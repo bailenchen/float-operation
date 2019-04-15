@@ -98,17 +98,7 @@ export default {
   computed: {
     ...mapGetters(['logo', 'name'])
   },
-  mounted() {
-    if (this.$route.query.authKey) {
-      Lockr.set('authKey', this.$route.query.authKey)
-      location.reload()
-    } else if (this.$route.query.type == 'admin') {
-      this.loginForm = {
-        username: '18888888888',
-        password: '123456'
-      }
-    }
-  },
+  mounted() {},
   methods: {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
