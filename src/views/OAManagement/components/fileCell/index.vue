@@ -59,12 +59,10 @@ export default {
       })
         .then(() => {
           crmFileDelete({
-            module: 'work_task',
-            module_id: this.module_id,
-            save_name: this.data.save_name
+            id: this.data.file_id
           })
             .then(res => {
-              this.$message.success(res.data)
+              this.$message.success('操作成功')
               this.$emit('delete', this.cellIndex, this.data)
             })
             .catch(() => {})

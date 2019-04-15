@@ -55,7 +55,7 @@
       </div>
       <div class="select-group">
         <label>截止时间</label>
-        <el-select v-model="fromData.time"
+        <el-select v-model="fromData.date"
                    @change="selectChange"
                    placeholder="请选择">
           <el-option v-for="item in timeOptions"
@@ -72,9 +72,9 @@
                    @change="selectChange"
                    placeholder="请选择">
           <el-option v-for="item in subUserListData"
-                     :key="item.id"
+                     :key="item.user_id"
                      :label="item.realname"
-                     :value="item.id">
+                     :value="item.user_id">
           </el-option>
         </el-select>
       </div>
@@ -116,25 +116,25 @@ export default {
   data() {
     return {
       fromData: {
-        type: '',
+        type: '0',
         status: '',
-        priority: 'all',
-        time: '',
+        priority: '',
+        date: '',
         subUser: ''
       },
       // 任务类型
       typeOptions: [
-        { label: '全部', key: '' },
-        { label: '我负责的', key: 'mymain' },
-        { label: '我创建的', key: 'mycreate' },
-        { label: '我参与的', key: 'myown' }
+        { label: '全部', key: '0' },
+        { label: '我负责的', key: '1' },
+        { label: '我创建的', key: '2' },
+        { label: '我参与的', key: '3' }
       ],
       // 下属任务类型
       subordinateOption: [
-        { label: '全部', key: '' },
-        { label: '下属负责的', key: 'mymain' },
-        { label: '下属创建的', key: 'mycreate' },
-        { label: '下属参与的', key: 'myown' }
+        { label: '全部', key: '0' },
+        { label: '下属负责的', key: '1' },
+        { label: '下属创建的', key: '2' },
+        { label: '下属参与的', key: '3' }
       ],
       // 状态
       statusOptions: [
@@ -144,7 +144,7 @@ export default {
       ],
       // 优先级
       priorityOptions: [
-        { label: '全部', key: 'all' },
+        { label: '全部', key: '' },
         { label: '高', key: '3' },
         { label: '中', key: '2' },
         { label: '低', key: '1' },

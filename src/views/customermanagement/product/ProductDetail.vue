@@ -38,7 +38,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="product"
-                       :action="{type: 'update', id: this.id}"
+                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -129,14 +129,14 @@ export default {
     getDetial() {
       this.loading = true
       crmProductRead({
-        id: this.id
+        productId: this.id
       })
         .then(res => {
           this.loading = false
           this.detailData = res.data
 
-          this.headDetails[0].value = res.data.category_id_info
-          this.headDetails[1].value = res.data.unit
+          this.headDetails[0].value = res.data.category_name
+          this.headDetails[1].value = res.data.单位
           this.headDetails[2].value = res.data.price
           this.headDetails[3].value = res.data.num
         })

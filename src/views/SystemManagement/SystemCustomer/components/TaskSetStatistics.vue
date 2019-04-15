@@ -103,11 +103,10 @@
 </template>
 
 <script>
-import { depList, userListByStructid } from '@/api/common'
+import { depList, usersList } from '@/api/common'
 import {
   crmAchievementIndex,
-  crmAchievementUpdate,
-  crmAchievementIndexForuser
+  crmAchievementUpdate
 } from '@/api/systemManagement/SystemCustomer'
 
 import moment from 'moment'
@@ -191,18 +190,14 @@ export default {
       var id = this.structuresSelectValue[this.structuresSelectValue.length - 1]
       crmAchievementIndex({
         year: this.dateSelect,
+        type: 2, // 2部门3员工
         status: this.typeSelect,
-        structure_id: id
+        deptId: id
       })
         .then(res => {
           var self = this
-          this.list = res.data.map(function(item, index, array) {
-            item['first'] = self.calculateFirst(item)
-            item['second'] = self.calculateSecond(item)
-            item['third'] = self.calculateThird(item)
-            item['fourth'] = self.calculateFourth(item)
-            item['yeartarget'] = self.calculateAll(item)
-            return item
+          this.list = res.data.map(item => {
+            return this.getShowItem(item)
           })
           if (this.list.length >= 2) {
             // 有子部门
@@ -213,6 +208,14 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    getShowItem(item) {
+      item['first'] = this.calculateFirst(item)
+      item['second'] = this.calculateSecond(item)
+      item['third'] = this.calculateThird(item)
+      item['fourth'] = this.calculateFourth(item)
+      item['yeartarget'] = this.calculateAll(item)
+      return item
     },
     /** 获取直属下级目标总和 */
     getSubTotalModel() {
@@ -430,12 +433,12 @@ export default {
     },
     /** 部门下员工 */
     getUserList() {
-      var params = {}
+      var params = { pageType: 0 }
       if (this.structuresSelectValue.length > 0) {
-        params.structure_id = this.structuresSelectValue[
+        params.deptId = this.structuresSelectValue[
           this.structuresSelectValue.length - 1
         ]
-        userListByStructid(params)
+        usersList(params)
           .then(res => {
             this.userOptions = res.data
           })
@@ -449,21 +452,17 @@ export default {
     getAhievementListForUser() {
       this.loading = true
       var id = this.structuresSelectValue[this.structuresSelectValue.length - 1]
-      crmAchievementIndexForuser({
+      crmAchievementIndex({
         year: this.dateSelect,
+        type: 3, // 2部门3员工
         status: this.typeSelect,
-        structure_id: id,
-        user_id: this.userSelectValue
+        deptId: id,
+        userId: this.userSelectValue
       })
         .then(res => {
           var self = this
-          this.list = res.data.map(function(item, index, array) {
-            item['first'] = self.calculateFirst(item)
-            item['second'] = self.calculateSecond(item)
-            item['third'] = self.calculateThird(item)
-            item['fourth'] = self.calculateFourth(item)
-            item['yeartarget'] = self.calculateAll(item)
-            return item
+          this.list = res.data.map(item => {
+            return this.getShowItem(item)
           })
           this.loading = false
         })
@@ -516,13 +515,9 @@ export default {
         } else if (this.tabType === 'user') {
           list = this.list
         }
-        crmAchievementUpdate({
-          year: this.dateSelect,
-          status: this.typeSelect,
-          datalist: list
-        })
+        crmAchievementUpdate(list)
           .then(res => {
-            this.$message.success(res.data)
+            this.$message.success('操作成功')
             this.loading = false
             this.isEdit = false
             this.updateAhievementList()

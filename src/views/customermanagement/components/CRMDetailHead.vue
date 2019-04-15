@@ -61,7 +61,7 @@ import {
   crmCustomerLock,
   crmCustomerPutInPool,
   crmCustomerDelete,
-  crmCustomerReceive
+  crmCustomerDistribute
 } from '@/api/customermanagement/customer'
 import { crmContactsDelete } from '@/api/customermanagement/contacts'
 import { crmBusinessDelete } from '@/api/customermanagement/business'
@@ -100,6 +100,10 @@ export default {
     name() {
       if (this.crmType === 'receivables') {
         return this.detail.number
+      } else if (this.crmType === 'customer') {
+        return this.detail.customer_name
+      } else if (this.crmType === 'business') {
+        return this.detail.business_name
       }
       return this.detail.name
     },
@@ -210,89 +214,83 @@ export default {
     confirmHandle(type) {
       if (type === 'lock' || type === 'unlock') {
         crmCustomerLock({
-          is_lock: type === 'lock' ? '1' : '2',
-          customer_id: [this.id]
+          isLock: type === 'lock' ? '1' : '0', // 1锁0不锁
+          ids: this.id
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
       } else if (type === 'put_seas') {
         crmCustomerPutInPool({
-          customer_id: [this.id]
+          ids: this.id
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
       } else if (type === 'transform') {
         crmLeadsTransform({
-          leads_id: [this.id]
+          leadsIds: this.id
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '转化成功'
             })
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
       } else if (type === 'start' || type === 'disable') {
         crmProductStatus({
-          id: [this.id],
-          status: type === 'start' ? '上架' : '下架'
+          ids: this.id,
+          status: type === 'start' ? '1' : '0'
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
       } else if (type === 'delete') {
-        let request
-        if (this.crmType == 'leads') {
-          request = crmLeadsDelete
-        } else if (this.crmType == 'customer') {
-          request = crmCustomerDelete
-        } else if (this.crmType == 'contacts') {
-          request = crmContactsDelete
-        } else if (this.crmType == 'business') {
-          request = crmBusinessDelete
-        } else if (this.crmType == 'contract') {
-          request = crmContractDelete
-        } else if (this.crmType == 'receivables') {
-          request = crmReceivablesDelete
-        }
+        let request = {
+          leads: crmLeadsDelete,
+          customer: crmCustomerDelete,
+          contacts: crmContactsDelete,
+          business: crmBusinessDelete,
+          contract: crmContractDelete,
+          receivables: crmReceivablesDelete
+        }[this.crmType]
         request({
-          id: [this.id]
+          [this.crmType + 'Ids']: this.id
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '删除成功'
             })
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
       } else if (type === 'get') {
         // 领取
-        crmCustomerReceive({
-          customer_id: [this.id]
+        crmCustomerDistribute({
+          ids: this.id
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
@@ -369,11 +367,7 @@ export default {
         ])
       } else if (this.crmType == 'customer') {
         if (this.isSeas) {
-          return this.forSelectionHandleItems(handleInfos, [
-            'alloc',
-            'get',
-            'delete'
-          ])
+          return this.forSelectionHandleItems(handleInfos, ['alloc', 'get', 'delete'])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
             'put_seas',

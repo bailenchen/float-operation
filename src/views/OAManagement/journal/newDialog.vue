@@ -37,7 +37,8 @@
               <el-upload ref="imageUpload"
                          :action="crmFileSaveUrl"
                          :headers="httpHeader"
-                         name="img[]"
+                         name="file"
+                         :data="{type: 'img', batchId: batchId}"
                          multiple
                          accept="image/*"
                          list-type="picture-card"
@@ -56,7 +57,8 @@
               <el-upload ref="fileUpload"
                          :action="crmFileSaveUrl"
                          :headers="httpHeader"
-                         name="file[]"
+                         name="file"
+                         :data="{type: 'file', batchId: batchId}"
                          multiple
                          accept="*.*"
                          :on-preview="handleFilePreview"
@@ -110,6 +112,7 @@
 <script>
 import axios from 'axios'
 import { crmFileSave, crmFileDelete, crmFileSaveUrl } from '@/api/common'
+import { guid } from '@/utils'
 import CreateView from '@/components/CreateView'
 // 部门员工优化版
 import membersDep from '@/components/selectEmployee/membersDep'
@@ -123,12 +126,11 @@ export default {
   },
   computed: {
     crmFileSaveUrl() {
-      return window.BASE_URL + crmFileSaveUrl
+      return crmFileSaveUrl
     },
     httpHeader() {
       return {
-        authKey: axios.defaults.headers.authKey,
-        sessionId: axios.defaults.headers.sessionId
+        'Admin-Token': axios.defaults.headers['Admin-Token']
       }
     }
   },
@@ -157,6 +159,7 @@ export default {
         { label: '下月工作内容', model: 'tomorrow' },
         { label: '遇到的问题', model: 'question' }
       ],
+      batchId: guid(),
       imageFileList: [],
       fileList: [],
       // 发送给谁
@@ -213,6 +216,11 @@ export default {
           break
       }
     }
+
+    if (this.dialogTitle != '写日志' && this.formData.batch_id) {
+      this.batchId = this.formData.batch_id
+    }
+
     // 编辑时引用 - 自动勾选
     var allData = {}
     allData.business = this.formData.businessList
@@ -252,11 +260,11 @@ export default {
     this.relevanceAll = relevanceAll
 
     this.imageFileList = this.imgFileList.map(function(item, index, array) {
-      item.url = item.file_path_thumb
+      item.url = item.file_path
       return item
     })
     this.fileList = this.accessoryFileList.map(function(item, index, array) {
-      item.url = item.file_path_thumb
+      item.url = item.file_path
       return item
     })
   },
@@ -291,8 +299,7 @@ export default {
         this.$emit(
           'submitBtn',
           this.activeName,
-          this.fileList,
-          this.imageFileList,
+          this.batchId,
           this.relevanceAll
         )
       } else {

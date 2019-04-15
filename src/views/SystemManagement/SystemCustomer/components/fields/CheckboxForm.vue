@@ -35,6 +35,9 @@ export default {
       return false
     }
   },
+  mounted() {
+    console.log('this.attr---', this.attr);
+  },
   data() {
     return {}
   }

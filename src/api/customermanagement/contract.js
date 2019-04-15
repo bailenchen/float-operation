@@ -3,16 +3,19 @@ import request from '@/utils/request'
 // crm 新建合同
 export function crmContractSave(data) {
   return request({
-    url: 'crm/contract/save',
+    url: 'CrmContract/saveAndUpdate',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
 // crm 列表
 export function crmContractIndex(data) {
   return request({
-    url: 'crm/contract/index',
+    url: 'CrmContract/queryPage',
     method: 'post',
     data: data
   })
@@ -21,7 +24,7 @@ export function crmContractIndex(data) {
 // 删除
 export function crmContractDelete(data) {
   return request({
-    url: 'crm/contract/delete',
+    url: 'CrmContract/deleteByIds',
     method: 'post',
     data: data
   })
@@ -39,7 +42,7 @@ export function crmContractUpdate(data) {
 // crm 详情
 export function crmContractRead(data) {
   return request({
-    url: 'crm/contract/read',
+    url: 'CrmContract/queryById',
     method: 'post',
     data: data
   })
@@ -51,9 +54,12 @@ export function crmContractRead(data) {
  */
 export function crmReceivablesPlanSave(data) {
   return request({
-    url: 'crm/receivables_plan/save',
+    url: 'Crm/ReceivablesPlan/saveAndUpdate',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -73,7 +79,7 @@ export function crmContractCheck(data) {
 }
 
 /**
- * 合同撤回审批
+ * 合同撤回审核
  * @param {*} data
  * id
  * status 1通过 0拒绝
@@ -94,7 +100,7 @@ export function crmContractRevokeCheck(data) {
  */
 export function crmContractProduct(data) {
   return request({
-    url: 'crm/contract/product',
+    url: 'CrmContract/qureyProductListByContractId',
     method: 'post',
     data: data
   })
@@ -103,10 +109,90 @@ export function crmContractProduct(data) {
 // 转移
 export function crmContractTransfer(data) {
   return request({
-    url: 'crm/contract/transfer',
+    url: 'CrmContract/transfer',
     method: 'post',
     data: data
   })
 }
 
+/**
+ * 合同下回款
+ * @param {*} data 
+ */
+export function crmContractQueryReceivables(data) {
+  return request({
+    url: 'CrmContract/qureyReceivablesListByContractId',
+    method: 'post',
+    data: data
+  })
+}
 
+/**
+ * 合同下回款计划
+ * @param {*} data 
+ */
+export function crmContractQueryReceivablesPlan(data) {
+  return request({
+    url: 'CrmContract/qureyReceivablesPlanListByContractId',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 跟进记录
+ * @param {*} data 
+ */
+export function crmContractRecordSave(data) {
+  return request({
+    url: 'CrmContract/addRecord',
+    method: 'post',
+    data: data
+  })
+}
+export function crmContractRecordIndex(data) {
+  return request({
+    url: 'CrmContract/getRecord',
+    method: 'post',
+    data: data
+  })
+}
+// 团队操作
+
+/**
+ * 相关团队创建
+ * @param {*} data
+ * types crm_leads
+ * types_id 分类ID
+ */
+export function crmContractSettingTeamSave(data) {
+  return request({
+    url: 'CrmContract/addMembers',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmContractSettingTeamDelete(data) {
+  return request({
+    url: 'CrmContract/deleteMembers',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmContractTeamMembers(data) {
+  return request({
+    url: 'CrmContract/getMembers',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmContractUpdateMembers(data) {
+  return request({
+    url: 'CrmContract/updateMembers',
+    method: 'post',
+    data: data
+  })
+}

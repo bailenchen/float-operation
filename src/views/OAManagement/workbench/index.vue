@@ -49,6 +49,8 @@ import VSchedule from './schedule'
 import tabJournal from './tabsJournal'
 // API
 import { workbenchList, eventList } from '@/api/oamanagement/workbench'
+import moment from 'moment'
+
 export default {
   components: {
     tabsContent,
@@ -82,7 +84,7 @@ export default {
   },
   mounted() {
     // 日程
-    eventList()
+    eventList({ month: moment(new Date()).format('YYYY-MM') })
       .then(res => {
         for (let item of res.data) {
           if (item.status == 1) {
@@ -157,10 +159,7 @@ export default {
     // 切换上下月
     changeMonth(startTime, endTime) {
       this.scheduleLoading = true
-      eventList({
-        start_time: startTime,
-        end_time: endTime
-      })
+      eventList({ month: startTime })
         .then(res => {
           for (let item of res.data) {
             if (item.status == 1) {

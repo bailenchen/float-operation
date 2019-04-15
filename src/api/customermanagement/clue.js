@@ -3,16 +3,19 @@ import request from '@/utils/request'
 // crm 新建线索
 export function crmLeadsSave(data) {
   return request({
-    url: 'crm/leads/save',
+    url: 'CrmLeads/addOrUpdate',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
 // crm 列表
 export function crmLeadsIndex(data) {
   return request({
-    url: 'crm/leads/index',
+    url: 'CrmLeads/queryList',
     method: 'post',
     data: data
   })
@@ -21,7 +24,7 @@ export function crmLeadsIndex(data) {
 // 删除
 export function crmLeadsDelete(data) {
   return request({
-    url: 'crm/leads/delete',
+    url: 'CrmLeads/deleteByIds',
     method: 'post',
     data: data
   })
@@ -39,7 +42,7 @@ export function crmLeadsUpdate(data) {
 // crm 详情
 export function crmLeadsRead(data) {
   return request({
-    url: 'crm/leads/read',
+    url: 'CrmLeads/queryById',
     method: 'post',
     data: data
   })
@@ -55,7 +58,7 @@ export function crmLeadsRead(data) {
  */
 export function crmLeadsTransfer(data) {
   return request({
-    url: 'crm/leads/transfer',
+    url: 'CrmLeads/changeOwnerUser',
     method: 'post',
     data: data
   })
@@ -68,7 +71,7 @@ export function crmLeadsTransfer(data) {
  */
 export function crmLeadsTransform(data) {
   return request({
-    url: 'crm/leads/transform',
+    url: 'CrmLeads/transfer',
     method: 'post',
     data: data
   })
@@ -81,7 +84,7 @@ export function crmLeadsTransform(data) {
  */
 export function crmLeadsExcelExport(data) {
   return request({
-    url: 'crm/leads/excelExport',
+    url: 'CrmLeads/excelExport',
     method: 'post',
     data: data,
     responseType: 'blob'
@@ -113,4 +116,23 @@ export function crmLeadsExcelImport(data) {
  * @param {*} data
  *
  */
-export const crmLeadsExcelDownloadURL = 'crm/leads/excelDownload'
+export const crmLeadsExcelDownloadURL = process.env.BASE_API + 'crm/leads/excelDownload'
+
+/**
+ * 跟进记录
+ * @param {*} data 
+ */
+export function crmLeadsRecordSave(data) {
+  return request({
+    url: 'CrmLeads/addRecord',
+    method: 'post',
+    data: data
+  })
+}
+export function crmLeadsRecordIndex(data) {
+  return request({
+    url: 'CrmLeads/getRecord',
+    method: 'post',
+    data: data
+  })
+}

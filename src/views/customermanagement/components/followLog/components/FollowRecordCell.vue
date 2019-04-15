@@ -1,13 +1,12 @@
 <template>
   <div class="fl-c">
     <flexbox class="fl-h">
-      <div v-photo="item.create_user_info"
-           :key="item.create_user_info.thumb_img"
-           v-lazy:background-image="$options.filters.filterUserLazyImg(item.create_user_info.thumb_img)"
+      <div v-photo="{img: item.user_img, realname: item.realname}"
+           v-lazy:background-image="$options.filters.filterUserLazyImg(item.user_img)"
            class="div-photo fl-h-img"></div>
       <div class="fl-h-b">
-        <div class="fl-h-name">{{item.create_user_info.realname}}</div>
-        <div class="fl-h-time">{{item.create_time|filterTimestampToFormatTime('YYYY-MM-DD HH:mm')}}</div>
+        <div class="fl-h-name">{{item.realname}}</div>
+        <div class="fl-h-time">{{item.create_time}}</div>
       </div>
       <flexbox class="fl-h-mark">
         <img class="fl-h-mark-img"
@@ -18,18 +17,18 @@
     <div class="fl-b">
       <div class="fl-b-content">{{item.content}}</div>
       <flexbox class="fl-b-images"
-               v-if="item.dataInfo.imgList && item.dataInfo.imgList.length > 0"
+               v-if="item.img && item.img.length > 0"
                wrap="wrap">
         <div class="fl-b-img-item"
-             v-for="(file, index) in item.dataInfo.imgList"
-             :key="file.file_path_thumb"
-             @click="previewImg(item.dataInfo.imgList, index)"
-             v-lazy:background-image="file.file_path_thumb"></div>
+             v-for="(file, index) in item.img"
+             :key="file.file_path"
+             @click="previewImg(item.img, index)"
+             v-lazy:background-image="file.file_path"></div>
       </flexbox>
-      <div v-if="item.dataInfo.fileList && item.dataInfo.fileList.length > 0"
+      <div v-if="item.file && item.file.length > 0"
            class="fl-b-files">
         <flexbox class="cell"
-                 v-for="(file, index) in item.dataInfo.fileList"
+                 v-for="(file, index) in item.file"
                  :key="index">
           <img class="cell-head"
                src="@/assets/img/relevance_file.png" />
@@ -44,14 +43,14 @@
         <span v-if="item.category"
               class="follow-info">{{item.category}}</span>
         <span v-if="item.next_time"
-              class="follow-info">{{item.next_time|filterTimestampToFormatTime('YYYY-MM-DD HH:mm:ss')}}</span>
+              class="follow-info">{{item.next_time}}</span>
       </div>
       <div class="fl-b-other"
-           v-if="item.dataInfo.contactsList && item.dataInfo.contactsList.length > 0">
+           v-if="item.contacts_list && item.contacts_list.length > 0">
         <div class="fl-b-other-name">关联联系人</div>
         <div>
           <flexbox class="cell"
-                   v-for="(item, index) in item.dataInfo.contactsList"
+                   v-for="(item, index) in item.contacts_list"
                    @click.native="checkRelationDetail('contacts', item.contacts_id)"
                    :key="index">
             <i class="wukong wukong-contacts cell-head crm-type"
@@ -62,17 +61,17 @@
         </div>
       </div>
       <div class="fl-b-other"
-           v-if="item.dataInfo.businessList && item.dataInfo.businessList.length > 0">
+           v-if="item.business_list && item.business_list.length > 0">
         <div class="fl-b-other-name">关联商机</div>
         <div>
           <flexbox class="cell"
-                   v-for="(item, index) in item.dataInfo.businessList"
+                   v-for="(item, index) in item.business_list"
                    @click.native="checkRelationDetail('business', item.business_id)"
                    :key="index">
             <i class="wukong wukong-business cell-head crm-type"
                :style="{'opacity': index == 0 ? 1 : 0}"></i>
             <div class="cell-body"
-                 style="color: #6394E5;cursor: pointer;">{{item.name}}</div>
+                 style="color: #6394E5;cursor: pointer;">{{item.business_name}}</div>
           </flexbox>
         </div>
       </div>

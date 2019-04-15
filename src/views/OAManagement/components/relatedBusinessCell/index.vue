@@ -5,7 +5,7 @@
     <div class="cell-body"
          :class="{'cursor-pointer' :cursorPointer}"
          @click="bodyClick">
-      {{typeName + '-' + data.name}}
+      {{getShowName()}}
     </div>
     <img v-if="showFoot"
          class="cell-foot"
@@ -59,6 +59,9 @@ export default {
     },
     bodyClick() {
       this.$emit('detail', this.type, this.cellIndex, this.data)
+    },
+    getShowName(item) {
+      return this.typeName + '-' + (this.data.name || this.data.business_name || this.data.customer_name || this.data.number)
     }
   },
 

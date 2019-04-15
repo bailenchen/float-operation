@@ -4,7 +4,7 @@
        xs-empty-icon="nopermission"
        xs-empty-text="暂无权限">
     <flexbox class="header">
-      <div class="name">{{data.row.name}}</div>
+      <div class="name">{{data.row.customer_name}}</div>
       <div class="detail">商机（{{list.length}}）</div>
       <img @click="hidenView"
            class="close"
@@ -24,7 +24,6 @@
                        align="center"
                        header-align="center"
                        show-overflow-tooltip
-                       :formatter="fieldFormatter"
                        :prop="item.prop"
                        :label="item.label">
       </el-table-column>
@@ -34,7 +33,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { crmBusinessIndex } from '@/api/customermanagement/business'
+import { crmCustomerQueryBusiness } from '@/api/customermanagement/customer'
 
 export default {
   /** 客户管理 的 客户列表  相关商机列表*/
@@ -80,77 +79,38 @@ export default {
     return {
       loading: false,
       list: [],
-      fieldList: [],
-      /** 格式化规则 */
-      formatterRules: {}
+      fieldList: []
     }
   },
   mounted() {
-    this.fieldList.push({ prop: 'name', width: '200', label: '商机名称' })
+    this.fieldList.push({ prop: 'business_name', width: '200', label: '商机名称' })
     this.fieldList.push({
-      prop: 'money',
+      prop: 'total_price',
       width: '200',
       label: '商机金额'
     })
     this.fieldList.push({
-      prop: 'customer_id',
+      prop: 'customer_name',
       width: '200',
       label: '客户名称'
     })
-    this.fieldList.push({ prop: 'type_id', width: '200', label: '商机状态组' })
-    this.fieldList.push({ prop: 'status_id', width: '200', label: '状态' })
-
-    // 为客户名称 商机状态组 状态 加入字段格式化展示规则
-    function crmFieldFormatter(info) {
-      return info ? info.name : ''
-    }
-    this.formatterRules['customer_id'] = {
-      type: 'crm',
-      formatter: crmFieldFormatter
-    }
-    function fieldFormatter(info) {
-      return info ? info : ''
-    }
-    this.formatterRules['type_id'] = {
-      type: 'crm',
-      formatter: fieldFormatter
-    }
-    this.formatterRules['status_id'] = {
-      type: 'crm',
-      formatter: fieldFormatter
-    }
+    this.fieldList.push({ prop: 'type_name', width: '200', label: '商机状态组' })
+    this.fieldList.push({ prop: 'status_name', width: '200', label: '状态' })
   },
   methods: {
     getDetail() {
       this.loading = true
-      crmBusinessIndex({
-        pageType: 'all',
-        customer_id: this.data.row.customer_id
+      crmCustomerQueryBusiness({
+        pageType: 0,
+        customerId: this.data.row.customer_id
       })
         .then(res => {
           this.loading = false
-          this.list = res.data.list
+          this.list = res.data
         })
         .catch(() => {
           this.loading = false
         })
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
     },
     hidenView() {
       document.querySelector('#app').click()

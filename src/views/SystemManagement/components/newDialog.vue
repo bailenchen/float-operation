@@ -102,13 +102,13 @@ export default {
       } else {
       }
       usersEdit({
-        users: this.selectUsers.map(function(data) {
-          return data.id
-        }),
-        groups: this.selectRoles
+        userIds: this.selectUsers.map(function(data) {
+          return data.user_id
+        }).join(','),
+        roleIds: this.selectRoles.join(',')
       })
         .then(res => {
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
           this.$emit('save')
         })
         .catch(err => {})

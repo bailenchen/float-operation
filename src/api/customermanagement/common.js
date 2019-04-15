@@ -9,7 +9,32 @@ import request from '@/utils/request'
  */
 export function filedGetField(data) {
   return request({
-    url: 'admin/field/getField',
+    url: 'field/queryField',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 详情页基本信息
+ * @param {*} data 
+ */
+export function filedGetInformation(data) {
+  return request({
+    url: 'field/information',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
+ * java 不使用filedGetField 
+ * @param {*} data 
+ */
+export function filedGetTableField(data) {
+  return request({
+    url: 'field/queryListHead',
     method: 'post',
     data: data
   })
@@ -18,7 +43,7 @@ export function filedGetField(data) {
 // crm 自定义字段验重
 export function filedValidates(data) {
   return request({
-    url: 'admin/field/validates',
+    url: 'field/verify',
     method: 'post',
     data: data
   })
@@ -27,7 +52,7 @@ export function filedValidates(data) {
 // crm 自定义字段(高级筛选)
 export function filterIndexfields(data) {
   return request({
-    url: 'admin/index/fields',
+    url: 'scene/queryField',
     method: 'post',
     data: data
   })
@@ -36,7 +61,7 @@ export function filterIndexfields(data) {
 // 商机状态组列表 systemCustomer.js 也包含该接口
 export function businessGroupList(data) {
   return request({
-    url: 'crm/business_status/type',
+    url: 'businessType/queryBusinessTypeList',
     method: 'post',
     data: data
   })
@@ -44,7 +69,15 @@ export function businessGroupList(data) {
 // 场景列表
 export function crmSceneIndex(data) {
   return request({
-    url: 'admin/scene/index',
+    url: 'scene/queryScene',
+    method: 'post',
+    data: data
+  })
+}
+// 场景设置列表
+export function crmSceneSetIndex(data) {
+  return request({
+    url: 'scene/querySceneConfig',
     method: 'post',
     data: data
   })
@@ -53,7 +86,7 @@ export function crmSceneIndex(data) {
 // 场景创建
 export function crmSceneSave(data) {
   return request({
-    url: 'admin/scene/save',
+    url: 'scene/addScene',
     method: 'post',
     data: data
   })
@@ -62,7 +95,7 @@ export function crmSceneSave(data) {
 // 场景编辑
 export function crmSceneUpdate(data) {
   return request({
-    url: 'admin/scene/update',
+    url: 'scene/updateScene',
     method: 'post',
     data: data
   })
@@ -71,7 +104,7 @@ export function crmSceneUpdate(data) {
 // 场景默认
 export function crmSceneDefaults(data) {
   return request({
-    url: 'admin/scene/defaults',
+    url: 'scene/setDefaultScene',
     method: 'post',
     data: data
   })
@@ -89,7 +122,7 @@ export function crmSceneRead(data) {
 // 场景删除
 export function crmSceneDelete(data) {
   return request({
-    url: 'admin/scene/delete',
+    url: 'scene/deleteScene',
     method: 'post',
     data: data
   })
@@ -98,7 +131,7 @@ export function crmSceneDelete(data) {
 // 场景排序
 export function crmSceneSort(data) {
   return request({
-    url: 'admin/scene/sort',
+    url: 'scene/sceneConfig',
     method: 'post',
     data: data
   })
@@ -107,7 +140,7 @@ export function crmSceneSort(data) {
 // 列表字段排序数据
 export function crmFieldConfigIndex(data) {
   return request({
-    url: 'admin/field/configIndex',
+    url: 'field/queryFieldConfig',
     method: 'post',
     data: data
   })
@@ -116,7 +149,7 @@ export function crmFieldConfigIndex(data) {
 // 列表排序编辑
 export function crmFieldConfig(data) {
   return request({
-    url: 'admin/field/config',
+    url: 'field/fieldConfig',
     method: 'post',
     data: data
   })
@@ -125,7 +158,7 @@ export function crmFieldConfig(data) {
 // 列表宽度设置
 export function crmFieldColumnWidth(data) {
   return request({
-    url: 'admin/field/columnWidth',
+    url: 'field/setFelidStyle',
     method: 'post',
     data: data
   })
@@ -152,7 +185,7 @@ export function crmRecordSave(data) {
 // 操作记录
 export function crmIndexFieldRecord(data) {
   return request({
-    url: 'admin/index/fieldRecord',
+    url: 'CrmRecord/queryRecordList',
     method: 'post',
     data: data
   })
@@ -161,7 +194,7 @@ export function crmIndexFieldRecord(data) {
 // 客户管理下 合同审批信息
 export function crmExamineFlowStepList(data) {
   return request({
-    url: 'admin/examine_flow/stepList',
+    url: 'admin/examineFlow/stepList',
     method: 'post',
     data: data
   })
@@ -175,7 +208,7 @@ export function crmExamineFlowStepList(data) {
  */
 export function crmExamineFlowRecordList(data) {
   return request({
-    url: 'admin/examine_flow/recordList',
+    url: 'admin/examineFlow/recordList',
     method: 'post',
     data: data
   })
@@ -188,7 +221,7 @@ export function crmExamineFlowRecordList(data) {
  */
 export function crmExamineFlowUserList(data) {
   return request({
-    url: 'admin/examine_flow/userList',
+    url: 'admin/examineFlow/userList',
     method: 'post',
     data: data
   })
@@ -216,8 +249,25 @@ export function crmSettingTeam(data) {
  */
 export function crmSettingTeamSave(data) {
   return request({
-    url: 'crm/setting/teamSave',
+    url: 'CrmCustomer/addMembers',
     method: 'post',
     data: data
+  })
+}
+
+/**
+ * 相关团队列表
+ * @param {*} data
+ * types crm_leads
+ * types_id 分类ID
+ */
+export function crmMainIndex(data) {
+  return request({
+    url: 'scene/queryPageList',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }

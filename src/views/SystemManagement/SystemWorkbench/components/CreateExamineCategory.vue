@@ -113,8 +113,7 @@
 <script type="text/javascript">
 import CreateView from '@/components/CreateView'
 import {
-  oaExamineCategorySave,
-  oaExamineCategoryUpdate
+  oaExamineCategorySave
 } from '@/api/systemManagement/workbench' // 审批类型创建
 
 import {
@@ -208,15 +207,15 @@ export default {
     this.getField()
     if (this.handle.data) {
       // data 存在就处理 save
-      if (this.handle.data.config && this.handle.data.config === 1) {
+      if (this.handle.data.examine_type && this.handle.data.examine_type === 1) {
         this.examineList = []
         for (let index = 0; index < this.handle.data.stepList.length; index++) {
           const element = this.handle.data.stepList[index]
           var item = {}
-          item['type'] = element.status
-          if (element.status === 2 || element.status === 3) {
+          item['type'] = element.step_type
+          if (element.step_type === 2 || element.step_type === 3) {
             item['show'] = true
-            item['value'] = element.user_id_info
+            item['value'] = element.userList
           } else {
             item['show'] = false
             item['value'] = []
@@ -266,25 +265,25 @@ export default {
         value: this.handle.data ? this.handle.data.title : ''
       })
       field.push({
-        field: 'structure',
+        field: 'dept',
         form_type: 'structure',
         is_null: 0,
         name: '可视范围',
         setting: [],
         input_tips: '默认全公司',
         value: {
-          users: this.handle.data ? this.handle.data.user_ids_info : [],
-          strucs: this.handle.data ? this.handle.data.structure_ids_info : []
+          users: this.handle.data ? this.handle.data.userIds : [],
+          strucs: this.handle.data ? this.handle.data.deptIds : []
         }
       })
       field.push({
-        field: 'remark',
+        field: 'remarks',
         form_type: 'textarea',
         is_null: 0,
         name: '审批类型说明',
         setting: [],
         input_tips: '',
-        value: this.handle.data ? this.handle.data.remark : ''
+        value: this.handle.data ? this.handle.data.remarks : ''
       })
 
       this.getcrmRulesAndModel(field)
@@ -351,7 +350,7 @@ export default {
       if (this.handle.action == 'update') {
         params.id = this.handle.id
       }
-      this.getRequest()(params)
+      oaExamineCategorySave(params)
         .then(res => {
           this.loading = false
           // 回到保存成功
@@ -369,13 +368,14 @@ export default {
                   name: 'handlefield',
                   params: {
                     type: 'oa_examine',
+                    label: '10',
                     id: res.data.category_id
                   }
                 })
               })
               .catch(() => {})
           } else {
-            this.$message.success(res.data)
+            this.$message.success('操作成功')
             this.hidenView()
           }
         })
@@ -383,23 +383,17 @@ export default {
           this.loading = false
         })
     },
-    // 请求url
-    getRequest() {
-      return this.handle.action === 'update'
-        ? oaExamineCategoryUpdate
-        : oaExamineCategorySave
-    },
     // 请求参数
     getSubmiteParams(array) {
       var params = {}
       for (let index = 0; index < array.length; index++) {
         const element = array[index]
         // 关联产品数据需要特殊拼接
-        if (element.key === 'structure') {
-          params['user_ids'] = element.value['users'].map(function(item) {
-            return item.id
+        if (element.key === 'dept') {
+          params['userIds'] = element.value['users'].map(function(item) {
+            return item.user_id
           })
-          params['structure_ids'] = element.value['strucs'].map(function(item) {
+          params['deptIds'] = element.value['strucs'].map(function(item) {
             return item.id
           })
         } else {
@@ -411,13 +405,13 @@ export default {
       for (let index = 0; index < this.examineList.length; index++) {
         const element = this.examineList[index]
         steps.push({
-          status: element.type,
-          user_id: element.value.map(function(item) {
-            return item.id
+          stepType: element.type,
+          checkUserId: element.value.map(function(item) {
+            return item.user_id
           })
         })
       }
-      params['config'] = this.examineType
+      params['examineType'] = this.examineType
       params['step'] = steps
       return params
     },

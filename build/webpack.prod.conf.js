@@ -55,7 +55,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       template: 'index.html',
       inject: true,
       favicon: resolve('favicon.ico'),
-      title: 'wukong',
+      title: 'vue-admin-template',
       minify: {
         removeComments: true,
         collapseWhitespace: true,

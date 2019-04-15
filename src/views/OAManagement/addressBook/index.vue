@@ -1,22 +1,25 @@
 <template>
   <div class="address-book oa-bgcolor">
     <div class="header">
-      <el-tabs v-model="activeName"
-               @tab-click="handleClick">
-        <el-input placeholder="搜索成员"
-                  prefix-icon="el-icon-search"
-                  @blur="blurFun"
-                  @keyup.enter.native="blurFun"
-                  v-model="inputModel">
-        </el-input>
+      <el-tabs v-model="activeName">
         <el-tab-pane label="员工"
                      name="1">
+          <el-input placeholder="搜索成员"
+                    prefix-icon="el-icon-search"
+                    @blur="blurFun"
+                    v-model="userInput">
+          </el-input>
           <v-staff v-loading="staffLoading"
                    :staffData="staffData">
           </v-staff>
         </el-tab-pane>
         <el-tab-pane label="部门"
                      name="2">
+          <el-input placeholder="搜索成员"
+                    prefix-icon="el-icon-search"
+                    @blur="blurFun"
+                    v-model="depInput">
+          </el-input>
           <v-department :depData="depData">
           </v-department>
         </el-tab-pane>
@@ -26,7 +29,10 @@
 </template>
 
 <script>
-import { addresslist } from '@/api/oamanagement/addressBook'
+import {
+  addresslist,
+  queryListNameByDept
+} from '@/api/oamanagement/addressBook'
 import VStaff from './staff'
 import VDepartment from './department'
 export default {
@@ -39,44 +45,42 @@ export default {
       activeName: '1',
       staffData: [],
       depData: [],
-      inputModel: '',
+      userInput: '',
+      depInput: '',
       staffLoading: true
     }
   },
   created() {
     // 员工
-    this.dataFun(1)
+    this.dataUserFun()
     // 部门
-    this.dataFun()
+    this.dataDepFun()
   },
   methods: {
-    dataFun(key, search) {
+    dataUserFun() {
       this.staffLoading = true
       addresslist({
-        type: key,
-        search: search
+        search: this.userInput
       }).then(res => {
-        if (key == 1) {
-          for (let item in res.data) {
-            this.staffData.push({
-              letter: item,
-              list: res.data[item]
-            })
-          }
-          this.staffLoading = false
-        } else {
-          this.depData = res.data
+        for (let item in res.data) {
+          this.staffData.push({
+            letter: item,
+            list: res.data[item]
+          })
         }
+        this.staffLoading = false
       })
     },
-    handleClick(key) {
-      this.inputModel = ''
+    dataDepFun(search) {
+      queryListNameByDept({
+        name: this.depInput
+      }).then(res => {
+        this.depData = res.data
+      })
     },
     blurFun() {
       this.staffData = []
-      let num = 0
-      num = this.activeName == '1' ? 1 : ''
-      this.dataFun(num, this.inputModel)
+      this.activeName == '1' ? this.dataUserFun() : this.dataDepFun()
     }
   }
 }

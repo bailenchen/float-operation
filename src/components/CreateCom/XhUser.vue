@@ -18,7 +18,6 @@
                      class="colleagues-list">
           <div v-photo="item"
                v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-               :key="item.thumb_img"
                class="div-photo search-img"></div>
           <span>{{item.realname}}</span>
         </el-checkbox>
@@ -94,7 +93,7 @@ export default {
               let disabled = true
               for (let index = 0; index < self.selectedData.length; index++) {
                 const element = self.selectedData[index]
-                if (element.id == item.id) {
+                if (element.user_id == item.user_id) {
                   disabled = false
                   self.selectItems.push(item)
                 }
@@ -128,6 +127,7 @@ export default {
           ? this.infoParams
           : {}
       if (this.infoType === 'default') {
+        params.pageType = 0
         return params
       } else if (
         this.infoType === 'crm_contract' ||
@@ -143,7 +143,7 @@ export default {
         if (items.length) {
           var element = items[0]
           this.list = this.list.map(function(item, index, array) {
-            if (element.id == item.id) {
+            if (element.user_id == item.user_id) {
               item.disabled = false
             } else {
               item.disabled = true
@@ -165,7 +165,7 @@ export default {
       var removeIndex = -1
       for (let index = 0; index < this.selectItems.length; index++) {
         const element = this.selectItems[index]
-        if (element.id == item.id) {
+        if (element.user_id == item.user_id) {
           removeIndex = index
         }
       }
@@ -187,7 +187,7 @@ export default {
           let disabled = true
           for (let index = 0; index < items.length; index++) {
             const element = items[index]
-            if (element.id == item.id) {
+            if (element.user_id == item.user_id) {
               disabled = false
               this.selectItems.push(item)
             }

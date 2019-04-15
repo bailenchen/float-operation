@@ -36,7 +36,6 @@
                                @change="userCheckboxChange(user, index)">
                     <div v-photo="user"
                          v-lazy:background-image="$options.filters.filterUserLazyImg(user.thumb_img)"
-                         :key="user.thumb_img"
                          class="div-photo search-img header-circle"></div>
                     <span>{{user.realname}}</span>
                   </el-checkbox>
@@ -92,7 +91,6 @@
               <div v-if="item.type == 'user'"
                    v-photo="item"
                    v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-                   :key="item.thumb_img"
                    class="div-photo"></div>
               <span v-if="item.type == 'user'"> {{item.realname}} </span>
               <span v-else> {{item.name}} </span>
@@ -266,9 +264,7 @@ export default {
     // 部门列表数据
     getDepList() {
       this.depLoading = true
-      depList({
-        type: 'tree'
-      })
+      depList({ type: 'tree' })
         .then(res => {
           this.depShowList = res.data.map((item, index, array) => {
             item.type = 'dep'
@@ -328,7 +324,7 @@ export default {
      */
     getUserList() {
       this.userLoading = true
-      usersList()
+      usersList({ pageType: 0 })
         .then(res => {
           this.userList = res.data.map(item => {
             item.type = 'user'
@@ -351,7 +347,9 @@ export default {
       var removeIndex = -1
       for (let index = 0; index < this.checkedUserDepList.length; index++) {
         const element = this.checkedUserDepList[index]
-        if (element.type == type && item.id == element.id) {
+        if (element.type == 'user' && item.user_id == element.user_id) {
+          removeIndex = index
+        } else if (element.type == 'dep' && item.id == element.id) {
           removeIndex = index
         }
       }
@@ -369,7 +367,10 @@ export default {
       var hasItem = false
       for (let index = 0; index < this.checkedUserDepList.length; index++) {
         const element = this.checkedUserDepList[index]
-        if (element.type == type && item.id == element.id) {
+        if (element.type == 'user' && item.user_id == element.user_id) {
+          hasItem = true
+          break
+        } else if (element.type == 'dep' && item.id == element.id) {
           hasItem = true
           break
         }

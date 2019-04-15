@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 日志列表
 export function journalList (data) {
     return request({
-        url: 'oa/log/index',
+        url: 'OaLog/queryList',
         method: 'post',
         data: data
     })
@@ -11,23 +11,29 @@ export function journalList (data) {
 // 新建日志
 export function journalAdd (data) {
     return request({
-        url: 'oa/log/save',
+        url: 'OaLog/addOrUpdate',
         method: 'post',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
         data
     })
 }
 // 日志编辑
 export function journalEdit (data) {
     return request({
-        url: 'oa/log/update',
+        url: 'OaLog/addOrUpdate',
         method: 'post',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
         data
     })
 }
 // 日志评论添加
 export function journalCommentSave (data) {
     return request({
-        url: 'oa/log/commentSave',
+        url: 'OaLog/addComment',
         method: 'post',
         data
     })
@@ -35,7 +41,7 @@ export function journalCommentSave (data) {
 // 日志删除
 export function journalDelete (data) {
     return request({
-        url: 'oa/log/delete',
+        url: 'OaLog/deleteById',
         method: 'post',
         data
     })
@@ -43,7 +49,7 @@ export function journalDelete (data) {
 // 日志评论删除
 export function journalCommentDelete (data) {
     return request({
-        url: 'oa/log/commentDel',
+        url: 'OaLog/delComment',
         method: 'post',
         data
     })

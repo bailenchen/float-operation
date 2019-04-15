@@ -11,8 +11,8 @@
              :key="index"
              class="list-data">
           <label>{{item.label}}：</label>
-          <span v-if="item.type=='time' && listData.time">{{listData[item.value] | moment("YYYY-MM-DD HH:mm:ss")}}</span>
-          <span v-else-if="item.type=='create_time'">{{listData[item.value] | moment("YYYY-MM-DD HH:mm:ss")}}</span>
+          <span v-if="item.type=='time' && listData.time">{{listData[item.value]}}</span>
+          <span v-else-if="item.type=='create_time'">{{listData[item.value]}}</span>
           <span v-else-if="item.type=='ownerList'"
                 class="owner-list">
             <span v-for="(k, j) in listData[item.value]"
@@ -25,13 +25,12 @@
                 </div>
                 <div v-photo="k"
                      v-lazy:background-image="$options.filters.filterUserLazyImg(k.thumb_img)"
-                     :key="k.thumb_img"
                      class="div-photo header-circle"></div>
               </el-tooltip>
             </span>
           </span>
           <span v-else-if="item.type=='remindtype'">{{listData.remindtypeText}}</span>
-          <span v-else-if="item.type=='create_person'">{{listData.create_user_info.realname}}</span>
+          <span v-else-if="item.type=='create_person'">{{listData.username}}</span>
           <span v-else-if="item.type=='bz'">{{listData[item.value]}}</span>
         </div>
         <!-- 关联业务 -->
@@ -76,7 +75,7 @@ export default {
         { label: '开始时间', value: 'start_time', type: 'time' },
         { label: '结束时间', value: 'end_time', type: 'time' },
         { label: '参与人', value: 'ownerList', type: 'ownerList' },
-        { label: '创建人', value: 'create_person', type: 'create_person' },
+        { label: '创建人', value: 'username', type: 'create_person' },
         { label: '创建时间', value: 'create_time', type: 'create_time' },
         { label: '备注', value: 'remark', type: 'bz' }
       ],
@@ -146,7 +145,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          scheduleDelete({ event_id: this.listData.event_id }).then(res => {
+          scheduleDelete({ eventId: this.listData.event_id }).then(res => {
             this.$emit('deleteClose', this.listData)
             this.$message({
               type: 'success',

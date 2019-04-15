@@ -43,17 +43,17 @@ export default {
         } else if (data.type == 'change-priority') {
           this.list[data.index].priority = data.value.id
         } else if (data.type == 'change-name') {
-          this.list[data.index].task_name = data.value
+          this.list[data.index].name = data.value
         } else if (data.type == 'change-comments') {
-          let commentcount = this.list[data.index].commentcount
+          let commentCount = this.list[data.index].commentCount
           if (data.value == 'add') {
-            this.list[data.index].commentcount = commentcount + 1
+            this.list[data.index].commentCount = commentCount + 1
           } else {
-            this.list[data.index].commentcount = commentcount - 1
+            this.list[data.index].commentCount = commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
-          this.list[data.index].subdonecount = data.value.subdonecount
-          this.list[data.index].subcount = data.value.allcount - data.value.subdonecount
+          this.list[data.index].childAllCount = data.value.subdonecount
+          this.list[data.index].childAllCount = data.value.allcount
         }
       }
     },

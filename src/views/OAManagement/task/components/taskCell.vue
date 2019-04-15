@@ -14,12 +14,12 @@
                   effect="light"
                   popper-class="task-tooltip tooltip-change-border">
         <div slot="content">
-          <span>{{data.task_name}}</span>
+          <span>{{data.name}}</span>
         </div>
         <span
               ref="itemSpan"
               :class="data.checked ? 'item-name-active' : 'item-name'">
-          {{data.task_name}}
+          {{data.name}}
         </span>
       </el-tooltip>
     </div>
@@ -30,14 +30,14 @@
                :key="j"
                class="item-label">
             <span class="k-name"
-                  :style="{'background': k.color}">{{k.name}}</span>
+                  :style="{'background': k.color}">{{k.lableName}}</span>
           </div>
         </template>
         <template v-else>
           <span class="k-name"
-                :style="{'background': data.lableList[0].color}">{{data.lableList[0].name}}</span>
+                :style="{'background': data.lableList[0].color}">{{data.lableList[0].lableName}}</span>
           <span class="k-name"
-                :style="{'background': data.lableList[1].color}">{{data.lableList[1].name}}</span>
+                :style="{'background': data.lableList[1].color}">{{data.lableList[1].lableName}}</span>
           <el-tooltip placement="top"
                       effect="light"
                       popper-class="tooltip-change-border task-tooltip">
@@ -51,7 +51,7 @@
                 <span v-if="j >= 2"
                       class="k-name"
                       :style="{'background': k.color ? k.color: '#ccc'}"
-                      style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.name}}</span>
+                      style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.lableName}}</span>
               </div>
             </div>
             <span class="color-label-more">
@@ -67,19 +67,19 @@
           <span>{{data.relationCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.subcount + data.subdonecount != 0">
+             v-if="data.childAllCount > 0">
           <i class="wukong wukong-sub-task"></i>
-          <span>{{data.subdonecount}}/{{data.subcount + data.subdonecount}}</span>
+          <span>{{data.childWCCount}}/{{data.childAllCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.filecount">
+             v-if="data.fileCount">
           <i class="wukong wukong-file"></i>
-          <span>{{data.filecount}}</span>
+          <span>{{data.fileCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.commentcount">
+             v-if="data.commentCount">
           <i class="wukong wukong-comment-task"></i>
-          <span>{{data.commentcount}}</span>
+          <span>{{data.commentCount}}</span>
         </div>
         <div class="img-box"
              v-if="data.stop_time">
@@ -99,7 +99,6 @@
           </div>
           <div v-photo="data.main_user"
                v-lazy:background-image="$options.filters.filterUserLazyImg(data.main_user.thumb_img)"
-               :key="data.main_user.thumb_img"
                class="div-photo"></div>
         </el-tooltip>
       </div>
@@ -108,7 +107,7 @@
 </template>
 <script type="text/javascript">
 // API
-import { taskOver } from '@/api/oamanagement/task'
+import { editTask } from '@/api/oamanagement/task'
 
 export default {
   name: 'task-cell', // 任务cell
@@ -127,9 +126,9 @@ export default {
   methods: {
     // 列表标记任务
     taskOverClick(val) {
-      taskOver({
-        task_id: val.task_id,
-        type: val.checked ? 1 : 2
+      editTask({
+        taskId: val.task_id,
+        status: val.checked ? 5 : 1
       })
         .then(res => {})
         .catch(err => {

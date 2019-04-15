@@ -111,6 +111,7 @@ import {
   crmFieldConfigIndex,
   crmFieldConfig
 } from '@/api/customermanagement/common'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import draggable from 'vuedraggable'
 
 export default {
@@ -183,20 +184,16 @@ export default {
   },
   methods: {
     getFieldConfigIndex() {
-      let types = 'crm_' + this.crmType
-      if (this.isSeas) {
-        types = types + '_pool'
-      }
       crmFieldConfigIndex({
-        types: types
+        label: this.isSeas ? 8 : crmTypeModel[this.crmType]
       })
         .then(res => {
-          this.checkedLeftData = res.data.value_list.map(function(item, index) {
+          this.checkedLeftData = res.data.value.map(function(item, index) {
             item.check = false
             item.show = true
             return item
           })
-          this.checkedRightData = res.data.hide_list.map(function(item, index) {
+          this.checkedRightData = res.data.hide_value.map(function(item, index) {
             item.check = false
             item.show = true
             return item
@@ -237,17 +234,17 @@ export default {
       if (this.checkedLeftData.length < 2) {
         this.$message.error('至少要显示两列')
       } else {
-        let types = 'crm_' + this.crmType
-        if (this.isSeas) {
-          types = types + '_pool'
-        }
         crmFieldConfig({
-          types: types,
-          value: this.checkedLeftData,
-          hide_value: this.checkedRightData
+          label: this.isSeas ? 8 : crmTypeModel[this.crmType],
+          noHideIds: this.checkedLeftData.map((item)=> {
+            return item.field_id
+          }).join(','),
+          hideIds: this.checkedRightData.map((item)=> {
+            return item.field_id
+          }).join(',')
         })
           .then(res => {
-            this.$message.success(res.data)
+            this.$message.success('操作成功')
             this.$emit('set-success')
             this.handleCancel()
           })
@@ -362,7 +359,7 @@ export default {
         ) {
           var remove = false
           self.rightCheckItems.forEach(function(element, index) {
-            if (item.field == element.field) {
+            if (item.field_id == element.field_id) {
               remove = true
             }
           })
@@ -389,7 +386,7 @@ export default {
         ) {
           var remove = false
           self.leftCheckItems.forEach(function(element, index) {
-            if (item.field == element.field) {
+            if (item.field_id == element.field_id) {
               remove = true
             }
           })

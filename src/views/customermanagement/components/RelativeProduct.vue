@@ -17,7 +17,6 @@
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
-                       :formatter="fieldFormatter"
                        :label="item.label">
       </el-table-column>
     </el-table>
@@ -52,9 +51,7 @@ export default {
       tableHeight: '400px',
       showFullDetail: false,
       productId: '', // 查看全屏产品详情的 ID
-      totalInfo: { total_price: '0.00', discount_rate: '0.00' },
-      /** 格式化规则 */
-      formatterRules: {}
+      totalInfo: { total_price: '0.00', discount_rate: '0.00' }
     }
   },
   watch: {
@@ -93,7 +90,7 @@ export default {
     getFieldList() {
       this.fieldList.push({ prop: 'name', width: '200', label: '产品名称' })
       this.fieldList.push({
-        prop: 'category_id',
+        prop: 'category_name',
         width: '200',
         label: '产品类别'
       })
@@ -107,13 +104,6 @@ export default {
         label: '折扣（%）'
       })
       this.fieldList.push({ prop: 'subtotal', width: '200', label: '合计' })
-      function fieldFormatter(info) {
-        return info ? info : ''
-      }
-      this.formatterRules['category_id'] = {
-        type: 'crm',
-        formatter: fieldFormatter
-      }
     },
     getDetail() {
       this.loading = true
@@ -145,30 +135,15 @@ export default {
     getParams() {
       if (this.crmType == 'business') {
         return {
-          business_id: this.id
+          businessId: this.id,
+          pageType: 0
         }
       } else if (this.crmType == 'contract') {
         return {
-          contract_id: this.id
+          contractId: this.id,
+          pageType: 0
         }
       }
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {

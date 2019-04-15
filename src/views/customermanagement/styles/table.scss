@@ -6,6 +6,20 @@
   border-radius: 2px;
 }
 
+/**
+  .el-table /deep/ thead th {
+    border-right: 1px solid #ebeef5;
+  }
+  
+  .el-table /deep/ tbody tr td:nth-child(2){
+    border-right: 1px solid #ebeef5;
+  }
+  
+  .b-bottom {
+    border-bottom: 1px solid #ebeef5;
+  }
+  */
+
 .el-table /deep/ thead th {
   background-color: #fafdff;
   font-weight: 400;

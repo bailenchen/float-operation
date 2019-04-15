@@ -92,7 +92,7 @@ const managerRouter = {
     },
     {
       name: 'handlefield',
-      path: 'system-customer/handlefield/:type/:id', // type customer contacts business contract money
+      path: 'system-customer/handlefield/:type/:id/:label', // type customer contacts business contract money
       component: () => import('@/views/SystemManagement/SystemCustomer/HandleField'),
       hidden: true
     }

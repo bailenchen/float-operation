@@ -134,7 +134,7 @@ export default {
       } else {
         params.config = this.config
         params.file = this.file
-        params.owner_user_id = this.user.length > 0 ? this.user[0].id : ''
+        params.owner_user_id = this.user[0].id
         var request
         if (this.crmType == 'customer') {
           request = crmCustomerExcelImport
@@ -145,7 +145,7 @@ export default {
         request(params)
           .then(res => {
             loading.close()
-            this.$message.success(res.data)
+            this.$message.success('操作成功')
             this.closeView()
           })
           .catch(() => {
@@ -157,9 +157,9 @@ export default {
     download() {
       var a = document.createElement('a')
       if (this.crmType == 'customer') {
-        a.href = window.BASE_URL + crmCustomerExcelDownloadURL
+        a.href = crmCustomerExcelDownloadURL
       } else if (this.crmType == 'leads') {
-        a.href = window.BASE_URL + crmLeadsExcelDownloadURL
+        a.href = crmLeadsExcelDownloadURL
       }
       a.target = '_black'
       document.body.appendChild(a)

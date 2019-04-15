@@ -22,9 +22,8 @@
       <el-table-column prop="name"
                        label="产品名称">
       </el-table-column>
-      <el-table-column prop="category_id"
-                       label="产品类别"
-                       :formatter="categoryFormatter">
+      <el-table-column prop="category_name"
+                       label="产品类别">
       </el-table-column>
       <el-table-column prop="unit"
                        label="单位">
@@ -99,36 +98,39 @@ export default {
   },
   props: {},
   mounted() {
-    this.productList = this.dataValue.product
-    this.total_price = this.dataValue.total_price
-      ? this.dataValue.total_price
-      : 0
-    this.discount_rate = this.dataValue.discount_rate
-      ? this.dataValue.discount_rate
-      : 0
+    console.log('this.productList---', this.productList)
+    if (this.dataValue.product) {
+      this.productList = this.dataValue.product
+      console.log('this.productList---', this.productList)
+      this.total_price = this.dataValue.total_price
+        ? this.dataValue.total_price
+        : 0
+      this.discount_rate = this.dataValue.discount_rate
+        ? this.dataValue.discount_rate
+        : 0
+    }
   },
   methods: {
-    // 类别格式化
-    categoryFormatter(row, column) {
-      return row[column.property + '_info']
-    },
     /** 选中 */
     selectInfos(data) {
-      var self = this
-      data.data.forEach(function(element) {
-        let obj = self.productList.find(item => {
-          return item.product_id == element.product_id
+      console.log('selectInfos---', data)
+      if (data.data) {
+        console.log('1111')
+        var self = this
+        data.data.forEach(function(element) {
+          let obj = self.productList.find(item => {
+            return item.product_id == element.product_id
+          })
+          if (!obj) {
+            self.productList.push(self.getShowItem(element))
+          }
         })
-        if (!obj) {
-          self.productList.push(self.getShowItem(element))
-        }
-      })
+      }
     },
     getShowItem(data) {
       var item = {}
       item.name = data.name
-      item.category_id = data.category_id
-      item.category_id_info = data.category_id_info
+      item.category_name = data.category_name
       item.unit = data.unit
       item.price = data.price
       item.sales_price = data.price
@@ -179,6 +181,7 @@ export default {
     },
     // 计算总价
     calculateToal() {
+      console.log('---productList', 123)
       var totalPrice = 0.0
       for (var i = 0; i < this.productList.length; i++) {
         var item = this.productList[i]
@@ -194,10 +197,12 @@ export default {
     },
     // 删除操作
     removeItem(index) {
+      console.log('removeItem---', this.productList)
       this.productList.splice(index, 1)
       this.calculateToal()
     },
     updateValue() {
+      console.log('this.productList--updateValue-', this.productList)
       this.valueChange({
         product: this.productList,
         total_price: this.total_price,

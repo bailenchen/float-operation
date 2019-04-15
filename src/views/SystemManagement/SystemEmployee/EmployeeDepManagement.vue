@@ -115,7 +115,8 @@
                              :width="item.width"
                              show-overflow-tooltip
                              :prop="item.field"
-                             :label="item.value">
+                             :label="item.value"
+                             :formatter="tableFormatter">
               <template slot="header"
                         slot-scope="scope">
                 <div class="table-head-name">{{scope.column.label}}</div>
@@ -272,19 +273,15 @@
 
 <script>
 import {
-  depTreeList,
   depDelete,
   depEdit,
   depSave,
-  adminUsersIndex,
   usersAdd,
   roleList,
-  usersUpdate,
   adminUsersUpdatePwd,
-  usersEditStatus,
-  adminStructuresListDialog
+  usersEditStatus
 } from '@/api/systemManagement/EmployeeDepManagement'
-import { usersList as selectUsersList, depList } from '@/api/common' // 直属上级接口
+import { usersList, depList } from '@/api/common' // 直属上级接口
 import EmployeeDetail from './components/employeeDetail'
 
 export default {
@@ -317,15 +314,20 @@ export default {
         { field: 'username', value: '手机号（登录名）', width: '150' },
         { field: 'sex', value: '性别', type: 'select', width: '50' },
         { field: 'email', value: '邮箱', width: '150' },
-        { field: 's_name', value: '部门', type: 'select', width: '100' },
+        { field: 'deptName', value: '部门', type: 'select', width: '100' },
         { field: 'post', value: '岗位', width: '150' },
         {
-          field: 'parent_name',
+          field: 'parentName',
           value: '直属上级',
           type: 'select',
           width: '150'
         },
-        { field: 'groups', value: '角色', type: 'selectCheckout', width: '150' }
+        {
+          field: 'roleName',
+          value: '角色',
+          type: 'selectCheckout',
+          width: '150'
+        }
       ],
       selectionList: [], // 批量勾选数据
       tableData: [],
@@ -347,17 +349,17 @@ export default {
       // 编辑部门时id
       treeEditId: '',
       optionsList: {
-        structure_id: {
-          field: 'structure_id',
+        deptId: {
+          field: 'deptId',
           list: []
         },
-        parent_id: {
-          field: 'parent_id',
+        parentId: {
+          field: 'parentId',
           list: []
         },
         sex: {
           field: 'sex',
-          list: [{ id: '男', name: '男' }, { id: '女', name: '女' }]
+          list: [{ id: 1, name: '男' }, { id: 2, name: '女' }]
         }
       },
       groupsList: [],
@@ -379,7 +381,7 @@ export default {
         ],
         password: [
           { required: true, message: '密码不能为空', trigger: 'blur' },
-          { min: 6, message: '长度至少为6个字符', trigger: 'blur' }
+          { min: 6, max: 6, message: '长度为6个字符', trigger: 'blur' }
         ],
         username: [
           { required: true, message: '手机号码不能为空', trigger: 'blur' },
@@ -396,12 +398,10 @@ export default {
             trigger: 'blur'
           }
         ],
-        structure_id: [
+        deptId: [
           { required: true, message: '部门不能为空', trigger: 'change' }
         ],
-        group_id: [
-          { required: true, message: '角色不能为空', trigger: 'change' }
-        ]
+        roleId: [{ required: true, message: '角色不能为空', trigger: 'change' }]
       }
     }
   },
@@ -458,10 +458,10 @@ export default {
           { field: 'realname', value: '姓名' },
           { field: 'sex', value: '性别', type: 'select' },
           { field: 'email', value: '邮箱' },
-          { field: 'structure_id', value: '部门', type: 'select' },
+          { field: 'deptId', value: '部门', type: 'select' },
           { field: 'post', value: '岗位' },
-          { field: 'parent_id', value: '直属上级', type: 'select' },
-          { field: 'group_id', value: '角色', type: 'selectCheckout' }
+          { field: 'parentId', value: '直属上级', type: 'select' },
+          { field: 'roleId', value: '角色', type: 'selectCheckout' }
         ]
       } else {
         return [
@@ -469,10 +469,10 @@ export default {
           { field: 'realname', value: '姓名' },
           { field: 'sex', value: '性别', type: 'select' },
           { field: 'email', value: '邮箱' },
-          { field: 'structure_id', value: '部门', type: 'select' },
+          { field: 'deptId', value: '部门', type: 'select' },
           { field: 'post', value: '岗位' },
-          { field: 'parent_id', value: '直属上级', type: 'select' },
-          { field: 'group_id', value: '角色', type: 'selectCheckout' }
+          { field: 'parentId', value: '直属上级', type: 'select' },
+          { field: 'roleId', value: '角色', type: 'selectCheckout' }
         ]
       }
     }
@@ -515,7 +515,7 @@ export default {
       this.employeeCreateDialog = true
       this.dialogTitle = '新建员工'
       this.formInline = {
-        group_id: []
+        roleId: []
       }
     },
     // 详情 -- 编辑用户
@@ -525,20 +525,24 @@ export default {
       for (let index = 0; index < this.tableList.length; index++) {
         const element = this.tableList[index]
         if (element.field !== 'password') {
-          if (element.field === 'group_id') {
-            detail[element.field] = this.dialogData.groupids
-              ? this.dialogData.groupids
+          if (element.field === 'roleId') {
+            detail[element.field] = this.dialogData.roleId
+              ? this.dialogData.roleId
                   .split(',')
                   .map(function(item, index, array) {
                     return parseInt(item)
                   })
               : []
+          } else if (element.field === 'parentId') {
+            detail.parentId = this.dialogData.parent_id
+          } else if (element.field === 'deptId') {
+            detail.deptId = this.dialogData.dept_id
           } else {
             detail[element.field] = this.dialogData[element.field]
           }
         }
       }
-      detail['id'] = this.dialogData.id
+      detail['userId'] = this.dialogData.user_id
       this.formInline = detail
       this.employeeCreateDialog = true
     },
@@ -546,7 +550,7 @@ export default {
     // 部门非树形结构列表 用于部门添加
     getDepList() {
       depList().then(response => {
-        this.optionsList['structure_id'].list = response.data
+        this.optionsList['deptId'].list = response.data
       })
     },
     append(data) {
@@ -560,7 +564,7 @@ export default {
     //获取新增部门 上级部门信息
     getStructuresListBySuperior(data) {
       this.dialogOptions = []
-      adminStructuresListDialog(data).then(response => {
+      depList(data).then(response => {
         this.dialogOptions = response.data
       })
     },
@@ -568,7 +572,7 @@ export default {
     edit(node, data) {
       this.treeInput = data.label
       this.treeEditId = data.id
-      this.depSelect = data.pid
+      this.depSelect = data.id
       this.navBtnTitle = '编辑部门'
       this.labelName = '编辑部门'
       this.getStructuresListBySuperior({ id: data.id, type: 'update' })
@@ -626,7 +630,7 @@ export default {
     // 获取树形列表
     treeListFun() {
       this.depLoading = true
-      depTreeList()
+      depList({ type: 'tree' })
         .then(response => {
           this.treeData = response.data
           this.depLoading = false
@@ -651,6 +655,7 @@ export default {
         if (valid) {
           if (this.dialogTitle == '新建员工') {
             this.loading = true
+            this.formInline.roleIds = this.formInline.roleId.join(',')
             usersAdd(this.formInline)
               .then(res => {
                 this.$message.success('新增成功')
@@ -663,7 +668,8 @@ export default {
               })
           } else {
             this.loading = true
-            usersUpdate(this.formInline)
+            this.formInline.roleIds = this.formInline.roleId.join(',')
+            usersAdd(this.formInline)
               .then(res => {
                 if (this.employeeDetailDialog) {
                   this.employeeDetailDialog = false
@@ -694,8 +700,8 @@ export default {
           break
         case 'status':
           usersEditStatus({
-            id: [this.dialogData.id],
-            status: this.dialogData.status == 0 ? 1 : 0
+            userIds: this.dialogData.user_id,
+            status: this.dialogData.status === 1 ? 0 : 1
           }).then(res => {
             this.employeeDetailDialog = false
             this.$message.success('修改成功')
@@ -707,8 +713,8 @@ export default {
     /** 操作 */
     selectionBarClick(type) {
       var ids = this.selectionList.map(function(item, index, array) {
-        return item.id
-      })
+        return item.user_id
+      }).join(',')
       if (type === 'lock' || type === 'unlock') {
         var message = type === 'lock' ? '禁用' : '激活'
         this.$confirm('这些员工账号将被' + message + ', 是否继续?', '提示', {
@@ -719,7 +725,7 @@ export default {
           .then(() => {
             this.loading = true
             usersEditStatus({
-              id: ids,
+              userIds: ids,
               status: type === 'unlock' ? 1 : 0
             })
               .then(res => {
@@ -747,20 +753,24 @@ export default {
         for (let index = 0; index < this.tableList.length; index++) {
           const element = this.tableList[index]
           if (element.field !== 'password') {
-            if (element.field === 'group_id') {
-              detail[element.field] = this.dialogData.groupids
-                ? this.dialogData.groupids
+            if (element.field === 'roleId') {
+              detail[element.field] = this.dialogData.roleId
+                ? this.dialogData.roleId
                     .split(',')
                     .map(function(item, index, array) {
                       return parseInt(item)
                     })
                 : []
+            } else if (element.field === 'parentId') {
+              detail.parentId = this.dialogData.parent_id
+            } else if (element.field === 'deptId') {
+              detail.deptId = this.dialogData.dept_id
             } else {
               detail[element.field] = this.dialogData[element.field]
             }
           }
         }
-        detail['id'] = this.dialogData.id
+        detail['userId'] = this.dialogData.user_id
         this.formInline = detail
         this.employeeCreateDialog = true
       }
@@ -773,13 +783,15 @@ export default {
     passSubmit(val) {
       var ids = []
       if (this.selectionList.length > 0) {
-        ids = this.selectionList.map(function(item, index, array) {
-          return item.id
-        })
+        ids = this.selectionList
+          .map(function(item, index, array) {
+            return item.user_id
+          })
+          .join(',')
       } else {
-        ids = [this.dialogData.id]
+        ids = this.dialogData.user_id
       }
-      val.id = ids
+      val.userIds = ids
       this.loading = true
       adminUsersUpdatePwd(val)
         .then(res => {
@@ -808,26 +820,16 @@ export default {
     // 用户列表
     usersListFun() {
       this.loading = true
-      var params = {
+      usersList({
         page: this.currentPage,
         limit: this.pageSize,
-        search: this.importInput,
-        structure_id: this.structureValue
-      }
-      if (this.selectModel) {
-        params.status = this.selectModel
-      } else {
-        params.status = 'all'
-      }
-      adminUsersIndex(params)
+        realname: this.importInput,
+        deptId: this.structureValue,
+        status: this.selectModel
+      })
         .then(res => {
-          this.tableData = res.data.list.map((item, index, array) => {
-            if (item.sex == '0') {
-              item.sex = ''
-            }
-            return item
-          })
-          this.total = res.data.dataCount
+          this.tableData = res.data.list
+          this.total = res.data.totalRow
           this.loading = false
         })
         .catch(() => {
@@ -837,11 +839,11 @@ export default {
     /** 获取选择直属上级列表 */
     getSelectUserList() {
       this.loading = true
-      selectUsersList({})
+      usersList({ pageType: 0 })
         .then(res => {
           for (let i of res.data) {
-            this.optionsList['parent_id'].list.push({
-              id: i.id,
+            this.optionsList['parentId'].list.push({
+              id: i.user_id,
               name: i.realname
             })
           }
@@ -851,7 +853,7 @@ export default {
           this.loading = false
         })
     },
-    // 获取状态颜色
+    // 获取状态颜色 0 禁用 1 启用 2未激活
     getStatusColor(status) {
       if (status == 0) {
         return '#FF6767'
@@ -860,6 +862,13 @@ export default {
       } else if (status == 2) {
         return '#CCCCCC'
       }
+    },
+    // 列表信息格式化
+    tableFormatter(row, column) {
+      if (column.property == 'sex') {
+        return { 1: '男', 2: '女' }[row.sex]
+      }
+      return row[column.property]
     }
   },
   mounted() {
@@ -875,7 +884,7 @@ export default {
     this.usersListFun()
     this.getDepList()
     // 角色列表
-    roleList({ tree: 1 }).then(res => {
+    roleList().then(res => {
       this.groupsList = res.data
     })
     document.getElementsByClassName('el-select-dropdown')[0].style.color = 'red'

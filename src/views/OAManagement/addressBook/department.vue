@@ -14,20 +14,20 @@
           <div class="list-right">
             <div class="k-realname">{{k.realname.substring(0, 6)}}</div>
             <div class="content">
-              <div v-if="item.name">
+              <div v-if="k.deptName">
                 <img src="@/assets/img/structure.png"
                      alt="">
-                <span>{{item.name}}</span>
+                <span>{{k.deptName}}</span>
               </div>
-              <div v-if="k.post">
+              <div v-if="k.postName">
                 <img src="@/assets/img/post.png"
                      alt="">
-                <span>{{k.post}}</span>
+                <span>{{k.postName}}</span>
               </div>
-              <div v-if="k.username">
+              <div v-if="k.mobile">
                 <img src="@/assets/img/mobile.png"
                      alt="">
-                <span>{{k.username}}</span>
+                <span>{{k.mobile}}</span>
               </div>
             </div>
           </div>

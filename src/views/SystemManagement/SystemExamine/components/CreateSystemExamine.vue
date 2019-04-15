@@ -112,14 +112,7 @@
 </template>
 <script type="text/javascript">
 import CreateView from '@/components/CreateView'
-import {
-  examineFlowSave,
-  examineFlowUpdate
-} from '@/api/systemManagement/examineflow'
-import {
-  oaExamineCategorySave,
-  oaExamineCategoryUpdate
-} from '@/api/systemManagement/workbench' // 审批类型创建
+import { examineFlowSave } from '@/api/systemManagement/examineflow'
 
 import {
   XhInput,
@@ -148,13 +141,8 @@ export default {
         } else if (this.handle.action === 'update') {
           return '编辑审批流程'
         }
-      } else if (this.handle.type === 'examine') {
-        if (this.handle.action === 'save') {
-          return '新建审批类型及审批流'
-        } else if (this.handle.action === 'update') {
-          return '编辑审批类型及审批流'
-        }
       }
+      return ''
     }
   },
   data() {
@@ -206,7 +194,7 @@ export default {
       type: Object,
       default: () => {
         return {
-          type: 'examineflow', // examine 审批 审批流 examineflow
+          type: 'examineflow', // 审批流 examineflow
           action: 'save', // save 创建  update 编辑
           id: '',
           data: null // 编辑数据
@@ -220,17 +208,20 @@ export default {
     this.getField()
     if (this.handle.data) {
       // data 存在就处理 save
-      if (this.handle.data.config && this.handle.data.config === 1) {
+      if (
+        this.handle.data.examine_type &&
+        this.handle.data.examine_type === 1
+      ) {
         // 固定审批流
         this.examineType = 1
         this.examineList = []
         for (let index = 0; index < this.handle.data.stepList.length; index++) {
           const element = this.handle.data.stepList[index]
           var item = {}
-          item['type'] = element.status
-          if (element.status === 2 || element.status === 3) {
+          item['type'] = element.step_type
+          if (element.step_type === 2 || element.step_type === 3) {
             item['show'] = true
-            item['value'] = element.user_id_info
+            item['value'] = element.userList
           } else {
             item['show'] = false
             item['value'] = []
@@ -269,28 +260,6 @@ export default {
     // 获取自定义字段
     getField() {
       var field = []
-      // 如果是审批添加 加入审批相关信息
-      if (this.handle.type == 'examine') {
-        field.push({
-          field: 'title',
-          form_type: 'text',
-          is_null: 1,
-          name: '审批类型名称',
-          setting: [],
-          input_tips: '',
-          value: ''
-        })
-
-        field.push({
-          field: 'examine_remark',
-          form_type: 'textarea',
-          is_null: 0,
-          name: '审批类型说明',
-          setting: [],
-          input_tips: '',
-          value: ''
-        })
-      }
 
       field.push({
         field: 'name',
@@ -302,41 +271,36 @@ export default {
         value: this.handle.data ? this.handle.data.name : ''
       })
 
-      if (this.handle.type === 'examineflow') {
-        // 新建审批类型 默认为 oa_examine
-        field.push({
-          field: 'types',
-          form_type: 'select',
-          is_null: 0,
-          name: '关联对象',
-          setting: [
-            { name: '合同', value: 'crm_contract' },
-            { name: '回款', value: 'crm_receivables' }
-          ],
-          value: this.handle.data ? this.handle.data.types : 'crm_contract'
-        })
-      }
+      // 新建审批类型 默认为 oa_examine
+      field.push({
+        field: 'categoryType',
+        form_type: 'select',
+        is_null: 0,
+        name: '关联对象',
+        setting: [{ name: '合同', value: 1 }, { name: '回款', value: 2 }],
+        value: this.handle.data ? this.handle.data.category_type : 1
+      })
 
       field.push({
-        field: 'structure',
+        field: 'dept',
         form_type: 'structure',
         is_null: 0,
         name: '应用部门',
         setting: [],
         input_tips: '默认全公司',
         value: {
-          users: this.handle.data ? this.handle.data.user_ids_info : [],
-          strucs: this.handle.data ? this.handle.data.structure_ids_info : []
+          users: this.handle.data ? this.handle.data.userIds : [],
+          strucs: this.handle.data ? this.handle.data.deptIds : []
         }
       })
       field.push({
-        field: 'remark',
+        field: 'remarks',
         form_type: 'textarea',
         is_null: 0,
         name: '流程说明',
         setting: [],
         input_tips: '请填写相关注意事项，方便员工在申请时查阅，限制输入2000字',
-        value: this.handle.data ? this.handle.data.remark : ''
+        value: this.handle.data ? this.handle.data.remarks : ''
       })
 
       this.getcrmRulesAndModel(field)
@@ -401,13 +365,13 @@ export default {
       this.loading = true
       var params = this.getSubmiteParams(array)
       if (this.handle.action == 'update') {
-        params.id = this.handle.id
+        params.examineId = this.handle.data.examine_id
       }
-      this.getRequest()(params)
+      examineFlowSave(params)
         .then(res => {
           this.loading = false
           this.hidenView()
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
           // 回到保存成功
           this.$emit('save')
         })
@@ -415,62 +379,21 @@ export default {
           this.loading = false
         })
     },
-    // 请求url
-    getRequest() {
-      if (this.handle.type === 'examineflow') {
-        return this.handle.action === 'update'
-          ? examineFlowUpdate
-          : examineFlowSave
-      } else if (this.handle.type === 'examine') {
-        return this.handle.action === 'update'
-          ? oaExamineCategoryUpdate
-          : oaExamineCategorySave
-      }
-    },
     // 请求参数
     getSubmiteParams(array) {
       var params = {}
       for (let index = 0; index < array.length; index++) {
         const element = array[index]
         // 关联产品数据需要特殊拼接
-        if (this.handle.type === 'examineflow') {
-          if (element.key === 'structure') {
-            params['user_ids'] = element.value['users'].map(function(item) {
-              return item.id
-            })
-            params['structure_ids'] = element.value['strucs'].map(function(
-              item
-            ) {
-              return item.id
-            })
-          } else {
-            params[element.key] = element.value
-          }
-        } else if (this.handle.type === 'examine') {
-          // 审批上传时  审批流的信息 放入 examineFlow
-          if (element.key === 'title') {
-            params['title'] = element.value
-          } else if (element.key === 'examine_remark') {
-            params['remark'] = element.value
-          }
-
-          if (!params['examineFlow']) {
-            params['examineFlow'] = { types: 'oa_examine' } // 初始加入 关联对象为审批
-          }
-          if (element.key === 'structure') {
-            params['examineFlow']['user_ids'] = element.value['users'].map(
-              function(item) {
-                return item.id
-              }
-            )
-            params['examineFlow']['structure_ids'] = element.value[
-              'strucs'
-            ].map(function(item) {
-              return item.id
-            })
-          } else {
-            params['examineFlow'][element.key] = element.value
-          }
+        if (element.key === 'dept') {
+          params['userIds'] = element.value['users'].map(function(item) {
+            return item.user_id
+          })
+          params['deptIds'] = element.value['strucs'].map(function(item) {
+            return item.id
+          })
+        } else {
+          params[element.key] = element.value
         }
       }
 
@@ -478,19 +401,14 @@ export default {
       for (let index = 0; index < this.examineList.length; index++) {
         const element = this.examineList[index]
         steps.push({
-          status: element.type,
-          user_id: element.value.map(function(item) {
-            return item.id
+          stepType: element.type,
+          checkUserId: element.value.map(function(item) {
+            return item.user_id
           })
         })
       }
-      if (this.handle.type === 'examineflow') {
-        params['config'] = this.examineType
-        params['step'] = steps
-      } else if (this.handle.type === 'examine') {
-        params['examineFlow']['config'] = this.examineType
-        params['examineFlow']['step'] = steps
-      }
+      params['examineType'] = this.examineType
+      params['step'] = steps
       return params
     },
     // 下一页

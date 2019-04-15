@@ -42,7 +42,7 @@
 <script>
 import myTask from './components/myTask'
 import newDialog from './components/newDialog'
-import { subTaskListAPI, myTaskAPI, addTask } from '@/api/oamanagement/task'
+import { taskListAPI, addTask } from '@/api/oamanagement/task'
 import { usersList } from '@/api/common'
 
 export default {
@@ -53,7 +53,7 @@ export default {
   data() {
     return {
       activeName: 'mytask',
-      activePramas: { priority: 'all' },
+      activePramas: { priority: '' },
       tabData: [
         { label: '我的任务', key: 'mytask' },
         { label: '我下属的任务', key: 'subtask' }
@@ -121,11 +121,11 @@ export default {
   methods: {
     // 负责人
     subUserFun() {
-      usersList()
+      usersList({ pageType: 0 })
         .then(res => {
           this.subUserListData = res.data
           this.subUserListData.unshift({
-            id: '',
+            user_id: '',
             realname: ' 全部'
           })
         })
@@ -171,13 +171,12 @@ export default {
         status: data.data.status,
         type: data.data.type,
         priority: data.data.priority,
-        stop_type: data.data.time,
-        work_id: data.data.project
+        date: data.data.date
       }
       if (data.type == 'subtask') {
-        params.main_user_id = data.data.subUser
+        params.userId = data.data.subUser
       } else {
-        params.main_user_id = ''
+        params.userId = ''
       }
       this.activePramas = params
 
@@ -194,12 +193,15 @@ export default {
     },
     getList() {
       this.loading = true
-      let requst = this.activeName == 'mytask' ? myTaskAPI : subTaskListAPI
       var params = this.activePramas
+      console.log('params---', params);
       params.limit = 15
       params.page = this.pageNum
       params.search = this.searchValue
-      requst(params)
+      if (this.activeName == 'subtask') {
+        params.mold = 1
+      }
+      taskListAPI(params)
         .then(res => {
           for (let item of res.data.list) {
             if (item.status == 5) {

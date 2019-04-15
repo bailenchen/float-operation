@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 审批类型列表
 export function oaExamineCategoryList(data) {
   return request({
-    url: 'oa/examine/categoryList',
+    url: 'OaExamineCategory/queryAllExamineCategoryList',
     method: 'post',
     data: data
   })
@@ -27,10 +27,19 @@ export function oaExamineUpdate(data) {
   })
 }
 
-// 审批列表
-export function oaExamineIndex(data) {
+// 我发起的审批
+export function oaExamineMyCreateIndex(data) {
   return request({
-    url: 'oa/examine/index',
+    url: 'OaExamine/myInitiate',
+    method: 'post',
+    data: data
+  })
+}
+
+// 我审批的
+export function oaExamineMyExamineIndex(data) {
+  return request({
+    url: 'OaExamine/myOaExamine',
     method: 'post',
     data: data
   })
@@ -63,7 +72,7 @@ export function oaExamineCheck(data) {
   })
 }
 
-// OA审批撤回审批
+// OA审批撤回审核
 export function oaExamineRevokeCheck(data) {
   return request({
     url: 'oa/examine/revokeCheck',

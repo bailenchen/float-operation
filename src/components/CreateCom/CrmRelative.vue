@@ -87,7 +87,7 @@ export default {
       default: true
     },
     /**
-     * default 默认  condition 固定条件筛选
+     * default 默认  condition 固定条件筛选 moduleType 下的
      * relative: 相关 添加
      */
     action: {

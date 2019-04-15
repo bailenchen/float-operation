@@ -26,7 +26,6 @@
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
-                       :formatter="fieldFormatter"
                        :label="item.label">
       </el-table-column>
       <el-table-column label="操作"
@@ -122,7 +121,7 @@ export default {
     this.fieldList.push({ prop: 'name', width: '200', label: '附件名称' })
     this.fieldList.push({ prop: 'size', width: '200', label: '附件大小' })
     this.fieldList.push({
-      prop: 'create_user_id',
+      prop: 'create_user_name',
       width: '200',
       label: '上传人'
     })
@@ -131,13 +130,7 @@ export default {
       width: '200',
       label: '上传时间'
     })
-    function fieldFormatter(info) {
-      return info ? info.realname : ''
-    }
-    this.formatterRules['create_user_id'] = {
-      type: 'crm',
-      formatter: fieldFormatter
-    }
+
     this.getDetail()
   },
   activated: function() {},
@@ -146,34 +139,15 @@ export default {
     getDetail() {
       this.loading = true
       crmFileIndex({
-        module: 'crm_' + this.crmType,
-        module_id: this.id,
-        by: 'all'
+        batchId: this.detail.batch_id
       })
         .then(res => {
           this.loading = false
-          this.list = res.data.list
+          this.list = res.data
         })
         .catch(() => {
           this.loading = false
         })
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
     },
     addFile() {
       document.getElementById('file').click()
@@ -186,9 +160,9 @@ export default {
         const file = files[index]
         // if (file.type.indexOf('image') != -1) {
         var params = {}
-        params.module_id = this.id
-        params.module = 'crm_' + this.crmType
-        params['file[]'] = file
+        var params = {}
+        params.batchId = this.detail.batch_id
+        params.file = file
         crmFileSave(params)
           .then(res => {
             this.getDetail()
@@ -220,9 +194,7 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              save_name: item.row.save_name,
-              module_id: this.id,
-              module: 'crm_' + this.crmType
+              id: item.row.file_id
             })
               .then(res => {
                 this.list.splice(item.$index, 1)
@@ -245,11 +217,11 @@ export default {
     confirmEdit() {
       if (this.editForm.name) {
         crmFileUpdate({
-          save_name: this.editForm.data.row.save_name,
+          fileId: this.editForm.data.row.file_id,
           name: this.editForm.name
         })
           .then(res => {
-            this.$message.success(res.data)
+            this.$message.success('编辑成功')
             this.editDialog = false
             var item = this.list[this.editForm.data.$index]
             item.name = this.editForm.name

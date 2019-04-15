@@ -26,6 +26,7 @@
           <el-date-picker v-else-if="item.type == 'time'"
                           v-model="formInline[item.field]"
                           type="date"
+                          value-format="yyyy-MM-dd"
                           placeholder="选择日期">
           </el-date-picker>
           <div v-else-if="item.type == 'priority'"
@@ -98,9 +99,9 @@ export default {
       },
       formList: [
         { label: '任务名称', field: 'name' },
-        { label: '负责人', field: 'main_user_name', type: 'popover' },
-        { label: '开始时间', field: 'start_time', type: 'time' },
-        { label: '结束时间', field: 'end_time', type: 'time' },
+        { label: '负责人', field: 'mainUserId', type: 'popover' },
+        { label: '开始时间', field: 'startTime', type: 'time' },
+        { label: '结束时间', field: 'stopTime', type: 'time' },
         { label: '优先级', field: 'priority', type: 'priority' },
         { label: '任务描述', field: 'description', type: 'textarea' }
       ],
@@ -135,22 +136,18 @@ export default {
         if (valid) {
           var formInlineCopy = Object.assign({}, this.formInline)
           formInlineCopy = {
-            main_user_id:
-              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].id,
-            start_time: this.formInline.start_time
-              ? new Date(this.formInline.start_time).getTime() / 1000
-              : this.formInline.start_time,
-            stop_time: this.formInline.end_time
-              ? new Date(this.formInline.end_time).getTime() / 1000
-              : this.formInline.end_time,
+            mainUserId:
+              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].user_id,
+            startTime: this.formInline.startTime,
+            stopTime: this.formInline.stopTime,
             description: this.formInline.description,
             priority: this.formInline.priority,
             work_id: this.formInline.work_id,
             name: this.formInline.name,
-            customer_ids: this.relevanceAll.customer_ids,
-            contacts_ids: this.relevanceAll.contacts_ids,
-            business_ids: this.relevanceAll.business_ids,
-            contract_ids: this.relevanceAll.contract_ids
+            customerIds: this.relevanceAll.customer_ids ? this.relevanceAll.customer_ids.join(',') : [],
+            contactsIds: this.relevanceAll.contacts_ids ? this.relevanceAll.contacts_ids.join(',') : [] ,
+            businessIds: this.relevanceAll.business_ids ? this.relevanceAll.business_ids.join(',') : [] ,
+            contractIds: this.relevanceAll.contract_ids ? this.relevanceAll.contract_ids.join(',') : [] 
           }
           this.$emit('dialogVisibleSubmit', formInlineCopy)
         } else {
@@ -213,11 +210,11 @@ export default {
         margin-top: 7px;
       }
       .el-form-item-name,
-      .el-form-item-start_time {
+      .el-form-item-startTime {
         padding-right: 25px;
       }
-      .el-form-item-main_user_name,
-      .el-form-item-end_time {
+      .el-form-item-mainUserId,
+      .el-form-item-stopTime {
         padding-left: 25px;
       }
       .el-form-item-priority,

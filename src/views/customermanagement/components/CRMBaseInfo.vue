@@ -139,8 +139,9 @@
 
 <script>
 import loading from '../mixins/loading'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import Sections from '../components/Sections'
-import { filedGetField } from '@/api/customermanagement/common'
+import { filedGetInformation } from '@/api/customermanagement/common'
 import { getDateFromTimestamp } from '@/utils'
 import moment from 'moment'
 import MapView from '@/components/MapView' // 地图详情
@@ -162,6 +163,12 @@ export default {
   props: {
     /** 模块ID */
     id: [String, Number],
+    detail: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
@@ -190,37 +197,18 @@ export default {
     // 获取基础信息
     getBaseInfo() {
       this.loading = true
-      filedGetField({
-        types: 'crm_' + this.crmType,
-        module: 'crm',
-        controller: this.crmType,
-        action: 'read',
-        action_id: this.id
+      filedGetInformation({
+        types: crmTypeModel[this.crmType],
+        id: this.id
       })
         .then(res => {
           var self = this
-          this.list = res.data.map(function(item, index) {
-            return self.handleShowInfo(item)
-          })
+          this.list = res.data
           this.loading = false
         })
         .catch(() => {
           this.loading = false
         })
-    },
-    handleShowInfo(item) {
-      if (item.form_type === 'date' && item.value == '0000-00-00') {
-        item.value = ''
-      } else if (item.form_type === 'datetime') {
-        if (item.value == 0 || !item.value) {
-          item.value = ''
-        } else {
-          item.value = moment(getDateFromTimestamp(item.value)).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
-        }
-      }
-      return item
     },
     /**
      * 查看地图详情

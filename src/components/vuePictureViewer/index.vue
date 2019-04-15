@@ -24,6 +24,8 @@
           <img :src="bigShowType.icon" />
         </div>
         <div class="file-handle">
+          <!-- <el-button type="primary"
+                     @click.native="fileHandle('online')">在线预览</el-button> -->
           <el-button type="primary"
                      @click.native="fileHandle('download')"
                      plain>下载</el-button>

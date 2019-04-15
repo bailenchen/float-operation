@@ -46,7 +46,8 @@
 <script>
 import Calendar from 'vue-calendar-component'
 import createSchedule from '../schedule/components/createSchedule'
-import { scheduleListAPI } from '@/api/oamanagement/workbench'
+import { scheduleDayList } from '@/api/oamanagement/workbench'
+import moment from 'moment'
 
 export default {
   components: {
@@ -81,7 +82,7 @@ export default {
     // 点击哪一天
     clickDay(date) {
       this.loading = true
-      scheduleListAPI({ start_time: Date.parse(date) / 1000 })
+      scheduleDayList({ day: moment(date).format('YYYY-MM-DD') })
         .then(res => {
           this.scheduleList = res.data
           for (let item of document.getElementsByClassName('wh_item_date')) {

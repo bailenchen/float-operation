@@ -77,8 +77,7 @@ import CreateSystemExamine from './components/CreateSystemExamine'
 import SystemExamineDetail from './components/systemExamineDetail'
 import {
   examineFlowIndex,
-  examineFlowDelete,
-  examineFlowEnables
+  examineFlowUpdateStatus
 } from '@/api/systemManagement/examineflow'
 import { timestampToFormatTime } from '@/utils'
 
@@ -102,12 +101,12 @@ export default {
           width: 150
         },
         {
-          prop: 'config',
+          prop: 'examine_type',
           label: '流程类型',
           width: 150
         },
         {
-          prop: 'types',
+          prop: 'category_type',
           label: '关联对象',
           width: 100
         },
@@ -117,7 +116,7 @@ export default {
           width: 150
         },
         {
-          prop: 'realname',
+          prop: 'updateUserName',
           label: '最后修改人',
           width: 150
         },
@@ -166,8 +165,8 @@ export default {
         .then(res => {
           this.list = res.data.list
 
-          this.total = res.data.dataCount
-
+          this.total = res.data.totalRow
+          console.log('this.list---', this.list, this.total)
           this.loading = false
         })
         .catch(() => {
@@ -177,7 +176,8 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      if (column.property === 'config') {
+      // 1 固定审批 2 授权审批
+      if (column.property === 'examine_type') {
         if (row[column.property] === 1) {
           return '固定审批流'
         } else if (row[column.property] === 0) {
@@ -185,24 +185,24 @@ export default {
         } else {
           return ''
         }
-      } else if (column.property === 'types') {
-        return { crm_contract: '合同', crm_receivables: '回款' }[
-          row[column.property]
-        ]
+        // 1 合同 2 回款
+      } else if (column.property === 'category_type') {
+        return { 1: '合同', 2: '回款' }[row[column.property]]
       } else if (column.property === 'user_ids') {
         var name = ''
-        var structures = row['structure_ids_info']
+        var structures = row['deptIds'] || []
         for (let index = 0; index < structures.length; index++) {
           const element = structures[index]
           name = name + element.name + '、'
         }
-        var users = row['user_ids_info']
+        var users = row['userIds'] || []
         for (let index = 0; index < users.length; index++) {
           const element = users[index]
           name =
             name + element.realname + (index === users.length - 1 ? '' : '、')
         }
         return name ? name : '全公司'
+        // 1 启用 0 禁用 2 删除
       } else if (column.property === 'status') {
         if (row[column.property] === 0) {
           return '停用'
@@ -239,7 +239,7 @@ export default {
     handleClick(type, scope) {
       if (type === 'edit') {
         this.createHandleInfo.action = 'update'
-        this.createHandleInfo.id = scope.row.flow_id
+        this.createHandleInfo.id = scope.row.category_id
         this.createHandleInfo.data = scope.row
         this.showHandleView = true
       } else if (type === 'delete') {
@@ -250,15 +250,15 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            examineFlowDelete({
-              id: scope.row['flow_id']
+            examineFlowUpdateStatus({
+              id: scope.row['category_id']
             })
               .then(res => {
                 this.list.splice(scope.$index, 1)
                 this.getList()
                 this.$message({
                   type: 'success',
-                  message: res.data
+                  message: '操作成功'
                 })
               })
               .catch(() => {})
@@ -283,15 +283,15 @@ export default {
           }
         )
           .then(() => {
-            examineFlowEnables({
-              id: scope.row['flow_id'],
+            examineFlowUpdateStatus({
+              id: scope.row['category_id'],
               status: scope.row['status'] === 0 ? 1 : 0
             })
               .then(res => {
                 scope.row['status'] = scope.row['status'] === 0 ? 1 : 0
                 this.$message({
                   type: 'success',
-                  message: res.data
+                  message: '操作成功'
                 })
               })
               .catch(() => {})

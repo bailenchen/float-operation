@@ -51,7 +51,7 @@ import {
   scheduleEdit
 } from '@/api/oamanagement/schedule'
 
-import { getDateFromTimestamp } from '@/utils'
+import { getDateFromTimestamp, timestampToFormatTime } from '@/utils'
 import moment from 'moment'
 export default {
   components: {
@@ -94,9 +94,8 @@ export default {
           _this.newText = '创建日程'
           _this.showDialog = true
           _this.formData = {
-            start_time: date._i,
-            end_time: date._i,
-            checkList: []
+            startTime: timestampToFormatTime(date._i, 'YYYY-MM-DD HH:mm:ss'),
+            endTime: timestampToFormatTime(date._i, 'YYYY-MM-DD HH:mm:ss')
           }
         },
         // 点击显示详情
@@ -134,20 +133,23 @@ export default {
         },
         events: function(start, end, timezone, callback) {
           _this.loading = true
-          let start_date = parseInt(start._i / 1000)
-          let end_date = parseInt(end._i / 1000)
+          let startTime = timestampToFormatTime(
+            parseInt(start._i / 1000),
+            'YYYY-MM-DD'
+          )
+          let endTime = timestampToFormatTime(
+            parseInt(end._i / 1000),
+            'YYYY-MM-DD'
+          )
           scheduleList({
-            start_time: start_date,
-            end_time: end_date
+            startTime: startTime,
+            endTime: endTime
           })
             .then(res => {
-              let list = res.data.list.map(item => {
-                item.start = moment(
-                  getDateFromTimestamp(item.start_time)
-                ).format('YYYY-MM-DD HH:mm:ss')
-                item.end = moment(getDateFromTimestamp(item.end_time)).format(
-                  'YYYY-MM-DD HH:mm:ss'
-                )
+              let list = res.data.map(item => {
+                item.start = item.start_time
+                item.end = item.end_time
+                item.color = item.color
                 item.textColor = '#333'
                 return item
               })
@@ -176,12 +178,8 @@ export default {
     // 详情编辑
     editBtn(val) {
       this.newText = '编辑日程'
-      let times = []
-      for (let item of val.time) {
-        times.push(item * 1000)
-      }
-      val.start_time = times[0]
-      val.end_time = times[1]
+      val.startTime = val.start_time
+      val.endTime = val.end_time
       this.formData = val
       this.handleClose()
       this.showDialog = true

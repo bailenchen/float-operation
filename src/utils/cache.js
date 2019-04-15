@@ -7,7 +7,8 @@ const cache = {
    * 载入全部登陆信息
    */
   loadingCache: function () {
-    if (Lockr.get('authKey') && !axios.defaults.headers.authKey) {
+    console.log('loadingCache---', Lockr.get('Admin-Token'));
+    if (Lockr.get('Admin-Token') && !axios.defaults.headers['Admin-Token']) {
       /** 将用户信息放入缓存 */
       const userInfo = Lockr.get('loginUserInfo')
       if (userInfo) {
@@ -27,18 +28,16 @@ const cache = {
    * 请求和更新登录缓存
    */
   updateAxiosCache: function () {
-    axios.defaults.headers.authKey = Lockr.get('authKey')
-    axios.defaults.headers.sessionId = Lockr.get('sessionId')
-    store.dispatch("GetUserInfo")
-    store.dispatch('SystemLogoAndName')
+    axios.defaults.headers['Admin-Token'] = Lockr.get('Admin-Token')
+    // store.dispatch("GetUserInfo")
+    // store.dispatch('SystemLogoAndName')
   },
   /**
    * 移除登录信息
    * @param {*}  
    */
   rmAxiosCache: function () {
-    Lockr.rm('authKey')
-    Lockr.rm('sessionId')
+    Lockr.rm('Admin-Token')
   }
 }
 

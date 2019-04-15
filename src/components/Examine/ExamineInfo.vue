@@ -17,7 +17,7 @@
       <div style="min-height: 40px;">
         <el-button v-if="examineInfo.is_recheck==1"
                    @click="examineHandle(2)"
-                   class="flow-button white">撤回审批</el-button>
+                   class="flow-button white">撤回审核</el-button>
         <el-button v-if="examineInfo.is_check==1"
                    @click="examineHandle(0)"
                    class="flow-button red">拒绝</el-button>
@@ -36,7 +36,6 @@
                    style="width:auto;">
             <div v-photo="item.userInfo"
                  v-lazy:background-image="$options.filters.filterUserLazyImg(item.userInfo.thumb_img)"
-                 :key="item.userInfo.thumb_img"
                  class="div-photo check-item-img"></div>
             <div class="check-item-name">{{item.userInfo.realname}}</div>
           </flexbox>
@@ -213,7 +212,7 @@ export default {
           this.loading = false
         })
     },
-    // 撤回审批 通过 拒绝
+    // 撤回审核 通过 拒绝
     examineHandle(status) {
       this.examineHandleInfo.status = status
       this.showExamineHandle = true

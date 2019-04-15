@@ -102,17 +102,16 @@
               <div class="card-row-right">
                 <flexbox class="text-right">
                   <div class="color-label user-name-label"> 负责人： </div>
-                  <div v-if="taskData.main_user_name"
+                  <div v-if="taskData.mainUser"
                        class="bg-position">
                     <el-tooltip placement="bottom"
                                 effect="light"
                                 popper-class="tooltip-change-border">
                       <div slot="content">
-                        <span>{{taskData.main_user_name}}</span>
+                        <span>{{taskData.mainUser.realname}}</span>
                       </div>
-                      <div v-photo="{thumb_img: taskData.main_user_img, realname: taskData.main_user_name}"
-                           v-lazy:background-image="$options.filters.filterUserLazyImg(taskData.main_user_img)"
-                           :key="taskData.main_user_img"
+                      <div v-photo="taskData.mainUser"
+                           v-lazy:background-image="$options.filters.filterUserLazyImg(taskData.mainUser.img)"
                            class="div-photo main-user-name"></div>
                     </el-tooltip>
                     <img src="@/assets/img/delete_task.png"
@@ -136,14 +135,14 @@
               </div>
             </div>
             <div class="card-content-row  margin-bottom-25"
-                 v-if="taskData.lable_list">
+                 v-if="taskData.labelList">
               <div class="particulars-priority-copy">
-                <template v-show="taskData.lable_list.length != 0">
+                <template v-show="taskData.labelList.length != 0">
                   <span class="item-color"
                         :style="{'background': item.color ? item.color : '#ccc'}"
-                        v-for="(item, index) in taskData.lable_list"
+                        v-for="(item, index) in taskData.labelList"
                         :key="index">
-                    {{item.name}}
+                    {{item.lableName}}
                   </span>
                 </template>
                 <div class="add-tag">
@@ -166,7 +165,6 @@
                                     ref="endTime"
                                     :clearable="false"
                                     @change="endTimeChange"
-                                    format="yyyy-MM-dd"
                                     value-format="yyyy-MM-dd"
                                     placeholder="">
                     </el-date-picker>
@@ -217,8 +215,8 @@
                   <span>参与人： </span>
                 </div>
                 <div class="participant-class"
-                     v-if="taskData.owner_list">
-                  <span v-for="(item, index) in taskData.owner_list"
+                     v-if="taskData.ownerUserList">
+                  <span v-for="(item, index) in taskData.ownerUserList"
                         :key="index"
                         class="owner-list">
                     <el-tooltip placement="bottom"
@@ -228,8 +226,7 @@
                         <span>{{item.realname}}</span>
                       </div>
                       <div v-photo="item"
-                           v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-                           :key="item.thumb_img"
+                           v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
                            class="div-photo item-img"></div>
                     </el-tooltip>
                     <img src="@/assets/img/delete_task.png"
@@ -239,7 +236,7 @@
                 </div>
                 <members-dep :closeDep="true"
                              :contentBlock="false"
-                             :userCheckedData="taskData.owner_list"
+                             :userCheckedData="taskData.ownerUserList"
                              @popoverSubmit="editOwnerList">
                   <i slot="membersDep"
                      class="wukong wukong-addition-task"></i>
@@ -260,26 +257,25 @@
                                 @checkInfos="checkInfos">
               </related-business>
             </div>
-            <div class="card-content-row card-content-row-column"
-                 v-if="taskData.pid == 0">
+            <div class="card-content-row card-content-row-column">
               <div class="display-flex sub-task margin-bottom-7">
                 <span class="color-label participant">
                   <i class="wukong wukong-sub-task"></i>
                   <span>子任务</span>
                 </span>
-                <template v-if="taskData.subTaskList.length != 0">
-                  <span class="color-label sub-task-progress"> ({{subTaskProgress}}/{{taskData.subTaskList.length}}) </span>
-                  <el-progress :percentage="subTaskProgress/taskData.subTaskList.length*100"
+                <template v-if="taskData.childTask.length != 0">
+                  <span class="color-label sub-task-progress"> ({{subTaskProgress}}/{{taskData.childTask.length}}) </span>
+                  <el-progress :percentage="subTaskProgress/taskData.childTask.length*100"
                                :stroke-width="10"></el-progress>
                 </template>
                 <template v-else>
-                  <span class="color-label sub-task-progress"> ({{subTaskProgress}}/{{taskData.subTaskList.length}}) </span>
+                  <span class="color-label sub-task-progress"> ({{subTaskProgress}}/{{taskData.childTask.length}}) </span>
                   <el-progress :percentage="0"></el-progress>
                 </template>
               </div>
-              <template v-if="taskData.subTaskList.length != 0">
+              <template v-if="taskData.childTask.length != 0">
                 <div class="card-related-matters subtasks-box"
-                     v-for="(item, index) in taskData.subTaskList"
+                     v-for="(item, index) in taskData.childTask"
                      :key="index">
                   <div v-if="!item.showEdit"
                        class="show-edit">
@@ -301,10 +297,10 @@
                       <flexbox class="rt-box">
                         <div class="bg-color task-bg-color"
                              v-if="item.stop_time">{{item.stop_time | moment("MM-DD")}} 截止</div>
-                        <div v-if="item.main_user_id"
-                             v-photo="item"
-                             :key="item.thumb_img"
-                             v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
+                        <div v-if="item.mainUser"
+                             v-photo="item.mainUser"
+                             :key="item.mainUser.img"
+                             v-lazy:background-image="$options.filters.filterUserLazyImg(item.mainUser.img)"
                              class="div-photo"></div>
                       </flexbox>
                     </div>
@@ -384,8 +380,7 @@
                    class="add-comments">
                 <div class="footer-img">
                   <div v-photo="userInfo"
-                       v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.thumb_img)"
-                       :key="userInfo.thumb_img"
+                       v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
                        class="div-photo"></div>
                 </div>
                 <div class="comments-con">
@@ -421,18 +416,18 @@
 
                   <!-- 评论 -->
                   <div class="discuss"
-                       v-if="taskData.replyList && taskData.replyList.length != 0">
+                       v-if="replyList && replyList.length != 0">
                     <div class="discuss-list"
-                         v-for="(discussItem, k) in taskData.replyList"
+                         v-for="(discussItem, k) in replyList"
                          :key="k">
-                      <div v-photo="discussItem.userInfo"
-                           v-lazy:background-image="$options.filters.filterUserLazyImg(discussItem.userInfo.thumb_img)"
-                           :key="discussItem.userInfo.thumb_img"
+                      <div v-photo="discussItem.user"
+                           v-lazy:background-image="$options.filters.filterUserLazyImg(discussItem.user.img)"
+                           :key="discussItem.user.img"
                            class="div-photo head-img header-circle"></div>
-                      <span class="name">{{discussItem.userInfo.realname}}</span>
-                      <span class="time">{{discussItem.create_time | moment("YYYY-MM-DD HH:mm")}}</span>
+                      <span class="name">{{discussItem.user.realname}}</span>
+                      <span class="time">{{discussItem.create_time}}</span>
                       <div class="rt">
-                        <span @click="discussDelete(discussItem, taskData.replyList, k)">删除</span>
+                        <span @click="discussDelete(discussItem, replyList, k)">删除</span>
                         <span @click="discussBtn(discussItem, -1)">回复</span>
                       </div>
 
@@ -440,28 +435,29 @@
                         <span v-html="emoji(discussItem.content)"></span>
                       </p>
 
-                      <p class="discuss-content"
-                         v-html="emoji(discussItem.reply_content)"></p>
+                      <!-- <p class="discuss-content"
+                         v-html="emoji(discussItem.reply_content)"></p> -->
 
                       <div class="children-reply"
-                           v-if="discussItem.replyList && discussItem.replyList.length > 0">
+                           v-if="discussItem.childCommentList && discussItem.childCommentList.length > 0">
                         <div class="discuss-list"
-                             v-for="(childDiscussItem, k) in discussItem.replyList"
+                             v-for="(childDiscussItem, k) in discussItem.childCommentList"
                              :key="k">
-                          <div v-photo="childDiscussItem.userInfo"
-                               v-lazy:background-image="$options.filters.filterUserLazyImg(childDiscussItem.userInfo.thumb_img)"
-                               :key="childDiscussItem.userInfo.thumb_img"
+                          <div v-photo="childDiscussItem.user"
+                               v-lazy:background-image="$options.filters.filterUserLazyImg(childDiscussItem.user.img)"
+                               :key="childDiscussItem.user.img"
                                class="div-photo head-img header-circle"></div>
-                          <span class="name">{{childDiscussItem.userInfo.realname}}</span>
-                          <span class="time">{{childDiscussItem.create_time | moment("YYYY-MM-DD HH:mm")}}</span>
+                          <span class="name">{{childDiscussItem.user.realname}}</span>
+                          <span class="time">{{childDiscussItem.create_time}}</span>
                           <div class="rt">
-                            <span @click="discussDelete(childDiscussItem, discussItem.replyList, k)">删除</span>
+                            <span @click="discussDelete(childDiscussItem, discussItem.childCommentList, k)">删除</span>
                             <span @click="discussBtn(discussItem, k)">回复</span>
                           </div>
                           <p class="reply-title">
                             <template>
                               <span>回复</span>
-                              <span class="reply">@{{childDiscussItem.replyuserInfo.realname}}：</span>
+                              <span class="reply"
+                                    v-if="childDiscussItem.replyUser">@{{childDiscussItem.replyUser.realname}}：</span>
                             </template>
                             <span v-html="emoji(childDiscussItem.content)"></span>
                           </p>
@@ -507,12 +503,12 @@
                        :key="index"
                        class="activity-list">
                     <div v-photo="item"
-                         :key="item.thumb_img"
-                         v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
+                         :key="item.img"
+                         v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
                          class="div-photo"></div>
                     <span class="activity-name">{{item.realname}}</span>
                     <span>{{item.content}}</span>
-                    <span class="activity-time">{{item.create_time | moment("MM-DD HH:mm")}}</span>
+                    <span class="activity-time">{{item.create_time}}</span>
                   </div>
                 </template>
               </div>
@@ -522,8 +518,8 @@
         <slot></slot>
       </div>
       <div class="tip"
-           v-if="taskData && taskData.create_user_info">
-        <span>{{taskData.create_user_info.realname}} 创建于 {{taskData.create_time | moment("YYYY-MM-DD HH:mm:ss")}}</span>
+           v-if="taskData && taskData.createUser">
+        <span>{{taskData.createUser.realname}} 创建于 {{taskData.create_time}}</span>
       </div>
 
       <c-r-m-full-screen-detail :visible.sync="showRelatedDetail"
@@ -538,18 +534,16 @@
 <script type="text/javascript">
 import {
   editTask,
-  editTaskName,
-  updateStoptime,
-  updateOwner,
+  editTaskRelation,
   deleteTask,
-  updatePriority,
-  taskOver,
-  delOwnerById,
-  comAdd,
-  comDelete,
   detailsTask,
   readLoglist
 } from '@/api/oamanagement/task'
+import {
+  setCommentAPI,
+  deleteCommentAPI,
+  queryCommentListAPI
+} from '@/api/oamanagement/common'
 import { usersList, depList, crmFileSave, crmFileIndex } from '@/api/common'
 
 import membersDep from '@/components/selectEmployee/membersDep'
@@ -631,7 +625,9 @@ export default {
       loading: false,
       taskData: null,
       activityList: [],
-      fileList: []
+      fileList: [],
+      // 评论列表
+      replyList: []
     }
   },
   props: {
@@ -649,8 +645,8 @@ export default {
     id: function(val) {
       this.initInfo()
       this.getDetail()
-      this.getFileList()
       this.getActivityList()
+      this.getCommentList()
     }
   },
   mounted() {
@@ -659,8 +655,8 @@ export default {
     }
     if (this.id) {
       this.getDetail()
-      this.getFileList()
       this.getActivityList()
+      this.getCommentList()
     }
   },
   methods: {
@@ -682,17 +678,13 @@ export default {
     // 基础详情
     getDetail() {
       this.loading = true
-      detailsTask({ task_id: this.id })
+      detailsTask({ taskId: this.id })
         .then(res => {
           let taskData = res.data
-          taskData.stop_time = timestampToFormatTime(
-            taskData.stop_time,
-            'YYYY-MM-DD'
-          )
           taskData.checked = taskData.status == 5 ? true : false
 
-          if (taskData.subTaskList) {
-            for (let item of taskData.subTaskList) {
+          if (taskData.childTask) {
+            for (let item of taskData.childTask) {
               if (item.status == 5) {
                 item.checked = true
                 this.subTaskProgress++
@@ -701,7 +693,7 @@ export default {
               }
             }
           }
-
+          this.fileList = res.data.file
           this.allData = {
             business: taskData.businessList || [],
             contacts: taskData.contactsList || [],
@@ -719,20 +711,22 @@ export default {
     // 获取活动信息
     getActivityList() {
       readLoglist({
-        task_id: this.id
+        taskId: this.id
       })
         .then(res => {
           this.activityList = res.data
         })
         .catch(() => {})
     },
-    getFileList() {
-      crmFileIndex({
-        module: 'work_task',
-        module_id: this.id
+
+    // 获取评论信息
+    getCommentList() {
+      queryCommentListAPI({
+        typeId: this.id,
+        type: 1
       })
         .then(res => {
-          this.fileList = res.data.list
+          this.replyList = res.data
         })
         .catch(() => {})
     },
@@ -740,8 +734,8 @@ export default {
     // 主题勾选
     titleCheckbox(val) {
       this.taskData.checked = val
-      taskOver({
-        task_id: this.id,
+      editTask({
+        taskId: this.id,
         type: this.taskData.checked ? 1 : 2
       })
         .then(res => {
@@ -779,9 +773,9 @@ export default {
     // 紧急按钮
     priorityBtn(value, def) {
       this.taskData.priority = value.id
-      updatePriority({
-        task_id: this.id,
-        priority_id: value.id
+      editTask({
+        taskId: this.id,
+        priority: value.id
       })
         .then(res => {
           this.$emit('on-handle', {
@@ -806,7 +800,7 @@ export default {
       })
         .then(() => {
           deleteTask({
-            task_id: this.id
+            taskId: this.id
           })
             .then(res => {
               this.$message.success('删除成功')
@@ -828,13 +822,11 @@ export default {
     // 附件 -- 上传
     httpRequest(val) {
       crmFileSave({
-        'file[]': val.file,
-        module: 'work_task',
-        module_id: this.id
+        file: val.file,
+        batchId: this.taskData.batch_id
       })
         .then(res => {
-          // 更新附件数据
-          this.getFileList()
+          this.fileList.push(res)
           // this.$emit('httpRequest', this.taskData)
           this.$message.success('上传成功')
         })
@@ -861,13 +853,13 @@ export default {
         type: 'change-sub-task',
         value: {
           subdonecount: this.subTaskProgress,
-          allcount: this.taskData.subTaskList.length
+          allcount: this.taskData.childTask.length
         },
         index: this.detailIndex
       })
-      taskOver({
-        task_id: val.task_id,
-        type: e ? 1 : 2
+      editTask({
+        taskid: val.task_id,
+        status: e ? 5 : 1
       })
         .then(res => {})
         .catch(err => {
@@ -883,7 +875,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskProgress,
-              allcount: this.taskData.subTaskList.length
+              allcount: this.taskData.childTask.length
             },
             index: this.detailIndex
           })
@@ -897,54 +889,55 @@ export default {
     editOwnerList(users, dep) {
       let list1 = []
       let list2 = []
-      this.taskData.owner_list = []
-      updateOwner({
-        task_id: this.id,
-        owner_userids: users.map(item => {
-          return item.id
-        })
+      this.taskData.ownerUserList = []
+      editTask({
+        taskId: this.id,
+        ownerUserId: users
+          .map(item => {
+            return item.user_id
+          })
+          .join(',')
       })
         .then(res => {
-          this.taskData.owner_list = users
+          this.taskData.ownerUserList = users
         })
         .catch(() => {})
     },
     // 参与人删除按钮
     deleteOwnerList(item, index) {
-      delOwnerById({
-        task_id: this.id,
-        type: 'owner_userid_del',
-        owner_userid_del: item.id
+      editTask({
+        taskId: this.id,
+        ownerUserId: this.taskData.ownerUserList
+          .filter(userItem => {
+            return userItem.user_id != item.user_id
+          })
+          .join(',')
       })
         .then(res => {
-          this.taskData.owner_list.splice(index, 1)
+          this.taskData.ownerUserList.splice(index, 1)
         })
         .catch(() => {})
     },
     // 编辑负责人
     editMainUser(val) {
       editTask({
-        task_id: this.id,
-        main_user_id: val ? val.data[0].id : '',
-        type: 'main_user_id'
+        taskId: this.id,
+        mainUserId: val ? val.data[0].user_id : ''
       })
         .then(res => {
           if (val) {
-            this.$set(this.taskData, 'main_user_name', val.data[0].realname)
-            this.$set(this.taskData, 'main_user_img', val.data[0].thumb_img)
+            this.$set(this.taskData, 'mainUser', val.data[0])
           } else {
-            this.$set(this.taskData, 'main_user_name', '')
-            this.$set(this.taskData, 'main_user_img', '')
+            this.$set(this.taskData, 'mainUser', null)
           }
         })
         .catch(() => {})
     },
     // 编辑任务名
     nameVShow(val) {
-      editTaskName({
+      editTask({
         name: val,
-        type: 'name',
-        task_id: this.id
+        taskId: this.id
       })
         .then(res => {
           this.nameVinput = false
@@ -960,10 +953,9 @@ export default {
     },
     // 截至日期API
     endTimeChange(val) {
-      updateStoptime({
-        stop_time: new Date(val).getTime() / 1000,
-        type: 'stop_time',
-        task_id: this.id
+      editTask({
+        stopTime: val,
+        taskId: this.id
       })
         .then(res => {
           // val.substring(5)
@@ -978,7 +970,7 @@ export default {
     // 描述提交按钮
     addDescriptionSubmit() {
       editTask({
-        task_id: this.id,
+        taskId: this.id,
         description: this.addDescriptionTextarea
       })
         .then(res => {
@@ -1005,20 +997,16 @@ export default {
     commentsSub() {
       if (this.commentsTextarea) {
         this.commentsLoading = true
-        comAdd({
-          task_id: this.id,
+        setCommentAPI({
+          typeId: this.id,
+          type: 1,
           content: this.commentsTextarea
         })
           .then(res => {
-            this.taskData.replyList.push({
-              comment_id: res.data,
-              type_id: this.id,
-              userInfo: this.userInfo,
-              create_time: new Date().getTime() / 1000,
-              content: this.commentsTextarea,
-              replyList: [],
-              show: false
-            })
+            res.data.childCommentList = []
+            res.data.show = false
+            res.data.user = this.userInfo
+            this.replyList.push(res.data)
             this.commentsTextarea = ''
             // this.$emit('commentsSet', 'add')
             this.$emit('on-handle', {
@@ -1039,27 +1027,19 @@ export default {
         var item =
           this.replyChildIndex == -1
             ? this.replyChildComment
-            : this.replyChildComment.replyList[this.replyChildIndex]
-        comAdd({
-          reply_fid: this.replyChildComment.comment_id,
-          task_id: item.type_id,
-          content: this.childCommentsTextarea,
-          reply_content: item.content,
-          reply_comment_id: item.comment_id,
-          reply_user_id: item.userInfo.id,
-          reply_name: item.userInfo.realname
+            : this.replyChildComment.childCommentList[this.replyChildIndex]
+        setCommentAPI({
+          pid: item.user_id,
+          typeId: item.type_id,
+          mainId: item.main_id == 0 ? item.comment_id : item.main_id,
+          type: 1,
+          content: this.childCommentsTextarea
         })
           .then(res => {
             this.childCommentsPopover = false
-            this.replyChildComment.replyList.push({
-              comment_id: res.data,
-              type_id: item.type_id,
-              userInfo: this.userInfo,
-              create_time: new Date().getTime() / 1000,
-              content: this.childCommentsTextarea,
-              reply_content: item.content,
-              replyuserInfo: item.userInfo
-            })
+            res.data.user = this.userInfo
+            res.data.replyUser = item.user
+            this.replyChildComment.childCommentList.push(res.data)
             this.replyChildComment.show = false
             this.replyChildComment = null
             this.childCommentsTextarea = ''
@@ -1081,9 +1061,8 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          comDelete({
-            comment_id: val.comment_id,
-            task_id: val.type_id
+          deleteCommentAPI({
+            commentId: val.comment_id
           })
             .then(res => {
               items.splice(index, 1)
@@ -1120,12 +1099,12 @@ export default {
     },
     // 关联业务提交按钮
     checkInfos(val) {
-      editTask({
-        task_id: this.id,
-        customer_ids: val.customer_ids,
-        contacts_ids: val.contacts_ids,
-        business_ids: val.business_ids,
-        contract_ids: val.contract_ids
+      editTaskRelation({
+        taskId: this.id,
+        customerIds: val.customer_ids ? val.customer_ids.join(',') : [],
+        contactsIds: val.contacts_ids ? val.contacts_ids.join(',') : [],
+        businessIds: val.business_ids ? val.business_ids.join(',') : [],
+        contractIds: val.contract_ids ? val.contract_ids.join(',') : []
       })
         .then(res => {
           this.$message.success('关联成功')
@@ -1149,10 +1128,10 @@ export default {
       })
         .then(() => {
           deleteTask({
-            task_id: val.task_id
+            taskId: val.task_id
           })
             .then(res => {
-              let subData = this.taskData.subTaskList
+              let subData = this.taskData.childTask
               for (let i in subData) {
                 if (subData[i].task_id == val.task_id) {
                   subData.splice(i, 1)
@@ -1165,7 +1144,7 @@ export default {
                   type: 'change-sub-task',
                   value: {
                     subdonecount: this.subTaskProgress,
-                    allcount: this.taskData.subTaskList.length
+                    allcount: this.taskData.childTask.length
                   },
                   index: this.detailIndex
                 })
@@ -1185,7 +1164,7 @@ export default {
     },
     editSubTask(val) {
       this.subTaskID = val.task_id
-      let dataList = this.taskData.subTaskList
+      let dataList = this.taskData.childTask
       for (let i in dataList) {
         if (dataList[i].task_id == val.task_id) {
           this.$set(dataList[i], 'showEdit', true)
@@ -1204,7 +1183,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskProgress,
-              allcount: this.taskData.subTaskList.length + 1
+              allcount: this.taskData.childTask.length + 1
             },
             index: this.detailIndex
           })
@@ -1213,7 +1192,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskProgress,
-              allcount: this.taskData.subTaskList.length - 1
+              allcount: this.taskData.childTask.length - 1
             },
             index: this.detailIndex
           })
@@ -1229,8 +1208,8 @@ export default {
     // 删除截止时间
     deleteTimeTop() {
       editTask({
-        task_id: this.id,
-        stop_time: ''
+        taskId: this.id,
+        stopTime: ''
       })
         .then(res => {
           this.$set(this.taskData, 'stop_time', '')

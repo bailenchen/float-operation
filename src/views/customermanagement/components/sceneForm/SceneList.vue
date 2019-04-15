@@ -28,11 +28,9 @@
 </template>
 
 <script type="text/javascript">
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { mapGetters } from 'vuex'
-import {
-  filterIndexfields,
-  crmSceneIndex
-} from '@/api/customermanagement/common'
+import { crmSceneIndex } from '@/api/customermanagement/common'
 
 export default {
   name: 'scene-list', //客户管理下 重要提醒 回款计划提醒
@@ -63,13 +61,14 @@ export default {
   methods: {
     getSceneList() {
       crmSceneIndex({
-        types: 'crm_' + this.crmType
+        type: crmTypeModel[this.crmType]
       })
         .then(res => {
-          let defaultScene = res.data.list.filter(function(item, index) {
+          let defaultScene = res.data.filter(function(item, index) {
             return item.is_default === 1
           })
 
+          console.log('defaultScene--', defaultScene)
           if (defaultScene && defaultScene.length > 0) {
             this.scene_id = defaultScene[0].scene_id
             this.scene_name = defaultScene[0].name
@@ -80,7 +79,7 @@ export default {
             this.$emit('scene', { id: '', name: '' })
           }
 
-          this.sceneList = res.data.list
+          this.sceneList = res.data
         })
         .catch(() => {
           this.$emit('scene', { id: '', name: '' })

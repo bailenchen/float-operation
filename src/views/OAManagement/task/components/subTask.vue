@@ -53,8 +53,7 @@
                     <span>{{item.realname}}</span>
                   </div>
                   <div v-photo="item"
-                       v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-                       :key="item.thumb_img"
+                       v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
                        class="div-photo"></div>
                 </el-tooltip>
               </span>
@@ -95,10 +94,9 @@ export default {
       this.subtasksTextarea = this.text ? this.text : ''
       this.subtasksDataText = this.time
       if (JSON.stringify(this.subData) !== '{}') {
-        if (this.subData.main_user_id) {
-          this.subData.id = this.subData.main_user_id
+        if (this.subData.mainUser) {
           this.subtaskChange = true
-          this.xhUserData = [this.subData]
+          this.xhUserData = [this.subData.mainUser]
         }
       } else {
         this.xhUserData = []
@@ -138,30 +136,20 @@ export default {
       if (this.subtasksTextarea && this.num == 0) {
         this.num = 1
         if (this.subTaskCom == 'new') {
-          let timeData = this.subtasksDate
-            ? new Date(this.subtasksDate).getTime() / 1000
-            : ''
           this.$emit('on-handle', { type: 'add', result: 'success' })
           addTask({
             pid: this.taskData.task_id,
             name: this.subtasksTextarea,
-            stop_time: timeData,
-            main_user_id:
-              this.xhUserData.length != 0 ? this.xhUserData[0].id : ''
+            stopTime: this.subtasksDate,
+            mainUserId:
+              this.xhUserData.length != 0 ? this.xhUserData[0].user_id : ''
           })
             .then(res => {
-              this.taskData.subTaskList.push({
+              this.taskData.childTask.push({
                 name: this.subtasksTextarea,
-                stop_time: timeData,
-                task_id: res.data,
-                thumb_img:
-                  this.xhUserData.length > 0
-                    ? this.xhUserData[0].thumb_img
-                    : '',
-                main_user_id:
-                  this.xhUserData.length > 0 ? this.xhUserData[0].id : '',
-                realname:
-                  this.xhUserData.length > 0 ? this.xhUserData[0].realname : ''
+                stop_time: this.subtasksDate,
+                task_id: res.data.task_id,
+                mainUser: this.xhUserData.length > 0 ? this.xhUserData[0] : null
               })
               this.$message.success('子任务创建成功')
               // 创建成功 -- 清除选择
@@ -176,40 +164,28 @@ export default {
               this.num = 0
             })
         } else if (this.subTaskCom == 'edit') {
-          let ids = this.xhUserData.length > 0 ? this.xhUserData[0].id : ''
-
           if (
             this.isNum == 1 ||
             this.text != this.subtasksTextarea ||
             this.subtasksDataText != this.time
           ) {
-            let timeData = this.subtasksDate
-              ? new Date(this.subtasksDate).getTime() / 1000
-              : this.time
             this.$emit('on-handle', { type: 'edit', result: 'success' })
             editTask({
-              task_id: this.taskId,
-              stop_time: timeData ? timeData : '',
-              main_user_id: ids,
+              taskId: this.taskId,
+              stopTime: this.subtasksDate,
+              mainUserId:
+                this.xhUserData.length > 0 ? this.xhUserData[0].id : '',
               name: this.subtasksTextarea
             })
               .then(res => {
-                let dataList = this.taskData.subTaskList
+                let dataList = this.taskData.childTask
                 for (let i in dataList) {
                   if (dataList[i].task_id == this.taskId) {
                     let list = dataList[i]
                     list.name = this.subtasksTextarea
-                    list.stop_time = timeData ? timeData : ''
-                    list.thumb_img =
-                      this.xhUserData.length > 0
-                        ? this.xhUserData[0].thumb_img
-                        : ''
-                    list.main_user_id =
-                      this.xhUserData.length > 0 ? this.xhUserData[0].id : ''
-                    list.realname =
-                      this.xhUserData.length > 0
-                        ? this.xhUserData[0].realname
-                        : ''
+                    list.stop_time = this.subtasksDate
+                    list.mainUser =
+                      this.xhUserData.length > 0 ? this.xhUserData[0] : null
                     dataList.splice(i, 1, list)
                     break
                   }
@@ -234,7 +210,7 @@ export default {
       if (data.data.length != 0) {
         this.subtaskChange = true
         if (this.xhUserData.length != 0) {
-          this.$set(this.xhUserData[0], 'thumb_img', data.data[0].thumb_img)
+          this.$set(this.xhUserData[0], 'img', data.data[0].img)
           this.$set(this.xhUserData[0], 'realname', data.data[0].realname)
         } else {
           this.xhUserData = data.data

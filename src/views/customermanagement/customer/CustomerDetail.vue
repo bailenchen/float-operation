@@ -43,7 +43,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="customer"
-                       :action="{type: 'update', id: this.id}"
+                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -66,6 +66,7 @@ import RelativeTeam from '../components/RelativeTeam' //相关团队
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 
+import { getDateFromTimestamp } from '@/utils'
 import moment from 'moment'
 import detail from '../mixins/detail'
 
@@ -178,19 +179,15 @@ export default {
     getDetial() {
       this.loading = true
       crmCustomerRead({
-        id: this.id
+        customerId: this.id
       })
         .then(res => {
           this.loading = false
           this.detailData = res.data
           // 负责人
-          this.headDetails[0].value = res.data.level
+          this.headDetails[0].value = res.data.客户级别
           this.headDetails[1].value = res.data.deal_status
-          this.headDetails[2].value = this.isSeas
-            ? '- -'
-            : res.data.owner_user_id_info
-            ? res.data.owner_user_id_info.realname
-            : ''
+          this.headDetails[2].value = res.data.owner_user_name
           this.headDetails[3].value = res.data.update_time
         })
         .catch(() => {

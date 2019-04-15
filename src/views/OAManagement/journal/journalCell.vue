@@ -3,14 +3,14 @@
        :id="'journal-cell' + logIndex">
     <div class="list-content">
       <div class="header">
-        <div v-photo="data.create_user_info"
+        <div v-photo="data.createUser"
              class="div-photo head-img header-circle"
-             :key="data.create_user_info.thumb_img"
-             v-lazy:background-image="$options.filters.filterUserLazyImg(data.create_user_info.thumb_img)">
+             :key="data.createUser.img"
+             v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)">
         </div>
         <div class="row">
           <p class="row-title">
-            <span class="name">{{data.create_user_info.realname}}</span>
+            <span class="name">{{data.createUser.realname}}</span>
             <span v-if="showWorkbench"
                   class="item-content">{{data.action_content}}</span>
             <span v-else
@@ -18,7 +18,7 @@
                   :style="{'color': data.is_read == 0 ? '#3E84E9' : '#ccc'}">{{data.is_read == 0 ? '未读' : '已读'}}</span>
           </p>
           <span class="time">{{data.create_time | moment("YYYY-MM-DD HH:mm")}}</span>
-          <el-tooltip :disabled="!(data.sendUserList.length > 0 || data.sendStructList.length > 0)"
+          <el-tooltip :disabled="!(data.sendUserList.length > 0 || data.sendDeptList.length > 0)"
                       placement="bottom"
                       effect="light"
                       popper-class="tooltip-change-border">
@@ -29,20 +29,20 @@
                   <!-- 如果没有部门而且员工最后一个 - 不显示逗号 -->
                   <span v-for="(k, i) in data.sendUserList"
                         :key="i">
-                    {{data.sendStructList.length == 0 && i == data.sendUserList.length-1 ? k.realname : k.realname + "，"}}
+                    {{data.sendDeptList.length == 0 && i == data.sendUserList.length-1 ? k.realname : k.realname + "，"}}
                   </span>
                 </span>
                 <!-- hover部门 -->
-                <span v-for="(dep, depIndex) in data.sendStructList"
+                <span v-for="(dep, depIndex) in data.sendDeptList"
                       :key="depIndex"
-                      v-if="data.sendStructList.legnth != 0">
-                  {{ depIndex == data.sendStructList.length-1 ? dep.name : dep.name+"，"}}
+                      v-if="data.sendDeptList.legnth != 0">
+                  {{ depIndex == data.sendDeptList.length-1 ? dep.name : dep.name+"，"}}
                 </span>
               </div>
             </div>
             <p class="row-title"
                style="display: inline-block;">
-              <span v-if="data.sendStructList">{{data.sendStructList.length}} 个部门，</span>
+              <span v-if="data.sendDeptList">{{data.sendDeptList.length}} 个部门，</span>
               <span v-if="data.sendUserList">{{data.sendUserList.length}}个同事</span>
             </p>
           </el-tooltip>
@@ -79,18 +79,18 @@
       </div>
       <div class="accessory">
         <div class="upload-img-box"
-             v-if="data.imgList.length != 0">
-          <div v-for="(imgItem, k) in data.imgList"
+             v-if="data.img.length != 0">
+          <div v-for="(imgItem, k) in data.img"
                :key="k"
                class="img-list"
-               @click="imgZoom(data.imgList, k)">
+               @click="imgZoom(data.img, k)">
             <img v-lazy="imgItem.file_path"
                  :key="imgItem.file_path">
           </div>
         </div>
         <div class="accessory-box"
-             v-if="data.fileList.length != 0">
-          <file-cell v-for="(file, fileIndex) in data.fileList"
+             v-if="data.file.length != 0">
+          <file-cell v-for="(file, fileIndex) in data.file"
                      :key="fileIndex"
                      :data="file"
                      :cellIndex="fileIndex"></file-cell>
@@ -105,19 +105,19 @@
       </related-business>
       <!-- 评论 -->
       <div class="discuss"
-           v-if="data.replyList.length != 0">
+           v-if="replyList && replyList.length != 0">
         <div class="border"></div>
         <div class="discuss-list"
-             v-for="(discussItem, k) in data.replyList"
+             v-for="(discussItem, k) in replyList"
              :key="k">
-          <div v-photo="discussItem.userInfo"
-               v-lazy:background-image="$options.filters.filterUserLazyImg(discussItem.userInfo.thumb_img)"
-               :key="discussItem.userInfo.thumb_img"
+          <div v-photo="discussItem.user"
+               v-lazy:background-image="$options.filters.filterUserLazyImg(discussItem.user.img)"
+               :key="discussItem.user.img"
                class="div-photo head-img header-circle"></div>
-          <span class="name">{{discussItem.userInfo.realname}}</span>
-          <span class="time">{{discussItem.create_time | moment("YYYY-MM-DD HH:mm")}}</span>
+          <span class="name">{{discussItem.user.realname}}</span>
+          <span class="time">{{discussItem.create_time}}</span>
           <div class="rt">
-            <span @click="discussDelete(discussItem, data.replyList, k)">删除</span>
+            <span @click="discussDelete(discussItem, replyList, k)">删除</span>
             <span @click="discussBtn(discussItem, -1)">回复</span>
           </div>
 
@@ -125,28 +125,29 @@
             <span v-html="emoji(discussItem.content)"></span>
           </p>
 
-          <p class="discuss-content"
-             v-html="emoji(discussItem.reply_content)"></p>
+          <!-- <p class="discuss-content"
+             v-html="emoji(discussItem.reply_content)"></p> -->
 
           <div class="children-reply"
-               v-if="discussItem.replyList && discussItem.replyList.length > 0">
+               v-if="discussItem.childCommentList && discussItem.childCommentList.length > 0">
             <div class="discuss-list"
-                 v-for="(childDiscussItem, k) in discussItem.replyList"
+                 v-for="(childDiscussItem, k) in discussItem.childCommentList"
                  :key="k">
-              <div v-photo="childDiscussItem.userInfo"
-                   v-lazy:background-image="$options.filters.filterUserLazyImg(childDiscussItem.userInfo.thumb_img)"
-                   :key="childDiscussItem.userInfo.thumb_img"
+              <div v-photo="childDiscussItem.user"
+                   v-lazy:background-image="$options.filters.filterUserLazyImg(childDiscussItem.user.img)"
+                   :key="childDiscussItem.user.img"
                    class="div-photo head-img header-circle"></div>
-              <span class="name">{{childDiscussItem.userInfo.realname}}</span>
-              <span class="time">{{childDiscussItem.create_time | moment("YYYY-MM-DD HH:mm")}}</span>
+              <span class="name">{{childDiscussItem.user.realname}}</span>
+              <span class="time">{{childDiscussItem.create_time}}</span>
               <div class="rt">
-                <span @click="discussDelete(childDiscussItem, discussItem.replyList, k)">删除</span>
+                <span @click="discussDelete(childDiscussItem, discussItem.childCommentList, k)">删除</span>
                 <span @click="discussBtn(discussItem, k)">回复</span>
               </div>
               <p class="reply-title">
                 <template>
                   <span>回复</span>
-                  <span class="reply">@{{childDiscussItem.replyuserInfo.realname}}：</span>
+                  <span class="reply"
+                        v-if="childDiscussItem.replyUser">@{{childDiscussItem.replyUser.realname}}：</span>
                 </template>
                 <span v-html="emoji(childDiscussItem.content)"></span>
               </p>
@@ -212,7 +213,7 @@
         </el-popover>
         <div class="btn-box">
           <el-button type="primary"
-                     @click="commentSubmit(data)"
+                     @click="commentSubmit()"
                      :loading="contentLoading">回复</el-button>
           <el-button @click="data.showComment = false">取消</el-button>
         </div>
@@ -224,10 +225,15 @@
 import emoji from '@/components/emoji'
 // API
 import {
-  journalCommentDelete,
-  journalCommentSave,
   journalSetread
 } from '@/api/oamanagement/journal'
+
+import {
+  setCommentAPI,
+  deleteCommentAPI,
+  queryCommentListAPI
+} from '@/api/oamanagement/common'
+
 // 关联业务 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 
@@ -261,7 +267,9 @@ export default {
       contentLoading: false,
       // 父元素
       parentTarget: null,
-      awaitMoment: false // 等客户浏览
+      awaitMoment: false, // 等客户浏览
+      // 评论列表
+      replyList: []
     }
   },
   props: {
@@ -297,6 +305,8 @@ export default {
         }
       })
     }
+
+    this.replyList = this.data.replyList
   },
   methods: {
     whetherPreview() {
@@ -328,6 +338,19 @@ export default {
         })
         .catch(err => {})
     },
+
+    // 获取评论信息
+    getCommentList() {
+      queryCommentListAPI({
+        typeId: this.data.log_id,
+        type: 1
+      })
+        .then(res => {
+          this.replyList = res.data
+        })
+        .catch(() => {})
+    },
+
     verifyAwaitInfo() {},
     // 编辑 删除
     handleCommand(command) {
@@ -347,9 +370,8 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          journalCommentDelete({
-            comment_id: val.comment_id,
-            log_id: val.type_id
+          deleteCommentAPI({
+            comment_id: val.comment_id
           }).then(res => {
             this.$message({
               type: 'success',
@@ -387,27 +409,22 @@ export default {
         var item =
           this.replyChildIndex == -1
             ? this.replyChildComment
-            : this.replyChildComment.replyList[this.replyChildIndex]
+            : this.replyChildComment.childCommentList[this.replyChildIndex]
         this.contentLoading = true
-        journalCommentSave({
-          reply_fid: this.replyChildComment.comment_id,
-          log_id: item.type_id,
-          content: this.childCommentsTextarea,
-          reply_content: item.content,
-          reply_comment_id: item.comment_id,
-          reply_user_id: item.userInfo.id,
-          reply_name: item.userInfo.realname
+        setCommentAPI({
+          pid: item.user_id,
+          typeId: item.type_id,
+          mainId: item.main_id == 0 ? item.comment_id : item.main_id,
+          type: 2,
+          content: this.childCommentsTextarea
         })
           .then(res => {
-            this.replyChildComment.replyList.push({
-              comment_id: res.data,
-              type_id: item.type_id,
-              userInfo: this.userInfo,
-              create_time: parseInt(new Date().getTime() / 1000),
-              content: this.childCommentsTextarea,
-              reply_content: item.content,
-              replyuserInfo: item.userInfo
-            })
+            this.childCommentsPopover = false
+
+            res.data.user = this.userInfo
+            res.data.replyUser = item.user
+
+            this.replyChildComment.childCommentList.push(res.data)
             this.$message.success('回复成功')
             this.replyChildComment.show = false
             this.replyChildComment = null
@@ -426,25 +443,22 @@ export default {
       }
     },
     // 评论 -- 提交
-    commentSubmit(val) {
+    commentSubmit() {
       if (this.commentsTextarea) {
         this.contentLoading = true
-        journalCommentSave({
-          log_id: this.showWorkbench ? this.data.action_id : this.data.log_id,
+        setCommentAPI({
+          typeId: this.showWorkbench ? this.data.action_id : this.data.log_id,
+          type: 2, // 1 任务 2 日志
           content: this.commentsTextarea
         })
           .then(res => {
             // 插入一条数据
-            val.showComment = false
-            val.replyList.push({
-              comment_id: res.data,
-              type_id: this.showWorkbench ? this.data.action_id : this.data.log_id,
-              userInfo: this.userInfo,
-              create_time: parseInt(new Date().getTime() / 1000),
-              content: this.commentsTextarea,
-              replyList: [],
-              show: false
-            })
+            this.$set(this.data, 'showComment', false)
+            res.data.childCommentList = []
+            res.data.show = false
+            res.data.user = this.userInfo
+
+            this.replyList.push(res.data)
             this.commentsTextarea = ''
             this.$message.success('回复成功')
             this.contentLoading = false

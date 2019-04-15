@@ -9,24 +9,24 @@
         <template v-for="(formItem, index) in form">
           <el-row :key="index">
             <el-col :span="8">
-              <el-select v-model="formItem.field"
+              <el-select v-model="formItem.fieldName"
                          @change="fieldChange(formItem)"
                          placeholder="请选择要筛选的字段名">
                 <el-option v-for="item in fieldList"
-                           :key="item.field"
+                           :key="item.fieldName"
                            :label="item.name"
-                           :value="item.field">
+                           :value="item.fieldName">
                 </el-option>
               </el-select>
             </el-col>
 
             <el-col :span="1"
-                    v-if="formItem.form_type !== 'date' && formItem.form_type !== 'datetime' && formItem.form_type !== 'business_type'">&nbsp;</el-col>
+                    v-if="formItem.formType !== 'date' && formItem.formType !== 'datetime' && formItem.formType !== 'business_type'">&nbsp;</el-col>
             <el-col :span="4"
-                    v-if="formItem.form_type !== 'date' && formItem.form_type !== 'datetime' && formItem.form_type !== 'business_type'">
+                    v-if="formItem.formType !== 'date' && formItem.formType !== 'datetime' && formItem.formType !== 'business_type'">
               <el-select v-model="formItem.condition"
                          placeholder="请选择范围">
-                <el-option v-for="item in calConditionOptions(formItem.form_type, formItem)"
+                <el-option v-for="item in calConditionOptions(formItem.formType, formItem)"
                            :key="item.value"
                            :label="item.label"
                            :value="item.value">
@@ -36,9 +36,9 @@
 
             <!-- 商机组 -->
             <el-col :span="1"
-                    v-if="formItem.form_type == 'business_type'">&nbsp;</el-col>
+                    v-if="formItem.formType == 'business_type'">&nbsp;</el-col>
             <el-col :span="4"
-                    v-if="formItem.form_type == 'business_type'">
+                    v-if="formItem.formType == 'business_type'">
               <el-select v-model="formItem.type_id"
                          @change="typeOptionsChange(formItem)"
                          placeholder="请选择">
@@ -51,8 +51,8 @@
             </el-col>
 
             <el-col :span="1">&nbsp;</el-col>
-            <el-col :span="formItem.form_type === 'datetime' || formItem.form_type === 'date' ? 13 : 8">
-              <el-select v-if="formItem.form_type === 'select'"
+            <el-col :span="formItem.formType === 'datetime' || formItem.formType === 'date' ? 13 : 8">
+              <el-select v-if="formItem.formType === 'select'"
                          v-model="formItem.value"
                          placeholder="请选择筛选条件">
                 <el-option v-for="item in formItem.setting"
@@ -61,16 +61,16 @@
                            :value="item">
                 </el-option>
               </el-select>
-              <el-date-picker v-else-if="formItem.form_type === 'date' || formItem.form_type === 'datetime'"
+              <el-date-picker v-else-if="formItem.formType === 'date' || formItem.formType === 'datetime'"
                               v-model="formItem.value"
-                              :value-format="formItem.form_type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"
-                              :type="formItem.form_type === 'date' ? 'daterange' : 'datetimerange'"
+                              :value-format="formItem.formType === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"
+                              :type="formItem.formType === 'date' ? 'daterange' : 'datetimerange'"
                               style="padding: 0px 10px;"
                               range-separator="-"
                               start-placeholder="开始日期"
                               end-placeholder="结束日期">
               </el-date-picker>
-              <el-select v-else-if="formItem.form_type === 'business_type'"
+              <el-select v-else-if="formItem.formType === 'business_type'"
                          v-model="formItem.status_id"
                          placeholder="请选择">
                 <el-option v-for="item in formItem.statusOption"
@@ -79,7 +79,7 @@
                            :value="item.status_id">
                 </el-option>
               </el-select>
-              <xh-user-cell v-else-if="formItem.form_type === 'user'"
+              <xh-user-cell v-else-if="formItem.formType === 'user'"
                             :item="formItem"
                             :infoParams="{m	:'crm',c: crmType,a: 'index' }"
                             @value-change="userValueChange"></xh-user-cell>
@@ -151,15 +151,15 @@ export default {
       default: {},
       required: true
     },
-    // 辅助 使用 公海没有场景
-    isSeas: {
-      type: Boolean,
-      default: false
-    },
     /** 获取客户管理下列表权限内的员工列表 针对 usersList */
     crmType: {
       type: String,
       default: ''
+    },
+    // 辅助 使用 公海没有场景
+    isSeas: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -179,9 +179,9 @@ export default {
           this.form = objDeepCopy(this.obj.form)
           if (this.form.length == 0) {
             this.form.push({
-              field: '',
+              fieldName: '',
               name: '',
-              form_type: '',
+              formType: '',
               condition: 'is',
               value: '',
               typeOption: [],
@@ -226,20 +226,20 @@ export default {
       }
     },
     /** 条件数据源 */
-    calConditionOptions(form_type, item) {
+    calConditionOptions(formType, item) {
       if (
-        form_type == 'select' ||
-        form_type == 'checkbox' ||
-        form_type == 'user'
+        formType == 'select' ||
+        formType == 'checkbox' ||
+        formType == 'user'
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
           { value: 'isnot', label: '不等于', disabled: false }
         ]
       } else if (
-        form_type == 'module' ||
-        form_type == 'text' ||
-        form_type == 'textarea'
+        formType == 'module' ||
+        formType == 'text' ||
+        formType == 'textarea'
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
@@ -247,7 +247,7 @@ export default {
           { value: 'contains', label: '包含', disabled: false },
           { value: 'not_contain', label: '不包含', disabled: false }
         ]
-      } else if (form_type == 'floatnumber' || form_type == 'number') {
+      } else if (formType == 'floatnumber' || formType == 'number') {
         return [
           { value: 'is', label: '等于', disabled: false },
           { value: 'isnot', label: '不等于', disabled: false },
@@ -283,29 +283,29 @@ export default {
      */
     fieldChange(formItem) {
       let obj = this.fieldList.find(item => {
-        return item.field === formItem.field
+        return item.fieldName === formItem.fieldName
       })
       if (obj) {
-        formItem.form_type = obj.form_type
+        formItem.formType = obj.formType
         formItem.name = obj.name
-        if (formItem.form_type == 'business_type') {
+        if (formItem.formType == 'business_type') {
           formItem.typeOption = obj.setting
           formItem.statusOption = []
           formItem.type_id = ''
           formItem.status_id = ''
-        } else if (formItem.form_type == 'select') {
+        } else if (formItem.formType == 'select') {
           formItem.setting = obj.setting || []
         } else if (
-          formItem.form_type === 'date' ||
-          formItem.form_type === 'datetime' ||
-          formItem.form_type === 'user'
+          formItem.formType === 'date' ||
+          formItem.formType === 'datetime' ||
+          formItem.formType === 'user'
         ) {
           formItem.value = []
         }
       }
 
       let arr = this.form.filter(item => {
-        return item.field === formItem.field
+        return item.fieldName === formItem.fieldName
       })
       if (arr.length > 1) this.showErrors = true
       else this.showErrors = false
@@ -332,19 +332,19 @@ export default {
       }
       for (let i = 0; i < this.form.length; i++) {
         let o = this.form[i]
-        if (!o.field || o.field === '') {
+        if (!o.fieldName || o.fieldName === '') {
           this.$message.error('要筛选的字段名称不能为空！')
           return
         }
-        if (o.form_type == 'business_type') {
+        if (o.formType == 'business_type') {
           if (!o.type_id && !o.status_id) {
             this.$message.error('请输入筛选条件的值！')
             return
           }
         } else if (
-          o.form_type == 'date' ||
-          o.form_type == 'datetime' ||
-          o.form_type == 'user'
+          o.formType == 'date' ||
+          o.formType == 'datetime' ||
+          o.formType == 'user'
         ) {
           if (!o.value || o.value.length === 0) {
             this.$message.error('请输入筛选条件的值！')
@@ -357,40 +357,40 @@ export default {
       }
       let obj = {}
       this.form.forEach(o => {
-        if (o.form_type == 'date') {
-          obj[o.field] = {
+        if (o.formType == 'date') {
+          obj[o.fieldName] = {
             start_date: o.value[0],
             end_date: o.value[1],
-            form_type: o.form_type,
-            name: o.name
+            formType: o.formType,
+            name: o.fieldName
           }
-        } else if (o.form_type == 'datetime') {
-          obj[o.field] = {
-            start: formatTimeToTimestamp(o.value[0]),
-            end: formatTimeToTimestamp(o.value[1]),
-            form_type: o.form_type,
-            name: o.name
+        } else if (o.formType == 'datetime') {
+          obj[o.fieldName] = {
+            start: o.value[0],
+            end: o.value[1],
+            formType: o.formType,
+            name: o.fieldName
           }
-        } else if (o.form_type == 'business_type') {
-          obj[o.field] = {
+        } else if (o.formType == 'business_type') {
+          obj[o.fieldName] = {
             type_id: o.type_id,
             status_id: o.status_id,
-            form_type: o.form_type,
-            name: o.name
+            formType: o.formType,
+            name: o.fieldName
           }
-        } else if (o.form_type == 'user') {
-          obj[o.field] = {
+        } else if (o.formType == 'user') {
+          obj[o.fieldName] = {
             condition: o.condition,
             value: o.value[0].id,
-            form_type: o.form_type,
-            name: o.name
+            formType: o.formType,
+            name: o.fieldName
           }
         } else {
-          obj[o.field] = {
+          obj[o.fieldName] = {
             condition: o.condition,
             value: o.value,
-            form_type: o.form_type,
-            name: o.name
+            formType: o.formType,
+            name: o.fieldName
           }
         }
       })
@@ -408,10 +408,10 @@ export default {
      */
     handleAdd() {
       this.form.push({
-        field: '',
+        fieldName: '',
         condition: 'is',
         value: '',
-        form_type: '',
+        formType: '',
         setting: [],
         typeOption: [],
         statusOption: [],

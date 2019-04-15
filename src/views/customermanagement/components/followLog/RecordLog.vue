@@ -17,7 +17,11 @@
 
 <script>
 import FollowRecordCell from './components/FollowRecordCell' // 跟进记录
-import { crmRecordIndex } from '@/api/customermanagement/common'
+import { crmLeadsRecordIndex } from '@/api/customermanagement/clue'
+import { crmCustomerRecordIndex } from '@/api/customermanagement/customer'
+import { crmContactsRecordIndex } from '@/api/customermanagement/contacts'
+import { crmBusinessRecordIndex } from '@/api/customermanagement/business'
+import { crmContractRecordIndex } from '@/api/customermanagement/contract'
 import { formatTimeToTimestamp } from '@/utils'
 
 export default {
@@ -86,16 +90,23 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      crmRecordIndex({
+      let request = {
+        customer: crmCustomerRecordIndex,
+        leads: crmLeadsRecordIndex,
+        contacts: crmContactsRecordIndex,
+        business: crmBusinessRecordIndex,
+        contract: crmContractRecordIndex
+      }[this.crmType]
+
+      let params = {
         page: this.page,
-        limit: 10,
-        types: 'crm_' + this.crmType,
-        types_id: this.id,
-        by: 'record' // 类型（record 跟进记录，log 日志、examine审批、task 任务、event日程、默认是全部）
-      })
+        limit: 10
+      }
+      params[this.crmType + 'Id'] = this.id
+      request(params)
         .then(res => {
-          this.list = this.list.concat(res.data.list)
-          if (res.data.list.length < 10) {
+          this.list = this.list.concat(res.data)
+          if (res.data.length < 10) {
             this.loadMoreLoading = false
           } else {
             this.loadMoreLoading = true

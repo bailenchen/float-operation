@@ -99,15 +99,15 @@ export default {
         })
         var user_ids = this.usersList[0].id
         var params = {
-          owner_user_id: user_ids
+          userId: user_ids
         }
-        params[this.crmType + '_id'] = action_ids
+        params.ids = action_ids.join(',')
         this.loading = true
         crmCustomerDistribute(params)
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.loading = false
             this.$emit('handle', {

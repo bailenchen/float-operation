@@ -3,16 +3,19 @@ import request from '@/utils/request'
 // crm 新建客户
 export function crmCustomerSave(data) {
   return request({
-    url: 'crm/customer/save',
+    url: 'CrmCustomer/addOrUpdate',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
 // crm 客户列表
 export function crmCustomerIndex(data) {
   return request({
-    url: 'crm/customer/index',
+    url: 'CrmCustomer/queryList',
     method: 'post',
     data: data
   })
@@ -21,7 +24,7 @@ export function crmCustomerIndex(data) {
 // 删除
 export function crmCustomerDelete(data) {
   return request({
-    url: 'crm/customer/delete',
+    url: 'CrmCustomer/deleteByIds',
     method: 'post',
     data: data
   })
@@ -39,7 +42,7 @@ export function crmCustomerUpdate(data) {
 // crm 公海列表
 export function crmCustomerPool(data) {
   return request({
-    url: 'crm/customer/pool',
+    url: 'CrmCustomer/queryPageGH',
     method: 'post',
     data: data
   })
@@ -48,7 +51,7 @@ export function crmCustomerPool(data) {
 // crm 详情
 export function crmCustomerRead(data) {
   return request({
-    url: 'crm/customer/read',
+    url: 'CrmCustomer/queryById',
     method: 'post',
     data: data
   })
@@ -63,7 +66,7 @@ export function crmCustomerRead(data) {
  */
 export function crmCustomerLock(data) {
   return request({
-    url: 'crm/customer/lock',
+    url: 'CrmCustomer/lock',
     method: 'post',
     data: data
   })
@@ -76,7 +79,7 @@ export function crmCustomerLock(data) {
  */
 export function crmCustomerPutInPool(data) {
   return request({
-    url: 'crm/customer/putInPool',
+    url: 'CrmCustomer/updateCustomerByIds',
     method: 'post',
     data: data
   })
@@ -93,7 +96,7 @@ export function crmCustomerPutInPool(data) {
  */
 export function crmCustomerTransfer(data) {
   return request({
-    url: 'crm/customer/transfer',
+    url: 'CrmCustomer/transfer',
     method: 'post',
     data: data
   })
@@ -106,7 +109,7 @@ export function crmCustomerTransfer(data) {
  */
 export function crmCustomerExcelExport(data) {
   return request({
-    url: 'crm/customer/excelExport',
+    url: 'CrmCustomer/excelExport',
     method: 'post',
     data: data,
     responseType: 'blob'
@@ -138,7 +141,7 @@ export function crmCustomerExcelImport(data) {
  * @param {*} data
  *
  */
-export const crmCustomerExcelDownloadURL = 'crm/customer/excelDownload'
+export const crmCustomerExcelDownloadURL = process.env.BASE_API + 'crm/customer/excelDownload'
 
 /**
  * 客户分配
@@ -148,7 +151,7 @@ export const crmCustomerExcelDownloadURL = 'crm/customer/excelDownload'
  */
 export function crmCustomerDistribute(data) {
   return request({
-    url: 'crm/customer/distribute',
+    url: 'CrmCustomer/getCustomersByIds',
     method: 'post',
     data: data
   })
@@ -162,6 +165,125 @@ export function crmCustomerDistribute(data) {
 export function crmCustomerReceive(data) {
   return request({
     url: 'crm/customer/receive',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 客户下联系人
+ * @param {*} data 
+ */
+export function crmCustomerQueryContacts(data) {
+  return request({
+    url: 'CrmCustomer/queryContacts',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 客户下商机
+ * @param {*} data 
+ */
+export function crmCustomerQueryBusiness(data) {
+  return request({
+    url: 'CrmCustomer/queryBusiness',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 客户下合同
+ * @param {*} data 
+ */
+export function crmCustomerQueryContract(data) {
+  return request({
+    url: 'CrmCustomer/queryContract',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 客户下回款计划
+ * @param {*} data 
+ */
+export function crmCustomerQueryReceivablesPlan(data) {
+  return request({
+    url: 'CrmCustomer/queryReceivablesPlan',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 客户下回款
+ * @param {*} data 
+ */
+export function crmCustomerQueryReceivables(data) {
+  return request({
+    url: 'CrmCustomer/queryReceivables',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
+ * 跟进记录
+ * @param {*} data 
+ */
+export function crmCustomerRecordSave(data) {
+  return request({
+    url: 'CrmCustomer/addRecord',
+    method: 'post',
+    data: data
+  })
+}
+export function crmCustomerRecordIndex(data) {
+  return request({
+    url: 'CrmCustomer/getRecord',
+    method: 'post',
+    data: data
+  })
+}
+// 团队操作
+
+/**
+ * 相关团队创建
+ * @param {*} data
+ * types crm_leads
+ * types_id 分类ID
+ */
+export function crmCustomerSettingTeamSave(data) {
+  return request({
+    url: 'CrmCustomer/addMembers',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmCustomerSettingTeamDelete(data) {
+  return request({
+    url: 'CrmCustomer/deleteMembers',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmCustomerTeamMembers(data) {
+  return request({
+    url: 'CrmCustomer/getMembers',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmCustomerUpdateMembers(data) {
+  return request({
+    url: 'CrmCustomer/updateMembers',
     method: 'post',
     data: data
   })

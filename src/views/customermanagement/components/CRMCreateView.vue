@@ -35,7 +35,7 @@
                     </div>
                   </div>
                   <!-- 员工 和部门 为多选（radio=false）  relation 相关合同商机使用-->
-                  <component :is="item.data.form_type | typeToComponentName"
+                  <component :is="item.data.formType | typeToComponentName"
                              :value="item.value"
                              :index="index"
                              :item="item"
@@ -76,36 +76,21 @@
   </create-view>
 </template>
 <script type="text/javascript">
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
 import { crmLeadsSave, crmLeadsUpdate } from '@/api/customermanagement/clue'
-import {
-  crmCustomerSave,
-  crmCustomerUpdate
-} from '@/api/customermanagement/customer'
-import {
-  crmContactsSave,
-  crmContactsUpdate
-} from '@/api/customermanagement/contacts'
+import { crmCustomerSave } from '@/api/customermanagement/customer'
+import { crmContactsSave } from '@/api/customermanagement/contacts'
 import {
   crmBusinessSave,
-  crmBusinessUpdate,
   crmBusinessProduct // 商机下产品
 } from '@/api/customermanagement/business'
-import {
-  crmContractSave,
-  crmContractUpdate
-} from '@/api/customermanagement/contract'
-import {
-  crmProductSave,
-  crmProductUpdate
-} from '@/api/customermanagement/product'
-import {
-  crmReceivablesSave,
-  crmReceivablesUpdate
-} from '@/api/customermanagement/money'
+import { crmContractSave } from '@/api/customermanagement/contract'
+import { crmProductSave } from '@/api/customermanagement/product'
+import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
 
 import {
@@ -196,49 +181,49 @@ export default {
   },
   filters: {
     /** 根据type 找到组件 */
-    typeToComponentName(form_type) {
+    typeToComponentName(formType) {
       if (
-        form_type == 'text' ||
-        form_type == 'number' ||
-        form_type == 'floatnumber' ||
-        form_type == 'mobile' ||
-        form_type == 'email'
+        formType == 'text' ||
+        formType == 'number' ||
+        formType == 'floatnumber' ||
+        formType == 'mobile' ||
+        formType == 'email'
       ) {
         return 'XhInput'
-      } else if (form_type == 'textarea') {
+      } else if (formType == 'textarea') {
         return 'XhTextarea'
-      } else if (form_type == 'select' || form_type == 'business_status') {
+      } else if (formType == 'select' || formType == 'business_status') {
         return 'XhSelect'
-      } else if (form_type == 'checkbox') {
+      } else if (formType == 'checkbox') {
         return 'XhMultipleSelect'
-      } else if (form_type == 'date') {
+      } else if (formType == 'date') {
         return 'XhDate'
-      } else if (form_type == 'datetime') {
+      } else if (formType == 'datetime') {
         return 'XhDateTime'
-      } else if (form_type == 'user') {
+      } else if (formType == 'user') {
         return 'XhUserCell'
-      } else if (form_type == 'structure') {
+      } else if (formType == 'structure') {
         return 'XhStructureCell'
-      } else if (form_type == 'file') {
+      } else if (formType == 'file') {
         return 'XhFiles'
       } else if (
-        form_type == 'contacts' ||
-        form_type == 'customer' ||
-        form_type == 'contract' ||
-        form_type == 'business'
+        formType == 'contacts' ||
+        formType == 'customer' ||
+        formType == 'contract' ||
+        formType == 'business'
       ) {
         return 'CrmRelativeCell'
-      } else if (form_type == 'category') {
+      } else if (formType == 'category') {
         // 产品类别
         return 'XhProuctCate'
-      } else if (form_type == 'business_type') {
+      } else if (formType == 'business_type') {
         // 商机类别
         return 'XhBusinessStatus'
-      } else if (form_type == 'product') {
+      } else if (formType == 'product') {
         return 'XhProduct'
-      } else if (form_type == 'map_address') {
+      } else if (formType == 'map_address') {
         return 'XhCustomerAddress'
-      } else if (form_type == 'receivables_plan') {
+      } else if (formType == 'receivables_plan') {
         return 'XhReceivablesPlan'
       }
     }
@@ -258,7 +243,8 @@ export default {
       default: () => {
         return {
           type: 'save',
-          id: ''
+          id: '',
+          data: {} //编辑所需信息
         }
       }
     }
@@ -278,11 +264,10 @@ export default {
     fieldValueChange(data) {
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
+      console.log('data.value---', data.value)
+      console.log('item.value---', item.value)
       //商机下处理商机状态
-      if (
-        this.crmType == 'business' &&
-        item.data.form_type == 'business_type'
-      ) {
+      if (this.crmType == 'business' && item.data.formType == 'business_type') {
         //找到阶段数据
         for (
           let statusIndex = 0;
@@ -290,7 +275,7 @@ export default {
           statusIndex++
         ) {
           const statusElement = this.crmForm.crmFields[statusIndex]
-          if (statusElement.data.form_type == 'business_status') {
+          if (statusElement.data.formType == 'business_status') {
             for (let typeIndex = 0; typeIndex < data.data.length; typeIndex++) {
               const typeElement = data.data[typeIndex]
               if (typeElement.type_id == data.value) {
@@ -300,7 +285,10 @@ export default {
                     return item
                   }
                 )
-                statusElement.value = ''
+                if (data.type != 'init') {
+                  // 编辑初始化时 不重置
+                  statusElement.value = ''
+                }
                 this.$set(this.crmForm.crmFields, statusIndex, statusElement)
                 break
               }
@@ -308,7 +296,7 @@ export default {
           }
         }
       } else if (this.crmType == 'contract') {
-        if (item.data.form_type == 'customer') {
+        if (item.data.formType == 'customer') {
           // 新建合同 选择客户 要将id交于 商机
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
@@ -317,7 +305,7 @@ export default {
               if (item.value.length > 0) {
                 element.disabled = false
                 var customerItem = item.value[0]
-                customerItem['form_type'] = 'customer'
+                customerItem['moduleType'] = 'customer'
                 element['relation'] = customerItem
               } else {
                 element.disabled = true
@@ -327,10 +315,11 @@ export default {
               break
             }
           }
-        } else if (item.data.form_type == 'business') {
+        } else if (item.data.formType == 'business') {
           if (item.value.length > 0) {
             crmBusinessProduct({
-              business_id: item.value[0].business_id
+              businessId: item.value[0].business_id,
+              pageType: 0
             })
               .then(res => {
                 for (
@@ -354,7 +343,7 @@ export default {
         }
       } else if (this.crmType == 'receivables') {
         // 新建回款 选择客户 要将id交于 合同
-        if (item.data.form_type == 'customer') {
+        if (item.data.formType == 'customer') {
           var planItem = null // 合同更改 重置回款计划
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
@@ -363,7 +352,7 @@ export default {
               if (item.value.length > 0) {
                 element.disabled = false
                 var customerItem = item.value[0]
-                customerItem['form_type'] = 'customer'
+                customerItem['moduleType'] = 'customer'
                 customerItem['params'] = { check_status: 2 }
                 element['relation'] = customerItem
               } else {
@@ -380,15 +369,17 @@ export default {
             planItem['relation'] = {}
             planItem.value = ''
           }
-        } else if (item.data.form_type == 'contract') {
+        } else if (item.data.formType == 'contract') {
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
             if (element.key === 'plan_id') {
               // 如果是回款 改变回款样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
+                console.log('item.value---', item.value)
                 var contractItem = item.value[0]
-                contractItem['form_type'] = 'contract'
+                console.log('contractItem---', contractItem)
+                contractItem['moduleType'] = 'contract'
                 element['relation'] = contractItem
               } else {
                 element.disabled = true
@@ -403,13 +394,13 @@ export default {
 
       //无事件的处理 后期可换成input实现
       if (
-        item.data.form_type == 'user' ||
-        item.data.form_type == 'structure' ||
-        item.data.form_type == 'file' ||
-        item.data.form_type == 'category' ||
-        item.data.form_type == 'customer' ||
-        item.data.form_type == 'business' ||
-        item.data.form_type == 'contract'
+        item.data.formType == 'user' ||
+        item.data.formType == 'structure' ||
+        item.data.formType == 'file' ||
+        item.data.formType == 'category' ||
+        item.data.formType == 'customer' ||
+        item.data.formType == 'business' ||
+        item.data.formType == 'contract'
       ) {
         this.$refs.crmForm.validateField('crmFields.' + data.index + '.value')
       }
@@ -418,15 +409,12 @@ export default {
     getField() {
       this.loading = true
       // 获取自定义字段的更新时间
-      var params = {}
-      params.types = 'crm_' + this.crmType
-      params.module = 'crm'
-      params.controller = this.crmType
-      params.action =
-        this.action.type === 'relative' ? 'save' : this.action.type
-      // 进行编辑操作
+      var params = {
+        label: crmTypeModel[this.crmType]
+      }
+      // // 进行编辑操作
       if (this.action.type == 'update') {
-        params.action_id = this.action.id
+        params.id = this.action.id
       }
 
       filedGetField(params)
@@ -444,35 +432,36 @@ export default {
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
         showStyleIndex += 1
+
         /**
          * 规则数据
          */
 
-        this.crmRules[item.field] = this.getItemRulesArrayFromItem(item)
+        this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
 
         /**
          * 表单数据
          */
         if (
           // crm相关信息特殊处理
-          item.form_type == 'contacts' ||
-          item.form_type == 'customer' ||
-          item.form_type == 'contract' ||
-          item.form_type == 'business' ||
-          item.form_type == 'receivables_plan'
+          item.formType == 'contacts' ||
+          item.formType == 'customer' ||
+          item.formType == 'contract' ||
+          item.formType == 'business' ||
+          item.formType == 'receivables_plan'
         ) {
           var params = {}
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           // 获取 value relative 信息
           this.getParamsValueAndRelativeInfo(params, item, list)
           params['disabled'] = this.getItemDisabledFromItem(item)
           params['styleIndex'] = showStyleIndex
           this.crmForm.crmFields.push(params)
-        } else if (item.form_type == 'category') {
+        } else if (item.formType == 'category') {
           /** 产品分类 */
           var params = {}
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           if (this.action.type == 'update' && item.value) {
             params['value'] = item.value
@@ -486,11 +475,11 @@ export default {
           params['disabled'] = false // 是否可交互
           params['styleIndex'] = showStyleIndex
           this.crmForm.crmFields.push(params)
-        } else if (item.form_type == 'product') {
+        } else if (item.formType == 'product') {
           // 关联产品信息比较多 用字典接收
           var params = {}
           params['value'] = item.value
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['showblock'] = true // 展示整行效果
@@ -498,16 +487,19 @@ export default {
             showStyleIndex = -1
           }
           this.crmForm.crmFields.push(params)
-        } else if (item.form_type == 'map_address') {
+        } else if (item.formType == 'map_address') {
           // 关联产品信息比较多 用字典接收
           var params = {}
 
           if (this.action.type == 'update') {
+            if (item.value.address) {
+              item.value.address = item.value.address.split(',')
+            }
             params['value'] = item.value // 编辑的值 在value字段
           } else {
             params['value'] = {} // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['showblock'] = true // 展示整行效果
@@ -515,35 +507,16 @@ export default {
             showStyleIndex = -1
           }
           this.crmForm.crmFields.push(params)
-        } else if (item.form_type == 'datetime') {
-          // 返回的时间戳  要处理为格式化时间（编辑的时候）
-          // 关联产品信息比较多 用字典接收
-          var params = {}
-
-          if (this.action.type == 'update') {
-            params['value'] =
-              item.value && item.value !== 0
-                ? timestampToFormatTime(item.value, 'YYYY-MM-DD HH:mm:ss')
-                : '' // 编辑的值 在value字段
-          } else {
-            params['value'] = item.default_value // 加入默认值 可能编辑的时候需要调整
-          }
-
-          params['key'] = item.field
-          params['data'] = item
-          params['disabled'] = false // 是否可交互
-          params['styleIndex'] = showStyleIndex
-          this.crmForm.crmFields.push(params)
         } else {
           var params = {}
           if (this.action.type == 'update') {
-            params['value'] = item.value // 编辑的值 在value字段
+            params['value'] = item.value || '' // 编辑的值 在value字段
           } else {
             params['value'] = item.default_value
               ? item.default_value
-              : item.value // 加入默认值 可能编辑的时候需要调整
+              : item.value || '' // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['styleIndex'] = showStyleIndex
@@ -563,14 +536,18 @@ export default {
           params['value'] = relativeData ? [relativeData] : []
         }
       } else {
-        params['value'] = item.value
+        if (item.form_type == 'receivables_plan') {
+          params['value'] = item.value || ''
+        } else {
+          params['value'] = item.value || []
+        }
       }
       if (this.action.type == 'relative' || this.action.type == 'update') {
         // 回款计划 需要合同信息
         if (item.form_type === 'receivables_plan') {
           let contractItem = this.getItemRelatveInfo(item, list, 'contract')
           if (contractItem) {
-            contractItem['form_type'] = 'contract'
+            contractItem['moduleType'] = 'contract'
             params['relation'] = contractItem
           }
           // 商机合同 需要客户信息
@@ -580,10 +557,10 @@ export default {
         ) {
           let customerItem = this.getItemRelatveInfo(item, list, 'customer')
           if (item.form_type == 'business' && customerItem) {
-            customerItem['form_type'] = 'customer'
+            customerItem['moduleType'] = 'customer'
             params['relation'] = customerItem
           } else if (item.form_type == 'contract' && customerItem) {
-            customerItem['form_type'] = 'customer'
+            customerItem['moduleType'] = 'customer'
             customerItem['params'] = { check_status: 2 }
             params['relation'] = customerItem
           }
@@ -665,10 +642,9 @@ export default {
      */
     getItemRulesArrayFromItem(item) {
       var tempList = []
-
       //验证必填
-      if (item.is_null == 1) {
-        if (item.form_type == 'category') {
+      if (item.isNull == 1) {
+        if (item.formType == 'category') {
           tempList.push({
             required: true,
             message: item.name + '不能为空',
@@ -684,15 +660,15 @@ export default {
       }
 
       //验证唯一
-      if (item.is_unique == 1) {
+      if (item.isUnique == 1) {
         var validateUnique = (rule, value, callback) => {
-          if (!value && rule.item.is_null == 0) {
+          if (!value && rule.item.isNull == 0) {
             callback()
           } else {
             var validatesParams = {}
-            validatesParams.field = rule.item.field
+            validatesParams.name = item.name
             validatesParams.val = value
-            validatesParams.types = 'crm_' + this.crmType
+            validatesParams.types = crmTypeModel[this.crmType]
             if (this.action.type == 'update') {
               validatesParams.id = this.action.id
             }
@@ -713,7 +689,7 @@ export default {
       }
 
       // 特殊字符
-      if (item.form_type == 'number') {
+      if (item.formType == 'number') {
         var validateCRMNumber = (rule, value, callback) => {
           if (!value || value == '' || regexIsCRMNumber(value)) {
             callback()
@@ -726,7 +702,7 @@ export default {
           item: item,
           trigger: ['blur']
         })
-      } else if (item.form_type == 'floatnumber') {
+      } else if (item.formType == 'floatnumber') {
         var validateCRMMoneyNumber = (rule, value, callback) => {
           if (!value || value == '' || regexIsCRMMoneyNumber(value)) {
             callback()
@@ -739,7 +715,7 @@ export default {
           item: item,
           trigger: ['blur']
         })
-      } else if (item.form_type == 'mobile') {
+      } else if (item.formType == 'mobile') {
         var validateCRMMobile = (rule, value, callback) => {
           if (!value || value == '' || regexIsCRMMobile(value)) {
             callback()
@@ -752,7 +728,7 @@ export default {
           item: item,
           trigger: ['blur']
         })
-      } else if (item.form_type == 'email') {
+      } else if (item.formType == 'email') {
         var validateCRMEmail = (rule, value, callback) => {
           if (!value || value == '' || regexIsCRMEmail(value)) {
             callback()
@@ -796,7 +772,8 @@ export default {
       this.loading = true
       var crmRequest = this.getSubmiteRequest()
       if (this.action.type == 'update') {
-        params.id = this.action.id
+        params.entity[this.crmType + '_id'] = this.action.id
+        params.entity.batch_id = this.action.batch_id
       }
       crmRequest(params)
         .then(res => {
@@ -810,12 +787,14 @@ export default {
             }
           } else {
             this.hidenView()
-            this.$message.success(res.data)
+            this.$message.success(
+              this.action.type == 'update' ? '编辑成功' : '添加成功'
+            )
           }
           // 回到保存成功
           this.$emit('save-success', {
             type: this.crmType,
-            data: res.data,
+            data: res.data || {},
             saveAndCreate: this.saveAndCreate
           })
         })
@@ -826,29 +805,19 @@ export default {
     /** 获取上传url */
     getSubmiteRequest() {
       if (this.crmType == 'leads') {
-        return this.action.type == 'update' ? crmLeadsUpdate : crmLeadsSave
+        return crmLeadsSave
       } else if (this.crmType == 'customer') {
-        return this.action.type == 'update'
-          ? crmCustomerUpdate
-          : crmCustomerSave
+        return crmCustomerSave
       } else if (this.crmType == 'contacts') {
-        return this.action.type == 'update'
-          ? crmContactsUpdate
-          : crmContactsSave
+        return crmContactsSave
       } else if (this.crmType == 'business') {
-        return this.action.type == 'update'
-          ? crmBusinessUpdate
-          : crmBusinessSave
+        return crmBusinessSave
       } else if (this.crmType == 'product') {
-        return this.action.type == 'update' ? crmProductUpdate : crmProductSave
+        return crmProductSave
       } else if (this.crmType == 'contract') {
-        return this.action.type == 'update'
-          ? crmContractUpdate
-          : crmContractSave
+        return crmContractSave
       } else if (this.crmType == 'receivables') {
-        return this.action.type == 'update'
-          ? crmReceivablesUpdate
-          : crmReceivablesSave
+        return crmReceivablesSave
       } else if (this.crmType == 'receivables_plan') {
         // 回款计划 不能编辑
         return crmReceivablesPlanSave
@@ -856,36 +825,42 @@ export default {
     },
     /** 拼接上传传输 */
     getSubmiteParams(array) {
-      var params = {}
+      var params = { entity: {}, field: [] }
       for (let index = 0; index < array.length; index++) {
         const element = array[index]
-        // 关联产品数据需要特殊拼接
         if (element.key == 'product') {
           this.getProductParams(params, element)
-        } else if (element.key == 'customer_address') {
-          // 位置信息需要注入多个字段
-          this.getCustomerAddressParams(params, element)
+        } else if (element.data.fieldType == 1) {
+          params.entity[element.key] = this.getRealParams(element) || ''
+        } else if (element.key == 'map_address') {
+          this.getCustomerAddressParams(params.entity, element)
         } else {
-          let value = this.getRealParams(element)
-          if (!(element.data.form_type == 'date' && !value)) {
-            params[element.key] = value
-          }
+          element.data.value = this.getRealParams(element)
+          params.field.push(element.data)
         }
       }
       return params
     },
     getProductParams(params, element) {
-      params['product'] = element.value.product
-      params['total_price'] = element.value.total_price
-        ? element.value.total_price
-        : 0
-      params['discount_rate'] = element.value.discount_rate
-        ? element.value.discount_rate
-        : 0
+      if (element.value) {
+        params['product'] = element.value.product ? element.value.product : []
+        params.entity['total_price'] = element.value.total_price
+          ? element.value.total_price
+          : 0
+        params.entity['discount_rate'] = element.value.discount_rate
+          ? element.value.discount_rate
+          : 0
+      } else {
+        params['product'] = []
+        params.entity['total_price'] = ''
+        params.entity['discount_rate'] = ''
+      }
     },
     // 获取客户位置参数
     getCustomerAddressParams(params, element) {
       params['address'] = element.value.address
+        ? element.value.address.join(',')
+        : []
       params['detail_address'] = element.value.detail_address
       params['location'] = element.value.location
       params['lng'] = element.value.lng
@@ -900,27 +875,30 @@ export default {
         element.key == 'leads_id' ||
         element.key == 'contract_id'
       ) {
-        if (element.value.length) {
+        if (element.value && element.value.length) {
           return element.value[0][element.key]
         } else {
           return ''
         }
       } else if (
-        element.data.form_type == 'user' ||
-        element.data.form_type == 'structure'
+        element.data.formType == 'user' ||
+        element.data.formType == 'structure'
       ) {
-        return element.value.map(function(item, index, array) {
-          return item.id
-        })
-      } else if (element.data.form_type == 'file') {
-        return element.value.map(function(item, index, array) {
-          return item.file_id
-        })
-      } else if (element.data.form_type == 'datetime') {
-        // datetime 时间戳 date 格式化时间
         return element.value
-          ? formatTimeToTimestamp(element.value)
-          : element.value
+          .map(function(item, index, array) {
+            return element.data.formType == 'user' ? item.user_id : item.id
+          })
+          .join(',')
+      } else if (element.data.formType == 'file') {
+        if (element.value && element.value.length > 0) {
+          return element.value[0].batchId
+        }
+        return ''
+      } else if (element.data.formType == 'checkbox') {
+        if (element.value && element.value.length > 0) {
+          return element.value.join(',')
+        }
+        return ''
       }
 
       return element.value

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 系统配置
 export function adminSystemSave(data) {
     return request({
-        url: 'admin/system/save',
+        url: 'sysConfig/setSysConfig',
         method: 'post',
         data: data,
         headers: {
@@ -15,11 +15,8 @@ export function adminSystemSave(data) {
 // 系统配置
 export function adminSystemIndex(data) {
     return request({
-        url: 'admin/system/index',
+        url: 'sysConfig/querySysConfig',
         method: 'post',
-        data: data,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+        data: data
     })
 }

@@ -2,40 +2,16 @@
 import {
   mapGetters
 } from 'vuex'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CRMListHead from '../components/CRMListHead'
 import CRMTableHead from '../components/CRMTableHead'
 import FieldsSet from '../components/fieldsManager/FieldsSet'
 import {
-  filedGetField,
+  filedGetTableField,
   crmSceneIndex,
-  crmFieldColumnWidth
+  crmFieldColumnWidth,
+  crmMainIndex
 } from '@/api/customermanagement/common'
-import {
-  crmLeadsIndex
-} from '@/api/customermanagement/clue'
-import {
-  crmCustomerIndex,
-  crmCustomerPool
-} from '@/api/customermanagement/customer'
-import {
-  crmContactsIndex
-} from '@/api/customermanagement/contacts'
-import {
-  crmBusinessIndex
-} from '@/api/customermanagement/business'
-import {
-  crmContractIndex
-} from '@/api/customermanagement/contract'
-import {
-  crmProductIndex
-} from '@/api/customermanagement/product'
-import {
-  crmReceivablesIndex
-} from '@/api/customermanagement/money'
-import {
-  getDateFromTimestamp
-} from '@/utils'
-import moment from 'moment'
 
 export default {
   components: {
@@ -99,19 +75,19 @@ export default {
     /** 获取列表数据 */
     getList() {
       this.loading = true
-      var crmIndexRequest = this.getIndexRequest()
       var params = {
         page: this.currentPage,
         limit: this.pageSize,
-        search: this.search
+        search: this.search,
+        type: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8是公海
       }
       if (this.scene_id) {
         params.scene_id = this.scene_id
       }
-      for (var key in this.filterObj) {
-        params[key] = this.filterObj[key]
+      if (this.filterObj && Object.keys(this.filterObj).length > 0) {
+        params.data = this.filterObj
       }
-      crmIndexRequest(params)
+      crmMainIndex(params)
         .then(res => {
           if (this.crmType === 'customer') {
             this.list = res.data.list.map(element => {
@@ -122,7 +98,7 @@ export default {
             this.list = res.data.list
           }
 
-          this.total = res.data.dataCount
+          this.total = res.data.totalRow
 
           this.loading = false
         })
@@ -130,124 +106,16 @@ export default {
           this.loading = false
         })
     },
-    /** 获取列表请求 */
-    getIndexRequest() {
-      if (this.crmType === 'leads') {
-        return crmLeadsIndex
-      } else if (this.crmType === 'customer') {
-        if (this.isSeas) {
-          return crmCustomerPool
-        } else {
-          return crmCustomerIndex
-        }
-      } else if (this.crmType === 'contacts') {
-        return crmContactsIndex
-      } else if (this.crmType === 'business') {
-        return crmBusinessIndex
-      } else if (this.crmType === 'contract') {
-        return crmContractIndex
-      } else if (this.crmType === 'product') {
-        return crmProductIndex
-      } else if (this.crmType === 'receivables') {
-        return crmReceivablesIndex
-      }
-    },
     /** 获取字段 */
     getFieldList() {
       if (this.fieldList.length == 0) {
         this.loading = true
-        var params = {
-          types: 'crm_' + this.crmType,
-          module: 'crm',
-          action: this.isSeas ? 'pool' : 'index'
-        }
-        params.controller = this.crmType
-
-        filedGetField(params)
+        filedGetTableField({
+            label: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8 是公海
+          })
           .then(res => {
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
-              /** 获取需要格式化的字段 和格式化的规则 */
-              if (element.form_type === 'date') {
-                function fieldFormatter(time) {
-                  if (time == '0000-00-00') {
-                    time = ''
-                  }
-                  return time
-                }
-                this.formatterRules[element.field] = {
-                  formatter: fieldFormatter
-                }
-              } else if (element.form_type === 'datetime') {
-                function fieldFormatter(time) {
-                  if (time == 0 || !time) {
-                    return ""
-                  }
-                  return moment(getDateFromTimestamp(time)).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                  )
-                }
-                this.formatterRules[element.field] = {
-                  formatter: fieldFormatter
-                }
-              } else if (element.field === 'create_user_id' || element.field === 'owner_user_id') {
-                function fieldFormatter(info) {
-                  return info ? info.realname : ''
-                }
-                this.formatterRules[element.field] = {
-                  type: 'crm',
-                  formatter: fieldFormatter
-                }
-              } else if (element.form_type === 'user') {
-                function fieldFormatter(info) {
-                  if (info) {
-                    var content = ''
-                    for (let index = 0; index < info.length; index++) {
-                      const element = info[index]
-                      content = content + element.realname + (index === (info.length - 1) ? '' : ',')
-                    }
-                    return content
-                  }
-                  return ''
-                }
-                this.formatterRules[element.field] = {
-                  type: 'crm',
-                  formatter: fieldFormatter
-                }
-              } else if (element.form_type === 'structure') {
-                function fieldFormatter(info) {
-                  if (info) {
-                    var content = ''
-                    for (let index = 0; index < info.length; index++) {
-                      const element = info[index]
-                      content = content + element.name + (index === (info.length - 1) ? '' : ',')
-                    }
-                    return content
-                  }
-                  return ''
-                }
-                this.formatterRules[element.field] = {
-                  type: 'crm',
-                  formatter: fieldFormatter
-                }
-                /** 联系人 客户 商机 合同*/
-              } else if (element.field === 'contacts_id' || element.field === 'customer_id' || element.field === 'business_id' || element.field === 'contract_id') {
-                function fieldFormatter(info) {
-                  return info ? info.name : ''
-                }
-                this.formatterRules[element.field] = {
-                  type: 'crm',
-                  formatter: fieldFormatter
-                }
-              } else if (element.field === 'status_id' || element.field === 'type_id' || element.field === 'category_id') {
-                function fieldFormatter(info) {
-                  return info ? info : ''
-                }
-                this.formatterRules[element.field] = {
-                  type: 'crm',
-                  formatter: fieldFormatter
-                }
-              }
 
               var width = 0
               if (!element.width) {
@@ -261,7 +129,7 @@ export default {
               }
 
               this.fieldList.push({
-                prop: element.field,
+                prop: element.fieldName,
                 label: element.name,
                 width: width
               })
@@ -277,7 +145,6 @@ export default {
         // 获取好字段开始请求数据
         this.getList()
       }
-
     },
     /** 格式化字段 */
     fieldFormatter(row, column) {
@@ -323,7 +190,7 @@ export default {
         this.showDview = true
       } else if (this.crmType === 'contacts') {
         if (column.property === 'customer_id') {
-          this.rowID = row.customer_id_info.customer_id
+          this.rowID = row.customer_id
           this.rowType = 'customer'
         } else {
           this.rowID = row.contacts_id
@@ -332,7 +199,7 @@ export default {
         this.showDview = true
       } else if (this.crmType === 'business') {
         if (column.property === 'customer_id') {
-          this.rowID = row.customer_id_info.customer_id
+          this.rowID = row.customer_id
           this.rowType = 'customer'
         } else {
           this.rowID = row.business_id
@@ -341,13 +208,13 @@ export default {
         this.showDview = true
       } else if (this.crmType === 'contract') {
         if (column.property === 'customer_id') {
-          this.rowID = row.customer_id_info.customer_id
+          this.rowID = row.customer_id
           this.rowType = 'customer'
         } else if (column.property === 'business_id') {
-          this.rowID = row.business_id_info.business_id
+          this.rowID = row.business_id
           this.rowType = 'business'
         } else if (column.property === 'contacts_id') {
-          this.rowID = row.contacts_id_info.contacts_id
+          this.rowID = row.contacts_id
           this.rowType = 'contacts'
         } else {
           this.rowID = row.contract_id
@@ -359,7 +226,7 @@ export default {
         this.showDview = true
       } else if (this.crmType === 'receivables') {
         if (column.property === 'customer_id') {
-          this.rowID = row.customer_id_info.customer_id
+          this.rowID = row.customer_id
           this.rowType = 'customer'
         } else if (column.property === 'contract_id') {
           this.rowID = row.contract_id

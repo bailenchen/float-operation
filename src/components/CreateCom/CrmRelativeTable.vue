@@ -46,10 +46,9 @@
                        :key="index"
                        :fixed="index===0"
                        show-overflow-tooltip
-                       :prop="item.prop"
-                       :label="item.label"
-                       :width="150"
-                       :formatter="fieldFormatter"></el-table-column>
+                       :prop="item.field"
+                       :label="item.name"
+                       :width="150"></el-table-column>
       <el-table-column></el-table-column>
     </el-table>
     <div class="table-footer">
@@ -65,13 +64,15 @@
   </div>
 </template>
 <script type="text/javascript">
-import { crmLeadsIndex } from '@/api/customermanagement/clue'
-import { crmCustomerIndex } from '@/api/customermanagement/customer'
-import { crmContactsIndex } from '@/api/customermanagement/contacts'
-import { crmBusinessIndex } from '@/api/customermanagement/business'
-import { crmContractIndex } from '@/api/customermanagement/contract'
-import { crmProductIndex } from '@/api/customermanagement/product'
-import { crmSceneIndex } from '@/api/customermanagement/common'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
+import { crmSceneIndex, crmMainIndex } from '@/api/customermanagement/common'
+// 客户下商机和联系人
+import {
+  crmCustomerQueryBusiness,
+  crmCustomerQueryContract,
+  crmCustomerQueryContacts
+} from '@/api/customermanagement/customer'
+
 import { getDateFromTimestamp } from '@/utils'
 import moment from 'moment'
 
@@ -140,9 +141,7 @@ export default {
       currentPage: 1, // 当前页数
       totalPage: 1, //总页数
 
-      selectedItem: [], // 勾选的数据 点击确定 传递给父组件
-      /** 格式化规则 */
-      formatterRules: {}
+      selectedItem: [] // 勾选的数据 点击确定 传递给父组件
     }
   },
   props: {
@@ -186,13 +185,13 @@ export default {
     getSceneList() {
       this.loading = true
       crmSceneIndex({
-        types: 'crm_' + this.crmType
+        type: crmTypeModel[this.crmType]
       })
         .then(res => {
-          var defaultScene = res.data.list.filter(function(item, index) {
+          var defaultScene = res.data.filter(function(item, index) {
             return item.is_default === 1
           })
-          this.scenesList = res.data.list
+          this.scenesList = res.data
           if (defaultScene && defaultScene.length > 0) {
             this.sceneInfo = defaultScene[0]
           }
@@ -209,62 +208,8 @@ export default {
     /** 获取字段 */
     getFieldList() {
       if (this.fieldList.length == 0) {
-        var defaultFields = this.getDefaultField()
-        for (let index = 0; index < defaultFields.length; index++) {
-          const element = defaultFields[index]
-          /** 获取需要格式化的字段 和格式化的规则 */
-          if (element.form_type === 'datetime') {
-            function foramtterDatetime(time) {
-              if (!time || time == 0) {
-                return ''
-              }
-              return moment(getDateFromTimestamp(time)).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )
-            }
-            this.formatterRules[element.field] = {
-              formatter: foramtterDatetime
-            }
-          } else if (element.field === 'create_user_id') {
-            function fieldFormatter(info) {
-              return info ? info.realname : ''
-            }
-            this.formatterRules[element.field] = {
-              type: 'crm',
-              formatter: fieldFormatter
-            }
-            /** 联系人 客户 商机 */
-          } else if (
-            element.field === 'contacts_id' ||
-            element.field === 'customer_id' ||
-            element.field === 'business_id'
-          ) {
-            function fieldFormatter(info) {
-              return info ? info.name : ''
-            }
-            this.formatterRules[element.field] = {
-              type: 'crm',
-              formatter: fieldFormatter
-            }
-          } else if (
-            element.field === 'status_id' ||
-            element.field === 'type_id' ||
-            element.field === 'category_id'
-          ) {
-            function fieldFormatter(info) {
-              return info ? info : ''
-            }
-            this.formatterRules[element.field] = {
-              type: 'crm',
-              formatter: fieldFormatter
-            }
-          }
-
-          this.fieldList.push({
-            prop: element.field,
-            label: element.name
-          })
-        }
+        this.fieldList = this.getDefaultField()
+        console.log('this.fieldList---', this.fieldList)
       }
       // 获取好字段开始请求数据
       this.getList()
@@ -280,7 +225,7 @@ export default {
         ]
       } else if (this.crmType === 'customer') {
         return [
-          { name: '客户名称', field: 'name', form_type: 'customer' },
+          { name: '客户名称', field: 'customer_name', form_type: 'customer' },
           { name: '下次联系时间', field: 'next_time', form_type: 'datetime' },
           { name: '最后跟进时间', field: 'update_time', form_type: 'datetime' },
           { name: '创建时间 ', field: 'create_time', form_type: 'datetime' }
@@ -293,17 +238,17 @@ export default {
         ]
       } else if (this.crmType === 'business') {
         return [
-          { name: '商机名称', field: 'name', form_type: 'text' },
-          { name: '商机金额', field: 'money', form_type: 'text' },
-          { name: '客户名称', field: 'customer_id', form_type: 'text' },
-          { name: '商机状态组 ', field: 'type_id', form_type: 'text' },
-          { name: '状态 ', field: 'status_id', form_type: 'text' }
+          { name: '商机名称', field: 'business_name', form_type: 'text' },
+          { name: '商机金额', field: 'total_price', form_type: 'text' },
+          { name: '客户名称', field: 'customer_name', form_type: 'text' },
+          { name: '商机状态组 ', field: 'type_name', form_type: 'text' },
+          { name: '状态 ', field: 'status_name', form_type: 'text' }
         ]
       } else if (this.crmType === 'contract') {
         return [
           { name: '合同编号', field: 'num', form_type: 'text' },
-          { name: '合同名称', field: 'name', form_type: 'text' },
-          { name: '客户名称', field: 'customer_id', form_type: 'text' },
+          { name: '合同名称', field: this.isRelationShow ? 'contract_name' : 'name', form_type: 'text' },
+          { name: '客户名称', field: 'customer_name', form_type: 'text' },
           { name: '合同金额', field: 'money', form_type: 'text' },
           { name: '开始日期', field: 'start_time', form_type: 'text' },
           { name: '结束日期', field: 'end_time', form_type: 'text' }
@@ -318,64 +263,64 @@ export default {
         ]
       }
     },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
-    },
     /** 获取列表数据 */
     getList() {
       this.loading = true
-      var crmIndexRequest = this.getIndexRequest()
-
-      var params = {
-        page: this.currentPage,
-        limit: 10,
-        search: this.searchContent
-      }
+      let crmIndexRequest = crmMainIndex
+      console.log('crmIndexRequest---', crmIndexRequest)
+      console.log('this.action,--', this.action);
+      console.log('this.crmType---', this.crmType);
+      let params = {}
       // 注入场景
       if (this.sceneInfo) {
         params.scene_id = this.sceneInfo.scene_id
       }
       // 注入关联ID
       if (this.isRelationShow) {
-        // 客户下相关展示
-        if (this.action.data.form_type === 'customer') {
-          // 是什么类型下的数据 传入什么类型的ID
-          params.customer_id = this.action.data.customer_id
+        // this.action.data.moduleType 下的 this.crmType 的列表
+        if (this.action.data.moduleType) {
+          crmIndexRequest = {
+            customer: {
+              business: crmCustomerQueryBusiness,
+              contacts: crmCustomerQueryContacts,
+              contract: crmCustomerQueryContract
+            }
+          }[this.action.data.moduleType][this.crmType]
+
+          params[this.action.data.moduleType + 'Id'] = this.action.data[
+            this.action.data.moduleType + '_id'
+          ]
+          console.log('params---', params, this.action.data)
           if (this.action.data.params) {
             for (let field in this.action.data.params) {
               params[field] = this.action.data.params[field]
             }
           }
         }
+      } else {
+        params = {
+          page: this.currentPage,
+          limit: 10,
+          search: this.searchContent,
+          type: crmTypeModel[this.crmType]
+        }
       }
-
+      console.log('crmIndexRequest---', crmIndexRequest)
       crmIndexRequest(params)
         .then(res => {
           this.list = res.data.list
           /**
            *  如果已选择的有数据
            */
+
           if (this.selectedData[this.crmType]) {
             this.checkItemsWithSelectedData()
           } else {
             this.list = res.data.list
           }
 
-          this.totalPage = Math.ceil(res.data.dataCount / 10)
+          console.log('this.list---', this.list)
+          this.totalPage = Math.ceil(res.data.totalRow / 10)
           this.loading = false
         })
         .catch(() => {
@@ -402,22 +347,6 @@ export default {
           this.$refs.relativeTable.toggleRowSelection(row, true)
         })
       })
-    },
-    /** 获取列表请求 */
-    getIndexRequest() {
-      if (this.crmType === 'leads') {
-        return crmLeadsIndex
-      } else if (this.crmType === 'customer') {
-        return crmCustomerIndex
-      } else if (this.crmType === 'contacts') {
-        return crmContactsIndex
-      } else if (this.crmType === 'business') {
-        return crmBusinessIndex
-      } else if (this.crmType === 'contract') {
-        return crmContractIndex
-      } else if (this.crmType === 'product') {
-        return crmProductIndex
-      }
     },
     // 场景选择
     handleTypeDrop(command) {

@@ -47,7 +47,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="receivables"
-                       :action="{type: 'update', id: this.id}"
+                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -105,6 +105,7 @@ export default {
     return {
       loading: false, // 展示加载loading
       crmType: 'receivables',
+      name: '', // 名称
       detailData: {}, // read 详情
       headDetails: [
         { title: '客户名称', value: '' },
@@ -138,26 +139,19 @@ export default {
     getDetial() {
       this.loading = true
       crmReceivablesRead({
-        id: this.id
+        receivablesId: this.id
       })
         .then(res => {
           this.loading = false
+          this.name = res.data.number
           this.detailData = res.data
           //   // 负责人
-          this.headDetails[0].value = res.data.customer_id_info
-            ? res.data.customer_id_info.name
-            : ''
-          this.headDetails[1].value = res.data.contract_id_info
-            ? res.data.contract_id_info.money
-            : ''
-          this.headDetails[2].value = res.data.contract_id_info
-            ? res.data.contract_id_info.name
-            : ''
-          this.headDetails[3].value = res.data.return_time == '0000-00-00' ? '' : res.data.return_time
+          this.headDetails[0].value = res.data.customer_name
+          this.headDetails[1].value = res.data.money
+          this.headDetails[2].value = res.data.contract_name
+          this.headDetails[3].value = res.data.return_time
           this.headDetails[4].value = res.data.money
-          this.headDetails[5].value = res.data.owner_user_id_info
-            ? res.data.owner_user_id_info.realname
-            : ''
+          this.headDetails[5].value = res.data.owner_user_name
         })
         .catch(() => {
           this.loading = false

@@ -24,7 +24,7 @@ router.beforeEach((to, from, next) => {
     } else {
       if (!store.getters.allAuth) { // 判断当前用户是否获取权限
         store.dispatch('getAuth').then(res => { // 拉取user_info
-          const auths = res.data
+          const auths = res
           store.dispatch('GenerateRoutes', auths).then(() => { // 根据auths权限生成可访问的路由表
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
             next({

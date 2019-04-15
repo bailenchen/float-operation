@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 审批类型列表
 export function oaExamineCategory(data) {
   return request({
-    url: 'oa/examine/category',
+    url: 'OaExamineCategory/queryExamineCategoryList',
     method: 'post',
     data: data
   })
@@ -18,21 +18,11 @@ export function oaExamineCategory(data) {
  */
 export function oaExamineCategorySave(data) {
   return request({
-    url: 'oa/examine/categorySave',
+    url: 'OaExamineCategory/setExamineCategory',
     method: 'post',
-    data: data
-  })
-}
-
-/**
- * 审批类型编辑
- * @param {*} data
- * id 审批类型ID
- */
-export function oaExamineCategoryUpdate(data) {
-  return request({
-    url: 'oa/examine/categoryUpdate',
-    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     data: data
   })
 }
@@ -44,7 +34,7 @@ export function oaExamineCategoryUpdate(data) {
  */
 export function oaExamineCategoryDelete(data) {
   return request({
-    url: 'oa/examine/categoryDelete',
+    url: 'OaExamineCategory/deleteExamineCategory',
     method: 'post',
     data: data
   })
@@ -58,7 +48,7 @@ export function oaExamineCategoryDelete(data) {
  */
 export function oaExamineCategoryEnables(data) {
   return request({
-    url: 'oa/examine/categoryEnables',
+    url: 'OaExamineCategory/updateStatus',
     method: 'post',
     data: data
   })

@@ -22,6 +22,7 @@
             <template v-if="item.type == 'date'">
               <el-date-picker v-model="formData[item.field]"
                               type="date"
+                              value-format="yyyy-MM-dd"
                               placeholder="选择日期">
               </el-date-picker>
             </template>
@@ -56,8 +57,8 @@ export default {
     return {
       formList: [
         { label: '公告标题', field: 'title' },
-        { label: '开始时间', field: 'start_time', type: 'date' },
-        { label: '结束时间', field: 'end_time', type: 'date' },
+        { label: '开始时间', field: 'startTime', type: 'date' },
+        { label: '结束时间', field: 'endTime', type: 'date' },
         { label: '公告正文', field: 'content', type: 'textarea' }
       ],
       rules: {
@@ -140,13 +141,13 @@ $size16: 16px;
         }
       }
       .el-form-itemtitle,
-      .el-form-itemend_time {
+      .el-form-itemendTime {
         padding-right: 25px;
       }
-      .el-form-itemstart_time {
+      .el-form-itemstartTime {
         padding-left: 25px;
       }
-      .el-form-itemstart_time {
+      .el-form-itemstartTime {
         margin-bottom: 11px;
       }
       .el-form-itemcontent {

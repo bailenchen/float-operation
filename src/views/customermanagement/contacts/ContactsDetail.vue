@@ -40,7 +40,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="contacts"
-                       :action="{type: 'update', id: this.id}"
+                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -59,6 +59,7 @@ import RelativeHandle from '../components/RelativeHandle' //相关操作
 import RelativeFiles from '../components/RelativeFiles' //相关附件
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 
+import { getDateFromTimestamp } from '@/utils'
 import moment from 'moment'
 import detail from '../mixins/detail'
 
@@ -109,7 +110,7 @@ export default {
         { title: '客户名称', value: '' },
         { title: '职务', value: '' },
         { title: '手机', value: '' },
-        { title: '更新时间', value: '' }
+        { title: '创建时间', value: '' }
       ],
       tabCurrentName: 'followlog',
       isCreate: false // 编辑操作
@@ -149,18 +150,16 @@ export default {
     getDetial() {
       this.loading = true
       crmContactsRead({
-        id: this.id
+        contactsId: this.id
       })
         .then(res => {
           this.loading = false
           this.detailData = res.data
           // 负责人
-          this.headDetails[0].value = res.data.customer_id_info
-            ? res.data.customer_id_info.name
-            : ''
+          this.headDetails[0].value = res.data.customer_name
           this.headDetails[1].value = res.data.post
           this.headDetails[2].value = res.data.mobile
-          this.headDetails[3].value = res.data.update_time
+          this.headDetails[3].value = res.data.create_time
         })
         .catch(() => {
           this.loading = false

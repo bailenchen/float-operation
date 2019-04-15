@@ -1,3 +1,162 @@
+/**
+ * Created by jiachenpan on 16/11/18.
+ */
+
+export function parseTime(time, cFormat) {
+  if (arguments.length === 0) {
+    return null
+  }
+  const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+  let date
+  if (typeof time === 'object') {
+    date = time
+  } else {
+    if (('' + time).length === 10) time = parseInt(time) * 1000
+    date = new Date(time)
+  }
+  const formatObj = {
+    y: date.getFullYear(),
+    m: date.getMonth() + 1,
+    d: date.getDate(),
+    h: date.getHours(),
+    i: date.getMinutes(),
+    s: date.getSeconds(),
+    a: date.getDay()
+  }
+  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+    let value = formatObj[key]
+    // Note: getDay() returns 0 on Sunday
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
+    if (result.length > 0 && value < 10) {
+      value = '0' + value
+    }
+    return value || 0
+  })
+  return time_str
+}
+
+export function formatTime(time, option) {
+  time = +time * 1000
+  const d = new Date(time)
+  const now = Date.now()
+
+  const diff = (now - d) / 1000
+
+  if (diff < 30) {
+    return '刚刚'
+  } else if (diff < 3600) {
+    // less 1 hour
+    return Math.ceil(diff / 60) + '分钟前'
+  } else if (diff < 3600 * 24) {
+    return Math.ceil(diff / 3600) + '小时前'
+  } else if (diff < 3600 * 24 * 2) {
+    return '1天前'
+  }
+  if (option) {
+    return parseTime(time, option)
+  } else {
+    return (
+      d.getMonth() +
+      1 +
+      '月' +
+      d.getDate() +
+      '日' +
+      d.getHours() +
+      '时' +
+      d.getMinutes() +
+      '分'
+    )
+  }
+}
+
+export function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
+}
+
+/** 压缩文件
+ * quality压缩百分比 0.3
+ */
+export function compressImage(file, quality, callback) {
+  // quality 设置为0.3
+  quality = quality || 0.3
+  const reader = new FileReader()
+  reader.onload = function (event) {
+    var result = event.target.result
+    if (file.size > 204800 && file.type !== 'image/gif' && quality < 1) { // 大于200Kb
+      const img = new Image()
+      img.src = result
+      img.onload = function () {
+        // 如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+        var initSize = img.src.length
+        var width = img.width
+        var height = img.height
+
+        var ratio
+        if ((ratio = width * height / 4000000) > 1) {
+          ratio = Math.sqrt(ratio)
+          width /= ratio
+          height /= ratio
+        } else {
+          ratio = 1
+        }
+        var canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        // 铺底色
+        var ctx = canvas.getContext('2d')
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        // 如果图片像素大于100万则使用瓦片绘制
+        var count
+        if ((count = width * height / 1000000) > 1) {
+          count = ~~(Math.sqrt(count) + 1)
+          // 计算要分成多少块瓦片
+          // 计算每块瓦片的宽和高
+          var nw = ~~(width / count)
+          var nh = ~~(height / count)
+          var tCanvas = document.createElement('canvas')
+          tCanvas.width = nw
+          tCanvas.height = nh
+          for (var i = 0; i < count; i++) {
+            for (var j = 0; j < count; j++) {
+              var tctx = tCanvas.getContext('2d')
+              tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh)
+
+              ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh)
+            }
+          }
+          tCanvas.width = tCanvas.height = 0
+        } else {
+          ctx.drawImage(img, 0, 0, width, height)
+        }
+        // 进行最小压缩
+        var ndata = canvas.toDataURL('image/jpeg', quality)
+        canvas.width = canvas.height = 0
+        callback(ndata)
+      }
+    } else { // 小于200K不需要压缩 直接返回
+      callback(result)
+    }
+  }
+  reader.readAsDataURL(file)
+}
+
+/** 根据date URL 创建blob 用于上传 */
+export function createBlob(result) {
+  var arr = result.split(',')
+  var mime = arr[0].match(/:(.*?)/)[1]
+  var bstr = atob(arr[1])
+  var n = bstr.length
+  var u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new Blob([u8arr], {
+    type: mime
+  })
+}
 
 /** 获取file大小的名称 */
 export function fileSize(size) {
@@ -115,7 +274,7 @@ export function regexIsCRMMoneyNumber(nubmer) {
 
 /** 判断输入的是电话*/
 export function regexIsCRMMobile(mobile) {
-  var regex = /^1[3-9]\d{9}$/
+  var regex = /^1[3456789]\d{9}$/
   if (!regex.test(mobile)) {
     return false
   }
@@ -244,4 +403,23 @@ export function dataURLtoBlob(dataurl) {
   return new Blob([u8arr], {
     type: mime
   })
+}
+
+export function getBase64Image(img) {
+  var canvas = document.createElement("canvas")
+  canvas.width = img.width
+  canvas.height = img.height
+  var ctx = canvas.getContext("2d")
+  ctx.drawImage(img, 0, 0, img.width, img.height)
+  var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase()
+  var dataURL = canvas.toDataURL("image/" + ext)
+  return dataURL
+}
+
+// 获取绑定参数
+export function guid() {
+  function S4() {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  }
+  return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
 }

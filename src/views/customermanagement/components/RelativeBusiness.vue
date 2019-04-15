@@ -22,7 +22,6 @@
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
-                       :formatter="fieldFormatter"
                        :label="item.label">
       </el-table-column>
     </el-table>
@@ -41,7 +40,8 @@
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
-import { crmBusinessIndex } from '@/api/customermanagement/business'
+import { crmCustomerQueryBusiness } from '@/api/customermanagement/customer'
+import { crmContactsQueryBusiness } from '@/api/customermanagement/contacts'
 
 export default {
   name: 'relative-business', //相关联系人商机  可能再很多地方展示 放到客户管理目录下（新建时仅和客户进行关联）
@@ -60,8 +60,6 @@ export default {
       showFullDetail: false,
       isCreate: false, // 控制新建
       businessId: '', // 查看全屏联系人详情的 ID
-      /** 格式化规则 */
-      formatterRules: {},
       // 创建的相关信息
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {} }
     }
@@ -100,50 +98,37 @@ export default {
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'name', width: '200', label: '商机名称' })
       this.fieldList.push({
-        prop: 'money',
+        prop: 'business_name',
+        width: '200',
+        label: '商机名称'
+      })
+      this.fieldList.push({
+        prop: 'total_price',
         width: '200',
         label: '商机金额'
       })
       this.fieldList.push({
-        prop: 'customer_id',
+        prop: 'customer_name',
         width: '200',
         label: '客户名称'
       })
       this.fieldList.push({
-        prop: 'type_id',
+        prop: 'type_name',
         width: '200',
         label: '商机状态组'
       })
-      this.fieldList.push({ prop: 'status_id', width: '200', label: '状态' })
-
-      // 为客户名称 商机状态组 状态 加入字段格式化展示规则
-      function crmFieldFormatter(info) {
-        return info ? info.name : ''
-      }
-      this.formatterRules['customer_id'] = {
-        type: 'crm',
-        formatter: crmFieldFormatter
-      }
-      function fieldFormatter(info) {
-        return info ? info : ''
-      }
-      this.formatterRules['type_id'] = {
-        type: 'crm',
-        formatter: fieldFormatter
-      }
-      this.formatterRules['status_id'] = {
-        type: 'crm',
-        formatter: fieldFormatter
-      }
+      this.fieldList.push({ prop: 'status_name', width: '200', label: '状态' })
     },
     getDetail() {
       this.loading = true
-      crmBusinessIndex({
-        pageType: 'all',
-        customer_id: this.id
-      })
+      let request = {
+        contacts: crmContactsQueryBusiness,
+        customer: crmCustomerQueryBusiness
+      }[this.crmType]
+      let params = {}
+      params[this.crmType + 'Id'] = this.id
+      request(params)
         .then(res => {
           if (this.fieldList.length == 0) {
             this.getFieldList()
@@ -158,23 +143,6 @@ export default {
           }
           this.loading = false
         })
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
@@ -193,7 +161,7 @@ export default {
     createClick() {
       /** 客户 和 联系人 下可新建商机  */
       if (this.crmType == 'contacts') {
-        this.createActionInfo.data['customer'] = this.detail.customer_id_info
+        this.createActionInfo.data['customer'] = this.detail
       } else if (this.crmType == 'customer') {
         this.createActionInfo.data['customer'] = this.detail
       }

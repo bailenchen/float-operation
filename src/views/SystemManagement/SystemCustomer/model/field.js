@@ -2,22 +2,22 @@ class Field {
   constructor(obj) {
     this.field_id = obj.field_id || '' //  字段id  1
     this.name = obj.name || '' //  标识名  1
-    this.form_type = obj.form_type || '' // 字段类型  1
+    this.formType = obj.formType || '' // 字段类型  1
     this.is_unique = obj.is_unique || false // 是否唯一
     this.is_null = obj.is_null || false // 是否必填
     this.input_tips = obj.input_tips || '' // 输入提示
-    if (this.form_type === 'textarea') {
+    if (this.formType === 'textarea') {
       this.max_length = obj.max_length || 1000 // textarea 多行文本有最大数量
     }
 
-    if (this.form_type === 'checkbox') {
+    if (this.formType === 'checkbox') {
       this.default_value = obj.default_value || []
     } else {
       this.default_value = obj.default_value || ''
     }
 
     // 表格的特殊处理
-    if (this.form_type === 'form') {
+    if (this.formType === 'form') {
       this.form_value = obj.form_value || [] // 内部布局
     }
 

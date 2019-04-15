@@ -6,7 +6,7 @@
               popper-class="no-padding-popover"
               trigger="click">
     <crm-relative ref="crmrelative"
-                  :crm-type="item.data.form_type"
+                  :crm-type="item.data.formType"
                   :action="relationAction"
                   v-if="!disabled&&showSelectView"
                   @close="showPopover=false"
@@ -19,7 +19,7 @@
       <div v-for="(aitem, aindex) in dataValue"
            :key="aindex"
            @click.stop="deleteinfo(aindex)"
-           class="user-item">{{item.data.form_type==='contract' ? aitem.num : aitem.name}}
+           class="user-item">{{getShowName(aitem)}}
         <i class="delete-icon el-icon-close"></i>
       </div>
       <div class="add-item"
@@ -45,7 +45,7 @@ export default {
   },
   watch: {
     relation: function(val) {
-      if (val.form_type) {
+      if (val.moduleType) {
         this.relationAction = { type: 'condition', data: val }
       } else {
         this.relationAction = { type: 'default' }
@@ -70,7 +70,7 @@ export default {
     }
   },
   mounted() {
-    if (this.relation && this.relation.form_type) {
+    if (this.relation && this.relation.moduleType) {
       this.relationAction = { type: 'condition', data: this.relation }
     } else {
       this.relationAction = { type: 'default' }
@@ -79,6 +79,7 @@ export default {
   methods: {
     /** 选中 */
     checkInfos(data) {
+      console.log('data---', data);
       this.dataValue = data.data ? data.data : []
       this.$emit('value-change', {
         index: this.index,
@@ -105,6 +106,18 @@ export default {
     },
     contentClick() {
       this.showSelectView = true
+    },
+    getShowName(data) {
+      if (this.item.data.formType === 'receivables') {
+        return data.number
+      } else if (this.item.data.formType === 'customer') {
+        return data.customer_name
+      } else if (this.item.data.formType === 'business') {
+        return data.business_name
+      } else if (this.item.data.formType === 'contract') {
+        return data.contract_num || data.num
+      }
+      return data.name
     }
   }
 }

@@ -29,9 +29,9 @@
                class="handle-item">
         <div class="handle-item-name">同时添加至：</div>
         <el-checkbox-group v-model="addsTypes">
-          <!-- <el-checkbox label="contacts">联系人</el-checkbox> -->
-          <el-checkbox label="crm_business">商机</el-checkbox>
-          <el-checkbox label="crm_contract">合同</el-checkbox>
+          <!-- <el-checkbox label="1">联系人</el-checkbox> -->
+          <el-checkbox label="2">商机</el-checkbox>
+          <el-checkbox label="3">合同</el-checkbox>
         </el-checkbox-group>
       </flexbox>
     </div>
@@ -46,8 +46,20 @@
 
 <script>
 import { XhUserCell } from '@/components/CreateCom'
-import { crmSettingTeamSave } from '@/api/customermanagement/common'
+import {
+  crmCustomerSettingTeamSave,
+  crmCustomerSettingTeamDelete
+} from '@/api/customermanagement/customer'
+import {
+  crmContractSettingTeamSave,
+  crmContractSettingTeamDelete
+} from '@/api/customermanagement/contract'
 
+import {
+  crmBusinessSettingTeamSave,
+  crmBusinessSettingTeamDelete
+} from '@/api/customermanagement/business'
+  
 export default {
   /** 客户管理 的 勾选后的 团队成员 操作 移除操作不可移除客户负责人*/
   name: 'teams-handle',
@@ -125,31 +137,41 @@ export default {
           return item[self.crmType + '_id']
         })
         var user_ids = this.usersList.map(function(item, index, array) {
-          return item.id
+          return item.user_id
         })
         var params = {
-          types: 'crm_' + this.crmType,
-          types_id: action_ids,
-          user_id: user_ids
+          ids: action_ids.join(','),
+          memberIds: user_ids.join(',')
         }
         if (this.crmType === 'customer' && this.title == '添加团队成员') {
           // 只有客户下面同时添加到
           params.module = this.addsTypes
         }
+
+        let request
         if (this.title == '添加团队成员') {
           // 1只读，2读写
-          params.type = this.handleType
+          params.power = this.handleType
+          request = {
+            customer: crmCustomerSettingTeamSave,
+            contract: crmContractSettingTeamSave,
+            business: crmBusinessSettingTeamSave
+          }[this.crmType]
         } else {
-          /** 移除操作 */
-          params.is_del = 1
+          request = {
+            customer: crmCustomerSettingTeamDelete,
+            contract: crmContractSettingTeamDelete,
+            business: crmBusinessSettingTeamDelete
+          }[this.crmType]
         }
-
+  
         this.loading = true
-        crmSettingTeamSave(params)
+
+        request(params)
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.loading = false
             this.handleCancel()

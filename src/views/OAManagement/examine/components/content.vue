@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { oaExamineIndex, oaExamineDelete } from '@/api/oamanagement/examine'
+import { oaExamineMyCreateIndex, oaExamineMyExamineIndex, oaExamineDelete } from '@/api/oamanagement/examine'
 import { formatTimeToTimestamp } from '@/utils'
 import ExamineCell from './examineCell'
 import ExamineDetail from './examineDetail'
@@ -78,7 +78,7 @@ export default {
     return {
       loading: false,
       loadMoreLoading: true,
-      check_status: this.by == 'examine' ? 'stay_examine' : 'all',
+      check_status: this.by == 'examine' ? '1' : '',
       between_time: [],
       list: [],
       // 判断是否发请求
@@ -112,12 +112,12 @@ export default {
     statusOptions() {
       if (this.by == 'examine') {
         return [
-          { label: '待我审批的', key: 'stay_examine' },
-          { label: '我已审批的', key: 'already_examine' }
-        ]
+          { label: '待我审批的', key: '1' },
+          { label: '我已审批的', key: '2' }
+        ]// 1待我审批的、2我已审批的
       } else {
         return [
-          { label: '全部', key: 'all' },
+          { label: '全部', key: '' },
           { label: '待审', key: '0' },
           { label: '审批中', key: '1' },
           { label: '通过', key: '2' },
@@ -156,25 +156,27 @@ export default {
     /** 获取列表数据 */
     getList() {
       this.loading = true
-      let by = ''
-      let check_status = ''
-      if (this.by == 'examine') {
-        by = this.check_status
-        check_status = 'all'
-      } else {
-        by = this.by
-        check_status = this.check_status
-      }
-      oaExamineIndex({
-        by: by,
+      let params = {
+        page: this.page,
         limit: 15,
-        category_id: this.category_id,
-        check_status: check_status,
-        between_time: this.between_time.map(function(item, index, array) {
-          return formatTimeToTimestamp(item)
-        }),
-        page: this.page
-      })
+        category_id: this.category_id
+      }
+      if (this.by == 'examine') {
+        params.status = this.check_status
+      } else {
+        params.checkStatus = this.check_status
+      }
+
+      if (this.between_time.length > 0) {
+        params.startTime = this.between_time[0]
+        params.endTime = this.between_time[1]
+      }
+
+      let request = {
+        my: oaExamineMyCreateIndex,
+        examine : oaExamineMyExamineIndex
+      }[this.by ]
+      request(params)
         .then(res => {
           this.list = this.list.concat(res.data.list)
           if (res.data.list.length < 15) {

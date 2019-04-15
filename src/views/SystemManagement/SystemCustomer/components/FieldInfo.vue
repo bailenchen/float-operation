@@ -25,7 +25,7 @@
       <div class="name">
         选项设置
       </div>
-      <el-radio-group v-if="field.form_type == 'select'"
+      <el-radio-group v-if="field.formType == 'select'"
                       v-model="field.default_value"
                       :disabled="disabled">
         <draggable :list="field.showSetting">
@@ -45,7 +45,7 @@
           </el-radio>
         </draggable>
       </el-radio-group>
-      <el-checkbox-group v-if="field.form_type == 'checkbox'"
+      <el-checkbox-group v-if="field.formType == 'checkbox'"
                          v-model="field.default_value"
                          :disabled="disabled">
         <draggable :list="field.showSetting">
@@ -78,8 +78,8 @@
       <el-date-picker v-if="show_datepicker"
                       v-model="field.default_value"
                       :disabled="disabled"
-                      :type="field.form_type == 'date' ? 'date' : 'datetime'"
-                      :value-format="field.form_type == 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"
+                      :type="field.formType == 'date' ? 'date' : 'datetime'"
+                      :value-format="field.formType == 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"
                       placeholder="选择日期">
       </el-date-picker>
       <div v-if="default_tips"
@@ -118,16 +118,16 @@ export default {
   },
   computed: {
     default_tips() {
-      if (this.field.form_type == 'floatnumber') {
+      if (this.field.formType == 'floatnumber') {
         return '货币的整数部分须少于10位，小数部分须少于2位'
-      } else if (this.field.form_type == 'number') {
+      } else if (this.field.formType == 'number') {
         return '数字的整数部分须少于12位，小数部分须少于4位'
       }
       return ''
     },
     /** 展示最大输入 */
     show_max_input() {
-      if (this.field.form_type == 'textarea') {
+      if (this.field.formType == 'textarea') {
         return true
       }
       return false
@@ -135,8 +135,8 @@ export default {
     /** 展示默认值块 */
     show_default_value() {
       if (
-        this.field.form_type == 'select' ||
-        this.field.form_type == 'checkbox'
+        this.field.formType == 'select' ||
+        this.field.formType == 'checkbox'
       ) {
         return false
       }
@@ -145,8 +145,8 @@ export default {
     /** 展示单选多选 */
     show_select() {
       if (
-        this.field.form_type == 'select' ||
-        this.field.form_type == 'checkbox'
+        this.field.formType == 'select' ||
+        this.field.formType == 'checkbox'
       ) {
         return true
       }
@@ -155,8 +155,8 @@ export default {
     /** 展示时间选择 */
     show_datepicker() {
       if (
-        this.field.form_type == 'date' ||
-        this.field.form_type == 'datetime'
+        this.field.formType == 'date' ||
+        this.field.formType == 'datetime'
       ) {
         return true
       }
@@ -165,8 +165,8 @@ export default {
     /** 控制人员和部分不展示默认值 */
     is_userstructure() {
       if (
-        this.field.form_type == 'user' ||
-        this.field.form_type == 'structure'
+        this.field.formType == 'user' ||
+        this.field.formType == 'structure'
       ) {
         return true
       }
@@ -202,7 +202,7 @@ export default {
       default: () => {
         return {
           name: '', //  标识名
-          form_type: '', // 字段类型
+          formType: '', // 字段类型
           is_unique: false, // 是否唯一
           is_null: false, // 是否必填
           input_tips: '', // 输入提示
@@ -248,14 +248,14 @@ export default {
     },
     /*** 输入默认值触发 */
     inputBlur(e) {
-      if (this.field.form_type == 'mobile') {
+      if (this.field.formType == 'mobile') {
         if (!regexIsCRMMobile(this.field.default_value)) {
           this.$message({
             message: '输入的手机格式有误',
             type: 'error'
           })
         }
-      } else if (this.field.form_type == 'email') {
+      } else if (this.field.formType == 'email') {
         if (!regexIsCRMEmail(this.field.default_value)) {
           this.$message({
             message: '输入的邮箱格式有误',

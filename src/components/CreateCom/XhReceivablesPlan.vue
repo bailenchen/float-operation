@@ -13,7 +13,9 @@
 </template>
 <script type="text/javascript">
 import stringMixin from './stringMixin'
-import { crmReceivablesPlanIndex } from '@/api/customermanagement/money'
+import {
+  crmContractQueryReceivablesPlan
+} from '@/api/customermanagement/contract'
 
 export default {
   name: 'xh-receivables-plan', // 回款 下的 回款计划
@@ -21,7 +23,7 @@ export default {
   mixins: [stringMixin],
   watch: {
     relation: function(val) {
-      if (val.form_type) {
+      if (val.moduleType) {
         this.getPlanList()
       } else {
         this.option = []
@@ -44,20 +46,17 @@ export default {
     }
   },
   mounted() {
-    if (this.relation.form_type) {
+    if (this.relation.moduleType) {
       this.getPlanList()
     }
   },
   methods: {
     getPlanList() {
       this.loading = true
-      crmReceivablesPlanIndex({
-        contract_id: this.relation.contract_id,
-        pageType: 'all'
-      })
+      crmContractQueryReceivablesPlan({ contractId: this.relation.contract_id, pageType: 0})
         .then(res => {
           this.loading = false
-          this.option = res.data.list
+          this.option = res.data
         })
         .catch(() => {
           this.loading = false

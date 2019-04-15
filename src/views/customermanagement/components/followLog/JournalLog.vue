@@ -191,7 +191,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            journalDelete({ log_id: data.data.item.log_id }).then(res => {
+            journalDelete({ logId: data.data.item.log_id }).then(res => {
               this.$message({
                 type: 'success',
                 message: '删除成功!'

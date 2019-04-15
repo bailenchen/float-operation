@@ -1,19 +1,8 @@
 import request from '@/utils/request'
 
-// 部门列表、增、删、改 depTreeList depDelete depEdit depSave
-export function depTreeList() {
-  return request({
-    url: 'admin/structures/index',
-    method: 'post',
-    data: {
-      type: "tree"
-    }
-  })
-}
-
 export function depDelete(data) {
   return request({
-    url: 'admin/structures/delete',
+    url: 'manager/dept/deleteDept',
     method: 'post',
     data: data
   })
@@ -21,7 +10,7 @@ export function depDelete(data) {
 
 export function depEdit(data) {
   return request({
-    url: 'admin/structures/update',
+    url: 'manager/dept/setDept',
     method: 'post',
     data: data
   })
@@ -29,16 +18,7 @@ export function depEdit(data) {
 
 export function depSave(data) {
   return request({
-    url: 'admin/structures/save',
-    method: 'post',
-    data: data
-  })
-}
-
-// 用户列表
-export function adminUsersIndex(data) {
-  return request({
-    url: 'admin/users/index',
+    url: 'manager/dept/setDept',
     method: 'post',
     data: data
   })
@@ -46,15 +26,7 @@ export function adminUsersIndex(data) {
 
 export function usersAdd(params) {
   return request({
-    url: 'admin/users/save',
-    method: 'post',
-    data: params
-  })
-}
-
-export function usersUpdate(params) {
-  return request({
-    url: 'admin/users/update',
+    url: 'manager/user/setUser',
     method: 'post',
     data: params
   })
@@ -72,7 +44,7 @@ export function jobsList(data) {
 // 角色列表
 export function roleList(data) {
   return request({
-    url: 'admin/groups/index',
+    url: 'manager/role/getAllRoleList',
     method: 'post',
     data: data
   })
@@ -95,7 +67,7 @@ export function resetPassword(data) {
  */
 export function adminUsersUpdatePwd(data) {
   return request({
-    url: 'admin/users/updatePwd',
+    url: 'manager/user/resetPassword',
     method: 'post',
     data: data
   })
@@ -105,7 +77,7 @@ export function adminUsersUpdatePwd(data) {
 // 用户状态修改
 export function usersEditStatus(data) {
   return request({
-    url: 'admin/users/enables',
+    url: 'manager/user/setUserStatus',
     method: 'post',
     data: data
   })
@@ -132,7 +104,7 @@ export function adminUsersTobeusers(data) {
  */
 export function adminStructuresListDialog(data) {
   return request({
-    url: 'admin/structures/listDialog',
+    url: 'manager/dept/queryDeptTree',
     method: 'post',
     data: data
   })

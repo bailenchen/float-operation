@@ -63,7 +63,7 @@ import listTaskDetail from '../task/mixins/listTaskDetail.js'
 import {
   detailsTask,
   readLoglist,
-  taskOver,
+  editTask,
   deleteTask
 } from '@/api/oamanagement/task'
 import { taskListAPI } from '@/api/oamanagement/workbench'
@@ -101,10 +101,10 @@ export default {
       this.loading = true
       taskListAPI()
         .then(res => {
-          for (let item of res.data.list) {
+          for (let item of res.data) {
             item.checked = false
           }
-          this.list = res.data.list
+          this.list = res.data
           this.loading = false
         })
         .catch(err => {
@@ -125,9 +125,9 @@ export default {
     },
     // 列表标记任务
     taskOverFun(item, index) {
-      taskOver({
-        task_id: item.task_id,
-        type: item.checked ? 1 : 2
+      editTask({
+        taskId: item.task_id,
+        status: item.checked ? 5 : 1
       })
         .then(res => {
           if (item.checked) {
@@ -159,7 +159,7 @@ export default {
   }
   .content-box {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
     margin-bottom: 10px;
     .content {
@@ -211,7 +211,10 @@ export default {
       }
     }
   }
-
+  .content-box:hover {
+    overflow: auto;
+    padding-right: 0 !important;
+  }
   .no-task {
     position: absolute;
     top: 50%;

@@ -40,7 +40,7 @@
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
-import { crmContactsIndex } from '@/api/customermanagement/contacts'
+import { crmCustomerQueryContacts } from '@/api/customermanagement/customer'
 
 export default {
   name: 'relative-contacts', //相关联系人列表  可能再很多地方展示 放到客户管理目录下
@@ -97,15 +97,18 @@ export default {
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'name', width: '200', label: '姓名' })
+      this.fieldList.push({
+        prop: 'contacts_name',
+        width: '200',
+        label: '姓名'
+      })
       this.fieldList.push({ prop: 'mobile', width: '200', label: '手机' })
       this.fieldList.push({ prop: 'post', width: '200', label: '职务' })
     },
     getDetail() {
       this.loading = true
-      crmContactsIndex({
-        pageType: 'all',
-        customer_id: this.id
+      crmCustomerQueryContacts({
+        customerId: this.id
       })
         .then(res => {
           if (this.fieldList.length == 0) {

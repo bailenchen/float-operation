@@ -100,7 +100,7 @@ export default {
           width: 150
         },
         {
-          prop: 'config',
+          prop: 'examine_type',
           label: '流程类型',
           width: 150
         },
@@ -110,7 +110,7 @@ export default {
           width: 150
         },
         {
-          prop: 'remark',
+          prop: 'remarks',
           label: '审批说明',
           width: 150
         },
@@ -164,7 +164,7 @@ export default {
         .then(res => {
           this.list = res.data.list
 
-          this.total = res.data.dataCount
+          this.total = res.data.totalRow
 
           this.loading = false
         })
@@ -175,7 +175,7 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      if (column.property === 'config') {
+      if (column.property === 'examine_type') {
         if (row[column.property] === 1) {
           return '固定审批流'
         } else if (row[column.property] === 0) {
@@ -185,12 +185,12 @@ export default {
         }
       } else if (column.property === 'user_ids') {
         var name = ''
-        var structures = row['structure_ids_info']
+        var structures = row['deptIds'] || []
         for (let index = 0; index < structures.length; index++) {
           const element = structures[index]
           name = name + element.name + '、'
         }
-        var users = row['user_ids_info']
+        var users = row['userIds'] || []
         for (let index = 0; index < users.length; index++) {
           const element = users[index]
           name =
@@ -236,6 +236,7 @@ export default {
           name: 'handlefield',
           params: {
             type: 'oa_examine',
+            label: '10',
             id: scope.row.category_id
           }
         })
@@ -262,7 +263,7 @@ export default {
 
                 this.$message({
                   type: 'success',
-                  message: res.data
+                  message: '操作成功'
                 })
                 this.loading = false
               })
@@ -298,7 +299,7 @@ export default {
                 scope.row['status'] = scope.row['status'] === 0 ? 1 : 0
                 this.$message({
                   type: 'success',
-                  message: res.data
+                  message: '操作成功'
                 })
               })
               .catch(() => {})

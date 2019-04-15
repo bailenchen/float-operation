@@ -47,7 +47,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="contract"
-                       :action="{type: 'update', id: this.id}"
+                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -69,6 +69,7 @@ import ExamineInfo from '@/components/Examine/ExamineInfo'
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 
+import { getDateFromTimestamp } from '@/utils'
 import moment from 'moment'
 import detail from '../mixins/detail'
 
@@ -174,24 +175,18 @@ export default {
     getDetial() {
       this.loading = true
       crmContractRead({
-        id: this.id
+        contractId: this.id
       })
         .then(res => {
           this.loading = false
           this.detailData = res.data // 创建回款计划的时候使用
 
           this.headDetails[0].value = res.data.num
-          this.headDetails[1].value = res.data.customer_id_info
-            ? res.data.customer_id_info.name
-            : ''
+          this.headDetails[1].value = res.data.customer_name
           this.headDetails[2].value = res.data.money
-          this.headDetails[3].value = res.data.order_date == '0000-00-00' ? '' : res.data.order_date
-          this.headDetails[4].value = res.data.receivablesMoney
-            ? res.data.receivablesMoney.doneMoney
-            : ''
-          this.headDetails[5].value = res.data.owner_user_id_info
-            ? res.data.owner_user_id_info.realname
-            : ''
+          this.headDetails[3].value = res.data.order_date
+          this.headDetails[4].value = res.data.receivables_money
+          this.headDetails[5].value = res.data.owner_user_name
         })
         .catch(() => {
           this.loading = false

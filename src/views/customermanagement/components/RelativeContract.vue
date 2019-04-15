@@ -22,7 +22,6 @@
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
-                       :formatter="fieldFormatter"
                        :label="item.label">
       </el-table-column>
     </el-table>
@@ -41,7 +40,8 @@
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
-import { crmContractIndex } from '@/api/customermanagement/contract'
+import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
+import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 
 export default {
   name: 'relative-contract', //相关联系人  可能再很多地方展示 放到客户管理目录下
@@ -60,8 +60,6 @@ export default {
       showFullDetail: false,
       isCreate: false, // 控制新建
       contractId: '', // 查看全屏联系人详情的 ID
-      /** 格式化规则 */
-      formatterRules: {},
       // 创建的相关信息
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {} }
     }
@@ -101,9 +99,13 @@ export default {
   methods: {
     getFieldList() {
       this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
-      this.fieldList.push({ prop: 'name', width: '200', label: '合同名称' })
       this.fieldList.push({
-        prop: 'customer_id',
+        prop: 'contract_name',
+        width: '200',
+        label: '合同名称'
+      })
+      this.fieldList.push({
+        prop: 'customer_name',
         width: '200',
         label: '客户名称'
       })
@@ -115,29 +117,23 @@ export default {
       })
 
       this.fieldList.push({ prop: 'end_time', width: '200', label: '结束日期' })
-
-      // 为客户名称加入字段格式化展示规则
-      function fieldFormatter(info) {
-        return info ? info.name : ''
-      }
-      this.formatterRules['customer_id'] = {
-        type: 'crm',
-        formatter: fieldFormatter
-      }
     },
     getDetail() {
       this.loading = true
-      crmContractIndex({
-        pageType: 'all',
-        customer_id: this.id
-      })
+      let request = {
+        customer: crmCustomerQueryContract,
+        business: crmBusinessQueryContract
+      }[this.crmType]
+      let params = { pageType: 0 }
+      params[this.crmType + 'Id'] = this.id
+      request(params)
         .then(res => {
           if (this.fieldList.length == 0) {
             this.getFieldList()
           }
           this.nopermission = false
           this.loading = false
-          this.list = res.data.list
+          this.list = res.data
         })
         .catch(data => {
           if (data.code == 102) {
@@ -145,23 +141,6 @@ export default {
           }
           this.loading = false
         })
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
@@ -180,7 +159,7 @@ export default {
     createClick() {
       /** 客户 和 商机 下新建合同 */
       if (this.crmType == 'business') {
-        this.createActionInfo.data['customer'] = this.detail.customer_id_info
+        this.createActionInfo.data['customer'] = this.detail
         this.createActionInfo.data['business'] = this.detail
       } else if (this.crmType == 'customer') {
         this.createActionInfo.data['customer'] = this.detail

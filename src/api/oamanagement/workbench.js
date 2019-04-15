@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 工作圈列表
 export function workbenchList (data) {
     return request({
-        url: 'oa/index/index',
+        url: 'OaRecord/getOaRecordPageList',
         method: 'post',
         data: data
     })
@@ -11,15 +11,15 @@ export function workbenchList (data) {
 // 工作圈列表
 export function eventList (data) {
     return request({
-        url: 'oa/index/eventList',
+        url: 'OaRecord/queryEvent',
         method: 'post',
         data: data
     })
 }
 // 根据时间查日程
-export function scheduleListAPI (data) {
+export function scheduleDayList (data) {
     return request({
-        url: 'oa/index/event',
+        url: 'OaRecord/queryEventByDay',
         method: 'post',
         data: data
     })
@@ -27,7 +27,7 @@ export function scheduleListAPI (data) {
 // 工作圈列表
 export function taskListAPI (data) {
     return request({
-        url: 'oa/index/taskList',
+        url: 'OaRecord/queryTask',
         method: 'post',
         data: data
     })

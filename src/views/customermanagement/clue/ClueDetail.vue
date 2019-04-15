@@ -34,13 +34,14 @@
         <keep-alive>
           <component v-bind:is="tabName"
                      crmType="leads"
+                     :detail="detailData"
                      :id="id"></component>
         </keep-alive>
       </div>
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="leads"
-                       :action="{type: 'update', id: this.id}"
+                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -58,6 +59,7 @@ import RelativeHandle from '../components/RelativeHandle' //相关操作
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 
+import { getDateFromTimestamp } from '@/utils'
 import moment from 'moment'
 import detail from '../mixins/detail'
 
@@ -104,10 +106,11 @@ export default {
       crmType: 'leads',
       detailData: {}, // read 详情
       headDetails: [
+        { title: '姓名', value: '' },
         { title: '线索来源', value: '' },
         { title: '手机', value: '' },
         { title: '负责人', value: '' },
-        { title: '更新时间', value: '' }
+        { title: '创建时间', value: '' }
       ],
       tabnames: [
         { label: '跟进记录', name: 'followlog' },
@@ -138,18 +141,17 @@ export default {
     getDetial() {
       this.loading = true
       crmLeadsRead({
-        id: this.id
+        leadsId: this.id
       })
         .then(res => {
           this.detailData = res.data
 
-          this.headDetails[0].value = res.data.source
-          this.headDetails[1].value = res.data.mobile
+          this.headDetails[0].value = res.data.name
+          this.headDetails[1].value = res.data.线索来源
+          this.headDetails[2].value = res.data.mobile
           // 负责人
-          this.headDetails[2].value = res.data.owner_user_id_info
-            ? res.data.owner_user_id_info.realname
-            : ''
-          this.headDetails[3].value = res.data.update_time
+          this.headDetails[3].value = res.data.owner_user_name
+          this.headDetails[4].value = res.data.create_time
           this.loading = false
         })
         .catch(() => {

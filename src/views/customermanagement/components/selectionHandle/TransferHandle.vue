@@ -33,9 +33,9 @@
                v-if="crmType === 'customer'">
         <div class="handle-item-name">同时变更负责人至：</div>
         <el-checkbox-group v-model="addsTypes">
-          <el-checkbox label="crm_contacts">联系人</el-checkbox>
-          <el-checkbox label="crm_business">商机</el-checkbox>
-          <el-checkbox label="crm_contract">合同</el-checkbox>
+          <el-checkbox label="1">联系人</el-checkbox>
+          <el-checkbox label="2">商机</el-checkbox>
+          <el-checkbox label="3">合同</el-checkbox>
         </el-checkbox-group>
       </flexbox>
     </div>
@@ -137,7 +137,7 @@ export default {
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.loading = false
             this.handleCancel()
@@ -162,25 +162,24 @@ export default {
       }
     },
     getParams() {
-      var owner_user_id = this.usersList[0].id
-
+      var owner_user_id = this.usersList[0].user_id
       var params = {
-        owner_user_id: owner_user_id,
-        is_remove: this.removeType
+        newOwnerUserId: owner_user_id,
+        transferType: this.removeType
       }
       if (this.removeType === 2) {
         // 1移出，2转为团队成员
-        params.type = this.handleType
+        params.power = this.handleType
       }
 
       var self = this
       var action_id = this.selectionList.map(function(item, index, array) {
         return item[self.crmType + '_id']
       })
-      params[this.crmType + '_id'] = action_id
+      params[this.crmType + 'Ids'] = action_id.join(",")
       if (this.crmType === 'customer') {
         // 只有客户下面有同时变更
-        params.types = this.addsTypes
+        params.changeType = this.addsTypes.join(",")
       }
       return params
     }

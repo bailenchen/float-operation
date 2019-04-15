@@ -26,7 +26,6 @@
                         v-model="next_time"
                         type="datetime"
                         placeholder="选择日期"
-                        :default-value="new Date"
                         value-format="yyyy-MM-dd HH:mm:ss"
                         :editable="false">
         </el-date-picker>
@@ -59,7 +58,7 @@
 <script>
 import MixAdd from '../../components/MixAdd'
 import RecordLog from '../../components/followLog/RecordLog' // 跟进记录
-import { crmRecordSave } from '@/api/customermanagement/common'
+import { crmLeadsRecordSave } from '@/api/customermanagement/clue'
 import { formatTimeToTimestamp } from '@/utils'
 
 export default {
@@ -131,27 +130,18 @@ export default {
         return
       }
       var params = {}
-      params.types = 'crm_' + this.crmType
-      params.types_id = this.id
+      params.typesId = this.id
       params.content = data.content
       params.category = this.followType
-      var image_ids = data.images.map(function(element, index, array) {
-        return element.file_id
-      })
-      var files_ids = data.files.map(function(element, index, array) {
-        return element.file_id
-      })
-      params.file_id = image_ids.concat(files_ids)
-      if (this.next_time) {
-        params.is_event = this.is_event ? 1 : 0
-        params.next_time = formatTimeToTimestamp(this.next_time)
-      }
+      params.batchId = data.batchId
+      params.isEvent = this.is_event ? 1 : 0
+      params.nextTime = this.next_time || ''
 
       this.sendLoading = true
-      crmRecordSave(params)
+      crmLeadsRecordSave(params)
         .then(res => {
           this.sendLoading = false
-          this.$message.success(res.data)
+          this.$message.success("发布成功")
           // 重置页面
           this.$refs.mixadd.resetInfo()
           this.is_event = false

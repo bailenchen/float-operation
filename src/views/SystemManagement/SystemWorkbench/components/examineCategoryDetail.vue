@@ -78,7 +78,6 @@
                        class="examine-users-item">
                     <div v-photo="userItem"
                          v-lazy:background-image="$options.filters.filterUserLazyImg(userItem.thumb_img)"
-                         :key="userItem.thumb_img"
                          class="div-photo"></div>
                     <div class="name">{{userItem.realname}}</div>
                   </div>
@@ -124,14 +123,14 @@ export default {
   filters: {
     formatedScopeInfo(data) {
       var name = ''
-      var structures = data['structure_ids_info']
-        ? data['structure_ids_info']
+      var structures = data['deptIds']
+        ? data['deptIds']
         : []
       for (let index = 0; index < structures.length; index++) {
         const element = structures[index]
         name = name + element.name + '、'
       }
-      var users = data['user_ids_info'] ? data['user_ids_info'] : []
+      var users = data['userIds'] ? data['userIds'] : []
       for (let index = 0; index < users.length; index++) {
         const element = users[index]
         name =

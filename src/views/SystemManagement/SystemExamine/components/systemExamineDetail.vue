@@ -40,7 +40,7 @@
               </flexbox>
               <flexbox class="content-items">
                 <div class="content-items-name">审批说明</div>
-                <div class="content-items-value">{{showData.remark}}</div>
+                <div class="content-items-value">{{showData.remarks}}</div>
               </flexbox>
             </div>
           </div>
@@ -69,7 +69,6 @@
                        class="examine-users-item">
                     <div v-photo="userItem"
                          v-lazy:background-image="$options.filters.filterUserLazyImg(userItem.thumb_img)"
-                         :key="userItem.thumb_img"
                          class="div-photo"></div>
                     <div class="name">{{userItem.realname}}</div>
                   </div>
@@ -90,8 +89,7 @@ import SlideView from '@/components/SlideView'
 import CreateSections from '@/components/CreateSections'
 import Nzhcn from 'nzh/cn'
 import {
-  examineFlowDelete,
-  examineFlowEnables
+  examineFlowUpdateStatus
 } from '@/api/systemManagement/examineflow'
 
 export default {
@@ -108,14 +106,14 @@ export default {
   filters: {
     formatedScopeInfo(data) {
       var name = ''
-      var structures = data['structure_ids_info']
-        ? data['structure_ids_info']
+      var structures = data['deptIds']
+        ? data['deptIds']
         : []
       for (let index = 0; index < structures.length; index++) {
         const element = structures[index]
         name = name + element.name + '、'
       }
-      var users = data['user_ids_info'] ? data['user_ids_info'] : []
+      var users = data['userIds'] ? data['userIds'] : []
       for (let index = 0; index < users.length; index++) {
         const element = users[index]
         name =
@@ -165,15 +163,16 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          examineFlowDelete({
-            id: this.data['flow_id']
+          examineFlowUpdateStatus({
+            examineId: this.data['examine_id'],
+            status: 2 //  1 启用 0 禁用 2 删除
           })
             .then(res => {
               this.$emit('refresh')
               this.hideView()
               this.$message({
                 type: 'success',
-                message: res.data
+                message: '操作成功'
               })
             })
             .catch(() => {})
@@ -203,15 +202,15 @@ export default {
         }
       )
         .then(() => {
-          examineFlowEnables({
-            id: this.data['flow_id'],
+          examineFlowUpdateStatus({
+            examineId: this.data['examine_id'],
             status: this.examineStatus === 0 ? 1 : 0
           })
             .then(res => {
               this.$emit('refresh')
               this.$message({
                 type: 'success',
-                message: res.data
+                message: '操作成功'
               })
             })
             .catch(() => {

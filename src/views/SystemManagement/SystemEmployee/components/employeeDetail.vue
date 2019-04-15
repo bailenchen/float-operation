@@ -28,13 +28,13 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="reset">重置密码</el-dropdown-item>
-                <el-dropdown-item command="status">{{data.status === 0 ? '激 活' : '禁 用'}}</el-dropdown-item>
+                <el-dropdown-item command="status">{{data.status === 1 ? '禁 用' : '激 活'}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
           <div class="dialog-remark">
-            <p>账号状态：{{{'0':'禁用','1':'激活','2':'未激活' }[data.status]}}</p>
-            <p>创建时间：{{data.create_time | filterTimestampToFormatTime('YYYY-MM-DD')}}</p>
+            <p>账号状态：{{data.status === 1 ? '激活' : '禁用'}}</p>
+            <p>创建时间：{{data.create_time}}</p>
           </div>
         </div>
         <div class="dialog-content">
@@ -66,8 +66,8 @@ export default {
   },
   filters: {
     formatedInfo(data, field) {
-      if (field == 'sex' && data[field] == 0) {
-        return ''
+      if (field == 'sex') {
+        return { 1: '男', 2: '女' }[data.sex]
       }
       return data[field]
     }
@@ -80,10 +80,10 @@ export default {
         { field: 'realname', value: '姓名' },
         { field: 'sex', value: '性别', type: 'select' },
         { field: 'email', value: '邮箱' },
-        { field: 's_name', value: '部门', type: 'select' },
+        { field: 'deptName', value: '部门', type: 'select' },
         { field: 'post', value: '岗位' },
-        { field: 'parent_name', value: '直属上级', type: 'select' },
-        { field: 'groups', value: '角色', type: 'selectCheckout' }
+        { field: 'parentName', value: '直属上级', type: 'select' },
+        { field: 'roleName', value: '角色', type: 'selectCheckout' }
       ]
     }
   },

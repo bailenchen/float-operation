@@ -94,9 +94,9 @@ export default {
   },
   computed: {
     byData() {
-      return { '1': '', '2': 'me', '3': 'other', '4': 'notRead' }[
+      return { '1': '', '2': '1', '3': '2', '4': '3' }[
         this.activeName
-      ]
+      ] // 1:我发出的 2：我收到的 3：未读的
     }
   },
   watch: {
@@ -140,7 +140,7 @@ export default {
       this.depOptions = res.data
     })
     // 用户列表
-    usersList().then(res => {
+    usersList({ pageType: 0 }).then(res => {
       this.nameOptions = res.data
     })
   },
@@ -174,19 +174,19 @@ export default {
       let params = objDeepCopy(
         this.$refs['log-list' + this.activeName][0].fromData
       )
-      if (params.create_time) {
-        params.create_time = new Date(params.create_time).getTime() / 1000
-      } else {
-        params.create_time = ''
+      if (!params.create_time) {
+        delete params['create_time']
       }
       params.page = this.pageNum
       params.limit = 15
-      params.by = this.byData
+      if (this.byData) {
+        params.by = this.byData 
+      }
       this.journalLoading = true
       journalList(params)
         .then(res => {
           this.journalLoading = false
-          if (res.data.list.length == 0 || res.data.list.length != 15) {
+          if (res.data.lastPage===true) {
             this.loadText = '没有更多了'
             this.isPost = false
             this.loadMoreLoading = false
@@ -242,14 +242,13 @@ export default {
     // 关闭新建页面
     newClose() {
       if (this.$route.query.routerKey == 1) {
-        this.showNewDialog = false
-        this.$router.go(-1)
+        this.$router.push('journal')
       } else {
         this.showNewDialog = false
       }
     },
     // 新建提交
-    submitBtn(key, file, img, relevanceAll) {
+    submitBtn(key, batchId, relevanceAll) {
       this.newLoading = true
       let imgList = []
       let fileList = []
@@ -264,47 +263,26 @@ export default {
       let staff = []
       if (this.formData.sentWhoList) {
         for (let h of this.formData.sentWhoList) {
-          staff.push(h.id)
+          staff.push(h.user_id)
         }
       }
 
-      if (img) {
-        imgList = img.map(function(file, index, array) {
-          if (file.response) {
-            return file.response.data[0].file_id
-          } else if (file.file_id) {
-            return file.file_id
-          }
-          return ''
-        })
-      }
-      // 附件
-      if (file) {
-        fileList = file.map(function(file, index, array) {
-          if (file.response) {
-            return file.response.data[0].file_id
-          } else if (file.file_id) {
-            return file.file_id
-          }
-          return ''
-        })
-      }
       if (this.dialogTitle == '写日志') {
         // 图片
 
         let pramas = {
-          category_id: key ? key : '',
+          categoryId: key || '',
           content: this.formData.content,
           tomorrow: this.formData.tomorrow,
           question: this.formData.question,
-          file: fileList.concat(imgList),
+          batchId: batchId,
           // img: imgList,
-          send_user_ids: staff,
-          send_structure_ids: dep,
-          customer_ids: relevanceAll.customer_ids,
-          contacts_ids: relevanceAll.contacts_ids,
-          business_ids: relevanceAll.business_ids,
-          contract_ids: relevanceAll.contract_ids
+          send_user_ids: staff.join(","),
+          send_dept_ids: dep.join(","),
+          customer_ids: relevanceAll.customer_ids.join(","),
+          contacts_ids: relevanceAll.contacts_ids.join(","),
+          business_ids: relevanceAll.business_ids.join(","),
+          contract_ids: relevanceAll.contract_ids.join(",")
         }
         if (key) {
           this.formData.category_id = key
@@ -323,18 +301,18 @@ export default {
         // 编辑页面
       } else {
         let pramas = {
-          id: this.formData.log_id,
-          category_id: key,
+          logId: this.formData.log_id,
+          categoryId: key,
           content: this.formData.content,
           tomorrow: this.formData.tomorrow,
           question: this.formData.question,
-          file: fileList.concat(imgList),
-          send_user_ids: staff,
-          send_structure_ids: dep,
-          customer_ids: relevanceAll.customer_ids,
-          contacts_ids: relevanceAll.contacts_ids,
-          business_ids: relevanceAll.business_ids,
-          contract_ids: relevanceAll.contract_ids
+          batchId: batchId,
+          send_user_ids: staff.join(","),
+          send_structure_ids: dep.join(","),
+          send_dept_ids: relevanceAll.customer_ids.join(","),
+          contacts_ids: relevanceAll.contacts_ids.join(","),
+          business_ids: relevanceAll.business_ids.join(","),
+          contract_ids: relevanceAll.contract_ids.join(",")
         }
         journalEdit(pramas)
           .then(res => {
@@ -352,23 +330,12 @@ export default {
     editBtn(val) {
       this.dialogTitle = '编辑日志'
       this.formData = val
-      this.imgFileList = []
-      if (val.imgList) {
-        for (let item of val.imgList) {
-          item.url = item.file_path_thumb
-          this.imgFileList.push(item)
-        }
-      }
+      this.imgFileList = val.img
       // 附件
-      this.accessoryFileList = []
-      if (val.fileList) {
-        for (let item of val.fileList) {
-          item.url = item.file_path_thumb
-          this.accessoryFileList.push(item)
-        }
-      }
+      this.accessoryFileList = val.file
+      
       // 员工部门赋值
-      this.formData.depData = val.sendStructList ? val.sendStructList : []
+      this.formData.depData = val.sendDeptList ? val.sendDeptList : []
       this.formData.sentWhoList = val.sendUserList ? val.sendUserList : []
       this.showNewDialog = true
     }

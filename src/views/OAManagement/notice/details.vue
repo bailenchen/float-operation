@@ -9,16 +9,16 @@
       </div>
       <div class="content">
         <div class="title">{{titleList.title}}</div>
-        <div class="time">{{titleList.create_time | moment("YYYY-MM-DD HH:mm")}}</div>
+        <div class="time">{{titleList.create_time}}</div>
         <pre class="text">{{titleList.content}}</pre>
       </div>
       <div class="btn-box"
            v-if="btnShow">
+        <!-- v-if="titleList.permission.is_update == 1" -->
         <el-button type="primary"
-                   v-if="titleList.permission.is_update == 1"
                    @click="onEdit">编辑</el-button>
+        <!-- v-if="titleList.permission.is_delete == 1" -->
         <el-button type="danger"
-                   v-if="titleList.permission.is_delete == 1"
                    @click="deleteFun">删除</el-button>
       </div>
     </div>
@@ -35,7 +35,7 @@
 import CreateView from '@/components/CreateView'
 import VEdit from './edit'
 // API
-import { noticeDelete, noticeEdit } from '@/api/oamanagement/notice'
+import { noticeDelete, noticeAdd } from '@/api/oamanagement/notice'
 export default {
   components: {
     CreateView,
@@ -57,11 +57,8 @@ export default {
   },
   methods: {
     onEdit() {
-      this.showEdit = true
       this.formData = Object.assign({}, this.titleList)
-      let list = []
-      this.formData.start_time = this.titleList.start_time * 1000
-      this.formData.end_time = this.titleList.end_time * 1000
+      this.showEdit = true
     },
     close() {
       this.$emit('close')
@@ -74,7 +71,7 @@ export default {
       })
         .then(() => {
           noticeDelete({
-            announcement_id: this.titleList.announcement_id
+            id: this.titleList.announcement_id
           }).then(res => {
             this.$emit('deleteFun')
             this.$message({
@@ -97,12 +94,12 @@ export default {
     // 编辑 -- 确定
     editSubmit() {
       this.loading = true
-      noticeEdit({
+      noticeAdd({
         announcement_id: this.formData.announcement_id,
         title: this.formData.title,
         content: this.formData.content,
-        start_time: new Date(this.formData.start_time).getTime() / 1000,
-        end_time: new Date(this.formData.end_time).getTime() / 1000
+        start_time: this.formData.start_time,
+        end_time: this.formData.end_time
       })
         .then(res => {
           this.$emit('editSubmit', this.formData)

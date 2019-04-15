@@ -12,7 +12,7 @@ loadingDirective.install = Vue => {
   if (Vue.prototype.$isServer) return
   const togglePhoto = (el, binding) => {
     /** 如果是数组 判断数组长度  否则 判断是否存在 当做Boolean */
-    if (binding.value && !binding.value.thumb_img) {
+    if (binding.value && !binding.value.img) {
       Vue.nextTick(() => {
         el.originalPosition = getStyle(el, 'position')
         insertDom(el, el, binding)
@@ -47,7 +47,7 @@ loadingDirective.install = Vue => {
     bind: function (el, binding, vnode) {
       const vm = vnode.context
       let text = ''
-      if (binding.value && !binding.value.thumb_img) {
+      if (binding.value && !binding.value.img) {
         text = binding.value.realname && binding.value.realname.length > 2 ? binding.value.realname.substring(binding.value.realname.length - 2, binding.value.realname.length) : binding.value.realname
       }
       const mask = new Mask({
@@ -64,7 +64,7 @@ loadingDirective.install = Vue => {
 
     update: function (el, binding) {
       let text = ''
-      if (binding.value && !binding.value.thumb_img) {
+      if (binding.value && !binding.value.img) {
         text = binding.value.realname && binding.value.realname.length > 2 ? binding.value.realname.substring(binding.value.realname.length - 2, binding.value.realname.length) : binding.value.realname
       }
       el.instance.setText(text)

@@ -69,7 +69,7 @@
 
 <script>
 // 关联业务 - 弹出框
-import { delrelation } from '@/api/oamanagement/task'
+import { editTaskRelation } from '@/api/oamanagement/task'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import { objDeepCopy } from '@/utils'
@@ -165,11 +165,17 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          delrelation({
-            task_id: this.taskID,
-            type: { customer: 1, contacts: 2, business: 3, contract: 4 }[field],
-            id: item[field + '_id']
-          })
+          let params = { taskId: this.taskID }
+          for (let index = 0; index < this.showTypes.length; index++) {
+            const typeItem = this.showTypes[index]
+            let typeArray = this.relatedListData[typeItem] || []
+            params[typeItem + 'Ids'] = typeArray
+              .map(aItem => {
+                return aItem[typeItem + '_id']
+              })
+              .join(',')
+          }
+          editTaskRelation(params)
             .then(res => {
               this.relatedListData[field].splice(index, 1)
               this.relatedListData = objDeepCopy(this.relatedListData)

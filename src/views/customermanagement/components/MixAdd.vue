@@ -16,7 +16,7 @@
         <div class="img-item"
              v-for="(item, index) in imgFiles"
              :key="index"
-             :style="{ 'background-image': 'url('+item.path+')' }"
+             :style="{ 'background-image': 'url('+item.url+')' }"
              @mouseover="mouseImgOver(item, index)"
              @mouseleave="mouseImgLeave(item, index)">
           <div v-if="item.showDelete"
@@ -67,7 +67,7 @@
           <flexbox class="c-item"
                    v-for="(item, index) in business"
                    :key="index">
-            <div class="c-item-name">{{item.name}}</div>
+            <div class="c-item-name">{{item.business_name}}</div>
             <div class="c-item-close"
                  @click="business.splice(index, 1)">×</div>
           </flexbox>
@@ -86,7 +86,7 @@
           <flexbox class="c-item"
                    v-for="(item, index) in contacts"
                    :key="index">
-            <div class="c-item-name">{{item.name}}</div>
+            <div class="c-item-name">{{item.contacts_name}}</div>
             <div class="c-item-close"
                  @click="contacts.splice(index, 1)">×</div>
           </flexbox>
@@ -118,7 +118,7 @@
           <crm-relative :show="item.show"
                         :radio="false"
                         ref="crmrelative"
-                        :action="{ type: 'condition', data: { form_type: 'customer', customer_id: id } }"
+                        :action="{ type: 'condition', data: { moduleType: crmType, customer_id: id } }"
                         :selectedData="item.type == 'business' ? { 'business': business } : { 'contacts': contacts }"
                         :crm-type="item.type"
                         @close="item.show=false"
@@ -196,7 +196,8 @@ export default {
       /** 关联联系人信息 */
       contacts: [],
       /** 展示关联弹窗 */
-      showRelativeType: ''
+      showRelativeType: '',
+      batchId: '' // 批次ID
     }
   },
   computed: {},
@@ -227,7 +228,8 @@ export default {
         files: this.files,
         images: this.imgFiles,
         business: this.business,
-        contacts: this.contacts
+        contacts: this.contacts,
+        batchId: this.batchId
       })
     })
   },
@@ -245,6 +247,7 @@ export default {
       this.contacts = []
       /** 展示关联弹窗 */
       this.showRelativeType = ''
+      this.batchId = ''
     },
     /** 快捷添加按钮 */
     checkRelativeInfos(data) {
@@ -266,41 +269,42 @@ export default {
     /** 图片选择出发 */
     uploadFile(event) {
       var files = event.target.files
-      var self = this
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index]
-        // if (file.type.indexOf('image') != -1) {
-        var params = {}
-        params.module_id = this.id
-        params.module = 'crm_' + this.crmType
-        if (event.target.accept == 'image/*') {
-          params['img[]'] = file
-        } else if (event.target.accept == '*.*') {
-          params['file[]'] = file
-        }
-        crmFileSave(params)
-          .then(res => {
-            /**
-                         * "key": 0,
-                            "name": "yun.jpg",
-                            "status": 1,
-                            "path": "uploads20181205\\1aee9b6b70a0601f48415c4ba9325274.jpg",
-                            "file_id": "21"
-                         */
-            res.data.forEach((element, index) => {
-              element['size'] = fileSize(file.size)
-              if (event.target.accept == 'image/*') {
-                self.imgFiles.push(element)
-              } else if (event.target.accept == '*.*') {
-                element['icon'] = getFileTypeIcon(file)
-                self.files.push(element)
-              }
-            })
-          })
-          .catch(() => {})
-        // }
+      if (files.length) {
+        var type = event.target.accept == 'image/*' ? 'img' : 'file'
+        var firstFile = files[0]
+        this.sendFileRequest(firstFile, type, () => {
+          for (let index = 1; index < files.length; index++) {
+            const file = files[index]
+            this.sendFileRequest(file, type)
+          }
+          event.target.value = ''
+        })
       }
-      event.target.value = ''
+    },
+    // 发送请求
+    sendFileRequest(file, type, result) {
+      var params = { file: file, type: type }
+      if (this.batchId) {
+        params.batchId = this.batchId
+      }
+      crmFileSave(params)
+        .then(res => {
+          if (this.batchId == '') {
+            this.batchId = res.batchId
+          }
+          res.size = fileSize(file.size)
+          if (type == 'img') {
+            this.imgFiles.push(res)
+          } else {
+            res['icon'] = getFileTypeIcon(file)
+            this.files.push(res)
+          }
+          if (result) {
+            console.log('2222');
+            result()
+          }
+        })
+        .catch(() => {})
     },
     /** 删除全部图片 */
     deleteAllImg() {
@@ -308,9 +312,7 @@ export default {
     },
     deleteImgOrFile(type, item, index) {
       crmFileDelete({
-        save_name: item.save_name,
-        module_id: this.id,
-        module: 'crm_' + this.crmType
+        id: item.file_id
       })
         .then(res => {
           if (type == 'image') {

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 销售简报
 export function crmIndexIndex(data) {
   return request({
-    url: 'crm/index/index',
+    url: 'Crm/Instrument/queryBulletin',
     method: 'post',
     data: data
   })
@@ -12,7 +12,7 @@ export function crmIndexIndex(data) {
 // 业绩指标
 export function crmIndexAchievementData(data) {
   return request({
-    url: 'crm/index/achievementData',
+    url: 'Crm/Instrument/queryPerformance',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function crmIndexFunnel(data) {
 // 销售趋势
 export function crmIndexSaletrend(data) {
   return request({
-    url: 'crm/index/saletrend',
+    url: 'Crm/Instrument/sellMonth',
     method: 'post',
     data: data
   })

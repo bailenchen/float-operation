@@ -83,6 +83,7 @@
 
 <script type="text/javascript">
 import { mapGetters } from 'vuex'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   filterIndexfields,
   crmSceneIndex,
@@ -98,7 +99,7 @@ import {
   crmCustomerPutInPool,
   crmCustomerExcelExport,
   crmCustomerDelete,
-  crmCustomerReceive
+  crmCustomerDistribute
 } from '@/api/customermanagement/customer'
 import { crmContactsDelete } from '@/api/customermanagement/contacts'
 import { crmBusinessDelete } from '@/api/customermanagement/business'
@@ -187,7 +188,7 @@ export default {
     // 获取高级筛选字段数据
     getFilterFieldInfo() {
       filterIndexfields({
-        types: 'crm_' + this.crmType
+        label: crmTypeModel[this.crmType]
       })
         .then(res => {
           this.fieldList = res.data
@@ -200,10 +201,10 @@ export default {
       this.showFilter = false
       if (form.saveChecked) {
         crmSceneSave({
-          types: 'crm_' + this.crmType,
-          is_default: form.saveDefault ? 1 : 0,
+          type: crmTypeModel[this.crmType],
+          isDefault: form.saveDefault ? 1 : 0,
           name: form.saveName,
-          data: form.obj
+          data: JSON.stringify(form.obj)
         })
           .then(res => {
             this.updateSceneList()
@@ -220,6 +221,7 @@ export default {
     // 场景操作
     /** 选择了场景 */
     sceneSelect(data) {
+      console.log('sceneSelect---', data);
       this.sceneName = data.name
       this.sceneID = data.id
       this.$emit('scene', data)
@@ -229,7 +231,7 @@ export default {
         this.showSceneSet = true
       } else if (data.type == 'add') {
         filterIndexfields({
-          types: 'crm_' + this.crmType
+          label: crmTypeModel[this.crmType]
         })
           .then(res => {
             this.fieldList = res.data
@@ -256,22 +258,18 @@ export default {
         var request
         if (this.crmType == 'customer') {
           request = crmCustomerExcelExport
-          params.customer_id = this.selectionList.map(function(
-            item,
-            index,
-            array
-          ) {
-            return item.customer_id
-          })
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.customer_id
+            })
+            .join(',')
         } else if (this.crmType == 'leads') {
           request = crmLeadsExcelExport
-          params.leads_id = this.selectionList.map(function(
-            item,
-            index,
-            array
-          ) {
-            return item.leads_id
-          })
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.leads_id
+            })
+            .join(',')
         }
         request(params)
           .then(res => {
@@ -352,13 +350,13 @@ export default {
           return item.customer_id
         })
         crmCustomerLock({
-          is_lock: type === 'lock' ? '1' : '2',
-          customer_id: customer_id
+          isLock: type === 'lock' ? '1' : '0', // 1锁0不锁
+          ids: customer_id.join(',')
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
           })
           .catch(() => {})
@@ -367,12 +365,12 @@ export default {
           return item.customer_id
         })
         crmCustomerPutInPool({
-          customer_id: customer_id
+          ids: customer_id.join(',')
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
@@ -382,12 +380,12 @@ export default {
           return item.leads_id
         })
         crmLeadsTransform({
-          leads_id: leads_id
+          leadsIds: leads_id.join(',')
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '转化成功'
             })
             this.$emit('handle', { type: type })
           })
@@ -397,13 +395,13 @@ export default {
           return item.product_id
         })
         crmProductStatus({
-          id: product_id,
-          status: type === 'start' ? '上架' : '下架'
+          ids: product_id.join(','),
+          status: type === 'start' ? '1' : '0'
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
@@ -413,27 +411,21 @@ export default {
         var ids = this.selectionList.map(function(item, index, array) {
           return item[self.crmType + '_id']
         })
-        let request
-        if (this.crmType == 'leads') {
-          request = crmLeadsDelete
-        } else if (this.crmType == 'customer') {
-          request = crmCustomerDelete
-        } else if (this.crmType == 'contacts') {
-          request = crmContactsDelete
-        } else if (this.crmType == 'business') {
-          request = crmBusinessDelete
-        } else if (this.crmType == 'contract') {
-          request = crmContractDelete
-        } else if (this.crmType == 'receivables') {
-          request = crmReceivablesDelete
-        }
+        let request = {
+          leads: crmLeadsDelete,
+          customer: crmCustomerDelete,
+          contacts: crmContactsDelete,
+          business: crmBusinessDelete,
+          contract: crmContractDelete,
+          receivables: crmReceivablesDelete
+        }[this.crmType]
         request({
-          id: ids
+          [this.crmType + 'Ids']: ids.join(',')
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '删除成功'
             })
             this.$emit('handle', { type: type })
           })
@@ -443,13 +435,13 @@ export default {
         var customer_id = this.selectionList.map(function(item, index, array) {
           return item.customer_id
         })
-        crmCustomerReceive({
-          customer_id: customer_id
+        crmCustomerDistribute({
+          ids: customer_id.join(',')
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })

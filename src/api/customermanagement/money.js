@@ -3,9 +3,12 @@ import request from '@/utils/request'
 // crm 新建回款
 export function crmReceivablesSave(data) {
   return request({
-    url: 'crm/receivables/save',
+    url: 'CrmReceivables/saveOrUpdate',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -27,7 +30,7 @@ export function crmReceivablesUpdate(data) {
  */
 export function crmReceivablesIndex(data) {
   return request({
-    url: 'crm/receivables/index',
+    url: 'CrmReceivables/queryPage',
     method: 'post',
     data: data
   })
@@ -40,7 +43,7 @@ export function crmReceivablesIndex(data) {
  */
 export function crmReceivablesDelete(data) {
   return request({
-    url: 'crm/receivables/delete',
+    url: 'CrmReceivables/deleteByIds',
     method: 'post',
     data: data
   })
@@ -52,7 +55,7 @@ export function crmReceivablesDelete(data) {
  */
 export function crmReceivablesRead(data) {
   return request({
-    url: 'crm/receivables/read',
+    url: 'CrmReceivables/queryById',
     method: 'post',
     data: data
   })
@@ -67,7 +70,7 @@ export function crmReceivablesRead(data) {
  */
 export function crmReceivablesPlanIndex(data) {
   return request({
-    url: 'crm/receivables_plan/index',
+    url: 'CrmCustomer/queryReceivablesPlan',
     method: 'post',
     data: data
   })
@@ -86,7 +89,7 @@ export function crmReceivablesCheck(data) {
 }
 
 /**
- * 回款撤回审批
+ * 回款撤回审核
  * @param {*} data
  */
 export function crmReceivablesRevokeCheck(data) {

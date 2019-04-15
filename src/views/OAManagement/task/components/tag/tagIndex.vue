@@ -84,7 +84,7 @@ import newTag from './newTag'
 import editTag from './editTag'
 import { tagList } from '@/api/oamanagement/task'
 import {
-  deleteAddTag,
+  editTask,
   createTag,
   deleteTagAPI,
   editTagAPI
@@ -159,13 +159,23 @@ export default {
     // 标签点击变色
     tagBtn(value, values) {
       // 标签点击关联页面
+      let labelIds = values.filter(item => {
+        if (value.check) {
+          return item.check && item.lable_id != value.lable_id
+        } else {
+          return item.check || item.lable_id == value.lable_id
+        }
+      })
       if (value.check) {
-        deleteAddTag({
-          task_id: this.taskData.task_id,
-          lable_id_del: value.lable_id,
-          type: 'lable_id_del'
+        editTask({
+          taskId: this.taskData.task_id,
+          lableId: labelIds
+            .map(item => {
+              return item.lable_id
+            })
+            .join(',')
         }).then(res => {
-          let list = this.taskData.lable_list
+          let list = this.taskData.labelList
           for (let item in list) {
             if (value.lable_id == list[item].lable_id) {
               list.splice(item, 1)
@@ -175,13 +185,17 @@ export default {
           value.check = false
         })
       } else {
-        deleteAddTag({
-          task_id: this.taskData.task_id,
-          lable_id_add: value.lable_id,
-          type: 'lable_id_add'
+        editTask({
+          taskId: this.taskData.task_id,
+          lableId: labelIds
+            .map(item => {
+              return item.lable_id
+            })
+            .join(',')
         }).then(res => {
           value.check = true
-          this.taskData.lable_list.push(value)
+          value.lableName = value.name
+          this.taskData.labelList.push(value)
         })
       }
       // value.check = value.check ? false : true
@@ -220,7 +234,7 @@ export default {
       } else {
         editTagAPI({
           name: val,
-          lable_id: this.editTagId,
+          lableId: this.editTagId,
           color: color
         }).then(res => {
           for (let item of _this.editTagList) {
@@ -267,7 +281,7 @@ export default {
           this.tagShow = true
           this.managementTag()
           deleteTagAPI({
-            lable_id: val.lable_id
+            lableId: val.lable_id
           }).then(res => {
             for (let i in this.editTagList) {
               if (this.editTagList[i].lable_id == val.lable_id) {
@@ -292,9 +306,9 @@ export default {
     tagListFun() {
       // 标签列表
       tagList().then(res => {
-        for (let item of res.data.list) {
-          if (this.taskData.lable_list) {
-            for (let i of this.taskData.lable_list) {
+        for (let item of res.data) {
+          if (this.taskData.labelList) {
+            for (let i of this.taskData.labelList) {
               if (i.lable_id == item.lable_id) {
                 item.check = true
                 break
@@ -305,10 +319,10 @@ export default {
           }
         }
         // 标签管理数据
-        this.editTagList = res.data.list
-        this.particularsTagList = res.data.list
+        this.editTagList = res.data
+        this.particularsTagList = res.data
         // 用作搜索功能
-        this.particularsTagListCopy = res.data.list
+        this.particularsTagListCopy = res.data
       })
     },
     referenceFun() {

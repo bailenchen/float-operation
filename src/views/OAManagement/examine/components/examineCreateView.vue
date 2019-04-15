@@ -179,12 +179,11 @@ export default {
       return true
     },
     crmFileSaveUrl() {
-      return window.BASE_URL + crmFileSaveUrl
+      return crmFileSaveUrl
     },
     httpHeader() {
       return {
-        authKey: axios.defaults.headers.authKey,
-        sessionId: axios.defaults.headers.sessionId
+        'Admin-Token': axios.defaults.headers['Admin-Token']
       }
     }
   },
@@ -797,10 +796,7 @@ export default {
             // params['money'] = element.value.money
           }
         } else {
-          let value = this.getRealParams(element)
-          if (!(element.data.form_type == 'date' && !value)) {
-            params[element.key] = value
-          }
+          params[element.key] = this.getRealParams(element)
         }
       }
       return params

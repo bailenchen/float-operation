@@ -1,7 +1,6 @@
 <template>
   <div class="rc-cont">
-    <flexbox v-if="!isSeas"
-             class="rc-head"
+    <flexbox class="rc-head"
              direction="row-reverse">
       <el-button class="rc-head-item"
                  @click.native="handleClick('remove')"
@@ -68,7 +67,21 @@
 import { crmSettingTeam } from '@/api/customermanagement/common'
 import loading from '../mixins/loading'
 import TeamsHandle from './selectionHandle/TeamsHandle' // 操作团队成员
-import { crmSettingTeamSave } from '@/api/customermanagement/common'
+import {
+  crmCustomerTeamMembers,
+  crmCustomerUpdateMembers,
+  crmCustomerSettingTeamDelete
+} from '@/api/customermanagement/customer'
+import {
+  crmBusinessTeamMembers,
+  crmBusinessUpdateMembers,
+  crmBusinessSettingTeamDelete
+} from '@/api/customermanagement/business'
+import {
+  crmContractTeamMembers,
+  crmContractUpdateMembers,
+  crmContractSettingTeamDelete
+} from '@/api/customermanagement/contract'
 
 export default {
   name: 'relative-team', //相关团队  可能再很多地方展示 放到客户管理目录下
@@ -117,9 +130,9 @@ export default {
   },
   mounted() {
     this.fieldList.push({ prop: 'realname', width: '200', label: '姓名' })
-    this.fieldList.push({ prop: 'structure_name', width: '200', label: '职位' })
-    this.fieldList.push({ prop: 'group_name', width: '200', label: '团队角色' })
-    this.fieldList.push({ prop: 'authority', width: '200', label: '权限' })
+    this.fieldList.push({ prop: 'name', width: '200', label: '职位' })
+    this.fieldList.push({ prop: 'groupRole', width: '200', label: '团队角色' })
+    this.fieldList.push({ prop: 'power', width: '200', label: '权限' })
 
     this.getDetail()
   },
@@ -128,10 +141,14 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
-      crmSettingTeam({
-        types: 'crm_' + this.crmType,
-        types_id: this.id
-      })
+      let request = {
+        customer: crmCustomerTeamMembers,
+        business: crmBusinessTeamMembers,
+        contract: crmContractTeamMembers
+      }[this.crmType]
+      let params = {}
+      params[this.crmType + 'Id'] = this.id
+      request(params)
         .then(res => {
           this.loading = false
           this.list = res.data
@@ -167,19 +184,24 @@ export default {
                 ) {
                   return item.id
                 })
+
+                let request = {
+                  customer: crmCustomerSettingTeamDelete,
+                  contract: crmContractSettingTeamDelete,
+                  business: crmBusinessSettingTeamDelete
+                }[this.crmType]
+
                 var params = {
-                  types: 'crm_' + this.crmType,
-                  types_id: [this.detail[this.crmType + '_id']],
-                  user_id: user_ids
+                  ids: this.id,
+                  memberIds: user_ids.join(',')
                 }
-                params.is_del = 1
 
                 this.loading = true
-                crmSettingTeamSave(params)
+                request(params)
                   .then(res => {
                     this.$message({
                       type: 'success',
-                      message: res.data
+                      message: '操作成功'
                     })
                     this.loading = false
                     this.getDetail()
@@ -208,17 +230,21 @@ export default {
         return item.id
       })
       this.loading = true
-      crmSettingTeamSave({
-        types: 'crm_' + this.crmType,
-        types_id: [this.detail[this.crmType + '_id']],
-        user_id: user_ids,
-        type: this.handleType
+      let request = {
+        customer: crmCustomerUpdateMembers,
+        business: crmBusinessUpdateMembers,
+        contract: crmContractUpdateMembers
+      }[this.crmType]
+      request({
+        ids: this.id,
+        memberIds: user_ids.join(','),
+        power: this.handleType
       })
         .then(res => {
           this.editPermissionShow = false
           this.$message({
             type: 'success',
-            message: res.data
+            message: '操作成功'
           })
           this.loading = false
           this.getDetail()
@@ -230,7 +256,7 @@ export default {
     //返回值用来决定这一行的 CheckBox 是否可以勾选
     handleSelectable(row, index) {
       /** row 是数据源 正式调试以他为主  index 是行 */
-      if (row.type == 0) {
+      if (row.power == '负责人权限') {
         // 0负责人，1只读，2读写
         return false
       }

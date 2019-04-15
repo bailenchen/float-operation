@@ -24,6 +24,7 @@
             <template v-if="item.type == 'time'">
               <el-date-picker v-model="formData[item.field]"
                               type="datetime"
+                              value-format="yyyy-MM-dd HH:mm:ss"
                               placeholder="选择日期时间">
               </el-date-picker>
             </template>
@@ -118,9 +119,9 @@ export default {
       zIndex: getMaxIndex(),
       formList: [
         { label: '主题', field: 'title', type: 'color' },
-        { label: '开始时间', field: 'start_time', type: 'time' },
-        { label: '结束时间', field: 'end_time', type: 'time' },
-        { label: '参与人', field: 'owner_user_ids', type: 'participant' },
+        { label: '开始时间', field: 'startTime', type: 'time' },
+        { label: '结束时间', field: 'endTime', type: 'time' },
+        { label: '参与人', field: 'ownerUserIds', type: 'participant' },
         { label: '备注', field: 'remark', type: 'textarea', width: '100%' }
       ],
       // 提醒
@@ -183,10 +184,10 @@ export default {
           { required: true, message: '主题不能为空', trigger: 'blur' },
           { max: 50, message: '主题长度最多为50个字符', trigger: 'blur' }
         ],
-        start_time: [
+        startTime: [
           { required: true, message: '开始时间不能为空', trigger: 'blur' }
         ],
-        end_time: [
+        endTime: [
           { required: true, message: '结束时间不能为空', trigger: 'blur' }
         ]
       },
@@ -239,6 +240,7 @@ export default {
     if (this.text == '创建日程') {
       this.$set(this.formData, 'color', '#3E8EF7')
     }
+    console.log(this.formData, 'formData---');
   },
   methods: {
     close() {
@@ -258,20 +260,20 @@ export default {
           let data = this.formData
           let owner_user_ids = []
           for (let item of this.colleaguesList) {
-            owner_user_ids.push(item.id)
+            owner_user_ids.push(item.user_id)
           }
           if (this.text == '创建日程') {
             scheduleAdd({
               title: data.title,
-              start_time: new Date(data.start_time).getTime() / 1000,
-              end_time: new Date(data.end_time).getTime() / 1000,
-              owner_user_ids: owner_user_ids,
+              startTime: data.startTime,
+              endTime: data.endTime,
+              ownerUserIds: owner_user_ids.join(','),
               remark: data.remark,
               color: data.color,
-              customer_ids: this.relevanceAll.customer_ids,
-              contacts_ids: this.relevanceAll.contacts_ids,
-              business_ids: this.relevanceAll.business_ids,
-              contract_ids: this.relevanceAll.contract_ids
+              customerIds: this.relevanceAll.customer_ids ? this.relevanceAll.customer_ids.join(',') : [],
+              contactsIds: this.relevanceAll.contacts_ids ? this.relevanceAll.contacts_ids.join(',') : [],
+              businessIds: this.relevanceAll.business_ids ? this.relevanceAll.business_ids.join(',') : [],
+              contractIds: this.relevanceAll.contract_ids ? this.relevanceAll.contract_ids.join(',') : []
             })
               .then(res => {
                 if (this.$route.query.routerKey == 1) {
@@ -320,17 +322,17 @@ export default {
                 ? list
                 : this.relevanceAll
             scheduleEdit({
-              event_id: data.event_id,
+              eventId: data.event_id,
               title: data.title,
-              start_time: new Date(data.start_time).getTime() / 1000,
-              end_time: new Date(data.end_time).getTime() / 1000,
-              owner_user_ids: owner_user_ids,
+              startTime: data.startTime,
+              endTime: data.endTime,
+              ownerUserIds: owner_user_ids.join(','),
               remark: data.remark,
               color: data.color,
-              customer_ids: ids.customer_ids,
-              contacts_ids: ids.contacts_ids,
-              business_ids: ids.business_ids,
-              contract_ids: ids.contract_ids
+              customerIds: ids.customer_ids.join(','),
+              contactsIds: ids.contacts_ids.join(','),
+              businessIds: ids.business_ids.join(','),
+              contractIds: ids.contract_ids.join(',')
             })
               .then(res => {
                 this.$emit('onSubmit')
@@ -546,13 +548,13 @@ export default {
             margin-left: 3px;
           }
         }
-        .el-form-item-owner_user_ids,
-        .el-form-item-start_time,
+        .el-form-item-ownerUserIds,
+        .el-form-item-startTime,
         .el-form-item-remind_time {
           padding-right: 25px;
         }
 
-        .el-form-item-end_time,
+        .el-form-item-endTime,
         .el-form-item-address {
           padding-left: 25px;
           padding-right: 0;

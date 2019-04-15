@@ -26,7 +26,7 @@
             <img class="table-item-icon"
                  :src="getCustomFieldIcon(item.types)" />
             <div class="table-item-label">{{item.name}}</div>
-            <div class="table-item-time">{{item.update_time == 0 ? '暂无' : item.update_time | moment('YYYY-MM-DD')}}更新</div>
+            <div class="table-item-time">{{item.update_time == 0 ? '暂无' : item.update_time}}更新</div>
             <div class="table-right-btn">
               <el-button style="font-weight: 400;"
                          @click="handleCustomField('edit', item, index)"
@@ -51,17 +51,17 @@
         <div class="customer-setting">
           <label>客户公海规则设置</label>
           <div class="customer-radio">
-            <el-radio-group v-model="customerData.config">
+            <el-radio-group v-model="customerData.type">
               <el-radio :label="0">不启用</el-radio>
               <el-radio :label="1">启用</el-radio>
             </el-radio-group>
             <br />
-            <el-input-number v-model="customerData.follow_day"
+            <el-input-number v-model="customerData.followupDay"
                              controls-position="right"
                              :min="0"
                              size="small"></el-input-number>
             <span>&nbsp;天不跟进或&nbsp;</span>
-            <el-input-number v-model="customerData.deal_day"
+            <el-input-number v-model="customerData.dealDay"
                              controls-position="right"
                              :min="0"
                              size="small"></el-input-number>
@@ -88,8 +88,8 @@
                              :key="index"
                              show-overflow-tooltip
                              :prop="item.field"
-                             :label="item.label"
                              :formatter="fieldFormatter">
+                             :label="item.label">
 
             </el-table-column>
             <el-table-column fixed="right"
@@ -199,7 +199,6 @@ import {
   customFieldIndex,
   productCategoryIndex,
   productCategorySave,
-  productCategoryUpdate,
   productCategoryDelete,
   crmSettingConfig, // 客户保护规则
   crmSettingConfigData // 客户详情
@@ -247,9 +246,9 @@ export default {
       menuIndex: '1',
       // 客户掉报规则设置
       customerData: {
-        config: 0,
-        follow_day: 0,
-        deal_day: 0
+        type: 0,
+        followupDay: 0,
+        dealDay: 0
       },
       // 商机组设置
       /** 商机组每行的信息 */
@@ -257,9 +256,9 @@ export default {
       businessData: [],
       businessList: [
         { label: '商机组名称', field: 'name' },
-        { label: '应用部门', field: 'structure_id' },
+        { label: '应用部门', field: 'deptName' },
         { label: '创建时间', field: 'create_time' },
-        { label: '创建人', field: 'create_user_id' }
+        { label: '创建人', field: 'createName' }
       ],
       // 添加商机组
       businessDialogVisible: false,
@@ -293,7 +292,7 @@ export default {
       crmSettingConfigData()
         .then(res => {
           this.loading = false
-          res.data.config = parseInt(res.data.config)
+          res.data.type = parseInt(res.data.type)
           this.customerData = res.data
         })
         .catch(() => {
@@ -306,7 +305,7 @@ export default {
       crmSettingConfig(this.customerData)
         .then(res => {
           this.loading = false
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
         })
         .catch(() => {
           this.loading = false
@@ -331,9 +330,9 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      if (column.property == 'structure_id') {
+      if (column.property == 'deptName') {
         //格式部门
-        var info = row[column.property + '_info']
+        var info = row.deptIds
         var name = ''
         if (info) {
           for (let index = 0; index < info.length; index++) {
@@ -342,18 +341,6 @@ export default {
           }
         }
         return name ? name : '全公司'
-      } else if (column.property == 'create_time') {
-        //格式时间
-        if (row[column.property] == 0 || !row[column.property]) {
-          return ''
-        }
-        return moment(getDateFromTimestamp(row[column.property])).format(
-          'YYYY-MM-DD HH:mm:ss'
-        )
-      } else if (column.property == 'create_user_id') {
-        //格式create_user 人
-        var info = row[column.property + '_info']
-        return info ? info.realname : ''
       }
       return row[column.property]
     },
@@ -363,16 +350,14 @@ export default {
         id: data.type_id
       })
         .then(res => {
-          var settingList = []
-          if (res.data.status) {
-            settingList = res.data.status
-          }
+          var settingList = res.data.statusList || []
           this.businessObj = {
-            type_id: data.type_id,
-            name: data.name,
-            businessDep: data.structure_id_info,
+            type_id: res.data.type_id,
+            name: res.data.name,
+            businessDep: res.data.deptIds || [],
             settingList: settingList
           }
+          console.log('this.businessObj---', this.businessObj);
           this.businessDialogVisible = true
           this.businessTitle = '编辑商机组'
         })
@@ -416,19 +401,21 @@ export default {
     businessSubmit(name, dep, list, title, type_id) {
       var businessHandleRequest = null
       var params = {
-        name: name,
-        structure_id: dep,
-        status: list
+        crmBusinessType: {
+          name: name,
+          type_id: type_id ? type_id : null
+        },
+        deptIds: dep,
+        crmBusinessStatus: list
       }
       if (title == '添加商机组') {
         businessHandleRequest = businessGroupAdd
       } else {
-        params.type_id = type_id
         businessHandleRequest = businessGroupUpdate
       }
       businessHandleRequest(params)
         .then(res => {
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
           this.getBusinessGroupList()
           this.businessClose()
         })
@@ -550,8 +537,8 @@ export default {
           })
       } else if (this.productForm.type == 'edit') {
         this.loading = true
-        productCategoryUpdate({
-          id: this.productForm.category_id,
+        productCategorySave({
+          categoryId: this.productForm.category_id,
           pid: this.productForm.pid,
           name: this.productForm.name
         })
@@ -589,7 +576,8 @@ export default {
           name: 'handlefield',
           params: {
             type: item.types,
-            id: 'none'
+            id: 'none',
+            label: item.label
           }
         })
       } else if (type == 'preview') {

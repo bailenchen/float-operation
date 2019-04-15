@@ -23,7 +23,8 @@
           </draggable>
         </ul>
       </el-aside>
-      <el-container class="content" v-loading="loading">
+      <el-container class="content"
+                    v-loading="loading">
         <el-header>
           <el-button type="text"
                      style="padding: 8px 22px;border-radius:2px;"
@@ -40,12 +41,11 @@
                      :options="{group: 'list',forceFallback:true, fallbackClass:'draggingStyle'}"
                      @end="handleListMove">
             <component v-for="(item, index) in fieldArr"
-                       v-if="!item.is_deleted"
                        :class="{selected: selectedIndex == index}"
-                       :isShow="selectedIndex == index && (item.operating == null || item.operating == 0 || item.operating == 2)"
+                       :isShow="selectedIndex == index && (item.is_del == null || item.is_del == 1)"
                        :key="index"
                        :attr="item"
-                       :is="item.form_type | typeToComponentName"
+                       :is="item | typeToComponentName"
                        @delete="handleDelete(item, index)"
                        @select="handleChildSelect"
                        @click.native="handleSelect(item, index)">
@@ -64,13 +64,15 @@
     </el-container>
     <!-- 表单预览 -->
     <preview-field-view v-if="showTablePreview"
-                        :types="tablePreviewData.types"
-                        :types_id="tablePreviewData.types_id"
+                        :types="tablePreviewData.type"
+                        :types_id="tablePreviewData.id"
+                        :label="tablePreviewData.label"
                         @hiden-view="showTablePreview=false"></preview-field-view>
   </flexbox>
 </template>
 
 <script>
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   customFieldHandle,
   customFieldList
@@ -112,7 +114,7 @@ export default {
       selectedIndex: -1,
       rejectHandle: true, // 请求未获取前不能操作
       /** 右边展示数据 */
-      form: null, // operating 0 改删 1改 2删 3无
+      form: null, // is_del 1 能编辑
       loading: false, // 加载动画
       // 展示表单预览
       tablePreviewData: { types: '', types_id: '' },
@@ -121,32 +123,33 @@ export default {
   },
   filters: {
     /** 根据type 找到组件 */
-    typeToComponentName(form_type) {
+    typeToComponentName(item) {
       if (
-        form_type === 'text' ||
-        form_type === 'number' ||
-        form_type === 'floatnumber' ||
-        form_type === 'mobile' ||
-        form_type === 'email' ||
-        form_type === 'date' ||
-        form_type === 'datetime' ||
-        form_type === 'user' ||
-        form_type === 'structure' ||
-        form_type === 'contacts' ||
-        form_type === 'customer' ||
-        form_type === 'contract' ||
-        form_type === 'business'
+        item.formType === 'text' ||
+        item.formType === 'number' ||
+        item.formType === 'floatnumber' ||
+        item.formType === 'mobile' ||
+        item.formType === 'email' ||
+        item.formType === 'date' ||
+        item.formType === 'datetime' ||
+        item.formType === 'user' ||
+        item.formType === 'structure' ||
+        item.formType === 'contacts' ||
+        item.formType === 'customer' ||
+        item.formType === 'contract' ||
+        item.formType === 'business' ||
+        item.type == 0
       ) {
         return 'SingleLineText'
-      } else if (form_type === 'textarea') {
+      } else if (item.formType === 'textarea') {
         return 'MultiLineText'
-      } else if (form_type === 'select') {
+      } else if (item.formType === 'select') {
         return 'SelectForm'
-      } else if (form_type === 'checkbox') {
+      } else if (item.formType === 'checkbox') {
         return 'CheckboxForm'
-      } else if (form_type === 'file') {
+      } else if (item.formType === 'file') {
         return 'FileForm'
-      } else if (form_type === 'form') {
+      } else if (item.formType === 'form') {
         return 'TableForm'
       }
     }
@@ -173,17 +176,17 @@ export default {
     getCustomInfo() {
       this.loading = true
       var params = {}
-      params.types = this.$route.params.type
+      params.label = this.$route.params.label
       if (this.$route.params.type === 'oa_examine') {
-        params.types_id = this.$route.params.id
+        params.examineId = this.$route.params.id
       }
       customFieldList(params)
         .then(res => {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             if (
-              element.form_type == 'select' ||
-              element.form_type == 'checkbox'
+              element.formType == 'select' ||
+              element.formType == 'checkbox'
             ) {
               var temps = []
               for (let i = 0; i < element.setting.length; i++) {
@@ -201,6 +204,7 @@ export default {
             this.selectedIndex = 0
             this.form = this.fieldArr[0]
           }
+          console.log('1111')
           this.rejectHandle = false
           this.loading = false
         })
@@ -210,25 +214,18 @@ export default {
     },
     // 删除一行自定义数据
     handleDelete(item, index) {
-      if (item.field_id) {
-        this.$confirm('确定删除该自定义字段吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            item.is_deleted = 1
-            this.$nextTick(() => {
-              this.selectedIndex = -1
-            })
+      this.$confirm('确定删除该自定义字段吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.fieldArr.splice(index, 1)
+          this.$nextTick(() => {
+            this.selectedIndex = -1
           })
-          .catch(() => {})
-      } else {
-        this.fieldArr.splice(index, 1)
-        this.$nextTick(() => {
-          this.selectedIndex = -1
         })
-      }
+        .catch(() => {})
     },
     // 主列表的选择
     handleSelect(item, index) {
@@ -246,10 +243,8 @@ export default {
     },
     // 预览表单
     handlePreview() {
-      this.tablePreviewData.types = this.$route.params.type
-      if (this.$route.params.type === 'oa_examine') {
-        this.tablePreviewData.types_id = this.$route.params.id
-      }
+      this.tablePreviewData = this.$route.params
+      console.log('tablePreviewData---', this.tablePreviewData);
       this.showTablePreview = true
     },
     // 保存数据
@@ -270,73 +265,42 @@ export default {
             message: '第' + (index + 1) + '行的自定义字段，标识名不能为空'
           })
           break
-        } else if (item.form_type == 'select' || item.form_type == 'checkbox') {
+        } else if (item.formType == 'select' || item.formType == 'checkbox') {
           var temps = []
           for (let i = 0; i < item.showSetting.length; i++) {
             const element = item.showSetting[i]
             if (element.value) {
               temps.push(element.value)
             }
-            item.setting = temps
+          }
+          item.options = temps.join(',')
+          if (item.formType == 'checkbox') {
+            item.default_value = item.default_value.join(',')
           }
         }
-
-        // 处理table 数据
-        if (item.form_type == 'form') {
-          for (
-            let tableIndex = 0;
-            tableIndex < item.form_value.length;
-            tableIndex++
-          ) {
-            const tableItem = item.form_value[tableIndex]
-            tableItem.is_null = tableItem.is_null == true ? 1 : 0
-            tableItem.is_unique = tableItem.is_unique == true ? 1 : 0
-
-            if (!tableItem.name) {
-              save = false
-              this.$message({
-                type: 'error',
-                message:
-                  '第' +
-                  (index + 1) +
-                  '行的第' +
-                  (tableIndex + 1) +
-                  '自定义字段，标识名不能为空'
-              })
-              return
-            } else if (
-              tableItem.form_type == 'select' ||
-              tableItem.form_type == 'checkbox'
-            ) {
-              var temps = []
-              for (
-                let selectIndex = 0;
-                selectIndex < tableItem.showSetting.length;
-                selectIndex++
-              ) {
-                const selectIndex = tableItem.showSetting[selectIndex]
-                if (selectIndex.value) {
-                  temps.push(selectIndex.value)
-                }
-                tableItem.setting = temps
-              }
-            }
-          }
-        }
+        item.type = this.getTypeFromFormType(item.formType)
       }
 
       if (save) {
         var params = {}
         params.data = tempFieldArr
-        params.types = this.$route.params.type
+        params.label = this.$route.params.label
         if (this.$route.params.type === 'oa_examine') {
-          params.types_id = this.$route.params.id
+          params.examineId = this.$route.params.id
         }
+        for (let item of params.data) {
+          for (let key in item) {
+            if (JSON.stringify(item[key]) == '{}') {
+              item[key] = null
+            }
+          }
+        }
+        console.log('params---', params);
         customFieldHandle(params)
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.getCustomInfo()
           })
@@ -344,6 +308,23 @@ export default {
             this.getCustomInfo()
           })
       }
+    },
+    getTypeFromFormType(formType) {
+      return (
+        {
+          text: 1,
+          textarea: 2,
+          select: 3,
+          date: 4,
+          number: 5,
+          floatnumber: 6,
+          mobile: 7,
+          file: 8,
+          checkbox: 9,
+          user: 10,
+          structure: 12
+        }[formType] || '0'
+      )
     },
     // 返回
     handleCancel() {
@@ -355,20 +336,21 @@ export default {
       if (!this.rejectHandle) {
         let newField = new Field({
           name: this.movedItem.name,
-          form_type: this.movedItem.form_type
+          formType: this.movedItem.formType
         })
-
+        console.log('newField---', newField)
         // 如果当前选中的table 则加入到table中
         if (
           this.form &&
-          this.form.form_type === 'form' &&
-          this.movedItem.form_type !== 'form'
+          this.form.formType === 'form' &&
+          this.movedItem.formType !== 'form'
         ) {
           this.form.form_value.push(newField)
         } else {
           this.fieldArr.push(newField)
           this.selectedIndex = this.fieldArr.length - 1
         }
+        console.log('this.fieldArr--', this.fieldArr)
       }
     },
     // 从左侧移动到右侧 时候的数据对象

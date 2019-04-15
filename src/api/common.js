@@ -16,16 +16,19 @@ import request from '@/utils/request'
  */
 export function usersList(data) {
   return request({
-    url: 'admin/users/getUserList',
+    url: 'manager/user/queryUserList',
     method: 'post',
     data: data
   })
 }
 
-// 部门列表
+/**
+ * type tree 树形结构
+ * @param {*} data 
+ */
 export function depList(data) {
   return request({
-    url: 'admin/structures/index',
+    url: 'manager/dept/queryDeptTree',
     method: 'post',
     data: data
   })
@@ -63,7 +66,7 @@ export function getSubUserByStructrue(data) {
  * @param {*} data
  * 附件上传 file module module_id
  */
-export const crmFileSaveUrl = 'admin/file/save'
+export const crmFileSaveUrl = process.env.BASE_API + 'file/upload'
 
 export function crmFileSave(data) {
   var param = new FormData()
@@ -71,9 +74,20 @@ export function crmFileSave(data) {
     param.append(key, data[key])
   })
   return request({
-    url: 'admin/file/save',
+    url: 'file/upload',
     method: 'post',
     data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+export function crmFileFormDataSave(data) {
+  return request({
+    url: 'file/upload',
+    method: 'post',
+    data: data,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -83,7 +97,7 @@ export function crmFileSave(data) {
 // 附件列表
 export function crmFileIndex(data) {
   return request({
-    url: 'admin/file/index',
+    url: 'file/queryByBatchId',
     method: 'post',
     data: data
   })
@@ -93,7 +107,7 @@ export function crmFileIndex(data) {
 // 附件删除接口
 export function crmFileDelete(data) {
   return request({
-    url: 'admin/file/delete',
+    url: 'file/removeById',
     method: 'post',
     data: data
   })
@@ -102,7 +116,7 @@ export function crmFileDelete(data) {
 // 附件重命名
 export function crmFileUpdate(data) {
   return request({
-    url: 'admin/file/update',
+    url: 'file/renameFileById',
     method: 'post',
     data: data
   })
@@ -117,7 +131,7 @@ export function crmFileUpdate(data) {
  */
 export function filedGetField(data) {
   return request({
-    url: 'admin/field/getField',
+    url: 'field/queryField',
     method: 'post',
     data: data
   })

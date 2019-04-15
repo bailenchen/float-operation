@@ -34,7 +34,7 @@
                     </div>
                   </div>
                   <!-- -->
-                  <component :is="item.data.form_type | typeToComponentName"
+                  <component :is="item.data.formType | typeToComponentName"
                              :radio="false"
                              :disabled="item.disabled">
                   </component>
@@ -113,49 +113,49 @@ export default {
   },
   filters: {
     /** 根据type 找到组件 */
-    typeToComponentName(form_type) {
+    typeToComponentName(formType) {
       if (
-        form_type == 'text' ||
-        form_type == 'number' ||
-        form_type == 'floatnumber' ||
-        form_type == 'mobile' ||
-        form_type == 'email'
+        formType == 'text' ||
+        formType == 'number' ||
+        formType == 'floatnumber' ||
+        formType == 'mobile' ||
+        formType == 'email'
       ) {
         return 'XhInput'
-      } else if (form_type == 'textarea') {
+      } else if (formType == 'textarea') {
         return 'XhTextarea'
-      } else if (form_type == 'select' || form_type == 'business_status') {
+      } else if (formType == 'select' || formType == 'business_status') {
         return 'XhSelect'
-      } else if (form_type == 'checkbox') {
+      } else if (formType == 'checkbox') {
         return 'XhMultipleSelect'
-      } else if (form_type == 'date') {
+      } else if (formType == 'date') {
         return 'XhDate'
-      } else if (form_type == 'datetime') {
+      } else if (formType == 'datetime') {
         return 'XhDateTime'
-      } else if (form_type == 'user') {
+      } else if (formType == 'user') {
         return 'XhUserCell'
-      } else if (form_type == 'structure') {
+      } else if (formType == 'structure') {
         return 'XhStructureCell'
-      } else if (form_type == 'file') {
+      } else if (formType == 'file') {
         return 'XhFiles'
       } else if (
-        form_type == 'contacts' ||
-        form_type == 'customer' ||
-        form_type == 'contract' ||
-        form_type == 'business'
+        formType == 'contacts' ||
+        formType == 'customer' ||
+        formType == 'contract' ||
+        formType == 'business'
       ) {
         return 'CrmRelativeCell'
-      } else if (form_type == 'category') {
+      } else if (formType == 'category') {
         // 产品类别
         return 'XhProuctCate'
-      } else if (form_type == 'business_type') {
+      } else if (formType == 'business_type') {
         // 商机类别
         return 'XhBusinessStatus'
-      } else if (form_type == 'product') {
+      } else if (formType == 'product') {
         return 'XhProduct'
-      } else if (form_type == 'map_address') {
+      } else if (formType == 'map_address') {
         return 'XhCustomerAddress'
-      } else if (form_type == 'receivables_plan') {
+      } else if (formType == 'receivables_plan') {
         return 'XhReceivablesPlan'
       }
     }
@@ -168,6 +168,10 @@ export default {
     },
     types_id: {
       type: [String, Number],
+      default: ''
+    },
+    label: {
+      type: String,
       default: ''
     }
   },
@@ -182,11 +186,12 @@ export default {
       this.loading = true
       // 获取自定义字段的更新时间
       var params = {}
-      params.types = this.types
-      if (this.types == 'oa_examine') {
-        params.types_id = this.types_id
+      var params = {}
+      console.log('object---', this.$props);
+      params.label = this.label
+      if (this.types === 'oa_examine') {
+        params.examineId = this.types_id
       }
-
       customFieldList(params)
         .then(res => {
           this.getcrmRulesAndModel(res.data)
@@ -202,7 +207,7 @@ export default {
         const item = list[index]
         var params = {}
         params['value'] = item.value
-        params['key'] = item.field
+        params['key'] = item.fieldName
         params['data'] = item
         params['disabled'] = true // 是否可交互
         this.crmForm.crmFields.push(params)

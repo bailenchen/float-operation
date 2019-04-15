@@ -10,11 +10,10 @@
       <div class="ha-week">{{item.create_time|filterTimestampToFormatTime('MM-DD dddd')}}</div>
       <div class="ha-circle"></div>
       <div class="ha-time">{{item.create_time|filterTimestampToFormatTime('H:mm')}}</div>
-      <div v-photo="item.user_id_info"
-           v-lazy:background-image="$options.filters.filterUserLazyImg(item.user_id_info.thumb_img)"
-           :key="item.user_id_info.thumb_img"
+      <div v-photo="item"
+           v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
            class="div-photo ha-img"></div>
-      <div class="ha-name">{{item.user_id_info.realname}}</div>
+      <div class="ha-name">{{item.realname}}</div>
       <div class="ha-content">
         <p v-for="(info, infoIndex) in item.content"
            :key="infoIndex">{{info}}</p>
@@ -26,6 +25,7 @@
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { crmIndexFieldRecord } from '@/api/customermanagement/common'
 import { timestampToFormatTime } from '@/utils'
 
@@ -55,15 +55,15 @@ export default {
         return {}
       }
     },
-    /** 是公海 默认是客户 */
-    isSeas: {
-      type: Boolean,
-      default: false
-    },
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
       default: ''
+    },
+    /** 是公海 默认是客户 */
+    isSeas: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -75,16 +75,15 @@ export default {
     getDetail() {
       this.loading = true
       crmIndexFieldRecord({
-        types: 'crm_' + this.crmType,
-        action_id: this.id
+        types: crmTypeModel[this.crmType],
+        actionId: this.id
       })
         .then(res => {
           this.loading = false
-          if (Object.prototype.toString.call(res.data) == '[object Array]') {
-            this.list = res.data
-          } else {
-            this.list = []
-          }
+          this.list = res.data.map((item)=> {
+            item.create_time = new Date(item.create_time).getTime()
+            return item
+          })
         })
         .catch(() => {
           this.loading = false

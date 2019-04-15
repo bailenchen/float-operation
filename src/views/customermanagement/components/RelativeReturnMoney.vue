@@ -18,7 +18,6 @@
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
-                       :formatter="fieldFormatter"
                        :label="item.label">
       </el-table-column>
     </el-table>
@@ -42,7 +41,6 @@
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
-                       :formatter="fieldFormatter"
                        :label="item.label">
       </el-table-column>
     </el-table>
@@ -62,10 +60,14 @@
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
 import {
-  crmReceivablesIndex,
-  crmReceivablesPlanIndex
-} from '@/api/customermanagement/money'
-import { timestampToFormatTime } from '@/utils'
+  crmCustomerQueryReceivables,
+  crmCustomerQueryReceivablesPlan
+} from '@/api/customermanagement/customer'
+import {
+  crmContractQueryReceivables,
+  crmContractQueryReceivablesPlan
+} from '@/api/customermanagement/contract'
+import { timestampToFormatTime, objDeepCopy } from '@/utils'
 
 export default {
   name: 'relative-return-money', //相关回款  可能再很多地方展示 放到客户管理目录下
@@ -106,24 +108,24 @@ export default {
       type: String,
       default: ''
     },
+    /** 是公海 默认是客户 */
+    isSeas: {
+      type: Boolean,
+      default: false
+    },
     /** 客户和 合同下 可新建 回款计划 */
     detail: {
       type: Object,
       default: () => {
         return {}
       }
-    },
-    /** 是公海 默认是客户 */
-    isSeas: {
-      type: Boolean,
-      default: false
     }
   },
   mounted() {
     this.planFieldList = [
       { prop: 'num', width: '200', label: '期数' },
-      { prop: 'customer_id', width: '200', label: '客户名称' },
-      { prop: 'contract_id', width: '200', label: '合同编号' },
+      { prop: 'customer_name', width: '200', label: '客户名称' },
+      { prop: 'contract_num', width: '200', label: '合同编号' },
       { prop: 'money', width: '200', label: '计划回款金额' },
       { prop: 'return_date', width: '200', label: '计划回款日期' },
       { prop: 'return_type', width: '200', label: '计划回款方式' },
@@ -134,12 +136,12 @@ export default {
     this.getPlanList()
 
     this.fieldList = [
-      { prop: 'number', width: '200', label: '回款编号' },
-      { prop: 'contract_id', width: '200', label: '合同名称' },
+      { prop: 'receivables_num', width: '200', label: '回款编号' },
+      { prop: 'contract_name', width: '200', label: '合同名称' },
       { prop: 'contract_money', width: '200', label: '合同金额' },
-      { prop: 'money', width: '200', label: '回款金额' },
-      { prop: 'owner_user_id', width: '200', label: '负责人' },
-      { prop: 'check_status_info', width: '200', label: '状态' },
+      { prop: 'receivables_money', width: '200', label: '回款金额' },
+      { prop: 'realname', width: '200', label: '负责人' },
+      { prop: 'check_status', width: '200', label: '状态' },
       { prop: 'return_time', width: '200', label: '回款日期' }
     ]
     this.getList()
@@ -149,10 +151,14 @@ export default {
   methods: {
     getPlanList() {
       this.loading = true
-      crmReceivablesPlanIndex(this.getParams())
+      let request = {
+        customer: crmCustomerQueryReceivablesPlan,
+        contract: crmContractQueryReceivablesPlan
+      }[this.crmType]
+      request(this.getParams())
         .then(res => {
           this.loading = false
-          this.palnList = res.data.list
+          this.palnList = res.data
         })
         .catch(() => {
           this.loading = false
@@ -161,10 +167,14 @@ export default {
     /** 回款列表 */
     getList() {
       this.loading = true
-      crmReceivablesIndex(this.getParams())
+      let request = {
+        customer: crmCustomerQueryReceivables,
+        contract: crmContractQueryReceivables
+      }[this.crmType]
+      request(this.getParams())
         .then(res => {
           this.loading = false
-          this.list = res.data.list
+          this.list = res.data
         })
         .catch(() => {
           this.loading = false
@@ -172,9 +182,9 @@ export default {
     },
     getParams() {
       if (this.crmType === 'customer') {
-        return { customer_id: this.id, pageType: 'all' }
+        return { customerId: this.id, pageType: 0 }
       } else if (this.crmType === 'contract') {
-        return { contract_id: this.id, pageType: 'all' }
+        return { contractId: this.id, pageType: 0 }
       }
       return {}
     },
@@ -196,8 +206,8 @@ export default {
     createClick(type) {
       if (type == 'money') {
         if (this.crmType === 'contract') {
-          this.createActionInfo.data['customer'] = this.detail.customer_id_info
-          this.createActionInfo.data['contract'] = this.detail
+          this.createActionInfo.data['customer'] = objDeepCopy(this.detail)
+          this.createActionInfo.data['contract'] = objDeepCopy(this.detail)
         } else if (this.crmType === 'customer') {
           this.createActionInfo.data['customer'] = this.detail
         }
@@ -205,8 +215,8 @@ export default {
         this.isCreate = true
       } else if (type == 'plan') {
         if (this.crmType === 'contract') {
-          this.createActionInfo.data['customer'] = this.detail.customer_id_info
-          this.createActionInfo.data['contract'] = this.detail
+          this.createActionInfo.data['customer'] = objDeepCopy(this.detail)
+          this.createActionInfo.data['contract'] = objDeepCopy(this.detail)
         } else if (this.crmType === 'customer') {
           this.createActionInfo.data['customer'] = this.detail
         }
@@ -220,20 +230,6 @@ export default {
       } else {
         this.getPlanList()
       }
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      if (column.property === 'contract_id') {
-        return row.contract_id_info.name
-      } else if (column.property === 'customer_id') {
-        return row.customer_id_info.name
-      } else if (column.property === 'create_time') {
-        return timestampToFormatTime(row.customer_id_info.create_time)
-      } else if (column.property === 'owner_user_id') {
-        return row.owner_user_id_info.realname
-      }
-      return row[column.property]
     },
     /** 通过回调控制表头style */
     headerRowStyle({ row, column, rowIndex, columnIndex }) {

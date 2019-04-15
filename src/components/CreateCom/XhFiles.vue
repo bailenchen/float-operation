@@ -31,6 +31,7 @@
 <script type="text/javascript">
 import arrayMixin from './arrayMixin'
 import { crmFileSave, crmFileDelete } from '@/api/common'
+import { fileSize } from '@/utils/index'
 
 export default {
   name: 'xh-files', // 新建 file  以数组的形式上传
@@ -39,7 +40,9 @@ export default {
   computed: {},
   watch: {},
   data() {
-    return {}
+    return {
+      batchId: '' // 批次ID
+    }
   },
   props: {},
   mounted() {},
@@ -53,23 +56,37 @@ export default {
     xhUploadFile(event) {
       var files = event.target.files
       var self = this
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index]
-        crmFileSave({
-          'file[]': file
-        })
-          .then(res => {
-            if (res.data) {
-              this.dataValue.push(res.data[0])
-              this.$emit('value-change', {
-                index: this.index,
-                value: this.dataValue
-              })
-            }
-          })
-          .catch(() => {})
+      var firstFile = files[0]
+      this.sendFileRequest(firstFile, () => {
+        for (let index = 1; index < files.length; index++) {
+          const file = files[index]
+          this.sendFileRequest(file)
+        }
+        event.target.value = ''
+      })
+    },
+    // 发送请求
+    sendFileRequest(file, result) {
+      var params = { file: file }
+      if (this.batchId) {
+        params.batchId = this.batchId
       }
-      event.target.value = ''
+      crmFileSave(params)
+        .then(res => {
+          if (this.batchId == '') {
+            this.batchId = res.batchId
+          }
+          res.size = fileSize(res.size)
+          this.dataValue.push(res)
+          this.$emit('value-change', {
+            index: this.index,
+            value: this.dataValue
+          })
+          if (result) {
+            result()
+          }
+        })
+        .catch(() => {})
     },
     /** 删除图片 */
     deleteFile(item, index) {
@@ -80,7 +97,7 @@ export default {
       })
         .then(() => {
           crmFileDelete({
-            save_name: item.save_name
+            id: item.file_id
           })
             .then(res => {
               this.dataValue.splice(index, 1)

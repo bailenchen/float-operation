@@ -171,11 +171,38 @@ export default {
       this.addressSelect.city = data.city.value
       this.addressSelect.area = data.area.value
       this.valueChange()
+      // this.areaSelectMap(data)
     },
+    // /** 区域选择地图 区域选择  不影响 定位 */
+    // areaSelectMap(data) {
+    //   if (this.canExecute) {
+    //     this.canExecute = false
+    //     this.searchInput =
+    //       data.province.value + data.city.value + data.area.value
+
+    //     this.detail_address = this.searchInput
+    //     // 创建地址解析器实例
+    //     var myGeo = new BMap.Geocoder()
+    //     // 将地址解析结果显示在地图上，并调整地图视野
+    //     var self = this
+    //     myGeo.getPoint(this.searchInput, function(point) {
+    //       if (point) {
+    //         // self.map.centerAndZoom(point, 14)
+    //         self.addMarkerLabel(point)
+    //       }
+    //     })
+
+    //     setTimeout(() => {
+    //       self.canExecute = true
+    //     }, 500)
+    //   }
+    // },
     /** 地图选择区域 */
     mapSelectArea(data) {
       if (this.canExecute) {
         this.canExecute = false
+        // this.addressSelect.province = data.province ? data.province : "";
+        // this.addressSelect.city = data.city ? data.city : "";
         /** 因为poi里面不包含区域 所以需要逆地址解析 */
         var myGeo = new BMap.Geocoder()
         // 根据坐标得到地址描述

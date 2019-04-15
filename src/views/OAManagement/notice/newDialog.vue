@@ -22,6 +22,7 @@
             <template v-if="item.type == 'date'">
               <el-date-picker v-model="formData[item.field]"
                               type="date"
+                              value-format="yyyy-MM-dd"
                               placeholder="选择日期">
               </el-date-picker>
             </template>
@@ -88,8 +89,8 @@ export default {
       formList: [
         { label: '公告标题', field: 'title' },
         { label: '通知部门', field: 'dep', type: 'plus' },
-        { label: '开始时间', field: 'start_time', type: 'date' },
-        { label: '结束时间', field: 'end_time', type: 'date' },
+        { label: '开始时间', field: 'startTime', type: 'date' },
+        { label: '结束时间', field: 'endTime', type: 'date' },
         { label: '公告正文', field: 'content', type: 'textarea' }
       ],
       formData: { dep: { staff: [], dep: [] } },
@@ -113,18 +114,14 @@ export default {
           noticeAdd({
             title: this.formData.title,
             content: this.formData.content,
-            start_time: this.formData.start_time
-              ? new Date(this.formData.start_time).getTime() / 1000
-              : '',
-            end_time: this.formData.end_time
-              ? new Date(this.formData.end_time).getTime() / 1000
-              : '',
-            owner_structure_ids: this.formData.dep.dep.map(item => {
+            startTime: this.formData.startTime,
+            endTime: this.formData.endTime,
+            dept_ids: this.formData.dep.dep.map(item => {
               return item.id
-            }),
+            }).join(','),
             owner_user_ids: this.formData.dep.staff.map(item => {
-              return item.id
-            })
+              return item.user_id
+            }).join(',')
           })
             .then(res => {
               this.$message.success('新建公告成功')
@@ -244,11 +241,11 @@ export default {
         }
       }
       .el-form-itemtitle,
-      .el-form-itemstart_time {
+      .el-form-itemstartTime {
         padding-right: 25px;
       }
       .el-form-itemdep,
-      .el-form-itemend_time {
+      .el-form-itemendTime {
         padding-left: 25px;
       }
       .el-form-itemdep {

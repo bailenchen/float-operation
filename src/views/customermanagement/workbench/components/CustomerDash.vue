@@ -80,15 +80,15 @@
                    class="target-items">
             <div class="target-item">
               <div class="name">目标</div>
-              <div class="value">{{gaugeData.achievementMoney}}元</div>
+              <div class="value">{{gaugeData.achievementMoneys}}元</div>
             </div>
             <div class="target-item">
               <div class="name">合同金额</div>
-              <div class="value">{{gaugeData.contractMoney}}元</div>
+              <div class="value">{{gaugeData.contractMoneys}}元</div>
             </div>
             <div class="target-item">
               <div class="name">回款金额</div>
-              <div class="value">{{gaugeData.receivablesMoney}}元</div>
+              <div class="value">{{gaugeData.receivablesMoneys}}元</div>
             </div>
           </flexbox>
         </div>
@@ -150,7 +150,7 @@
             </el-date-picker>
             <el-select v-model="trendSelectValue"
                        style="width: 80px;"
-                       @change="getTrendAxisInfo"
+                       @change="getCrmIndexSaletrend"
                        placeholder="请选择">
               <el-option v-for="item in [{ label: '按月', value: '月' }, { label: '按季度', value: '季度' }]"
                          :key="item.value"
@@ -162,11 +162,11 @@
           <flexbox style="position: relative;">
             <div class="trend-target-item">
               <div class="name">合同金额</div>
-              <div class="value">{{trendData.contractMoneyTotal}}元</div>
+              <div class="value">{{trendData.contractMoneySum}}元</div>
             </div>
             <div class="trend-target-item">
               <div class="name">回款金额</div>
-              <div class="value">{{trendData.receivablesMoneyTotal}}元</div>
+              <div class="value">{{trendData.receivablesMoneySum}}元</div>
             </div>
           </flexbox>
           <div class="trend-label">
@@ -218,62 +218,62 @@ export default {
         {
           title: '新增客户',
           icon: require('@/assets/img/c_curomer.png'),
-          field: 'customerNum',
+          field: 'customerCount',
           value: 0
         },
         {
           title: '新增联系人',
           icon: require('@/assets/img/c_contact.png'),
-          field: 'contactsNum',
+          field: 'contactsCount',
           value: 0
         },
         {
           title: '新增商机',
           icon: require('@/assets/img/c_business.png'),
-          field: 'businessNum',
+          field: 'businessCount',
           value: 0
         },
         {
           title: '阶段变化的商机',
           icon: require('@/assets/img/jd_business.png'),
-          field: 'businessStatusNum',
+          field: 'recordStatusCount',
           value: 0
         },
         {
           title: '新增合同',
           icon: require('@/assets/img/c_contract.png'),
-          field: 'contractNum',
+          field: 'contractCount',
           value: 0
         },
         {
           title: '新增跟进记录',
           icon: require('@/assets/img/c_log.png'),
-          field: 'recordNum',
+          field: 'recordCount',
           value: 0
         },
         {
           title: '新增回款',
           icon: require('@/assets/img/c_receivables.png'),
-          field: 'receivablesNum',
+          field: 'receivablesCount',
           value: 0
         }
       ],
-      jianbaoSelectValue: 'month',
+      jianbaoSelectValue: '5',
       jianbaoOptions: [
-        { name: '今天', value: 'today' },
-        { name: '昨天', value: 'yesterday' },
-        { name: '本周', value: 'week' },
-        { name: '上周', value: 'lastWeek' },
-        { name: '本月', value: 'month' },
-        { name: '上月', value: 'lastMonth' },
-        { name: '本季度', value: 'quarter' },
-        { name: '上季度', value: 'lastQuarter' },
-        { name: '本年', value: 'year' },
-        { name: '去年', value: 'lastYear' }
+        { name: '今天', value: '1' }, // today
+        { name: '昨天', value: '2' }, // yesterday
+        { name: '本周', value: '3' }, // week
+        { name: '上周', value: '4' }, // lastWeek
+        { name: '本月', value: '5' }, // month
+        { name: '上月', value: '6' }, // lastMonth
+        { name: '本季度', value: '7' }, // quarter
+        { name: '上季度', value: '8' }, // lastQuarter
+        { name: '本年', value: '9' }, // year
+        { name: '去年', value: '10' } // lastYear
       ],
       /** 业绩指标 */
       gaugeLoading: false,
-      gaugeSelectValue: 2,
+      gaugeSelectValue: 1,
       gaugeStartDate: '',
       gaugeEndDate: '',
       gaugeData: { contractMoney: 0, receivablesMoney: 0, achievementMoney: 0 },
@@ -312,7 +312,7 @@ export default {
   computed: {
     /** 简报信息 */
     gaugeOptions() {
-      return [{ label: '回款金额', value: 2 }, { label: '合同金额', value: 1 }]
+      return [{ label: '回款金额', value: 1 }, { label: '合同金额', value: 2 }]
     }
   },
   mounted() {
@@ -357,12 +357,12 @@ export default {
     },
     getBaseParams() {
       return {
-        user_id: this.data.users.map(function(item, index, array) {
+        userIds: this.data.users.map(function(item, index, array) {
+          return item.user_id
+        }).join(','),
+        deptIds: this.data.strucs.map(function(item, index, array) {
           return item.id
-        }),
-        structure_id: this.data.strucs.map(function(item, index, array) {
-          return item.id
-        })
+        }).join(',')
       }
     },
     /** 指标图 */
@@ -370,13 +370,13 @@ export default {
     getCrmIndexAchievementData() {
       this.gaugeLoading = true
       var params = this.getBaseParams()
-      params.start_time = formatTimeToTimestamp(this.gaugeStartDate)
-      params.end_time = formatTimeToTimestamp(this.gaugeEndDate)
-      params.status = this.gaugeSelectValue
+      params.startTime = this.gaugeStartDate
+      params.endTime = this.gaugeEndDate
+      params.type = this.gaugeSelectValue
       crmIndexAchievementData(params)
         .then(res => {
           this.gaugeData = res.data
-          this.gaugeOption.series[0].data[0].value = res.data.rate
+          this.gaugeOption.series[0].data[0].value = res.data.proportion
           this.gaugeChart.setOption(this.gaugeOption, true)
           this.gaugeLoading = false
         })
@@ -555,6 +555,7 @@ export default {
       this.trendLoading = true
       var params = this.getBaseParams()
       params.year = this.trendDateValue
+      params.type = this.trendSelectValue == '月' ? '1' : '2' // 1.月份 2.季度
       crmIndexSaletrend(params)
         .then(res => {
           this.trendData = res.data
@@ -566,11 +567,11 @@ export default {
         })
     },
     getTrendAxisInfo() {
-      if (this.trendData && this.trendData.charMonthArr) {
         let contractList = []
         let receivablesList = []
+        console.log('this.trendSelectValue---', this.trendSelectValue);
         if (this.trendSelectValue == '月') {
-          this.axisOption.xAxis[0].data = [
+          let keys = [
             '1月',
             '2月',
             '3月',
@@ -584,31 +585,33 @@ export default {
             '11月',
             '12月'
           ]
-          for (let key in this.trendData.charMonthArr) {
-            const element = this.trendData.charMonthArr[key]
-            contractList.push(element.contractMoney)
-            receivablesList.push(element.receivablesMoney)
+          this.axisOption.xAxis[0].data = keys
+          for (let key in keys) {
+            console.log('key---', key);
+            const element = this.trendData[keys[key]]
+            contractList.push(element.contractMoneys)
+            receivablesList.push(element.receivablesMoneys)
           }
         } else {
-          this.axisOption.xAxis[0].data = [
+          console.log('jidu');
+          let keys = [
             '一季度',
             '二季度',
             '三季度',
             '四季度'
           ]
-          for (let key in this.trendData.charQuarterArr) {
-            const element = this.trendData.charQuarterArr[key]
-            contractList.push(element.conQuarterMoney)
-            receivablesList.push(element.reQuarterMoney)
+          this.axisOption.xAxis[0].data = keys
+          for (let key in keys) {
+            const element = this.trendData[keys[key]]
+            contractList.push(element.contractMoneys)
+            receivablesList.push(element.receivablesMoneys)
           }
         }
-
+        console.log('contractList----', contractList);
+        console.log('receivablesList----', receivablesList);
         this.axisOption.series[0].data = contractList
         this.axisOption.series[1].data = receivablesList
         this.axisChart.setOption(this.axisOption, true)
-      } else {
-        this.getCrmIndexSaletrend()
-      }
     },
     initAxis() {
       var axisChart = echarts.init(document.getElementById('axismain'))

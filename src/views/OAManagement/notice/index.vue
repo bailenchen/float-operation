@@ -29,7 +29,6 @@
               <div class="header">
                 <div v-photo="item"
                      v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-                     :key="item.thumb_img"
                      class="div-photo"></div>
                 <div class="name-time">
                   <p class="name">{{item.realname}}</p>
@@ -77,7 +76,7 @@
 import VDetails from './details'
 import newDialog from './newDialog'
 // API
-import { noticeList, noticeAdd } from '@/api/oamanagement/notice'
+import { noticeList } from '@/api/oamanagement/notice'
 
 export default {
   components: {
@@ -144,9 +143,10 @@ export default {
         limit: 15
       })
         .then(res => {
-          res.data.is_create == 1
-            ? (this.newStatus = true)
-            : (this.newStatus = false)
+          this.newStatus = true
+          // res.data.is_create == 1
+          //   ? (this.newStatus = true)
+          //   : (this.newStatus = false)
           for (let item of res.data.list) {
             item.contentSub = item.content.substring(0, 150)
           }

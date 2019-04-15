@@ -63,6 +63,14 @@ export default {
 <style lang='scss' scoped>
 @import '@/styles/emoji-sprite.scss';
 .emoji {
+  //   width: 420px;
+  //       box-shadow: 0 0 24px rgba(0,0,0,.18);
+  // //   height: 186px;
+  //   bottom: 30px;
+  //   background: #fff;
+  //   z-index: 10;
+  //   padding: 10px;
+  //   margin-right: 10px;
   .emoji-controller {
     height: 36px;
     overflow: hidden;

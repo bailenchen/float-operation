@@ -134,8 +134,9 @@
 </template>
 
 <script type="text/javascript">
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
-  crmSceneIndex,
+  crmSceneSetIndex,
   crmSceneSort,
   crmSceneDefaults,
   crmSceneDelete,
@@ -206,15 +207,15 @@ export default {
   mounted() {},
   methods: {
     getSceneList() {
-      crmSceneIndex({
-        types: 'crm_' + this.crmType
+      crmSceneSetIndex({
+        type: crmTypeModel[this.crmType]
       })
         .then(res => {
-          this.checkedLeftData = res.data.list.map(function(item, index) {
+          this.checkedLeftData = res.data.value.map(function(item, index) {
             item.check = false
             return item
           })
-          this.checkedRightData = res.data.hideList.map(function(item, index) {
+          this.checkedRightData = res.data.hide_value.map(function(item, index) {
             item.check = false
             return item
           })
@@ -243,14 +244,13 @@ export default {
         this.default_id = ''
       }
       crmSceneSort({
-        types: 'crm_' + this.crmType,
-        ids: this.checkedLeftData.map(function(item, index, array) {
+        type: crmTypeModel[this.crmType],
+        noHideIds: this.checkedLeftData.map(function(item, index, array) {
           return item.scene_id
-        }),
-        hide_ids: this.checkedRightData.map(function(item, index, array) {
+        }).join(','),
+        hideIds: this.checkedRightData.map(function(item, index, array) {
           return item.scene_id
-        }),
-        default_id: this.default_id
+        }).join(',')
       })
         .then(res => {
           this.$message({
@@ -274,7 +274,7 @@ export default {
         })
           .then(() => {
             crmSceneDelete({
-              id: item.scene_id
+              sceneId: item.scene_id
             })
               .then(res => {
                 this.$message({
@@ -300,13 +300,12 @@ export default {
     /** 操作默认 */
     defaultHandle() {
       crmSceneDefaults({
-        id: this.handlDefaultItem.scene_id,
-        types: 'crm_' + this.crmType
+        sceneId: this.handlDefaultItem.scene_id
       })
         .then(res => {
           this.$message({
             type: 'success',
-            message: res.data
+            message: '操作成功'
           })
           this.default_id = this.handlDefaultItem.scene_id
         })
@@ -315,7 +314,7 @@ export default {
     /** 添加编辑场景 */
     addAndEditScene(type, data) {
       filterIndexfields({
-        types: 'crm_' + this.crmType
+        label: crmTypeModel[this.crmType]
       })
         .then(res => {
           this.fieldList = res.data

@@ -4,14 +4,14 @@
       <div class="select-group"
            v-if="selectAuthority">
         <label>发起人</label>
-        <el-select v-model="fromData.send_user_id"
+        <el-select v-model="fromData.create_user_id"
                    size="small"
                    @change="selectChange"
                    placeholder="请选择">
           <el-option v-for="item in nameOptions"
-                     :key="item.id"
+                     :key="item.user_id"
                      :label="item.realname"
-                     :value="item.id">
+                     :value="item.user_id">
           </el-option>
         </el-select>
       </div>
@@ -26,7 +26,7 @@
       </div>
       <div class="select-group">
         <label>类型</label>
-        <el-select v-model="fromData.category_id"
+        <el-select v-model="fromData.categoryId"
                    @change="selectChange"
                    size="small"
                    placeholder="请选择">
@@ -123,7 +123,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            journalDelete({ log_id: data.data.item.log_id }).then(res => {
+            journalDelete({ logId: data.data.item.log_id }).then(res => {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
