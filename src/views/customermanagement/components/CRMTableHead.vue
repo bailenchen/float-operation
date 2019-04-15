@@ -1,6 +1,6 @@
 <template>
   <div>
-    <flexbox v-if="selectionList.length == 0"
+    <flexbox v-show="selectionList.length == 0"
              class="th-container">
       <div v-if="!isSeas">场景：</div>
       <el-popover v-if="!isSeas"
