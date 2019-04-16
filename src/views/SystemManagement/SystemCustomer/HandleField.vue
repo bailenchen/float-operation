@@ -1,7 +1,7 @@
 <template>
   <flexbox orient="vertical"
            align="stretch"
-           style="height:100%;">
+           :style="{'height': contentHeight + 'px'}">
     <div class="title">{{'编辑'+getTitle()+'字段'}}</div>
     <el-container class="wrapper">
       <el-aside class="left">
@@ -118,7 +118,8 @@ export default {
       loading: false, // 加载动画
       // 展示表单预览
       tablePreviewData: { types: '', types_id: '' },
-      showTablePreview: false
+      showTablePreview: false,
+      contentHeight: document.documentElement.clientHeight - 100
     }
   },
   filters: {
@@ -168,6 +169,9 @@ export default {
     }
   },
   mounted() {
+    window.onresize = () => {
+      this.contentHeight = document.documentElement.clientHeight - 100
+    }
     // 获取当前模块的自定义数据
     this.getCustomInfo()
   },
