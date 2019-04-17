@@ -9,17 +9,17 @@
         </tab-journal>
       </template>
       <template v-else>
-        <div v-photo="item.create_user_info"
-             v-lazy:background-image="$options.filters.filterUserLazyImg(item.create_user_info.thumb_img)"
+        <div v-photo="item.createUser"
+             v-lazy:background-image="$options.filters.filterUserLazyImg(item.createUser.img)"
              class="div-photo"></div>
         <div class="img-text">
           <div class="name-time">
             <p class="name-behavior">
               <span class="name"
-                    v-if="item.create_user_info.realname">{{item.create_user_info.realname}}</span>
+                    v-if="item.createUser.realname">{{item.createUser.realname}}</span>
               <span class="behavior">{{item.action_content}}</span>
             </p>
-            <p class="time">{{item.create_time | moment("YYYY-MM-DD HH:mm")}}</p>
+            <p class="time">{{item.create_time}}</p>
           </div>
           <div class="log-title">
             <img v-if="item.type == 1"

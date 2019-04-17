@@ -182,7 +182,7 @@ export default {
       var params = {}
       params.label = this.$route.params.label
       if (this.$route.params.type === 'oa_examine') {
-        params.examineId = this.$route.params.id
+        params.categoryId = this.$route.params.id
       }
       customFieldList(params)
         .then(res => {
@@ -290,7 +290,7 @@ export default {
         params.data = tempFieldArr
         params.label = this.$route.params.label
         if (this.$route.params.type === 'oa_examine') {
-          params.examineId = this.$route.params.id
+          params.categoryId = this.$route.params.id
         }
         for (let item of params.data) {
           for (let key in item) {

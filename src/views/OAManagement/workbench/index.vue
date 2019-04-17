@@ -132,7 +132,7 @@ export default {
       })
         .then(res => {
           this.listData = this.listData.concat(res.data.list)
-          if (Math.ceil(res.data.dataCount / 15) <= page) {
+          if (res.data.list.length < 15) {
             this.loadText = '没有更多了'
             this.loadMoreLoading = false
           } else {

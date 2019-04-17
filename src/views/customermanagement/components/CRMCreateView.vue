@@ -529,14 +529,14 @@ export default {
      */
     getParamsValueAndRelativeInfo(params, item, list) {
       if (this.action.type == 'relative') {
-        let relativeData = this.action.data[item.form_type]
-        if (item.form_type == 'receivables_plan') {
+        let relativeData = this.action.data[item.formType]
+        if (item.formType == 'receivables_plan') {
           params['value'] = ''
         } else {
           params['value'] = relativeData ? [relativeData] : []
         }
       } else {
-        if (item.form_type == 'receivables_plan') {
+        if (item.formType == 'receivables_plan') {
           params['value'] = item.value || ''
         } else {
           params['value'] = item.value || []
@@ -544,7 +544,7 @@ export default {
       }
       if (this.action.type == 'relative' || this.action.type == 'update') {
         // 回款计划 需要合同信息
-        if (item.form_type === 'receivables_plan') {
+        if (item.formType === 'receivables_plan') {
           let contractItem = this.getItemRelatveInfo(item, list, 'contract')
           if (contractItem) {
             contractItem['moduleType'] = 'contract'
@@ -552,14 +552,14 @@ export default {
           }
           // 商机合同 需要客户信息
         } else if (
-          item.form_type == 'business' ||
-          item.form_type == 'contract'
+          item.formType == 'business' ||
+          item.formType == 'contract'
         ) {
           let customerItem = this.getItemRelatveInfo(item, list, 'customer')
-          if (item.form_type == 'business' && customerItem) {
+          if (item.formType == 'business' && customerItem) {
             customerItem['moduleType'] = 'customer'
             params['relation'] = customerItem
-          } else if (item.form_type == 'contract' && customerItem) {
+          } else if (item.formType == 'contract' && customerItem) {
             customerItem['moduleType'] = 'customer'
             customerItem['params'] = { check_status: 2 }
             params['relation'] = customerItem
@@ -576,7 +576,7 @@ export default {
         crmItem = this.action.data[from_type]
       } else {
         let crmObj = list.find(listItem => {
-          return listItem.form_type === from_type
+          return listItem.formType === from_type
         })
         if (crmObj && crmObj.value && crmObj.value.length > 0) {
           crmItem = crmObj.value[0]
@@ -618,19 +618,19 @@ export default {
           let relativeTypeDisInfos = crmTypeDisInfos[this.action.crmType]
           if (relativeTypeDisInfos) {
             // 包含的字段值
-            return relativeTypeDisInfos[item.form_type] || false
+            return relativeTypeDisInfos[item.formType] || false
           }
         }
         return false
       } else if (this.action.type != 'update') {
         // 新建
-        if (this.crmType === 'contract' && item.form_type === 'business') {
+        if (this.crmType === 'contract' && item.formType === 'business') {
           return true
           // 回款下 新建 合同 和 回款计划 默认不能操作
         } else if (this.crmType === 'receivables') {
-          if (item.form_type === 'contract') {
+          if (item.formType === 'contract') {
             return true
-          } else if (item.form_type === 'receivables_plan') {
+          } else if (item.formType === 'receivables_plan') {
             return true
           }
         }

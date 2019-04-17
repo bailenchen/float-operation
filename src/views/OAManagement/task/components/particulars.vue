@@ -858,7 +858,7 @@ export default {
         index: this.detailIndex
       })
       editTask({
-        taskid: val.task_id,
+        taskId: val.task_id,
         status: e ? 5 : 1
       })
         .then(res => {})
@@ -910,6 +910,9 @@ export default {
         ownerUserId: this.taskData.ownerUserList
           .filter(userItem => {
             return userItem.user_id != item.user_id
+          })
+          .map(item => {
+            return item.user_id
           })
           .join(',')
       })
