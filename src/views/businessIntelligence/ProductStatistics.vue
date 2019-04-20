@@ -25,9 +25,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.id"
+                   :key="item.user_id"
                    :label="item.realname"
-                   :value="item.id">
+                   :value="item.user_id">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"
@@ -70,9 +70,8 @@
 </template>
 
 <script>
-import { adminStructuresSubIndex, getSubUserByStructrue } from '@/api/common'
+import { adminStructuresSubIndex, usersList } from '@/api/common'
 import { biProductStatistics } from '@/api/businessIntelligence/bi'
-import { formatTimeToTimestamp } from '@/utils'
 import moment from 'moment'
 import ContractDetail from '@/views/customermanagement/contract/ContractDetail'
 import CustomerDetail from '@/views/customermanagement/customer/CustomerDetail'
@@ -279,9 +278,9 @@ export default {
     },
     /** 部门下员工 */
     getUserList() {
-      var params = {}
-      params.structure_id = this.structuresSelectValue
-      getSubUserByStructrue(params)
+      let params = { pageType: 0 }
+      params.deptId = this.structuresSelectValue
+      usersList(params)
         .then(res => {
           this.userOptions = res.data
         })
@@ -297,10 +296,10 @@ export default {
     getProductDatalist() {
       this.loading = true
       biProductStatistics({
-        start_time: formatTimeToTimestamp(this.dateSelect[0]),
-        end_time: formatTimeToTimestamp(this.dateSelect[1]),
-        structure_id: this.structuresSelectValue,
-        user_id: this.userSelectValue
+        startTime: this.dateSelect[0],
+        endTime: this.dateSelect[1],
+        deptId: this.structuresSelectValue,
+        userId: this.userSelectValue
       })
         .then(res => {
           this.list = res.data

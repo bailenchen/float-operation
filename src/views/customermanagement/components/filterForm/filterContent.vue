@@ -4,10 +4,10 @@
       <li class="list-item"
           v-for="(item, index) in showObj.form"
           :key="index">
-        <span v-if="item.form_type == 'date'">{{item.name +'&nbsp;“' + item.value[0] + '-' + item.value[1] + '”'}}</span>
-        <span v-else-if="item.form_type === 'datetime'">{{item.name +'&nbsp;“' + item.value[0] + '-' + item.value[1] + '”'}}</span>
-        <span v-else-if="item.form_type === 'business_type'">{{item.name +'&nbsp;“' + getTypesName(item) + getStatusName(item) + '”'}}</span>
-        <span v-else-if="item.form_type === 'user'">{{item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”'}}</span>
+        <span v-if="item.formType == 'date'">{{item.name +'&nbsp;“' + item.value[0] + '-' + item.value[1] + '”'}}</span>
+        <span v-else-if="item.formType === 'datetime'">{{item.name +'&nbsp;“' + item.value[0] + '-' + item.value[1] + '”'}}</span>
+        <span v-else-if="item.formType === 'business_type'">{{item.name +'&nbsp;“' + getTypesName(item) + getStatusName(item) + '”'}}</span>
+        <span v-else-if="item.formType === 'user'">{{item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”'}}</span>
         <span v-else>{{item.name + '&nbsp;' + optionsNames[item.condition] + '“' + item.value + '”' }}</span>
         <i class="el-icon-close icon"
            @click="handleDelete(item, index)"></i>
@@ -36,13 +36,13 @@ export default {
       // 获取条件名称
       optionsNames: {
         is: '等于',
-        isnot: '不等于',
+        isNot: '不等于',
         contains: '包含',
-        not_contain: '不包含',
-        start_with: '开始于',
-        end_with: '结束于',
-        is_empty: '为空',
-        is_not_empty: '不为空',
+        notContains: '不包含',
+        startWith: '开始于',
+        endWith: '结束于',
+        isNull: '为空',
+        isNotNull: '不为空',
         eq: '等于',
         neq: '不等于',
         gt: '大于',
@@ -63,7 +63,7 @@ export default {
      * @param index
      */
     handleDelete(item, index) {
-      this.$delete(this.showObj.obj, item.field)
+      this.$delete(this.showObj.obj, item.fieldName)
       this.showObj.form.splice(index, 1)
       this.$emit('delete', { item: item, index: index, obj: this.showObj })
     },

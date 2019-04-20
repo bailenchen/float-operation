@@ -191,10 +191,19 @@ export function crmIndexFieldRecord(data) {
   })
 }
 
-// 客户管理下 合同审批信息
+// 客户管理下 合同审批信息 新建
 export function crmExamineFlowStepList(data) {
   return request({
     url: 'admin/examineFlow/stepList',
+    method: 'post',
+    data: data
+  })
+}
+
+// CRM合同回款创建时候的审批流
+export function crmCreateExamineFlow(data) {
+  return request({
+    url: 'examine/queryExaminStep',
     method: 'post',
     data: data
   })
@@ -208,7 +217,7 @@ export function crmExamineFlowStepList(data) {
  */
 export function crmExamineFlowRecordList(data) {
   return request({
-    url: 'admin/examineFlow/recordList',
+    url: 'examineRecord/queryExamineLogList',
     method: 'post',
     data: data
   })

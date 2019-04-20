@@ -234,7 +234,7 @@ export default {
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
-          { value: 'isnot', label: '不等于', disabled: false }
+          { value: 'isNot', label: '不等于', disabled: false }
         ]
       } else if (
         formType == 'module' ||
@@ -243,18 +243,18 @@ export default {
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
-          { value: 'isnot', label: '不等于', disabled: false },
+          { value: 'isNot', label: '不等于', disabled: false },
           { value: 'contains', label: '包含', disabled: false },
-          { value: 'not_contain', label: '不包含', disabled: false }
+          { value: 'notContains', label: '不包含', disabled: false }
         ]
       } else if (formType == 'floatnumber' || formType == 'number') {
         return [
           { value: 'is', label: '等于', disabled: false },
-          { value: 'isnot', label: '不等于', disabled: false },
+          { value: 'isNot', label: '不等于', disabled: false },
           { value: 'contains', label: '包含', disabled: false },
-          { value: 'not_contain', label: '不包含', disabled: false },
-          { value: 'is_empty', label: '为空', disabled: false },
-          { value: 'is_not_empty', label: '不为空', disabled: false },
+          { value: 'notContains', label: '不包含', disabled: false },
+          { value: 'isNull', label: '为空', disabled: false },
+          { value: 'isNotNull', label: '不为空', disabled: false },
           { value: 'gt', label: '大于', disabled: false },
           { value: 'egt', label: '大于等于', disabled: false },
           { value: 'lt', label: '小于', disabled: false },
@@ -263,13 +263,13 @@ export default {
       } else {
         return [
           { value: 'is', label: '等于', disabled: false },
-          { value: 'isnot', label: '不等于', disabled: false },
+          { value: 'isNot', label: '不等于', disabled: false },
           { value: 'contains', label: '包含', disabled: false },
-          { value: 'not_contain', label: '不包含', disabled: false },
-          { value: 'start_with', label: '开始于', disabled: false },
-          { value: 'end_with', label: '结束于', disabled: false },
-          { value: 'is_empty', label: '为空', disabled: false },
-          { value: 'is_not_empty', label: '不为空', disabled: false },
+          { value: 'notContains', label: '不包含', disabled: false },
+          { value: 'startWith', label: '开始于', disabled: false },
+          { value: 'endWith', label: '结束于', disabled: false },
+          { value: 'isNull', label: '为空', disabled: false },
+          { value: 'isNotNull', label: '不为空', disabled: false },
           { value: 'gt', label: '大于', disabled: false },
           { value: 'egt', label: '大于等于', disabled: false },
           { value: 'lt', label: '小于', disabled: false },

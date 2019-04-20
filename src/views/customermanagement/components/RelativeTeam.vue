@@ -1,6 +1,7 @@
 <template>
   <div class="rc-cont">
-    <flexbox class="rc-head"
+    <flexbox v-if="!isSeas"
+             class="rc-head"
              direction="row-reverse">
       <el-button class="rc-head-item"
                  @click.native="handleClick('remove')"

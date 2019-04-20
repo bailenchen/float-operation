@@ -28,12 +28,12 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="reset">重置密码</el-dropdown-item>
-                <el-dropdown-item command="status">{{data.status === 1 ? '禁 用' : '激 活'}}</el-dropdown-item>
+                <el-dropdown-item command="status">{{data.status === 0 ? '激 活' : '禁 用'}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
           <div class="dialog-remark">
-            <p>账号状态：{{data.status === 1 ? '激活' : '禁用'}}</p>
+            <p>账号状态：{{{'0':'禁用','1':'激活','2':'未激活' }[data.status]}}</p>
             <p>创建时间：{{data.create_time}}</p>
           </div>
         </div>

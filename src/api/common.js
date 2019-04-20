@@ -37,25 +37,18 @@ export function depList(data) {
 // 获取权限范围内部门接口
 export function adminStructuresSubIndex(data) {
   return request({
-    url: 'admin/structures/subIndex',
+    url: 'manager/dept/queryDeptByAuth',
     method: 'post',
     data: data
   })
 }
+
+
 
 // 部门下的员工 structure_id
 export function userListByStructid(data) {
   return request({
     url: 'admin/users/userListByStructid',
-    method: 'post',
-    data: data
-  })
-}
-
-// 根据部门获取权限范围内员工接口
-export function getSubUserByStructrue(data) {
-  return request({
-    url: 'admin/structures/getSubUserByStructrue',
     method: 'post',
     data: data
   })

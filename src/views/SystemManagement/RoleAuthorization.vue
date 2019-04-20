@@ -90,7 +90,7 @@
                        @click="addEmployees"> 关联员工 </el-button>
           </flexbox>
           <el-table :data="tableData"
-                    style="width: 100%">
+                    :height="tableHeight">
             <el-table-column :prop="item.field"
                              show-overflow-tooltip
                              :label="item.label"
@@ -166,7 +166,6 @@
     <!-- 添加员工 -->
     <new-dialog :dialogVisible="newEmployeeVisible"
                 :roleList="roleList"
-                :role="roleActive"
                 :selectRoleList="newDialogSelectRoles"
                 :selectUserList="newDialogSelectUsers"
                 :dialogTitle="dialogTitle"
@@ -202,14 +201,15 @@ export default {
       tableData: [], // 与角色关联的员工
       tableList: [
         { label: '姓名', field: 'realname' },
-        { label: '部门', field: 's_name' },
+        { label: '部门', field: 'deptName' },
         { label: '职位', field: 'post' },
-        { label: '角色', field: 'groups' }
+        { label: '角色', field: 'roleName' }
       ], //员工列表 头部 数据
       // 新建角色
       newRoleVisible: false,
       role: {}, // 操作角色的框 关联的信息
       roleList: [], // 角色列表 list属性 是信息
+      tableHeight: document.documentElement.clientHeight - 285,
       // 权限管理
       jurisdictionIndex: 'crm', // 默认模块 工作台
       muneList: [],
@@ -243,25 +243,32 @@ export default {
   },
   computed: {},
   mounted() {
+    window.onresize = () => {
+      this.tableHeight = document.documentElement.clientHeight - 285
+    }
+
     /** 获取权限信息 */
-    this.getRulesList();
+    this.getRulesList()
   },
   methods: {
     // 获取权限规则信息
     getRulesList() {
       rulesList({ type: 'tree' }).then(res => {
-
-        var arr=[];
-        var map={};
-        for(var i = 0; i < res.data.length; i++) {
-          arr.push({label: res.data[i].menu_name, index: i,realm:res.data[i].realm})
-          map[res.data[i].realm]=res.data[i];
+        var arr = []
+        var map = {}
+        for (var i = 0; i < res.data.length; i++) {
+          arr.push({
+            label: res.data[i].menu_name,
+            index: i,
+            realm: res.data[i].realm
+          })
+          map[res.data[i].realm] = res.data[i]
         }
-        this.treeData = map;
-        this.muneList=arr;
-        this.showTreeData = [this.treeData[this.jurisdictionIndex]];
+        this.treeData = map
+        this.muneList = arr
+        this.showTreeData = [this.treeData[this.jurisdictionIndex]]
         this.getRoleList()
-        })
+      })
     },
     // 获取角色列表
     getRoleList() {
@@ -273,9 +280,13 @@ export default {
           let hasActive = false
           if (this.roleActive) {
             for (let index = 0; index < this.roleList.length; index++) {
-              const element = this.roleList[index];
-              for (let subIndex = 0; subIndex < element.list.length; subIndex++) {
-                const item = element.list[subIndex];
+              const element = this.roleList[index]
+              for (
+                let subIndex = 0;
+                subIndex < element.list.length;
+                subIndex++
+              ) {
+                const item = element.list[subIndex]
                 if (item.id === this.roleActive.id) {
                   this.roleActive = item
                   // 点击角色 复制权限 用于编辑操作
@@ -312,7 +323,7 @@ export default {
     // 添加员工
     addEmployees() {
       this.newDialogSelectUsers = []
-      this.newDialogSelectRoles = []
+      this.newDialogSelectRoles = [this.roleActive.id]
       this.dialogTitle = '添加员工'
       this.newEmployeeVisible = true
     },
@@ -331,7 +342,7 @@ export default {
       })
         .then(() => {
           this.menuLoading = true
-          usersDelete({ user_id: val.id, group_id: this.roleActive.id }).then(
+          usersDelete({ userId: val.user_id, roleId: this.roleActive.id }).then(
             res => {
               this.menuLoading = true
               this.getUserListWithRole(this.roleActive)
@@ -348,7 +359,7 @@ export default {
     },
     editBtn(val) {
       this.newDialogSelectUsers = [val]
-      this.newDialogSelectRoles = val.groupids.split(',').map(function(data) {
+      this.newDialogSelectRoles = val.roleId.split(',').map(function(data) {
         return +data
       })
       this.dialogTitle = '编辑员工'
@@ -361,9 +372,7 @@ export default {
       this.showTreeData = [this.treeData[this.jurisdictionIndex]]
       this.$nextTick(() => {
         if (this.$refs.tree) {
-          this.$refs.tree.setCheckedKeys(
-            this.roleRulesEdit
-          )
+          this.$refs.tree.setCheckedKeys(this.roleRulesEdit)
         }
       })
     },
@@ -502,16 +511,17 @@ export default {
       this.getUserRulesWithRole(this.roleActive)
     },
     getRoleRulesInfo(role) {
-      this.roleRulesEdit = this.getUserModuleRules(role.rules, 'crm');
+      this.roleRulesEdit = this.getUserModuleRules(role.rules, 'crm')
     },
     // 获取角色下员工列表
     getUserListWithRole(role) {
       this.menuLoading = true
       usersList({
-        roleId: role.id
+        roleId: role.id,
+        pageType: 0 // 1分页 0不分页
       })
         .then(res => {
-          this.tableData = res.data.list
+          this.tableData = res.data
           this.menuLoading = false
         })
         .catch(err => {
@@ -523,9 +533,7 @@ export default {
       // 默认勾选第一个
       this.$nextTick(() => {
         if (this.$refs.tree) {
-          this.$refs.tree.setCheckedKeys(
-            this.roleRulesEdit
-          )
+          this.$refs.tree.setCheckedKeys(this.roleRulesEdit)
         }
       })
       // 默认勾选第一个数据权限
@@ -543,12 +551,20 @@ export default {
       var firstTree = this.treeData[type]
       var hasRemove = false
       var copyArray = this.copyItem(array)
-      for (let firstIndex = 0; firstIndex < firstTree.childMenu.length; firstIndex++) {
+      for (
+        let firstIndex = 0;
+        firstIndex < firstTree.childMenu.length;
+        firstIndex++
+      ) {
         const firstItem = firstTree.childMenu[firstIndex]
         for (let index = 0; index < array.length; index++) {
           const element = array[index]
           var temps = []
-          for (let secondIndex = 0; secondIndex < firstItem.childMenu.length; secondIndex++) {
+          for (
+            let secondIndex = 0;
+            secondIndex < firstItem.childMenu.length;
+            secondIndex++
+          ) {
             const secondItem = firstItem.childMenu[secondIndex]
             if (secondItem.id == element) {
               temps.push(secondItem)
@@ -605,7 +621,7 @@ export default {
     // 权限提交
     jurisdictionSubmit() {
       this.roleRulesEdit = this.$refs.tree.getCheckedKeys()
-      this.jurisdictionLoading = true;
+      this.jurisdictionLoading = true
       updateRoleMenu({
         rules: this.roleRulesEdit,
         type: this.radioModel,

@@ -32,9 +32,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.id"
+                   :key="item.user_id"
                    :label="item.realname"
-                   :value="item.id">
+                   :value="item.user_id">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"
@@ -67,7 +67,7 @@
 
 <script>
 import echarts from 'echarts'
-import { adminStructuresSubIndex, getSubUserByStructrue } from '@/api/common'
+import { adminStructuresSubIndex, usersList } from '@/api/common'
 import { biAchievementStatistics } from '@/api/businessIntelligence/bi'
 import moment from 'moment'
 
@@ -103,7 +103,7 @@ export default {
       fieldList: [
         { field: 'month', name: '时间' },
         { field: 'receivables', name: '回款金额(元)' },
-        { field: 'achiement', name: '目标(元)' },
+        { field: 'achievement', name: '目标(元)' },
         { field: 'rate', name: '完成率(%)' }
       ],
 
@@ -147,9 +147,9 @@ export default {
     },
     /** 部门下员工 */
     getUserList() {
-      var params = {}
-      params.structure_id = this.structuresSelectValue
-      getSubUserByStructrue(params)
+      let params = { pageType: 0 }
+      params.deptId = this.structuresSelectValue
+      usersList(params)
         .then(res => {
           this.userOptions = res.data
         })
@@ -160,23 +160,23 @@ export default {
       this.loading = true
       biAchievementStatistics({
         year: this.dateSelect,
-        status: this.typeSelect,
-        structure_id: this.structuresSelectValue,
-        user_id: this.userSelectValue
+        type: this.typeSelect,
+        deptId: this.structuresSelectValue,
+        userId: this.userSelectValue
       })
         .then(res => {
           var self = this
           var receivabless = []
           var achiements = []
           var rates = []
-          for (let index = 1; index < 13; index++) {
+          for (let index = 0; index < 12; index++) {
             const element = res.data[index]
             receivabless.push(element.receivables)
-            achiements.push(element.achiement)
+            achiements.push(element.achievement)
             rates.push(element.rate)
             this.list.push(element)
           }
-
+          console.log('receivabless---', receivabless, achiements);
           this.axisOption.series[0].data = receivabless
           this.axisOption.series[1].data = achiements
           this.axisOption.series[2].data = rates

@@ -10,20 +10,14 @@ export function oaExamineCategoryList(data) {
 }
 
 // 审批新建
-export function oaExamineSave(data) {
+export function oaExamineSaveAndUpdate(data) {
   return request({
-    url: 'oa/examine/save',
+    url: 'OaExamine/setOaExamine',
     method: 'post',
-    data: data
-  })
-}
-
-// 审批编辑
-export function oaExamineUpdate(data) {
-  return request({
-    url: 'oa/examine/update',
-    method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -76,6 +70,16 @@ export function oaExamineCheck(data) {
 export function oaExamineRevokeCheck(data) {
   return request({
     url: 'oa/examine/revokeCheck',
+    method: 'post',
+    data: data
+  })
+}
+
+//新建的审批流
+// CRM合同回款创建时候的审批流
+export function oaCreateExamineFlow(data) {
+  return request({
+    url: 'OaExamine/queryExaminStep',
     method: 'post',
     data: data
   })

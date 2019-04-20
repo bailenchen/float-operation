@@ -88,7 +88,7 @@ export default {
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'name', width: '200', label: '产品名称' })
+      this.fieldList.push({ prop: 'product_name', width: '200', label: '产品名称' })
       this.fieldList.push({
         prop: 'category_name',
         width: '200',
@@ -115,7 +115,7 @@ export default {
           this.nopermission = false
           this.loading = false
           this.list = res.data.list
-          this.totalInfo.total_price = res.data.total_price
+          this.totalInfo.money = res.data.money
           this.totalInfo.discount_rate = res.data.discount_rate
         })
         .catch(data => {

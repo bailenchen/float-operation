@@ -10,7 +10,7 @@ import request from '@/utils/request'
  */
 export function biAchievementStatistics(data) {
   return request({
-    url: 'bi/achievement/statistics',
+    url: 'bi/taskCompletestatistics',
     method: 'post',
     data: data
   })
@@ -26,7 +26,7 @@ export function biAchievementStatistics(data) {
  */
 export function biProductStatistics(data) {
   return request({
-    url: 'bi/product/statistics',
+    url: 'bi/productStatistics',
     method: 'post',
     data: data
   })
@@ -41,7 +41,7 @@ export function biProductStatistics(data) {
  */
 export function biReceivablesStatistics(data) {
   return request({
-    url: 'bi/receivables/statistics',
+    url: 'bi/moneyStatistics',
     method: 'post',
     data: data
   })
@@ -73,7 +73,7 @@ export function biReceivablesStatisticList(data) {
  */
 export function biCustomerStatistics(data) {
   return request({
-    url: 'bi/customer/statistics',
+    url: 'CrmCustomer/getUserCustomerAnalysis',
     method: 'post',
     data: data
   })
@@ -90,7 +90,7 @@ export function biCustomerStatistics(data) {
  */
 export function biBusinessFunnel(data) {
   return request({
-    url: 'bi/business/funnel',
+    url: 'bi/funnelStatistics',
     method: 'post',
     data: data
   })

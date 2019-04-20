@@ -26,9 +26,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.id"
+                   :key="item.user_id"
                    :label="item.realname"
-                   :value="item.id">
+                   :value="item.user_id">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { adminStructuresSubIndex, getSubUserByStructrue } from '@/api/common'
+import { adminStructuresSubIndex, usersList } from '@/api/common'
 import { biCustomerStatistics } from '@/api/businessIntelligence/bi'
 import { formatTimeToTimestamp } from '@/utils'
 import moment from 'moment'
@@ -90,13 +90,13 @@ export default {
       list: [],
       fieldList: [
         { field: 'realname', name: '员工姓名' },
-        { field: 'customer_num', name: '客户数' },
-        { field: 'deal_customer_num', name: '成交客户数' },
-        { field: 'deal_customer_rate', name: '客户成交率(%)' },
-        { field: 'contract_money', name: '合同总金额' },
-        { field: 'receivables_money', name: '回款金额' },
-        { field: 'un_receivables_money', name: '未回款金额' },
-        { field: 'deal_receivables_rate', name: '回款完成率(%)' }
+        { field: 'customerNum', name: '客户数' },
+        { field: 'finishCustomerNum', name: '成交客户数' },
+        { field: 'finishCustomerR', name: '客户成交率(%)' },
+        { field: 'contractMoney', name: '合同总金额' },
+        { field: 'receivablesMoney', name: '回款金额' },
+        { field: 'unfinishReR', name: '未回款金额' },
+        { field: 'reFinishR', name: '回款完成率(%)' }
       ]
     }
   },
@@ -120,10 +120,10 @@ export default {
     getDataList() {
       this.loading = true
       biCustomerStatistics({
-        start_time: formatTimeToTimestamp(this.dateSelect[0]),
-        end_time: formatTimeToTimestamp(this.dateSelect[1]),
-        structure_id: this.structuresSelectValue,
-        user_id: this.userSelectValue
+        startTime: this.dateSelect[0],
+        endTime: this.dateSelect[1],
+        deptId: this.structuresSelectValue,
+        userId: this.userSelectValue
       })
         .then(res => {
           this.list = res.data
@@ -160,9 +160,9 @@ export default {
     },
     /** 部门下员工 */
     getUserList() {
-      var params = {}
-      params.structure_id = this.structuresSelectValue
-      getSubUserByStructrue(params)
+      let params = { pageType: 0 }
+      params.deptId = this.structuresSelectValue
+      usersList(params)
         .then(res => {
           this.userOptions = res.data
         })

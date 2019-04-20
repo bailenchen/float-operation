@@ -155,7 +155,7 @@ export default {
     },
     /** 通过回调控制style */
     cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'name' || column.property === 'business-check') {
+      if (column.property === 'customer_name' || column.property === 'business-check') {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {
         return ''

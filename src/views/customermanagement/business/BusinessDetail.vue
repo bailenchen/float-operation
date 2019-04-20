@@ -257,7 +257,7 @@ export default {
 
           this.headDetails[0].value = res.data.customer_name
 
-          this.headDetails[1].value = res.data.total_price
+          this.headDetails[1].value = res.data.money
           this.headDetails[2].value = res.data.type_name
           // // 负责人
           this.headDetails[3].value = res.data.owner_user_name

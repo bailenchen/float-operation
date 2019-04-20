@@ -128,8 +128,7 @@ export default {
               if (this.$route.query.routerKey == 1) {
                 this.$router.push('notice')
               } else {
-                res.data.create_time = new Date().getTime()
-                this.$emit('onSubmit', res.data)
+                this.$emit('onSubmit')
               }
               this.loading = false
             })

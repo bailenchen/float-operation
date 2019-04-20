@@ -571,7 +571,7 @@ export default {
     // 编辑组织架构
     edit(node, data) {
       this.treeInput = data.label
-      this.treeEditId = data.id
+      this.treeEditId = data.pid
       this.depSelect = data.id
       this.navBtnTitle = '编辑部门'
       this.labelName = '编辑部门'
@@ -619,9 +619,10 @@ export default {
       } else {
         depEdit({
           name: this.treeInput,
-          id: this.treeEditId,
-          pid: this.depSelect
+          deptId: this.depSelect,
+          pid: this.treeEditId
         }).then(res => {
+          this.$message.success('操作成功')
           this.treeListFun()
           this.navHandleClose()
         })

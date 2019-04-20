@@ -27,7 +27,6 @@
 </template>
 <script type="text/javascript">
 import { usersList } from '@/api/common'
-import { crmExamineFlowUserList } from '@/api/customermanagement/common'
 
 export default {
   name: 'xh-user', // 新建 user
@@ -118,7 +117,7 @@ export default {
         this.infoType === 'crm_receivables' ||
         this.infoType === 'oa_examine'
       ) {
-        return crmExamineFlowUserList
+        return usersList
       }
     },
     getParams() {
@@ -134,7 +133,7 @@ export default {
         this.infoType === 'crm_receivables' ||
         this.infoType === 'oa_examine'
       ) {
-        params.types = this.infoType
+        params.pageType = 0
         return params
       }
     },

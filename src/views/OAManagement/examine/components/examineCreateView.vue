@@ -36,7 +36,7 @@
                     </div>
                   </div>
                   <!-- 员工 和部门 为多选（radio=false）  relation 相关合同商机使用-->
-                  <component :is="item.data.form_type | typeToComponentName"
+                  <component :is="item.data.formType | typeToComponentName"
                              :value="item.value"
                              :index="index"
                              :item="item"
@@ -56,7 +56,8 @@
             <el-upload ref="imageUpload"
                        :action="crmFileSaveUrl"
                        :headers="httpHeader"
-                       name="img[]"
+                       name="file"
+                       :data="{type: 'img', batchId: batchId}"
                        multiple
                        accept="image/*"
                        list-type="picture-card"
@@ -75,7 +76,8 @@
             <el-upload ref="fileUpload"
                        :action="crmFileSaveUrl"
                        :headers="httpHeader"
-                       name="file[]"
+                       name="file"
+                       :data="{type: 'file', batchId: batchId}"
                        multiple
                        accept="*.*"
                        :on-preview="handleFilePreview"
@@ -98,8 +100,8 @@
         <create-sections v-if="showExamine"
                          title="审核信息">
           <div slot="header"
-               v-if="examineInfo.config===1 || examineInfo.config===0"
-               class="examine-type">{{examineInfo.config===1 ? '固定审批流' : '授权审批人'}}</div>
+               v-if="examineInfo.examine_type===1 || examineInfo.examine_type===2"
+               class="examine-type">{{examineInfo.examine_type===1 ? '固定审批流' : '授权审批人'}}</div>
           <create-examine-info ref="examineInfo"
                                types="oa_examine"
                                :types_id="category_id"
@@ -121,7 +123,7 @@
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
 import { crmFileSave, crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import axios from 'axios'
-import { oaExamineSave, oaExamineUpdate } from '@/api/oamanagement/examine'
+import { oaExamineSaveAndUpdate } from '@/api/oamanagement/examine'
 
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
@@ -136,8 +138,7 @@ import {
   regexIsCRMMoneyNumber,
   regexIsCRMMobile,
   regexIsCRMEmail,
-  formatTimeToTimestamp,
-  timestampToFormatTime
+  guid
 } from '@/utils'
 
 import {
@@ -199,6 +200,7 @@ export default {
       crmForm: {
         crmFields: []
       },
+      batchId: guid(),
       // 图片附件
       imgFileList: [],
       fileList: [],
@@ -209,41 +211,41 @@ export default {
   },
   filters: {
     /** 根据type 找到组件 */
-    typeToComponentName(form_type) {
+    typeToComponentName(formType) {
       if (
-        form_type == 'text' ||
-        form_type == 'number' ||
-        form_type == 'floatnumber' ||
-        form_type == 'mobile' ||
-        form_type == 'email'
+        formType == 'text' ||
+        formType == 'number' ||
+        formType == 'floatnumber' ||
+        formType == 'mobile' ||
+        formType == 'email'
       ) {
         return 'XhInput'
-      } else if (form_type == 'textarea') {
+      } else if (formType == 'textarea') {
         return 'XhTextarea'
-      } else if (form_type == 'select') {
+      } else if (formType == 'select') {
         return 'XhSelect'
-      } else if (form_type == 'checkbox') {
+      } else if (formType == 'checkbox') {
         return 'XhMultipleSelect'
-      } else if (form_type == 'date') {
+      } else if (formType == 'date') {
         return 'XhDate'
-      } else if (form_type == 'datetime') {
+      } else if (formType == 'datetime') {
         return 'XhDateTime'
-      } else if (form_type == 'user') {
+      } else if (formType == 'user') {
         return 'XhUserCell'
-      } else if (form_type == 'structure') {
+      } else if (formType == 'structure') {
         return 'XhStructureCell'
-      } else if (form_type == 'file') {
+      } else if (formType == 'file') {
         return 'XhFiles'
       } else if (
-        form_type == 'contacts' ||
-        form_type == 'customer' ||
-        form_type == 'contract' ||
-        form_type == 'business'
+        formType == 'contacts' ||
+        formType == 'customer' ||
+        formType == 'contract' ||
+        formType == 'business'
       ) {
         return 'CrmRelativeCell'
-      } else if (form_type == 'examine_cause') {
+      } else if (formType == 'examine_cause') {
         return 'XhExpenses'
-      } else if (form_type == 'business_cause') {
+      } else if (formType == 'business_cause') {
         return 'XhLeaves'
       }
     }
@@ -278,6 +280,10 @@ export default {
     document.body.appendChild(this.$el)
     this.title = this.getTitle()
     this.getField()
+
+    if (this.action.type == 'update') {
+      this.batchId = this.action.data.batch_id
+    }
   },
   methods: {
     // 关联业务的值更新
@@ -294,7 +300,7 @@ export default {
       item.value = data.value
 
       // 出差事项
-      if (item.data.form_type == 'business_cause' && item.value.update) {
+      if (item.data.formType == 'business_cause' && item.value.update) {
         for (let index = 0; index < this.crmForm.crmFields.length; index++) {
           const element = this.crmForm.crmFields[index]
           if (element.key === 'duration') {
@@ -303,7 +309,7 @@ export default {
           }
         }
         // 报销
-      } else if (item.data.form_type == 'examine_cause' && item.value.update) {
+      } else if (item.data.formType == 'examine_cause' && item.value.update) {
         for (let index = 0; index < this.crmForm.crmFields.length; index++) {
           const element = this.crmForm.crmFields[index]
           if (element.key === 'money') {
@@ -315,9 +321,9 @@ export default {
 
       //无事件的处理 后期可换成input实现
       if (
-        item.data.form_type == 'user' ||
-        item.data.form_type == 'structure' ||
-        item.data.form_type == 'file'
+        item.data.formType == 'user' ||
+        item.data.formType == 'structure' ||
+        item.data.formType == 'file'
       ) {
         this.$refs.crmForm.validateField('crmFields.' + data.index + '.value')
       }
@@ -327,15 +333,12 @@ export default {
       this.loading = true
       // 获取自定义字段的更新时间
       var params = {}
-      params.types = 'oa_examine'
-      params.module = 'oa'
-      params.controller = 'examine'
-      params.action = this.action.type
-      params.types_id = this.category_id
+      params.label = 10
+      params.id = this.category_id
 
       // 进行编辑操作
       if (this.action.type == 'update') {
-        params.action_id = this.action.id
+        params.examineId = this.action.id
       }
 
       filedGetField(params)
@@ -383,20 +386,12 @@ export default {
         showStyleIndex += 1
         /**
          *
-         *
-         *
-         *
-         *
-         *
-         *
-         *
-         *
          * 规则数据
          */
         var tempList = []
         //验证必填
-        if (item.is_null == 1) {
-          if (item.form_type == 'business_cause') {
+        if (item.isNull == 1) {
+          if (item.formType == 'business_cause') {
             var validateFunction = (rule, value, callback) => {
               if (!value.list) {
                 this.$message.error('请完善明细')
@@ -425,7 +420,7 @@ export default {
               validator: validateFunction,
               trigger: []
             })
-          } else if (item.form_type == 'examine_cause') {
+          } else if (item.formType == 'examine_cause') {
             var validateFunction = (rule, value, callback) => {
               if (!value.list) {
                 this.$message.error('请完善明细')
@@ -471,13 +466,13 @@ export default {
         //验证唯一
         if (item.is_unique == 1) {
           var validateUnique = (rule, value, callback) => {
-            if (!value && rule.item.is_null == 0) {
+            if (!value && rule.item.isNull == 0) {
               callback()
             } else {
               var validatesParams = {}
-              validatesParams.field = rule.item.field
+              validatesParams.name = item.name
               validatesParams.val = value
-              validatesParams.types = 'oa_examine'
+              validatesParams.types = 10
               if (this.action.type == 'update') {
                 validatesParams.id = this.action.id
               }
@@ -498,7 +493,7 @@ export default {
         }
 
         // 特殊字符
-        if (item.form_type == 'number') {
+        if (item.formType == 'number') {
           var validateCRMNumber = (rule, value, callback) => {
             if (!value || value == '' || regexIsCRMNumber(value)) {
               callback()
@@ -511,7 +506,7 @@ export default {
             item: item,
             trigger: ['blur']
           })
-        } else if (item.form_type == 'floatnumber') {
+        } else if (item.formType == 'floatnumber') {
           var validateCRMMoneyNumber = (rule, value, callback) => {
             if (!value || value == '' || regexIsCRMMoneyNumber(value)) {
               callback()
@@ -524,7 +519,7 @@ export default {
             item: item,
             trigger: ['blur']
           })
-        } else if (item.form_type == 'mobile') {
+        } else if (item.formType == 'mobile') {
           var validateCRMMobile = (rule, value, callback) => {
             if (!value || value == '' || regexIsCRMMobile(value)) {
               callback()
@@ -537,7 +532,7 @@ export default {
             item: item,
             trigger: ['blur']
           })
-        } else if (item.form_type == 'email') {
+        } else if (item.formType == 'email') {
           var validateCRMEmail = (rule, value, callback) => {
             if (!value || value == '' || regexIsCRMEmail(value)) {
               callback()
@@ -552,7 +547,7 @@ export default {
           })
         }
 
-        this.crmRules[item.field] = tempList
+        this.crmRules[item.fieldName] = tempList
 
         /**
          *
@@ -565,28 +560,25 @@ export default {
          *
          * 表单数据
          */
-        if (item.form_type == 'datetime') {
+        if (item.formType == 'datetime') {
           // 返回的时间戳  要处理为格式化时间（编辑的时候）
           // 关联产品信息比较多 用字典接收
           var params = {}
 
           if (this.action.type == 'update') {
-            params['value'] =
-              item.value && item.value !== 0
-                ? timestampToFormatTime(item.value, 'YYYY-MM-DD HH:mm:ss')
-                : '' // 编辑的值 在value字段
+            params['value'] = item.value || ''
           } else {
-            params['value'] = item.default_value // 加入默认值 可能编辑的时候需要调整
+            params['value'] = item.defaultValue // 加入默认值 可能编辑的时候需要调整
           }
 
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['styleIndex'] = showStyleIndex
           this.crmForm.crmFields.push(params)
         } else if (
-          item.form_type == 'examine_cause' ||
-          item.form_type == 'business_cause'
+          item.formType == 'examine_cause' ||
+          item.formType == 'business_cause'
         ) {
           // 报销事项
           var params = {}
@@ -594,23 +586,8 @@ export default {
           if (this.action.type == 'update') {
             let list = item.value.map(function(element, index, array) {
               element.start_time =
-                element.start_time && element.start_time !== 0
-                  ? timestampToFormatTime(
-                      element.start_time,
-                      item.form_type == 'examine_cause'
-                        ? 'YYYY-MM-DD'
-                        : 'YYYY-MM-DD HH:mm:ss'
-                    )
-                  : ''
-              element.end_time =
-                element.end_time && element.end_time !== 0
-                  ? timestampToFormatTime(
-                      element.end_time,
-                      item.form_type == 'examine_cause'
-                        ? 'YYYY-MM-DD'
-                        : 'YYYY-MM-DD HH:mm:ss'
-                    )
-                  : ''
+                (element.start_time && element.start_time) || ''
+              element.end_time = element.end_time || ''
               element.imgList = element.imgList.map(function(
                 file,
                 index,
@@ -625,7 +602,7 @@ export default {
           } else {
             params['value'] = {} // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['showblock'] = true // 展示整行效果
@@ -635,8 +612,8 @@ export default {
           this.crmForm.crmFields.push(params)
         } else if (
           // 出差审批 差旅报销
-          (item.field == 'duration' && this.category_id == 3) ||
-          (item.field == 'money' && this.category_id == 5)
+          (item.fieldName == 'duration' && this.category_id == 3) ||
+          (item.fieldName == 'money' && this.category_id == 5)
         ) {
           // 报销事项
           var params = {}
@@ -644,11 +621,9 @@ export default {
           if (this.action.type == 'update') {
             params['value'] = item.value // 编辑的值 在value字段
           } else {
-            params['value'] = item.default_value
-              ? item.default_value
-              : item.value // 加入默认值 可能编辑的时候需要调整
+            params['value'] = item.defaultValue ? item.defaultValue : item.value // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = true // 是否可交互
           params['styleIndex'] = showStyleIndex
@@ -658,11 +633,9 @@ export default {
           if (this.action.type == 'update') {
             params['value'] = item.value // 编辑的值 在value字段
           } else {
-            params['value'] = item.default_value
-              ? item.default_value
-              : item.value // 加入默认值 可能编辑的时候需要调整
+            params['value'] = item.defaultValue ? item.defaultValue : item.value // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.field
+          params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['styleIndex'] = showStyleIndex
@@ -677,14 +650,24 @@ export default {
           if (this.showExamine) {
             /** 验证审批数据 */
             this.$refs.examineInfo.validateField(() => {
-              var params = this.getSubmiteParams(this.crmForm.crmFields)
-              if (this.examineInfo.config === 0) {
-                params['check_user_id'] = this.examineInfo.value[0].id
+              let params = {
+                oaExamine: { categoryId: this.category_id },
+                oaExamineRelation: {},
+                field: []
+              }
+              this.getSubmiteParams(this.crmForm.crmFields, params)
+              if (this.examineInfo.examine_type === 2) {
+                params.oaExamine['checkUserId'] = this.examineInfo.value[0].user_id
               }
               this.submiteParams(params)
             })
           } else {
-            var params = this.getSubmiteParams(this.crmForm.crmFields)
+            let params = {
+              oaExamine: { categoryId: this.category_id },
+              oaExamineRelation: {},
+              field: []
+            }
+            this.getSubmiteParams(this.crmForm.crmFields, params)
             this.submiteParams(params)
           }
         } else {
@@ -697,88 +680,58 @@ export default {
       /** 注入关联参数 */
       for (let key in this.relatedBusinessInfo) {
         const list = this.relatedBusinessInfo[key]
-        params[key + '_ids'] = list.map(function(item, index, array) {
+        params.oaExamineRelation[key + 'Ids'] = list.map(function(
+          item,
+          index,
+          array
+        ) {
           return item[key + '_id']
-        })
+        }).join(',')
       }
 
-      // 附件 图片
-      var fileList = this.fileList.map(function(file, index, array) {
-        if (file.response) {
-          return file.response.data[0].file_id
-        } else if (file.file_id) {
-          return file.file_id
-        }
-        return ''
-      })
-      var imgFileList = this.imgFileList.map(function(file, index, array) {
-        if (file.response) {
-          return file.response.data[0].file_id
-        } else if (file.file_id) {
-          return file.file_id
-        }
-        return ''
-      })
-      params['file_id'] = fileList.concat(imgFileList)
+      params.oaExamine['batchId'] = this.batchId
 
       this.loading = true
-      var crmRequest = this.getSubmiteRequest()
       if (this.action.type == 'update') {
-        params.id = this.action.id
+        params.oaExamine.examineId = this.action.id
       }
-      params['category_id'] = this.category_id
-      crmRequest(params)
+      oaExamineSaveAndUpdate(params)
         .then(res => {
           this.loading = false
           this.hidenView()
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
           // 回到保存成功
-          this.$emit('save-success', {
-            data: res.data
-          })
+          this.$emit('save-success')
         })
         .catch(() => {
           this.loading = false
         })
     },
-    /** 获取上传url */
-    getSubmiteRequest() {
-      return this.action.type == 'update' ? oaExamineUpdate : oaExamineSave
-    },
     /** 拼接上传传输 */
-    getSubmiteParams(array) {
-      var params = {}
+    getSubmiteParams(array, params) {
       for (let index = 0; index < array.length; index++) {
         const element = array[index]
         if (element.key == 'cause') {
-          if (element.data.form_type == 'business_cause') {
+          if (element.data.formType == 'business_cause') {
             var causeList = []
             for (let index = 0; index < element.value.list.length; index++) {
               const cause = element.value.list[index]
               var causeCopy = Object.assign({}, cause)
 
-              causeCopy['start_time'] = causeCopy.start_time
-                ? formatTimeToTimestamp(causeCopy.start_time)
-                : causeCopy.start_time
-              causeCopy['end_time'] = causeCopy.end_time
-                ? formatTimeToTimestamp(causeCopy.end_time)
-                : causeCopy.end_time
+              causeCopy['start_time'] = causeCopy.start_time || ''
+              causeCopy['end_time'] = causeCopy.end_time || ''
               causeList.push(causeCopy)
             }
             params[element.key] = causeList
             // params['duration'] = element.value.duration
-          } else if (element.data.form_type == 'examine_cause') {
+          } else if (element.data.formType == 'examine_cause') {
             var causeList = []
             for (let index = 0; index < element.value.list.length; index++) {
               const cause = element.value.list[index]
               var causeCopy = Object.assign({}, cause)
 
-              causeCopy['start_time'] = causeCopy.start_time
-                ? formatTimeToTimestamp(causeCopy.start_time)
-                : causeCopy.start_time
-              causeCopy['end_time'] = causeCopy.end_time
-                ? formatTimeToTimestamp(causeCopy.end_time)
-                : causeCopy.end_time
+              causeCopy['start_time'] = causeCopy.start_time || ''
+              causeCopy['end_time'] = causeCopy.end_time || ''
 
               var file_id = []
               if (causeCopy.imgList.length > 0) {
@@ -796,7 +749,7 @@ export default {
             // params['money'] = element.value.money
           }
         } else {
-          params[element.key] = this.getRealParams(element)
+          params.oaExamine[element.key] = this.getRealParams(element)
         }
       }
       return params
@@ -811,10 +764,7 @@ export default {
       if (file.response || file.file_id) {
         let perviewFile
         if (file.response) {
-          perviewFile = {
-            url: file.response.data[0].path,
-            name: file.response.data[0].name
-          }
+          perviewFile = file.response
         } else {
           perviewFile = {
             url: file.file_path,
@@ -829,11 +779,11 @@ export default {
     },
     beforeRemove(file, fileList) {
       if (file.response || file.file_id) {
-        let save_name
+        let file_id
         if (file.response) {
-          save_name = file.response.data[0].save_name
+          file_id = file.response.file_id
         } else {
-          save_name = file.save_name
+          file_id = file.file_id
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -842,18 +792,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              save_name: save_name
+              id: file_id
             })
               .then(res => {
-                this.$message.success(res.data)
+                this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.imageUpload.uploadFiles,
-                  save_name
+                  file_id
                 )
                 if (removeIndex != -1) {
                   this.$refs.imageUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.imgFileList, save_name)
+                removeIndex = this.getFileIndex(this.imgFileList, file_id)
                 if (removeIndex != -1) {
                   this.imgFileList.splice(removeIndex, 1)
                 }
@@ -872,17 +822,17 @@ export default {
       }
     },
     // 附件索引
-    getFileIndex(files, save_name) {
+    getFileIndex(files, file_id) {
       var removeIndex = -1
       for (let index = 0; index < files.length; index++) {
         const item = files[index]
-        let item_save_name
+        let item_file_id
         if (item.response) {
-          item_save_name = item.response.data[0].save_name
+          item_file_id = item.response.file_id
         } else {
-          item_save_name = item.save_name
+          item_file_id = item.file_id
         }
-        if (item_save_name == save_name) {
+        if (item_file_id == file_id) {
           removeIndex = index
           break
         }
@@ -894,11 +844,11 @@ export default {
     },
     handleFileRemove(file, fileList) {
       if (file.response || file.file_id) {
-        let save_name
+        let file_id
         if (file.response) {
-          save_name = file.response.data[0].save_name
+          file_id = file.response.file_id
         } else {
-          save_name = file.save_name
+          file_id = file.file_id
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -907,18 +857,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              save_name: save_name
+              id: file_id
             })
               .then(res => {
-                this.$message.success(res.data)
+                this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.fileUpload.uploadFiles,
-                  save_name
+                  file_id
                 )
                 if (removeIndex != -1) {
                   this.$refs.fileUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.fileList, save_name)
+                removeIndex = this.getFileIndex(this.fileList, file_id)
                 if (removeIndex != -1) {
                   this.fileList.splice(removeIndex, 1)
                 }
@@ -956,22 +906,18 @@ export default {
         } else {
           return ''
         }
-      } else if (
-        element.data.form_type == 'user' ||
-        element.data.form_type == 'structure'
-      ) {
+      } else if (element.data.formType == 'user') {
+        return element.value.map(function(item, index, array) {
+          return item.user_id
+        })
+      } else if (element.data.formType == 'structure') {
         return element.value.map(function(item, index, array) {
           return item.id
         })
-      } else if (element.data.form_type == 'file') {
+      } else if (element.data.formType == 'file') {
         return element.value.map(function(item, index, array) {
           return item.file_id
         })
-      } else if (element.data.form_type == 'datetime') {
-        // datetime 时间戳 date 格式化时间
-        return element.value
-          ? formatTimeToTimestamp(element.value)
-          : element.value
       }
 
       return element.value

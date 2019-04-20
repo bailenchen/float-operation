@@ -52,8 +52,8 @@
         <create-sections v-if="showExamine"
                          title="审核信息">
           <div slot="header"
-               v-if="examineInfo.config===1 || examineInfo.config===0"
-               class="examine-type">{{examineInfo.config===1 ? '固定审批流' : '授权审批人'}}</div>
+               v-if="examineInfo.examine_type===1 || examineInfo.examine_type===2"
+               class="examine-type">{{examineInfo.examine_type===1 ? '固定审批流' : '授权审批人'}}</div>
           <create-examine-info ref="examineInfo"
                                :types="'crm_' + crmType"
                                :types_id="action.id"
@@ -512,9 +512,7 @@ export default {
           if (this.action.type == 'update') {
             params['value'] = item.value || '' // 编辑的值 在value字段
           } else {
-            params['value'] = item.default_value
-              ? item.default_value
-              : item.value || '' // 加入默认值 可能编辑的时候需要调整
+            params['value'] = item.default_value || ''
           }
           params['key'] = item.fieldName
           params['data'] = item
@@ -753,8 +751,8 @@ export default {
             /** 验证审批数据 */
             this.$refs.examineInfo.validateField(() => {
               var params = this.getSubmiteParams(this.crmForm.crmFields)
-              if (this.examineInfo.config === 0) {
-                params['check_user_id'] = this.examineInfo.value[0].id
+              if (this.examineInfo.examine_type === 2) {
+                params['checkUserId'] = this.examineInfo.value[0].user_id
               }
               this.submiteParams(params)
             })

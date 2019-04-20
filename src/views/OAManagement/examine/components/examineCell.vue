@@ -2,18 +2,18 @@
   <div class="list">
     <div class="list-content">
       <flexbox class="header">
-        <div v-photo="data.create_user_info"
-             v-lazy:background-image="$options.filters.filterUserLazyImg(data.create_user_info.thumb_img)"
+        <div v-photo="data.createUser"
+             v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)"
              class="div-photo head-img"></div>
         <div class="name-time">
-          <span class="name">{{data.create_user_info.realname}}</span>
-          <span class="time">{{data.create_time|filterTimestampToFormatTime}}</span>
+          <span class="name">{{data.createUser.realname}}</span>
+          <span class="time">{{data.create_time}}</span>
         </div>
         <div class="rt-setting">
           <span class="bg-color"
                 :style="{ 'background-color': getStatusColor(data.check_status) }"></span>
           <span class="dep">
-            <span>{{data.category_name}} - </span>
+            <span>{{data.categoryTitle}} - </span>
             <span>{{getStatusName(data.check_status)}}</span>
           </span>
           <!-- 编辑 -->
@@ -41,19 +41,19 @@
            class="title">{{data.causeTitle}}</p>
       </div>
       <div class="accessory"
-           v-if="data.fileList.length > 0 || data.imgList.length > 0">
+           v-if="data.file.length > 0 || data.img.length > 0">
         <!-- 图片 -->
         <div class="upload-img-box">
-          <div v-for="(imgItem, k) in data.imgList"
+          <div v-for="(imgItem, k) in data.img"
                :key="k"
                class="img-list"
-               @click="imgZoom(data.imgList, k)">
-            <img v-lazy="imgItem.file_path_thumb">
+               @click="imgZoom(data.img, k)">
+            <img v-lazy="imgItem.file_path">
           </div>
         </div>
         <!-- 附件 -->
         <div class="accessory-box">
-          <file-cell v-for="(file, fileIndex) in data.fileList"
+          <file-cell v-for="(file, fileIndex) in data.file"
                      :key="fileIndex"
                      :data="file"
                      :cellIndex="fileIndex"></file-cell>

@@ -24,9 +24,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.id"
+                   :key="item.user_id"
                    :label="item.realname"
-                   :value="item.id">
+                   :value="item.user_id">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"
@@ -71,7 +71,7 @@
 
 <script>
 import echarts from 'echarts'
-import { adminStructuresSubIndex, getSubUserByStructrue } from '@/api/common'
+import { adminStructuresSubIndex, usersList } from '@/api/common'
 import moment from 'moment'
 import {
   biReceivablesStatistics,
@@ -173,9 +173,9 @@ export default {
     },
     /** 部门下员工 */
     getUserList() {
-      var params = {}
-      params.structure_id = this.structuresSelectValue
-      getSubUserByStructrue(params)
+      let params = { pageType: 0 }
+      params.deptId = this.structuresSelectValue
+      usersList(params)
         .then(res => {
           this.userOptions = res.data
         })
@@ -193,8 +193,8 @@ export default {
       this.showType = 0 // table 不展示
       biReceivablesStatistics({
         year: this.dateSelect,
-        structure_id: this.structuresSelectValue,
-        user_id: this.userSelectValue
+        deptId: this.structuresSelectValue,
+        userId: this.userSelectValue
       })
         .then(res => {
           var self = this

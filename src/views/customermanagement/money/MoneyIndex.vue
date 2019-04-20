@@ -124,8 +124,8 @@ export default {
     cellStyle({ row, column, rowIndex, columnIndex }) {
       if (
         column.property === 'number' ||
-        column.property === 'customer_id' ||
-        column.property === 'contract_id'
+        column.property === 'customer_name' ||
+        column.property === 'contract_num'
       ) {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {

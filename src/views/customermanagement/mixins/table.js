@@ -189,7 +189,7 @@ export default {
         this.rowType = 'customer'
         this.showDview = true
       } else if (this.crmType === 'contacts') {
-        if (column.property === 'customer_id') {
+        if (column.property === 'customer_name') {
           this.rowID = row.customer_id
           this.rowType = 'customer'
         } else {
@@ -198,7 +198,7 @@ export default {
         }
         this.showDview = true
       } else if (this.crmType === 'business') {
-        if (column.property === 'customer_id') {
+        if (column.property === 'customer_name') {
           this.rowID = row.customer_id
           this.rowType = 'customer'
         } else {
@@ -207,13 +207,13 @@ export default {
         }
         this.showDview = true
       } else if (this.crmType === 'contract') {
-        if (column.property === 'customer_id') {
+        if (column.property === 'customer_name') {
           this.rowID = row.customer_id
           this.rowType = 'customer'
-        } else if (column.property === 'business_id') {
+        } else if (column.property === 'business_name') {
           this.rowID = row.business_id
           this.rowType = 'business'
-        } else if (column.property === 'contacts_id') {
+        } else if (column.property === 'contacts_name') {
           this.rowID = row.contacts_id
           this.rowType = 'contacts'
         } else {
@@ -225,10 +225,10 @@ export default {
         this.rowID = row.product_id
         this.showDview = true
       } else if (this.crmType === 'receivables') {
-        if (column.property === 'customer_id') {
+        if (column.property === 'customer_name') {
           this.rowID = row.customer_id
           this.rowType = 'customer'
-        } else if (column.property === 'contract_id') {
+        } else if (column.property === 'contract_num') {
           this.rowID = row.contract_id
           this.rowType = 'contract'
         } else {

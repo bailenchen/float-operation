@@ -24,13 +24,13 @@
           <div class="log-title">
             <img v-if="item.type == 1"
                  src="@/assets/img/work_log.png">
-            <img v-if="item.type == 2"
+            <img v-else-if="item.type == 2"
                  src="@/assets/img/work_schedule.png">
-            <img v-if="item.type == 3"
+            <img v-else-if="item.type == 3"
                  src="@/assets/img/work_notice.png">
-            <img v-if="item.type == 4"
+            <img v-else-if="item.type == 4"
                  src="@/assets/img/work_task.png">
-            <img v-if="item.type == 5"
+            <img v-else-if="item.type == 5"
                  class="img-5"
                  src="@/assets/img/work_examine.png">
             <span class="type-name">{{item.type_name}}</span>
@@ -142,7 +142,7 @@ export default {
             this.titleList = {
               title: val.title,
               create_time: val.create_time,
-              content: val.ann_content
+              content: val.annContent
             }
           }
           break

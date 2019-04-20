@@ -84,7 +84,7 @@
               <p><span class="examine-add-required">*</span>当选择“指定用户（任意一人）”表示指定用户中任意一人审批即可。当选择“指定用户（多人会签）”表示 指定用户中所有人都要审批。</p>
             </div>
             <el-radio v-model="examineType"
-                      :label="0">授权审批人</el-radio>
+                      :label="2">授权审批人</el-radio>
           </div>
         </div>
       </flexbox>
@@ -157,7 +157,7 @@ export default {
       },
       // 总两页 当前页
       currentPage: 1,
-      examineType: 1, // 1 固定 0 授权
+      examineType: 1, // 1 固定审批 2 授权审批
       examineList: [
         {
           type: 1,

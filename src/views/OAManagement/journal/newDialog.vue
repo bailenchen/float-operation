@@ -319,10 +319,7 @@ export default {
       if (file.response || file.file_id) {
         let perviewFile
         if (file.response) {
-          perviewFile = {
-            url: file.response.data[0].path,
-            name: file.response.data[0].name
-          }
+          perviewFile = file.response
         } else {
           perviewFile = {
             url: file.file_path,
@@ -336,12 +333,13 @@ export default {
       }
     },
     beforeRemove(file, fileList) {
+      console.log('file---', file);
       if (file.response || file.file_id) {
-        let save_name
+        let file_id
         if (file.response) {
-          save_name = file.response.data[0].save_name
+          file_id = file.response.file_id
         } else {
-          save_name = file.save_name
+          file_id = file.file_id
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -350,18 +348,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              save_name: save_name
+              id: file_id
             })
               .then(res => {
-                this.$message.success(res.data)
+                this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.imageUpload.uploadFiles,
-                  save_name
+                  file_id
                 )
                 if (removeIndex != -1) {
                   this.$refs.imageUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.imgFileList, save_name)
+                removeIndex = this.getFileIndex(this.imgFileList, file_id)
                 if (removeIndex != -1) {
                   this.imgFileList.splice(removeIndex, 1)
                 }
@@ -380,17 +378,17 @@ export default {
       }
     },
     // 附件索引
-    getFileIndex(files, save_name) {
+    getFileIndex(files, file_id) {
       var removeIndex = -1
       for (let index = 0; index < files.length; index++) {
         const item = files[index]
-        let item_save_name
+        let item_file_id
         if (item.response) {
-          item_save_name = item.response.data[0].save_name
+          item_file_id = item.response.file_id
         } else {
-          item_save_name = item.save_name
+          item_file_id = item.file_id
         }
-        if (item_save_name == save_name) {
+        if (item_file_id == file_id) {
           removeIndex = index
           break
         }
@@ -402,11 +400,11 @@ export default {
     },
     handleFileRemove(file, fileList) {
       if (file.response || file.file_id) {
-        let save_name
+        let file_id
         if (file.response) {
-          save_name = file.response.data[0].save_name
+          file_id = file.response.file_id
         } else {
-          save_name = file.save_name
+          file_id = file.file_id
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -415,18 +413,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              save_name: save_name
+              id: file_id
             })
               .then(res => {
-                this.$message.success(res.data)
+                this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.fileUpload.uploadFiles,
-                  save_name
+                  file_id
                 )
                 if (removeIndex != -1) {
                   this.$refs.fileUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.fileList, save_name)
+                removeIndex = this.getFileIndex(this.fileList, file_id)
                 if (removeIndex != -1) {
                   this.fileList.splice(removeIndex, 1)
                 }

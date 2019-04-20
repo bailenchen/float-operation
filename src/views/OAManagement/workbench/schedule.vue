@@ -21,11 +21,8 @@
              v-if="index < 1">
           <p class="list-title">{{item.title}}</p>
           <div>
-            <span class="time">{{item.start_time | moment("YYYY-MM-DD")}} - {{item.end_time | moment("YYYY-MM-DD")}}</span>
-            <template v-if="item.ownList.length != 0">
-              <span v-for="(k, j) in item.ownList"
-                    :key="j">{{item.ownList.length - 1 == j ? k.realname : k.realname + '、' }}</span>
-            </template>
+            <span class="time">{{item.start_time}} - {{item.end_time}}</span>
+            <span>{{item.realnames}}</span>
           </div>
         </div>
         <p v-if="scheduleList.length >= 1"

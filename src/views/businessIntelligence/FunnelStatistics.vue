@@ -25,9 +25,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.id"
+                   :key="item.user_id"
                    :label="item.realname"
-                   :value="item.id">
+                   :value="item.user_id">
         </el-option>
       </el-select>
       <el-select v-model="businessStatusValue"
@@ -71,7 +71,7 @@
 
 <script>
 import echarts from 'echarts'
-import { adminStructuresSubIndex, getSubUserByStructrue } from '@/api/common'
+import { adminStructuresSubIndex, usersList } from '@/api/common'
 import { formatTimeToTimestamp } from '@/utils'
 import { crmBusinessStatusList } from '@/api/customermanagement/business'
 import { biBusinessFunnel } from '@/api/businessIntelligence/bi'
@@ -109,9 +109,9 @@ export default {
 
       list: [],
       fieldList: [
-        { field: 'status_name', name: '阶段' },
-        { field: 'money', name: '金额' },
-        { field: 'count', name: '商机数' }
+        { field: 'name', name: '阶段' },
+        { field: 'total_price', name: '金额' },
+        { field: 'businessNum', name: '商机数' }
       ],
 
       funnelChart: null, // 漏斗图
@@ -158,9 +158,9 @@ export default {
     },
     /** 部门下员工 */
     getUserList() {
-      var params = {}
-      params.structure_id = this.structuresSelectValue
-      getSubUserByStructrue(params)
+      let params = { pageType: 0 }
+      params.deptId = this.structuresSelectValue
+      usersList(params)
         .then(res => {
           this.userOptions = res.data
         })
@@ -191,27 +191,29 @@ export default {
     getData() {
       this.loading = true
       biBusinessFunnel({
-        start_time: formatTimeToTimestamp(this.dateSelect[0]),
-        end_time: formatTimeToTimestamp(this.dateSelect[1]),
-        structure_id: this.structuresSelectValue,
-        user_id: this.userSelectValue,
-        type_id: this.businessStatusValue
+        startTime: this.dateSelect[0],
+        endTime: this.dateSelect[1],
+        deptId: this.structuresSelectValue,
+        userId: this.userSelectValue,
+        typeId: this.businessStatusValue
       })
         .then(res => {
           this.loading = false
-          this.list = res.data.list
+          this.list = res.data
           var data = []
-          for (let index = 0; index < res.data.list.length; index++) {
-            const element = res.data.list[index]
+          let sumMoney = 0
+          for (let index = 0; index < res.data.length; index++) {
+            const element = res.data[index]
             data.push({
-              name: element.status_name + '(' + element.count + ')',
-              value: element.money
+              name: element.name + '(' + element.businessNum + ')',
+              value: element.total_price
             })
+            sumMoney += element.total_price
           }
 
           this.funnelOption.series[0].data = data
           this.funnelOption.series[0].max =
-            res.data.sum_money < 1 ? 1 : res.data.sum_money
+            sumMoney < 1 ? 1 : sumMoney
           this.funnelChart.setOption(this.funnelOption, true)
         })
         .catch(() => {

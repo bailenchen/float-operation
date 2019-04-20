@@ -73,7 +73,7 @@ export function usersEdit(data) {
 // 删除员工
 export function usersDelete(data) {
   return request({
-    url: 'admin/users/groupsDel',
+    url: 'manager/role/unbindingUser',
     method: 'post',
     data: data
   })
