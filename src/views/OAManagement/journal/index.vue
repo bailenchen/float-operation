@@ -180,7 +180,7 @@ export default {
       params.page = this.pageNum
       params.limit = 15
       if (this.byData) {
-        params.by = this.byData 
+        params.by = this.byData
       }
       this.journalLoading = true
       journalList(params)
@@ -249,6 +249,7 @@ export default {
     },
     // 新建提交
     submitBtn(key, batchId, relevanceAll) {
+      debugger;
       this.newLoading = true
       let imgList = []
       let fileList = []
@@ -308,15 +309,16 @@ export default {
           question: this.formData.question,
           batchId: batchId,
           send_user_ids: staff.join(","),
-          send_structure_ids: dep.join(","),
-          send_dept_ids: relevanceAll.customer_ids.join(","),
+          send_dept_ids: dep.join(","),
+          customer_ids: relevanceAll.customer_ids.join(","),
           contacts_ids: relevanceAll.contacts_ids.join(","),
           business_ids: relevanceAll.business_ids.join(","),
           contract_ids: relevanceAll.contract_ids.join(",")
         }
         journalEdit(pramas)
           .then(res => {
-            this.newClose()
+            this.newClose();
+            this.refreshLogList();
             this.$message.success('编辑成功')
             this.newLoading = false
           })
@@ -333,7 +335,7 @@ export default {
       this.imgFileList = val.img
       // 附件
       this.accessoryFileList = val.file
-      
+
       // 员工部门赋值
       this.formData.depData = val.sendDeptList ? val.sendDeptList : []
       this.formData.sentWhoList = val.sendUserList ? val.sendUserList : []
