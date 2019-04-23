@@ -239,7 +239,7 @@ export default {
     handleClick(type, scope) {
       if (type === 'edit') {
         this.createHandleInfo.action = 'update'
-        this.createHandleInfo.id = scope.row.category_id
+        this.createHandleInfo.id = scope.row.examine_id
         this.createHandleInfo.data = scope.row
         this.showHandleView = true
       } else if (type === 'delete') {
@@ -251,7 +251,7 @@ export default {
         })
           .then(() => {
             examineFlowUpdateStatus({
-              id: scope.row['category_id']
+              examineId: scope.row['examine_id']
             })
               .then(res => {
                 this.list.splice(scope.$index, 1)
@@ -284,7 +284,7 @@ export default {
         )
           .then(() => {
             examineFlowUpdateStatus({
-              id: scope.row['category_id'],
+              examineId: scope.row['examine_id'],
               status: scope.row['status'] === 0 ? 1 : 0
             })
               .then(res => {

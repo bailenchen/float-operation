@@ -104,8 +104,7 @@ export default {
     getDetail() {
       this.loading = true
       crmExamineFlowRecordList({
-        types: this.examineType,
-        types_id: this.id
+        recordId: this.id
       })
         .then(res => {
           this.loading = false

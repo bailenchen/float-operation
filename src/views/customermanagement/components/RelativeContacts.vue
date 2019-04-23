@@ -98,7 +98,7 @@ export default {
   methods: {
     getFieldList() {
       this.fieldList.push({
-        prop: 'contacts_name',
+        prop: 'name',
         width: '200',
         label: '姓名'
       })

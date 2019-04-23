@@ -51,7 +51,7 @@ export function oaExamineDelete(data) {
 // 审批详情
 export function oaExamineRead(data) {
   return request({
-    url: 'oa/examine/read',
+    url: 'OaExamine/queryOaExamineInfo',
     method: 'post',
     data: data
   })
@@ -80,6 +80,15 @@ export function oaExamineRevokeCheck(data) {
 export function oaCreateExamineFlow(data) {
   return request({
     url: 'OaExamine/queryExaminStep',
+    method: 'post',
+    data: data
+  })
+}
+
+// 审批详情 基本信息
+export function OaExamineGetField(data) {
+  return request({
+    url: 'OaExamine/getField',
     method: 'post',
     data: data
   })

@@ -98,22 +98,22 @@ export default {
           data: ['单程', '往返']
         },
         {
-          field: 'start_address',
+          field: 'startAddress',
           name: '出发城市',
           form_type: 'text'
         },
         {
-          field: 'end_address',
+          field: 'endAddress',
           name: '目的城市',
           form_type: 'text'
         },
         {
-          field: 'start_time',
+          field: 'startTime',
           name: '开始时间',
           form_type: 'datetime'
         },
         {
-          field: 'end_time',
+          field: 'endTime',
           name: '结束时间',
           form_type: 'datetime'
         },
@@ -172,10 +172,10 @@ export default {
       return {
         vehicle: '',
         trip: '',
-        start_address: '',
-        end_address: '',
-        start_time: '',
-        end_time: '',
+        startAddress: '',
+        endAddress: '',
+        startTime: '',
+        endTime: '',
         duration: ''
       }
     }

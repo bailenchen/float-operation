@@ -133,7 +133,7 @@ export function filedGetField(data) {
 // 权限数据返回
 export function adminIndexAuthList(data) {
   return request({
-    url: 'admin/index/authList',
+    url: 'manager/role/auth',
     method: 'post',
     data: data
   })

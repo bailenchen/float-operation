@@ -7,7 +7,7 @@
                   placement="bottom"
                   width="300"
                   trigger="click">
-        <check-flow :id="id"
+        <check-flow :id="flow_id"
                     :examineType="examineType"
                     @close="showFlowPopover=false"></check-flow>
         <el-button slot="reference"
@@ -15,60 +15,60 @@
                    type="text">查看审批历史</el-button>
       </el-popover>
       <div style="min-height: 40px;">
-        <el-button v-if="examineInfo.is_recheck==1"
-                   @click="examineHandle(2)"
+        <el-button
+                   @click="examineHandle(4)"
                    class="flow-button white">撤回审核</el-button>
-        <el-button v-if="examineInfo.is_check==1"
-                   @click="examineHandle(0)"
+        <el-button
+                   @click="examineHandle(2)"
                    class="flow-button red">拒绝</el-button>
-        <el-button v-if="examineInfo.is_check==1"
+        <el-button
                    @click="examineHandle(1)"
                    class="flow-button blue">通过</el-button>
       </div>
     </flexbox>
-    <flexbox v-if="examineInfo.config == 0"
+    <flexbox v-if="examineInfo.status == 2"
              class="check-items">
       <flexbox class="check-item"
-               v-for="(item, index) in examineInfo.stepList"
+               v-for="(item, index) in examineInfo.steps"
                :key="index">
         <div>
           <flexbox class="check-item-user"
                    style="width:auto;">
             <div v-photo="item.userInfo"
-                 v-lazy:background-image="$options.filters.filterUserLazyImg(item.userInfo.thumb_img)"
+                 v-lazy:background-image="$options.filters.filterUserLazyImg(item.userInfo.img)"
                  class="div-photo check-item-img"></div>
             <div class="check-item-name">{{item.userInfo.realname}}</div>
           </flexbox>
           <flexbox class="check-item-info">
             <img class="check-item-img"
-                 :src="item.type|statusIcon">
-            <div class="check-item-name">{{getStatusName(item.type)}}</div>
+                 :src="item.examine_status|statusIcon">
+            <div class="check-item-name">{{getStatusName(item.examine_status)}}</div>
           </flexbox>
         </div>
-        <i v-if="examineInfo.stepList.length -1 != index"
+        <i v-if="examineInfo.steps.length -1 != index"
            class="el-icon-arrow-right check-item-arrow"></i>
       </flexbox>
     </flexbox>
-    <flexbox v-else-if="examineInfo.config == 1"
+    <flexbox v-else-if="examineInfo.status == 1"
              class="check-items"
              wrap="wrap">
-      <el-popover v-for="(item, index) in examineInfo.stepList"
+      <el-popover v-for="(item, index) in examineInfo.steps"
                   :key="index"
                   placement="bottom"
-                  :disabled="item.user_id_info.length==0"
+                  :disabled="item.userList.length==0"
                   trigger="hover">
         <div class="popover-detail">
-          <flexbox v-for="(subItem, subIndex) in item.user_id_info"
+          <flexbox v-for="(subItem, subIndex) in item.userList"
                    :key="subIndex"
                    align="stretch"
                    class="popover-detail-item">
             <img class="popover-detail-item-img"
-                 :src="subItem.check_type|statusIcon">
+                 :src="subItem.examine_status|statusIcon">
             <div>
-              <div class="popover-detail-item-time">{{subItem.check_time|filterTimestampToFormatTime}}</div>
+              <div class="popover-detail-item-time">{{subItem.examineTime}}</div>
               <flexbox class="popover-detail-item-examine">
                 <div class="examine-name">{{subItem.realname}}</div>
-                <div class="examine-info">{{getStatusName(subItem.check_type)}}此申请</div>
+                <div class="examine-info">{{getStatusName(subItem.examine_status)}}此申请</div>
               </flexbox>
             </div>
           </flexbox>
@@ -84,7 +84,7 @@
               <div class="check-item-name">{{getStatusName(item.type)}}</div>
             </flexbox>
           </div>
-          <i v-if="examineInfo.stepList.length -1 != index"
+          <i v-if="examineInfo.steps.length -1 != index"
              class="el-icon-arrow-right check-item-arrow"></i>
         </flexbox>
       </el-popover>
@@ -93,6 +93,7 @@
                     @close="showExamineHandle = false"
                     @save="examineHandleClick"
                     :id="id"
+                    :recordId="flow_id"
                     :examineType="examineType"
                     :detail="examineInfo"
                     :status="examineHandleInfo.status"></examine-handle>
@@ -116,27 +117,28 @@ export default {
   filters: {
     statusIcon: function(status) {
       // 0失败，1通过，2撤回，3创建，4待审核
-      if (status == 0) {
+      // JAVA 0 未审核 1 审核通过 2 审核拒绝 3 审核中 4 已撤回
+      if (status == 2) {
         return require('@/assets/img/check_fail.png')
       } else if (status == 1) {
         return require('@/assets/img/check_suc.png')
-      } else if (status == 2) {
+      } else if (status == 4) {
         return require('@/assets/img/check_revoke.png')
       } else if (status == 3) {
         return require('@/assets/img/check_create.png')
-      } else if (status == 4) {
+      } else if (status == 0) {
         return require('@/assets/img/check_wait.png')
       }
       return ''
     },
     detailName: function(data) {
-      if (data.status == 2) {
-        return data.user_id_info.length + '人或签'
-      } else if (data.status == 3) {
-        return data.user_id_info.length + '人会签'
-      } else if (data.status == 1) {
+      if (data.step_type == 2) {
+        return data.userList.length + '人或签'
+      } else if (data.step_type == 3) {
+        return data.userList.length + '人会签'
+      } else if (data.step_type == 1) {
         return '负责人主管'
-      } else if (data.status == 4) {
+      } else if (data.step_type == 4) {
         return '上一级审批人主管'
       } else if (data.type == 3) {
         return '创建人'
@@ -185,7 +187,8 @@ export default {
     // 详情信息id
     id: [String, Number],
     // 审批流id
-    flow_id: [String, Number]
+    flow_id: [String, Number],
+    owner_user_id: [String, Number]
   },
   mounted() {},
   methods: {
@@ -195,16 +198,14 @@ export default {
       }
       this.loading = true
       crmExamineFlowStepList({
-        types: this.examineType,
-        flow_id: this.flow_id,
-        types_id: this.id,
-        action: 'view'
+        recordId: this.flow_id,
+        ownerUserId: this.owner_user_id
       })
         .then(res => {
           this.loading = false
           this.examineInfo = res.data
           this.$emit('value-change', {
-            config: res.data.config, // 审批类型
+            config: res.data.status, // 审批类型
             value: [] // 审批信息
           })
         })
@@ -220,18 +221,29 @@ export default {
     // 获取状态名称
     getStatusName(status) {
       // 0拒绝，1通过，2撤回，3创建，4待审核
+      // if (status == 0) {
+      //   return '拒绝'
+      // } else if (status == 1) {
+      //   return '通过'
+      // } else if (status == 2) {
+      //   return '撤回'
+      // } else if (status == 3) {
+      //   return '创建'
+      // } else if (status == 4) {
+      //   return '待审核'
+      // } else if (status == 5) {
+      //   return '审核中'
+      // }
       if (status == 0) {
-        return '拒绝'
+        return '未审核 '
       } else if (status == 1) {
         return '通过'
       } else if (status == 2) {
-        return '撤回'
+        return '拒绝'
       } else if (status == 3) {
-        return '创建'
-      } else if (status == 4) {
-        return '待审核'
-      } else if (status == 5) {
         return '审核中'
+      } else if (status == 4) {
+        return '已撤回'
       }
       return ''
     },

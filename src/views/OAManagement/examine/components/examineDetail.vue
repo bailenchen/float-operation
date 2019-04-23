@@ -107,8 +107,8 @@
                  :key="k"
                  class="img-list"
                  @click="imgZoom(imgList, k)">
-              <img :key="imgItem.file_path_thumb"
-                   v-lazy="imgItem.file_path_thumb">
+              <img :key="imgItem.file_path"
+                   v-lazy="imgItem.file_path">
             </div>
           </div>
           <!-- 附件 -->
@@ -132,7 +132,6 @@
                              :key="index"
                              show-overflow-tooltip
                              :prop="item.prop"
-                             :formatter="fieldFormatter"
                              :label="item.label">
               <template slot="header"
                         slot-scope="scope">
@@ -208,8 +207,7 @@
 </template>
 
 <script>
-import { oaExamineRead } from '@/api/oamanagement/examine'
-import { filedGetField } from '@/api/common'
+import { oaExamineRead, OaExamineGetField } from '@/api/oamanagement/examine'
 import SlideView from '@/components/SlideView'
 import CreateSections from '@/components/CreateSections'
 import ExamineInfo from '@/components/Examine/ExamineInfo'
@@ -303,13 +301,8 @@ export default {
     // 获取基础信息
     getBaseInfo() {
       this.loading = true
-      filedGetField({
-        types: 'oa_examine',
-        module: 'oa',
-        controller: 'examine',
-        action: 'read',
-        action_id: this.id,
-        types_id: this.category_id
+      OaExamineGetField({
+        examineId: this.id
       })
         .then(res => {
           var self = this
@@ -339,43 +332,23 @@ export default {
     getDetial() {
       this.loading = true
       oaExamineRead({
-        id: this.id
+        examineId: this.id
       })
         .then(res => {
           this.loading = false
           this.category_id = res.data.category_id
           this.getBaseInfo()
           this.detail = res.data
-          this.category_name = this.detail.category_name
+          this.category_name = this.detail.category
 
-          this.fileList = this.detail.fileList
-          this.imgList = this.detail.imgList
+          this.fileList = this.detail.file
+          this.imgList = this.detail.img
 
           this.travelList = this.detail.travelList
         })
         .catch(() => {
           this.loading = false
         })
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化 出差
-      if (
-        this.category_id == 3 &&
-        (column.property == 'start_time' || column.property == 'end_time')
-      ) {
-        return row[column.property]
-          ? timestampToFormatTime(row[column.property], 'YYYY-MM-DD HH:mm:ss')
-          : ''
-      } else if (
-        this.category_id == 5 &&
-        (column.property == 'start_time' || column.property == 'end_time')
-      ) {
-        return row[column.property]
-          ? timestampToFormatTime(row[column.property], 'YYYY-MM-DD')
-          : ''
-      }
-      return row[column.property]
     },
     //** 点击关闭按钮隐藏视图 */
     hideView() {

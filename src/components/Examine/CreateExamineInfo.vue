@@ -71,7 +71,7 @@ export default {
     contentFilters: function(array) {
       return array
         .map(item => {
-          item.realname
+          return item.realname
         })
         .join('、')
     }

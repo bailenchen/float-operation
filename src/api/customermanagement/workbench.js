@@ -21,7 +21,7 @@ export function crmIndexAchievementData(data) {
 // 销售漏斗
 export function crmIndexFunnel(data) {
   return request({
-    url: 'crm/index/funnel',
+    url: 'Crm/Instrument/queryBusiness',
     method: 'post',
     data: data
   })

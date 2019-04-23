@@ -11,10 +11,10 @@
         </div>
         <div class="rt-setting">
           <span class="bg-color"
-                :style="{ 'background-color': getStatusColor(data.check_status) }"></span>
+                :style="{ 'background-color': getStatusColor(data.examine_status) }"></span>
           <span class="dep">
             <span>{{data.categoryTitle}} - </span>
-            <span>{{getStatusName(data.check_status)}}</span>
+            <span>{{getStatusName(data.examine_status)}}</span>
           </span>
           <!-- 编辑 -->
           <el-dropdown v-if="data.permission && (data.permission.is_recheck || data.permission.is_update || data.permission.is_delete)"
@@ -108,16 +108,16 @@ export default {
   },
   mounted() {},
   methods: {
-    // 获取状态名称
+    // 获取状态名称  0 未审核 1 审核通过 2 审核拒绝 3 审核中 4 已撤回
     getStatusName(status) {
       if (status == 0) {
         return '待审'
       } else if (status == 1) {
-        return '审批中'
+        return '审核通过'
       } else if (status == 2) {
-        return '通过'
+        return '审核拒绝'
       } else if (status == 3) {
-        return '拒绝'
+        return '审核中'
       } else if (status == 4) {
         return '撤回'
       }
@@ -127,11 +127,11 @@ export default {
       if (status == 0) {
         return '#F3A633'
       } else if (status == 1) {
-        return '#F3A633'
-      } else if (status == 2) {
         return '#93E06D'
-      } else if (status == 3) {
+      } else if (status == 2) {
         return '#FF0000'
+      } else if (status == 3) {
+        return '#F3A633'
       } else if (status == 4) {
         return '#FF0000'
       }

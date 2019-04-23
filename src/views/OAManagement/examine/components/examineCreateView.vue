@@ -653,11 +653,12 @@ export default {
               let params = {
                 oaExamine: { categoryId: this.category_id },
                 oaExamineRelation: {},
-                field: []
+                field: [],
+                oaExamineTravelList: []
               }
               this.getSubmiteParams(this.crmForm.crmFields, params)
               if (this.examineInfo.examine_type === 2) {
-                params.oaExamine['checkUserId'] = this.examineInfo.value[0].user_id
+                params['checkUserId'] = this.examineInfo.value[0].user_id
               }
               this.submiteParams(params)
             })
@@ -665,7 +666,8 @@ export default {
             let params = {
               oaExamine: { categoryId: this.category_id },
               oaExamineRelation: {},
-              field: []
+              field: [],
+              oaExamineTravelList: []
             }
             this.getSubmiteParams(this.crmForm.crmFields, params)
             this.submiteParams(params)
@@ -713,40 +715,17 @@ export default {
         const element = array[index]
         if (element.key == 'cause') {
           if (element.data.formType == 'business_cause') {
-            var causeList = []
-            for (let index = 0; index < element.value.list.length; index++) {
-              const cause = element.value.list[index]
-              var causeCopy = Object.assign({}, cause)
-
-              causeCopy['start_time'] = causeCopy.start_time || ''
-              causeCopy['end_time'] = causeCopy.end_time || ''
-              causeList.push(causeCopy)
-            }
-            params[element.key] = causeList
+            params.oaExamineTravelList = element.value.list
             // params['duration'] = element.value.duration
           } else if (element.data.formType == 'examine_cause') {
             var causeList = []
             for (let index = 0; index < element.value.list.length; index++) {
               const cause = element.value.list[index]
               var causeCopy = Object.assign({}, cause)
-
-              causeCopy['start_time'] = causeCopy.start_time || ''
-              causeCopy['end_time'] = causeCopy.end_time || ''
-
-              var file_id = []
-              if (causeCopy.imgList.length > 0) {
-                file_id = causeCopy.imgList.map(function(item, index) {
-                  return item.file_id
-                })
-              }
-
               delete causeCopy['imgList']
-
-              causeCopy.file_id = file_id
-              causeList.push(causeCopy)
+              params.oaExamineTravelList.push(causeCopy)
             }
             params[element.key] = causeList
-            // params['money'] = element.value.money
           }
         } else {
           params.oaExamine[element.key] = this.getRealParams(element)

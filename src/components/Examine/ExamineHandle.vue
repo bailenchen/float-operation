@@ -5,7 +5,7 @@
              :append-to-body="true"
              @close="hiddenView"
              :visible.sync="showDialog">
-    <div v-if="status == 1 && detail.config == 0"
+    <div v-if="status == 1 && detail.status == 2"
          class="handle-type">
       <flexbox class="handle-item">
         <el-radio v-model="handleType"
@@ -23,7 +23,7 @@
                       @value-change="selectExamineUser"></xh-user-cell>
       </flexbox>
     </div>
-    <div v-if="status == 1 && detail.config == 0"
+    <div v-if="status == 1 && detail.status == 2"
          class="title">意见</div>
     <el-input v-model="content"
               type="textarea"
@@ -39,14 +39,7 @@
   </el-dialog>
 </template>
 <script type="text/javascript">
-import {
-  crmContractCheck,
-  crmContractRevokeCheck
-} from '@/api/customermanagement/contract'
-import {
-  crmReceivablesCheck,
-  crmReceivablesRevokeCheck
-} from '@/api/customermanagement/money'
+import { crmExamineFlowAuditExamine } from '@/api/customermanagement/common'
 import {
   oaExamineCheck,
   oaExamineRevokeCheck
@@ -104,13 +97,14 @@ export default {
       type: Boolean,
       default: false
     },
-    /** 操作类型  1通过0拒绝2撤回*/
+    /** 操作类型  1通过0拒绝2撤回*/ // 审核状态 1 审核通过 2 审核拒绝 4 已撤回
     status: {
       type: [String, Number],
       default: 1
     },
     // 详情信息id
     id: [String, Number],
+    recordId: [String, Number],
     // 审核信息 config 1 固定 0 自选
     detail: {
       type: Object,
@@ -143,7 +137,9 @@ export default {
       this.loading = true
       this.getExamineRevokeRequest()({
         id: this.id,
-        content: this.content
+        recordId: this.recordId,
+        status: this.status,
+        remarks: this.content
       })
         .then(res => {
           this.loading = false
@@ -156,10 +152,8 @@ export default {
         })
     },
     getExamineRevokeRequest() {
-      if (this.examineType == 'crm_contract') {
-        return crmContractRevokeCheck
-      } else if (this.examineType == 'crm_receivables') {
-        return crmReceivablesRevokeCheck
+      if (this.examineType == 'crm_contract' || this.examineType == 'crm_receivables') {
+        return crmExamineFlowAuditExamine
       } else if (this.examineType == 'oa_examine') {
         return oaExamineRevokeCheck
       }
@@ -169,15 +163,14 @@ export default {
       this.loading = true
       var params = {
         id: this.id,
+        recordId: this.recordId,
         status: this.status,
-        content: this.content,
-        flow_id: this.detail.flow_id
+        remarks: this.content
       }
-      if (this.status == 1 && this.detail.config == 0) {
+      if (this.status == 1 && this.detail.status == 2) {
         if (this.handleType == 1) {
-          params['is_end'] = 1
         } else {
-          params['check_user_id'] = this.selectUsers[0].id
+          params['nextUserId'] = this.selectUsers[0].id
         }
       }
       this.getExamineRequest()(params)
@@ -192,10 +185,8 @@ export default {
         })
     },
     getExamineRequest() {
-      if (this.examineType == 'crm_contract') {
-        return crmContractCheck
-      } else if (this.examineType == 'crm_receivables') {
-        return crmReceivablesCheck
+      if (this.examineType == 'crm_contract' || this.examineType == 'crm_receivables') {
+        return crmExamineFlowAuditExamine
       } else if (this.examineType == 'oa_examine') {
         return oaExamineCheck
       }

@@ -126,8 +126,8 @@
           <div id="funnelmain"
                class="funnel"></div>
           <div class="funnel-label">
-            <div>赢单：{{funnelData.sum_ying}}元</div>
-            <div>输单：{{funnelData.sum_shu}}元</div>
+            <div>赢单：{{funnelData.winSingle}}元</div>
+            <div>输单：{{funnelData.loseSingle}}元</div>
           </div>
         </div>
       </flexbox-item>
@@ -283,7 +283,7 @@ export default {
       businessOptions: [],
       businessStatusValue: '',
       dateSelect: [], // 选择的date区间
-      funnelData: { sum_ying: 0, sum_shu: 0 },
+      funnelData: { winSingle: 0, loseSingle: 0 },
       /** 销售趋势 */
       trendLoading: false,
       trendDateValue: '',
@@ -357,12 +357,16 @@ export default {
     },
     getBaseParams() {
       return {
-        userIds: this.data.users.map(function(item, index, array) {
-          return item.user_id
-        }).join(','),
-        deptIds: this.data.strucs.map(function(item, index, array) {
-          return item.id
-        }).join(',')
+        userIds: this.data.users
+          .map(function(item, index, array) {
+            return item.user_id
+          })
+          .join(','),
+        deptIds: this.data.strucs
+          .map(function(item, index, array) {
+            return item.id
+          })
+          .join(',')
       }
     },
     /** 指标图 */
@@ -452,24 +456,25 @@ export default {
       if (this.businessStatusValue) {
         this.funnelLoading = true
         var params = this.getBaseParams()
-        params.start_time = formatTimeToTimestamp(this.dateSelect[0])
-        params.end_time = formatTimeToTimestamp(this.dateSelect[1])
-        params.type_id = this.businessStatusValue
+        params.startTime = this.dateSelect[0]
+        params.endTime = this.dateSelect[1]
+        params.typeId = this.businessStatusValue
         crmIndexFunnel(params)
           .then(res => {
             this.funnelLoading = false
             var data = []
-            for (let index = 0; index < res.data.list.length; index++) {
-              const element = res.data.list[index]
+            let sum_money = 0
+            for (let index = 0; index < res.data.record.length; index++) {
+              const element = res.data.record[index]
               data.push({
-                name: element.status_name + '(' + element.count + ')',
-                value: element.money
+                name: (element.name || '') + '(' + element.businessNum + ')',
+                value: element.total_price
               })
+              sum_money += element.total_price
             }
             this.funnelData = res.data
             this.funnelOption.series[0].data = data
-            this.funnelOption.series[0].max =
-              res.data.sum_money < 1 ? 1 : res.data.sum_money
+            this.funnelOption.series[0].max = sum_money < 1 ? 1 : sum_money
             this.funnelChart.setOption(this.funnelOption, true)
           })
           .catch(() => {
@@ -480,9 +485,7 @@ export default {
       }
     },
     initFunnel() {
-      var funnelChart = echarts.init(
-        document.getElementById('funnelmain')
-      )
+      var funnelChart = echarts.init(document.getElementById('funnelmain'))
       var option = {
         tooltip: {
           trigger: 'item',
@@ -567,51 +570,46 @@ export default {
         })
     },
     getTrendAxisInfo() {
-        let contractList = []
-        let receivablesList = []
-        console.log('this.trendSelectValue---', this.trendSelectValue);
-        if (this.trendSelectValue == '月') {
-          let keys = [
-            '1月',
-            '2月',
-            '3月',
-            '4月',
-            '5月',
-            '6月',
-            '7月',
-            '8月',
-            '9月',
-            '10月',
-            '11月',
-            '12月'
-          ]
-          this.axisOption.xAxis[0].data = keys
-          for (let key in keys) {
-            console.log('key---', key);
-            const element = this.trendData[keys[key]]
-            contractList.push(element.contractMoneys)
-            receivablesList.push(element.receivablesMoneys)
-          }
-        } else {
-          console.log('jidu');
-          let keys = [
-            '一季度',
-            '二季度',
-            '三季度',
-            '四季度'
-          ]
-          this.axisOption.xAxis[0].data = keys
-          for (let key in keys) {
-            const element = this.trendData[keys[key]]
-            contractList.push(element.contractMoneys)
-            receivablesList.push(element.receivablesMoneys)
-          }
+      let contractList = []
+      let receivablesList = []
+      console.log('this.trendSelectValue---', this.trendSelectValue)
+      if (this.trendSelectValue == '月') {
+        let keys = [
+          '1月',
+          '2月',
+          '3月',
+          '4月',
+          '5月',
+          '6月',
+          '7月',
+          '8月',
+          '9月',
+          '10月',
+          '11月',
+          '12月'
+        ]
+        this.axisOption.xAxis[0].data = keys
+        for (let key in keys) {
+          console.log('key---', key)
+          const element = this.trendData[keys[key]]
+          contractList.push(element.contractMoneys)
+          receivablesList.push(element.receivablesMoneys)
         }
-        console.log('contractList----', contractList);
-        console.log('receivablesList----', receivablesList);
-        this.axisOption.series[0].data = contractList
-        this.axisOption.series[1].data = receivablesList
-        this.axisChart.setOption(this.axisOption, true)
+      } else {
+        console.log('jidu')
+        let keys = ['一季度', '二季度', '三季度', '四季度']
+        this.axisOption.xAxis[0].data = keys
+        for (let key in keys) {
+          const element = this.trendData[keys[key]]
+          contractList.push(element.contractMoneys)
+          receivablesList.push(element.receivablesMoneys)
+        }
+      }
+      console.log('contractList----', contractList)
+      console.log('receivablesList----', receivablesList)
+      this.axisOption.series[0].data = contractList
+      this.axisOption.series[1].data = receivablesList
+      this.axisChart.setOption(this.axisOption, true)
     },
     initAxis() {
       var axisChart = echarts.init(document.getElementById('axismain'))

@@ -53,7 +53,7 @@
           <div class="img-item"
                v-for="(imgItem, imgIndex) in item['imgList']"
                :key="imgIndex"
-               :style="{ 'background-image': 'url('+imgItem.path+')' }"
+               :style="{ 'background-image': 'url('+imgItem.url+')' }"
                @mouseover="mouseImgOver(imgItem, imgIndex, item['imgList'])"
                @mouseleave="mouseImgLeave(imgItem, imgIndex, item['imgList'])">
             <div v-if="imgItem.showDelete"
@@ -82,6 +82,7 @@
 <script type="text/javascript">
 import { crmFileSave, crmFileDelete } from '@/api/common'
 import objMixin from '@/components/CreateCom/objMixin'
+import { guid } from '@/utils'
 
 export default {
   name: 'xh-expenses', // 差旅报销事项
@@ -105,22 +106,22 @@ export default {
       totalMoney: '0', //合计
       showItems: [
         {
-          field: 'start_address',
+          field: 'startAddress',
           name: '出发城市',
           form_type: 'text'
         },
         {
-          field: 'end_address',
+          field: 'endAddress',
           name: '目的城市',
           form_type: 'text'
         },
         {
-          field: 'start_time',
+          field: 'startTime',
           name: '开始时间',
           form_type: 'date'
         },
         {
-          field: 'end_time',
+          field: 'endTime',
           name: '结束时间',
           form_type: 'date'
         },
@@ -164,14 +165,17 @@ export default {
     uploadImageFile(event) {
       var files = event.target.files
       var self = this
+
       for (let index = 0; index < files.length; index++) {
         const file = files[index]
         crmFileSave({
-          'img[]': file
+          type: 'img',
+          'file': file,
+          batchId: this.mainList[this.imageIndex].batchId
         })
           .then(res => {
-            if (res.data) {
-              this.mainList[this.imageIndex].imgList.push(res.data[0])
+            if (res) {
+              this.mainList[this.imageIndex].imgList.push(res)
               this.submitValueChange()
             }
           })
@@ -255,17 +259,18 @@ export default {
     },
     getValueItem() {
       return {
-        start_address: '',
-        end_address: '',
-        start_time: '',
-        end_time: '',
+        startAddress: '',
+        endAddress: '',
+        startTime: '',
+        endTime: '',
         traffic: '',
         stay: '',
         diet: '',
         other: '',
         money: '0',
         description: '',
-        imgList: []
+        imgList: [],
+        batchId: guid()
       }
     }
   }

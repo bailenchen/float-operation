@@ -82,16 +82,11 @@ export default {
     dialogTitle: String,
     dialogVisible: Boolean,
     roleList: Array,
-    role: Object, //
     // 选择的员工 和 角色
     selectRoleList: Array,
     selectUserList: Array
   },
-  mounted() {
-    if (this.role) {
-      this.selectRoles = [this.role.id]
-    }
-  },
+  mounted() {},
   methods: {
     handleClose() {
       this.$emit('handleClose')

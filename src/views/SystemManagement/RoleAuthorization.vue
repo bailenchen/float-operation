@@ -462,6 +462,8 @@ export default {
               // 点击角色 复制权限 用于编辑操作
               this.getRoleRulesInfo(this.roleActive)
             }
+          }).catch(() => {
+            
           })
         })
         .catch(() => {
