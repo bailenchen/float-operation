@@ -7,7 +7,7 @@
                   placement="bottom"
                   width="300"
                   trigger="click">
-        <check-flow :id="flow_id"
+        <check-flow :id="recordId"
                     :examineType="examineType"
                     @close="showFlowPopover=false"></check-flow>
         <el-button slot="reference"
@@ -15,18 +15,18 @@
                    type="text">查看审批历史</el-button>
       </el-popover>
       <div style="min-height: 40px;">
-        <el-button
+        <el-button v-if="examineInfo.isRecheck==1"
                    @click="examineHandle(4)"
                    class="flow-button white">撤回审核</el-button>
-        <el-button
+        <el-button v-if="examineInfo.isCheck==1"
                    @click="examineHandle(2)"
                    class="flow-button red">拒绝</el-button>
-        <el-button
+        <el-button v-if="examineInfo.isCheck==1"
                    @click="examineHandle(1)"
                    class="flow-button blue">通过</el-button>
       </div>
     </flexbox>
-    <flexbox v-if="examineInfo.status == 2"
+    <flexbox v-if="examineInfo.examineType == 2"
              class="check-items">
       <flexbox class="check-item"
                v-for="(item, index) in examineInfo.steps"
@@ -49,13 +49,13 @@
            class="el-icon-arrow-right check-item-arrow"></i>
       </flexbox>
     </flexbox>
-    <flexbox v-else-if="examineInfo.status == 1"
+    <flexbox v-else-if="examineInfo.examineType == 1"
              class="check-items"
              wrap="wrap">
       <el-popover v-for="(item, index) in examineInfo.steps"
                   :key="index"
                   placement="bottom"
-                  :disabled="item.userList.length==0"
+                  :disabled="!item.userList || item.userList.length==0"
                   trigger="hover">
         <div class="popover-detail">
           <flexbox v-for="(subItem, subIndex) in item.userList"
@@ -80,8 +80,8 @@
             <div class="detail">{{item|detailName}}</div>
             <flexbox class="check-item-info">
               <img class="check-item-img"
-                   :src="item.type|statusIcon">
-              <div class="check-item-name">{{getStatusName(item.type)}}</div>
+                   :src="item.examine_status|statusIcon">
+              <div class="check-item-name">{{getStatusName(item.examine_status)}}</div>
             </flexbox>
           </div>
           <i v-if="examineInfo.steps.length -1 != index"
@@ -93,7 +93,7 @@
                     @close="showExamineHandle = false"
                     @save="examineHandleClick"
                     :id="id"
-                    :recordId="flow_id"
+                    :recordId="recordId"
                     :examineType="examineType"
                     :detail="examineInfo"
                     :status="examineHandleInfo.status"></examine-handle>
@@ -128,6 +128,8 @@ export default {
         return require('@/assets/img/check_create.png')
       } else if (status == 0) {
         return require('@/assets/img/check_wait.png')
+      } else if (status == 5) {
+        return require('@/assets/img/check_create.png')
       }
       return ''
     },
@@ -149,18 +151,9 @@ export default {
     }
   },
   watch: {
-    id: {
+    recordId: {
       handler(val) {
-        if (val) {
-          this.examineInfo = {}
-          this.getFlowStepList()
-        }
-      },
-      deep: true,
-      immediate: true
-    },
-    flow_id: {
-      handler(val) {
+        console.log('recordId---', val);
         if (val) {
           this.examineInfo = {}
           this.getFlowStepList()
@@ -175,7 +168,7 @@ export default {
       loading: false,
       examineInfo: {}, //审核信息
       showFlowPopover: false,
-      examineHandleInfo: { status: 0 },
+      examineHandleInfo: { status: 1 }, // 1 审核通过 2 审核拒绝 4 已撤回
       showExamineHandle: false // 审核操作
     }
   },
@@ -187,25 +180,25 @@ export default {
     // 详情信息id
     id: [String, Number],
     // 审批流id
-    flow_id: [String, Number],
+    recordId: [String, Number],
     owner_user_id: [String, Number]
   },
   mounted() {},
   methods: {
     getFlowStepList() {
-      if (!this.flow_id || !this.id) {
+      if (!this.recordId || !this.id) {
         return
       }
       this.loading = true
       crmExamineFlowStepList({
-        recordId: this.flow_id,
+        recordId: this.recordId,
         ownerUserId: this.owner_user_id
       })
         .then(res => {
           this.loading = false
           this.examineInfo = res.data
           this.$emit('value-change', {
-            config: res.data.status, // 审批类型
+            config: res.data.examineType, // 审批类型
             value: [] // 审批信息
           })
         })
@@ -244,6 +237,8 @@ export default {
         return '审核中'
       } else if (status == 4) {
         return '已撤回'
+      } else if (status == 5) {
+        return '创建'
       }
       return ''
     },

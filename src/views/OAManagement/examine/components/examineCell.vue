@@ -17,17 +17,17 @@
             <span>{{getStatusName(data.examine_status)}}</span>
           </span>
           <!-- 编辑 -->
-          <el-dropdown v-if="data.permission && (data.permission.is_recheck || data.permission.is_update || data.permission.is_delete)"
+          <el-dropdown v-if="data.permission && (data.permission.isChecked || data.permission.isUpdate || data.permission.isDelete)"
                        @command="handleCommand"
                        trigger="click">
             <i style="color:#CDCDCD; cursor: pointer;"
                class="el-icon-arrow-down el-icon-more"></i>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if="data.permission && data.permission.is_recheck"
+              <el-dropdown-item v-if="data.permission && data.permission.isChecked"
                                 command="withdraw">撤回</el-dropdown-item>
-              <el-dropdown-item v-if="data.permission && data.permission.is_update"
+              <el-dropdown-item v-if="data.permission && data.permission.isUpdate"
                                 command="edit">编辑</el-dropdown-item>
-              <el-dropdown-item v-if="data.permission && data.permission.is_delete"
+              <el-dropdown-item v-if="data.permission && data.permission.isDelete"
                                 command="delete">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>

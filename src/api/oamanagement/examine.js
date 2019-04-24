@@ -42,7 +42,7 @@ export function oaExamineMyExamineIndex(data) {
 // 审批删除
 export function oaExamineDelete(data) {
   return request({
-    url: 'oa/examine/delete',
+    url: 'OaExamine/deleteOaExamine',
     method: 'post',
     data: data
   })

@@ -866,6 +866,7 @@ export default {
     },
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
+      console.log('element---', element);
       if (
         element.key == 'customer_id' ||
         element.key == 'contacts_id' ||
@@ -890,6 +891,12 @@ export default {
       } else if (element.data.formType == 'file') {
         if (element.value && element.value.length > 0) {
           return element.value[0].batchId
+        }
+        return ''
+      } else if (element.key == 'category_id') {
+        console.log('element.key ---', element.key )
+        if (element.value && element.value.length > 0) {
+          return element.value[element.value.length - 1]
         }
         return ''
       } else if (element.data.formType == 'checkbox') {

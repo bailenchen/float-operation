@@ -121,6 +121,7 @@
 </template>
 <script type="text/javascript">
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
+import { OaExamineGetField } from '@/api/oamanagement/examine'
 import { crmFileSave, crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import axios from 'axios'
 import { oaExamineSaveAndUpdate } from '@/api/oamanagement/examine'
@@ -341,7 +342,11 @@ export default {
         params.examineId = this.action.id
       }
 
-      filedGetField(params)
+      let request = {
+        update: OaExamineGetField,
+        save: filedGetField
+      }[this.action.type]
+      request(params)
         .then(res => {
           this.getcrmRulesAndModel(res.data)
           if (this.action.type == 'update') {
@@ -355,20 +360,12 @@ export default {
     },
     // 更新图片附件关联业务信息
     getUpdateOtherInfo() {
-      this.imgFileList = this.action.data.imgList.map(function(
-        item,
-        index,
-        array
-      ) {
-        item.url = item.file_path_thumb
+      this.imgFileList = this.action.data.img.map(function(item, index, array) {
+        item.url = item.file_path
         return item
       })
-      this.fileList = this.action.data.fileList.map(function(
-        item,
-        index,
-        array
-      ) {
-        item.url = item.file_path_thumb
+      this.fileList = this.action.data.file.map(function(item, index, array) {
+        item.url = item.file_path
         return item
       })
       this.relatedBusinessInfo = {
@@ -400,9 +397,16 @@ export default {
                 var hasError = false
                 for (let index = 0; index < value.list.length; index++) {
                   const item = value.list[index]
-                  for (var i in item) {
-                    // 备注非必填
-                    if (i != 'description' && !item[i]) {
+                  let keys = [
+                    'startAddress',
+                    'endAddress',
+                    'startTime',
+                    'endTime',
+                    'duration'
+                  ]
+                  for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
+                    const key = keys[keyIndex]
+                    if (!item[key]) {
                       hasError = true
                       this.$message.error('请完善明细')
                       callback(new Error('请完善明细'))
@@ -429,14 +433,20 @@ export default {
                 var hasError = false
                 for (let index = 0; index < value.list.length; index++) {
                   const item = value.list[index]
-                  for (var i in item) {
-                    // 备注非必填
-                    if (
-                      i != 'description' &&
-                      i != 'vehicle' &&
-                      i != 'trip' &&
-                      !item[i]
-                    ) {
+                  let keys = [
+                    'startAddress',
+                    'endAddress',
+                    'startTime',
+                    'endTime',
+                    'traffic',
+                    'stay',
+                    'diet',
+                    'other'
+                  ]
+                  for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
+                    const key = keys[keyIndex]
+                    console.log('item[key]---', item[key], key, item);
+                    if (!item[key]) {
                       hasError = true
                       this.$message.error('请完善明细')
                       callback(new Error('请完善明细'))
@@ -584,18 +594,16 @@ export default {
           var params = {}
 
           if (this.action.type == 'update') {
+            console.log('item.value---', item.value)
             let list = item.value.map(function(element, index, array) {
-              element.start_time =
-                (element.start_time && element.start_time) || ''
-              element.end_time = element.end_time || ''
-              element.imgList = element.imgList.map(function(
-                file,
-                index,
-                array
-              ) {
-                file.path = file.file_path_thumb
-                return file
-              })
+              if (element.img) {
+                element.imgList = element.img.map(function(file, index, array) {
+                  file.url = file.file_path
+                  return file
+                })
+              } else {
+                element.imgList = []
+              }
               return element
             })
             params['value'] = { list: list } // 编辑的值 在value字段
@@ -682,13 +690,11 @@ export default {
       /** 注入关联参数 */
       for (let key in this.relatedBusinessInfo) {
         const list = this.relatedBusinessInfo[key]
-        params.oaExamineRelation[key + 'Ids'] = list.map(function(
-          item,
-          index,
-          array
-        ) {
-          return item[key + '_id']
-        }).join(',')
+        params.oaExamineRelation[key + 'Ids'] = list
+          .map(function(item, index, array) {
+            return item[key + '_id']
+          })
+          .join(',')
       }
 
       params.oaExamine['batchId'] = this.batchId

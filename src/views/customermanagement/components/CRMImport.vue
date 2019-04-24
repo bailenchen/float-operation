@@ -20,7 +20,7 @@
         <div class="content">
           <el-select v-model="config"
                      placeholder="请选择">
-            <el-option v-for="(item, index) in [{name: '覆盖系统原有数据',value: 1},{name: '跳过',value: 0}]"
+            <el-option v-for="(item, index) in [{name: '覆盖系统原有数据',value: 1},{name: '跳过',value: 2}]"
                        :key="index"
                        :label="item.name"
                        :value="item.value">
@@ -66,12 +66,10 @@
 import { mapGetters } from 'vuex'
 import {
   crmCustomerExcelImport,
-  crmCustomerExcelDownload,
   crmCustomerExcelDownloadURL
 } from '@/api/customermanagement/customer'
 import {
   crmLeadsExcelImport,
-  crmLeadsExcelDownload,
   crmLeadsExcelDownloadURL
 } from '@/api/customermanagement/clue'
 import { XhUserCell } from '@/components/CreateCom'
@@ -86,7 +84,7 @@ export default {
     return {
       loading: false,
       showDialog: false,
-      config: 1, // 	1 覆盖，0跳过
+      config: 1, // 	1 覆盖，2跳过
       file: { name: '' },
       user: []
     }
@@ -132,9 +130,9 @@ export default {
       ) {
         this.$message.error('请选择负责人')
       } else {
-        params.config = this.config
+        params.repeatHandling = this.config
         params.file = this.file
-        params.owner_user_id = this.user[0].id
+        params.ownerUserId = this.user[0].user_id
         var request
         if (this.crmType == 'customer') {
           request = crmCustomerExcelImport

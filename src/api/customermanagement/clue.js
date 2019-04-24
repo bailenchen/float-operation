@@ -102,7 +102,7 @@ export function crmLeadsExcelImport(data) {
     param.append(key, data[key])
   })
   return request({
-    url: 'crm/leads/excelImport',
+    url: 'CrmLeads/uploadExcel',
     method: 'post',
     data: param,
     headers: {
@@ -116,7 +116,7 @@ export function crmLeadsExcelImport(data) {
  * @param {*} data
  *
  */
-export const crmLeadsExcelDownloadURL = process.env.BASE_API + 'crm/leads/excelDownload'
+export const crmLeadsExcelDownloadURL = process.env.BASE_API + 'CrmLeads/downloadExcel'
 
 /**
  * 跟进记录

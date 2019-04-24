@@ -109,10 +109,13 @@ export function crmCustomerTransfer(data) {
  */
 export function crmCustomerExcelExport(data) {
   return request({
-    url: 'CrmCustomer/excelExport',
+    url: 'CrmCustomer/allExportExcel',
     method: 'post',
     data: data,
-    responseType: 'blob'
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -127,7 +130,7 @@ export function crmCustomerExcelImport(data) {
     param.append(key, data[key])
   })
   return request({
-    url: 'crm/customer/excelImport',
+    url: 'CrmCustomer/uploadExcel',
     method: 'post',
     data: param,
     headers: {
@@ -141,7 +144,7 @@ export function crmCustomerExcelImport(data) {
  * @param {*} data
  *
  */
-export const crmCustomerExcelDownloadURL = process.env.BASE_API + 'crm/customer/excelDownload'
+export const crmCustomerExcelDownloadURL = process.env.BASE_API + 'CrmCustomer/downloadExcel'
 
 /**
  * 客户分配

@@ -331,7 +331,7 @@ export default {
     },
     submiteIsRead() {
       journalSetread({
-        log_id: this.showWorkbench ? this.data.action_id : this.data.log_id
+        logId: this.showWorkbench ? this.data.action_id : this.data.log_id
       })
         .then(res => {
           this.data.is_read = 1

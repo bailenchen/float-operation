@@ -163,14 +163,14 @@ export default {
     },
     // 导出操作
     exportInfos() {
-      var params = {
+      let params = {
         search: this.search
       }
       if (this.scene_id) {
         params.scene_id = this.scene_id
       }
-      for (var key in this.filterObj) {
-        params[key] = this.filterObj[key]
+      if (this.filterObj && Object.keys(this.filterObj).length > 0) {
+        params.data = this.filterObj
       }
       crmCustomerExcelExport(params)
         .then(res => {

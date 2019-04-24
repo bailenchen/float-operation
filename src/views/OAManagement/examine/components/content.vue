@@ -217,7 +217,7 @@ export default {
         })
           .then(() => {
             oaExamineDelete({
-              id: data.data.item.examine_id
+              examineId: data.data.item.examine_id
             }).then(res => {
               this.searchBtn()
               this.$message({

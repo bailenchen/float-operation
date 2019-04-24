@@ -205,7 +205,7 @@ export default {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             data.push({
-              name: element.name + '(' + element.businessNum + ')',
+              name: (element.name || '') + '(' + element.businessNum + ')',
               value: element.total_price
             })
             sumMoney += element.total_price

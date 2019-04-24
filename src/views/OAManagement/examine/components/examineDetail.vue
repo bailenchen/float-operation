@@ -21,9 +21,9 @@
           <flexbox-item :span="0.5"
                         v-for="(item, index) in list"
                         :key="index"
-                        v-if="item.form_type !== 'examine_cause' && item.form_type !== 'business_cause'"
+                        v-if="item.formType !== 'examine_cause' && item.formType !== 'business_cause'"
                         class="b-cell">
-            <flexbox v-if="item.form_type === 'user'"
+            <flexbox v-if="item.formType === 'user'"
                      align="stretch"
                      class="b-cell-b">
               <div class="b-cell-name">{{item.name}}</div>
@@ -39,7 +39,7 @@
               </div>
             </flexbox>
 
-            <flexbox v-else-if="item.form_type === 'structure'"
+            <flexbox v-else-if="item.formType === 'structure'"
                      align="stretch"
                      class="b-cell-b">
               <div class="b-cell-name">{{item.name}}</div>
@@ -55,7 +55,7 @@
               </div>
             </flexbox>
 
-            <flexbox v-else-if="item.form_type === 'checkbox'"
+            <flexbox v-else-if="item.formType === 'checkbox'"
                      align="stretch"
                      class="b-cell-b">
               <div class="b-cell-name">{{item.name}}</div>
@@ -71,7 +71,7 @@
               </div>
             </flexbox>
 
-            <flexbox v-else-if="item.form_type === 'file'"
+            <flexbox v-else-if="item.formType === 'file'"
                      align="stretch"
                      class="b-cell-b">
               <div class="b-cell-name">{{item.name}}</div>
@@ -152,7 +152,6 @@
                              :key="index"
                              show-overflow-tooltip
                              :prop="item.prop"
-                             :formatter="fieldFormatter"
                              :label="item.label">
               <template slot="header"
                         slot-scope="scope">
@@ -164,7 +163,7 @@
               <template slot-scope="scope">
                 <flexbox justify="center">
                   <el-button type="text"
-                             @click.native="handleFile('preview', scope.row.imgList, 0)">{{scope.row.imgList.length}}张</el-button>
+                             @click.native="handleFile('preview', scope.row.img, 0)">{{scope.row.img.length}}张</el-button>
                 </flexbox>
               </template>
             </el-table-column>
@@ -306,28 +305,12 @@ export default {
       })
         .then(res => {
           var self = this
-          this.list = res.data.map(function(item, index) {
-            return self.handleShowInfo(item)
-          })
+          this.list = res.data
           this.loading = false
         })
         .catch(() => {
           this.loading = false
         })
-    },
-    handleShowInfo(item) {
-      if (item.form_type === 'date' && item.value == '0000-00-00') {
-        item.value = ''
-      } else if (item.form_type === 'datetime') {
-        if (item.value == 0) {
-          item.value = ''
-        } else {
-          item.value = item.value
-            ? timestampToFormatTime(item.value, 'YYYY-MM-DD HH:mm:ss')
-            : ''
-        }
-      }
-      return item
     },
     getDetial() {
       this.loading = true
@@ -344,7 +327,7 @@ export default {
           this.fileList = this.detail.file
           this.imgList = this.detail.img
 
-          this.travelList = this.detail.travelList
+          this.travelList = this.detail.examineTravelList
         })
         .catch(() => {
           this.loading = false

@@ -16,18 +16,18 @@
                align="stretch"
                justify="flex-start">
         <img class="cf-flow-item-img"
-             :src="item.status|statusIcon" />
+             :src="item.examine_status|statusIcon" />
         <div>
           <flexbox class="cf-flow-item-head">
             <div class="cf-flow-item-des">{{item.order_id|stepName}}</div>
-            <div>{{item.check_time|filterTimestampToFormatTime}}</div>
+            <div>{{item.examine_time}}</div>
           </flexbox>
           <flexbox class="cf-flow-item-info">
-            <div class="cf-flow-item-name">{{item.check_user_id_info.realname}}</div>
-            <div><span>{{getStatusName(item.status)}}</span>了此申请</div>
+            <div class="cf-flow-item-name">{{item.realname}}</div>
+            <div><span>{{getStatusName(item.examine_status)}}</span>了此申请</div>
           </flexbox>
-          <div v-if="item.content"
-               class="cf-flow-item-content">{{item.content}}
+          <div v-if="item.remarks"
+               class="cf-flow-item-content">{{item.remarks}}
             <div class="cf-flow-item-content-arrow"></div>
           </div>
         </div>
@@ -48,17 +48,27 @@ export default {
   filters: {
     statusIcon: function(status) {
       // 0失败，1通过，2撤回，3创建，4待审核
-      if (status == 0) {
-        return require('@/assets/img/check_fail.png')
-      } else if (status == 1) {
+      // JAVA  0 未审核 1 审核通过 2 审核拒绝3 撤回审核
+
+      if (status == 1) {
         return require('@/assets/img/check_suc.png')
       } else if (status == 2) {
-        return require('@/assets/img/check_revoke.png')
+        return require('@/assets/img/check_fail.png')
       } else if (status == 3) {
-        return require('@/assets/img/check_create.png')
-      } else if (status == 4) {
-        return require('@/assets/img/check_wait.png')
+        return require('@/assets/img/check_revoke.png')
       }
+
+      // if (status == 0) {
+      //   return require('@/assets/img/check_fail.png')
+      // } else if (status == 1) {
+      //   return require('@/assets/img/check_suc.png')
+      // } else if (status == 2) {
+      //   return require('@/assets/img/check_revoke.png')
+      // } else if (status == 3) {
+      //   return require('@/assets/img/check_create.png')
+      // } else if (status == 4) {
+      //   return require('@/assets/img/check_wait.png')
+      // }
       return ''
     },
     detailName: function(data) {
@@ -78,8 +88,10 @@ export default {
   },
   watch: {
     id: function(val) {
-      this.list = []
-      this.getDetail()
+      if (val) {
+        this.list = []
+        this.getDetail()
+      }
     }
   },
   props: {
@@ -97,9 +109,7 @@ export default {
     }
   },
   computed: {},
-  mounted() {
-    this.getDetail()
-  },
+  mounted() {},
   methods: {
     getDetail() {
       this.loading = true
@@ -109,10 +119,10 @@ export default {
         .then(res => {
           this.loading = false
           this.list = res.data
-          this.$emit('value-change', {
-            config: res.data.config, // 审批类型
-            value: [] // 审批信息
-          })
+          // this.$emit('value-change', {
+          //   config: res.data.config, // 审批类型
+          //   value: [] // 审批信息
+          // })
         })
         .catch(() => {
           this.loading = false
@@ -121,19 +131,20 @@ export default {
     // 获取状态名称
     getStatusName(status) {
       // 0拒绝，1通过，2撤回，3创建，4待审核
+      // JAVA  0 未审核 1 审核通过 2 审核拒绝3 撤回审核
       if (status == 0) {
-        return '拒绝'
+        return '未审核'
       } else if (status == 1) {
         return '通过'
       } else if (status == 2) {
-        return '撤回'
+        return '拒绝'
       } else if (status == 3) {
-        return '创建'
-      } else if (status == 4) {
+        return '撤回'
+      } /*else if (status == 4) {
         return '待审核'
       } else if (status == 5) {
         return '审核中'
-      }
+      }*/
       return ''
     },
     close() {

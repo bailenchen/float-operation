@@ -57,7 +57,7 @@ export function journalCommentDelete (data) {
 // 日志标记已读
 export function journalSetread(data) {
     return request({
-        url: 'oa/log/setread',
+        url: 'OaLog/readLog',
         method: 'post',
         data
     })

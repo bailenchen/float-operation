@@ -5,7 +5,7 @@
              :append-to-body="true"
              @close="hiddenView"
              :visible.sync="showDialog">
-    <div v-if="status == 1 && detail.status == 2"
+    <div v-if="status == 1 && detail.examineType == 2"
          class="handle-type">
       <flexbox class="handle-item">
         <el-radio v-model="handleType"
@@ -23,7 +23,7 @@
                       @value-change="selectExamineUser"></xh-user-cell>
       </flexbox>
     </div>
-    <div v-if="status == 1 && detail.status == 2"
+    <div v-if="status == 1 && detail.examineType == 2"
          class="title">意见</div>
     <el-input v-model="content"
               type="textarea"
@@ -63,12 +63,12 @@ export default {
       return ''
     },
     placeholder() {
-      // 1通过0拒绝2撤回
+      // 1 审核通过 2 审核拒绝 4 已撤回
       if (this.status == 1) {
         return '请输入审批意见（选填）'
-      } else if (this.status == 0) {
-        return '请输入审批意见（必填）'
       } else if (this.status == 2) {
+        return '请输入审批意见（必填）'
+      } else if (this.status == 4) {
         return '请输入撤回理由（必填）'
       }
       return ''
@@ -167,7 +167,7 @@ export default {
         status: this.status,
         remarks: this.content
       }
-      if (this.status == 1 && this.detail.status == 2) {
+      if (this.status == 1 && this.detail.examineType == 2) {
         if (this.handleType == 1) {
         } else {
           params['nextUserId'] = this.selectUsers[0].id
