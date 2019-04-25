@@ -104,7 +104,7 @@ export default {
         label: '商机名称'
       })
       this.fieldList.push({
-        prop: 'total_price',
+        prop: 'money',
         width: '200',
         label: '商机金额'
       })

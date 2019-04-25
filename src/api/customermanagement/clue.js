@@ -84,7 +84,16 @@ export function crmLeadsTransform(data) {
  */
 export function crmLeadsExcelExport(data) {
   return request({
-    url: 'CrmLeads/excelExport',
+    url: 'CrmLeads/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+export function crmLeadsExcelAllExport(data) {
+  return request({
+    url: 'CrmLeads/allExportExcel',
     method: 'post',
     data: data,
     responseType: 'blob'

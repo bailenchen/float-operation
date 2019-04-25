@@ -109,6 +109,15 @@ export function crmCustomerTransfer(data) {
  */
 export function crmCustomerExcelExport(data) {
   return request({
+    url: 'CrmCustomer/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+export function crmCustomerExcelAllExport(data) {
+  return request({
     url: 'CrmCustomer/allExportExcel',
     method: 'post',
     data: data,

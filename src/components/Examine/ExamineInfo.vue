@@ -7,7 +7,8 @@
                   placement="bottom"
                   width="300"
                   trigger="click">
-        <check-flow :id="recordId"
+        <check-flow ref="checkFlow"
+                    :id="recordId"
                     :examineType="examineType"
                     @close="showFlowPopover=false"></check-flow>
         <el-button slot="reference"
@@ -34,10 +35,10 @@
         <div>
           <flexbox class="check-item-user"
                    style="width:auto;">
-            <div v-photo="item.userInfo"
-                 v-lazy:background-image="$options.filters.filterUserLazyImg(item.userInfo.img)"
+            <div v-photo="item.examinUser"
+                 v-lazy:background-image="$options.filters.filterUserLazyImg(item.examinUser.img)"
                  class="div-photo check-item-img"></div>
-            <div class="check-item-name">{{item.userInfo.realname}}</div>
+            <div class="check-item-name">{{item.examinUser.realname}}</div>
           </flexbox>
           <flexbox class="check-item-info">
             <img class="check-item-img"
@@ -117,7 +118,7 @@ export default {
   filters: {
     statusIcon: function(status) {
       // 0失败，1通过，2撤回，3创建，4待审核
-      // JAVA 0 未审核 1 审核通过 2 审核拒绝 3 审核中 4 已撤回
+      // JAVA 0 未审核 1 审核通过 2 审核拒绝 3 审核中 4 已撤回 5 创建
       if (status == 2) {
         return require('@/assets/img/check_fail.png')
       } else if (status == 1) {
@@ -153,10 +154,10 @@ export default {
   watch: {
     recordId: {
       handler(val) {
-        console.log('recordId---', val);
         if (val) {
           this.examineInfo = {}
           this.getFlowStepList()
+          this.$refs.checkFlow.getDetail()
         }
       },
       deep: true,
@@ -236,7 +237,7 @@ export default {
       } else if (status == 3) {
         return '审核中'
       } else if (status == 4) {
-        return '已撤回'
+        return '撤回'
       } else if (status == 5) {
         return '创建'
       }
@@ -263,6 +264,7 @@ export default {
     // 审批操作点击
     examineHandleClick(data) {
       this.getFlowStepList()
+      this.$refs.checkFlow.getDetail()
       this.$emit('on-handle', data)
     }
   }

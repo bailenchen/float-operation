@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import { crmCustomerExcelExport } from '@/api/customermanagement/customer'
+import { crmCustomerExcelAllExport } from '@/api/customermanagement/customer'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
 import table from '../mixins/table'
@@ -172,7 +172,7 @@ export default {
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
-      crmCustomerExcelExport(params)
+      crmCustomerExcelAllExport(params)
         .then(res => {
           var blob = new Blob([res.data], {
             type: 'application/vnd.ms-excel;charset=utf-8'

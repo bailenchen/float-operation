@@ -243,7 +243,7 @@ export default {
           this.examineList.push(item)
         }
       } else {
-        this.examineType = 0
+        this.examineType = 2
       }
     }
   },

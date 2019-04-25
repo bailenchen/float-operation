@@ -105,8 +105,8 @@
                              label="操作"
                              show-overflow-tooltip>
               <template slot-scope="scope">
-                <span class="el-icon-edit content-table-span"
-                      @click="editBtn(scope.row)"></span>
+                <!-- <span class="el-icon-edit content-table-span"
+                      @click="editBtn(scope.row)"></span> -->
                 <span class="el-icon-delete content-table-span"
                       @click="delectBtn(scope.row)"></span>
               </template>

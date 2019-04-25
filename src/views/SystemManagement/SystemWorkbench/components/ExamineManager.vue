@@ -178,7 +178,7 @@ export default {
       if (column.property === 'examine_type') {
         if (row[column.property] === 1) {
           return '固定审批流'
-        } else if (row[column.property] === 0) {
+        } else if (row[column.property] === 2) {
           return '授权审批人'
         } else {
           return ''

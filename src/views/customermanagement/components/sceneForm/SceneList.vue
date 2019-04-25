@@ -68,28 +68,27 @@ export default {
             return item.is_default === 1
           })
 
-          console.log('defaultScene--', defaultScene)
           if (defaultScene && defaultScene.length > 0) {
             this.scene_id = defaultScene[0].scene_id
             this.scene_name = defaultScene[0].name
             this.sceneSelectId = this.scene_id
-            this.$emit('scene', { id: this.scene_id, name: this.scene_name })
+            this.$emit('scene', { id: this.scene_id, name: this.scene_name, bydata: defaultScene[0].bydata })
           } else {
             this.sceneSelectId = ''
-            this.$emit('scene', { id: '', name: '' })
+            this.$emit('scene', { id: '', name: '', bydata: '' })
           }
 
           this.sceneList = res.data
         })
         .catch(() => {
-          this.$emit('scene', { id: '', name: '' })
+          this.$emit('scene', { id: '', name: '', bydata: '' })
         })
     },
 
     // 选择场景、
     selectScene(item, index) {
       this.sceneSelectId = item.scene_id
-      this.$emit('scene', { id: item.scene_id, name: item.name })
+      this.$emit('scene', { id: item.scene_id, name: item.name, bydata: item.bydata })
       this.$emit('hidden-scene')
     },
     // 添加场景

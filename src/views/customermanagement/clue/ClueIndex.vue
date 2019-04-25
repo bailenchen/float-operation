@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { crmLeadsExcelExport } from '@/api/customermanagement/clue'
+import { crmLeadsExcelAllExport } from '@/api/customermanagement/clue'
 import ClueDetail from './ClueDetail'
 import table from '../mixins/table'
 
@@ -114,7 +114,7 @@ export default {
       for (var key in this.filterObj) {
         params[key] = this.filterObj[key]
       }
-      crmLeadsExcelExport(params)
+      crmLeadsExcelAllExport(params)
         .then(res => {
           var blob = new Blob([res.data], {
             type: 'application/vnd.ms-excel;charset=utf-8'

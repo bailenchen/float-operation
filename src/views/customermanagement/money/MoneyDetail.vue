@@ -23,7 +23,8 @@
         <examine-info :id="id"
                       class="examine-info-border"
                       examineType="crm_receivables"
-                      :flow_id="detailData.flow_id">
+                      :recordId="detailData.examine_record_id"
+                      :owner_user_id="detailData.owner_user_id">
         </examine-info>
       </div>
       <div class="tabs">

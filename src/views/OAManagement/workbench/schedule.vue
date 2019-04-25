@@ -114,21 +114,9 @@ export default {
     // 切换月份
     changeMonth(val) {
       this.scheduleList = []
-      // 初始化时间
-      let now = new Date(val)
-      // 获取当月第一天
-      var nowYear = now.getYear() //当前年
-      nowYear += nowYear < 2000 ? 1900 : 0
-      var nowMonth = now.getMonth() //当前月
-      var monthStartDate = new Date(nowYear, nowMonth, 1)
-      // 获取当月最后一天
-      var monthEndDate = new Date(nowYear, nowMonth + 1, 1)
-      var days = (monthEndDate - monthStartDate) / (1000 * 60 * 60 * 24)
-      var lastDay = new Date(nowYear, nowMonth, days)
       this.$emit(
         'changeMonth',
-        monthStartDate.getTime() / 1000,
-        lastDay.getTime() / 1000
+        new Date(val)
       )
     }
   }

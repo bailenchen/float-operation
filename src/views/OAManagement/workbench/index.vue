@@ -157,9 +157,9 @@ export default {
       this.workbenchData(this.activeName, this.pageNum)
     },
     // 切换上下月
-    changeMonth(startTime, endTime) {
+    changeMonth(monthDate) {
       this.scheduleLoading = true
-      eventList({ month: startTime })
+      eventList({ month: moment(monthDate).format('YYYY-MM') })
         .then(res => {
           for (let item of res.data) {
             if (item.status == 1) {

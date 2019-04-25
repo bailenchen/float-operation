@@ -24,9 +24,9 @@
       </el-tooltip>
     </div>
     <div class="list-right">
-      <div class="tag-box" v-if="data.lableList">
-        <template v-if="data.lableList.length <= 2">
-          <div v-for="(k, j) in data.lableList"
+      <div class="tag-box" v-if="data.labelList && data.labelList.length > 0">
+        <template v-if="data.labelList.length <= 2">
+          <div v-for="(k, j) in data.labelList"
                :key="j"
                class="item-label">
             <span class="k-name"
@@ -35,22 +35,22 @@
         </template>
         <template v-else>
           <span class="k-name"
-                :style="{'background': data.lableList[0].color}">{{data.lableList[0].lableName}}</span>
+                :style="{'background': data.labelList[0].color}">{{data.labelList[0].lableName}}</span>
           <span class="k-name"
-                :style="{'background': data.lableList[1].color}">{{data.lableList[1].lableName}}</span>
+                :style="{'background': data.labelList[1].color}">{{data.labelList[1].lableName}}</span>
           <el-tooltip placement="top"
                       effect="light"
                       popper-class="tooltip-change-border task-tooltip">
             <div slot="content"
                  class="tooltip-content"
                  style="margin: 10px 10px 10px 0;">
-              <div v-for="(k, j) in data.lableList"
+              <div v-for="(k, j) in data.labelList"
                    :key="j"
                    class="item-label"
                    style="display: inline-block; margin-right: 10px;">
                 <span v-if="j >= 2"
                       class="k-name"
-                      :style="{'background': k.color ? k.color: '#ccc'}"
+                      :style="{'background': k.color || '#ccc'}"
                       style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.lableName}}</span>
               </div>
             </div>

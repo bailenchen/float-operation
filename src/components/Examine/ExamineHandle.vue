@@ -55,9 +55,9 @@ export default {
     title() {
       if (this.status == 1) {
         return '审批通过'
-      } else if (this.status == 0) {
-        return '审批拒绝'
       } else if (this.status == 2) {
+        return '审批拒绝'
+      } else if (this.status == 4) {
         return '撤回审批'
       }
       return ''
@@ -121,13 +121,13 @@ export default {
   mounted() {},
   methods: {
     submitInfo() {
-      if ((this.status == 0 || this.status == 2) && !this.content) {
+      if ((this.status == 2 || this.status == 4) && !this.content) {
         this.$message.error(this.placeholder)
       } else {
-        if (this.status == 0 || this.status == 1) {
+        if (this.status == 2 || this.status == 1) {
           // 1通过0拒绝2撤回
           this.handlePassAndReject()
-        } else if (this.status == 2) {
+        } else if (this.status == 4) {
           this.handleRevoke()
         }
       }
@@ -143,7 +143,7 @@ export default {
       })
         .then(res => {
           this.loading = false
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
           this.$emit('save')
           this.hiddenView()
         })
@@ -170,13 +170,13 @@ export default {
       if (this.status == 1 && this.detail.examineType == 2) {
         if (this.handleType == 1) {
         } else {
-          params['nextUserId'] = this.selectUsers[0].id
+          params['nextUserId'] = this.selectUsers[0].user_id
         }
       }
       this.getExamineRequest()(params)
         .then(res => {
           this.loading = false
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
           this.$emit('save', { type: this.status })
           this.hiddenView()
         })
