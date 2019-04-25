@@ -40,7 +40,7 @@
           <flexbox align="stretch"
                    class="info-cell-box">
             <div class="info-cell-box-name">{{item.name}}</div>
-            <div class="info-cell-box-value">{{userInfo[item.props]}}</div>
+            <div class="info-cell-box-value">{{item.props!=='sex'?userInfo[item.props]:userInfo[item.props]===1?'男':userInfo[item.props]===2?'女':""}}</div>
           </flexbox>
         </flexbox-item>
       </flexbox>

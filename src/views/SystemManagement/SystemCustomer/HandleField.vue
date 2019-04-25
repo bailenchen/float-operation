@@ -205,7 +205,6 @@ export default {
             this.selectedIndex = 0
             this.form = this.fieldArr[0]
           }
-          console.log('1111')
           this.rejectHandle = false
           this.loading = false
         })
@@ -245,7 +244,6 @@ export default {
     // 预览表单
     handlePreview() {
       this.tablePreviewData = this.$route.params
-      console.log('tablePreviewData---', this.tablePreviewData);
       this.showTablePreview = true
     },
     // 保存数据
@@ -259,7 +257,6 @@ export default {
 
         item.is_null = item.is_null == true ? 1 : 0
         item.is_unique = item.is_unique == true ? 1 : 0
-        console.log("item------:",item)
         if (!item.name) {
           save = false
           this.$message({
@@ -297,7 +294,6 @@ export default {
             }
           }
         }
-        console.log('params---', params);
         customFieldHandle(params)
           .then(res => {
             this.$message({
@@ -324,7 +320,8 @@ export default {
           file: 8,
           checkbox: 9,
           user: 10,
-          structure: 12
+          structure: 12,
+          datetime:13
         }[formType] || '0'
       )
     },
@@ -340,7 +337,6 @@ export default {
           name: this.movedItem.name,
           formType: this.movedItem.formType
         })
-        console.log('newField---', newField)
         // 如果当前选中的table 则加入到table中
         if (
           this.form &&
@@ -352,7 +348,6 @@ export default {
           this.fieldArr.push(newField)
           this.selectedIndex = this.fieldArr.length - 1
         }
-        console.log('this.fieldArr--', this.fieldArr)
       }
     },
     // 从左侧移动到右侧 时候的数据对象

@@ -37,7 +37,7 @@ export function adminUsersRead(data) {
  */
 export function adminUsersUpdate(data) {
   return request({
-    url: 'admin/users/update',
+    url: 'manager/user/updateUser',
     method: 'post',
     data: data
   })
@@ -52,7 +52,7 @@ export function adminUsersUpdate(data) {
  */
 export function adminUsersResetPassword(data) {
   return request({
-    url: 'admin/users/resetPassword',
+    url: 'manager/user/updatePassword',
     method: 'post',
     data: data
   })

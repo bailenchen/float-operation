@@ -27,7 +27,7 @@
         <el-select v-model="ruleForm.sex"
                    style="display: block;"
                    placeholder="请选择">
-          <el-option v-for="item in [{ label: '男', value: '男' }, { label: '女', value: '女' }]"
+          <el-option v-for="item in [{ label: '男', value: 1 }, { label: '女', value: 2 }]"
                      :key="item.value"
                      :label="item.label"
                      :value="item.value">
@@ -37,7 +37,7 @@
       <el-form-item label="手机号（登录名）"
                     class="create-item"
                     prop="username">
-        <el-input v-model="ruleForm.username"></el-input>
+        <el-input v-model="ruleForm.username" :disabled="true"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer"
