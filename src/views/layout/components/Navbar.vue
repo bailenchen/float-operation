@@ -42,8 +42,8 @@
            class="user-container">
         <div v-photo="userInfo"
              class="user-img div-photo"
-             :key="userInfo.thumb_img"
-             v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.thumb_img)">
+             :key="userInfo.img"
+             v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)">
         </div>
         <i class="el-icon-caret-bottom mark"></i>
       </div>
