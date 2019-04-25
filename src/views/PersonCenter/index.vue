@@ -12,7 +12,7 @@
     <flexbox class="person-info">
       <div class="person-head">
         <div v-photo="userInfo"
-             v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.thumb_img)"
+             v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
              class="div-photo person-head-img"></div>
         <div class="select-picture"
              @click="changePersonImage">
@@ -21,7 +21,7 @@
       </div>
       <div class="person-body">
         <div class="person-name">{{userInfo.realname}}</div>
-        <div class="person-detail">部门：{{userInfo.structure_name}}&nbsp;&nbsp;&nbsp;&nbsp;职位：{{userInfo.post}}</div>
+        <div class="person-detail">部门：{{userInfo.deptName}}&nbsp;&nbsp;&nbsp;&nbsp;职位：{{userInfo.post}}</div>
       </div>
     </flexbox>
     <div class="segmentation"></div>
@@ -97,9 +97,9 @@ export default {
         { name: '性别', props: 'sex' },
         { name: '手机号（登录名）', props: 'username' },
         { name: '邮箱', props: 'email' },
-        { name: '部门', props: 'structure_name' },
+        { name: '部门', props: 'deptName' },
         { name: '岗位', props: 'post' },
-        { name: '直属上级', props: 'parent_name' }
+        { name: '直属上级', props: 'parentName' }
       ]
     }
   },
@@ -154,7 +154,7 @@ export default {
     submiteImage(data) {
       this.loading = true
       var param = new FormData()
-      param.append('id', this.userInfo.id)
+      param.append('userId', this.userInfo.user_id)
       param.append('file', data.blob, data.file.name)
       adminUsersUpdateImg(param)
         .then(res => {

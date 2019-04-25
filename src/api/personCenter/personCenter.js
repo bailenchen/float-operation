@@ -8,7 +8,7 @@ import request from '@/utils/request'
  */
 export function adminUsersUpdateImg(data) {
   return request({
-    url: 'admin/users/updateImg',
+    url: 'manager/user/updateImg',
     method: 'post',
     data: data,
     headers: {
@@ -24,7 +24,7 @@ export function adminUsersUpdateImg(data) {
  */
 export function adminUsersRead(data) {
   return request({
-    url: 'admin/users/read',
+    url: 'manager/user/queryLoginUser',
     method: 'post',
     data: data
   })

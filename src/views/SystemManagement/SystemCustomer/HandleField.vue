@@ -188,10 +188,7 @@ export default {
         .then(res => {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
-            if (
-              element.formType == 'select' ||
-              element.formType == 'checkbox'
-            ) {
+            if (element.formType == 'select' || element.formType == 'checkbox') {
               var temps = []
               for (let i = 0; i < element.setting.length; i++) {
                 // 必须有属性 才能for绑定 所以处理了下数据
@@ -259,9 +256,10 @@ export default {
       var tempFieldArr = objDeepCopy(this.fieldArr)
       for (let index = 0; index < tempFieldArr.length; index++) {
         const item = tempFieldArr[index]
+
         item.is_null = item.is_null == true ? 1 : 0
         item.is_unique = item.is_unique == true ? 1 : 0
-
+        console.log("item------:",item)
         if (!item.name) {
           save = false
           this.$message({
