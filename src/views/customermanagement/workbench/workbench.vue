@@ -3,7 +3,7 @@
     <flexbox class="user-container">
       <div v-photo="filtersInfo"
            :key="filtersInfo.thumb_img"
-           v-lazy:background-image="$options.filters.filterUserLazyImg(filtersInfo.thumb_img)"
+           v-lazy:background-image="$options.filters.filterUserLazyImg(filtersInfo.img)"
            class="div-photo user-img">
       </div>
       <div>
