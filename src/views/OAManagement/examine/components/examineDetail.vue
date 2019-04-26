@@ -193,7 +193,7 @@
           <examine-info :id="id"
                         class="create-sections-content"
                         examineType="oa_examine"
-                        :flow_id="detail.flow_id"
+                        :recordId="detail.examine_record_id"
                         @on-handle="examineHandle">
           </examine-info>
         </create-sections>
@@ -247,7 +247,9 @@ export default {
     return {
       loading: false,
       category_id: '',
-      detail: {},
+      detail: {
+        examine_record_id: ''
+      },
       list: [], // 基本信息
       category_name: '',
 

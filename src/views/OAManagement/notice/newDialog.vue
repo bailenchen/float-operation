@@ -116,10 +116,10 @@ export default {
             content: this.formData.content,
             startTime: this.formData.startTime,
             endTime: this.formData.endTime,
-            dept_ids: this.formData.dep.dep.map(item => {
+            deptIds: this.formData.dep.dep.map(item => {
               return item.id
             }).join(','),
-            owner_user_ids: this.formData.dep.staff.map(item => {
+            ownerUserIds: this.formData.dep.staff.map(item => {
               return item.user_id
             }).join(',')
           })

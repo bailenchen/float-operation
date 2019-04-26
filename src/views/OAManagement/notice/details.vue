@@ -95,11 +95,11 @@ export default {
     editSubmit() {
       this.loading = true
       noticeAdd({
-        announcement_id: this.formData.announcement_id,
+        announcementId: this.formData.announcement_id,
         title: this.formData.title,
         content: this.formData.content,
-        start_time: this.formData.start_time,
-        end_time: this.formData.end_time
+        startTime: this.formData.start_time,
+        endTime: this.formData.end_time
       })
         .then(res => {
           this.$emit('editSubmit', this.formData)

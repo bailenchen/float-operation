@@ -57,24 +57,6 @@ export function oaExamineRead(data) {
   })
 }
 
-// OA审批审核
-export function oaExamineCheck(data) {
-  return request({
-    url: 'oa/examine/check',
-    method: 'post',
-    data: data
-  })
-}
-
-// OA审批撤回审核
-export function oaExamineRevokeCheck(data) {
-  return request({
-    url: 'oa/examine/revokeCheck',
-    method: 'post',
-    data: data
-  })
-}
-
 //新建的审批流
 // CRM合同回款创建时候的审批流
 export function oaCreateExamineFlow(data) {
@@ -89,6 +71,36 @@ export function oaCreateExamineFlow(data) {
 export function OaExamineGetField(data) {
   return request({
     url: 'OaExamine/getField',
+    method: 'post',
+    data: data
+  })
+}
+
+// 办公下 审批的审批信息
+export function oaExamineFlowStepList(data) {
+  return request({
+    url: 'OaExamine/queryExamineRecordList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 审批记录
+ * @param {*} data
+ */
+export function oaExamineFlowRecordList(data) {
+  return request({
+    url: 'OaExamine/queryExamineLogList',
+    method: 'post',
+    data: data
+  })
+}
+
+// 审批的审核
+export function oaExamineFlowAuditExamine(data) {
+  return request({
+    url: 'OaExamine/auditExamine',
     method: 'post',
     data: data
   })

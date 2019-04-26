@@ -40,10 +40,8 @@
 </template>
 <script type="text/javascript">
 import { crmExamineFlowAuditExamine } from '@/api/customermanagement/common'
-import {
-  oaExamineCheck,
-  oaExamineRevokeCheck
-} from '@/api/oamanagement/examine'
+import { oaExamineFlowAuditExamine } from '@/api/oamanagement/examine'
+
 import { XhUserCell } from '@/components/CreateCom'
 
 export default {
@@ -96,9 +94,8 @@ export default {
     show: {
       type: Boolean,
       default: false
-    },
-    /** 操作类型  1通过0拒绝2撤回*/ // 审核状态 1 审核通过 2 审核拒绝 4 已撤回
-    status: {
+    }, // 审核状态 1 审核通过 2 审核拒绝 4 已撤回
+    /** 操作类型  1通过0拒绝2撤回*/ status: {
       type: [String, Number],
       default: 1
     },
@@ -135,7 +132,7 @@ export default {
     // 撤回操作
     handleRevoke() {
       this.loading = true
-      this.getExamineRevokeRequest()({
+      this.getRequest()({
         id: this.id,
         recordId: this.recordId,
         status: this.status,
@@ -151,12 +148,12 @@ export default {
           this.loading = false
         })
     },
-    getExamineRevokeRequest() {
-      if (this.examineType == 'crm_contract' || this.examineType == 'crm_receivables') {
-        return crmExamineFlowAuditExamine
-      } else if (this.examineType == 'oa_examine') {
-        return oaExamineRevokeCheck
-      }
+    getRequest() {
+      return {
+        crm_contract: crmExamineFlowAuditExamine,
+        crm_receivables: crmExamineFlowAuditExamine,
+        oa_examine: oaExamineFlowAuditExamine
+      }[this.examineType]
     },
     // 通过 拒绝操作
     handlePassAndReject() {
@@ -173,7 +170,7 @@ export default {
           params['nextUserId'] = this.selectUsers[0].user_id
         }
       }
-      this.getExamineRequest()(params)
+      this.getRequest()(params)
         .then(res => {
           this.loading = false
           this.$message.success('操作成功')
@@ -183,13 +180,6 @@ export default {
         .catch(() => {
           this.loading = false
         })
-    },
-    getExamineRequest() {
-      if (this.examineType == 'crm_contract' || this.examineType == 'crm_receivables') {
-        return crmExamineFlowAuditExamine
-      } else if (this.examineType == 'oa_examine') {
-        return oaExamineCheck
-      }
     },
     handleClick(type) {
       if (type == 'cancel') {

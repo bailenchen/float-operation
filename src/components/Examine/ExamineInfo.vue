@@ -102,6 +102,7 @@
 </template>
 <script type="text/javascript">
 import { crmExamineFlowStepList } from '@/api/customermanagement/common' // 审批步骤
+import { oaExamineFlowStepList } from '@/api/oamanagement/examine'
 
 import Nzhcn from 'nzh/cn'
 import ExamineHandle from './ExamineHandle' // 审批操作理由
@@ -154,10 +155,13 @@ export default {
   watch: {
     recordId: {
       handler(val) {
+        console.log('recordId---', val);
         if (val) {
           this.examineInfo = {}
           this.getFlowStepList()
-          this.$refs.checkFlow.getDetail()
+          if (this.$refs.checkFlow) {
+            this.$refs.checkFlow.getDetail()
+          }
         }
       },
       deep: true,
@@ -191,7 +195,13 @@ export default {
         return
       }
       this.loading = true
-      crmExamineFlowStepList({
+      let request = {
+        crm_contract: crmExamineFlowStepList,
+        crm_receivables: crmExamineFlowStepList,
+        oa_examine: oaExamineFlowStepList
+      }[this.examineType]
+
+      request({
         recordId: this.recordId,
         ownerUserId: this.owner_user_id
       })
@@ -264,7 +274,9 @@ export default {
     // 审批操作点击
     examineHandleClick(data) {
       this.getFlowStepList()
-      this.$refs.checkFlow.getDetail()
+      if (this.$refs.checkFlow) {
+        this.$refs.checkFlow.getDetail()
+      }
       this.$emit('on-handle', data)
     }
   }

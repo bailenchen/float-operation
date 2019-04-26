@@ -39,6 +39,8 @@
 
 <script>
 import { crmExamineFlowRecordList } from '@/api/customermanagement/common' // 审批记录
+import { oaExamineFlowRecordList } from '@/api/oamanagement/examine'
+
 import Nzhcn from 'nzh/cn'
 
 export default {
@@ -105,21 +107,29 @@ export default {
   mounted() {},
   methods: {
     getDetail() {
-      this.loading = true
-      crmExamineFlowRecordList({
-        recordId: this.id
-      })
-        .then(res => {
-          this.loading = false
-          this.list = res.data
-          // this.$emit('value-change', {
-          //   config: res.data.config, // 审批类型
-          //   value: [] // 审批信息
-          // })
+      if (this.id) {
+        this.loading = true
+        let request = {
+          crm_contract: crmExamineFlowRecordList,
+          crm_receivables: crmExamineFlowRecordList,
+          oa_examine: oaExamineFlowRecordList
+        }[this.examineType]
+
+        request({
+          recordId: this.id
         })
-        .catch(() => {
-          this.loading = false
-        })
+          .then(res => {
+            this.loading = false
+            this.list = res.data
+            // this.$emit('value-change', {
+            //   config: res.data.config, // 审批类型
+            //   value: [] // 审批信息
+            // })
+          })
+          .catch(() => {
+            this.loading = false
+          })
+      }
     },
     // 获取状态名称
     getStatusName(status) {
