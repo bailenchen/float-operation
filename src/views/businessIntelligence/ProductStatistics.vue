@@ -116,14 +116,14 @@ export default {
       userSelectValue: '',
 
       headFieldList: [
-        { field: 'category_id_info', name: '产品分类', width: '115px' },
-        { field: 'product_id', name: '产品名称', width: '115px' },
-        { field: 'contract_id', name: '合同编号', width: '115px' },
-        { field: 'owner_user_id', name: '负责人', width: '115px' },
-        { field: 'customer_id', name: '客户名称', width: '115px' },
-        { field: 'sales_price', name: '销售单价', width: '115px' },
-        { field: 'num', name: '数量', width: '115px' },
-        { field: 'subtotal', name: '订单产品小计', width: '115px' }
+        { field: 'categoryName', name: '产品分类', width: '115px' },
+        { field: 'productName', name: '产品名称', width: '115px' },
+        { field: 'contracNum', name: '合同编号', width: '115px' },
+        { field: 'ownerUserName', name: '负责人', width: '115px' },
+        { field: 'customerName', name: '客户名称', width: '115px' },
+        { field: 'productPrice', name: '销售单价', width: '115px' },
+        { field: 'productNum', name: '数量', width: '115px' },
+        { field: 'productSubtotal', name: '订单产品小计', width: '115px' }
       ],
       infoFieldList: [
         { field: 'name1', name: '产品分类', width: '115px' },
