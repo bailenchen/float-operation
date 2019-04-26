@@ -339,7 +339,19 @@ export default {
           'color': '#F56C6B'
         }
       }
-    }
+    },
+    getStatusName(status) {
+      if (status == 0) {
+        return '待审核'
+      } else if (status == 1) {
+        return '审核中'
+      } else if (status == 2) {
+        return '通过'
+      } else if (status == 3) {
+        return '拒绝'
+      }
+      return ''
+    },
   },
 
   beforeDestroy() {}

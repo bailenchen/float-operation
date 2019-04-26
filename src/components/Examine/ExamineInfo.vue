@@ -239,7 +239,7 @@ export default {
       //   return '审核中'
       // }
       if (status == 0) {
-        return '未审核 '
+        return '未审核'
       } else if (status == 1) {
         return '通过'
       } else if (status == 2) {

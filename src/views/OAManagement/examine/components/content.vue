@@ -119,9 +119,9 @@ export default {
         return [
           { label: '全部', key: '' },
           { label: '待审', key: '0' },
-          { label: '审批中', key: '1' },
-          { label: '通过', key: '2' },
-          { label: '失败', key: '3' },
+          { label: '审批中', key: '3' },
+          { label: '通过', key: '1' },
+          { label: '失败', key: '2' },
           { label: '撤回', key: '4' }
         ]
       }

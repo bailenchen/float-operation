@@ -161,6 +161,7 @@
         <label>上级部门：</label>
         <el-select v-model="depSelect"
                    :clearable="false"
+                   :disabled="navBtnTitle == '编辑部门'"
                    placeholder="请选择">
           <el-option v-for="item in dialogOptions"
                      :key="item.id"

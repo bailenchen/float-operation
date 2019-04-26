@@ -85,7 +85,7 @@
                          label="距进入公海天数"
                          width="120">
           <template slot-scope="scope">
-            <div v-if="scope.row.pool_day != -1">{{scope.row.pool_day}}</div>
+            <div v-if="scope.row.is_lock == 0">{{scope.row.pool_day}}</div>
             <i v-else
                class="wukong wukong-lock customer-lock"></i>
           </template>

@@ -54,112 +54,15 @@ const user = {
           Lockr.set('Admin-Token', data['Admin-Token'])
           Lockr.set('loginUserInfo', data.user)
 
-          data.authList = {
-              "crm": {
-                "leads": {
-                  "save": true,
-                  "update": true,
-                  "index": true,
-                  "read": true,
-                  "excelimport": true,
-                  "excelexport": true,
-                  "delete": true,
-                  "transfer": true,
-                  "transform": true
-                },
-                "customer": {
-                  "save": true,
-                  "update": true,
-                  "index": true,
-                  "read": true,
-                  "excelimport": true,
-                  "excelexport": true,
-                  "delete": true,
-                  "transfer": true,
-                  "putinpool": true,
-                  "lock": true,
-                  "teamsave": true,
-                  "pool": true,
-                  "distribute": true,
-                  "receive": true
-                },
-                "contacts": {
-                  "save": true,
-                  "update": true,
-                  "index": true,
-                  "read": true,
-                  "delete": true,
-                  "transfer": true
-                },
-                "business": {
-                  "save": true,
-                  "update": true,
-                  "index": true,
-                  "read": true,
-                  "delete": true,
-                  "transfer": true,
-                  "teamsave": true
-                },
-                "contract": {
-                  "save": true,
-                  "update": true,
-                  "index": true,
-                  "read": true,
-                  "delete": true,
-                  "transfer": true,
-                  "teamsave": true
-                },
-                "receivables": {
-                  "save": true,
-                  "update": true,
-                  "index": true,
-                  "read": true,
-                  "delete": true
-                },
-                "product": {
-                  "save": true,
-                  "update": true,
-                  "index": true,
-                  "read": true,
-                  "status": true
-                }
-              },
-              "bi": {
-                "customer": {
-                  "read": true
-                },
-                "business": {
-                  "read": true
-                },
-                "receivables": {
-                  "read": true
-                },
-                "product": {
-                  "read": true
-                },
-                "achievement": {
-                  "read": true
-                }
-              },
-              "manage": {
-                "system": true,
-                "user": true,
-                "permission": true,
-                "examineFlow": true,
-                "oa": true,
-                "crm": true
-              }
-          }
-
-          Lockr.set('authList', data.authList)
+          Lockr.set('authList', data.auth)
 
           addAuth(data['Admin-Token'])
           commit('SET_USERINFO', data.user)
           // 权限
 
-          commit('SET_CRM', data.authList.crm)
-          commit('SET_BI', data.authList.bi)
-          commit('SET_MANAGE', data.authList.manage)
+          commit('SET_CRM', data.auth.crm)
+          commit('SET_BI', data.auth.bi)
+          commit('SET_MANAGE', data.auth.manage)
           resolve(data)
         }).catch(error => {
           reject(error)
@@ -172,113 +75,18 @@ const user = {
       commit
     }) {
       return new Promise((resolve, reject) => {
-        // adminIndexAuthList().then((response) => {
-        const data = {
-          "crm": {
-            "leads": {
-              "save": true,
-              "update": true,
-              "index": true,
-              "read": true,
-              "excelimport": true,
-              "excelexport": true,
-              "delete": true,
-              "transfer": true,
-              "transform": true
-            },
-            "customer": {
-              "save": true,
-              "update": true,
-              "index": true,
-              "read": true,
-              "excelimport": true,
-              "excelexport": true,
-              "delete": true,
-              "transfer": true,
-              "putinpool": true,
-              "lock": true,
-              "teamsave": true,
-              "pool": true,
-              "distribute": true,
-              "receive": true
-            },
-            "contacts": {
-              "save": true,
-              "update": true,
-              "index": true,
-              "read": true,
-              "delete": true,
-              "transfer": true
-            },
-            "business": {
-              "save": true,
-              "update": true,
-              "index": true,
-              "read": true,
-              "delete": true,
-              "transfer": true,
-              "teamsave": true
-            },
-            "contract": {
-              "save": true,
-              "update": true,
-              "index": true,
-              "read": true,
-              "delete": true,
-              "transfer": true,
-              "teamsave": true
-            },
-            "receivables": {
-              "save": true,
-              "update": true,
-              "index": true,
-              "read": true,
-              "delete": true
-            },
-            "product": {
-              "save": true,
-              "update": true,
-              "index": true,
-              "read": true,
-              "status": true
-            }
-          },
-          "bi": {
-            "customer": {
-              "read": true
-            },
-            "business": {
-              "read": true
-            },
-            "receivables": {
-              "read": true
-            },
-            "product": {
-              "read": true
-            },
-            "achievement": {
-              "read": true
-            }
-          },
-          "manage": {
-            "system": true,
-            "user": true,
-            "permission": true,
-            "examineFlow": true,
-            "oa": true,
-            "crm": true
-          }
-        }
-        Lockr.set('authList', data)
-        commit('SET_ALLAUTH', data)
-        commit('SET_CRM', data.crm)
-        commit('SET_BI', data.bi)
-        commit('SET_MANAGE', data.manage)
+        adminIndexAuthList().then((response) => {
+          let data = response.data
+          Lockr.set('authList', data)
+          commit('SET_ALLAUTH', data)
+          commit('SET_CRM', data.crm)
+          commit('SET_BI', data.bi)
+          commit('SET_MANAGE', data.manage)
 
-        resolve(data)
-        // }).catch(error => {
-        //   reject(error)
-        // })
+          resolve(data)
+        }).catch(error => {
+          reject(error)
+        })
       })
     },
 

@@ -48,7 +48,7 @@
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip
-                         prop="check_status_info"
+                         prop="check_status"
                          label="状态"
                          :resizable="false"
                          width="100"
@@ -61,7 +61,7 @@
           <template slot-scope="scope">
             <div class="status_button"
                  :style="getStatusStyle(scope.row.check_status)">
-              {{scope.row.check_status_info}}
+              {{getStatusName(scope.row.check_status)}}
             </div>
           </template>
         </el-table-column>
