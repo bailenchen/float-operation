@@ -337,10 +337,10 @@ export default {
         if (spanList.length == 0) {
           seriesIndex = 0 //一个新系列的开始
           productIndex = 0 //一个新产品的开始
-          subCount = element.num // 产品
-          subMoney = parseFloat(element.subtotal)
-          allCount = element.num // 系列
-          allMoney = parseFloat(element.subtotal)
+          subCount = element.productNum // 产品
+          subMoney = parseFloat(element.productSubtotal)
+          allCount = element.productNum // 系列
+          allMoney = parseFloat(element.productSubtotal)
 
           spanList.push({ rowspan: 1, product_rowspan: 1 })
           newList.push(element) // 真实数据
@@ -349,18 +349,18 @@ export default {
           /** 上一个最后产品的处理 */
           var preItem = spanList[seriesIndex]
           preItem.rowspan += 1
-          newList.push({ num: subCount, subtotal: subMoney }) // 产品小计数据
+          newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
           spanList.push({ rowspan: 0, product_rowspan: 1, isSum: true }) // 产品小计style
 
-          newList.push({ num: allCount, subtotal: allMoney }) // 系列小计数据
+          newList.push({ productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
           spanList.push({ rowspan: 1, product_rowspan: 1, isAllSum: true }) // 系列小计style
 
           /*** 新系列开始 */
           spanList.push({ rowspan: 1, product_rowspan: 1 }) // 新系列 新产品的 展示数据开始 style
-          subCount = element.num // 新产品的值 所以取消了重置为0
-          subMoney = parseFloat(element.subtotal)
-          allCount = element.num // 系列
-          allMoney = parseFloat(element.subtotal)
+          subCount = element.productNum // 新产品的值 所以取消了重置为0
+          subMoney = parseFloat(element.productSubtotal)
+          allCount = element.productNum // 系列
+          allMoney = parseFloat(element.productSubtotal)
           newList.push(element) // 真实数据
           seriesIndex = spanList.length - 1 //一个新系列的开始
           productIndex = spanList.length - 1 //一个新产品的开始
@@ -372,25 +372,25 @@ export default {
             var preProItem = spanList[productIndex]
             preProItem.product_rowspan += 1
             spanList.push({ rowspan: 0, product_rowspan: 0 }) // 产品 非第一条数据的style
-            subCount += element.num // 产品
-            subMoney += parseFloat(element.subtotal)
-            allCount += element.num // 系列
-            allMoney += parseFloat(element.subtotal)
+            subCount += element.productNum // 产品
+            subMoney += parseFloat(element.productSubtotal)
+            allCount += element.productNum // 系列
+            allMoney += parseFloat(element.productSubtotal)
             newList.push(element) // 真实数据
           } else {
             /*** 不相同产品 */
             // 需要添加一个小计
             preItem.rowspan += 1
 
-            newList.push({ num: subCount, subtotal: subMoney }) // 产品小计数据
+            newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
             spanList.push({ rowspan: 0, product_rowspan: 1, isSum: true }) // 产品小计Style
 
             spanList.push({ rowspan: 0, product_rowspan: 1 }) // 新产品 第一条数据style
             productIndex = spanList.length - 1 //一个新产品的开始=
-            subCount = element.num
-            subMoney = parseFloat(element.subtotal) //开始了一个新的产品  所以没有 清空数据
-            allCount += element.num // 系列 继续 叠加
-            allMoney += parseFloat(element.subtotal)
+            subCount = element.productNum
+            subMoney = parseFloat(element.productSubtotal) //开始了一个新的产品  所以没有 清空数据
+            allCount += element.productNum // 系列 继续 叠加
+            allMoney += parseFloat(element.productSubtotal)
             newList.push(element) // 真实数据
           }
         }
@@ -399,12 +399,12 @@ export default {
           // 最后一个产品的处理
           var preItem = spanList[seriesIndex]
           preItem.rowspan += 1
-          newList.push({ num: subCount, subtotal: subMoney }) // 产品小计数据
+          newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
           subCount = 0
           subMoney = 0 // 完成一个产品统计 清空数据
           spanList.push({ rowspan: 0, product_rowspan: 1, isSum: true }) // 产品小计style
 
-          newList.push({ num: allCount, subtotal: allMoney }) // 系列小计数据
+          newList.push({ productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
           allCount = 0
           allMoney = 0 // 完成一个系列统计 清空数据
           spanList.push({ rowspan: 1, product_rowspan: 1, isAllSum: true }) // 系列小计style
