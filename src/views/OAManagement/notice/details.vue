@@ -15,10 +15,10 @@
       <div class="btn-box"
            v-if="btnShow">
         <el-button type="primary"
-                   v-if="titleList.permission.is_update == 1"
+                   v-if="titleList.is_update == 1"
                    @click="onEdit">编辑</el-button>
         <el-button type="danger"
-                   v-if="titleList.permission.is_delete == 1"
+                   v-if="titleList.is_delete == 1"
                    @click="deleteFun">删除</el-button>
       </div>
     </div>
