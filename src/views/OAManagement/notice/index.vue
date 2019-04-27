@@ -143,10 +143,9 @@ export default {
         limit: 15
       })
         .then(res => {
-          this.newStatus = true
-          // res.data.is_create == 1
-          //   ? (this.newStatus = true)
-          //   : (this.newStatus = false)
+          res.data.is_save == 1
+            ? (this.newStatus = true)
+            : (this.newStatus = false)
           for (let item of res.data.list) {
             item.contentSub = item.content.substring(0, 150)
           }

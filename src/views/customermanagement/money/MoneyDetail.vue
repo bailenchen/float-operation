@@ -148,7 +148,7 @@ export default {
           this.detailData = res.data
           //   // 负责人
           this.headDetails[0].value = res.data.customer_name
-          this.headDetails[1].value = res.data.money
+          this.headDetails[1].value = res.data.contract_money
           this.headDetails[2].value = res.data.contract_name
           this.headDetails[3].value = res.data.return_time
           this.headDetails[4].value = res.data.money

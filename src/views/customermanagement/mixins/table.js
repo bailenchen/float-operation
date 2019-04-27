@@ -349,6 +349,8 @@ export default {
         return '通过'
       } else if (status == 3) {
         return '拒绝'
+      } else if (status == 4) {
+        return '撤回'
       }
       return ''
     },

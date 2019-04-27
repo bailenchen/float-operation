@@ -14,11 +14,11 @@
       </div>
       <div class="btn-box"
            v-if="btnShow">
-        <!-- v-if="titleList.permission.is_update == 1" -->
         <el-button type="primary"
+                   v-if="titleList.permission.is_update == 1"
                    @click="onEdit">编辑</el-button>
-        <!-- v-if="titleList.permission.is_delete == 1" -->
         <el-button type="danger"
+                   v-if="titleList.permission.is_delete == 1"
                    @click="deleteFun">删除</el-button>
       </div>
     </div>
@@ -98,8 +98,8 @@ export default {
         announcementId: this.formData.announcement_id,
         title: this.formData.title,
         content: this.formData.content,
-        startTime: this.formData.start_time,
-        endTime: this.formData.end_time
+        startTime: this.formData.startTime,
+        endTime: this.formData.endTime
       })
         .then(res => {
           this.$emit('editSubmit', this.formData)
