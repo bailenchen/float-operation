@@ -131,6 +131,19 @@ export default {
     this.initFunnel()
   },
   methods: {
+    // 合同金额
+    getRankingContract() {
+      this.loading = true
+      biRankingContractAPI({
+        type: 'year',
+        structure_id: this.structuresSelectValue,
+        user_id: this.userSelectValue
+      })
+        .then(res => {})
+        .catch(() => {
+          this.loading = false
+        })
+    },
     /**
      * 获取部门列表
      */
@@ -222,9 +235,7 @@ export default {
     },
     /** 销售漏斗 */
     initFunnel() {
-      var funnelChart = echarts.init(
-        document.getElementById('funnelmain')
-      )
+      var funnelChart = echarts.init(document.getElementById('funnelmain'))
       var option = {
         tooltip: {
           trigger: 'item',
@@ -302,7 +313,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-@import './styles/detail.scss';
+@import '../styles/detail.scss';
 
 .handle-bar {
   padding: 15px 20px 5px 20px;

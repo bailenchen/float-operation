@@ -7,13 +7,13 @@
     <el-container>
       <el-aside width="auto"
                 class="aside-container">
-        <sidebar :items="biRouters.children"
+        <sidebar :items="biRouterItems"
                  createButtonTitle=""
                  mainRouter="bi"></sidebar>
       </el-aside>
       <el-main id="crm-main-container"
                style="padding:15px; height: 100%;">
-        <app-main></app-main>
+        <router-view />
       </el-main>
     </el-container>
   </el-container>
@@ -22,6 +22,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Navbar, Sidebar, AppMain } from './components'
+import { biRouterMenu } from '@/router/modules/business'
 
 export default {
   name: 'business-layout',
@@ -31,7 +32,10 @@ export default {
     AppMain
   },
   computed: {
-    ...mapGetters(['bi', 'biRouters'])
+    ...mapGetters(['bi', 'biRouters']),
+    biRouterItems() {
+      return biRouterMenu
+    }
   },
   data() {
     return {}
@@ -55,5 +59,6 @@ export default {
   box-shadow: 0px 1px 2px #dbdbdb;
   z-index: 100;
   min-width: 1200px;
+  
 }
 </style>

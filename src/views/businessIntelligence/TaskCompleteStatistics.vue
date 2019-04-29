@@ -1,8 +1,5 @@
 <template>
-  <flexbox v-loading="loading"
-           class="main-container"
-           direction="column"
-           align="stretch">
+  <div class="main-container">
     <div class="handle-bar">
       <el-date-picker v-model="dateSelect"
                       type="year"
@@ -61,8 +58,7 @@
         </el-table>
       </div>
     </div>
-
-  </flexbox>
+  </div>
 </template>
 
 <script>
@@ -325,7 +321,18 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import './styles/detail.scss';
 
+.main-container {
+  height: 100%;
+  position: relative;
+}
+
 .handle-bar {
+  position: absolute;
+  background-color: white;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
   padding: 15px 20px 5px 20px;
   .el-date-editor {
     width: 130px;
@@ -353,7 +360,7 @@ export default {
 }
 
 .scoller-content {
-  flex: 1;
+  padding-top: 54px;
   overflow-y: auto;
 }
 </style>

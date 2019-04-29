@@ -372,7 +372,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-@import './styles/detail.scss';
+@import '../styles/detail.scss';
 @import '@/views/customermanagement/styles/detailview.scss';
 
 .handle-bar {

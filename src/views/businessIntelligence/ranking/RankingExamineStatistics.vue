@@ -1,0 +1,142 @@
+<template>
+  <div v-loading="loading"
+       class="main-container">
+    <filtrate-handle-view class="filtrate-bar"
+                          @load="loading=true"
+                          @change="getDataList">
+    </filtrate-handle-view>
+    <div class="content">
+      <div class="content-title">出差次数排行（按创建人、出差时间统计）</div>
+      <div class="axis-content"
+           v-empty="list.length === 0"
+           xs-empty-text="暂无排行">
+        <div id="axismain"></div>
+      </div>
+      <div class="table-content">
+        <el-table :data="list"
+                  height="400"
+                  stripe
+                  border
+                  highlight-current-row>
+          <el-table-column align="center"
+                           header-align="center"
+                           show-overflow-tooltip
+                           label="公司总排名">
+            <template slot-scope="scope">
+              {{scope.$index + 1}}
+            </template>
+          </el-table-column>
+          <el-table-column v-for="(item, index) in fieldList"
+                           :key="index"
+                           align="center"
+                           header-align="center"
+                           show-overflow-tooltip
+                           :prop="item.field"
+                           :label="item.name">
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import rankingMixins from '../mixins/ranking'
+import echarts from 'echarts'
+import { biRankingExamineAPI } from '@/api/businessIntelligence/ranking'
+
+export default {
+  /** 出差次数排行 */
+  name: 'ranking-examine-statistics',
+  data() {
+    return {}
+  },
+  mixins: [rankingMixins],
+  computed: {},
+  mounted() {
+    this.fieldList = [
+      { field: 'user_name', name: '员工' },
+      { field: 'structure_name', name: '部门' },
+      { field: 'count', name: '出差次数（次）' }
+    ]
+    this.initAxis()
+  },
+  methods: {
+    getDataList(params) {
+      this.loading = true
+      biRankingExamineAPI(params)
+        .then(res => {
+          this.loading = false
+          this.list = res.data || []
+
+          let showData = []
+          let yAxis = []
+
+          let rankingIndex = res.data.length > 10 ? 10 : res.data.length
+          for (let index = 0; index < rankingIndex; index++) {
+            const element = res.data[index]
+            showData.push(parseFloat(element.count))
+            yAxis.push(element.user_name)
+          }
+          this.axisOption.yAxis[0].data = yAxis
+          this.axisOption.series[0].data = showData
+          this.axisChart.setOption(this.axisOption, true)
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+    /** 柱状图 */
+    initAxis() {
+      this.axisChart = echarts.init(document.getElementById('axismain'))
+      this.axisOption.tooltip.formatter = '{b} : {c}次'
+      this.axisOption.xAxis[0].name = '（次）'
+      this.axisChart.setOption(this.axisOption, true)
+    }
+  }
+}
+</script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+@import '../styles/detail.scss';
+
+.main-container {
+  height: 100%;
+  position: relative;
+}
+
+.filtrate-bar {
+  position: absolute;
+  background-color: white;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 15px 20px 5px 20px;
+  margin-right: 15px;
+}
+
+.content {
+  .content-title {
+    padding: 20px 20px 5px;
+    font-size: 17px;
+    color: #333;
+  }
+  padding-top: 54px;
+  overflow-y: auto;
+}
+
+.axis-content {
+  padding: 20px 20% 40px;
+  position: relative;
+  #axismain {
+    margin: 0 auto;
+    width: 100%;
+    height: 400px;
+  }
+}
+
+.table-content {
+  padding: 0 60px;
+}
+</style>
