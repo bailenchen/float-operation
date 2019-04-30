@@ -124,11 +124,11 @@ export default {
   mounted() {
     this.planFieldList = [
       { prop: 'num', width: '200', label: '期数' },
-      { prop: 'customer_name', width: '200', label: '客户名称' },
-      { prop: 'contract_num', width: '200', label: '合同编号' },
+      { prop: 'customerName', width: '200', label: '客户名称' },
+      { prop: 'contractNum', width: '200', label: '合同编号' },
       { prop: 'money', width: '200', label: '计划回款金额' },
-      { prop: 'return_date', width: '200', label: '计划回款日期' },
-      { prop: 'return_type', width: '200', label: '计划回款方式' },
+      { prop: 'returnDate', width: '200', label: '计划回款日期' },
+      { prop: 'returnType', width: '200', label: '计划回款方式' },
       { prop: 'remind', width: '200', label: '提前几日提醒' },
       { prop: 'remark', width: '200', label: '备注' }
     ]
@@ -136,13 +136,13 @@ export default {
     this.getPlanList()
 
     this.fieldList = [
-      { prop: 'receivables_num', width: '200', label: '回款编号' },
-      { prop: 'contract_name', width: '200', label: '合同名称' },
-      { prop: 'contract_money', width: '200', label: '合同金额' },
-      { prop: 'receivables_money', width: '200', label: '回款金额' },
+      { prop: 'receivablesNum', width: '200', label: '回款编号' },
+      { prop: 'contractName', width: '200', label: '合同名称' },
+      { prop: 'contractMoney', width: '200', label: '合同金额' },
+      { prop: 'receivablesMoney', width: '200', label: '回款金额' },
       { prop: 'realname', width: '200', label: '负责人' },
-      { prop: 'check_status', width: '200', label: '状态' },
-      { prop: 'return_time', width: '200', label: '回款日期' }
+      { prop: 'checkStatus', width: '200', label: '状态' },
+      { prop: 'returnTime', width: '200', label: '回款日期' }
     ]
     this.getList()
   },
@@ -190,7 +190,7 @@ export default {
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      this.showFullId = row.receivables_id
+      this.showFullId = row.receivablesId
       this.showFullCrmType = 'receivables'
       this.showFullDetail = true
     },

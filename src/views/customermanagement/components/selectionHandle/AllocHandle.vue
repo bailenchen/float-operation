@@ -94,14 +94,13 @@ export default {
         this.$message.error('请选择负责人')
       } else {
         var self = this
-        var action_ids = this.selectionList.map(function(item, index, array) {
-          return item[self.crmType + '_id']
+        var actionIds = this.selectionList.map(function(item, index, array) {
+          return item[self.crmType + 'Id']
         })
-        var user_ids = this.usersList[0].id
         var params = {
-          userId: user_ids
+          userId: this.usersList[0].userId
         }
-        params.ids = action_ids.join(',')
+        params.ids = actionIds.join(',')
         this.loading = true
         crmCustomerDistribute(params)
           .then(res => {

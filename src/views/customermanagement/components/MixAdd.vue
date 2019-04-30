@@ -67,7 +67,7 @@
           <flexbox class="c-item"
                    v-for="(item, index) in business"
                    :key="index">
-            <div class="c-item-name">{{item.business_name}}</div>
+            <div class="c-item-name">{{item.businessName}}</div>
             <div class="c-item-close"
                  @click="business.splice(index, 1)">×</div>
           </flexbox>
@@ -86,7 +86,7 @@
           <flexbox class="c-item"
                    v-for="(item, index) in contacts"
                    :key="index">
-            <div class="c-item-name">{{item.contacts_name}}</div>
+            <div class="c-item-name">{{item.contactsName}}</div>
             <div class="c-item-close"
                  @click="contacts.splice(index, 1)">×</div>
           </flexbox>
@@ -118,7 +118,7 @@
           <crm-relative :show="item.show"
                         :radio="false"
                         ref="crmrelative"
-                        :action="{ type: 'condition', data: { moduleType: crmType, customer_id: id } }"
+                        :action="{ type: 'condition', data: { moduleType: crmType, customerId: id } }"
                         :selectedData="item.type == 'business' ? { 'business': business } : { 'contacts': contacts }"
                         :crm-type="item.type"
                         @close="item.show=false"
@@ -312,7 +312,7 @@ export default {
     },
     deleteImgOrFile(type, item, index) {
       crmFileDelete({
-        id: item.file_id
+        id: item.fileId
       })
         .then(res => {
           if (type == 'image') {

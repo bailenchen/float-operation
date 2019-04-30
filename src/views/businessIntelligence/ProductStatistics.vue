@@ -25,9 +25,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.user_id"
+                   :key="item.userId"
                    :label="item.realname"
-                   :value="item.user_id">
+                   :value="item.userId">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"
@@ -337,9 +337,9 @@ export default {
         if (spanList.length == 0) {
           seriesIndex = 0 //一个新系列的开始
           productIndex = 0 //一个新产品的开始
-          subCount = element.productNum // 产品
+          subCount = parseFloat(element.productNum) // 产品
           subMoney = parseFloat(element.productSubtotal)
-          allCount = element.productNum // 系列
+          allCount = parseFloat(element.productNum) // 系列
           allMoney = parseFloat(element.productSubtotal)
 
           spanList.push({ rowspan: 1, product_rowspan: 1 })
@@ -357,9 +357,9 @@ export default {
 
           /*** 新系列开始 */
           spanList.push({ rowspan: 1, product_rowspan: 1 }) // 新系列 新产品的 展示数据开始 style
-          subCount = element.productNum // 新产品的值 所以取消了重置为0
+          subCount = parseFloat(element.productNum) // 新产品的值 所以取消了重置为0
           subMoney = parseFloat(element.productSubtotal)
-          allCount = element.productNum // 系列
+          allCount = parseFloat(element.productNum) // 系列
           allMoney = parseFloat(element.productSubtotal)
           newList.push(element) // 真实数据
           seriesIndex = spanList.length - 1 //一个新系列的开始
@@ -372,9 +372,9 @@ export default {
             var preProItem = spanList[productIndex]
             preProItem.product_rowspan += 1
             spanList.push({ rowspan: 0, product_rowspan: 0 }) // 产品 非第一条数据的style
-            subCount += element.productNum // 产品
+            subCount += parseFloat(element.productNum) // 产品
             subMoney += parseFloat(element.productSubtotal)
-            allCount += element.productNum // 系列
+            allCount += parseFloat(element.productNum) // 系列
             allMoney += parseFloat(element.productSubtotal)
             newList.push(element) // 真实数据
           } else {
@@ -387,9 +387,9 @@ export default {
 
             spanList.push({ rowspan: 0, product_rowspan: 1 }) // 新产品 第一条数据style
             productIndex = spanList.length - 1 //一个新产品的开始=
-            subCount = element.productNum
+            subCount = parseFloat(element.productNum)
             subMoney = parseFloat(element.productSubtotal) //开始了一个新的产品  所以没有 清空数据
-            allCount += element.productNum // 系列 继续 叠加
+            allCount += parseFloat(element.productNum) // 系列 继续 叠加
             allMoney += parseFloat(element.productSubtotal)
             newList.push(element) // 真实数据
           }

@@ -258,22 +258,22 @@ export default {
         if (valid) {
           this.loading = true
           let data = this.formData
-          let owner_user_ids = []
+          let ownerUserIds = []
           for (let item of this.colleaguesList) {
-            owner_user_ids.push(item.user_id)
+            ownerUserIds.push(item.userId)
           }
           if (this.text == '创建日程') {
             scheduleAdd({
               title: data.title,
               startTime: data.startTime,
               endTime: data.endTime,
-              ownerUserIds: owner_user_ids.join(','),
+              ownerUserIds: ownerUserIds.join(','),
               remark: data.remark,
               color: data.color,
-              customerIds: this.relevanceAll.customer_ids ? this.relevanceAll.customer_ids.join(',') : [],
-              contactsIds: this.relevanceAll.contacts_ids ? this.relevanceAll.contacts_ids.join(',') : [],
-              businessIds: this.relevanceAll.business_ids ? this.relevanceAll.business_ids.join(',') : [],
-              contractIds: this.relevanceAll.contract_ids ? this.relevanceAll.contract_ids.join(',') : []
+              customerIds: this.relevanceAll.customerIds ? this.relevanceAll.customerIds.join(',') : [],
+              contactsIds: this.relevanceAll.contactsIds ? this.relevanceAll.contactsIds.join(',') : [],
+              businessIds: this.relevanceAll.businessIds ? this.relevanceAll.businessIds.join(',') : [],
+              contractIds: this.relevanceAll.contractIds ? this.relevanceAll.contractIds.join(',') : []
             })
               .then(res => {
                 if (this.$route.query.routerKey == 1) {
@@ -288,33 +288,33 @@ export default {
               })
           } else {
             let list = {
-              customer_ids: [],
-              contract_ids: [],
-              contacts_ids: [],
-              business_ids: []
+              customerIds: [],
+              contractIds: [],
+              contactsIds: [],
+              businessIds: []
             }
             // 客户
             if (this.allData.customer) {
               for (let item of this.allData.customer) {
-                list.customer_ids.push(item.customer_id)
+                list.customerIds.push(item.customerId)
               }
             }
             // 合同
             if (this.allData.contract) {
               for (let item of this.allData.contract) {
-                list.contract_ids.push(item.contract_id)
+                list.contractIds.push(item.contractId)
               }
             }
             // 联系人
             if (this.allData.contacts) {
               for (let item of this.allData.contacts) {
-                list.contacts_ids.push(item.contacts_id)
+                list.contactsIds.push(item.contactsId)
               }
             }
             // 关联商机
             if (this.allData.business) {
               for (let item of this.allData.business) {
-                list.business_ids.push(item.business_id)
+                list.businessIds.push(item.businessId)
               }
             }
             let ids =
@@ -322,17 +322,17 @@ export default {
                 ? list
                 : this.relevanceAll
             scheduleEdit({
-              eventId: data.event_id,
+              eventId: data.eventId,
               title: data.title,
               startTime: data.startTime,
               endTime: data.endTime,
-              ownerUserIds: owner_user_ids.join(','),
+              ownerUserIds: ownerUserIds.join(','),
               remark: data.remark,
               color: data.color,
-              customerIds: ids.customer_ids.join(','),
-              contactsIds: ids.contacts_ids.join(','),
-              businessIds: ids.business_ids.join(','),
-              contractIds: ids.contract_ids.join(',')
+              customerIds: ids.customerIds.join(','),
+              contactsIds: ids.contactsIds.join(','),
+              businessIds: ids.businessIds.join(','),
+              contractIds: ids.contractIds.join(',')
             })
               .then(res => {
                 this.$emit('onSubmit')

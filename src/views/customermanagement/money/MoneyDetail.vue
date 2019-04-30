@@ -23,8 +23,8 @@
         <examine-info :id="id"
                       class="examine-info-border"
                       examineType="crm_receivables"
-                      :recordId="detailData.examine_record_id"
-                      :owner_user_id="detailData.owner_user_id">
+                      :recordId="detailData.examineRecordId"
+                      :owner_user_id="detailData.ownerUserId">
         </examine-info>
       </div>
       <div class="tabs">
@@ -48,7 +48,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="receivables"
-                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
+                       :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -147,12 +147,12 @@ export default {
           this.name = res.data.number
           this.detailData = res.data
           //   // 负责人
-          this.headDetails[0].value = res.data.customer_name
-          this.headDetails[1].value = res.data.contract_money
-          this.headDetails[2].value = res.data.contract_name
-          this.headDetails[3].value = res.data.return_time
+          this.headDetails[0].value = res.data.customerName
+          this.headDetails[1].value = res.data.contractMoney
+          this.headDetails[2].value = res.data.contractName
+          this.headDetails[3].value = res.data.returnTime
           this.headDetails[4].value = res.data.money
-          this.headDetails[5].value = res.data.owner_user_name
+          this.headDetails[5].value = res.data.ownerUserName
         })
         .catch(() => {
           this.loading = false

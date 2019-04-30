@@ -84,10 +84,10 @@ export default {
       showTypes: ['customer', 'contacts', 'business', 'contract'],
       showPopover: false,
       relevanceAll: {
-        customer_ids: [],
-        contract_ids: [],
-        contacts_ids: [],
-        business_ids: []
+        customerIds: [],
+        contractIds: [],
+        contactsIds: [],
+        businessIds: []
       },
       // 关联业务信息
       relatedListData: {},
@@ -146,12 +146,12 @@ export default {
       this.relatedListData = val.data
       for (let key in val.data) {
         const list = val.data[key]
-        this.relevanceAll[key + '_ids'] = list.map(function(
+        this.relevanceAll[key + 'Ids'] = list.map(function(
           item,
           index,
           array
         ) {
-          return item[key + '_id']
+          return item[key + 'Id']
         })
       }
       this.$emit('checkInfos', this.relevanceAll)
@@ -171,7 +171,7 @@ export default {
             let typeArray = this.relatedListData[typeItem] || []
             params[typeItem + 'Ids'] = typeArray
               .map(aItem => {
-                return aItem[typeItem + '_id']
+                return aItem[typeItem + 'Id']
               })
               .join(',')
           }
@@ -188,7 +188,7 @@ export default {
         })
     },
     checkRelatedDetail(field, val) {
-      val.key = val[field + '_id']
+      val.key = val[field + 'Id']
       this.$emit('checkRelatedDetail', field, val)
     }
   }

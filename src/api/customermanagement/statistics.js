@@ -33,7 +33,7 @@ export function crmAchievementUpdate(data) {
  * @param {*} data
  * year 年
  * status 1销售（目标）2回款（目标）
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function crmAchievementIndexForuser(data) {
@@ -49,7 +49,7 @@ export function crmAchievementIndexForuser(data) {
  * @param {*} data
  * year 年
  * status 1销售（目标）2回款（目标）
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function crmAchievementDatalist(data) {
@@ -65,7 +65,7 @@ export function crmAchievementDatalist(data) {
  * @param {*} data
  * year 年
  * status 1销售（目标）2回款（目标）
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function crmProductStatistics(data) {
@@ -80,7 +80,7 @@ export function crmProductStatistics(data) {
  * 回款统计
  * @param {*} data
  * year 年
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function crmReceivablesStatistics(data) {
@@ -96,7 +96,7 @@ export function crmReceivablesStatistics(data) {
  * @param {*} data
  * year 年
  * month 1-12
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function crmReceivablesStatisticList(data) {
@@ -112,7 +112,7 @@ export function crmReceivablesStatisticList(data) {
  * @param {*} data
  * start_time
  * end_time
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function crmCustomerUserCustomer(data) {
@@ -128,7 +128,7 @@ export function crmCustomerUserCustomer(data) {
  * @param {*} data
  * start_time
  * end_time
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  * type_id 商机组
  */

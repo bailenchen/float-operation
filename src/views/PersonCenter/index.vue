@@ -154,7 +154,7 @@ export default {
     submiteImage(data) {
       this.loading = true
       var param = new FormData()
-      param.append('userId', this.userInfo.user_id)
+      param.append('userId', this.userInfo.userId)
       param.append('file', data.blob, data.file.name)
       adminUsersUpdateImg(param)
         .then(res => {

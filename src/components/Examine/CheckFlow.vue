@@ -16,15 +16,15 @@
                align="stretch"
                justify="flex-start">
         <img class="cf-flow-item-img"
-             :src="item.examine_status|statusIcon" />
+             :src="item.examineStatus|statusIcon" />
         <div>
           <flexbox class="cf-flow-item-head">
-            <div class="cf-flow-item-des">{{item.order_id|stepName}}</div>
-            <div>{{item.examine_time}}</div>
+            <div class="cf-flow-item-des">{{item.orderId|stepName}}</div>
+            <div>{{item.examineTime}}</div>
           </flexbox>
           <flexbox class="cf-flow-item-info">
             <div class="cf-flow-item-name">{{item.realname}}</div>
-            <div><span>{{getStatusName(item.examine_status)}}</span>了此申请</div>
+            <div><span>{{getStatusName(item.examineStatus)}}</span>了此申请</div>
           </flexbox>
           <div v-if="item.remarks"
                class="cf-flow-item-content">{{item.remarks}}
@@ -65,17 +65,6 @@ export default {
         return require('@/assets/img/check_create.png')
       }
       return ''
-    },
-    detailName: function(data) {
-      if (data.status == 2) {
-        return data.user_id_info.length + '人或签'
-      } else if (data.status == 3) {
-        return data.user_id_info.length + '人会签'
-      } else if (data.status == 1) {
-        return '负责人主管'
-      } else if (data.status == 4) {
-        return '上一级审批人主管'
-      }
     },
     stepName: function(index) {
       return '第' + Nzhcn.encodeS(index) + '级'

@@ -55,7 +55,7 @@
                 <span v-for="(item, index) in colleaguesList"
                       :key="index"
                       class="select-box-span">
-                  {{item.username}}
+                  {{item.realname}}
                   <span class="el-icon-close"
                         @click.stop="selectDelect(item, index)"> </span>
                 </span>
@@ -137,17 +137,16 @@ export default {
           var formInlineCopy = Object.assign({}, this.formInline)
           formInlineCopy = {
             mainUserId:
-              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].user_id,
+              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].userId,
             startTime: this.formInline.startTime,
             stopTime: this.formInline.stopTime,
             description: this.formInline.description,
             priority: this.formInline.priority,
-            work_id: this.formInline.work_id,
             name: this.formInline.name,
-            customerIds: this.relevanceAll.customer_ids ? this.relevanceAll.customer_ids.join(',') : [],
-            contactsIds: this.relevanceAll.contacts_ids ? this.relevanceAll.contacts_ids.join(',') : [] ,
-            businessIds: this.relevanceAll.business_ids ? this.relevanceAll.business_ids.join(',') : [] ,
-            contractIds: this.relevanceAll.contract_ids ? this.relevanceAll.contract_ids.join(',') : [] 
+            customerIds: this.relevanceAll.customerIds ? this.relevanceAll.customerIds.join(',') : [],
+            contactsIds: this.relevanceAll.contactsIds ? this.relevanceAll.contactsIds.join(',') : [] ,
+            businessIds: this.relevanceAll.businessIds ? this.relevanceAll.businessIds.join(',') : [] ,
+            contractIds: this.relevanceAll.contractIds ? this.relevanceAll.contractIds.join(',') : [] 
           }
           this.$emit('dialogVisibleSubmit', formInlineCopy)
         } else {

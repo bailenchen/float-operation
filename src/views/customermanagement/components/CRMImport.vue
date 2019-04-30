@@ -132,7 +132,7 @@ export default {
       } else {
         params.repeatHandling = this.config
         params.file = this.file
-        params.ownerUserId = this.user[0].user_id
+        params.ownerUserId = this.user[0].userId
         var request
         if (this.crmType == 'customer') {
           request = crmCustomerExcelImport

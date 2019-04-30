@@ -1,12 +1,12 @@
 <template>
   <div class="box-wrapper">
     <div class="title">
-      <span>{{attr.is_null ? '*' : ''}}</span>{{attr.name}}<span v-if="attr.input_tips">{{'（'+attr.input_tips+'）'}}</span>
+      <span>{{attr.isNull ? '*' : ''}}</span>{{attr.name}}<span v-if="attr.inputTips">{{'（'+attr.inputTips+'）'}}</span>
     </div>
     <ul class="table">
-      <draggable :list="attr.form_value"
+      <draggable :list="attr.formValue"
                  :options="{name: 'list'}">
-        <li v-for="(item, index) in attr.form_value"
+        <li v-for="(item, index) in attr.formValue"
             :key="index"
             @click.stop="selectItem(item, index)"
             class="table-item"

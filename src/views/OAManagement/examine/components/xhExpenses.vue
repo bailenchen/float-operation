@@ -19,7 +19,7 @@
           <div class="clauses-item-title">
             {{subItem.name}}
           </div>
-          <el-date-picker v-if="subItem.form_type == 'date'"
+          <el-date-picker v-if="subItem.formType == 'date'"
                           v-model="item[subItem.field]"
                           type="date"
                           value-format="yyyy-MM-dd"
@@ -108,42 +108,42 @@ export default {
         {
           field: 'startAddress',
           name: '出发城市',
-          form_type: 'text'
+          formType: 'text'
         },
         {
           field: 'endAddress',
           name: '目的城市',
-          form_type: 'text'
+          formType: 'text'
         },
         {
           field: 'startTime',
           name: '开始时间',
-          form_type: 'date'
+          formType: 'date'
         },
         {
           field: 'endTime',
           name: '结束时间',
-          form_type: 'date'
+          formType: 'date'
         },
         {
           field: 'traffic',
           name: '交通费（元）',
-          form_type: 'text'
+          formType: 'text'
         },
         {
           field: 'stay',
           name: '住宿费（元）',
-          form_type: 'text'
+          formType: 'text'
         },
         {
           field: 'diet',
           name: '餐饮费（元）',
-          form_type: 'text'
+          formType: 'text'
         },
         {
           field: 'other',
           name: '其他费用（元）',
-          form_type: 'text'
+          formType: 'text'
         }
       ]
     }
@@ -200,7 +200,7 @@ export default {
       })
         .then(() => {
           crmFileDelete({
-            save_name: item.save_name
+            id: item.fileId
           })
             .then(res => {
               items.splice(index, 1)

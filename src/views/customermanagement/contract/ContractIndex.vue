@@ -48,7 +48,7 @@
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip
-                         prop="check_status"
+                         prop="checkStatus"
                          label="状态"
                          :resizable="false"
                          width="100"
@@ -60,8 +60,8 @@
           </template>
           <template slot-scope="scope">
             <div class="status_button"
-                 :style="getStatusStyle(scope.row.check_status)">
-              {{getStatusName(scope.row.check_status)}}
+                 :style="getStatusStyle(scope.row.checkStatus)">
+              {{getStatusName(scope.row.checkStatus)}}
             </div>
           </template>
         </el-table-column>
@@ -124,9 +124,9 @@ export default {
     cellStyle({ row, column, rowIndex, columnIndex }) {
       if (
         column.property === 'num' ||
-        column.property === 'customer_name' ||
-        column.property === 'business_name' ||
-        column.property === 'contacts_name'
+        column.property === 'customerName' ||
+        column.property === 'businessName' ||
+        column.property === 'contactsName'
       ) {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {

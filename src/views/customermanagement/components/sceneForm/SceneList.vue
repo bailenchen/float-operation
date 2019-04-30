@@ -4,7 +4,7 @@
       <div v-for="(item, index) in sceneList"
            :key="index"
            @click="selectScene(item, index)"
-           :class="{'scene-list-item-select':item.scene_id == sceneSelectId}"
+           :class="{'scene-list-item-select':item.sceneId == sceneSelectId}"
            class="scene-list-item">
         {{item.name}}
       </div>
@@ -64,15 +64,18 @@ export default {
         type: crmTypeModel[this.crmType]
       })
         .then(res => {
-          let defaultScene = res.data.filter(function(item, index) {
-            return item.is_default === 1
+          let defaultScenes = res.data.filter(function(item, index) {
+            return item.isDefault === 1
           })
 
-          if (defaultScene && defaultScene.length > 0) {
-            this.scene_id = defaultScene[0].scene_id
-            this.scene_name = defaultScene[0].name
-            this.sceneSelectId = this.scene_id
-            this.$emit('scene', { id: this.scene_id, name: this.scene_name, bydata: defaultScene[0].bydata })
+          if (defaultScenes && defaultScenes.length > 0) {
+            let defaultScene = defaultScenes[0]
+            this.sceneSelectId = defaultScene.sceneId
+            this.$emit('scene', {
+              id: defaultScene.sceneId,
+              name: defaultScene.name,
+              bydata: defaultScene.bydata || ''
+            })
           } else {
             this.sceneSelectId = ''
             this.$emit('scene', { id: '', name: '', bydata: '' })
@@ -87,8 +90,12 @@ export default {
 
     // 选择场景、
     selectScene(item, index) {
-      this.sceneSelectId = item.scene_id
-      this.$emit('scene', { id: item.scene_id, name: item.name, bydata: item.bydata })
+      this.sceneSelectId = item.sceneId
+      this.$emit('scene', {
+        id: item.sceneId,
+        name: item.name,
+        bydata: item.bydata
+      })
       this.$emit('hidden-scene')
     },
     // 添加场景

@@ -32,9 +32,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.user_id"
+                   :key="item.userId"
                    :label="item.realname"
-                   :value="item.user_id">
+                   :value="item.userId">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"

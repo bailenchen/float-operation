@@ -39,13 +39,13 @@
                     v-if="formItem.formType == 'business_type'">&nbsp;</el-col>
             <el-col :span="4"
                     v-if="formItem.formType == 'business_type'">
-              <el-select v-model="formItem.type_id"
+              <el-select v-model="formItem.typeId"
                          @change="typeOptionsChange(formItem)"
                          placeholder="请选择">
                 <el-option v-for="item in formItem.typeOption"
-                           :key="item.type_id"
+                           :key="item.typeId"
                            :label="item.name"
-                           :value="item.type_id">
+                           :value="item.typeId">
                 </el-option>
               </el-select>
             </el-col>
@@ -71,12 +71,12 @@
                               end-placeholder="结束日期">
               </el-date-picker>
               <el-select v-else-if="formItem.formType === 'business_type'"
-                         v-model="formItem.status_id"
+                         v-model="formItem.statusId"
                          placeholder="请选择">
                 <el-option v-for="item in formItem.statusOption"
-                           :key="item.status_id"
+                           :key="item.statusId"
                            :label="item.name"
-                           :value="item.status_id">
+                           :value="item.statusId">
                 </el-option>
               </el-select>
               <xh-user-cell v-else-if="formItem.formType === 'user'"
@@ -186,8 +186,8 @@ export default {
               value: '',
               typeOption: [],
               statusOption: [],
-              type_id: '',
-              status_id: ''
+              typeId: '',
+              statusId: ''
             })
           }
           this.saveChecked = false
@@ -205,15 +205,15 @@ export default {
      * 商机组状态
      */
     typeOptionsChange(formItem) {
-      if (formItem.type_id) {
+      if (formItem.typeId) {
         let obj = formItem.typeOption.find(item => {
-          return item.type_id === formItem.type_id
+          return item.typeId === formItem.typeId
         })
         formItem.statusOption = obj.statusList || []
       } else {
         formItem.statusOption = []
       }
-      formItem.status_id = ''
+      formItem.statusId = ''
     },
     /**
      * 用户创建人
@@ -291,8 +291,8 @@ export default {
         if (formItem.formType == 'business_type') {
           formItem.typeOption = obj.setting
           formItem.statusOption = []
-          formItem.type_id = ''
-          formItem.status_id = ''
+          formItem.typeId = ''
+          formItem.statusId = ''
         } else if (formItem.formType == 'select') {
           formItem.setting = obj.setting || []
         } else if (
@@ -337,7 +337,7 @@ export default {
           return
         }
         if (o.formType == 'business_type') {
-          if (!o.type_id && !o.status_id) {
+          if (!o.typeId && !o.statusId) {
             this.$message.error('请输入筛选条件的值！')
             return
           }
@@ -357,14 +357,7 @@ export default {
       }
       let obj = {}
       this.form.forEach(o => {
-        if (o.formType == 'date') {
-          obj[o.fieldName] = {
-            start_date: o.value[0],
-            end_date: o.value[1],
-            formType: o.formType,
-            name: o.fieldName
-          }
-        } else if (o.formType == 'datetime') {
+        if (o.formType == 'datetime' || o.formType == 'date') {
           obj[o.fieldName] = {
             start: o.value[0],
             end: o.value[1],
@@ -373,15 +366,15 @@ export default {
           }
         } else if (o.formType == 'business_type') {
           obj[o.fieldName] = {
-            type_id: o.type_id,
-            status_id: o.status_id,
+            typeId: o.typeId,
+            statusId: o.statusId,
             formType: o.formType,
             name: o.fieldName
           }
         } else if (o.formType == 'user') {
           obj[o.fieldName] = {
             condition: o.condition,
-            value: o.value[0].id,
+            value: o.value[0].userId,
             formType: o.formType,
             name: o.fieldName
           }
@@ -415,8 +408,8 @@ export default {
         setting: [],
         typeOption: [],
         statusOption: [],
-        type_id: '',
-        status_id: ''
+        typeId: '',
+        statusId: ''
       })
     },
     /**

@@ -120,7 +120,7 @@ export default {
               return item.id
             }).join(','),
             ownerUserIds: this.formData.dep.staff.map(item => {
-              return item.user_id
+              return item.userId
             }).join(',')
           })
             .then(res => {

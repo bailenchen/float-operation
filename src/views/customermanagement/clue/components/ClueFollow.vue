@@ -23,14 +23,14 @@
         </el-dropdown>
         <div class="se-name">下次联系时间</div>
         <el-date-picker class="se-datepicker"
-                        v-model="next_time"
+                        v-model="nextTime"
                         type="datetime"
                         placeholder="选择日期"
                         :default-value="new Date"
                         value-format="yyyy-MM-dd HH:mm:ss"
                         :editable="false">
         </el-date-picker>
-        <el-checkbox v-model="is_event">添加到日程提醒</el-checkbox>
+        <el-checkbox v-model="isEvent">添加到日程提醒</el-checkbox>
         <el-button @click.native="sendInfo"
                    class="se-send"
                    type="primary">发布</el-button>
@@ -92,9 +92,9 @@ export default {
       ],
       followType: '打电话',
       /** 下次联系时间 */
-      next_time: '',
+      nextTime: '',
       /** 是否添加日程提醒 */
-      is_event: false,
+      isEvent: false,
       logType: 'record',
       logTypes: []
     }
@@ -126,7 +126,7 @@ export default {
     },
     /** 快捷添加框内 返回的数据用于上传 */
     submitInfo(data) {
-      if (this.is_event && !this.next_time) {
+      if (this.isEvent && !this.nextTime) {
         this.$message.error('请选择下次联系时间')
         return
       }
@@ -135,8 +135,8 @@ export default {
       params.content = data.content
       params.category = this.followType
       params.batchId = data.batchId
-      params.isEvent = this.is_event ? 1 : 0
-      params.nextTime = this.next_time || ''
+      params.isEvent = this.isEvent ? 1 : 0
+      params.nextTime = this.nextTime || ''
 
       this.sendLoading = true
       crmLeadsRecordSave(params)
@@ -145,8 +145,8 @@ export default {
           this.$message.success("发布成功")
           // 重置页面
           this.$refs.mixadd.resetInfo()
-          this.is_event = false
-          this.next_time = ''
+          this.isEvent = false
+          this.nextTime = ''
           // 刷新数据
           this.$bus.emit('follow-log-refresh', { type: 'record-log' })
         })

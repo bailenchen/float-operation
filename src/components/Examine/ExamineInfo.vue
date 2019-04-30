@@ -42,8 +42,8 @@
           </flexbox>
           <flexbox class="check-item-info">
             <img class="check-item-img"
-                 :src="item.examine_status|statusIcon">
-            <div class="check-item-name">{{getStatusName(item.examine_status)}}</div>
+                 :src="item.examineStatus|statusIcon">
+            <div class="check-item-name">{{getStatusName(item.examineStatus)}}</div>
           </flexbox>
         </div>
         <i v-if="examineInfo.steps.length -1 != index"
@@ -64,12 +64,12 @@
                    align="stretch"
                    class="popover-detail-item">
             <img class="popover-detail-item-img"
-                 :src="subItem.examine_status|statusIcon">
+                 :src="subItem.examineStatus|statusIcon">
             <div>
               <div class="popover-detail-item-time">{{subItem.examineTime}}</div>
               <flexbox class="popover-detail-item-examine">
                 <div class="examine-name">{{subItem.realname}}</div>
-                <div class="examine-info">{{getStatusName(subItem.examine_status)}}此申请</div>
+                <div class="examine-info">{{getStatusName(subItem.examineStatus)}}此申请</div>
               </flexbox>
             </div>
           </flexbox>
@@ -81,8 +81,8 @@
             <div class="detail">{{item|detailName}}</div>
             <flexbox class="check-item-info">
               <img class="check-item-img"
-                   :src="item.examine_status|statusIcon">
-              <div class="check-item-name">{{getStatusName(item.examine_status)}}</div>
+                   :src="item.examineStatus|statusIcon">
+              <div class="check-item-name">{{getStatusName(item.examineStatus)}}</div>
             </flexbox>
           </div>
           <i v-if="examineInfo.steps.length -1 != index"
@@ -136,15 +136,15 @@ export default {
       return ''
     },
     detailName: function(data) {
-      if (data.step_type == 2) {
+      if (data.stepType == 2) {
         return data.userList.length + '人或签'
-      } else if (data.step_type == 3) {
+      } else if (data.stepType == 3) {
         return data.userList.length + '人会签'
-      } else if (data.step_type == 1) {
+      } else if (data.stepType == 1) {
         return '负责人主管'
-      } else if (data.step_type == 4) {
+      } else if (data.stepType == 4) {
         return '上一级审批人主管'
-      } else if (data.type == 3) {
+      } else if (data.stepType == 5) {
         return '创建人'
       }
     },
@@ -259,13 +259,13 @@ export default {
         const item = array[index]
         if (index == array.length - 1) {
           content =
-            content + item.realname + '：' + this.getStatusName(item.check_type)
+            content + item.realname + '：' + this.getStatusName(item.checkType)
         } else {
           content =
             content +
             item.realname +
             '：' +
-            this.getStatusName(item.check_type) +
+            this.getStatusName(item.checkType) +
             '、'
         }
       }

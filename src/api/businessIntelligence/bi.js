@@ -5,7 +5,7 @@ import request from '@/utils/request'
  * @param {*} data
  * year 年
  * status 1销售（目标）2回款（目标）
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function biAchievementStatistics(data) {
@@ -21,7 +21,7 @@ export function biAchievementStatistics(data) {
  * @param {*} data
  * year 年
  * status 1销售（目标）2回款（目标）
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function biProductStatistics(data) {
@@ -36,7 +36,7 @@ export function biProductStatistics(data) {
  * 回款统计
  * @param {*} data
  * year 年
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function biReceivablesStatistics(data) {
@@ -52,7 +52,7 @@ export function biReceivablesStatistics(data) {
  * @param {*} data
  * year 年
  * month 1-12
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function biReceivablesStatisticList(data) {
@@ -68,7 +68,7 @@ export function biReceivablesStatisticList(data) {
  * @param {*} data
  * start_time
  * end_time
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  */
 export function biCustomerStatistics(data) {
@@ -84,7 +84,7 @@ export function biCustomerStatistics(data) {
  * @param {*} data
  * start_time
  * end_time
- * user_id 员工ID
+ * userId 员工ID
  * structure_id 部门ID
  * type_id 商机组
  */

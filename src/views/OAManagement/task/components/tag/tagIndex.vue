@@ -145,7 +145,7 @@ export default {
     },
     // 标签管理 -- 编辑
     editBtn(val) {
-      this.editTagId = val.lable_id
+      this.editTagId = val.lableId
       this.newTagTitle = '编辑标签'
       this.tagContent = 3
       this.bgColorProps = val.color
@@ -161,23 +161,23 @@ export default {
       // 标签点击关联页面
       let labelIds = values.filter(item => {
         if (value.check) {
-          return item.check && item.lable_id != value.lable_id
+          return item.check && item.lableId != value.lableId
         } else {
-          return item.check || item.lable_id == value.lable_id
+          return item.check || item.lableId == value.lableId
         }
       })
       if (value.check) {
         editTask({
-          taskId: this.taskData.task_id,
+          taskId: this.taskData.taskId,
           lableId: labelIds
             .map(item => {
-              return item.lable_id
+              return item.lableId
             })
             .join(',')
         }).then(res => {
           let list = this.taskData.labelList
           for (let item in list) {
-            if (value.lable_id == list[item].lable_id) {
+            if (value.lableId == list[item].lableId) {
               list.splice(item, 1)
               break
             }
@@ -186,10 +186,10 @@ export default {
         })
       } else {
         editTask({
-          taskId: this.taskData.task_id,
+          taskId: this.taskData.taskId,
           lableId: labelIds
             .map(item => {
-              return item.lable_id
+              return item.lableId
             })
             .join(',')
         }).then(res => {
@@ -200,7 +200,7 @@ export default {
       }
       // value.check = value.check ? false : true
       for (let item in values) {
-        if (values[item].lable_id == value.lable_id) {
+        if (values[item].lableId == value.lableId) {
           document.getElementsByClassName('tag-list')[item].style.background =
             '#F7F8FA'
         } else {
@@ -238,7 +238,7 @@ export default {
           color: color
         }).then(res => {
           for (let item of _this.editTagList) {
-            if (item.lable_id == _this.editTagId) {
+            if (item.lableId == _this.editTagId) {
               item.name = val
               item.color = color
             }
@@ -281,10 +281,10 @@ export default {
           this.tagShow = true
           this.managementTag()
           deleteTagAPI({
-            lableId: val.lable_id
+            lableId: val.lableId
           }).then(res => {
             for (let i in this.editTagList) {
-              if (this.editTagList[i].lable_id == val.lable_id) {
+              if (this.editTagList[i].lableId == val.lableId) {
                 this.editTagList.splice(i, 1)
               }
             }
@@ -309,7 +309,7 @@ export default {
         for (let item of res.data) {
           if (this.taskData.labelList) {
             for (let i of this.taskData.labelList) {
-              if (i.lable_id == item.lable_id) {
+              if (i.lableId == item.lableId) {
                 item.check = true
                 break
               } else {

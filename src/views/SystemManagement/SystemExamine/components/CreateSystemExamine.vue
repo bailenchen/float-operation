@@ -31,11 +31,11 @@
                 <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
                   {{item.data.name}}
                   <span style="color:#999;">
-                    {{item.data.input_tips ? '（'+item.data.input_tips+'）':''}}
+                    {{item.data.inputTips ? '（'+item.data.inputTips+'）':''}}
                   </span>
                 </div>
               </div>
-              <component :is="item.data.form_type | typeToComponentName"
+              <component :is="item.data.formType | typeToComponentName"
                          :value="item.value"
                          :index="index"
                          :item="item"
@@ -174,14 +174,14 @@ export default {
   },
   filters: {
     /** 根据type 找到组件 */
-    typeToComponentName(form_type) {
-      if (form_type == 'text') {
+    typeToComponentName(formType) {
+      if (formType == 'text') {
         return 'XhInput'
-      } else if (form_type == 'textarea') {
+      } else if (formType == 'textarea') {
         return 'XhTextarea'
-      } else if (form_type == 'select') {
+      } else if (formType == 'select') {
         return 'XhSelect'
-      } else if (form_type == 'structure') {
+      } else if (formType == 'structure') {
         return 'XhStrucUserCell'
       }
     },
@@ -209,8 +209,8 @@ export default {
     if (this.handle.data) {
       // data 存在就处理 save
       if (
-        this.handle.data.examine_type &&
-        this.handle.data.examine_type === 1
+        this.handle.data.examineType &&
+        this.handle.data.examineType === 1
       ) {
         // 固定审批流
         this.examineType = 1
@@ -218,8 +218,8 @@ export default {
         for (let index = 0; index < this.handle.data.stepList.length; index++) {
           const element = this.handle.data.stepList[index]
           var item = {}
-          item['type'] = element.step_type
-          if (element.step_type === 2 || element.step_type === 3) {
+          item['type'] = element.stepType
+          if (element.stepType === 2 || element.stepType === 3) {
             item['show'] = true
             item['value'] = element.userList
           } else {
@@ -253,7 +253,7 @@ export default {
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
       //无事件的处理 后期可换成input实现
-      // if (item.data.form_type == 'structure') {
+      // if (item.data.formType == 'structure') {
       //   this.$refs.crmForm.validateField('crmFields.' + data.index + '.value')
       // }
     },
@@ -263,31 +263,31 @@ export default {
 
       field.push({
         field: 'name',
-        form_type: 'text',
-        is_null: 1,
+        formType: 'text',
+        isNull: 1,
         name: '审批流名称',
         setting: [],
-        input_tips: '',
+        inputTips: '',
         value: this.handle.data ? this.handle.data.name : ''
       })
 
       // 新建审批类型 默认为 oa_examine
       field.push({
         field: 'categoryType',
-        form_type: 'select',
-        is_null: 0,
+        formType: 'select',
+        isNull: 0,
         name: '关联对象',
         setting: [{ name: '合同', value: 1 }, { name: '回款', value: 2 }],
-        value: this.handle.data ? this.handle.data.category_type : 1
+        value: this.handle.data ? this.handle.data.categoryType : 1
       })
 
       field.push({
         field: 'dept',
-        form_type: 'structure',
-        is_null: 0,
+        formType: 'structure',
+        isNull: 0,
         name: '应用部门',
         setting: [],
-        input_tips: '默认全公司',
+        inputTips: '默认全公司',
         value: {
           users: this.handle.data ? this.handle.data.userIds : [],
           strucs: this.handle.data ? this.handle.data.deptIds : []
@@ -295,11 +295,11 @@ export default {
       })
       field.push({
         field: 'remarks',
-        form_type: 'textarea',
-        is_null: 0,
+        formType: 'textarea',
+        isNull: 0,
         name: '流程说明',
         setting: [],
-        input_tips: '请填写相关注意事项，方便员工在申请时查阅，限制输入2000字',
+        inputTips: '请填写相关注意事项，方便员工在申请时查阅，限制输入2000字',
         value: this.handle.data ? this.handle.data.remarks : ''
       })
 
@@ -313,7 +313,7 @@ export default {
         var tempList = []
 
         //验证必填
-        if (item.is_null == 1) {
+        if (item.isNull == 1) {
           tempList.push({
             required: true,
             message: item.name + '不能为空',
@@ -328,7 +328,7 @@ export default {
         params['value'] = item.value
         params['key'] = item.field
         params['data'] = item
-        if (item.form_type == 'textarea') {
+        if (item.formType == 'textarea') {
           params['showblock'] = true // 展示整行效果
         }
         this.crmForm.crmFields.push(params)
@@ -365,7 +365,7 @@ export default {
       this.loading = true
       var params = this.getSubmiteParams(array)
       if (this.handle.action == 'update') {
-        params.examineId = this.handle.data.examine_id
+        params.examineId = this.handle.data.examineId
       }
       examineFlowSave(params)
         .then(res => {
@@ -387,7 +387,7 @@ export default {
         // 关联产品数据需要特殊拼接
         if (element.key === 'dept') {
           params['userIds'] = element.value['users'].map(function(item) {
-            return item.user_id
+            return item.userId
           })
           params['deptIds'] = element.value['strucs'].map(function(item) {
             return item.id
@@ -403,7 +403,7 @@ export default {
         steps.push({
           stepType: element.type,
           checkUserId: element.value.map(function(item) {
-            return item.user_id
+            return item.userId
           })
         })
       }

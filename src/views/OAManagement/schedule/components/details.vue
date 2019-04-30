@@ -12,7 +12,7 @@
              class="list-data">
           <label>{{item.label}}：</label>
           <span v-if="item.type=='time' && listData.time">{{listData[item.value]}}</span>
-          <span v-else-if="item.type=='create_time'">{{listData[item.value]}}</span>
+          <span v-else-if="item.type=='createTime'">{{listData[item.value]}}</span>
           <span v-else-if="item.type=='ownerList'"
                 class="owner-list">
             <span v-for="(k, j) in listData[item.value]"
@@ -24,13 +24,13 @@
                   <span>{{k.realname}}</span>
                 </div>
                 <div v-photo="k"
-                     v-lazy:background-image="$options.filters.filterUserLazyImg(k.thumb_img)"
+                     v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
                      class="div-photo header-circle"></div>
               </el-tooltip>
             </span>
           </span>
           <span v-else-if="item.type=='remindtype'">{{listData.remindtypeText}}</span>
-          <span v-else-if="item.type=='create_person'">{{listData.username}}</span>
+          <span v-else-if="item.type=='createUser'">{{listData.username}}</span>
           <span v-else-if="item.type=='bz'">{{listData[item.value]}}</span>
         </div>
         <!-- 关联业务 -->
@@ -45,10 +45,10 @@
             class="dialog-footer"
             v-if="btnShow">
         <el-button type="primary"
-                   v-if="listData.permission && listData.permission.is_update == 1"
+                   v-if="listData.permission && listData.permission.isUpdate == 1"
                    @click="editBtn">编辑</el-button>
         <el-button type="danger"
-                   v-if="listData.permission && listData.permission.is_delete == 1"
+                   v-if="listData.permission && listData.permission.isDelete == 1"
                    @click="deleteClose">删除</el-button>
       </span>
     </el-dialog>
@@ -72,11 +72,11 @@ export default {
   data() {
     return {
       list: [
-        { label: '开始时间', value: 'start_time', type: 'time' },
-        { label: '结束时间', value: 'end_time', type: 'time' },
+        { label: '开始时间', value: 'startTime', type: 'time' },
+        { label: '结束时间', value: 'endTime', type: 'time' },
         { label: '参与人', value: 'ownerList', type: 'ownerList' },
-        { label: '创建人', value: 'username', type: 'create_person' },
-        { label: '创建时间', value: 'create_time', type: 'create_time' },
+        { label: '创建人', value: 'username', type: 'createUser' },
+        { label: '创建时间', value: 'createTime', type: 'createTime' },
         { label: '备注', value: 'remark', type: 'bz' }
       ],
       allData: {},
@@ -145,7 +145,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          scheduleDelete({ eventId: this.listData.event_id }).then(res => {
+          scheduleDelete({ eventId: this.listData.eventId }).then(res => {
             this.$emit('deleteClose', this.listData)
             this.$message({
               type: 'success',

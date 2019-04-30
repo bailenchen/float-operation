@@ -38,8 +38,8 @@ export default {
       formatterRules: {},
       /** 高级筛选 */
       filterObj: {}, // 筛选确定数据
-      scene_id: '', // 场景筛选ID
-      scene_name: '', // 场景名字
+      sceneId: '', // 场景筛选ID
+      sceneName: '', // 场景名字
       /** 列表展示字段管理 */
       showFieldSet: false,
       /** 勾选行 */
@@ -81,8 +81,8 @@ export default {
         search: this.search,
         type: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8是公海
       }
-      if (this.scene_id) {
-        params.scene_id = this.scene_id
+      if (this.sceneId) {
+        params.sceneId = this.sceneId
       }
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
@@ -179,60 +179,60 @@ export default {
         return // 多选布局不能点击
       }
       if (this.crmType === 'leads') {
-        this.rowID = row.leads_id
+        this.rowID = row.leadsId
         this.showDview = true
       } else if (this.crmType === 'customer') {
-        if (column.property === 'business-check' && row.business_count > 0) {
+        if (column.property === 'businessCheck' && row.businessCount > 0) {
           return // 列表查看商机不展示详情
         }
-        this.rowID = row.customer_id
+        this.rowID = row.customerId
         this.rowType = 'customer'
         this.showDview = true
       } else if (this.crmType === 'contacts') {
-        if (column.property === 'customer_name') {
-          this.rowID = row.customer_id
+        if (column.property === 'customerName') {
+          this.rowID = row.customerId
           this.rowType = 'customer'
         } else {
-          this.rowID = row.contacts_id
+          this.rowID = row.contactsId
           this.rowType = 'contacts'
         }
         this.showDview = true
       } else if (this.crmType === 'business') {
-        if (column.property === 'customer_name') {
-          this.rowID = row.customer_id
+        if (column.property === 'customerName') {
+          this.rowID = row.customerId
           this.rowType = 'customer'
         } else {
-          this.rowID = row.business_id
+          this.rowID = row.businessId
           this.rowType = 'business'
         }
         this.showDview = true
       } else if (this.crmType === 'contract') {
-        if (column.property === 'customer_name') {
-          this.rowID = row.customer_id
+        if (column.property === 'customerName') {
+          this.rowID = row.customerId
           this.rowType = 'customer'
-        } else if (column.property === 'business_name') {
-          this.rowID = row.business_id
+        } else if (column.property === 'businessName') {
+          this.rowID = row.businessId
           this.rowType = 'business'
-        } else if (column.property === 'contacts_name') {
-          this.rowID = row.contacts_id
+        } else if (column.property === 'contactsName') {
+          this.rowID = row.contactsId
           this.rowType = 'contacts'
         } else {
-          this.rowID = row.contract_id
+          this.rowID = row.contractId
           this.rowType = 'contract'
         }
         this.showDview = true
       } else if (this.crmType === 'product') {
-        this.rowID = row.product_id
+        this.rowID = row.productId
         this.showDview = true
       } else if (this.crmType === 'receivables') {
-        if (column.property === 'customer_name') {
-          this.rowID = row.customer_id
+        if (column.property === 'customerName') {
+          this.rowID = row.customerId
           this.rowType = 'customer'
-        } else if (column.property === 'contract_num') {
-          this.rowID = row.contract_id
+        } else if (column.property === 'contractNum') {
+          this.rowID = row.contractId
           this.rowType = 'contract'
         } else {
-          this.rowID = row.receivables_id
+          this.rowID = row.receivablesId
           this.rowType = 'receivables'
         }
         this.showDview = true
@@ -248,8 +248,8 @@ export default {
     },
     /** 场景操作 */
     handleScene(data) {
-      this.scene_id = data.id
-      this.scene_name = data.name
+      this.sceneId = data.id
+      this.sceneName = data.name
       this.currentPage = 1
       this.getFieldList()
     },

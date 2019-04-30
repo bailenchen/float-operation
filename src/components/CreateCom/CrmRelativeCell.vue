@@ -111,11 +111,11 @@ export default {
       if (this.item.data.formType === 'receivables') {
         return data.number
       } else if (this.item.data.formType === 'customer') {
-        return data.customer_name
+        return data.customerName
       } else if (this.item.data.formType === 'business') {
-        return data.business_name
+        return data.businessName
       } else if (this.item.data.formType === 'contract') {
-        return data.contract_num || data.num
+        return data.contractNum || data.num
       }
       return data.name
     }

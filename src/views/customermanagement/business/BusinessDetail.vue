@@ -23,7 +23,7 @@
       <div style="padding:10px 50px;"
            v-if="status.length > 0">
         <flexbox class="busi-state"
-                 :style="{'opacity' : detailData.is_end != 0 ? 1 : 1}">
+                 :style="{'opacity' : detailData.isEnd != 0 ? 1 : 1}">
           <a v-for="(item, index) in status"
              :key="index">
             <el-popover placement="bottom"
@@ -98,7 +98,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="business"
-                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
+                       :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -255,13 +255,13 @@ export default {
           this.detailData = res.data
           this.getBusinessStatusById(res.data)
 
-          this.headDetails[0].value = res.data.customer_name
+          this.headDetails[0].value = res.data.customerName
 
           this.headDetails[1].value = res.data.money
-          this.headDetails[2].value = res.data.type_name
+          this.headDetails[2].value = res.data.typeName
           // // 负责人
-          this.headDetails[3].value = res.data.owner_user_name
-          this.headDetails[4].value = res.data.create_time
+          this.headDetails[3].value = res.data.ownerUserName
+          this.headDetails[4].value = res.data.createTime
         })
         .catch(() => {
           this.loading = false
@@ -275,7 +275,7 @@ export default {
       })
         .then(res => {
           this.loading = false
-          this.handleBusinessStatus(data.is_end, data.status_id, res.data)
+          this.handleBusinessStatus(data.isEnd, data.statusId, res.data)
         })
         .catch(() => {
           this.loading = false
@@ -288,18 +288,18 @@ export default {
     //** tab标签点击 */
     handleClick(tab, event) {},
     /** 处理商机状态数据 */
-    handleBusinessStatus(is_end, status_id, statusList) {
+    handleBusinessStatus(isEnd, statusId, statusList) {
       this.status = []
       if (statusList && statusList.length > 0) {
         var isdoing = false
         var isdoingIndex = 0
         for (let index = 0; index < statusList.length; index++) {
           const item = statusList[index]
-          if (status_id === 0) {
+          if (statusId === 0) {
             // 没有阶段一般不会有
-            if (is_end != 0) {
+            if (isEnd != 0) {
               // 状态已完成 展示灰色效果
-              if (is_end == 1) {
+              if (isEnd == 1) {
                 //赢单
                 item['class'] = 'state-suc'
               } else {
@@ -308,16 +308,16 @@ export default {
             } else {
               item['class'] = 'state-undo'
             }
-          } else if (item.status_id === status_id) {
+          } else if (item.statusId === statusId) {
             item['class'] = 'state-suc'
             item['isdoing'] = true
             isdoing = true
             isdoingIndex = index
           } else {
             if (isdoing) {
-              if (is_end != 0) {
+              if (isEnd != 0) {
                 // 状态已完成 展示灰色效果
-                if (is_end == 1) {
+                if (isEnd == 1) {
                   //赢单
                   item['class'] = 'state-suc'
                 } else {
@@ -333,35 +333,35 @@ export default {
           this.status.push(item)
         }
 
-        var overItem = { type: is_end }
-        if (is_end == 0) {
+        var overItem = { type: isEnd }
+        if (isEnd == 0) {
           overItem.name = '结束'
           overItem['overIcon'] = ['el-icon-arrow-down', 'el-icon--right']
           if (isdoingIndex == statusList.length - 1) {
             overItem['class'] = 'state-doing'
           } else {
-            if (this.status.length > 0 && status_id != 0) {
+            if (this.status.length > 0 && statusId != 0) {
               // 有推进状态 才会有下一阶段
               this.status[isdoingIndex + 1].class = 'state-doing'
             }
             overItem['class'] = 'state-undo'
           }
-        } else if (is_end == 1) {
+        } else if (isEnd == 1) {
           overItem.name = '赢单'
           overItem.title = '赢单' // 详情标题 和 内容
           overItem.detail = '赢单率100%'
           overItem['overIcon'] = ['el-icon-check', 'el-icon--right']
           overItem['class'] = 'state-suc'
-        } else if (is_end == 2) {
+        } else if (isEnd == 2) {
           overItem.name = '输单'
           overItem.title = '赢单率0%'
-          overItem.detail = data.status_remark
+          overItem.detail = data.statusRemark
           overItem['overIcon'] = ['el-icon-circle-close', 'el-icon--right']
           overItem['class'] = 'state-fail'
-        } else if (is_end == 3) {
+        } else if (isEnd == 3) {
           overItem.name = '无效'
           overItem.title = '赢单率0%'
-          overItem.detail = data.status_remark
+          overItem.detail = data.statusRemark
           overItem['overIcon'] = ['el-icon-remove-outline', 'el-icon--right']
           overItem['class'] = 'state-invalid'
         }
@@ -370,7 +370,7 @@ export default {
     },
     /** 操作状态改变 */
     handleStatuChange(item, index) {
-      if (this.detailData.is_end != 0) {
+      if (this.detailData.isEnd != 0) {
         // 非完结状态下 可推进
         return
       }
@@ -385,7 +385,7 @@ export default {
             this.loading = true
             crmBusinessAdvance({
               businessId: this.id,
-              statusId: item.status_id
+              statusId: item.statusId
             })
               .then(res => {
                 this.loading = false
@@ -406,7 +406,7 @@ export default {
     },
     /** 完结状态结果 */
     handleStatuResult(item, index) {
-      if (this.detailData.is_end != 0) {
+      if (this.detailData.isEnd != 0) {
         // 非完结状态下 可推进
         return
       }
@@ -422,7 +422,7 @@ export default {
             this.loading = true
             crmBusinessAdvance({
               businessId: this.id,
-              statusId: item.status_id,
+              statusId: item.statusId,
               isEnd: item.type,
               remark: value
             })
@@ -452,7 +452,7 @@ export default {
             this.loading = true
             crmBusinessAdvance({
               businessId: this.id,
-              statusId: item.status_id,
+              statusId: item.statusId,
               isEnd: item.type
             })
               .then(res => {

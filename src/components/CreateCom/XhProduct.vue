@@ -22,7 +22,7 @@
       <el-table-column prop="name"
                        label="产品名称">
       </el-table-column>
-      <el-table-column prop="category_name"
+      <el-table-column prop="categoryName"
                        label="产品类别">
       </el-table-column>
       <el-table-column prop="unit"
@@ -33,7 +33,7 @@
       </el-table-column>
       <el-table-column label="售价">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.sales_price"
+          <el-input v-model="scope.row.salesPrice"
                     @input="salesPriceChange(scope)"
                     placeholder="请输入"></el-input>
         </template>
@@ -64,10 +64,10 @@
     <flexbox class="handle-footer">
       <div class="discount-title">整单折扣（%）：</div>
       <el-input style="width: 80px"
-                v-model="discount_rate"
+                v-model="discountRate"
                 @input="rateChange"
                 placeholder="请输入"></el-input>
-      <div class="total-info">已选中产品：<span class="info-yellow">{{productList.length}}</span>&nbsp;种&nbsp;&nbsp;总金额：<span class="info-yellow">{{total_price}}</span>&nbsp;元</div>
+      <div class="total-info">已选中产品：<span class="info-yellow">{{productList.length}}</span>&nbsp;种&nbsp;&nbsp;总金额：<span class="info-yellow">{{totalPrice}}</span>&nbsp;元</div>
     </flexbox>
   </div>
 </template>
@@ -92,34 +92,30 @@ export default {
       showPopover: false, // 展示产品框
       showSelectView: false, // 内容
       productList: [],
-      total_price: 0,
-      discount_rate: 0
+      totalPrice: 0,
+      discountRate: 0
     }
   },
   props: {},
   mounted() {
-    console.log('this.productList---', this.productList)
     if (this.dataValue.product) {
       this.productList = this.dataValue.product
-      console.log('this.productList---', this.productList)
-      this.total_price = this.dataValue.total_price
-        ? this.dataValue.total_price
+      this.totalPrice = this.dataValue.totalPrice
+        ? this.dataValue.totalPrice
         : 0
-      this.discount_rate = this.dataValue.discount_rate
-        ? this.dataValue.discount_rate
+      this.discountRate = this.dataValue.discountRate
+        ? this.dataValue.discountRate
         : 0
     }
   },
   methods: {
     /** 选中 */
     selectInfos(data) {
-      console.log('selectInfos---', data)
       if (data.data) {
-        console.log('1111')
         var self = this
         data.data.forEach(function(element) {
           let obj = self.productList.find(item => {
-            return item.product_id == element.product_id
+            return item.productId == element.productId
           })
           if (!obj) {
             self.productList.push(self.getShowItem(element))
@@ -130,24 +126,24 @@ export default {
     getShowItem(data) {
       var item = {}
       item.name = data.name
-      item.category_name = data.category_name
+      item.categoryName = data.categoryName
       item.unit = data.unit
       item.price = data.price
-      item.sales_price = data.price
+      item.salesPrice = data.price
       item.num = 0
       item.discount = 0
       item.subtotal = 0
-      item.product_id = data.product_id
+      item.productId = data.productId
       return item
     },
     // 单价
     salesPriceChange(data) {
       var item = data.row
-      if (item.sales_price === '') {
-        item.sales_price = 0.0
+      if (item.salesPrice === '') {
+        item.salesPrice = 0.0
       }
 
-      var discount = ((item.price - item.sales_price) / item.price) * 100.0
+      var discount = ((item.price - item.salesPrice) / item.price) * 100.0
       discount = discount.toFixed(2)
       if (item.discount !== discount) {
         item.discount = discount
@@ -167,17 +163,17 @@ export default {
     // 折扣
     discountChange(data) {
       var item = data.row
-      var sales_price = (item.price * (100.0 - item.discount)) / 100.0
-      sales_price = sales_price.toFixed(2)
-      if (item.sales_price !== sales_price) {
-        item.sales_price = sales_price
+      var salesPrice = (item.price * (100.0 - item.discount)) / 100.0
+      salesPrice = salesPrice.toFixed(2)
+      if (item.salesPrice !== salesPrice) {
+        item.salesPrice = salesPrice
       }
       this.calculateSubTotal(item)
       this.calculateToal()
     },
     // 计算单价
     calculateSubTotal(item) {
-      item.subtotal = (item.sales_price * item.num).toFixed(2)
+      item.subtotal = (item.salesPrice * item.num).toFixed(2)
     },
     // 计算总价
     calculateToal() {
@@ -187,8 +183,8 @@ export default {
         var item = this.productList[i]
         totalPrice = parseFloat(totalPrice) + parseFloat(item.subtotal)
       }
-      totalPrice = (totalPrice * (100.0 - this.discount_rate)) / 100.0
-      this.total_price = totalPrice.toFixed(2)
+      totalPrice = (totalPrice * (100.0 - this.discountRate)) / 100.0
+      this.totalPrice = totalPrice.toFixed(2)
       this.updateValue() // 传递数据给父组件
     },
     // 总折扣
@@ -205,8 +201,8 @@ export default {
       console.log('this.productList--updateValue-', this.productList)
       this.valueChange({
         product: this.productList,
-        total_price: this.total_price,
-        discount_rate: this.discount_rate
+        totalPrice: this.totalPrice,
+        discountRate: this.discountRate
       })
     }
   }

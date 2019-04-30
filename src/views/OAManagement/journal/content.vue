@@ -4,21 +4,21 @@
       <div class="select-group"
            v-if="selectAuthority">
         <label>发起人</label>
-        <el-select v-model="fromData.create_user_id"
+        <el-select v-model="fromData.createUserId"
                    size="small"
                    @change="selectChange"
                    placeholder="请选择">
           <el-option v-for="item in nameOptions"
-                     :key="item.user_id"
+                     :key="item.userId"
                      :label="item.realname"
-                     :value="item.user_id">
+                     :value="item.userId">
           </el-option>
         </el-select>
       </div>
       <div class="select-group">
         <label>提交时间</label>
         <el-date-picker @change="selectChange"
-                        v-model="fromData.create_time"
+                        v-model="fromData.createTime"
                         type="date"
                         value-format="yyyy-MM-dd"
                         placeholder="选择日期">
@@ -123,13 +123,13 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            journalDelete({ logId: data.data.item.log_id }).then(res => {
+            journalDelete({ logId: data.data.item.logId }).then(res => {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
               })
               for (let i in this.journalData) {
-                if (this.journalData[i].log_id == data.data.item.log_id) {
+                if (this.journalData[i].logId == data.data.item.logId) {
                   this.journalData.splice(i, 1)
                   break
                 }

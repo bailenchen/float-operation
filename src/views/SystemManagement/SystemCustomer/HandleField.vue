@@ -42,7 +42,7 @@
                      @end="handleListMove">
             <component v-for="(item, index) in fieldArr"
                        :class="{selected: selectedIndex == index}"
-                       :isShow="selectedIndex == index && (item.is_del == null || item.is_del == 1)"
+                       :isShow="selectedIndex == index && (item.isDel == null || item.isDel == 1)"
                        :key="index"
                        :attr="item"
                        :is="item | typeToComponentName"
@@ -114,10 +114,10 @@ export default {
       selectedIndex: -1,
       rejectHandle: true, // 请求未获取前不能操作
       /** 右边展示数据 */
-      form: null, // is_del 1 能编辑
+      form: null, // isDel 1 能编辑
       loading: false, // 加载动画
       // 展示表单预览
-      tablePreviewData: { types: '', types_id: '' },
+      tablePreviewData: { types: '', id: '' },
       showTablePreview: false,
       contentHeight: document.documentElement.clientHeight - 100
     }
@@ -197,8 +197,8 @@ export default {
               }
               element.showSetting = temps //放到showSeeting上
             }
-            element.is_null = element.is_null == 1 ? true : false
-            element.is_unique = element.is_unique == 1 ? true : false
+            element.isNull = element.isNull == 1 ? true : false
+            element.isUnique = element.isUnique == 1 ? true : false
           }
           this.fieldArr = res.data
           if (res.data.length > 0) {
@@ -255,8 +255,8 @@ export default {
       for (let index = 0; index < tempFieldArr.length; index++) {
         const item = tempFieldArr[index]
 
-        item.is_null = item.is_null == true ? 1 : 0
-        item.is_unique = item.is_unique == true ? 1 : 0
+        item.isNull = item.isNull == true ? 1 : 0
+        item.isUnique = item.isUnique == true ? 1 : 0
         if (!item.name) {
           save = false
           this.$message({
@@ -274,7 +274,7 @@ export default {
           }
           item.options = temps.join(',')
           if (item.formType == 'checkbox') {
-            item.default_value = item.default_value.join(',')
+            item.defaultValue = item.defaultValue.join(',')
           }
         }
         item.type = this.getTypeFromFormType(item.formType)
@@ -343,7 +343,7 @@ export default {
           this.form.formType === 'form' &&
           this.movedItem.formType !== 'form'
         ) {
-          this.form.form_value.push(newField)
+          this.form.formValue.push(newField)
         } else {
           this.fieldArr.push(newField)
           this.selectedIndex = this.fieldArr.length - 1

@@ -38,7 +38,7 @@
           <el-button @click="handleClick('edit', scope)"
                      type="text"
                      size="small">编辑</el-button>
-          <el-button :disabled="scope.row.is_sys === 1"
+          <el-button :disabled="scope.row.isSys === 1"
                      @click="handleClick('delete', scope)"
                      type="text"
                      size="small">删除</el-button>
@@ -100,12 +100,12 @@ export default {
           width: 150
         },
         {
-          prop: 'examine_type',
+          prop: 'examineType',
           label: '流程类型',
           width: 150
         },
         {
-          prop: 'user_ids',
+          prop: 'userIds',
           label: '可见范围',
           width: 150
         },
@@ -115,7 +115,7 @@ export default {
           width: 150
         },
         {
-          prop: 'update_time',
+          prop: 'updateTime',
           label: '最后修改时间',
           width: 150
         },
@@ -175,7 +175,7 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      if (column.property === 'examine_type') {
+      if (column.property === 'examineType') {
         if (row[column.property] === 1) {
           return '固定审批流'
         } else if (row[column.property] === 2) {
@@ -183,7 +183,7 @@ export default {
         } else {
           return ''
         }
-      } else if (column.property === 'user_ids') {
+      } else if (column.property === 'userIds') {
         var name = ''
         var structures = row['deptIds'] || []
         for (let index = 0; index < structures.length; index++) {
@@ -237,12 +237,12 @@ export default {
           params: {
             type: 'oa_examine',
             label: '10',
-            id: scope.row.category_id
+            id: scope.row.categoryId
           }
         })
       } else if (type === 'edit') {
         this.createHandleInfo.action = 'update'
-        this.createHandleInfo.id = scope.row.category_id
+        this.createHandleInfo.id = scope.row.categoryId
         this.createHandleInfo.data = scope.row
         this.showHandleView = true
       } else if (type === 'delete') {
@@ -255,7 +255,7 @@ export default {
           .then(() => {
             this.loading = true
             oaExamineCategoryDelete({
-              id: scope.row['category_id']
+              id: scope.row['categoryId']
             })
               .then(res => {
                 this.list.splice(scope.$index, 1)
@@ -292,7 +292,7 @@ export default {
         )
           .then(() => {
             oaExamineCategoryEnables({
-              id: scope.row['category_id'],
+              id: scope.row['categoryId'],
               status: scope.row['status'] === 0 ? 1 : 0
             })
               .then(res => {

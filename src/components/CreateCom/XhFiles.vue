@@ -97,7 +97,7 @@ export default {
       })
         .then(() => {
           crmFileDelete({
-            id: item.file_id
+            id: item.fileId
           })
             .then(res => {
               this.dataValue.splice(index, 1)

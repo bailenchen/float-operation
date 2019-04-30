@@ -121,12 +121,12 @@ export default {
     this.fieldList.push({ prop: 'name', width: '200', label: '附件名称' })
     this.fieldList.push({ prop: 'size', width: '200', label: '附件大小' })
     this.fieldList.push({
-      prop: 'create_user_name',
+      prop: 'createUserName',
       width: '200',
       label: '上传人'
     })
     this.fieldList.push({
-      prop: 'create_time',
+      prop: 'createTime',
       width: '200',
       label: '上传时间'
     })
@@ -139,7 +139,7 @@ export default {
     getDetail() {
       this.loading = true
       crmFileIndex({
-        batchId: this.detail.batch_id
+        batchId: this.detail.batchId
       })
         .then(res => {
           this.loading = false
@@ -161,7 +161,7 @@ export default {
         // if (file.type.indexOf('image') != -1) {
         var params = {}
         var params = {}
-        params.batchId = this.detail.batch_id
+        params.batchId = this.detail.batchId
         params.file = file
         crmFileSave(params)
           .then(res => {
@@ -179,7 +179,7 @@ export default {
     handleFile(type, item) {
       if (type === 'preview') {
         var previewList = this.list.map(element => {
-          element.url = element.file_path
+          element.url = element.filePath
           return element
         })
         this.$bus.emit('preview-image-bus', {
@@ -194,7 +194,7 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              id: item.row.file_id
+              id: item.row.fileId
             })
               .then(res => {
                 this.list.splice(item.$index, 1)
@@ -217,7 +217,7 @@ export default {
     confirmEdit() {
       if (this.editForm.name) {
         crmFileUpdate({
-          fileId: this.editForm.data.row.file_id,
+          fileId: this.editForm.data.row.fileId,
           name: this.editForm.name
         })
           .then(res => {

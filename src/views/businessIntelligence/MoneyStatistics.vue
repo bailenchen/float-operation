@@ -24,9 +24,9 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.user_id"
+                   :key="item.userId"
                    :label="item.realname"
-                   :value="item.user_id">
+                   :value="item.userId">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"
@@ -201,7 +201,7 @@ export default {
           var receivablesMoneys = []
           var contractMoneys = []
           for (let index = 1; index < 13; index++) {
-            const element = res.data.charMonthArr[index]
+            const element = res.data[index]
             receivablesMoneys.push(element.receivablesMoney)
             contractMoneys.push(element.contractMoney)
             this.list.push(element)
@@ -352,7 +352,7 @@ export default {
         structure_id: this.structuresSelectValue,
         month: month,
         type: type,
-        user_id: this.userSelectValue
+        userId: this.userSelectValue
       })
         .then(res => {
           this.loading = false
@@ -375,7 +375,7 @@ export default {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             /** 获取需要格式化的字段 和格式化的规则 */
-            if (element.form_type === 'date') {
+            if (element.formType === 'date') {
               function fieldFormatter(time) {
                 if (time == '0000-00-00') {
                   time = ''
@@ -385,7 +385,7 @@ export default {
               this.formatterRules[element.field] = {
                 formatter: fieldFormatter
               }
-            } else if (element.form_type === 'datetime') {
+            } else if (element.formType === 'datetime') {
               function fieldFormatter(time) {
                 if (time == 0 || !time) {
                   return ''
@@ -405,7 +405,7 @@ export default {
                 type: 'crm',
                 formatter: fieldFormatter
               }
-            } else if (element.form_type === 'user') {
+            } else if (element.formType === 'user') {
               function fieldFormatter(info) {
                 if (info) {
                   var content = ''
@@ -424,7 +424,7 @@ export default {
                 type: 'crm',
                 formatter: fieldFormatter
               }
-            } else if (element.form_type === 'structure') {
+            } else if (element.formType === 'structure') {
               function fieldFormatter(info) {
                 if (info) {
                   var content = ''

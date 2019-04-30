@@ -35,7 +35,7 @@
                          align="center"
                          width="55">
         </el-table-column>
-        <el-table-column prop="business-check"
+        <el-table-column prop="businessCheck"
                          fixed
                          :resizable='false'
                          label=""
@@ -50,7 +50,7 @@
             <el-popover placement="right"
                         popper-class="no-padding-popover"
                         width="500"
-                        :disabled="scope.row.business_count == 0"
+                        :disabled="scope.row.businessCount == 0"
                         :offset="250"
                         trigger="click">
               <business-check :data="scope"
@@ -62,7 +62,7 @@
                  @click="businessCheckClick($event, scope)"
                  class="wukong wukong-business"
                  style="color: '#2486E4'"
-                 :style="{'opacity' :scope.row.business_count > 0 ? 1 : 0}"></i>
+                 :style="{'opacity' :scope.row.businessCount > 0 ? 1 : 0}"></i>
             </el-popover>
           </template>
         </el-table-column>
@@ -79,13 +79,13 @@
             <div class="table-head-name">{{scope.column.label}}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="pool_day"
+        <el-table-column prop="poolDay"
                          show-overflow-tooltip
                          :resizable='false'
                          label="距进入公海天数"
                          width="120">
           <template slot-scope="scope">
-            <div v-if="scope.row.is_lock == 0">{{scope.row.pool_day}}</div>
+            <div v-if="scope.row.isLock == 0">{{scope.row.poolDay}}</div>
             <i v-else
                class="wukong wukong-lock customer-lock"></i>
           </template>
@@ -149,13 +149,13 @@ export default {
   mounted() {},
   methods: {
     relativeBusinessClick(data) {
-      this.rowID = data.business_id
+      this.rowID = data.businessId
       this.rowType = 'business'
       this.showDview = true
     },
     /** 通过回调控制style */
     cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'customer_name' || column.property === 'business-check') {
+      if (column.property === 'customerName' || column.property === 'businessCheck') {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {
         return ''
@@ -166,8 +166,8 @@ export default {
       let params = {
         search: this.search
       }
-      if (this.scene_id) {
-        params.scene_id = this.scene_id
+      if (this.sceneId) {
+        params.sceneId = this.sceneId
       }
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
@@ -193,7 +193,7 @@ export default {
     },
     // 商机信息查看
     businessCheckClick(e, scope) {
-      if (scope.row.business_count == 0) {
+      if (scope.row.businessCount == 0) {
         return
       }
       this.$set(scope.row, 'show', !scope.row.show)

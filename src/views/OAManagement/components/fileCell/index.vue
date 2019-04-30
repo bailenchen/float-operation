@@ -59,7 +59,7 @@ export default {
       })
         .then(() => {
           crmFileDelete({
-            id: this.data.file_id
+            id: this.data.fileId
           })
             .then(res => {
               this.$message.success('操作成功')

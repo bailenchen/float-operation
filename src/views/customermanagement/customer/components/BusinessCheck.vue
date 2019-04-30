@@ -4,7 +4,7 @@
        xs-empty-icon="nopermission"
        xs-empty-text="暂无权限">
     <flexbox class="header">
-      <div class="name">{{data.row.customer_name}}</div>
+      <div class="name">{{data.row.customerName}}</div>
       <div class="detail">商机（{{list.length}}）</div>
       <img @click="hidenView"
            class="close"
@@ -52,7 +52,7 @@ export default {
           this.canShowIndex &&
           val &&
           this.data.row &&
-          this.data.row.business_count > 0 &&
+          this.data.row.businessCount > 0 &&
           this.list.length == 0
         ) {
           this.getDetail()
@@ -83,26 +83,26 @@ export default {
     }
   },
   mounted() {
-    this.fieldList.push({ prop: 'business_name', width: '200', label: '商机名称' })
+    this.fieldList.push({ prop: 'businessName', width: '200', label: '商机名称' })
     this.fieldList.push({
-      prop: 'total_price',
+      prop: 'totalPrice',
       width: '200',
       label: '商机金额'
     })
     this.fieldList.push({
-      prop: 'customer_name',
+      prop: 'customerName',
       width: '200',
       label: '客户名称'
     })
-    this.fieldList.push({ prop: 'type_name', width: '200', label: '商机状态组' })
-    this.fieldList.push({ prop: 'status_name', width: '200', label: '状态' })
+    this.fieldList.push({ prop: 'typeName', width: '200', label: '商机状态组' })
+    this.fieldList.push({ prop: 'statusName', width: '200', label: '状态' })
   },
   methods: {
     getDetail() {
       this.loading = true
       crmCustomerQueryBusiness({
         pageType: 0,
-        customerId: this.data.row.customer_id
+        customerId: this.data.row.customerId
       })
         .then(res => {
           this.loading = false

@@ -189,14 +189,14 @@ export default {
       })
         .then(res => {
           var defaultScene = res.data.filter(function(item, index) {
-            return item.is_default === 1
+            return item.isDefault === 1
           })
           this.scenesList = res.data
           if (defaultScene && defaultScene.length > 0) {
             this.sceneInfo = defaultScene[0]
           }
           if (this.scenesList.length == 0) {
-            this.scenesList.push({ scene_id: '', name: '全部' })
+            this.scenesList.push({ sceneId: '', name: '全部' })
             this.sceneInfo = this.scenesList[0]
           }
           this.getFieldList()
@@ -209,7 +209,6 @@ export default {
     getFieldList() {
       if (this.fieldList.length == 0) {
         this.fieldList = this.getDefaultField()
-        console.log('this.fieldList---', this.fieldList)
       }
       // 获取好字段开始请求数据
       this.getList()
@@ -218,48 +217,52 @@ export default {
     getDefaultField() {
       if (this.crmType === 'leads') {
         return [
-          { name: '线索名称', field: 'name', form_type: 'leads' },
-          { name: '下次联系时间', field: 'next_time', form_type: 'datetime' },
-          { name: '最后跟进时间', field: 'update_time', form_type: 'datetime' },
-          { name: '创建时间 ', field: 'create_time', form_type: 'datetime' }
+          { name: '线索名称', field: 'name', formType: 'leads' },
+          { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
+          { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
+          { name: '创建时间 ', field: 'createTime', formType: 'datetime' }
         ]
       } else if (this.crmType === 'customer') {
         return [
-          { name: '客户名称', field: 'customer_name', form_type: 'customer' },
-          { name: '下次联系时间', field: 'next_time', form_type: 'datetime' },
-          { name: '最后跟进时间', field: 'update_time', form_type: 'datetime' },
-          { name: '创建时间 ', field: 'create_time', form_type: 'datetime' }
+          { name: '客户名称', field: 'customerName', formType: 'customer' },
+          { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
+          { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
+          { name: '创建时间 ', field: 'createTime', formType: 'datetime' }
         ]
       } else if (this.crmType === 'contacts') {
         return [
-          { name: '姓名', field: 'name', form_type: 'contacts' },
-          { name: '手机', field: 'mobile', form_type: 'mobile' },
-          { name: '职务', field: 'post', form_type: 'text' }
+          { name: '姓名', field: 'name', formType: 'contacts' },
+          { name: '手机', field: 'mobile', formType: 'mobile' },
+          { name: '职务', field: 'post', formType: 'text' }
         ]
       } else if (this.crmType === 'business') {
         return [
-          { name: '商机名称', field: 'business_name', form_type: 'text' },
-          { name: '商机金额', field: 'total_price', form_type: 'text' },
-          { name: '客户名称', field: 'customer_name', form_type: 'text' },
-          { name: '商机状态组 ', field: 'type_name', form_type: 'text' },
-          { name: '状态 ', field: 'status_name', form_type: 'text' }
+          { name: '商机名称', field: 'businessName', formType: 'text' },
+          { name: '商机金额', field: 'totalPrice', formType: 'text' },
+          { name: '客户名称', field: 'customerName', formType: 'text' },
+          { name: '商机状态组 ', field: 'typeName', formType: 'text' },
+          { name: '状态 ', field: 'statusName', formType: 'text' }
         ]
       } else if (this.crmType === 'contract') {
         return [
-          { name: '合同编号', field: 'num', form_type: 'text' },
-          { name: '合同名称', field: this.isRelationShow ? 'contract_name' : 'name', form_type: 'text' },
-          { name: '客户名称', field: 'customer_name', form_type: 'text' },
-          { name: '合同金额', field: 'money', form_type: 'text' },
-          { name: '开始日期', field: 'start_time', form_type: 'text' },
-          { name: '结束日期', field: 'end_time', form_type: 'text' }
+          { name: '合同编号', field: 'num', formType: 'text' },
+          {
+            name: '合同名称',
+            field: this.isRelationShow ? 'contractName' : 'name',
+            formType: 'text'
+          },
+          { name: '客户名称', field: 'customerName', formType: 'text' },
+          { name: '合同金额', field: 'money', formType: 'text' },
+          { name: '开始日期', field: 'startTime', formType: 'text' },
+          { name: '结束日期', field: 'endTime', formType: 'text' }
         ]
       } else if (this.crmType === 'product') {
         return [
-          { name: '产品名称', field: 'name', form_type: 'text' },
-          { name: '单位', field: 'unit', form_type: 'text' },
-          { name: '价格', field: 'price', form_type: 'text' },
-          { name: '产品类别', field: 'category_id', form_type: 'text' },
-          { name: '状态 ', field: 'status', form_type: 'text' }
+          { name: '产品名称', field: 'name', formType: 'text' },
+          { name: '单位', field: 'unit', formType: 'text' },
+          { name: '价格', field: 'price', formType: 'text' },
+          { name: '产品类别', field: 'categoryId', formType: 'text' },
+          { name: '状态 ', field: 'status', formType: 'text' }
         ]
       }
     },
@@ -267,13 +270,10 @@ export default {
     getList() {
       this.loading = true
       let crmIndexRequest = crmMainIndex
-      console.log('crmIndexRequest---', crmIndexRequest)
-      console.log('this.action,--', this.action);
-      console.log('this.crmType---', this.crmType);
       let params = {}
       // 注入场景
       if (this.sceneInfo) {
-        params.scene_id = this.sceneInfo.scene_id
+        params.sceneId = this.sceneInfo.sceneId
       }
       // 注入关联ID
       if (this.isRelationShow) {
@@ -288,7 +288,7 @@ export default {
           }[this.action.data.moduleType][this.crmType]
 
           params[this.action.data.moduleType + 'Id'] = this.action.data[
-            this.action.data.moduleType + '_id'
+            this.action.data.moduleType + 'Id'
           ]
           console.log('params---', params, this.action.data)
           if (this.action.data.params) {
@@ -334,7 +334,7 @@ export default {
       this.list.forEach((item, index) => {
         selectedArray.forEach((selectedItem, selectedIndex) => {
           if (
-            item[this.crmType + '_id'] == selectedItem[this.crmType + '_id']
+            item[this.crmType + 'Id'] == selectedItem[this.crmType + 'Id']
           ) {
             selectedRows.push(item)
           }

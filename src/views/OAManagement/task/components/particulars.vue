@@ -159,8 +159,8 @@
                 <div class="text-right">
                   <span class="color-label"> 截止日期： </span>
                   <div class="time-top">
-                    <el-date-picker :class="{ 'no-time-top': !taskData.stop_time }"
-                                    v-model="taskData.stop_time"
+                    <el-date-picker :class="{ 'no-time-top': !taskData.stopTime }"
+                                    v-model="taskData.stopTime"
                                     type="date"
                                     ref="endTime"
                                     :clearable="false"
@@ -170,8 +170,8 @@
                     </el-date-picker>
                     <img src="@/assets/img/delete_task.png"
                          class="el-icon-close time-top-close"
-                         v-if="taskData.stop_time"
-                         @click.stop="deleteTimeTop(taskData.stop_time)"
+                         v-if="taskData.stopTime"
+                         @click.stop="deleteTimeTop(taskData.stopTime)"
                          alt="">
                   </div>
                 </div>
@@ -252,7 +252,7 @@
               <related-business :marginLeft="'0'"
                                 :isTask="true"
                                 :allData="allData"
-                                :taskID="taskData.task_id"
+                                :taskID="taskData.taskId"
                                 @checkRelatedDetail="checkRelatedDetail"
                                 @checkInfos="checkInfos">
               </related-business>
@@ -296,7 +296,7 @@
                     <div class="rt">
                       <flexbox class="rt-box">
                         <div class="bg-color task-bg-color"
-                             v-if="item.stop_time">{{item.stop_time | moment("MM-DD")}} 截止</div>
+                             v-if="item.stopTime">{{item.stopTime | moment("MM-DD")}} 截止</div>
                         <div v-if="item.mainUser"
                              v-photo="item.mainUser"
                              :key="item.mainUser.img"
@@ -307,7 +307,7 @@
                   </div>
                   <sub-task v-else
                             :subTaskCom="'edit'"
-                            :time="item.stop_time"
+                            :time="item.stopTime"
                             :subData="item"
                             :text="item.name"
                             :taskId="subTaskID"
@@ -425,7 +425,7 @@
                            :key="discussItem.user.img"
                            class="div-photo head-img header-circle"></div>
                       <span class="name">{{discussItem.user.realname}}</span>
-                      <span class="time">{{discussItem.create_time}}</span>
+                      <span class="time">{{discussItem.createTime}}</span>
                       <div class="rt">
                         <span @click="discussDelete(discussItem, replyList, k)">删除</span>
                         <span @click="discussBtn(discussItem, -1)">回复</span>
@@ -448,7 +448,7 @@
                                :key="childDiscussItem.user.img"
                                class="div-photo head-img header-circle"></div>
                           <span class="name">{{childDiscussItem.user.realname}}</span>
-                          <span class="time">{{childDiscussItem.create_time}}</span>
+                          <span class="time">{{childDiscussItem.createTime}}</span>
                           <div class="rt">
                             <span @click="discussDelete(childDiscussItem, discussItem.childCommentList, k)">删除</span>
                             <span @click="discussBtn(discussItem, k)">回复</span>
@@ -508,7 +508,7 @@
                          class="div-photo"></div>
                     <span class="activity-name">{{item.realname}}</span>
                     <span>{{item.content}}</span>
-                    <span class="activity-time">{{item.create_time}}</span>
+                    <span class="activity-time">{{item.createTime}}</span>
                   </div>
                 </template>
               </div>
@@ -519,7 +519,7 @@
       </div>
       <div class="tip"
            v-if="taskData && taskData.createUser">
-        <span>{{taskData.createUser.realname}} 创建于 {{taskData.create_time}}</span>
+        <span>{{taskData.createUser.realname}} 创建于 {{taskData.createTime}}</span>
       </div>
 
       <c-r-m-full-screen-detail :visible.sync="showRelatedDetail"
@@ -823,7 +823,7 @@ export default {
     httpRequest(val) {
       crmFileSave({
         file: val.file,
-        batchId: this.taskData.batch_id
+        batchId: this.taskData.batchId
       })
         .then(res => {
           this.fileList.push(res)
@@ -858,7 +858,7 @@ export default {
         index: this.detailIndex
       })
       editTask({
-        taskId: val.task_id,
+        taskId: val.taskId,
         status: e ? 5 : 1
       })
         .then(res => {})
@@ -894,7 +894,7 @@ export default {
         taskId: this.id,
         ownerUserId: users
           .map(item => {
-            return item.user_id
+            return item.userId
           })
           .join(',')
       })
@@ -909,10 +909,10 @@ export default {
         taskId: this.id,
         ownerUserId: this.taskData.ownerUserList
           .filter(userItem => {
-            return userItem.user_id != item.user_id
+            return userItem.userId != item.userId
           })
           .map(item => {
-            return item.user_id
+            return item.userId
           })
           .join(',')
       })
@@ -925,7 +925,7 @@ export default {
     editMainUser(val) {
       editTask({
         taskId: this.id,
-        mainUserId: val ? val.data[0].user_id : ''
+        mainUserId: val ? val.data[0].userId : ''
       })
         .then(res => {
           if (val) {
@@ -1032,9 +1032,9 @@ export default {
             ? this.replyChildComment
             : this.replyChildComment.childCommentList[this.replyChildIndex]
         setCommentAPI({
-          pid: item.user_id,
-          typeId: item.type_id,
-          mainId: item.main_id == 0 ? item.comment_id : item.main_id,
+          pid: item.userId,
+          typeId: item.typeId,
+          mainId: item.mainId == 0 ? item.commentId : item.mainId,
           type: 1,
           content: this.childCommentsTextarea
         })
@@ -1065,7 +1065,7 @@ export default {
       })
         .then(() => {
           deleteCommentAPI({
-            commentId: val.comment_id
+            commentId: val.commentId
           })
             .then(res => {
               items.splice(index, 1)
@@ -1104,10 +1104,10 @@ export default {
     checkInfos(val) {
       editTaskRelation({
         taskId: this.id,
-        customerIds: val.customer_ids ? val.customer_ids.join(',') : [],
-        contactsIds: val.contacts_ids ? val.contacts_ids.join(',') : [],
-        businessIds: val.business_ids ? val.business_ids.join(',') : [],
-        contractIds: val.contract_ids ? val.contract_ids.join(',') : []
+        customerIds: val.customerIds ? val.customerIds.join(',') : [],
+        contactsIds: val.contactsIds ? val.contactsIds.join(',') : [],
+        businessIds: val.businessIds ? val.businessIds.join(',') : [],
+        contractIds: val.contractIds ? val.contractIds.join(',') : []
       })
         .then(res => {
           this.$message.success('关联成功')
@@ -1131,12 +1131,12 @@ export default {
       })
         .then(() => {
           deleteTask({
-            taskId: val.task_id
+            taskId: val.taskId
           })
             .then(res => {
               let subData = this.taskData.childTask
               for (let i in subData) {
-                if (subData[i].task_id == val.task_id) {
+                if (subData[i].taskId == val.taskId) {
                   subData.splice(i, 1)
                   break
                 }
@@ -1166,10 +1166,10 @@ export default {
         })
     },
     editSubTask(val) {
-      this.subTaskID = val.task_id
+      this.subTaskID = val.taskId
       let dataList = this.taskData.childTask
       for (let i in dataList) {
-        if (dataList[i].task_id == val.task_id) {
+        if (dataList[i].taskId == val.taskId) {
           this.$set(dataList[i], 'showEdit', true)
         } else {
           this.$set(dataList[i], 'showEdit', false)
@@ -1215,7 +1215,7 @@ export default {
         stopTime: ''
       })
         .then(res => {
-          this.$set(this.taskData, 'stop_time', '')
+          this.$set(this.taskData, 'stopTime', '')
         })
         .catch(() => {})
     }

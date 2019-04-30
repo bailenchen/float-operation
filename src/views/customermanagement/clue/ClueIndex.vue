@@ -108,8 +108,8 @@ export default {
       var params = {
         search: this.search
       }
-      if (this.scene_id) {
-        params.scene_id = this.scene_id
+      if (this.sceneId) {
+        params.sceneId = this.sceneId
       }
       for (var key in this.filterObj) {
         params[key] = this.filterObj[key]
@@ -135,7 +135,7 @@ export default {
     },
     /** 通过回调控制style */
     cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'leads_name') {
+      if (column.property === 'leadsName') {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {
         return ''

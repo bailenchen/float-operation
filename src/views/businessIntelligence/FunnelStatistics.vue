@@ -25,17 +25,17 @@
                  :clearable="true"
                  placeholder="选择员工">
         <el-option v-for="item in userOptions"
-                   :key="item.user_id"
+                   :key="item.userId"
                    :label="item.realname"
-                   :value="item.user_id">
+                   :value="item.userId">
         </el-option>
       </el-select>
       <el-select v-model="businessStatusValue"
                  placeholder="商机组">
         <el-option v-for="item in businessOptions"
-                   :key="item.type_id"
+                   :key="item.typeId"
                    :label="item.name"
-                   :value="item.type_id">
+                   :value="item.typeId">
         </el-option>
       </el-select>
       <el-button @click.native="handleClick('search')"
@@ -110,7 +110,7 @@ export default {
       list: [],
       fieldList: [
         { field: 'name', name: '阶段' },
-        { field: 'total_price', name: '金额' },
+        { field: 'totalPrice', name: '金额' },
         { field: 'businessNum', name: '商机数' }
       ],
 
@@ -174,7 +174,7 @@ export default {
           this.loading = false
           this.businessOptions = res.data
           if (res.data.length > 0) {
-            this.businessStatusValue = res.data[0].type_id
+            this.businessStatusValue = res.data[0].typeId
             this.getData()
           }
         })
@@ -206,9 +206,9 @@ export default {
             const element = res.data[index]
             data.push({
               name: (element.name || '') + '(' + element.businessNum + ')',
-              value: element.total_price
+              value: parseFloat(element.totalPrice)
             })
-            sumMoney += element.total_price
+            sumMoney += parseFloat(element.totalPrice)
           }
 
           this.funnelOption.series[0].data = data

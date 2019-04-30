@@ -100,23 +100,23 @@ export default {
     getFieldList() {
       this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
       this.fieldList.push({
-        prop: 'contract_name',
+        prop: 'contractName',
         width: '200',
         label: '合同名称'
       })
       this.fieldList.push({
-        prop: 'customer_name',
+        prop: 'customerName',
         width: '200',
         label: '客户名称'
       })
       this.fieldList.push({ prop: 'money', width: '200', label: '合同金额' })
       this.fieldList.push({
-        prop: 'start_time',
+        prop: 'startTime',
         width: '200',
         label: '开始日期'
       })
 
-      this.fieldList.push({ prop: 'end_time', width: '200', label: '结束日期' })
+      this.fieldList.push({ prop: 'endTime', width: '200', label: '结束日期' })
     },
     getDetail() {
       this.loading = true
@@ -144,7 +144,7 @@ export default {
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      this.contractId = row.contract_id
+      this.contractId = row.contractId
       this.showFullDetail = true
     },
     /** 通过回调控制表头style */

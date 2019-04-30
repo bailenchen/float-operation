@@ -178,7 +178,7 @@ export default {
               type: 'warning'
             })
               .then(() => {
-                var user_ids = this.selectionList.map(function(
+                var userIds = this.selectionList.map(function(
                   item,
                   index,
                   array
@@ -194,7 +194,7 @@ export default {
 
                 var params = {
                   ids: this.id,
-                  memberIds: user_ids.join(',')
+                  memberIds: userIds.join(',')
                 }
 
                 this.loading = true
@@ -227,7 +227,7 @@ export default {
     },
     /** 编辑操作确定 */
     handleEditConfirm() {
-      var user_ids = this.selectionList.map(function(item, index, array) {
+      var userIds = this.selectionList.map(function(item, index, array) {
         return item.id
       })
       this.loading = true
@@ -238,7 +238,7 @@ export default {
       }[this.crmType]
       request({
         ids: this.id,
-        memberIds: user_ids.join(','),
+        memberIds: userIds.join(','),
         power: this.handleType
       })
         .then(res => {

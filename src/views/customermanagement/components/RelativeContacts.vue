@@ -127,7 +127,7 @@ export default {
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      this.contactsId = row.contacts_id
+      this.contactsId = row.contactsId
       this.showFullDetail = true
     },
     /** 通过回调控制表头style */

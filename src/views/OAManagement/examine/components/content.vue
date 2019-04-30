@@ -4,7 +4,7 @@
     <div class="select-box">
       <div class="select-group">
         <label>审核状态</label>
-        <el-select v-model="check_status"
+        <el-select v-model="checkStatus"
                    size="small"
                    placeholder="请选择"
                    @change="searchBtn">
@@ -17,7 +17,7 @@
       </div>
       <div class="select-group">
         <label>发起时间</label>
-        <el-date-picker v-model="between_time"
+        <el-date-picker v-model="betweenTime"
                         type="daterange"
                         style="padding: 0px 10px;width: 250px;"
                         range-separator="-"
@@ -78,8 +78,8 @@ export default {
     return {
       loading: false,
       loadMoreLoading: true,
-      check_status: this.by == 'examine' ? '1' : '',
-      between_time: [],
+      checkStatus: this.by == 'examine' ? '1' : '',
+      betweenTime: [],
       list: [],
       // 判断是否发请求
       isPost: false,
@@ -96,7 +96,7 @@ export default {
     }
   },
   watch: {
-    category_id: function(params) {
+    categoryId: function(params) {
       this.page = 1
       this.list = []
       this.getList()
@@ -106,7 +106,7 @@ export default {
     // 类型 my我发起的,examine我审批的
     by: String,
     // 审批类型ID
-    category_id: [String, Number]
+    categoryId: [String, Number]
   },
   computed: {
     statusOptions() {
@@ -159,17 +159,17 @@ export default {
       let params = {
         page: this.page,
         limit: 15,
-        category_id: this.category_id
+        categoryId: this.categoryId
       }
       if (this.by == 'examine') {
-        params.status = this.check_status
+        params.status = this.checkStatus
       } else {
-        params.checkStatus = this.check_status
+        params.checkStatus = this.checkStatus
       }
 
-      if (this.between_time.length > 0) {
-        params.startTime = this.between_time[0]
-        params.endTime = this.between_time[1]
+      if (this.betweenTime.length > 0) {
+        params.startTime = this.betweenTime[0]
+        params.endTime = this.betweenTime[1]
       }
 
       let request = {
@@ -200,8 +200,8 @@ export default {
     },
     // 重置
     resetBtn() {
-      this.check_status = 'all'
-      this.between_time = []
+      this.checkStatus = 'all'
+      this.betweenTime = []
       this.$emit('reset')
     },
     examineCellHandle(data) {
@@ -217,7 +217,7 @@ export default {
         })
           .then(() => {
             oaExamineDelete({
-              examineId: data.data.item.examine_id
+              examineId: data.data.item.examineId
             }).then(res => {
               this.searchBtn()
               this.$message({
@@ -234,16 +234,16 @@ export default {
           })
         // 撤回
       } else if (data.type == 'withdraw') {
-        this.rowID = data.data.item.examine_id
+        this.rowID = data.data.item.examineId
         this.showExamineHandle = true
         // 详情
       } else if (data.type == 'view') {
         this.showRelatedDetail = false
-        this.rowID = data.data.item.examine_id
+        this.rowID = data.data.item.examineId
         this.showDview = true
       } else if (data.type == 'related-detail') {
         this.showDview = false
-        this.relatedID = data.data.item[data.data.type + '_id']
+        this.relatedID = data.data.item[data.data.type + 'Id']
         this.relatedCRMType = data.data.type
         this.showRelatedDetail = true
       }

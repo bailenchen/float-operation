@@ -29,7 +29,7 @@
                     <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
                       {{item.data.name}}
                       <span style="color:#999;">
-                        {{item.data.input_tips ? '（'+item.data.input_tips+'）':''}}
+                        {{item.data.inputTips ? '（'+item.data.inputTips+'）':''}}
                       </span>
                     </div>
                   </div>

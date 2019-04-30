@@ -98,7 +98,7 @@ export default {
       }
       usersEdit({
         userIds: this.selectUsers.map(function(data) {
-          return data.user_id
+          return data.userId
         }).join(','),
         roleIds: this.selectRoles.join(',')
       })

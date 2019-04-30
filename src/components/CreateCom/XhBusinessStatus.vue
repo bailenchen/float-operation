@@ -5,9 +5,9 @@
              placeholder="请选择"
              :disabled="disabled">
     <el-option v-for="item in options"
-               :key="item.type_id"
+               :key="item.typeId"
                :label="item.name"
-               :value="item.type_id">
+               :value="item.typeId">
     </el-option>
   </el-select>
 </template>
@@ -37,7 +37,7 @@ export default {
           this.options = res.data
           if (this.dataValue) {
             for (let item of this.options) {
-              if (item.type_id == this.dataValue) {
+              if (item.typeId == this.dataValue) {
                 this.$emit('value-change', {
                   index: this.index,
                   value: this.dataValue,

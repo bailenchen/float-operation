@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form ref="form"
-             v-if="examineInfo.examine_type == 2"
+             v-if="examineInfo.examineType == 2"
              :model="form"
              :rules="rules"
              label-position="top"
@@ -20,7 +20,7 @@
                       @value-change="fieldValueChange"></xh-user-cell>
       </el-form-item>
     </el-form>
-    <flexbox v-else-if="examineInfo.examine_type == 1"
+    <flexbox v-else-if="examineInfo.examineType == 1"
              class="fixed-examine"
              wrap="wrap">
       <el-popover v-for="(item, index) in examineInfo.examineSteps"
@@ -55,13 +55,13 @@ export default {
   computed: {},
   filters: {
     detail: function(data) {
-      if (data.step_type == 2) {
+      if (data.stepType == 2) {
         return data.userList.length + '人或签'
-      } else if (data.step_type == 3) {
+      } else if (data.stepType == 3) {
         return data.userList.length + '人会签'
-      } else if (data.step_type == 1) {
+      } else if (data.stepType == 1) {
         return '负责人主管'
-      } else if (data.step_type == 4) {
+      } else if (data.stepType == 4) {
         return '上一级审批人主管'
       }
     },
@@ -84,7 +84,7 @@ export default {
       rules: {
         name: [{ required: true, message: '审批人不能为空', trigger: 'blur' }]
       },
-      // 审核信息 examine_type 1 固定审批 2 授权审批
+      // 审核信息 examineType 1 固定审批 2 授权审批
       examineInfo: {}
     }
   },
@@ -95,7 +95,7 @@ export default {
       default: ''
     },
     // 办公审批 传ID
-    types_id: {
+    typesId: {
       type: [String, Number],
       default: ''
     }
@@ -113,7 +113,7 @@ export default {
 
       let params = {}
       if (this.types == 'oa_examine') {
-        params.categoryId = this.types_id
+        params.categoryId = this.typesId
       } else {
         params.categoryType = this.types == 'crm_contract' ? 1 : 2 // 1 合同 2 回款
       }
@@ -121,14 +121,14 @@ export default {
         .then(res => {
           this.examineInfo = res.data
           this.$emit('value-change', {
-            examine_type: res.data.examine_type, // 审批类型
+            examineType: res.data.examineType, // 审批类型
             value: [] // 审批信息
           })
         })
         .catch(() => {})
     },
     validateField(result) {
-      if (this.examineInfo.examine_type == 2) {
+      if (this.examineInfo.examineType == 2) {
         // 授权审批人 需要验证关联人
         this.$refs.form.validate(valid => {
           if (valid) {
@@ -145,7 +145,7 @@ export default {
     fieldValueChange(data) {
       this.form.name = data
       this.$emit('value-change', {
-        examine_type: this.examineInfo.examine_type, // 审批类型
+        examineType: this.examineInfo.examineType, // 审批类型
         value: data.value // 审批信息
       })
       this.$refs.form.validateField('name')

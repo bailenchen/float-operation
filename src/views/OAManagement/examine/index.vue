@@ -7,9 +7,9 @@
                    placeholder="请选择"
                    size="mini">
           <el-option v-for="item in categoryOptions"
-                     :key="item.category_id"
+                     :key="item.categoryId"
                      :label="item.title"
-                     :value="item.category_id">
+                     :value="item.categoryId">
           </el-option>
         </el-select>
       </div>
@@ -24,7 +24,7 @@
                    v-for="(item, index) in tabsData"
                    :key="index">
         <v-content :by="item.key"
-                   :category_id="categoryType"
+                   :categoryId="categoryType"
                    :ref="'tabcontent' + item.key"
                    id="examine-list-box"
                    @reset="reset"
@@ -36,8 +36,8 @@
                              @select="selcetExamineCategory"
                              @close="showCategorySelect=false"></examine-category-select>
     <examine-create-view v-if="isCreate"
-                         :category_id="createInfo.category_id"
-                         :category_title="createInfo.title"
+                         :categoryId="createInfo.categoryId"
+                         :categoryTitle="createInfo.title"
                          :action="createAction"
                          @save-success="createSaveSuccess"
                          @hiden-view="hideView"></examine-create-view>
@@ -84,7 +84,7 @@ export default {
       oaExamineCategoryList()
         .then(res => {
           this.loading = false
-          this.categoryOptions = [{ category_id: '', title: '全部' }].concat(
+          this.categoryOptions = [{ categoryId: '', title: '全部' }].concat(
             res.data
           )
         })
@@ -97,9 +97,9 @@ export default {
       this.categoryType = ''
     },
     editDetail(item) {
-      item.title = item.category_name
+      item.title = item.categoryName
       this.createInfo = item
-      this.createAction = { type: 'update', id: item.examine_id, data: item }
+      this.createAction = { type: 'update', id: item.examineId, data: item }
       this.isCreate = true
     },
     // 创建

@@ -47,7 +47,7 @@
         </create-sections>
         <create-sections title="流程"
                          class="create-sections">
-          <div v-if="showData.config == 1"
+          <div v-if="showData.examineType == 1"
                class="create-sections-content">
             <flexbox v-for="(item, index) in showData.stepList"
                      :key="index"
@@ -63,12 +63,12 @@
               <div class="examine-flow-body">
                 <div class="body-header"><span class="body-header-name">{{index + 1|toRowName}}</span><span class="body-header-des">（{{item|toRowNameDes}}）</span></div>
                 <flexbox class="examine-users"
-                         v-if="item.user_id_info.length > 0">
-                  <div v-for="(userItem, userIndex) in item.user_id_info"
+                         v-if="item.userList.length > 0">
+                  <div v-for="(userItem, userIndex) in item.userList"
                        :key="userIndex"
                        class="examine-users-item">
                     <div v-photo="userItem"
-                         v-lazy:background-image="$options.filters.filterUserLazyImg(userItem.thumb_img)"
+                         v-lazy:background-image="$options.filters.filterUserLazyImg(userItem.img)"
                          class="div-photo"></div>
                     <div class="name">{{userItem.realname}}</div>
                   </div>
@@ -127,13 +127,13 @@ export default {
     },
     // 标题描述
     toRowNameDes: function(data) {
-      if (data.status == 1) {
+      if (data.stepType == 1) {
         return '负责人主管'
-      } else if (data.status == 2) {
-        return data.user_id_info.length + '人或签'
-      } else if (data.status == 3) {
-        return data.user_id_info.length + '人会签'
-      } else if (data.status == 4) {
+      } else if (data.stepType == 2) {
+        return data.userList.length + '人或签'
+      } else if (data.stepType == 3) {
+        return data.userList.length + '人会签'
+      } else if (data.stepType == 4) {
         return '上一级审批人主管'
       }
       return ''
@@ -164,7 +164,7 @@ export default {
       })
         .then(() => {
           examineFlowUpdateStatus({
-            examineId: this.data['examine_id'],
+            examineId: this.data['examineId'],
             status: 2 //  1 启用 0 禁用 2 删除
           })
             .then(res => {
@@ -189,11 +189,11 @@ export default {
       this.examineStatus = this.showData.status == 0 ? false : true
     },
     // 切换审批状态
-    examineStatusChange() {
-      this.showData.status = this.examineStatus ? 1 : 0
+    examineStatusChange(status) {
+      this.showData.status = status ? 1 : 0
       // 启用停用
       this.$confirm(
-        '您确定要' + (this.examineStatus === 0 ? '启用' : '停用') + '该审批流?',
+        '您确定要' + (status ? '启用' : '停用') + '该审批流?',
         '提示',
         {
           confirmButtonText: '确定',
@@ -203,8 +203,8 @@ export default {
       )
         .then(() => {
           examineFlowUpdateStatus({
-            examineId: this.data['examine_id'],
-            status: this.examineStatus === 0 ? 1 : 0
+            examineId: this.data['examineId'],
+            status: status ? 1 : 0
           })
             .then(res => {
               this.$emit('refresh')

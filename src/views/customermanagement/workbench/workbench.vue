@@ -2,7 +2,7 @@
   <div>
     <flexbox class="user-container">
       <div v-photo="filtersInfo"
-           :key="filtersInfo.thumb_img"
+           :key="filtersInfo.img"
            v-lazy:background-image="$options.filters.filterUserLazyImg(filtersInfo.img)"
            class="div-photo user-img">
       </div>
@@ -46,7 +46,7 @@ export default {
       strucs: [],
       // 条件
       dashData: { users: [], strucs: [] },
-      filtersInfo: { realname: '', thumb_img: '' }
+      filtersInfo: { realname: '', img: '' }
     }
   },
   computed: {
@@ -66,14 +66,14 @@ export default {
         this.dashData = { users: this.users, strucs: this.strucs }
         this.filtersInfo = {
           realname: this.users[0].realname,
-          thumb_img: this.users[0].thumb_img
+          img: this.users[0].img
         }
       } else if (this.users.length === 0 && this.strucs.length === 0) {
         this.users = [this.userInfo]
         this.dashData = { users: this.users, strucs: this.strucs }
         this.filtersInfo = {
           realname: this.userInfo.realname,
-          thumb_img: this.userInfo.thumb_img
+          img: this.userInfo.img
         }
       } else {
         this.dashData = { users: this.users, strucs: this.strucs }
@@ -89,7 +89,7 @@ export default {
         }
         this.filtersInfo = {
           realname: name,
-          thumb_img: require('@/assets/img/crm_multiuser.png')
+          img: require('@/assets/img/crm_multiuser.png')
         }
       }
     }

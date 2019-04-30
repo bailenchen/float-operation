@@ -167,7 +167,7 @@ export default {
       if (this.status == 1 && this.detail.examineType == 2) {
         if (this.handleType == 1) {
         } else {
-          params['nextUserId'] = this.selectUsers[0].user_id
+          params['nextUserId'] = this.selectUsers[0].userId
         }
       }
       this.getRequest()(params)

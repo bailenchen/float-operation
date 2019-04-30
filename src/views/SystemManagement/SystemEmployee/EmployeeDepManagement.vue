@@ -195,7 +195,7 @@
                  :model="passForm"
                  :rules="rules">
           <el-form-item label="密码"
-                        prop="new_pwd">
+                        prop="password">
             <el-input v-model="passForm.password"
                       type="password"></el-input>
           </el-form-item>
@@ -535,15 +535,15 @@ export default {
                   })
               : []
           } else if (element.field === 'parentId') {
-            detail.parentId = this.dialogData.parent_id
+            detail.parentId = this.dialogData.parentId
           } else if (element.field === 'deptId') {
-            detail.deptId = this.dialogData.dept_id
+            detail.deptId = this.dialogData.deptId
           } else {
             detail[element.field] = this.dialogData[element.field]
           }
         }
       }
-      detail['userId'] = this.dialogData.user_id
+      detail['userId'] = this.dialogData.userId
       this.formInline = detail
       this.employeeCreateDialog = true
     },
@@ -702,7 +702,7 @@ export default {
           break
         case 'status':
           usersEditStatus({
-            userIds: this.dialogData.user_id,
+            userIds: this.dialogData.userId,
             status: this.dialogData.status === 1 ? 0 : 1
           }).then(res => {
             this.employeeDetailDialog = false
@@ -715,7 +715,7 @@ export default {
     /** 操作 */
     selectionBarClick(type) {
       var ids = this.selectionList.map(function(item, index, array) {
-        return item.user_id
+        return item.userId
       }).join(',')
       if (type === 'lock' || type === 'unlock') {
         var message = type === 'lock' ? '禁用' : '激活'
@@ -764,15 +764,15 @@ export default {
                     })
                 : []
             } else if (element.field === 'parentId') {
-              detail.parentId = this.dialogData.parent_id
+              detail.parentId = this.dialogData.parentId
             } else if (element.field === 'deptId') {
-              detail.deptId = this.dialogData.dept_id
+              detail.deptId = this.dialogData.deptId
             } else {
               detail[element.field] = this.dialogData[element.field]
             }
           }
         }
-        detail['userId'] = this.dialogData.user_id
+        detail['userId'] = this.dialogData.userId
         this.formInline = detail
         this.employeeCreateDialog = true
       }
@@ -787,11 +787,11 @@ export default {
       if (this.selectionList.length > 0) {
         ids = this.selectionList
           .map(function(item, index, array) {
-            return item.user_id
+            return item.userId
           })
           .join(',')
       } else {
-        ids = this.dialogData.user_id
+        ids = this.dialogData.userId
       }
       val.userIds = ids
       this.loading = true
@@ -845,7 +845,7 @@ export default {
         .then(res => {
           for (let i of res.data) {
             this.optionsList['parentId'].list.push({
-              id: i.user_id,
+              id: i.userId,
               name: i.realname
             })
           }

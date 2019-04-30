@@ -82,23 +82,23 @@
           <span>{{data.commentCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.stop_time">
+             v-if="data.stopTime">
           <i class="wukong wukong-time-task"
           
-             :style="{'color': data.is_end == 1 && !data.checked ? 'red': '#999'}"></i>
-          <span :style="{'color': data.is_end == 1 && !data.checked ? 'red': '#999'}">{{data.stop_time | moment("MM-DD")}} 截止</span>
+             :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}"></i>
+          <span :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}">{{data.stopTime | moment("MM-DD")}} 截止</span>
         </div>
       </div>
       <div class="item-own-box">
         <el-tooltip placement="bottom"
                     effect="light"
                     popper-class="tooltip-change-border"
-                    v-if="data.main_user && data.main_user.id">
+                    v-if="data.mainUser && data.mainUser.id">
           <div slot="content">
-            <span>{{data.main_user.realname}}</span>
+            <span>{{data.mainUser.realname}}</span>
           </div>
-          <div v-photo="data.main_user"
-               v-lazy:background-image="$options.filters.filterUserLazyImg(data.main_user.thumb_img)"
+          <div v-photo="data.mainUser"
+               v-lazy:background-image="$options.filters.filterUserLazyImg(data.mainUser.img)"
                class="div-photo"></div>
         </el-tooltip>
       </div>
@@ -127,7 +127,7 @@ export default {
     // 列表标记任务
     taskOverClick(val) {
       editTask({
-        taskId: val.task_id,
+        taskId: val.taskId,
         status: val.checked ? 5 : 1
       })
         .then(res => {})

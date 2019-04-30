@@ -11,12 +11,12 @@
              label-width="80px"
              label-position="top">
       <el-form-item label="原密码"
-                    prop="old_pwd">
-        <el-input v-model="ruleForm.old_pwd"></el-input>
+                    prop="oldPwd">
+        <el-input v-model="ruleForm.oldPwd"></el-input>
       </el-form-item>
       <el-form-item label="新密码"
-                    prop="new_pwd">
-        <el-input v-model="ruleForm.new_pwd"></el-input>
+                    prop="newPwd">
+        <el-input v-model="ruleForm.newPwd"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer"
@@ -53,19 +53,19 @@ export default {
       loading: false,
       showDialog: false,
       rules: {
-        old_pwd: [
+        oldPwd: [
           { required: true, message: '请输入原密码', trigger: 'blur' },
           { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
         ],
-        new_pwd: [
+        newPwd: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
           { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
         ]
       },
       ruleForm: {
         id: '',
-        old_pwd: '',
-        new_pwd: ''
+        oldPwd: '',
+        newPwd: ''
       }
     }
   },

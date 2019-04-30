@@ -101,17 +101,17 @@ export default {
           width: 150
         },
         {
-          prop: 'examine_type',
+          prop: 'examineType',
           label: '流程类型',
           width: 150
         },
         {
-          prop: 'category_type',
+          prop: 'categoryType',
           label: '关联对象',
           width: 100
         },
         {
-          prop: 'user_ids',
+          prop: 'userIds',
           label: '适用范围',
           width: 150
         },
@@ -121,7 +121,7 @@ export default {
           width: 150
         },
         {
-          prop: 'update_time',
+          prop: 'updateTime',
           label: '最后修改时间',
           width: 150
         },
@@ -177,7 +177,7 @@ export default {
     fieldFormatter(row, column) {
       // 如果需要格式化
       // 1 固定审批 2 授权审批
-      if (column.property === 'examine_type') {
+      if (column.property === 'examineType') {
         if (row[column.property] === 1) {
           return '固定审批流'
         } else if (row[column.property] === 2) {
@@ -186,9 +186,9 @@ export default {
           return ''
         }
         // 1 合同 2 回款
-      } else if (column.property === 'category_type') {
+      } else if (column.property === 'categoryType') {
         return { 1: '合同', 2: '回款' }[row[column.property]]
-      } else if (column.property === 'user_ids') {
+      } else if (column.property === 'userIds') {
         var name = ''
         var structures = row['deptIds'] || []
         for (let index = 0; index < structures.length; index++) {

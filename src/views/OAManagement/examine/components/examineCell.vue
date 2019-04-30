@@ -7,14 +7,14 @@
              class="div-photo head-img"></div>
         <div class="name-time">
           <span class="name">{{data.createUser.realname}}</span>
-          <span class="time">{{data.create_time}}</span>
+          <span class="time">{{data.createtime}}</span>
         </div>
         <div class="rt-setting">
           <span class="bg-color"
-                :style="{ 'background-color': getStatusColor(data.examine_status) }"></span>
+                :style="{ 'background-color': getStatusColor(data.examineStatus) }"></span>
           <span class="dep">
             <span>{{data.categoryTitle}} - </span>
-            <span>{{getStatusName(data.examine_status)}}</span>
+            <span>{{getStatusName(data.examineStatus)}}</span>
           </span>
           <!-- 编辑 -->
           <el-dropdown v-if="data.permission && (data.permission.isChecked || data.permission.isUpdate || data.permission.isDelete)"
@@ -48,7 +48,7 @@
                :key="k"
                class="img-list"
                @click="imgZoom(data.img, k)">
-            <img v-lazy="imgItem.file_path">
+            <img v-lazy="imgItem.filePath">
           </div>
         </div>
         <!-- 附件 -->
@@ -143,7 +143,7 @@ export default {
         index: k,
         data: images.map(function(item, index, array) {
           return {
-            url: item.file_path,
+            url: item.filePath,
             name: item.name
           }
         })

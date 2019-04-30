@@ -193,7 +193,7 @@ export default {
             item.show = true
             return item
           })
-          this.checkedRightData = res.data.hide_value.map(function(item, index) {
+          this.checkedRightData = res.data.hideValue.map(function(item, index) {
             item.check = false
             item.show = true
             return item
@@ -237,10 +237,10 @@ export default {
         crmFieldConfig({
           label: this.isSeas ? 8 : crmTypeModel[this.crmType],
           noHideIds: this.checkedLeftData.map((item)=> {
-            return item.field_id
+            return item.fieldId
           }).join(','),
           hideIds: this.checkedRightData.map((item)=> {
-            return item.field_id
+            return item.fieldId
           }).join(',')
         })
           .then(res => {
@@ -359,7 +359,7 @@ export default {
         ) {
           var remove = false
           self.rightCheckItems.forEach(function(element, index) {
-            if (item.field_id == element.field_id) {
+            if (item.fieldId == element.fieldId) {
               remove = true
             }
           })
@@ -386,7 +386,7 @@ export default {
         ) {
           var remove = false
           self.leftCheckItems.forEach(function(element, index) {
-            if (item.field_id == element.field_id) {
+            if (item.fieldId == element.fieldId) {
               remove = true
             }
           })

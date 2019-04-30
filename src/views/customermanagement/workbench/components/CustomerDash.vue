@@ -117,9 +117,9 @@
                        placeholder="商机组"
                        @change="getBusinessStatustatistics">
               <el-option v-for="item in businessOptions"
-                         :key="item.type_id"
+                         :key="item.typeId"
                          :label="item.name"
-                         :value="item.type_id">
+                         :value="item.typeId">
               </el-option>
             </el-select>
           </flexbox>
@@ -359,7 +359,7 @@ export default {
       return {
         userIds: this.data.users
           .map(function(item, index, array) {
-            return item.user_id
+            return item.userId
           })
           .join(','),
         deptIds: this.data.strucs
@@ -444,8 +444,10 @@ export default {
           this.funnelLoading = false
           this.businessOptions = res.data
           if (res.data.length > 0) {
-            this.businessStatusValue = res.data[0].type_id
-            this.getBusinessStatustatistics()
+            this.businessStatusValue = res.data[0].typeId
+            if (this.businessStatusValue) {
+              this.getBusinessStatustatistics()
+            }
           }
         })
         .catch(() => {
@@ -453,36 +455,32 @@ export default {
         })
     },
     getBusinessStatustatistics() {
-      if (this.businessStatusValue) {
-        this.funnelLoading = true
-        var params = this.getBaseParams()
-        params.startTime = this.dateSelect[0]
-        params.endTime = this.dateSelect[1]
-        params.typeId = this.businessStatusValue
-        crmIndexFunnel(params)
-          .then(res => {
-            this.funnelLoading = false
-            var data = []
-            let sum_money = 0
-            for (let index = 0; index < res.data.record.length; index++) {
-              const element = res.data.record[index]
-              data.push({
-                name: (element.name || '') + '(' + element.businessNum + ')',
-                value: element.total_price
-              })
-              sum_money += element.total_price
-            }
-            this.funnelData = res.data
-            this.funnelOption.series[0].data = data
-            this.funnelOption.series[0].max = sum_money < 1 ? 1 : sum_money
-            this.funnelChart.setOption(this.funnelOption, true)
-          })
-          .catch(() => {
-            this.funnelLoading = false
-          })
-      } else {
-        this.getBusinessStatusList()
-      }
+      this.funnelLoading = true
+      var params = this.getBaseParams()
+      params.startTime = this.dateSelect[0]
+      params.endTime = this.dateSelect[1]
+      params.typeId = this.businessStatusValue
+      crmIndexFunnel(params)
+        .then(res => {
+          this.funnelLoading = false
+          var data = []
+          let sumMoney = 0
+          for (let index = 0; index < res.data.record.length; index++) {
+            const element = res.data.record[index]
+            data.push({
+              name: (element.name || '') + '(' + element.businessNum + ')',
+              value: element.totalPrice
+            })
+            sumMoney += element.totalPrice
+          }
+          this.funnelData = res.data
+          this.funnelOption.series[0].data = data
+          this.funnelOption.series[0].max = sumMoney < 1 ? 1 : sumMoney
+          this.funnelChart.setOption(this.funnelOption, true)
+        })
+        .catch(() => {
+          this.funnelLoading = false
+        })
     },
     initFunnel() {
       var funnelChart = echarts.init(document.getElementById('funnelmain'))

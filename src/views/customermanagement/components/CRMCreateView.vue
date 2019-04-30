@@ -30,7 +30,7 @@
                     <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
                       {{item.data.name}}
                       <span style="color:#999;">
-                        {{item.data.input_tips ? '（'+item.data.input_tips+'）':''}}
+                        {{item.data.inputTips ? '（'+item.data.inputTips+'）':''}}
                       </span>
                     </div>
                   </div>
@@ -52,11 +52,11 @@
         <create-sections v-if="showExamine"
                          title="审核信息">
           <div slot="header"
-               v-if="examineInfo.examine_type===1 || examineInfo.examine_type===2"
-               class="examine-type">{{examineInfo.examine_type===1 ? '固定审批流' : '授权审批人'}}</div>
+               v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
+               class="examine-type">{{examineInfo.examineType===1 ? '固定审批流' : '授权审批人'}}</div>
           <create-examine-info ref="examineInfo"
                                :types="'crm_' + crmType"
-                               :types_id="action.id"
+                               :typesId="action.id"
                                @value-change="examineValueChange"></create-examine-info>
         </create-sections>
       </div>
@@ -278,10 +278,10 @@ export default {
           if (statusElement.data.formType == 'business_status') {
             for (let typeIndex = 0; typeIndex < data.data.length; typeIndex++) {
               const typeElement = data.data[typeIndex]
-              if (typeElement.type_id == data.value) {
+              if (typeElement.typeId == data.value) {
                 statusElement.data.setting = typeElement.statusList.map(
                   function(item, index) {
-                    item['value'] = item.status_id
+                    item['value'] = item.statusId
                     return item
                   }
                 )
@@ -300,7 +300,7 @@ export default {
           // 新建合同 选择客户 要将id交于 商机
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
-            if (element.key === 'business_id') {
+            if (element.key === 'businessId') {
               // 如果是商机 改变商机样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
@@ -318,7 +318,7 @@ export default {
         } else if (item.data.formType == 'business') {
           if (item.value.length > 0) {
             crmBusinessProduct({
-              businessId: item.value[0].business_id,
+              businessId: item.value[0].businessId,
               pageType: 0
             })
               .then(res => {
@@ -331,8 +331,8 @@ export default {
                   if (element.key === 'product') {
                     element['value'] = {
                       product: res.data.list,
-                      total_price: res.data.total_price,
-                      discount_rate: res.data.discount_rate
+                      totalPrice: res.data.totalPrice,
+                      discountRate: res.data.discountRate
                     }
                     break
                   }
@@ -347,7 +347,7 @@ export default {
           var planItem = null // 合同更改 重置回款计划
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
-            if (element.key === 'contract_id') {
+            if (element.key === 'contractId') {
               // 如果是合同 改变合同样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
@@ -360,7 +360,7 @@ export default {
                 element['relation'] = {}
                 element.value = []
               }
-            } else if (element.key === 'plan_id') {
+            } else if (element.key === 'planId') {
               planItem = element
             }
           }
@@ -372,7 +372,7 @@ export default {
         } else if (item.data.formType == 'contract') {
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
-            if (element.key === 'plan_id') {
+            if (element.key === 'planId') {
               // 如果是回款 改变回款样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
@@ -512,7 +512,9 @@ export default {
           if (this.action.type == 'update') {
             params['value'] = item.value || '' // 编辑的值 在value字段
           } else {
-            params['value'] = item.default_value || ''
+            params['value'] = item.defaultValue
+              ? item.defaultValue
+              : item.value || ''
           }
           params['key'] = item.fieldName
           params['data'] = item
@@ -549,10 +551,7 @@ export default {
             params['relation'] = contractItem
           }
           // 商机合同 需要客户信息
-        } else if (
-          item.formType == 'business' ||
-          item.formType == 'contract'
-        ) {
+        } else if (item.formType == 'business' || item.formType == 'contract') {
           let customerItem = this.getItemRelatveInfo(item, list, 'customer')
           if (item.formType == 'business' && customerItem) {
             customerItem['moduleType'] = 'customer'
@@ -568,13 +567,13 @@ export default {
     /**
      * 获取相关联item
      */
-    getItemRelatveInfo(item, list, from_type) {
+    getItemRelatveInfo(item, list, fromType) {
       let crmItem = null
       if (this.action.type == 'relative') {
-        crmItem = this.action.data[from_type]
+        crmItem = this.action.data[fromType]
       } else {
         let crmObj = list.find(listItem => {
-          return listItem.formType === from_type
+          return listItem.formType === fromType
         })
         if (crmObj && crmObj.value && crmObj.value.length > 0) {
           crmItem = crmObj.value[0]
@@ -751,8 +750,8 @@ export default {
             /** 验证审批数据 */
             this.$refs.examineInfo.validateField(() => {
               var params = this.getSubmiteParams(this.crmForm.crmFields)
-              if (this.examineInfo.examine_type === 2) {
-                params['checkUserId'] = this.examineInfo.value[0].user_id
+              if (this.examineInfo.examineType === 2) {
+                params['checkUserId'] = this.examineInfo.value[0].userId
               }
               this.submiteParams(params)
             })
@@ -770,8 +769,8 @@ export default {
       this.loading = true
       var crmRequest = this.getSubmiteRequest()
       if (this.action.type == 'update') {
-        params.entity[this.crmType + '_id'] = this.action.id
-        params.entity.batch_id = this.action.batch_id
+        params.entity[this.crmType + 'Id'] = this.action.id
+        params.entity.batchId = this.action.batchId
       }
       crmRequest(params)
         .then(res => {
@@ -842,16 +841,16 @@ export default {
     getProductParams(params, element) {
       if (element.value) {
         params['product'] = element.value.product ? element.value.product : []
-        params.entity['total_price'] = element.value.total_price
-          ? element.value.total_price
+        params.entity['totalPrice'] = element.value.totalPrice
+          ? element.value.totalPrice
           : 0
-        params.entity['discount_rate'] = element.value.discount_rate
-          ? element.value.discount_rate
+        params.entity['discountRate'] = element.value.discountRate
+          ? element.value.discountRate
           : 0
       } else {
         params['product'] = []
-        params.entity['total_price'] = ''
-        params.entity['discount_rate'] = ''
+        params.entity['totalPrice'] = ''
+        params.entity['discountRate'] = ''
       }
     },
     // 获取客户位置参数
@@ -866,13 +865,13 @@ export default {
     },
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
-      console.log('element---', element);
+      console.log('element---', element)
       if (
-        element.key == 'customer_id' ||
-        element.key == 'contacts_id' ||
-        element.key == 'business_id' ||
-        element.key == 'leads_id' ||
-        element.key == 'contract_id'
+        element.key == 'customerId' ||
+        element.key == 'contactsId' ||
+        element.key == 'businessId' ||
+        element.key == 'leadsId' ||
+        element.key == 'contractId'
       ) {
         if (element.value && element.value.length) {
           return element.value[0][element.key]
@@ -885,7 +884,7 @@ export default {
       ) {
         return element.value
           .map(function(item, index, array) {
-            return element.data.formType == 'user' ? item.user_id : item.id
+            return element.data.formType == 'user' ? item.userId : item.id
           })
           .join(',')
       } else if (element.data.formType == 'file') {
@@ -893,8 +892,8 @@ export default {
           return element.value[0].batchId
         }
         return ''
-      } else if (element.key == 'category_id') {
-        console.log('element.key ---', element.key )
+      } else if (element.key == 'categoryId') {
+        console.log('element.key ---', element.key)
         if (element.value && element.value.length > 0) {
           return element.value[element.value.length - 1]
         }

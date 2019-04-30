@@ -25,7 +25,7 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label',
-        value: 'category_id'
+        value: 'categoryId'
       }
     }
   },

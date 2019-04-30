@@ -19,14 +19,14 @@
           <div class="clauses-item-title">
             {{subItem.name}}
           </div>
-          <el-date-picker v-if="subItem.form_type == 'datetime'"
+          <el-date-picker v-if="subItem.formType == 'datetime'"
                           v-model="item[subItem.field]"
                           type="datetime"
                           value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="选择日期"
                           @change="valueChange">
           </el-date-picker>
-          <el-select v-else-if="subItem.form_type == 'select'"
+          <el-select v-else-if="subItem.formType == 'select'"
                      v-model="item[subItem.field]"
                      @change="valueChange"
                      placeholder="请选择">
@@ -88,39 +88,39 @@ export default {
         {
           field: 'vehicle',
           name: '交通工具',
-          form_type: 'select',
+          formType: 'select',
           data: ['飞机', '火车', '汽车', '其他']
         },
         {
           field: 'trip',
           name: '单程往返',
-          form_type: 'select',
+          formType: 'select',
           data: ['单程', '往返']
         },
         {
           field: 'startAddress',
           name: '出发城市',
-          form_type: 'text'
+          formType: 'text'
         },
         {
           field: 'endAddress',
           name: '目的城市',
-          form_type: 'text'
+          formType: 'text'
         },
         {
           field: 'startTime',
           name: '开始时间',
-          form_type: 'datetime'
+          formType: 'datetime'
         },
         {
           field: 'endTime',
           name: '结束时间',
-          form_type: 'datetime'
+          formType: 'datetime'
         },
         {
           field: 'duration',
           name: '时长（天）',
-          form_type: 'text'
+          formType: 'text'
         }
       ]
     }

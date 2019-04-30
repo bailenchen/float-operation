@@ -99,7 +99,7 @@ export default {
   methods: {
     getFieldList() {
       this.fieldList.push({
-        prop: 'business_name',
+        prop: 'businessName',
         width: '200',
         label: '商机名称'
       })
@@ -109,16 +109,16 @@ export default {
         label: '商机金额'
       })
       this.fieldList.push({
-        prop: 'customer_name',
+        prop: 'customerName',
         width: '200',
         label: '客户名称'
       })
       this.fieldList.push({
-        prop: 'type_name',
+        prop: 'typeName',
         width: '200',
         label: '商机状态组'
       })
-      this.fieldList.push({ prop: 'status_name', width: '200', label: '状态' })
+      this.fieldList.push({ prop: 'statusName', width: '200', label: '状态' })
     },
     getDetail() {
       this.loading = true
@@ -146,7 +146,7 @@ export default {
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      this.businessId = row.business_id
+      this.businessId = row.businessId
       this.showFullDetail = true
     },
     /** 通过回调控制表头style */

@@ -1,8 +1,8 @@
 <template>
   <div class="box-wrapper">
-    <div class="title"><span>{{attr.is_null ? '*' : ''}}</span>{{attr.name}}<span v-if="attr.input_tips">{{'（'+attr.input_tips+'）'}}</span></div>
+    <div class="title"><span>{{attr.isNull ? '*' : ''}}</span>{{attr.name}}<span v-if="attr.inputTips">{{'（'+attr.inputTips+'）'}}</span></div>
     <div class="box">
-      <el-checkbox-group v-model="attr.default_value"
+      <el-checkbox-group v-model="attr.defaultValue"
                          :disabled="disabled">
         <el-checkbox class="checkbox"
                      v-for="(item, index) in attr.showSetting"

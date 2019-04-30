@@ -31,7 +31,7 @@
                     <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
                       {{item.data.name}}
                       <span style="color:#999;">
-                        {{item.data.input_tips ? '（'+item.data.input_tips+'）':''}}
+                        {{item.data.inputTips ? '（'+item.data.inputTips+'）':''}}
                       </span>
                     </div>
                   </div>
@@ -100,11 +100,11 @@
         <create-sections v-if="showExamine"
                          title="审核信息">
           <div slot="header"
-               v-if="examineInfo.examine_type===1 || examineInfo.examine_type===2"
-               class="examine-type">{{examineInfo.examine_type===1 ? '固定审批流' : '授权审批人'}}</div>
+               v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
+               class="examine-type">{{examineInfo.examineType===1 ? '固定审批流' : '授权审批人'}}</div>
           <create-examine-info ref="examineInfo"
                                types="oa_examine"
-                               :types_id="category_id"
+                               :typesId="categoryId"
                                @value-change="examineValueChange"></create-examine-info>
         </create-sections>
       </div>
@@ -253,12 +253,12 @@ export default {
   },
   props: {
     // 类型ID
-    category_id: {
+    categoryId: {
       type: [String, Number],
       default: ''
     },
     // 类型名称
-    category_title: {
+    categoryTitle: {
       type: String,
       default: ''
     },
@@ -283,7 +283,7 @@ export default {
     this.getField()
 
     if (this.action.type == 'update') {
-      this.batchId = this.action.data.batch_id
+      this.batchId = this.action.data.batchId
     }
   },
   methods: {
@@ -335,7 +335,7 @@ export default {
       // 获取自定义字段的更新时间
       var params = {}
       params.label = 10
-      params.id = this.category_id
+      params.id = this.categoryId
 
       // 进行编辑操作
       if (this.action.type == 'update') {
@@ -361,11 +361,11 @@ export default {
     // 更新图片附件关联业务信息
     getUpdateOtherInfo() {
       this.imgFileList = this.action.data.img.map(function(item, index, array) {
-        item.url = item.file_path
+        item.url = item.filePath
         return item
       })
       this.fileList = this.action.data.file.map(function(item, index, array) {
-        item.url = item.file_path
+        item.url = item.filePath
         return item
       })
       this.relatedBusinessInfo = {
@@ -474,7 +474,7 @@ export default {
         }
 
         //验证唯一
-        if (item.is_unique == 1) {
+        if (item.isUnique == 1) {
           var validateUnique = (rule, value, callback) => {
             if (!value && rule.item.isNull == 0) {
               callback()
@@ -598,7 +598,7 @@ export default {
             let list = item.value.map(function(element, index, array) {
               if (element.img) {
                 element.imgList = element.img.map(function(file, index, array) {
-                  file.url = file.file_path
+                  file.url = file.filePath
                   return file
                 })
               } else {
@@ -620,8 +620,8 @@ export default {
           this.crmForm.crmFields.push(params)
         } else if (
           // 出差审批 差旅报销
-          (item.fieldName == 'duration' && this.category_id == 3) ||
-          (item.fieldName == 'money' && this.category_id == 5)
+          (item.fieldName == 'duration' && this.categoryId == 3) ||
+          (item.fieldName == 'money' && this.categoryId == 5)
         ) {
           // 报销事项
           var params = {}
@@ -659,20 +659,20 @@ export default {
             /** 验证审批数据 */
             this.$refs.examineInfo.validateField(() => {
               let params = {
-                oaExamine: { categoryId: this.category_id },
+                oaExamine: { categoryId: this.categoryId },
                 oaExamineRelation: {},
                 field: [],
                 oaExamineTravelList: []
               }
               this.getSubmiteParams(this.crmForm.crmFields, params)
-              if (this.examineInfo.examine_type === 2) {
-                params['checkUserId'] = this.examineInfo.value[0].user_id
+              if (this.examineInfo.examineType === 2) {
+                params['checkUserId'] = this.examineInfo.value[0].userId
               }
               this.submiteParams(params)
             })
           } else {
             let params = {
-              oaExamine: { categoryId: this.category_id },
+              oaExamine: { categoryId: this.categoryId },
               oaExamineRelation: {},
               field: [],
               oaExamineTravelList: []
@@ -692,7 +692,7 @@ export default {
         const list = this.relatedBusinessInfo[key]
         params.oaExamineRelation[key + 'Ids'] = list
           .map(function(item, index, array) {
-            return item[key + '_id']
+            return item[key + 'Id']
           })
           .join(',')
       }
@@ -746,13 +746,13 @@ export default {
     },
     // 查看图片
     handleFilePreview(file) {
-      if (file.response || file.file_id) {
+      if (file.response || file.fileId) {
         let perviewFile
         if (file.response) {
           perviewFile = file.response
         } else {
           perviewFile = {
-            url: file.file_path,
+            url: file.filePath,
             name: file.name
           }
         }
@@ -763,12 +763,12 @@ export default {
       }
     },
     beforeRemove(file, fileList) {
-      if (file.response || file.file_id) {
-        let file_id
+      if (file.response || file.fileId) {
+        let fileId
         if (file.response) {
-          file_id = file.response.file_id
+          fileId = file.response.fileId
         } else {
-          file_id = file.file_id
+          fileId = file.fileId
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -777,18 +777,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              id: file_id
+              id: fileId
             })
               .then(res => {
                 this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.imageUpload.uploadFiles,
-                  file_id
+                  fileId
                 )
                 if (removeIndex != -1) {
                   this.$refs.imageUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.imgFileList, file_id)
+                removeIndex = this.getFileIndex(this.imgFileList, fileId)
                 if (removeIndex != -1) {
                   this.imgFileList.splice(removeIndex, 1)
                 }
@@ -807,17 +807,17 @@ export default {
       }
     },
     // 附件索引
-    getFileIndex(files, file_id) {
+    getFileIndex(files, fileId) {
       var removeIndex = -1
       for (let index = 0; index < files.length; index++) {
         const item = files[index]
-        let item_file_id
+        let itemFileId
         if (item.response) {
-          item_file_id = item.response.file_id
+          itemFileId = item.response.fileId
         } else {
-          item_file_id = item.file_id
+          itemFileId = item.fileId
         }
-        if (item_file_id == file_id) {
+        if (itemFileId == fileId) {
           removeIndex = index
           break
         }
@@ -828,12 +828,12 @@ export default {
       this.fileList = fileList
     },
     handleFileRemove(file, fileList) {
-      if (file.response || file.file_id) {
-        let file_id
+      if (file.response || file.fileId) {
+        let fileId
         if (file.response) {
-          file_id = file.response.file_id
+          fileId = file.response.fileId
         } else {
-          file_id = file.file_id
+          fileId = file.fileId
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -842,18 +842,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              id: file_id
+              id: fileId
             })
               .then(res => {
                 this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.fileUpload.uploadFiles,
-                  file_id
+                  fileId
                 )
                 if (removeIndex != -1) {
                   this.$refs.fileUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.fileList, file_id)
+                removeIndex = this.getFileIndex(this.fileList, fileId)
                 if (removeIndex != -1) {
                   this.fileList.splice(removeIndex, 1)
                 }
@@ -877,7 +877,7 @@ export default {
         element.key == 'customer_id' ||
         element.key == 'contacts_id' ||
         element.key == 'business_id' ||
-        element.key == 'leads_id' ||
+        element.key == 'leadsId' ||
         element.key == 'contract_id'
       ) {
         if (element.value.length) {
@@ -885,7 +885,7 @@ export default {
         } else {
           return ''
         }
-      } else if (element.key == 'category_id') {
+      } else if (element.key == 'categoryId') {
         if (element.value.length) {
           return element.value[element.value.length - 1]
         } else {
@@ -893,7 +893,7 @@ export default {
         }
       } else if (element.data.formType == 'user') {
         return element.value.map(function(item, index, array) {
-          return item.user_id
+          return item.userId
         })
       } else if (element.data.formType == 'structure') {
         return element.value.map(function(item, index, array) {
@@ -901,7 +901,7 @@ export default {
         })
       } else if (element.data.formType == 'file') {
         return element.value.map(function(item, index, array) {
-          return item.file_id
+          return item.fileId
         })
       }
 
@@ -913,8 +913,8 @@ export default {
     // 根据类型获取标题展示名称
     getTitle() {
       return this.action.type == 'update'
-        ? '编辑' + this.category_title
-        : '新建' + this.category_title
+        ? '编辑' + this.categoryTitle
+        : '新建' + this.categoryTitle
     },
     // 获取左边padding
     getPaddingLeft(item, index) {

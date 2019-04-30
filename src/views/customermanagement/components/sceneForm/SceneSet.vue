@@ -20,7 +20,7 @@
                    class="list-item"
                    v-for="(item, index) in checkedLeftData"
                    :key="index">
-            <div :class="{'default-mark-active': item.scene_id == default_id}"
+            <div :class="{'default-mark-active': item.sceneId == defaultId}"
                  class="default-mark"></div>
             <el-checkbox class="list-item-check"
                          v-model="item.check"
@@ -46,7 +46,7 @@
                      class="list-item"
                      v-for="(item, index) in checkedLeftData"
                      :key="index">
-              <div :class="{'default-mark-active': item.scene_id == default_id}"
+              <div :class="{'default-mark-active': item.sceneId == defaultId}"
                    class="default-mark"></div>
               <el-checkbox class="list-item-check"
                            v-model="item.check"
@@ -154,7 +154,7 @@ export default {
   computed: {},
   data() {
     return {
-      default_id: '', // 默认场景id
+      defaultId: '', // 默认场景id
       visible: false, //控制展示
       isleftIndeterminate: false, // 标注头部是多选框效果
       checkleftAll: false, // 关联全选操作多选框
@@ -220,13 +220,13 @@ export default {
             return item
           })
           var defaultScene = this.checkedLeftData.filter(function(item, index) {
-            return item.is_default == 1
+            return item.isDefault == 1
           })
           // 如果有默认场景
           if (defaultScene && defaultScene.length > 0) {
-            this.default_id = defaultScene[0].scene_id
+            this.defaultId = defaultScene[0].sceneId
           } else {
-            this.default_id = ''
+            this.defaultId = ''
           }
         })
         .catch(() => {})
@@ -238,18 +238,18 @@ export default {
       // 如果选择默认的 不包含在左侧列表 重置为没有默认
       var self = this
       var leftTemps = this.checkedLeftData.filter(function(item, index) {
-        return item.scene_id == self.default_id
+        return item.sceneId == self.defaultId
       })
       if (leftTemps.length == 0) {
-        this.default_id = ''
+        this.defaultId = ''
       }
       crmSceneSort({
         type: crmTypeModel[this.crmType],
         noHideIds: this.checkedLeftData.map(function(item, index, array) {
-          return item.scene_id
+          return item.sceneId
         }).join(','),
         hideIds: this.checkedRightData.map(function(item, index, array) {
-          return item.scene_id
+          return item.sceneId
         }).join(',')
       })
         .then(res => {
@@ -274,7 +274,7 @@ export default {
         })
           .then(() => {
             crmSceneDelete({
-              sceneId: item.scene_id
+              sceneId: item.sceneId
             })
               .then(res => {
                 this.$message({
@@ -300,14 +300,14 @@ export default {
     /** 操作默认 */
     defaultHandle() {
       crmSceneDefaults({
-        sceneId: this.handlDefaultItem.scene_id
+        sceneId: this.handlDefaultItem.sceneId
       })
         .then(res => {
           this.$message({
             type: 'success',
             message: '操作成功'
           })
-          this.default_id = this.handlDefaultItem.scene_id
+          this.defaultId = this.handlDefaultItem.sceneId
         })
         .catch(() => {})
     },
@@ -321,8 +321,8 @@ export default {
           if (type == 'edit') {
             this.filterObj = { form: [], obj: data.data }
             this.filterName = data.name
-            this.filterDefault = data.is_default == 1 ? true : false
-            this.filterEditId = data.scene_id.toString()
+            this.filterDefault = data.isDefault == 1 ? true : false
+            this.filterEditId = data.sceneId.toString()
           } else {
             this.filterObj = { form: [] }
             this.filterEditId = ''
@@ -441,7 +441,7 @@ export default {
         ) {
           var remove = false
           self.rightCheckItems.forEach(function(element, index) {
-            if (item.scene_id == element.scene_id) {
+            if (item.sceneId == element.sceneId) {
               remove = true
             }
           })
@@ -468,7 +468,7 @@ export default {
         ) {
           var remove = false
           self.leftCheckItems.forEach(function(element, index) {
-            if (item.scene_id == element.scene_id) {
+            if (item.sceneId == element.sceneId) {
               remove = true
             }
           })

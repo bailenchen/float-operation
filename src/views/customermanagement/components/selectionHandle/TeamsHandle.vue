@@ -133,19 +133,19 @@ export default {
         this.$message.error('请选择团队成员')
       } else {
         var self = this
-        var action_ids = this.selectionList.map(function(item, index, array) {
-          return item[self.crmType + '_id']
+        var actionIds = this.selectionList.map(function(item, index, array) {
+          return item[self.crmType + 'Id']
         })
-        var user_ids = this.usersList.map(function(item, index, array) {
-          return item.user_id
+        var userIds = this.usersList.map(function(item, index, array) {
+          return item.userId
         })
         var params = {
-          ids: action_ids.join(','),
-          memberIds: user_ids.join(',')
+          ids: actionIds.join(','),
+          memberIds: userIds.join(',')
         }
         if (this.crmType === 'customer' && this.title == '添加团队成员') {
           // 只有客户下面同时添加到
-          params.module = this.addsTypes
+          params.changeType = this.addsTypes.join(',')
         }
 
         let request

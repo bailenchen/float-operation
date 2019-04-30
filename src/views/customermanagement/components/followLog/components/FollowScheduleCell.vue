@@ -2,7 +2,7 @@
   <div class="fl-c">
     <flexbox class="fl-h">
       <div v-photo="data.create_user_info"
-           v-lazy:background-image="$options.filters.filterUserLazyImg(data.create_user_info.thumb_img)"
+           v-lazy:background-image="$options.filters.filterUserLazyImg(data.create_user_info.img)"
            class="div-photo fl-h-img"></div>
       <div class="fl-h-b">
         <div class="fl-h-name">{{data.create_user_info.realname}}</div>
@@ -36,8 +36,8 @@
                   <span>{{k.realname}}</span>
                 </div>
                 <div v-photo="k"
-                     :key="k.thumb_img"
-                     v-lazy:background-image="$options.filters.filterUserLazyImg(k.thumb_img)"
+                     :key="k.img"
+                     v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
                      class="div-photo header-circle"></div>
               </el-tooltip>
             </span>

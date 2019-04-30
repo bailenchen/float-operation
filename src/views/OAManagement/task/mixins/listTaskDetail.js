@@ -18,7 +18,7 @@ export default {
     },
     // 点击显示详情
     showDetailView(val, index, result) {
-      this.taskID = val.task_id
+      this.taskID = val.taskId
       this.detailIndex = index
       this.taskDetailShow = true
       if (result) {
@@ -35,11 +35,11 @@ export default {
         } else if (data.type == 'change-stop-time') {
           let stopTime = parseInt(data.value) + 86399
           if (stopTime > new Date(new Date()).getTime() / 1000) {
-            this.list[data.index].is_end = false
+            this.list[data.index].isEnd = false
           } else {
-            this.list[data.index].is_end = true
+            this.list[data.index].isEnd = true
           }
-          this.list[data.index].stop_time = data.value
+          this.list[data.index].stopTime = data.value
         } else if (data.type == 'change-priority') {
           this.list[data.index].priority = data.value.id
         } else if (data.type == 'change-name') {

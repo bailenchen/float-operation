@@ -138,17 +138,17 @@ export default {
         if (this.subTaskCom == 'new') {
           this.$emit('on-handle', { type: 'add', result: 'success' })
           addTask({
-            pid: this.taskData.task_id,
+            pid: this.taskData.taskId,
             name: this.subtasksTextarea,
             stopTime: this.subtasksDate,
             mainUserId:
-              this.xhUserData.length != 0 ? this.xhUserData[0].user_id : ''
+              this.xhUserData.length != 0 ? this.xhUserData[0].userId : ''
           })
             .then(res => {
               this.taskData.childTask.push({
                 name: this.subtasksTextarea,
-                stop_time: this.subtasksDate,
-                task_id: res.data.task_id,
+                stopTime: this.subtasksDate,
+                taskId: res.data.taskId,
                 mainUser: this.xhUserData.length > 0 ? this.xhUserData[0] : null
               })
               this.$message.success('子任务创建成功')
@@ -180,10 +180,10 @@ export default {
               .then(res => {
                 let dataList = this.taskData.childTask
                 for (let i in dataList) {
-                  if (dataList[i].task_id == this.taskId) {
+                  if (dataList[i].taskId == this.taskId) {
                     let list = dataList[i]
                     list.name = this.subtasksTextarea
-                    list.stop_time = this.subtasksDate
+                    list.stopTime = this.subtasksDate
                     list.mainUser =
                       this.xhUserData.length > 0 ? this.xhUserData[0] : null
                     dataList.splice(i, 1, list)

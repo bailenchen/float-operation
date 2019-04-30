@@ -9,7 +9,7 @@
              style="height: 100%;">
       <div class="header">
         <flexbox class="detail-header">
-          <div class="header-name">{{showData.title}}<i v-if="showData.is_sys != 1"
+          <div class="header-name">{{showData.title}}<i v-if="showData.isSys != 1"
                @click="deleteClick"
                class="el-icon-delete delete"></i></div>
           <img @click="hideView"
@@ -72,12 +72,12 @@
               <div class="examine-flow-body">
                 <div class="body-header"><span class="body-header-name">{{index + 1|toRowName}}</span><span class="body-header-des">（{{item|toRowNameDes}}）</span></div>
                 <flexbox class="examine-users"
-                         v-if="item.user_id_info.length > 0">
-                  <div v-for="(userItem, userIndex) in item.user_id_info"
+                         v-if="item.userList.length > 0">
+                  <div v-for="(userItem, userIndex) in item.userList"
                        :key="userIndex"
                        class="examine-users-item">
                     <div v-photo="userItem"
-                         v-lazy:background-image="$options.filters.filterUserLazyImg(userItem.thumb_img)"
+                         v-lazy:background-image="$options.filters.filterUserLazyImg(userItem.img)"
                          class="div-photo"></div>
                     <div class="name">{{userItem.realname}}</div>
                   </div>
@@ -93,7 +93,7 @@
     <!-- 表单预览 -->
     <preview-field-view v-if="showTablePreview"
                         :types="tablePreviewData.types"
-                        :types_id="tablePreviewData.types_id"
+                        :types_id="tablePreviewData.typesId"
                         @hiden-view="showTablePreview=false"></preview-field-view>
   </slide-view>
 </template>
@@ -144,13 +144,13 @@ export default {
     },
     // 标题描述
     toRowNameDes: function(data) {
-      if (data.status == 1) {
+      if (data.stepType == 1) {
         return '负责人主管'
-      } else if (data.status == 2) {
-        return data.user_id_info.length + '人或签'
-      } else if (data.status == 3) {
-        return data.user_id_info.length + '人会签'
-      } else if (data.status == 4) {
+      } else if (data.stepType == 2) {
+        return data.userList.length + '人或签'
+      } else if (data.stepType == 3) {
+        return data.userList.length + '人会签'
+      } else if (data.stepType == 4) {
         return '上一级审批人主管'
       }
       return ''
@@ -166,7 +166,7 @@ export default {
       showData: {},
       examineStatus: false,
       // 展示表单预览
-      tablePreviewData: { types: '', types_id: '' },
+      tablePreviewData: { types: '', typesId: '' },
       showTablePreview: false
     }
   },
@@ -178,7 +178,7 @@ export default {
     // 预览表单
     handlePreview() {
       this.tablePreviewData.types = 'oa_examine'
-      this.tablePreviewData.types_id = this.data.category_id
+      this.tablePreviewData.typesId = this.data.categoryId
       this.showTablePreview = true
     },
     deleteClick() {
@@ -190,7 +190,7 @@ export default {
       })
         .then(() => {
           oaExamineCategoryDelete({
-            id: this.data['category_id']
+            id: this.data['categoryId']
           })
             .then(res => {
               this.$emit('refresh')
@@ -214,11 +214,11 @@ export default {
       this.examineStatus = this.showData.status == 0 ? false : true
     },
     // 切换审批状态
-    examineStatusChange() {
-      this.showData.status = this.examineStatus ? 1 : 0
+    examineStatusChange(status) {
+      this.showData.status = status ? 1 : 0
       // 启用停用
       this.$confirm(
-        '您确定要' + (this.examineStatus === 0 ? '启用' : '停用') + '该审批流?',
+        '您确定要' + (status ? '启用' : '停用') + '该审批流?',
         '提示',
         {
           confirmButtonText: '确定',
@@ -228,8 +228,8 @@ export default {
       )
         .then(() => {
           oaExamineCategoryEnables({
-            id: this.data['category_id'],
-            status: this.examineStatus === 0 ? 1 : 0
+            id: this.data['categoryId'],
+            status: status ? 1 : 0
           })
             .then(res => {
               this.$emit('refresh')

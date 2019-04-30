@@ -72,9 +72,9 @@
                    @change="selectChange"
                    placeholder="请选择">
           <el-option v-for="item in subUserListData"
-                     :key="item.user_id"
+                     :key="item.userId"
                      :label="item.realname"
-                     :value="item.user_id">
+                     :value="item.userId">
           </el-option>
         </el-select>
       </div>

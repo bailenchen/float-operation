@@ -32,7 +32,7 @@
                      class="div-photo"></div>
                 <div class="name-time">
                   <p class="name">{{item.realname}}</p>
-                  <p class="time">{{item.create_time | moment("YYYY-MM-DD HH:mm")}}</p>
+                  <p class="time">{{item.createTime | moment("YYYY-MM-DD HH:mm")}}</p>
                 </div>
               </div>
               <div class="title"
@@ -143,7 +143,7 @@ export default {
         limit: 15
       })
         .then(res => {
-          res.data.is_save == 1
+          res.data.isSave == 1
             ? (this.newStatus = true)
             : (this.newStatus = false)
           for (let item of res.data.list) {
@@ -176,9 +176,7 @@ export default {
     // 删除
     deleteFun() {
       for (let i in this.listData) {
-        if (
-          this.listData[i].announcement_id == this.titleList.announcement_id
-        ) {
+        if (this.listData[i].announcementId == this.titleList.announcementId) {
           this.listData.splice(i, 1)
         }
       }

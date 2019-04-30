@@ -76,7 +76,7 @@
           <div class="sent-who">
             <span class="label">发送给谁:</span>
             <div v-photo="k"
-                 v-lazy:background-image="$options.filters.filterUserLazyImg(k.thumb_img)"
+                 v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
                  v-for="(k, j) in formData.sentWhoList"
                  :key="j"
                  class="div-photo k-img header-circle"></div>
@@ -200,8 +200,8 @@ export default {
     this.formList = this.dateList
 
     // 确定显示哪一种日志
-    if (this.formData.category_id) {
-      switch (this.formData.category_id) {
+    if (this.formData.categoryId) {
+      switch (this.formData.categoryId) {
         case 1:
           this.tabsData = [{ label: '日报', key: '1' }]
           this.formList = this.dateList
@@ -217,8 +217,8 @@ export default {
       }
     }
 
-    if (this.dialogTitle != '写日志' && this.formData.batch_id) {
-      this.batchId = this.formData.batch_id
+    if (this.dialogTitle != '写日志' && this.formData.batchId) {
+      this.batchId = this.formData.batchId
     }
 
     // 编辑时引用 - 自动勾选
@@ -237,34 +237,34 @@ export default {
       : []
     this.allData = allData
     var relevanceAll = {}
-    relevanceAll.business_ids = this.formData.businessList
+    relevanceAll.businessIds = this.formData.businessList
       ? this.formData.businessList.map((item, index, array) => {
-          return item.business_id
+          return item.businessId
         })
       : []
-    relevanceAll.contacts_ids = this.formData.contactsList
+    relevanceAll.contactsIds = this.formData.contactsList
       ? this.formData.contactsList.map((item, index, array) => {
-          return item.contacts_id
+          return item.contactsId
         })
       : []
-    relevanceAll.contract_ids = this.formData.contractList
+    relevanceAll.contractIds = this.formData.contractList
       ? this.formData.contractList.map((item, index, array) => {
-          return item.contract_id
+          return item.contractId
         })
       : []
-    relevanceAll.customer_ids = this.formData.customerList
+    relevanceAll.customerIds = this.formData.customerList
       ? this.formData.customerList.map((item, index, array) => {
-          return item.customer_id
+          return item.customerId
         })
       : []
     this.relevanceAll = relevanceAll
 
     this.imageFileList = this.imgFileList.map(function(item, index, array) {
-      item.url = item.file_path
+      item.url = item.filePath
       return item
     })
     this.fileList = this.accessoryFileList.map(function(item, index, array) {
-      item.url = item.file_path
+      item.url = item.filePath
       return item
     })
   },
@@ -316,13 +316,13 @@ export default {
     },
     // 查看图片
     handleFilePreview(file) {
-      if (file.response || file.file_id) {
+      if (file.response || file.fileId) {
         let perviewFile
         if (file.response) {
           perviewFile = file.response
         } else {
           perviewFile = {
-            url: file.file_path,
+            url: file.filePath,
             name: file.name
           }
         }
@@ -334,12 +334,12 @@ export default {
     },
     beforeRemove(file, fileList) {
       console.log('file---', file);
-      if (file.response || file.file_id) {
-        let file_id
+      if (file.response || file.fileId) {
+        let fileId
         if (file.response) {
-          file_id = file.response.file_id
+          fileId = file.response.fileId
         } else {
-          file_id = file.file_id
+          fileId = file.fileId
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -348,18 +348,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              id: file_id
+              id: fileId
             })
               .then(res => {
                 this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.imageUpload.uploadFiles,
-                  file_id
+                  fileId
                 )
                 if (removeIndex != -1) {
                   this.$refs.imageUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.imgFileList, file_id)
+                removeIndex = this.getFileIndex(this.imgFileList, fileId)
                 if (removeIndex != -1) {
                   this.imgFileList.splice(removeIndex, 1)
                 }
@@ -378,17 +378,17 @@ export default {
       }
     },
     // 附件索引
-    getFileIndex(files, file_id) {
+    getFileIndex(files, fileId) {
       var removeIndex = -1
       for (let index = 0; index < files.length; index++) {
         const item = files[index]
-        let item_file_id
+        let itemFileId
         if (item.response) {
-          item_file_id = item.response.file_id
+          itemFileId = item.response.fileId
         } else {
-          item_file_id = item.file_id
+          itemFileId = item.fileId
         }
-        if (item_file_id == file_id) {
+        if (itemFileId == fileId) {
           removeIndex = index
           break
         }
@@ -399,12 +399,12 @@ export default {
       this.fileList = fileList
     },
     handleFileRemove(file, fileList) {
-      if (file.response || file.file_id) {
-        let file_id
+      if (file.response || file.fileId) {
+        let fileId
         if (file.response) {
-          file_id = file.response.file_id
+          fileId = file.response.fileId
         } else {
-          file_id = file.file_id
+          fileId = file.fileId
         }
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -413,18 +413,18 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              id: file_id
+              id: fileId
             })
               .then(res => {
                 this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.fileUpload.uploadFiles,
-                  file_id
+                  fileId
                 )
                 if (removeIndex != -1) {
                   this.$refs.fileUpload.uploadFiles.splice(removeIndex, 1)
                 }
-                removeIndex = this.getFileIndex(this.fileList, file_id)
+                removeIndex = this.getFileIndex(this.fileList, fileId)
                 if (removeIndex != -1) {
                   this.fileList.splice(removeIndex, 1)
                 }

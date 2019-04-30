@@ -94,9 +94,7 @@ export default {
   },
   computed: {
     byData() {
-      return { '1': '', '2': '1', '3': '2', '4': '3' }[
-        this.activeName
-      ] // 1:我发出的 2：我收到的 3：未读的
+      return { '1': '', '2': '1', '3': '2', '4': '3' }[this.activeName] // 1:我发出的 2：我收到的 3：未读的
     }
   },
   watch: {
@@ -174,8 +172,8 @@ export default {
       let params = objDeepCopy(
         this.$refs['log-list' + this.activeName][0].fromData
       )
-      if (!params.create_time) {
-        delete params['create_time']
+      if (!params.createTime) {
+        delete params['createTime']
       }
       params.page = this.pageNum
       params.limit = 15
@@ -186,7 +184,7 @@ export default {
       journalList(params)
         .then(res => {
           this.journalLoading = false
-          if (res.data.lastPage===true) {
+          if (res.data.lastPage === true) {
             this.loadText = '没有更多了'
             this.isPost = false
             this.loadMoreLoading = false
@@ -249,7 +247,6 @@ export default {
     },
     // 新建提交
     submitBtn(key, batchId, relevanceAll) {
-      debugger;
       this.newLoading = true
       let imgList = []
       let fileList = []
@@ -264,13 +261,12 @@ export default {
       let staff = []
       if (this.formData.sentWhoList) {
         for (let h of this.formData.sentWhoList) {
-          staff.push(h.user_id)
+          staff.push(h.userId)
         }
       }
-
+      debugger
       if (this.dialogTitle == '写日志') {
         // 图片
-
         let pramas = {
           categoryId: key || '',
           content: this.formData.content,
@@ -278,15 +274,15 @@ export default {
           question: this.formData.question,
           batchId: batchId,
           // img: imgList,
-          send_user_ids: staff.join(","),
-          send_dept_ids: dep.join(","),
-          customer_ids: relevanceAll.customer_ids.join(","),
-          contacts_ids: relevanceAll.contacts_ids.join(","),
-          business_ids: relevanceAll.business_ids.join(","),
-          contract_ids: relevanceAll.contract_ids.join(",")
+          sendUserIds: staff.join(','),
+          sendDeptIds: dep.join(','),
+          customerIds: relevanceAll.customerIds.join(','),
+          contactsIds: relevanceAll.contactsIds.join(','),
+          businessIds: relevanceAll.businessIds.join(','),
+          contractIds: relevanceAll.contractIds.join(',')
         }
         if (key) {
-          this.formData.category_id = key
+          this.formData.categoryId = key
         }
         journalAdd(pramas)
           .then(res => {
@@ -302,23 +298,23 @@ export default {
         // 编辑页面
       } else {
         let pramas = {
-          logId: this.formData.log_id,
+          logId: this.formData.logId,
           categoryId: key,
           content: this.formData.content,
           tomorrow: this.formData.tomorrow,
           question: this.formData.question,
           batchId: batchId,
-          send_user_ids: staff.join(","),
-          send_dept_ids: dep.join(","),
-          customer_ids: relevanceAll.customer_ids.join(","),
-          contacts_ids: relevanceAll.contacts_ids.join(","),
-          business_ids: relevanceAll.business_ids.join(","),
-          contract_ids: relevanceAll.contract_ids.join(",")
+          sendUserIds: staff.join(','),
+          sendDeptIds: dep.join(','),
+          customerIds: relevanceAll.customerIds.join(','),
+          contactsIds: relevanceAll.contactsIds.join(','),
+          businessIds: relevanceAll.businessIds.join(','),
+          contractIds: relevanceAll.contractIds.join(',')
         }
         journalEdit(pramas)
           .then(res => {
-            this.newClose();
-            this.refreshLogList();
+            this.newClose()
+            this.refreshLogList()
             this.$message.success('编辑成功')
             this.newLoading = false
           })

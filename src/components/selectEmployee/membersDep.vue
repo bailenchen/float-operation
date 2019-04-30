@@ -35,7 +35,7 @@
                   <el-checkbox v-model="user.isCheck"
                                @change="userCheckboxChange(user, index)">
                     <div v-photo="user"
-                         v-lazy:background-image="$options.filters.filterUserLazyImg(user.thumb_img)"
+                         v-lazy:background-image="$options.filters.filterUserLazyImg(user.img)"
                          class="div-photo search-img header-circle"></div>
                     <span>{{user.realname}}</span>
                   </el-checkbox>
@@ -90,7 +90,7 @@
                  class="checked-list">
               <div v-if="item.type == 'user'"
                    v-photo="item"
-                   v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
+                   v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
                    class="div-photo"></div>
               <span v-if="item.type == 'user'"> {{item.realname}} </span>
               <span v-else> {{item.name}} </span>
@@ -347,7 +347,7 @@ export default {
       var removeIndex = -1
       for (let index = 0; index < this.checkedUserDepList.length; index++) {
         const element = this.checkedUserDepList[index]
-        if (element.type == 'user' && item.user_id == element.user_id) {
+        if (element.type == 'user' && item.userId == element.userId) {
           removeIndex = index
         } else if (element.type == 'dep' && item.id == element.id) {
           removeIndex = index
@@ -367,7 +367,7 @@ export default {
       var hasItem = false
       for (let index = 0; index < this.checkedUserDepList.length; index++) {
         const element = this.checkedUserDepList[index]
-        if (element.type == 'user' && item.user_id == element.user_id) {
+        if (element.type == 'user' && item.userId == element.userId) {
           hasItem = true
           break
         } else if (element.type == 'dep' && item.id == element.id) {

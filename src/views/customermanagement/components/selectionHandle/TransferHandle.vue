@@ -162,9 +162,9 @@ export default {
       }
     },
     getParams() {
-      var owner_user_id = this.usersList[0].user_id
+      var ownerUserId = this.usersList[0].userId
       var params = {
-        newOwnerUserId: owner_user_id,
+        newOwnerUserId: ownerUserId,
         transferType: this.removeType
       }
       if (this.removeType === 2) {
@@ -173,10 +173,10 @@ export default {
       }
 
       var self = this
-      var action_id = this.selectionList.map(function(item, index, array) {
-        return item[self.crmType + '_id']
+      var actionId = this.selectionList.map(function(item, index, array) {
+        return item[self.crmType + 'Id']
       })
-      params[this.crmType + 'Ids'] = action_id.join(",")
+      params[this.crmType + 'Ids'] = actionId.join(",")
       if (this.crmType === 'customer') {
         // 只有客户下面有同时变更
         params.changeType = this.addsTypes.join(",")

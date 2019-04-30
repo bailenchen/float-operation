@@ -14,7 +14,7 @@
       </flexbox>
       <div class="detail-body">
         <div class="dialog-top">
-          <img :src="data.thumb_img"
+          <img :src="data.img"
                alt="">
           <span>{{data.realname}}</span>
           <div class="dialog-btn-group">
@@ -34,7 +34,7 @@
           </div>
           <div class="dialog-remark">
             <p>账号状态：{{{'0':'禁用','1':'激活','2':'未激活' }[data.status]}}</p>
-            <p>创建时间：{{data.create_time}}</p>
+            <p>创建时间：{{data.createTime}}</p>
           </div>
         </div>
         <div class="dialog-content">

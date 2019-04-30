@@ -1,12 +1,12 @@
 <template>
   <div class="fl-c">
     <flexbox class="fl-h">
-      <div v-photo="{img: item.user_img, realname: item.realname}"
-           v-lazy:background-image="$options.filters.filterUserLazyImg(item.user_img)"
+      <div v-photo="{img: item.userImg, realname: item.realname}"
+           v-lazy:background-image="$options.filters.filterUserLazyImg(item.userImg)"
            class="div-photo fl-h-img"></div>
       <div class="fl-h-b">
         <div class="fl-h-name">{{item.realname}}</div>
-        <div class="fl-h-time">{{item.create_time}}</div>
+        <div class="fl-h-time">{{item.createTime}}</div>
       </div>
       <flexbox class="fl-h-mark">
         <img class="fl-h-mark-img"
@@ -21,9 +21,9 @@
                wrap="wrap">
         <div class="fl-b-img-item"
              v-for="(file, index) in item.img"
-             :key="file.file_path"
+             :key="file.filePath"
              @click="previewImg(item.img, index)"
-             v-lazy:background-image="file.file_path"></div>
+             v-lazy:background-image="file.filePath"></div>
       </flexbox>
       <div v-if="item.file && item.file.length > 0"
            class="fl-b-files">
@@ -39,19 +39,19 @@
         </flexbox>
       </div>
       <div class="follow"
-           v-if="item.category || item.next_time">
+           v-if="item.category || item.nextTime">
         <span v-if="item.category"
               class="follow-info">{{item.category}}</span>
-        <span v-if="item.next_time"
-              class="follow-info">{{item.next_time}}</span>
+        <span v-if="item.nextTime"
+              class="follow-info">{{item.nextTime}}</span>
       </div>
       <div class="fl-b-other"
-           v-if="item.contacts_list && item.contacts_list.length > 0">
+           v-if="item.contactsList && item.contactsList.length > 0">
         <div class="fl-b-other-name">关联联系人</div>
         <div>
           <flexbox class="cell"
-                   v-for="(item, index) in item.contacts_list"
-                   @click.native="checkRelationDetail('contacts', item.contacts_id)"
+                   v-for="(item, index) in item.contactsList"
+                   @click.native="checkRelationDetail('contacts', item.contactsId)"
                    :key="index">
             <i class="wukong wukong-contacts cell-head crm-type"
                :style="{'opacity': index == 0 ? 1 : 0}"></i>
@@ -61,17 +61,17 @@
         </div>
       </div>
       <div class="fl-b-other"
-           v-if="item.business_list && item.business_list.length > 0">
+           v-if="item.businessList && item.businessList.length > 0">
         <div class="fl-b-other-name">关联商机</div>
         <div>
           <flexbox class="cell"
-                   v-for="(item, index) in item.business_list"
-                   @click.native="checkRelationDetail('business', item.business_id)"
+                   v-for="(item, index) in item.businessList"
+                   @click.native="checkRelationDetail('business', item.businessId)"
                    :key="index">
             <i class="wukong wukong-business cell-head crm-type"
                :style="{'opacity': index == 0 ? 1 : 0}"></i>
             <div class="cell-body"
-                 style="color: #6394E5;cursor: pointer;">{{item.business_name}}</div>
+                 style="color: #6394E5;cursor: pointer;">{{item.businessName}}</div>
           </flexbox>
         </div>
       </div>
@@ -119,13 +119,13 @@ export default {
       this.$bus.emit('preview-image-bus', {
         index: index,
         data: list.map(function(item, index, array) {
-          item.url = item.file_path
+          item.url = item.filePath
           return item
         })
       })
     },
     downloadFile(file) {
-      downloadFile({ path: file.file_path, name: file.name })
+      downloadFile({ path: file.filePath, name: file.name })
     },
     /**
      * 查看相关客户管理详情

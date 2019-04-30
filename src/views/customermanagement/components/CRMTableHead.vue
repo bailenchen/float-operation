@@ -252,20 +252,20 @@ export default {
         // 转移
         this.transferDialogShow = true
       } else if (type == 'export') {
-        var params = { scene_id: this.scene_id }
+        var params = {}
         var request
         if (this.crmType == 'customer') {
           request = crmCustomerExcelExport
           params.ids = this.selectionList
             .map(function(item, index, array) {
-              return item.customer_id
+              return item.customerId
             })
             .join(',')
         } else if (this.crmType == 'leads') {
           request = crmLeadsExcelExport
           params.ids = this.selectionList
             .map(function(item, index, array) {
-              return item.leads_id
+              return item.leadsId
             })
             .join(',')
         }
@@ -344,12 +344,12 @@ export default {
     },
     confirmHandle(type) {
       if (type === 'lock' || type === 'unlock') {
-        var customer_id = this.selectionList.map(function(item, index, array) {
-          return item.customer_id
+        var customerId = this.selectionList.map(function(item, index, array) {
+          return item.customerId
         })
         crmCustomerLock({
           isLock: type === 'lock' ? '1' : '0', // 1锁0不锁
-          ids: customer_id.join(',')
+          ids: customerId.join(',')
         })
           .then(res => {
             this.$message({
@@ -359,11 +359,11 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'put_seas') {
-        var customer_id = this.selectionList.map(function(item, index, array) {
-          return item.customer_id
+        var customerId = this.selectionList.map(function(item, index, array) {
+          return item.customerId
         })
         crmCustomerPutInPool({
-          ids: customer_id.join(',')
+          ids: customerId.join(',')
         })
           .then(res => {
             this.$message({
@@ -374,11 +374,11 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'transform') {
-        var leads_id = this.selectionList.map(function(item, index, array) {
-          return item.leads_id
+        var leadsId = this.selectionList.map(function(item, index, array) {
+          return item.leadsId
         })
         crmLeadsTransform({
-          leadsIds: leads_id.join(',')
+          leadsIds: leadsId.join(',')
         })
           .then(res => {
             this.$message({
@@ -389,11 +389,11 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'start' || type === 'disable') {
-        var product_id = this.selectionList.map(function(item, index, array) {
-          return item.product_id
+        var productId = this.selectionList.map(function(item, index, array) {
+          return item.productId
         })
         crmProductStatus({
-          ids: product_id.join(','),
+          ids: productId.join(','),
           status: type === 'start' ? '1' : '0'
         })
           .then(res => {
@@ -407,7 +407,7 @@ export default {
       } else if (type === 'delete') {
         let self = this
         var ids = this.selectionList.map(function(item, index, array) {
-          return item[self.crmType + '_id']
+          return item[self.crmType + 'Id']
         })
         let request = {
           leads: crmLeadsDelete,
@@ -430,11 +430,11 @@ export default {
           .catch(() => {})
       } else if (type === 'get') {
         // 领取
-        var customer_id = this.selectionList.map(function(item, index, array) {
-          return item.customer_id
+        var customerId = this.selectionList.map(function(item, index, array) {
+          return item.customerId
         })
         crmCustomerDistribute({
-          ids: customer_id.join(',')
+          ids: customerId.join(',')
         })
           .then(res => {
             this.$message({

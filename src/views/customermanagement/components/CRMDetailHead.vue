@@ -101,9 +101,9 @@ export default {
       if (this.crmType === 'receivables') {
         return this.detail.number
       } else if (this.crmType === 'customer') {
-        return this.detail.customer_name
+        return this.detail.customerName
       } else if (this.crmType === 'business') {
-        return this.detail.business_name
+        return this.detail.businessName
       }
       return this.detail.name
     },

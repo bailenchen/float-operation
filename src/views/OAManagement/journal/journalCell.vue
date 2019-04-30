@@ -15,9 +15,9 @@
                   class="item-content">{{data.action_content}}</span>
             <span v-else
                   class="read"
-                  :style="{'color': data.is_read == 0 ? '#3E84E9' : '#ccc'}">{{data.is_read == 0 ? '未读' : '已读'}}</span>
+                  :style="{'color': data.isRead == 0 ? '#3E84E9' : '#ccc'}">{{data.isRead == 0 ? '未读' : '已读'}}</span>
           </p>
-          <span class="time">{{data.create_time | moment("YYYY-MM-DD HH:mm")}}</span>
+          <span class="time">{{data.createTime | moment("YYYY-MM-DD HH:mm")}}</span>
           <el-tooltip :disabled="!(data.sendUserList.length > 0 || data.sendDeptList.length > 0)"
                       placement="bottom"
                       effect="light"
@@ -63,12 +63,12 @@
       <div class="text">
         <p class="row"
            v-if="data.content">
-          <span class="title">{{data.category_id == 1 ? "今日工作内容" : data.category_id == 2 ? "本周工作内容" : "本月工作内容"}}：</span>
+          <span class="title">{{data.categoryId == 1 ? "今日工作内容" : data.categoryId == 2 ? "本周工作内容" : "本月工作内容"}}：</span>
           {{data.content}}
         </p>
         <p class="row"
            v-if="data.tomorrow">
-          <span class="title">{{data.category_id == 1 ? "明日工作内容" : data.category_id == 2 ? "下周工作内容" : "下月工作内容"}}：</span>
+          <span class="title">{{data.categoryId == 1 ? "明日工作内容" : data.categoryId == 2 ? "下周工作内容" : "下月工作内容"}}：</span>
           {{data.tomorrow}}
         </p>
         <p class="row"
@@ -84,8 +84,8 @@
                :key="k"
                class="img-list"
                @click="imgZoom(data.img, k)">
-            <img v-lazy="imgItem.file_path"
-                 :key="imgItem.file_path">
+            <img v-lazy="imgItem.filePath"
+                 :key="imgItem.filePath">
           </div>
         </div>
         <div class="accessory-box"
@@ -115,7 +115,7 @@
                :key="discussItem.user.img"
                class="div-photo head-img header-circle"></div>
           <span class="name">{{discussItem.user.realname}}</span>
-          <span class="time">{{discussItem.create_time}}</span>
+          <span class="time">{{discussItem.createTime}}</span>
           <div class="rt">
             <span @click="discussDelete(discussItem, replyList, k)">删除</span>
             <span @click="discussBtn(discussItem, -1)">回复</span>
@@ -138,7 +138,7 @@
                    :key="childDiscussItem.user.img"
                    class="div-photo head-img header-circle"></div>
               <span class="name">{{childDiscussItem.user.realname}}</span>
-              <span class="time">{{childDiscussItem.create_time}}</span>
+              <span class="time">{{childDiscussItem.createTime}}</span>
               <div class="rt">
                 <span @click="discussDelete(childDiscussItem, discussItem.childCommentList, k)">删除</span>
                 <span @click="discussBtn(discussItem, k)">回复</span>
@@ -285,9 +285,9 @@ export default {
     }
   },
   mounted() {
-    if (this.data.is_read == 0 && !this.showWorkbench) {
+    if (this.data.isRead == 0 && !this.showWorkbench) {
       this.$bus.on('journal-list-box-scroll', target => {
-        if (this.data.is_read == 0) {
+        if (this.data.isRead == 0) {
           if (target) {
             this.parentTarget = target
           }
@@ -331,10 +331,10 @@ export default {
     },
     submiteIsRead() {
       journalSetread({
-        logId: this.showWorkbench ? this.data.action_id : this.data.log_id
+        logId: this.showWorkbench ? this.data.actionId : this.data.logId
       })
         .then(res => {
-          this.data.is_read = 1
+          this.data.isRead = 1
         })
         .catch(err => {})
     },
@@ -342,7 +342,7 @@ export default {
     // 获取评论信息
     getCommentList() {
       queryCommentListAPI({
-        typeId: this.data.log_id,
+        typeId: this.data.logId,
         type: 1
       })
         .then(res => {
@@ -371,7 +371,7 @@ export default {
       })
         .then(() => {
           deleteCommentAPI({
-            comment_id: val.comment_id
+            commentId: val.commentId
           }).then(res => {
             this.$message({
               type: 'success',
@@ -412,9 +412,9 @@ export default {
             : this.replyChildComment.childCommentList[this.replyChildIndex]
         this.contentLoading = true
         setCommentAPI({
-          pid: item.user_id,
-          typeId: item.type_id,
-          mainId: item.main_id == 0 ? item.comment_id : item.main_id,
+          pid: item.userId,
+          typeId: item.typeId,
+          mainId: item.mainId == 0 ? item.commentId : item.mainId,
           type: 2,
           content: this.childCommentsTextarea
         })
@@ -447,7 +447,7 @@ export default {
       if (this.commentsTextarea) {
         this.contentLoading = true
         setCommentAPI({
-          typeId: this.showWorkbench ? this.data.action_id : this.data.log_id,
+          typeId: this.showWorkbench ? this.data.actionId : this.data.logId,
           type: 2, // 1 任务 2 日志
           content: this.commentsTextarea
         })
@@ -503,7 +503,7 @@ export default {
         index: k,
         data: val.map(function(item, index, array) {
           return {
-            url: item.file_path,
+            url: item.filePath,
             name: item.name
           }
         })

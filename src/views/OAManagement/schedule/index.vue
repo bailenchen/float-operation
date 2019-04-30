@@ -9,8 +9,8 @@
     <div ref="hoverDialog"
          class="hover-dialog">
       <div class="img-content">
-        <span>{{hoverDialogList.start_time | moment("YYYY-MM-DD")}}</span>
-        <span v-if="hoverDialogList.end_time"> - {{hoverDialogList.end_time | moment("YYYY-MM-DD")}}</span>
+        <span>{{hoverDialogList.startTime | moment("YYYY-MM-DD")}}</span>
+        <span v-if="hoverDialogList.endTime"> - {{hoverDialogList.endTime | moment("YYYY-MM-DD")}}</span>
       </div>
       <div>
         {{hoverDialogList.text}}
@@ -101,7 +101,7 @@ export default {
         // 点击显示详情
         eventClick: function(val, key) {
           let list = []
-          list.push(val.start_time, val.end_time)
+          list.push(val.startTime, val.endTime)
           val.time = list
           _this.listData = val
           _this.showParticulars(val)
@@ -121,8 +121,8 @@ export default {
             jsEvent.clientY - jsEvent.offsetY - 60 + 'px'
           _this.hoverDialogList = {
             time: event.start._i,
-            start_time: event.start_time,
-            end_time: event.end_time,
+            startTime: event.startTime,
+            endTime: event.endTime,
             text: event.title,
             color: event.color,
             priority: event.priority
@@ -147,8 +147,8 @@ export default {
           })
             .then(res => {
               let list = res.data.map(item => {
-                item.start = item.start_time
-                item.end = item.end_time
+                item.start = item.startTime
+                item.end = item.endTime
                 item.color = item.color
                 item.textColor = '#333'
                 return item
@@ -178,8 +178,8 @@ export default {
     // 详情编辑
     editBtn(val) {
       this.newText = '编辑日程'
-      val.startTime = val.start_time
-      val.endTime = val.end_time
+      val.startTime = val.startTime
+      val.endTime = val.endTime
       this.formData = val
       this.handleClose()
       this.showDialog = true

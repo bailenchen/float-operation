@@ -7,9 +7,9 @@
              class="ha-cont"
              align="stretch"
              justify="flex-start">
-      <div class="ha-week">{{item.create_time|filterTimestampToFormatTime('MM-DD dddd')}}</div>
+      <div class="ha-week">{{item.createTime|filterTimestampToFormatTime('MM-DD dddd')}}</div>
       <div class="ha-circle"></div>
-      <div class="ha-time">{{item.create_time|filterTimestampToFormatTime('H:mm')}}</div>
+      <div class="ha-time">{{item.createTime|filterTimestampToFormatTime('H:mm')}}</div>
       <div v-photo="item"
            v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
            class="div-photo ha-img"></div>
@@ -81,7 +81,7 @@ export default {
         .then(res => {
           this.loading = false
           this.list = res.data.map((item)=> {
-            item.create_time = new Date(item.create_time).getTime()
+            item.createTime = new Date(item.createTime).getTime()
             return item
           })
         })

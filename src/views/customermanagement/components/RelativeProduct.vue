@@ -21,8 +21,8 @@
       </el-table-column>
     </el-table>
     <flexbox class="handle-footer">
-      <div class="discount-title">整单折扣（%）：<span class="discount-title-value">{{totalInfo.discount_rate}}</span></div>
-      <div class="total-info">已选中产品：<span class="info-yellow">{{list.length}}</span>&nbsp;种&nbsp;&nbsp;总金额：<span class="info-yellow">{{totalInfo.total_price}}</span>&nbsp;元</div>
+      <div class="discount-title">整单折扣（%）：<span class="discount-title-value">{{totalInfo.discountRate}}</span></div>
+      <div class="total-info">已选中产品：<span class="info-yellow">{{list.length}}</span>&nbsp;种&nbsp;&nbsp;总金额：<span class="info-yellow">{{totalInfo.totalPrice}}</span>&nbsp;元</div>
     </flexbox>
     <c-r-m-full-screen-detail :visible.sync="showFullDetail"
                               crmType="product"
@@ -51,7 +51,7 @@ export default {
       tableHeight: '400px',
       showFullDetail: false,
       productId: '', // 查看全屏产品详情的 ID
-      totalInfo: { total_price: '0.00', discount_rate: '0.00' }
+      totalInfo: { totalPrice: '0.00', discountRate: '0.00' }
     }
   },
   watch: {
@@ -88,15 +88,15 @@ export default {
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'product_name', width: '200', label: '产品名称' })
+      this.fieldList.push({ prop: 'productName', width: '200', label: '产品名称' })
       this.fieldList.push({
-        prop: 'category_name',
+        prop: 'categoryName',
         width: '200',
         label: '产品类别'
       })
       this.fieldList.push({ prop: 'unit', width: '200', label: '单位' })
       this.fieldList.push({ prop: 'price', width: '200', label: '标准价格' })
-      this.fieldList.push({ prop: 'sales_price', width: '200', label: '售价' })
+      this.fieldList.push({ prop: 'salesPrice', width: '200', label: '售价' })
       this.fieldList.push({ prop: 'num', width: '200', label: '数量' })
       this.fieldList.push({
         prop: 'discount',
@@ -116,7 +116,7 @@ export default {
           this.loading = false
           this.list = res.data.list
           this.totalInfo.money = res.data.money
-          this.totalInfo.discount_rate = res.data.discount_rate
+          this.totalInfo.discountRate = res.data.discountRate
         })
         .catch(data => {
           if (data.code == 102) {
@@ -147,7 +147,7 @@ export default {
     },
     //当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      this.productId = row.product_id
+      this.productId = row.productId
       this.showFullDetail = true
     },
     /** 通过回调控制表头style */

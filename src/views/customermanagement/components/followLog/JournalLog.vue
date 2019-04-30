@@ -191,13 +191,13 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            journalDelete({ logId: data.data.item.log_id }).then(res => {
+            journalDelete({ logId: data.data.item.logId }).then(res => {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
               })
               for (let i in this.list) {
-                if (this.list[i].log_id == data.data.item.log_id) {
+                if (this.list[i].logId == data.data.item.logId) {
                   this.list.splice(i, 1)
                   break
                 }
@@ -237,24 +237,24 @@ export default {
         }
       }
       for (let item of this.imgFileList) {
-        imgList.push(item.file_id)
+        imgList.push(item.fileId)
       }
       for (let item of this.accessoryFileList) {
-        fileList.push(item.file_id)
+        fileList.push(item.fileId)
       }
       let pramas = {
-        id: this.formData.log_id,
-        category_id: key,
+        id: this.formData.logId,
+        categoryId: key,
         content: this.formData.content,
         tomorrow: this.formData.tomorrow,
         question: this.formData.question,
         file: fileList.concat(imgList),
-        send_user_ids: staff,
-        send_structure_ids: dep,
-        customer_ids: relevanceAll.customer_ids,
-        contacts_ids: relevanceAll.contacts_ids,
-        business_ids: relevanceAll.business_ids,
-        contract_ids: relevanceAll.contract_ids
+        sendUserIds: staff,
+        sendStructureIds: dep,
+        customerIds: relevanceAll.customerIds,
+        contactsIds: relevanceAll.contactsIds,
+        businessIds: relevanceAll.businessIds,
+        contractIds: relevanceAll.contractIds
       }
       journalEdit(pramas)
         .then(res => {

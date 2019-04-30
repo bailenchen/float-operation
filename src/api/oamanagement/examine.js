@@ -26,7 +26,10 @@ export function oaExamineMyCreateIndex(data) {
   return request({
     url: 'OaExamine/myInitiate',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -35,7 +38,10 @@ export function oaExamineMyExamineIndex(data) {
   return request({
     url: 'OaExamine/myOaExamine',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 

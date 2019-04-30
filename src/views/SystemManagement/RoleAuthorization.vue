@@ -137,7 +137,7 @@
               <div class="jurisdiction-content-checkbox">
                 <el-tree :data="showTreeData"
                          show-checkbox
-                         node-key="menu_id"
+                         node-key="menuId"
                          ref="tree"
                          :indent="0"
                          empty-text=""
@@ -217,7 +217,7 @@ export default {
       showTreeData: [],
       defaultProps: {
         children: 'childMenu',
-        label: 'menu_name'
+        label: 'menuName'
       },
       radioModel: 2,
       // 编辑或添加员工
@@ -258,7 +258,7 @@ export default {
         var map = {}
         for (var i = 0; i < res.data.length; i++) {
           arr.push({
-            label: res.data[i].menu_name,
+            label: res.data[i].menuName,
             index: i,
             realm: res.data[i].realm
           })
@@ -342,7 +342,7 @@ export default {
       })
         .then(() => {
           this.menuLoading = true
-          usersDelete({ userId: val.user_id, roleId: this.roleActive.id }).then(
+          usersDelete({ userId: val.userId, roleId: this.roleActive.id }).then(
             res => {
               this.menuLoading = true
               this.getUserListWithRole(this.roleActive)

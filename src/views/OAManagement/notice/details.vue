@@ -9,16 +9,16 @@
       </div>
       <div class="content">
         <div class="title">{{titleList.title}}</div>
-        <div class="time">{{titleList.create_time}}</div>
+        <div class="time">{{titleList.createTime}}</div>
         <pre class="text">{{titleList.content}}</pre>
       </div>
       <div class="btn-box"
            v-if="btnShow">
         <el-button type="primary"
-                   v-if="titleList.is_update == 1"
+                   v-if="titleList.isUpdate == 1"
                    @click="onEdit">编辑</el-button>
         <el-button type="danger"
-                   v-if="titleList.is_delete == 1"
+                   v-if="titleList.isDelete == 1"
                    @click="deleteFun">删除</el-button>
       </div>
     </div>
@@ -71,7 +71,7 @@ export default {
       })
         .then(() => {
           noticeDelete({
-            id: this.titleList.announcement_id
+            id: this.titleList.announcementId
           }).then(res => {
             this.$emit('deleteFun')
             this.$message({
@@ -95,7 +95,7 @@ export default {
     editSubmit() {
       this.loading = true
       noticeAdd({
-        announcementId: this.formData.announcement_id,
+        announcementId: this.formData.announcementId,
         title: this.formData.title,
         content: this.formData.content,
         startTime: this.formData.startTime,

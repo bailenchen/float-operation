@@ -150,7 +150,7 @@ export default {
             this.businessDep,
             this.settingList,
             this.businessTitle,
-            this.infoData.type_id
+            this.infoData.typeId
           )
         }
       }

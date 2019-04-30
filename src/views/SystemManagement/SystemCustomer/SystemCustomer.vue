@@ -26,7 +26,7 @@
             <img class="table-item-icon"
                  :src="getCustomFieldIcon(item.types)" />
             <div class="table-item-label">{{item.name}}</div>
-            <div class="table-item-time">{{item.update_time == 0 ? '暂无' : item.update_time}}更新</div>
+            <div class="table-item-time">{{item.updateTime == 0 ? '暂无' : item.updateTime}}更新</div>
             <div class="table-right-btn">
               <el-button style="font-weight: 400;"
                          @click="handleCustomField('edit', item, index)"
@@ -88,7 +88,7 @@
                              :key="index"
                              show-overflow-tooltip
                              :prop="item.field"
-                             :formatter="fieldFormatter">
+                             :formatter="fieldFormatter"
                              :label="item.label">
 
             </el-table-column>
@@ -181,7 +181,7 @@
     <!-- 表单预览 -->
     <preview-field-view v-if="showTablePreview"
                         :types="tablePreviewData.types"
-                        :types_id="tablePreviewData.types_id"
+                        :types_id="tablePreviewData.typesId"
                         @hiden-view="showTablePreview=false"></preview-field-view>
   </div>
 </template>
@@ -216,12 +216,12 @@ export default {
   watch: {
     loading: function(val) {
       if (val) {
-        this.loading_view = Loading.service({
+        this.loadingView = Loading.service({
           target: document.querySelector('.system-view-table')
         })
       } else {
-        if (this.loading_view) {
-          this.loading_view.close()
+        if (this.loadingView) {
+          this.loadingView.close()
         }
       }
     }
@@ -235,12 +235,12 @@ export default {
         { label: '产品类别设置', key: '4' },
         { label: '业绩目标设置', key: '5' }
       ],
-      loading_view: null, // 加载效果
+      loadingView: null, // 加载效果
       loading: false, // 展示加载中效果
       // 自定义字段设置
       tableList: [],
       // 展示表单预览
-      tablePreviewData: { types: '', types_id: '' },
+      tablePreviewData: { types: '', typesId: '' },
       showTablePreview: false,
       // 导航显示不同的页面
       menuIndex: '1',
@@ -257,7 +257,7 @@ export default {
       businessList: [
         { label: '商机组名称', field: 'name' },
         { label: '应用部门', field: 'deptName' },
-        { label: '创建时间', field: 'create_time' },
+        { label: '创建时间', field: 'createTime' },
         { label: '创建人', field: 'createName' }
       ],
       // 添加商机组
@@ -269,7 +269,7 @@ export default {
       treeSetTypes: [],
       // 编辑产品弹窗
       productHandleDialog: false,
-      productForm: { name: '', type: '', pid: '', category_id: '' },
+      productForm: { name: '', type: '', pid: '', categoryId: '' },
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -347,12 +347,12 @@ export default {
     // 商机组编辑
     businessEdit(data) {
       businessGroupRead({
-        id: data.type_id
+        id: data.typeId
       })
         .then(res => {
           var settingList = res.data.statusList || []
           this.businessObj = {
-            type_id: res.data.type_id,
+            typeId: res.data.typeId,
             name: res.data.name,
             businessDep: res.data.deptIds || [],
             settingList: settingList
@@ -372,7 +372,7 @@ export default {
       })
         .then(() => {
           businessGroupDelete({
-            id: scope.row.type_id
+            id: scope.row.typeId
           })
             .then(res => {
               this.businessData.splice(scope.$index, 1)
@@ -398,12 +398,12 @@ export default {
       this.businessDialogVisible = false
     },
     // 商机组添加 -- 确定按钮
-    businessSubmit(name, dep, list, title, type_id) {
+    businessSubmit(name, dep, list, title, typeId) {
       var businessHandleRequest = null
       var params = {
         crmBusinessType: {
           name: name,
-          type_id: type_id ? type_id : null
+          typeId: typeId ? typeId : null
         },
         deptIds: dep,
         crmBusinessStatus: list
@@ -442,7 +442,7 @@ export default {
       }
       if (command.type == 'create-child') {
         this.productForm.type = command.type
-        this.productForm.pid = command.node.data.category_id
+        this.productForm.pid = command.node.data.categoryId
         this.productForm.name = ''
         this.productHandleDialog = true
       } else if (command.type == 'create-brother') {
@@ -453,7 +453,7 @@ export default {
       } else if (command.type == 'edit') {
         this.productForm.type = command.type
         this.productForm.name = command.node.data.name
-        this.productForm.category_id = command.node.data.category_id
+        this.productForm.categoryId = command.node.data.categoryId
         this.productForm.pid = command.node.data.pid
         this.productHandleDialog = true
       } else if (command.type == 'delete') {
@@ -469,7 +469,7 @@ export default {
             })
             this.loading = true
             productCategoryDelete({
-              id: command.node.data.category_id
+              id: command.node.data.categoryId
             })
               .then(res => {
                 this.getProductCategoryIndex()
@@ -538,7 +538,7 @@ export default {
       } else if (this.productForm.type == 'edit') {
         this.loading = true
         productCategorySave({
-          categoryId: this.productForm.category_id,
+          categoryId: this.productForm.categoryId,
           pid: this.productForm.pid,
           name: this.productForm.name
         })

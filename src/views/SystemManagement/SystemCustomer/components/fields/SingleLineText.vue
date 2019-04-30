@@ -1,10 +1,10 @@
 <template>
   <div class="box-wrapper">
     <div class="title">
-      <span>{{attr.is_null ? '*' : ''}}</span>{{attr.name}}<span v-if="attr.input_tips">{{'（'+attr.input_tips+'）'}}</span>
+      <span>{{attr.isNull ? '*' : ''}}</span>{{attr.name}}<span v-if="attr.inputTips">{{'（'+attr.inputTips+'）'}}</span>
     </div>
     <div class="box">
-      <span class="default-val">{{attr.default_value}}</span>
+      <span class="default-val">{{attr.defaultValue}}</span>
     </div>
     <span class="el-icon-delete control"
           @click="handleDelete"

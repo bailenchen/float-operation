@@ -8,7 +8,7 @@
     <flexbox orient="vertical"
              style="height: 100%;">
       <flexbox class="detail-header">
-        <div class="header-name">{{category_name}}</div>
+        <div class="header-name">{{categoryName}}</div>
         <img @click="hideView"
              class="header-close"
              src="@/assets/img/task_close.png" />
@@ -107,8 +107,8 @@
                  :key="k"
                  class="img-list"
                  @click="imgZoom(imgList, k)">
-              <img :key="imgItem.file_path"
-                   v-lazy="imgItem.file_path">
+              <img :key="imgItem.filePath"
+                   v-lazy="imgItem.filePath">
             </div>
           </div>
           <!-- 附件 -->
@@ -122,7 +122,7 @@
         <!-- 行程 报销 -->
         <create-sections title="行程"
                          class="create-sections"
-                         v-if="category_id && category_id == 3 && travelList && travelList.length > 0">
+                         v-if="categoryId && categoryId == 3 && travelList && travelList.length > 0">
           <el-table :data="travelList"
                     style="font-size: 13px;"
                     align="center"
@@ -142,7 +142,7 @@
         </create-sections>
         <create-sections title="报销"
                          class="create-sections"
-                         v-if="category_id && category_id == 5 && travelList && travelList.length > 0">
+                         v-if="categoryId && categoryId == 5 && travelList && travelList.length > 0">
           <el-table :data="travelList"
                     style="font-size: 13px;"
                     align="center"
@@ -193,7 +193,7 @@
           <examine-info :id="id"
                         class="create-sections-content"
                         examineType="oa_examine"
-                        :recordId="detail.examine_record_id"
+                        :recordId="detail.examineRecordId"
                         @on-handle="examineHandle">
           </examine-info>
         </create-sections>
@@ -246,12 +246,12 @@ export default {
   data() {
     return {
       loading: false,
-      category_id: '',
+      categoryId: '',
       detail: {
-        examine_record_id: ''
+        examineRecordId: ''
       },
       list: [], // 基本信息
-      category_name: '',
+      categoryName: '',
 
       fileList: [],
       imgList: [],
@@ -260,18 +260,18 @@ export default {
       travelField: [
         { prop: 'vehicle', label: '交通工具' },
         { prop: 'trip', label: '单程往返' },
-        { prop: 'start_address', label: '出发城市' },
-        { prop: 'end_address', label: '目的城市' },
-        { prop: 'start_time', label: '开始时间' },
-        { prop: 'end_time', label: '结束时间' },
+        { prop: 'startAddress', label: '出发城市' },
+        { prop: 'endAddress', label: '目的城市' },
+        { prop: 'startTime', label: '开始时间' },
+        { prop: 'endTime', label: '结束时间' },
         { prop: 'duration', label: '时长（天）' },
         { prop: 'description', label: '备注' }
       ],
       expensesField: [
-        { prop: 'start_address', label: '出发城市' },
-        { prop: 'end_address', label: '目的城市' },
-        { prop: 'start_time', label: '开始时间' },
-        { prop: 'end_time', label: '结束时间' },
+        { prop: 'startAddress', label: '出发城市' },
+        { prop: 'endAddress', label: '目的城市' },
+        { prop: 'startTime', label: '开始时间' },
+        { prop: 'endTime', label: '结束时间' },
         { prop: 'traffic', label: '交通费（元）' },
         { prop: 'stay', label: '住宿费（元）' },
         { prop: 'diet', label: '餐饮费（元）' },
@@ -321,10 +321,10 @@ export default {
       })
         .then(res => {
           this.loading = false
-          this.category_id = res.data.category_id
+          this.categoryId = res.data.categoryId
           this.getBaseInfo()
           this.detail = res.data
-          this.category_name = this.detail.category
+          this.categoryName = this.detail.category
 
           this.fileList = this.detail.file
           this.imgList = this.detail.img
@@ -341,7 +341,7 @@ export default {
     },
     // 查看关联业务详情
     checkRelatedDetail(crmType, item) {
-      this.relatedID = item[crmType + '_id']
+      this.relatedID = item[crmType + 'Id']
       this.relatedCRMType = crmType
       this.showRelatedDetail = true
     },
@@ -352,7 +352,7 @@ export default {
       if (type === 'preview') {
         if (files && files.length > 0) {
           var previewList = files.map(element => {
-            element.url = element.file_path
+            element.url = element.filePath
             return element
           })
           this.$bus.emit('preview-image-bus', {
@@ -361,7 +361,7 @@ export default {
           })
         }
       } else if (type === 'download') {
-        downloadFile({ path: files.file_path, name: files.name })
+        downloadFile({ path: files.filePath, name: files.name })
       }
     },
     // 放大图片
@@ -370,14 +370,14 @@ export default {
         index: k,
         data: images.map(function(item, index, array) {
           return {
-            url: item.file_path,
+            url: item.filePath,
             name: item.name
           }
         })
       })
     },
     downloadFile(file) {
-      downloadFile({ path: file.file_path, name: file.name })
+      downloadFile({ path: file.filePath, name: file.name })
     },
     // 审批操作
     examineHandle(data) {

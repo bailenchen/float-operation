@@ -53,7 +53,7 @@ export default {
   methods: {
     getPlanList() {
       this.loading = true
-      crmContractQueryReceivablesPlan({ contractId: this.relation.contract_id, pageType: 0})
+      crmContractQueryReceivablesPlan({ contractId: this.relation.contractId, pageType: 0})
         .then(res => {
           this.loading = false
           this.option = res.data
