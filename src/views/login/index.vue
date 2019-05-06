@@ -108,8 +108,8 @@ export default {
             .dispatch('Login', this.loginForm)
             .then(res => {
               this.loading = false
-              // this.$store.dispatch('SystemLogoAndName')
-              this.$router.push({ path: '/workbench/index' })
+              this.$store.dispatch('SystemLogoAndName')
+              this.$router.push({ path: this.redirect || '/workbench/index' })
             })
             .catch(() => {
               this.loading = false

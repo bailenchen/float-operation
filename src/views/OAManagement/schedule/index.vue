@@ -40,7 +40,6 @@
 <script>
 import $ from 'jquery'
 import 'fullcalendar'
-import 'fullcalendar-scheduler'
 import zhLocal from 'fullcalendar/dist/locale/zh-cn'
 import createSchedule from './components/createSchedule'
 import VDetails from './components/details'
@@ -215,7 +214,6 @@ export default {
 
 <style>
 @import 'fullcalendar/dist/fullcalendar.css';
-@import 'fullcalendar-scheduler/dist/scheduler.css';
 </style>
 
 <style lang="scss" scoped>

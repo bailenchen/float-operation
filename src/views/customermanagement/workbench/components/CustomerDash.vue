@@ -379,9 +379,11 @@ export default {
       params.type = this.gaugeSelectValue
       crmIndexAchievementData(params)
         .then(res => {
-          this.gaugeData = res.data
-          this.gaugeOption.series[0].data[0].value = res.data.proportion
-          this.gaugeChart.setOption(this.gaugeOption, true)
+          if (res.data) {
+            this.gaugeData = res.data
+            this.gaugeOption.series[0].data[0].value = res.data.proportion || '0'
+            this.gaugeChart.setOption(this.gaugeOption, true)
+          }
           this.gaugeLoading = false
         })
         .catch(() => {

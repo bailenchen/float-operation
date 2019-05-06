@@ -10,7 +10,7 @@ import request from '@/utils/request'
  */
 export function biAchievementStatistics(data) {
   return request({
-    url: 'bi/taskCompletestatistics',
+    url: 'bi/taskCompleteStatistics',
     method: 'post',
     data: data
   })
