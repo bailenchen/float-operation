@@ -7,6 +7,7 @@
           <el-input placeholder="搜索成员"
                     prefix-icon="el-icon-search"
                     @blur="blurFun"
+                    @keyup.enter.native="blurFun"
                     v-model="userInput">
           </el-input>
           <v-staff v-loading="staffLoading"

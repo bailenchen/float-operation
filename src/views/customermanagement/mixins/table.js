@@ -8,7 +8,6 @@ import CRMTableHead from '../components/CRMTableHead'
 import FieldsSet from '../components/fieldsManager/FieldsSet'
 import {
   filedGetTableField,
-  crmSceneIndex,
   crmFieldColumnWidth,
   crmMainIndex
 } from '@/api/customermanagement/common'
@@ -34,8 +33,6 @@ export default {
       rowID: '', // 行信息
       rowType: '', //详情类型
       showDview: false,
-      /** 格式化规则 */
-      formatterRules: {},
       /** 高级筛选 */
       filterObj: {}, // 筛选确定数据
       sceneId: '', // 场景筛选ID
@@ -149,19 +146,7 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
+      return row[column.property] || '--'
     },
     /** */
     /** */
@@ -337,6 +322,10 @@ export default {
           'border-color': '#F56C6B',
           'background-color': '#FEF0F0',
           'color': '#F56C6B'
+        }
+      } else if (status == 4) {
+        return {
+          'background-color': '#FFFFFF'
         }
       }
     },

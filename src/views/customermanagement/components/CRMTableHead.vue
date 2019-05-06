@@ -9,7 +9,7 @@
                   v-model="showScene"
                   width="150">
         <flexbox slot="reference">
-          <div class="condition_title">{{sceneData.name ? sceneData.name : getDefaultSceneName()}}</div>
+          <div class="condition_title">{{sceneData.name || getDefaultSceneName()}}</div>
           <i class="el-icon-arrow-down el-icon--right"
              style="color:#777;"></i>
         </flexbox>

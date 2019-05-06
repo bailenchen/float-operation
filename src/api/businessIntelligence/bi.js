@@ -57,7 +57,7 @@ export function biReceivablesStatistics(data) {
  */
 export function biReceivablesStatisticList(data) {
   return request({
-    url: 'bi/receivables/statisticList',
+    url: 'bi/queryByMonth',
     method: 'post',
     data: data
   })

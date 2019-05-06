@@ -445,7 +445,7 @@ export default {
                   ]
                   for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
                     const key = keys[keyIndex]
-                    console.log('item[key]---', item[key], key, item);
+                    console.log('item[key]---', item[key], key, item)
                     if (!item[key]) {
                       hasError = true
                       this.$message.error('请完善明细')
@@ -557,7 +557,7 @@ export default {
           })
         }
 
-        this.crmRules[item.fieldName] = tempList
+        this.crmRules[item.fieldName || item.name] = tempList
 
         /**
          *
@@ -581,7 +581,7 @@ export default {
             params['value'] = item.defaultValue // 加入默认值 可能编辑的时候需要调整
           }
 
-          params['key'] = item.fieldName
+          params['key'] = item.fieldName || item.name
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['styleIndex'] = showStyleIndex
@@ -610,7 +610,7 @@ export default {
           } else {
             params['value'] = {} // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.fieldName
+          params['key'] = item.fieldName || item.name
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['showblock'] = true // 展示整行效果
@@ -631,7 +631,7 @@ export default {
           } else {
             params['value'] = item.defaultValue ? item.defaultValue : item.value // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.fieldName
+          params['key'] = item.fieldName || item.name
           params['data'] = item
           params['disabled'] = true // 是否可交互
           params['styleIndex'] = showStyleIndex
@@ -643,7 +643,7 @@ export default {
           } else {
             params['value'] = item.defaultValue ? item.defaultValue : item.value // 加入默认值 可能编辑的时候需要调整
           }
-          params['key'] = item.fieldName
+          params['key'] = item.fieldName || item.name
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['styleIndex'] = showStyleIndex
@@ -734,7 +734,12 @@ export default {
             params[element.key] = causeList
           }
         } else {
-          params.oaExamine[element.key] = this.getRealParams(element)
+          if (element.data.fieldName) {
+            params.oaExamine[element.key] = this.getRealParams(element)
+          } else {
+            element.data.value = this.getRealParams(element)
+            params.field.push(element.data)
+          }
         }
       }
       return params
@@ -874,11 +879,11 @@ export default {
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
       if (
-        element.key == 'customer_id' ||
-        element.key == 'contacts_id' ||
-        element.key == 'business_id' ||
+        element.key == 'customerId' ||
+        element.key == 'contactsId' ||
+        element.key == 'businessId' ||
         element.key == 'leadsId' ||
-        element.key == 'contract_id'
+        element.key == 'contractId'
       ) {
         if (element.value.length) {
           return element.value[0][element.key]

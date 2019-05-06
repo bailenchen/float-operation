@@ -38,7 +38,7 @@
              style="width: 850px;height:400px;"></div>
       </div>
       <div class="box"
-           v-if="showType !== 0">
+           v-if="showTable">
         <el-table :data="list"
                   :height="tableHeight"
                   stripe
@@ -49,7 +49,6 @@
                            align="center"
                            header-align="center"
                            show-overflow-tooltip
-                           :formatter="fieldFormatter"
                            :prop="item.prop"
                            :label="item.label">
           </el-table-column>
@@ -77,7 +76,8 @@ import {
   biReceivablesStatistics,
   biReceivablesStatisticList
 } from '@/api/businessIntelligence/bi'
-import { filedGetField } from '@/api/customermanagement/common'
+import { filedGetTableField } from '@/api/customermanagement/common'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { getDateFromTimestamp } from '@/utils'
 import ContractDetail from '@/views/customermanagement/contract/ContractDetail'
 import MoneyDetail from '@/views/customermanagement/money/MoneyDetail'
@@ -113,13 +113,9 @@ export default {
       userSelectValue: '',
 
       list: [],
-      showType: 0, // 	1：合同 2:回款 0 不展示
-      /** 格式化规则 */
-      formatterRules: {},
+      showTable: false, // 	是否展示列表
       /** 合同列表 */
-      fieldContractList: [],
-      /** 回款字段列表 */
-      fieldReceivablesList: [],
+      fieldList: [],
       /** 详情查看 */
       rowID: '', // 行信息
       showContractDview: false,
@@ -127,15 +123,6 @@ export default {
     }
   },
   computed: {
-    fieldList() {
-      // 1：合同 2:回款 0 不展示
-      if (this.showType == 1) {
-        return this.fieldContractList
-      } else if (this.showType == 2) {
-        return this.fieldReceivablesList
-      }
-      return []
-    }
   },
   mounted() {
     this.dateSelect = moment(new Date())
@@ -190,7 +177,7 @@ export default {
     /** 获取部门业绩完成信息 */
     getAxisData() {
       this.loading = true
-      this.showType = 0 // table 不展示
+      this.showTable = false // table 不展示
       biReceivablesStatistics({
         year: this.dateSelect,
         deptId: this.structuresSelectValue,
@@ -317,29 +304,9 @@ export default {
       var self = this
       axisChart.on('click', function(params) {
         // 	1：合同 2:回款
-        if (params.seriesIndex === 0) {
-          // 回款金额
-          if (self.fieldReceivablesList.length === 0) {
-            self.getFieldList('receivables', () => {
-              self.showType = 2
-              self.getDataList(params.dataIndex + 1, 2)
-            })
-          } else {
-            self.showType = 2
-            self.getDataList(params.dataIndex + 1, 2)
-          }
-        } else if (params.seriesIndex === 1) {
-          // 合同金额
-          if (self.fieldContractList.length === 0) {
-            self.getFieldList('contract', () => {
-              self.showType = 1
-              self.getDataList(params.dataIndex + 1, 1)
-            })
-          } else {
-            self.showType = 1
-            self.getDataList(params.dataIndex + 1, 1)
-          }
-        }
+        self.getFieldList('contract', () => {
+          self.getDataList(params.dataIndex + 1)
+        })
       })
       this.axisOption = option
       this.axisChart = axisChart
@@ -349,9 +316,8 @@ export default {
       this.loading = true
       biReceivablesStatisticList({
         year: this.dateSelect,
-        structure_id: this.structuresSelectValue,
+        userId: this.structuresSelectValue,
         month: month,
-        type: type,
         userId: this.userSelectValue
       })
         .then(res => {
@@ -365,136 +331,31 @@ export default {
     /** 获取字段 */
     getFieldList(crmType, success) {
       this.loading = true
-      filedGetField({
-        types: 'crm_' + crmType,
-        module: 'crm',
-        controller: crmType,
-        action: 'index'
+      filedGetTableField({
+        label: crmTypeModel[crmType]
       })
         .then(res => {
+          this.showTable = true
           for (let index = 0; index < res.data.length; index++) {
-            const element = res.data[index]
-            /** 获取需要格式化的字段 和格式化的规则 */
-            if (element.formType === 'date') {
-              function fieldFormatter(time) {
-                if (time == '0000-00-00') {
-                  time = ''
-                }
-                return time
-              }
-              this.formatterRules[element.field] = {
-                formatter: fieldFormatter
-              }
-            } else if (element.formType === 'datetime') {
-              function fieldFormatter(time) {
-                if (time == 0 || !time) {
-                  return ''
-                }
-                return moment(getDateFromTimestamp(time)).format(
-                  'YYYY-MM-DD HH:mm:ss'
-                )
-              }
-              this.formatterRules[element.field] = {
-                formatter: fieldFormatter
-              }
-            } else if (element.field === 'create_user_id') {
-              function fieldFormatter(info) {
-                return info ? info.realname : ''
-              }
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: fieldFormatter
-              }
-            } else if (element.formType === 'user') {
-              function fieldFormatter(info) {
-                if (info) {
-                  var content = ''
-                  for (let index = 0; index < info.length; index++) {
-                    const element = info[index]
-                    content =
-                      content +
-                      element.realname +
-                      (index === info.length - 1 ? '' : ',')
-                  }
-                  return content
-                }
-                return ''
-              }
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: fieldFormatter
-              }
-            } else if (element.formType === 'structure') {
-              function fieldFormatter(info) {
-                if (info) {
-                  var content = ''
-                  for (let index = 0; index < info.length; index++) {
-                    const element = info[index]
-                    content =
-                      content +
-                      element.name +
-                      (index === info.length - 1 ? '' : ',')
-                  }
-                  return content
-                }
-                return ''
-              }
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: fieldFormatter
-              }
-              /** 联系人 客户 商机 */
-            } else if (
-              element.field === 'contacts_id' ||
-              element.field === 'customer_id' ||
-              element.field === 'business_id' ||
-              element.field === 'contract_id'
-            ) {
-              function fieldFormatter(info) {
-                return info ? info.name : ''
-              }
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: fieldFormatter
-              }
-            } else if (
-              element.field === 'status_id' ||
-              element.field === 'type_id' ||
-              element.field === 'category_id'
-            ) {
-              function fieldFormatter(info) {
-                return info ? info : ''
-              }
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: fieldFormatter
-              }
-            }
+              const element = res.data[index]
 
-            var width = 0
-            if (!element.width) {
-              if (element.name.length <= 6) {
-                width = element.name.length * 15 + 45
+              var width = 0
+              if (!element.width) {
+                if (element.name && element.name.length <= 6) {
+                  width = element.name.length * 15 + 45
+                } else {
+                  width = 140
+                }
               } else {
-                width = 140
+                width = element.width
               }
-            } else {
-              width = element.width
-            }
-            if (crmType === 'contract') {
-              this.fieldContractList.push({
-                prop: element.field,
-                label: element.name,
-                width: width
-              })
-            } else if (crmType === 'receivables') {
-              this.fieldReceivablesList.push({
-                prop: element.field,
+
+              this.fieldList.push({
+                prop: element.fieldName,
                 label: element.name,
                 width: width
               })
             }
-          }
           // 获取好字段开始请求数据
           success() // 回调成功
         })
@@ -502,33 +363,10 @@ export default {
           this.loading = false
         })
     },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
-    },
     /** 查看详情 */
     handleRowClick(row, column, event) {
-      // 	1：合同 2:回款
-      if (this.showType == 1) {
-        this.rowID = row.contract_id
+      this.rowID = row.contractId
         this.showContractDview = true
-      } else if (this.showType == 2) {
-        this.rowID = row.receivables_id
-        this.showMoneyDview = true
-      }
     }
   }
 }

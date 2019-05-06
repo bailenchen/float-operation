@@ -137,16 +137,34 @@ export default {
           var formInlineCopy = Object.assign({}, this.formInline)
           formInlineCopy = {
             mainUserId:
-              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].userId,
+              this.colleaguesList.length == 0
+                ? ''
+                : this.colleaguesList[0].userId,
             startTime: this.formInline.startTime,
             stopTime: this.formInline.stopTime,
             description: this.formInline.description,
             priority: this.formInline.priority,
             name: this.formInline.name,
-            customerIds: this.relevanceAll.customerIds ? this.relevanceAll.customerIds.join(',') : [],
-            contactsIds: this.relevanceAll.contactsIds ? this.relevanceAll.contactsIds.join(',') : [] ,
-            businessIds: this.relevanceAll.businessIds ? this.relevanceAll.businessIds.join(',') : [] ,
-            contractIds: this.relevanceAll.contractIds ? this.relevanceAll.contractIds.join(',') : [] 
+            customerIds:
+              this.relevanceAll.customerIds &&
+              this.relevanceAll.customerIds.length
+                ? ',' + this.relevanceAll.customerIds.join(',') + ','
+                : '',
+            contactsIds:
+              this.relevanceAll.contactsIds &&
+              this.relevanceAll.contactsIds.length
+                ? ',' + this.relevanceAll.contactsIds.join(',') + ','
+                : '',
+            businessIds:
+              this.relevanceAll.businessIds &&
+              this.relevanceAll.businessIds.length
+                ? ',' + this.relevanceAll.businessIds.join(',') + ','
+                : '',
+            contractIds:
+              this.relevanceAll.contractIds &&
+              this.relevanceAll.contractIds.length
+                ? ',' + this.relevanceAll.contractIds.join(',') + ','
+                : ''
           }
           this.$emit('dialogVisibleSubmit', formInlineCopy)
         } else {

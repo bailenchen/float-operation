@@ -295,7 +295,7 @@ export default {
         var isdoingIndex = 0
         for (let index = 0; index < statusList.length; index++) {
           const item = statusList[index]
-          if (statusId === 0) {
+          if (statusId == 0) {
             // 没有阶段一般不会有
             if (isEnd != 0) {
               // 状态已完成 展示灰色效果
@@ -308,7 +308,7 @@ export default {
             } else {
               item['class'] = 'state-undo'
             }
-          } else if (item.statusId === statusId) {
+          } else if (item.statusId == statusId) {
             item['class'] = 'state-suc'
             item['isdoing'] = true
             isdoing = true

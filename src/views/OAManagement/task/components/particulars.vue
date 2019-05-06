@@ -1104,10 +1104,22 @@ export default {
     checkInfos(val) {
       editTaskRelation({
         taskId: this.id,
-        customerIds: val.customerIds ? val.customerIds.join(',') : [],
-        contactsIds: val.contactsIds ? val.contactsIds.join(',') : [],
-        businessIds: val.businessIds ? val.businessIds.join(',') : [],
-        contractIds: val.contractIds ? val.contractIds.join(',') : []
+        customerIds:
+          val.customerIds && val.customerIds.length
+            ? ',' + val.customerIds.join(',') + ','
+            : '',
+        contactsIds:
+          val.contactsIds && val.contactsIds.length
+            ? ',' + val.contactsIds.join(',') + ','
+            : '',
+        businessIds:
+          val.businessIds && val.businessIds.length
+            ? ',' + val.businessIds.join(',') + ','
+            : '',
+        contractIds:
+          val.contractIds && val.contractIds.length
+            ? ',' + val.contractIds.join(',') + ','
+            : ''
       })
         .then(res => {
           this.$message.success('关联成功')

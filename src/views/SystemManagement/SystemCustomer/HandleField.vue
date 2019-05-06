@@ -42,7 +42,7 @@
                      @end="handleListMove">
             <component v-for="(item, index) in fieldArr"
                        :class="{selected: selectedIndex == index}"
-                       :isShow="selectedIndex == index && (item.isDel == null || item.isDel == 1)"
+                       :isShow="selectedIndex == index && (item.operating == null || item.operating == 0 || item.operating == 2)"
                        :key="index"
                        :attr="item"
                        :is="item | typeToComponentName"
@@ -114,7 +114,7 @@ export default {
       selectedIndex: -1,
       rejectHandle: true, // 请求未获取前不能操作
       /** 右边展示数据 */
-      form: null, // isDel 1 能编辑
+      form: null, // operating 0 改删 1改 2删 3无
       loading: false, // 加载动画
       // 展示表单预览
       tablePreviewData: { types: '', id: '' },
@@ -188,7 +188,10 @@ export default {
         .then(res => {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
-            if (element.formType == 'select' || element.formType == 'checkbox') {
+            if (
+              element.formType == 'select' ||
+              element.formType == 'checkbox'
+            ) {
               var temps = []
               for (let i = 0; i < element.setting.length; i++) {
                 // 必须有属性 才能for绑定 所以处理了下数据
@@ -321,7 +324,8 @@ export default {
           checkbox: 9,
           user: 10,
           structure: 12,
-          datetime:13
+          datetime: 13,
+          email: 14
         }[formType] || '0'
       )
     },

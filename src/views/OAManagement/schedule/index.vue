@@ -41,7 +41,7 @@
 import $ from 'jquery'
 import 'fullcalendar'
 import 'fullcalendar-scheduler'
-import 'fullcalendar/dist/locale/zh-cn.js'
+import zhLocal from 'fullcalendar/dist/locale/zh-cn'
 import createSchedule from './components/createSchedule'
 import VDetails from './components/details'
 // API
@@ -90,6 +90,7 @@ export default {
       $('#calendar').fullCalendar({
         height: document.documentElement.clientHeight - 101,
         nextDayThreshold: '00:00:00',
+        locale: zhLocal,
         dayClick: function(date, jsEvent, view) {
           _this.newText = '创建日程'
           _this.showDialog = true
