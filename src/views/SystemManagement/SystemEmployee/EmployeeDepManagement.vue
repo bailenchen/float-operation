@@ -233,6 +233,11 @@
             <el-select v-model="formInline[item.field]"
                        filterable
                        placeholder="请选择">
+              <el-option
+                         :key="0"
+                         label="请选择"
+                         :value="0">
+              </el-option>
               <el-option v-for="optionItem in optionsList[item.field].list"
                          :key="optionItem.id"
                          :label="optionItem.name"
