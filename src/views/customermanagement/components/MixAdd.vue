@@ -86,7 +86,7 @@
           <flexbox class="c-item"
                    v-for="(item, index) in contacts"
                    :key="index">
-            <div class="c-item-name">{{item.contactsName}}</div>
+            <div class="c-item-name">{{item.name}}</div>
             <div class="c-item-close"
                  @click="contacts.splice(index, 1)">×</div>
           </flexbox>

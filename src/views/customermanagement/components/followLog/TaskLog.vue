@@ -3,7 +3,7 @@
     <div v-empty="list.length === 0">
       <div class="log-items">
         <task-cell v-for="(item, index) in list"
-                   :data="item.dataInfo"
+                   :data="item"
                    :dataIndex="index"
                    :key="index"
                    @on-handle="taskCellHandle"></task-cell>
@@ -31,7 +31,7 @@
 import listTaskDetail from '@/views/OAManagement/task/mixins/listTaskDetail.js'
 import TaskCell from '@/views/OAManagement/task/components/taskCell' // 任务
 
-import { crmRecordIndex } from '@/api/customermanagement/common'
+import { crmQueryTaskRelation } from '@/api/customermanagement/common'
 import { getMaxIndex } from '@/utils'
 
 export default {
@@ -97,13 +97,9 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      crmRecordIndex({
-        page: this.page,
-        limit: 10,
-        types: 'crm_' + this.crmType,
-        types_id: this.id,
-        by: 'task' // 类型（record 跟进记录，log 日志、examine审批、task 任务、event日程、默认是全部）
-      })
+      let params = { page: this.page, limit: 10 }
+      params[this.crmType + 'Ids'] = this.id
+      crmQueryTaskRelation(params)
         .then(res => {
           this.list = this.list.concat(res.data.list)
           if (res.data.list.length < 10) {

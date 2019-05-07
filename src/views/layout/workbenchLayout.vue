@@ -33,8 +33,8 @@
                              @select="selcetExamineCategory"
                              @close="showCategorySelect=false"></examine-category-select>
     <examine-create-view v-if="isCreate"
-                         :category_id="createInfo.category_id"
-                         :category_title="createInfo.title"
+                         :categoryId="createInfo.categoryId"
+                         :categoryTitle="createInfo.title"
                          @hiden-view="isCreate = false"></examine-create-view>
   </el-container>
 </template>

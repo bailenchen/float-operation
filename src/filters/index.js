@@ -6,7 +6,7 @@ import {
 
 /**
  * 时间戳到格式化时间
- * {{item.create_time|filterTimestampToFormatTime('MM-DD dddd')}}
+ * {{item.createTime|filterTimestampToFormatTime('MM-DD dddd')}}
  * @param {*} time 
  * @param {*} cFormat 
  */

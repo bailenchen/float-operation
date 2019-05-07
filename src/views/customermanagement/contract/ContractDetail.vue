@@ -24,7 +24,7 @@
                       class="examine-info-border"
                       examineType="crm_contract"
                       :recordId="detailData.examineRecordId"
-                      :owner_user_id="detailData.ownerUserId">
+                      :ownerUserId="detailData.ownerUserId">
         </examine-info>
       </div>
       <div class="tabs">

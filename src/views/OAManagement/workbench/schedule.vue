@@ -21,7 +21,7 @@
              v-if="index < 1">
           <p class="list-title">{{item.title}}</p>
           <div>
-            <span class="time">{{item.start_time}} - {{item.end_time}}</span>
+            <span class="time">{{item.startTime}} - {{item.endTime}}</span>
             <span>{{item.realnames}}</span>
           </div>
         </div>

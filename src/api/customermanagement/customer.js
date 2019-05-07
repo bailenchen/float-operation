@@ -267,7 +267,7 @@ export function crmCustomerRecordIndex(data) {
  * 相关团队创建
  * @param {*} data
  * types crm_leads
- * types_id 分类ID
+ * typesId 分类ID
  */
 export function crmCustomerSettingTeamSave(data) {
   return request({

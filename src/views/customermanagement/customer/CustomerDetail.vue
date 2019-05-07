@@ -43,7 +43,7 @@
     </flexbox>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="customer"
-                       :action="{type: 'update', id: this.id, batch_id: detailData.batch_id}"
+                       :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
                        @save-success="editSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </slide-view>
@@ -186,9 +186,9 @@ export default {
           this.detailData = res.data
           // 负责人
           this.headDetails[0].value = res.data.客户级别
-          this.headDetails[1].value = res.data.deal_status
-          this.headDetails[2].value = res.data.owner_user_name
-          this.headDetails[3].value = res.data.update_time
+          this.headDetails[1].value = res.data.dealStatus
+          this.headDetails[2].value = res.data.ownerUserName
+          this.headDetails[3].value = res.data.updateTime
         })
         .catch(() => {
           this.loading = false

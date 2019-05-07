@@ -186,7 +186,7 @@ export default {
     id: [String, Number],
     // 审批流id
     recordId: [String, Number],
-    owner_user_id: [String, Number]
+    ownerUserId: [String, Number]
   },
   mounted() {},
   methods: {
@@ -203,7 +203,7 @@ export default {
 
       request({
         recordId: this.recordId,
-        ownerUserId: this.owner_user_id
+        ownerUserId: this.ownerUserId
       })
         .then(res => {
           this.loading = false

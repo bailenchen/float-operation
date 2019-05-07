@@ -166,7 +166,7 @@ export default {
       type: String,
       default: ''
     },
-    types_id: {
+    typesId: {
       type: [String, Number],
       default: ''
     },
@@ -190,7 +190,7 @@ export default {
       console.log('object---', this.$props);
       params.label = this.label
       if (this.types === 'oa_examine') {
-        params.examineId = this.types_id
+        params.examineId = this.typesId
       }
       customFieldList(params)
         .then(res => {

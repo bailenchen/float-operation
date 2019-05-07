@@ -139,10 +139,10 @@ export default {
       newList: [],
       /** 格式化规则 */
       formatterRules: {
-        product_id: fieldFormatter,
-        contract_id: fieldFormatter,
-        owner_user_id: fieldFormatter,
-        customer_id: fieldFormatter
+        productId: fieldFormatter,
+        contractId: fieldFormatter,
+        ownerUserId: fieldFormatter,
+        customerId: fieldFormatter
       },
       /** 控制详情展示 */
       showContractview: false,
@@ -183,14 +183,14 @@ export default {
           }
         }
       } else if (columnIndex == 1) {
-        if (item.product_rowspan == 0) {
+        if (item.productRowspan == 0) {
           return {
             rowspan: 0,
             colspan: 0
           }
         } else {
           return {
-            rowspan: item.product_rowspan,
+            rowspan: item.productRowspan,
             colspan: 1
           }
         }
@@ -212,32 +212,32 @@ export default {
     /** 列表操作 */
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      if (column.property === 'customer_id') {
+      if (column.property === 'customerId') {
         if (this.showProductview) {
           this.showProductview = false
         }
         if (this.showContractview) {
           this.showContractview = false
         }
-        this.rowID = row.customer_id
+        this.rowID = row.customerId
         this.showCustomerView = true
-      } else if (column.property === 'product_id') {
+      } else if (column.property === 'productId') {
         if (this.showCustomerView) {
           this.showCustomerView = false
         }
         if (this.showContractview) {
           this.showContractview = false
         }
-        this.rowID = row.product_id
+        this.rowID = row.productId
         this.showProductview = true
-      } else if (column.property === 'contract_id') {
+      } else if (column.property === 'contractId') {
         if (this.showProductview) {
           this.showProductview = false
         }
         if (this.showCustomerView) {
           this.showCustomerView = false
         }
-        this.rowID = row.contract_id
+        this.rowID = row.contractId
         this.showContractview = true
       }
     },
@@ -342,21 +342,21 @@ export default {
           allCount = parseFloat(element.productNum) // 系列
           allMoney = parseFloat(element.productSubtotal)
 
-          spanList.push({ rowspan: 1, product_rowspan: 1 })
+          spanList.push({ rowspan: 1, productRowspan: 1 })
           newList.push(element) // 真实数据
-        } else if (element.category_id != this.list[index - 1].category_id) {
+        } else if (element.categoryId != this.list[index - 1].categoryId) {
           // 系列改变时候的逻辑
           /** 上一个最后产品的处理 */
           var preItem = spanList[seriesIndex]
           preItem.rowspan += 1
           newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
-          spanList.push({ rowspan: 0, product_rowspan: 1, isSum: true }) // 产品小计style
+          spanList.push({ rowspan: 0, productRowspan: 1, isSum: true }) // 产品小计style
 
           newList.push({ productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
-          spanList.push({ rowspan: 1, product_rowspan: 1, isAllSum: true }) // 系列小计style
+          spanList.push({ rowspan: 1, productRowspan: 1, isAllSum: true }) // 系列小计style
 
           /*** 新系列开始 */
-          spanList.push({ rowspan: 1, product_rowspan: 1 }) // 新系列 新产品的 展示数据开始 style
+          spanList.push({ rowspan: 1, productRowspan: 1 }) // 新系列 新产品的 展示数据开始 style
           subCount = parseFloat(element.productNum) // 新产品的值 所以取消了重置为0
           subMoney = parseFloat(element.productSubtotal)
           allCount = parseFloat(element.productNum) // 系列
@@ -368,10 +368,10 @@ export default {
           var preItem = spanList[seriesIndex]
           preItem.rowspan += 1
           /*** 相同产品 */
-          if (element.product_id == this.list[index - 1].product_id) {
+          if (element.productId == this.list[index - 1].productId) {
             var preProItem = spanList[productIndex]
-            preProItem.product_rowspan += 1
-            spanList.push({ rowspan: 0, product_rowspan: 0 }) // 产品 非第一条数据的style
+            preProItem.productRowspan += 1
+            spanList.push({ rowspan: 0, productRowspan: 0 }) // 产品 非第一条数据的style
             subCount += parseFloat(element.productNum) // 产品
             subMoney += parseFloat(element.productSubtotal)
             allCount += parseFloat(element.productNum) // 系列
@@ -383,9 +383,9 @@ export default {
             preItem.rowspan += 1
 
             newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
-            spanList.push({ rowspan: 0, product_rowspan: 1, isSum: true }) // 产品小计Style
+            spanList.push({ rowspan: 0, productRowspan: 1, isSum: true }) // 产品小计Style
 
-            spanList.push({ rowspan: 0, product_rowspan: 1 }) // 新产品 第一条数据style
+            spanList.push({ rowspan: 0, productRowspan: 1 }) // 新产品 第一条数据style
             productIndex = spanList.length - 1 //一个新产品的开始=
             subCount = parseFloat(element.productNum)
             subMoney = parseFloat(element.productSubtotal) //开始了一个新的产品  所以没有 清空数据
@@ -402,12 +402,12 @@ export default {
           newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
           subCount = 0
           subMoney = 0 // 完成一个产品统计 清空数据
-          spanList.push({ rowspan: 0, product_rowspan: 1, isSum: true }) // 产品小计style
+          spanList.push({ rowspan: 0, productRowspan: 1, isSum: true }) // 产品小计style
 
           newList.push({ productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
           allCount = 0
           allMoney = 0 // 完成一个系列统计 清空数据
-          spanList.push({ rowspan: 1, product_rowspan: 1, isAllSum: true }) // 系列小计style
+          spanList.push({ rowspan: 1, productRowspan: 1, isAllSum: true }) // 系列小计style
         }
       }
 

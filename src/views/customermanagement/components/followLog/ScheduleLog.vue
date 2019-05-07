@@ -4,7 +4,7 @@
       <div class="log-items">
         <follow-schedule-cell v-for="(item, index) in list"
                               :key="index"
-                              :data="item.dataInfo"
+                              :data="item"
                               @on-handle="examineCellHandle"></follow-schedule-cell>
         <div class="load">
           <el-button type="text"
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { crmRecordIndex } from '@/api/customermanagement/common'
+import { crmQueryEventRelation } from '@/api/customermanagement/common'
 import FollowScheduleCell from './components/FollowScheduleCell'
 import { scheduleDelete } from '@/api/oamanagement/schedule'
 import CreateSchedule from '@/views/OAManagement/schedule/components/createSchedule'
@@ -105,13 +105,9 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      crmRecordIndex({
-        page: this.page,
-        limit: 10,
-        types: 'crm_' + this.crmType,
-        types_id: this.id,
-        by: 'event' // 类型（record 跟进记录，log 日志、examine审批、task 任务、event日程、默认是全部）
-      })
+      let params = { page: this.page, limit: 10 }
+      params[this.crmType + 'Ids'] = this.id
+      crmQueryEventRelation(params)
         .then(res => {
           this.list = this.list.concat(res.data.list)
           if (res.data.list.length < 10) {
@@ -137,11 +133,11 @@ export default {
       if (data.type == 'edit') {
         this.newText = '编辑日程'
         let val = data.data.item
-        val.start_time = val.start_time * 1000
-        val.end_time = val.end_time * 1000
-        val.owner_user_ids = []
+        val.startTime = val.startTime * 1000
+        val.endTime = val.endTime * 1000
+        val.ownerUserIds = []
         for (let k of val.ownerList) {
-          val.owner_user_ids.push(k.owner_id)
+          val.ownerUserIds.push(k.userId)
         }
         this.formData = val
         this.showDialog = true
@@ -152,7 +148,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            scheduleDelete({ event_id: data.data.item.event_id }).then(res => {
+            scheduleDelete({ eventId: data.data.item.eventId }).then(res => {
               this.refreshList()
               this.$message({
                 type: 'success',
@@ -167,7 +163,7 @@ export default {
             })
           })
       } else if (data.type == 'related-detail') {
-        this.rowID = data.data.item[data.data.type + '_id']
+        this.rowID = data.data.item[data.data.type + 'Id']
         this.detailCRMType = data.data.type
         this.showFullDetail = true
       }

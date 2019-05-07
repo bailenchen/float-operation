@@ -1,20 +1,21 @@
 <template>
   <div class="fl-c">
     <flexbox class="fl-h">
-      <div v-photo="data.create_user_info"
-           v-lazy:background-image="$options.filters.filterUserLazyImg(data.create_user_info.img)"
+      <div v-photo="data.createUser"
+           v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)"
            class="div-photo fl-h-img"></div>
       <div class="fl-h-b">
-        <div class="fl-h-name">{{data.create_user_info.realname}}</div>
-        <div class="fl-h-time">{{data.create_time|filterTimestampToFormatTime}}</div>
+        <div class="fl-h-name">{{data.createUser.realname}}</div>
+        <div class="fl-h-time">{{data.createTime}}</div>
       </div>
       <el-dropdown @command="handleCommand"
+                    v-if="data.permission && (data.permission.isUpdate == 1 || data.permission.isDelete == 1)"
                    trigger="click">
         <i style="color:#CDCDCD;"
            class="el-icon-arrow-down el-icon-more"></i>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="edit">编辑</el-dropdown-item>
-          <el-dropdown-item command="delete">删除</el-dropdown-item>
+          <el-dropdown-item command="edit" v-if="data.permission && data.permission.isUpdate == 1">编辑</el-dropdown-item>
+          <el-dropdown-item command="delete" v-if="data.permission && data.permission.isDelete == 1">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </flexbox>
@@ -45,11 +46,11 @@
         </flexbox>
         <flexbox class="fl-b-des-item">
           <div class="fl-b-des-item-name">开始时间：</div>
-          <div>{{data.start_time | moment("YYYY-MM-DD HH:mm:ss")}}</div>
+          <div>{{data.startTime}}</div>
         </flexbox>
         <flexbox class="fl-b-des-item">
           <div class="fl-b-des-item-name">结束时间：</div>
-          <div>{{data.end_time | moment("YYYY-MM-DD HH:mm:ss")}}</div>
+          <div>{{data.endTime}}</div>
         </flexbox>
         <flexbox class="fl-b-des-item">
           <div class="fl-b-des-item-name">备注：</div>
@@ -72,14 +73,14 @@
            @click="checkRelatedDetail('customer',customer)">
           <img src="@/assets/img/relevance_business.png"
                alt="">
-          客户-{{customer.name}}
+          客户-{{customer.customerName}}
         </p>
         <p v-for="(business, i) in data.businessList"
            :key="'business' + i"
            @click="checkRelatedDetail('business',business)">
           <img src="@/assets/img/relevance_business.png"
                alt="">
-          商机-{{business.name}}
+          商机-{{business.businessName}}
         </p>
         <p v-for="(contract, i) in data.contractList"
            :key="'contract' + i"

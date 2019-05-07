@@ -93,7 +93,7 @@
     <!-- 表单预览 -->
     <preview-field-view v-if="showTablePreview"
                         :types="tablePreviewData.types"
-                        :types_id="tablePreviewData.typesId"
+                        :typesId="tablePreviewData.typesId"
                         @hiden-view="showTablePreview=false"></preview-field-view>
   </slide-view>
 </template>

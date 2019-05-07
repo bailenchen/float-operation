@@ -54,6 +54,7 @@
                     @close="showExamineHandle = false"
                     @save="searchBtn"
                     :id="rowID"
+                    :recordId="rowData.examineRecordId"
                     examineType="oa_examine"
                     status="2"></examine-handle>
   </div>
@@ -86,6 +87,7 @@ export default {
       page: 1,
       /** 控制详情展示 */
       rowID: '', // 行信息
+      rowData: {}, // 行全部信息
       showDview: false,
       // 相关详情的查看
       relatedID: '',
@@ -240,6 +242,7 @@ export default {
       } else if (data.type == 'view') {
         this.showRelatedDetail = false
         this.rowID = data.data.item.examineId
+        this.rowData = data.data.item
         this.showDview = true
       } else if (data.type == 'related-detail') {
         this.showDview = false

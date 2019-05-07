@@ -164,10 +164,37 @@ export function crmFieldColumnWidth(data) {
   })
 }
 
-// 跟进记录列表
-export function crmRecordIndex(data) {
+// 查询关联日志
+export function crmQueryLogRelation(data) {
   return request({
-    url: 'admin/record/index',
+    url: 'OaLog/queryLogRelation',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询关联日程
+export function crmQueryEventRelation(data) {
+  return request({
+    url: 'OaEvent/queryEventRelation',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询关联任务
+export function crmQueryTaskRelation(data) {
+  return request({
+    url: 'task/queryTaskRelation',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询关联审批
+export function crmQueryExamineRelation(data) {
+  return request({
+    url: 'OaExamine/queryExamineRelation',
     method: 'post',
     data: data
   })
@@ -213,7 +240,7 @@ export function crmCreateExamineFlow(data) {
  * 审批记录
  * @param {*} data
  * types
- * types_id
+ * typesId
  */
 export function crmExamineFlowRecordList(data) {
   return request({
@@ -249,7 +276,7 @@ export function crmExamineFlowUserList(data) {
  * 相关团队列表
  * @param {*} data
  * types crm_leads
- * types_id 分类ID
+ * typesId 分类ID
  */
 export function crmSettingTeam(data) {
   return request({
@@ -263,7 +290,7 @@ export function crmSettingTeam(data) {
  * 相关团队创建
  * @param {*} data
  * types crm_leads
- * types_id 分类ID
+ * typesId 分类ID
  */
 export function crmSettingTeamSave(data) {
   return request({
@@ -277,7 +304,7 @@ export function crmSettingTeamSave(data) {
  * 相关团队列表
  * @param {*} data
  * types crm_leads
- * types_id 分类ID
+ * typesId 分类ID
  */
 export function crmMainIndex(data) {
   return request({

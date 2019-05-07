@@ -4,7 +4,7 @@
       <div class="log-items">
         <examine-cell v-for="(item, index) in list"
                       :key="index"
-                      :data="item.dataInfo"
+                      :data="item"
                       @on-handle="examineCellHandle"></examine-cell>
         <div class="load">
           <el-button type="text"
@@ -19,8 +19,8 @@
                     examineType="oa_examine"
                     status="2"></examine-handle>
     <examine-create-view v-if="isCreate"
-                         :category_id="createInfo.category_id"
-                         :category_title="createInfo.title"
+                         :categoryId="createInfo.categoryId"
+                         :categoryTitle="createInfo.title"
                          :action="createAction"
                          @save-success="refreshList"
                          @hiden-view="isCreate=false"></examine-create-view>
@@ -33,7 +33,7 @@
 <script>
 import ExamineCell from '@/views/OAManagement/examine/components/examineCell' // 跟进记录
 import ExamineCreateView from '@/views/OAManagement/examine/components/examineCreateView'
-import { crmRecordIndex } from '@/api/customermanagement/common'
+import { crmQueryExamineRelation } from '@/api/customermanagement/common'
 import { oaExamineDelete } from '@/api/oamanagement/examine'
 import { formatTimeToTimestamp } from '@/utils'
 
@@ -110,13 +110,9 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      crmRecordIndex({
-        page: this.page,
-        limit: 10,
-        types: 'crm_' + this.crmType,
-        types_id: this.id,
-        by: 'examine' // 类型（record 跟进记录，log 日志、examine审批、task 任务、event日程、默认是全部）
-      })
+      let params = { page: this.page, limit: 10 }
+      params[this.crmType + 'Ids'] = this.id
+      crmQueryExamineRelation(params)
         .then(res => {
           this.list = this.list.concat(res.data.list)
           if (res.data.list.length < 10) {
@@ -140,11 +136,11 @@ export default {
     examineCellHandle(data) {
       // 编辑
       if (data.type == 'edit') {
-        data.data.item.title = data.data.item.category_name
+        data.data.item.title = data.data.item.categoryName
         this.createInfo = data.data.item
         this.createAction = {
           type: 'update',
-          id: data.data.item.examine_id,
+          id: data.data.item.examineId,
           data: data.data.item
         }
         this.isCreate = true
@@ -157,7 +153,7 @@ export default {
         })
           .then(() => {
             oaExamineDelete({
-              examineId: data.data.item.examine_id
+              examineId: data.data.item.examineId
             }).then(res => {
               this.refreshList()
               this.$message({
@@ -174,15 +170,15 @@ export default {
           })
         // 撤回
       } else if (data.type == 'withdraw') {
-        this.rowID = data.data.item.examine_id
+        this.rowID = data.data.item.examineId
         this.showExamineHandle = true
         // 详情
       } else if (data.type == 'view') {
         this.detailCRMType = 'examine'
-        this.rowID = data.data.item.examine_id
+        this.rowID = data.data.item.examineId
         this.showFullDetail = true
       } else if (data.type == 'related-detail') {
-        this.rowID = data.data.item[data.data.type + '_id']
+        this.rowID = data.data.item[data.data.type + 'Id']
         this.detailCRMType = data.data.type
         this.showFullDetail = true
       }

@@ -65,7 +65,7 @@
     <!-- 表单预览 -->
     <preview-field-view v-if="showTablePreview"
                         :types="tablePreviewData.type"
-                        :types_id="tablePreviewData.id"
+                        :typesId="tablePreviewData.id"
                         :label="tablePreviewData.label"
                         @hiden-view="showTablePreview=false"></preview-field-view>
   </flexbox>

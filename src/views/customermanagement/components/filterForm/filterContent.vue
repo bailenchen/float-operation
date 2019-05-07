@@ -69,9 +69,9 @@ export default {
     },
     // 商机组展示名称
     getTypesName(data) {
-      if (data.type_id) {
+      if (data.typeId) {
         let obj = data.typeOption.find(item => {
-          return item.type_id === data.type_id
+          return item.typeId === data.typeId
         })
         return obj.name || ''
       }
@@ -79,9 +79,9 @@ export default {
     },
     // 商机阶段展示名称
     getStatusName(data) {
-      if (data.status_id) {
+      if (data.statusId) {
         let obj = data.statusOption.find(item => {
-          return item.status_id === data.status_id
+          return item.statusId === data.statusId
         })
         if (obj.name) {
           return '-' + obj.name

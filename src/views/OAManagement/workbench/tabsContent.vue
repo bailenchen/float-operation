@@ -17,9 +17,9 @@
             <p class="name-behavior">
               <span class="name"
                     v-if="item.createUser.realname">{{item.createUser.realname}}</span>
-              <span class="behavior">{{item.action_content}}</span>
+              <span class="behavior">{{item.actionContent}}</span>
             </p>
-            <p class="time">{{item.create_time}}</p>
+            <p class="time">{{item.createTime}}</p>
           </div>
           <div class="log-title">
             <img v-if="item.type == 1"
@@ -33,7 +33,7 @@
             <img v-else-if="item.type == 5"
                  class="img-5"
                  src="@/assets/img/work_examine.png">
-            <span class="type-name">{{item.type_name}}</span>
+            <span class="type-name">{{item.typeName}}</span>
           </div>
           <div class="title"
                v-if="item.title">
@@ -130,7 +130,7 @@ export default {
             this.dialogVisible = true
             this.scheduleData = val
             let list = []
-            list.push(val.start_time, val.end_time)
+            list.push(val.startTime, val.endTime)
             this.scheduleData.time = list
             this.showScheduleDetails = true
           }
@@ -141,7 +141,7 @@ export default {
             this.dialog = true
             this.titleList = {
               title: val.title,
-              create_time: val.create_time,
+              createTime: val.createTime,
               content: val.annContent
             }
           }
@@ -149,14 +149,14 @@ export default {
         // 任务
         case 4:
           {
-            this.taskID = val.action_id
+            this.taskID = val.actionId
             this.taskDetailShow = true
           }
           break
         // 审批
         case 5:
           {
-            this.examineData = { id: val.action_id }
+            this.examineData = { id: val.actionId }
             this.showExamine = true
           }
           break

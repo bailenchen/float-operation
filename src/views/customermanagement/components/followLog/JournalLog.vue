@@ -5,7 +5,7 @@
         <journal-cell v-for="(item, index) in list"
                       :key="index"
                       class="list-cell"
-                      :data="item.dataInfo"
+                      :data="item"
                       @on-handle="jourecallCellHandle"></journal-cell>
         <div class="load">
           <el-button type="text"
@@ -32,7 +32,7 @@
 // API
 import { journalDelete, journalEdit } from '@/api/oamanagement/journal'
 import JournalCell from '@/views/OAManagement/journal/journalCell' // 办公日志
-import { crmRecordIndex } from '@/api/customermanagement/common'
+import { crmQueryLogRelation } from '@/api/customermanagement/common'
 import { formatTimeToTimestamp } from '@/utils'
 
 export default {
@@ -114,31 +114,27 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      crmRecordIndex({
-        page: this.page,
-        limit: 10,
-        types: 'crm_' + this.crmType,
-        types_id: this.id,
-        by: 'log' // 类型（record 跟进记录，log 日志、examine审批、task 任务、event日程、默认是全部）
-      })
+      let params = { page: this.page, limit: 10 }
+      params[this.crmType + 'Ids'] = this.id
+      crmQueryLogRelation(params)
         .then(res => {
-          for (let item of res.data.list) {
-            item.dataInfo.allData = {}
-            item.dataInfo.allData.business = item.dataInfo.businessList
-            item.dataInfo.allData.contacts = item.dataInfo.contactsList
-            item.dataInfo.allData.contract = item.dataInfo.contractList
-            item.dataInfo.allData.customer = item.dataInfo.customerList
-            if (
-              item.dataInfo.businessList.length != 0 ||
-              item.dataInfo.contactsList.length != 0 ||
-              item.dataInfo.contractList.length != 0 ||
-              item.dataInfo.customerList.length != 0
-            ) {
-              item.dataInfo.allDataShow = true
-            } else {
-              item.dataInfo.allDataShow = false
-            }
-          }
+          // for (let item of res.data.list) {
+          //   item.dataInfo.allData = {}
+          //   item.dataInfo.allData.business = item.dataInfo.businessList
+          //   item.dataInfo.allData.contacts = item.dataInfo.contactsList
+          //   item.dataInfo.allData.contract = item.dataInfo.contractList
+          //   item.dataInfo.allData.customer = item.dataInfo.customerList
+          //   if (
+          //     item.dataInfo.businessList.length != 0 ||
+          //     item.dataInfo.contactsList.length != 0 ||
+          //     item.dataInfo.contractList.length != 0 ||
+          //     item.dataInfo.customerList.length != 0
+          //   ) {
+          //     item.dataInfo.allDataShow = true
+          //   } else {
+          //     item.dataInfo.allDataShow = false
+          //   }
+          // }
           this.list = this.list.concat(res.data.list)
           if (res.data.list.length < 10) {
             this.loadMoreLoading = false

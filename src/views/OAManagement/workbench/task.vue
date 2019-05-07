@@ -126,7 +126,7 @@ export default {
     // 列表标记任务
     taskOverFun(item, index) {
       editTask({
-        taskId: item.task_id,
+        taskId: item.taskId,
         status: item.checked ? 5 : 1
       })
         .then(res => {
