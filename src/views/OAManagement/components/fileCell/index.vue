@@ -49,7 +49,7 @@ export default {
   mounted() {},
   methods: {
     downloadClick() {
-      downloadFile({ path: this.data.file_path, name: this.data.name })
+      downloadFile({ path: this.data.filePath, name: this.data.name })
     },
     deleteClick() {
       this.$confirm('确定删除?', '提示', {

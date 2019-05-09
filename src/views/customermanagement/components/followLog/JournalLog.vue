@@ -164,7 +164,7 @@ export default {
         this.imgFileList = []
         if (val.imgList) {
           for (let item of val.imgList) {
-            item.url = item.file_path_thumb
+            item.url = item.filePath
             this.imgFileList.push(item)
           }
         }
@@ -172,7 +172,7 @@ export default {
         this.accessoryFileList = []
         if (val.fileList) {
           for (let item of val.fileList) {
-            item.url = item.file_path_thumb
+            item.url = item.filePath
             this.accessoryFileList.push(item)
           }
         }

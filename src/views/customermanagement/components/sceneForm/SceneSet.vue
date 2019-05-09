@@ -16,7 +16,7 @@
           <div class="scene-list-head-detail">{{leftCheckItems.length + '/' + checkedLeftData.length}}</div>
         </flexbox>
         <div class="scene-list-body">
-          <flexbox v-if="item.type == 1"
+          <flexbox v-if="item.isSystem == 1"
                    class="list-item"
                    v-for="(item, index) in checkedLeftData"
                    :key="index">
@@ -42,7 +42,7 @@
                      @end="leftMoveEnd"
                      :move="leftMove"
                      :options="{group: 'list',forceFallback:false, fallbackClass:'draggingStyle'}">
-            <flexbox v-if="item.type != 1"
+            <flexbox v-if="item.isSystem != 1"
                      class="list-item"
                      v-for="(item, index) in checkedLeftData"
                      :key="index">

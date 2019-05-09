@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="新建场景"
+  <el-dialog :title="edit_id ? '编辑场景' : '新建场景'"
              :visible.sync="visible"
              @close="handleCancel"
              :append-to-body="true"
@@ -442,11 +442,11 @@ export default {
             name: o.fieldName
           }
         } else if (o.formType == 'user') {
-          console.log('o.value---', o.value);
           obj[o.fieldName] = {
             condition: o.condition,
-            value: o.value[0].userID,
+            value: o.value[0].userId,
             formType: o.formType,
+            setting: o.value[0],
             name: o.fieldName
           }
         } else {

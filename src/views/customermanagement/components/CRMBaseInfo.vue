@@ -229,7 +229,7 @@ export default {
     handleFile(type, item, index) {
       if (type === 'preview') {
         var previewList = item.value.map(element => {
-          element.url = element.file_path
+          element.url = element.filePath
           return element
         })
         this.$bus.emit('preview-image-bus', {
@@ -237,7 +237,7 @@ export default {
           data: previewList
         })
       } else if (type === 'download') {
-        downloadFile({ path: item.file_path, name: item.name })
+        downloadFile({ path: item.filePath, name: item.name })
       }
     }
   }

@@ -182,6 +182,7 @@
     <preview-field-view v-if="showTablePreview"
                         :types="tablePreviewData.types"
                         :typesId="tablePreviewData.typesId"
+                        :label="tablePreviewData.label"
                         @hiden-view="showTablePreview=false"></preview-field-view>
   </div>
 </template>
@@ -581,7 +582,7 @@ export default {
           }
         })
       } else if (type == 'preview') {
-        this.tablePreviewData.types = item.types
+        this.tablePreviewData = item
         this.showTablePreview = true
       }
     },

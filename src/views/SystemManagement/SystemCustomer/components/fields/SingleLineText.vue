@@ -4,7 +4,7 @@
       <span>{{attr.isNull ? '*' : ''}}</span>{{attr.name}}<span v-if="attr.inputTips">{{'（'+attr.inputTips+'）'}}</span>
     </div>
     <div class="box">
-      <span class="default-val">{{attr.defaultValue}}</span>
+      <span class="default-val">{{typeof attr.defaultValue == 'string' ? attr.defaultValue : ''}}</span>
     </div>
     <span class="el-icon-delete control"
           @click="handleDelete"

@@ -12,7 +12,7 @@
           <p class="row-title">
             <span class="name">{{data.createUser.realname}}</span>
             <span v-if="showWorkbench"
-                  class="item-content">{{data.action_content}}</span>
+                  class="item-content">{{data.actionContent}}</span>
             <span v-else
                   class="read"
                   :style="{'color': data.isRead == 0 ? '#3E84E9' : '#ccc'}">{{data.isRead == 0 ? '未读' : '已读'}}</span>
@@ -97,10 +97,10 @@
         </div>
       </div>
       <!-- 关联业务 -->
-      <related-business v-if="data.allDataShow"
+      <related-business v-if="allDataShow"
                         :marginLeft="'0'"
                         :alterable="false"
-                        :allData="data.allData"
+                        :allData="allData"
                         @checkRelatedDetail="checkRelatedDetail">
       </related-business>
       <!-- 评论 -->
@@ -126,7 +126,7 @@
           </p>
 
           <!-- <p class="discuss-content"
-             v-html="emoji(discussItem.reply_content)"></p> -->
+             v-html="emoji(discussItem.replyContent)"></p> -->
 
           <div class="children-reply"
                v-if="discussItem.childCommentList && discussItem.childCommentList.length > 0">
@@ -224,9 +224,7 @@
 <script type="text/javascript">
 import emoji from '@/components/emoji'
 // API
-import {
-  journalSetread
-} from '@/api/oamanagement/journal'
+import { journalSetread } from '@/api/oamanagement/journal'
 
 import {
   setCommentAPI,
@@ -249,7 +247,27 @@ export default {
   },
   mixins: [],
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    allData() {
+      let allData = {}
+      allData.business = this.data.businessList
+      allData.contacts = this.data.contactsList
+      allData.contract = this.data.contractList
+      allData.customer = this.data.customerList
+      return allData
+    },
+    allDataShow() {
+      if (
+        this.data.businessList.length != 0 ||
+        this.data.contactsList.length != 0 ||
+        this.data.contractList.length != 0 ||
+        this.data.customerList.length != 0
+      ) {
+        return true
+      } else {
+        return false
+      }
+    }
   },
   watch: {},
   data() {

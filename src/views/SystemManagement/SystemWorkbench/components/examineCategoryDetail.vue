@@ -41,7 +41,7 @@
               </flexbox>
               <flexbox class="content-items">
                 <div class="content-items-name">审批说明</div>
-                <div class="content-items-value">{{showData.remark}}</div>
+                <div class="content-items-value">{{showData.remarks}}</div>
               </flexbox>
             </div>
           </div>
@@ -56,7 +56,7 @@
         </create-sections>
         <create-sections title="流程"
                          class="create-sections">
-          <div v-if="showData.config == 1"
+          <div v-if="showData.examineType == 1"
                class="create-sections-content">
             <flexbox v-for="(item, index) in showData.stepList"
                      :key="index"
@@ -93,6 +93,7 @@
     <!-- 表单预览 -->
     <preview-field-view v-if="showTablePreview"
                         :types="tablePreviewData.types"
+                        label="10"
                         :typesId="tablePreviewData.typesId"
                         @hiden-view="showTablePreview=false"></preview-field-view>
   </slide-view>
@@ -197,7 +198,7 @@ export default {
               this.hideView()
               this.$message({
                 type: 'success',
-                message: res.data
+                message: '操作成功'
               })
             })
             .catch(() => {})
@@ -235,7 +236,7 @@ export default {
               this.$emit('refresh')
               this.$message({
                 type: 'success',
-                message: res.data
+                message: '操作成功'
               })
             })
             .catch(() => {
