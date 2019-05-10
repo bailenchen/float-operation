@@ -187,7 +187,6 @@ export default {
       // 获取自定义字段的更新时间
       var params = {}
       var params = {}
-      console.log('object---', this.$props);
       params.label = this.label
       if (this.types === 'oa_examine') {
         params.examineId = this.typesId

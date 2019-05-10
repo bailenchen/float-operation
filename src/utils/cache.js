@@ -7,7 +7,6 @@ const cache = {
    * 载入全部登陆信息
    */
   loadingCache: function () {
-    console.log('loadingCache---', Lockr.get('Admin-Token'));
     if (Lockr.get('Admin-Token') && !axios.defaults.headers['Admin-Token']) {
       /** 将用户信息放入缓存 */
       const userInfo = Lockr.get('loginUserInfo')

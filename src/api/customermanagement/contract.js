@@ -30,15 +30,6 @@ export function crmContractDelete(data) {
   })
 }
 
-// crm 更新
-export function crmContractUpdate(data) {
-  return request({
-    url: 'crm/contract/update',
-    method: 'post',
-    data: data
-  })
-}
-
 // crm 详情
 export function crmContractRead(data) {
   return request({
@@ -60,36 +51,6 @@ export function crmReceivablesPlanSave(data) {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
-  })
-}
-
-/**
- * 合同审核
- * @param {*} data
- * id
- * status 1通过0拒绝
- * content
- */
-export function crmContractCheck(data) {
-  return request({
-    url: 'crm/contract/check',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 合同撤回审核
- * @param {*} data
- * id
- * status 1通过 0拒绝
- * 0失败，1通过，2撤回，3创建，4待审核 状态信息
- */
-export function crmContractRevokeCheck(data) {
-  return request({
-    url: 'crm/contract/revokeCheck',
-    method: 'post',
-    data: data
   })
 }
 
@@ -162,8 +123,6 @@ export function crmContractRecordIndex(data) {
 /**
  * 相关团队创建
  * @param {*} data
- * types crm_leads
- * typesId 分类ID
  */
 export function crmContractSettingTeamSave(data) {
   return request({

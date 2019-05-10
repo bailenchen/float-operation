@@ -264,8 +264,6 @@ export default {
     fieldValueChange(data) {
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
-      console.log('data.value---', data.value)
-      console.log('item.value---', item.value)
       //商机下处理商机状态
       if (this.crmType == 'business' && item.data.formType == 'business_type') {
         //找到阶段数据
@@ -376,9 +374,7 @@ export default {
               // 如果是回款 改变回款样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
-                console.log('item.value---', item.value)
                 var contractItem = item.value[0]
-                console.log('contractItem---', contractItem)
                 contractItem['moduleType'] = 'contract'
                 element['relation'] = contractItem
               } else {
@@ -865,7 +861,6 @@ export default {
     },
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
-      console.log('element---', element)
       if (
         element.key == 'customerId' ||
         element.key == 'contactsId' ||
@@ -893,7 +888,6 @@ export default {
         }
         return ''
       } else if (element.key == 'categoryId') {
-        console.log('element.key ---', element.key)
         if (element.value && element.value.length > 0) {
           return element.value[element.value.length - 1]
         }

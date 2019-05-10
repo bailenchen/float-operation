@@ -79,7 +79,6 @@ export default {
   methods: {
     /** 选中 */
     checkInfos(data) {
-      console.log('data---', data);
       this.dataValue = data.data ? data.data : []
       this.$emit('value-change', {
         index: this.index,

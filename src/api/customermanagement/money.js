@@ -12,21 +12,9 @@ export function crmReceivablesSave(data) {
   })
 }
 
-// crm 回款编辑
-export function crmReceivablesUpdate(data) {
-  return request({
-    url: 'crm/receivables/Update',
-    method: 'post',
-    data: data
-  })
-}
-
 /**
  * 回款列表
  * @param {*} data
- * page 页码
- * limit 每页数量
- * search 普通搜索
  */
 export function crmReceivablesIndex(data) {
   return request({
@@ -99,4 +87,3 @@ export function crmReceivablesRevokeCheck(data) {
     data: data
   })
 }
-

@@ -176,7 +176,6 @@ export default {
             rates.push(element.rate)
             this.list.push(element)
           }
-          console.log('receivabless---', receivabless, achiements);
           this.axisOption.series[0].data = receivabless
           this.axisOption.series[1].data = achiements
           this.axisOption.series[2].data = rates

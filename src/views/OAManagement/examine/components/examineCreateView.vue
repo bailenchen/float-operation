@@ -445,7 +445,6 @@ export default {
                   ]
                   for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
                     const key = keys[keyIndex]
-                    console.log('item[key]---', item[key], key, item)
                     if (!item[key]) {
                       hasError = true
                       this.$message.error('请完善明细')
@@ -594,7 +593,6 @@ export default {
           var params = {}
 
           if (this.action.type == 'update') {
-            console.log('item.value---', item.value)
             let list = item.value.map(function(element, index, array) {
               if (element.img) {
                 element.imgList = element.img.map(function(file, index, array) {
@@ -629,7 +627,7 @@ export default {
           if (this.action.type == 'update') {
             params['value'] = item.value // 编辑的值 在value字段
           } else {
-            params['value'] = item.defaultValue ? item.defaultValue : item.value // 加入默认值 可能编辑的时候需要调整
+            params['value'] = item.defaultValue || '' // 加入默认值 可能编辑的时候需要调整
           }
           params['key'] = item.fieldName || item.name
           params['data'] = item
@@ -641,7 +639,7 @@ export default {
           if (this.action.type == 'update') {
             params['value'] = item.value // 编辑的值 在value字段
           } else {
-            params['value'] = item.defaultValue ? item.defaultValue : item.value // 加入默认值 可能编辑的时候需要调整
+            params['value'] = item.defaultValue || '' // 加入默认值 可能编辑的时候需要调整
           }
           params['key'] = item.fieldName || item.name
           params['data'] = item

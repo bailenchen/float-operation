@@ -177,7 +177,6 @@ export default {
     },
     // 计算总价
     calculateToal() {
-      console.log('---productList', 123)
       var totalPrice = 0.0
       for (var i = 0; i < this.productList.length; i++) {
         var item = this.productList[i]
@@ -193,12 +192,10 @@ export default {
     },
     // 删除操作
     removeItem(index) {
-      console.log('removeItem---', this.productList)
       this.productList.splice(index, 1)
       this.calculateToal()
     },
     updateValue() {
-      console.log('this.productList--updateValue-', this.productList)
       this.valueChange({
         product: this.productList,
         totalPrice: this.totalPrice,

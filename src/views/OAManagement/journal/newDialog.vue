@@ -333,7 +333,6 @@ export default {
       }
     },
     beforeRemove(file, fileList) {
-      console.log('file---', file);
       if (file.response || file.fileId) {
         let fileId
         if (file.response) {

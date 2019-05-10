@@ -233,6 +233,8 @@ export default {
         return [
           { name: '姓名', field: 'name', formType: 'contacts' },
           { name: '手机', field: 'mobile', formType: 'mobile' },
+          { name: '电话', field: 'telephone', formType: 'text' },
+          { name: '是否关键决策人', field: '是否关键决策人', formType: 'text' },
           { name: '职务', field: 'post', formType: 'text' }
         ]
       } else if (this.crmType === 'business') {
@@ -290,7 +292,6 @@ export default {
           params[this.action.data.moduleType + 'Id'] = this.action.data[
             this.action.data.moduleType + 'Id'
           ]
-          console.log('params---', params, this.action.data)
           if (this.action.data.params) {
             for (let field in this.action.data.params) {
               params[field] = this.action.data.params[field]
@@ -304,8 +305,7 @@ export default {
           search: this.searchContent,
           type: crmTypeModel[this.crmType]
         }
-      }
-      console.log('crmIndexRequest---', crmIndexRequest)
+      } 
       crmIndexRequest(params)
         .then(res => {
           this.list = res.data.list
@@ -319,7 +319,6 @@ export default {
             this.list = res.data.list
           }
 
-          console.log('this.list---', this.list)
           this.totalPage = Math.ceil(res.data.totalRow / 10)
           this.loading = false
         })
@@ -333,9 +332,7 @@ export default {
       let selectedRows = []
       this.list.forEach((item, index) => {
         selectedArray.forEach((selectedItem, selectedIndex) => {
-          if (
-            item[this.crmType + 'Id'] == selectedItem[this.crmType + 'Id']
-          ) {
+          if (item[this.crmType + 'Id'] == selectedItem[this.crmType + 'Id']) {
             selectedRows.push(item)
           }
         })

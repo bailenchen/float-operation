@@ -30,15 +30,6 @@ export function crmCustomerDelete(data) {
   })
 }
 
-// crm 更新
-export function crmCustomerUpdate(data) {
-  return request({
-    url: 'crm/customer/update',
-    method: 'post',
-    data: data
-  })
-}
-
 // crm 公海列表
 export function crmCustomerPool(data) {
   return request({
@@ -61,8 +52,6 @@ export function crmCustomerRead(data) {
 /**
  * 客户锁定，解锁
  * @param {*} data
- * is_lock 1锁定，2解锁
- * customer_id 客户数组
  */
 export function crmCustomerLock(data) {
   return request({
@@ -88,11 +77,6 @@ export function crmCustomerPutInPool(data) {
 /**
  * 客户转移
  * @param {*} data
- * customer_id 	客户数组
- * owner_user_id 	变更负责人
- * is_remove 1移出，2转为团队成员
- * types business,contract 相关模块
- * type 权限 1只读2读写
  */
 export function crmCustomerTransfer(data) {
   return request({
@@ -158,8 +142,6 @@ export const crmCustomerExcelDownloadURL = process.env.BASE_API + 'CrmCustomer/d
 /**
  * 客户分配
  * @param {*} data
- * customer_id 客户ID
- * owner_user_id 分配人ID
  */
 export function crmCustomerDistribute(data) {
   return request({
@@ -172,7 +154,6 @@ export function crmCustomerDistribute(data) {
 /**
  * 客户领取
  * @param {*} data
- * customer_id 客户IDs
  */
 export function crmCustomerReceive(data) {
   return request({

@@ -240,7 +240,6 @@ export default {
     if (this.text == '创建日程') {
       this.$set(this.formData, 'color', '#3E8EF7')
     }
-    console.log(this.formData, 'formData---');
   },
   methods: {
     close() {

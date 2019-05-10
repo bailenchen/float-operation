@@ -47,7 +47,6 @@
                            align="center"
                            header-align="center"
                            show-overflow-tooltip
-                           :formatter="fieldFormatter"
                            :prop="item.field"
                            :label="item.name">
           </el-table-column>
@@ -76,13 +75,6 @@ import moment from 'moment'
 import ContractDetail from '@/views/customermanagement/contract/ContractDetail'
 import CustomerDetail from '@/views/customermanagement/customer/CustomerDetail'
 import ProductDetail from '@/views/customermanagement/product/ProductDetail'
-
-function fieldFormatter(info) {
-  if (info) {
-    return info.num ? info.num : info.realname ? info.realname : info.name
-  }
-  return ''
-}
 
 export default {
   /** 产品销售情况统计 */
@@ -125,25 +117,10 @@ export default {
         { field: 'productNum', name: '数量', width: '115px' },
         { field: 'productSubtotal', name: '订单产品小计', width: '115px' }
       ],
-      infoFieldList: [
-        { field: 'name1', name: '产品分类', width: '115px' },
-        { field: 'name2', name: '产品名称', width: '115px' },
-        { field: 'name3', name: '合同编号', width: '115px' },
-        { field: 'name4', name: '负责人', width: '115px' },
-        { field: 'count', name: '客户名称', width: '115px' },
-        { field: 'money', name: '销售单价', width: '115px' }
-      ],
       list: [],
       //
       spanList: [],
       newList: [],
-      /** 格式化规则 */
-      formatterRules: {
-        productId: fieldFormatter,
-        contractId: fieldFormatter,
-        ownerUserId: fieldFormatter,
-        customerId: fieldFormatter
-      },
       /** 控制详情展示 */
       showContractview: false,
       showCustomerView: false,
@@ -195,19 +172,6 @@ export default {
           }
         }
       }
-    },
-    /** 格式化字段 */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (column.property) {
-          return aRules(row[column.property + '_info'])
-        } else {
-          return ''
-        }
-      }
-      return row[column.property]
     },
     /** 列表操作 */
     // 当某一行被点击时会触发该事件

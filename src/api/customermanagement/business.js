@@ -30,15 +30,6 @@ export function crmBusinessDelete(data) {
   })
 }
 
-// crm 更新
-export function crmBusinessUpdate(data) {
-  return request({
-    url: 'crm/business/update',
-    method: 'post',
-    data: data
-  })
-}
-
 // crm 商机状态组
 export function crmBusinessStatusList(data) {
   return request({
@@ -70,10 +61,6 @@ export function crmBusinessRead(data) {
 /**
  * 商机转移
  * @param {*} data
- * business_id 	商机数组
- * owner_user_id 	变更负责人
- * is_remove 1移出，2转为团队成员
- * type 权限 1只读2读写
  */
 export function crmBusinessTransfer(data) {
   return request({
@@ -86,9 +73,6 @@ export function crmBusinessTransfer(data) {
 /**
  * 商机转移
  * @param {*} data
- * business_id 	商机
- * status_id 	商机状态ID
- * content 备注
  */
 export function crmBusinessAdvance(data) {
   return request({
@@ -101,7 +85,6 @@ export function crmBusinessAdvance(data) {
 /**
  * 商机相关产品
  * @param {*} data
- * business_id 	商机ID
  */
 export function crmBusinessProduct(data) {
   return request({
@@ -143,8 +126,6 @@ export function crmBusinessQueryContract(data) {
 /**
  * 相关团队创建
  * @param {*} data
- * types crm_leads
- * typesId 分类ID
  */
 export function crmBusinessSettingTeamSave(data) {
   return request({

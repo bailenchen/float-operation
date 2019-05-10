@@ -3,8 +3,6 @@ import request from '@/utils/request'
 /**
  * 修改头像
  * @param {*} data
- * id
- * file
  */
 export function adminUsersUpdateImg(data) {
   return request({
@@ -20,7 +18,6 @@ export function adminUsersUpdateImg(data) {
 /**
  * 个人详情
  * @param {*} data
- * id
  */
 export function adminUsersRead(data) {
   return request({
@@ -33,7 +30,6 @@ export function adminUsersRead(data) {
 /**
  * 修改个人信息
  * @param {*} data
- * id
  */
 export function adminUsersUpdate(data) {
   return request({
@@ -46,9 +42,6 @@ export function adminUsersUpdate(data) {
 /**
  * 修改密码
  * @param {*} data
- * id
- * old_pwd
- * new_pwd
  */
 export function adminUsersResetPassword(data) {
   return request({

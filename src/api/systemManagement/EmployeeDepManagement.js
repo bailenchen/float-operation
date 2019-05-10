@@ -32,15 +32,6 @@ export function usersAdd(params) {
   })
 }
 
-// 岗位列表
-export function jobsList(data) {
-  return request({
-    url: 'admin/posts/index',
-    method: 'post',
-    data: data
-  })
-}
-
 // 角色列表
 export function roleList(data) {
   return request({
@@ -78,33 +69,6 @@ export function adminUsersUpdatePwd(data) {
 export function usersEditStatus(data) {
   return request({
     url: 'manager/user/setUserStatus',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 人资员工导入
- * @param {*} data
- * userlist 员工ID 数组
- */
-export function adminUsersTobeusers(data) {
-  return request({
-    url: 'admin/users/tobeusers',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 部门列表数据（编辑时）
- * @param {*} data
- * id 部门ID
- * type update编辑、save添加
- */
-export function adminStructuresListDialog(data) {
-  return request({
-    url: 'manager/dept/queryDeptTree',
     method: 'post',
     data: data
   })

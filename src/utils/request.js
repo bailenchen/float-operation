@@ -44,7 +44,6 @@ service.interceptors.response.use(
      * code为非20000是抛错 可结合自己业务进行修改
      */
     const res = response.data
-    console.log('resresres---', res);
     if (response.status === 200 && response.config.responseType === 'blob') { // 文件类型特殊处理
       return response
     } else if (res.code !== 0) {

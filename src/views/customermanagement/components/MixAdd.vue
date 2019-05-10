@@ -300,7 +300,6 @@ export default {
             this.files.push(res)
           }
           if (result) {
-            console.log('2222');
             result()
           }
         })

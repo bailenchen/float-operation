@@ -166,7 +166,6 @@ export default {
           this.list = res.data.list
 
           this.total = res.data.totalRow
-          console.log('this.list---', this.list, this.total)
           this.loading = false
         })
         .catch(() => {

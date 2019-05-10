@@ -358,7 +358,6 @@ export default {
             businessDep: res.data.deptIds || [],
             settingList: settingList
           }
-          console.log('this.businessObj---', this.businessObj);
           this.businessDialogVisible = true
           this.businessTitle = '编辑商机组'
         })

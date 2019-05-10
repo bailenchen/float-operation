@@ -160,7 +160,11 @@ export default {
       if (this.isEvent && !this.nextTime) {
         this.$message.error('请选择下次联系时间')
         return
+      } else if (!data.content) {
+        this.$message.error('请输入跟进内容')
+        return
       }
+
       var params = {}
       params.typesId = this.id
       params.content = data.content
@@ -171,7 +175,7 @@ export default {
       var contactsIds = data.contacts.map(function(element, index, array) {
         return element.contactsId
       })
-      
+
       params.batchId = data.batchId
       params.businessIds = businessIds.join(',')
       params.contactsIds = contactsIds.join(',')
@@ -183,7 +187,7 @@ export default {
       crmCustomerRecordSave(params)
         .then(res => {
           this.sendLoading = false
-          this.$message.success("发布成功")
+          this.$message.success('发布成功')
           // 重置页面
           this.$refs.mixadd.resetInfo()
           this.isEvent = false

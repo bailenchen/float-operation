@@ -221,7 +221,6 @@ export default {
     /** 选择了场景 */
     sceneSelect(data) {
       this.sceneData = data
-      console.log('this.sceneData---', this.sceneData);
       this.$emit('scene', data)
     },
     sceneHandle(data) {

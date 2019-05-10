@@ -367,12 +367,23 @@ export default {
     },
     // 不同模块的权限切换
     jurisdictionSelect(key) {
-      this.roleRulesEdit = this.$refs.tree.getCheckedKeys()
+      this.roleRulesEdit[
+        this.jurisdictionIndex
+      ] = this.$refs.tree.getCheckedKeys()
+      this.roleRulesEdit[
+        this.jurisdictionIndex + '_upload'
+      ] = this.$refs.tree
+        .getCheckedKeys()
+        .concat(this.$refs.tree.getHalfCheckedKeys())
+
       this.jurisdictionIndex = key
       this.showTreeData = [this.treeData[this.jurisdictionIndex]]
+
       this.$nextTick(() => {
         if (this.$refs.tree) {
-          this.$refs.tree.setCheckedKeys(this.roleRulesEdit)
+          this.$refs.tree.setCheckedKeys(
+            this.roleRulesEdit[this.jurisdictionIndex]
+          )
         }
       })
     },
@@ -454,17 +465,20 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          roleDelete({ roleId: val.id }).then(res => {
-            this.getRoleList()
-            this.$message.success('删除成功')
-            if (this.roleList.length > 0 && this.roleList[0].list.length > 0) {
-              this.roleActive = this.roleList[0].list[0]
-              // 点击角色 复制权限 用于编辑操作
-              this.getRoleRulesInfo(this.roleActive)
-            }
-          }).catch(() => {
-            
-          })
+          roleDelete({ roleId: val.id })
+            .then(res => {
+              this.getRoleList()
+              this.$message.success('删除成功')
+              if (
+                this.roleList.length > 0 &&
+                this.roleList[0].list.length > 0
+              ) {
+                this.roleActive = this.roleList[0].list[0]
+                // 点击角色 复制权限 用于编辑操作
+                this.getRoleRulesInfo(this.roleActive)
+              }
+            })
+            .catch(() => {})
         })
         .catch(() => {
           this.$message({
@@ -513,7 +527,10 @@ export default {
       this.getUserRulesWithRole(this.roleActive)
     },
     getRoleRulesInfo(role) {
-      this.roleRulesEdit = this.getUserModuleRules(role.rules, 'crm')
+      this.roleRulesEdit['crm'] = this.getUserModuleRules(role.rules, 'crm')
+      this.roleRulesEdit['crm_upload'] = role.rules ? role.rules : []
+      this.roleRulesEdit['bi'] = this.getUserModuleRules(role.rules, 'bi')
+      this.roleRulesEdit['bi_upload'] = role.rules ? role.rules : []
     },
     // 获取角色下员工列表
     getUserListWithRole(role) {
@@ -535,7 +552,9 @@ export default {
       // 默认勾选第一个
       this.$nextTick(() => {
         if (this.$refs.tree) {
-          this.$refs.tree.setCheckedKeys(this.roleRulesEdit)
+          this.$refs.tree.setCheckedKeys(
+            this.roleRulesEdit[this.jurisdictionIndex]
+          )
         }
       })
       // 默认勾选第一个数据权限
@@ -622,10 +641,20 @@ export default {
     },
     // 权限提交
     jurisdictionSubmit() {
-      this.roleRulesEdit = this.$refs.tree.getCheckedKeys()
+      this.roleRulesEdit[
+        this.jurisdictionIndex
+      ] = this.$refs.tree.getCheckedKeys()
+      this.roleRulesEdit[
+        this.jurisdictionIndex + '_upload'
+      ] = this.$refs.tree
+        .getCheckedKeys()
+        .concat(this.$refs.tree.getHalfCheckedKeys())
+
       this.jurisdictionLoading = true
       updateRoleMenu({
-        rules: this.roleRulesEdit,
+        rules: this.roleRulesEdit['crm_upload'].concat(
+          this.roleRulesEdit['bi_upload']
+        ),
         type: this.radioModel,
         id: this.roleActive.id,
         title: this.roleActive.title
@@ -736,6 +765,7 @@ export default {
   display: flex;
   flex: 1;
   flex-direction: column;
+  overflow: hidden;
 }
 .jurisdiction-title {
   border-bottom: 1px dashed #e6e6e6;

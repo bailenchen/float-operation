@@ -25,14 +25,6 @@ export function deleteTask(data) {
     data: data
   })
 }
-// 拖拽改变分类
-export function dragChangeClassify(data) {
-  return request({
-    url: 'oa/task/updateTop',
-    method: 'post',
-    data: data
-  })
-}
 // 任务详情
 export function detailsTask(data) {
   return request({

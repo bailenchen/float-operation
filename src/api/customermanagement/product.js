@@ -21,15 +21,6 @@ export function crmProductIndex(data) {
   })
 }
 
-// crm 更新
-export function crmProductUpdate(data) {
-  return request({
-    url: 'crm/product/update',
-    method: 'post',
-    data: data
-  })
-}
-
 // crm 详情
 export function crmProductRead(data) {
   return request({
@@ -42,8 +33,6 @@ export function crmProductRead(data) {
 /**
  * 产品上架、下架
  * @param {*} data
- * id 产品ID数组
- * status 	上架、下架
  */
 export function crmProductStatus(data) {
   return request({

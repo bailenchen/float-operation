@@ -1,11 +1,8 @@
 import request from '@/utils/request'
 
-// crm 自定义字段的添加
 /**
- *
+ *crm 自定义字段的添加
  * @param {*} data
- * 操作方法 (save:添加、update:编辑、read:详情、index:列表)
- * 操作ID (如：客户ID)
  */
 export function filedGetField(data) {
   return request({
@@ -29,7 +26,7 @@ export function filedGetInformation(data) {
 
 
 /**
- * java 不使用filedGetField 
+ * 表头
  * @param {*} data 
  */
 export function filedGetTableField(data) {
@@ -105,15 +102,6 @@ export function crmSceneUpdate(data) {
 export function crmSceneDefaults(data) {
   return request({
     url: 'scene/setDefaultScene',
-    method: 'post',
-    data: data
-  })
-}
-
-// 场景详情
-export function crmSceneRead(data) {
-  return request({
-    url: 'admin/scene/read',
     method: 'post',
     data: data
   })
@@ -200,15 +188,6 @@ export function crmQueryExamineRelation(data) {
   })
 }
 
-// 跟进记录添加
-export function crmRecordSave(data) {
-  return request({
-    url: 'admin/record/save',
-    method: 'post',
-    data: data
-  })
-}
-
 // 操作记录
 export function crmIndexFieldRecord(data) {
   return request({
@@ -254,47 +233,6 @@ export function crmExamineFlowRecordList(data) {
 export function crmExamineFlowAuditExamine(data) {
   return request({
     url: 'examineRecord/auditExamine',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 合同审批人信息
- * @param {*} data
- * types crm_contract
- */
-export function crmExamineFlowUserList(data) {
-  return request({
-    url: 'admin/examineFlow/userList',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 相关团队列表
- * @param {*} data
- * types crm_leads
- * typesId 分类ID
- */
-export function crmSettingTeam(data) {
-  return request({
-    url: 'crm/setting/team',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 相关团队创建
- * @param {*} data
- * types crm_leads
- * typesId 分类ID
- */
-export function crmSettingTeamSave(data) {
-  return request({
-    url: 'CrmCustomer/addMembers',
     method: 'post',
     data: data
   })

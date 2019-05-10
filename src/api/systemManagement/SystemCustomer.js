@@ -130,9 +130,6 @@ export function crmSettingConfigData(data) {
 /**
  * 部门业绩目标列表
  * @param {*} data
- * year 年
- * status 1销售（目标）2回款（目标）
- * id 部门ID
  */
 export function crmAchievementIndex(data) {
   return request({
@@ -145,7 +142,6 @@ export function crmAchievementIndex(data) {
 /**
  * 业绩目标编辑接口
  * @param {*} data
- * datalist 对应数组
  */
 export function crmAchievementUpdate(data) {
   return request({

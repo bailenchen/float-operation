@@ -1,18 +1,8 @@
 import request from '@/utils/request'
 
-// 公共接口 涉及 员工 部门 等 使用频率较高 但分散 的接口
-// 权限范围内的用户列表
 /**
  * 
  * @param {*} data 
- * 1.默认全部
- * 
- * 2.模块下权限内
- * m
- * c
- * a
- * 
- * 
  */
 export function usersList(data) {
   return request({
@@ -23,7 +13,7 @@ export function usersList(data) {
 }
 
 /**
- * type tree 树形结构
+ * type
  * @param {*} data 
  */
 export function depList(data) {
@@ -45,7 +35,7 @@ export function adminStructuresSubIndex(data) {
 
 
 
-// 部门下的员工 structure_id
+// 部门下的员工
 export function userListByStructid(data) {
   return request({
     url: 'admin/users/userListByStructid',
@@ -57,7 +47,6 @@ export function userListByStructid(data) {
 /**
  *
  * @param {*} data
- * 附件上传 file module module_id
  */
 export const crmFileSaveUrl = process.env.BASE_API + 'file/upload'
 
@@ -119,8 +108,6 @@ export function crmFileUpdate(data) {
 /**
  *
  * @param {*} data
- * 操作方法 (save:添加、update:编辑、read:详情、index:列表)
- * 操作ID (如：客户ID)
  */
 export function filedGetField(data) {
   return request({

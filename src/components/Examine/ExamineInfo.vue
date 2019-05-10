@@ -155,7 +155,6 @@ export default {
   watch: {
     recordId: {
       handler(val) {
-        console.log('recordId---', val);
         if (val) {
           this.examineInfo = {}
           this.getFlowStepList()

@@ -33,7 +33,6 @@ export function roleDelete(data) {
   })
 }
 
-
 export function roleUpdate(data) {
   return request({
     url: 'manager/role/update',

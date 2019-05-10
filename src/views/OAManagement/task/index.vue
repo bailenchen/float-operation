@@ -194,7 +194,6 @@ export default {
     getList() {
       this.loading = true
       var params = this.activePramas
-      console.log('params---', params);
       params.limit = 15
       params.page = this.pageNum
       params.search = this.searchValue

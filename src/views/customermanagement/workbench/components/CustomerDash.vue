@@ -572,7 +572,6 @@ export default {
     getTrendAxisInfo() {
       let contractList = []
       let receivablesList = []
-      console.log('this.trendSelectValue---', this.trendSelectValue)
       if (this.trendSelectValue == '月') {
         let keys = [
           '1月',
@@ -590,13 +589,11 @@ export default {
         ]
         this.axisOption.xAxis[0].data = keys
         for (let key in keys) {
-          console.log('key---', key)
           const element = this.trendData[keys[key]]
           contractList.push(element.contractMoneys)
           receivablesList.push(element.receivablesMoneys)
         }
       } else {
-        console.log('jidu')
         let keys = ['一季度', '二季度', '三季度', '四季度']
         this.axisOption.xAxis[0].data = keys
         for (let key in keys) {
@@ -605,8 +602,6 @@ export default {
           receivablesList.push(element.receivablesMoneys)
         }
       }
-      console.log('contractList----', contractList)
-      console.log('receivablesList----', receivablesList)
       this.axisOption.series[0].data = contractList
       this.axisOption.series[1].data = receivablesList
       this.axisChart.setOption(this.axisOption, true)

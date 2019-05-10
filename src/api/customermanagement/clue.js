@@ -51,10 +51,6 @@ export function crmLeadsRead(data) {
 /**
  * 线索转移
  * @param {*} data
- * leads_id 	线索数组
- * owner_user_id 	变更负责人
- * is_remove 1移出，2转为团队成员
- * type 权限 1只读2读写
  */
 export function crmLeadsTransfer(data) {
   return request({
@@ -67,7 +63,6 @@ export function crmLeadsTransfer(data) {
 /**
  * 线索转换为客户
  * @param {*} data
- * leads_id 	线索数组
  */
 export function crmLeadsTransform(data) {
   return request({

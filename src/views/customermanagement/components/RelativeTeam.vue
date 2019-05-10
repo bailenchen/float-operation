@@ -65,7 +65,6 @@
 </template>
 
 <script type="text/javascript">
-import { crmSettingTeam } from '@/api/customermanagement/common'
 import loading from '../mixins/loading'
 import TeamsHandle from './selectionHandle/TeamsHandle' // 操作团队成员
 import {

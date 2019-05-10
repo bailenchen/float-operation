@@ -129,7 +129,11 @@ export default {
       if (this.isEvent && !this.nextTime) {
         this.$message.error('请选择下次联系时间')
         return
+      } else if (!data.content) {
+        this.$message.error('请输入跟进内容')
+        return
       }
+
       var params = {}
       params.typesId = this.id
       params.content = data.content
