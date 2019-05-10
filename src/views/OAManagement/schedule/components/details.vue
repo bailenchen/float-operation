@@ -30,7 +30,7 @@
             </span>
           </span>
           <span v-else-if="item.type=='remindtype'">{{listData.remindtypeText}}</span>
-          <span v-else-if="item.type=='createUser'">{{listData.username}}</span>
+          <span v-else-if="item.type=='createUser'">{{listData.createUser.realname}}</span>
           <span v-else-if="item.type=='bz'">{{listData[item.value]}}</span>
         </div>
         <!-- 关联业务 -->
