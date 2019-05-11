@@ -272,7 +272,7 @@ export default {
     getList() {
       this.loading = true
       let crmIndexRequest = crmMainIndex
-      let params = {}
+      let params = { search: this.searchContent }
       // 注入场景
       if (this.sceneInfo) {
         params.sceneId = this.sceneInfo.sceneId
@@ -305,7 +305,7 @@ export default {
           search: this.searchContent,
           type: crmTypeModel[this.crmType]
         }
-      } 
+      }
       crmIndexRequest(params)
         .then(res => {
           this.list = res.data.list
