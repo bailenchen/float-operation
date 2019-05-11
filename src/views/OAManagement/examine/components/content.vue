@@ -169,8 +169,8 @@ export default {
       } else {
         params.checkStatus = this.checkStatus
       }
-
-      if (this.betweenTime.length > 0) {
+      
+      if (this.betweenTime && this.betweenTime.length > 0) {
         params.startTime = this.betweenTime[0]
         params.endTime = this.betweenTime[1]
       }
