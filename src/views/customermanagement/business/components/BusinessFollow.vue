@@ -131,10 +131,8 @@ export default {
     }
   },
   mounted() {},
-  activated: function() {
-  },
-  deactivated: function() {
-  },
+  activated: function() {},
+  deactivated: function() {},
   methods: {
     /** 发布 时候的类型选择 */
     handleTypeDrop(command) {
@@ -156,7 +154,7 @@ export default {
         this.$message.error('请输入跟进内容')
         return
       }
-      
+
       var params = {}
       params.typesId = this.id
       params.content = data.content
@@ -169,7 +167,7 @@ export default {
       crmBusinessRecordSave(params)
         .then(res => {
           this.sendLoading = false
-          this.$message.success("发布成功")
+          this.$message.success('发布成功')
           // 重置页面
           this.$refs.mixadd.resetInfo()
           this.isEvent = false

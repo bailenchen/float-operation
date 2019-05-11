@@ -133,8 +133,8 @@ export default {
       if (data.type == 'edit') {
         this.newText = '编辑日程'
         let val = data.data.item
-        val.startTime = val.startTime * 1000
-        val.endTime = val.endTime * 1000
+        val.startTime = val.startTime
+        val.endTime = val.endTime
         val.ownerUserIds = []
         for (let k of val.ownerList) {
           val.ownerUserIds.push(k.userId)

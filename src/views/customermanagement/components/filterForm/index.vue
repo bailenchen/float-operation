@@ -102,7 +102,8 @@
     </p>
     <el-button type="text"
                @click="handleAdd">+ 添加筛选条件</el-button>
-    <div class="save" v-if="!isSeas">
+    <div class="save"
+         v-if="!isSeas">
       <el-checkbox v-model="saveChecked">保存为场景</el-checkbox>
       <el-input class="name"
                 v-show="saveChecked"

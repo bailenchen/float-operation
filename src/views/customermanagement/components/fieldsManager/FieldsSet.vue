@@ -236,12 +236,16 @@ export default {
       } else {
         crmFieldConfig({
           label: this.isSeas ? 8 : crmTypeModel[this.crmType],
-          noHideIds: this.checkedLeftData.map((item)=> {
-            return item.fieldId
-          }).join(','),
-          hideIds: this.checkedRightData.map((item)=> {
-            return item.fieldId
-          }).join(',')
+          noHideIds: this.checkedLeftData
+            .map(item => {
+              return item.fieldId
+            })
+            .join(','),
+          hideIds: this.checkedRightData
+            .map(item => {
+              return item.fieldId
+            })
+            .join(',')
         })
           .then(res => {
             this.$message.success('操作成功')

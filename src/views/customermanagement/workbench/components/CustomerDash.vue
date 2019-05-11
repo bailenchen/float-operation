@@ -381,7 +381,8 @@ export default {
         .then(res => {
           if (res.data) {
             this.gaugeData = res.data
-            this.gaugeOption.series[0].data[0].value = res.data.proportion || '0'
+            this.gaugeOption.series[0].data[0].value =
+              res.data.proportion || '0'
             this.gaugeChart.setOption(this.gaugeOption, true)
           }
           this.gaugeLoading = false

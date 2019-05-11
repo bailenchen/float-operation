@@ -319,7 +319,7 @@ export default {
           } else {
             this.files.splice(index, 1)
           }
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
         })
         .catch(() => {})
     },

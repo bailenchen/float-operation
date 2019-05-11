@@ -9,13 +9,15 @@
         <div class="fl-h-time">{{data.createTime}}</div>
       </div>
       <el-dropdown @command="handleCommand"
-                    v-if="data.permission && (data.permission.isUpdate == 1 || data.permission.isDelete == 1)"
+                   v-if="data.permission && (data.permission.isUpdate == 1 || data.permission.isDelete == 1)"
                    trigger="click">
         <i style="color:#CDCDCD;"
            class="el-icon-arrow-down el-icon-more"></i>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="edit" v-if="data.permission && data.permission.isUpdate == 1">编辑</el-dropdown-item>
-          <el-dropdown-item command="delete" v-if="data.permission && data.permission.isDelete == 1">删除</el-dropdown-item>
+          <el-dropdown-item command="edit"
+                            v-if="data.permission && data.permission.isUpdate == 1">编辑</el-dropdown-item>
+          <el-dropdown-item command="delete"
+                            v-if="data.permission && data.permission.isDelete == 1">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </flexbox>

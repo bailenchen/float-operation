@@ -118,23 +118,6 @@ export default {
       params[this.crmType + 'Ids'] = this.id
       crmQueryLogRelation(params)
         .then(res => {
-          // for (let item of res.data.list) {
-          //   item.dataInfo.allData = {}
-          //   item.dataInfo.allData.business = item.dataInfo.businessList
-          //   item.dataInfo.allData.contacts = item.dataInfo.contactsList
-          //   item.dataInfo.allData.contract = item.dataInfo.contractList
-          //   item.dataInfo.allData.customer = item.dataInfo.customerList
-          //   if (
-          //     item.dataInfo.businessList.length != 0 ||
-          //     item.dataInfo.contactsList.length != 0 ||
-          //     item.dataInfo.contractList.length != 0 ||
-          //     item.dataInfo.customerList.length != 0
-          //   ) {
-          //     item.dataInfo.allDataShow = true
-          //   } else {
-          //     item.dataInfo.allDataShow = false
-          //   }
-          // }
           this.list = this.list.concat(res.data.list)
           if (res.data.list.length < 10) {
             this.loadMoreLoading = false

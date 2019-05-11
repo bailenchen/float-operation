@@ -105,7 +105,7 @@ export default {
                 index: this.index,
                 value: this.dataValue
               })
-              this.$message.success(res.data)
+              this.$message.success('操作成功')
             })
             .catch(() => {})
         })

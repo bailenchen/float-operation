@@ -527,10 +527,15 @@ export default {
       this.getUserRulesWithRole(this.roleActive)
     },
     getRoleRulesInfo(role) {
-      this.roleRulesEdit['crm'] = this.getUserModuleRules(role.rules, 'crm')
-      this.roleRulesEdit['crm_upload'] = role.rules ? role.rules : []
-      this.roleRulesEdit['bi'] = this.getUserModuleRules(role.rules, 'bi')
-      this.roleRulesEdit['bi_upload'] = role.rules ? role.rules : []
+      this.roleRulesEdit['crm'] = this.getUserModuleRules(
+        role.rules['crm'],
+        'crm'
+      )
+      this.roleRulesEdit['crm_upload'] = role.rules['crm']
+        ? role.rules['crm']
+        : []
+      this.roleRulesEdit['bi'] = this.getUserModuleRules(role.rules['bi'], 'bi')
+      this.roleRulesEdit['bi_upload'] = role.rules['bi'] ? role.rules['bi'] : []
     },
     // 获取角色下员工列表
     getUserListWithRole(role) {
@@ -652,9 +657,7 @@ export default {
 
       this.jurisdictionLoading = true
       updateRoleMenu({
-        rules: this.roleRulesEdit['crm_upload'].concat(
-          this.roleRulesEdit['bi_upload']
-        ),
+        rules: this.roleRulesEdit['crm'].concat(this.roleRulesEdit['bi']),
         type: this.radioModel,
         id: this.roleActive.id,
         title: this.roleActive.title
