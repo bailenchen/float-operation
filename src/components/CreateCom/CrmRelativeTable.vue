@@ -299,12 +299,9 @@ export default {
           }
         }
       } else {
-        params = {
-          page: this.currentPage,
-          limit: 10,
-          search: this.searchContent,
-          type: crmTypeModel[this.crmType]
-        }
+        params.page = this.currentPage
+        params.limit = 10
+        params.type = crmTypeModel[this.crmType]
       }
       crmIndexRequest(params)
         .then(res => {
