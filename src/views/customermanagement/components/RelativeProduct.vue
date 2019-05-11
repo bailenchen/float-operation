@@ -22,7 +22,7 @@
     </el-table>
     <flexbox class="handle-footer">
       <div class="discount-title">整单折扣（%）：<span class="discount-title-value">{{totalInfo.discountRate}}</span></div>
-      <div class="total-info">已选中产品：<span class="info-yellow">{{list.length}}</span>&nbsp;种&nbsp;&nbsp;总金额：<span class="info-yellow">{{totalInfo.totalPrice}}</span>&nbsp;元</div>
+      <div class="total-info">已选中产品：<span class="info-yellow">{{list.length}}</span>&nbsp;种&nbsp;&nbsp;总金额：<span class="info-yellow">{{totalInfo.money}}</span>&nbsp;元</div>
     </flexbox>
     <c-r-m-full-screen-detail :visible.sync="showFullDetail"
                               crmType="product"
@@ -51,7 +51,7 @@ export default {
       tableHeight: '400px',
       showFullDetail: false,
       productId: '', // 查看全屏产品详情的 ID
-      totalInfo: { totalPrice: '0.00', discountRate: '0.00' }
+      totalInfo: { money: '0.00', discountRate: '0.00' }
     }
   },
   watch: {
