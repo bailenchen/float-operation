@@ -68,19 +68,6 @@ service.interceptors.response.use(
             })
           })
         }
-      } else if (res.code === 402) {
-        if (res.error && Object.prototype.toString.call(res.error) === '[object Array]') {
-          res.error = res.error.reduce(function (prev, cur, index, array) {
-            return prev + "\r\n" + cur
-          })
-        }
-        Message({
-          showClose: true,
-          duration: 0,
-          customClass: 'el-close-message',
-          message: res.msg,
-          type: 'error'
-        })
       } else {
         if (res.msg) {
           Message({
