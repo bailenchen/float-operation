@@ -54,8 +54,10 @@
             <i style="color:#CDCDCD; cursor: pointer;"
                class="el-icon-arrow-down el-icon-more"></i>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if="data.permission.isUpdate" command="edit">编辑</el-dropdown-item>
-              <el-dropdown-item v-if="data.permission.isDelete" command="delete">删除</el-dropdown-item>
+              <el-dropdown-item v-if="data.permission.isUpdate"
+                                command="edit">编辑</el-dropdown-item>
+              <el-dropdown-item v-if="data.permission.isDelete"
+                                command="delete">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>

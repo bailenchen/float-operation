@@ -111,8 +111,8 @@ export default {
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
-      for (var key in this.filterObj) {
-        params[key] = this.filterObj[key]
+      if (this.filterObj && Object.keys(this.filterObj).length > 0) {
+        params.data = this.filterObj
       }
       crmLeadsExcelAllExport(params)
         .then(res => {

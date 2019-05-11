@@ -944,7 +944,6 @@ export default {
       })
         .then(res => {
           this.nameVinput = false
-          // this.$emit('saveName', val)
           this.$emit('on-handle', {
             type: 'change-name',
             value: val,

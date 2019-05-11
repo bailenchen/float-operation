@@ -238,12 +238,12 @@ export default {
           label: this.isSeas ? 8 : crmTypeModel[this.crmType],
           noHideIds: this.checkedLeftData
             .map(item => {
-              return item.fieldId
+              return item.id
             })
             .join(','),
           hideIds: this.checkedRightData
             .map(item => {
-              return item.fieldId
+              return item.id
             })
             .join(',')
         })
@@ -363,7 +363,7 @@ export default {
         ) {
           var remove = false
           self.rightCheckItems.forEach(function(element, index) {
-            if (item.fieldId == element.fieldId) {
+            if (item.id == element.id) {
               remove = true
             }
           })
@@ -390,7 +390,7 @@ export default {
         ) {
           var remove = false
           self.leftCheckItems.forEach(function(element, index) {
-            if (item.fieldId == element.fieldId) {
+            if (item.id == element.id) {
               remove = true
             }
           })

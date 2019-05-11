@@ -83,7 +83,11 @@ export default {
     }
   },
   mounted() {
-    this.fieldList.push({ prop: 'businessName', width: '200', label: '商机名称' })
+    this.fieldList.push({
+      prop: 'businessName',
+      width: '200',
+      label: '商机名称'
+    })
     this.fieldList.push({
       prop: 'totalPrice',
       width: '200',

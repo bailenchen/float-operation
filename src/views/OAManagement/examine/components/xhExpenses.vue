@@ -170,7 +170,7 @@ export default {
         const file = files[index]
         crmFileSave({
           type: 'img',
-          'file': file,
+          file: file,
           batchId: this.mainList[this.imageIndex].batchId
         })
           .then(res => {

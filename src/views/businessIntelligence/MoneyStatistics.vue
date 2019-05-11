@@ -122,8 +122,7 @@ export default {
       showMoneyDview: false
     }
   },
-  computed: {
-  },
+  computed: {},
   mounted() {
     this.dateSelect = moment(new Date())
       .year()
@@ -337,25 +336,25 @@ export default {
         .then(res => {
           this.showTable = true
           for (let index = 0; index < res.data.length; index++) {
-              const element = res.data[index]
+            const element = res.data[index]
 
-              var width = 0
-              if (!element.width) {
-                if (element.name && element.name.length <= 6) {
-                  width = element.name.length * 15 + 45
-                } else {
-                  width = 140
-                }
+            var width = 0
+            if (!element.width) {
+              if (element.name && element.name.length <= 6) {
+                width = element.name.length * 15 + 45
               } else {
-                width = element.width
+                width = 140
               }
-
-              this.fieldList.push({
-                prop: element.fieldName,
-                label: element.name,
-                width: width
-              })
+            } else {
+              width = element.width
             }
+
+            this.fieldList.push({
+              prop: element.fieldName,
+              label: element.name,
+              width: width
+            })
+          }
           // 获取好字段开始请求数据
           success() // 回调成功
         })
@@ -366,7 +365,7 @@ export default {
     /** 查看详情 */
     handleRowClick(row, column, event) {
       this.rowID = row.contractId
-        this.showContractDview = true
+      this.showContractDview = true
     }
   }
 }

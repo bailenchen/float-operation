@@ -75,7 +75,7 @@ export default {
         { label: '开始时间', value: 'startTime', type: 'time' },
         { label: '结束时间', value: 'endTime', type: 'time' },
         { label: '参与人', value: 'ownerList', type: 'ownerList' },
-        { label: '创建人', value: 'username', type: 'createUser' },
+        { label: '创建人', value: 'realname', type: 'createUser' },
         { label: '创建时间', value: 'createTime', type: 'createTime' },
         { label: '备注', value: 'remark', type: 'bz' }
       ],

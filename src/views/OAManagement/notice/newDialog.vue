@@ -116,12 +116,16 @@ export default {
             content: this.formData.content,
             startTime: this.formData.startTime,
             endTime: this.formData.endTime,
-            deptIds: this.formData.dep.dep.map(item => {
-              return item.id
-            }).join(','),
-            ownerUserIds: this.formData.dep.staff.map(item => {
-              return item.userId
-            }).join(',')
+            deptIds: this.formData.dep.dep
+              .map(item => {
+                return item.id
+              })
+              .join(','),
+            ownerUserIds: this.formData.dep.staff
+              .map(item => {
+                return item.userId
+              })
+              .join(',')
           })
             .then(res => {
               this.$message.success('新建公告成功')

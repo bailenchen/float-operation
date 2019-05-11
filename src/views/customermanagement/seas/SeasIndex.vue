@@ -108,7 +108,10 @@ export default {
   methods: {
     /** 通过回调控制style */
     cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'customerName' || column.property === 'businessCheck') {
+      if (
+        column.property === 'customerName' ||
+        column.property === 'businessCheck'
+      ) {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {
         return ''

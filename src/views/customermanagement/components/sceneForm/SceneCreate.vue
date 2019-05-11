@@ -205,10 +205,7 @@ export default {
               if (element.formType == 'date') {
                 item.value = [element.start_date, element.end_date]
               } else if (element.formType == 'datetime') {
-                item.value = [
-                 element.start,
-                 element.end
-                ]
+                item.value = [element.start, element.end]
               } else if (element.formType == 'business_type') {
                 item.typeId = element.typeId
                 item.statusId = element.statusId

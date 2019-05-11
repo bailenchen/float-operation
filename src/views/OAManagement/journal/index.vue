@@ -245,7 +245,7 @@ export default {
           staff.push(h.userId)
         }
       }
-      
+
       if (this.dialogTitle == '写日志') {
         // 图片
         let pramas = {

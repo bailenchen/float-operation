@@ -59,7 +59,7 @@ import {
   crmBusinessSettingTeamSave,
   crmBusinessSettingTeamDelete
 } from '@/api/customermanagement/business'
-  
+
 export default {
   /** 客户管理 的 勾选后的 团队成员 操作 移除操作不可移除客户负责人*/
   name: 'teams-handle',
@@ -164,7 +164,7 @@ export default {
             business: crmBusinessSettingTeamDelete
           }[this.crmType]
         }
-  
+
         this.loading = true
 
         request(params)

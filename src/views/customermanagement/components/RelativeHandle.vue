@@ -80,7 +80,7 @@ export default {
       })
         .then(res => {
           this.loading = false
-          this.list = res.data.map((item)=> {
+          this.list = res.data.map(item => {
             item.createTime = new Date(item.createTime).getTime()
             return item
           })

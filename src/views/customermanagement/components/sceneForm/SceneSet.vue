@@ -215,7 +215,10 @@ export default {
             item.check = false
             return item
           })
-          this.checkedRightData = res.data.hide_value.map(function(item, index) {
+          this.checkedRightData = res.data.hide_value.map(function(
+            item,
+            index
+          ) {
             item.check = false
             return item
           })
@@ -245,12 +248,16 @@ export default {
       }
       crmSceneSort({
         type: crmTypeModel[this.crmType],
-        noHideIds: this.checkedLeftData.map(function(item, index, array) {
-          return item.sceneId
-        }).join(','),
-        hideIds: this.checkedRightData.map(function(item, index, array) {
-          return item.sceneId
-        }).join(',')
+        noHideIds: this.checkedLeftData
+          .map(function(item, index, array) {
+            return item.sceneId
+          })
+          .join(','),
+        hideIds: this.checkedRightData
+          .map(function(item, index, array) {
+            return item.sceneId
+          })
+          .join(',')
       })
         .then(res => {
           this.$message({

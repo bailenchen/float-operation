@@ -170,8 +170,7 @@ export default {
       this.$emit('hide-view')
     },
     //** tab标签点击 */
-    handleClick(tab, event) {
-    },
+    handleClick(tab, event) {},
     editSaveSuccess() {
       this.getDetial()
     }

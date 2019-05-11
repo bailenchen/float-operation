@@ -154,7 +154,7 @@ export default {
         this.$message.error('请输入跟进内容')
         return
       }
-      
+
       var params = {}
       params.typesId = this.id
       params.content = data.content
@@ -167,7 +167,7 @@ export default {
       crmContractRecordSave(params)
         .then(res => {
           this.sendLoading = false
-          this.$message.success("发布成功")
+          this.$message.success('发布成功')
           // 重置页面
           this.$refs.mixadd.resetInfo()
           this.isEvent = false

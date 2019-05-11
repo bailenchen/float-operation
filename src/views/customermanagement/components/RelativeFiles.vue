@@ -82,8 +82,6 @@ export default {
       list: [],
       fieldList: [],
       tableHeight: '400px',
-      /** 格式化规则 */
-      formatterRules: {},
       /** 重命名 弹窗 */
       editDialog: false,
       /** 编辑信息 */

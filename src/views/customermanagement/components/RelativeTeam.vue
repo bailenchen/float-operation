@@ -255,9 +255,7 @@ export default {
     },
     //返回值用来决定这一行的 CheckBox 是否可以勾选
     handleSelectable(row, index) {
-      /** row 是数据源 正式调试以他为主  index 是行 */
       if (row.power == '负责人权限') {
-        // 0负责人，1只读，2读写
         return false
       }
       return true

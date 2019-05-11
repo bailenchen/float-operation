@@ -568,9 +568,13 @@ export default {
     // 判断是否展示
     whetherTypeShowByPermision: function(type) {
       if (type == 'transfer') {
-        return this.sceneData.bydata == 'transform' ?  false : this.crm[this.crmType].transfer
+        return this.sceneData.bydata == 'transform'
+          ? false
+          : this.crm[this.crmType].transfer
       } else if (type == 'transform') {
-        return this.sceneData.bydata == 'transform' ?  false : this.crm[this.crmType].transform
+        return this.sceneData.bydata == 'transform'
+          ? false
+          : this.crm[this.crmType].transform
       } else if (type == 'export') {
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {

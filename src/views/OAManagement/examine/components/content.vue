@@ -62,7 +62,11 @@
 </template>
 
 <script>
-import { oaExamineMyCreateIndex, oaExamineMyExamineIndex, oaExamineDelete } from '@/api/oamanagement/examine'
+import {
+  oaExamineMyCreateIndex,
+  oaExamineMyExamineIndex,
+  oaExamineDelete
+} from '@/api/oamanagement/examine'
 import { formatTimeToTimestamp } from '@/utils'
 import ExamineCell from './examineCell'
 import ExamineDetail from './examineDetail'
@@ -117,7 +121,7 @@ export default {
         return [
           { label: '待我审批的', key: '1' },
           { label: '我已审批的', key: '2' }
-        ]// 1待我审批的、2我已审批的
+        ] // 1待我审批的、2我已审批的
       } else {
         return [
           { label: '全部', key: '' },
@@ -169,7 +173,7 @@ export default {
       } else {
         params.checkStatus = this.checkStatus
       }
-      
+
       if (this.betweenTime && this.betweenTime.length > 0) {
         params.startTime = this.betweenTime[0]
         params.endTime = this.betweenTime[1]
@@ -177,8 +181,8 @@ export default {
 
       let request = {
         my: oaExamineMyCreateIndex,
-        examine : oaExamineMyExamineIndex
-      }[this.by ]
+        examine: oaExamineMyExamineIndex
+      }[this.by]
       request(params)
         .then(res => {
           this.list = this.list.concat(res.data.list)

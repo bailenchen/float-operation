@@ -269,10 +269,18 @@ export default {
               ownerUserIds: ownerUserIds.join(','),
               remark: data.remark,
               color: data.color,
-              customerIds: this.relevanceAll.customerIds ? this.relevanceAll.customerIds.join(',') : [],
-              contactsIds: this.relevanceAll.contactsIds ? this.relevanceAll.contactsIds.join(',') : [],
-              businessIds: this.relevanceAll.businessIds ? this.relevanceAll.businessIds.join(',') : [],
-              contractIds: this.relevanceAll.contractIds ? this.relevanceAll.contractIds.join(',') : []
+              customerIds: this.relevanceAll.customerIds
+                ? this.relevanceAll.customerIds.join(',')
+                : [],
+              contactsIds: this.relevanceAll.contactsIds
+                ? this.relevanceAll.contactsIds.join(',')
+                : [],
+              businessIds: this.relevanceAll.businessIds
+                ? this.relevanceAll.businessIds.join(',')
+                : [],
+              contractIds: this.relevanceAll.contractIds
+                ? this.relevanceAll.contractIds.join(',')
+                : []
             })
               .then(res => {
                 if (this.$route.query.routerKey == 1) {

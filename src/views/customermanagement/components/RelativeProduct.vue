@@ -88,7 +88,11 @@ export default {
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'productName', width: '200', label: '产品名称' })
+      this.fieldList.push({
+        prop: 'productName',
+        width: '200',
+        label: '产品名称'
+      })
       this.fieldList.push({
         prop: 'categoryName',
         width: '200',

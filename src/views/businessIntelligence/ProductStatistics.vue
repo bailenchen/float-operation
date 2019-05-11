@@ -185,7 +185,7 @@ export default {
         }
         this.rowID = row.customerId
         this.showCustomerView = true
-      } else if (column.property === 'productId') {
+      } else if (column.property === 'productName') {
         if (this.showCustomerView) {
           this.showCustomerView = false
         }

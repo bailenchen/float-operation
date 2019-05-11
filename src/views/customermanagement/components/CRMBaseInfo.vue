@@ -8,119 +8,11 @@
         <flexbox :gutter="0"
                  wrap="wrap"
                  style="padding: 10px 8px 0;">
-          <flexbox-item :span="item.form_type === 'map_address' ? 12 : 0.5"
+          <flexbox-item :span="0.5"
                         v-for="(item, index) in list"
-                        v-if="item.form_type !== 'product'"
                         :key="index"
-                        :class="{'b-cell' :item.form_type !== 'map_address'}">
-            <flexbox v-if="item.form_type === 'map_address'"
-                     :gutter="0"
-                     wrap="wrap">
-              <flexbox-item :span="0.5"
-                            @click.native="checkMapView(item)"
-                            class="b-cell">
-                <flexbox class="b-cell-b"
-                         align="stretch">
-                  <div class="b-cell-name">定位</div>
-                  <div class="b-cell-value"
-                       style="color: #3E84E9;cursor: pointer;">{{item.value.location}}</div>
-                </flexbox>
-              </flexbox-item>
-              <flexbox-item :span="0.5"
-                            class="b-cell">
-                <flexbox class="b-cell-b"
-                         align="stretch">
-                  <div class="b-cell-name">区域</div>
-                  <div class="b-cell-value">{{item.value.address | addressShow}}</div>
-                </flexbox>
-              </flexbox-item>
-              <flexbox-item :span="0.5"
-                            class="b-cell">
-                <flexbox class="b-cell-b"
-                         align="stretch">
-                  <div class="b-cell-name">详细地址</div>
-                  <div class="b-cell-value">{{item.value.detail_address}}</div>
-                </flexbox>
-              </flexbox-item>
-            </flexbox>
-
-            <flexbox v-else-if="item.form_type === 'customer' || item.form_type === 'business' || item.form_type === 'contract' || item.form_type === 'contacts'"
-                     align="stretch"
-                     class="b-cell-b">
-              <div class="b-cell-name">{{item.name}}</div>
-              <div class="b-cell-value">{{item.value&&item.value.length > 0 ? (item.form_type === 'contract' ? item.value[0].num : item.value[0].name) : ''}}
-              </div>
-            </flexbox>
-
-            <flexbox v-else-if="item.form_type === 'user'"
-                     align="stretch"
-                     class="b-cell-b">
-              <div class="b-cell-name">{{item.name}}</div>
-              <div class="b-cell-value">
-                <flexbox :gutter="0"
-                         wrap="wrap"
-                         style="padding: 0px 10px 10px 0px;">
-                  <div v-for="(item, index) in item.value"
-                       :key="index">
-                    {{item.realname}}&nbsp;&nbsp;
-                  </div>
-                </flexbox>
-              </div>
-            </flexbox>
-
-            <flexbox v-else-if="item.form_type === 'structure'"
-                     align="stretch"
-                     class="b-cell-b">
-              <div class="b-cell-name">{{item.name}}</div>
-              <div class="b-cell-value">
-                <flexbox :gutter="0"
-                         wrap="wrap"
-                         style="padding: 0px 10px 10px 0px;">
-                  <div v-for="(item, index) in item.value"
-                       :key="index">
-                    {{item.name}}&nbsp;&nbsp;
-                  </div>
-                </flexbox>
-              </div>
-            </flexbox>
-
-            <flexbox v-else-if="item.form_type === 'checkbox'"
-                     align="stretch"
-                     class="b-cell-b">
-              <div class="b-cell-name">{{item.name}}</div>
-              <div class="b-cell-value">
-                <flexbox :gutter="0"
-                         wrap="wrap"
-                         style="padding: 0px 10px 10px 0px;">
-                  <div v-for="(item, index) in item.value"
-                       :key="index">
-                    {{item}}&nbsp;&nbsp;
-                  </div>
-                </flexbox>
-              </div>
-            </flexbox>
-
-            <flexbox v-else-if="item.form_type === 'file'"
-                     align="stretch"
-                     class="b-cell-b">
-              <div class="b-cell-name">{{item.name}}</div>
-              <div class="b-cell-value">
-                <flexbox class="f-item"
-                         v-for="(file, index) in item.value"
-                         :key="index">
-                  <img class="f-img"
-                       src="@/assets/img/relevance_file.png" />
-                  <div class="f-name">{{file.name.length > 15 ? (file.name.substring(0, 15) + '...'): file.name+'('+file.size+')'}}</div>
-                  <el-button type="text"
-                             @click.native="handleFile('preview', item, index)">预览</el-button>
-                  <el-button type="text"
-                             @click.native="handleFile('download', file, index)">下载</el-button>
-                </flexbox>
-              </div>
-            </flexbox>
-
-            <flexbox v-else
-                     align="stretch"
+                        class="b-cell">
+            <flexbox align="stretch"
                      class="b-cell-b">
               <div class="b-cell-name">{{item.name}}</div>
               <div class="b-cell-value">{{item.value}}</div>
@@ -209,36 +101,6 @@ export default {
         .catch(() => {
           this.loading = false
         })
-    },
-    /**
-     * 查看地图详情
-     */
-    checkMapView(item) {
-      if (item.value && item.value !== '') {
-        this.mapViewInfo = {
-          title: item.value.location,
-          lat: item.value.lat,
-          lng: item.value.lng
-        }
-        this.showMapView = true
-      }
-    },
-    /**
-     * 附件查看
-     */
-    handleFile(type, item, index) {
-      if (type === 'preview') {
-        var previewList = item.value.map(element => {
-          element.url = element.filePath
-          return element
-        })
-        this.$bus.emit('preview-image-bus', {
-          index: index,
-          data: previewList
-        })
-      } else if (type === 'download') {
-        downloadFile({ path: item.filePath, name: item.name })
-      }
     }
   }
 }

@@ -61,7 +61,14 @@ export default {
       this.$emit('detail', this.type, this.cellIndex, this.data)
     },
     getShowName(item) {
-      return this.typeName + '-' + (this.data.name || this.data.businessName || this.data.customerName || this.data.number)
+      return (
+        this.typeName +
+        '-' +
+        (this.data.name ||
+          this.data.businessName ||
+          this.data.customerName ||
+          this.data.number)
+      )
     }
   },
 
