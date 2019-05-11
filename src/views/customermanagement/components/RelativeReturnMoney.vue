@@ -140,7 +140,7 @@ export default {
       { prop: 'contractName', width: '200', label: '合同名称' },
       { prop: 'contractMoney', width: '200', label: '合同金额' },
       { prop: 'receivablesMoney', width: '200', label: '回款金额' },
-      { prop: 'realname', width: '200', label: '负责人' },
+      { prop: 'ownerUserName', width: '200', label: '负责人' },
       { prop: 'checkStatus', width: '200', label: '状态' },
       { prop: 'returnTime', width: '200', label: '回款日期' }
     ]

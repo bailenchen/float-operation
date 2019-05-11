@@ -7,7 +7,7 @@
     <el-option v-for="(item, index) in option"
                :key="index"
                :label="item.num"
-               :value="item.plan_id">
+               :value="item.planId">
     </el-option>
   </el-select>
 </template>

@@ -8,7 +8,7 @@
       <div class="label-input">
         <label class="label-title">选择员工</label>
         <xh-user-cell :radio="false"
-                      :selectedData="selectUsers"
+                      :value="selectUsers"
                       @value-change="changeCheckout"></xh-user-cell>
       </div>
       <label class="label-title">员工角色配置</label>

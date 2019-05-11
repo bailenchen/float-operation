@@ -55,8 +55,9 @@
                     @save="searchBtn"
                     :id="rowID"
                     :recordId="rowData.examineRecordId"
+                    :detail="rowData"
                     examineType="oa_examine"
-                    status="2"></examine-handle>
+                    status="4"></examine-handle>
   </div>
 </template>
 
@@ -237,12 +238,12 @@ export default {
         // 撤回
       } else if (data.type == 'withdraw') {
         this.rowID = data.data.item.examineId
+        this.rowData = data.data.item
         this.showExamineHandle = true
         // 详情
       } else if (data.type == 'view') {
         this.showRelatedDetail = false
         this.rowID = data.data.item.examineId
-        this.rowData = data.data.item
         this.showDview = true
       } else if (data.type == 'related-detail') {
         this.showDview = false

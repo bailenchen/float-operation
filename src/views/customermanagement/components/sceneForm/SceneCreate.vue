@@ -199,8 +199,7 @@ export default {
             for (let field in this.obj.obj) {
               const element = this.obj.obj[field]
               let item = this.getItem()
-              item.name = element.name
-              item.fieldName = field
+              item.fieldName = element.name
               item.condition = element.condition
               item.formType = element.formType
               if (element.formType == 'date') {

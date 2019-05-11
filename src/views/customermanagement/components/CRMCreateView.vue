@@ -351,7 +351,7 @@ export default {
                 element.disabled = false
                 var customerItem = item.value[0]
                 customerItem['moduleType'] = 'customer'
-                customerItem['params'] = { check_status: 2 }
+                customerItem['params'] = { checkStatus: 2 }
                 element['relation'] = customerItem
               } else {
                 element.disabled = true
@@ -554,7 +554,7 @@ export default {
             params['relation'] = customerItem
           } else if (item.formType == 'contract' && customerItem) {
             customerItem['moduleType'] = 'customer'
-            customerItem['params'] = { check_status: 2 }
+            customerItem['params'] = { checkStatus: 2 }
             params['relation'] = customerItem
           }
         }
