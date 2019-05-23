@@ -38,6 +38,7 @@ Vue.use(VueLazyload, {
   loading: require('@/assets/img/loading.gif'),
   attempt: 1
 })
+
 import * as filters from './filters' // global filters
 // 注册全局过滤器
 Object.keys(filters).forEach(key => {
