@@ -44,6 +44,7 @@ import * as filters from './filters' // global filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+
 // 处理时间的过滤器
 Vue.use(require('vue-moment'))
 import moment from 'moment'
