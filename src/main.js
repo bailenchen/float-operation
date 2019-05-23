@@ -64,6 +64,7 @@ import {
   emoji
 } from './utils/emoji'
 Vue.prototype.emoji = emoji
+
 Vue.config.productionTip = false
 
 window.app = new Vue({
