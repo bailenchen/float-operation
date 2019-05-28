@@ -52,14 +52,14 @@ export default {
       postParams: {}, // 筛选参数
       axisList: [],
       fieldList: [
-        { field: 'business_name', name: '商机名称' },
-        { field: 'customer_name', name: '客户名称' },
-        { field: 'type_id_info', name: '商机状态组' },
-        { field: 'status_id_info', name: '商机阶段' },
+        { field: 'businessName', name: '商机名称' },
+        { field: 'customerName', name: '客户名称' },
+        { field: 'typeName', name: '商机状态组' },
+        { field: 'statusName', name: '商机阶段' },
         { field: 'money', name: '商机金额' },
-        { field: 'deal_date', name: '预计成交日期' },
-        { field: 'owner_user_name', name: '负责人' },
-        { field: 'create_time', name: '创建时间' }
+        { field: 'dealDate', name: '预计成交日期' },
+        { field: 'ownerUserName', name: '负责人' },
+        { field: 'createTime', name: '创建时间' }
       ]
     }
   },
@@ -92,8 +92,8 @@ export default {
           let xAxis = []
           for (let index = 0; index < this.axisList.length; index++) {
             const element = this.axisList[index]
-            moneyCounts.push(element.business_money)
-            numCounts.push(element.business_num)
+            moneyCounts.push(element.businessMoney)
+            numCounts.push(element.businessNum)
             xAxis.push(element.type)
           }
           this.axisOption.xAxis[0].data = xAxis
@@ -115,10 +115,10 @@ export default {
 
       if (typeof dataIndex !== 'undefined') {
         let dataItem = this.axisList[dataIndex]
-        params.user_id = this.postParams.user_id
-        params.structure_id = this.postParams.structure_id
-        params.start_time = dataItem.start_time
-        params.end_time = dataItem.end_time
+        params.userId = this.postParams.userId
+        params.deptId = this.postParams.deptId
+        params.startTime = dataItem.startTime
+        params.endTime = dataItem.endTime
       } else {
         params = this.postParams
       }

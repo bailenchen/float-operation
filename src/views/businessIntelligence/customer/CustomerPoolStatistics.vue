@@ -53,10 +53,10 @@ export default {
       axisList: [],
       fieldList: [
         { field: 'realname', name: '姓名' },
-        { field: 'username', name: '部门' },
-        { field: 'receive', name: '公海池领取客户数' },
-        { field: 'put_in', name: '进入公海客户数' },
-        { field: 'customer_num', name: '客户总数' }
+        { field: 'deptName', name: '部门' },
+        { field: 'receiveNum', name: '公海池领取客户数' },
+        { field: 'putInNum', name: '进入公海客户数' },
+        { field: 'customerNum', name: '客户总数' }
       ]
     }
   },
@@ -89,8 +89,8 @@ export default {
           let xAxis = []
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
-            putCounts.push(element.put_in)
-            receiveCounts.push(element.receive)
+            putCounts.push(element.putInNum)
+            receiveCounts.push(element.receiveNum)
             xAxis.push(element.type)
           }
           this.axisOption.xAxis[0].data = xAxis
@@ -112,10 +112,10 @@ export default {
 
       if (typeof dataIndex !== 'undefined') {
         let dataItem = this.axisList[dataIndex]
-        params.user_id = this.postParams.user_id
-        params.structure_id = this.postParams.structure_id
-        params.start_time = dataItem.start_time
-        params.end_time = dataItem.end_time
+        params.userId = this.postParams.userId
+        params.deptId = this.postParams.deptId
+        params.startTime = dataItem.startTime
+        params.endTime = dataItem.endTime
       } else {
         params = this.postParams
       }

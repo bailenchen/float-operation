@@ -53,8 +53,8 @@ export default {
       axisList: [],
       fieldList: [
         { field: 'realname', name: '员工姓名' },
-        { field: 'record_num', name: '跟进次数' },
-        { field: 'customer_num', name: '跟进客户数' }
+        { field: 'recordCount', name: '跟进次数' },
+        { field: 'customerCount', name: '跟进客户数' }
       ]
     }
   },
@@ -88,7 +88,7 @@ export default {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             customerCounts.push(element.customerCount)
-            dataCounts.push(element.dataCount)
+            dataCounts.push(element.recordCount)
             xAxis.push(element.type)
           }
           this.axisOption.xAxis[0].data = xAxis
@@ -110,10 +110,10 @@ export default {
 
       if (typeof dataIndex !== 'undefined') {
         let dataItem = this.axisList[dataIndex]
-        params.user_id = this.postParams.user_id
-        params.structure_id = this.postParams.structure_id
-        params.start_time = dataItem.start_time
-        params.end_time = dataItem.end_time
+        params.userId = this.postParams.userId
+        params.deptId = this.postParams.deptId
+        params.startTime = dataItem.startTime
+        params.endTime = dataItem.endTime
       } else {
         params = this.postParams
       }

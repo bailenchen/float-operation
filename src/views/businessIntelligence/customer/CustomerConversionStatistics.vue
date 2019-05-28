@@ -58,16 +58,16 @@ export default {
       list: [],
       axisList: [],
       fieldList: [
-        { field: 'name', name: '客户名称' },
-        { field: 'contract_name', name: '合同名称' },
-        { field: 'contract_money', name: '合同金额（元）' },
-        { field: 'r_money', name: '回款金额（元）' },
-        { field: 'industry', name: '客户行业' },
-        { field: 'source', name: '客户来源' },
-        { field: 'owner_realname', name: '负责人' },
-        { field: 'create_realname', name: '创建人' },
-        { field: 'create_time', name: '创建时间' },
-        { field: 'order_time', name: '下单时间' }
+        { field: 'customerName', name: '客户名称' },
+        { field: 'contractName', name: '合同名称' },
+        { field: 'contractMoney', name: '合同金额（元）' },
+        { field: 'receivablesMoney', name: '回款金额（元）' },
+        { field: '客户行业', name: '客户行业' },
+        { field: '客户来源', name: '客户来源' },
+        { field: 'ownerUserName', name: '负责人' },
+        { field: 'createUserName', name: '创建人' },
+        { field: 'createTime', name: '创建时间' },
+        { field: 'orderDate', name: '下单时间' }
       ]
     }
   },
@@ -114,8 +114,8 @@ export default {
           let legendData = []
           for (let index = 0; index < list.length; index++) {
             const element = list[index]
-            pieData.push({ name: element.type, value: element.proportion })
-            axisData.push(element.proportion)
+            pieData.push({ name: element.type, value: element.pro })
+            axisData.push(element.pro)
             legendData.push(element.type)
           }
 
@@ -141,10 +141,10 @@ export default {
 
       if (typeof dataIndex !== 'undefined') {
         let dataItem = this.axisList[dataIndex]
-        params.user_id = this.postParams.user_id
-        params.structure_id = this.postParams.structure_id
-        params.start_time = dataItem.start_time
-        params.end_time = dataItem.end_time
+        params.userId = this.postParams.userId
+        params.deptId = this.postParams.deptId
+        params.startTime = dataItem.startTime
+        params.endTime = dataItem.endTime
       } else {
         params = this.postParams
       }

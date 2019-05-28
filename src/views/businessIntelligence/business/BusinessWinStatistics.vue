@@ -52,14 +52,14 @@ export default {
       postParams: {}, // 筛选参数
       axisList: [],
       fieldList: [
-        { field: 'business_name', name: '商机名称' },
-        { field: 'customer_name', name: '客户名称' },
-        { field: 'type_id_info', name: '商机状态组' },
-        { field: 'status_id_info', name: '商机阶段' },
+        { field: 'businessName', name: '商机名称' },
+        { field: 'customerName', name: '客户名称' },
+        { field: 'typeName', name: '商机状态组' },
+        { field: 'statusName', name: '商机阶段' },
         { field: 'money', name: '商机金额' },
-        { field: 'deal_date', name: '预计成交日期' },
-        { field: 'owner_user_name', name: '负责人' },
-        { field: 'create_time', name: '创建时间' }
+        { field: 'dealDate', name: '预计成交日期' },
+        { field: 'ownerUserName', name: '负责人' },
+        { field: 'createTime', name: '创建时间' }
       ]
     }
   },
@@ -93,8 +93,8 @@ export default {
           let xAxis = []
           for (let index = 0; index < this.axisList.length; index++) {
             const element = this.axisList[index]
-            endCounts.push(element.business_end)
-            numCounts.push(element.business_num)
+            endCounts.push(element.businessEnd)
+            numCounts.push(element.businessNum)
             proportionCounts.push(element.proportion)
             xAxis.push(element.type)
           }

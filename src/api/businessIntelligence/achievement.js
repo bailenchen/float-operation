@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function biAchievementAnalysisAPI(data) {
   return request({
-    url: 'bi/achievement/analysis',
+    url: 'biEmployee/contractNumStats',
     method: 'post',
     data: data
   })
@@ -14,7 +14,7 @@ export function biAchievementAnalysisAPI(data) {
 
 /**
  * 合同汇总表
- * @param {*} data 
+ * @param {*} data
  */
 export function biAchievementSummaryAPI(data) {
   return request({

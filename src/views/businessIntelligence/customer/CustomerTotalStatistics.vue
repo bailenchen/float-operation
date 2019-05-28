@@ -54,13 +54,13 @@ export default {
       axisList: [],
       fieldList: [
         { field: 'realname', name: '员工姓名' },
-        { field: 'customer_num', name: '新增客户数' },
-        { field: 'deal_customer_num', name: '成交客户数' },
-        { field: 'deal_customer_rate', name: '客户成交率(%)' },
-        { field: 'contract_money', name: '合同总金额' },
-        { field: 'receivables_money', name: '回款金额' },
-        { field: 'un_receivables_money', name: '未回款金额' },
-        { field: 'deal_receivables_rate', name: '回款完成率(%)' }
+        { field: 'customerNum', name: '新增客户数' },
+        { field: 'dealCustomerNum', name: '成交客户数' },
+        { field: 'dealCustomerRate', name: '客户成交率(%)' },
+        { field: 'contractMoney', name: '合同总金额' },
+        { field: 'receivablesMoney', name: '回款金额' },
+        { field: 'unreceivedMoney', name: '未回款金额' },
+        { field: 'completedRate', name: '回款完成率(%)' }
       ]
     }
   },
@@ -83,19 +83,19 @@ export default {
      */
     getDataList() {
       this.loading = true
+      console.log(this.postParams)
       biCustomerTotalAPI(this.postParams)
         .then(res => {
           this.loading = false
           let list = res.data || []
           this.axisList = list
-
           let dealData = []
           let numData = []
           let legendData = []
           for (let index = 0; index < list.length; index++) {
             const element = list[index]
-            dealData.push(element.deal_customer_num)
-            numData.push(element.customer_num)
+            dealData.push(element.dealCustomerNum)
+            numData.push(element.customerNum)
             legendData.push(element.type)
           }
 
@@ -116,13 +116,12 @@ export default {
       this.list = []
 
       let params = {}
-
       if (typeof dataIndex !== 'undefined') {
         let dataItem = this.axisList[dataIndex]
-        params.user_id = this.postParams.user_id
-        params.structure_id = this.postParams.structure_id
-        params.start_time = dataItem.start_time
-        params.end_time = dataItem.end_time
+        params.userId = this.postParams.userId
+        params.deptId = this.postParams.deptId
+        params.startTime = dataItem.startTime
+        params.endTime = dataItem.endTime
       } else {
         params = this.postParams
       }

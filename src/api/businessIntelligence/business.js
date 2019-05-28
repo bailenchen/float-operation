@@ -10,7 +10,7 @@ import request from '@/utils/request'
  */
 export function biBusinessTrendAPI(data) {
   return request({
-    url: 'bi/business/businessTrend',
+    url: 'biFunnel/addBusinessAnalyze',
     method: 'post',
     data: data
   })
@@ -18,11 +18,11 @@ export function biBusinessTrendAPI(data) {
 
 /**
  * 新增商机数与金额趋势分析 详情列表
- * @param {*} data 
+ * @param {*} data
  */
 export function biBusinessTrendListAPI(data) {
   return request({
-    url: 'bi/business/trendList',
+    url: 'biFunnel/sellFunnelList',
     method: 'post',
     data: data
   })
@@ -30,11 +30,11 @@ export function biBusinessTrendListAPI(data) {
 
 /**
  * 赢单机会转化率趋势分析
- * @param {*} data 
+ * @param {*} data
  */
 export function biBusinessWinAPI(data) {
   return request({
-    url: 'bi/business/win',
+    url: 'biFunnel/win',
     method: 'post',
     data: data
   })

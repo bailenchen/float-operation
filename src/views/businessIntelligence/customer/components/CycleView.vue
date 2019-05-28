@@ -37,7 +37,8 @@ import echarts from 'echarts'
 import {
   biCustomerUserCycleAPI,
   biCustomerAddressCycleAPI,
-  biCustomerProductCycleAPI
+  biCustomerProductCycleAPI,
+  employeeCycleInfo
 } from '@/api/businessIntelligence/customer'
 
 export default {
@@ -109,22 +110,23 @@ export default {
       request(params)
         .then(res => {
           this.loading = false
-
-          this.list = this.type == 'customer' ? res.data.users : res.data
-          let axisList = this.type == 'customer' ? res.data.items : res.data
+          if(this.type != 'customer'){
+            this.list = res.data
+          }
+          let axisList = res.data
           let cycleData = []
           let dealData = []
           let xAxis = []
           for (let index = 0; index < axisList.length; index++) {
             const element = axisList[index]
             cycleData.push(element.cycle)
-            dealData.push(element.customer_num)
+            dealData.push(element.customerNum)
             if (this.type == 'customer') {
               xAxis.push(element.type)
             } else if (this.type == 'address') {
-              xAxis.push(element.address)
+              xAxis.push(element.type)
             } else if (this.type == 'product') {
-              xAxis.push(element.product_name)
+              xAxis.push(element.productName)
             }
           }
           this.axisOption.xAxis[0].data = xAxis
@@ -135,6 +137,19 @@ export default {
         .catch(() => {
           this.loading = false
         })
+      if(this.type == 'customer'){
+        employeeCycleInfo(params)
+          .then(res => {
+            this.loading = false
+
+            this.list = res.data
+          })
+          .catch(() => {
+            this.loading = false
+          })
+      }
+
+
     },
     /** 柱状图 */
     initAxis() {
@@ -251,17 +266,17 @@ export default {
         customer: [
           { field: 'realname', name: '姓名' },
           { field: 'cycle', name: '成交周期（天）' },
-          { field: 'customer_num', name: '成交客户数' }
+          { field: 'customerNum', name: '成交客户数' }
         ],
         product: [
-          { field: 'product_name', name: '产品名称' },
+          { field: 'productName', name: '产品名称' },
           { field: 'cycle', name: '成交周期（天）' },
-          { field: 'customer_num', name: '成交客户数' }
+          { field: 'customerNum', name: '成交客户数' }
         ],
         address: [
-          { field: 'address', name: '地区' },
+          { field: 'type', name: '地区' },
           { field: 'cycle', name: '成交周期（天）' },
-          { field: 'customer_num', name: '成交客户数' }
+          { field: 'customerNum', name: '成交客户数' }
         ]
       }[this.type]
     }

@@ -70,7 +70,7 @@
 </template>
 
 <script type="text/javascript">
-import { adminStructuresSubIndex, getSubUserByStructrue } from '@/api/common'
+import { adminStructuresSubIndex, userListByStructid,getUserByDeptId } from '@/api/common'
 import { crmBusinessStatusList } from '@/api/customermanagement/business'
 import { productCategoryIndex } from '@/api/systemManagement/SystemCustomer'
 import timeTypeSelect from '@/components/timeTypeSelect'
@@ -223,8 +223,8 @@ export default {
     /** 部门下员工 */
     getUserList() {
       var params = {}
-      params.structure_id = this.structuresSelectValue
-      getSubUserByStructrue(params)
+      params.deptId = this.structuresSelectValue
+      getUserByDeptId(params)
         .then(res => {
           this.userOptions = res.data
         })
@@ -258,12 +258,12 @@ export default {
     },
     postFiltrateValue() {
       let params = {
-        structure_id: this.structuresSelectValue
+        deptId: this.structuresSelectValue
       }
 
       // 展示员工，返回员工参数
       if (this.showUserSelect) {
-        params.user_id = this.userSelectValue
+        params.userId = this.userSelectValue
       }
 
       // 展示商机状态 返回商机状态参数
