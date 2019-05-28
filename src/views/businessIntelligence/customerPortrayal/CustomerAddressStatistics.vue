@@ -137,7 +137,7 @@ export default {
             mapType: 'china',
             showLegendSymbol: false,
             itemStyle: {
-              normal: { label: { show: true } , borderColor:'#ccc'},
+              normal: { label: { show: true }, borderColor: '#ccc' },
               emphasis: { label: { show: true } }
             },
             data: []
@@ -151,24 +151,4 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
-
-.main-container {
-  height: 100%;
-  position: relative;
-}
-
-.content {
-  padding-top: 54px;
-  overflow-y: auto;
-}
-
-.axis-content {
-  padding: 20px 10% 40px;
-  position: relative;
-  .axismain {
-    margin: 0 auto;
-    width: 100%;
-    height: 450px;
-  }
-}
 </style>

@@ -2,6 +2,7 @@
   <div v-loading="loading"
        class="main-container">
     <filtrate-handle-view class="filtrate-bar"
+                          moduleType="customer"
                           :showCustomSelect="true"
                           :customDefault="showType"
                           :customOptions="[{name:'饼状图', value: 'pie'},{name:'柱状图', value: 'bar'}]"
@@ -10,26 +11,25 @@
                           @typeChange="showTypeChange">
     </filtrate-handle-view>
     <div class="content">
-      <flexbox>
-        <flexbox-item class="chart-content">
-          <div id="axismain"></div>
-        </flexbox-item>
-        <flexbox-item>
-          <el-table :data="list"
-                    height="300"
-                    stripe
-                    highlight-current-row>
-            <el-table-column v-for="(item, index) in fieldList"
-                             :key="index"
-                             align="center"
-                             header-align="center"
-                             show-overflow-tooltip
-                             :prop="item.field"
-                             :label="item.name">
-            </el-table-column>
-          </el-table>
-        </flexbox-item>
-      </flexbox>
+      <div class="axis-content">
+        <div id="axismain"></div>
+      </div>
+      <div class="table-content">
+        <el-table :data="list"
+                  height="400"
+                  stripe
+                  border
+                  highlight-current-row>
+          <el-table-column v-for="(item, index) in fieldList"
+                           :key="index"
+                           align="center"
+                           header-align="center"
+                           show-overflow-tooltip
+                           :prop="item.field"
+                           :label="item.name">
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
@@ -55,8 +55,8 @@ export default {
       list: [],
       fieldList: [
         { field: 'category', name: '跟进方式' },
-        { field: 'proportion', name: '个数' },
-        { field: 'recordNum', name: '占比' }
+        { field: 'recordNum', name: '个数' },
+        { field: 'proportion', name: '占比（%）' }
       ]
     }
   },
@@ -100,7 +100,7 @@ export default {
 
           this.axisOption.xAxis[0].data = legendData
           this.axisOption.series[0].data = axisData
-          
+
           this.refreshChartInfo()
         })
         .catch(() => {
@@ -173,6 +173,7 @@ export default {
           {
             name: '',
             type: 'bar',
+            barWidth: 15,
             data: []
           }
         ]
@@ -188,7 +189,8 @@ export default {
         },
         legend: {
           type: 'scroll',
-          bottom: '0px',
+          bottom: '0',
+          x: 'center',
           data: []
         },
         series: [
@@ -216,49 +218,4 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
-
-.main-container {
-  height: 100%;
-  position: relative;
-}
-
-.filtrate-bar {
-  position: absolute;
-  background-color: white;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: 0;
-  padding: 15px 20px 5px 20px;
-  margin-right: 15px;
-}
-
-.content {
-  padding-top: 54px;
-  overflow-y: auto;
-}
-
-.chart-content {
-  padding: 20px 30px 40px;
-  position: relative;
-}
-
-.content /deep/ .el-table {
-  border: 1px solid #e6e6e6;
-  width: 300px;
-}
-
-#piemain {
-  margin: 0 auto;
-  width: 100%;
-  height: 400px;
-}
-#axismain {
-  margin: 0 auto;
-  width: 420px;
-  height: 400px;
-}
-.table-content {
-  padding: 0 60px;
-}
 </style>

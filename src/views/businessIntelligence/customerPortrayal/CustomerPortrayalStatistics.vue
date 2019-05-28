@@ -2,24 +2,14 @@
   <div v-loading="loading"
        class="main-container">
     <filtrate-handle-view class="filtrate-bar"
+                          moduleType="portrait"
                           @load="loading=true"
                           @change="getDataList">
     </filtrate-handle-view>
     <div class="content">
-      <flexbox>
-        <flexbox-item>
-          <div class="axis-content">
-            <div class="axismain"
-                 id="allChart"></div>
-          </div>
-        </flexbox-item>
-        <flexbox-item>
-          <div class="axis-content">
-            <div class="axismain"
-                 id="dealChart"></div>
-          </div>
-        </flexbox-item>
-      </flexbox>
+      <div class="axis-content">
+        <div id="axismain"></div>
+      </div>
       <div class="table-content">
         <el-table :data="list"
                   height="400"
@@ -53,10 +43,8 @@ export default {
   data() {
     return {
       loading: false,
-      allOption: null,
-      dealOption: null,
-      allChart: null,
-      dealChart: null,
+      axisOption: null,
+      axisChart: null,
 
       list: [],
       type: '', // 类型 source：客户来源；industry：客户行业；level：客户级别
@@ -74,7 +62,7 @@ export default {
   mounted() {
     this.initAxis()
   },
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     this.type = to.params.type
     this.getDataList(this.postParams)
     next()
@@ -142,14 +130,12 @@ export default {
           }
 
           // 图表展示
-          this.allOption.legend.data = legendData
-          this.dealOption.legend.data = legendData
+          this.axisOption.legend.data = legendData
 
-          this.allOption.series[0].data = allData
-          this.dealOption.series[0].data = dealData
+          this.axisOption.series[0].data = allData
+          this.axisOption.series[1].data = dealData
 
-          this.allChart.setOption(this.allOption, true)
-          this.dealChart.setOption(this.dealOption, true)
+          this.axisChart.setOption(this.axisOption, true)
 
           // 列表展示
           this.fieldList = fieldList
@@ -161,35 +147,48 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.allChart = echarts.init(document.getElementById('allChart'))
-      this.dealChart = echarts.init(document.getElementById('dealChart'))
-      this.allOption = this.getChartOptione('全部客户')
-      this.dealOption = this.getChartOptione('成交客户')
-      this.allChart.setOption(this.allOption, true)
-      this.dealChart.setOption(this.dealOption, true)
+      this.axisChart = echarts.init(document.getElementById('axismain'))
+      this.axisOption = this.getChartOptione()
+      this.axisChart.setOption(this.axisOption, true)
     },
-    getChartOptione(title) {
+    getChartOptione() {
       return {
-        title: {
-          text: title,
-          x: 'center',
-          bottom: '10'
-        },
+        title: [
+          {
+            text: '全部客户',
+            x: '20%',
+            bottom: '25'
+          },
+          {
+            text: '成交客户',
+            x: '70%',
+            bottom: '25'
+          }
+        ],
         color: this.chartColors,
         tooltip: {
           trigger: 'item',
           formatter: '{b} : {c}'
         },
         legend: {
-          orient: 'vertical',
-          x: 'left',
+          x: 'center',
+          y: 'bottom',
+          type: 'scroll',
           data: []
         },
         series: [
           {
-            name: '',
+            name: '全部客户',
             type: 'pie',
-            radius: ['50%', '70%'],
+            radius: ['35%', '50%'],
+            center: ['25%', '50%'],
+            data: []
+          },
+          {
+            name: '成交客户',
+            type: 'pie',
+            radius: ['35%', '50%'],
+            center: ['75%', '50%'],
             data: []
           }
         ]
@@ -202,38 +201,9 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
 
-.main-container {
-  height: 100%;
-  position: relative;
-}
-
-.filtrate-bar {
-  position: absolute;
-  background-color: white;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: 0;
-  padding: 15px 20px 5px 20px;
-  margin-right: 15px;
-}
-
-.content {
-  padding-top: 54px;
-  overflow-y: auto;
-}
-
 .axis-content {
-  padding: 20px 10% 40px;
-  position: relative;
-  .axismain {
-    margin: 0 auto;
-    width: 100%;
-    height: 400px;
+  #axismain {
+    height: 420px;
   }
-}
-
-.table-content {
-  padding: 0 60px;
 }
 </style>

@@ -2,6 +2,8 @@
   <div v-loading="loading"
        class="main-container">
     <filtrate-handle-view class="filtrate-bar"
+                          :showUserSelect="false"
+                          moduleType="ranking"
                           @load="loading=true"
                           @change="getDataList">
     </filtrate-handle-view>
@@ -75,8 +77,8 @@ export default {
           let rankingIndex = res.data.length > 10 ? 10 : res.data.length
           for (let index = 0; index < rankingIndex; index++) {
             const element = res.data[index]
-            showData.push(parseFloat(element.money))
-            yAxis.push(element.user_name)
+            showData.splice(0, 0, parseFloat(element.money))
+            yAxis.splice(0, 0, element.user_name)
           }
           this.axisOption.yAxis[0].data = yAxis
           this.axisOption.series[0].data = showData
@@ -97,44 +99,4 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
-
-.main-container {
-  height: 100%;
-  position: relative;
-}
-
-.filtrate-bar {
-  position: absolute;
-  background-color: white;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: 0;
-  padding: 15px 20px 5px 20px;
-  margin-right: 15px;
-}
-
-.content {
-  .content-title {
-    padding: 20px 20px 5px;
-    font-size: 17px;
-    color: #333;
-  }
-  padding-top: 54px;
-  overflow-y: auto;
-}
-
-.axis-content {
-  padding: 20px 20% 40px;
-  position: relative;
-  #axismain {
-    margin: 0 auto;
-    width: 100%;
-    height: 400px;
-  }
-}
-
-.table-content {
-  padding: 0 60px;
-}
 </style>

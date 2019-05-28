@@ -99,6 +99,7 @@ export default {
   methods: {
     // 类型选择
     typeSelectClick(item) {
+      this.showTypePopover = false
       this.sureCustomContent = false
       this.showCustomContent = false
       this.selectType = item

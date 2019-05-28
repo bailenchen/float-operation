@@ -22,7 +22,8 @@
                  :value="item.id">
       </el-option>
     </el-select>
-    <el-select v-model="userSelectValue"
+    <el-select v-if="showUserSelect"
+               v-model="userSelectValue"
                :clearable="true"
                placeholder="选择员工">
       <el-option v-for="item in userOptions"
@@ -33,7 +34,7 @@
     </el-select>
     <!-- 展示商机状态筛选 -->
     <el-select v-model="businessStatusValue"
-               v-if="showBusinessStatus"
+               v-if="showBusinessSelect"
                placeholder="商机组">
       <el-option v-for="item in businessOptions"
                  :key="item.type_id"
@@ -113,14 +114,24 @@ export default {
     }
   },
   props: {
+    // 模块类型
+    moduleType: {
+      required: true,
+      type: String
+    },
     // 是否展示年
     showYearSelect: {
       default: false,
       type: Boolean
     },
     // 是否展示商机状态筛选
-    showBusinessStatus: {
+    showBusinessSelect: {
       default: false,
+      type: Boolean
+    },
+    // 展示员工选择
+    showUserSelect: {
+      default: true,
       type: Boolean
     },
     showCustomSelect: {
@@ -153,7 +164,7 @@ export default {
 
     this.$emit('load')
     this.getDeptList(() => {
-      if (this.showBusinessStatus) {
+      if (this.showBusinessSelect) {
         this.getBusinessStatusList(() => {
           this.postFiltrateValue()
         })
@@ -179,12 +190,20 @@ export default {
      * 获取部门列表
      */
     getDeptList(result) {
-      adminStructuresSubIndex()
+      adminStructuresSubIndex({
+        m: 'bi',
+        c: this.moduleType,
+        a: 'read'
+      })
         .then(res => {
           this.deptList = res.data
           if (res.data.length > 0) {
             this.structuresSelectValue = res.data[0].id
-            this.getUserList() // 更新员工列表
+            if (this.showUserSelect) {
+              this.getUserList() // 更新员工列表
+            }
+          } else {
+            this.structuresSelectValue = ''
           }
           result(true)
         })
@@ -194,9 +213,12 @@ export default {
     },
     /** 部门更改 */
     structuresValueChange(data) {
-      this.userSelectValue = ''
-      this.userOptions = []
-      this.getUserList() // 更新员工列表
+      // 展示员工筛选，执行更新逻辑
+      if (this.showUserSelect) {
+        this.userSelectValue = ''
+        this.userOptions = []
+        this.getUserList() // 更新员工列表
+      }
     },
     /** 部门下员工 */
     getUserList() {
@@ -236,10 +258,16 @@ export default {
     },
     postFiltrateValue() {
       let params = {
-        structure_id: this.structuresSelectValue,
-        user_id: this.userSelectValue
+        structure_id: this.structuresSelectValue
       }
-      if (this.showBusinessStatus) {
+
+      // 展示员工，返回员工参数
+      if (this.showUserSelect) {
+        params.user_id = this.userSelectValue
+      }
+
+      // 展示商机状态 返回商机状态参数
+      if (this.showBusinessSelect) {
         params.type_id = this.businessStatusValue
       }
 

@@ -1,30 +1,33 @@
 <template>
-  <div class="content"
+  <div class="cycle-content"
        v-loading="loading">
     <filtrate-handle-view class="filtrate-bar"
+                          moduleType="customer"
                           @load="loading=true"
                           @change="getDataList">
     </filtrate-handle-view>
-    <div class="axis-content">
-      <div class="content-title">{{title}}</div>
-      <div class="axismain"
-           :id="'axismain' + type"></div>
-    </div>
-    <div class="table-content">
-      <el-table :data="list"
-                height="400"
-                stripe
-                border
-                highlight-current-row>
-        <el-table-column v-for="(item, index) in fieldList"
-                         :key="index"
-                         align="center"
-                         header-align="center"
-                         show-overflow-tooltip
-                         :prop="item.field"
-                         :label="item.name">
-        </el-table-column>
-      </el-table>
+    <div class="content">
+      <div class="axis-content">
+        <div class="content-title">{{title}}</div>
+        <div class="axismain"
+             :id="'axismain' + type"></div>
+      </div>
+      <div class="table-content">
+        <el-table :data="list"
+                  height="400"
+                  stripe
+                  border
+                  highlight-current-row>
+          <el-table-column v-for="(item, index) in fieldList"
+                           :key="index"
+                           align="center"
+                           header-align="center"
+                           show-overflow-tooltip
+                           :prop="item.field"
+                           :label="item.name">
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
@@ -43,9 +46,9 @@ export default {
   computed: {
     title() {
       return {
-        customer: '员工客户成交周期（根据成交客户数）',
-        address: '地区成交周期（根据成交客户数）',
-        product: '产品成交周期（根据成交客户数）'
+        customer: '员工客户成交周期（根据合同下单时间和客户创建时间计算）',
+        address: '地区成交周期（根据合同下单时间和客户创建时间计算）',
+        product: '产品成交周期（根据合同下单时间和客户创建时间计算）'
       }[this.type]
     }
   },
@@ -135,11 +138,11 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      var axisChart = echarts.init(
+      let axisChart = echarts.init(
         document.getElementById('axismain' + this.type)
       )
 
-      var option = {
+      let option = {
         color: ['#6ca2ff', '#ff7474'],
         tooltip: {
           trigger: 'axis',
@@ -191,7 +194,7 @@ export default {
             },
             axisLabel: {
               color: '#BDBDBD',
-              formatter: '{value}个'
+              formatter: '{value}天'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
@@ -210,7 +213,7 @@ export default {
             },
             axisLabel: {
               color: '#BDBDBD',
-              formatter: '{value}次'
+              formatter: '{value}个'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
@@ -247,17 +250,17 @@ export default {
       return {
         customer: [
           { field: 'realname', name: '姓名' },
-          { field: 'cycle', name: '成交周期（月）' },
+          { field: 'cycle', name: '成交周期（天）' },
           { field: 'customer_num', name: '成交客户数' }
         ],
         product: [
           { field: 'product_name', name: '产品名称' },
-          { field: 'cycle', name: '成交周期（月）' },
+          { field: 'cycle', name: '成交周期（天）' },
           { field: 'customer_num', name: '成交客户数' }
         ],
         address: [
           { field: 'address', name: '地区' },
-          { field: 'cycle', name: '成交周期（月）' },
+          { field: 'cycle', name: '成交周期（天）' },
           { field: 'customer_num', name: '成交客户数' }
         ]
       }[this.type]
@@ -266,39 +269,22 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../../styles/detail.scss';
 .filtrate-bar {
   position: absolute;
-  background-color: white;
   z-index: 2;
   left: 0;
   right: 0;
   top: 0;
-  padding: 15px 20px 5px 20px;
-  margin-right: 15px;
 }
 
 .content {
   padding-top: 54px;
+  height: 100%;
+}
+
+.cycle-content {
+  height: 100%;
   overflow-y: auto;
-  .content-title {
-    padding: 20px 20px 5px;
-    font-size: 17px;
-    color: #333;
-  }
-}
-
-.axis-content {
-  padding: 20px 20% 40px;
-  position: relative;
-  .axismain {
-    margin: 0 auto;
-    width: 100%;
-    height: 400px;
-  }
-}
-
-.table-content {
-  padding: 0 60px;
-  margin-bottom: 20px;
 }
 </style>

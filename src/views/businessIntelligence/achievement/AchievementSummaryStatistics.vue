@@ -82,35 +82,7 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
-
-.main-container {
-  height: 100%;
-  position: relative;
-}
-
-.filtrate-bar {
-  position: absolute;
-  background-color: white;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: 0;
-  padding: 15px 20px 5px 20px;
-  margin-right: 15px;
-}
-
-.content {
-  padding-top: 54px;
-  overflow-y: auto;
-  .content-title {
-    padding: 20px 20px 5px;
-    font-size: 17px;
-    color: #333;
-  }
-}
-
-.table-content {
-  margin-top: 20px;
-  padding: 0 20px;
+.content-title {
+  padding-bottom: 15px;
 }
 </style>

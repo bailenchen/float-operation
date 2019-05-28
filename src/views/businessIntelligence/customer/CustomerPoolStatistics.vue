@@ -2,14 +2,15 @@
   <div v-loading="loading"
        class="main-container">
     <filtrate-handle-view class="filtrate-bar"
+                          moduleType="customer"
                           @load="loading=true"
-                          @change="getDataList">
+                          @change="searchClick">
     </filtrate-handle-view>
     <div class="content">
       <div class="axis-content">
         <div id="axismain"></div>
       </div>
-      <div class="table-content" v-if="showTable">
+      <div class="table-content">
         <el-table :data="list"
                   height="400"
                   stripe
@@ -46,7 +47,6 @@ export default {
       axisOption: null,
       axisChart: null,
 
-      showTable: false,
       list: [],
 
       postParams: {}, // 筛选参数
@@ -66,12 +66,20 @@ export default {
     this.initAxis()
   },
   methods: {
-    getDataList(params) {
-      this.showTable = false
-
+    /**
+     * 搜索点击
+     */
+    searchClick(params) {
       this.postParams = params
+      this.getDataList()
+      this.getRecordList()
+    },
+    /**
+     * 图表数据
+     */
+    getDataList() {
       this.loading = true
-      biCustomerPoolAPI(params)
+      biCustomerPoolAPI(this.postParams)
         .then(res => {
           this.loading = false
           this.axisList = res.data || []
@@ -99,16 +107,18 @@ export default {
      */
     getRecordList(dataIndex) {
       this.list = []
-      this.showTable = true
 
-      let params = {
-        user_id: this.postParams.user_id,
-        structure_id: this.postParams.structure_id
+      let params = {}
+
+      if (typeof dataIndex !== 'undefined') {
+        let dataItem = this.axisList[dataIndex]
+        params.user_id = this.postParams.user_id
+        params.structure_id = this.postParams.structure_id
+        params.start_time = dataItem.start_time
+        params.end_time = dataItem.end_time
+      } else {
+        params = this.postParams
       }
-
-      let dataItem = this.axisList[dataIndex]
-      params.start_time = dataItem.start_time
-      params.end_time = dataItem.end_time
 
       this.loading = true
       biCustomerPoolListAPI(params)
@@ -211,12 +221,14 @@ export default {
             name: '进入公海客户数',
             type: 'bar',
             yAxisIndex: 0,
+            barWidth: 15,
             data: []
           },
           {
             name: '公海池领取客户数',
             type: 'bar',
             yAxisIndex: 1,
+            barWidth: 15,
             data: []
           }
         ]
@@ -236,39 +248,4 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
-
-.main-container {
-  height: 100%;
-  position: relative;
-}
-
-.filtrate-bar {
-  position: absolute;
-  background-color: white;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: 0;
-  padding: 15px 20px 5px 20px;
-  margin-right: 15px;
-}
-
-.content {
-  padding-top: 54px;
-  overflow-y: auto;
-}
-
-.axis-content {
-  padding: 20px 20% 40px;
-  position: relative;
-  #axismain {
-    margin: 0 auto;
-    width: 100%;
-    height: 400px;
-  }
-}
-
-.table-content {
-  padding: 0 60px;
-}
 </style>

@@ -45,10 +45,17 @@ export default {
 
   /deep/ .el-tabs__header {
     padding: 10px 20px 0;
+    margin-bottom: 0;
   }
 
   /deep/ .el-tabs__content {
-    overflow: scroll;
+    overflow: hidden;
+    height: 100%;
+
+    .el-tab-pane {
+      overflow: hidden;
+      height: 100%;
+    }
   }
 }
 </style>
