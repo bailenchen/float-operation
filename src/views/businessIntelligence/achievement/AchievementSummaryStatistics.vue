@@ -50,9 +50,9 @@ export default {
       },
       fieldList: [
         { field: 'type', name: '日期' },
-        { field: 'count', name: '签约合同数（个）' },
-        { field: 'money', name: '签约合同金额（元）' },
-        { field: 'back', name: '回款金额（元）' }
+        { field: 'contractNum', name: '签约合同数（个）' },
+        { field: 'contractMoney', name: '签约合同金额（元）' },
+        { field: 'receivablesMoney', name: '回款金额（元）' }
       ]
     }
   },

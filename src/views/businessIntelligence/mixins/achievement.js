@@ -86,11 +86,11 @@ export default {
             }
 
             let keys = [
-              'month',
+              'thisMonth',
               'lastMonth',
-              'lastYeatMonth',
-              'chain_ratio',
-              'year_on_year'
+              'lastYear',
+              'lastYearGrowth',
+              'lastMonthGrowth'
             ]
             for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
               const keyElement = keys[keyIndex]
@@ -110,12 +110,12 @@ export default {
           let xAxis = []
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
-            monthData.push(element.month)
+            monthData.push(element.thisMonth)
             lastMonthData.push(element.lastMonth)
-            lastYeatMonthData.push(element.lastYeatMonth)
-            chainRatioData.push(element.chain_ratio)
-            yearOnYearData.push(element.year_on_year)
-            xAxis.push(element.type)
+            lastYeatMonthData.push(element.lastYear)
+            chainRatioData.push(element.lastYearGrowth)
+            yearOnYearData.push(element.lastMonthGrowth)
+            xAxis.push(element.month)
           }
           this.axisOption.xAxis[0].data = xAxis
           this.axisOption.series[0].data = monthData
