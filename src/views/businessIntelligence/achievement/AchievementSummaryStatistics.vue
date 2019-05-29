@@ -69,8 +69,14 @@ export default {
       this.loading = true
       biAchievementSummaryAPI(params)
         .then(res => {
-          this.data = res.data
-          this.list = res.data.items || []
+          let data=res.data;
+          this.data = {
+            back_zong: data.receivablesMoney,
+            count_zong: data.contractNum,
+            money_zong: data.contractMoney,
+            w_back_zong: data.unreceivedMoney
+          }
+          this.list = data.list || []
           this.loading = false
         })
         .catch(() => {

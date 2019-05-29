@@ -5,7 +5,7 @@ import request from '@/utils/request'
  */
 export function biProductCategoryAPI(data) {
   return request({
-    url: 'bi/product/productCategory',
+    url: 'biRanking/contractProductRanKing',
     method: 'post',
     data: data
   })

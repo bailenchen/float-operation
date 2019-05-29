@@ -46,8 +46,8 @@ export default {
           let legendData = []
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
-            numCounts.push({ name: element.product_name, value: element.num })
-            legendData.push(element.product_name)
+            numCounts.push({ name: element.productName, value: element.num })
+            legendData.push(element.productName)
           }
           this.axisOption.legend.data = legendData
           this.axisOption.series[0].data = numCounts
