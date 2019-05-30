@@ -10,7 +10,7 @@ import request from '@/utils/request'
  */
 export function biRankingContractAPI(data) {
   return request({
-    url: 'bi/ranking/contract',
+    url: 'biRanking/contractRanKing',
     method: 'post',
     data: data
   })
@@ -18,11 +18,11 @@ export function biRankingContractAPI(data) {
 
 /**
  * 回款金额排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingReceivablesAPI(data) {
   return request({
-    url: 'bi/ranking/receivables',
+    url: 'biRanking/receivablesRanKing',
     method: 'post',
     data: data
   })
@@ -30,11 +30,11 @@ export function biRankingReceivablesAPI(data) {
 
 /**
  * 签约合同排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingSigningAPI(data) {
   return request({
-    url: 'bi/ranking/signing',
+    url: 'biRanking/contractCountRanKing',
     method: 'post',
     data: data
   })
@@ -42,11 +42,11 @@ export function biRankingSigningAPI(data) {
 
 /**
  * 产品销量排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingProductAPI(data) {
   return request({
-    url: 'bi/ranking/product',
+    url: 'biRanking/productCountRanKing',
     method: 'post',
     data: data
   })
@@ -54,11 +54,11 @@ export function biRankingProductAPI(data) {
 
 /**
  * 新增客户数排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingAddCustomerAPI(data) {
   return request({
-    url: 'bi/ranking/addCustomer',
+    url: 'biRanking/customerCountRanKing',
     method: 'post',
     data: data
   })
@@ -66,11 +66,11 @@ export function biRankingAddCustomerAPI(data) {
 
 /**
  * 新增联系人数排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingAddContactsAPI(data) {
   return request({
-    url: 'bi/ranking/addContacts',
+    url: 'biRanking/contactsCountRanKing',
     method: 'post',
     data: data
   })
@@ -78,11 +78,11 @@ export function biRankingAddContactsAPI(data) {
 
 /**
  * 跟进次数排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingRecordNunAPI(data) {
   return request({
-    url: 'bi/ranking/recordNun',
+    url: 'biRanking/recordCountRanKing',
     method: 'post',
     data: data
   })
@@ -90,11 +90,11 @@ export function biRankingRecordNunAPI(data) {
 
 /**
  * 跟进客户数排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingRecordCustomerAPI(data) {
   return request({
-    url: 'bi/ranking/recordCustomer',
+    url: 'biRanking/customerGenjinCountRanKing',
     method: 'post',
     data: data
   })
@@ -102,11 +102,11 @@ export function biRankingRecordCustomerAPI(data) {
 
 /**
  * 出差次数排行
- * @param {*} data 
+ * @param {*} data
  */
 export function biRankingExamineAPI(data) {
   return request({
-    url: 'bi/ranking/examine',
+    url: 'biRanking/travelCountRanKing',
     method: 'post',
     data: data
   })

@@ -57,8 +57,8 @@ export default {
   computed: {},
   mounted() {
     this.fieldList = [
-      { field: 'user_name', name: '签订人' },
-      { field: 'structure_name', name: '归属人' },
+      { field: 'realname', name: '签订人' },
+      { field: 'structureName', name: '归属人' },
       { field: 'money', name: '回款金额（元）' }
     ]
     this.initAxis()
@@ -78,7 +78,7 @@ export default {
           for (let index = 0; index < rankingIndex; index++) {
             const element = res.data[index]
             showData.splice(0, 0, parseFloat(element.money))
-            yAxis.splice(0, 0, element.user_name)
+            yAxis.splice(0, 0, element.realname)
           }
           this.axisOption.yAxis[0].data = yAxis
           this.axisOption.series[0].data = showData
