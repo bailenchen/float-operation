@@ -101,11 +101,11 @@
           <flexbox style="position: relative;">
             <div class="trend-target-item">
               <div class="name">合同金额</div>
-              <div class="value">{{trendData.contractMoneySum}}元</div>
+              <div class="value">{{trendData.totlaContractMoney}}元</div>
             </div>
             <div class="trend-target-item">
               <div class="name">回款金额</div>
-              <div class="value">{{trendData.receivablesMoneySum}}元</div>
+              <div class="value">{{trendData.totlaReceivablesMoney}}元</div>
             </div>
           </flexbox>
           <div class="trend-label">
@@ -274,7 +274,8 @@ export default {
           .map(function(item, index, array) {
             return item.id
           })
-          .join(',')
+          .join(','),
+        type:this.data.timeTypeValue.value
       }
 
       if (this.data.timeTypeValue.type) {
@@ -292,7 +293,7 @@ export default {
     getCrmIndexAchievementData() {
       this.gaugeLoading = true
       var params = this.getBaseParams()
-      params.type = this.gaugeSelectValue
+      params.status = this.gaugeSelectValue
       crmIndexAchievementData(params)
         .then(res => {
           if (res.data) {
@@ -382,15 +383,18 @@ export default {
           this.funnelLoading = false
           var data = []
           let sumMoney = 0
-          for (let index = 0; index < res.data.record.length; index++) {
-            const element = res.data.record[index]
+          for (let index = 0; index < res.data.list.length; index++) {
+            const element = res.data.list[index]
             data.push({
-              name: (element.name || '') + '(' + element.businessNum + ')',
-              value: element.totalPrice
+              name: (element.name || '') + '(' + element.orderNum + ')',
+              value: element.money
             })
-            sumMoney += element.totalPrice
+            sumMoney += parseFloat(element.money||0)
           }
-          this.funnelData = res.data
+          this.funnelData = {
+            winSingle: res.data.sumYing,
+            loseSingle: res.data.sumShu
+          }
           this.funnelOption.series[0].data = data
           this.funnelOption.series[0].max = sumMoney < 1 ? 1 : sumMoney
           this.funnelChart.setOption(this.funnelOption, true)
@@ -474,15 +478,18 @@ export default {
       var params = this.getBaseParams()
       crmIndexSaletrend(params)
         .then(res => {
-          this.trendData = res.data
+          this.trendData = {
+            totlaContractMoney:res.data.totlaContractMoney,
+            totlaReceivablesMoney:res.data.totlaReceivablesMoney
+          }
           let list = res.data.list || []
           let contractList = []
           let receivablesList = []
           let xAxisData = []
           for (let index = 0; index < list.length; index++) {
             const element = list[index]
-            contractList.push(element.contractMoney)
-            receivablesList.push(element.receivablesMoney)
+            contractList.push(element.contractMoneys)
+            receivablesList.push(element.receivablesMoneys)
             xAxisData.push(element.type)
           }
 
