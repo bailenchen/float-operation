@@ -11,9 +11,8 @@
                  createButtonTitle=""
                  mainRouter="bi"></sidebar>
       </el-aside>
-      <el-main id="crm-main-container"
-               style="padding:15px; height: 100%;">
-        <router-view />
+      <el-main id="crm-main-container">
+        <app-main></app-main>
       </el-main>
     </el-container>
   </el-container>
