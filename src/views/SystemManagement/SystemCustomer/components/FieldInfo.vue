@@ -29,39 +29,42 @@
                       v-model="field.defaultValue"
                       :disabled="disabled">
         <draggable :list="field.showSetting">
-          <el-radio class="radio"
-                    v-for="(item, index) in field.showSetting"
-                    @click.native.prevent="radioChange(item.value)"
-                    :key="index"
-                    :label="item.value">
-            <el-input class="input"
-                      v-model="item.value"
-                      :disabled="disabled"></el-input>
+          <div class="radio"
+               v-for="(item, index) in field.showSetting"
+               :key="index">
+            <el-radio @click.native.prevent="radioChange(item.value)"
+                      :label="item.value">
+              <el-input class="input"
+                        v-model="item.value"
+                        :disabled="disabled"></el-input>
+            </el-radio>
             <i @click="handleRadio('add', item, index)"
                class="el-icon-circle-plus handle"></i>
             <i v-if="field.showSetting.length > 1"
                @click="handleRadio('remove', item, index)"
                class="el-icon-remove handle"></i>
-          </el-radio>
+          </div>
         </draggable>
       </el-radio-group>
       <el-checkbox-group v-if="field.formType == 'checkbox'"
                          v-model="field.defaultValue"
                          :disabled="disabled">
         <draggable :list="field.showSetting">
-          <el-checkbox class="checkbox"
-                       v-for="(item, index) in field.showSetting"
-                       :key="index"
-                       :label="item.value">
+          <div v-for="(item, index) in field.showSetting"
+               :key="index"
+               class="checkbox">
+            <el-checkbox :label="item.value">
+            </el-checkbox>
             <el-input class="input"
                       v-model="item.value"
                       :disabled="disabled"></el-input>
-            <i @click="handleCheckbox('add', item, index)"
+            <i @click.stop="handleCheckbox('add', item, index)"
                class="el-icon-circle-plus handle"></i>
             <i v-if="field.showSetting.length > 1"
-               @click="handleCheckbox('remove', item, index)"
+               @click.stop="handleCheckbox('remove', item, index)"
                class="el-icon-remove handle"></i>
-          </el-checkbox>
+          </div>
+          
         </draggable>
       </el-checkbox-group>
     </div>
@@ -318,7 +321,11 @@ export default {
 .radio {
   margin-top: 5px;
   margin-left: 0;
+  /deep/.el-radio {
+    margin-right: 10px;
+  }
   .input {
+    display: inline-block;
     width: 180px;
   }
   .handle {
@@ -331,7 +338,14 @@ export default {
   display: block;
   margin-left: 0;
   margin-top: 5px;
+  /deep/.el-checkbox {
+    margin-right: 10px;
+    .el-checkbox__label {
+      display: none;
+    }
+  }
   .input {
+    display: inline-block;
     width: 180px;
   }
   .handle {
