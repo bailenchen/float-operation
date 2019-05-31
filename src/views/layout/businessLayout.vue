@@ -31,8 +31,14 @@ export default {
     AppMain
   },
   computed: {
-    ...mapGetters(['bi', 'biRouters']),
+    ...mapGetters(['bi']),
     biRouterItems() {
+      for (let index = 0; index < biRouterMenu.length; index++) {
+        const routerMenuItem = biRouterMenu[index]
+        routerMenuItem.hidden = this.bi[routerMenuItem.meta.subType]
+          ? false
+          : true
+      }
       return biRouterMenu
     }
   },
