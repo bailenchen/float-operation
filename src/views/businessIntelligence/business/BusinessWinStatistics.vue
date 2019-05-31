@@ -121,8 +121,8 @@ export default {
         let dataItem = this.axisList[dataIndex]
         params.user_id = this.postParams.user_id
         params.structure_id = this.postParams.structure_id
-        params.start_time = dataItem.start_time
-        params.end_time = dataItem.end_time
+        params.startTime = dataItem.start_time
+        params.endTime = dataItem.end_time
       } else {
         params = this.postParams
       }

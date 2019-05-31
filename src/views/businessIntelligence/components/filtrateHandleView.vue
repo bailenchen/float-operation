@@ -283,8 +283,8 @@ export default {
         params.year = this.yearValue
       } else {
         if (this.timeTypeValue.type == 'custom') {
-          params.start_time = this.timeTypeValue.startTime
-          params.end_time = this.timeTypeValue.endTime
+          params.startTime = this.timeTypeValue.startTime
+          params.endTime = this.timeTypeValue.endTime
         } else {
           params.type = this.timeTypeValue.value
         }
