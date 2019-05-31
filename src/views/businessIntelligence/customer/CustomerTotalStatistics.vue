@@ -83,7 +83,6 @@ export default {
      */
     getDataList() {
       this.loading = true
-      console.log(this.postParams)
       biCustomerTotalAPI(this.postParams)
         .then(res => {
           this.loading = false

@@ -2,6 +2,7 @@
   <div v-loading="loading"
        class="main-container">
     <filtrate-handle-view class="filtrate-bar"
+                          moduleType="business"
                           :showBusinessSelect="true"
                           @load="loading=true"
                           @change="getDataList">

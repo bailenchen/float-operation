@@ -264,7 +264,7 @@ export default {
         })
     },
     getBaseParams() {
-      return {
+      let params = {
         userIds: this.data.users
           .map(function(item, index, array) {
             return item.userId
@@ -274,8 +274,7 @@ export default {
           .map(function(item, index, array) {
             return item.id
           })
-          .join(','),
-        type:this.data.timeTypeValue.value
+          .join(',')
       }
 
       if (this.data.timeTypeValue.type) {
@@ -389,7 +388,7 @@ export default {
               name: (element.name || '') + '(' + element.orderNum + ')',
               value: element.money
             })
-            sumMoney += parseFloat(element.money||0)
+            sumMoney += parseFloat(element.money || 0)
           }
           this.funnelData = {
             winSingle: res.data.sumYing,
@@ -479,8 +478,8 @@ export default {
       crmIndexSaletrend(params)
         .then(res => {
           this.trendData = {
-            totlaContractMoney:res.data.totlaContractMoney,
-            totlaReceivablesMoney:res.data.totlaReceivablesMoney
+            totlaContractMoney: res.data.totlaContractMoney,
+            totlaReceivablesMoney: res.data.totlaReceivablesMoney
           }
           let list = res.data.list || []
           let contractList = []

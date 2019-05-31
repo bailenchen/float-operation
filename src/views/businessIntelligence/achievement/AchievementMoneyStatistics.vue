@@ -2,6 +2,7 @@
   <div v-loading="loading"
        class="main-container">
     <filtrate-handle-view class="filtrate-bar"
+                          moduleType="contract"
                           :showYearSelect="true"
                           @load="loading=true"
                           @change="getDataList">
@@ -39,8 +40,7 @@ export default {
   /** 合同金额分析 */
   name: 'achievement-money-statistics',
   data() {
-    return {
-    }
+    return {}
   },
   mixins: [achievementMixins],
   computed: {},

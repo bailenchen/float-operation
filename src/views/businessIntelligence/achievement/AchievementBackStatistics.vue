@@ -2,6 +2,7 @@
   <div v-loading="loading"
        class="main-container">
     <filtrate-handle-view class="filtrate-bar"
+                          moduleType="contract"
                           :showYearSelect="true"
                           @load="loading=true"
                           @change="getDataList">
@@ -35,7 +36,6 @@
 <script>
 import achievementMixins from '../mixins/achievement'
 
-
 export default {
   /** 回款金额分析 */
   name: 'achievement-back-statistics',
@@ -47,9 +47,7 @@ export default {
   created() {
     this.type = 'back'
   },
-  methods: {
-    
-  }
+  methods: {}
 }
 </script>
 

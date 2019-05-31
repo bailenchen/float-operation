@@ -81,7 +81,7 @@ export default {
             if (fieldList.length <= res.data.length) {
               fieldList.push({
                 field: fieldKey,
-                name: element.type
+                name: element.month
               })
             }
 
@@ -100,7 +100,7 @@ export default {
 
           this.fieldList = fieldList
           this.list = list
-
+          
           let monthData = []
           let lastMonthData = []
           let lastYeatMonthData = []

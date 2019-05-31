@@ -19,7 +19,6 @@
                          align="center"
                          header-align="center"
                          show-overflow-tooltip
-                         :formatter="fieldFormatter"
                          :prop="item.field"
                          :label="item.name">
         </el-table-column>

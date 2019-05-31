@@ -37,9 +37,9 @@
                v-if="showBusinessSelect"
                placeholder="商机组">
       <el-option v-for="item in businessOptions"
-                 :key="item.type_id"
+                 :key="item.typeId"
                  :label="item.name"
-                 :value="item.type_id">
+                 :value="item.typeId">
       </el-option>
     </el-select>
     <el-cascader v-if="showProductSelect"
@@ -50,7 +50,7 @@
                  :props="{
                     children: 'children',
                     label: 'label',
-                    value: 'category_id'
+                    value: 'categoryId'
                   }"
                  v-model="productValue">
     </el-cascader>
@@ -238,7 +238,7 @@ export default {
         .then(res => {
           this.businessOptions = res.data
           if (res.data.length > 0) {
-            this.businessStatusValue = res.data[0].type_id
+            this.businessStatusValue = res.data[0].typeId
           }
           result(true)
         })
@@ -268,11 +268,11 @@ export default {
 
       // 展示商机状态 返回商机状态参数
       if (this.showBusinessSelect) {
-        params.type_id = this.businessStatusValue
+        params.typeId = this.businessStatusValue
       }
 
       if (this.showProductSelect) {
-        params.category_id =
+        params.categoryId =
           this.productValue.length > 0
             ? this.productValue[this.productValue.length - 1]
             : ''
