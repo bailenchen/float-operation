@@ -59,6 +59,9 @@ export default {
   box-shadow: 0px 1px 2px #dbdbdb;
   z-index: 100;
   min-width: 1200px;
-  
+}
+
+.el-container {
+  overflow: hidden;
 }
 </style>
