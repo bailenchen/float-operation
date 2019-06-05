@@ -76,7 +76,7 @@ export default {
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             data.push({
-              name: (element.name || '') + '(' + element.businessNum + ')',
+              name: (element.name || '') + '(' + element.count + ')',
               value: parseFloat(element.totalPrice)
             })
             sumMoney += parseFloat(element.totalPrice)
