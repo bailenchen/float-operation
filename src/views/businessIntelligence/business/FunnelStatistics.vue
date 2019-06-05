@@ -48,8 +48,8 @@ export default {
       list: [],
       fieldList: [
         { field: 'name', name: '阶段' },
-        { field: 'totalPrice', name: '金额' },
-        { field: 'businessNum', name: '商机数' }
+        { field: 'money', name: '金额' },
+        { field: 'count', name: '商机数' }
       ],
 
       funnelChart: null, // 漏斗图
@@ -77,9 +77,9 @@ export default {
             const element = res.data[index]
             data.push({
               name: (element.name || '') + '(' + element.count + ')',
-              value: parseFloat(element.totalPrice)
+              value: parseFloat(element.money)
             })
-            sumMoney += parseFloat(element.totalPrice)
+            sumMoney += parseFloat(element.money)
           }
 
           this.funnelOption.series[0].data = data
