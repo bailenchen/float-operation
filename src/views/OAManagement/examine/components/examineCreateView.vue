@@ -894,18 +894,25 @@ export default {
         } else {
           return ''
         }
-      } else if (element.data.formType == 'user') {
-        return element.value.map(function(item, index, array) {
-          return item.userId
-        })
-      } else if (element.data.formType == 'structure') {
-        return element.value.map(function(item, index, array) {
-          return item.id
-        })
+      } else if (
+        element.data.formType == 'user' ||
+        element.data.formType == 'structure'
+      ) {
+        return element.value
+          .map(function(item, index, array) {
+            return element.data.formType == 'user' ? item.userId : item.id
+          })
+          .join(',')
       } else if (element.data.formType == 'file') {
-        return element.value.map(function(item, index, array) {
-          return item.fileId
-        })
+        if (element.value && element.value.length > 0) {
+          return element.value[0].batchId
+        }
+        return ''
+      } else if (element.data.formType == 'checkbox') {
+        if (element.value && element.value.length > 0) {
+          return element.value.join(',')
+        }
+        return ''
       }
 
       return element.value
