@@ -18,7 +18,7 @@
                        type="text"
                        class="user-switch">切换</el-button>
           </members-dep>
-
+          <time-type-select @change="timeTypeChange"></time-type-select>
         </flexbox>
       </div>
     </flexbox>
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import timeTypeSelect from '@/components/timeTypeSelect'
 import CustomerDash from './components/CustomerDash'
 import membersDep from '@/components/selectEmployee/membersDep'
 import { mapGetters } from 'vuex'
@@ -36,7 +37,8 @@ export default {
   name: 'customerWorkbench',
   components: {
     CustomerDash,
-    membersDep // 员工部门
+    membersDep, // 员工部门
+    timeTypeSelect
   },
   filters: {},
   data() {
@@ -45,8 +47,10 @@ export default {
       users: [],
       strucs: [],
       // 条件
-      dashData: { users: [], strucs: [] },
-      filtersInfo: { realname: '', img: '' }
+      dashData: { users: [], strucs: [], timeTypeValue: {} },
+      filtersInfo: { realname: '', img: '' },
+      // 时间值
+      timeTypeValue: { label: '本季度', value: 'quarter' }
     }
   },
   computed: {
@@ -54,29 +58,34 @@ export default {
   },
   mounted() {
     this.users.push(this.userInfo)
-    this.dashData = { users: this.users, strucs: [] }
+    this.dashData = { users: this.users, strucs: [], timeTypeValue: this.timeTypeValue }
     this.filtersInfo = this.userInfo
   },
   methods: {
+    // 类型选择
+    timeTypeChange(data) {
+      this.timeTypeValue = data
+      this.dashData = { users: this.users, strucs: this.strucs, timeTypeValue: this.timeTypeValue }
+    },
     // 更改筛选条件
     popoverSubmit(users, strucs) {
       this.users = users
       this.strucs = strucs
       if (this.users.length === 1 && this.strucs.length === 0) {
-        this.dashData = { users: this.users, strucs: this.strucs }
+        this.dashData = { users: this.users, strucs: this.strucs, timeTypeValue: this.timeTypeValue }
         this.filtersInfo = {
           realname: this.users[0].realname,
           img: this.users[0].img
         }
       } else if (this.users.length === 0 && this.strucs.length === 0) {
         this.users = [this.userInfo]
-        this.dashData = { users: this.users, strucs: this.strucs }
+        this.dashData = { users: this.users, strucs: this.strucs, timeTypeValue: this.timeTypeValue }
         this.filtersInfo = {
           realname: this.userInfo.realname,
           img: this.userInfo.img
         }
       } else {
-        this.dashData = { users: this.users, strucs: this.strucs }
+        this.dashData = { users: this.users, strucs: this.strucs, timeTypeValue: this.timeTypeValue }
         var name = ''
         if (this.users.length > 0) {
           name = this.users.length + '个员工'
@@ -121,6 +130,7 @@ export default {
     }
     .user-switch {
       font-size: 12px;
+      margin-right: 15px;
     }
   }
   .user-more {
