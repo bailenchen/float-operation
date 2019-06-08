@@ -118,7 +118,7 @@ export default {
     var validateTime = (rule, value, callback) => {
       if (this.formData.startTime && this.formData.endTime) {
         if (
-          formatTimeToTimestamp(this.formData.startTime) >
+          formatTimeToTimestamp(this.formData.startTime) >=
           formatTimeToTimestamp(this.formData.endTime)
         ) {
           callback(new Error('开始时间必须小于结束时间'))
@@ -197,11 +197,11 @@ export default {
         ],
         startTime: [
           { required: true, message: '开始时间不能为空', trigger: 'blur' },
-          { validator: validateTime, trigger: 'change' }
+          { validator: validateTime, trigger: 'blur' }
         ],
         endTime: [
           { required: true, message: '结束时间不能为空', trigger: 'blur' },
-          { validator: validateTime, trigger: 'change' }
+          { validator: validateTime, trigger: 'blur' }
         ]
       },
       // 获取选择的数据id数组
