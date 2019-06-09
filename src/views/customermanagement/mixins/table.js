@@ -292,7 +292,7 @@ export default {
     },
     /** 勾选操作 */
     handleHandle(data) {
-      if (data.type === 'alloc' || data.type === 'get' || data.type === 'transfer' || data.type === 'transform' || data.type === 'delete') {
+      if (data.type === 'alloc' || data.type === 'get' || data.type === 'transfer' || data.type === 'transform' || data.type === 'delete' || data.type === 'put_seas') {
         this.showDview = false
       }
 
