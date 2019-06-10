@@ -195,6 +195,10 @@ export default {
           })
           .join('、')
 
+        if (strName) {
+          strName += '、'
+        }
+
         let users = row['userIds'] || []
         let userName = users
           .map(item => {
