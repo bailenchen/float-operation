@@ -32,6 +32,7 @@
         <keep-alive>
           <component v-bind:is="tabName"
                      crmType="product"
+                     :detail="detailData"
                      :id="id"></component>
         </keep-alive>
       </div>
