@@ -43,12 +43,14 @@ import { Navbar, Sidebar, AppMain } from './components'
 
 export default {
   name: 'Layout',
+
   components: {
     Navbar,
     Sidebar,
     AppMain,
     CRMCreateView
   },
+
   computed: {
     ...mapGetters(['crm', 'crmRouters']),
     // 快捷添加
@@ -110,15 +112,23 @@ export default {
       return Math.round(this.quickAddList.length / 2) * 25
     }
   },
+
   data() {
     return {
       isCreate: false,
       createCRMType: ''
     }
   },
+
+  created() {
+    this.getcrmMessagNum()
+  },
+
   mounted() {},
+
   methods: {
     navClick(index) {},
+
     addSkip(item) {
       let type = item.index
       if (type == 'money') {
@@ -128,6 +138,16 @@ export default {
       }
       this.createCRMType = type
       this.isCreate = true
+    },
+
+    /**
+     * 获取消息数
+     */
+    getcrmMessagNum() {
+      this.$store
+        .dispatch('GetMessageNum')
+        .then(res => {})
+        .catch(() => {})
     }
   }
 }
