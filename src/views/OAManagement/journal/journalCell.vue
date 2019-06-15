@@ -307,28 +307,41 @@ export default {
   mounted() {
     if (this.data.isRead == 0 && !this.showWorkbench) {
       this.$bus.on('journal-list-box-scroll', target => {
-        if (this.data.isRead == 0) {
-          if (target) {
-            this.parentTarget = target
-          }
-          let ispreview = this.whetherPreview()
-          if (!this.awaitMoment && ispreview) {
-            this.awaitMoment = true
-            setTimeout(() => {
-              this.awaitMoment = false
-              let ispreview = this.whetherPreview()
-              if (ispreview) {
-                this.submiteIsRead()
-              }
-            }, 3000)
-          }
-        }
+        this.observePreview(target)
       })
+      this.observePreview(
+        document.getElementById('journal-cell' + this.logIndex).parentNode
+      )
     }
 
     this.replyList = this.data.replyList
   },
   methods: {
+    /**
+     * 观察预览
+     */
+    observePreview(target) {
+      if (this.data.isRead == 0) {
+        if (target) {
+          this.parentTarget = target
+        }
+        let ispreview = this.whetherPreview()
+        if (!this.awaitMoment && ispreview) {
+          this.awaitMoment = true
+          setTimeout(() => {
+            this.awaitMoment = false
+            let ispreview = this.whetherPreview()
+            if (ispreview) {
+              this.submiteIsRead()
+            }
+          }, 3000)
+        }
+      }
+    },
+
+    /**
+     * 是否预览
+     */
     whetherPreview() {
       let dom = this.parentTarget.children[this.logIndex]
       if (this.parentTarget.getBoundingClientRect()) {
@@ -354,6 +367,7 @@ export default {
         logId: this.showWorkbench ? this.data.actionId : this.data.logId
       })
         .then(res => {
+          this.$store.dispatch('GetOAMessageNum', 'log')
           this.data.isRead = 1
         })
         .catch(err => {})

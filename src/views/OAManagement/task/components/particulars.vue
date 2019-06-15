@@ -744,6 +744,7 @@ export default {
             value: val,
             index: this.detailIndex
           })
+          this.$store.dispatch('GetOAMessageNum', 'task')
         })
         .catch(err => {
           this.$emit('on-handle', {
