@@ -12,15 +12,6 @@ export function crmLeadsSave(data) {
   })
 }
 
-// crm 列表
-export function crmLeadsIndex(data) {
-  return request({
-    url: 'CrmLeads/queryList',
-    method: 'post',
-    data: data
-  })
-}
-
 // 删除
 export function crmLeadsDelete(data) {
   return request({
@@ -136,6 +127,18 @@ export function crmLeadsRecordSave(data) {
 export function crmLeadsRecordIndex(data) {
   return request({
     url: 'CrmLeads/getRecord',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 查重
+ * @param {*} data
+ */
+export function crmLeadsQueryListAPI(data) {
+  return request({
+    url: 'CrmLeads/queryList',
     method: 'post',
     data: data
   })
