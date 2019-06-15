@@ -65,19 +65,13 @@
       <div class="text">
         <p class="row"
            v-if="data.content">
-          <span class="title">{{data.categoryId == 1 ? "今日工作内容" : data.categoryId == 2 ? "本周工作内容" : "本月工作内容"}}：</span>
-          {{data.content}}
-        </p>
+          <span class="title">{{data.categoryId == 1 ? "今日工作内容" : data.categoryId == 2 ? "本周工作内容" : "本月工作内容"}}：</span>{{data.content}}</p>
         <p class="row"
            v-if="data.tomorrow">
-          <span class="title">{{data.categoryId == 1 ? "明日工作内容" : data.categoryId == 2 ? "下周工作内容" : "下月工作内容"}}：</span>
-          {{data.tomorrow}}
-        </p>
+          <span class="title">{{data.categoryId == 1 ? "明日工作内容" : data.categoryId == 2 ? "下周工作内容" : "下月工作内容"}}：</span>{{data.tomorrow}}</p>
         <p class="row"
            v-if="data.question">
-          <span class="title">遇到的问题：</span>
-          {{data.question}}
-        </p>
+          <span class="title">遇到的问题：</span>{{data.question}}</p>
       </div>
       <div class="accessory">
         <div class="upload-img-box"
@@ -618,6 +612,8 @@ export default {
         margin-bottom: 7px;
         line-height: 22px;
         font-size: 13px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
         .title {
           width: 95px;
           text-align: left;
@@ -679,6 +675,13 @@ export default {
           color: #333;
           font-size: 13px;
           margin: 10px 0 10px 40px;
+          padding: 10px 10px 10px 40px;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          span {
+            letter-spacing: 0.5px;
+            line-height: 18px;
+          }
           .reply {
             color: #3e84e9;
           }
@@ -765,5 +768,9 @@ export default {
       border: 0;
     }
   }
+}
+
+.wukong {
+  cursor: pointer;
 }
 </style>

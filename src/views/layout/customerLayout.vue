@@ -32,6 +32,7 @@
     </el-container>
     <c-r-m-create-view v-if="isCreate"
                        :crm-type="createCRMType"
+                       @save-success="createSaveSuccess"
                        @hiden-view="isCreate=false"></c-r-m-create-view>
   </el-container>
 </template>
@@ -148,6 +149,25 @@ export default {
         .dispatch('GetMessageNum')
         .then(res => {})
         .catch(() => {})
+    }
+  },
+
+  /**
+   * 新建客户同时新建联系人
+   */
+  // 创建数据页面 保存成功
+  createSaveSuccess(data) {
+    if (data && data.saveAndCreate) {
+      if (data.type == 'customer') {
+        this.createCRMType = 'contacts'
+        this.createActionInfo = {
+          type: 'relative',
+          crmType: 'customer',
+          data: {}
+        }
+        this.createActionInfo.data['customer'] = data.data
+        this.isCreate = true
+      }
     }
   }
 }
