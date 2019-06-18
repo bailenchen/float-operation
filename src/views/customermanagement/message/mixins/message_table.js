@@ -24,10 +24,7 @@ export default {
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
-      total: 0,
-
-      /** 格式化规则 */
-      formatterRules: {}
+      total: 0
     }
   },
 
@@ -156,43 +153,43 @@ export default {
     getFieldList() {
       if (this.crmType == 'receivables_plan') {
         const list = [{
-          field: 'num',
-          form_type: 'text',
+          fieldName: 'num',
+          formType: 'text',
           name: '期数'
         },
         {
-          field: 'customerName',
-          form_type: 'customerName',
+          fieldName: 'customerName',
+          formType: 'customerName',
           name: '客户名称'
         },
         {
-          field: 'contractNum',
-          form_type: 'contractNum',
+          fieldName: 'contractNum',
+          formType: 'contractNum',
           name: '合同编号'
         },
         {
-          field: 'money',
-          form_type: 'text',
+          fieldName: 'money',
+          formType: 'text',
           name: '计划回款金额'
         },
         {
-          field: 'returnDate',
-          form_type: 'text',
+          fieldName: 'returnDate',
+          formType: 'text',
           name: '计划回款日期'
         },
         {
-          field: 'returnType',
-          form_type: 'text',
+          fieldName: 'returnType',
+          formType: 'text',
           name: '计划回款方式'
         },
         {
-          field: 'remind',
-          form_type: 'text',
+          fieldName: 'remind',
+          formType: 'text',
           name: '提前几日提醒'
         },
         {
           prop: 'remark',
-          form_type: 'text',
+          formType: 'text',
           name: '备注'
         }
         ]
@@ -204,26 +201,7 @@ export default {
         label: crmTypeModel[this.crmType]
       })
         .then(res => {
-          for (let index = 0; index < res.data.length; index++) {
-            const element = res.data[index]
-
-            var width = 0
-            if (!element.width) {
-              if (element.name && element.name.length <= 6) {
-                width = element.name.length * 15 + 45
-              } else {
-                width = 140
-              }
-            } else {
-              width = element.width
-            }
-
-            this.fieldList.push({
-              prop: element.fieldName,
-              label: element.name,
-              width: width
-            })
-          }
+          this.handelFieldList(res.data)
 
           // 获取好字段开始请求数据
           this.getList()
@@ -231,6 +209,31 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+
+    handelFieldList(list) {
+      for (let index = 0; index < list.length; index++) {
+        const element = list[index]
+        var width = 0
+        if (!element.width) {
+          if (element.name && element.name.length <= 6) {
+            width = element.name.length * 15 + 45
+          } else {
+            width = 140
+          }
+        } else {
+          width = element.width
+        }
+
+        this.fieldList.push({
+          prop: element.fieldName,
+          label: element.name,
+          width: width
+        })
+      }
+
+      // 获取好字段开始请求数据
+      this.getList()
     },
 
     /** 格式化字段 */
