@@ -325,7 +325,7 @@ export default {
               }).join(',')
             })
               .then(res => {
-                this.$message.success(res.data)
+                this.$message.success('操作成功')
                 this.refreshList()
 
                 this.$emit('on-handle', {

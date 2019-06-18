@@ -886,7 +886,7 @@ export default {
             this.loading = true
             adminUsersUsernameEditAPI(val)
               .then(res => {
-                this.$message.success(res.data)
+                this.$message.success('重置成功')
                 this.searchClick()
                 this.resetUserNameVisible = false
                 this.loading = false
