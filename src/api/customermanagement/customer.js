@@ -292,7 +292,7 @@ export function crmCustomerQueryListAPI(data) {
  */
 export function crmCustomerSetFollowAPI(data) {
   return request({
-    url: 'crm/customer/setFollow',
+    url: 'CrmBackLog/setCustomerFollowup',
     method: 'post',
     data: data
   })

@@ -151,7 +151,7 @@ export function crmLeadsQueryListAPI(data) {
  */
 export function crmLeadsSetFollowAPI(data) {
   return request({
-    url: 'crm/leads/setFollow',
+    url: 'CrmBackLog/setLeadsFollowup',
     method: 'post',
     data: data
   })
