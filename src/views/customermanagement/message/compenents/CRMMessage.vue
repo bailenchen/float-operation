@@ -320,9 +320,9 @@ export default {
               followCustomer: crmCustomerSetFollowAPI
             }[this.infoType]
             request({
-              id: this.selectionList.map(item => {
+              ids: this.selectionList.map(item => {
                 return item[this.crmType + 'Id']
-              })
+              }).join(',')
             })
               .then(res => {
                 this.$message.success(res.data)

@@ -95,7 +95,7 @@ export default {
         ]
       } else if (this.type == 'leads') {
         return [
-          { name: '线索名称', field: 'name' },
+          { name: '线索名称', field: 'leadsName' },
           { name: '负责人', field: 'ownerUserName' }
         ]
       }
@@ -250,7 +250,11 @@ export default {
      * 通过回调控制style
      */
     cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'name' || column.property === 'customerName') {
+      if (
+        column.property === 'name' ||
+        column.property === 'customerName' ||
+        column.property === 'leadsName'
+      ) {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {
         return ''
