@@ -130,8 +130,9 @@ export default {
         isSub: this.isSubType
       }
 
-      if (this.filterObj && Object.keys(this.filterObj).length > 0) {
-        params.data = this.filterObj
+      const filterObj = this.filterObj.obj
+      if (filterObj && Object.keys(filterObj).length > 0) {
+        params.data = filterObj
       }
 
       crmIndexRequest(params)

@@ -8,7 +8,10 @@ export function crmMessageCheckContractAPI(data) {
   return request({
     url: 'CrmBackLog/checkContract',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -20,7 +23,10 @@ export function crmMessageCheckReceivablesAPI(data) {
   return request({
     url: 'CrmBackLog/checkReceivables',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -32,7 +38,10 @@ export function crmMessageTodayCustomerAPI(data) {
   return request({
     url: 'CrmBackLog/todayCustomer',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -44,7 +53,10 @@ export function crmMessageFollowLeadsAPI(data) {
   return request({
     url: 'CrmBackLog/followLeads',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -69,7 +81,10 @@ export function crmMessagEndContractAPI(data) {
   return request({
     url: 'CrmBackLog/endContract',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -93,6 +108,9 @@ export function crmMessagNumAPI(data) {
   return request({
     url: 'CrmBackLog/num',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
