@@ -21,11 +21,12 @@
             </el-option>
           </el-select>
         </div>
-        <div class="content">
+        <div class="content" id="notice-list-box">
           <div class="list-box">
             <notice-cell v-for="(item, index) in listData"
                          :key="index"
                          :data="item"
+                         :cellIndex="index"
                          @handle="noticeHandle">
             </notice-cell>
             <p class="load">
@@ -99,8 +100,9 @@ export default {
     this.noticeDataFun(1, this.pageNum)
     // 分批次加载
     let _this = this
-    document.getElementsByClassName('content')[0].onscroll = function() {
+    document.getElementsByClassName('content')[0].onscroll = function(e) {
       let doms = document.getElementsByClassName('content')[0]
+      _this.$bus.emit('notice-list-box-scroll', e.target)
       var scrollTop = doms.scrollTop
       var windowHeight = doms.clientHeight
       var scrollHeight = doms.scrollHeight //滚动条到底部的条件
@@ -218,7 +220,6 @@ export default {
     .list-box {
       margin-top: 20px;
       padding-right: 20px;
-
       .load {
         color: #999;
         font-size: 13px;

@@ -1,5 +1,6 @@
 <template>
-  <div class="list">
+  <div class="list"
+       :id="'notice-cell' + cellIndex">
     <div class="header">
       <div v-photo="data"
            v-lazy:background-image="$options.filters.filterUserLazyImg(data.img)"
@@ -26,15 +27,96 @@
 </template>
 
 <script>
+import { noticeIsReadAPI } from '@/api/oamanagement/notice'
+
 export default {
   components: {},
+
   data() {
-    return {}
+    return {
+      // 父元素
+      parentTarget: null,
+      awaitMoment: false // 等客户浏览
+    }
   },
+
   props: {
-    data: Object
+    data: Object,
+    cellIndex: Number
   },
+
+  mounted() {
+    if (this.data.isRead == 0) {
+      this.$bus.on('notice-list-box-scroll', target => {
+        this.observePreview(target)
+      })
+      this.observePreview(
+        document.getElementById('notice-cell' + this.cellIndex).parentNode
+      )
+    }
+  },
+
   methods: {
+    /**
+     * 观察预览
+     */
+    observePreview(target) {
+      if (this.data.isRead == 0) {
+        if (target) {
+          this.parentTarget = target
+        }
+        let ispreview = this.whetherPreview()
+        if (!this.awaitMoment && ispreview) {
+          this.awaitMoment = true
+          setTimeout(() => {
+            this.awaitMoment = false
+            let ispreview = this.whetherPreview()
+            if (ispreview) {
+              this.submiteIsRead()
+            }
+          }, 3000)
+        }
+      }
+    },
+    
+    /**
+     * 是否预览
+     */
+    whetherPreview() {
+      let dom = this.parentTarget.children[this.cellIndex]
+      if (this.parentTarget.getBoundingClientRect()) {
+        let offsetTop =
+          this.parentTarget.getBoundingClientRect().top -
+          dom.getBoundingClientRect().top
+        let ispreview = false
+        if (
+          offsetTop <= 0 &&
+          Math.abs(offsetTop) < this.parentTarget.clientHeight
+        ) {
+          ispreview = true
+        } else if (offsetTop > 0 && offsetTop < dom.clientHeight) {
+          ispreview = true
+        }
+        return ispreview
+      } else {
+        return false
+      }
+    },
+
+    /**
+     * 提交已读
+     */
+    submiteIsRead() {
+      noticeIsReadAPI({
+        announcementId: this.data.announcementId
+      })
+        .then(res => {
+          this.$store.dispatch('GetOAMessageNum', 'announcement')
+          this.data.isRead = 1
+        })
+        .catch(err => {})
+    },
+
     /**
      * 点击显示详情
      */
@@ -49,6 +131,10 @@ export default {
       this.$set(val, 'preShow', true)
       this.$set(val, 'loadMore', true)
     }
+  },
+
+  beforeDestroy() {
+    this.$bus.off('notice-list-box-scroll')
   }
 }
 </script>

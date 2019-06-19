@@ -241,9 +241,6 @@ export default {
           width: width
         })
       }
-
-      // 获取好字段开始请求数据
-      this.getList()
     },
 
     /** 格式化字段 */
