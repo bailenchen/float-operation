@@ -205,6 +205,8 @@ export default {
         }
         ]
         this.handelFieldList(list)
+        // 获取好字段开始请求数据
+        this.getList()
         return
       }
 

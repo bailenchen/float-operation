@@ -373,7 +373,7 @@ export default {
      * 删除筛选字段
      */
     handleDeleteField(data) {
-      this.filterObj = data.obj.obj
+      this.filterObj = data.obj
       this.updateTableHeight()
       this.refreshList()
     },
