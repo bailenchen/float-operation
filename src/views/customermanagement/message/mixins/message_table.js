@@ -99,7 +99,7 @@ export default {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
-        } else if (column.property === 'contractNum') {
+        } else if (column.property === 'contractNum' || column.property === 'contractName') {
           this.rowID = row.contractId
           this.rowType = 'contract'
         } else {
@@ -111,6 +111,9 @@ export default {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
+        } else if (column.property === 'contractNum' || column.property === 'contractName') {
+          this.rowID = row.contractId
+          this.rowType = 'contract'
         }
         this.showDview = true
       }

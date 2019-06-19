@@ -388,7 +388,9 @@ export default {
         column.property === 'leadsName' ||
         column.property === 'customerName' ||
         column.property === 'businessName' ||
-        column.property === 'contactsName'
+        column.property === 'contactsName' ||
+        column.property === 'contractName' ||
+        column.property === 'contractNum'
       ) {
         return { color: '#3E84E9', cursor: 'pointer' }
       } else {
