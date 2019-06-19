@@ -87,7 +87,7 @@
                        layout="total, sizes, prev, pager, next, jumper"
                        :total="total">
         </el-pagination>
-        <span class="money-bar">合同总金额：{{moneyPageData.contractMoney}} / 已回款金额：{{moneyPageData.receivedMoney}}</span>
+        <span class="money-bar">合同总金额：{{moneyPageData.contractMoney || 0}} / 已回款金额：{{moneyPageData.receivedMoney || 0}}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->

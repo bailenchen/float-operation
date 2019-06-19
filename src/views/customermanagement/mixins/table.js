@@ -103,7 +103,7 @@ export default {
           } else {
             if (this.crmType === 'contract') {
               // 合同列表展示金额信息
-              this.moneyData = res.data
+              this.moneyData = res.data.money
             }
             this.list = res.data.list
           }
