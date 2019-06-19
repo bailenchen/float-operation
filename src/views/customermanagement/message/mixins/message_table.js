@@ -199,7 +199,7 @@ export default {
           name: '提前几日提醒'
         },
         {
-          prop: 'remark',
+          fieldName: 'remark',
           formType: 'text',
           name: '备注'
         }
