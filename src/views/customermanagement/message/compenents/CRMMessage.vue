@@ -385,6 +385,7 @@ export default {
       if (
         column.property === 'name' ||
         column.property === 'number' ||
+        column.property === 'leadsName' ||
         column.property === 'customerName' ||
         column.property === 'businessName' ||
         column.property === 'contactsName'

@@ -53,6 +53,7 @@ export default {
     handleRowClick(row, column, event) {
       if (this.crmType === 'leads') {
         this.rowID = row.leadsId
+        this.rowType = 'leads'
         this.showDview = true
       } else if (this.crmType === 'customer') {
         this.rowID = row.customerId
