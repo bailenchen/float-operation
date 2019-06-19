@@ -107,6 +107,12 @@ export default {
           this.rowType = 'receivables'
         }
         this.showDview = true
+      } else if (this.crmType === 'receivables_plan') {
+        if (column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'customer'
+        }
+        this.showDview = true
       }
     },
 
