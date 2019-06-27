@@ -56,10 +56,10 @@
             <el-input class="input"
                       v-model="item.value"
                       :disabled="disabled"></el-input>
-            <i @click="handleRadio('add', item, index)"
+            <i @click="handleCheckbox('add', item, index)"
                class="el-icon-circle-plus handle"></i>
             <i v-if="field.showSetting.length > 1"
-               @click="handleRadio('remove', item, index)"
+               @click="handleCheckbox('remove', item, index)"
                class="el-icon-remove handle"></i>
           </el-checkbox>
         </draggable>
@@ -154,20 +154,14 @@ export default {
     },
     /** 展示时间选择 */
     showDatepicker() {
-      if (
-        this.field.formType == 'date' ||
-        this.field.formType == 'datetime'
-      ) {
+      if (this.field.formType == 'date' || this.field.formType == 'datetime') {
         return true
       }
       return false
     },
     /** 控制人员和部分不展示默认值 */
     isUserStructure() {
-      if (
-        this.field.formType == 'user' ||
-        this.field.formType == 'structure'
-      ) {
+      if (this.field.formType == 'user' || this.field.formType == 'structure') {
         return true
       }
       return false
@@ -245,6 +239,26 @@ export default {
       this.field.defaultValue == val
         ? (this.field.defaultValue = '')
         : (this.field.defaultValue = val)
+    },
+    /**
+     * 多选
+     */
+    handleCheckbox(type, item, index) {
+      if (this.disabled) {
+        // 不能点击
+        return
+      }
+      if (type == 'add') {
+        this.field.showSetting.push({
+          value: '选' + (this.field.showSetting.length + 1)
+        })
+      } else if (type == 'remove') {
+        let removeIndex = this.field.default_value.indexOf(item.value)
+        if (removeIndex != -1) {
+          this.field.default_value.splice(removeIndex, 1)
+        }
+        this.field.showSetting.splice(index, 1)
+      }
     },
     /*** 输入默认值触发 */
     inputBlur(e) {
