@@ -12,13 +12,23 @@
               stripe
               style="width: 100%;border: 1px solid #E6E6E6;"
               :header-cell-style="headerRowStyle"
-              :cell-style="cellStyle"
-              @row-click="planHandleRowClick">
+              :cell-style="cellStyle">
       <el-table-column v-for="(item, index) in planFieldList"
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
                        :label="item.label">
+      </el-table-column>
+      <el-table-column label="操作"
+                       width="100">
+        <template slot-scope="scope">
+          <flexbox justify="center">
+            <el-button type="text"
+                       @click.native="handleFile('edit', scope)">编辑</el-button>
+            <el-button type="text"
+                       @click.native="handleFile('delete', scope)">删除</el-button>
+          </flexbox>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -67,16 +77,21 @@ import {
   crmContractQueryReceivables,
   crmContractQueryReceivablesPlan
 } from '@/api/customermanagement/contract'
+/** 注意  需要删除接口 */
 import { timestampToFormatTime, objDeepCopy } from '@/utils'
 
 export default {
   name: 'relative-return-money', //相关回款  可能再很多地方展示 放到客户管理目录下
+
   components: {
     CRMCreateView,
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue')
   },
+
   computed: {},
+
   mixins: [loading],
+
   data() {
     return {
       list: [],
@@ -89,9 +104,10 @@ export default {
       isCreate: false, // 新建回款回款
       palnList: [],
       planFieldList: [],
-      createActionInfo: { type: 'relative', crmType: this.crmType, data: {} } // 新建回款计划的时候 在客户 合同下导入关联信息
+      createActionInfo: {} // 新建回款计划的时候 在客户 合同下导入关联信息
     }
   },
+
   watch: {
     id: function(val) {
       this.list = []
@@ -100,6 +116,7 @@ export default {
       this.getPlanList()
     }
   },
+
   props: {
     /** 模块ID */
     id: [String, Number],
@@ -121,6 +138,7 @@ export default {
       }
     }
   },
+
   mounted() {
     this.planFieldList = [
       { prop: 'num', width: '200', label: '期数' },
@@ -146,9 +164,11 @@ export default {
     ]
     this.getList()
   },
-  activated: function() {},
-  deactivated: function() {},
+
   methods: {
+    /**
+     * 回款计划列表
+     */
     getPlanList() {
       this.loading = true
       let request = {
@@ -164,7 +184,10 @@ export default {
           this.loading = false
         })
     },
-    /** 回款列表 */
+    
+    /**
+     * 回款列表
+     */
     getList() {
       this.loading = true
       let request = {
@@ -180,6 +203,10 @@ export default {
           this.loading = false
         })
     },
+
+    /**
+     * 获取上传参数
+     */
     getParams() {
       if (this.crmType === 'customer') {
         return { customerId: this.id, pageType: 0 }
@@ -188,14 +215,19 @@ export default {
       }
       return {}
     },
-    //当某一行被点击时会触发该事件
+
+    /**
+     * 当某一行被点击时会触发该事件
+     */
     handleRowClick(row, column, event) {
       this.showFullId = row.receivablesId
       this.showFullCrmType = 'receivables'
       this.showFullDetail = true
     },
-    planHandleRowClick(row, column, event) {},
-    /** 通过回调控制style */
+    
+    /**
+     * 通过回调控制style
+     */
     cellStyle({ row, column, rowIndex, columnIndex }) {
       if (columnIndex == 1) {
         return { color: '#3E84E9' }
@@ -203,7 +235,16 @@ export default {
         return ''
       }
     },
+
+    /**
+     * 新建回款和回款计划
+     */
     createClick(type) {
+      this.createActionInfo = {
+        type: 'relative',
+        crmType: this.crmType,
+        data: {}
+      }
       if (type == 'money') {
         if (this.crmType === 'contract') {
           this.createActionInfo.data['customer'] = objDeepCopy(this.detail)
@@ -224,6 +265,10 @@ export default {
         this.isCreate = true
       }
     },
+
+    /**
+     * 新建成功
+     */
     saveSuccess() {
       if (this.createCrmType == 'receivables') {
         this.getList()
@@ -231,11 +276,50 @@ export default {
         this.getPlanList()
       }
     },
-    /** 通过回调控制表头style */
+
+    /**
+     * 编辑操作
+     */
+    handleFile(type, item) {
+      if (type == 'edit') {
+        this.createActionInfo = { type: 'update', id: item.row.plan_id }
+        this.createCrmType = 'receivables_plan'
+        this.isCreate = true
+      } else if (type == 'delete') {
+        this.$confirm('您确定要删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            crmReceivablesPlanDeleteAPI({
+              id: item.row.plan_id
+            })
+              .then(res => {
+                this.palnList.splice(item.$index, 1)
+                this.$message.success(res.data)
+              })
+              .catch(() => {})
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            })
+          })
+      }
+    },
+
+    /**
+     * 通过回调控制表头style
+     */
     headerRowStyle({ row, column, rowIndex, columnIndex }) {
       return { textAlign: 'center' }
     },
-    /** 通过回调控制style */
+
+    /**
+     * 通过回调控制style
+     */
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return { textAlign: 'center' }
     }
