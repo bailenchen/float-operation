@@ -158,6 +158,7 @@ export default {
       { prop: 'contractName', width: '200', label: '合同名称' },
       { prop: 'contractMoney', width: '200', label: '合同金额' },
       { prop: 'receivablesMoney', width: '200', label: '回款金额' },
+      { prop: 'num', width: '200', label: '期数' },
       { prop: 'ownerUserName', width: '200', label: '负责人' },
       { prop: 'checkStatus', width: '200', label: '状态' },
       { prop: 'returnTime', width: '200', label: '回款日期' }
@@ -184,7 +185,7 @@ export default {
           this.loading = false
         })
     },
-    
+
     /**
      * 回款列表
      */
@@ -224,7 +225,7 @@ export default {
       this.showFullCrmType = 'receivables'
       this.showFullDetail = true
     },
-    
+
     /**
      * 通过回调控制style
      */
