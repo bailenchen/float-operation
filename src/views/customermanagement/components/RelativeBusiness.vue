@@ -46,7 +46,7 @@
               :cell-style="cellStyle"
               @row-click="handleRowClick"
               @selection-change="selectionList = $event">
-      <el-table-column v-if="canRelation"
+      <el-table-column v-if="canRelation && fieldList.length > 0"
                        show-overflow-tooltip
                        type="selection"
                        align="center"
