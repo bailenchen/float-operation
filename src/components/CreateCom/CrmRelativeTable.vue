@@ -182,6 +182,14 @@ export default {
   },
   mounted() {},
   methods: {
+    /**
+     * 刷新列表
+     */
+    refreshList() {
+      this.currentPage = 1
+      this.getList()
+    },
+
     getSceneList() {
       this.loading = true
       crmSceneIndex({

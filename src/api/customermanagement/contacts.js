@@ -128,6 +128,18 @@ export function crmContactsExcelImport(data) {
 export const crmContactsExcelDownloadURL = process.env.BASE_API + 'CrmContacts/downloadExcel'
 
 /**
+ * 关联和取消关联商机/联系人
+ * @param {*} data 
+ */
+export function crmContactsRelationAPI(data) {
+  return request({
+    url: 'crm/contacts/relation',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
  * 查重
  * @param {*} data
  */
