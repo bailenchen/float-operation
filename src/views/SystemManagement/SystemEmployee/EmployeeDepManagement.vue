@@ -600,7 +600,7 @@ export default {
                   })
               : []
           } else if (element.field === 'parentId') {
-            detail.parentId = this.dialogData.parentId
+            detail.parentId = this.dialogData.parentId || ''
           } else if (element.field === 'deptId') {
             detail.deptId = this.dialogData.deptId
           } else {
@@ -728,6 +728,7 @@ export default {
                 this.$message.success('新增成功')
                 this.employeeCreateDialog = false
                 this.usersListFun()
+                this.getSelectUserList()
                 this.loading = false
               })
               .catch(() => {
@@ -744,6 +745,7 @@ export default {
                 this.employeeCreateDialog = false
                 this.$message.success('编辑成功')
                 this.usersListFun()
+                this.getSelectUserList()
                 this.loading = false
               })
               .catch(() => {
@@ -938,6 +940,7 @@ export default {
       this.loading = true
       usersList({ pageType: 0 })
         .then(res => {
+          this.optionsList['parentId'].list = []
           for (let i of res.data) {
             this.optionsList['parentId'].list.push({
               id: i.userId,
