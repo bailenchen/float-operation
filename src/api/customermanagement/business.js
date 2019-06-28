@@ -158,3 +158,39 @@ export function crmBusinessUpdateMembers(data) {
     data: data
   })
 }
+
+/**
+ * 商机关联联系人
+ * @param {*} data
+ */
+export function crmBusinessRelateContactsAPI(data) {
+  return request({
+    url: 'CrmBusiness/relateContacts',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 商机取消关联联系人
+ * @param {*} data
+ */
+export function crmBusinessUnrelateContactsAPI(data) {
+  return request({
+    url: 'CrmBusiness/unrelateContacts',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 商机下联系人
+ * @param {*} data
+ */
+export function crmBusinessQueryContactsAPI(data) {
+  return request({
+    url: 'CrmBusiness/queryContacts',
+    method: 'post',
+    data: data
+  })
+}

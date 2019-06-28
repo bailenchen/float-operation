@@ -24,7 +24,7 @@
                       :show="showRelativeView"
                       :radio="false"
                       ref="crmrelative"
-                      :action="{ type: 'condition', data: { form_type: 'customer', customer_id: customer_id } }"
+                      :action="{ type: 'condition', data: { moduleType: 'customer', customerId: customerId } }"
                       :selectedData="{ 'business': list }"
                       crm-type="business"
                       @close="showRelativeView = false"
@@ -75,8 +75,11 @@
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
 import { crmCustomerQueryBusiness } from '@/api/customermanagement/customer'
-import { crmContactsQueryBusiness } from '@/api/customermanagement/contacts'
-import { crmContactsRelationAPI } from '@/api/customermanagement/contacts'
+import {
+  crmContactsQueryBusiness,
+  crmContactsRelateBusinessAPI,
+  crmContactsUnrelateBusinessAPI
+} from '@/api/customermanagement/contacts'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 
 export default {
@@ -88,8 +91,8 @@ export default {
   },
   computed: {
     // 联系人下客户id获取关联商机
-    customer_id() {
-      return this.detail.customer_id
+    customerId() {
+      return this.detail.customerId
     },
     // 是否能关联
     canRelation() {
@@ -153,15 +156,16 @@ export default {
      */
     checkRelativeInfos(data) {
       if (data.data.length > 0) {
-        let params = { is_relation: 1 }
-        params[this.crmType + '_id'] = this.id
-        params.business_id = data.data.map(item => {
-          return item.business_id
-        })
-        crmContactsRelationAPI(params)
+        let params = { contactsId: this.id }
+        params.businessIds = data.data
+          .map(item => {
+            return item.businessId
+          })
+          .join(',')
+        crmContactsRelateBusinessAPI(params)
           .then(res => {
             this.getDetail()
-            this.$message.success(res.data)
+            this.$message.success('操作成功')
           })
           .catch(() => {})
       }
@@ -180,15 +184,16 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            let params = { is_relation: 0 }
-            params[this.crmType + '_id'] = this.id
-            params.business_id = this.selectionList.map(item => {
-              return item.business_id
-            })
-            crmContactsRelationAPI(params)
+            let params = { contactsId: this.id }
+            params.businessIds = this.selectionList
+              .map(item => {
+                return item.businessId
+              })
+              .join(',')
+            crmContactsUnrelateBusinessAPI(params)
               .then(res => {
                 this.getDetail()
-                this.$message.success(res.data)
+                this.$message.success('操作成功')
               })
               .catch(() => {})
           })

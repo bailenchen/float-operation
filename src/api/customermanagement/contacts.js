@@ -128,24 +128,36 @@ export function crmContactsExcelImport(data) {
 export const crmContactsExcelDownloadURL = process.env.BASE_API + 'CrmContacts/downloadExcel'
 
 /**
- * 关联和取消关联商机/联系人
- * @param {*} data 
- */
-export function crmContactsRelationAPI(data) {
-  return request({
-    url: 'crm/contacts/relation',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
  * 查重
  * @param {*} data
  */
 export function crmContactsQueryListAPI(data) {
   return request({
     url: 'CrmContacts/queryList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 联系人关联商机
+ * @param {*} data
+ */
+export function crmContactsRelateBusinessAPI(data) {
+  return request({
+    url: 'CrmContacts/relateBusiness',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 联系人取消关联商机
+ * @param {*} data
+ */
+export function crmContactsUnrelateBusinessAPI(data) {
+  return request({
+    url: 'CrmContacts/unrelateBusiness',
     method: 'post',
     data: data
   })

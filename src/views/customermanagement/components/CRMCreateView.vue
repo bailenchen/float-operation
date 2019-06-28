@@ -301,7 +301,7 @@ export default {
           // 新建合同 选择客户 要将id交于 商机
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
-            if (element.key === 'businessId') {
+            if (element.key === 'business_id') {
               // 如果是商机 改变商机样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
@@ -348,7 +348,7 @@ export default {
           var planItem = null // 合同更改 重置回款计划
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
-            if (element.key === 'contractId') {
+            if (element.key === 'contract_id') {
               // 如果是合同 改变合同样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
@@ -361,7 +361,7 @@ export default {
                 element['relation'] = {}
                 element.value = []
               }
-            } else if (element.key === 'planId') {
+            } else if (element.key === 'plan_id') {
               planItem = element
             }
           }
@@ -373,7 +373,7 @@ export default {
         } else if (item.data.formType == 'contract') {
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
-            if (element.key === 'planId') {
+            if (element.key === 'plan_id') {
               // 如果是回款 改变回款样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
@@ -903,14 +903,16 @@ export default {
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
       if (
-        element.key == 'customerId' ||
-        element.key == 'contactsId' ||
-        element.key == 'businessId' ||
-        element.key == 'leadsId' ||
-        element.key == 'contractId'
+        element.key == 'customer_id' ||
+        element.key == 'contacts_id' ||
+        element.key == 'business_id' ||
+        element.key == 'leads_id' ||
+        element.key == 'contract_id'
       ) {
         if (element.value && element.value.length) {
-          return element.value[0][element.key]
+          let key = element.key.replace('_id', 'Id')
+          console.log('key---', key);
+          return element.value[0][key]
         } else {
           return ''
         }
