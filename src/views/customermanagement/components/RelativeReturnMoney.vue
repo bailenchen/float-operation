@@ -77,6 +77,9 @@ import {
   crmContractQueryReceivables,
   crmContractQueryReceivablesPlan
 } from '@/api/customermanagement/contract'
+import {
+  crmReceivablesPlanDeleteAPI
+} from '@/api/customermanagement/money'
 /** 注意  需要删除接口 */
 import { timestampToFormatTime, objDeepCopy } from '@/utils'
 
@@ -283,7 +286,7 @@ export default {
      */
     handleFile(type, item) {
       if (type == 'edit') {
-        this.createActionInfo = { type: 'update', id: item.row.plan_id }
+        this.createActionInfo = { type: 'update', id: item.row.planId }
         this.createCrmType = 'receivables_plan'
         this.isCreate = true
       } else if (type == 'delete') {
@@ -294,11 +297,11 @@ export default {
         })
           .then(() => {
             crmReceivablesPlanDeleteAPI({
-              id: item.row.plan_id
+              planIds: item.row.planId
             })
               .then(res => {
                 this.palnList.splice(item.$index, 1)
-                this.$message.success(res.data)
+                this.$message.success('删除成功')
               })
               .catch(() => {})
           })

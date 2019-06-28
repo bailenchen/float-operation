@@ -806,7 +806,8 @@ export default {
       this.loading = true
       var crmRequest = this.getSubmiteRequest()
       if (this.action.type == 'update') {
-        params.entity[this.crmType + 'Id'] = this.action.id
+        let key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType 
+        params.entity[key + 'Id'] = this.action.id
         params.entity.batchId = this.action.batchId
       }
       crmRequest(params)
@@ -853,7 +854,6 @@ export default {
       } else if (this.crmType == 'receivables') {
         return crmReceivablesSave
       } else if (this.crmType == 'receivables_plan') {
-        // 回款计划 不能编辑
         return crmReceivablesPlanSave
       }
     },
@@ -911,7 +911,6 @@ export default {
       ) {
         if (element.value && element.value.length) {
           let key = element.key.replace('_id', 'Id')
-          console.log('key---', key);
           return element.value[0][key]
         } else {
           return ''

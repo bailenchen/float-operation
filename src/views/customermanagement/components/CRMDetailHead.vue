@@ -78,7 +78,7 @@ export default {
     AllocHandle
   },
   computed: {
-    ...mapGetters(['crm']),
+    ...mapGetters(['crm', 'CRMConfig']),
     crmIcon() {
       if (this.crmType === 'customer') {
         return require('@/assets/img/customer_detail.png')
@@ -109,7 +109,11 @@ export default {
     },
     // 展示转移
     showTransfer() {
-      if (this.crmType === 'receivables' || this.crmType === 'product' || this.isSeas) {
+      if (
+        this.crmType === 'receivables' ||
+        this.crmType === 'product' ||
+        this.isSeas
+      ) {
         return false
       }
       return this.crm[this.crmType].transfer
@@ -367,7 +371,11 @@ export default {
         ])
       } else if (this.crmType == 'customer') {
         if (this.isSeas) {
-          return this.forSelectionHandleItems(handleInfos, ['alloc', 'get', 'delete'])
+          return this.forSelectionHandleItems(handleInfos, [
+            'alloc',
+            'get',
+            'delete'
+          ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
             'put_seas',
@@ -410,7 +418,7 @@ export default {
         return this.crm[this.crmType].putinpool
       } else if (type == 'lock' || type == 'unlock') {
         // 锁定解锁(客户)
-        return this.crm[this.crmType].lock
+        return this.crm[this.crmType].lock && this.CRMConfig.customerConfig == 1
       } else if (type == 'add_user' || type == 'delete_user') {
         // 添加 移除团队成员
         return this.crm[this.crmType].teamsave

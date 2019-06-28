@@ -70,7 +70,7 @@ export function crmReceivablesPlanIndex(data) {
  */
 export function crmReceivablesPlanDeleteAPI(data) {
   return request({
-    url: 'crm/receivables_plan/delete',
+    url: 'Crm/ReceivablesPlan/deleteByIds',
     method: 'post',
     data: data
   })
