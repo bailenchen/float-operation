@@ -12,7 +12,8 @@ import {
   crmMainIndex
 } from '@/api/customermanagement/common'
 import {
-  crmCustomerExcelAllExport
+  crmCustomerExcelAllExport,
+  crmCustomerPoolExcelExportAPI
 } from '@/api/customermanagement/customer'
 import {
   crmLeadsExcelAllExport
@@ -251,12 +252,19 @@ export default {
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
-      var request = {
-        customer: crmCustomerExcelAllExport,
-        leads: crmLeadsExcelAllExport,
-        contacts: crmContactsExcelAllExport,
-        product: crmProductExcelAllExport
-      }[this.crmType]
+      let request
+      // 公海的请求
+      if (this.isSeas) {
+        request = crmCustomerPoolExcelExportAPI
+      } else {
+        request = {
+          customer: crmCustomerExcelAllExport,
+          leads: crmLeadsExcelAllExport,
+          contacts: crmContactsExcelAllExport,
+          product: crmProductExcelAllExport
+        }[this.crmType]
+      }
+
       request(params)
         .then(res => {
           var blob = new Blob([res.data], {

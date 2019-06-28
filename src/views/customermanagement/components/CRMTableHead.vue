@@ -98,6 +98,7 @@ import {
   crmCustomerLock,
   crmCustomerPutInPool,
   crmCustomerExcelExport,
+  crmCustomerPoolExcelExportAPI,
   crmCustomerDelete,
   crmCustomerDistribute
 } from '@/api/customermanagement/customer'
@@ -258,8 +259,15 @@ export default {
         this.transferDialogShow = true
       } else if (type == 'export') {
         var params = {}
-        var request
-        if (this.crmType == 'customer') {
+        var request = null
+        if (this.isSeas) {
+          request = crmCustomerPoolExcelExportAPI
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.customerId
+            })
+            .join(',')
+        } else if (this.crmType == 'customer') {
           request = crmCustomerExcelExport
           params.ids = this.selectionList
             .map(function(item, index, array) {
@@ -544,7 +552,11 @@ export default {
         ])
       } else if (this.crmType == 'customer') {
         if (this.isSeas) {
-          return this.forSelectionHandleItems(handleInfos, ['alloc', 'get'])
+          return this.forSelectionHandleItems(handleInfos, [
+            'alloc',
+            'get',
+            'export'
+          ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
             'transfer',
@@ -605,6 +617,9 @@ export default {
           ? false
           : this.crm[this.crmType].transform
       } else if (type == 'export') {
+        if (this.isSeas) {
+          return this.crm[this.crmType].poolexcelexport
+        }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
         return this.crm[this.crmType].delete

@@ -131,6 +131,20 @@ export function crmCustomerExcelImport(data) {
 export const crmCustomerExcelDownloadURL = process.env.BASE_API + 'CrmCustomer/downloadExcel'
 
 /**
+ * 公海导出
+ * @param {*} data
+ */
+export function crmCustomerPoolExcelExportAPI(data) {
+  return request({
+    url: 'crm/customer/poolExcelExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    timeout: 60000
+  })
+}
+
+/**
  * 客户分配
  * @param {*} data
  */
