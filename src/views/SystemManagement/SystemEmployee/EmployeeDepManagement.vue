@@ -882,7 +882,6 @@ export default {
         if (valid) {
           if (this.selectionList.length > 0) {
             val.id = this.selectionList[0].id
-            console.log(val)
             this.loading = true
             adminUsersUsernameEditAPI(val)
               .then(res => {
