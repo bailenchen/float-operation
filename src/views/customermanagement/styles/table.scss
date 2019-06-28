@@ -45,14 +45,14 @@
 }
 
 .el-table /deep/ .el-table__row.current-row {
-  td:first-child {
-    border-left: 2px solid #5383ED;
-  }
-}
-
-.el-table /deep/ .el-table__row {
-  td:first-child {
-    border-left: 2px solid transparent;
+  td:first-child::before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #5383ED;
   }
 }
 
