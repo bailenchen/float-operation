@@ -183,8 +183,9 @@
       </div>
     </div>
     <div class="footer">
-      <span @click="commentBtn(data)"
-            class="comment">回复</span>
+      <el-button type="primary"
+                 icon="el-icon-chat-line-round"
+                 @click="commentBtn(data)">回复</el-button>
       <!-- <img @click="commentBtn(item)" class="comment" src="@/assets/img/journal_comment.png"> -->
     </div>
     <!-- 底部评论 -->

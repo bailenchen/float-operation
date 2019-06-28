@@ -178,33 +178,45 @@ export default {
         return // 多选布局不能点击
       }
       if (this.crmType === 'leads') {
-        this.rowID = row.leadsId
-        this.showDview = true
+        if (column.property === 'leadsName') {
+          this.rowID = row.leadsId
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       } else if (this.crmType === 'customer') {
         if (column.property === 'businessCheck' && row.businessCount > 0) {
           return // 列表查看商机不展示详情
         }
-        this.rowID = row.customerId
-        this.rowType = 'customer'
-        this.showDview = true
+        if (column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'customer'
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       } else if (this.crmType === 'contacts') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
-        } else {
+        } else if (column.property === 'name') {
           this.rowID = row.contactsId
           this.rowType = 'contacts'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       } else if (this.crmType === 'business') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
-        } else {
+        } else if (column.property === 'businessName') {
           this.rowID = row.businessId
           this.rowType = 'business'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       } else if (this.crmType === 'contract') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
@@ -215,14 +227,20 @@ export default {
         } else if (column.property === 'contactsName') {
           this.rowID = row.contactsId
           this.rowType = 'contacts'
-        } else {
+        } else if (column.property === 'num') {
           this.rowID = row.contractId
           this.rowType = 'contract'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       } else if (this.crmType === 'product') {
-        this.rowID = row.productId
-        this.showDview = true
+        if (column.property === 'name') {
+          this.rowID = row.productId
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       } else if (this.crmType === 'receivables') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
@@ -230,11 +248,13 @@ export default {
         } else if (column.property === 'contractNum') {
           this.rowID = row.contractId
           this.rowType = 'contract'
-        } else {
+        } else if (column.property === 'number') {
           this.rowID = row.receivablesId
           this.rowType = 'receivables'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       }
     },
     /**
