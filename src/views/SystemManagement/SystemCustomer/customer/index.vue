@@ -71,8 +71,9 @@ export default {
         .dispatch('CRMSettingConfig')
         .then(res => {
           this.loading = false
-          res.data.type = parseInt(res.data.type)
-          this.customerData = res.data
+          this.customerData.type = res.data.customerConfig
+          this.customerData.followupDay = res.data.followupDay
+          this.customerData.dealDay = res.data.dealDay
         })
         .catch(() => {
           this.loading = false

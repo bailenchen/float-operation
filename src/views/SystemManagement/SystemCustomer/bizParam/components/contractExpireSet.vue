@@ -11,9 +11,9 @@
       <div class="tips">设置提前提醒天数之后，根据合同的”合同到期时间”计算提醒时间</div>
       <div class="set-content">
         <el-radio v-model="contractConfig"
-                  label="0">不提醒</el-radio>
+                  :label="0">不提醒</el-radio>
         <el-radio v-model="contractConfig"
-                  label="1">提前提醒天数</el-radio>
+                  :label="1">提前提醒天数</el-radio>
         <div v-if="contractConfig == 1"
              class="time-set">
           <el-input v-model="contractDay"></el-input><span>天</span>
@@ -36,7 +36,7 @@ export default {
       loading: false, // 展示加载中效果
 
       contractDay: 0, // 合同到期提醒天数
-      contractConfig: '0'
+      contractConfig: 0 // 是否提醒 0、不提醒 1、提醒
     }
   },
 
@@ -54,8 +54,8 @@ export default {
         .dispatch('CRMSettingConfig')
         .then(res => {
           this.loading = false
-          this.contractDay = res.data.contract_day
-          this.contractConfig = res.data.contract_config
+          this.contractDay = res.data.contractDay
+          this.contractConfig = parseInt(res.data.contractConfig)
         })
         .catch(() => {
           this.loading = false
@@ -69,16 +69,15 @@ export default {
       this.loading = true
       let params = {}
       if (this.contractConfig == 1) {
-        params.contract_day = this.contractDay
-        params.contract_config = 1
+        params.contractDay = this.contractDay
+        params.status = 1
       } else {
-        params.contract_config = 0
+        params.status = 0
       }
       crmSettingContractDayAPI(params)
         .then(res => {
           this.loading = false
-
-          this.$message.success(res.data)
+          this.$message.success('操作成功')
         })
         .catch(() => {
           this.loading = false

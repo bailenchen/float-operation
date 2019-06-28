@@ -160,7 +160,7 @@ export function crmAchievementUpdate(data) {
  */
 export function crmSettingRecordListAPI(data) {
   return request({
-    url: 'crm/setting/recordList',
+    url: 'CrmRecord/queryRecordOptions',
     method: 'post',
     data: data
   })
@@ -172,9 +172,12 @@ export function crmSettingRecordListAPI(data) {
  */
 export function crmSettingRecordEditAPI(data) {
   return request({
-    url: 'crm/setting/recordEdit',
+    url: 'CrmRecord/setRecordOptions',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -184,7 +187,7 @@ export function crmSettingRecordEditAPI(data) {
  */
 export function crmSettingContractDayAPI(data) {
   return request({
-    url: 'crm/setting/contractDay',
+    url: 'CrmContract/setContractConfig',
     method: 'post',
     data: data
   })
