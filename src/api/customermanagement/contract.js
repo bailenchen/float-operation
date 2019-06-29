@@ -15,7 +15,7 @@ export function crmContractSave(data) {
 // crm 列表
 export function crmContractIndex(data) {
   return request({
-    url: 'CrmContract/queryPage',
+    url: 'CrmContract/queryPageList',
     method: 'post',
     data: data
   })

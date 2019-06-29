@@ -12,6 +12,15 @@ export function crmContactsSave(data) {
   })
 }
 
+// crm 列表
+export function crmContactsIndex(data) {
+  return request({
+    url: 'CrmContacts/queryPageList',
+    method: 'post',
+    data: data
+  })
+}
+
 // 删除
 export function crmContactsDelete(data) {
   return request({

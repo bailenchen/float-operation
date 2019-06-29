@@ -8,22 +8,35 @@ import CRMTableHead from '../components/CRMTableHead'
 import FieldsSet from '../components/fieldsManager/FieldsSet'
 import {
   filedGetTableField,
-  crmFieldColumnWidth,
-  crmMainIndex
+  crmFieldColumnWidth
 } from '@/api/customermanagement/common'
 import {
+  crmCustomerIndex,
+  crmCustomerPool,
   crmCustomerExcelAllExport,
-  crmCustomerPoolExcelExportAPI
+  crmCustomerPoolExcelAllExport
 } from '@/api/customermanagement/customer'
 import {
+  crmLeadsIndex,
   crmLeadsExcelAllExport
 } from '@/api/customermanagement/clue'
 import {
+  crmContactsIndex,
   crmContactsExcelAllExport
 } from '@/api/customermanagement/contacts'
 import {
+  crmBusinessIndex
+} from '@/api/customermanagement/business'
+import {
+  crmContractIndex
+} from '@/api/customermanagement/contract'
+import {
+  crmProductIndex,
   crmProductExcelAllExport
 } from '@/api/customermanagement/product'
+import {
+  crmReceivablesIndex
+} from '@/api/customermanagement/money'
 
 export default {
   components: {
@@ -82,6 +95,7 @@ export default {
     /** 获取列表数据 */
     getList() {
       this.loading = true
+      var crmIndexRequest = this.getIndexRequest()
       var params = {
         page: this.currentPage,
         limit: this.pageSize,
@@ -94,7 +108,7 @@ export default {
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
-      crmMainIndex(params)
+      crmIndexRequest(params)
         .then(res => {
           if (this.crmType === 'customer') {
             this.list = res.data.list.map(element => {
@@ -116,6 +130,28 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    /** 获取列表请求 */
+    getIndexRequest() {
+      if (this.crmType === 'leads') {
+        return crmLeadsIndex
+      } else if (this.crmType === 'customer') {
+        if (this.isSeas) {
+          return crmCustomerPool
+        } else {
+          return crmCustomerIndex
+        }
+      } else if (this.crmType === 'contacts') {
+        return crmContactsIndex
+      } else if (this.crmType === 'business') {
+        return crmBusinessIndex
+      } else if (this.crmType === 'contract') {
+        return crmContractIndex
+      } else if (this.crmType === 'product') {
+        return crmProductIndex
+      } else if (this.crmType === 'receivables') {
+        return crmReceivablesIndex
+      }
     },
     /** 获取字段 */
     getFieldList() {
@@ -275,7 +311,7 @@ export default {
       let request
       // 公海的请求
       if (this.isSeas) {
-        request = crmCustomerPoolExcelExportAPI
+        request = crmCustomerPoolExcelAllExport
       } else {
         request = {
           customer: crmCustomerExcelAllExport,

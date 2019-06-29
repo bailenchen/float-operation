@@ -250,23 +250,6 @@ export function crmExamineFlowAuditExamine(data) {
   })
 }
 
-/**
- * 相关团队列表
- * @param {*} data
- * types crm_leads
- * typesId 分类ID
- */
-export function crmMainIndex(data) {
-  return request({
-    url: 'scene/queryPageList',
-    method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
-  })
-}
-
 // 跟进记录删除
 export function crmRecordDelete(data) {
   return request({

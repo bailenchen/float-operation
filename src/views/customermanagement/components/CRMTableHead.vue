@@ -100,7 +100,7 @@ import {
   crmCustomerExcelExport,
   crmCustomerPoolExcelExportAPI,
   crmCustomerDelete,
-  crmCustomerDistribute
+  crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import {
   crmContactsDelete,
@@ -461,7 +461,7 @@ export default {
         var customerId = this.selectionList.map(function(item, index, array) {
           return item.customerId
         })
-        crmCustomerDistribute({
+        crmCustomerReceive({
           ids: customerId.join(',')
         })
           .then(res => {

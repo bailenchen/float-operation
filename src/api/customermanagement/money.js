@@ -18,7 +18,7 @@ export function crmReceivablesSave(data) {
  */
 export function crmReceivablesIndex(data) {
   return request({
-    url: 'CrmReceivables/queryPage',
+    url: 'CrmReceivables/queryPageList',
     method: 'post',
     data: data
   })

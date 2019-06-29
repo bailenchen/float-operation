@@ -61,7 +61,7 @@ import {
   crmCustomerLock,
   crmCustomerPutInPool,
   crmCustomerDelete,
-  crmCustomerDistribute
+  crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import { crmContactsDelete } from '@/api/customermanagement/contacts'
 import { crmBusinessDelete } from '@/api/customermanagement/business'
@@ -288,7 +288,7 @@ export default {
           .catch(() => {})
       } else if (type === 'get') {
         // 领取
-        crmCustomerDistribute({
+        crmCustomerReceive({
           ids: this.id
         })
           .then(res => {

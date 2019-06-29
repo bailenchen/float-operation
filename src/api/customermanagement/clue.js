@@ -12,6 +12,15 @@ export function crmLeadsSave(data) {
   })
 }
 
+// crm 列表
+export function crmLeadsIndex(data) {
+  return request({
+    url: 'CrmLeads/queryPageList',
+    method: 'post',
+    data: data
+  })
+}
+
 // 删除
 export function crmLeadsDelete(data) {
   return request({
