@@ -195,7 +195,7 @@ export default {
     /**
      * 商机组添加 -- 确定按钮
      */
-    businessSubmit(name, dep, list, title, type_id) {
+    businessSubmit(name, dep, list, title, typeId) {
       var businessHandleRequest = null
       var params = {
         crmBusinessType: {
