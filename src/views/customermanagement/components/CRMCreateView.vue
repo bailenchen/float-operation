@@ -806,7 +806,7 @@ export default {
       this.loading = true
       var crmRequest = this.getSubmiteRequest()
       if (this.action.type == 'update') {
-        let key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType 
+        let key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType
         params.entity[key + 'Id'] = this.action.id
         params.entity.batchId = this.action.batchId
       }
@@ -929,7 +929,7 @@ export default {
           return element.value[0].batchId
         }
         return ''
-      } else if (element.key == 'categoryId') {
+      } else if (element.key == 'category_id') {
         if (element.value && element.value.length > 0) {
           return element.value[element.value.length - 1]
         }
