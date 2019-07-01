@@ -410,6 +410,9 @@ export default {
       } else if (type == 'transform') {
         return this.crm[this.crmType].transform
       } else if (type == 'export') {
+        if (this.isSeas) {
+          return this.crm.pool.excelexport
+        }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
         return this.crm[this.crmType].delete
@@ -424,10 +427,10 @@ export default {
         return this.crm[this.crmType].teamsave
       } else if (type == 'alloc') {
         // 分配(公海)
-        return this.crm[this.crmType].distribute
+        return this.crm.pool.distribute
       } else if (type == 'get') {
         // 领取(公海)
-        return this.crm[this.crmType].receive
+        return this.crm.pool.receive
       } else if (type == 'start' || type == 'disable') {
         // 上架 下架(产品)
         return this.crm[this.crmType].status

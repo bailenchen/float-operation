@@ -108,7 +108,7 @@ export default {
       }
     } else {
       // 客户池的导出关键字不同
-      if (this.crm[this.crmType].poolexcelexport) {
+      if (this.crm.pool.excelexport) {
         this.moreTypes.push({ type: 'out', name: '导出' })
       }
     }

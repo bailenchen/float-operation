@@ -82,12 +82,10 @@ export default {
     // document.getElementById('crm-table').addEventListener('click', e => {
     //   e.stopPropagation()
     // })
-    if (this.crm[this.crmType].index) {
-      if (this.isSeas) {
-        this.getFieldList()
-      } else {
-        this.loading = true
-      }
+    if (this.isSeas && this.crm.pool.index) {
+      this.getFieldList()
+    } else if (this.crm[this.crmType].index) {
+      this.loading = true
     }
   },
 
