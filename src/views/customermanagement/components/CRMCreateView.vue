@@ -508,25 +508,31 @@ export default {
           this.crmForm.crmFields.push(params)
         } else {
           var params = {}
-          if (this.action.type == 'update') {
-            params['value'] = item.value || '' // 编辑的值 在value∂ç字段
-          } else {
-            if (
-              item.formType == 'user' ||
-              item.formType == 'structure' ||
-              item.formType == 'file' ||
-              item.formType == 'category' ||
-              item.formType == 'customer' ||
-              item.formType == 'business' ||
-              item.formType == 'contract'
-            ) {
+          if (
+            item.formType == 'user' ||
+            item.formType == 'structure' ||
+            item.formType == 'file' ||
+            item.formType == 'category' ||
+            item.formType == 'customer' ||
+            item.formType == 'business' ||
+            item.formType == 'contract'
+          ) {
+            if (this.action.type == 'update') {
+              params['value'] = item.value ? objDeepCopy(item.value) : []
+              
+            } else {
               params['value'] = item.defaultValue
                 ? objDeepCopy(item.defaultValue)
                 : []
+            }
+          } else {
+            if (this.action.type == 'update') {
+              params['value'] = item.value || '' // 编辑的值 在value∂ç字段
             } else {
               params['value'] = item.defaultValue || ''
             }
           }
+
           params['key'] = item.fieldName
           params['data'] = item
           params['disabled'] = false // 是否可交互
