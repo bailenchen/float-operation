@@ -15,7 +15,7 @@ export function crmProductSave(data) {
 // crm 列表
 export function crmProductIndex(data) {
   return request({
-    url: 'CrmProduct/queryList',
+    url: 'CrmProduct/queryPageList',
     method: 'post',
     data: data
   })
