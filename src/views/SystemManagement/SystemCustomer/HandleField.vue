@@ -332,7 +332,14 @@ export default {
           user: 10,
           structure: 12,
           datetime: 13,
-          email: 14
+          email: 14,
+          customer: 15,
+          business: 16,
+          contacts: 17,
+          map_address: 18,
+          category: 19,
+          contract: 20,
+          receivables_plan: 21
         }[formType] || '0'
       )
     },

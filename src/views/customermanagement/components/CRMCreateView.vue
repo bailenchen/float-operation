@@ -895,7 +895,7 @@ export default {
       params['address'] = element.value.address
         ? element.value.address.join(',')
         : []
-      params['detail_address'] = element.value.detail_address
+      params['detailAddress'] = element.value.detailAddress
       params['location'] = element.value.location
       params['lng'] = element.value.lng
       params['lat'] = element.value.lat
