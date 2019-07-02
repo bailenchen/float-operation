@@ -17,6 +17,9 @@ export function crmBusinessIndex(data) {
   return request({
     url: 'CrmBusiness/queryPageList',
     method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     data: data
   })
 }

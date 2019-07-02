@@ -17,7 +17,10 @@ export function crmContractIndex(data) {
   return request({
     url: 'CrmContract/queryPageList',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
