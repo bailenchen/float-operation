@@ -17,7 +17,10 @@ export function crmLeadsIndex(data) {
   return request({
     url: 'CrmLeads/queryPageList',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
