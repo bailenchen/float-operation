@@ -142,7 +142,7 @@
                         :style="{'background': item.color ? item.color : '#ccc'}"
                         v-for="(item, index) in taskData.labelList"
                         :key="index">
-                    {{item.lableName}}
+                    {{item.labelName}}
                   </span>
                 </template>
                 <div class="add-tag">
