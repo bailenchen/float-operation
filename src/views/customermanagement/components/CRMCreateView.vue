@@ -680,7 +680,7 @@ export default {
             callback()
           } else {
             var validatesParams = {}
-            validatesParams.name = item.name
+            validatesParams.fieldName = item.fieldName
             if (isArray(value)) {
               let postValue = ''
               if (value.length > 0) {
@@ -706,6 +706,7 @@ export default {
               validatesParams.val = value
             }
             validatesParams.types = crmTypeModel[this.crmType]
+            validatesParams.fieldType = item.fieldType
             if (this.action.type == 'update') {
               validatesParams.id = this.action.id
             }
