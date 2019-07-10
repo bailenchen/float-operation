@@ -129,6 +129,19 @@ const systemOtherRouter = {
         type: 'manage',
         subType: 'oa'
       }
+    },
+    {
+      name: 'project',
+      path: 'project', // 项目管理
+      component: () => import('@/views/SystemManagement/project'),
+      meta: {
+        requiresAuth: true,
+        title: '项目管理',
+        icon: 'project',
+        index: 1,
+        type: 'manage',
+        subType: 'oa'
+      }
     }
   ]
 }

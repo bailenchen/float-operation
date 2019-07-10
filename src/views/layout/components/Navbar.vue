@@ -104,6 +104,12 @@ export default {
           icon: 'statistics'
         })
       }
+      tempsItems.push({
+        title: '项目管理',
+        type: 2,
+        path: '/project',
+        icon: 'project'
+      })
       return tempsItems
     }
   },
