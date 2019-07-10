@@ -10,7 +10,7 @@
            @click="close"></i>
       </div>
       <div class="content">
-        <members-dep v-if="permission.is_update == 1 && isOpen != 1"
+        <members-dep v-if="canUpdateWork"
                      :userCheckedData="userList"
                      :closeDep="true"
                      @popoverSubmit="userSelectChange">
@@ -30,7 +30,7 @@
                class="div-photo"></div>
           <span>{{item.realname}}
           </span>
-          <i v-if="permission.is_update == 1 && isOpen != 1"
+          <i v-if="canUpdateWork"
              class="el-icon-close"
              @click="deleteUser(item, index)"></i>
         </div>
@@ -53,6 +53,16 @@ export default {
   components: {
     MembersDep
   },
+
+  computed: {
+    /**
+     * 可以编辑项目
+     */
+    canUpdateWork() {
+      return this.isOpen != 1 && this.permission.work && this.permission.work.update 
+    }
+  },
+
   data() {
     return {
       zIndex: getMaxIndex(),
@@ -87,7 +97,6 @@ export default {
       type: Object,
       default: () => {
         return {
-          is_update: 0
         }
       }
     }

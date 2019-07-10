@@ -19,7 +19,7 @@
         <span>{{hoverDialogList.start_time + ' - ' + hoverDialogList.stop_time}}</span>
       </div>
     </div>
-    <!-- 新增任务弹出框 newDialog-->
+    <!-- 新建任务弹出框 newDialog-->
     <new-dialog :visible="taskCreateShow"
                 :action="createActionInfo"
                 @handleClose="handleClose"
@@ -286,6 +286,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
+
 .task-calendars {
   position: relative;
   border: 1px solid #e6e6e6;

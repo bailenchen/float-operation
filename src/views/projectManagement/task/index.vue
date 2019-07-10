@@ -110,13 +110,13 @@
             <div class="new-task"
                  @click="createTaskByTop(item.is_top)">
               <span class="el-icon-plus"></span>
-              <span>新增任务</span>
+              <span>新建任务</span>
             </div>
           </flexbox>
         </div>
       </div>
     </div>
-    <!-- 新增任务弹出框 newDialog-->
+    <!-- 新建任务弹出框 newDialog-->
     <new-dialog :visible="taskCreateShow"
                 :params="{is_top: topId}"
                 @handleClose="handleClose"
@@ -159,7 +159,7 @@ export default {
   data() {
     return {
       taskList: [],
-      // 新增任务弹出框
+      // 新建任务弹出框
       taskCreateShow: false,
       // 加载中
       loading: true,

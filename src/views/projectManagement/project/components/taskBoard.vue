@@ -18,7 +18,8 @@
             <div>
               <span class="text"> {{ item.class_name }} </span>
               <span class="text-num">{{item.checkedNum}} / {{item.list.length}}</span>
-              <el-popover placement="bottom-start"
+              <el-popover v-if="canUpdateTaskClass"
+                          placement="bottom-start"
                           width="150"
                           v-model="item.taskHandleShow"
                           trigger="click">
@@ -52,9 +53,11 @@
                     <p @click="renameTaskListClick(item)"
                        slot="reference">重命名</p>
                   </el-popover>
-                  <p @click="createSubTaskClick(item)">新建任务</p>
-                  <p @click="archiveTaskListClick(item)">归档已完成任务</p>
-                  <p @click="delectTaskListClick(item, index)">删除列表</p>
+                  <p v-if="canCreateTask"
+                     @click="createSubTaskClick(item)">新建任务</p>
+                  <p v-if="canUpdateTaskClass"
+                     @click="archiveTaskListClick(item)">归档已完成任务</p>
+                  <p v-if="canDeleteTaskClass" @click="delectTaskListClick(item, index)">删除列表</p>
                 </div>
                 <img class="img-gd"
                      ref="imgPopoverSlot"
@@ -115,42 +118,42 @@
                 </div>
 
                 <template v-if="element.lableList.length <= 2">
-                    <div v-for="(k, j) in element.lableList"
-                         :key="j"
-                         class="item-label"
-                         :style="{'background': k.color}">
-                      {{k.name}}
+                  <div v-for="(k, j) in element.lableList"
+                       :key="j"
+                       class="item-label"
+                       :style="{'background': k.color}">
+                    {{k.name}}
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="item-label"
+                       :style="{'background': element.lableList[0].color}">{{element.lableList[0].name}}</div>
+                  <div class="item-label"
+                       :style="{'background': element.lableList[1].color}">{{element.lableList[1].name}}</div>
+                  <el-tooltip placement="top"
+                              effect="light"
+                              popper-class="tooltip-change-border task-tooltip">
+                    <div slot="content"
+                         style="margin: 10px 10px 10px 0;">
+                      <div v-for="(k, j) in element.lableList"
+                           :key="j"
+                           style="display: inline-block; margin-right: 10px;">
+                        <span v-if="j >= 2"
+                              class="k-name"
+                              :style="{'background': k.color ? k.color: '#ccc'}"
+                              style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.name}}</span>
+                      </div>
                     </div>
-                  </template>
-                  <template v-else>
-                    <div class="item-label"
-                         :style="{'background': element.lableList[0].color}">{{element.lableList[0].name}}</div>
-                    <div class="item-label"
-                         :style="{'background': element.lableList[1].color}">{{element.lableList[1].name}}</div>
-                    <el-tooltip placement="top"
-                                effect="light"
-                                popper-class="tooltip-change-border task-tooltip">
-                      <div slot="content"
-                           style="margin: 10px 10px 10px 0;">
-                        <div v-for="(k, j) in element.lableList"
-                             :key="j"
-                             style="display: inline-block; margin-right: 10px;">
-                          <span v-if="j >= 2"
-                                class="k-name"
-                                :style="{'background': k.color ? k.color: '#ccc'}"
-                                style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.name}}</span>
-                        </div>
-                      </div>
-                      <div class="color-label-more">
-                        <i>...</i>
-                      </div>
-                    </el-tooltip>
+                    <div class="color-label-more">
+                      <i>...</i>
+                    </div>
+                  </el-tooltip>
 
-                  </template>
+                </template>
               </div>
             </div>
           </draggable>
-          <!-- 新增任务 -->
+          <!-- 新建任务 -->
           <div class="new-task-input"
                v-if="createSubTaskClassId == item.class_id">
             <el-input type="textarea"
@@ -217,15 +220,15 @@
           </div>
           <div class="new-task"
                @click="createSubTaskClick(item)"
-               v-else>
+               v-else-if="canCreateTask">
             <span class="el-icon-plus"></span>
-            <span>新增任务</span>
+            <span>新建任务</span>
           </div>
         </flexbox>
       </div>
 
       <!-- 新建列表 -->
-      <div class="board-column-new-list">
+      <div v-if="canCreateTaskClass" class="board-column-new-list">
         <div class="new-list"
              v-if="!createTaskListShow && loading == false"
              @click="createTaskListShow = true">
@@ -292,10 +295,40 @@ export default {
     scrollx
   },
 
+  computed: {
+    /**
+     * 可以新建任务
+     */
+    canCreateTask() {
+      return this.permission.task && this.permission.task.save
+    },
+
+    /**
+     * 可以创建任务列表
+     */
+    canCreateTaskClass() {
+      return this.permission.taskclass && this.permission.taskclass.save
+    },
+
+    /**
+     * 可以编辑任务列表
+     */
+    canUpdateTaskClass() {
+      return this.permission.taskclass && this.permission.taskclass.update
+    },
+
+    /**
+     * 可以删除任务列表
+     */
+    canDeleteTaskClass() {
+      return this.permission.taskclass && this.permission.taskclass.delete
+    }
+  },
+
   data() {
     return {
       loading: false,
-      // 新增任务弹出框
+      // 新建任务弹出框
       createTaskListShow: false,
       createSubTaskClassId: 'hidden',
       subTaskContent: '',
@@ -330,7 +363,13 @@ export default {
   },
 
   props: {
-    workId: String
+    workId: String,
+    permission: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   created() {
@@ -559,7 +598,7 @@ export default {
     },
 
     /**
-     * 新增任务
+     * 新建任务
      */
     addSubTask(val) {
       this.loading = true
@@ -619,7 +658,7 @@ export default {
     },
 
     /**
-     * 新增任务 -- 选择人员
+     * 新建任务 -- 选择人员
      */
     selectOwnerList(item, val) {
       this.selectMainUser = val

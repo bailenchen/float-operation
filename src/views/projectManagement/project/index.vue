@@ -16,11 +16,11 @@
                            :closeDep="true"
                            @popoverSubmit="userSelectChange">
                 <p slot="membersDep"
-                   v-if="projectData.permission.is_update == 1 && projectData.is_open != 1"
+                   v-if="canUpdateWork && projectData.is_open != 1"
                    @click="projectHandleShow = false">添加项目成员</p>
               </members-dep>
 
-              <project-settings v-if="projectData.permission.is_update == 1"
+              <project-settings v-if="canUpdateWork"
                                 :workId="workId"
                                 :title="projectName"
                                 :color="projectColor"
@@ -31,9 +31,9 @@
                                 @handle="projectSettingsHandle"
                                 @click="projectHandleShow = false">
               </project-settings>
-              <p v-if="projectData.permission.is_update == 1"
+              <p v-if="canUpdateWork"
                  @click="archiveProject">归档项目</p>
-              <p v-if="projectData.permission.is_update == 1"
+              <p v-if="canUpdateWork"
                  @click="deleteProject">删除项目</p>
               <p @click="exitProject">退出项目</p>
             </div>
@@ -71,7 +71,8 @@
     <div class="content">
       <keep-alive>
         <component v-bind:is="activeName"
-                   :workId="workId"></component>
+                   :workId="workId"
+                   :permission="permission"></component>
       </keep-alive>
     </div>
 
@@ -85,7 +86,7 @@
     <members :workId="workId"
              :list="membersList"
              :is-open="projectData.is_open"
-             :permission="projectData.permission"
+             :permission="permission"
              :visible.sync="membersShow">
     </members>
   </div>
@@ -109,6 +110,7 @@ import {
   workWorkOwnerListAPI,
   workWorkOwnerAddAPI
 } from '@/api/projectManagement/project'
+
 export default {
   components: {
     TaskBoard,
@@ -121,6 +123,17 @@ export default {
     MembersDep
   },
 
+  computed: {
+    /**
+     * 可以编辑项目
+     */
+    canUpdateWork() {
+      return (
+        this.isOpen != 1 && this.permission.work && this.permission.work.update
+      )
+    }
+  },
+
   data() {
     return {
       // 项目ID
@@ -128,7 +141,6 @@ export default {
       projectName: '',
       projectColor: '',
       projectData: {
-        permission: { is_update: 0 },
         is_open: 0
       },
 
@@ -141,7 +153,10 @@ export default {
       membersList: [],
       // 是否显示筛选
       screeningButtonShow: true,
-      screeningShow: false
+      screeningShow: false,
+
+      // 权限
+      permission: {}
     }
   },
 
@@ -175,6 +190,8 @@ export default {
           this.projectData = data
           this.projectColor = data.color
           this.projectName = data.name
+
+          this.permission = data.authList.work
         })
         .catch(err => {})
     },
