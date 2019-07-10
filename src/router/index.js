@@ -8,9 +8,9 @@ Vue.use(Router)
 
 import workbenchRouter from './modules/workbench'
 import customerRouter from './modules/customer'
-import managerRouter from './modules/manager'
+import { managerRouter } from './modules/manager'
 import personRouter from './modules/person'
-import businessRouter from './modules/business'
+import { biRouter } from './modules/business'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -58,8 +58,8 @@ export default new Router({
 
 export const asyncRouterMap = [
   customerRouter,
+  biRouter,
   managerRouter,
-  businessRouter,
   {
     path: '*',
     redirect: '/404',

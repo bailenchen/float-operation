@@ -139,7 +139,8 @@ import {
   regexIsCRMMoneyNumber,
   regexIsCRMMobile,
   regexIsCRMEmail,
-  guid
+  guid,
+  objDeepCopy
 } from '@/utils'
 
 import {
@@ -257,6 +258,7 @@ export default {
       type: [String, Number],
       default: ''
     },
+    type: [String, Number],
     // 类型名称
     categoryTitle: {
       type: String,
@@ -475,12 +477,35 @@ export default {
         //验证唯一
         if (item.isUnique == 1) {
           var validateUnique = (rule, value, callback) => {
-            if (!value && rule.item.isNull == 0) {
+            if ((isArray(value) && value.length == 0) || !value) {
               callback()
             } else {
               var validatesParams = {}
               validatesParams.name = item.name
-              validatesParams.val = value
+              if (isArray(value)) {
+                let postValue = ''
+                if (value.length > 0) {
+                  if (
+                    rule.item.formType == 'user' ||
+                    rule.item.formType == 'structure'
+                  ) {
+                    postValue = value
+                      .map(valueItem => {
+                        return rule.item.formType == 'user'
+                          ? valueItem.userId
+                          : valueItem.id
+                      })
+                      .join(',')
+                  } else if (rule.item.fieldName == 'categoryId') {
+                    postValue = element.value[element.value.length - 1]
+                  } else if (rule.item.formType == 'checkbox') {
+                    postValue = value.join(',')
+                  }
+                }
+                validatesParams.val = postValue
+              } else {
+                validatesParams.val = value
+              }
               validatesParams.types = 10
               if (this.action.type == 'update') {
                 validatesParams.id = this.action.id
@@ -497,7 +522,10 @@ export default {
           tempList.push({
             validator: validateUnique,
             item: item,
-            trigger: ['blur']
+            trigger:
+              item.formType == 'checkbox' || item.formType == 'select'
+                ? ['change']
+                : ['blur']
           })
         }
 
@@ -618,8 +646,8 @@ export default {
           this.crmForm.crmFields.push(params)
         } else if (
           // 出差审批 差旅报销
-          (item.fieldName == 'duration' && this.categoryId == 3) ||
-          (item.fieldName == 'money' && this.categoryId == 5)
+          (item.fieldName == 'duration' && this.type == 3) ||
+          (item.fieldName == 'money' && this.type == 5)
         ) {
           // 报销事项
           var params = {}
@@ -639,7 +667,21 @@ export default {
           if (this.action.type == 'update') {
             params['value'] = item.value // 编辑的值 在value字段
           } else {
-            params['value'] = item.defaultValue || '' // 加入默认值 可能编辑的时候需要调整
+            if (
+              item.formType == 'user' ||
+              item.formType == 'structure' ||
+              item.formType == 'file' ||
+              item.formType == 'category' ||
+              item.formType == 'customer' ||
+              item.formType == 'business' ||
+              item.formType == 'contract'
+            ) {
+              params['value'] = item.defaultValue
+                ? objDeepCopy(item.defaultValue)
+                : []
+            } else {
+              params['value'] = item.defaultValue || ''
+            }
           }
           params['key'] = item.fieldName || item.name
           params['data'] = item
@@ -732,7 +774,7 @@ export default {
             params[element.key] = causeList
           }
         } else {
-          if (element.data.fieldName) {
+          if (element.data.fieldType == 1) {
             params.oaExamine[element.key] = this.getRealParams(element)
           } else {
             element.data.value = this.getRealParams(element)
@@ -894,18 +936,25 @@ export default {
         } else {
           return ''
         }
-      } else if (element.data.formType == 'user') {
-        return element.value.map(function(item, index, array) {
-          return item.userId
-        })
-      } else if (element.data.formType == 'structure') {
-        return element.value.map(function(item, index, array) {
-          return item.id
-        })
+      } else if (
+        element.data.formType == 'user' ||
+        element.data.formType == 'structure'
+      ) {
+        return element.value
+          .map(function(item, index, array) {
+            return element.data.formType == 'user' ? item.userId : item.id
+          })
+          .join(',')
       } else if (element.data.formType == 'file') {
-        return element.value.map(function(item, index, array) {
-          return item.fileId
-        })
+        if (element.value && element.value.length > 0) {
+          return element.value[0].batchId
+        }
+        return ''
+      } else if (element.data.formType == 'checkbox') {
+        if (element.value && element.value.length > 0) {
+          return element.value.join(',')
+        }
+        return ''
       }
 
       return element.value

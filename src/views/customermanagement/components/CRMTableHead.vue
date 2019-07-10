@@ -98,14 +98,21 @@ import {
   crmCustomerLock,
   crmCustomerPutInPool,
   crmCustomerExcelExport,
+  crmCustomerPoolExcelExportAPI,
   crmCustomerDelete,
-  crmCustomerDistribute
+  crmCustomerReceive
 } from '@/api/customermanagement/customer'
-import { crmContactsDelete } from '@/api/customermanagement/contacts'
+import {
+  crmContactsDelete,
+  crmContactsExcelExport
+} from '@/api/customermanagement/contacts'
 import { crmBusinessDelete } from '@/api/customermanagement/business'
 import { crmContractDelete } from '@/api/customermanagement/contract'
 import { crmReceivablesDelete } from '@/api/customermanagement/money'
-import { crmProductStatus } from '@/api/customermanagement/product'
+import {
+  crmProductStatus,
+  crmProductExcelExport
+} from '@/api/customermanagement/product'
 
 import filterForm from './filterForm'
 import filterContent from './filterForm/filterContent'
@@ -130,7 +137,7 @@ export default {
     SceneSet
   },
   computed: {
-    ...mapGetters(['crm'])
+    ...mapGetters(['crm', 'CRMConfig'])
   },
   data() {
     return {
@@ -252,8 +259,15 @@ export default {
         this.transferDialogShow = true
       } else if (type == 'export') {
         var params = {}
-        var request
-        if (this.crmType == 'customer') {
+        var request = null
+        if (this.isSeas) {
+          request = crmCustomerPoolExcelExportAPI
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.customerId
+            })
+            .join(',')
+        } else if (this.crmType == 'customer') {
           request = crmCustomerExcelExport
           params.ids = this.selectionList
             .map(function(item, index, array) {
@@ -265,6 +279,20 @@ export default {
           params.ids = this.selectionList
             .map(function(item, index, array) {
               return item.leadsId
+            })
+            .join(',')
+        } else if (this.crmType == 'contacts') {
+          request = crmContactsExcelExport
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.contactsId
+            })
+            .join(',')
+        } else if (this.crmType == 'product') {
+          request = crmProductExcelExport
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.productId
             })
             .join(',')
         }
@@ -355,6 +383,7 @@ export default {
               type: 'success',
               message: '操作成功'
             })
+            this.$emit('handle', { type: type })
           })
           .catch(() => {})
       } else if (type === 'put_seas') {
@@ -432,7 +461,7 @@ export default {
         var customerId = this.selectionList.map(function(item, index, array) {
           return item.customerId
         })
-        crmCustomerDistribute({
+        crmCustomerReceive({
           ids: customerId.join(',')
         })
           .then(res => {
@@ -523,7 +552,11 @@ export default {
         ])
       } else if (this.crmType == 'customer') {
         if (this.isSeas) {
-          return this.forSelectionHandleItems(handleInfos, ['alloc', 'get'])
+          return this.forSelectionHandleItems(handleInfos, [
+            'alloc',
+            'get',
+            'export'
+          ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
             'transfer',
@@ -537,7 +570,11 @@ export default {
           ])
         }
       } else if (this.crmType == 'contacts') {
-        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
+        return this.forSelectionHandleItems(handleInfos, [
+          'transfer',
+          'export',
+          'delete'
+        ])
       } else if (this.crmType == 'business') {
         return this.forSelectionHandleItems(handleInfos, [
           'transfer',
@@ -555,7 +592,11 @@ export default {
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'product') {
-        return this.forSelectionHandleItems(handleInfos, ['start', 'disable'])
+        return this.forSelectionHandleItems(handleInfos, [
+          'export',
+          'start',
+          'disable'
+        ])
       }
     },
     forSelectionHandleItems(handleInfos, array) {
@@ -576,6 +617,9 @@ export default {
           ? false
           : this.crm[this.crmType].transform
       } else if (type == 'export') {
+        if (this.isSeas) {
+          return this.crm.pool.excelexport
+        }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
         return this.crm[this.crmType].delete
@@ -584,16 +628,16 @@ export default {
         return this.crm[this.crmType].putinpool
       } else if (type == 'lock' || type == 'unlock') {
         // 锁定解锁(客户)
-        return this.crm[this.crmType].lock
+        return this.crm[this.crmType].lock && this.CRMConfig.customerConfig == 1
       } else if (type == 'add_user' || type == 'delete_user') {
         // 添加 移除团队成员
         return this.crm[this.crmType].teamsave
       } else if (type == 'alloc') {
         // 分配(公海)
-        return this.crm[this.crmType].distribute
+        return this.crm.pool.distribute
       } else if (type == 'get') {
         // 领取(公海)
-        return this.crm[this.crmType].receive
+        return this.crm.pool.receive
       } else if (type == 'start' || type == 'disable') {
         // 上架 下架(产品)
         return this.crm[this.crmType].status

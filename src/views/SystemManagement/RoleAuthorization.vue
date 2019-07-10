@@ -138,6 +138,7 @@
                 <el-tree :data="showTreeData"
                          show-checkbox
                          node-key="menuId"
+                         style="height: 0;"
                          ref="tree"
                          :indent="0"
                          empty-text=""
@@ -253,22 +254,28 @@ export default {
   methods: {
     // 获取权限规则信息
     getRulesList() {
-      rulesList({ type: 'tree' }).then(res => {
-        var arr = []
-        var map = {}
-        for (var i = 0; i < res.data.length; i++) {
-          arr.push({
-            label: res.data[i].menuName,
-            index: i,
-            realm: res.data[i].realm
-          })
-          map[res.data[i].realm] = res.data[i]
-        }
-        this.treeData = map
-        this.muneList = arr
-        this.showTreeData = [this.treeData[this.jurisdictionIndex]]
-        this.getRoleList()
-      })
+      this.navLoading = true
+      rulesList({ type: 'tree' })
+        .then(res => {
+          this.navLoading = false
+          var arr = []
+          var map = {}
+          for (var i = 0; i < res.data.length; i++) {
+            arr.push({
+              label: res.data[i].menuName,
+              index: i,
+              realm: res.data[i].realm
+            })
+            map[res.data[i].realm] = res.data[i]
+          }
+          this.treeData = map
+          this.muneList = arr
+          this.showTreeData = [this.treeData[this.jurisdictionIndex]]
+          this.getRoleList()
+        })
+        .catch(() => {
+          this.navLoading = false
+        })
     },
     // 获取角色列表
     getRoleList() {
@@ -677,11 +684,9 @@ export default {
 
 <style lang="scss" scoped>
 .role-authorization {
-  display: flex;
-  flex-direction: column;
   height: 100%;
-  /* padding: 20px; */
   box-sizing: border-box;
+  overflow: hidden;
 }
 .title {
   font-size: 18px;
@@ -692,19 +697,18 @@ export default {
   color: #333;
 }
 .role-box {
-  flex: 1;
-  display: flex;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  height: calc(100% - 60px);
+  overflow: hidden;
+  position: relative;
 }
 .nav {
-  min-width: 200px;
+  width: 200px;
   background: #fff;
-  margin-right: 10px;
   border: 1px solid #e6e6e6;
-  display: flex;
-  overflow: auto;
-  flex-direction: column;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .nav-new-btn {
   text-align: center;
@@ -719,16 +723,16 @@ export default {
   border-radius: 2px;
 }
 .content-box {
-  flex: 1;
   background: #fff;
   border: 1px solid #e6e6e6;
-  display: flex;
-  flex-direction: column;
+  margin-left: 215px;
+  height: 100%;
+  overflow: hidden;
 }
 .content-table {
   padding-bottom: 15px;
+  height: calc(100% - 61px);
   overflow: hidden;
-  flex: 1;
 }
 .content-table > .el-button {
   float: right;
@@ -737,7 +741,7 @@ export default {
 }
 .content-box .content-table-span {
   color: #3e84e9;
-  padding-right: 20px;
+  margin-left: 5px;
   cursor: pointer;
 }
 
@@ -750,24 +754,25 @@ export default {
 
 /* 权限管理 */
 .jurisdiction-content {
-  display: flex;
-  flex: 1;
+  height: calc(100% - 61px);
+  position: relative;
   overflow: hidden;
 }
 .content-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
+  margin-right: 250px;
+  overflow: hidden;
 }
 .content-right {
   width: 250px;
-  display: flex;
-  flex-direction: column;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
 }
 .jurisdiction-box {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+  padding-bottom: 15px;
+  height: calc(100% - 61px);
   overflow: hidden;
 }
 .jurisdiction-title {
@@ -776,8 +781,8 @@ export default {
 }
 .jurisdiction-content-checkbox {
   border-right: 1px dashed #e6e6e6;
-  flex: 1;
-  overflow: auto;
+  height: calc(100% - 47px);
+  overflow-y: scroll;
   padding: 20px;
 }
 .jurisdiction-content-checkbox
@@ -819,9 +824,9 @@ export default {
 }
 .role-nav-box {
   line-height: 30px;
-  flex: 1;
-  overflow: auto;
+  overflow-y: auto;
   padding: 5px 0 20px 0;
+  height: calc(100% - 65px);
 }
 .role-nav-box .item-list {
   color: #333;

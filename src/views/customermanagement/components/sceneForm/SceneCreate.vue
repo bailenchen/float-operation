@@ -13,7 +13,8 @@
       </el-input>
     </div>
     <div class="scene-name">筛选条件</div>
-    <el-form class="filter-container">
+    <el-form class="filter-container"
+             id="scene-filter-container">
       <el-form-item>
         <template v-for="(formItem, index) in form">
           <el-row :key="index">
@@ -68,6 +69,15 @@
                            :key="item"
                            :label="item"
                            :value="item">
+                </el-option>
+              </el-select>
+              <el-select v-else-if="formItem.formType === 'checkStatus'"
+                         v-model="formItem.value"
+                         placeholder="请选择筛选条件">
+                <el-option v-for="item in formItem.setting"
+                           :key="item.value"
+                           :label="item.name"
+                           :value="item.value">
                 </el-option>
               </el-select>
               <el-date-picker v-else-if="formItem.formType === 'date' || formItem.formType === 'datetime'"
@@ -251,6 +261,13 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+
+    form() {
+      this.$nextTick(() => {
+        var container = document.getElementById('scene-filter-container')
+        container.scrollTop = container.scrollHeight
+      })
     }
   },
   methods: {
@@ -296,7 +313,8 @@ export default {
       if (
         formType == 'select' ||
         formType == 'checkbox' ||
-        formType == 'user'
+        formType == 'user' ||
+        formType == 'checkStatus'
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
@@ -359,7 +377,10 @@ export default {
           formItem.statusOption = []
           formItem.typeId = ''
           formItem.statusId = ''
-        } else if (formItem.formType == 'select') {
+        } else if (
+          formItem.formType == 'select' ||
+          formItem.formType == 'checkStatus'
+        ) {
           formItem.setting = obj.setting || []
         } else if (
           formItem.formType === 'date' ||

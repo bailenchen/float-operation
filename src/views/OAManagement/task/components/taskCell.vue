@@ -16,28 +16,28 @@
         <div slot="content">
           <span>{{data.name}}</span>
         </div>
-        <span
-              ref="itemSpan"
+        <span ref="itemSpan"
               :class="data.checked ? 'item-name-active' : 'item-name'">
           {{data.name}}
         </span>
       </el-tooltip>
     </div>
     <div class="list-right">
-      <div class="tag-box" v-if="data.labelList && data.labelList.length > 0">
+      <div class="tag-box"
+           v-if="data.labelList && data.labelList.length > 0">
         <template v-if="data.labelList.length <= 2">
           <div v-for="(k, j) in data.labelList"
                :key="j"
                class="item-label">
             <span class="k-name"
-                  :style="{'background': k.color}">{{k.lableName}}</span>
+                  :style="{'background': k.color}">{{k.labelName}}</span>
           </div>
         </template>
         <template v-else>
           <span class="k-name"
-                :style="{'background': data.labelList[0].color}">{{data.labelList[0].lableName}}</span>
+                :style="{'background': data.labelList[0].color}">{{data.labelList[0].labelName}}</span>
           <span class="k-name"
-                :style="{'background': data.labelList[1].color}">{{data.labelList[1].lableName}}</span>
+                :style="{'background': data.labelList[1].color}">{{data.labelList[1].labelName}}</span>
           <el-tooltip placement="top"
                       effect="light"
                       popper-class="tooltip-change-border task-tooltip">
@@ -51,7 +51,7 @@
                 <span v-if="j >= 2"
                       class="k-name"
                       :style="{'background': k.color || '#ccc'}"
-                      style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.lableName}}</span>
+                      style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.labelName}}</span>
               </div>
             </div>
             <span class="color-label-more">
@@ -84,7 +84,6 @@
         <div class="img-box"
              v-if="data.stopTime">
           <i class="wukong wukong-time-task"
-          
              :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}"></i>
           <span :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}">{{data.stopTime | moment("MM-DD")}} 截止</span>
         </div>
@@ -130,14 +129,19 @@ export default {
         taskId: val.taskId,
         status: val.checked ? 5 : 1
       })
-        .then(res => {})
+        .then(res => {
+          this.$store.dispatch('GetOAMessageNum', 'task')
+        })
         .catch(err => {
           val.checked = false
         })
     },
     // 点击显示详情
     rowFun(val) {
-      this.$emit('on-handle', { type: 'view', data: { item: this.data, index: this.dataIndex } })
+      this.$emit('on-handle', {
+        type: 'view',
+        data: { item: this.data, index: this.dataIndex }
+      })
     },
     onmouseoverFun(item) {
       if (

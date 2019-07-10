@@ -1,5 +1,7 @@
 <template>
   <slide-view v-empty="!canShowDetail"
+              xs-empty-icon="nopermission"
+              xs-empty-text="暂无权限"
               :listenerIDs="listenerIDs"
               :noListenerIDs="noListenerIDs"
               :noListenerClass="noListenerClass"
@@ -7,8 +9,6 @@
               :body-style="{padding: 0, height: '100%'}">
     <flexbox v-if="canShowDetail"
              v-loading="loading"
-             xs-empty-icon="nopermission"
-             xs-empty-text="暂无权限"
              direction="column"
              align="stretch"
              class="d-container">
@@ -32,6 +32,7 @@
         <keep-alive>
           <component v-bind:is="tabName"
                      crmType="product"
+                     :detail="detailData"
                      :id="id"></component>
         </keep-alive>
       </div>
@@ -151,6 +152,7 @@ export default {
     //** tab标签点击 */
     handleClick(tab, event) {},
     editSaveSuccess() {
+      this.$emit('handle', { type: 'save-success' })
       this.getDetial()
     }
   }

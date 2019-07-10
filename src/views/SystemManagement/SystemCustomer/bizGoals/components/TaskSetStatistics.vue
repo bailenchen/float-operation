@@ -125,7 +125,7 @@ export default {
         }
       },
       loading: false,
-      tableHeight: 500,
+      tableHeight: document.documentElement.clientHeight - 290,
       tabType: 'department',
 
       dateSelect: '', // 选择的date区间
@@ -170,6 +170,10 @@ export default {
   },
   computed: {},
   mounted() {
+    window.onresize = () => {
+      this.tableHeight = document.documentElement.clientHeight - 290
+    }
+    
     this.dateSelect = moment(new Date())
       .year()
       .toString()
@@ -610,7 +614,7 @@ export default {
 .content {
   padding: 10px 20px;
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 .content /deep/ .el-table {
   border: 1px solid #e6e6e6;

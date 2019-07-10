@@ -1,12 +1,12 @@
 import request from '@/utils/request'
 
 /**
- * 
- * @param {*} data 
+ *
+ * @param {*} data
  */
 export function usersList(data) {
   return request({
-    url: 'manager/user/queryUserList',
+    url: 'system/user/queryUserList',
     method: 'post',
     data: data
   })
@@ -14,11 +14,11 @@ export function usersList(data) {
 
 /**
  * type
- * @param {*} data 
+ * @param {*} data
  */
 export function depList(data) {
   return request({
-    url: 'manager/dept/queryDeptTree',
+    url: 'system/dept/queryDeptTree',
     method: 'post',
     data: data
   })
@@ -27,12 +27,19 @@ export function depList(data) {
 // 获取权限范围内部门接口
 export function adminStructuresSubIndex(data) {
   return request({
-    url: 'manager/dept/queryDeptByAuth',
+    url: 'system/dept/queryDeptByAuth',
     method: 'post',
     data: data
   })
 }
-
+// 获取权限范围内部门接口
+export function getUserByDeptId(data) {
+  return request({
+    url: 'system/user/queryUserByDeptId',
+    method: 'post',
+    data: data
+  })
+}
 
 
 // 部门下的员工
@@ -120,7 +127,7 @@ export function filedGetField(data) {
 // 权限数据返回
 export function adminIndexAuthList(data) {
   return request({
-    url: 'manager/role/auth',
+    url: 'system/role/auth',
     method: 'post',
     data: data
   })
