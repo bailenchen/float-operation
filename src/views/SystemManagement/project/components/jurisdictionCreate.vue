@@ -10,7 +10,7 @@
              width="700px">
     <div class="label-input">
       <label class="label-title">权限名称</label>
-      <el-input v-model="title"
+      <el-input v-model="roleName"
                 placeholder="请输入权限名称"></el-input>
     </div>
     <div class="label-input">
@@ -24,7 +24,7 @@
     <div class="jurisdiction-content-checkbox">
       <el-tree :data="showTreeData"
                show-checkbox
-               node-key="id"
+               node-key="menuId"
                style="height: 0;"
                ref="tree"
                :indent="0"
@@ -44,11 +44,7 @@
 </template>
 
 <script>
-import {
-  rulesList,
-  roleAdd,
-  roleUpdate
-} from '@/api/systemManagement/RoleAuthorization'
+import { systemMenuGetWorkMenuListAPI, systemRoleSetWorkRoleAPI } from '@/api/systemManagement/project'
 
 export default {
   name: 'jurisdiction-create', // 文件导入
@@ -56,12 +52,12 @@ export default {
   data() {
     return {
       loading: false,
-      title: '',
+      roleName: '',
       remark: '',
       showTreeData: [],
       defaultProps: {
-        children: 'children',
-        label: 'title'
+        children: 'childMenu',
+        label: 'menuName'
       }
     }
   },
@@ -108,10 +104,10 @@ export default {
      */
     initInfo() {
       if (this.action.type == 'update') {
-        this.title = this.action.data.title
+        this.roleName = this.action.data.roleName
         this.remark = this.action.data.remark
       } else {
-        this.title = ''
+        this.roleName = ''
         this.remark = ''
         if (this.$refs.tree) {
           this.$refs.tree.setCheckedKeys([])
@@ -130,11 +126,9 @@ export default {
      */
     getRulesList() {
       this.loading = true
-      rulesList({
-        type: 'tree'
-      })
+      systemMenuGetWorkMenuListAPI()
         .then(res => {
-          this.showTreeData = [res.data.work]
+          this.showTreeData = [res.data]
           this.checkTreeByUpdateInfo()
           this.loading = false
         })
@@ -151,7 +145,7 @@ export default {
         this.$nextTick(() => {
           if (this.$refs.tree) {
             this.$refs.tree.setCheckedKeys(
-              this.getUserModuleRules(this.action.data.rules.split(','))
+              this.getUserModuleRules(this.action.data.rules)
             )
           }
         })
@@ -162,30 +156,21 @@ export default {
      * 确定
      */
     sureClick() {
-      if (!this.title) {
+      if (!this.roleName) {
         this.$message.error('请填写权限名称')
       } else {
         this.loading = true
-        let rules = this.$refs.tree
-          .getCheckedKeys()
-          .concat(this.$refs.tree.getHalfCheckedKeys())
-
-        let request = {
-          save: roleAdd,
-          update: roleUpdate
-        }[this.action.type]
-
+        let rules = this.$refs.tree.getCheckedKeys()
         let params = {
-          title: this.title,
+          roleName: this.roleName,
           remark: this.remark,
-          rules: rules,
-          pid: 5
+          rules: rules
         }
 
         if (this.action.type == 'update') {
-          params.id = this.action.data.id
+          params.roleId = this.action.data.roleId
         }
-        request(params)
+        systemRoleSetWorkRoleAPI(params)
           .then(res => {
             this.loading = false
             this.$emit('submite')
@@ -213,35 +198,35 @@ export default {
       var copyArray = this.copyItem(array)
       for (
         let firstIndex = 0;
-        firstIndex < firstTree.children.length;
+        firstIndex < firstTree.childMenu.length;
         firstIndex++
       ) {
-        const firstItem = firstTree.children[firstIndex]
-        if (!firstItem.children) {
-          firstItem.children = []
+        const firstItem = firstTree.childMenu[firstIndex]
+        if (!firstItem.childMenu) {
+          firstItem.childMenu = []
         }
         for (let index = 0; index < array.length; index++) {
           const element = array[index]
           var temps = []
           for (
             let secondIndex = 0;
-            secondIndex < firstItem.children.length;
+            secondIndex < firstItem.childMenu.length;
             secondIndex++
           ) {
-            const secondItem = firstItem.children[secondIndex]
-            if (secondItem.id == element) {
+            const secondItem = firstItem.childMenu[secondIndex]
+            if (secondItem.menuId == element) {
               temps.push(secondItem)
             }
           }
-          if (temps.length != firstItem.children.length) {
+          if (temps.length != firstItem.childMenu.length) {
             hasRemove = true
-            this.removeItem(copyArray, firstItem.id)
+            this.removeItem(copyArray, firstItem.menuId)
           }
         }
       }
 
       if (hasRemove) {
-        this.removeItem(copyArray, firstTree.id)
+        this.removeItem(copyArray, firstTree.menuId)
       }
 
       var checkedKey = []

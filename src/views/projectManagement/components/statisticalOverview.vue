@@ -3,7 +3,7 @@
     <flexbox class="content">
       <div class="content-progress">
         <radial-progress-bar :diameter="120"
-                             :completed-steps="data.completionRate || 0"
+                             :completed-steps="parseFloat(data.completionRate) || 0"
                              :total-steps="100"
                              :strokeWidth="7"
                              inner-stroke-color="#E7F2FA"
@@ -15,7 +15,7 @@
         </radial-progress-bar>
 
         <radial-progress-bar :diameter="120"
-                             :completed-steps="data.delayRate || 0"
+                             :completed-steps="parseFloat(data.overdueRate) || 0"
                              :total-steps="100"
                              :strokeWidth="7"
                              inner-stroke-color="#E8F2FA"
@@ -23,7 +23,7 @@
                              stop-color="#FF5D60"
                              class="progress">
           <p class="progress-title">逾期率</p>
-          <p class="progress-value">{{data.delayRate || 0}}<span>%</span></p>
+          <p class="progress-value">{{data.overdueRate || 0}}<span>%</span></p>
         </radial-progress-bar>
       </div>
       <div class="content-bar">
@@ -36,8 +36,8 @@
                v-for="(item, index) in showList"
                :key="index">
             <div v-photo="item"
-                 v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-                 :key="item.thumb_img"
+                 v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+                 :key="item.img"
                  class="div-photo main-user-head"></div>
             <div class="main-user-name">{{item.realname}}</div>
           </div>
@@ -107,13 +107,13 @@ export default {
       type: Object,
       default: () => {
         return {
-          allNum: 0,
-          archiveNum: 0,
+          allCount: 0,
+          archive: 0,
           completionRate: 0,
-          delayRate: 0,
-          doneNum: 0,
-          overtimeNum: 0,
-          undoneNum: 0
+          overdueRate: 0,
+          complete: 0,
+          overdue: 0,
+          unfinished: 0
         }
       }
     },
@@ -131,11 +131,11 @@ export default {
      */
     changeBarData() {
       this.barOption.series[0].data = [
-        this.data.allNum || 0,
-        this.data.undoneNum || 0,
-        this.data.doneNum || 0,
-        this.data.overtimeNum || 0,
-        this.data.archiveNum || 0
+        this.data.allCount || 0,
+        this.data.unfinished || 0,
+        this.data.complete || 0,
+        this.data.overdue || 0,
+        this.data.archive || 0
       ]
       this.barChart.setOption(this.barOption, true)
     },
@@ -162,7 +162,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: ['总任务', '未开始', '已完成', '已逾期', '已归档'],
+          data: ['总任务', '未完成', '已完成', '已逾期', '已归档'],
           axisTick: {
             alignWithLabel: true,
             lineStyle: { width: 0 }

@@ -5,7 +5,8 @@
                 v-model="projectSetShow"
                 popper-class="project-settings-list-top"
                 trigger="click">
-      <div class="project-settings-box" v-loading="loading">
+      <div class="project-settings-box"
+           v-loading="loading">
         <p class="project-settings-title-top">
           <span>项目设置</span>
           <span class="el-icon-close rt"
@@ -16,7 +17,7 @@
             <span :style="{color: tabType == 'base' ? '#3E84E9': '#333333'}"
                   class="span-item"
                   @click="tabType = 'base'">基础设置</span>
-            <span v-if="isOpen == 0"
+            <span v-if="isOpen == 2"
                   :style="{color: tabType == 'member' ? '#3E84E9': '#333333'}"
                   class="span-item"
                   @click="tabType = 'member'">成员管理</span>
@@ -75,18 +76,18 @@
                    :key="index"
                    class="member-row">
                 <div v-photo="item"
-                     v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-                     :key="item.thumb_img"
+                     v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+                     :key="item.img"
                      class="div-photo"></div>
                 <span class="member-row-name">{{item.realname}}</span>
                 <div class="rt">
-                  <el-select v-model="item.group_id"
+                  <el-select v-model="item.roleId"
                              placeholder="请选择"
                              size="mini">
                     <el-option v-for="val in optionList"
-                               :key="val.id"
-                               :label="val.title"
-                               :value="val.id">
+                               :key="val.roleId"
+                               :label="val.roleName"
+                               :value="val.roleId">
                     </el-option>
                   </el-select>
                   <span class="el-icon-close"
@@ -111,10 +112,10 @@
 
 <script>
 import {
-  workWorkUpdateAPI,
+  workWorkSaveAPI,
   workWorkOwnerDelAPI,
   workWorkAddUserGroupAPI,
-  workWorkOwnerAddAPI,
+  workWorkOwnerListAPI,
   workWorkGroupListAPI
 } from '@/api/projectManagement/project'
 import MembersDep from '@/components/selectEmployee/membersDep'
@@ -146,10 +147,10 @@ export default {
       // 动态背景
       setColor: '',
       setTitle: '',
-      setIsOpen: 0,
+      setIsOpen: 2,
       openOptions: [
         {
-          value: 0,
+          value: 2,
           label: '私有：只有加入的成员才能看见此项目'
         },
         {
@@ -222,15 +223,15 @@ export default {
     submite() {
       if (this.tabType == 'base') {
         this.loading = true
-        workWorkUpdateAPI({
+        workWorkSaveAPI({
           name: this.setTitle,
           color: this.setColor,
-          is_open: this.setIsOpen,
-          work_id: this.workId
+          isOpen: this.setIsOpen,
+          workId: this.workId
         })
           .then(res => {
             this.loading = false
-            this.$message.success(res.data)
+            this.$message.success('操作成功')
             this.$emit('submite', this.setTitle, this.setColor, this.setIsOpen)
             this.close()
           })
@@ -240,13 +241,8 @@ export default {
       } else {
         this.loading = true
         workWorkAddUserGroupAPI({
-          list: this.membersList.map(item => {
-            let newItem = {}
-            newItem.user_id = item.id
-            newItem.group_id = item.group_id
-            return newItem
-          }),
-          work_id: this.workId
+          list: this.membersList,
+          workId: this.workId
         })
           .then(res => {
             this.loading = false
@@ -271,11 +267,13 @@ export default {
      * 编辑成员
      */
     userSelectChange(members, dep) {
-      workWorkOwnerAddAPI({
-        work_id: this.workId,
-        owner_user_id: members.map(item => {
-          return item.id
-        })
+      workWorkSaveAPI({
+        workId: this.workId,
+        ownerUserId: members
+          .map(item => {
+            return item.userId
+          })
+          .join(',')
       })
         .then(res => {
           this.membersList = res.data
@@ -290,8 +288,8 @@ export default {
      */
     deleteMember(data, index) {
       workWorkOwnerDelAPI({
-        work_id: this.workId,
-        owner_user_id: data.id
+        workId: this.workId,
+        ownerUserId: data.userId
       }).then(res => {
         this.membersList.splice(index, 1)
         this.$message.success('删除成功')

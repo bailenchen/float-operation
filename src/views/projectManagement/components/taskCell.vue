@@ -24,9 +24,9 @@
     </div>
     <div class="list-right">
       <div class="tag-box"
-           v-if="data.lableList">
-        <template v-if="data.lableList.length <= 2">
-          <div v-for="(k, j) in data.lableList"
+           v-if="data.labelList">
+        <template v-if="data.labelList.length <= 2">
+          <div v-for="(k, j) in data.labelList"
                :key="j"
                class="item-label">
             <span class="k-name"
@@ -35,16 +35,16 @@
         </template>
         <template v-else>
           <span class="k-name"
-                :style="{'background': data.lableList[0].color}">{{data.lableList[0].name}}</span>
+                :style="{'background': data.labelList[0].color}">{{data.labelList[0].name}}</span>
           <span class="k-name"
-                :style="{'background': data.lableList[1].color}">{{data.lableList[1].name}}</span>
+                :style="{'background': data.labelList[1].color}">{{data.labelList[1].name}}</span>
           <el-tooltip placement="top"
                       effect="light"
                       popper-class="tooltip-change-border task-tooltip">
             <div slot="content"
                  class="tooltip-content"
                  style="margin: 10px 10px 10px 0;">
-              <div v-for="(k, j) in data.lableList"
+              <div v-for="(k, j) in data.labelList"
                    :key="j"
                    class="item-label"
                    style="display: inline-block; margin-right: 10px;">
@@ -67,38 +67,38 @@
           <span>{{data.relationCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.subcount + data.subdonecount != 0">
+             v-if="data.childAllCount > 0">
           <i class="wukong wukong-sub-task"></i>
-          <span>{{data.subdonecount}}/{{data.subcount + data.subdonecount}}</span>
+          <span>{{data.childFinishCount}}/{{data.childAllCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.filecount">
+             v-if="data.fileNum">
           <i class="wukong wukong-file"></i>
-          <span>{{data.filecount}}</span>
+          <span>{{data.fileNum}}</span>
         </div>
         <div class="img-box"
-             v-if="data.commentcount">
+             v-if="data.commentNum">
           <i class="wukong wukong-comment-task"></i>
-          <span>{{data.commentcount}}</span>
+          <span>{{data.commentNum}}</span>
         </div>
         <div class="img-box"
-             v-if="data.stop_time">
+             v-if="data.stopTime">
           <i class="wukong wukong-time-task"
-             :style="{'color': data.is_end == 1 && !data.checked ? 'red': '#999'}"></i>
-          <span :style="{'color': data.is_end == 1 && !data.checked ? 'red': '#999'}">{{data.stop_time | moment("MM-DD")}} 截止</span>
+             :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}"></i>
+          <span :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}">{{new Date(data.stopTime).getTime() | moment("MM-DD")}} 截止</span>
         </div>
       </div>
       <div class="item-own-box">
         <el-tooltip placement="bottom"
                     effect="light"
                     popper-class="tooltip-change-border"
-                    v-if="data.main_user && data.main_user.id">
+                    v-if="data.mainUser && data.mainUser.id">
           <div slot="content">
-            <span>{{data.main_user.realname}}</span>
+            <span>{{data.mainUser.realname}}</span>
           </div>
-          <div v-photo="data.main_user"
-               v-lazy:background-image="$options.filters.filterUserLazyImg(data.main_user.thumb_img)"
-               :key="data.main_user.thumb_img"
+          <div v-photo="data.mainUser"
+               v-lazy:background-image="$options.filters.filterUserLazyImg(data.mainUser.img)"
+               :key="data.mainUser.img"
                class="div-photo"></div>
         </el-tooltip>
       </div>
@@ -106,7 +106,7 @@
   </div>
 </template>
 <script type="text/javascript">
-import { workTaskTaskOverAPI } from '@/api/projectManagement/task'
+import { workTaskSaveAPI } from '@/api/projectManagement/task'
 
 export default {
   name: 'task-cell', // 任务cell
@@ -130,9 +130,9 @@ export default {
      * 列表标记任务
      */
     taskOverClick(val) {
-      workTaskTaskOverAPI({
-        task_id: val.task_id,
-        type: val.checked ? 1 : 2
+      workTaskSaveAPI({
+        taskId: val.taskId,
+        status: val.checked ? 5 : 1
       })
         .then(res => {})
         .catch(err => {

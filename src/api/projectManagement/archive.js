@@ -6,19 +6,7 @@ import request from '@/utils/request'
  */
 export function workWorkArchiveListAPI(data) {
     return request({
-        url: 'work/work/archiveList',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 归档项目恢复
- * @param {*} data
- */
-export function workWorkArRecoverAPI(data) {
-    return request({
-        url: 'work/work/arRecover',
+        url: 'work/queryArchiveWorkList',
         method: 'post',
         data: data
     })

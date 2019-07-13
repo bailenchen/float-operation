@@ -19,7 +19,7 @@
                 style="width: 100%"
                 @row-click="handleRowClick">
         <el-table-column show-overflow-tooltip
-                         prop="title"
+                         prop="roleName"
                          width="150"
                          label="项目权限">
         </el-table-column>
@@ -53,9 +53,11 @@
 import JurisdictionCreate from './components/jurisdictionCreate'
 import Reminder from '@/components/reminder'
 import {
-  roleListFun,
   roleDelete
 } from '@/api/systemManagement/RoleAuthorization'
+import {
+  systemRoleQueryProjectRoleListAPI
+} from '@/api/systemManagement/project'
 
 export default {
   /** 系统管理 的 项目管理 */
@@ -92,9 +94,7 @@ export default {
      */
     getList() {
       this.loading = true
-      roleListFun({
-        pid: 5 // 项目管理
-      })
+      systemRoleQueryProjectRoleListAPI()
         .then(res => {
           this.list = res.data
           this.loading = false
@@ -139,7 +139,7 @@ export default {
         })
           .then(() => {
             roleDelete({
-              id: scope.row['id']
+              roleId: scope.row.roleId
             })
               .then(res => {
                 this.list.splice(scope.$index, 1)

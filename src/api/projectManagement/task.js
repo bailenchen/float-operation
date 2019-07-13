@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function workTaskMyTaskAPI(data) {
     return request({
-        url: 'work/task/myTask',
+        url: 'workbench/myTask',
         method: 'post',
         data: data
     })
@@ -18,7 +18,7 @@ export function workTaskMyTaskAPI(data) {
  */
 export function workTaskSaveAPI(data) {
     return request({
-        url: 'work/task/save',
+        url: 'task/setWorkTask',
         method: 'post',
         data: data
     })
@@ -42,8 +42,11 @@ export function workTaskDeleteAPI(data) {
  */
 export function workTaskUpdateTopAPI(data) {
     return request({
-        url: 'work/task/updateTop',
+        url: 'workbench/updateTop',
         method: 'post',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
         data: data
     })
 }
@@ -54,7 +57,7 @@ export function workTaskUpdateTopAPI(data) {
  */
 export function workIndexWorkListAPI(data) {
     return request({
-        url: 'work/index/workList',
+        url: 'work/queryWorkNameList',
         method: 'post',
         data: data
     })
@@ -66,7 +69,7 @@ export function workIndexWorkListAPI(data) {
  */
 export function workTaskReadAPI(data) {
     return request({
-        url: 'work/task/read',
+        url: 'task/queryTaskById',
         method: 'post',
         data: data
     })
@@ -157,23 +160,12 @@ export function workTaskUpdatePriorityAPI(data) {
 }
 
 /**
- * 子任务标记结束
- */
-export function workTaskTaskOverAPI(data) {
-    return request({
-        url: 'work/task/taskOver',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
  * 操作记录
  * @param {*} data
  */
 export function workTaskReadLoglistAPI(data) {
     return request({
-        url: 'work/task/readLoglist',
+        url: 'task/queryTaskLog',
         method: 'post',
         data: data
     })
@@ -209,7 +201,7 @@ export function workTaskcommentSaveAPI(data) {
  */
 export function workTaskcommentDeleteAPI(data) {
     return request({
-        url: 'work/taskcomment/delete',
+        url: 'workTrash/deleteTask',
         method: 'post',
         data
     })
@@ -221,7 +213,19 @@ export function workTaskcommentDeleteAPI(data) {
  */
 export function workTaskRecoverAPI(data) {
     return request({
-        url: 'work/task/recover',
+        url: 'workTrash/restore',
+        method: 'post',
+        data
+    })
+}
+
+/**
+ * 任务评论
+ * @param {*} data
+ */
+export function queryCommentListAPI(data) {
+    return request({
+        url: 'comment/queryWorkCommentList',
         method: 'post',
         data
     })

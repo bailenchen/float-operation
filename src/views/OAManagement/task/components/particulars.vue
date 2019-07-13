@@ -225,6 +225,7 @@
                       </div>
                       <div v-photo="item"
                            v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+                           :key="item.img"
                            class="div-photo item-img"></div>
                     </el-tooltip>
                     <img src="@/assets/img/delete_task.png"
@@ -379,6 +380,7 @@
                 <div class="footer-img">
                   <div v-photo="userInfo"
                        v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
+                       :key="userInfo.img"
                        class="div-photo"></div>
                 </div>
                 <div class="comments-con">

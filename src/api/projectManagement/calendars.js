@@ -1,12 +1,12 @@
 import request from '@/utils/request'
 
 /**
- * 归档项目列表
+ * 日历任务
  * @param {*} data
  */
 export function workTaskDateListAPI(data) {
     return request({
-        url: 'work/task/dateList',
+        url: 'workbench/dateList',
         method: 'post',
         data: data
     })

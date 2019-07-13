@@ -2,27 +2,27 @@
   <div class="statistical"
        v-loading="loading">
     <statistical-overview class="statistical-overview"
-                          :data="detailData.dataCount"
+                          :data="detailData.taskStatistics"
                           :list="detailData.ownerList"></statistical-overview>
     <flexbox class="statistical-task">
       <statistical-task class="statistical-task-item"
                         type="task"
-                        :list="detailData.classList"
+                        :list="detailData.classStatistics"
                         title="任务列表"></statistical-task>
       <statistical-task class="statistical-task-item"
                         type="label"
-                        :list="detailData.labelList"
+                        :list="detailData.labelStatistics"
                         title="标签分析"></statistical-task>
     </flexbox>
 
     <statistical-member class="statistical-member"
-                        :list="detailData.userList"></statistical-member>
+                        :list="detailData.memberTaskStatistics"></statistical-member>
   </div>
 </template>
 
 <script>
 import StatisticalOverview from '@/views/projectManagement/components/statisticalOverview'
-import StatisticalTask from './statisticalTask'
+import StatisticalTask from '@/views/projectManagement/components/statisticalTask'
 import StatisticalMember from '@/views/projectManagement/components/statisticalMember'
 // API
 import { workWorkStatisticAPI } from '@/api/projectManagement/statistics'
@@ -70,7 +70,7 @@ export default {
     getDetail(loading) {
       this.loading = loading
       workWorkStatisticAPI({
-        work_id: this.workId
+        workId: this.workId
       })
         .then(res => {
           this.detailData = res.data

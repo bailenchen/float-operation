@@ -45,7 +45,7 @@
       <div v-empty="taskList.length == 0 && loading == false"
            class="content-body-items">
         <el-collapse v-model="collapseNames">
-          <el-collapse-item :name="item.work_id"
+          <el-collapse-item :name="item.workId"
                             v-for="(item, index) in taskList"
                             :key="index"
                             class="list-box">
@@ -53,7 +53,7 @@
                class="wukong wukong-subproject"
                :style="{color : item.color ? item.color : '#4AB8B8'}"></i>
             <span slot="title"
-                  class="title">{{item.work_name}}</span>
+                  class="title">{{item.name}}</span>
             <task-cell v-for="(taskItem, taskIndex) in item.list"
                        :key="taskIndex"
                        class="item-list"
@@ -130,14 +130,14 @@ export default {
     this.labelID = to.params.id
     this.taskList = []
     this.collapseNames = []
-    this.getDetail({ lable_id: to.params.id })
+    this.getDetail({ labelId: to.params.id })
     this.getList()
     next()
   },
 
   created() {
     this.labelID = this.$route.params.id
-    this.getDetail({ lable_id: this.$route.params.id })
+    this.getDetail({ labelId: this.$route.params.id })
     this.getList()
   },
 
@@ -166,12 +166,19 @@ export default {
     getList() {
       this.loading = true
       workTasklableGetWokListAPI({
-        lable_id: this.labelID
+        labelId: this.labelID
       })
         .then(res => {
           this.taskList = res.data || []
+          for (let item of this.taskList) {
+            for (let i of item.list) {
+              if (i.status == 5) {
+                i.checked = true
+              }
+            }
+          }
           this.collapseNames = res.data.map(item => {
-            return item.work_id
+            return item.workId
           })
           this.loading = false
         })
@@ -186,7 +193,7 @@ export default {
     labelSetSave() {
       workTasklableUpdateAPI({
         name: this.editLabelName,
-        lable_id: this.labelID,
+        labelId: this.labelID,
         color: this.editLabelColor
       }).then(res => {
         this.labelName = this.editLabelName

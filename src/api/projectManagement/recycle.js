@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function workTrashIndexAPI(data) {
     return request({
-        url: 'work/trash/index',
+        url: 'workTrash/queryList',
         method: 'post',
         data: data
     })

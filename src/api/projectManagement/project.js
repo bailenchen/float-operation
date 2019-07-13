@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function workTaskArchListAPI(data) {
     return request({
-        url: 'work/task/archList',
+        url: 'work/archList',
         method: 'post',
         data: data
     })
@@ -18,7 +18,7 @@ export function workTaskArchListAPI(data) {
  */
 export function workWorkReadAPI(data) {
     return request({
-        url: 'work/work/read',
+        url: 'work/getWorkById',
         method: 'post',
         data: data
     })
@@ -30,7 +30,7 @@ export function workWorkReadAPI(data) {
  */
 export function workWorkDeleteAPI(data) {
     return request({
-        url: 'work/work/delete',
+        url: 'work/deleteWork',
         method: 'post',
         data: data
     })
@@ -42,7 +42,7 @@ export function workWorkDeleteAPI(data) {
  */
 export function workWorkSaveAPI(data) {
     return request({
-        url: 'work/work/save',
+        url: 'work/setWork',
         method: 'post',
         data: data
     })
@@ -54,7 +54,7 @@ export function workWorkSaveAPI(data) {
  */
 export function workWorkLeaveAPI(data) {
     return request({
-        url: 'work/work/leave',
+        url: 'work/leave',
         method: 'post',
         data: data
     })
@@ -66,43 +66,22 @@ export function workWorkLeaveAPI(data) {
  */
 export function workTaskIndexAPI(data) {
     return request({
-        url: 'work/task/index',
+        url: 'work/queryTaskByWorkId',
         method: 'post',
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+        },
         data: data
     })
 }
 
 /**
- * 归档项目
+ * 设置任务类别
  * @param {*} data
  */
-export function workWorkArchiveAPI(data) {
+export function workTaskClassSetAPI(data) {
     return request({
-        url: 'work/work/archive',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 新建分类列表
- * @param {*} data
- */
-export function workTaskclassSaveAPI(data) {
-    return request({
-        url: 'work/taskclass/save',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 分类重命名
- * @param {*} data
- */
-export function workTaskclassRenameAPI(data) {
-    return request({
-        url: 'work/taskclass/rename',
+        url: 'task/setTaskClass',
         method: 'post',
         data: data
     })
@@ -114,7 +93,7 @@ export function workTaskclassRenameAPI(data) {
  */
 export function workTaskclassDeleteAPI(data) {
     return request({
-        url: 'work/taskclass/delete',
+        url: 'work/deleteTaskList',
         method: 'post',
         data: data
     })
@@ -126,19 +105,7 @@ export function workTaskclassDeleteAPI(data) {
  */
 export function workWorkFileListAPI(data) {
     return request({
-        url: 'work/work/fileList',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 项目 -- 基础设置
- * @param {*} data
- */
-export function workWorkUpdateAPI(data) {
-    return request({
-        url: 'work/work/update',
+        url: 'work/queryTaskFileByWorkId',
         method: 'post',
         data: data
     })
@@ -150,19 +117,7 @@ export function workWorkUpdateAPI(data) {
  */
 export function workWorkOwnerListAPI(data) {
     return request({
-        url: 'work/work/ownerList',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 项目 -- 成员添加
- * @param {*} data
- */
-export function workWorkOwnerAddAPI(data) {
-    return request({
-        url: 'work/work/ownerAdd',
+        url: 'work/queryOwnerRoleList',
         method: 'post',
         data: data
     })
@@ -174,7 +129,7 @@ export function workWorkOwnerAddAPI(data) {
  */
 export function workWorkOwnerDelAPI(data) {
     return request({
-        url: 'work/work/ownerDel',
+        url: 'work/remove',
         method: 'post',
         data: data
     })
@@ -186,7 +141,7 @@ export function workWorkOwnerDelAPI(data) {
  */
 export function workTaskArchiveTaskAPI(data) {
     return request({
-        url: 'work/task/archiveTask',
+        url: 'work/archiveTask',
         method: 'post',
         data: data
     })
@@ -198,8 +153,11 @@ export function workTaskArchiveTaskAPI(data) {
  */
 export function workTaskUpdateOrderAPI(data) {
     return request({
-        url: 'work/task/updateOrder',
+        url: 'work/updateOrder',
         method: 'post',
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+        },
         data: data
     })
 }
@@ -210,8 +168,11 @@ export function workTaskUpdateOrderAPI(data) {
  */
 export function workTaskUpdateClassOrderAPI(data) {
     return request({
-        url: 'work/task/updateClassOrder',
+        url: 'work/updateClassOrder',
         method: 'post',
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+        },
         data: data
     })
 }
@@ -222,8 +183,11 @@ export function workTaskUpdateClassOrderAPI(data) {
  */
 export function workWorkAddUserGroupAPI(data) {
     return request({
-        url: 'work/work/addUserGroup',
+        url: 'work/setOwnerRole',
         method: 'post',
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+        },
         data: data
     })
 }
@@ -234,8 +198,9 @@ export function workWorkAddUserGroupAPI(data) {
  */
 export function workWorkGroupListAPI(data) {
     return request({
-        url: 'work/work/groupList',
+        url: 'work/queryRoleList',
         method: 'post',
         data: data
     })
 }
+

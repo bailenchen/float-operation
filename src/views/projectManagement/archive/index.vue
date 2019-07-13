@@ -5,20 +5,56 @@
     </div>
     <div v-loading="loading"
          class="content-body">
-      <div v-empty="list.length == 0 && loading == false"
-           class="content-body-items">
-        <flexbox v-for="(item, index) of list"
-                 :key="index"
-                 class="archive-item">
-          <i :style="{'color':item.color}"
-             class="wukong wukong-subproject"></i>
-          <div class="title">{{item.name}}</div>
-          <div class="time-btn">
-            <span>{{item.archive_time | filterTimestampToFormatTime('YYYY-MM-DD')}}</span>
+      <el-table class="n-table--border"
+                id="crm-table"
+                v-loading="loading"
+                :data="list"
+                :height="tableHeight"
+                stripe
+                highlight-current-row
+                style="width: 100%">
+        <el-table-column prop="businessCheck"
+                         :resizable='false'
+                         label=""
+                         width="38">
+          <template slot="header"
+                    slot-scope="slot">
+            <i style="color:#999"
+               class="wukong wukong-subproject"></i>
+          </template>
+          <template slot-scope="scope">
+            <i :style="{'color':scope.row.color}"
+               class="wukong wukong-subproject"></i>
+          </template>
+        </el-table-column>
+        <el-table-column show-overflow-tooltip
+                         prop="name"
+                         label="项目名称">
+        </el-table-column>
+        <el-table-column show-overflow-tooltip
+                         width="200"
+                         prop="archiveTime"
+                         label="归档时间">
+        </el-table-column>
+        <el-table-column label="操作"
+                         width="100">
+          <template slot-scope="scope">
             <el-button type="text"
-                       @click="recoverProject(item, index)">恢复项目</el-button>
-          </div>
-        </flexbox>
+                       @click.native="recoverProject(scope.row, scope.$index)">恢复项目</el-button>
+          </template>
+        </el-table-column>
+
+      </el-table>
+      <div class="p-contianer">
+        <el-pagination class="p-bar"
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="pageSizes"
+                       :page-size.sync="pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="total">
+        </el-pagination>
       </div>
     </div>
   </div>
@@ -26,10 +62,8 @@
 
 <script>
 import particulars from '../components/particulars'
-import {
-  workWorkArchiveListAPI,
-  workWorkArRecoverAPI
-} from '@/api/projectManagement/archive'
+import { workWorkArchiveListAPI } from '@/api/projectManagement/archive'
+import { workWorkSaveAPI } from '@/api/projectManagement/project'
 
 export default {
   components: {
@@ -38,21 +72,51 @@ export default {
   data() {
     return {
       loading: false,
-      list: []
+      tableHeight: document.documentElement.clientHeight - 205,
+      list: [],
+
+      // 分页
+      currentPage: 1,
+      pageSize: 15,
+      pageSizes: [15, 30, 45, 60],
+      total: 0
     }
   },
   created() {
+    window.onresize = () => {
+      this.tableHeight = document.documentElement.clientHeight - 205
+    }
+
     this.getList()
   },
   methods: {
+    /**
+     * 更改每页展示数量
+     */
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getList()
+    },
+
+    /**
+     * 更改当前页数
+     */
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.getList()
+    },
+
     /**
      * 获取列表
      */
     getList() {
       this.loading = true
-      workWorkArchiveListAPI()
+      workWorkArchiveListAPI({
+        page: this.currentPage,
+        limit: this.pageSize
+      })
         .then(res => {
-          this.list = res.data
+          this.list = res.data.list
           this.loading = false
         })
         .catch(err => {
@@ -71,8 +135,9 @@ export default {
       })
         .then(() => {
           this.loading = true
-          workWorkArRecoverAPI({
-            work_id: val.work_id
+          workWorkSaveAPI({
+            workId: val.workId,
+            status: 1 // 状态 1启用 2 删除 3归档
           })
             .then(res => {
               this.list.splice(index, 1)
@@ -108,7 +173,6 @@ export default {
   }
 
   .content-body {
-    background-color: white;
     position: absolute;
     top: 60px;
     right: 0;
@@ -116,51 +180,34 @@ export default {
     left: 0;
     border-radius: 3px;
     overflow-y: auto;
-    border: 1px solid #e6e6e6;
   }
+}
 
-  .content-body-items {
-    height: 100%;
+.el-table /deep/ thead th {
+  background-color: #f5f5f5;
+  font-weight: 400;
+}
+
+.el-table {
+  border: 1px solid #e6e6e6;
+  border-bottom: none;
+}
+
+.p-contianer {
+  position: relative;
+  background-color: white;
+  height: 44px;
+  border: 1px solid #e6e6e6;
+
+  .p-bar {
+    float: right;
+    margin: 5px 100px 0 0;
+    font-size: 14px !important;
   }
+}
 
-  .archive-item {
-    position: relative;
-    padding: 8px 20px;
-    .title {
-      flex: 1;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-  }
-
-  .archive-item::before {
-    content: ' ';
-    position: absolute;
-    bottom: 0;
-    right: 15px;
-    height: 1px;
-    border-bottom: 1px solid #e5e5e5;
-    color: #e5e5e5;
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
-    -webkit-transform: scaleY(0.5);
-    transform: scaleY(0.5);
-    left: 15px;
-    z-index: 2;
-  }
-
-  .time-btn {
-    span {
-      text-align: center;
-      margin-right: 30px;
-      color: #999;
-      font-size: 14px;
-    }
-
-    .el-button {
-      margin-right: 30px;
-    }
-  }
+.el-table::before {
+  display: none;
 }
 
 .wukong-subproject {

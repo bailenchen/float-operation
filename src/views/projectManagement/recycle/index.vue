@@ -63,9 +63,12 @@ export default {
     getList() {
       workTrashIndexAPI()
         .then(res => {
-          this.list = res.data.list
-          for (let item of this.list) {
-            item.is_deleted = true
+          this.list = res.data
+          for (let i of this.list) {
+            i.isDeleted = true
+            if (i.status == 5) {
+              i.checked = true
+            }
           }
           this.loading = false
         })

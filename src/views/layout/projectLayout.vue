@@ -75,10 +75,10 @@ export default {
             projectMenu.children = []
             for (let item of res.data) {
               projectMenu.children.push({
-                path: 'list/' + item.work_id,
+                path: 'list/' + item.workId,
                 meta: {
                   title: item.name,
-                  id: item.work_id
+                  id: item.workId
                 }
               })
             }
@@ -103,9 +103,9 @@ export default {
         workTasklableIndexAPI()
           .then(res => {
             tagMenu.children = []
-            for (let item of res.data.list) {
+            for (let item of res.data) {
               tagMenu.children.push({
-                path: 'tag/' + item.lable_id,
+                path: 'tag/' + item.labelId,
                 meta: {
                   title: item.name,
                   params: item

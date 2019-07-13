@@ -16,7 +16,7 @@
                            :closeDep="true"
                            @popoverSubmit="userSelectChange">
                 <p slot="membersDep"
-                   v-if="canUpdateWork && projectData.is_open != 1"
+                   v-if="canUpdateWork && projectData.isOpen != 1"
                    @click="projectHandleShow = false">添加项目成员</p>
               </members-dep>
 
@@ -24,7 +24,7 @@
                                 :workId="workId"
                                 :title="projectName"
                                 :color="projectColor"
-                                :is-open="projectData.is_open"
+                                :is-open="projectData.isOpen"
                                 :addMembersData="membersList"
                                 @close="projectHandleShow = false"
                                 @submite="setSubmite"
@@ -85,9 +85,10 @@
     <!-- 人员列表 -->
     <members :workId="workId"
              :list="membersList"
-             :is-open="projectData.is_open"
+             :is-open="projectData.isOpen"
              :permission="permission"
-             :visible.sync="membersShow">
+             :visible.sync="membersShow"
+             @handle="membersHandle">
     </members>
   </div>
 </template>
@@ -106,9 +107,8 @@ import {
   workWorkReadAPI,
   workWorkDeleteAPI,
   workWorkLeaveAPI,
-  workWorkArchiveAPI,
   workWorkOwnerListAPI,
-  workWorkOwnerAddAPI
+  workWorkSaveAPI
 } from '@/api/projectManagement/project'
 
 export default {
@@ -141,7 +141,7 @@ export default {
       projectName: '',
       projectColor: '',
       projectData: {
-        is_open: 0
+        isOpen: 0
       },
 
       activeName: 'task-board',
@@ -183,7 +183,7 @@ export default {
      */
     getDetail() {
       workWorkReadAPI({
-        work_id: this.workId
+        workId: this.workId
       })
         .then(res => {
           let data = res.data
@@ -205,7 +205,7 @@ export default {
      */
     getMemberList() {
       workWorkOwnerListAPI({
-        work_id: this.workId
+        workId: this.workId
       })
         .then(res => {
           this.membersList = res.data || []
@@ -217,14 +217,16 @@ export default {
      * 编辑成员
      */
     userSelectChange(members, dep) {
-      workWorkOwnerAddAPI({
-        work_id: this.workId,
-        owner_user_id: members.map(item => {
-          return item.id
-        })
+      workWorkSaveAPI({
+        workId: this.workId,
+        ownerUserId: members
+          .map(item => {
+            return item.userId
+          })
+          .join(',')
       })
         .then(res => {
-          this.membersList = members
+          this.membersList = res.data
           this.$message.success('添加成功')
         })
         .catch(err => {})
@@ -244,7 +246,7 @@ export default {
         }
       )
         .then(() => {
-          workWorkDeleteAPI({ work_id: this.workId })
+          workWorkDeleteAPI({ workId: this.workId })
             .then(res => {
               this.$message({
                 type: 'success',
@@ -272,7 +274,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          workWorkLeaveAPI({ work_id: this.workId })
+          workWorkLeaveAPI({ workId: this.workId })
             .then(res => {
               this.$message({
                 type: 'success',
@@ -300,7 +302,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          workWorkArchiveAPI({ work_id: this.workId })
+          workWorkSaveAPI({ workId: this.workId, status: 3 }) // 状态 1启用 2 删除 3归档
             .then(res => {
               this.$message({
                 type: 'success',
@@ -322,7 +324,7 @@ export default {
      * 项目设置更新数据
      */
     setSubmite(name, color, isOpen) {
-      if (this.projectData.is_open != isOpen) {
+      if (this.projectData.isOpen != isOpen) {
         this.getDetail()
         this.getMemberList()
       } else {
@@ -336,6 +338,15 @@ export default {
      * 项目设置
      */
     projectSettingsHandle(type, data) {
+      if (type == 'member') {
+        this.membersList = data
+      }
+    },
+
+    /**
+     * 成员设置
+     */
+    membersHandle(type, data) {
       if (type == 'member') {
         this.membersList = data
       }

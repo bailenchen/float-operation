@@ -1,5 +1,6 @@
 <template>
-  <div class="attachment" v-loading="loading">
+  <div class="attachment"
+       v-loading="loading">
     <div class="attachment-body">
       <el-table :data="list"
                 :height="tableHeight"
@@ -13,7 +14,6 @@
                          :key="index"
                          show-overflow-tooltip
                          :prop="item.prop"
-                         :formatter="fieldFormatter"
                          :label="item.label">
         </el-table-column>
         <el-table-column label="操作"
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { crmFileIndex, crmFileDelete, crmFileUpdate } from '@/api/common'
+import { crmFileDelete, crmFileUpdate } from '@/api/common'
 
 import { workWorkFileListAPI } from '@/api/projectManagement/project'
 
@@ -82,8 +82,6 @@ export default {
 
       fieldList: [],
       tableHeight: document.documentElement.clientHeight - 240,
-      /** 格式化规则 */
-      formatterRules: {},
       /** 重命名 弹窗 */
       editDialog: false,
       /** 编辑信息 */
@@ -120,22 +118,15 @@ export default {
     this.fieldList.push({ prop: 'name', width: '200', label: '附件名称' })
     this.fieldList.push({ prop: 'size', width: '200', label: '附件大小' })
     this.fieldList.push({
-      prop: 'create_user_id',
+      prop: 'createUserName',
       width: '200',
       label: '上传人'
     })
     this.fieldList.push({
-      prop: 'create_time',
+      prop: 'createTime',
       width: '200',
       label: '上传时间'
     })
-    function fieldFormatter(info) {
-      return info ? info.realname : ''
-    }
-    this.formatterRules['create_user_id'] = {
-      type: 'crm',
-      formatter: fieldFormatter
-    }
   },
 
   methods: {
@@ -175,26 +166,6 @@ export default {
     },
 
     /**
-     * 格式化字段
-     */
-    fieldFormatter(row, column) {
-      // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info'])
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property])
-        }
-      }
-      return row[column.property]
-    },
-
-    /**
      * 通过回调控制表头style
      */
     headerRowStyle({ row, column, rowIndex, columnIndex }) {
@@ -214,11 +185,11 @@ export default {
     confirmEdit() {
       if (this.editForm.name) {
         crmFileUpdate({
-          save_name: this.editForm.data.row.save_name,
+          fileId: this.editForm.data.row.fileId,
           name: this.editForm.name
         })
           .then(res => {
-            this.$message.success(res.data)
+            this.$message.success('编辑成功')
             this.editDialog = false
             var item = this.list[this.editForm.data.$index]
             item.name = this.editForm.name
@@ -233,7 +204,7 @@ export default {
     handleFile(type, item) {
       if (type === 'preview') {
         var previewList = this.list.map(element => {
-          element.url = element.file_path
+          element.url = element.filePath
           return element
         })
         this.$bus.emit('preview-image-bus', {
@@ -248,13 +219,11 @@ export default {
         })
           .then(() => {
             crmFileDelete({
-              save_name: item.row.save_name,
-              module_id: this.workId,
-              module: 'work_task'
+              id: item.row.fileId
             })
               .then(res => {
                 this.list.splice(item.$index, 1)
-                this.$message.success(res.data)
+                this.$message.success('操作成功')
               })
               .catch(() => {})
           })

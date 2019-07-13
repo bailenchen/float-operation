@@ -16,7 +16,7 @@
         <div>{{hoverDialogList.name}}</div>
       </flexbox>
       <div class="img-content">
-        <span>{{hoverDialogList.start_time + ' - ' + hoverDialogList.stop_time}}</span>
+        <span>{{hoverDialogList.startTime + ' - ' + hoverDialogList.stopTime}}</span>
       </div>
     </div>
     <!-- 新建任务弹出框 newDialog-->
@@ -40,7 +40,6 @@
 
 
 <script>
-import axios from 'axios'
 import $ from 'jquery'
 import fullcalendar from 'fullcalendar'
 import 'fullcalendar/dist/locale/zh-cn.js'
@@ -49,9 +48,6 @@ import newDialog from '../components/newDialog'
 import particulars from '../components/particulars'
 // API
 import { workTaskDateListAPI } from '@/api/projectManagement/calendars'
-import { workTaskTaskOverAPI } from '@/api/projectManagement/task'
-import { timestampToFormatTime } from '@/utils'
-import moment from 'moment'
 
 export default {
   components: {
@@ -103,8 +99,8 @@ export default {
           this.createActionInfo = {
             type: 'create',
             data: {
-              start_time: date.toDate(),
-              end_time: date.toDate()
+              startTime: date.format('YYYY-MM-DD'),
+              stopTime: date.format('YYYY-MM-DD')
             }
           }
           this.taskCreateShow = true
@@ -129,8 +125,8 @@ export default {
           let styleTop = jsEvent.clientY - jsEvent.offsetY - 60
           this.$refs.hoverDialog.style.top = styleTop + 'px'
           this.hoverDialogList = {
-            start_time: timestampToFormatTime(event.start_time, 'YYYY-MM-DD') || '无',
-            stop_time: timestampToFormatTime(event.stop_time, 'YYYY-MM-DD') || '无',
+            startTime: event.startTime || '无',
+            stopTime: event.stopTime || '无',
             name: event.name,
             color: event.color,
             priority: event.priority
@@ -155,41 +151,23 @@ export default {
         events: (start, end, timezone, callback) => {
           this.loading = true
           workTaskDateListAPI({
-            start_time: start.unix(),
-            stop_time: end.unix()
+            startTime: start.format('YYYY-MM-DD'),
+            endTime: end.format('YYYY-MM-DD')
           })
             .then(res => {
               let taskData = res.data.map(item => {
-                if (item.start_time && item.stop_time) {
-                  item.start = timestampToFormatTime(
-                    item.start_time,
-                    'YYYY-MM-DD HH:mm:ss'
-                  )
-                  item.end = timestampToFormatTime(
-                    item.stop_time,
-                    'YYYY-MM-DD HH:mm:ss'
-                  )
-                } else if (!item.start_time && item.stop_time) {
-                  let stopTime = timestampToFormatTime(
-                    item.stop_time,
-                    'YYYY-MM-DD HH:mm:ss'
-                  )
-                  item.start = stopTime
-                  item.end = stopTime
-                } else if (item.start_time && !item.stop_time) {
-                  let startTime = timestampToFormatTime(
-                    item.start_time,
-                    'YYYY-MM-DD HH:mm:ss'
-                  )
-                  item.start = startTime
-                  item.end = startTime
-                } else if (!item.start_time && !item.stop_time) {
-                  let updateTime = timestampToFormatTime(
-                    item.update_time,
-                    'YYYY-MM-DD HH:mm:ss'
-                  )
-                  item.start = updateTime
-                  item.end = updateTime
+                if (item.startTime && item.stopTime) {
+                  item.start = item.startTime
+                  item.end = item.stopTime
+                } else if (!item.startTime && item.stopTime) {
+                  item.start = item.stopTime
+                  item.end = item.stopTime
+                } else if (item.startTime && !item.stopTime) {
+                  item.start = item.startTime
+                  item.end = item.startTime
+                } else if (!item.startTime && !item.stopTime) {
+                  item.start = item.updateTime
+                  item.end = item.updateTime
                 }
 
                 item.color = this.getPriorityColor(item.priority)
@@ -239,7 +217,7 @@ export default {
      * 点击显示详情
      */
     showDetailView(val) {
-      this.taskID = val.task_id
+      this.taskID = val.taskId
       this.taskDetailShow = true
     },
 
@@ -286,6 +264,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
+@import '@/styles/calendars.scss';
 
 .task-calendars {
   position: relative;

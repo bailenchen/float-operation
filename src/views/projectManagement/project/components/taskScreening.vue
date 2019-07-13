@@ -25,8 +25,8 @@
                @click="rowChecked(val)">
             <div v-if="val.type == 'user'"
                  v-photo="val"
-                 v-lazy:background-image="$options.filters.filterUserLazyImg(val.thumb_img)"
-                 :key="val.thumb_img"
+                 v-lazy:background-image="$options.filters.filterUserLazyImg(val.img)"
+                 :key="val.img"
                  class="div-photo"></div>
             <i v-if="val.type == 'tag'"
                style="margin-right:10px; vertical-align: text-top;"
@@ -136,7 +136,7 @@ export default {
     getUserList() {
       this.menuList[0].list = []
       workWorkOwnerListAPI({
-        work_id: this.workId
+        workId: this.workId
       }).then(res => {
         this.menuList[0].list = res.data.map(item => {
           item.checked = false
@@ -154,8 +154,8 @@ export default {
       this.menuList[2].list = []
       workTasklableIndexAPI()
         .then(res => {
-          this.menuList[2].list = res.data.list.map(item => {
-            item.id = item.lable_id
+          this.menuList[2].list = res.data.map(item => {
+            item.id = item.labelId
             item.checked = false
             item.type = 'tag'
             return item
@@ -185,7 +185,7 @@ export default {
       let userIds = []
       for (let item of this.menuList[0].list) {
         if (item.checked) {
-          userIds.push(item.id)
+          userIds.push(item.userId)
         }
       }
       // 时间

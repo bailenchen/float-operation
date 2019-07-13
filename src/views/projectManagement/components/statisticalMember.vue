@@ -34,7 +34,7 @@ export default {
     return {
       fieldList: [
         {
-          prop: 'name',
+          prop: 'realname',
           label: '姓名'
         },
         {
@@ -42,15 +42,15 @@ export default {
           label: '任务总数'
         },
         {
-          prop: 'doneCount',
+          prop: 'complete',
           label: '已完成数'
         },
         {
           prop: 'undoneCount',
-          label: '待完成数'
+          label: '未完成数'
         },
         {
-          prop: 'overtimeCount',
+          prop: 'overdueRate',
           label: '逾期数'
         },
         {
@@ -72,9 +72,6 @@ export default {
      * 格式化字段
      */
     fieldFormatter(row, column) {
-      if (column.property == 'name') {
-        return row.userInfo.realname
-      }
       return row[column.property] || '--'
     },
 

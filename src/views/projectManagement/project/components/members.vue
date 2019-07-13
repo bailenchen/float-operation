@@ -43,7 +43,7 @@
 // API
 import {
   workWorkOwnerDelAPI,
-  workWorkOwnerAddAPI
+  workWorkSaveAPI
 } from '@/api/projectManagement/project'
 import MembersDep from '@/components/selectEmployee/membersDep'
 import { getMaxIndex } from '@/utils/index'
@@ -114,15 +114,16 @@ export default {
      */
     userSelectChange(members, dep) {
       this.loading = true
-      workWorkOwnerAddAPI({
-        work_id: this.workId,
-        owner_user_id: members.map(item => {
-          return item.id
-        })
+      workWorkSaveAPI({
+        workId: this.workId,
+        ownerUserId: members.map(item => {
+          return item.userId
+        }).join(',')
       })
         .then(res => {
           this.loading = false
-          this.userList = members
+          this.userList = res.data
+          this.$emit('handle', 'member', res.data)
           this.$message.success('添加成功')
         })
         .catch(err => {
@@ -141,8 +142,8 @@ export default {
       })
         .then(() => {
           workWorkOwnerDelAPI({
-            work_id: this.workId,
-            owner_user_id: val.id
+            workId: this.workId,
+            ownerUserId: val.userId
           }).then(res => {
             this.userList.splice(index, 1)
             this.$message.success('删除成功')

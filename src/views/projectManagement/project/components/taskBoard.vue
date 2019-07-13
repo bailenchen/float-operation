@@ -16,7 +16,7 @@
                  class="board-column-wrapper ignoreClass">
           <div class="board-column-header">
             <div>
-              <span class="text"> {{ item.class_name }} </span>
+              <span class="text"> {{ item.className }} </span>
               <span class="text-num">{{item.checkedNum}} / {{item.list.length}}</span>
               <el-popover v-if="canUpdateTaskClass"
                           placement="bottom-start"
@@ -39,7 +39,7 @@
                       </div>
                       <div class="content">
                         <el-input size="mini"
-                                  :value="item.class_name"
+                                  :value="item.className"
                                   v-model="renameInput"></el-input>
                         <div class="btn-box">
                           <el-button size="mini"
@@ -57,7 +57,8 @@
                      @click="createSubTaskClick(item)">新建任务</p>
                   <p v-if="canUpdateTaskClass"
                      @click="archiveTaskListClick(item)">归档已完成任务</p>
-                  <p v-if="canDeleteTaskClass" @click="delectTaskListClick(item, index)">删除列表</p>
+                  <p v-if="canDeleteTaskClass"
+                     @click="delectTaskListClick(item, index)">删除列表</p>
                 </div>
                 <img class="img-gd"
                      ref="imgPopoverSlot"
@@ -74,17 +75,17 @@
                      :options="{ group: 'missionSon', forceFallback: false, dragClass: 'sortable-drag' }"
                      @end="moveEndSonTask"
                      class="board-column-content"
-                     :id="item.class_id">
+                     :id="item.classId">
             <div v-for="(element, i) in item.list"
                  :key="i"
                  :class="element.checked ? 'board-item board-item-active' : 'board-item'"
                  :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
                  ref="taskRow"
                  @click="showDetailView(element, index , i)">
-              <div v-if="element.main_user"
-                   v-photo="element.main_user"
-                   v-lazy:background-image="$options.filters.filterUserLazyImg(element.main_user.thumb_img)"
-                   :key="element.main_user.thumb_img"
+              <div v-if="element.mainUser"
+                   v-photo="element.mainUser"
+                   v-lazy:background-image="$options.filters.filterUserLazyImg(element.mainUser.img)"
+                   :key="element.mainUser.img"
                    class="head-png div-photo"></div>
               <flexbox align="stretch">
                 <div @click.stop
@@ -96,10 +97,10 @@
               </flexbox>
               <div class="img-group">
                 <div class="img-box"
-                     v-if="element.stop_time">
+                     v-if="element.stopTime">
                   <i class="wukong wukong-time-task"
-                     :style="{'color': element.is_end == 1 && !element.checked ? 'red': '#999'}"></i>
-                  <span :style="{'color': element.is_end == 1 && !element.checked ? 'red': '#999'}">{{element.stop_time | filterTimestampToFormatTime('MM-DD')}}截止</span>
+                     :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}"></i>
+                  <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{new Date(element.stopTime).getTime() | filterTimestampToFormatTime('MM-DD')}}截止</span>
                 </div>
                 <div class="img-box"
                      v-if="element.subcount">
@@ -117,8 +118,8 @@
                   <span>{{element.commentcount}}</span>
                 </div>
 
-                <template v-if="element.lableList.length <= 2">
-                  <div v-for="(k, j) in element.lableList"
+                <template v-if="element.labelList.length <= 2">
+                  <div v-for="(k, j) in element.labelList"
                        :key="j"
                        class="item-label"
                        :style="{'background': k.color}">
@@ -127,15 +128,15 @@
                 </template>
                 <template v-else>
                   <div class="item-label"
-                       :style="{'background': element.lableList[0].color}">{{element.lableList[0].name}}</div>
+                       :style="{'background': element.labelList[0].color}">{{element.labelList[0].name}}</div>
                   <div class="item-label"
-                       :style="{'background': element.lableList[1].color}">{{element.lableList[1].name}}</div>
+                       :style="{'background': element.labelList[1].color}">{{element.labelList[1].name}}</div>
                   <el-tooltip placement="top"
                               effect="light"
                               popper-class="tooltip-change-border task-tooltip">
                     <div slot="content"
                          style="margin: 10px 10px 10px 0;">
-                      <div v-for="(k, j) in element.lableList"
+                      <div v-for="(k, j) in element.labelList"
                            :key="j"
                            style="display: inline-block; margin-right: 10px;">
                         <span v-if="j >= 2"
@@ -155,7 +156,7 @@
           </draggable>
           <!-- 新建任务 -->
           <div class="new-task-input"
-               v-if="createSubTaskClassId == item.class_id">
+               v-if="createSubTaskClassId == item.classId">
             <el-input type="textarea"
                       :rows="2"
                       placeholder="请输入内容"
@@ -189,8 +190,8 @@
                          @click="selectOwnerList(item, k)"
                          :class="k.checked ? 'personnel-list personnel-list-active' : 'personnel-list'">
                       <div v-photo="k"
-                           v-lazy:background-image="$options.filters.filterUserLazyImg(k.thumb_img)"
-                           :key="k.thumb_img"
+                           v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
+                           :key="k.img"
                            class="div-photo k-img"></div>
                       <span>{{k.realname}}</span>
                       <i class="el-icon-check"></i>
@@ -200,8 +201,8 @@
                 <div v-if="selectMainUser"
                      slot="reference"
                      v-photo="selectMainUser"
-                     v-lazy:background-image="$options.filters.filterUserLazyImg(selectMainUser.thumb_img)"
-                     :key="selectMainUser.thumb_img"
+                     v-lazy:background-image="$options.filters.filterUserLazyImg(selectMainUser.img)"
+                     :key="selectMainUser.img"
                      @click="showOwnerListClick(item)"
                      class="div-photo head-img"></div>
                 <i v-else
@@ -228,7 +229,8 @@
       </div>
 
       <!-- 新建列表 -->
-      <div v-if="canCreateTaskClass" class="board-column-new-list">
+      <div v-if="canCreateTaskClass"
+           class="board-column-new-list">
         <div class="new-list"
              v-if="!createTaskListShow && loading == false"
              @click="createTaskListShow = true">
@@ -268,13 +270,9 @@ import particulars from '@/views/projectManagement/components/particulars'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
 
+import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
-  workTaskSaveAPI,
-  workTaskTaskOverAPI
-} from '@/api/projectManagement/task'
-import {
-  workTaskclassSaveAPI,
-  workTaskclassRenameAPI,
+  workTaskClassSetAPI,
   workTaskclassDeleteAPI,
   workTaskIndexAPI,
   workTaskArchiveTaskAPI,
@@ -307,21 +305,21 @@ export default {
      * 可以创建任务列表
      */
     canCreateTaskClass() {
-      return this.permission.taskclass && this.permission.taskclass.save
+      return this.permission.taskClass && this.permission.taskClass.save
     },
 
     /**
      * 可以编辑任务列表
      */
     canUpdateTaskClass() {
-      return this.permission.taskclass && this.permission.taskclass.update
+      return this.permission.taskClass && this.permission.taskClass.update
     },
 
     /**
      * 可以删除任务列表
      */
     canDeleteTaskClass() {
-      return this.permission.taskclass && this.permission.taskclass.delete
+      return this.permission.taskClass && this.permission.taskClass.delete
     }
   },
 
@@ -377,9 +375,9 @@ export default {
     // 筛选
     this.$bus.$on('search', (userIds, timeId, tagIds) => {
       this.getList({
-        main_user_id: userIds,
-        stop_time_type: timeId,
-        lable_id: tagIds
+        mainUserId: userIds,
+        stopTimeType: timeId,
+        lableId: tagIds
       })
     })
 
@@ -390,7 +388,7 @@ export default {
   },
 
   mounted() {
-    //为了防止火狐浏览器拖拽的时候以新标签打开，此代码真实有效
+    //为了防止火狐浏览器拖拽的时候以新标签打开
     document.body.ondrop = function(event) {
       event.preventDefault()
       event.stopPropagation()
@@ -407,9 +405,9 @@ export default {
      */
     getList(params) {
       if (params) {
-        params.work_id = this.workId
+        params.workId = this.workId
       } else {
-        params = { work_id: this.workId }
+        params = { workId: this.workId }
       }
       this.loading = true
       workTaskIndexAPI(params)
@@ -419,7 +417,8 @@ export default {
           for (let item of this.taskList) {
             item.checkedNum = 0
             for (let i of item.list) {
-              if (i.checked) {
+              if (i.status == 5) {
+                i.checked = true
                 item.checkedNum += 1
               }
             }
@@ -436,9 +435,9 @@ export default {
     moveEndParentTask(evt) {
       if (evt && evt.oldIndex != evt.newIndex) {
         workTaskUpdateClassOrderAPI({
-          work_id: this.workId,
-          class_ids: this.taskList.map(item => {
-            return item.class_id
+          workId: this.workId,
+          classIds: this.taskList.map(item => {
+            return item.classId
           })
         })
           .then(res => {})
@@ -460,31 +459,31 @@ export default {
         }
 
         let fromList = this.taskList.filter(item => {
-          return item.class_id == fromId
+          return item.classId == fromId
         })[0].list
 
         let toList = this.taskList.filter(item => {
-          return item.class_id == toId
+          return item.classId == toId
         })[0].list
 
         let params = {}
         if (fromId == toId) {
           params = {
-            tolist: toList.map(item => {
-              return item.task_id
+            toList: toList.map(item => {
+              return item.taskId
             }),
-            toid: toId
+            toId: toId
           }
         } else {
           params = {
-            fromlist: fromList.map(item => {
-              return item.task_id
+            fromList: fromList.map(item => {
+              return item.taskId
             }),
-            fromid: fromId,
-            tolist: toList.map(item => {
-              return item.task_id
+            fromId: fromId,
+            toList: toList.map(item => {
+              return item.taskId
             }),
-            toid: toId
+            toId: toId
           }
         }
         workTaskUpdateOrderAPI(params)
@@ -502,9 +501,9 @@ export default {
       } else {
         value.checkedNum--
       }
-      workTaskTaskOverAPI({
-        task_id: element.task_id,
-        type: element.checked ? 1 : 2
+      workTaskSaveAPI({
+        taskId: element.taskId,
+        status: element.checked ? 5 : 1
       })
         .then(res => {})
         .catch(err => {
@@ -528,8 +527,8 @@ export default {
       })
         .then(() => {
           workTaskclassDeleteAPI({
-            class_id: val.class_id,
-            work_id: this.workId
+            classId: val.classId,
+            workId: this.workId
           })
             .then(res => {
               this.taskList.splice(index, 1)
@@ -551,7 +550,7 @@ export default {
      */
     archiveTaskListClick(val) {
       workTaskArchiveTaskAPI({
-        class_id: val.class_id
+        classId: val.classId
       }).then(res => {
         this.$message.success('归档成功')
         val.taskHandleShow = false
@@ -563,7 +562,7 @@ export default {
      * 重命名
      */
     renameTaskListClick(val) {
-      this.renameInput = val.class_name
+      this.renameInput = val.className
       val.taskHandleShow = false
     },
 
@@ -571,12 +570,12 @@ export default {
      * 重命名 -- 提交
      */
     renameSubmit(val) {
-      workTaskclassRenameAPI({
+      workTaskClassSetAPI({
         name: this.renameInput,
-        class_id: val.class_id
+        classId: val.classId
       })
         .then(res => {
-          val.class_name = this.renameInput
+          val.className = this.renameInput
         })
         .catch(err => {})
       val.renameShow = false
@@ -586,9 +585,9 @@ export default {
      * 新建列表提交
      */
     createTaskListSave() {
-      workTaskclassSaveAPI({
+      workTaskClassSetAPI({
         name: this.taskListName,
-        work_id: this.workId
+        workId: this.workId
       })
         .then(res => {
           this.getList()
@@ -604,12 +603,12 @@ export default {
       this.loading = true
       workTaskSaveAPI({
         name: this.subTaskContent,
-        stop_time: this.subTaskStopTimeDate
+        stopTime: this.subTaskStopTimeDate
           ? new Date(this.subTaskStopTimeDate).getTime() / 1000
           : '',
-        main_user_id: this.selectMainUser.id,
-        work_id: this.workId,
-        class_id: val.class_id
+        mainUserId: this.selectMainUser.id,
+        workId: this.workId,
+        classId: val.classId
       })
         .then(res => {
           this.createSubTaskClassId = 'hidden'
@@ -636,7 +635,7 @@ export default {
      */
     getOwnerList() {
       workWorkOwnerListAPI({
-        work_id: this.workId
+        workId: this.workId
       }).then(res => {
         this.ownerList = res.data
       })
@@ -650,7 +649,7 @@ export default {
       this.subTaskStopTimeDate = ''
       this.selectMainUser = ''
 
-      this.createSubTaskClassId = val.class_id
+      this.createSubTaskClassId = val.classId
 
       if (val.taskHandleShow) {
         val.taskHandleShow = false
@@ -677,7 +676,7 @@ export default {
      * 点击显示详情
      */
     showDetailView(val, section, index) {
-      this.taskID = val.task_id
+      this.taskID = val.taskId
       this.detailIndex = index
       this.detailSection = section
       this.taskDetailShow = true
@@ -700,11 +699,11 @@ export default {
         } else if (data.type == 'change-stop-time') {
           let stopTime = parseInt(data.value) + 86399
           if (stopTime > new Date(new Date()).getTime() / 1000) {
-            this.taskList[data.section].list[data.index].is_end = false
+            this.taskList[data.section].list[data.index].isEnd = false
           } else {
-            this.taskList[data.section].list[data.index].is_end = true
+            this.taskList[data.section].list[data.index].isEnd = true
           }
-          this.taskList[data.section].list[data.index].stop_time = data.value
+          this.taskList[data.section].list[data.index].stopTime = data.value
         } else if (data.type == 'change-priority') {
           this.taskList[data.section].list[data.index].priority = data.value.id
         } else if (data.type == 'change-name') {

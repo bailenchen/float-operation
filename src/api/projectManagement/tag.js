@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function workTasklableIndexAPI(data) {
     return request({
-        url: 'work/tasklable/index',
+        url: 'taskLabel/getLabelList',
         method: 'post',
         data: data
     })
@@ -18,7 +18,7 @@ export function workTasklableIndexAPI(data) {
  */
 export function workTasklableReadAPI(data) {
     return request({
-        url: 'work/tasklable/read',
+        url: 'taskLabel/queryById',
         method: 'post',
         data: data
     })
@@ -54,7 +54,7 @@ export function workTasklableSaveAPI(data) {
  */
 export function workTasklableGetWokListAPI(data) {
     return request({
-        url: 'work/tasklable/getWokList',
+        url: 'taskLabel/getTaskList',
         method: 'post',
         data: data
     })

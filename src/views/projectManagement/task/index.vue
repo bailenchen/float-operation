@@ -42,18 +42,18 @@
                   <div class="element-label">
                     <i v-if="element.pname"
                        class="wukong wukong-sub-task"></i>{{element.name}}<span v-if="element.pname">（{{element.pname}}）</span></div>
-                  <div v-if="element.main_user"
-                       v-photo="element.main_user"
-                       v-lazy:background-image="$options.filters.filterUserLazyImg(element.main_user.thumb_img)"
-                       :key="element.main_user.thumb_img"
+                  <div v-if="element.mainUser"
+                       v-photo="element.mainUser"
+                       v-lazy:background-image="$options.filters.filterUserLazyImg(element.mainUser.img)"
+                       :key="element.mainUser.img"
                        class="head-png div-photo"></div>
                 </flexbox>
                 <div class="img-group">
                   <div class="img-box"
-                       v-if="element.stop_time">
+                       v-if="element.stopTime">
                     <i class="wukong wukong-time-task"
-                       :style="{'color': element.is_end == 1 && !element.checked ? 'red': '#999'}"></i>
-                    <span :style="{'color': element.is_end == 1 && !element.checked ? 'red': '#999'}">{{element.stop_time | filterTimestampToFormatTime('MM-DD')}} 截止</span>
+                       :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}"></i>
+                    <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{new Date(element.stopTime).getTime() | filterTimestampToFormatTime('MM-DD')}} 截止</span>
                   </div>
                   <div class="img-box"
                        v-if="element.subcount">
@@ -71,8 +71,8 @@
                     <span>{{element.commentcount}}</span>
                   </div>
 
-                  <template v-if="element.lableList.length <= 2">
-                    <div v-for="(k, j) in element.lableList"
+                  <template v-if="element.labelList.length <= 2">
+                    <div v-for="(k, j) in element.labelList"
                          :key="j"
                          class="item-label"
                          :style="{'background': k.color}">
@@ -81,15 +81,15 @@
                   </template>
                   <template v-else>
                     <div class="item-label"
-                         :style="{'background': element.lableList[0].color}">{{element.lableList[0].name}}</div>
+                         :style="{'background': element.labelList[0].color}">{{element.labelList[0].name}}</div>
                     <div class="item-label"
-                         :style="{'background': element.lableList[1].color}">{{element.lableList[1].name}}</div>
+                         :style="{'background': element.labelList[1].color}">{{element.labelList[1].name}}</div>
                     <el-tooltip placement="top"
                                 effect="light"
                                 popper-class="tooltip-change-border task-tooltip">
                       <div slot="content"
                            style="margin: 10px 10px 10px 0;">
-                        <div v-for="(k, j) in element.lableList"
+                        <div v-for="(k, j) in element.labelList"
                              :key="j"
                              style="display: inline-block; margin-right: 10px;">
                           <span v-if="j >= 2"
@@ -108,7 +108,7 @@
               </div>
             </draggable>
             <div class="new-task"
-                 @click="createTaskByTop(item.is_top)">
+                 @click="createTaskByTop(item.isTop)">
               <span class="el-icon-plus"></span>
               <span>新建任务</span>
             </div>
@@ -118,7 +118,7 @@
     </div>
     <!-- 新建任务弹出框 newDialog-->
     <new-dialog :visible="taskCreateShow"
-                :params="{is_top: topId}"
+                :params="{isTop: topId}"
                 @handleClose="handleClose"
                 @submit="getList">
     </new-dialog>
@@ -140,9 +140,8 @@ import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
 import {
   workTaskMyTaskAPI,
-  workTaskSaveAPI,
   workTaskUpdateTopAPI,
-  workTaskTaskOverAPI
+  workTaskSaveAPI
 } from '@/api/projectManagement/task'
 
 export default {
@@ -197,11 +196,17 @@ export default {
       this.loading = true
       workTaskMyTaskAPI()
         .then(res => {
-          this.taskList = res.data.map(item => {
-            item.checkedNum = 0
-            return item
-          })
+          this.taskList = res.data || []
 
+          for (let item of this.taskList) {
+            item.checkedNum = 0
+            for (let i of item.list) {
+              if (i.status == 5) {
+                i.checked = true
+                item.checkedNum += 1
+              }
+            }
+          }
           this.loading = false
         })
         .catch(err => {
@@ -228,21 +233,21 @@ export default {
         let params = {}
         if (fromTop == toTop) {
           params = {
-            tolist: toList.map(item => {
-              return item.task_id
+            toList: toList.map(item => {
+              return item.taskId
             }),
-            to_top_id: toTop
+            toTopId: toTop
           }
         } else {
           params = {
-            fromlist: fromList.map(item => {
-              return item.task_id
+            fromList: fromList.map(item => {
+              return item.taskId
             }),
-            from_top_id: fromTop,
-            tolist: toList.map(item => {
-              return item.task_id
+            fromTopId: fromTop,
+            toList: toList.map(item => {
+              return item.taskId
             }),
-            to_top_id: toTop
+            toTopId: toTop
           }
         }
         workTaskUpdateTopAPI(params)
@@ -260,9 +265,9 @@ export default {
       } else {
         value.checkedNum--
       }
-      workTaskTaskOverAPI({
-        task_id: element.task_id,
-        type: element.checked ? 1 : 2
+      workTaskSaveAPI({
+        taskId: element.taskId,
+        status: element.checked ? 5 : 1
       })
         .then(res => {})
         .catch(err => {
@@ -294,8 +299,8 @@ export default {
      * 点击显示详情
      */
     showDetailView(val, seciton, index) {
-      this.topId = val.is_top
-      this.taskID = val.task_id
+      this.topId = val.isTop
+      this.taskID = val.taskId
       this.detailIndex = index
       this.detailSection = seciton
       this.taskDetailShow = true
@@ -318,11 +323,11 @@ export default {
         } else if (data.type == 'change-stop-time') {
           let stopTime = parseInt(data.value) + 86399
           if (stopTime > new Date(new Date()).getTime() / 1000) {
-            this.taskList[data.section].list[data.index].is_end = false
+            this.taskList[data.section].list[data.index].isEnd = false
           } else {
-            this.taskList[data.section].list[data.index].is_end = true
+            this.taskList[data.section].list[data.index].isEnd = true
           }
-          this.taskList[data.section].list[data.index].stop_time = data.value
+          this.taskList[data.section].list[data.index].stopTime = data.value
         } else if (data.type == 'change-priority') {
           this.taskList[data.section].list[data.index].priority = data.value.id
         } else if (data.type == 'change-name') {

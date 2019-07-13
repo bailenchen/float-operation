@@ -64,13 +64,13 @@ export default {
         const item = this.list[index]
 
         if (this.type == 'task') {
-          xAxis.push(item.name)
-          undoneList.push(item.undoneTask)
-          doneList.push(item.doneTask)
+          xAxis.push(item.className)
+          undoneList.push(item.undone)
+          doneList.push(item.complete)
         } else if (this.type == 'label') {
-          xAxis.push(item.lablename)
-          undoneList.push(item.undoneTask)
-          doneList.push(item.doneTask)
+          xAxis.push(item.name)
+          undoneList.push(item.undone)
+          doneList.push(item.complete)
         }
       }
       this.barOption.xAxis[0].data = xAxis

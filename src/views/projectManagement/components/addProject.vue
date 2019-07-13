@@ -49,7 +49,7 @@
           <div class="label">项目成员</div>
           <div>
             <div v-photo="k"
-                 v-lazy:background-image="$options.filters.filterUserLazyImg(k.thumb_img)"
+                 v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
                  v-for="(k, j) in selectUserList"
                  :key="j"
                  class="div-photo k-img header-circle"></div>
@@ -106,10 +106,10 @@ export default {
         '#F24D70',
         '#FF6F6F'
       ],
-      openType: 0,
+      openType: 2,
       openOptions: [
         {
-          value: 0,
+          value: 2,
           label: '私有：只有加入的成员才能看见此项目'
         },
         {
@@ -144,15 +144,15 @@ export default {
         name: this.name,
         description: this.description,
         color: this.typeColor,
-        is_open: this.openType,
-        owner_user_id: this.selectUserList.map(item => {
-          return item.id
-        })
+        isOpen: this.openType,
+        ownerUserId: this.selectUserList.map(item => {
+          return item.userId
+        }).join(',')
       })
         .then(res => {
           this.loading = false
           this.$emit('save-success')
-          this.$bus.$emit('add-project', this.name, res.data)
+          this.$bus.$emit('add-project', this.name, res.work.workId)
           this.close()
         })
         .catch(error => {

@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function workWorkStatisticAPI(data) {
     return request({
-        url: 'work/work/statistic',
+        url: 'work/workStatistics',
         method: 'post',
         data: data
     })

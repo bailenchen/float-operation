@@ -28,7 +28,7 @@
 import TaskCell from '@/views/projectManagement/components/taskCell'
 import axios from 'axios'
 import { workTaskArchListAPI } from '@/api/projectManagement/project'
-import { workTaskTaskOverAPI } from '@/api/projectManagement/task'
+import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import particulars from '@/views/projectManagement/components/particulars'
 
 export default {
@@ -81,14 +81,14 @@ export default {
      */
     getList(loading) {
       this.loading = loading
-      workTaskArchListAPI({ work_id: this.workId })
+      workTaskArchListAPI({ workId: this.workId })
         .then(res => {
           this.loading = false
           // 完成状态 1正在进行2延期3归档 5结束
-          for (let item of res.data.list) {
+          for (let item of res.data) {
             item.checked = item.status == 5
           }
-          this.taskList = res.data.list
+          this.taskList = res.data
         })
         .catch(err => {
           this.loading = false
@@ -99,9 +99,9 @@ export default {
      * 页面勾选删除
      */
     changeCheckbox(val) {
-      workTaskTaskOverAPI({
-        task_id: val.task_id,
-        type: val.checked ? 1 : 2
+      workTaskSaveAPI({
+        taskId: val.taskId,
+        status: val.checked ? 5 : 1
       })
         .then(res => {})
         .catch(err => {
@@ -113,7 +113,7 @@ export default {
      * 点击显示详情
      */
     showDetailView(val, index) {
-      this.taskID = val.task_id
+      this.taskID = val.taskId
       this.detailIndex = index
       this.taskDetailShow = true
     },
@@ -167,7 +167,7 @@ export default {
      */
     titleCheckbox(checked) {
       for (let item of this.taskList) {
-        if (item.task_id == this.indexObjData.task_id) {
+        if (item.taskId == this.indexObjData.taskId) {
           this.$set(item, 'checked', checked)
         }
       }

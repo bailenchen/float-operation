@@ -26,6 +26,7 @@
           <el-date-picker v-else-if="item.type == 'time'"
                           v-model="formData[item.field]"
                           type="date"
+                          value-format="yyyy-MM-dd"
                           placeholder="选择日期">
           </el-date-picker>
           <div v-else-if="item.type == 'priority'"
@@ -54,7 +55,7 @@
                 <span v-for="(item, index) in colleaguesList"
                       :key="index"
                       class="select-box-span">
-                  {{item.username}}
+                  {{item.realname}}
                   <span class="el-icon-close"
                         @click.stop="selectDelect(item, index)"> </span>
                 </span>
@@ -85,6 +86,7 @@
 import relatedBusiness from '@/components/relatedBusiness'
 import XhUser from '@/components/CreateCom/XhUser'
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
+import { formatTimeToTimestamp } from '@/utils/index'
 
 export default {
   components: {
@@ -94,10 +96,10 @@ export default {
 
   data() {
     var validateTime = (rule, value, callback) => {
-      if (this.formData.start_time && this.formData.stop_time) {
+      if (this.formData.startTime && this.formData.stopTime) {
         if (
-          this.formData.start_time.getTime() >=
-          this.formData.stop_time.getTime()
+          formatTimeToTimestamp(this.formData.startTime) >=
+          formatTimeToTimestamp(this.formData.stopTime)
         ) {
           callback(new Error('开始时间必须小于结束时间'))
         }
@@ -111,9 +113,9 @@ export default {
       },
       formList: [
         { label: '任务名称', field: 'name' },
-        { label: '负责人', field: 'main_user_name', type: 'popover' },
-        { label: '开始时间', field: 'start_time', type: 'time' },
-        { label: '结束时间', field: 'stop_time', type: 'time' },
+        { label: '负责人', field: 'mainUserName', type: 'popover' },
+        { label: '开始时间', field: 'startTime', type: 'time' },
+        { label: '结束时间', field: 'stopTime', type: 'time' },
         { label: '优先级', field: 'priority', type: 'priority' },
         { label: '任务描述', field: 'description', type: 'textarea' }
       ],
@@ -127,8 +129,8 @@ export default {
           { required: true, message: '任务名称不能为空', trigger: 'blur' },
           { max: 50, message: '任务名称长度最多为50个字符', trigger: 'blur' }
         ],
-        start_time: [{ validator: validateTime, trigger: 'blur' }],
-        stop_time: [{ validator: validateTime, trigger: 'blur' }]
+        startTime: [{ validator: validateTime, trigger: 'blur' }],
+        stopTime: [{ validator: validateTime, trigger: 'blur' }]
       },
       // 获取选择的数据id数组
       relevanceAll: {},
@@ -179,24 +181,19 @@ export default {
         if (valid) {
           var formDataCopy = Object.assign({}, this.formData)
           formDataCopy = {
-            main_user_id:
-              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].id,
-            start_time: this.formData.start_time
-              ? this.formData.start_time.getTime() / 1000
-              : '',
-            stop_time: this.formData.stop_time
-              ? this.formData.stop_time.getTime() / 1000
-              : '',
+            mainUserId:
+              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].userId,
+            startTime: this.formData.startTime || '',
+            stopTime: this.formData.stopTime || '',
             description: this.formData.description,
             priority: this.formData.priority,
-            work_id: this.formData.work_id,
             name: this.formData.name,
-            customer_ids: this.relevanceAll.customer_ids,
-            contacts_ids: this.relevanceAll.contacts_ids,
-            business_ids: this.relevanceAll.business_ids,
-            contract_ids: this.relevanceAll.contract_ids
+            customerIds: this.relevanceAll.customerIds ? this.relevanceAll.customerIds.join(',') : '',
+            contactsIds: this.relevanceAll.contactsIds ? this.relevanceAll.contactsIds.join(',') : '',
+            businessIds: this.relevanceAll.businessIds ? this.relevanceAll.businessIds.join(',') : '',
+            contractIds: this.relevanceAll.contractIds ? this.relevanceAll.contractIds.join(',') : ''
           }
-          
+
           if (this.params) {
             Object.assign(formDataCopy, this.params)
           }
@@ -283,11 +280,11 @@ export default {
         margin-top: 7px;
       }
       .el-form-item-name,
-      .el-form-item-start_time {
+      .el-form-item-startTime {
         padding-right: 25px;
       }
-      .el-form-item-main_user_name,
-      .el-form-item-stop_time {
+      .el-form-item-mainUserName,
+      .el-form-item-stopTime {
         padding-left: 25px;
       }
       .el-form-item-priority,

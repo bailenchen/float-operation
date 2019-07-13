@@ -6,7 +6,7 @@
     <div class="project-body"
          v-loading="loading">
       <statistical-overview class="statistical-overview"
-                            :data="detailData.dataCount"
+                            :data="detailData.taskStatistics"
                             :list="detailData.ownerList">
         <el-select v-model="workId"
                    placeholder="请选择"
@@ -15,12 +15,23 @@
           <el-option v-for="item in projectList"
                      :key="item.workId"
                      :label="item.name"
-                     :value="item.work_id">
+                     :value="item.workId">
           </el-option>
         </el-select>
       </statistical-overview>
+      <flexbox class="statistical-task"
+               v-if="workId != 'all'">
+        <statistical-task class="statistical-task-item"
+                          type="task"
+                          :list="detailData.classStatistics"
+                          title="任务列表"></statistical-task>
+        <statistical-task class="statistical-task-item"
+                          type="label"
+                          :list="detailData.labelStatistics"
+                          title="标签分析"></statistical-task>
+      </flexbox>
       <statistical-member class="statistical-member"
-                          :list="detailData.userList"></statistical-member>
+                          :list="detailData.memberTaskStatistics"></statistical-member>
     </div>
   </div>
 </template>
@@ -30,11 +41,13 @@ import { workIndexWorkListAPI } from '@/api/projectManagement/task'
 import { workWorkStatisticAPI } from '@/api/projectManagement/statistics'
 
 import StatisticalOverview from '@/views/projectManagement/components/statisticalOverview'
+import StatisticalTask from '@/views/projectManagement/components/statisticalTask'
 import StatisticalMember from '@/views/projectManagement/components/statisticalMember'
 
 export default {
   components: {
     StatisticalOverview,
+    StatisticalTask,
     StatisticalMember
   },
 
@@ -42,7 +55,7 @@ export default {
     return {
       loading: false,
       detailData: {},
-      projectList: [],
+      projectList: [{ workId: 'all', name: '全部' }],
       workId: 'all'
     }
   },
@@ -58,7 +71,7 @@ export default {
     getDetail() {
       this.loading = true
       workWorkStatisticAPI({
-        work_id: this.workId
+        workId: this.workId
       })
         .then(res => {
           this.detailData = res.data
@@ -75,7 +88,7 @@ export default {
     getProjectList() {
       workIndexWorkListAPI()
         .then(res => {
-          this.projectList = [{ work_id: 'all', name: '全部' }].concat(res.data)
+          this.projectList = [{ workId: 'all', name: '全部' }].concat(res.data)
         })
         .catch(() => {})
     }
@@ -120,6 +133,25 @@ export default {
   border: 1px solid #e6e6e6;
   overflow: hidden;
   padding-top: 5px;
+}
+
+.statistical-task {
+  margin-top: 10px;
+  .section {
+    margin-top: 0;
+  }
+  .statistical-task-item {
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid #e6e6e6;
+    overflow: hidden;
+    padding-top: 5px;
+    flex: 1;
+  }
+
+  .statistical-task-item:first-child {
+    margin-right: 10px;
+  }
 }
 
 .statistical-member {
