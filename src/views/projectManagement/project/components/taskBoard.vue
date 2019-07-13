@@ -2,7 +2,7 @@
   <div class="content-box"
        v-loading="loading">
     <draggable :list="taskList"
-               :options="{ group: 'mission', forceFallback: false, dragClass: 'sortable-parent-drag'}"
+               :options="{ group: 'mission', forceFallback: false, dragClass: 'sortable-parent-drag', filter: '.ignore-elements'}"
                handle=".board-column-wrapper"
                @end="moveEndParentTask"
                id="task-board-body"
@@ -10,7 +10,8 @@
                v-scrollx="{ ignoreClass :['ignoreClass']}">
       <div class="board-column"
            v-for="(item, index) in taskList"
-           :key="index">
+           :key="index"
+           :class="{'ignore-elements': item.classId == -1}">
         <flexbox orient="vertical"
                  align="stretch"
                  class="board-column-wrapper ignoreClass">
@@ -123,14 +124,14 @@
                        :key="j"
                        class="item-label"
                        :style="{'background': k.color}">
-                    {{k.name}}
+                    {{k.labelName}}
                   </div>
                 </template>
                 <template v-else>
                   <div class="item-label"
-                       :style="{'background': element.labelList[0].color}">{{element.labelList[0].name}}</div>
+                       :style="{'background': element.labelList[0].color}">{{element.labelList[0].labelName}}</div>
                   <div class="item-label"
-                       :style="{'background': element.labelList[1].color}">{{element.labelList[1].name}}</div>
+                       :style="{'background': element.labelList[1].color}">{{element.labelList[1].labelName}}</div>
                   <el-tooltip placement="top"
                               effect="light"
                               popper-class="tooltip-change-border task-tooltip">
@@ -142,7 +143,7 @@
                         <span v-if="j >= 2"
                               class="k-name"
                               :style="{'background': k.color ? k.color: '#ccc'}"
-                              style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.name}}</span>
+                              style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.labelName}}</span>
                       </div>
                     </div>
                     <div class="color-label-more">

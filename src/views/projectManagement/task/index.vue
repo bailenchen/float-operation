@@ -76,14 +76,14 @@
                          :key="j"
                          class="item-label"
                          :style="{'background': k.color}">
-                      {{k.name}}
+                      {{k.labelName}}
                     </div>
                   </template>
                   <template v-else>
                     <div class="item-label"
-                         :style="{'background': element.labelList[0].color}">{{element.labelList[0].name}}</div>
+                         :style="{'background': element.labelList[0].color}">{{element.labelList[0].labelName}}</div>
                     <div class="item-label"
-                         :style="{'background': element.labelList[1].color}">{{element.labelList[1].name}}</div>
+                         :style="{'background': element.labelList[1].color}">{{element.labelList[1].labelName}}</div>
                     <el-tooltip placement="top"
                                 effect="light"
                                 popper-class="tooltip-change-border task-tooltip">
@@ -95,7 +95,7 @@
                           <span v-if="j >= 2"
                                 class="k-name"
                                 :style="{'background': k.color ? k.color: '#ccc'}"
-                                style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.name}}</span>
+                                style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{k.labelName}}</span>
                         </div>
                       </div>
                       <div class="color-label-more">

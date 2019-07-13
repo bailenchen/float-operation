@@ -441,9 +441,9 @@
 
                   <!-- 评论 -->
                   <div class="discuss"
-                       v-if="taskData.replyList && taskData.replyList.length != 0">
+                       v-if="replyList && replyList.length != 0">
                     <div class="discuss-list"
-                         v-for="(discussItem, k) in taskData.replyList"
+                         v-for="(discussItem, k) in replyList"
                          :key="k">
                       <div v-photo="discussItem.user"
                            v-lazy:background-image="$options.filters.filterUserLazyImg(discussItem.user.img)"
@@ -452,7 +452,7 @@
                       <span class="name">{{discussItem.user.realname}}</span>
                       <span class="time">{{discussItem.createTime}}</span>
                       <div class="rt">
-                        <span @click="discussDelete(discussItem, taskData.replyList, k)">删除</span>
+                        <span @click="discussDelete(discussItem, replyList, k)">删除</span>
                         <span @click="discussBtn(discussItem, -1)">回复</span>
                       </div>
 
@@ -657,7 +657,9 @@ export default {
       loading: false,
       taskData: null,
       activityList: [],
-      fileList: []
+      fileList: [],
+      // 评论列表
+      replyList: []
     }
   },
   props: {
@@ -1083,7 +1085,7 @@ export default {
       if (this.commentsTextarea) {
         this.commentsLoading = true
         workTaskcommentSaveAPI({
-          taskId: this.id,
+          typeId: this.id,
           type: 1,
           content: xss(this.commentsTextarea)
         })
