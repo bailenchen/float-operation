@@ -560,15 +560,10 @@
 <script type="text/javascript">
 import xss from 'xss'
 import {
-  workTaskUpdateAPI,
-  workTaskUpdateNameAPI,
-  workTaskUpdateStoptimeAPI,
-  workTaskUpdateOwnerAPI,
+  workTaskSaveAPI,
+  taskSvaeTaskRelationAPI,
   workTaskDeleteAPI,
   workTaskArchiveAPI,
-  workTaskUpdatePriorityAPI,
-  workTaskSaveAPI,
-  workTaskDelOwnerByIdAPI,
   queryCommentListAPI,
   workTaskcommentSaveAPI,
   workTaskcommentDeleteAPI,
@@ -723,10 +718,6 @@ export default {
       workTaskReadAPI({ taskId: this.id })
         .then(res => {
           let taskData = res.data
-          taskData.stopTime = timestampToFormatTime(
-            taskData.stopTime,
-            'YYYY-MM-DD'
-          )
           taskData.checked = taskData.status == 5 ? true : false
 
           if (taskData.childTask) {
@@ -782,7 +773,7 @@ export default {
       this.taskData.checked = val
       workTaskSaveAPI({
         taskId: this.id,
-        status: this.taskData.checked ? 5 : 1
+        type: this.taskData.checked ? 1 : 2
       })
         .then(res => {
           this.$emit('on-handle', {
@@ -822,9 +813,9 @@ export default {
     // 紧急按钮
     priorityBtn(value, def) {
       this.taskData.priority = value.id
-      workTaskUpdatePriorityAPI({
+      workTaskSaveAPI({
         taskId: this.id,
-        priority_id: value.id
+        priority: value.id
       })
         .then(res => {
           this.$emit('on-handle', {
@@ -902,13 +893,11 @@ export default {
     // 附件 -- 上传
     httpRequest(val) {
       crmFileSave({
-        'file[]': val.file,
-        module: 'work_task',
-        moduleId: this.id
+        file: val.file,
+        batchId: this.taskData.batchId
       })
         .then(res => {
-          // 更新附件数据
-          this.getFileList()
+          this.fileList.push(res)
           // this.$emit('httpRequest', this.taskData)
           this.$message.success('上传成功')
         })
@@ -940,9 +929,9 @@ export default {
         index: this.detailIndex,
         section: this.detailSection
       })
-      taskOver({
+      workTaskSaveAPI({
         taskId: val.taskId,
-        type: e ? 1 : 2
+        status: e ? 5 : 1
       })
         .then(res => {})
         .catch(err => {
@@ -971,52 +960,56 @@ export default {
      */
     // 提交按钮
     editOwnerList(users, dep) {
-      workTaskUpdateOwnerAPI({
+      workTaskSaveAPI({
         taskId: this.id,
-        owner_userids: users.map(item => {
-          return item.id
-        })
+        ownerUserId: users
+          .map(item => {
+            return item.userId
+          })
+          .join(',')
       })
         .then(res => {
-          this.taskData.owner_list = users
+          this.taskData.ownerUserList = users
         })
         .catch(() => {})
     },
     // 参与人删除按钮
     deleteOwnerList(item, index) {
-      workTaskDelOwnerByIdAPI({
+      workTaskSaveAPI({
         taskId: this.id,
-        type: 'owner_userid_del',
-        owner_userid_del: item.id
+        ownerUserId: this.taskData.ownerUserList
+          .filter(userItem => {
+            return userItem.userId != item.userId
+          })
+          .map(item => {
+            return item.userId
+          })
+          .join(',')
       })
         .then(res => {
-          this.taskData.owner_list.splice(index, 1)
+          this.taskData.ownerUserList.splice(index, 1)
         })
         .catch(() => {})
     },
     // 编辑负责人
     editMainUser(val) {
-      workTaskUpdateAPI({
+      workTaskSaveAPI({
         taskId: this.id,
-        main_user_id: val ? val.data[0].id : '',
-        type: 'main_user_id'
+        mainUserId: val ? val.data[0].userId : ''
       })
         .then(res => {
           if (val) {
-            this.$set(this.taskData, 'main_user_name', val.data[0].realname)
-            this.$set(this.taskData, 'main_user_img', val.data[0].img)
+            this.$set(this.taskData, 'mainUser', val.data[0])
           } else {
-            this.$set(this.taskData, 'main_user_name', '')
-            this.$set(this.taskData, 'main_user_img', '')
+            this.$set(this.taskData, 'mainUser', null)
           }
         })
         .catch(() => {})
     },
     // 编辑任务名
     nameVShow(val) {
-      workTaskUpdateNameAPI({
+      workTaskSaveAPI({
         name: val,
-        type: 'name',
         taskId: this.id
       })
         .then(res => {
@@ -1034,9 +1027,8 @@ export default {
     },
     // 截至日期API
     endTimeChange(val) {
-      workTaskUpdateStoptimeAPI({
-        stopTime: new Date(val).getTime() / 1000,
-        type: 'stopTime',
+      workTaskSaveAPI({
+        stopTime: val,
         taskId: this.id
       })
         .then(res => {
@@ -1051,7 +1043,7 @@ export default {
     },
     // 描述提交按钮
     addDescriptionSubmit() {
-      workTaskUpdateAPI({
+      workTaskSaveAPI({
         taskId: this.id,
         description: this.addDescriptionTextarea
       })
@@ -1092,18 +1084,14 @@ export default {
         this.commentsLoading = true
         workTaskcommentSaveAPI({
           taskId: this.id,
+          type: 1,
           content: xss(this.commentsTextarea)
         })
           .then(res => {
-            this.taskData.replyList.push({
-              comment_id: res.data,
-              type_id: this.id,
-              userInfo: this.userInfo,
-              create_time: parseInt(new Date().getTime() / 1000),
-              content: xss(this.commentsTextarea),
-              replyList: [],
-              show: false
-            })
+            res.data.childCommentList = []
+            res.data.show = false
+            res.data.user = this.userInfo
+            this.replyList.push(res.data)
             this.commentsTextarea = ''
             this.$emit('on-handle', {
               type: 'change-comments',
@@ -1126,25 +1114,17 @@ export default {
             ? this.replyChildComment
             : this.replyChildComment.replyList[this.replyChildIndex]
         workTaskcommentSaveAPI({
-          reply_fid: this.replyChildComment.comment_id,
-          taskId: item.type_id,
-          content: xss(this.childCommentsTextarea),
-          reply_content: item.content,
-          reply_comment_id: item.comment_id,
-          reply_user_id: item.userInfo.id,
-          reply_name: item.userInfo.realname
+          pid: item.userId,
+          typeId: item.typeId,
+          mainId: item.mainId == 0 ? item.commentId : item.mainId,
+          type: 1,
+          content: xss(this.childCommentsTextarea)
         })
           .then(res => {
             this.childCommentsPopover = false
-            this.replyChildComment.replyList.push({
-              comment_id: res.data,
-              type_id: item.type_id,
-              userInfo: this.userInfo,
-              create_time: parseInt(new Date().getTime() / 1000),
-              content: xss(this.childCommentsTextarea),
-              reply_content: item.content,
-              replyuserInfo: item.userInfo
-            })
+            res.data.user = this.userInfo
+            res.data.replyUser = item.user
+            this.replyChildComment.childCommentList.push(res.data)
             this.replyChildComment.show = false
             this.replyChildComment = null
             this.childCommentsTextarea = ''
@@ -1168,8 +1148,7 @@ export default {
       })
         .then(() => {
           workTaskcommentDeleteAPI({
-            comment_id: val.comment_id,
-            taskId: val.type_id
+            commentId: val.commentId
           })
             .then(res => {
               items.splice(index, 1)
@@ -1208,12 +1187,24 @@ export default {
     },
     // 关联业务提交按钮
     checkInfos(val) {
-      workTaskUpdateAPI({
+      taskSvaeTaskRelationAPI({
         taskId: this.id,
-        customer_ids: val.customer_ids,
-        contacts_ids: val.contacts_ids,
-        business_ids: val.business_ids,
-        contract_ids: val.contract_ids
+        customerIds:
+          val.customerIds && val.customerIds.length
+            ? ',' + val.customerIds.join(',') + ','
+            : '',
+        contactsIds:
+          val.contactsIds && val.contactsIds.length
+            ? ',' + val.contactsIds.join(',') + ','
+            : '',
+        businessIds:
+          val.businessIds && val.businessIds.length
+            ? ',' + val.businessIds.join(',') + ','
+            : '',
+        contractIds:
+          val.contractIds && val.contractIds.length
+            ? ',' + val.contractIds.join(',') + ','
+            : ''
       })
         .then(res => {
           this.$message.success('关联成功')
@@ -1319,7 +1310,7 @@ export default {
     },
     // 删除截止时间
     deleteTimeTop() {
-      workTaskUpdateAPI({
+      workTaskSaveAPI({
         taskId: this.id,
         stopTime: ''
       })

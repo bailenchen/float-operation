@@ -30,7 +30,7 @@ export function workTrashDeleteAPI(data) {
  */
 export function workTrashRecoverAPI(data) {
     return request({
-        url: 'work/trash/recover',
+        url: 'workTrash/restore',
         method: 'post',
         data: data
     })

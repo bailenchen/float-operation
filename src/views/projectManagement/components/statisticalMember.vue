@@ -12,8 +12,7 @@
                        :key="index"
                        show-overflow-tooltip
                        :prop="item.prop"
-                       :label="item.label"
-                       :formatter="fieldFormatter">
+                       :label="item.label">
       </el-table-column>
     </el-table>
   </create-sections>
@@ -46,11 +45,11 @@ export default {
           label: '已完成数'
         },
         {
-          prop: 'undoneCount',
+          prop: 'unfinished',
           label: '未完成数'
         },
         {
-          prop: 'overdueRate',
+          prop: 'overdue',
           label: '逾期数'
         },
         {
@@ -68,12 +67,6 @@ export default {
   mounted() {},
 
   methods: {
-    /**
-     * 格式化字段
-     */
-    fieldFormatter(row, column) {
-      return row[column.property] || '--'
-    },
 
     /**
      * 表单元可点击样式

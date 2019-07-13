@@ -82,7 +82,7 @@
 import {
   workTasklableReadAPI,
   workTasklableGetWokListAPI,
-  workTasklableUpdateAPI
+  workTasklableSaveAPI
 } from '@/api/projectManagement/tag'
 import TaskCell from '@/views/projectManagement/components/taskCell'
 import particulars from '../components/particulars'
@@ -191,7 +191,7 @@ export default {
      * 标签设置保存
      */
     labelSetSave() {
-      workTasklableUpdateAPI({
+      workTasklableSaveAPI({
         name: this.editLabelName,
         labelId: this.labelID,
         color: this.editLabelColor
@@ -216,7 +216,7 @@ export default {
     taskCellHandle(data) {
       if (data.type == 'view') {
         let dataCell = data.data
-        this.taskID = dataCell.item.task_id
+        this.taskID = dataCell.item.taskId
         this.detailIndex = dataCell.index
         this.detailSection = dataCell.section
         this.taskDetailShow = true

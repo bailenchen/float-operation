@@ -18,7 +18,7 @@
             <div>
               <span class="text"> {{ item.className }} </span>
               <span class="text-num">{{item.checkedNum}} / {{item.list.length}}</span>
-              <el-popover v-if="canUpdateTaskClass"
+              <el-popover v-if="canUpdateTaskClass && item.classId != -1"
                           placement="bottom-start"
                           width="150"
                           v-model="item.taskHandleShow"

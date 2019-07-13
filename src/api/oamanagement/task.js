@@ -54,7 +54,7 @@ export function editTaskRelation(data) {
 // 创建标签
 export function createTag(data) {
   return request({
-    url: 'taskLabel/setLable',
+    url: 'taskLabel/setLabel',
     method: 'post',
     data: data
   })
@@ -62,7 +62,7 @@ export function createTag(data) {
 // 编辑标签
 export function editTagAPI(data) {
   return request({
-    url: 'taskLabel/setLable',
+    url: 'taskLabel/setLabel',
     method: 'post',
     data: data
   })
@@ -70,7 +70,7 @@ export function editTagAPI(data) {
 // 删除标签
 export function deleteTagAPI(data) {
   return request({
-    url: 'taskLabel/deleteLable',
+    url: 'taskLabel/deleteLabel',
     method: 'post',
     data: data
   })

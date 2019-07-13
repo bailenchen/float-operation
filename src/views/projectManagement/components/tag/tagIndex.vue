@@ -84,9 +84,9 @@ import newTag from '@/views/projectManagement/components/tag/newTag'
 import editTag from '@/views/projectManagement/components/tag/editTag'
 import { workTasklableIndexAPI } from '@/api/projectManagement/tag'
 import {
-  workTaskUpdateLableAPI
+  workTaskSaveAPI
 } from '@/api/projectManagement/task'
-import { workTasklableUpdateAPI, workTasklableDeleteAPI, workTasklableSaveAPI } from '@/api/projectManagement/tag'
+import { workTasklableDeleteAPI, workTasklableSaveAPI } from '@/api/projectManagement/tag'
 
 export default {
   components: {
@@ -144,7 +144,7 @@ export default {
     },
     // 标签管理 -- 编辑
     editBtn(val) {
-      this.editTagId = val.lable_id
+      this.editTagId = val.labelId
       this.newTagTitle = '编辑标签'
       this.tagContent = 3
       this.bgColorProps = val.color
@@ -158,15 +158,25 @@ export default {
     // 标签点击变色
     tagBtn(value, values) {
       // 标签点击关联页面
+      let labelIds = values.filter(item => {
+        if (value.check) {
+          return item.check && item.labelId != value.labelId
+        } else {
+          return item.check || item.labelId == value.labelId
+        }
+      })
       if (value.check) {
-        workTaskUpdateLableAPI({
-          task_id: this.taskData.task_id,
-          lable_id_del: value.lable_id,
-          type: 'lable_id_del'
+        workTaskSaveAPI({
+          taskId: this.taskData.taskId,
+          labelId: labelIds
+            .map(item => {
+              return item.labelId
+            })
+            .join(',')
         }).then(res => {
-          let list = this.taskData.lable_list
+          let list = this.taskData.labelList
           for (let item in list) {
-            if (value.lable_id == list[item].lable_id) {
+            if (value.labelId == list[item].labelId) {
               list.splice(item, 1)
               break
             }
@@ -174,18 +184,22 @@ export default {
           value.check = false
         })
       } else {
-        workTaskUpdateLableAPI({
-          task_id: this.taskData.task_id,
-          lable_id_add: value.lable_id,
-          type: 'lable_id_add'
+        workTaskSaveAPI({
+          taskId: this.taskData.taskId,
+          labelId: labelIds
+            .map(item => {
+              return item.labelId
+            })
+            .join(',')
         }).then(res => {
           value.check = true
-          this.taskData.lable_list.push(value)
+          value.labelName = value.name
+          this.taskData.labelList.push(value)
         })
       }
       // value.check = value.check ? false : true
       for (let item in values) {
-        if (values[item].lable_id == value.lable_id) {
+        if (values[item].labelId == value.labelId) {
           document.getElementsByClassName('tag-list')[item].style.background =
             '#F7F8FA'
         } else {
@@ -217,13 +231,13 @@ export default {
           this.$message.success('创建成功')
         })
       } else {
-        workTasklableUpdateAPI({
+        workTasklableSaveAPI({
           name: val,
-          lable_id: this.editTagId,
+          labelId: this.editTagId,
           color: color
         }).then(res => {
           for (let item of _this.editTagList) {
-            if (item.lable_id == _this.editTagId) {
+            if (item.labelId == _this.editTagId) {
               item.name = val
               item.color = color
             }
@@ -266,10 +280,10 @@ export default {
           this.tagShow = true
           this.managementTag()
           workTasklableDeleteAPI({
-            lable_id: val.lable_id
+            labelId: val.labelId
           }).then(res => {
             for (let i in this.editTagList) {
-              if (this.editTagList[i].lable_id == val.lable_id) {
+              if (this.editTagList[i].labelId == val.labelId) {
                 this.editTagList.splice(i, 1)
               }
             }
@@ -291,10 +305,10 @@ export default {
     tagListFun() {
       // 标签列表
       workTasklableIndexAPI().then(res => {
-        for (let item of res.data.list) {
-          if (this.taskData.lable_list) {
-            for (let i of this.taskData.lable_list) {
-              if (i.lable_id == item.lable_id) {
+        for (let item of res.data) {
+          if (this.taskData.labelList) {
+            for (let i of this.taskData.labelList) {
+              if (i.labelId == item.labelId) {
                 item.check = true
                 break
               } else {
@@ -304,10 +318,10 @@ export default {
           }
         }
         // 标签管理数据
-        this.editTagList = res.data.list
-        this.particularsTagList = res.data.list
+        this.editTagList = res.data
+        this.particularsTagList = res.data
         // 用作搜索功能
-        this.particularsTagListCopy = res.data.list
+        this.particularsTagListCopy = res.data
       })
     },
     referenceFun() {

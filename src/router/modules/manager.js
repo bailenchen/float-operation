@@ -148,7 +148,7 @@ const systemOtherRouter = {
 
 const handlefieldRouter = {
   name: 'handlefield',
-  path: 'custom-field/handlefield/:type/:id', // type customer contacts business contract money
+  path: 'custom-field/handlefield/:type/:id:label', // type customer contacts business contract money
   component: () => import('@/views/SystemManagement/SystemCustomer/HandleField'),
   meta: {
     changeMenu: false, // 跳转不更改路径

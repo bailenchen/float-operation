@@ -83,7 +83,7 @@ export default {
     taskCellHandle(data) {
       if (data.type == 'view') {
         let dataCell = data.data
-        this.taskID = dataCell.item.task_id
+        this.taskID = dataCell.item.taskId
         this.detailIndex = dataCell.index
         this.taskDetailShow = true
       }

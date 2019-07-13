@@ -30,7 +30,7 @@ export function workTaskSaveAPI(data) {
  */
 export function workTaskDeleteAPI(data) {
     return request({
-        url: 'work/task/delete',
+        url: 'task/deleteTask',
         method: 'post',
         data: data
     })
@@ -45,7 +45,7 @@ export function workTaskUpdateTopAPI(data) {
         url: 'workbench/updateTop',
         method: 'post',
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8'
+            'Content-Type': 'application/json;charset=UTF-8'
         },
         data: data
     })
@@ -76,18 +76,6 @@ export function workTaskReadAPI(data) {
 }
 
 /**
- * 任务编辑 -- 详情页总编辑
- * @param {*} data
- */
-export function workTaskUpdateAPI(data) {
-    return request({
-        url: 'work/task/update',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
  * 编辑任务名
  * @param {*} data
  */
@@ -100,60 +88,12 @@ export function workTaskUpdateNameAPI(data) {
 }
 
 /**
- * 设置截至日期
- * @param {*} data
- */
-export function workTaskUpdateStoptimeAPI(data) {
-    return request({
-        url: 'work/task/updateStoptime',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 任务参与人删除添加
- * @param {*} data
- */
-export function workTaskUpdateOwnerAPI(data) {
-    return request({
-        url: 'work/task/updateOwner',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 添加删除标签
- * @param {*} data
- */
-export function workTaskUpdateLableAPI(data) {
-    return request({
-        url: 'work/task/updateLable',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
  * 任务归档
  * @param {*} data
  */
 export function workTaskArchiveAPI(data) {
     return request({
-        url: 'work/task/archive',
-        method: 'post',
-        data: data
-    })
-}
-
-/**
- * 优先级
- * @param {*} data
- */
-export function workTaskUpdatePriorityAPI(data) {
-    return request({
-        url: 'work/task/updatePriority',
+        url: 'task/archiveByTaskId',
         method: 'post',
         data: data
     })
@@ -172,24 +112,12 @@ export function workTaskReadLoglistAPI(data) {
 }
 
 /**
- * 单独删除参与人
- * @param {*} data
- */
-export function workTaskDelOwnerByIdAPI(data) {
-    return request({
-        url: 'work/task/delOwnerById',
-        method: 'post',
-        data
-    })
-}
-
-/**
  * 任务评论添加
  * @param {*} data
  */
 export function workTaskcommentSaveAPI(data) {
     return request({
-        url: 'work/taskcomment/save',
+        url: 'comment/setComment',
         method: 'post',
         data
     })
@@ -201,7 +129,7 @@ export function workTaskcommentSaveAPI(data) {
  */
 export function workTaskcommentDeleteAPI(data) {
     return request({
-        url: 'workTrash/deleteTask',
+        url: 'comment/deleteComment',
         method: 'post',
         data
     })
@@ -213,7 +141,7 @@ export function workTaskcommentDeleteAPI(data) {
  */
 export function workTaskRecoverAPI(data) {
     return request({
-        url: 'workTrash/restore',
+        url: 'work/activation',
         method: 'post',
         data
     })
@@ -228,5 +156,17 @@ export function queryCommentListAPI(data) {
         url: 'comment/queryWorkCommentList',
         method: 'post',
         data
+    })
+}
+
+/**
+ * 编辑关联业务
+ * @param {*} data
+ */
+export function taskSvaeTaskRelationAPI(data) {
+    return request({
+        url: 'task/svaeTaskRelation',
+        method: 'post',
+        data: data
     })
 }

@@ -30,7 +30,7 @@ export function workTasklableReadAPI(data) {
  */
 export function workTasklableDeleteAPI(data) {
     return request({
-        url: 'work/tasklable/delete',
+        url: 'taskLabel/deleteLabel',
         method: 'post',
         data: data
     })
@@ -42,7 +42,7 @@ export function workTasklableDeleteAPI(data) {
  */
 export function workTasklableSaveAPI(data) {
     return request({
-        url: 'work/tasklable/save',
+        url: 'taskLabel/setLabel',
         method: 'post',
         data: data
     })
@@ -60,14 +60,3 @@ export function workTasklableGetWokListAPI(data) {
     })
 }
 
-/**
- * 编辑标签
- * @param {*} data
- */
-export function workTasklableUpdateAPI(data) {
-    return request({
-        url: 'work/tasklable/update',
-        method: 'post',
-        data: data
-    })
-}

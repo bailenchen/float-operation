@@ -33,11 +33,11 @@
           <template slot-scope="scope">
             <el-button @click="handleClick('edit', scope)"
                        type="text"
-                       :disabled="scope.row.system == 1"
+                       :disabled="scope.row.roleType == 5"
                        size="small">编辑</el-button>
             <el-button @click="handleClick('delete', scope)"
                        type="text"
-                       :disabled="scope.row.system == 1"
+                       :disabled="scope.row.roleType == 5"
                        size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -132,7 +132,7 @@ export default {
         this.jurisdictionCreateShow = true
       } else if (type === 'delete') {
         // 启用停用
-        this.$confirm('您确定要删除该审批流?', '提示', {
+        this.$confirm('您确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
