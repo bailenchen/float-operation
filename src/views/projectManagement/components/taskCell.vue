@@ -69,17 +69,17 @@
         <div class="img-box"
              v-if="data.childAllCount > 0">
           <i class="wukong wukong-sub-task"></i>
-          <span>{{data.childFinishCount}}/{{data.childAllCount}}</span>
+          <span>{{data.childWCCount}}/{{data.childAllCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.fileNum">
+             v-if="data.fileCount">
           <i class="wukong wukong-file"></i>
-          <span>{{data.fileNum}}</span>
+          <span>{{data.fileCount}}</span>
         </div>
         <div class="img-box"
-             v-if="data.commentNum">
+             v-if="data.commentCount">
           <i class="wukong wukong-comment-task"></i>
-          <span>{{data.commentNum}}</span>
+          <span>{{data.commentCount}}</span>
         </div>
         <div class="img-box"
              v-if="data.stopTime">

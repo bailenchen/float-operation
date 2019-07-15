@@ -191,7 +191,7 @@ export default {
           this.projectColor = data.color
           this.projectName = data.name
 
-          this.permission = data.authList.work
+          this.permission = data.authList.work || {}
         })
         .catch(err => {})
     },

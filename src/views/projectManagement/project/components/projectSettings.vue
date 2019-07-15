@@ -176,7 +176,7 @@ export default {
   },
 
   props: {
-    workId: String,
+    workId: [Number, String],
     title: String,
     color: String,
     isOpen: [Number, String],

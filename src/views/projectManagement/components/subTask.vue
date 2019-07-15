@@ -53,8 +53,8 @@
                     <span>{{item.realname}}</span>
                   </div>
                   <div v-photo="item"
-                       v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-                       :key="item.thumb_img"
+                       v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+                       :key="item.img || item.userId"
                        class="div-photo"></div>
                 </el-tooltip>
               </span>
@@ -96,9 +96,8 @@ export default {
       this.subtasksDataText = this.time
       if (JSON.stringify(this.subData) !== '{}') {
         if (this.subData.mainUser) {
-          this.subData.id = this.subData.mainUser
           this.subtaskChange = true
-          this.xhUserData = [this.subData]
+          this.xhUserData = [this.subData.mainUser]
         }
       } else {
         this.xhUserData = []
@@ -166,7 +165,7 @@ export default {
               this.num = 0
             })
         } else if (this.subTaskCom == 'edit') {
-          let ids = this.xhUserData.length > 0 ? this.xhUserData[0].id : ''
+          let ids = this.xhUserData.length > 0 ? this.xhUserData[0].userId : ''
 
           if (
             this.isNum == 1 ||

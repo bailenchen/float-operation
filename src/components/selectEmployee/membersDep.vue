@@ -79,7 +79,11 @@
         </div>
         <div class="checked-content">
           <div class="checked-top">
-            <span class="title">已选择员工({{userSelectCount }}) 部门 ({{depSelectCount}})</span>
+            <span class="title">已选择</span>
+            <span v-if="!closeUser"
+                  class="title">员工 ({{userSelectCount}})</span>
+            <span v-if="!closeDep"
+                  class="title">部门 ({{depSelectCount}})</span>
             <el-button type="text"
                        class="rt"
                        @click="emptyClick">清空</el-button>

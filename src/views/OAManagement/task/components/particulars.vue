@@ -737,7 +737,7 @@ export default {
       this.taskData.checked = val
       editTask({
         taskId: this.id,
-        type: this.taskData.checked ? 1 : 2
+        status: this.taskData.checked ? 5 : 1
       })
         .then(res => {
           this.$emit('on-handle', {

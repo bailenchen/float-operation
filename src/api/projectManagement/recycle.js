@@ -18,7 +18,7 @@ export function workTrashIndexAPI(data) {
  */
 export function workTrashDeleteAPI(data) {
     return request({
-        url: 'work/trash/delete',
+        url: 'workTrash/deleteTask',
         method: 'post',
         data: data
     })

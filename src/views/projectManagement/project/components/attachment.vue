@@ -90,7 +90,7 @@ export default {
   },
 
   props: {
-    workId: String
+    workId: [Number, String]
   },
 
   watch: {

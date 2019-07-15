@@ -44,7 +44,6 @@
                        width="55"></el-table-column>
       <el-table-column v-for="(item, index) in fieldList"
                        :key="index"
-                       :fixed="index===0"
                        show-overflow-tooltip
                        :prop="item.field"
                        :label="item.name"
@@ -462,5 +461,9 @@ export default {
 
 .el-table /deep/ thead .el-checkbox {
   display: none;
+}
+
+body .el-table th.gutter{
+    display: table-cell!important;
 }
 </style>

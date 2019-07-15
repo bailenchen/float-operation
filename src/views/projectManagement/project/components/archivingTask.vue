@@ -57,7 +57,7 @@ export default {
   },
 
   props: {
-    workId: String
+    workId: [Number, String]
   },
 
   activated() {
@@ -141,11 +141,11 @@ export default {
         } else if (data.type == 'change-name') {
           this.taskList[data.index].task_name = data.value
         } else if (data.type == 'change-comments') {
-          let commentcount = this.taskList[data.index].commentcount
+          let commentCount = this.taskList[data.index].commentCount
           if (data.value == 'add') {
-            this.taskList[data.index].commentcount = commentcount + 1
+            this.taskList[data.index].commentCount = commentCount + 1
           } else {
-            this.taskList[data.index].commentcount = commentcount - 1
+            this.taskList[data.index].commentCount = commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
           this.taskList[data.index].subdonecount = data.value.subdonecount

@@ -104,19 +104,19 @@
                   <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{new Date(element.stopTime).getTime() | filterTimestampToFormatTime('MM-DD')}}截止</span>
                 </div>
                 <div class="img-box"
-                     v-if="element.subcount">
+                     v-if="element.childAllCount > 0">
                   <i class="wukong wukong-sub-task"></i>
-                  <span>{{element.subdonecount}}/{{element.subcount + element.subdonecount}}</span>
+                  <span>{{element.childWCCount}}/{{element.childAllCount}}</span>
                 </div>
                 <div class="img-box"
-                     v-if="element.filecount">
+                     v-if="element.fileCount">
                   <i class="wukong wukong-file"></i>
-                  <span>{{element.filecount}}</span>
+                  <span>{{element.fileCount}}</span>
                 </div>
                 <div class="img-box"
-                     v-if="element.commentcount">
+                     v-if="element.commentCount">
                   <i class="wukong wukong-comment-task"></i>
-                  <span>{{element.commentcount}}</span>
+                  <span>{{element.commentCount}}</span>
                 </div>
 
                 <template v-if="element.labelList.length <= 2">
@@ -165,7 +165,7 @@
             <div class="img-box">
               <span class="stop-time">
                 <span v-if="subTaskStopTimeDate"
-                      class="bg-color">{{subTaskStopTimeDate | moment('MM-DD')}}<i class="el-icon-close"
+                      class="bg-color">{{new Date(subTaskStopTimeDate).getTime() | moment('MM-DD')}}<i class="el-icon-close"
                      @click="subTaskStopTimeDate = ''"></i></span>
                 <i v-else
                    class="wukong wukong-time-task">
@@ -173,6 +173,7 @@
                 <el-date-picker v-model="subTaskStopTimeDate"
                                 type="date"
                                 :style="{'width': subTaskStopTimeDate ? '54px' : '18px'}"
+                                value-format="yyyy-MM-DD"
                                 placeholder="选择日期">
                 </el-date-picker>
               </span>
@@ -222,7 +223,7 @@
           </div>
           <div class="new-task"
                @click="createSubTaskClick(item)"
-               v-else-if="canCreateTask">
+               v-else-if="canCreateTask && item.classId != -1">
             <span class="el-icon-plus"></span>
             <span>新建任务</span>
           </div>
@@ -378,7 +379,7 @@ export default {
       this.getList({
         mainUserId: userIds,
         stopTimeType: timeId,
-        lableId: tagIds
+        labelId: tagIds
       })
     })
 
@@ -604,10 +605,8 @@ export default {
       this.loading = true
       workTaskSaveAPI({
         name: this.subTaskContent,
-        stopTime: this.subTaskStopTimeDate
-          ? new Date(this.subTaskStopTimeDate).getTime() / 1000
-          : '',
-        mainUserId: this.selectMainUser.id,
+        stopTime: this.subTaskStopTimeDate,
+        mainUserId: this.selectMainUser.userId,
         workId: this.workId,
         classId: val.classId
       })
@@ -663,7 +662,7 @@ export default {
     selectOwnerList(item, val) {
       this.selectMainUser = val
       for (let item of this.ownerList) {
-        if (item.id == val.id) {
+        if (item.userId == val.userId) {
           item.checked = true
         } else {
           item.checked = false
@@ -710,14 +709,14 @@ export default {
         } else if (data.type == 'change-name') {
           this.taskList[data.section].list[data.index].name = data.value
         } else if (data.type == 'change-comments') {
-          let commentcount = this.taskList[data.section].list[data.index]
-            .commentcount
+          let commentCount = this.taskList[data.section].list[data.index]
+            .commentCount
           if (data.value == 'add') {
-            this.taskList[data.section].list[data.index].commentcount =
-              commentcount + 1
+            this.taskList[data.section].list[data.index].commentCount =
+              commentCount + 1
           } else {
-            this.taskList[data.section].list[data.index].commentcount =
-              commentcount - 1
+            this.taskList[data.section].list[data.index].commentCount =
+              commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
           this.taskList[data.section].list[data.index].subdonecount =

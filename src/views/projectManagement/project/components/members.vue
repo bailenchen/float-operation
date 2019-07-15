@@ -25,8 +25,8 @@
              :key="index"
              class="item-list">
           <div v-photo="item"
-               v-lazy:background-image="$options.filters.filterUserLazyImg(item.thumb_img)"
-               :key="item.thumb_img"
+               v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+               :key="item.img"
                class="div-photo"></div>
           <span>{{item.realname}}
           </span>
@@ -90,7 +90,7 @@ export default {
       type: Boolean,
       default: false
     },
-    workId: String,
+    workId: [Number, String],
     list: Array,
     isOpen: [String, Number],
     permission: {

@@ -40,8 +40,8 @@
                                  @change="checkboxChange(element, item)"></el-checkbox>
                   </div>
                   <div class="element-label">
-                    <i v-if="element.pname"
-                       class="wukong wukong-sub-task"></i>{{element.name}}<span v-if="element.pname">（{{element.pname}}）</span></div>
+                    <i v-if="element.workName"
+                       class="wukong wukong-sub-task"></i>{{element.name}}<span v-if="element.workName">（{{element.workName}}）</span></div>
                   <div v-if="element.mainUser"
                        v-photo="element.mainUser"
                        v-lazy:background-image="$options.filters.filterUserLazyImg(element.mainUser.img)"
@@ -56,19 +56,19 @@
                     <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{new Date(element.stopTime).getTime() | filterTimestampToFormatTime('MM-DD')}} 截止</span>
                   </div>
                   <div class="img-box"
-                       v-if="element.subcount">
+                       v-if="element.childAllCount > 0">
                     <i class="wukong wukong-sub-task"></i>
-                    <span>{{element.subdonecount}}/{{element.subcount + element.subdonecount}}</span>
+                    <span>{{element.childWCCount}}/{{element.childAllCount}}</span>
                   </div>
                   <div class="img-box"
-                       v-if="element.filecount">
+                       v-if="element.fileCount">
                     <i class="wukong wukong-file"></i>
-                    <span>{{element.filecount}}</span>
+                    <span>{{element.fileCount}}</span>
                   </div>
                   <div class="img-box"
-                       v-if="element.commentcount">
+                       v-if="element.commentCount">
                     <i class="wukong wukong-comment-task"></i>
-                    <span>{{element.commentcount}}</span>
+                    <span>{{element.commentCount}}</span>
                   </div>
 
                   <template v-if="element.labelList.length <= 2">
@@ -333,14 +333,14 @@ export default {
         } else if (data.type == 'change-name') {
           this.taskList[data.section].list[data.index].name = data.value
         } else if (data.type == 'change-comments') {
-          let commentcount = this.taskList[data.section].list[data.index]
-            .commentcount
+          let commentCount = this.taskList[data.section].list[data.index]
+            .commentCount
           if (data.value == 'add') {
-            this.taskList[data.section].list[data.index].commentcount =
-              commentcount + 1
+            this.taskList[data.section].list[data.index].commentCount =
+              commentCount + 1
           } else {
-            this.taskList[data.section].list[data.index].commentcount =
-              commentcount - 1
+            this.taskList[data.section].list[data.index].commentCount =
+              commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
           this.taskList[data.section].list[data.index].subdonecount =

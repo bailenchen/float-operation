@@ -119,8 +119,6 @@ export default {
         { label: '优先级', field: 'priority', type: 'priority' },
         { label: '任务描述', field: 'description', type: 'textarea' }
       ],
-      // 上传附件
-      uploadFile: [],
       // 负责人弹出框
       colleaguesList: [],
       popoverModel: false,
@@ -142,8 +140,17 @@ export default {
   watch: {
     visible(value) {
       if (value) {
-        if (this.action.type == 'create' && this.action.data) {
-          this.formData = Object.assign(this.formData, this.action.data)
+        if (this.action.type == 'create') {
+          if (this.action.data) {
+            this.formData = Object.assign(this.formData, this.action.data)
+          } else {
+            this.formData = {
+              priority: 0
+            }
+            this.colleaguesList = []
+            this.relevanceAll = {}
+            this.allData = {}
+          }
         }
       }
     }
@@ -182,16 +189,26 @@ export default {
           var formDataCopy = Object.assign({}, this.formData)
           formDataCopy = {
             mainUserId:
-              this.colleaguesList.length == 0 ? '' : this.colleaguesList[0].userId,
+              this.colleaguesList.length == 0
+                ? ''
+                : this.colleaguesList[0].userId,
             startTime: this.formData.startTime || '',
             stopTime: this.formData.stopTime || '',
             description: this.formData.description,
             priority: this.formData.priority,
             name: this.formData.name,
-            customerIds: this.relevanceAll.customerIds ? this.relevanceAll.customerIds.join(',') : '',
-            contactsIds: this.relevanceAll.contactsIds ? this.relevanceAll.contactsIds.join(',') : '',
-            businessIds: this.relevanceAll.businessIds ? this.relevanceAll.businessIds.join(',') : '',
-            contractIds: this.relevanceAll.contractIds ? this.relevanceAll.contractIds.join(',') : ''
+            customerIds: this.relevanceAll.customerIds
+              ? ',' + this.relevanceAll.customerIds.join(',') + ','
+              : '',
+            contactsIds: this.relevanceAll.contactsIds
+              ? ',' + this.relevanceAll.contactsIds.join(',') + ','
+              : '',
+            businessIds: this.relevanceAll.businessIds
+              ? ',' + this.relevanceAll.businessIds.join(',') + ','
+              : '',
+            contractIds: this.relevanceAll.contractIds
+              ? ',' + this.relevanceAll.contractIds.join(',') + ','
+              : ''
           }
 
           if (this.params) {

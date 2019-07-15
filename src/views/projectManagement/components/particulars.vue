@@ -52,13 +52,13 @@
               <span>附件</span>
             </el-upload>
           </div>
-          <div>
+          <div v-if="taskData.ishidden != 1">
             <el-popover placement="bottom"
                         width="80"
                         trigger="click">
               <div class="more-btn-group">
-                <p @click="moreArchive">归 档</p>
-                <p @click="moreDelete">删 除</p>
+                <p v-if="taskData.isArchive != 1 && taskData.ishidden != 1" @click="moreArchive">归 档</p>
+                <p v-if="taskData.ishidden != 1" @click="moreDelete">删 除</p>
               </div>
               <span slot="reference">
                 <img src="@/assets/img/task_ellipsis.png">
@@ -75,7 +75,7 @@
            v-if="taskData">
         <!-- 归档 -->
         <div class="particulars-extraContent"
-             v-if="taskData.isArchive == 1">
+             v-if="taskData.isArchive == 1 && taskData.ishidden != 1">
           <span class="text">该任务已于 {{taskData.archiveTime}} 被归档。</span>
           <el-button type="primary"
                      class="border-radius"
@@ -733,6 +733,8 @@ export default {
             }
           }
 
+          this.fileList = res.data.file
+
           this.allData = {
             business: taskData.businessList || [],
             contacts: taskData.contactsList || [],
@@ -775,7 +777,7 @@ export default {
       this.taskData.checked = val
       workTaskSaveAPI({
         taskId: this.id,
-        type: this.taskData.checked ? 1 : 2
+        status: this.taskData.checked ? 5 : 1
       })
         .then(res => {
           this.$emit('on-handle', {
@@ -835,7 +837,7 @@ export default {
     },
     // 更多 ———— 删除和规定按钮
     moreDelete() {
-      this.$confirm('此操作将永久删除该任务, 是否继续?', '提示', {
+      this.$confirm('确定删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',

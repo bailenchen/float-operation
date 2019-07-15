@@ -262,14 +262,14 @@ export default {
         } else if (data.type == 'change-name') {
           this.taskList[data.section].list[data.index].task_name = data.value
         } else if (data.type == 'change-comments') {
-          let commentcount = this.taskList[data.section].list[data.index]
-            .commentcount
+          let commentCount = this.taskList[data.section].list[data.index]
+            .commentCount
           if (data.value == 'add') {
-            this.taskList[data.section].list[data.index].commentcount =
-              commentcount + 1
+            this.taskList[data.section].list[data.index].commentCount =
+              commentCount + 1
           } else {
-            this.taskList[data.section].list[data.index].commentcount =
-              commentcount - 1
+            this.taskList[data.section].list[data.index].commentCount =
+              commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
           this.taskList[data.section].list[data.index].subdonecount =
