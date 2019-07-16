@@ -211,7 +211,9 @@ export default {
     closeDep: {
       type: Boolean,
       default: false
-    }
+    },
+    userRequest: Function,
+    userParams: Object
   },
   methods: {
     initInfo() {
@@ -328,7 +330,15 @@ export default {
      */
     getUserList() {
       this.userLoading = true
-      usersList({ pageType: 0 })
+      let request = usersList
+      let params = {}
+      if (this.userRequest) {
+        request = this.userRequest
+        params = this.userParams || {}
+      } else {
+        params = { pageType: 0 }
+      }
+      request(params)
         .then(res => {
           this.userList = res.data.map(item => {
             item.type = 'user'

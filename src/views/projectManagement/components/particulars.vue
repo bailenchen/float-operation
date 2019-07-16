@@ -1116,7 +1116,7 @@ export default {
         var item =
           this.replyChildIndex == -1
             ? this.replyChildComment
-            : this.replyChildComment.replyList[this.replyChildIndex]
+            : this.replyChildComment.childCommentList[this.replyChildIndex]
         workTaskcommentSaveAPI({
           pid: item.userId,
           typeId: item.typeId,
@@ -1356,6 +1356,7 @@ export default {
       })
         .then(res => {
           this.loading = false
+          this.$message.success('恢复成功')
           this.$emit('on-handle', {
             type: 'recover-task',
             index: this.detailIndex,

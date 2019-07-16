@@ -83,10 +83,11 @@
 import newTag from '@/views/projectManagement/components/tag/newTag'
 import editTag from '@/views/projectManagement/components/tag/editTag'
 import { workTasklableIndexAPI } from '@/api/projectManagement/tag'
+import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
-  workTaskSaveAPI
-} from '@/api/projectManagement/task'
-import { workTasklableDeleteAPI, workTasklableSaveAPI } from '@/api/projectManagement/tag'
+  workTasklableDeleteAPI,
+  workTasklableSaveAPI
+} from '@/api/projectManagement/tag'
 
 export default {
   components: {

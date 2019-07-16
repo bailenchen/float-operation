@@ -129,7 +129,7 @@ export function workWorkOwnerListAPI(data) {
  */
 export function workWorkOwnerDelAPI(data) {
     return request({
-        url: 'work/remove',
+        url: '/system/role/deleteWorkRole',
         method: 'post',
         data: data
     })

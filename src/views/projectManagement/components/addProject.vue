@@ -45,7 +45,8 @@
             </el-option>
           </el-select>
         </div>
-        <div class="member">
+        <div class="member"
+             v-if="openType == 2">
           <div class="label">项目成员</div>
           <div>
             <div v-photo="k"
@@ -140,15 +141,20 @@ export default {
      */
     submitBtn() {
       this.loading = true
-      workWorkSaveAPI({
+      let params = {
         name: this.name,
         description: this.description,
         color: this.typeColor,
-        isOpen: this.openType,
-        ownerUserId: this.selectUserList.map(item => {
-          return item.userId
-        }).join(',')
-      })
+        isOpen: this.openType
+      }
+      if (this.openType == 2) {
+        params.ownerUserId = this.selectUserList
+          .map(item => {
+            return item.userId
+          })
+          .join(',')
+      }
+      workWorkSaveAPI(params)
         .then(res => {
           this.loading = false
           this.$emit('save-success')

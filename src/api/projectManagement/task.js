@@ -117,7 +117,7 @@ export function workTaskReadLoglistAPI(data) {
  */
 export function workTaskcommentSaveAPI(data) {
     return request({
-        url: 'comment/setComment',
+        url: 'comment/setWorkTaskComment',
         method: 'post',
         data
     })

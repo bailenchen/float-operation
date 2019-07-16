@@ -98,7 +98,7 @@ export default {
     var validateTime = (rule, value, callback) => {
       if (this.formData.startTime && this.formData.stopTime) {
         if (
-          formatTimeToTimestamp(this.formData.startTime) >=
+          formatTimeToTimestamp(this.formData.startTime) >
           formatTimeToTimestamp(this.formData.stopTime)
         ) {
           callback(new Error('开始时间必须小于结束时间'))
@@ -142,7 +142,12 @@ export default {
       if (value) {
         if (this.action.type == 'create') {
           if (this.action.data) {
-            this.formData = Object.assign(this.formData, this.action.data)
+            this.formData = Object.assign(
+              {
+                priority: 0
+              },
+              this.action.data
+            )
           } else {
             this.formData = {
               priority: 0

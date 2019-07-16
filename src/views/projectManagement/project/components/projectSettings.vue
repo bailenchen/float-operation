@@ -115,7 +115,6 @@ import {
   workWorkSaveAPI,
   workWorkOwnerDelAPI,
   workWorkAddUserGroupAPI,
-  workWorkOwnerListAPI,
   workWorkGroupListAPI
 } from '@/api/projectManagement/project'
 import MembersDep from '@/components/selectEmployee/membersDep'
@@ -293,7 +292,7 @@ export default {
       }).then(res => {
         this.membersList.splice(index, 1)
         this.$message.success('删除成功')
-      })
+      }).catch(err => {})
     }
   },
 

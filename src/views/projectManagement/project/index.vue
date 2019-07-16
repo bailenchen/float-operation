@@ -209,6 +209,7 @@ export default {
       })
         .then(res => {
           this.membersList = res.data || []
+          this.$bus.$emit('members-update', this.membersList)
         })
         .catch(err => {})
     },

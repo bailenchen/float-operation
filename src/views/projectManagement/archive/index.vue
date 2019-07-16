@@ -142,6 +142,7 @@ export default {
             .then(res => {
               this.list.splice(index, 1)
               this.$message.success('恢复成功')
+              this.$bus.$emit('recover-project', val.name, val.workId)
               this.loading = false
             })
             .catch(err => {

@@ -5,6 +5,7 @@
                :options="{ group: 'mission', forceFallback: false, dragClass: 'sortable-parent-drag', filter: '.ignore-elements'}"
                handle=".board-column-wrapper"
                @end="moveEndParentTask"
+               :move="moveParentTask"
                id="task-board-body"
                class="board-column-content-parent"
                v-scrollx="{ ignoreClass :['ignoreClass']}">
@@ -73,7 +74,10 @@
                          :percentage="item.checkedNum / item.list.length * 100"></el-progress>
           </div>
           <draggable :list="item.list"
-                     :options="{ group: 'missionSon', forceFallback: false, dragClass: 'sortable-drag' }"
+                     :options="{ group: {
+                       name: 'missionSon',
+                       put: item.classId != -1
+                     }, forceFallback: false, dragClass: 'sortable-drag'}"
                      @end="moveEndSonTask"
                      class="board-column-content"
                      :id="item.classId">
@@ -271,6 +275,7 @@ import newDialog from '@/views/projectManagement/components/newDialog'
 import particulars from '@/views/projectManagement/components/particulars'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
+import { debounce } from 'throttle-debounce'
 
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
@@ -415,16 +420,18 @@ export default {
       workTaskIndexAPI(params)
         .then(res => {
           this.loading = false
-          this.taskList = res.data
-          for (let item of this.taskList) {
+          for (let item of res.data) {
             item.checkedNum = 0
             for (let i of item.list) {
               if (i.status == 5) {
                 i.checked = true
                 item.checkedNum += 1
+              } else {
+                i.checked = false
               }
             }
           }
+          this.taskList = res.data
         })
         .catch(err => {
           this.loading = false
@@ -447,6 +454,15 @@ export default {
       }
     },
 
+    moveParentTask(evt) {
+      if (
+        evt.draggedContext.futureIndex == 0 &&
+        this.taskList[0].classId == -1
+      ) {
+        return false
+      }
+    },
+
     /**
      * 任务拖拽
      */
@@ -460,13 +476,17 @@ export default {
           return
         }
 
-        let fromList = this.taskList.filter(item => {
+        let fromTask = this.taskList.filter(item => {
           return item.classId == fromId
-        })[0].list
+        })[0]
+        let fromList = fromTask.list
+        this.updateTaskListCheckNum(fromTask)
 
-        let toList = this.taskList.filter(item => {
+        let toTask = this.taskList.filter(item => {
           return item.classId == toId
-        })[0].list
+        })[0]
+        let toList  = toTask.list
+        this.updateTaskListCheckNum(toTask)
 
         let params = {}
         if (fromId == toId) {
@@ -492,6 +512,15 @@ export default {
           .then(res => {})
           .catch(err => {})
       }
+    },
+
+    /**
+     * 更新勾选数字
+     */
+    updateTaskListCheckNum(task) {
+      task.checkedNum = task.list.filter(item => {
+        return item.checked
+      }).length
     },
 
     /**
@@ -689,11 +718,14 @@ export default {
       if (data.index == 0 || data.index) {
         // 是否完成勾选
         if (data.type == 'title-check') {
-          this.$set(
-            this.taskList[data.section].list[data.index],
-            'checked',
-            data.value
-          )
+          let sectionItem = this.taskList[data.section]
+          this.$set(sectionItem.list[data.index], 'checked', data.value)
+          if (data.value) {
+            sectionItem.checkedNum++
+          } else {
+            sectionItem.checkedNum--
+          }
+          this.$set(sectionItem, 'checkedNum', sectionItem.checkedNum)
         } else if (data.type == 'delete') {
           this.taskList[data.section].list.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {

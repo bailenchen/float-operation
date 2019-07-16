@@ -19,15 +19,14 @@
         <div class="time">
           <el-date-picker v-model="subtasksDate"
                           type="date"
-                          @change="subtasksDateClick(subtasksDate)"
                           ref="subtasksDate"
                           format="yyyy 年 MM 月 dd 日"
                           value-format="yyyy-MM-dd"
-                          :style="{'width': subtasksDataText ? '54px': '28px'}"
+                          :style="{'width': subtasksDate ? '54px': '28px'}"
                           placeholder="选择日期">
           </el-date-picker>
           <span class="bg-color"
-                v-if="subtasksDataText && subtasksDataText != 0">{{subtasksDataText | moment("MM-DD")}}</span>
+                v-if="subtasksDate">{{subtasksDate | moment("MM-DD")}}</span>
           <i v-else
              class="wukong wukong-time-task"
              @click="subtasksDateFun"></i>
@@ -82,7 +81,6 @@ export default {
       subtasksDate: '',
       // 子任务数据
       xhUserData: [],
-      subtasksDataText: null,
       // 子任务人员
       subtaskChange: false,
       num: 0,
@@ -93,7 +91,7 @@ export default {
   created() {
     if (this.subTaskCom == 'edit') {
       this.subtasksTextarea = this.text ? this.text : ''
-      this.subtasksDataText = this.time
+      this.subtasksDate = this.time
       if (JSON.stringify(this.subData) !== '{}') {
         if (this.subData.mainUser) {
           this.subtaskChange = true
@@ -128,10 +126,6 @@ export default {
   },
   watch: {},
   methods: {
-    // 子任务 -- 选中时间
-    subtasksDateClick(val) {
-      this.subtasksDataText = val.substring(5)
-    },
     subtasksSubmit(event) {
       this.subtasksTextarea = this.subtasksTextarea.split(/[\n]/).join('')
       if (this.subtasksTextarea && this.num == 0) {
@@ -155,7 +149,7 @@ export default {
               this.$message.success('子任务创建成功')
               // 创建成功 -- 清除选择
               this.subtasksTextarea = ''
-              this.subtasksDataText = null
+              this.subtasksDate = ''
               this.subtaskChange = false
               this.num = 0
             })
@@ -170,7 +164,7 @@ export default {
           if (
             this.isNum == 1 ||
             this.text != this.subtasksTextarea ||
-            this.subtasksDataText != this.time
+            this.subtasksDate != this.time
           ) {
             this.$emit('on-handle', { type: 'edit', result: 'success' })
             workTaskSaveAPI({
