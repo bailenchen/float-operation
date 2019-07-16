@@ -965,7 +965,7 @@ export default {
           // val.substring(5)
           this.$emit('on-handle', {
             type: 'change-stop-time',
-            value: new Date(val).getTime() / 1000,
+            value: val,
             index: this.detailIndex
           })
         })

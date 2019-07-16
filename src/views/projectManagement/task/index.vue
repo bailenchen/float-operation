@@ -343,10 +343,10 @@ export default {
               commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
-          this.taskList[data.section].list[data.index].subdonecount =
+          this.taskList[data.section].list[data.index].childWCCount =
             data.value.subdonecount
-          this.taskList[data.section].list[data.index].subcount =
-            data.value.allcount - data.value.subdonecount
+          this.taskList[data.section].list[data.index].childAllCount =
+            data.value.allcount
         }
       }
     },

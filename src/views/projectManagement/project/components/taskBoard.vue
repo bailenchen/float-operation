@@ -165,7 +165,7 @@
             <div class="img-box">
               <span class="stop-time">
                 <span v-if="subTaskStopTimeDate"
-                      class="bg-color">{{new Date(subTaskStopTimeDate).getTime() | moment('MM-DD')}}<i class="el-icon-close"
+                      class="bg-color">{{subTaskStopTimeDate | moment('MM-DD')}}<i class="el-icon-close"
                      @click="subTaskStopTimeDate = ''"></i></span>
                 <i v-else
                    class="wukong wukong-time-task">
@@ -173,7 +173,7 @@
                 <el-date-picker v-model="subTaskStopTimeDate"
                                 type="date"
                                 :style="{'width': subTaskStopTimeDate ? '54px' : '18px'}"
-                                value-format="yyyy-MM-DD"
+                                value-format="yyyy-MM-dd"
                                 placeholder="选择日期">
                 </el-date-picker>
               </span>
@@ -697,7 +697,7 @@ export default {
         } else if (data.type == 'delete') {
           this.taskList[data.section].list.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {
-          let stopTime = parseInt(data.value) + 86399
+          let stopTime = new Date(data.value).getTime() / 1000 + 86399
           if (stopTime > new Date(new Date()).getTime() / 1000) {
             this.taskList[data.section].list[data.index].isEnd = false
           } else {
@@ -719,10 +719,10 @@ export default {
               commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
-          this.taskList[data.section].list[data.index].subdonecount =
+          this.taskList[data.section].list[data.index].childWCCount =
             data.value.subdonecount
-          this.taskList[data.section].list[data.index].subcount =
-            data.value.allcount - data.value.subdonecount
+          this.taskList[data.section].list[data.index].childAllCount =
+            data.value.allcount
         }
       }
     },

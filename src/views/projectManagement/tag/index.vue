@@ -250,17 +250,17 @@ export default {
         ) {
           this.taskList.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {
-          let stopTime = parseInt(data.value) + 86399
+          let stopTime = new Date(data.value).getTime() / 1000 + 86399
           if (stopTime > new Date(new Date()).getTime() / 1000) {
-            this.taskList[data.section].list[data.index].is_end = false
+            this.taskList[data.section].list[data.index].isEnd = false
           } else {
-            this.taskList[data.section].list[data.index].is_end = true
+            this.taskList[data.section].list[data.index].isEnd = true
           }
-          this.taskList[data.section].list[data.index].stop_time = data.value
+          this.taskList[data.section].list[data.index].stopTime = data.value
         } else if (data.type == 'change-priority') {
           this.taskList[data.section].list[data.index].priority = data.value.id
         } else if (data.type == 'change-name') {
-          this.taskList[data.section].list[data.index].task_name = data.value
+          this.taskList[data.section].list[data.index].name = data.value
         } else if (data.type == 'change-comments') {
           let commentCount = this.taskList[data.section].list[data.index]
             .commentCount
@@ -272,10 +272,10 @@ export default {
               commentCount - 1
           }
         } else if (data.type == 'change-sub-task') {
-          this.taskList[data.section].list[data.index].subdonecount =
+          this.taskList[data.section].list[data.index].childWCCount =
             data.value.subdonecount
-          this.taskList[data.section].list[data.index].subcount =
-            data.value.allcount - data.value.subdonecount
+          this.taskList[data.section].list[data.index].childAllCount =
+            data.value.allcount
         }
       }
     },

@@ -1038,7 +1038,7 @@ export default {
         .then(res => {
           this.$emit('on-handle', {
             type: 'change-stop-time',
-            value: new Date(val).getTime() / 1000,
+            value: val,
             index: this.detailIndex,
             section: this.detailSection
           })
@@ -1224,7 +1224,7 @@ export default {
       this.showRelatedDetail = true
     },
     deleteSubTask(val) {
-      this.$confirm('此操作将永久删除该任务, 是否继续?', '提示', {
+      this.$confirm('此操作将删除该任务, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
