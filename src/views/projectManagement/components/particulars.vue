@@ -57,8 +57,10 @@
                         width="80"
                         trigger="click">
               <div class="more-btn-group">
-                <p v-if="taskData.isArchive != 1 && taskData.ishidden != 1" @click="moreArchive">归 档</p>
-                <p v-if="taskData.ishidden != 1" @click="moreDelete">删 除</p>
+                <p v-if="taskData.isArchive != 1 && taskData.ishidden != 1"
+                   @click="moreArchive">归 档</p>
+                <p v-if="taskData.ishidden != 1"
+                   @click="moreDelete">删 除</p>
               </div>
               <span slot="reference">
                 <img src="@/assets/img/task_ellipsis.png">
@@ -1499,7 +1501,6 @@ export default {
   overflow: auto;
   display: flex;
   flex-direction: column;
-  padding-bottom: 90px;
 }
 .tip {
   position: fixed;
@@ -1981,7 +1982,7 @@ export default {
     }
   }
   .card-footers {
-    margin-top: 20px;
+    margin: 20px 0 40px 0;
     .footer-title {
       margin-bottom: 40px;
       margin-left: 35px;
@@ -2204,6 +2205,11 @@ export default {
     border-radius: 11px;
     padding: 5px 15px;
   }
+}
+
+.body-content {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
 

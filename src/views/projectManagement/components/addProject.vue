@@ -46,7 +46,7 @@
           </el-select>
         </div>
         <div class="member"
-             v-if="openType == 2">
+             v-if="openType == 0">
           <div class="label">项目成员</div>
           <div>
             <div v-photo="k"
@@ -107,10 +107,10 @@ export default {
         '#F24D70',
         '#FF6F6F'
       ],
-      openType: 2,
+      openType: 0,
       openOptions: [
         {
-          value: 2,
+          value: 0,
           label: '私有：只有加入的成员才能看见此项目'
         },
         {
@@ -147,7 +147,7 @@ export default {
         color: this.typeColor,
         isOpen: this.openType
       }
-      if (this.openType == 2) {
+      if (this.openType == 0) {
         params.ownerUserId = this.selectUserList
           .map(item => {
             return item.userId

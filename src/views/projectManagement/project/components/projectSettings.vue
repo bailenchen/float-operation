@@ -17,7 +17,7 @@
             <span :style="{color: tabType == 'base' ? '#3E84E9': '#333333'}"
                   class="span-item"
                   @click="tabType = 'base'">基础设置</span>
-            <span v-if="isOpen == 2"
+            <span v-if="isOpen == 0"
                   :style="{color: tabType == 'member' ? '#3E84E9': '#333333'}"
                   class="span-item"
                   @click="tabType = 'member'">成员管理</span>
@@ -146,10 +146,10 @@ export default {
       // 动态背景
       setColor: '',
       setTitle: '',
-      setIsOpen: 2,
+      setIsOpen: 0,
       openOptions: [
         {
-          value: 2,
+          value: 0,
           label: '私有：只有加入的成员才能看见此项目'
         },
         {
