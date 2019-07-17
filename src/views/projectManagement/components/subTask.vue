@@ -34,9 +34,12 @@
         <!-- 选择负责人 -->
         <el-popover placement="bottom-end"
                     width="280"
-                    trigger="click">
+                    trigger="click"
+                    v-model="showUserPopover">
           <xh-user ref="xhuser"
                    radio
+                   :infoRequest="ownerListRequest"
+                   :infoParams="{ workId: workId }"
                    :selectedData="xhUserData"
                    @changeCheckout="xhUserCheckout">
           </xh-user>
@@ -49,7 +52,7 @@
                             effect="light"
                             popper-class="tooltip-change-border">
                   <div slot="content">
-                    <span>{{item.realname}}</span>
+                    <span @click="showUserPopover = true">{{item.realname}}</span>
                   </div>
                   <div v-photo="item"
                        v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
@@ -70,6 +73,7 @@
 <script>
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import XhUser from '@/components/CreateCom/XhUser'
+import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 
 export default {
   components: {
@@ -85,7 +89,8 @@ export default {
       subtaskChange: false,
       num: 0,
       subtasksTextarea: '',
-      isNum: 0
+      isNum: 0,
+      showUserPopover: false
     }
   },
   created() {
@@ -122,6 +127,14 @@ export default {
     checkboxData: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    ownerListRequest() {
+      return workWorkOwnerListAPI
+    },
+    workId() {
+      return this.taskData.workId
     }
   },
   watch: {},
@@ -217,6 +230,7 @@ export default {
         this.isNum = 0
         this.subtaskChange = false
       }
+      this.showUserPopover = false
     },
     // 子任务 -- 时间弹框
     subtasksDateFun() {

@@ -903,6 +903,7 @@ export default {
         batchId: this.taskData.batchId
       })
         .then(res => {
+          res.filePath = res.url
           this.fileList.push(res)
           // this.$emit('httpRequest', this.taskData)
           this.$message.success('上传成功')
@@ -1982,7 +1983,7 @@ export default {
     }
   }
   .card-footers {
-    margin: 20px 0 40px 0;
+    margin: 20px 0 60px 0;
     .footer-title {
       margin-bottom: 40px;
       margin-left: 35px;
@@ -2205,11 +2206,6 @@ export default {
     border-radius: 11px;
     padding: 5px 15px;
   }
-}
-
-.body-content {
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 </style>
 
