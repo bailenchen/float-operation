@@ -228,6 +228,7 @@ export default {
       })
         .then(res => {
           this.membersList = res.data
+          this.$bus.$emit('members-update', res.data)
           this.$message.success('添加成功')
         })
         .catch(err => {})
@@ -349,6 +350,7 @@ export default {
      */
     membersHandle(type, data) {
       if (type == 'member') {
+        this.$bus.$emit('members-update', data)
         this.membersList = data
       }
     }
