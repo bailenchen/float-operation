@@ -39,9 +39,7 @@
                     <el-checkbox v-model="element.checked"
                                  @change="checkboxChange(element, item)"></el-checkbox>
                   </div>
-                  <div class="element-label">
-                    <i v-if="element.workName"
-                       class="wukong wukong-sub-task"></i>{{element.name}}<span v-if="element.workName">（{{element.workName}}）</span></div>
+                  <div class="element-label">{{element.name}}<span v-if="element.workName">（{{element.workName}}）</span></div>
                   <div v-if="element.mainUser"
                        v-photo="element.mainUser"
                        v-lazy:background-image="$options.filters.filterUserLazyImg(element.mainUser.img)"

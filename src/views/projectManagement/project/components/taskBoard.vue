@@ -368,7 +368,7 @@ export default {
   },
 
   props: {
-    workId: String,
+    workId: [String, Number],
     permission: {
       type: Object,
       default: () => {
@@ -621,6 +621,7 @@ export default {
         workId: this.workId
       })
         .then(res => {
+          this.taskListName = ''
           this.getList()
         })
         .catch(err => {})

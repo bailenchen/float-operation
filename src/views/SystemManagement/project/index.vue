@@ -53,10 +53,8 @@
 import JurisdictionCreate from './components/jurisdictionCreate'
 import Reminder from '@/components/reminder'
 import {
-  roleDelete
-} from '@/api/systemManagement/RoleAuthorization'
-import {
-  systemRoleQueryProjectRoleListAPI
+  systemRoleQueryProjectRoleListAPI,
+  systemRoleDeleteWorkRoleAPI
 } from '@/api/systemManagement/project'
 
 export default {
@@ -138,7 +136,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            roleDelete({
+            systemRoleDeleteWorkRoleAPI({
               roleId: scope.row.roleId
             })
               .then(res => {
@@ -190,7 +188,6 @@ export default {
 }
 
 .project-reminder {
-  display: inline-block;
   width: auto;
   float: left;
   margin-left: 20px;

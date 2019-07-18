@@ -142,7 +142,8 @@ export default {
             item.children.push({
               path: 'list/' + id,
               meta: {
-                title: name
+                title: name,
+                id: id
               }
             })
             this.$nextTick(() => {
@@ -165,7 +166,8 @@ export default {
             item.children.push({
               path: 'list/' + id,
               meta: {
-                title: name
+                title: name,
+                id: id
               }
             })
           }

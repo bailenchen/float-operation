@@ -463,7 +463,11 @@ export default {
   display: none;
 }
 
-body .el-table th.gutter{
-    display: table-cell!important;
+body .el-table th.gutter {
+  display: table-cell !important;
+}
+
+.el-table /deep/ .el-table__body-wrapper {
+  height: calc(100% - 48px) !important;
 }
 </style>

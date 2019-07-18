@@ -26,13 +26,24 @@ export function systemMenuGetWorkMenuListAPI(data) {
  * @param {*} data
  */
 export function systemRoleSetWorkRoleAPI(data) {
-    return request({
-      url: 'system/role/setWorkRole',
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      data: data
-    })
-  }
+  return request({
+    url: 'system/role/setWorkRole',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
+/**
+ * 删除项目角色
+ */
+export function systemRoleDeleteWorkRoleAPI(data) {
+  return request({
+    url: 'system/role/deleteWorkRole',
+    method: 'post',
+    data: data
+  })
+}
 
