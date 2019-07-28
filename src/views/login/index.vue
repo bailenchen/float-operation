@@ -4,13 +4,13 @@
       <div class="left-pic" />
     </div>
     <div class="right">
+      <div class="title">{{name}}</div>
       <el-form ref="loginForm"
                :model="loginForm"
                :rules="loginRules"
                class="login-form"
                auto-complete="on"
                label-position="left">
-        <div class="title">{{name}}</div>
         <el-form-item prop="username">
           <el-input ref="name"
                     v-model="loginForm.username"
@@ -169,14 +169,14 @@ $login_theme: #00aaee;
     align-items: center;
     flex-direction: column;
     padding-top: 6%;
+    .title {
+      font-size: 26px;
+      color: $light_gray;
+      margin: 0 auto 50px;
+      text-align: center;
+    }
     .el-form {
       width: 70%;
-      .title {
-        font-size: 26px;
-        color: $light_gray;
-        margin: 0 auto 50px;
-        text-align: center;
-      }
       .submit-btn {
         width: 100%;
         line-height: 2;

@@ -31,6 +31,11 @@ export const constantRouterMap = [{
     hidden: true
   },
   {
+    path: '/clogin',
+    component: () => import('@/views/login/cloudIndex'),
+    hidden: true
+  },
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
