@@ -72,7 +72,7 @@
                   <img slot="suffix"
                        alt=""
                        class="image-verification"
-                       src="http://crm.72crm.com/crm9/index.php/index/index/getVerify"
+                       src="/api/cloud/authCode?t=1"
                        @click="changeImageVerification" />
                 </el-input>
               </el-form-item>
@@ -124,7 +124,7 @@
 <script>
 import Register from './components/register'
 import ForgetPassword from './components/forgetPassword'
-import { sendSmsAPI, passwordLoginAPI, dynamicLoginAPI } from '@/api/login'
+import { sendSmsAPI, LoginAPI } from '@/api/login'
 import { isvalidUsername } from '@/utils/validate'
 import { mapGetters } from 'vuex'
 import Lockr from 'lockr'
@@ -208,17 +208,13 @@ export default {
         // 密码登录
         this.$refs.loginForm.validate(valid => {
           if (valid) {
-            console.log('loginForm-----', this.loginForm)
-            // this.$router.push({ path: this.redirect || '/workbench/index' })
-            passwordLoginAPI({
-              types: 1,
-              telephone: this.loginForm.telephone,
+            LoginAPI({
+              username: this.loginForm.username,
               password: this.loginForm.password
             })
               .then(response => {
-                console.log(response.data)
-
-                this.handleLoginSuccess(response.data)
+                console.log(response)
+                this.handleLoginSuccess(response)
               })
               .catch(error => {})
           } else {
@@ -228,17 +224,12 @@ export default {
       } else {
         this.$refs.dyLoginForm.validate(valid => {
           if (valid) {
-            console.log('dyLoginForm-----', this.dyLoginForm)
-
-            dynamicLoginAPI({
-              types: 2,
-              telephone: this.loginForm.telephone,
-              smscode: this.loginForm.smscode
+            LoginAPI({
+              username: this.dyLoginForm.telephone,
+              smscode: this.dyLoginForm.smscode
             })
               .then(response => {
-                console.log(response.data)
-
-                this.handleLoginSuccess(response.data)
+                this.handleLoginSuccess(response)
               })
               .catch(error => {})
           } else {
@@ -264,15 +255,14 @@ export default {
       this.$store.commit('SET_CRM', data.auth.crm)
       this.$store.commit('SET_BI', data.auth.bi)
       this.$store.commit('SET_MANAGE', data.auth.manage)
+      this.$router.push({ path: this.redirect || '/workbench/index' })
     },
 
     /**
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src =
-        'http://crm.72crm.com/crm9/index.php/index/index/getVerify?t=' +
-        Math.random()
+      e.target.src = '/api/cloud/authCode?t=' + Math.random()
     },
 
     /**

@@ -31,11 +31,11 @@ export function logout() {
 /** 云平台 登录 API */
 /**
  * 账号密码登录
- * @param {*} data 
+ * @param {*} data
  */
-export function passwordLoginAPI(data) {
+export function LoginAPI(data) {
   return request({
-    url: 'http://crm.72crm.com/crm9/index.php/index/index/clogin',
+    url: '/login',
     method: 'post',
     data: data
   })
@@ -47,19 +47,7 @@ export function passwordLoginAPI(data) {
  */
 export function sendSmsAPI(data) {
   return request({
-    url: 'http://crm.72crm.com/crm9/index.php/index/index/sendSms',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 验证码登录
- * @param {*} data
- */
-export function dynamicLoginAPI(data) {
-  return request({
-    url: 'http://crm.72crm.com/crm9/index.php/index/index/clogin',
+    url: '/cloud/sendSms',
     method: 'post',
     data: data
   })
@@ -67,11 +55,11 @@ export function dynamicLoginAPI(data) {
 
 /**
  * 找回密码第一步验证
- * @param {*} data 
+ * @param {*} data
  */
 export function findpwdAPI(data) {
   return request({
-    url: 'http://crm.72crm.com/crm9/index.php/index/index/findpwd',
+    url: '/cloud/findpwd',
     method: 'post',
     data: data
   })
@@ -79,11 +67,11 @@ export function findpwdAPI(data) {
 
 /**
  * 重置密码
- * @param {*} data 
+ * @param {*} data
  */
 export function resetpwdAPI(data) {
   return request({
-    url: 'http://crm.72crm.com/crm9/index.php/index/index/resetpwd',
+    url: '/cloud/resetpwd',
     method: 'post',
     data: data
   })
@@ -92,11 +80,11 @@ export function resetpwdAPI(data) {
 
 /**
  * 注册
- * @param {*} data 
+ * @param {*} data
  */
 export function registerAPI(data) {
   return request({
-    url: 'http://crm.72crm.com/crm9/index.php/index/index/register',
+    url: '/cloud/register',
     method: 'post',
     data: data
   })

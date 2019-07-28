@@ -25,7 +25,7 @@
           <img slot="suffix"
                alt=""
                class="image-verification"
-               src="http://crm.72crm.com/crm9/index.php/index/index/getVerify"
+               src="/api/cloud/authCode"
                @click="changeImageVerification" />
         </el-input>
       </el-form-item>
@@ -156,17 +156,16 @@ export default {
     goNext() {
       this.$refs.findForm.validate(valid => {
         if (valid) {
-          console.log('findForm-----', this.findForm)
-          this.isNext = true
-          // findpwdAPI({
-          //   telephone: this.findForm.telephone,
-          //   img_verify: this.findForm.img_verify
-          //   smscode: this.findForm.smscode
-          // })
-          //   .then(response => {
-          //     console.log(response.data)
-          //   })
-          //   .catch(error => {})
+          findpwdAPI({
+            phone: this.findForm.telephone,
+            smscode: this.findForm.smscode
+          })
+            .then(response => {
+              if(response.code===0){
+                this.isNext = true
+              }
+            })
+            .catch(error => {})
         } else {
           return false
         }
@@ -180,14 +179,16 @@ export default {
       this.$refs.confirmPasswordForm.validate(valid => {
         if (valid) {
           console.log('confirmPasswordForm-----', this.confirmPasswordForm)
-          // resetpwdAPI({
-          //   password: this.confirmPasswordForm.password,
-          //   confirm_password: this.confirmPasswordForm.confirm_password
-          // })
-          //   .then(response => {
-          //     console.log(response.data)
-          //   })
-          //   .catch(error => {})
+          resetpwdAPI({
+            password: this.confirmPasswordForm.password,
+          })
+            .then(response => {
+              if(response.code===0){
+                this.$message.success('重置密码成功')
+                this.goLogin();
+              }
+            })
+            .catch(error => {})
         } else {
           return false
         }
@@ -198,9 +199,7 @@ export default {
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src =
-        'http://crm.72crm.com/crm9/index.php/index/index/getVerify?t=' +
-        Math.random()
+      e.target.src ='/api/cloud/authCode?t=' + Math.random();
     },
 
     /**
@@ -222,8 +221,6 @@ export default {
           img_verify: this.findForm.img_verify
         })
           .then(response => {
-            console.log(response.data)
-
             // 倒计时逻辑
             this.verificationDisabled = true
             this.verificationButtonName = '60s后重新发送'

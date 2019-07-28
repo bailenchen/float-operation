@@ -24,7 +24,7 @@
           <img slot="suffix"
                alt=""
                class="image-verification"
-               src="http://crm.72crm.com/crm9/index.php/index/index/getVerify"
+               src="/api/cloud/authCode"
                @click="changeImageVerification" />
         </el-input>
       </el-form-item>
@@ -47,7 +47,7 @@
                   placeholder="请输入密码（6-20位，同时包含字母、数字）" />
       </el-form-item>
       <el-form-item prop="confirm_password">
-        <el-input type="confirm_password"
+        <el-input type="password"
                   v-model="registerForm.confirm_password"
                   name="confirm_password"
                   auto-complete="on"
@@ -119,15 +119,16 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           console.log('loginForm-----', this.registerForm)
-          // registerAPI({
-          //   types: 1,
-          //   telephone: this.loginForm.telephone,
-          //   password: this.loginForm.password
-          // })
-          //   .then(response => {
-          //     console.log(response.data)
-          //   })
-          //   .catch(error => {})
+          registerAPI({
+            types: 1,
+            phone: this.registerForm.telephone,
+            smscode: this.registerForm.smscode,
+            password: this.registerForm.password
+          }).then(response => {
+              this.$message.success('注册成功')
+              this.goLogin();
+            })
+            .catch(error => {})
         } else {
           return false
         }
@@ -138,8 +139,7 @@ export default {
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src =
-        'http://crm.72crm.com/crm9/index.php/index/index/getVerify?t=' +
+      e.target.src = '/api/cloud/authCode?t=' + Math.random();
         Math.random()
     },
 
