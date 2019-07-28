@@ -427,3 +427,29 @@ export function guid() {
   }
   return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
 }
+
+import CryptoJS from 'crypto-js'
+
+export function encrypt(word) {
+  const key = CryptoJS.enc.Utf8.parse('99c5b4fc63b64dcb9a7979993f33c760')
+  const srcs = CryptoJS.enc.Utf8.parse(word)
+  const encrypted = CryptoJS.AES.encrypt(srcs, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+  return encrypted.toString()
+}
+
+export function decrypt(word) {
+  const key = CryptoJS.enc.Utf8.parse('99c5b4fc63b64dcb9a7979993f33c760')
+  const decrypt = CryptoJS.AES.decrypt(word, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 })
+  return CryptoJS.enc.Utf8.stringify(decrypt).toString()
+}
+
+import JsEncrypt from 'jsencrypt'
+
+export function RSAencrypt(pas) {
+  const publicKey = '-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4ZiC5JTMV6C12+cuxDoBBUN3wYdHnSF/sUV9a6lST4GpQTpBkC5vvMhb5mqnDzzAkOiRgrbjBqTuf6PVSgJt+b2rsV2A1zvhXLdVhU4Zw2R+iHDb+mXvZnFXKkwjb5+GMkX2tj4DxqEq3QP0XZHxuvpl5h7kdIIp/QS80Pk7jdlSi92TY5C62j6WU2Cw0SC0Ie4bOJQL5E5WphY3k6xJekpHh6y5k1utgV4RVCyxGnBpp1S0u2aupa1gd0A/AEjfv6uJJh6B8HY8DUgWgLEb0jGF5IviUKPu5B2GcLtZg45jjzZfcIt5gLVxBo9w870khq95MkSW0kULtG+1NVjz2wIDAQAB-----END PUBLIC KEY-----'
+  // 实例化jsEncrypt对象
+  const jse = new JsEncrypt()
+  // 设置公钥
+  jse.setPublicKey(publicKey)
+  return jse.encrypt(pas)
+}

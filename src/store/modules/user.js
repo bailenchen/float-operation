@@ -14,6 +14,7 @@ import {
   removeAuth
 } from '@/utils/auth'
 import Lockr from 'lockr'
+import { RSAencrypt } from '@/utils'
 
 const user = {
   state: {
@@ -49,8 +50,9 @@ const user = {
       commit
     }, userInfo) {
       const username = userInfo.username.trim()
+      const password = RSAencrypt(userInfo.password)
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(data => {
+        login(username, password).then(data => {
           Lockr.set('Admin-Token', data['Admin-Token'])
           Lockr.set('loginUserInfo', data.user)
 
