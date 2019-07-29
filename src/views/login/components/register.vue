@@ -16,6 +16,24 @@
                   auto-complete="on"
                   placeholder="请输入手机号" />
       </el-form-item>
+      <el-form-item prop="company_name">
+        <el-input ref="name"
+                  v-model="registerForm.company_name"
+                  autofocus="autofocus"
+                  name="company_name"
+                  type="text"
+                  auto-complete="on"
+                  placeholder="请输入企业名称" />
+      </el-form-item>
+      <el-form-item prop="company_credit_number">
+        <el-input ref="name"
+                  v-model="registerForm.company_credit_number"
+                  autofocus="autofocus"
+                  name="company_credit_number"
+                  type="text"
+                  auto-complete="on"
+                  placeholder="请输入企业信用号" />
+      </el-form-item>
       <el-form-item prop="img_verify">
         <el-input v-model="registerForm.img_verify"
                   name="img_verify"
@@ -87,6 +105,8 @@ export default {
       // 动态登录信息
       registerForm: {
         telephone: '',
+        company_name: '',
+        company_credit_number: '',
         img_verify: '',
         smscode: '',
         password: '',
