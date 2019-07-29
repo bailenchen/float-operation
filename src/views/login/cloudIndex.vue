@@ -72,7 +72,7 @@
                   <img slot="suffix"
                        alt=""
                        class="image-verification"
-                       src="/api/cloud/authCode?t=1"
+                       :src="'/api/cloud/authCode?t=' + Math.random()"
                        @click="changeImageVerification" />
                 </el-input>
               </el-form-item>
@@ -80,8 +80,7 @@
                 <el-input v-model="dyLoginForm.smscode"
                           name="smscode"
                           auto-complete="on"
-                          placeholder="请输入短信验证码"
-                          @click.native.prevent="handleLogin">
+                          placeholder="请输入短信验证码">
                   <el-button slot="suffix"
                              type="text"
                              :disabled="verificationDisabled"

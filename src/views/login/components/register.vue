@@ -24,7 +24,7 @@
           <img slot="suffix"
                alt=""
                class="image-verification"
-               src="/api/cloud/authCode"
+               :src="'/api/cloud/authCode?t=' + Math.random()"
                @click="changeImageVerification" />
         </el-input>
       </el-form-item>
@@ -140,7 +140,6 @@ export default {
      */
     changeImageVerification(e) {
       e.target.src = '/api/cloud/authCode?t=' + Math.random();
-        Math.random()
     },
 
     /**
