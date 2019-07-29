@@ -116,6 +116,12 @@ export default {
         telephone: [
           { required: true, message: '请输入手机号', trigger: 'blur' }
         ],
+        company_name: [
+          { required: true, message: '请输入企业名称', trigger: 'blur' }
+        ],
+        company_credit_number: [
+          { required: true, message: '请输入企业信用号', trigger: 'blur' }
+        ],
         img_verify: [
           { required: true, message: '请输入图片验证码', trigger: 'blur' }
         ],
