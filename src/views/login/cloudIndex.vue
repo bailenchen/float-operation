@@ -104,6 +104,21 @@
                    @click="showType = 'register'">创建新企业</el-button>
       </div>
 
+      <div v-else-if="showType == 'company'" style="padding: 0 15%;">
+        <div class="title">选择企业</div>
+        <div>
+          <flexbox class="company"
+                   v-for="(item, index) in companyList"
+                   :key="index">
+            <div class="company-title" @click="selectCompanyClick(item)">{{item}}</div>
+          </flexbox>
+        </div>
+        <el-button @click.native.prevent="showType = 'login'"
+                   class="submit-btn">
+          返回上一步
+        </el-button>
+      </div>
+
       <register v-if="showType == 'register'"
                 @login="showType = 'login'" />
       <forget-password v-if="showType == 'findPassword'"
@@ -127,9 +142,7 @@ import { sendSmsAPI, LoginAPI } from '@/api/login'
 import { isvalidUsername } from '@/utils/validate'
 import { mapGetters } from 'vuex'
 import Lockr from 'lockr'
-import {
-  addAuth
-} from '@/utils/auth'
+import { addAuth } from '@/utils/auth'
 
 export default {
   name: 'clogin',
@@ -153,7 +166,7 @@ export default {
       }
     }
     return {
-      showType: 'login', // login register findPassword
+      showType: 'login', // login (company) register findPassword
       activeLoginTab: 'password', // password dynamic
       loginForm: {
         username: '',
@@ -182,6 +195,20 @@ export default {
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
+
+      // 选择公司
+      companyList: [
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司'
+      ],
+
       loading: false,
       redirect: undefined,
       remember: false,
@@ -202,7 +229,13 @@ export default {
   },
   mounted() {},
   methods: {
+    /**
+     * 选择公司 重置密码
+     */
+    selectCompanyClick(item) {},
+
     handleLogin() {
+      this.showType = 'company'
       if (this.activeLoginTab == 'password') {
         // 密码登录
         this.$refs.loginForm.validate(valid => {
@@ -308,7 +341,7 @@ export default {
 <style lang="scss" scoped>
 $dark_gray: #ccc;
 $light_gray: #333;
-$login_theme: #00aaee;
+$login_theme: #3E84E9;
 
 /deep/ input {
   border: 0 none;
@@ -349,6 +382,17 @@ $login_theme: #00aaee;
     width: 32%;
     background-color: #fff;
     padding-top: 6%;
+    .submit-btn {
+      margin-top: 20px;
+      width: 100%;
+      line-height: 2;
+      font-size: 16px;
+      color: white;
+      border-radius: 3px;
+      background-color: $login_theme;
+      display: block;
+    }
+
     .title {
       font-size: 26px;
       color: $light_gray;
@@ -356,16 +400,6 @@ $login_theme: #00aaee;
       text-align: center;
     }
     .el-form {
-      .submit-btn {
-        margin-top: 20px;
-        width: 100%;
-        line-height: 2;
-        font-size: 16px;
-        color: white;
-        border-radius: 3px;
-        background-color: $login_theme;
-        display: block;
-      }
       .el-button {
         border: 0 none;
       }
@@ -425,5 +459,37 @@ $login_theme: #00aaee;
 .find-password {
   float: right;
   color: #999;
+}
+
+.company {
+  position: relative;
+  &-title {
+    padding: 10px 0;
+    font-size: 16px;
+    flex: 1;
+    cursor: pointer;
+  }
+  &-title:hover {
+    color: #3E84E9;
+  }
+  .el-button {
+    font-size: 15px;
+    margin-left: 8px;
+  }
+}
+.company:after {
+  content: ' ';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-bottom: 1px solid #e5e5e5;
+  color: #e5e5e5;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+  z-index: 2;
 }
 </style>

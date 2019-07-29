@@ -1,7 +1,7 @@
 <template>
   <div class="register">
-    <div class="title">找回密码</div>
-    <el-form v-if="!isNext"
+    <div class="title">{{showType == 'company' ? '选择企业' : '找回密码'}}</div>
+    <el-form v-if="showType == 'verify'"
              ref="findForm"
              :model="findForm"
              :rules="findRules"
@@ -50,7 +50,23 @@
       </el-form-item>
     </el-form>
 
-    <el-form v-else
+    <div v-else-if="showType == 'company'">
+      <div>
+        <flexbox class="company"
+                 v-for="(item, index) in companyList"
+                 :key="index">
+          <div class="company-title">{{item}}</div>
+          <el-button type="text"
+                     @click="resetPassword(item)">重置密码</el-button>
+        </flexbox>
+      </div>
+      <el-button @click.native.prevent="showType = 'verify'"
+                 class="submit-btn">
+        返回上一步
+      </el-button>
+    </div>
+
+    <el-form v-else-if="showType == 'password'"
              ref="confirmPasswordForm"
              :model="confirmPasswordForm"
              :rules="confirmPasswordRules"
@@ -61,19 +77,19 @@
         <el-input v-model="confirmPasswordForm.password"
                   name="password"
                   auto-complete="on"
-                  placeholder="请输入密码（6-20位，同时包含字母、数字）" />
+                  placeholder="请输入密码（8-20位，同时包含字母、数字）" />
       </el-form-item>
       <el-form-item prop="confirm_password">
         <el-input type="confirm_password"
                   v-model="confirmPasswordForm.confirm_password"
                   name="confirm_password"
                   auto-complete="on"
-                  placeholder="请输入确认密码（6-20位，同时包含字母、数字）"
+                  placeholder="请输入确认密码（8-20位，同时包含字母、数字）"
                   @keyup.enter.native="submitPassword" />
       </el-form-item>
       <el-form-item>
         <el-button :loading="loading"
-                   @click="isNext = false"
+                   @click="showType = 'company'"
                    class="submit-btn"
                    style="width: 40%; display: inline-block;">
           返回上一步
@@ -86,7 +102,8 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <el-button round
+    <el-button v-if="showType == 'verify'"
+               round
                @click="goLogin">立即登录</el-button>
   </div>
 </template>
@@ -111,7 +128,7 @@ export default {
     }
     return {
       loading: false,
-      isNext: false, // 分两步
+      showType: 'verify', // 分三步 verify company password
 
       // 找回密码
       findForm: {
@@ -133,15 +150,39 @@ export default {
       verificationDisabled: false, // 验证button是否可点击
       verificationButtonName: '获取验证码',
 
+      // 选择公司
+      companyList: [
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司',
+        '测试公司'
+      ],
+      selectCompany: null,
+
       // 确认密码
       confirmPasswordForm: {
         password: '',
         confirm_password: ''
       },
       confirmPasswordRules: {
-        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          {
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            message: '同时包含字母、数字、特殊符号'
+          }
+        ],
         confirm_password: [
           { required: true, message: '请输入确认密码', trigger: 'blur' },
+          {
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            message: '同时包含字母、数字、特殊符号'
+          },
           { required: true, trigger: 'blur', validator: validatePassword }
         ]
       }
@@ -154,6 +195,7 @@ export default {
      * 第一步的验证
      */
     goNext() {
+      this.showType = 'company'
       this.$refs.findForm.validate(valid => {
         if (valid) {
           findpwdAPI({
@@ -161,8 +203,8 @@ export default {
             smscode: this.findForm.smscode
           })
             .then(response => {
-              if(response.code===0){
-                this.isNext = true
+              if (response.code === 0) {
+                this.showType = 'company'
               }
             })
             .catch(error => {})
@@ -180,12 +222,12 @@ export default {
         if (valid) {
           console.log('confirmPasswordForm-----', this.confirmPasswordForm)
           resetpwdAPI({
-            password: this.confirmPasswordForm.password,
+            password: this.confirmPasswordForm.password
           })
             .then(response => {
-              if(response.code===0){
+              if (response.code === 0) {
                 this.$message.success('重置密码成功')
-                this.goLogin();
+                this.goLogin()
               }
             })
             .catch(error => {})
@@ -196,10 +238,18 @@ export default {
     },
 
     /**
+     * 选择公司 重置密码
+     */
+    resetPassword(item) {
+      this.selectCompany = item
+      this.showType = 'password'
+    },
+
+    /**
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src ='/api/cloud/authCode?t=' + Math.random();
+      e.target.src = '/api/cloud/authCode?t=' + Math.random()
     },
 
     /**
@@ -253,7 +303,7 @@ export default {
 <style lang="scss" scoped>
 $dark_gray: #ccc;
 $light_gray: #333;
-$login_theme: #00aaee;
+$login_theme: #3E84E9;
 
 .title {
   font-size: 26px;
@@ -262,17 +312,18 @@ $login_theme: #00aaee;
   text-align: center;
 }
 
+.submit-btn {
+  margin-top: 20px;
+  width: 100%;
+  line-height: 2;
+  font-size: 16px;
+  color: white;
+  border-radius: 3px;
+  background-color: $login_theme;
+  display: block;
+}
+
 .el-form {
-  .submit-btn {
-    margin-top: 20px;
-    width: 100%;
-    line-height: 2;
-    font-size: 16px;
-    color: white;
-    border-radius: 3px;
-    background-color: $login_theme;
-    display: block;
-  }
   .el-button {
     border: 0 none;
   }
@@ -302,5 +353,33 @@ $login_theme: #00aaee;
 .register {
   padding: 0 15%;
   text-align: center;
+}
+
+.company {
+  position: relative;
+  &-title {
+    padding: 10px 0;
+    font-size: 16px;
+    flex: 1;
+  }
+  .el-button {
+    font-size: 15px;
+    margin-left: 8px;
+  }
+}
+.company:after {
+  content: ' ';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-bottom: 1px solid #e5e5e5;
+  color: #e5e5e5;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+  z-index: 2;
 }
 </style>

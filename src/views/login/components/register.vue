@@ -102,9 +102,19 @@ export default {
         smscode: [
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ],
-        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          {
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            message: '同时包含字母、数字、特殊符号'
+          }
+        ],
         confirm_password: [
           { required: true, message: '请输入确认密码', trigger: 'blur' },
+          {
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            message: '同时包含字母、数字、特殊符号'
+          },
           { required: true, trigger: 'blur', validator: validatePassword }
         ]
       },
@@ -124,9 +134,10 @@ export default {
             phone: this.registerForm.telephone,
             smscode: this.registerForm.smscode,
             password: this.registerForm.password
-          }).then(response => {
+          })
+            .then(response => {
               this.$message.success('注册成功')
-              this.goLogin();
+              this.goLogin()
             })
             .catch(error => {})
         } else {
@@ -139,7 +150,7 @@ export default {
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src = '/api/cloud/authCode?t=' + Math.random();
+      e.target.src = '/api/cloud/authCode?t=' + Math.random()
     },
 
     /**
@@ -194,7 +205,7 @@ export default {
 <style lang="scss" scoped>
 $dark_gray: #ccc;
 $light_gray: #333;
-$login_theme: #00aaee;
+$login_theme: #3E84E9;
 
 .title {
   font-size: 26px;
