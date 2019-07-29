@@ -25,7 +25,7 @@
           <img slot="suffix"
                alt=""
                class="image-verification"
-               :src="'/api/cloud/authCode?t=' + Math.random()"
+               :src="imgCode"
                @click="changeImageVerification" />
         </el-input>
       </el-form-item>
@@ -129,6 +129,8 @@ export default {
     return {
       loading: false,
       showType: 'verify', // 分三步 verify company password
+      // 图片验证码
+      imgCode: '/api/cloud/authCode?t=' + Math.random(),
 
       // 找回密码
       findForm: {
@@ -249,7 +251,7 @@ export default {
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src = '/api/cloud/authCode?t=' + Math.random()
+      this.imgCode = '/api/cloud/authCode?t=' + Math.random()
     },
 
     /**

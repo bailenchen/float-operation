@@ -8,8 +8,7 @@
              auto-complete="on"
              label-position="left">
       <el-form-item prop="telephone">
-        <el-input ref="name"
-                  v-model="registerForm.telephone"
+        <el-input v-model="registerForm.telephone"
                   autofocus="autofocus"
                   name="telephone"
                   type="text"
@@ -17,8 +16,7 @@
                   placeholder="请输入手机号" />
       </el-form-item>
       <el-form-item prop="company_name">
-        <el-input ref="name"
-                  v-model="registerForm.company_name"
+        <el-input v-model="registerForm.company_name"
                   autofocus="autofocus"
                   name="company_name"
                   type="text"
@@ -26,8 +24,7 @@
                   placeholder="请输入企业名称" />
       </el-form-item>
       <el-form-item prop="company_credit_number">
-        <el-input ref="name"
-                  v-model="registerForm.company_credit_number"
+        <el-input v-model="registerForm.company_credit_number"
                   autofocus="autofocus"
                   name="company_credit_number"
                   type="text"
@@ -42,8 +39,8 @@
           <img slot="suffix"
                alt=""
                class="image-verification"
-               :src="'/api/cloud/authCode?t=' + Math.random()"
-               @click="changeImageVerification" />
+               :src="imgCode"
+               @click.prevent="changeImageVerification" />
         </el-input>
       </el-form-item>
       <el-form-item prop="smscode">
@@ -102,6 +99,8 @@ export default {
     }
     return {
       loading: false,
+      // 图片验证码
+      imgCode: '/api/cloud/authCode?t=' + Math.random(),
       // 动态登录信息
       registerForm: {
         telephone: '',
@@ -176,7 +175,7 @@ export default {
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src = '/api/cloud/authCode?t=' + Math.random()
+      this.imgCode = '/api/cloud/authCode?t=' + Math.random()
     },
 
     /**

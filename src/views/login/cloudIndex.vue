@@ -72,7 +72,7 @@
                   <img slot="suffix"
                        alt=""
                        class="image-verification"
-                       :src="'/api/cloud/authCode?t=' + Math.random()"
+                       :src="imgCode"
                        @click="changeImageVerification" />
                 </el-input>
               </el-form-item>
@@ -168,6 +168,9 @@ export default {
     return {
       showType: 'login', // login (company) register findPassword
       activeLoginTab: 'password', // password dynamic
+      // 图片验证码
+      imgCode: '/api/cloud/authCode?t=' + Math.random(),
+
       loginForm: {
         username: '',
         password: ''
@@ -294,7 +297,7 @@ export default {
      * 更新图片验证码
      */
     changeImageVerification(e) {
-      e.target.src = '/api/cloud/authCode?t=' + Math.random()
+      this.imgCode = '/api/cloud/authCode?t=' + Math.random()
     },
 
     /**
