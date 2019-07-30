@@ -158,7 +158,9 @@ export default {
             types: 1,
             phone: this.registerForm.telephone,
             smscode: this.registerForm.smscode,
-            password: this.registerForm.password
+            password: this.registerForm.password,
+            company_name: this.registerForm.company_name,
+            company_credit_number: this.registerForm.company_credit_number,
           })
             .then(response => {
               this.$message.success('注册成功')

@@ -110,7 +110,7 @@
           <flexbox class="company"
                    v-for="(item, index) in companyList"
                    :key="index">
-            <div class="company-title" @click="selectCompanyClick(item)">{{item}}</div>
+            <div class="company-title" @click="selectCompanyClick(item)">{{item.companyName}}</div>
           </flexbox>
         </div>
         <el-button @click.native.prevent="showType = 'login'"
@@ -138,7 +138,7 @@
 <script>
 import Register from './components/register'
 import ForgetPassword from './components/forgetPassword'
-import { sendSmsAPI, LoginAPI } from '@/api/login'
+import { sendSmsAPI, LoginAPI,reLogin } from '@/api/login'
 import { isvalidUsername } from '@/utils/validate'
 import { mapGetters } from 'vuex'
 import Lockr from 'lockr'
@@ -200,17 +200,7 @@ export default {
       },
 
       // 选择公司
-      companyList: [
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司'
-      ],
+      companyList: [],
 
       loading: false,
       redirect: undefined,
@@ -235,10 +225,15 @@ export default {
     /**
      * 选择公司 重置密码
      */
-    selectCompanyClick(item) {},
-
+    selectCompanyClick(item) {
+      console.log(item);
+      reLogin({companyId:item.companyId}).then(response=>{
+        if(response.code===0){
+          this.handleLoginSuccess(response)
+        }
+      })
+    },
     handleLogin() {
-      this.showType = 'company'
       if (this.activeLoginTab == 'password') {
         // 密码登录
         this.$refs.loginForm.validate(valid => {
@@ -248,8 +243,12 @@ export default {
               password: this.loginForm.password
             })
               .then(response => {
-                console.log(response)
-                this.handleLoginSuccess(response)
+                if(response.companyList){
+                  this.companyList=response.companyList;
+                  this.showType = 'company'
+                }else {
+                  this.handleLoginSuccess(response)
+                }
               })
               .catch(error => {})
           } else {
@@ -264,7 +263,12 @@ export default {
               smscode: this.dyLoginForm.smscode
             })
               .then(response => {
-                this.handleLoginSuccess(response)
+                if(response.companyList){
+                  this.companyList=response.companyList;
+                  this.showType = 'company';
+                }else {
+                  this.handleLoginSuccess(response)
+                }
               })
               .catch(error => {})
           } else {

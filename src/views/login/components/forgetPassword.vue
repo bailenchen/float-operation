@@ -55,9 +55,9 @@
         <flexbox class="company"
                  v-for="(item, index) in companyList"
                  :key="index">
-          <div class="company-title">{{item}}</div>
+          <div class="company-title">{{item.companyName}}</div>
           <el-button type="text"
-                     @click="resetPassword(item)">重置密码</el-button>
+                     @click="chooseCompany(item)">重置密码</el-button>
         </flexbox>
       </div>
       <el-button @click.native.prevent="showType = 'verify'"
@@ -89,7 +89,7 @@
       </el-form-item>
       <el-form-item>
         <el-button :loading="loading"
-                   @click="showType = 'company'"
+                   @click="companyList&&companyList.length>0?showType = 'company':showType = 'verify'"
                    class="submit-btn"
                    style="width: 40%; display: inline-block;">
           返回上一步
@@ -153,17 +153,8 @@ export default {
       verificationButtonName: '获取验证码',
 
       // 选择公司
-      companyList: [
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司',
-        '测试公司'
-      ],
+      companyList: [],
+      companyId:"",
       selectCompany: null,
 
       // 确认密码
@@ -197,7 +188,6 @@ export default {
      * 第一步的验证
      */
     goNext() {
-      this.showType = 'company'
       this.$refs.findForm.validate(valid => {
         if (valid) {
           findpwdAPI({
@@ -206,7 +196,14 @@ export default {
           })
             .then(response => {
               if (response.code === 0) {
-                this.showType = 'company'
+                this.companyList=[];
+                if(response.companyId){
+                  this.companyId=response.companyId;
+                  this.showType="password";
+                }else if(response.companyList){
+                  this.companyList = response.companyList;
+                  this.showType = 'company'
+                }
               }
             })
             .catch(error => {})
@@ -215,16 +212,19 @@ export default {
         }
       })
     },
-
+    chooseCompany(item){
+      this.companyId=item.companyId;
+      this.showType="password";
+    },
     /**
      * 提交 密码
      */
     submitPassword() {
       this.$refs.confirmPasswordForm.validate(valid => {
         if (valid) {
-          console.log('confirmPasswordForm-----', this.confirmPasswordForm)
           resetpwdAPI({
-            password: this.confirmPasswordForm.password
+            password: this.confirmPasswordForm.password,
+            companyId: this.companyId
           })
             .then(response => {
               if (response.code === 0) {

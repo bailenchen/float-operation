@@ -40,7 +40,13 @@ export function LoginAPI(data) {
     data: data
   })
 }
-
+export function reLogin(data) {
+  return request({
+    url: '/reLogin',
+    method: 'post',
+    data: data
+  })
+}
 /**
  * 发送验证码
  * @param {*} data
