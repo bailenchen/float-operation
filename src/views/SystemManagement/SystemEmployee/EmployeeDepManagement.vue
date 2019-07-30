@@ -419,7 +419,10 @@ export default {
       rules: {
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
+          {
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            message: '同时包含字母、数字、特殊符号'
+          }
         ],
         username: [
           { required: true, message: '手机号不能为空', trigger: 'blur' }
@@ -432,7 +435,10 @@ export default {
         ],
         password: [
           { required: true, message: '密码不能为空', trigger: 'blur' },
-          { min: 6, max: 6, message: '长度为6个字符', trigger: 'blur' }
+          {
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            message: '同时包含字母、数字、特殊符号'
+          }
         ],
         username: [
           { required: true, message: '手机号码不能为空', trigger: 'blur' },
