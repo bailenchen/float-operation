@@ -398,19 +398,19 @@ export default {
     managerGroupReminderContent(item) {
       if (item.label == 1) {
         return '项目管理员拥有“项目管理”模块所有权限，能看到并维护所有项目信息'
-      } else if (item.id == 1) {
+      } else if (item.label == 5) {
         return '超级管理员不可被任何管理员删除，默认系统所有权限，也可添加其他超级管理员'
-      } else if (item.id == 2) {
+      } else if (item.label == 6) {
         return '系统设置管理员拥有整个系统的“系统设置”权限'
-      } else if (item.id == 3) {
+      } else if (item.label == 7) {
         return '员工与角色权限管理的管理权限，可管理公司的组织结构和员工账号的增加、停用，可创建角色并为员工分配角色授权'
-      } else if (item.id == 4) {
+      } else if (item.label == 8) {
         return '审批管理员可配置、管理所有审批流程'
-      } else if (item.id == 5) {
+      } else if (item.label == 9) {
         return '办公管理员可以对“办公”的所有设置进行管理'
-      } else if (item.id == 6) {
+      } else if (item.label == 10) {
         return '客户管理管理员可以对“客户管理”的所有设置进行管理'
-      } else if (item.id == 7) {
+      } else if (item.label == 11) {
         return '公告管理员有新建、删除、结束公告的操作'
       }
       return ''
