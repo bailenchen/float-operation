@@ -131,7 +131,7 @@
     </div>
 
     <img class="logo"
-         src="'@/assets/img/logo.png'" />
+         src="@/assets/img/logo.png" />
   </div>
 </template>
 
