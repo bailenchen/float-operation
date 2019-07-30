@@ -258,6 +258,7 @@ export default {
       } else {
         this.$refs.dyLoginForm.validate(valid => {
           if (valid) {
+            this.imgCode = '/api/cloud/authCode?t=' + Math.random()
             LoginAPI({
               username: this.dyLoginForm.telephone,
               smscode: this.dyLoginForm.smscode

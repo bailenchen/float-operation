@@ -190,6 +190,7 @@ export default {
     goNext() {
       this.$refs.findForm.validate(valid => {
         if (valid) {
+          this.imgCode = '/api/cloud/authCode?t=' + Math.random()
           findpwdAPI({
             phone: this.findForm.telephone,
             smscode: this.findForm.smscode

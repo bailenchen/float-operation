@@ -154,6 +154,7 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           console.log('loginForm-----', this.registerForm)
+          this.imgCode = '/api/cloud/authCode?t=' + Math.random()
           registerAPI({
             types: 1,
             phone: this.registerForm.telephone,
