@@ -6,7 +6,7 @@
     <div class="right">
       <div v-if="showType == 'login'"
            class="login">
-        <div class="title">{{name}}</div>
+        <div class="title">悟空CRM系统</div>
         <el-tabs v-model="activeLoginTab"
                  style="">
           <el-tab-pane label="密码登录"
@@ -131,7 +131,7 @@
     </div>
 
     <img class="logo"
-         :src="logo" />
+         src="'@/assets/img/logo.png'" />
   </div>
 </template>
 
@@ -218,7 +218,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['logo', 'name'])
   },
   mounted() {},
   methods: {
@@ -295,6 +294,7 @@ export default {
       this.$store.commit('SET_CRM', data.auth.crm)
       this.$store.commit('SET_BI', data.auth.bi)
       this.$store.commit('SET_MANAGE', data.auth.manage)
+      this.$store.dispatch('SystemLogoAndName')
       this.$router.push({ path: this.redirect || '/workbench/index' })
     },
 

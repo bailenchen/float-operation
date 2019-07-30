@@ -22,7 +22,7 @@ const cache = {
     }
     store.commit('SET_APPNAME', Lockr.get('systemName'))
     store.commit('SET_APPLOGO', Lockr.get('systemLogo'))
-    store.dispatch('SystemLogoAndName')
+    // store.dispatch('SystemLogoAndName')
   },
   /**
    * 请求和更新登录缓存
