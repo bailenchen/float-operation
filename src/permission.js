@@ -15,7 +15,7 @@ router.beforeEach((to, from, next) => {
   NProgress.start()
   /** 请求头包含授权信息 并且 页面必须授权 直接进入 */
   if (getAuth()) {
-    if (to.path === '/login') {
+    if (to.path === '/login' || to.path === '/clogin') {
       next({
         path: '/workbench/index'
       })

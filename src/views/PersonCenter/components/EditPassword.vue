@@ -94,7 +94,7 @@ export default {
                   type: 'warning'
                 })
                   .then(() => {
-                    this.$router.push('/login')
+                    this.$router.push('/clogin')
                   })
                   .catch(() => {})
               })

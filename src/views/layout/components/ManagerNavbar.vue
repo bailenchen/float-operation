@@ -51,7 +51,7 @@ export default {
             .dispatch('LogOut')
             .then(() => {
               loading.close()
-              this.$router.push('/login')
+              this.$router.push('/clogin')
             })
             .catch(() => {
               loading.close()
