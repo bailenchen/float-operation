@@ -234,19 +234,47 @@ export default {
       const calculateFields = ['traffic', 'stay', 'diet', 'other']
       const mainItem = this.mainList[mainIndex]
       calculateFields.forEach(field => {
-        subTotal = subTotal + parseFloat(mainItem[field] ? mainItem[field] : 0)
+        subTotal = this.accAdd(
+          subTotal,
+          parseFloat(mainItem[field] ? mainItem[field] : 0)
+        )
       })
       mainItem.money = subTotal
 
       var total = 0
       for (let index = 0; index < this.mainList.length; index++) {
         const element = this.mainList[index]
-        total = total + parseFloat(element.money ? element.money : 0)
+        total = this.accAdd(
+          total,
+          parseFloat(element.money ? element.money : 0)
+        )
       }
       this.totalMoney = total
 
       this.submitValueChange(true)
     },
+    /**
+     * 两个浮点数求和
+     * @param num1
+     * @param num2
+     * @return {number}
+     */
+    accAdd(num1, num2) {
+      let r1, r2, m
+      try {
+        r1 = num1.toString().split('.')[1].length
+      } catch (e) {
+        r1 = 0
+      }
+      try {
+        r2 = num2.toString().split('.')[1].length
+      } catch (e) {
+        r2 = 0
+      }
+      m = Math.pow(10, Math.max(r1, r2))
+      return Math.round(num1 * m + num2 * m) / m
+    },
+
     submitValueChange(update) {
       this.$emit('value-change', {
         index: this.index,
