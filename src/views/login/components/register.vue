@@ -84,6 +84,7 @@
 
 <script type="text/javascript">
 import { sendSmsAPI, registerAPI } from '@/api/login'
+import { Loading } from 'element-ui'
 
 export default {
   name: 'register', // 注册
@@ -155,6 +156,7 @@ export default {
         if (valid) {
           console.log('loginForm-----', this.registerForm)
           this.imgCode = '/api/cloud/authCode?t=' + Math.random()
+          let loading = Loading.service({ fullscreen: true, text: '注册中...' })
           registerAPI({
             types: 1,
             phone: this.registerForm.telephone,
@@ -164,10 +166,13 @@ export default {
             company_credit_number: this.registerForm.company_credit_number,
           })
             .then(response => {
+              loading.close()
               this.$message.success('注册成功')
               this.goLogin()
             })
-            .catch(error => {})
+            .catch(error => {
+              loading.close()
+            })
         } else {
           return false
         }
