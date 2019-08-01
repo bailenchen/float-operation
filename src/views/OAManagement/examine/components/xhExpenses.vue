@@ -53,7 +53,7 @@
           <div class="img-item"
                v-for="(imgItem, imgIndex) in item['imgList']"
                :key="imgIndex"
-               :style="{ 'background-image': 'url('+imgItem.url+')' }"
+               :style="{ 'background-image': `url('${imgItem.url}')` }"
                @mouseover="mouseImgOver(imgItem, imgIndex, item['imgList'])"
                @mouseleave="mouseImgLeave(imgItem, imgIndex, item['imgList'])">
             <div v-if="imgItem.showDelete"
