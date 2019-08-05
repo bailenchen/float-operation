@@ -25,11 +25,12 @@ import { biRouter } from './modules/business'
     icon: 'svg-name'             the icon show in the sidebar,
   }
 **/
-export const constantRouterMap = [{
+export const constantRouterMap = [
+  /*{
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
-  },
+  },*/
   {
     path: '/clogin',
     component: () => import('@/views/login/cloudIndex'),
