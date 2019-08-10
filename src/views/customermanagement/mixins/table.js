@@ -50,6 +50,7 @@ export default {
       tableHeight: document.documentElement.clientHeight - 240, // 表的高度
       list: [],
       fieldList: [],
+      sortData: {}, // 字段排序
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
@@ -100,6 +101,11 @@ export default {
         search: this.search,
         type: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8是公海
       }
+      if (this.sortData.order) {
+        params.order_field = this.sortData.prop
+        params.order_type = this.sortData.order == "ascending" ? 'asc' : 'desc'
+      }
+
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
@@ -389,6 +395,13 @@ export default {
     handleTableSet() {
       this.showFieldSet = true
     },
+    /**
+     * 字段排序
+     */
+    sortChange(column, prop, order) {
+      this.sortData = column
+      this.getList()
+    },
     /** 勾选操作 */
     // 当选择项发生变化时会触发该事件
     handleSelectionChange(val) {
@@ -405,10 +418,6 @@ export default {
           width: newWidth
         })
           .then(res => {
-            this.$message({
-              type: 'success',
-              message: res.data
-            })
           })
           .catch(() => { })
       }
