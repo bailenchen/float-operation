@@ -104,8 +104,8 @@ export default {
         type: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8是公海
       }
       if (this.sortData.order) {
-        params.order_field = this.sortData.prop
-        params.order_type = this.sortData.order == "ascending" ? 'asc' : 'desc'
+        params.sortField = this.sortData.prop
+        params.order = this.sortData.order == "ascending" ? 2 : 1
       }
 
       if (this.sceneId) {

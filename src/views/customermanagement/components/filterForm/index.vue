@@ -4,7 +4,8 @@
              @close="handleCancel"
              width="900px">
     <div style="margin-bottom: 10px;">筛选条件</div>
-    <el-form class="filter-container" id="filter-container">
+    <el-form class="filter-container"
+             id="filter-container">
       <el-form-item>
         <template v-for="(formItem, index) in form">
           <el-row :key="index">
@@ -21,9 +22,9 @@
             </el-col>
 
             <el-col :span="1"
-                    v-if="formItem.formType !== 'date' && formItem.formType !== 'datetime' && formItem.formType !== 'business_type'">&nbsp;</el-col>
+                    v-if="showCalCondition(formItem.formType)">&nbsp;</el-col>
             <el-col :span="4"
-                    v-if="formItem.formType !== 'date' && formItem.formType !== 'datetime' && formItem.formType !== 'business_type'">
+                    v-if="showCalCondition(formItem.formType)">
               <el-select v-model="formItem.condition"
                          placeholder="请选择范围">
                 <el-option v-for="item in calConditionOptions(formItem.formType, formItem)"
@@ -51,7 +52,7 @@
             </el-col>
 
             <el-col :span="1">&nbsp;</el-col>
-            <el-col :span="formItem.formType === 'datetime' || formItem.formType === 'date' ? 13 : 8">
+            <el-col :span="formItem.formType === 'datetime' || formItem.formType === 'date' || formItem.formType === 'map_address' ? 13 : 8">
               <el-select v-if="formItem.formType === 'select'"
                          v-model="formItem.value"
                          placeholder="请选择筛选条件">
@@ -95,7 +96,7 @@
               <xh-prouct-cate v-else-if="formItem.formType === 'category'"
                               :item="formItem"
                               @value-change="arrayValueChange"></xh-prouct-cate>
-              <v-distpicker v-else-if="formItem.formType === 'address'"
+              <v-distpicker v-else-if="formItem.formType === 'map_address'"
                             @province="selectProvince($event,formItem)"
                             @city="selectCity($event,formItem)"
                             @area="selectArea($event,formItem)"
@@ -285,7 +286,7 @@ export default {
         formType == 'datetime' ||
         formType == 'business_type' ||
         formType == 'category' ||
-        formType == 'address'
+        formType == 'map_address'
       ) {
         return false
       }
@@ -327,7 +328,7 @@ export default {
           { value: 'lt', label: '小于', disabled: false },
           { value: 'elt', label: '小于等于', disabled: false }
         ]
-      } else if (form_type == 'category') {
+      } else if (formType == 'category') {
         return [
           { value: 'is', label: '等于', disabled: false },
           { value: 'isnot', label: '不等于', disabled: false },
@@ -374,7 +375,7 @@ export default {
         ) {
           formItem.setting = obj.setting || []
           formItem.value = ''
-        } else if (formItem.formType == 'address') {
+        } else if (formItem.formType == 'map_address') {
           formItem.address = {
             state: '',
             city: '',
@@ -429,6 +430,11 @@ export default {
             this.$message.error('请输入筛选条件的值！')
             return
           }
+        } else if (o.formType == 'map_address') {
+          if (!o.address.state && !o.address.city && !o.address.area) {
+            this.$message.error('请选择筛选条件的值！')
+            return
+          }
         } else if (
           o.formType == 'date' ||
           o.formType == 'datetime' ||
@@ -467,17 +473,24 @@ export default {
             formType: o.formType,
             name: o.fieldName
           }
-        } else if (o.form_type == 'category') {
-          obj[o.field] = {
+        } else if (o.formType == 'category') {
+          obj[o.fieldName] = {
+            condition: 'is',
             value: o.value[o.value.length - 1],
-            form_type: o.form_type,
-            name: o.name
+            formType: o.formType,
+            name: o.fieldName
           }
-        } else if (o.form_type == 'address') {
-          obj[o.field] = {
-            ...o.address,
-            form_type: o.form_type,
-            name: o.name
+        } else if (o.formType == 'map_address') {
+          let value = ''
+          for (let key in o.address) {
+            if (o.address[key]) {
+              value += o.address[key] + ','
+            }
+          }
+          obj[o.fieldName] = {
+            value: value,
+            formType: o.formType,
+            name: o.fieldName
           }
         } else {
           obj[o.fieldName] = {
