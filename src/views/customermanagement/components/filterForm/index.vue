@@ -91,7 +91,17 @@
               <xh-user-cell v-else-if="formItem.formType === 'user'"
                             :item="formItem"
                             :infoParams="{m	:'crm',c: crmType,a: 'index' }"
-                            @value-change="userValueChange"></xh-user-cell>
+                            @value-change="arrayValueChange"></xh-user-cell>
+              <xh-prouct-cate v-else-if="formItem.formType === 'category'"
+                              :item="formItem"
+                              @value-change="arrayValueChange"></xh-prouct-cate>
+              <v-distpicker v-else-if="formItem.formType === 'address'"
+                            @province="selectProvince($event,formItem)"
+                            @city="selectCity($event,formItem)"
+                            @area="selectArea($event,formItem)"
+                            :province="formItem.address.state"
+                            :city="formItem.address.city"
+                            :area="formItem.address.area"></v-distpicker>
               <el-input v-else
                         v-model="formItem.value"
                         placeholder="请输入筛选条件"></el-input>
@@ -136,7 +146,8 @@
 
 <script>
 import { formatTimeToTimestamp, objDeepCopy } from '@/utils'
-import { XhUserCell } from '@/components/CreateCom'
+import { XhUserCell, XhProuctCate } from '@/components/CreateCom'
+import VDistpicker from 'v-distpicker'
 /**
  * fieldList: 高级筛选的字段
  *     type:  date || datetime || select || 其他 input
@@ -144,7 +155,9 @@ import { XhUserCell } from '@/components/CreateCom'
 export default {
   name: 'index',
   components: {
-    XhUserCell
+    XhUserCell,
+    XhProuctCate,
+    VDistpicker
   },
   props: {
     dialogVisible: {
@@ -197,7 +210,12 @@ export default {
               typeOption: [],
               statusOption: [],
               typeId: '',
-              statusId: ''
+              statusId: '',
+              address: {
+                state: '',
+                city: '',
+                area: ''
+              }
             })
           }
           this.saveChecked = false
@@ -219,6 +237,19 @@ export default {
   },
   methods: {
     /**
+     * 位置更改
+     */
+    selectProvince(data, formItem) {
+      formItem.address.state = data.value
+    },
+    selectCity(data, formItem) {
+      formItem.address.city = data.value
+    },
+    selectArea(data, formItem) {
+      formItem.address.area = data.value
+    },
+
+    /**
      * 商机组状态
      */
     typeOptionsChange(formItem) {
@@ -234,13 +265,31 @@ export default {
     },
     /**
      * 用户创建人
+     * 产品类别
      */
-    userValueChange(data) {
+    arrayValueChange(data) {
       if (data.value.length > 0) {
         data.item.value = data.value
+        data.item.valueContent = data.valueContent
       } else {
         data.item.value = []
       }
+    },
+
+    /**
+     * 是否展示条件
+     */
+    showCalCondition(formType) {
+      if (
+        formType == 'date' ||
+        formType == 'datetime' ||
+        formType == 'business_type' ||
+        formType == 'category' ||
+        formType == 'address'
+      ) {
+        return false
+      }
+      return true
     },
     /** 条件数据源 */
     calConditionOptions(formType, item) {
@@ -277,6 +326,13 @@ export default {
           { value: 'egt', label: '大于等于', disabled: false },
           { value: 'lt', label: '小于', disabled: false },
           { value: 'elt', label: '小于等于', disabled: false }
+        ]
+      } else if (form_type == 'category') {
+        return [
+          { value: 'is', label: '等于', disabled: false },
+          { value: 'isnot', label: '不等于', disabled: false },
+          { value: 'contains', label: '包含', disabled: false },
+          { value: 'not_contain', label: '不包含', disabled: false }
         ]
       } else {
         return [
@@ -318,10 +374,17 @@ export default {
         ) {
           formItem.setting = obj.setting || []
           formItem.value = ''
+        } else if (formItem.formType == 'address') {
+          formItem.address = {
+            state: '',
+            city: '',
+            area: ''
+          }
         } else if (
           formItem.formType === 'date' ||
           formItem.formType === 'datetime' ||
-          formItem.formType === 'user'
+          formItem.formType === 'user' ||
+          formItem.formType === 'category'
         ) {
           formItem.value = []
         } else {
@@ -369,10 +432,11 @@ export default {
         } else if (
           o.formType == 'date' ||
           o.formType == 'datetime' ||
-          o.formType == 'user'
+          o.formType == 'user' ||
+          o.formType == 'category'
         ) {
           if (!o.value || o.value.length === 0) {
-            this.$message.error('请输入筛选条件的值！')
+            this.$message.error('请选择筛选条件的值！')
             return
           }
         } else if (!o.value && o.value !== 0) {
@@ -402,6 +466,18 @@ export default {
             value: o.value[0].userId,
             formType: o.formType,
             name: o.fieldName
+          }
+        } else if (o.form_type == 'category') {
+          obj[o.field] = {
+            value: o.value[o.value.length - 1],
+            form_type: o.form_type,
+            name: o.name
+          }
+        } else if (o.form_type == 'address') {
+          obj[o.field] = {
+            ...o.address,
+            form_type: o.form_type,
+            name: o.name
           }
         } else {
           obj[o.fieldName] = {
@@ -514,5 +590,9 @@ export default {
   .desc {
     padding-left: 8px;
   }
+}
+
+.distpicker-address-wrapper /deep/ select {
+  border-radius: 2px;
 }
 </style>
