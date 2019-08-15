@@ -16,7 +16,8 @@
                           v-for="(item, index) in jianbaoItems"
                           :key="index"
                           @click.native="reportClick(item)">
-              <flexbox class="jianbao-icon-content">
+              <flexbox class="jianbao-icon-content"
+                       :style="{cursor: item.type ? 'pointer':'auto'}">
                 <img class="jianbao-icon"
                      :src="item.icon" />
                 <div class="jianbao-title">{{item.title}}</div>
@@ -128,6 +129,15 @@
         </div>
       </flexbox-item>
     </flexbox>
+
+    <!-- 销售简报列表 -->
+    <report-list v-if="showReportList"
+                 :title="reportData.title"
+                 :placeholder="reportData.placeholder"
+                 :crmType="reportData.crmType"
+                 :request="reportData.request"
+                 :params="reportData.params"
+                 @hide="showReportList = false"></report-list>
   </div>
 </template>
 
@@ -305,7 +315,7 @@ export default {
         this.showReportList = true
       }
     },
-    
+
     getBaseParams() {
       let params = {
         userIds: this.data.users
@@ -696,7 +706,6 @@ export default {
   padding: 8px 8px;
   background-color: #f2f2f5;
   border-radius: 3px;
-  // cursor: pointer;
   .jianbao-icon {
     display: block;
     width: 23px;
