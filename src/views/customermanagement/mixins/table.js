@@ -37,6 +37,7 @@ import {
 import {
   crmReceivablesIndex
 } from '@/api/customermanagement/money'
+import Lockr from 'lockr'
 
 export default {
   components: {
@@ -52,8 +53,8 @@ export default {
       fieldList: [],
       sortData: {}, // 字段排序
       currentPage: 1,
-      pageSize: 15,
-      pageSizes: [15, 30, 45, 60],
+      pageSize: Lockr.get('crmPageSizes') || 15,
+      pageSizes: [15, 30, 60, 100],
       total: 0,
       search: '', // 搜索内容
       /** 控制详情展示 */
@@ -424,6 +425,7 @@ export default {
     },
     // 更改每页展示数量
     handleSizeChange(val) {
+      Lockr.set('crmPageSizes', val)
       this.pageSize = val
       this.getList()
     },
