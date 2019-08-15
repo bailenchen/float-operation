@@ -38,6 +38,7 @@ import {
   crmReceivablesIndex
 } from '@/api/customermanagement/money'
 import Lockr from 'lockr'
+import { Loading } from 'element-ui'
 
 export default {
   components: {
@@ -332,7 +333,7 @@ export default {
           product: crmProductExcelAllExport
         }[this.crmType]
       }
-
+      let loading = Loading.service({ fullscreen: true, text: '导出中...' })
       request(params)
         .then(res => {
           var blob = new Blob([res.data], {
@@ -349,8 +350,11 @@ export default {
           downloadElement.click() //点击下载
           document.body.removeChild(downloadElement) //下载完成移除元素
           window.URL.revokeObjectURL(href) //释放掉blob对象
+          loading.close()
         })
-        .catch(() => { })
+        .catch(() => { 
+          loading.close()
+        })
     },
     /** 筛选操作 */
     handleFilter(data) {
