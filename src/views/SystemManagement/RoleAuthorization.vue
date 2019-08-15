@@ -572,7 +572,7 @@ export default {
         roleId: role.id
       })
         .then(res => {
-          this.tableData = res.data
+          this.tableData = res.data.list
           this.total = res.data.totalRow
           this.menuLoading = false
         })

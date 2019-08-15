@@ -96,7 +96,7 @@ export default {
       this.loading = true
       biExamineStatisticsAPI(params)
         .then(res => {
-          this.fieldList = this.getFieldList(res.data.category_list || [])
+          this.fieldList = this.getFieldList(res.data.categoryList || [])
           this.list = res.data.userList || []
           this.loading = false
         })
@@ -118,15 +118,15 @@ export default {
       ].concat(
         list.map(item => {
           var width = 0
-          if (item.name && item.name.length <= 6) {
-            width = item.name.length * 15 + 45
+          if (item.title && item.title.length <= 6) {
+            width = item.title.length * 15 + 45
           } else {
             width = 140
           }
           return {
             name: item.title,
             width: width,
-            field: `count_${item.category_id}`
+            field: `count_${item.categoryId}`
           }
         })
       )
@@ -156,18 +156,18 @@ export default {
     handleRowClick(row, column, event) {
       if (column.property !== 'realname' && row[column.property]) {
         let propertys = column.property.split('_')
-        let category_id = propertys.length > 1 ? propertys[1] : ''
+        let categoryId = propertys.length > 1 ? propertys[1] : ''
 
         let params = {
-          user_id: row.id,
-          category_id: category_id
+          userId: row.userId,
+          categoryId: categoryId
         }
 
         if (this.postParams.type) {
           params.type = this.postParams.type
         } else {
-          params.start_time = this.postParams.start_time
-          params.end_time = this.postParams.end_time
+          params.startTime = this.postParams.startTime
+          params.endTime = this.postParams.endTime
         }
         this.indexParams = params
         this.showList = true

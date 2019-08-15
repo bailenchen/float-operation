@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function biLogStatisticsAPI(data) {
     return request({
-        url: 'bi/log/statistics',
+        url: 'biWork/logStatistics',
         method: 'post',
         data: data
     })
@@ -18,7 +18,7 @@ export function biLogStatisticsAPI(data) {
  */
 export function biLogExcelExportAPI(data) {
     return request({
-        url: 'bi/log/excelExport',
+        url: 'biWork/logStatisticsExport',
         method: 'post',
         data: data,
         responseType: 'blob',
@@ -32,7 +32,7 @@ export function biLogExcelExportAPI(data) {
  */
 export function biExamineStatisticsAPI(data) {
     return request({
-        url: 'bi/examine/statistics',
+        url: 'biWork/examineStatistics',
         method: 'post',
         data: data
     })
@@ -44,7 +44,7 @@ export function biExamineStatisticsAPI(data) {
 */
 export function biExamineIndexAPI(data) {
     return request({
-        url: 'bi/examine/index',
+        url: 'biWork/examineInfo',
         method: 'post',
         data: data
     })
@@ -56,7 +56,7 @@ export function biExamineIndexAPI(data) {
  */
 export function biExamineExcelExportAPI(data) {
     return request({
-        url: 'bi/examine/excelExport',
+        url: 'biWork/examineStatisticsExport',
         method: 'post',
         data: data,
         responseType: 'blob',

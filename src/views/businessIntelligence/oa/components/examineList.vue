@@ -91,26 +91,26 @@ export default {
   computed: {
     // 展示说明信息
     showDes() {
-      return this.params.category_id > 1 && this.params.category_id <= 6
+      return this.params.categoryId > 1 && this.params.categoryId <= 6
     },
     // 说明信息
     desInfo() {
-      if (this.params.category_id == 2) {
+      if (this.params.categoryId == 2) {
         return '请假总天数'
-      } else if (this.params.category_id == 3) {
+      } else if (this.params.categoryId == 3) {
         return '出差总天数'
-      } else if (this.params.category_id == 4) {
+      } else if (this.params.categoryId == 4) {
         return '加班总天数'
-      } else if (this.params.category_id == 5) {
+      } else if (this.params.categoryId == 5) {
         return '报销总金额'
-      } else if (this.params.category_id == 6) {
+      } else if (this.params.categoryId == 6) {
         return '借款总金额'
       }
       return ''
     },
     // 说明单位
     desUnit() {
-      if (this.params.category_id > 1 && this.params.category_id <= 4) {
+      if (this.params.categoryId > 1 && this.params.categoryId <= 4) {
         return '天'
       }
       return '元'
@@ -155,10 +155,10 @@ export default {
         .then(res => {
           this.name = res.data.categoryName
           this.sumData = res.data.sumData
-          this.list = this.list.concat(res.data.list.list)
-          this.totalCount = res.data.list.dataCount
+          this.list = this.list.concat(res.data.list)
+          this.totalCount = res.data.totalRow
 
-          if (res.data.list.list.length < 15) {
+          if (res.data.lastPage === true) {
             this.loadMoreLoading = false
           } else {
             this.loadMoreLoading = true
