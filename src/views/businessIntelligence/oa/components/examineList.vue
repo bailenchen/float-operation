@@ -154,7 +154,7 @@ export default {
       this.request({ page: this.page, limit: 15, ...this.params })
         .then(res => {
           this.name = res.data.categoryName
-          this.sumData = res.data.sumData
+          this.sumData = this.desUnit == '天' ? res.data.duration : res.data.money
           this.list = this.list.concat(res.data.list)
           this.totalCount = res.data.totalRow
 

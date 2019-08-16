@@ -51,15 +51,14 @@
                              label="距进入公海天数"
                              width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_pool == 1">--</div>
-                <div v-else-if="scope.row.isLock == 0">{{scope.row.poolDay}}</div>
+                <div v-if="scope.row.isLock == 0">{{scope.row.poolDay}}</div>
                 <i v-else
                    class="wukong wukong-lock customer-lock"></i>
               </template>
             </el-table-column>
             <el-table-column v-if="showExamineStatus"
                              show-overflow-tooltip
-                             prop="check_status_info"
+                             prop="checkStatus"
                              label="状态"
                              :resizable="false"
                              width="100"
@@ -71,8 +70,8 @@
               </template>
               <template slot-scope="scope">
                 <div class="status_button"
-                     :style="getStatusStyle(scope.row.check_status)">
-                  {{scope.row.check_status_info}}
+                     :style="getStatusStyle(scope.row.checkStatus)">
+                  {{scope.row.checkStatus}}
                 </div>
               </template>
             </el-table-column>
@@ -210,14 +209,14 @@ export default {
       }
 
       if (this.sortData.order) {
-        params.order_field = this.sortData.prop
-        params.order_type = this.sortData.order == 'ascending' ? 'asc' : 'desc'
+        params.sortField = this.sortData.prop
+        params.order = this.sortData.order == "ascending" ? 2 : 1
       }
 
       this.request({ ...params, ...this.params })
         .then(res => {
           this.list = res.data.list
-          this.total = res.data.dataCount
+          this.total = res.data.totalRow
           this.loading = false
         })
         .catch(() => {
@@ -253,7 +252,7 @@ export default {
                 width = element.width
               }
 
-              this.fieldList.push({
+              this.showFieldList.push({
                 prop: element.fieldName,
                 label: element.name,
                 width: width

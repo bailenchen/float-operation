@@ -171,6 +171,7 @@ export default {
           icon: require('@/assets/img/c_curomer.png'),
           field: 'customerCount',
           type: 'customer',
+          label: 2, // 0为变化的商机 2为客户 3为联系人 5为商机 6为合同 7为回款
           value: 0
         },
         {
@@ -178,6 +179,7 @@ export default {
           icon: require('@/assets/img/c_contact.png'),
           field: 'contactsCount',
           type: 'contacts',
+          label: 3,
           value: 0
         },
         {
@@ -185,6 +187,7 @@ export default {
           icon: require('@/assets/img/c_business.png'),
           field: 'businessCount',
           type: 'business',
+          label: 5,
           value: 0
         },
         {
@@ -192,6 +195,7 @@ export default {
           icon: require('@/assets/img/jd_business.png'),
           field: 'recordStatusCount',
           type: 'business_status',
+          label: 0,
           value: 0
         },
         {
@@ -199,6 +203,7 @@ export default {
           icon: require('@/assets/img/c_contract.png'),
           field: 'contractCount',
           type: 'contract',
+          label: 6,
           value: 0
         },
         {
@@ -213,6 +218,7 @@ export default {
           icon: require('@/assets/img/c_receivables.png'),
           field: 'receivablesCount',
           type: 'receivables',
+          label: 7,
           value: 0
         }
       ],
@@ -312,6 +318,7 @@ export default {
         this.reportData.crmType = item.type
         this.reportData.request = crmIndexIndexListAPI
         this.reportData.params = this.getBaseParams()
+        this.reportData.params.label = item.label
         this.showReportList = true
       }
     },
