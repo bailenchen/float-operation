@@ -233,7 +233,7 @@ export default {
         let crmType =
           this.crmType == 'business_status' ? 'business' : this.crmType
         var params = {
-          label: crmTypeModel[this.crmType]
+          label: crmTypeModel[crmType]
         }
 
         filedGetTableField(params)
@@ -370,7 +370,7 @@ export default {
         } else {
           this.showDview = false
         }
-      } else if (this.crmType === 'business') {
+      } else if (this.crmType === 'business' || this.crmType === 'business_status') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
