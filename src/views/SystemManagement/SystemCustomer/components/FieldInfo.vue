@@ -106,6 +106,7 @@
         转化客户字段
       </div>
       <el-select v-model="field.relevant"
+                 clearable
                  placeholder="请选择">
         <el-option v-for="item in transformData[field.formType]"
                    :key="item.value"
