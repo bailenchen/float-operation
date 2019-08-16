@@ -14,7 +14,7 @@ export function crmIndexIndex(data) {
  */
 export function crmIndexIndexListAPI(data) {
   return request({
-    url: 'crm/index/indexList',
+    url: 'Crm/Instrument/queryBulletinInfo',
     method: 'post',
     data: data
   })
