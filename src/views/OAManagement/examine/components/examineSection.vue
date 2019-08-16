@@ -92,6 +92,7 @@ export default {
     examineCellHandle(data) {
       // 编辑
       if (data.type == 'edit') {
+        let item = data.data.item
         item.title = item.categoryName
         this.createInfo = item
         this.createAction = { type: 'update', id: item.examineId, data: item }
