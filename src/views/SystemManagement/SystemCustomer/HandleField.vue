@@ -444,7 +444,7 @@ export default {
             if (array) {
               array.push({
                 label: element.name,
-                value: element.fieldName
+                value: element.fieldId
               })
             }
           }
