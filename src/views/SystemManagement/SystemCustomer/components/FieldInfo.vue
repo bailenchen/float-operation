@@ -100,14 +100,14 @@
       <div class="input-tips"><span>*</span>上限为2000字</div>
     </div>
 
-    <div v-if="canTransform && transformData && transformData[field.form_type]"
+    <div v-if="canTransform && transformData && transformData[field.formType]"
          class="item-section">
       <div class="name">
         转化客户字段
       </div>
       <el-select v-model="field.relevant"
                  placeholder="请选择">
-        <el-option v-for="item in transformData[field.form_type]"
+        <el-option v-for="item in transformData[field.formType]"
                    :key="item.value"
                    :label="item.label"
                    :value="item.value">

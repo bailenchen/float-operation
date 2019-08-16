@@ -419,15 +419,9 @@ export default {
      * 获取添加字段
      */
     getTransformField() {
-      let types = this.$route.params.type
-
-      var params = {}
-      params.types = 'crm_customer'
-      params.module = 'crm'
-      params.controller = 'customer'
-      params.action = 'save'
-
-      filedGetField(params)
+      filedGetField({
+        label: crmTypeModel['customer']
+      })
         .then(res => {
           let data = {
             text: [],
@@ -446,11 +440,11 @@ export default {
 
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
-            let array = data[element.form_type]
+            let array = data[element.formType]
             if (array) {
               array.push({
                 label: element.name,
-                value: element.field
+                value: element.fieldName
               })
             }
           }
