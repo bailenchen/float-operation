@@ -10,6 +10,7 @@
                       crm-type="product"
                       v-if="showSelectView"
                       :radio="false"
+                      :show="showPopover"
                       :selectedData="selectedData"
                       @close="showPopover=false"
                       @changeCheckout="selectInfos"></crm-relative>
@@ -95,7 +96,7 @@ export default {
       this.refreshProductList()
     },
     productList() {
-      this.selectedData = { product: this.productList|| [] }
+      this.selectedData = { product: this.productList || [] }
     }
   },
   data() {
@@ -117,22 +118,26 @@ export default {
      * 刷新数据
      */
     refreshProductList() {
-      this.productList = this.dataValue.product
-      this.totalPrice = this.dataValue.totalPrice
-      this.discountRate = this.dataValue.discountRate
+      this.productList = this.dataValue.product || []
+      this.totalPrice = this.dataValue.totalPrice || 0
+      this.discountRate = this.dataValue.discountRate || 0
     },
     /** 选中 */
     selectInfos(data) {
       if (data.data) {
-        let self = this
-        data.data.forEach(function(element) {
-          let obj = self.productList.find(item => {
+        let newSelects = []
+        data.data.forEach(element => {
+          let obj = this.productList.find(item => {
             return item.productId == element.productId
           })
-          if (!obj) {
-            self.productList.push(self.getShowItem(element))
+          if (obj) {
+            newSelects.push(obj)
+          } else {
+            newSelects.push(this.getShowItem(element))
           }
         })
+        this.productList = newSelects
+        this.calculateToal()
       }
     },
     getShowItem(data) {
