@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <div class="title">欢迎注册雪山ERP</div>
+    <div class="title">欢迎注册悟空CRM</div>
     <el-form ref="registerForm"
              :model="registerForm"
              :rules="registerRules"

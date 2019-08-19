@@ -6,7 +6,7 @@
     <div class="right">
       <div v-if="showType == 'login'"
            class="login">
-        <div class="title">雪山ERP系统</div>
+        <div class="title">悟空CRM系统</div>
         <el-tabs v-model="activeLoginTab"
                  style="">
           <el-tab-pane label="密码登录"
@@ -124,9 +124,9 @@
       <forget-password v-if="showType == 'findPassword'"
                        @login="showType = 'login'" />
       <div class="copyright">
-        雪山ERP受国家计算机软件著作权保护，未经授权不得进行商业行为，违者必究。<br>
-        ©2019 雪山ERP<a target="_blank"
-           href="http://www.erpsnow.com">www.erpsnow.com</a>
+        悟空CRM受国家计算机软件著作权保护，未经授权不得进行商业行为，违者必究。<br>
+        ©2019 悟空CRM<a target="_blank"
+           href="http://www.5kcrm.com">www.5kcrm.com</a>
       </div>
     </div>
 

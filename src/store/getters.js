@@ -11,7 +11,7 @@ const getters = {
     if (state.app.name) {
       return state.app.name
     }
-    return '雪山ERP系统'
+    return '悟空CRM系统'
   },
   activeIndex: state => state.app.sidebar.activeIndex,
   navActiveIndex: state => state.app.navbar.activeIndex,
