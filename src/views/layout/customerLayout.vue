@@ -10,7 +10,8 @@
         <sidebar :items="crmRouters.children"
                  :addOffset="quickAddOffset"
                  createButtonTitle="快速创建"
-                 mainRouter="crm">
+                 mainRouter="crm"
+                 @select="handleSelect">
           <div slot="add"
                class="quick-add">
             <div class="quick-add-content">
@@ -150,6 +151,14 @@ export default {
         .dispatch('GetMessageNum')
         .then(res => {})
         .catch(() => {})
+    },
+    
+    /**
+     * 菜单钢鞭
+     */
+    handleSelect() {
+      this.$store
+        .dispatch('GetMessageNum')
     },
 
     /**

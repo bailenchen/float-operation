@@ -141,6 +141,16 @@ export default {
             })
             this.loading = false
             this.handleCancel()
+            
+            // 刷新待办
+            if (
+              this.crmType == 'customer' ||
+              this.crmType == 'contract' ||
+              this.crmType == 'leads'
+            ) {
+              this.$store.dispatch('GetMessageNum')
+            }
+
             this.$emit('handle', { type: 'transfer' })
           })
           .catch(() => {

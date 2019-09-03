@@ -141,6 +141,14 @@ export default {
         .then(res => {
           this.loading = false
           this.$message.success('操作成功')
+          // 刷新待办
+          if (
+            this.examineType == 'crm_contract' ||
+            this.examineType == 'crm_receivables'
+          ) {
+            this.$store.dispatch('GetMessageNum')
+          }
+
           this.$emit('save')
           this.hiddenView()
         })

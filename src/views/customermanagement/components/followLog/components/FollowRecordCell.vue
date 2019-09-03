@@ -155,6 +155,9 @@ export default {
                 type: command,
                 data: { item: this.item, index: this.index }
               })
+              // 刷新待办
+              this.$store.dispatch('GetMessageNum')
+              
               this.$message.success('操作成功')
             })
             .catch(() => {})

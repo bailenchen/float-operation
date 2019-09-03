@@ -29,7 +29,8 @@
              :background-color="backgroundColor"
              :active-text-color="activeTextColor"
              :collapse="collapse"
-             unique-opened>
+             unique-opened
+             @select="handleSelect">
       <template v-for="(item, index) in items"
                 v-if="!item.hidden">
         <router-link v-if="!item.children"
@@ -164,6 +165,10 @@ export default {
     // 快速创建
     quicklyCreate() {
       this.$emit('quicklyCreate')
+    },
+
+    handleSelect(key, keyPath) {
+      this.$emit('select', key, keyPath)
     }
   }
 }

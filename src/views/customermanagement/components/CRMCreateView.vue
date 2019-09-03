@@ -519,7 +519,6 @@ export default {
           ) {
             if (this.action.type == 'update') {
               params['value'] = item.value ? objDeepCopy(item.value) : []
-              
             } else {
               params['value'] = item.defaultValue
                 ? objDeepCopy(item.defaultValue)
@@ -833,6 +832,16 @@ export default {
               this.action.type == 'update' ? '编辑成功' : '添加成功'
             )
           }
+
+          // 刷新待办
+          if (
+            this.crmType == 'customer' ||
+            this.crmType == 'contract' ||
+            this.crmType == 'receivables'
+          ) {
+            this.$store.dispatch('GetMessageNum')
+          }
+
           // 回到保存成功
           this.$emit('save-success', {
             type: this.crmType,

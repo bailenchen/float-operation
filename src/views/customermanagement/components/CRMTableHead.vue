@@ -413,6 +413,9 @@ export default {
               type: 'success',
               message: '转化成功'
             })
+            // 刷新待办
+            this.$store.dispatch('GetMessageNum')
+            
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
@@ -469,6 +472,9 @@ export default {
               type: 'success',
               message: '操作成功'
             })
+            // 刷新待办
+            this.$store.dispatch('GetMessageNum')
+
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
