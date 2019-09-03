@@ -150,10 +150,12 @@ export default {
         let startDate = moment(item.startTime)
         let endDate = moment(item.endTime)
         let diff = endDate.diff(startDate, 'hours')
-        let intDays = Math.floor(diff/24)
-        let remainder = diff%24
-        if (remainder >= 4) {
+        let intDays = Math.floor(diff / 24)
+        let remainder = diff % 24
+        if (remainder >= 4 && remainder < 8) {
           intDays += 0.5
+        } else if (remainder >= 8) {
+          intDays += 1
         }
         item.duration = intDays
         this.calculateValueChange()
