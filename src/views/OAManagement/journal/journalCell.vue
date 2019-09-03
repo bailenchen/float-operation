@@ -156,6 +156,8 @@
             <el-input type="textarea"
                       @blur="blurFun"
                       :rows="2"
+                      maxlength="500"
+                      show-word-limit
                       placeholder="请输入内容"
                       v-model="childCommentsTextarea"></el-input>
             <div class="btn-group">
@@ -195,6 +197,8 @@
                 @blur="blurFun"
                 type="textarea"
                 :rows="3"
+                maxlength="500"
+                show-word-limit
                 placeholder="请输入内容"></el-input>
       <div class="btn-group">
         <el-popover placement="top"
