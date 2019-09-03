@@ -24,7 +24,7 @@
                           type="datetime"
                           value-format="yyyy-MM-dd HH:mm:ss"
                           placeholder="选择日期"
-                          @change="valueChange">
+                          @change="datePickerChange(index)">
           </el-date-picker>
           <el-select v-else-if="subItem.formType == 'select'"
                      v-model="item[subItem.field]"
@@ -37,7 +37,7 @@
             </el-option>
           </el-select>
           <el-input v-else
-                    @input="calculateValueChange(index, subIndex)"
+                    :disabled="getInputDisable(subItem.field)"
                     v-model="item[subItem.field]"></el-input>
         </flexbox-item>
       </flexbox>
@@ -62,6 +62,7 @@
   </div>
 </template>
 <script type="text/javascript">
+import moment from 'moment'
 import objMixin from '@/components/CreateCom/objMixin'
 
 export default {
@@ -134,21 +135,35 @@ export default {
     }
   },
   methods: {
+    getInputDisable(field) {
+      return field == 'duration'
+    },
     deleteItems(index) {
       this.mainList.splice(index, 1)
     },
     addItems() {
       this.mainList.push(this.getValueItem())
     },
+    datePickerChange(index) {
+      let item = this.mainList[index]
+      if (item.startTime && item.endTime) {
+        let startDate = moment(item.startTime)
+        let endDate = moment(item.endTime)
+        let diff = endDate.diff(startDate, 'hours')
+        let intDays = Math.floor(diff/24)
+        let remainder = diff%24
+        if (remainder >= 4) {
+          intDays += 0.5
+        }
+        item.duration = intDays
+        this.calculateValueChange()
+      }
+    },
     valueChange() {
       this.submitValueChange(false)
     },
     // 值更新的回调
-    calculateValueChange(mainIndex, subIndex) {
-      if (subIndex < 5) {
-        this.submitValueChange(false)
-        return
-      }
+    calculateValueChange() {
       var total = 0
       for (let index = 0; index < this.mainList.length; index++) {
         const element = this.mainList[index]
