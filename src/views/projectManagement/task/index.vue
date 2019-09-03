@@ -51,7 +51,7 @@
                        v-if="element.stopTime">
                     <i class="wukong wukong-time-task"
                        :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}"></i>
-                    <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{new Date(element.stopTime).getTime() | filterTimestampToFormatTime('MM-DD')}} 截止</span>
+                    <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ element.stopTime | moment("MM-DD") }} 截止</span>
                   </div>
                   <div class="img-box"
                        v-if="element.childAllCount > 0">

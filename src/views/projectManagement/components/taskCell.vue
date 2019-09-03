@@ -85,7 +85,7 @@
              v-if="data.stopTime">
           <i class="wukong wukong-time-task"
              :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}"></i>
-          <span :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}">{{new Date(data.stopTime).getTime() | moment("MM-DD")}} 截止</span>
+          <span :style="{'color': data.isEnd == 1 && !data.checked ? 'red': '#999'}">{{ data.stopTime | moment("MM-DD") }} 截止</span>
         </div>
       </div>
       <div class="item-own-box">
