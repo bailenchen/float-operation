@@ -30,11 +30,11 @@ export default {
     AppMain
   },
   computed: {
-    ...mapGetters(['manage']),
+    ...mapGetters(['admin']),
     managerRouterItems() {
       for (let index = 0; index < managerRouterMenu.length; index++) {
         const routerMenuItem = managerRouterMenu[index]
-        routerMenuItem.hidden = this.manage[routerMenuItem.meta.subType]
+        routerMenuItem.hidden = this.admin[routerMenuItem.meta.subType]
           ? false
           : true
       }

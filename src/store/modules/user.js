@@ -22,7 +22,7 @@ const user = {
     allAuth: null, //总权限信息 默认空 调整动态路由
     crm: {}, // 客户管理
     bi: {}, // 商业智能
-    manage: {} // 管理后台
+    admin: {} // 管理后台
   },
 
   mutations: {
@@ -38,8 +38,8 @@ const user = {
     SET_BI: (state, bi) => {
       state.bi = bi
     },
-    SET_MANAGE: (state, manage) => {
-      state.manage = manage
+    SET_ADMIN: (state, admin) => {
+      state.admin = admin
     }
   },
 
@@ -60,9 +60,9 @@ const user = {
           commit('SET_USERINFO', data.user)
           // 权限
 
-          commit('SET_CRM', data.auth.crm)
-          commit('SET_BI', data.auth.bi)
-          commit('SET_MANAGE', data.auth.manage)
+          commit('SET_CRM', data.authList.crm)
+          commit('SET_BI', data.authList.bi)
+          commit('SET_ADMIN', data.authList.admin)
           resolve(data)
         }).catch(error => {
           reject(error)
@@ -81,7 +81,7 @@ const user = {
           commit('SET_ALLAUTH', data)
           commit('SET_CRM', data.crm)
           commit('SET_BI', data.bi)
-          commit('SET_MANAGE', data.manage)
+          commit('SET_ADMIN', data.admin)
 
           resolve(data)
         }).catch(error => {

@@ -30,8 +30,8 @@
              @click="handleClick('goout')"><i class="wukong wukong-goout"></i>退出登录</div>
         <div class="handel-item hr-top"
              style="pointer-events: none;"
-             :style="{'margin-bottom': manage ? '15px' : '0'}"><i class="wukong wukong-versions"></i>版本 V9.2.1.190820</div>
-        <div v-if="manage"
+             :style="{'margin-bottom': admin ? '15px' : '0'}"><i class="wukong wukong-versions"></i>版本 V9.2.1.190809</div>
+        <div v-if="admin"
              class="handel-box">
           <el-button @click="enterSystemSet()"
                      type="primary"
@@ -79,7 +79,7 @@ export default {
   },
   components: {},
   computed: {
-    ...mapGetters(['userInfo', 'lang', 'logo', 'crm', 'bi', 'manage']),
+    ...mapGetters(['userInfo', 'lang', 'logo', 'crm', 'bi', 'admin']),
     items() {
       var tempsItems = []
       tempsItems.push({

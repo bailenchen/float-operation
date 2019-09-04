@@ -17,7 +17,7 @@ const cache = {
       if (authList) {
         store.commit('SET_CRM', authList.crm)
         store.commit('SET_BI', authList.bi)
-        store.commit('SET_MANAGE', authList.manage)
+        store.commit('SET_ADMIN', authList.admin)
       }
     }
     store.commit('SET_APPNAME', Lockr.get('systemName'))
