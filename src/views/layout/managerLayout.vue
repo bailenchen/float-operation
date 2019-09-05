@@ -68,4 +68,8 @@ export default {
 #manager-main-container {
   max-height: 100%;
 }
+
+.el-container {
+  overflow: hidden;
+}
 </style>

@@ -220,4 +220,8 @@ export default {
 #project-main-container {
   max-height: 100%;
 }
+
+.el-container {
+  overflow: hidden;
+}
 </style>
