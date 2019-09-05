@@ -125,18 +125,52 @@ export default {
      * 更多操作
      */
     handleMoreCommand(command, item) {
-      this.loading = true
-      adminConfigsetUpdate({
-        id: item.id,
-        status: command == 'disable' ? 0 : 1
+      this.getConfirmMessage(command, item, () => {
+        this.loading = true
+        adminConfigsetUpdate({
+          id: item.id,
+          status: command == 'disable' ? 0 : 1
+        })
+          .then(res => {
+            this.loading = false
+            this.getDetail()
+          })
+          .catch(() => {
+            this.loading = false
+          })
       })
-        .then(res => {
-          this.loading = false
-          this.getDetail()
+    },
+
+    /**
+     * 操作提示
+     */
+    getConfirmMessage(command, item, result) {
+      if (command == 'enable') {
+        result()
+      } else {
+        let message = {
+          oa:
+            '停用办公后，与客户管理、项目管理中的关联项也将被停用。确定要停用吗？',
+          crm:
+            '停用客户管理后，与办公、项目管理中的关联项也将被停用。确定要停用吗？',
+          work:
+            '停用项目管理后，与办公、客户管理中的关联项也将被停用。确定要停用吗？'
+        }[item.module]
+        this.$confirm(message, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-        .catch(() => {
-          this.loading = false
-        })
+          .then(() => {
+            result()
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            })
+          })
+      }
     },
 
     getModuleIcon(status, moduleType) {
