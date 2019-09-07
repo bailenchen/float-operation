@@ -555,7 +555,7 @@ export default {
         deal_status: {
           name: '更改成交状态',
           type: 'deal_status',
-          icon: require('@/assets/img/selection_disable.png')
+          icon: require('@/assets/img/selection_deal_status.png')
         }
       }
       if (this.crmType == 'leads') {

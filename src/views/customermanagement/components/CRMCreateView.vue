@@ -72,10 +72,10 @@
                    class="handle-button"
                    type="primary"
                    plain
-                   @click.native="saveDraftField()">草稿</el-button>
+                   @click.native="saveDraftField()">保存草稿</el-button>
         <el-button class="handle-button"
                    type="primary"
-                   @click.native="saveField(false)">保存</el-button>
+                   @click.native="saveField(false)">{{sureBtnTitle}}</el-button>
       </div>
     </flexbox>
   </create-view>
@@ -165,6 +165,12 @@ export default {
         return true
       }
       return false
+    },
+    sureBtnTitle() {
+      if (this.crmType === 'contract' || this.crmType === 'receivables') {
+        return '提交审核'
+      }
+      return '保存'
     }
   },
   watch: {
