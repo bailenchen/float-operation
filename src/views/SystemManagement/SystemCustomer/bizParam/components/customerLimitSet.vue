@@ -89,14 +89,14 @@ export default {
             1: '拥有客户数上限',
             2: '锁定客户数上限'
           }[this.types],
-          field: 'is_deal'
+          field: 'value'
         },
         {
           label: {
             1: '成交客户是否占有拥有客户数',
             2: '成交客户是否占有锁定客户数'
           }[this.types],
-          field: 'value'
+          field: 'is_deal'
         }
       ]
     }
