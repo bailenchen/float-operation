@@ -239,7 +239,7 @@ export default {
     },
     /**
      * save:添加、update:编辑(action_id)、read:详情、index:列表
-     * relative: 相关 添加(目前用于客户等相关添加)
+     * relative: 相关 添加(目前用于客户等相关添加) 如果有relativeData 直接合并入上传
      */
     action: {
       type: Object,
@@ -609,7 +609,8 @@ export default {
             contacts: { customer: true }
           },
           contacts: {
-            customer: { customer: true }
+            customer: { customer: true },
+            business: { customer: true }
           },
           contract: {
             customer: { customer: true },
@@ -815,6 +816,14 @@ export default {
         let key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType
         params.entity[key + 'Id'] = this.action.id
         params.entity.batchId = this.action.batchId
+      }
+
+      // 相关添加时候的多余提交信息
+      if (
+        this.action.relativeData &&
+        Object.keys(this.action.relativeData).length
+      ) {
+        params = { ...params, ...this.action.relativeData }
       }
       crmRequest(params)
         .then(res => {
