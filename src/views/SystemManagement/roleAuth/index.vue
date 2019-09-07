@@ -271,14 +271,14 @@ export default {
         if (res.data.length == 2) {
           this.ruleMenuList = [
             {
-              label: this.title,
+              label: '模块功能',
               index: 'data',
               type: 'tree',
               value: [],
               data: [res.data[0]]
             },
             {
-              label: '商业智能',
+              label: '数据分析',
               index: 'bi',
               type: 'tree',
               value: [],
@@ -288,7 +288,7 @@ export default {
         } else if (res.data.length == 1) {
           this.ruleMenuList = [
             {
-              label: this.title,
+              label: '模块功能',
               index: 'data',
               type: 'tree',
               value: [],
