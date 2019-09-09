@@ -10,7 +10,8 @@ import {
   crmMessageFollowLeadsAPI,
   crmMessageFollowCustomerAPI,
   crmMessagEndContractAPI,
-  crmMessagRemindreceivablesplanAPI
+  crmMessagRemindreceivablesplanAPI,
+  crmMessagRemindCustomerAPI
 } from '@/api/customermanagement/message'
 
 export default {
@@ -25,6 +26,16 @@ export default {
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
       total: 0
+    }
+  },
+
+  computed: {
+    // 展示options下拉选择
+    showOptions() {
+      if (this.infoType == 'remindCustomer') {
+        return false
+      }
+      return true
     }
   },
 
@@ -126,8 +137,11 @@ export default {
       const params = {
         page: this.currentPage,
         limit: this.pageSize,
-        type: this.optionsType,
         isSub: this.isSubType
+      }
+
+      if (this.showOptions) {
+        params.type = this.optionsType
       }
 
       const filterObj = this.filterObj.obj
@@ -156,7 +170,8 @@ export default {
         'checkContract': crmMessageCheckContractAPI,
         'checkReceivables': crmMessageCheckReceivablesAPI,
         'remindReceivablesPlan': crmMessagRemindreceivablesplanAPI,
-        'endContract': crmMessagEndContractAPI
+        'endContract': crmMessagEndContractAPI,
+        'remindCustomer': crmMessagRemindCustomerAPI,
       }[this.infoType]
     },
 
