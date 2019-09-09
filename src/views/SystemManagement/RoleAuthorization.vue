@@ -1,46 +1,41 @@
 <template>
   <div class="role-authorization">
-    <p class="title"> 角色权限控制 </p>
+    <p class="title"
+       ref="title"> {{title}} </p>
     <div class="role-box">
       <!-- 左边导航 -->
       <div class="nav"
-           v-loading="navLoading">
+           v-loading="roleMenuLoading">
         <div class="nav-new-btn">
           <el-button size="medium"
                      @click="newRoleBtn"> 新建角色 </el-button>
         </div>
         <!-- 角色列表 -->
         <div class="role-nav-box">
-          <div v-for="(item, index) in roleList"
+          <div class="item-list"
+               v-for="(item, index) in roleList"
                :key="index"
-               class="role-list">
-            <div class="item-label">
-              {{item.name}}
-            </div>
-            <div class="item-list"
-                 :class="{'item-list-hover' : value.id == roleActive.id}"
-                 v-for="(value, i) in item.list"
-                 v-if="item.list"
-                 :key="i"
-                 @click="roleListClick(value)">
-              {{value.title}}
-              <div class="icon-close"
-                   v-if="item.pid != 1">
-                <el-dropdown trigger="click"
-                             @command="roleHandleClick">
-                  <i class="el-icon-arrow-down"
-                     @click="roleDropdownClick(value)"></i>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="copy">复制</el-dropdown-item>
-                    <el-dropdown-item command="edit">编辑</el-dropdown-item>
-                    <el-dropdown-item command="delete">删除</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </div>
+               :class="{'item-list-hover' : item.id == roleActive.id}"
+               @click="roleMenuSelect(item)">
+            {{item.title}}
+            <div class="icon-close"
+                 v-if="item.pid != 1">
+              <el-dropdown trigger="click"
+                           @command="roleHandleClick">
+                <i class="el-icon-arrow-down"
+                   @click="roleDropdownClick(item)"></i>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="copy">复制</el-dropdown-item>
+                  <el-dropdown-item command="edit">编辑</el-dropdown-item>
+                  <el-dropdown-item command="delete">删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- 角色编辑 -->
       <el-dialog :title="roleTitle"
                  :visible.sync="newRoleVisible"
                  width="30%"
@@ -48,17 +43,6 @@
         <label class="label-title">角色名称</label>
         <el-input v-model="role.title"
                   class="input-role"></el-input>
-        <label class="label-title">角色类型</label>
-        <el-select v-model="role.pid"
-                   class="input-role"
-                   placeholder="请选择">
-          <el-option v-for="item in roleList"
-                     v-if="item.pid != 1"
-                     :key="item.pid"
-                     :label="item.name"
-                     :value="item.pid">
-          </el-option>
-        </el-select>
         <span slot="footer"
               class="dialog-footer">
           <el-button type="primary"
@@ -66,117 +50,115 @@
           <el-button @click="newRoleClose">取 消</el-button>
         </span>
       </el-dialog>
+
       <!-- 右边内容 -->
       <div class="content-box">
-        <el-menu :default-active="activeIndex"
-                 class="el-menu-demo"
-                 mode="horizontal"
-                 @select="handleSelect">
-          <el-menu-item index="1">角色员工</el-menu-item>
-          <el-menu-item index="2"
-                        v-if="roleActive && (roleActive.pid != 1 || roleActive.pid == 0)">角色权限</el-menu-item>
-        </el-menu>
-        <div class="content-table"
-             v-loading="menuLoading"
-             v-show="activeIndex == '1'">
-          <flexbox class="content-table-header">
-            <div class="content-table-header-reminder">
-              <reminder v-if="this.roleActive && this.roleActive.pid == 1"
-                        :content="managerGroupReminderContent(this.roleActive)">
-              </reminder>
-            </div>
-            <el-button size="medium"
-                       type="primary"
-                       @click="addEmployees"> 关联员工 </el-button>
-          </flexbox>
-          <el-table :data="tableData"
-                    :height="tableHeight">
-            <el-table-column :prop="item.field"
-                             show-overflow-tooltip
-                             :label="item.label"
-                             v-for="(item, index) in tableList"
-                             :key="index">
-              <template slot="header"
-                        slot-scope="scope">
-                <div class="table-head-name">{{scope.column.label}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <!-- <span class="el-icon-edit content-table-span"
+        <el-tabs v-model="mainMenuIndex">
+          <el-tab-pane label="角色员工"
+                       name="user">
+            <div class="content-table"
+                 v-loading="userLoading">
+              <flexbox class="content-table-header">
+                <div class="content-table-header-reminder">
+                  <reminder v-if="this.roleActive && this.roleActive.pid == 1"
+                            :content="managerGroupReminderContent(this.roleActive.types)">
+                  </reminder>
+                </div>
+                <el-button size="medium"
+                           type="primary"
+                           @click="addEmployees"> 关联员工 </el-button>
+              </flexbox>
+              <el-table :data="tableData"
+                        :height="tableHeight"
+                        style="width: 100%">
+                <el-table-column :prop="item.field"
+                                 show-overflow-tooltip
+                                 :label="item.label"
+                                 v-for="(item, index) in tableList"
+                                 :key="index">
+                  <template slot="header"
+                            slot-scope="scope">
+                    <div class="table-head-name">{{scope.column.label}}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作">
+                  <template slot-scope="scope">
+                    <!-- <span class="el-icon-edit content-table-span"
                       @click="editBtn(scope.row)"></span> -->
-                <span class="el-icon-delete content-table-span"
-                      @click="delectBtn(scope.row)"></span>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="p-contianer">
-            <el-pagination class="p-bar"
-                           @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"
-                           :current-page="currentPage"
-                           :page-sizes="pageSizes"
-                           :page-size.sync="pageSize"
-                           layout="total, sizes, prev, pager, next, jumper"
-                           :total="total">
-            </el-pagination>
-          </div>
+                    <span class="el-icon-delete content-table-span"
+                          @click="delectBtn(scope.row)"></span>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div class="p-contianer">
+                <el-pagination class="p-bar"
+                               @size-change="handleSizeChange"
+                               @current-change="handleCurrentChange"
+                               :current-page="currentPage"
+                               :page-sizes="pageSizes"
+                               :page-size.sync="pageSize"
+                               layout="total, sizes, prev, pager, next, jumper"
+                               :total="total">
+                </el-pagination>
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="角色权限"
+                       name="rule">
+            <!-- 权限管理 -->
+            <div class="jurisdiction-box"
+                 v-loading="ruleLoading">
+              <el-button v-if="roleActive"
+                         size="medium"
+                         type="primary"
+                         class="jurisdiction-edit"
+                         @click="ruleSubmit"> 保 存 </el-button>
+              <el-tabs v-model="ruleMenuIndex">
+                <el-tab-pane v-for="(item, index) in ruleMenuList"
+                             :key="index"
+                             :label="item.label"
+                             :name="item.index">
+                  <div v-if="item.type == 'tree'"
+                       class="jurisdiction-content"
+                       :style="{ height: treeHeight + 'px'}">
+                    <div class="jurisdiction-content-checkbox">
+                      <el-tree :data="item.data"
+                               show-checkbox
+                               node-key="id"
+                               style="height: 0;"
+                               :ref="'tree' + item.index"
+                               :indent="0"
+                               empty-text=""
+                               default-expand-all
+                               :expand-on-click-node="false"
+                               :props="defaultProps">
+                      </el-tree>
+                    </div>
+                  </div>
+                  <div v-else
+                       class="jurisdiction-content">
+                    <div class="data-radio">
+                      <el-radio-group v-model="item.value">
+                        <el-radio :label="1">本人</el-radio>
+                        <el-radio :label="2">本人及下属</el-radio>
+                        <el-radio :label="3">本部门</el-radio>
+                        <el-radio :label="4">本部门及下属部门</el-radio>
+                        <el-radio :label="5">全部</el-radio>
+                      </el-radio-group>
+                    </div>
+                  </div>
 
-        </div>
-        <!-- 权限管理 -->
-        <div class="jurisdiction-box"
-             v-loading="jurisdictionLoading"
-             v-show="activeIndex == '2'">
-          <div style="position: relative;">
-            <el-menu :default-active="jurisdictionIndex"
-                     class="el-menu-demo"
-                     mode="horizontal"
-                     @select="jurisdictionSelect">
-              <el-menu-item v-for="(item, index) in muneList"
-                            :key="item.realm"
-                            :index="item.realm">{{item.label}}</el-menu-item>
-            </el-menu>
-            <el-button size="medium"
-                       type="primary"
-                       class="jurisdiction-edit"
-                       @click="jurisdictionSubmit"> 保 存 </el-button>
-          </div>
-          <div class="jurisdiction-content">
-            <div class="content-left">
-              <p class="jurisdiction-title">功能权限管理</p>
-              <div class="jurisdiction-content-checkbox">
-                <el-tree :data="showTreeData"
-                         show-checkbox
-                         node-key="menuId"
-                         style="height: 0;"
-                         ref="tree"
-                         :indent="0"
-                         empty-text=""
-                         default-expand-all
-                         :expand-on-click-node="false"
-                         :props="defaultProps">
-                </el-tree>
-              </div>
+                </el-tab-pane>
+              </el-tabs>
             </div>
-            <div class="content-right">
-              <p class="jurisdiction-title">数据权限</p>
-              <div class="data-radio">
-                <el-radio-group v-model="radioModel">
-                  <el-radio :label="1">本人</el-radio>
-                  <el-radio :label="2">本人及下属</el-radio>
-                  <el-radio :label="3">本部门</el-radio>
-                  <el-radio :label="4">本部门及下属部门</el-radio>
-                  <el-radio :label="5">全部</el-radio>
-                </el-radio-group>
-              </div>
-            </div>
-          </div>
-        </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
     <!-- 添加员工 -->
     <new-dialog :dialogVisible="newEmployeeVisible"
                 :roleList="roleList"
+                :role="roleActive"
                 :selectRoleList="newDialogSelectRoles"
                 :selectUserList="newDialogSelectUsers"
                 :dialogTitle="dialogTitle"
@@ -188,7 +170,8 @@
 
 <script>
 import NewDialog from './components/newDialog'
-import { usersList } from '@/api/common'
+
+import { adminUsersIndex } from '@/api/systemManagement/EmployeeDepManagement'
 import Reminder from '@/components/reminder'
 import {
   roleListFun,
@@ -196,9 +179,8 @@ import {
   roleAdd,
   roleDelete,
   roleCopy,
-  updateRoleMenu,
-  usersDelete,
-  roleUpdate
+  roleUpdate,
+  usersDelete
 } from '@/api/systemManagement/RoleAuthorization'
 
 export default {
@@ -206,35 +188,38 @@ export default {
     NewDialog,
     Reminder
   },
+
   data() {
     return {
-      activeIndex: '1', // 角色员工  角色权限 切换 默认左边
+      pid: '',
+      title: '',
       tableData: [], // 与角色关联的员工
-      tableHeight: document.documentElement.clientHeight - 319,
+      tableHeight: document.documentElement.clientHeight - 319, // 表的高度
+      treeHeight: document.documentElement.clientHeight - 230, // 表的3度
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
       total: 0,
       tableList: [
         { label: '姓名', field: 'realname' },
-        { label: '部门', field: 'deptName' },
+        { label: '部门', field: 's_name' },
         { label: '职位', field: 'post' },
-        { label: '角色', field: 'roleName' }
-      ], //员工列表 头部 数据
+        { label: '角色', field: 'groups' }
+      ],
+
       // 新建角色
       newRoleVisible: false,
       role: {}, // 操作角色的框 关联的信息
       roleList: [], // 角色列表 list属性 是信息
+
+      mainMenuIndex: 'user', // 角色员工  角色权限 切换 默认左边
       // 权限管理
-      jurisdictionIndex: 'crm', // 默认模块 工作台
-      muneList: [],
-      treeData: [], // 角色权限数据
-      showTreeData: [],
+      ruleMenuIndex: 'data', // 默认模块 工作台
+      ruleMenuList: [],
       defaultProps: {
-        children: 'childMenu',
-        label: 'menuName'
+        children: 'children',
+        label: 'title'
       },
-      radioModel: 2,
       // 编辑或添加员工
       dialogTitle: '',
       newEmployeeVisible: false,
@@ -244,115 +229,134 @@ export default {
       newDialogSelectRoles: [],
       // 选中的角色
       roleActive: null,
-      roleRulesEdit: [], // 编辑时用到的信息
       dropdownHandleRole: null, // 下拉操作编辑角色
       // 新建编辑角色title
       roleTitle: '',
       //   加载
-      navLoading: false,
+      roleMenuLoading: false,
       // 权限加载中
-      jurisdictionLoading: false,
-      // 列表加载中
-      menuLoading: false
+      ruleLoading: false,
+      // 员工列表加载中
+      userLoading: false
     }
   },
+
+  watch: {},
+
   computed: {},
+
   mounted() {
     /** 控制table的高度 */
     window.onresize = () => {
       this.tableHeight = document.documentElement.clientHeight - 319
+      this.treeHeight = document.documentElement.clientHeight - 230
     }
     /** 获取权限信息 */
+    this.pid = this.$route.params.pid
+    this.title = this.$route.params.title
     this.getRulesList()
+    this.getRoleList()
   },
+
+  beforeRouteUpdate(to, from, next) {
+    this.pid = to.params.pid
+    this.title = to.params.title
+    this.roleActive = null
+    this.roleList = []
+    this.currentPage = 1
+    this.total = 0
+    this.tableData = []
+    this.getRulesList()
+    this.getRoleList()
+    next()
+  },
+
   methods: {
-    // 获取权限规则信息
+    /**
+     * 获取权限规则信息
+     */
     getRulesList() {
-      this.navLoading = true
-      rulesList({ type: 'tree' })
-        .then(res => {
-          this.navLoading = false
-          var arr = []
-          var map = {}
-          for (var i = 0; i < res.data.length; i++) {
-            arr.push({
-              label: res.data[i].menuName,
-              index: i,
-              realm: res.data[i].realm
-            })
-            map[res.data[i].realm] = res.data[i]
-          }
-          this.treeData = map
-          this.muneList = arr
-          this.showTreeData = [this.treeData[this.jurisdictionIndex]]
-          this.getRoleList()
-        })
-        .catch(() => {
-          this.navLoading = false
-        })
+      rulesList({ type: 'tree', pid: this.pid }).then(res => {
+        if (res.data.length == 2) {
+          this.ruleMenuList = [
+            {
+              label: this.title,
+              index: 'data',
+              type: 'tree',
+              value: [],
+              data: [res.data[0]]
+            },
+            {
+              label: '商业智能',
+              index: 'bi',
+              type: 'tree',
+              value: [],
+              data: [res.data[1]]
+            }
+          ]
+        } else if (res.data.length == 1) {
+          this.ruleMenuList = [
+            {
+              label: this.title,
+              index: 'data',
+              type: 'tree',
+              value: [],
+              data: [res.data[0]]
+            }
+          ]
+        } else {
+          this.ruleMenuList = []
+        }
+
+        this.getRoleRulesInfo()
+      })
     },
-    // 获取角色列表
+
+    /**
+     * 获取角色列表
+     */
     getRoleList() {
-      this.navLoading = true
-      roleListFun()
+      this.roleMenuLoading = true
+      roleListFun({ pid: this.pid, rules: 1 })
         .then(res => {
           this.roleList = res.data
           /** 判断数据是否存在 */
           let hasActive = false
           if (this.roleActive) {
             for (let index = 0; index < this.roleList.length; index++) {
-              const element = this.roleList[index]
-              for (
-                let subIndex = 0;
-                subIndex < element.list.length;
-                subIndex++
-              ) {
-                const item = element.list[subIndex]
-                if (item.id === this.roleActive.id) {
-                  this.roleActive = item
-                  // 点击角色 复制权限 用于编辑操作
-                  this.getRoleRulesInfo(item)
-                  hasActive = true
-                  break
-                }
-              }
-            }
-          }
-          if (!hasActive) {
-            for (let item of this.roleList) {
-              if (item.list.length != 0) {
-                this.roleActive = item.list[0]
-                // 点击角色 复制权限 用于编辑操作
-                this.getRoleRulesInfo(this.roleActive)
+              const item = this.roleList[index]
+              if (item.id == this.roleActive.id) {
+                this.roleActive = item
+                this.getRoleRulesInfo()
+                hasActive = true
                 break
               }
             }
           }
-
-          this.getUserListWithRole(this.roleActive)
-          this.getUserRulesWithRole(this.roleActive)
-          this.navLoading = false
+          if (!hasActive && this.roleList.length) {
+            this.roleActive = this.roleList[0]
+            this.getRoleRulesInfo()
+          }
+          this.getUserList(this.roleActive)
+          this.roleMenuLoading = false
         })
         .catch(err => {
-          this.navLoading = false
+          this.roleMenuLoading = false
         })
     },
-    // 右侧角色和权限切换
-    handleSelect(key, keyPath) {
-      this.activeIndex = key
-    },
+
     // 添加员工
     addEmployees() {
       this.newDialogSelectUsers = []
-      this.newDialogSelectRoles = [this.roleActive.id]
+      this.newDialogSelectRoles = []
       this.dialogTitle = '添加员工'
       this.newEmployeeVisible = true
     },
     // 添加员工确定
     employeesSave(val) {
       this.newEmployeeVisible = false
-      this.getUserListWithRole(this.roleActive)
-      this.getUserRulesWithRole(this.roleActive)
+      this.getUserList(this.roleActive)
+      // this.getUserRulesWithRole(this.roleActive)
     },
     // 删除
     delectBtn(val) {
@@ -362,11 +366,11 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.menuLoading = true
-          usersDelete({ userId: val.userId, roleId: this.roleActive.id }).then(
+          this.userLoading = true
+          usersDelete({ user_id: val.id, group_id: this.roleActive.id }).then(
             res => {
-              this.menuLoading = true
-              this.getUserListWithRole(this.roleActive)
+              this.userLoading = true
+              this.getUserList(this.roleActive)
               this.$message.success('删除成功')
             }
           )
@@ -380,56 +384,40 @@ export default {
     },
     editBtn(val) {
       this.newDialogSelectUsers = [val]
-      this.newDialogSelectRoles = val.roleId.split(',').map(function(data) {
+      this.newDialogSelectRoles = val.groupids.split(',').map(function(data) {
         return +data
       })
       this.dialogTitle = '编辑员工'
       this.newEmployeeVisible = true
     },
-    // 不同模块的权限切换
-    jurisdictionSelect(key) {
-      this.roleRulesEdit[
-        this.jurisdictionIndex
-      ] = this.$refs.tree.getCheckedKeys()
-      this.roleRulesEdit[
-        this.jurisdictionIndex + '_upload'
-      ] = this.$refs.tree
-        .getCheckedKeys()
-        .concat(this.$refs.tree.getHalfCheckedKeys())
 
-      this.jurisdictionIndex = key
-      this.showTreeData = [this.treeData[this.jurisdictionIndex]]
-
-      this.$nextTick(() => {
-        if (this.$refs.tree) {
-          this.$refs.tree.setCheckedKeys(
-            this.roleRulesEdit[this.jurisdictionIndex]
-          )
-        }
-      })
-    },
-    // 管理角色说明
-    managerGroupReminderContent(item) {
-      if (item.label == 1) {
-        return '项目管理员拥有“项目管理”模块所有权限，能看到并维护所有项目信息'
-      } else if (item.id == 1) {
+    /**
+     * 管理角色说明
+     */
+    managerGroupReminderContent(types) {
+      if (types == 1) {
         return '超级管理员不可被任何管理员删除，默认系统所有权限，也可添加其他超级管理员'
-      } else if (item.id == 2) {
+      } else if (types == 2) {
         return '系统设置管理员拥有整个系统的“系统设置”权限'
-      } else if (item.id == 3) {
+      } else if (types == 3) {
         return '员工与角色权限管理的管理权限，可管理公司的组织结构和员工账号的增加、停用，可创建角色并为员工分配角色授权'
-      } else if (item.id == 4) {
+      } else if (types == 4) {
         return '审批管理员可配置、管理所有审批流程'
-      } else if (item.id == 5) {
+      } else if (types == 5) {
         return '办公管理员可以对“办公”的所有设置进行管理'
-      } else if (item.id == 6) {
+      } else if (types == 6) {
         return '客户管理管理员可以对“客户管理”的所有设置进行管理'
-      } else if (item.id == 7) {
+      } else if (types == 8) {
         return '公告管理员有新建、删除、结束公告的操作'
+      } else if (types == 7) {
+        return '项目管理员拥有“项目管理”模块所有权限，能看到并维护所有项目信息'
       }
       return ''
     },
-    // 新建角色
+
+    /**
+     * 新建角色
+     */
     newRoleClose() {
       this.newRoleVisible = false
     },
@@ -450,7 +438,10 @@ export default {
         this.roleDelect(this.dropdownHandleRole)
       }
     },
-    // 角色编辑
+
+    /**
+     * 角色编辑
+     */
     roleEditBtn(val) {
       this.roleTitle = '编辑角色'
       this.role = {
@@ -460,7 +451,10 @@ export default {
       }
       this.newRoleVisible = true
     },
-    // 复制
+
+    /**
+     * 复制
+     */
     ticketsBtn(val) {
       this.$confirm('确定此操作?', '提示', {
         confirmButtonText: '确定',
@@ -468,7 +462,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          roleCopy({ roleId: val.id }).then(res => {
+          roleCopy({ id: val.id }).then(res => {
             this.$message.success('复制成功')
             this.getRoleList()
           })
@@ -480,7 +474,10 @@ export default {
           })
         })
     },
-    // 删除
+
+    /**
+     * 删除
+     */
     roleDelect(val) {
       this.$confirm('此操作将永久删除是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -488,20 +485,15 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          roleDelete({ roleId: val.id })
-            .then(res => {
-              this.getRoleList()
-              this.$message.success('删除成功')
-              if (
-                this.roleList.length > 0 &&
-                this.roleList[0].list.length > 0
-              ) {
-                this.roleActive = this.roleList[0].list[0]
-                // 点击角色 复制权限 用于编辑操作
-                this.getRoleRulesInfo(this.roleActive)
-              }
-            })
-            .catch(() => {})
+          roleDelete({ id: val.id }).then(res => {
+            if (this.roleList.length) {
+              this.roleActive = this.roleList[0]
+              // 点击角色 复制权限 用于编辑操作
+              this.getRoleRulesInfo()
+            }
+            this.getRoleList()
+            this.$message.success('删除成功')
+          })
         })
         .catch(() => {
           this.$message({
@@ -513,24 +505,18 @@ export default {
     newRoleSubmit() {
       if (!this.role.title) {
         this.$message.error('角色名称不能为空')
-      } else if (!this.role.pid && this.role.pid != 0) {
-        this.$message.error('角色类型不能为空')
       } else {
         if (this.roleTitle == '新建角色') {
           roleAdd({
-            roleName: this.role.title,
-            roleType: this.role.pid
+            title: this.role.title,
+            pid: this.pid
           }).then(res => {
             this.getRoleList()
             this.$message.success('添加成功')
             this.newRoleClose()
           })
         } else {
-          roleUpdate({
-            roleName: this.role.title,
-            roleType: this.role.pid,
-            roleId: this.role.id
-          }).then(res => {
+          roleUpdate(this.role).then(res => {
             this.getRoleList()
             this.$message.success('编辑成功')
             this.newRoleClose()
@@ -538,107 +524,90 @@ export default {
         }
       }
     },
-    // 角色列表点击事件
-    roleListClick(val) {
-      if (val.pid == 1) {
-        this.activeIndex = '1' // 切换会角色员工
-      }
+
+    /**
+     * 角色列表点击
+     */
+    roleMenuSelect(val) {
       this.roleActive = val
-      // 点击角色 复制权限 用于编辑操作
-      this.getRoleRulesInfo(val)
-      this.getUserListWithRole(this.roleActive)
-      this.getUserRulesWithRole(this.roleActive)
+
+      this.getRoleRulesInfo()
+
+      this.getUserList(this.roleActive)
     },
-    getRoleRulesInfo(role) {
-      this.roleRulesEdit['crm'] = this.getUserModuleRules(
-        role.rules['crm'],
-        'crm'
-      )
-      this.roleRulesEdit['crm_upload'] = role.rules['crm']
-        ? role.rules['crm']
-        : []
-      this.roleRulesEdit['bi'] = this.getUserModuleRules(role.rules['bi'], 'bi')
-      this.roleRulesEdit['bi_upload'] = role.rules['bi'] ? role.rules['bi'] : []
-    },
-    // 获取角色下员工列表
-    getUserListWithRole(role, noReset) {
-      if (!noReset) {
-        this.currentPage = 1
-      }
-      this.menuLoading = true
-      usersList({
-        page: this.currentPage,
-        limit: this.pageSize,
-        roleId: role.id
-      })
-        .then(res => {
-          this.tableData = res.data.list
-          this.total = res.data.totalRow
-          this.menuLoading = false
-        })
-        .catch(err => {
-          this.menuLoading = false
-        })
-    },
+
     /**
-     * 更改每页展示数量
+     * 获取权限信息 需在roleActive获取之后
      */
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.getUserListWithRole(this.roleActive, true)
-    },
-    /**
-     * 更改当前页数
-     */
-    handleCurrentChange(val) {
-      this.currentPage = val
-      this.getUserListWithRole(this.roleActive, true)
-    },
-    // 员工权限标记
-    getUserRulesWithRole(role) {
-      // 默认勾选第一个
-      this.$nextTick(() => {
-        if (this.$refs.tree) {
-          this.$refs.tree.setCheckedKeys(
-            this.roleRulesEdit[this.jurisdictionIndex]
-          )
+    getRoleRulesInfo() {
+      if (this.roleActive && this.ruleMenuList.length) {
+        if (this.roleActive.type) {
+          let lastItem = this.ruleMenuList[this.ruleMenuList.length - 1]
+          if (lastItem.type != 'data') {
+            this.ruleMenuList.push({
+              label: '数据权限',
+              index: 'info',
+              type: 'data',
+              value: this.roleActive.type
+            })
+          }
         }
-      })
-      // 默认勾选第一个数据权限
-      if (role.type) {
-        this.radioModel = role.type
-      } else {
-        this.radioModel = ''
+
+        for (let index = 0; index < this.ruleMenuList.length; index++) {
+          const element = this.ruleMenuList[index]
+          if (element.type == 'tree') {
+            element.rules = this.getRoleRules(
+              this.roleActive.rules[element.index],
+              element.data[0]
+            )
+
+            let treeRefs = this.$refs['tree' + element.index]
+            if (treeRefs) {
+              if (
+                Object.prototype.toString.call(treeRefs) == '[object Array]'
+              ) {
+                treeRefs[0].setCheckedKeys(element.rules)
+              } else {
+                treeRefs.setCheckedKeys(element.rules)
+              }
+            }
+          } else {
+            element.value = this.roleActive.type
+          }
+        }
       }
     },
-    // 获得check的实际数据
-    getUserModuleRules(array, type) {
+
+    /**
+     * 获得check的实际数据
+     */
+    getRoleRules(array, tree) {
       if (!array) {
         array = []
       }
-      var firstTree = this.treeData[type]
+
       var hasRemove = false
       var copyArray = this.copyItem(array)
       for (
         let firstIndex = 0;
-        firstIndex < firstTree.childMenu.length;
+        firstIndex < tree.children.length;
         firstIndex++
       ) {
-        const firstItem = firstTree.childMenu[firstIndex]
+        const firstItem = tree.children[firstIndex]
         for (let index = 0; index < array.length; index++) {
           const element = array[index]
           var temps = []
           for (
             let secondIndex = 0;
-            secondIndex < firstItem.childMenu.length;
+            secondIndex < firstItem.children.length;
             secondIndex++
           ) {
-            const secondItem = firstItem.childMenu[secondIndex]
+            const secondItem = firstItem.children[secondIndex]
             if (secondItem.id == element) {
               temps.push(secondItem)
             }
           }
-          if (temps.length != firstItem.childMenu.length) {
+          if (temps.length != firstItem.children.length) {
             hasRemove = true
             this.removeItem(copyArray, firstItem.id)
           }
@@ -646,7 +615,7 @@ export default {
       }
 
       if (hasRemove) {
-        this.removeItem(copyArray, firstTree.id)
+        this.removeItem(copyArray, tree.id)
       }
 
       var checkedKey = []
@@ -656,6 +625,7 @@ export default {
           checkedKey.push(parseInt(element))
         }
       }
+
       return checkedKey
     },
     copyItem(array) {
@@ -686,31 +656,89 @@ export default {
       }
       return false
     },
-    // 权限提交
-    jurisdictionSubmit() {
-      this.roleRulesEdit[
-        this.jurisdictionIndex
-      ] = this.$refs.tree.getCheckedKeys()
-      this.roleRulesEdit[
-        this.jurisdictionIndex + '_upload'
-      ] = this.$refs.tree
-        .getCheckedKeys()
-        .concat(this.$refs.tree.getHalfCheckedKeys())
 
-      this.jurisdictionLoading = true
-      updateRoleMenu({
-        rules: this.roleRulesEdit['crm'].concat(this.roleRulesEdit['bi']),
-        type: this.radioModel,
+    /**
+     * 员工列表
+     */
+    getUserList(role, noReset) {
+      if (!role) {
+        return
+      }
+
+      if (!noReset) {
+        this.currentPage = 1
+      }
+      this.userLoading = true
+      adminUsersIndex({
+        page: this.currentPage,
+        limit: this.pageSize,
+        group_id: role.id
+      })
+        .then(res => {
+          this.tableData = res.data.list
+          this.total = res.data.dataCount
+          this.userLoading = false
+        })
+        .catch(err => {
+          this.userLoading = false
+        })
+    },
+    /**
+     * 更改每页展示数量
+     */
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getUserList(this.roleActive, true)
+    },
+    /**
+     * 更改当前页数
+     */
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.getUserList(this.roleActive, true)
+    },
+
+    // 权限提交
+    ruleSubmit() {
+      this.ruleLoading = true
+
+      let rules = []
+      let infoData = ''
+      for (let index = 0; index < this.ruleMenuList.length; index++) {
+        const element = this.ruleMenuList[index]
+        if (element.type == 'tree') {
+          let treeRefs = this.$refs['tree' + element.index]
+          if (treeRefs) {
+            if (Object.prototype.toString.call(treeRefs) == '[object Array]') {
+              rules = rules.concat(
+                treeRefs[0]
+                  .getCheckedKeys()
+                  .concat(treeRefs[0].getHalfCheckedKeys())
+              )
+            } else {
+              rules = rules.concat(
+                treeRefs.getCheckedKeys().concat(treeRefs.getHalfCheckedKeys())
+              )
+            }
+          }
+        } else {
+          infoData = element.value
+        }
+      }
+
+      roleUpdate({
+        rules: rules,
+        type: infoData,
         id: this.roleActive.id,
         title: this.roleActive.title
       })
         .then(res => {
           this.getRoleList()
           this.$message.success('编辑成功')
-          this.jurisdictionLoading = false
+          this.ruleLoading = false
         })
         .catch(() => {
-          this.jurisdictionLoading = false
+          this.ruleLoading = false
         })
     }
   }
@@ -763,10 +791,9 @@ export default {
   margin-left: 215px;
   height: 100%;
   overflow: hidden;
+  padding-top: 10px;
 }
 .content-table {
-  padding-bottom: 15px;
-  height: calc(100% - 61px);
   overflow: hidden;
 }
 .content-table > .el-button {
@@ -784,6 +811,7 @@ export default {
   padding: 15px;
   .content-table-header-reminder {
     flex: 1;
+    margin-right: 5px;
   }
 }
 
@@ -809,10 +837,7 @@ export default {
   padding-bottom: 15px;
   height: calc(100% - 61px);
   overflow: hidden;
-}
-.jurisdiction-title {
-  border-bottom: 1px dashed #e6e6e6;
-  padding: 15px 25px;
+  position: relative;
 }
 .jurisdiction-content-checkbox {
   border-right: 1px dashed #e6e6e6;
@@ -880,12 +905,6 @@ export default {
     display: none;
   }
 }
-.role-nav-box .item-label {
-  color: #000;
-  font-size: 14px;
-  padding-left: 15px;
-  margin-bottom: 5px;
-}
 .role-nav-box .item-list:hover {
   background: #ebf3ff;
   border-right-color: #46cdcf;
@@ -908,6 +927,7 @@ export default {
   position: absolute;
   top: 10px;
   right: 30px;
+  z-index: 3;
 }
 
 /** 分页布局 */
@@ -921,5 +941,21 @@ export default {
     font-size: 14px !important;
   }
 }
+
+.el-tabs /deep/ .el-tabs__nav-wrap::after {
+  display: none !important;
+}
+
+.el-tabs /deep/ .el-tabs__header {
+  padding: 0 17px;
+  margin: 0 0 15px !important;
+}
+
+.el-tabs /deep/ .el-tabs__item {
+  font-size: 13px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+}
+
 @import './styles/table.scss';
 </style>

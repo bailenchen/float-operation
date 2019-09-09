@@ -6,7 +6,7 @@
     <el-container>
       <el-aside width="auto"
                 class="aside-container">
-        <sidebar :items="managerRouterItems"
+        <sidebar :items="routerItems"
                  createButtonTitle=""
                  mainRouter="manager"></sidebar>
       </el-aside>
@@ -21,6 +21,7 @@
 import { mapGetters } from 'vuex'
 import { ManagerNavbar, Sidebar, AppMain } from './components'
 import { managerRouterMenu } from '@/router/modules/manager'
+import { adminRroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
 
 export default {
   name: 'Layout',
@@ -30,22 +31,48 @@ export default {
     AppMain
   },
   computed: {
-    ...mapGetters(['admin']),
-    managerRouterItems() {
-      for (let index = 0; index < managerRouterMenu.length; index++) {
-        const routerMenuItem = managerRouterMenu[index]
-        routerMenuItem.hidden = this.admin[routerMenuItem.meta.subType]
-          ? false
-          : true
-      }
-      return managerRouterMenu
-    }
+    ...mapGetters(['admin'])
   },
   data() {
-    return {}
+    return {
+      routerItems: []
+    }
   },
+
+  mounted() {
+    for (let index = 0; index < managerRouterMenu.length; index++) {
+      const menuItem = managerRouterMenu[index]
+      menuItem.hidden = this.admin[menuItem.meta.subType] ? false : true
+    }
+    this.routerItems = managerRouterMenu
+    this.getAuthMenu()
+  },
+
   methods: {
-    navClick(index) {}
+    navClick(index) {},
+
+    getAuthMenu() {
+      adminRroupsTypeListAPI()
+        .then(res => {
+          for (let index = 0; index < this.routerItems.length; index++) {
+            const menuItem = this.routerItems[index]
+            if (menuItem.meta.icon == 'contacts' && !menuItem.hidden) {
+              menuItem.children = res.data.map(item => {
+                return {
+                  name: 'role-authorization',
+                  path: `role-authorization/${item.pid}/${encodeURI(
+                    item.name
+                  )}`,
+                  meta: {
+                    title: item.name
+                  }
+                }
+              })
+            }
+          }
+        })
+        .catch(err => {})
+    }
   }
 }
 </script>

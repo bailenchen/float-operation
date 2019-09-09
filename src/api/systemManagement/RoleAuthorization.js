@@ -77,3 +77,12 @@ export function usersDelete(data) {
     data: data
   })
 }
+
+// 角色分类列表
+export function adminRroupsTypeListAPI(data) {
+  return request({
+      url: 'admin/groups/typeList',
+      method: 'post',
+      data: data
+  })
+}
