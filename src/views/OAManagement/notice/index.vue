@@ -3,7 +3,7 @@
        v-loading="loading">
     <el-button type="primary"
                class="new-btn"
-               v-if="newStatus"
+               v-if="newStatus && permissionSave"
                @click="newBtn">新建公告</el-button>
     <el-tabs v-model="activeName">
       <el-tab-pane label="公告"
@@ -56,6 +56,7 @@
 import VDetails from './details'
 import newDialog from './newDialog'
 import NoticeCell from './noticeCell'
+import { mapGetters } from 'vuex'
 // API
 import { noticeList } from '@/api/oamanagement/notice'
 
@@ -94,6 +95,12 @@ export default {
   watch: {
     $route(to, from) {
       this.$router.go(0)
+    }
+  },
+  computed: {
+    ...mapGetters(['oa']),
+    permissionSave() {
+      return this.oa && this.oa.announcement && this.oa.announcement.save
     }
   },
   mounted() {

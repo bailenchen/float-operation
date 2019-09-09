@@ -132,7 +132,7 @@ export default {
         })
           .then(res => {
             this.loading = false
-            this.getDetail()
+            window.location.reload()
           })
           .catch(() => {
             this.loading = false

@@ -530,17 +530,18 @@ export default {
               this.roleActive.rules[element.index],
               element.data[0]
             )
-
-            let treeRefs = this.$refs['tree' + element.index]
-            if (treeRefs) {
-              if (
-                Object.prototype.toString.call(treeRefs) == '[object Array]'
-              ) {
-                treeRefs[0].setCheckedKeys(element.rules)
-              } else {
-                treeRefs.setCheckedKeys(element.rules)
+            this.$nextTick(() => {
+              let treeRefs = this.$refs['tree' + element.index]
+              if (treeRefs) {
+                if (
+                  Object.prototype.toString.call(treeRefs) == '[object Array]'
+                ) {
+                  treeRefs.length && treeRefs[0].setCheckedKeys(element.rules)
+                } else {
+                  treeRefs.setCheckedKeys(element.rules)
+                }
               }
-            }
+            })
           } else {
             element.value = this.roleActive.type
           }
