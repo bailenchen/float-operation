@@ -107,20 +107,20 @@ const systemEmployeeRouter = {
 }
 
 const authRouter = {
-  path: '/role-authorization',
+  path: '/role-auth',
   component: Layout,
-  name: 'role-authorization',
+  name: 'role-auth',
   meta: {
     requiresAuth: true,
-    title: '系统管理',
+    title: '角色权限控制',
     index: 1,
     type: 'admin',
     subType: 'groups'
   },
   children: [{
-    name: 'role-authorization',
-    path: 'role-authorization/:pid/:title',
-    component: () => import('@/views/SystemManagement/RoleAuthorization'),
+    name: 'role-auth',
+    path: 'role-auth/:pid/:title',
+    component: () => import('@/views/SystemManagement/roleAuth/index'),
     meta: {
       requiresAuth: true,
       title: '角色权限管理',
@@ -134,9 +134,9 @@ const authRouter = {
 }
 
 const authMenuRouter = {
-  path: '/role-authorization',
+  path: '/role-auth',
   component: Layout,
-  name: 'role-authorization',
+  name: 'role-auth',
   meta: {
     requiresAuth: true,
     title: '角色权限控制',

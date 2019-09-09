@@ -59,8 +59,8 @@ export default {
             if (menuItem.meta.icon == 'contacts' && !menuItem.hidden) {
               menuItem.children = res.data.map(item => {
                 return {
-                  name: 'role-authorization',
-                  path: `role-authorization/${item.pid}/${encodeURI(
+                  name: 'role-auth',
+                  path: `role-auth/${item.pid}/${encodeURI(
                     item.name
                   )}`,
                   meta: {
