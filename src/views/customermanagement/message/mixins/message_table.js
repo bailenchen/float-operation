@@ -305,7 +305,7 @@ export default {
           'background-color': '#FEF0F0',
           'color': '#F56C6B'
         }
-      } else if (status == 4) {
+      } else if (status == 4 || status == 5) {
         return {
           'background-color': '#FFFFFF'
         }
@@ -323,6 +323,8 @@ export default {
         return '拒绝'
       } else if (status == 4) {
         return '撤回'
+      } else if (status == 5) {
+        return '未提交'
       }
       return ''
     },
