@@ -246,7 +246,7 @@ export default {
 .more-mark {
   color: #b3884f;
   font-size: 12px;
-  background: linear-gradient(left, #f9f3ed, #f8e1be);
+  background: linear-gradient(to right, #f9f3ed, #f8e1be);
   padding: 5px;
   border-radius: 2px;
   transform: scale(0.8);
