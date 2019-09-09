@@ -79,15 +79,26 @@ export default {
   },
   components: {},
   computed: {
-    ...mapGetters(['userInfo', 'lang', 'logo', 'crm', 'bi', 'admin']),
+    ...mapGetters([
+      'userInfo',
+      'lang',
+      'logo',
+      'crm',
+      'bi',
+      'admin',
+      'oa',
+      'work'
+    ]),
     items() {
       var tempsItems = []
-      tempsItems.push({
-        title: '办公',
-        type: 0,
-        path: '/workbench',
-        icon: 'workbench'
-      })
+      if (this.oa) {
+        tempsItems.push({
+          title: '办公',
+          type: 0,
+          path: '/workbench',
+          icon: 'workbench'
+        })
+      }
       if (this.crm) {
         tempsItems.push({
           title: '客户管理',
@@ -104,12 +115,14 @@ export default {
           icon: 'statistics'
         })
       }
-      tempsItems.push({
-        title: '项目管理',
-        type: 2,
-        path: '/project',
-        icon: 'project'
-      })
+      if (this.work) {
+        tempsItems.push({
+          title: '项目管理',
+          type: 2,
+          path: '/project',
+          icon: 'project'
+        })
+      }
       return tempsItems
     }
   },

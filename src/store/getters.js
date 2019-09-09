@@ -20,6 +20,8 @@ const getters = {
   crm: state => state.user.crm,
   bi: state => state.user.bi,
   admin: state => state.user.admin,
+  oa: state => state.user.oa,
+  work: state => state.user.work,
   // 路由
   addRouters: state => state.permission.addRouters,
   crmRouters: state => state.permission.crmRouters,
