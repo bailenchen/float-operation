@@ -114,7 +114,6 @@ export default {
               return element.type == item.type
             })
           }
-          console.log('this.allList---', this.allList)
         })
         .catch(() => {
           this.loading = false
