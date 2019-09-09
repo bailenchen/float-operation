@@ -63,8 +63,13 @@
           </template>
           <template slot-scope="scope">
             <div class="status_button"
+<<<<<<< HEAD
                  :style="getStatusStyle(scope.row.checkStatus)">
               {{getStatusName(scope.row.checkStatus)}}
+=======
+                 :style="getStatusStyle(scope.row.check_status)">
+              {{getStatusName(scope.row.check_status)}}
+>>>>>>> cd49e8b... 保存为草稿逻辑的加入
             </div>
           </template>
         </el-table-column>

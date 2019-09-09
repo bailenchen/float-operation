@@ -252,7 +252,7 @@ export default {
         })
     }
   },
-  mounted() {
+  created() {
     /** 控制table的高度 */
     window.onresize = () => {
       this.tableHeight = document.documentElement.clientHeight - 320
