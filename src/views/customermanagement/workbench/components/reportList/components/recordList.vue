@@ -14,7 +14,8 @@
            class="t-close"
            src="@/assets/img/task_close.png" />
     </flexbox>
-    <div id="follow-log-content" class="t-content">
+    <div id="follow-log-content"
+         class="t-content">
       <follow-record-cell v-for="(item, index) in list"
                           :item="item"
                           :crmType="crmType"
@@ -228,5 +229,4 @@ export default {
   height: calc(100% - 80px);
   overflow-y: auto;
 }
-
 </style>
