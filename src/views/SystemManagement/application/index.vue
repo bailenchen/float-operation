@@ -21,7 +21,7 @@
             <img class="item-icon"
                  :src="getModuleIcon(item.status, item.module)" />
             <span class="item-name">{{item.name}}</span>
-            <el-dropdown v-if="item.type == 1"
+            <el-dropdown v-if="item.type == 1 && configSetAuth"
                          class="more-menu"
                          @command="handleMoreCommand($event, item)">
               <i class="el-icon-more"></i>
@@ -46,6 +46,7 @@ import {
   adminConfigsetUpdate
 } from '@/api/systemManagement/applicationManagement'
 import CallDetail from './components/callDetail'
+import { mapGetters } from 'vuex'
 
 export default {
   /** 系统管理 的 应用管理 */
@@ -80,7 +81,12 @@ export default {
       showCallDetail: false
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['manage']),
+    configSetAuth() {
+      return this.manage && this.manage.configSet && this.manage.configSet.update
+    }
+  },
   mounted() {
     this.getDetail()
   },

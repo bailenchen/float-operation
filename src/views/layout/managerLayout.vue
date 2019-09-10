@@ -21,7 +21,7 @@
 import { mapGetters } from 'vuex'
 import { ManagerNavbar, Sidebar, AppMain } from './components'
 import { managerRouterMenu } from '@/router/modules/manager'
-import { adminRroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
+import { adminGroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
 
 export default {
   name: 'Layout',
@@ -31,7 +31,7 @@ export default {
     AppMain
   },
   computed: {
-    ...mapGetters(['admin'])
+    ...mapGetters(['manage'])
   },
   data() {
     return {
@@ -42,7 +42,23 @@ export default {
   mounted() {
     for (let index = 0; index < managerRouterMenu.length; index++) {
       const menuItem = managerRouterMenu[index]
-      menuItem.hidden = this.admin[menuItem.meta.subType] ? false : true
+      if (
+        Object.prototype.toString.call(menuItem.meta.subType) ==
+        '[object Array]'
+      ) {
+        var typeAuth = this.manage
+        for (let index = 0; index < menuItem.meta.subType.length; index++) {
+          const field = menuItem.meta.subType[index]
+          typeAuth = typeAuth[field]
+          if (typeAuth && menuItem.meta.subType.length - 1 == index) {
+            menuItem.hidden = false
+          } else if (!typeAuth) {
+            menuItem.hidden = true
+          }
+        }
+      } else {
+        menuItem.hidden = this.manage[menuItem.meta.subType] ? false : true
+      }
     }
     this.routerItems = managerRouterMenu
     this.getAuthMenu()
@@ -52,7 +68,7 @@ export default {
     navClick(index) {},
 
     getAuthMenu() {
-      adminRroupsTypeListAPI()
+      adminGroupsTypeListAPI()
         .then(res => {
           for (let index = 0; index < this.routerItems.length; index++) {
             const menuItem = this.routerItems[index]
@@ -60,9 +76,7 @@ export default {
               menuItem.children = res.data.map(item => {
                 return {
                   name: 'role-auth',
-                  path: `role-auth/${item.pid}/${encodeURI(
-                    item.name
-                  )}`,
+                  path: `role-auth/${item.roleType}/${encodeURI(item.name)}`,
                   meta: {
                     title: item.name
                   }
