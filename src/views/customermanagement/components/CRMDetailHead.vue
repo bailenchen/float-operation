@@ -128,6 +128,11 @@ export default {
       return this.isSeas ? false : this.crm[this.crmType].update
     }
   },
+  watch: {
+    isSeas() {
+      this.moreTypes = this.getSelectionHandleItemsInfo()
+    }
+  },
   data() {
     return {
       moreTypes: [], // 更多操作
