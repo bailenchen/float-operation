@@ -97,15 +97,7 @@ export default {
       nextTime: '',
       /** 是否添加日程提醒 */
       isEvent: false,
-      logType: 'record',
-      logTypes: [
-        // { type: 'all', name: '全部' },
-        { type: 'record', name: '跟进记录' },
-        { type: 'log', name: '日志' },
-        { type: 'examine', name: '审批' },
-        { type: 'task', name: '任务' },
-        { type: 'schedule', name: '日程' }
-      ]
+      logType: 'record'
     }
   },
   computed: {

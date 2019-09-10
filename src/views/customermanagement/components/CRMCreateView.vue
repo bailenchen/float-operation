@@ -822,15 +822,15 @@ export default {
                 this.examineInfo.hasOwnProperty('value') &&
                 this.examineInfo.value.length
               ) {
-                params['checkUserId'] = this.examineInfo.value[0].id
+                params['checkUserId'] = this.examineInfo.value[0].userId
               }
-              params.is_draft = 1
+              params.entity.checkStatus = 5
               this.submiteParams(params)
             } else {
               this.$refs.examineInfo.validateField(() => {
                 var params = this.getSubmiteParams(this.crmForm.crmFields)
-                if (this.examineInfo.config === 0) {
-                  params['check_user_id'] = this.examineInfo.value[0].id
+                if (this.examineInfo.examineType === 2 ) {
+                  params['checkUserId'] = this.examineInfo.value[0].userId
                 }
                 this.submiteParams(params)
               })

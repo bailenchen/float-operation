@@ -250,7 +250,7 @@ export default {
         .then(res => {
           if (res.data.list) {
             this.list = res.data.list
-            this.total = res.data.dataCount
+            this.total = res.data.totalRow
           } else {
             this.list = res.data
           }
