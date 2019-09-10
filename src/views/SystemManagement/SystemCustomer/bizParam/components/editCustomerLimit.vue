@@ -1,7 +1,7 @@
 <template>
   <el-dialog :visible.sync="visible"
              width="550px"
-             title="添加规则"
+             :title="title"
              :append-to-body="true"
              :before-close="close">
     <div class="position-relative">
@@ -18,12 +18,12 @@
                align="stretch">
         <div class="handle-item-name"
              style="margin-top: 8px;">{{valueLabel}}</div>
-        <el-input v-model="value"
+        <el-input v-model="customerNum"
                   placeholder="请输入内容"></el-input>
       </flexbox>
       <flexbox class="handle-item">
         <div class="handle-item-name">{{dealLabel}}</div>
-        <el-radio-group v-model="is_deal">
+        <el-radio-group v-model="customerDeal">
           <el-radio :label="1">是</el-radio>
           <el-radio :label="0">否</el-radio>
         </el-radio-group>
@@ -39,10 +39,7 @@
 </template>
 
 <script>
-import {
-  crmSettingCustomerConfigSaveAPI,
-  crmSettingCustomerConfigUpdateAPI
-} from '@/api/systemManagement/SystemCustomer'
+import { crmSettingCustomerConfigSetAPI } from '@/api/systemManagement/SystemCustomer'
 import { XhStrucUserCell } from '@/components/CreateCom'
 
 export default {
@@ -52,8 +49,8 @@ export default {
   },
   data() {
     return {
-      is_deal: 1,
-      value: '',
+      customerDeal: 1,
+      customerNum: '',
       users: [],
       strucs: []
     }
@@ -82,11 +79,11 @@ export default {
           this.clearInfo()
         } else if (this.action.type == 'update') {
           let data = this.action.data
-          this.is_deal = data.is_deal
-          this.value = data.value
+          this.customerDeal = data.customerDeal
+          this.customerNum = data.customerNum
           this.$nextTick(() => {
-            this.users = data.user_ids_info
-            this.strucs = data.structure_ids_info
+            this.users = data.userIds
+            this.strucs = data.deptIds
           })
         }
       }
@@ -105,6 +102,10 @@ export default {
         1: '成交客户是否占有拥有客户数：',
         2: '成交客户是否占有锁定客户数：'
       }[this.types]
+    },
+
+    title() {
+      return this.action.type == 'update' ? '编辑规则' : '添加规则'
     }
   },
   mounted() {},
@@ -119,30 +120,25 @@ export default {
     },
 
     sure() {
-      if ((!this.users.length && !this.strucs.length) || !this.value) {
+      if ((!this.users.length && !this.strucs.length) || !this.customerNum) {
         this.$message.error('请完善信息')
       } else {
-        let request = {
-          save: crmSettingCustomerConfigSaveAPI,
-          update: crmSettingCustomerConfigUpdateAPI
-        }[this.action.type]
-
         let params = {
-          user_ids: this.users.map(item => {
+          userList: this.users.map(item => {
+            return item.userId
+          }),
+          deptList: this.strucs.map(item => {
             return item.id
           }),
-          structure_ids: this.strucs.map(item => {
-            return item.id
-          }),
-          value: this.value,
-          is_deal: this.is_deal,
-          types: this.types
+          customerNum: this.customerNum,
+          customerDeal: this.customerDeal,
+          type: this.types
         }
 
         if (this.action.type == 'update') {
-          params.id = this.action.data.id
+          params.settingId = this.action.data.settingId
         }
-        request(params)
+        crmSettingCustomerConfigSetAPI(params)
           .then(res => {
             this.$emit('success')
             this.close()
@@ -154,8 +150,8 @@ export default {
     clearInfo() {
       this.users = []
       this.strucs = []
-      this.is_deal = 1
-      this.value = ''
+      this.customerDeal = 1
+      this.customerNum = ''
     }
   }
 }

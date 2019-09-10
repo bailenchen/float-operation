@@ -83,20 +83,20 @@ export default {
 
     fieldList() {
       return [
-        { label: '适用范围', field: 'scope' },
+        { label: '适用范围', field: 'range' },
         {
           label: {
             1: '拥有客户数上限',
             2: '锁定客户数上限'
           }[this.types],
-          field: 'value'
+          field: 'customerNum'
         },
         {
           label: {
             1: '成交客户是否占有拥有客户数',
             2: '成交客户是否占有锁定客户数'
           }[this.types],
-          field: 'is_deal'
+          field: 'customerDeal'
         }
       ]
     }
@@ -157,12 +157,12 @@ export default {
       crmSettingCustomerConfigListAPI({
         page: this.currentPage,
         limit: this.pageSize,
-        types: this.types
+        type: this.types
       })
         .then(res => {
           this.loading = false
           this.list = res.data.list
-          this.total = res.data.dataCount
+          this.total = res.data.totalRow
         })
         .catch(() => {
           this.loading = false
@@ -173,30 +173,9 @@ export default {
      * 列表格式化
      */
     fieldFormatter(row, column) {
-      if (column.property == 'scope') {
-        let structures = row['structure_ids_info'] || []
-        let strName = structures
-          .map(item => {
-            return item.name
-          })
-          .join('、')
-
-        if (strName) {
-          strName += '、'
-        }
-
-        let users = row['user_ids_info'] || []
-        let userName = users
-          .map(item => {
-            return item.realname
-          })
-          .join('、')
-
-        let name = strName + userName
-        return name ? name : '全公司'
-      } else if (column.property == 'is_deal') {
-        return row.is_deal == 1 ? '是' : '否'
-      }
+      if (column.property == 'customerDeal') {
+        return row.customerDeal == 1 ? '是' : '否'
+      } // 0 不占用 1 占用
       return row[column.property]
     },
 
@@ -233,7 +212,7 @@ export default {
         .then(() => {
           this.loading = true
           crmSettingCustomerConfigDelAPI({
-            id: scope.row.id
+            settingId: scope.row.settingId
           })
             .then(res => {
               this.list.splice(scope.$index, 1)
