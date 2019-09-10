@@ -134,7 +134,7 @@ export default {
         .then(res => {
           this.loading = false
           this.businessData = res.data.list
-          this.total = res.data.dataCount
+          this.total = res.data.totalRow
         })
         .catch(() => {
           this.loading = false
