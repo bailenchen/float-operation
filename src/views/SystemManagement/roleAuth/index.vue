@@ -15,11 +15,11 @@
           <div class="item-list"
                v-for="(item, index) in roleList"
                :key="index"
-               :class="{'item-list-hover' : item.id == roleActive.id}"
+               :class="{'item-list-hover' : item.roleId == roleActive.roleId}"
                @click="roleMenuSelect(item)">
-            {{item.title}}
+            {{item.roleName}}
             <div class="icon-close"
-                 v-if="item.types != 1">
+                 v-if="item.remark != 'admin'">
               <el-dropdown trigger="click"
                            @command="roleHandleClick">
                 <i class="el-icon-arrow-down"
@@ -100,7 +100,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane v-if="roleActive && roleActive.types != 1"
+          <el-tab-pane v-if="roleActive && roleActive.remark != 'admin'"
                        label="角色权限"
                        name="rule">
             <!-- 权限管理 -->
@@ -122,7 +122,7 @@
                     <div class="jurisdiction-content-checkbox">
                       <el-tree :data="item.data"
                                show-checkbox
-                               node-key="id"
+                               node-key="menuId"
                                style="height: 0;"
                                :ref="'tree' + item.index"
                                :indent="0"
@@ -162,16 +162,16 @@
 
 <script>
 import RelateEmpoyee from './components/relateEmpoyee'
-
-import { adminUsersIndex } from '@/api/systemManagement/EmployeeDepManagement'
+import { usersList } from '@/api/common'
 import {
-  roleListFun,
-  rulesList,
+  systemRuleByTypeAPI,
   roleAdd,
   roleDelete,
   roleCopy,
   roleUpdate,
-  usersDelete
+  updateRoleMenu,
+  usersDelete,
+  systemRoleByTypeAPI
 } from '@/api/systemManagement/RoleAuthorization'
 
 export default {
@@ -184,7 +184,7 @@ export default {
       pid: '',
       title: '',
       tableData: [], // 与角色关联的员工
-      tableHeight: document.documentElement.clientHeight - 300, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 305, // 表的高度
       treeHeight: document.documentElement.clientHeight - 230, // 表的3度
       currentPage: 1,
       pageSize: 15,
@@ -192,9 +192,9 @@ export default {
       total: 0,
       tableList: [
         { label: '姓名', field: 'realname' },
-        { label: '部门', field: 's_name' },
+        { label: '部门', field: 'deptName' },
         { label: '职位', field: 'post' },
-        { label: '角色', field: 'groups' }
+        { label: '角色', field: 'roleName' }
       ],
 
       // 新建角色
@@ -207,8 +207,8 @@ export default {
       ruleMenuIndex: 'data', // 默认模块 工作台
       ruleMenuList: [],
       defaultProps: {
-        children: 'children',
-        label: 'title'
+        children: 'childMenu',
+        label: 'menuName'
       },
       relateEmpoyeeShow: false,
       // 选中的角色
@@ -230,7 +230,7 @@ export default {
   computed: {
     roleId() {
       if (this.roleActive) {
-        return this.roleActive.id
+        return this.roleActive.roleId
       }
       return ''
     }
@@ -239,7 +239,7 @@ export default {
   mounted() {
     /** 控制table的高度 */
     window.onresize = () => {
-      this.tableHeight = document.documentElement.clientHeight - 300
+      this.tableHeight = document.documentElement.clientHeight - 305
       this.treeHeight = document.documentElement.clientHeight - 230
     }
     /** 获取权限信息 */
@@ -267,34 +267,26 @@ export default {
      * 获取权限规则信息
      */
     getRulesList() {
-      rulesList({ type: 'tree', pid: this.pid }).then(res => {
-        if (res.data.length == 2) {
+      systemRuleByTypeAPI({ roleType: this.pid }).then(res => {
+        if (res.data.data) {
           this.ruleMenuList = [
             {
               label: '模块功能',
               index: 'data',
               type: 'tree',
               value: [],
-              data: [res.data[0]]
-            },
-            {
+              data: [res.data.data]
+            }
+          ]
+          if (res.data.bi) {
+            this.ruleMenuList.push({
               label: '数据分析',
               index: 'bi',
               type: 'tree',
               value: [],
-              data: [res.data[1]]
-            }
-          ]
-        } else if (res.data.length == 1) {
-          this.ruleMenuList = [
-            {
-              label: '模块功能',
-              index: 'data',
-              type: 'tree',
-              value: [],
-              data: [res.data[0]]
-            }
-          ]
+              data: [res.data.bi]
+            })
+          }
         } else {
           this.ruleMenuList = []
         }
@@ -308,7 +300,7 @@ export default {
      */
     getRoleList() {
       this.roleMenuLoading = true
-      roleListFun({ pid: this.pid, rules: 1 })
+      systemRoleByTypeAPI({ roleType: this.pid })
         .then(res => {
           this.roleList = res.data
           /** 判断数据是否存在 */
@@ -316,7 +308,7 @@ export default {
           if (this.roleActive) {
             for (let index = 0; index < this.roleList.length; index++) {
               const item = this.roleList[index]
-              if (item.id == this.roleActive.id) {
+              if (item.roleId == this.roleActive.roleId) {
                 this.roleActive = item
                 this.getRoleRulesInfo()
                 hasActive = true
@@ -362,13 +354,14 @@ export default {
       })
         .then(() => {
           this.userLoading = true
-          usersDelete({ user_id: val.id, group_id: this.roleActive.id }).then(
-            res => {
-              this.userLoading = true
-              this.getUserList(this.roleActive)
-              this.$message.success('删除成功')
-            }
-          )
+          usersDelete({
+            userId: val.userId,
+            roleId: this.roleActive.roleId
+          }).then(res => {
+            this.userLoading = true
+            this.getUserList(this.roleActive)
+            this.$message.success('删除成功')
+          })
         })
         .catch(() => {
           this.$message({
@@ -412,9 +405,9 @@ export default {
     roleEditBtn(val) {
       this.roleTitle = '编辑角色'
       this.role = {
-        title: val.title,
-        pid: val.pid,
-        id: val.id
+        title: val.roleName,
+        pid: val.roleType,
+        id: val.roleId
       }
       this.newRoleVisible = true
     },
@@ -429,7 +422,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          roleCopy({ id: val.id }).then(res => {
+          roleCopy({ roleId: val.roleId }).then(res => {
             this.$message.success('复制成功')
             this.getRoleList()
           })
@@ -452,7 +445,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          roleDelete({ id: val.id }).then(res => {
+          roleDelete({ roleId: val.roleId }).then(res => {
             if (this.roleList.length) {
               this.roleActive = this.roleList[0]
               // 点击角色 复制权限 用于编辑操作
@@ -475,15 +468,19 @@ export default {
       } else {
         if (this.roleTitle == '新建角色') {
           roleAdd({
-            title: this.role.title,
-            pid: this.pid
+            roleName: this.role.title,
+            roleType: this.pid
           }).then(res => {
             this.getRoleList()
             this.$message.success('添加成功')
             this.newRoleClose()
           })
         } else {
-          roleUpdate(this.role).then(res => {
+          roleUpdate({
+            roleName: this.role.title,
+            roleType: this.role.pid,
+            roleId: this.role.id
+          }).then(res => {
             this.getRoleList()
             this.$message.success('编辑成功')
             this.newRoleClose()
@@ -511,14 +508,14 @@ export default {
      */
     getRoleRulesInfo() {
       if (this.roleActive && this.ruleMenuList.length) {
-        if (this.roleActive.type) {
+        if (this.pid == 2) {
           let lastItem = this.ruleMenuList[this.ruleMenuList.length - 1]
           if (lastItem.type != 'data') {
             this.ruleMenuList.push({
               label: '数据权限',
               index: 'info',
               type: 'data',
-              value: this.roleActive.type
+              value: this.roleActive.dataType
             })
           }
         }
@@ -543,7 +540,7 @@ export default {
               }
             })
           } else {
-            element.value = this.roleActive.type
+            element.value = this.roleActive.dataType
           }
         }
       }
@@ -561,24 +558,24 @@ export default {
       var copyArray = this.copyItem(array)
       for (
         let firstIndex = 0;
-        firstIndex < tree.children.length;
+        firstIndex < tree.childMenu.length;
         firstIndex++
       ) {
-        const firstItem = tree.children[firstIndex]
+        const firstItem = tree.childMenu[firstIndex]
         for (let index = 0; index < array.length; index++) {
           const element = array[index]
           var temps = []
           for (
             let secondIndex = 0;
-            secondIndex < firstItem.children.length;
+            secondIndex < firstItem.childMenu.length;
             secondIndex++
           ) {
-            const secondItem = firstItem.children[secondIndex]
+            const secondItem = firstItem.childMenu[secondIndex]
             if (secondItem.id == element) {
               temps.push(secondItem)
             }
           }
-          if (temps.length != firstItem.children.length) {
+          if (temps.length != firstItem.childMenu.length) {
             hasRemove = true
             this.removeItem(copyArray, firstItem.id)
           }
@@ -640,14 +637,14 @@ export default {
         this.currentPage = 1
       }
       this.userLoading = true
-      adminUsersIndex({
+      usersList({
         page: this.currentPage,
         limit: this.pageSize,
-        group_id: role.id
+        roleId: role.roleId
       })
         .then(res => {
           this.tableData = res.data.list
-          this.total = res.data.dataCount
+          this.total = res.data.totalRow
           this.userLoading = false
         })
         .catch(err => {
@@ -681,15 +678,9 @@ export default {
           let treeRefs = this.$refs['tree' + element.index]
           if (treeRefs) {
             if (Object.prototype.toString.call(treeRefs) == '[object Array]') {
-              rules = rules.concat(
-                treeRefs[0]
-                  .getCheckedKeys()
-                  .concat(treeRefs[0].getHalfCheckedKeys())
-              )
+              rules = rules.concat(treeRefs[0].getCheckedKeys())
             } else {
-              rules = rules.concat(
-                treeRefs.getCheckedKeys().concat(treeRefs.getHalfCheckedKeys())
-              )
+              rules = rules.concat(treeRefs.getCheckedKeys())
             }
           }
         } else {
@@ -697,11 +688,11 @@ export default {
         }
       }
 
-      roleUpdate({
+      updateRoleMenu({
         rules: rules,
         type: infoData,
-        id: this.roleActive.id,
-        title: this.roleActive.title
+        id: this.roleActive.roleId,
+        roleName: this.roleActive.roleName
       })
         .then(res => {
           this.getRoleList()

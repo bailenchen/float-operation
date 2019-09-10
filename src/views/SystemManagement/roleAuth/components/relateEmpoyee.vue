@@ -82,13 +82,13 @@ export default {
         this.$message.error('请选择员工')
       } else {
         usersEditAPI({
-          users: this.selectUsers.map(function(data) {
-            return data.id
-          }),
-          groups: [this.roleId]
+          userIds: this.selectUsers.map(function(data) {
+            return data.userId
+          }).join(','),
+          roleIds: this.roleId
         })
           .then(res => {
-            this.$message.success(res.data)
+            this.$message.success('操作成功')
             this.$emit('save')
           })
           .catch(err => {})

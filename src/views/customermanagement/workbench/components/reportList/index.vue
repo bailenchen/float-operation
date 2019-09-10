@@ -314,7 +314,7 @@ export default {
     fieldFormatter(row, column) {
       // 如果需要格式化
       if (this.fieldList && this.fieldList.length) {
-        if (column.property == 'types') {
+        if (column.property == 'crmType') {
           return {
             crm_leads: '线索',
             crm_customer: '客户',
@@ -477,9 +477,9 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType === 'record') {
-        if (column.property === 'dataCount' && row.dataCount) {
-          this.rowType = row.types.replace('crm_', '')
-          this.recordParams = row
+        if (column.property === 'count' && row.count) {
+          this.rowType = row.crmType
+          this.recordParams = { crmType: row.crmType, ...this.params }
           this.recordShow = true
         } else {
           this.recordShow = false
@@ -519,7 +519,7 @@ export default {
           column.property === 'num' ||
           column.property === 'contractNum' ||
           column.property === 'number' ||
-          column.property === 'dataCount') &&
+          (this.crmType === 'record' && column.property === 'count')) &&
         row[column.property]
       ) {
         return { color: '#3E84E9', cursor: 'pointer' }

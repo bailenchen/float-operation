@@ -86,7 +86,7 @@ export default {
         {
           name: '待进入公海的客户',
           crmType: 'customer',
-          infoType: 'remindCustomer',
+          infoType: 'putInPoolRemind',
           num: 0,
           tips: '',
           hidden: false

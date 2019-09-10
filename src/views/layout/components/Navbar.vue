@@ -30,8 +30,8 @@
              @click="handleClick('goout')"><i class="wukong wukong-goout"></i>退出登录</div>
         <div class="handel-item hr-top"
              style="pointer-events: none;"
-             :style="{'margin-bottom': admin ? '15px' : '0'}"><i class="wukong wukong-versions"></i>版本 V9.2.1.190809</div>
-        <div v-if="admin"
+             :style="{'margin-bottom': manage ? '15px' : '0'}"><i class="wukong wukong-versions"></i>版本 V9.2.1.190809</div>
+        <div v-if="manage"
              class="handel-box">
           <el-button @click="enterSystemSet()"
                      type="primary"
@@ -85,7 +85,7 @@ export default {
       'logo',
       'crm',
       'bi',
-      'admin',
+      'manage',
       'oa',
       'work'
     ]),

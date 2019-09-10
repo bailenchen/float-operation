@@ -4,48 +4,56 @@ import Layout from '@/views/layout/managerLayout'
 /**
  * 系统管理里的 客户管理
  */
-const systemCustomerAuth = {
-  requiresAuth: true,
-  index: 1,
-  type: 'admin',
-  subType: 'crm'
-}
-
 const systemCustomerRouter = {
   name: 'system-customer',
   path: 'system-customer',
   meta: {
     title: '客户管理',
     icon: 'customer',
-    ...systemCustomerAuth
+    requiresAuth: true,
+    index: 1,
+    type: 'manage',
+    subType: 'crm'
   },
   children: [{
     path: 'custom-field',
     component: () => import('@/views/SystemManagement/SystemCustomer/customField'),
     meta: {
       title: '自定义字段设置',
-      ...systemCustomerAuth
+      requiresAuth: true,
+      index: 2,
+      type: 'manage',
+      subType: ['crm', 'field']
     }
   }, {
     path: 'customer',
     component: () => import('@/views/SystemManagement/SystemCustomer/customer'),
     meta: {
       title: '客户公海规则设置',
-      ...systemCustomerAuth
+      requiresAuth: true,
+      index: 2,
+      type: 'manage',
+      subType: ['crm', 'pool']
     }
   }, {
     path: 'biz-param',
     component: () => import('@/views/SystemManagement/SystemCustomer/bizParam'),
     meta: {
       title: '业务参数设置',
-      ...systemCustomerAuth
+      requiresAuth: true,
+      index: 2,
+      type: 'manage',
+      subType: ['crm', 'setting']
     }
   }, {
     path: 'biz-goals',
     component: () => import('@/views/SystemManagement/SystemCustomer/bizGoals'),
     meta: {
       title: '业绩目标设置',
-      ...systemCustomerAuth
+      requiresAuth: true,
+      index: 2,
+      type: 'manage',
+      subType: ['crm', 'achievement']
     }
   }]
 }
@@ -62,19 +70,19 @@ const systemEmployeeRouter = {
     requiresAuth: true,
     title: '系统管理',
     index: 0,
-    type: 'admin'
+    type: 'manage'
   },
   children: [{
     name: 'systemconfig',
-    path: 'systemconfig', // 系统配置
+    path: 'systemconfig', // 企业首页
     component: () => import('@/views/SystemManagement/SystemConfig/index'),
     meta: {
       requiresAuth: true,
-      title: '系统配置',
+      title: '企业首页',
       icon: 'systemconfig',
-      index: 1,
-      type: 'admin',
-      subType: 'system'
+      index: 2,
+      type: 'manage',
+      subType: ['system', 'read']
     }
   },
   {
@@ -86,8 +94,8 @@ const systemEmployeeRouter = {
       title: '应用管理',
       icon: 'product',
       index: 2,
-      type: 'admin',
-      subType: ['config_set', 'index']
+      type: 'manage',
+      subType: ['configSet', 'read']
     }
   },
   {
@@ -98,9 +106,9 @@ const systemEmployeeRouter = {
       requiresAuth: true,
       title: '员工与部门管理',
       icon: 'department',
-      index: 1,
-      type: 'admin',
-      subType: 'user'
+      index: 2,
+      type: 'manage',
+      subType: ['users', 'read']
     }
   }
   ]
@@ -114,8 +122,8 @@ const authRouter = {
     requiresAuth: true,
     title: '角色权限控制',
     index: 1,
-    type: 'admin',
-    subType: 'groups'
+    type: 'manage',
+    subType: 'permission'
   },
   children: [{
     name: 'role-auth',
@@ -126,7 +134,7 @@ const authRouter = {
       title: '角色权限管理',
       icon: 'contacts',
       index: 1,
-      type: 'admin',
+      type: 'manage',
       subType: 'permission'
     }
   }
@@ -142,8 +150,8 @@ const authMenuRouter = {
     title: '角色权限控制',
     icon: 'contacts',
     index: 1,
-    type: 'admin',
-    subType: 'groups'
+    type: 'manage',
+    subType: 'permission'
   },
   children: [
   ]
@@ -158,7 +166,7 @@ const examineWorkbenchRouter = {
     requiresAuth: true,
     title: '系统管理',
     index: 0,
-    type: 'admin'
+    type: 'manage'
   },
   children: [
     {
@@ -170,8 +178,8 @@ const examineWorkbenchRouter = {
         title: '审批流程管理',
         icon: 'examine',
         index: 1,
-        type: 'admin',
-        subType: 'examine_flow'
+        type: 'manage',
+        subType: 'examineFlow'
       }
     },
     {
@@ -183,7 +191,7 @@ const examineWorkbenchRouter = {
         title: '工作台',
         icon: 'workbench',
         index: 1,
-        type: 'admin',
+        type: 'manage',
         subType: 'oa'
       }
     },
@@ -196,7 +204,7 @@ const examineWorkbenchRouter = {
         title: '项目管理',
         icon: 'project',
         index: 1,
-        type: 'admin',
+        type: 'manage',
         subType: 'work'
       }
     }
@@ -224,7 +232,7 @@ export const managerRouter = {
     requiresAuth: true,
     title: '系统管理',
     index: 0,
-    type: 'admin'
+    type: 'manage'
   },
   children: [
     ...systemEmployeeRouter.children,

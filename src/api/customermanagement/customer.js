@@ -354,7 +354,7 @@ export function crmCustomerSetFollowAPI(data) {
  */
 export function crmCustomerDealStatusAPI(data) {
   return request({
-    url: 'crm/customer/deal_status',
+    url: 'CrmCustomer/setDealStatus',
     method: 'post',
     data: data
   })

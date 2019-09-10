@@ -149,7 +149,8 @@ import {
   crmIndexAchievementData,
   crmIndexFunnel,
   crmIndexSaletrend,
-  crmIndexIndexListAPI
+  crmIndexIndexListAPI,
+  crmQueryRecordConuntAPI
 } from '@/api/customermanagement/workbench'
 import { crmBusinessStatusList } from '@/api/customermanagement/business'
 import { formatTimeToTimestamp } from '@/utils'
@@ -322,19 +323,20 @@ export default {
           this.fieldReportList = [
             {
               label: '模块',
-              prop: 'types',
+              prop: 'crmType',
               width: 300
             },
             {
               label: '新增跟进记录数',
-              prop: 'dataCount'
+              prop: 'count'
             }
           ]
+          this.reportData.request = crmQueryRecordConuntAPI
         } else {
           this.fieldReportList = null
+          this.reportData.request = crmIndexIndexListAPI
         }
         this.reportData.crmType = item.type
-        this.reportData.request = crmIndexIndexListAPI
         this.reportData.params = this.getBaseParams()
         this.reportData.params.label = item.label
         this.showReportList = true

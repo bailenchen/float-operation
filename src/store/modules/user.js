@@ -22,7 +22,7 @@ const user = {
     allAuth: null, // 总权限信息 默认空 调整动态路由
     crm: {}, // 客户管理
     bi: {}, // 商业智能
-    admin: {}, // 管理后台
+    manage: {}, // 管理后台
     oa: {}, // 办公
     work: {} // 项目管理
   },
@@ -40,8 +40,8 @@ const user = {
     SET_BI: (state, bi) => {
       state.bi = bi
     },
-    SET_ADMIN: (state, admin) => {
-      state.admin = admin
+    SET_MANAGE: (state, manage) => {
+      state.manage = manage
     },
     SET_OA: (state, oa) => {
       state.oa = oa
@@ -67,12 +67,12 @@ const user = {
           addAuth(data['Admin-Token'])
           commit('SET_USERINFO', data.user)
           // 权限
-          commit('SET_ALLAUTH', data.authList)
-          commit('SET_CRM', data.authList.crm)
-          commit('SET_BI', data.authList.bi)
-          commit('SET_ADMIN', data.authList.admin)
-          commit('SET_OA', data.authList.oa)
-          commit('SET_WORK', data.authList.work)
+          commit('SET_ALLAUTH', data.auth)
+          commit('SET_CRM', data.auth.crm)
+          commit('SET_BI', data.auth.bi)
+          commit('SET_MANAGE', data.auth.manage)
+          commit('SET_OA', data.auth.oa)
+          commit('SET_WORK', data.auth.work)
           resolve(data)
         }).catch(error => {
           reject(error)
@@ -86,12 +86,12 @@ const user = {
     }) {
       return new Promise((resolve, reject) => {
         adminIndexAuthList().then((response) => {
-          let data = response.data
+          const data = response.data
           Lockr.set('authList', data)
           commit('SET_ALLAUTH', data)
           commit('SET_CRM', data.crm)
           commit('SET_BI', data.bi)
-          commit('SET_ADMIN', data.admin)
+          commit('SET_MANAGE', data.manage)
           commit('SET_OA', data.oa)
           commit('SET_WORK', data.work)
 

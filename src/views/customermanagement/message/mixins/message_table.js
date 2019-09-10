@@ -32,7 +32,7 @@ export default {
   computed: {
     // 展示options下拉选择
     showOptions() {
-      if (this.infoType == 'remindCustomer') {
+      if (this.infoType == 'putInPoolRemind') {
         return false
       }
       return true
@@ -171,7 +171,7 @@ export default {
         'checkReceivables': crmMessageCheckReceivablesAPI,
         'remindReceivablesPlan': crmMessagRemindreceivablesplanAPI,
         'endContract': crmMessagEndContractAPI,
-        'remindCustomer': crmMessagRemindCustomerAPI,
+        'putInPoolRemind': crmMessagRemindCustomerAPI
       }[this.infoType]
     },
 

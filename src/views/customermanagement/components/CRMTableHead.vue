@@ -659,7 +659,7 @@ export default {
         return this.crm[this.crmType].status
       } else if (type == 'deal_status') {
         // 客户状态修改
-        return this.crm[this.crmType].deal_status
+        return this.crm[this.crmType].dealStatus
       }
 
       return true

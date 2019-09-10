@@ -88,19 +88,19 @@ export default {
 
   computed: {
     crmIcon() {
-      if (this.crmType === 'customer') {
+      if (this.crmType === 'crm_customer') {
         return require('@/assets/img/customer_detail.png')
-      } else if (this.crmType === 'leads') {
+      } else if (this.crmType === 'crm_leads') {
         return require('@/assets/img/clue_detail.png')
-      } else if (this.crmType === 'business') {
+      } else if (this.crmType === 'crm_business') {
         return require('@/assets/img/business_detail.png')
-      } else if (this.crmType === 'contacts') {
+      } else if (this.crmType === 'crm_contacts') {
         return require('@/assets/img/contacts_detail.png')
-      } else if (this.crmType === 'contract') {
+      } else if (this.crmType === 'crm_contract') {
         return require('@/assets/img/contract_detail.png')
-      } else if (this.crmType === 'receivables') {
+      } else if (this.crmType === 'crm_receivables') {
         return require('@/assets/img/money_detail.png')
-      } else if (this.crmType === 'product') {
+      } else if (this.crmType === 'crm_product') {
         return require('@/assets/img/product_detail.png')
       }
       return ''

@@ -60,15 +60,15 @@ export default {
   data() {
     return {
       loading: true,
-      status: 1,
+      status: '已成交',
       options: [
         {
           label: '已成交',
-          value: 1
+          value: '已成交'
         },
         {
           label: '未成交',
-          value: 2
+          value: '未成交'
         }
       ]
     }
@@ -88,19 +88,19 @@ export default {
      */
     handleConfirm() {
       var self = this
-      var action_ids = this.selectionList.map(function(item, index, array) {
-        return item[self.crmType + '_id']
-      })
+      var actionIds = this.selectionList.map(function(item, index, array) {
+        return item[self.crmType + 'Id']
+      }).join(',')
       var params = {
-        status: this.status
+        dealStatus: this.status
       }
-      params[this.crmType + '_id'] = action_ids
+      params.ids = actionIds
       this.loading = true
       crmCustomerDealStatusAPI(params)
         .then(res => {
           this.$message({
             type: 'success',
-            message: res.data
+            message: '操作成功'
           })
           this.loading = false
           this.$emit('handle', {

@@ -44,13 +44,13 @@
               <i class="wukong wukong-help_tips"></i>>
             </el-tooltip></label>
           <div class="customer-radio">
-            <el-radio-group v-model="customerData.remindConfig">
+            <el-radio-group v-model="customerData.putInPoolRemindConfig">
               <el-radio :label="0">不提醒</el-radio>
               <el-radio :label="1">提醒</el-radio>
             </el-radio-group>
             <br />
             <span>提前</span>
-            <el-input-number v-model="customerData.remindDay"
+            <el-input-number v-model="customerData.putInPoolRemindDays"
                              controls-position="right"
                              :min="0"
                              size="small"></el-input-number>
@@ -78,8 +78,8 @@ export default {
         type: 0,
         followupDay: 0,
         dealDay: 0,
-        remindConfig: 0,
-        remindDay: 0
+        putInPoolRemindConfig: 0,
+        putInPoolRemindDays: 0
       }
     }
   },
@@ -101,8 +101,8 @@ export default {
           this.customerData.type = res.data.customerConfig
           this.customerData.followupDay = res.data.followupDay
           this.customerData.dealDay = res.data.dealDay
-          this.customerData.remindConfig = res.data.remindConfig
-          this.customerData.remindDay = res.data.remindDay
+          this.customerData.putInPoolRemindConfig = res.data.putInPoolRemindConfig
+          this.customerData.putInPoolRemindDays = res.data.putInPoolRemindDays
         })
         .catch(() => {
           this.loading = false

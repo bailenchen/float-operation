@@ -118,7 +118,7 @@ const permission = {
           if (element.children && element.children.length > 0) {
             element.redirect = element.path + '/' + element.children[0].path
           }
-          
+
           // 获取跳转
           if (element.redirect && !redirect) {
             redirect = element.redirect

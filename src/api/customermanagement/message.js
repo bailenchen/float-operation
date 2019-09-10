@@ -127,7 +127,7 @@ export function crmMessagNumAPI(data) {
  */
 export function crmMessagRemindCustomerAPI(data) {
   return request({
-    url: 'crm/message/remindCustomer',
+    url: 'CrmBackLog/putInPoolRemind',
     method: 'post',
     data: data
   })

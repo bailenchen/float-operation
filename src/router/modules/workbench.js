@@ -95,7 +95,7 @@ const workbenchRouter = {
         icon: 'address',
         index: 1,
         type: 'oa',
-        subType: 'addresslist'
+        subType: 'book'
       }
     }
   ]

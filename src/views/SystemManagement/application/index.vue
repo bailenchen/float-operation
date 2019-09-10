@@ -21,7 +21,7 @@
             <img class="item-icon"
                  :src="getModuleIcon(item.status, item.module)" />
             <span class="item-name">{{item.name}}</span>
-            <el-dropdown v-if="bigIndex < 2"
+            <el-dropdown v-if="item.type == 1"
                          class="more-menu"
                          @command="handleMoreCommand($event, item)">
               <i class="el-icon-more"></i>
@@ -29,13 +29,8 @@
                 <el-dropdown-item :command="item.status ? 'disable' : 'enable'">{{item.status ? '停用' : '启用'}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-button v-else-if="item.module == 'call'"
-                       type="text"
-                       class="detail-button"
-                       @click="showCallDetail = true">了解详情<i class="el-icon-arrow-right el-icon--right"></i></el-button>
-            <span v-else-if="bigIndex == 3"
+            <span v-else-if="item.type == 2"
                   class="more-mark">即将发布</span>
-
           </flexbox>
         </flexbox>
       </div>
@@ -73,11 +68,6 @@ export default {
           name: '已停用应用',
           type: 1,
           status: 0,
-          sublist: []
-        },
-        {
-          name: '增值应用',
-          type: 3,
           sublist: []
         },
         {
@@ -127,7 +117,7 @@ export default {
       this.getConfirmMessage(command, item, () => {
         this.loading = true
         adminConfigsetUpdate({
-          id: item.id,
+          settingId: item.settingId,
           status: command == 'disable' ? 0 : 1
         })
           .then(res => {

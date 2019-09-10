@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function adminConfigsetIndex(data) {
   return request({
-    url: 'admin/config_set/index',
+    url: 'sysConfig/queryModuleSetting',
     method: 'post',
     data: data
   })
@@ -21,32 +21,7 @@ export function adminConfigsetIndex(data) {
  */
 export function adminConfigsetUpdate(data) {
   return request({
-    url: 'admin/config_set/update',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 根据模块类获取应用列表
- * @param {*} data
- * type 应用类别ID
- */
-export function adminConfigsetRead(data) {
-  return request({
-    url: 'admin/configset/read',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 模块列表
- * @param {*} data
- */
-export function adminConfigsetTypelist(data) {
-  return request({
-    url: 'admin/configset/typelist',
+    url: 'sysConfig/setModuleSetting',
     method: 'post',
     data: data
   })
