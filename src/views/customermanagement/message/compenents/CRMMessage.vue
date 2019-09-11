@@ -20,7 +20,8 @@
                      :value="item.value">
           </el-option>
         </el-select>
-        <el-select v-model="isSubType"
+        <el-select v-if="showSubType"
+                   v-model="isSubType"
                    @change="refreshList"
                    :style="{'margin-left': showOptions ? '10px' : 0}"
                    style="width: 120px;"
@@ -237,6 +238,17 @@ export default {
       return false
     },
 
+    // 展示我的/下属筛选
+    showSubType() {
+      if (
+        this.infoType == 'todayCustomer' ||
+        this.infoType == 'putInPoolRemind'
+      ) {
+        return true
+      }
+      return false
+    },
+
     // 下拉数据
     options() {
       if (this.infoType == 'todayCustomer') {
@@ -322,9 +334,11 @@ export default {
               followCustomer: crmCustomerSetFollowAPI
             }[this.infoType]
             request({
-              ids: this.selectionList.map(item => {
-                return item[this.crmType + 'Id']
-              }).join(',')
+              ids: this.selectionList
+                .map(item => {
+                  return item[this.crmType + 'Id']
+                })
+                .join(',')
             })
               .then(res => {
                 this.$message.success('操作成功')
