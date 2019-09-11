@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 
-
 export function roleListFun(data) {
   return request({
     url: 'system/role/getAllRoleList',

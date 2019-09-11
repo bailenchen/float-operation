@@ -40,8 +40,7 @@ router.beforeEach((to, from, next) => {
             }
           })
         } else {
-          store.dispatch('getAuth').then(res => { // 拉取user_info
-            const auths = res.data
+          store.dispatch('getAuth').then(auths => { // 拉取user_info
             store.dispatch('GenerateRoutes', auths).then(() => { // 根据auths权限生成可访问的路由表
               router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
               if (to.path === '/404') {
