@@ -328,6 +328,7 @@ import {
   depEdit,
   depSave,
   usersAdd,
+  usersEdit,
   roleList,
   adminUsersUpdatePwd,
   adminUsersUsernameEditAPI,
@@ -772,7 +773,7 @@ export default {
           } else {
             this.loading = true
             this.formInline.roleIds = this.formInline.roleId.join(',')
-            usersAdd(this.formInline)
+            usersEdit(this.formInline)
               .then(res => {
                 if (this.employeeDetailDialog) {
                   this.employeeDetailDialog = false
