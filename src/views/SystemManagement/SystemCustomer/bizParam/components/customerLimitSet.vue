@@ -82,7 +82,7 @@ export default {
     },
 
     fieldList() {
-      return [
+      let temps = [
         { label: '适用范围', field: 'range' },
         {
           label: {
@@ -90,15 +90,20 @@ export default {
             2: '锁定客户数上限'
           }[this.types],
           field: 'customerNum'
-        },
-        {
+        }
+      ]
+
+      if (this.types == 1) {
+        temps.push({
           label: {
             1: '成交客户是否占有拥有客户数',
             2: '成交客户是否占有锁定客户数'
           }[this.types],
           field: 'customerDeal'
-        }
-      ]
+        })
+      }
+      
+      return temps
     }
   },
 

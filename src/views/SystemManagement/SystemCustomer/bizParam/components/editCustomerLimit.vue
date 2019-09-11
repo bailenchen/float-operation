@@ -21,7 +21,7 @@
         <el-input v-model="customerNum"
                   placeholder="请输入内容"></el-input>
       </flexbox>
-      <flexbox class="handle-item">
+      <flexbox v-if="showDeal" class="handle-item">
         <div class="handle-item-name">{{dealLabel}}</div>
         <el-radio-group v-model="customerDeal">
           <el-radio :label="1">是</el-radio>
@@ -106,6 +106,11 @@ export default {
 
     title() {
       return this.action.type == 'update' ? '编辑规则' : '添加规则'
+    },
+
+    // 展示是否
+    showDeal() {
+      return this.types == 1
     }
   },
   mounted() {},
@@ -131,13 +136,17 @@ export default {
             return item.id
           }),
           customerNum: this.customerNum,
-          customerDeal: this.customerDeal,
           type: this.types
+        }
+
+        if (this.showDeal) {
+          params.customerDeal = this.customerDeal
         }
 
         if (this.action.type == 'update') {
           params.settingId = this.action.data.settingId
         }
+
         crmSettingCustomerConfigSetAPI(params)
           .then(res => {
             this.$emit('success')
