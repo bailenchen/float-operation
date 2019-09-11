@@ -3,7 +3,7 @@
        v-loading="loading">
     <el-button type="primary"
                class="new-btn"
-               v-if="newStatus && permissionSave"
+               v-if="permissionSave"
                @click="newBtn">新建公告</el-button>
     <el-tabs v-model="activeName">
       <el-tab-pane label="公告"
@@ -88,8 +88,7 @@ export default {
       loadText: '加载更多',
       loadMoreLoading: true,
       // 判断是否还有数据
-      isPost: true,
-      newStatus: false
+      isPost: true
     }
   },
   watch: {
@@ -130,9 +129,6 @@ export default {
         limit: 15
       })
         .then(res => {
-          res.data.isSave == 1
-            ? (this.newStatus = true)
-            : (this.newStatus = false)
           for (let item of res.data.list) {
             item.contentSub = item.content.substring(0, 150)
           }

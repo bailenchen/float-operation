@@ -40,31 +40,59 @@ export default {
   },
 
   mounted() {
-    for (let index = 0; index < managerRouterMenu.length; index++) {
-      const menuItem = managerRouterMenu[index]
-      if (
-        Object.prototype.toString.call(menuItem.meta.subType) ==
-        '[object Array]'
-      ) {
-        var typeAuth = this.manage
-        for (let index = 0; index < menuItem.meta.subType.length; index++) {
-          const field = menuItem.meta.subType[index]
-          typeAuth = typeAuth[field]
-          if (typeAuth && menuItem.meta.subType.length - 1 == index) {
-            menuItem.hidden = false
-          } else if (!typeAuth) {
-            menuItem.hidden = true
-          }
-        }
-      } else {
-        menuItem.hidden = this.manage[menuItem.meta.subType] ? false : true
-      }
-    }
-    this.routerItems = managerRouterMenu
+    this.routerItems = this.filterAsyncRouter(managerRouterMenu, {
+      manage: this.manage
+    })
     this.getAuthMenu()
   },
 
   methods: {
+    filterAsyncRouter(routers, authInfo) {
+      const res = []
+      routers.forEach(router => {
+        const tmp = {
+          ...router
+        }
+        if (this.checkAuth(tmp, authInfo)) {
+          if (tmp.children) {
+            tmp.children = this.filterAsyncRouter(tmp.children, authInfo)
+          }
+          res.push(tmp)
+        }
+      })
+      return res
+    },
+
+    checkAuth(router, authInfo) {
+      if (router.meta) {
+        const metaInfo = router.meta
+        if (!metaInfo.requiresAuth) {
+          return true
+        } else {
+          if (metaInfo.index == 0) {
+            return authInfo[metaInfo.type] ? true : false
+          } else if (metaInfo.index == 1) {
+            if (authInfo[metaInfo.type]) {
+              return authInfo[metaInfo.type][metaInfo.subType] ? true : false
+            }
+            return false
+          } else {
+            var typeAuth = authInfo[metaInfo.type]
+            for (let index = 0; index < metaInfo.subType.length; index++) {
+              const field = metaInfo.subType[index]
+              typeAuth = typeAuth[field]
+              if (typeAuth && metaInfo.subType.length - 1 == index) {
+                return true
+              } else if (!typeAuth) {
+                return false
+              }
+            }
+          }
+        }
+      }
+      return true
+    },
+
     navClick(index) {},
 
     getAuthMenu() {
