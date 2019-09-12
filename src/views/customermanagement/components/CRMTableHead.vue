@@ -729,9 +729,12 @@ export default {
 }
 
 .selection-items-box {
+  overflow-x: auto;
+  overflow-y: hidden;
   .selection-item {
     width: auto;
     padding: 15px;
+    flex-shrink: 0;
     .selection-item-icon {
       display: block;
       margin-right: 5px;
