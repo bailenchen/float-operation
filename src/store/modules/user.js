@@ -24,7 +24,7 @@ const user = {
     bi: {}, // 商业智能
     manage: {}, // 管理后台
     oa: {}, // 办公
-    work: {} // 项目管理
+    project: {} // 项目管理
   },
 
   mutations: {
@@ -46,8 +46,8 @@ const user = {
     SET_OA: (state, oa) => {
       state.oa = oa
     },
-    SET_WORK: (state, work) => {
-      state.work = work
+    SET_PROJECT: (state, project) => {
+      state.project = project
     }
   },
 
@@ -72,7 +72,7 @@ const user = {
           commit('SET_BI', data.auth.bi)
           commit('SET_MANAGE', data.auth.manage)
           commit('SET_OA', data.auth.oa)
-          commit('SET_WORK', data.auth.work)
+          commit('SET_PROJECT', data.auth.project)
           resolve(data)
         }).catch(error => {
           reject(error)
@@ -93,7 +93,7 @@ const user = {
           commit('SET_BI', data.bi)
           commit('SET_MANAGE', data.manage)
           commit('SET_OA', data.oa)
-          commit('SET_WORK', data.work)
+          commit('SET_PROJECT', data.project)
 
           resolve(data)
         }).catch(error => {

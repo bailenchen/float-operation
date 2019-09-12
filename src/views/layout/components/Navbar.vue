@@ -87,7 +87,7 @@ export default {
       'bi',
       'manage',
       'oa',
-      'work'
+      'project'
     ]),
     items() {
       var tempsItems = []
@@ -115,7 +115,7 @@ export default {
           icon: 'statistics'
         })
       }
-      if (this.work) {
+      if (this.project) {
         tempsItems.push({
           title: '项目管理',
           type: 2,

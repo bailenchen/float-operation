@@ -19,7 +19,7 @@
                @click="roleMenuSelect(item)">
             {{item.roleName}}
             <div class="icon-close"
-                 v-if="item.remark != 'admin'">
+                 v-if="item.remark != 'admin' || item.remark != 'project'">
               <el-dropdown trigger="click"
                            @command="roleHandleClick">
                 <i class="el-icon-arrow-down"
@@ -100,7 +100,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane v-if="roleActive && roleActive.remark != 'admin'"
+          <el-tab-pane v-if="roleActive && showRuleSet"
                        label="角色权限"
                        name="rule">
             <!-- 权限管理 -->
@@ -233,6 +233,15 @@ export default {
         return this.roleActive.roleId
       }
       return ''
+    },
+
+    // 展示角色权限
+    showRuleSet() {
+      if (this.roleActive) {
+        return this.roleActive.remark != 'admin' && this.roleActive.remark != 'project'
+      }
+
+      return false
     }
   },
 
@@ -562,6 +571,14 @@ export default {
         firstIndex++
       ) {
         const firstItem = tree.childMenu[firstIndex]
+
+        if (!firstItem.hasOwnProperty('children')) {
+          if (firstItem.length + 1 != copyArray.length) {
+            this.removeItem(copyArray, tree.id)
+          }
+          return copyArray
+        }
+
         for (let index = 0; index < array.length; index++) {
           const element = array[index]
           var temps = []
