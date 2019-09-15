@@ -1,244 +1,249 @@
 <template>
-  <div class="wrapper">
-    <div class="left">
-      <div class="left-pic" />
+  <div class="login-wrapper">
+    <div class="top-nav">
+      <a target="_blank" class="box" href="http://www.5kcrm.com">
+        <span class="icon wukong wukong-home"></span>
+        <span class="text">官网首页</span>
+      </a>
+      <!--<div class="box">
+        <span class="icon wukong wukong-bangzhu" />
+        <span class="text">帮助中心</span>
+      </div>-->
     </div>
-    <div class="right">
-      <div class="title">{{name}}</div>
-      <el-form ref="loginForm"
-               :model="loginForm"
-               :rules="loginRules"
-               class="login-form"
-               auto-complete="on"
-               label-position="left">
-        <el-form-item prop="username">
-          <el-input ref="name"
-                    v-model="loginForm.username"
-                    autofocus="autofocus"
-                    name="username"
-                    type="text"
-                    auto-complete="on"
-                    placeholder="请输入用户名"
-                    @keyup.enter.native="handleLogin" />
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input type="password"
-                    v-model="loginForm.password"
-                    name="password"
-                    auto-complete="on"
-                    placeholder="请输入密码"
-                    @keyup.enter.native="handleLogin" />
-        </el-form-item>
-        <el-form-item>
-          <el-button :loading="loading"
-                     @click.native.prevent="handleLogin"
-                     class="submit-btn">
-            登录
-          </el-button>
-        </el-form-item>
-      </el-form>
-      <div class="copyright">
-        悟空CRM受国家计算机软件著作权保护，未经授权不得进行商业行为，违者必究。<br>
-        ©2019 悟空CRM<a target="_blank"
-           href="http://www.5kcrm.com">www.5kcrm.com</a>
+    <div class="container">
+      <div class="left">
+        <h1 class="title">
+          数字管家
+        </h1>
+        <div class="text">
+          移动办公/智能CRM的领导者
+          <br>
+          为企业提供外勤、销售、人事、财务等方面的问题
+        </div>
+        <img src="~@/assets/login/bg.png" alt="" class="bg">
+      </div>
+      <div class="right">
+        <div class="main-content">
+          <div class="logo-box">
+            <img src="~@/assets/login/logo.png" alt="" class="logo">
+          </div>
+
+          <template v-if="activeCom !== 'MultipleCompany'">
+            <component
+              :is="activeCom"
+              @toggle="handleToggleCom" />
+          </template>
+          <template v-else>
+            <multiple-company
+              :list="companyList"
+              @toggle="handleToggleCom" />
+          </template>
+        </div>
+
+        <div class="app-down">
+          <span class="text">
+            APP下载
+          </span>
+          <div class="icon wukong wukong-anzhuo" />
+          <div class="icon wukong wukong-IOS" />
+          <div class="popover">
+            <img src="~@/assets/login/qrcode.png" alt="" class="qrcode">
+            <span class="down-text">
+              扫描二维码<br>下载客户端
+            </span>
+          </div>
+        </div>
       </div>
     </div>
-
-    <img class="logo"
-         :src="logo" />
   </div>
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
-import { mapGetters } from 'vuex'
-import Lockr from 'lockr'
+  import LoginByPwd from './component/loginByPwd'
+  import LoginByCode from './component/loginByCode'
+  import CreateNewCompany from './component/createNewCompany'
+  import MultipleCompany from './component/multipleCompany'
+  import ForgetPwd from './component/forgetPwd'
 
-export default {
-  name: 'Login',
-  data() {
-    const validateUsername = (rule, value, callback) => {
-      if (value.length == 0) {
-        callback(new Error('请输入账号'))
-      } else {
-        callback()
+  export default {
+    name: 'Login',
+    components: {
+      LoginByPwd,
+      LoginByCode,
+      CreateNewCompany,
+      MultipleCompany,
+      ForgetPwd
+    },
+    data() {
+      return {
+        usePwd: true,
+        activeCom: 'LoginByPwd',
+        companyList: [],
       }
-    }
-    const validatePass = (rule, value, callback) => {
-      if (value.length < 5) {
-        callback(new Error('密码不能小于5位'))
-      } else {
-        callback()
-      }
-    }
-    return {
-      loginForm: {
-        username: '',
-        password: ''
-      },
-      loginRules: {
-        username: [
-          { required: true, trigger: 'blur', validator: validateUsername }
-        ],
-        password: [{ required: true, trigger: 'blur', validator: validatePass }]
-      },
-      loading: false,
-      redirect: undefined,
-      remember: false
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
-  },
-  computed: {
-    ...mapGetters(['logo', 'name'])
-  },
-  mounted() {},
-  methods: {
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch('Login', this.loginForm)
-            .then(res => {
-              this.loading = false
-              this.$router.push({ path: this.redirect || '/' })
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          return false
+    },
+    methods: {
+      handleToggleCom(com, list = []) {
+        this.companyList = []
+        this.activeCom = com
+        console.log('com', com)
+        if (com === 'MultipleCompany') {
+          this.companyList = list
         }
-      })
+      }
     }
   }
-}
 </script>
 
-<style lang="scss" scoped>
-$dark_gray: #ccc;
-$light_gray: #333;
-$login_theme: #00aaee;
+<style scoped lang="scss">
+  @import "index";
 
-/deep/ input {
-  border: 0 none;
-  background-color: white;
-  -webkit-appearance: none;
-  &:-webkit-autofill {
-    background-image: none;
-    -webkit-box-shadow: 0 0 0 1000px white inset !important;
-    -webkit-text-fill-color: $light_gray !important;
-  }
-}
-/deep/ .el-input__inner {
-  height: 40px;
-  padding: 0 12px;
-  background-color: white;
-  border: 0 none;
-  border-bottom: 1px solid #e6e6e6 !important;
-}
-/deep/ .el-form-item__error {
-  left: 12px;
-}
-.wrapper {
-  position: relative;
-  width: 100%;
-  min-width: 1300px;
-  display: flex;
-  .left {
-    width: 68%;
-    .left-pic {
-      width: 100%;
-      height: 100%;
-      background: url('../../assets/img/login/login.png') no-repeat center;
-      background-size: cover;
-    }
-  }
-  .right {
+  .login-wrapper {
     position: relative;
-    width: 32%;
-    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    background-color: #3E4FEA;
     display: flex;
-    align-items: center;
     flex-direction: column;
-    padding-top: 6%;
-    .title {
-      font-size: 26px;
-      color: $light_gray;
-      margin: 0 auto 50px;
-      text-align: center;
-    }
-    .el-form {
-      width: 70%;
-      .submit-btn {
-        width: 100%;
-        line-height: 2;
-        font-size: 16px;
-        color: white;
-        border-radius: 3px;
-        background-color: $login_theme;
-        display: block;
-      }
-      .el-button {
-        border: 0 none;
-      }
-      .action-control {
-        color: #999;
-        /deep/ .el-checkbox {
-          .el-checkbox__label {
-            color: #999;
-          }
-          .el-checkbox__input.is-checked .el-checkbox__inner {
-            background-color: $login_theme;
-            border-color: $login_theme;
-          }
-        }
+    overflow: auto;
 
-        .forget {
-          cursor: pointer;
-          float: right;
-        }
-      }
-    }
-
-    .register {
-      width: 70%;
-      padding-top: 30px;
-      color: $light_gray;
-      border-top: 1px solid #e6e6e6;
-      text-align: center;
-      margin-top: 28px;
-      .register-btn {
-        color: $login_theme;
+    .top-nav {
+      width: 100%;
+      padding: 2.5% 2.8%;
+      display: flex;
+      .box {
+        width: 120px;
+        height: 38px;
+        color: #DADADA;
+        background-color: #3545D8;
+        border-radius: 38px;
+        margin-right: 18px;
         cursor: pointer;
+        @include center;
+        .icon {
+          font-size: 16px;
+          margin-right: 6px;
+        }
+        &:hover {
+          color: white;
+          background-color: #2C3AB8;
+        }
       }
     }
 
-    .copyright {
-      width: 92%;
-      position: absolute;
-      bottom: 2%;
-      color: #d0d0d0;
-      font-size: 12px;
-      text-align: center;
-      line-height: 1.5;
+    .container {
+      width: 100%;
+      flex: 1;
+      padding-top: 1.5%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      .left {
+        height: 100%;
+        .title {
+          position: relative;
+          font-size: 30px;
+          color: white;
+          letter-spacing: 3px;
+          padding-left: 30px;
+          &:after {
+            position: relative;
+            top: 10px;
+            left: 0;
+            content: '';
+            width: 80px;
+            height: 4px;
+            background-color: white;
+            display: block;
+          }
+        }
+        .text {
+          font-size: 20px;
+          line-height: 30px;
+          letter-spacing: 2px;
+          color: white;
+          padding-left: 30px;
+          margin-top: 30px;
+          margin-bottom: 80px;
+        }
+        .bg {
+          width: 80%;
+        }
+      }
+      .right {
+        width: 400px;
+        height: 100%;
+        margin-left: 250px;
+        .main-content {
+          position: relative;
+          width: 100%;
+          height: 85%;
+          background-color: white;
+          border-radius: 6px;
+          overflow: hidden;
+          .logo-box {
+            width: 100%;
+            margin-top: 15%;
+            @include center;
+            .logo {
+              width: 40%;
+              margin: 0 auto;
+            }
+          }
+        }
+        .app-down {
+          position: relative;
+          width: 176px;
+          height: 38px;
+          font-size: 14px;
+          color: #DADADA;
+          background-color: #3545D8;
+          border-radius: 38px;
+          margin: 30px auto 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          .text {
+            line-height: 18px;
+            margin-right: 12px;
+          }
+          .icon {
+            font-size: 16px;
+            margin: 0 6px;
+          }
+
+          .popover {
+            position: absolute;
+            top: -138px;
+            right: -150px;
+            z-index: 200;
+            width: 136px;
+            height: 174px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 13px 23px 4px rgba(0, 0, 0, 0.09);
+            flex-direction: column;
+            display: none;
+            .qrcode {
+              width: 90px;
+              height: 90px;
+            }
+            .down-text {
+              font-size: 12px;
+              color: #666;
+              margin-top: 15px;
+            }
+          }
+
+          &:hover {
+            color: white;
+            background-color: #2C3AB8;
+            .popover {
+              @include center;
+            }
+          }
+        }
+      }
     }
   }
-
-  .logo {
-    position: absolute;
-    left: 60px;
-    top: 50px;
-    width: 180px;
-    height: 48px;
-    z-index: 200;
-  }
-}
 </style>

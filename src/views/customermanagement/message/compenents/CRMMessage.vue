@@ -92,6 +92,18 @@
                        :width="item.width"
                        :formatter="fieldFormatter">
       </el-table-column>
+      <el-table-column v-if="showPoolDay && CRMConfig.customerConfig == 1"
+                       prop="poolDay"
+                       show-overflow-tooltip
+                       :resizable='false'
+                       label="距进入公海天数"
+                       width="120">
+        <template slot-scope="scope">
+          <div v-if="scope.row.isLock == 0">{{scope.row.poolDay}}</div>
+          <i v-else
+             class="wukong wukong-lock customer-lock"></i>
+        </template>
+      </el-table-column>
       <el-table-column :resizable="false">
       </el-table-column>
       <el-table-column v-if="showCheckStatus"
@@ -135,6 +147,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { filterIndexfields } from '@/api/customermanagement/common'
 import { crmLeadsSetFollowAPI } from '@/api/customermanagement/clue'
@@ -213,6 +226,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['CRMConfig']),
+
     // 展示勾选框
     showSelection() {
       if (this.infoType == 'followLeads' || this.infoType == 'followCustomer') {
@@ -233,6 +248,14 @@ export default {
     // 展示审核状态
     showCheckStatus() {
       if (this.crmType == 'contract' || this.crmType == 'receivables') {
+        return true
+      }
+      return false
+    },
+
+    // 展示客户池天数
+    showPoolDay() {
+      if (this.crmType == 'customer') {
         return true
       }
       return false

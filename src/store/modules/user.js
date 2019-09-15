@@ -49,6 +49,22 @@ const user = {
     },
     SET_PROJECT: (state, project) => {
       state.project = project
+    },
+    SET_AUTH: (state, data) => {
+      Lockr.set('Admin-Token', data['Admin-Token'])
+      Lockr.set('loginUserInfo', data.user)
+
+      Lockr.set('authList', data.auth)
+
+      addAuth(data['Admin-Token'])
+      state.userInfo = data.user
+      // 权限
+      state.allAuth = data.auth
+      state.crm = data.auth.crm
+      state.bi = data.auth.bi
+      state.manage = data.auth.manage
+      state.oa = data.auth.oa
+      state.project = data.auth.project
     }
   },
 
@@ -57,24 +73,11 @@ const user = {
     Login({
       commit
     }, userInfo) {
-      const username = userInfo.username.trim()
-      const password = RSAencrypt(userInfo.password)
       return new Promise((resolve, reject) => {
-        login(username, password).then(data => {
-          Lockr.set('Admin-Token', data['Admin-Token'])
-          Lockr.set('loginUserInfo', data.user)
-
-          Lockr.set('authList', data.auth)
-
-          addAuth(data['Admin-Token'])
-          commit('SET_USERINFO', data.user)
-          // 权限
-          commit('SET_ALLAUTH', data.auth)
-          commit('SET_CRM', data.auth.crm)
-          commit('SET_BI', data.auth.bi)
-          commit('SET_MANAGE', data.auth.manage)
-          commit('SET_OA', data.auth.oa)
-          commit('SET_PROJECT', data.auth.project)
+        login(userInfo).then(data => {
+          if (!data.hasOwnProperty('companyList')) {
+            commit('SET_AUTH', data)
+          }
           resolve(data)
         }).catch(error => {
           reject(error)

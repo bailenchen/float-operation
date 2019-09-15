@@ -1,13 +1,10 @@
 import request from '@/utils/request'
 
-export function login(username, password) {
+export function login(params) {
   return request({
     url: '/login',
     method: 'post',
-    data: {
-      username,
-      password
-    }
+    data: params
   })
 }
 
@@ -28,70 +25,75 @@ export function logout() {
   })
 }
 
-/** 云平台 登录 API */
 /**
- * 账号密码登录
- * @param {*} data
+ * 获取短信验证码
+ * @param params
  */
-export function LoginAPI(data) {
+export function SendSmsAPI(params) {
   return request({
-    url: '/login',
+    url: 'cloud/sendSms',
     method: 'post',
-    data: data
-  })
-}
-export function reLogin(data) {
-  return request({
-    url: '/reLogin',
-    method: 'post',
-    data: data
-  })
-}
-/**
- * 发送验证码
- * @param {*} data
- */
-export function sendSmsAPI(data) {
-  return request({
-    url: '/cloud/sendSms',
-    method: 'post',
-    data: data
+    data: params
   })
 }
 
 /**
- * 找回密码第一步验证
- * @param {*} data
+ * 注册
+ * @param params
  */
-export function findpwdAPI(data) {
+export function RegisterAPI(params) {
   return request({
-    url: '/cloud/findpwd',
+    url: 'cloud/register',
     method: 'post',
-    data: data
+    data: params
+  })
+}
+
+/**
+ * 注册
+ * @param params
+ */
+export function SliderVerifyAPI(params) {
+  return request({
+    url: 'cloud/isVerify',
+    method: 'post',
+    data: params,
+    useJson: true
+  })
+}
+
+/**
+ * 多公司选择登陆
+ * @param params
+ */
+export function ChooseLoginAPI(params) {
+  return request({
+    url: 'reLogin',
+    method: 'post',
+    data: params
+  })
+}
+
+/**
+ * 找回密码
+ * @param params
+ */
+export function ForgetPwdAPI(params) {
+  return request({
+    url: 'cloud/findpwd',
+    method: 'post',
+    data: params
   })
 }
 
 /**
  * 重置密码
- * @param {*} data
+ * @param params
  */
-export function resetpwdAPI(data) {
+export function ResetPwdAPI(params) {
   return request({
-    url: '/cloud/resetpwd',
+    url: 'cloud/resetpwd',
     method: 'post',
-    data: data
-  })
-}
-
-
-/**
- * 注册
- * @param {*} data
- */
-export function registerAPI(data) {
-  return request({
-    url: '/cloud/register',
-    method: 'post',
-    data: data
+    data: params
   })
 }
