@@ -196,8 +196,8 @@ const examineWorkbenchRouter = {
       }
     },
     {
-      name: 'project',
-      path: 'project', // 项目管理
+      name: 'system-project',
+      path: 'system-project', // 项目管理
       component: () => import('@/views/SystemManagement/project'),
       meta: {
         requiresAuth: true,
