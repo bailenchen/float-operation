@@ -21,12 +21,27 @@
                           :crmType="crmType"
                           :index="index"
                           :key="index"
-                          @on-handle="cellHandle"></follow-record-cell>
+                          @on-handle="cellHandle">
+        <flexbox class="relate-cell"
+                 @click.native="checkRelationDetail(item.types, item.typesId)">
+          <i class="wukong relate-cell-head crm-type"
+             :class="item.types | crmIconClass"></i>
+          <div class="relate-cell-body"
+               style="color: #6394E5;cursor: pointer;">{{item.typesName}}</div>
+        </flexbox>
+      </follow-record-cell>
+
+      </follow-record-cell>
       <div class="load">
         <el-button type="text"
                    :loading="loadMoreLoading">{{loadMoreLoading ? '加载更多' : '没有更多了'}}</el-button>
       </div>
     </div>
+
+    <c-r-m-full-screen-detail :visible.sync="showFullDetail"
+                              :crmType="relationCrmType"
+                              :id="relationID"></c-r-m-full-screen-detail>
+
   </slide-view>
 </template>
 
@@ -41,7 +56,9 @@ export default {
 
   components: {
     FollowRecordCell,
-    SlideView
+    SlideView,
+    CRMFullScreenDetail: () =>
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
 
   props: {
@@ -76,7 +93,11 @@ export default {
       // 判断是否发请求
       isPost: false,
       page: 1,
-      list: []
+      list: [],
+
+      showFullDetail: false, // 查看相关客户管理详情
+      relationID: '', // 相关ID参数
+      relationCrmType: '' // 相关类型
     }
   },
 
@@ -104,6 +125,12 @@ export default {
         return require('@/assets/img/product_detail.png')
       }
       return ''
+    }
+  },
+
+  filters: {
+    crmIconClass(type) {
+      return type && type.replace('crm_', 'wukong-')
     }
   },
 
@@ -163,6 +190,15 @@ export default {
         this.list.splice(data.data.index, 1)
         this.$emit('handle')
       }
+    },
+
+    /**
+     * 查看相关客户管理详情
+     */
+    checkRelationDetail(type, id) {
+      this.relationID = id
+      this.relationCrmType = type.replace('crm_', '')
+      this.showFullDetail = true
     },
 
     /**
@@ -228,5 +264,37 @@ export default {
   margin: 0 30px;
   height: calc(100% - 80px);
   overflow-y: auto;
+}
+
+.relate-cell {
+  padding: 8px;
+  background-color: #f5f7fa;
+  border-radius: 2px;
+  position: relative;
+
+  &-head {
+    display: block;
+    width: 15px;
+    height: 15px;
+    margin-right: 8px;
+  }
+
+  &-body {
+    flex: 1;
+    color: #333;
+    font-size: 12px;
+  }
+
+  &-foot {
+    display: block;
+    width: 20px;
+    padding: 0 4px;
+    margin-right: 8px;
+  }
+}
+
+.crm-type {
+  color: rgb(99, 148, 229);
+  font-size: 14px;
 }
 </style>
