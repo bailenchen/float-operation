@@ -529,10 +529,11 @@ export default {
      * 角色列表点击
      */
     roleMenuSelect(val) {
-      if (this.mainMenuIndex == 'rule' && val.types == 1) {
+      this.roleActive = val
+
+      if (this.mainMenuIndex == 'rule' && !this.showRuleSet) {
         this.mainMenuIndex = 'user'
       }
-      this.roleActive = val
 
       this.getRoleRulesInfo()
 
