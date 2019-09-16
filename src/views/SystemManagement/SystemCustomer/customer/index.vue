@@ -39,7 +39,7 @@
 
         <div class="customer-setting">
           <label class="label">提前提醒设置<el-tooltip effect="dark"
-                        content="提醒时间不能大于进入公海的天数"
+                        content="提醒时间不能大于公海回收时间"
                         placement="top">
               <i class="wukong wukong-help_tips"></i>>
             </el-tooltip></label>
