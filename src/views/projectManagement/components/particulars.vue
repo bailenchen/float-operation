@@ -680,6 +680,12 @@ export default {
     },
     workId() {
       return this.taskData.workId
+    },
+    labelList() {
+      if (!this.taskData) {
+        return []
+      }
+      return this.taskData.labelList || []
     }
   },
   watch: {
@@ -688,6 +694,15 @@ export default {
       this.getDetail()
       this.getCommentList()
       this.getActivityList()
+    },
+
+    labelList(val) {
+      this.$emit('on-handle', {
+        type: 'change-label',
+        value: val,
+        index: this.detailIndex,
+        section: this.detailSection
+      })
     }
   },
   mounted() {
@@ -1010,6 +1025,13 @@ export default {
           } else {
             this.$set(this.taskData, 'mainUser', null)
           }
+
+          this.$emit('on-handle', {
+            type: 'change-main-user',
+            value: val ? val.data[0] : null,
+            index: this.detailIndex,
+            section: this.detailSection
+          })
         })
         .catch(() => {})
     },
