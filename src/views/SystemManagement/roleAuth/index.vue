@@ -60,6 +60,9 @@
                  v-loading="userLoading">
               <flexbox class="content-table-header">
                 <div class="content-table-header-reminder">
+                  <reminder v-if="showReminder"
+                            :content="getReminderContent()">
+                  </reminder>
                 </div>
                 <el-button size="medium"
                            type="primary"
@@ -163,6 +166,7 @@
 <script>
 import RelateEmpoyee from './components/relateEmpoyee'
 import { usersList } from '@/api/common'
+import Reminder from '@/components/reminder'
 import {
   systemRuleByTypeAPI,
   roleAdd,
@@ -176,7 +180,8 @@ import {
 
 export default {
   components: {
-    RelateEmpoyee
+    RelateEmpoyee,
+    Reminder
   },
 
   data() {
@@ -238,7 +243,19 @@ export default {
     // 展示角色权限
     showRuleSet() {
       if (this.roleActive) {
-        return this.roleActive.remark != 'admin' && this.roleActive.remark != 'project'
+        return (
+          this.roleActive.remark != 'admin' &&
+          this.roleActive.remark != 'project'
+        )
+      }
+
+      return false
+    },
+
+    // 展示提示问题
+    showReminder() {
+      if (this.roleActive) {
+        return this.roleActive.remark == 'project'
       }
 
       return false
@@ -406,6 +423,16 @@ export default {
       } else if (command == 'delete') {
         this.roleDelect(this.dropdownHandleRole)
       }
+    },
+
+    /**
+     * 角色说明文字
+     */
+    getReminderContent() {
+      if (this.roleActive && this.roleActive.remark == 'project') {
+        return '项目管理员拥有“项目管理”模块所有权限，能看到并维护所有项目信息'
+      }
+      return ''
     },
 
     /**
