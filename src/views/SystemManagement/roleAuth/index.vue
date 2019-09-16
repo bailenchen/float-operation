@@ -19,7 +19,7 @@
                @click="roleMenuSelect(item)">
             {{item.roleName}}
             <div class="icon-close"
-                 v-if="item.remark != 'admin' || item.remark != 'project'">
+                 v-if="item.remark != 'admin' && item.remark != 'project'">
               <el-dropdown trigger="click"
                            @command="roleHandleClick">
                 <i class="el-icon-arrow-down"
