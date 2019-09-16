@@ -654,8 +654,23 @@ export default {
       } else if (type == 'get') {
         // 领取(公海)
         return this.crm.pool.receive
-      } else if (type == 'start' || type == 'disable') {
+      } else if (type == 'start') {
         // 上架 下架(产品)
+        for (let index = 0; index < this.selectionList.length; index++) {
+          const element = this.selectionList[index]
+          if (element.是否上下架 == '上架') {
+            return false
+          }
+        }
+        return this.crm[this.crmType].status
+      } else if (type == 'disable') {
+        // 上架 下架(产品)
+        for (let index = 0; index < this.selectionList.length; index++) {
+          const element = this.selectionList[index]
+          if (element.是否上下架 == '下架') {
+            return false
+          }
+        }
         return this.crm[this.crmType].status
       } else if (type == 'deal_status') {
         // 客户状态修改
