@@ -26,14 +26,9 @@ import { biRouter } from './modules/business'
   }
 **/
 export const constantRouterMap = [
-  /*{
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
-    hidden: true
-  },*/
-  {
-    path: '/clogin',
-    component: () => import('@/views/login/cloudIndex'),
     hidden: true
   },
   {

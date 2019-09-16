@@ -10,13 +10,13 @@ import {
 } from '@/utils/auth' // 验权
 
 let loadAsyncRouter = false
-const whiteList = ['/login', '/clogin'] // 不重定向白名单
+const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   localStorage.setItem("routerBefore", from.path)
   NProgress.start()
   /** 请求头包含授权信息 并且 页面必须授权 直接进入 */
   if (getAuth()) {
-    if (to.path === '/login' || to.path === '/clogin') {
+    if (to.path === '/login') {
       next({
         path: '/'
       })
@@ -74,8 +74,7 @@ router.beforeEach((to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      // next(`/clogin?redirect=${to.path}`) // 否则全部重定向到登录页
-      next(`/clogin`)
+      next(`/login`) // 否则全部重定向到登录页
       NProgress.done()
     }
   }
