@@ -35,13 +35,13 @@
                 v-if="!item.hidden">
         <router-link v-if="!item.children"
                      :key="index"
-                     :to="'/' + mainRouter + '/' + item.path">
-          <el-menu-item :index="item.path"
+                     :to="getFullPath(item.path)">
+          <el-menu-item :index="getFullPath(item.path)"
                         class="menu-item-defalt"
-                        :class="{'menu-item-select': activeIndex == item.path}">
+                        :class="{'menu-item-select': activeIndex == getFullPath(item.path)}">
             <i class="wukong"
                :class="'wukong-' + item.meta.icon"
-               :style="{ 'color': activeIndex == item.path ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
+               :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
             <span slot="title">{{item.meta.title}}</span>
             <el-badge v-if="item.meta.num && item.meta.num > 0"
                       :max="99"
@@ -50,7 +50,7 @@
         </router-link>
         <el-submenu v-else
                     :key="index"
-                    :index="item.path">
+                    :index="getFullPath(item.path)">
           <template slot="title"
                     v-if="!item.hidden">
             <i class="wukong"
@@ -61,10 +61,10 @@
           <router-link v-for="(subitem, subindex) in item.children"
                        v-if="!item.hidden"
                        :key="subindex"
-                       :to="'/' + mainRouter + '/' + subitem.path">
-            <el-menu-item :index="subitem.path"
+                       :to="getFullPath(subitem.path)">
+            <el-menu-item :index="getFullPath(subitem.path)"
                           class="menu-item-defalt"
-                          :class="{'menu-item-select': activeIndex == subitem.path }">
+                          :class="{'menu-item-select': activeIndex == getFullPath(subitem.path) }">
               {{subitem.meta.title}}
             </el-menu-item>
           </router-link>
@@ -169,6 +169,10 @@ export default {
 
     handleSelect(key, keyPath) {
       this.$emit('select', key, keyPath)
+    },
+
+    getFullPath(path) {
+      return `/${this.mainRouter}/${path}`
     }
   }
 }

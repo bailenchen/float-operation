@@ -108,7 +108,7 @@ export default {
             .dispatch('Login', this.loginForm)
             .then(res => {
               this.loading = false
-              this.$router.push({ path: this.redirect || '/workbench/index' })
+              this.$router.push({ path: this.redirect || '/' })
             })
             .catch(() => {
               this.loading = false

@@ -150,7 +150,7 @@
                              :taskData="taskData">
                     <div slot="editIndex">
                       <span class="el-icon-plus"></span>
-                      <span class="label">添加标签</span>
+                      <span class="label">标签</span>
                     </div>
                   </tag-index>
                 </div>
@@ -192,7 +192,6 @@
               <div v-show="addDescriptionShow">
                 <el-input type="textarea"
                           :autosize="{ minRows: 2}"
-                          maxlength="50"
                           placeholder="请输入内容"
                           v-model="addDescriptionTextarea">
                 </el-input>

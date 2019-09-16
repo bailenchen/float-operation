@@ -10,7 +10,7 @@ export function depDelete(data) {
 
 export function depEdit(data) {
   return request({
-    url: 'system/dept/setDept',
+    url: 'system/dept/updateDept',
     method: 'post',
     data: data
   })
@@ -18,15 +18,23 @@ export function depEdit(data) {
 
 export function depSave(data) {
   return request({
-    url: 'system/dept/setDept',
+    url: 'system/dept/addDept',
     method: 'post',
     data: data
   })
 }
 
-export function usersAdd(params) {
+export function usersEdit(params) {
   return request({
     url: 'system/user/setUser',
+    method: 'post',
+    data: params
+  })
+}
+
+export function usersAdd(params) {
+  return request({
+    url: 'system/user/addUser',
     method: 'post',
     data: params
   })
