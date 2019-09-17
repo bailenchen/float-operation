@@ -23,6 +23,7 @@
       </el-popover>
     </div>
     <el-menu :default-active="activeIndex"
+             ref="menu"
              :style="{'border-right-color': backgroundColor, 'padding-top': createButtonTitle != '' ? '90px' : '40px'}"
              class="el-menu-vertical"
              :text-color="textColor"
@@ -63,7 +64,9 @@
                        :key="subindex"
                        :to="getFullPath(subitem.path)">
             <el-menu-item :index="getFullPath(subitem.path)">
-              {{subitem.meta.title}}
+              <div class="menu-item-content">
+                {{subitem.meta.title}}
+              </div>
             </el-menu-item>
           </router-link>
         </el-submenu>
@@ -101,6 +104,9 @@ export default {
           this.buttonCollapse = val
         }, 300)
       }
+      this.$nextTick(() => {
+        this.changeMenuItemPadding(this.$refs.menu)
+      })
     }
   },
   computed: {
@@ -155,8 +161,41 @@ export default {
   },
   mounted() {
     this.buttonCollapse = this.collapse
+    this.$nextTick(() => {
+      this.changeMenuItemPadding(this.$refs.menu)
+    })
   },
   methods: {
+    changeMenuItemPadding(menus) {
+      for (let index = 0; index < menus.$children.length; index++) {
+        const element = menus.$children[index]
+        if (element.$options.name === 'router-link') {
+          if (element.$children && element.$children.length) {
+            const menuItem = element.$children[0]
+            let paddingLeft = menuItem.$el.style.paddingLeft
+            paddingLeft = paddingLeft.replace('px', '')
+
+            paddingLeft = parseFloat(paddingLeft) * 0.7
+
+            menuItem.$el.style.paddingLeft = paddingLeft + 'px'
+          }
+        } else if (element.$options.name === 'ElSubmenu') {
+          if (element.$el.children && element.$el.children.length) {
+            if (element.$refs['submenu-title']) {
+              let paddingLeft = element.$refs['submenu-title'].style.paddingLeft
+              paddingLeft = paddingLeft.replace('px', '')
+
+              paddingLeft = parseFloat(paddingLeft) * 0.7
+
+              element.$refs['submenu-title'].style.paddingLeft =
+                paddingLeft + 'px'
+            }
+          }
+
+          this.changeMenuItemPadding(element)
+        }
+      }
+    },
     toggleSideBarClick() {
       this.$store.commit('SET_COLLAPSE', !this.collapse)
     },
@@ -194,6 +233,12 @@ export default {
   padding-bottom: 48px;
 }
 
+.el-submenu__title {
+  i:first-child {
+    padding-left: 10px;
+  }
+}
+
 .el-menu-vertical.el-menu--collapse {
   .el-menu-item {
     span {
@@ -216,10 +261,9 @@ export default {
 }
 
 .el-menu-item {
-  height: 46px;
-  line-height: 46px;
-  padding: 5px 14px !important;
-  display: flex;
+  height: auto;
+  line-height: normal;
+  padding: 0 14px;
   background-color: #001529 !important;
 }
 
@@ -244,9 +288,19 @@ export default {
   width: 100%;
   border-radius: 4px;
   line-height: 36px;
+  margin: 5px 0;
   padding-left: 10px;
   position: relative;
   cursor: pointer;
+}
+
+.el-submenu.is-active {
+  .el-submenu__title {
+    span,
+    i:first-child {
+      color: white;
+    }
+  }
 }
 
 .create-button-container {
