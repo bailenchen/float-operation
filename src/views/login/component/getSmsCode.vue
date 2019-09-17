@@ -136,11 +136,13 @@ export default {
         this.errorInfo = '请先进行安全验证'
         return
       }
-      this.startTimer()
+
       SendSmsAPI({
         telephone: this.form.phone
       })
-        .then()
+        .then(() => {
+          this.startTimer()
+        })
         .catch()
     },
 
