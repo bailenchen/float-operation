@@ -945,7 +945,7 @@ export default {
     getCustomerAddressParams(params, element) {
       params['address'] = element.value.address
         ? element.value.address.join(',')
-        : []
+        : '';
       params['detailAddress'] = element.value.detailAddress
       params['location'] = element.value.location
       params['lng'] = element.value.lng
