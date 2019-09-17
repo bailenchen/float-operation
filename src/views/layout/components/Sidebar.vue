@@ -13,9 +13,9 @@
              @click="quicklyCreate"
              class="create-button"
              :style="{ 'background-color': createButtonBackgroundColor }">
-          <div v-show="!buttonNameCollapse"
+          <div v-show="!buttonCollapse"
                class="button-name">{{createButtonTitle}}</div>
-          <div v-show="!buttonNameCollapse"
+          <div v-show="!buttonCollapse"
                class="button-line"></div>
           <i class="button-mark"
              :class="createButtonIcon"></i>
@@ -36,16 +36,16 @@
         <router-link v-if="!item.children"
                      :key="index"
                      :to="getFullPath(item.path)">
-          <el-menu-item :index="getFullPath(item.path)"
-                        class="menu-item-defalt"
-                        :class="{'menu-item-select': activeIndex == getFullPath(item.path)}">
-            <i class="wukong"
-               :class="'wukong-' + item.meta.icon"
-               :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
-            <span slot="title">{{item.meta.title}}</span>
-            <el-badge v-if="item.meta.num && item.meta.num > 0"
-                      :max="99"
-                      :value="item.meta.num"></el-badge>
+          <el-menu-item :index="getFullPath(item.path)">
+            <div class="menu-item-content">
+              <i class="wukong"
+                 :class="'wukong-' + item.meta.icon"
+                 :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
+              <span slot="title">{{item.meta.title}}</span>
+              <el-badge v-if="item.meta.num && item.meta.num > 0"
+                        :max="99"
+                        :value="item.meta.num"></el-badge>
+            </div>
           </el-menu-item>
         </router-link>
         <el-submenu v-else
@@ -62,9 +62,7 @@
                        v-if="!item.hidden"
                        :key="subindex"
                        :to="getFullPath(subitem.path)">
-            <el-menu-item :index="getFullPath(subitem.path)"
-                          class="menu-item-defalt"
-                          :class="{'menu-item-select': activeIndex == getFullPath(subitem.path) }">
+            <el-menu-item :index="getFullPath(subitem.path)">
               {{subitem.meta.title}}
             </el-menu-item>
           </router-link>
@@ -75,7 +73,7 @@
          :style="{ 'background-color':backgroundColor }">
       <div class="sidebar-container">
         <img class="collapse-button"
-             :style="{ 'right': buttonNameCollapse ? '3px' : '0' }"
+             :style="{ 'right': buttonCollapse ? '3px' : '0' }"
              src="@/assets/img/collapse_white.png"
              alt=""
              @click="toggleSideBarClick">
@@ -91,23 +89,22 @@ export default {
   name: 'Sidebar',
   data() {
     return {
-      collapse: false, //菜单开关
-      buttonNameCollapse: false
+      buttonCollapse: false
     }
   },
   watch: {
     collapse: function(val) {
       if (val) {
-        this.buttonNameCollapse = val
+        this.buttonCollapse = val
       } else {
         setTimeout(() => {
-          this.buttonNameCollapse = val
+          this.buttonCollapse = val
         }, 300)
       }
     }
   },
   computed: {
-    ...mapGetters(['activeIndex'])
+    ...mapGetters(['activeIndex', 'collapse'])
   },
   props: {
     mainRouter: {
@@ -125,7 +122,7 @@ export default {
     },
     backgroundColor: {
       type: String,
-      default: '#2D3037'
+      default: '#001529'
     },
     activeTextColor: {
       type: String,
@@ -137,11 +134,11 @@ export default {
     },
     selectLineColor: {
       type: String,
-      default: '#3E84E9'
+      default: '#2362FB'
     },
     selectBackgroundColor: {
       type: String,
-      default: '#454E57'
+      default: '#001529'
     },
     createButtonTitle: {
       type: String,
@@ -149,17 +146,19 @@ export default {
     },
     createButtonBackgroundColor: {
       type: String,
-      default: '#3E84E9'
+      default: '#2362FB'
     },
     createButtonIcon: {
       type: String,
       default: 'el-icon-arrow-right'
     }
   },
-  mounted() {},
+  mounted() {
+    this.buttonCollapse = this.collapse
+  },
   methods: {
     toggleSideBarClick() {
-      this.collapse = !this.collapse
+      this.$store.commit('SET_COLLAPSE', !this.collapse)
     },
 
     // 快速创建
@@ -193,14 +192,12 @@ export default {
   height: 100%;
   overflow: auto;
   padding-bottom: 48px;
-  .el-submenu.is-active {
-    .el-submenu__title {
-      .wukong {
-        color: white;
-      }
-      span {
-        color: white;
-      }
+}
+
+.el-menu-vertical.el-menu--collapse {
+  .el-menu-item {
+    span {
+      display: none;
     }
   }
 }
@@ -218,19 +215,42 @@ export default {
   }
 }
 
-.menu-item-defalt {
-  border-left: 2px solid transparent;
+.el-menu-item {
   height: 46px;
   line-height: 46px;
+  padding: 5px 14px !important;
+  display: flex;
+  background-color: #001529 !important;
 }
 
-.menu-item-select {
-  border-left: 2px solid #3e84e9;
-  background-color: #454e57 !important;
+.el-menu-item.is-active {
+  .menu-item-content {
+    background-color: #2362fb !important;
+    color: white;
+  }
+}
+
+.el-menu-item:hover {
+  .menu-item-content {
+    background-color: rgba($color: #fff, $alpha: 0.1);
+    color: white;
+    .wukong {
+      color: white !important;
+    }
+  }
+}
+
+.menu-item-content {
+  width: 100%;
+  border-radius: 4px;
+  line-height: 36px;
+  padding-left: 10px;
+  position: relative;
+  cursor: pointer;
 }
 
 .create-button-container {
-  padding: 15px 12px 15px 12px;
+  padding: 15px 14px;
   color: white;
   font-size: 14px;
   cursor: pointer;
@@ -264,6 +284,10 @@ export default {
     .button-mark {
       width: 12px;
     }
+  }
+
+  .create-button:hover {
+    background-color: rgba($color: #fff, $alpha: 0.1) !important;
   }
 }
 
@@ -303,8 +327,8 @@ export default {
 // 消息数
 .el-badge {
   position: absolute;
-  right: 15px;
-  top: 5px;
+  right: 8px;
+  top: 6px;
   /deep/ .el-badge__content {
     border-width: 0;
   }
