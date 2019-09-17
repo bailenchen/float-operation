@@ -17,7 +17,7 @@
               full: Boolean(form.company_name),
               focus: focusKey === 'company_name'
             }"
-                class="form-icon wukong wukong-home"
+                class="form-icon wk wk-home"
                 style="font-size: 13px" />
         </el-input>
       </el-form-item>
@@ -35,7 +35,7 @@
               full: Boolean(form.company_credit_number),
               focus: focusKey === 'company_credit_number'
             }"
-                class="form-icon wukong wukong-credit-level"
+                class="form-icon wk wk-credit-level"
                 style="font-size: 16px" />
         </el-input>
       </el-form-item>
@@ -56,9 +56,9 @@
             <div class="desc">
               <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
               <span v-if="rankIndex >= 3"
-                    class="icon wukong wukong-tongguo" />
+                    class="icon wk wk-tongguo" />
               <span v-else
-                    class="icon error wukong wukong-guanbi" />
+                    class="icon error wk wk-guanbi" />
             </div>
           </div>
           <div slot="reference"
@@ -77,7 +77,7 @@
                   full: Boolean(form.password),
                   focus: focusKey === 'password'
                 }"
-                    class="form-icon wukong wukong-mima1" />
+                    class="form-icon wk wk-mima1" />
             </el-input>
           </div>
         </el-popover>
@@ -97,7 +97,7 @@
               full: Boolean(form.re_password),
               focus: focusKey === 're_password'
             }"
-                class="form-icon wukong wukong-mima1" />
+                class="form-icon wk wk-mima1" />
         </el-input>
       </el-form-item>
     </el-form>

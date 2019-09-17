@@ -2,11 +2,11 @@
   <div class="login-wrapper">
     <div class="top-nav">
       <!--<a target="_blank" class="box" href="http://www.5kcrm.com">
-        <span class="icon wukong wukong-home"></span>
+        <span class="icon wk wk-home"></span>
         <span class="text">官网首页</span>
       </a>-->
       <!--<div class="box">
-        <span class="icon wukong wukong-bangzhu" />
+        <span class="icon wk wk-bangzhu" />
         <span class="text">帮助中心</span>
       </div>-->
 
@@ -47,8 +47,8 @@
           <span class="text">
             APP下载
           </span>
-          <div class="icon wukong wukong-anzhuo" />
-          <div class="icon wukong wukong-IOS" />
+          <div class="icon wk wk-anzhuo" />
+          <div class="icon wk wk-IOS" />
           <div class="popover">
             <img src="~@/assets/login/qrcode.png"
                  alt=""
