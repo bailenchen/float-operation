@@ -21,10 +21,7 @@ export default {
     return {}
   },
   props: {
-    navIndex: {
-      type: Number,
-      default: 0
-    }
+    navIndex: String
   },
   components: {},
   computed: {

@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header class="nav-container">
-      <navbar :navIndex="0"
+      <navbar navIndex="/workbench"
               @nav-items-click="navClick"></navbar>
     </el-header>
     <el-container>

@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header class="nav-container">
-      <navbar :navIndex="2"
+      <navbar navIndex="/project"
               @nav-items-click="navClick"></navbar>
     </el-header>
     <el-container>
@@ -41,7 +41,11 @@ export default {
   computed: {
     ...mapGetters(['project']),
     permissonProject() {
-      return this.project && this.project.projectManage && this.project.projectManage.save
+      return (
+        this.project &&
+        this.project.projectManage &&
+        this.project.projectManage.save
+      )
     }
   },
   data() {

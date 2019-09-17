@@ -144,7 +144,7 @@ export default {
      */
     cellStyle({ row, column, rowIndex, columnIndex }) {
       if (column.property !== 'realname' && row[column.property]) {
-        return { color: '#3E84E9', cursor: 'pointer' }
+        return { color: '#2362FB', cursor: 'pointer' }
       } else {
         return ''
       }

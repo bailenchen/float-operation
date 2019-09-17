@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header class="nav-container">
-      <navbar :navIndex="1"
+      <navbar navIndex="/crm"
               @nav-items-click="navClick"></navbar>
     </el-header>
     <el-container>
@@ -157,8 +157,7 @@ export default {
      * 菜单钢鞭
      */
     handleSelect() {
-      this.$store
-        .dispatch('GetMessageNum')
+      this.$store.dispatch('GetMessageNum')
     },
 
     /**

@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header class="nav-container">
-      <navbar :navIndex="5"
+      <navbar navIndex="/bi"
               @nav-items-click="navClick"></navbar>
     </el-header>
     <el-container>
