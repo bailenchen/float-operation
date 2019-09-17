@@ -366,7 +366,7 @@ export default {
     }
   }
   .tag-footer {
-    color: #3e84e9;
+    color: #2362FB;
     .footer-row {
       margin: 13px 0;
     }

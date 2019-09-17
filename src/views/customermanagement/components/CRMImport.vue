@@ -232,7 +232,7 @@ export default {
   font-size: 14px;
   .download {
     cursor: pointer;
-    color: #3e84e9;
+    color: #2362FB;
   }
 }
 

@@ -206,3 +206,30 @@ div[lazy=loading] {
 * :focus {
   outline: none;
 }
+
+// 创建按钮
+.create-button--orange {
+  background-color: #fc6e51;
+  border-color: #fc6e51;
+}
+
+.create-button--orange:hover,
+.create-button--orange:focus {
+  background: #fc7d63;
+  border-color: #fc7d63;
+  color: #FFFFFF;
+}
+
+// Pagination 分页
+.el-pagination {
+  * {
+    font-size: 12px !important;
+  }
+
+  .number.active {
+    list-style-position: inside;
+    border: 1px solid $xr-color-primary;
+    color: $xr-color-primary !important;
+    background-color: #f4f4f5 !important;
+  }
+}

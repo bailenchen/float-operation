@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-head-container">
     <flexbox v-show="selectionList.length == 0"
              class="th-container">
       <div v-if="!isSeas">场景：</div>
@@ -8,23 +8,25 @@
                   popper-class="no-padding-popover"
                   v-model="showScene"
                   width="150">
-        <flexbox slot="reference">
-          <div class="condition_title">{{sceneData.name || getDefaultSceneName()}}</div>
-          <i class="el-icon-arrow-down el-icon--right"
-             style="color:#777;"></i>
-        </flexbox>
+        <el-input slot="reference"
+                  placeholder="请选择选择"
+                  v-model="sceneName"
+                  :readonly="true"
+                  class="scene-select">
+          <i slot="suffix"
+             :class="['el-input__icon', 'el-icon-' + iconClass]"></i>
+        </el-input>
         <scene-list ref="sceneList"
                     :crmType="crmType"
                     @scene="sceneSelect"
                     @scene-handle="sceneHandle"
                     @hidden-scene="showScene=false"></scene-list>
       </el-popover>
-      <img @click="showFilterClick"
-           class="c-filtrate"
-           :style="{ 'margin-left': isSeas ? 0 : '30px'}"
-           src="@/assets/img/c_filtrate.png" />
-      <div class="condition_title"
-           @click="showFilterClick">高级筛选</div>
+      <el-button :style="{ 'margin-left': isSeas ? 0 : '20px'}"
+                 type="primary"
+                 class="filter-button"
+                 icon="wukong wukong-funnelstatistics"
+                 @click="showFilterClick">高级筛选</el-button>
       <filter-form :fieldList="fieldList"
                    :dialogVisible.sync="showFilter"
                    :obj="filterObj"
@@ -35,17 +37,19 @@
     </flexbox>
     <flexbox v-if="selectionList.length > 0"
              class="selection-bar">
-      <div class="selected—title">已选中<span class="selected—count">{{selectionList.length}}</span>项</div>
+      <div class="selected—title">已选中 <span class="selected—count">{{selectionList.length}}</span> 项</div>
       <flexbox class="selection-items-box">
-        <flexbox class="selection-item"
-                 v-for="(item, index) in getSelectionHandleItemsInfo()"
-                 :key="index"
-                 v-if="whetherTypeShowByPermision(item.type)"
-                 @click.native="selectionBarClick(item.type)">
+        <!-- <flexbox class="selection-item">
           <img class="selection-item-icon"
                :src="item.icon" />
-          <div class="selection-item-name">{{item.name}}</div>
-        </flexbox>
+          <div class="selection-item-name"></div>
+        </flexbox> -->
+        <el-button icon="el-icon-user"
+                   v-for="(item, index) in getSelectionHandleItemsInfo()"
+                   :key="index"
+                   type="primary"
+                   v-if="whetherTypeShowByPermision(item.type)"
+                   @click.native="selectionBarClick(item.type)">{{item.name}}</el-button>
       </flexbox>
     </flexbox>
     <filter-content v-if="filterObj.form && filterObj.form.length > 0"
@@ -143,7 +147,13 @@ export default {
     DealStatusHandle
   },
   computed: {
-    ...mapGetters(['crm', 'CRMConfig'])
+    ...mapGetters(['crm', 'CRMConfig']),
+    iconClass() {
+      return this.showScene ? 'arrow-up' : 'arrow-down'
+    },
+    sceneName() {
+      return this.sceneData.name || this.getDefaultSceneName()
+    }
   },
   data() {
     return {
@@ -425,7 +435,7 @@ export default {
             })
             // 刷新待办
             this.$store.dispatch('GetMessageNum')
-            
+
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
@@ -711,10 +721,25 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.table-head-container {
+  border-bottom: 1px solid #e6e6e6;
+}
+
 .th-container {
   font-size: 13px;
   height: 50px;
   padding: 0 20px;
+
+  .scene-select {
+    width: 150px;
+  }
+
+  .filter-button {
+    /deep/ i {
+      font-size: 9px;
+      margin-right: 5px;
+    }
+  }
 }
 /** 场景和筛选 */
 .condition_title {
@@ -742,7 +767,7 @@ export default {
   .selected—title {
     flex-shrink: 0;
     padding-right: 20px;
-    border-right: 1px solid $--table-border-color;
+    color: #333;
     .selected—count {
       color: $xr-color-primary;
     }
@@ -752,23 +777,25 @@ export default {
 .selection-items-box {
   overflow-x: auto;
   overflow-y: hidden;
-  .selection-item {
-    width: auto;
-    padding: 15px;
-    flex-shrink: 0;
-    .selection-item-icon {
-      display: block;
-      margin-right: 5px;
-      width: 15px;
-      height: 15px;
-    }
-    .selection-item-name {
-      cursor: pointer;
-      color: #777;
-    }
-    .selection-item-name:hover {
-      color: $xr-color-primary;
-    }
+  padding: 0 15px;
+
+  .el-button {
+    color: #666;
+    background-color: #f6f8fa;
+    border-color: #f6f8fa;
+    font-size: 12px;
+    height: 28px;
+    border-radius: 14px;
+  }
+
+  .el-button--primary:hover {
+    background: $xr-color-primary;
+    border-color: $xr-color-primary;
+    color: #ffffff;
+  }
+
+  .el-button + .el-button {
+    margin-left: 15px;
   }
 }
 </style>

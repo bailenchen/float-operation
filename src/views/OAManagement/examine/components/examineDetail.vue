@@ -431,7 +431,7 @@ export default {
   }
   p {
     cursor: pointer;
-    color: #3e84e9;
+    color: #2362FB;
     background: #f5f7fa;
     line-height: 30px;
     margin-bottom: 5px;

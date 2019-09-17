@@ -67,12 +67,13 @@
       </el-table>
       <div class="p-contianer">
         <el-pagination class="p-bar"
+                       background
                        @size-change="handleSizeChange"
                        @current-change="handleCurrentChange"
                        :current-page="currentPage"
                        :page-sizes="pageSizes"
                        :page-size.sync="pageSize"
-                       layout="total, sizes, prev, pager, next, jumper"
+                       layout="prev, pager, next, sizes, total, jumper"
                        :total="total">
         </el-pagination>
       </div>
@@ -116,7 +117,7 @@ export default {
         column.property === 'customerName' ||
         column.property === 'businessCheck'
       ) {
-        return { color: '#3E84E9', cursor: 'pointer' }
+        return { color: '#2362FB', cursor: 'pointer' }
       } else {
         return ''
       }

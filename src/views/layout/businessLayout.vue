@@ -56,7 +56,6 @@ export default {
   position: relative;
   background-color: #2d3037;
   box-sizing: border-box;
-  border-right: solid 1px #e6e6e6;
 }
 
 .nav-container {

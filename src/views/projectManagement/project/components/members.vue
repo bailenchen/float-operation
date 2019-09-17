@@ -253,7 +253,7 @@ export default {
   }
   .add-title {
     font-size: 13px;
-    color: #3e84e9;
+    color: #2362FB;
     vertical-align: middle;
   }
 }

@@ -132,7 +132,7 @@ export default {
     line-height: 44px;
     border-bottom: 1px solid #e6e6e6;
     .rt {
-      color: #3e84e9;
+      color: #2362FB;
       margin-right: 0;
       cursor: pointer;
       .el-icon-plus {

@@ -27,7 +27,7 @@
         </sidebar>
       </el-aside>
       <el-main id="crm-main-container"
-               style="padding:15px;">
+               style="padding:15px 0;">
         <app-main></app-main>
       </el-main>
     </el-container>
@@ -152,7 +152,7 @@ export default {
         .then(res => {})
         .catch(() => {})
     },
-    
+
     /**
      * 菜单钢鞭
      */
@@ -199,7 +199,6 @@ export default {
   position: relative;
   background-color: #2d3037;
   box-sizing: border-box;
-  border-right: solid 1px #e6e6e6;
 }
 
 .nav-container {

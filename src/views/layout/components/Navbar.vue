@@ -6,14 +6,14 @@
       <flexbox style="width: auto;">
         <router-link @click.native="navItemsClick(item.type)"
                      class="nav-item"
-                     :style="{ 'color' : item.type == navIndexChild ? '#3E84E9' : '#333333' }"
+                     :style="{ 'color' : item.type == navIndexChild ? '#2362FB' : '#333333' }"
                      :to="item.path"
                      v-for="(item, index) in items"
                      :key="index">
           <i class="wukong"
              :class="'wukong-' + item.icon"
              style="margin-right: 10px;"
-             :style="{ 'color': item.type == navIndexChild ? '#3E84E9' : '#333333'}"></i>
+             :style="{ 'color': item.type == navIndexChild ? '#2362FB' : '#333333'}"></i>
           <div class="nav-item-title">{{item.title}}</div>
         </router-link>
       </flexbox>
@@ -22,7 +22,7 @@
     <el-popover placement="bottom"
                 :visible-arrow="false"
                 popper-class="no-padding-popover"
-                width="200"
+                width="210"
                 trigger="hover">
       <div class="auth-content">
         <div class="title">您暂未开通授权</div>
@@ -274,7 +274,7 @@ export default {
   }
   .handel-item:hover {
     background-color: #f7f8fa;
-    color: #3e84e9;
+    color: #2362FB;
   }
   .handel-box {
     padding: 0 15px;
@@ -297,11 +297,11 @@ export default {
   color: #888;
   padding: 20px;
   &:hover {
-    color: #3e84e9;
+    color: #2362FB;
   }
   &.active {
     font-weight: bold;
-    color: #3e84e9;
+    color: #2362FB;
   }
 }
 

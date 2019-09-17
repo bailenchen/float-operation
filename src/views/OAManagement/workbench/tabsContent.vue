@@ -234,7 +234,7 @@ export default {
       }
       .title {
         margin: 20px 0 0;
-        color: #3e84e9;
+        color: #2362FB;
         white-space: pre-wrap;
         word-wrap: break-word;
         letter-spacing: 0.5px;

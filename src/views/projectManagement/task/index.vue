@@ -549,7 +549,7 @@ export default {
       font-size: 13px;
       padding-left: 4px;
       .el-icon-plus {
-        color: #3e84e9;
+        color: #2362FB;
         font-weight: 700;
       }
     }

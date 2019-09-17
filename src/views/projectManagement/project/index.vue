@@ -418,7 +418,7 @@ export default {
   }
   p:hover {
     background: #f7f8fa;
-    color: #3e84e9;
+    color: #2362FB;
   }
 }
 .slide-fade-enter-active,

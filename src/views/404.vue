@@ -63,7 +63,7 @@ export default {
     font-size: 14px;
     color: #fefefe;
     line-height: 44px;
-    background: #3e84e9;
+    background: #2362FB;
     border-radius: 6px;
     margin: 50px auto 0;
     cursor: pointer;

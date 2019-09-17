@@ -2,46 +2,40 @@
 
 .crm-container {
   background-color: white;
-  border: 1px solid #E6E6E6;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
   border-radius: 2px;
 }
 
-/**
-  .el-table /deep/ thead th {
-    border-right: 1px solid #ebeef5;
-  }
-  
-  .el-table /deep/ tbody tr td:nth-child(2){
-    border-right: 1px solid #ebeef5;
-  }
-  
-  .b-bottom {
-    border-bottom: 1px solid #ebeef5;
-  }
-  */
-
 .el-table /deep/ thead th {
-  background-color: #fafdff;
-  font-weight: 400;
-  border-color: #E6E6E6;
-  color: #475059;
+  padding: 3px 0;
+  background-color: #F6F8FA;
+
+  .cell {
+    color: #333333;
+    font-size: 12px;
+    font-weight: 600;
+
+    .sort-caret {
+      transform: scale(0.8);
+    }
+
+    .sort-caret.ascending {
+      top: 7px;
+    }
+  }
 }
 
-.table-set {
-  width: 15px;
-  margin-top: 5px;
-  cursor: pointer;
+.el-table /deep/ thead  {
+  .is-sortable.ascending,
+  .is-sortable.descending {
+    background-color: #E7EDF4;
+  }
+
 }
 
-.table-head-name {
-  font-size: 14px;
-  color: #475059;
-  line-height: 23px;
-  padding: 0;
-}
-
-.el-table /deep/ thead .cell {
-  height: 23px;
+.el-table /deep/ td {
+  padding: 8px 0;
 }
 
 .el-table /deep/ .el-table__row.current-row {
@@ -60,18 +54,16 @@
   border-top-color: transparent;
   border-left-color: transparent;
   border-right-color: transparent;
-  border-bottom-color: #E6E6E6;
+  border-bottom-color: $xr-border-line-color;
   font-size: 13px;
 }
 
 .el-table /deep/ tbody tr td:nth-child(2) {
-  border-right: 1px solid #E6E6E6;
+  border-right: 1px solid $xr-border-line-color;
 }
 
 .n-table--border {
-  border-color: #E6E6E6;
-  border-left-color: transparent;
-  border-right-color: transparent;
+  border-width: 0;
 }
 
 .n-table--border::after {
@@ -86,23 +78,30 @@
   .p-bar {
     float: right;
     margin: 5px 100px 0 0;
-    font-size: 14px !important;
   }
+}
+
+// 设置
+.table-set {
+  width: 15px;
+  margin-top: 5px;
+  cursor: pointer;
 }
 
 // 列表状态
 .status_button {
   padding: 1px 6px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $xr-border-line-color;
   border-radius: 4px;
   display: inline-block;
   font-size: 12px;
   margin: 0 auto;
 }
 
-.el-table /deep/ .sort-caret.ascending {
-  top: -6px;
-}
-.el-table /deep/ .caret-wrapper {
-  height: 24px;
-}
+// .el-table /deep/ .sort-caret.ascending {
+//   top: -6px;
+// }
+
+// .el-table /deep/ .caret-wrapper {
+//   height: 24px;
+// }

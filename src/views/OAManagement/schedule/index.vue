@@ -278,7 +278,7 @@ export default {
           text-shadow: none;
         }
         .fc-state-active {
-          background: #3e84e9;
+          background: #2362FB;
           color: #fff;
         }
       }
@@ -331,7 +331,7 @@ export default {
         .fc-content-skeleton {
           .fc-today {
             .fc-day-number {
-              background: #3e84e9;
+              background: #2362FB;
               border-radius: 50%;
               padding: 3px;
               color: #fff;
