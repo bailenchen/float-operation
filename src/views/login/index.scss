@@ -124,6 +124,7 @@
 
   //margin-top: 45px;
   .btn {
+    width: 100%;
     height: 44px;
     font-size: 18px;
     color: white;
@@ -131,7 +132,7 @@
     line-height: 44px;
     background-color: #3E6BEA;
     border-radius: 6px;
-    cursor: pointer;
+    padding: 0;
 
     &:hover {
       background-color: #517aec;

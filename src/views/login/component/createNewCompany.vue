@@ -114,16 +114,17 @@
     </div>
 
     <div class="control">
-      <div v-if="!showNext"
+      <el-button v-if="!showNext"
            class="btn"
            @click="handleNext">
         下 一 步
-      </div>
-      <div v-else
+      </el-button>
+      <el-button v-else
+           :disabled="disabledBtn"
            class="btn"
            @click="handleRegister">
         立&nbsp;即&nbsp;创&nbsp;建
-      </div>
+      </el-button>
     </div>
 
     <div class="to-login">
@@ -170,6 +171,7 @@ export default {
         ]
       },
 
+      disabledBtn: false,
       pwdPopover: false, // 密码强度 popover
       width: 0, // 密码强度 popover 宽度
       rankIndex: 0 // 密码强度等级
@@ -204,6 +206,8 @@ export default {
      * 注册
      */
     handleRegister() {
+      if (this.disabledBtn) return;
+      this.disabledBtn = true
       let flag = this.checkForm()
       if (!flag) return
       let params = Object.assign({}, this.form)
@@ -215,9 +219,12 @@ export default {
       RegisterAPI(params)
         .then(() => {
           this.$message.success('注册成功')
+          this.disabledBtn = false
           this.$emit('toggle', 'LoginByPwd')
         })
-        .catch()
+        .catch(() => {
+          this.disabledBtn = false
+        })
     },
 
     /**
