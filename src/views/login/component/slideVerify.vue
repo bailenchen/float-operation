@@ -174,11 +174,11 @@ export default {
     // 随机生成img src
     getRandomImg() {
       this.showLoading = true
-      return (
-        'https://picsum.photos/300/150/?image=' +
-        this.getRandomNumberByRange(0, 1084)
-      )
-      // return require('../assets/img.jpg')
+      // return (
+      //   'https://picsum.photos/300/150/?image=' +
+      //   this.getRandomNumberByRange(0, 1084)
+      // )
+      return require(`@/assets/verify_img/${this.getRandomNumberByRange(1, 20)}.jpg`)
     },
     getRandomNumberByRange(start, end) {
       return Math.round(Math.random() * (end - start) + start)

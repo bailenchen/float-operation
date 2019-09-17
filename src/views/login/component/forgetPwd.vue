@@ -38,7 +38,7 @@
                  class="item" />
             </div>
             <div class="desc">
-              <span class="text">设置为8~20位字母、数字、特殊字符组合的密码</span>
+              <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
               <span v-if="rankIndex >= 3"
                     class="icon wukong wukong-tongguo" />
               <span v-else

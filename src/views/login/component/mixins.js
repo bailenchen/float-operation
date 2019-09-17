@@ -31,8 +31,10 @@ export default {
 
     setError(key, msg) {
       // this.$refs[key].focus()
-      this.validateRes[key] = false
-      this.errorInfo = msg
+      setTimeout(() => {
+        this.validateRes[key] = false
+        this.errorInfo = msg
+      }, 200)
     },
   }
 }
