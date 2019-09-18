@@ -58,7 +58,7 @@ router.beforeEach((to, from, next) => {
           }).catch((err) => {
             loadAsyncRouter = false
             store.dispatch('LogOut').then(() => {
-              Message.error(err || '获取用户信息失败')
+              Message.error(err.msg || '获取用户信息失败')
               next({
                 path: '/'
               })
