@@ -990,7 +990,7 @@ export default {
           return element.value[0].batchId
         }
         return ''
-      } else if (element.key == 'category_id') {
+      } else if (element.data.formType == 'category') {
         if (element.value && element.value.length > 0) {
           return element.value[element.value.length - 1]
         }
