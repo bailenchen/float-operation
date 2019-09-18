@@ -19,7 +19,7 @@ const customerRouter = {
     meta: {
       requiresAuth: false,
       title: '仪表盘',
-      icon: 'dashboard'
+      icon: 'board'
     }
   },
   {
@@ -111,7 +111,7 @@ const customerRouter = {
     meta: {
       requiresAuth: true,
       title: '回款',
-      icon: 'money',
+      icon: 'receivables',
       index: 1,
       type: 'crm',
       subType: 'receivables'

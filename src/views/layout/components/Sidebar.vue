@@ -39,8 +39,7 @@
                      :to="getFullPath(item.path)">
           <el-menu-item :index="getFullPath(item.path)">
             <div class="menu-item-content">
-              <i class="wukong"
-                 :class="'wukong-' + item.meta.icon"
+              <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
                  :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
               <span slot="title">{{item.meta.title}}</span>
               <el-badge v-if="item.meta.num && item.meta.num > 0"
@@ -54,8 +53,7 @@
                     :index="getFullPath(item.path)">
           <template slot="title"
                     v-if="!item.hidden">
-            <i class="wukong"
-               :class="'wukong-' + item.meta.icon"
+            <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
                :style="{fontSize: item.meta.fontSize || '16px'}"></i>
             <span slot="title">{{item.meta.title}}</span>
           </template>
@@ -109,7 +107,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['activeIndex', 'collapse'])
+    ...mapGetters(['activeIndex', 'collapse']),
+    preIcon() {
+      return this.mainRouter == 'crm' ? 'wk' : 'wukong'
+    }
   },
   props: {
     mainRouter: {
@@ -390,7 +391,8 @@ export default {
   padding: 18px 20px;
 }
 
-.wukong {
+.wukong,
+.wk {
   margin-right: 8px;
 }
 

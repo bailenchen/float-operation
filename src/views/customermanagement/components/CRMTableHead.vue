@@ -25,7 +25,7 @@
       <el-button :style="{ 'margin-left': isSeas ? 0 : '20px'}"
                  type="primary"
                  class="filter-button"
-                 icon="wukong wukong-funnelstatistics"
+                 icon="wk wk-screening"
                  @click="showFilterClick">高级筛选</el-button>
       <filter-form :fieldList="fieldList"
                    :dialogVisible.sync="showFilter"
@@ -736,7 +736,7 @@ export default {
 
   .filter-button {
     /deep/ i {
-      font-size: 9px;
+      font-size: 14px;
       margin-right: 5px;
     }
   }

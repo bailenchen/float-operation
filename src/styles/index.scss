@@ -233,3 +233,14 @@ div[lazy=loading] {
     background-color: #f4f4f5 !important;
   }
 }
+
+// 可访问
+.can-visit,
+.can-visit--underline {
+  color: #2362FB;
+  cursor: pointer
+}
+
+.can-visit--underline:hover {
+  text-decoration: underline;
+}

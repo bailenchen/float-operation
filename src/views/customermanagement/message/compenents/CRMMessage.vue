@@ -75,7 +75,7 @@
               border
               highlight-current-row
               style="width: 100%"
-              :cell-style="cellStyle"
+              :cell-class-name="cellClassName"
               @row-click="handleRowClick"
               @selection-change="handleSelectionChange">
       <el-table-column v-if="showSelection"
@@ -419,9 +419,9 @@ export default {
     },
 
     /**
-     * 表单元可点击样式
+     * 通过回调控制class
      */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
+    cellClassName({ row, column, rowIndex, columnIndex }) {
       if (
         column.property === 'name' ||
         column.property === 'number' ||
@@ -432,7 +432,7 @@ export default {
         column.property === 'contractName' ||
         column.property === 'contractNum'
       ) {
-        return { color: '#2362FB', cursor: 'pointer' }
+        return 'can-visit--underline'
       } else {
         return ''
       }

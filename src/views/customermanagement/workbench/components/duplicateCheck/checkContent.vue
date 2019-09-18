@@ -37,7 +37,7 @@
                 stripe
                 border
                 highlight-current-row
-                :cell-style="cellStyle"
+                :cell-class-name="cellClassName"
                 @row-click="handleRowClick"
                 style="width: 100%">
         <el-table-column v-for="(item, index) in fieldList"
@@ -247,15 +247,15 @@ export default {
     },
 
     /**
-     * 通过回调控制style
+     * 通过回调控制class
      */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
+    cellClassName({ row, column, rowIndex, columnIndex }) {
       if (
         column.property === 'name' ||
         column.property === 'customerName' ||
         column.property === 'leadsName'
       ) {
-        return { color: '#2362FB', cursor: 'pointer' }
+        return 'can-visit--underline'
       } else {
         return ''
       }

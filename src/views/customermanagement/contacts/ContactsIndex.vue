@@ -27,7 +27,7 @@
                 border
                 highlight-current-row
                 style="width: 100%"
-                :cell-style="cellStyle"
+                :cell-class-name="cellClassName"
                 @row-click="handleRowClick"
                 @sort-change="sortChange"
                 @header-dragend="handleHeaderDragend"
@@ -104,10 +104,12 @@ export default {
   computed: {},
   mounted() {},
   methods: {
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
       if (column.property === 'name' || column.property === 'customerName') {
-        return { color: '#2362FB', cursor: 'pointer' }
+        return 'can-visit--underline'
       } else {
         return ''
       }

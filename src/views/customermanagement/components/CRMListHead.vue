@@ -1,6 +1,6 @@
 <template>
   <div class="c-container">
-    <div class="title">{{title}}</div>
+    <flexbox class="title"><img :src="titleIcon" class="title-icon" >{{title}}</flexbox>
     <el-input class="sc-container"
               :placeholder="placeholder"
               v-model="inputContent"
@@ -57,6 +57,10 @@ export default {
         return false
       }
       return this.crm[this.crmType].save
+    },
+
+    titleIcon() {
+      return require(`@/assets/img/crm/${this.crmType}.png`)
     }
   },
   data() {
@@ -162,15 +166,23 @@ export default {
   height: 60px;
   position: relative;
   z-index: 100;
+  .title-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+
   .title {
     float: left;
-    padding: 0 20px;
-    font-size: 18px;
-    line-height: 60px;
+    width: auto;
+    padding-left: 28px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 15px;
   }
   .sc-container {
     width: 300px;
-    margin: -18px 0 0 -150px;
+    margin: -16px 0 0 -150px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -187,7 +199,7 @@ export default {
   .right-container {
     margin-right: -10px;
     float: right;
-    margin: 12px 20px 0 0;
+    margin: 15px 20px 0 0;
     position: relative;
 
     .create-button--orange {

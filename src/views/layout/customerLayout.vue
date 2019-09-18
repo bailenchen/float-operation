@@ -27,7 +27,7 @@
         </sidebar>
       </el-aside>
       <el-main id="crm-main-container"
-               style="padding:15px 0;">
+               style="padding: 0;">
         <app-main></app-main>
       </el-main>
     </el-container>
