@@ -37,16 +37,21 @@
         <router-link v-if="!item.children"
                      :key="index"
                      :to="getFullPath(item.path)">
-          <el-menu-item :index="getFullPath(item.path)">
-            <div class="menu-item-content">
-              <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
-                 :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
-              <span slot="title">{{item.meta.title}}</span>
-              <el-badge v-if="item.meta.num && item.meta.num > 0"
-                        :max="99"
-                        :value="item.meta.num"></el-badge>
-            </div>
-          </el-menu-item>
+          <el-tooltip :disabled="showTooltip"
+                      effect="dark"
+                      :content="item.meta.title"
+                      placement="right">
+            <el-menu-item :index="getFullPath(item.path)">
+              <div class="menu-item-content">
+                <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
+                   :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
+                <span slot="title">{{item.meta.title}}</span>
+                <el-badge v-if="item.meta.num && item.meta.num > 0"
+                          :max="99"
+                          :value="item.meta.num"></el-badge>
+              </div>
+            </el-menu-item>
+          </el-tooltip>
         </router-link>
         <el-submenu v-else
                     :key="index"
@@ -110,6 +115,9 @@ export default {
     ...mapGetters(['activeIndex', 'collapse']),
     preIcon() {
       return this.mainRouter == 'crm' ? 'wk' : 'wukong'
+    },
+    showTooltip() {
+      return !this.collapse
     }
   },
   props: {
