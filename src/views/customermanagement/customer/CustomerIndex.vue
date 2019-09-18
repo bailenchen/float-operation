@@ -44,9 +44,8 @@
                          width="38">
           <template slot="header"
                     slot-scope="slot">
-            <i class="wukong wukong-business"
-               :style="{ 'color': '#2486E4'}"
-               style="cursor: not-allowed; opacity: 0.5;"></i>
+            <i class="wk wk-business"
+               style="cursor: not-allowed; color: #9DA9C2;"></i>
           </template>
           <template slot-scope="scope">
             <el-popover placement="right"
@@ -62,8 +61,8 @@
               </business-check>
               <i slot="reference"
                  @click="businessCheckClick($event, scope)"
-                 class="wukong wukong-business"
-                 style="color: '#2486E4'"
+                 class="wk wk-business"
+                 style="color: #FC6E51"
                  :style="{'opacity' :scope.row.businessCount > 0 ? 1 : 0}"></i>
             </el-popover>
           </template>
@@ -93,12 +92,12 @@
         <el-table-column>
         </el-table-column>
         <el-table-column fixed="right"
-                         width="36">
+                         width="40"
+                         :resizable="false">
           <template slot="header"
                     slot-scope="slot">
-            <img src="@/assets/img/t_set.png"
-                 @click="handleTableSet"
-                 class="table-set" />
+            <i class="wk wk-config table-set"
+               @click="handleTableSet"></i>
           </template>
         </el-table-column>
       </el-table>

@@ -49,12 +49,12 @@
         <el-table-column>
         </el-table-column>
         <el-table-column fixed="right"
-                         width="36">
+                         width="40"
+                         :resizable="false">
           <template slot="header"
                     slot-scope="slot">
-            <img src="@/assets/img/t_set.png"
-                 @click="handleTableSet"
-                 class="table-set" />
+            <i class="wk wk-config table-set"
+               @click="handleTableSet"></i>
           </template>
         </el-table-column>
       </el-table>
