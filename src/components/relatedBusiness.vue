@@ -218,7 +218,7 @@ export default {
   .add-file {
     margin: 10px 0;
     font-size: 13px;
-    color: #3e84e9;
+    color: #2362FB;
     cursor: pointer;
     display: inline-block;
     img {

@@ -157,7 +157,7 @@ export default {
     margin-right: 8px;
   }
   .f-name {
-    color: #3e84e9;
+    color: #2362FB;
     font-size: 12px;
   }
 }

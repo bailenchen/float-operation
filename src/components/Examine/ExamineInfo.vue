@@ -282,7 +282,7 @@ export default {
   font-size: 13px;
 }
 .blue {
-  background-color: #3e84e9;
+  background-color: #2362FB;
   color: white;
   border: none;
 }

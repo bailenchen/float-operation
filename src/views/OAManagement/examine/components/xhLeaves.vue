@@ -220,7 +220,7 @@ export default {
 
     &-delete {
       padding: 0 10px;
-      color: #3e84e9;
+      color: #2362FB;
       font-size: 14px;
     }
   }
@@ -272,7 +272,7 @@ export default {
   &-button {
     float: right;
     border: none;
-    color: #3e84e9;
+    color: #2362FB;
   }
   &-total {
     margin-top: 10px;

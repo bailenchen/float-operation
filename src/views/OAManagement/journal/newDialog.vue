@@ -559,13 +559,13 @@ export default {
         height: 20px;
         line-height: 20px;
         margin-bottom: 10px;
-        color: #3e84e9;
+        color: #2362FB;
       }
     }
     .add-accessory {
       margin-top: 25px;
       margin-bottom: 20px;
-      color: #3e84e9;
+      color: #2362FB;
     }
   }
   .sent-who {

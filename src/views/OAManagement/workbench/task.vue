@@ -228,7 +228,7 @@ export default {
       margin-top: 10px;
     }
     .add {
-      color: #3e84e9;
+      color: #2362FB;
       cursor: pointer;
     }
   }

@@ -82,12 +82,13 @@
           <div class="p-contianer"
                v-if="showPagination">
             <el-pagination class="p-bar"
+                           background
                            @size-change="handleSizeChange"
                            @current-change="handleCurrentChange"
                            :current-page="currentPage"
                            :page-sizes="pageSizes"
                            :page-size.sync="pageSize"
-                           layout="total, sizes, prev, pager, next, jumper"
+                           layout="prev, pager, next, sizes, total, jumper"
                            :total="total">
             </el-pagination>
           </div>
@@ -522,7 +523,7 @@ export default {
           (this.crmType === 'record' && column.property === 'count')) &&
         row[column.property]
       ) {
-        return { color: '#3E84E9', cursor: 'pointer' }
+        return { color: '#2362FB', cursor: 'pointer' }
       } else {
         return ''
       }

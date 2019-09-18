@@ -255,7 +255,7 @@ export default {
         column.property === 'customerName' ||
         column.property === 'leadsName'
       ) {
-        return { color: '#3E84E9', cursor: 'pointer' }
+        return { color: '#2362FB', cursor: 'pointer' }
       } else {
         return ''
       }

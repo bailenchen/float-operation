@@ -97,7 +97,7 @@ export default {
 
   .cell-body {
     flex: 1;
-    color: #3e84e9;
+    color: #2362FB;
     font-size: 13px;
     .size {
       color: #ccc;

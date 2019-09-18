@@ -379,12 +379,12 @@
           <div class="footer-title">
             <span @click="footerTitle(0)">
               <i class="wukong wukong-comment-task"
-                 style="color: #3E84E9;"
+                 style="color: #2362FB;"
                  v-if="isComment"></i>
               <i class="wukong wukong-comment-task"
                  v-else></i>
               <span class="cursor-pointer"
-                    :style="{'color': isComment ? '#3E84E9' : '#666'}">评论</span>
+                    :style="{'color': isComment ? '#2362FB' : '#666'}">评论</span>
             </span>
             <span class="title-border"></span>
             <span @click="footerTitle(1)">
@@ -392,10 +392,10 @@
                  style="font-size: 18px;"
                  v-if="isComment"></i>
               <i class="wukong wukong-activity-task"
-                 style="color: #3E84E9; font-size: 18px;"
+                 style="color: #2362FB; font-size: 18px;"
                  v-else></i>
               <span class="cursor-pointer"
-                    :style="{'color': isComment ? '#666' : '#3E84E9'}"
+                    :style="{'color': isComment ? '#666' : '#2362FB'}"
                     @click="footerTitle(isComment)">活动</span>
             </span>
           </div>
@@ -1501,7 +1501,7 @@ export default {
   }
   p:hover {
     background: #f7f8fa;
-    color: #3e84e9;
+    color: #2362FB;
   }
 }
 // 负责人
@@ -1624,7 +1624,7 @@ export default {
             color: #333;
             .el-icon-edit-outline {
               margin: 0 10px;
-              color: #3e84e9;
+              color: #2362FB;
               opacity: 0;
               cursor: pointer;
             }
@@ -1829,7 +1829,7 @@ export default {
           background: #f5f7fa;
           height: 40px;
           line-height: 40px;
-          // color: #3E84E9;
+          // color: #2362FB;
           padding: 0 10px;
           font-size: 13px;
           .card-related-matters-right {
@@ -1909,7 +1909,7 @@ export default {
               cursor: pointer;
             }
             .wukong:hover {
-              color: #3e84e9;
+              color: #2362FB;
             }
           }
           .item-name {
@@ -1945,7 +1945,7 @@ export default {
         }
       }
       .add-subtasks {
-        color: #3e84e9;
+        color: #2362FB;
         cursor: pointer;
         background: #f5f7fa;
         height: 40px;
@@ -1964,7 +1964,7 @@ export default {
           line-height: 18px;
         }
         .no-description {
-          color: #3e84e9;
+          color: #2362FB;
           .color-label {
             color: #999;
           }
@@ -2113,7 +2113,7 @@ export default {
     }
     .back {
       margin-left: 35px;
-      color: #3e84e9;
+      color: #2362FB;
       cursor: pointer;
     }
   }
@@ -2153,7 +2153,7 @@ export default {
       white-space: pre-wrap;
       line-height: 18px;
       .reply {
-        color: #3e84e9;
+        color: #2362FB;
       }
     }
     .reply-title /deep/ img {

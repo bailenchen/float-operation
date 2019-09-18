@@ -222,7 +222,7 @@ export default {
       letter-spacing: 0.5px;
       line-height: 18px;
       cursor: pointer;
-      color: #3e84e9;
+      color: #2362FB;
       .text {
         padding-bottom: 10px;
       }

@@ -51,12 +51,13 @@
     </el-dialog>
     <div class="p-contianer">
       <el-pagination class="p-bar"
+                     background
                      @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
                      :current-page="currentPage"
                      :page-sizes="pageSizes"
                      :page-size.sync="pageSize"
-                     layout="total, sizes, prev, pager, next, jumper"
+                     layout="prev, pager, next, sizes, total, jumper"
                      :total="total">
       </el-pagination>
     </div>

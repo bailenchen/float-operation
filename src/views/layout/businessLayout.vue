@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header class="nav-container">
-      <navbar :navIndex="5"
+      <navbar navIndex="/bi"
               @nav-items-click="navClick"></navbar>
     </el-header>
     <el-container>
@@ -56,7 +56,6 @@ export default {
   position: relative;
   background-color: #2d3037;
   box-sizing: border-box;
-  border-right: solid 1px #e6e6e6;
 }
 
 .nav-container {

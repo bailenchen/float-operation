@@ -421,7 +421,7 @@ export default {
 }
 .img-text-color {
   margin-top: 20px;
-  color: #3e84e9;
+  color: #2362FB;
 }
 .img-center {
   vertical-align: middle;

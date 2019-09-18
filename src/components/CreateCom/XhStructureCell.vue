@@ -101,7 +101,7 @@ export default {
   }
   .add-item {
     padding: 5px;
-    color: #3e84e9;
+    color: #2362FB;
     cursor: pointer;
   }
   .delete-icon {

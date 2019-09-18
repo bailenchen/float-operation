@@ -15,7 +15,7 @@
                   class="item-content">{{data.actionContent}}</span>
             <span v-else
                   class="read"
-                  :style="{'color': data.isRead == 0 ? '#3E84E9' : '#ccc'}">{{data.isRead == 0 ? '未读' : '已读'}}</span>
+                  :style="{'color': data.isRead == 0 ? '#2362FB' : '#ccc'}">{{data.isRead == 0 ? '未读' : '已读'}}</span>
           </p>
           <span class="time">{{data.createTime | moment("YYYY-MM-DD HH:mm")}}</span>
           <el-tooltip :disabled="!(data.sendUserList.length > 0 || data.sendDeptList.length > 0)"
@@ -689,7 +689,7 @@ export default {
             line-height: 18px;
           }
           .reply {
-            color: #3e84e9;
+            color: #2362FB;
           }
         }
         .reply-title /deep/ img {

@@ -225,7 +225,7 @@ export default {
   width: 50%;
 }
 .business-setting-table > span .el-icon-circle-plus {
-  color: #3e84e9;
+  color: #2362FB;
   width: 20px;
   height: 20px;
   cursor: pointer;

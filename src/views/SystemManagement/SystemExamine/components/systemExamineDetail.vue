@@ -250,7 +250,7 @@ export default {
     color: #333333;
     flex: 1;
     .delete {
-      color: #3e84e9;
+      color: #2362FB;
       padding: 0 10px;
       font-size: 13px;
       cursor: pointer;

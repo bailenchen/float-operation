@@ -14,11 +14,11 @@
         </p>
         <div class="content">
           <p class="title-checked">
-            <span :style="{color: tabType == 'base' ? '#3E84E9': '#333333'}"
+            <span :style="{color: tabType == 'base' ? '#2362FB': '#333333'}"
                   class="span-item"
                   @click="tabType = 'base'">基础设置</span>
             <span v-if="isOpen == 0"
-                  :style="{color: tabType == 'member' ? '#3E84E9': '#333333'}"
+                  :style="{color: tabType == 'member' ? '#2362FB': '#333333'}"
                   class="span-item"
                   @click="tabType = 'member'">成员管理</span>
           </p>
@@ -310,7 +310,7 @@ export default {
   }
   .title:hover {
     background: #f7f8fa;
-    color: #3e84e9;
+    color: #2362FB;
   }
 }
 .project-settings-box {
@@ -403,7 +403,7 @@ export default {
           vertical-align: middle;
         }
         .add-title {
-          color: #3e84e9;
+          color: #2362FB;
           vertical-align: middle;
         }
       }

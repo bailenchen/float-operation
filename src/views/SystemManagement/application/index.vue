@@ -186,7 +186,7 @@ export default {
             disable: require('@/assets/img/system/app/crm_disable.png'),
             enable: require('@/assets/img/system/app/crm_enable.png')
           },
-          work: {
+          project: {
             disable: require('@/assets/img/system/app/project_disable.png'),
             enable: require('@/assets/img/system/app/project_enable.png')
           }

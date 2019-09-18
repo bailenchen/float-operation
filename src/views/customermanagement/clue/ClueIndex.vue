@@ -65,12 +65,14 @@
       </el-table>
       <div class="p-contianer">
         <el-pagination class="p-bar"
+                       background
+                       :pager-count="5"
                        @size-change="handleSizeChange"
                        @current-change="handleCurrentChange"
                        :current-page="currentPage"
                        :page-sizes="pageSizes"
                        :page-size.sync="pageSize"
-                       layout="total, sizes, prev, pager, next, jumper"
+                       layout="prev, pager, next, sizes, total, jumper"
                        :total="total">
         </el-pagination>
       </div>
@@ -108,7 +110,7 @@ export default {
     /** 通过回调控制style */
     cellStyle({ row, column, rowIndex, columnIndex }) {
       if (column.property === 'leadsName') {
-        return { color: '#3E84E9', cursor: 'pointer' }
+        return { color: '#2362FB', cursor: 'pointer' }
       } else {
         return ''
       }

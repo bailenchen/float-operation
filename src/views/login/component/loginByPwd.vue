@@ -15,7 +15,7 @@
               full: Boolean(form.username),
               focus: focusKey === 'username'
             }"
-                class="form-icon wukong wukong-username" />
+                class="form-icon wk wk-username" />
         </el-input>
       </el-form-item>
       <el-form-item>
@@ -33,7 +33,7 @@
               full: Boolean(form.password),
               focus: focusKey === 'password'
             }"
-                class="form-icon wukong wukong-mima1" />
+                class="form-icon wk wk-mima1" />
           <span v-if="focusKey !== 'password'"
                 slot="suffix"
                 class="forget-pwd"
@@ -63,7 +63,7 @@
       <div class="others">
         <div class="box"
              @click="$emit('toggle', 'LoginByCode')">
-          <span class="icon wukong wukong-shouji1" />
+          <span class="icon wk wk-shouji1" />
           <span class="text">验证码登录</span>
         </div>
       </div>

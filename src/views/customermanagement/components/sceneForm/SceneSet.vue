@@ -613,7 +613,7 @@ export default {
   font-size: 12px;
   .handle-bar-add {
     cursor: pointer;
-    color: #3e84e9;
+    color: #2362FB;
     padding: 20px 10px;
   }
   .handle-bar-save {

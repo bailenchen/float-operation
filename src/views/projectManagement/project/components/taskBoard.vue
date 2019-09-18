@@ -831,7 +831,7 @@ export default {
   }
   p:hover {
     background: #f7f8fa;
-    color: #3e84e9;
+    color: #2362FB;
   }
 }
 .task-board-personnel-list-popover {
@@ -1003,7 +1003,7 @@ export default {
       font-size: 13px;
       padding-left: 4px;
       .el-icon-plus {
-        color: #3e84e9;
+        color: #2362FB;
         font-weight: 700;
       }
     }
@@ -1092,7 +1092,7 @@ export default {
     color: #999;
     cursor: pointer;
     .el-icon-plus {
-      color: #3e84e9;
+      color: #2362FB;
       font-size: 12px;
       font-weight: 700;
       margin-right: 10px;

@@ -11,7 +11,7 @@
             :class="{active: selectedIndex === index}"
             class="list-item"
             @click="selectedIndex = index">
-          <span class="icon wukong wukong-home" />
+          <span class="icon wk wk-home" />
           <span class="text">
             {{ item.companyName }}
           </span>
@@ -41,9 +41,9 @@
             <div class="desc">
               <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
               <span v-if="rankIndex >= 3"
-                    class="icon wukong wukong-tongguo" />
+                    class="icon wk wk-tongguo" />
               <span v-else
-                    class="icon error wukong wukong-guanbi" />
+                    class="icon error wk wk-guanbi" />
             </div>
           </div>
           <div slot="reference"
@@ -59,7 +59,7 @@
                       @blur="checkFromItem('password', form.password)">
               <span slot="prefix"
                     :class="{focus: focusKey === 'password'}"
-                    class="form-icon wukong wukong-mima1" />
+                    class="form-icon wk wk-mima1" />
             </el-input>
           </div>
         </el-popover>
@@ -76,7 +76,7 @@
                   @blur="checkForm">
           <span slot="prefix"
                 :class="{focus: focusKey === 're_password'}"
-                class="form-icon wukong wukong-mima1" />
+                class="form-icon wk wk-mima1" />
         </el-input>
       </el-form-item>
     </el-form>

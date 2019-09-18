@@ -10,7 +10,7 @@
       <div class="others">
         <div class="box"
              @click="$emit('toggle', 'LoginByPwd')">
-          <span class="icon wukong wukong-pasword"
+          <span class="icon wk wk-pasword"
                 style="font-size: 14px" />
           <span class="text">密码登录</span>
         </div>

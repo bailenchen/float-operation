@@ -234,7 +234,7 @@ export default {
      */
     cellStyle({ row, column, rowIndex, columnIndex }) {
       if (columnIndex == 1) {
-        return { color: '#3E84E9' }
+        return { color: '#2362FB' }
       } else {
         return ''
       }

@@ -7,21 +7,19 @@
               @input="inputChange"
               @keyup.enter.native="searchInput">
       <el-button slot="append"
-                 @click.native="searchInput"
-                 icon="el-icon-search"></el-button>
+                 type="primary"
+                 @click.native="searchInput">搜索</el-button>
     </el-input>
     <div class="right-container">
       <el-button @click="createClick"
                  v-if="canSave"
+                 class="create-button--orange"
+                 icon="el-icon-plus"
                  type="primary">{{mainTitle}}</el-button>
       <el-dropdown trigger="click"
                    v-if="moreTypes.length > 0"
                    @command="handleTypeDrop">
-        <flexbox class="right-more-item">
-          <div>更多</div>
-          <i class="el-icon-arrow-down el-icon--right"
-             style="color:#777;"></i>
-        </flexbox>
+        <el-button icon="el-icon-more"></el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="(item, index) in moreTypes"
                             :key="index"
@@ -178,28 +176,30 @@ export default {
     top: 50%;
   }
 
+  .el-input {
+    /deep/ .el-input-group__append {
+      background-color: $xr-color-primary;
+      border-color: $xr-color-primary;
+      color: white;
+    }
+  }
+
   .right-container {
     margin-right: -10px;
     float: right;
     margin: 12px 20px 0 0;
     position: relative;
+
+    .create-button--orange {
+      margin-right: 10px;
+    }
+
     .right-item {
       float: left;
       margin-right: 10px;
       padding: 8px 10px;
       font-size: 13px;
       border-radius: 2px;
-    }
-
-    .right-more-item {
-      cursor: pointer;
-      border: 1px solid #dcdfe6;
-      background-color: white;
-      font-size: 13px;
-      color: #777;
-      padding: 0 12px;
-      border-radius: 2px;
-      height: 31px;
     }
   }
 }

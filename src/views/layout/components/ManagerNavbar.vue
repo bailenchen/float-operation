@@ -21,10 +21,7 @@ export default {
     return {}
   },
   props: {
-    navIndex: {
-      type: Number,
-      default: 0
-    }
+    navIndex: String
   },
   components: {},
   computed: {
@@ -89,7 +86,7 @@ export default {
   width: 94px;
   height: 36px;
   line-height: 36px;
-  background-color: #3e84e9;
+  background-color: #2362FB;
   border-radius: 3px;
   text-align: center;
   color: #fff;

@@ -14,7 +14,7 @@
               full: Boolean(form.phone),
               focus: focusKey === 'phone'
             }"
-                class="form-icon wukong wukong-username" />
+                class="form-icon wk wk-username" />
         </el-input>
       </el-form-item>
 
@@ -60,7 +60,7 @@
                      @click="getSmsCode">
             <div class="btn-content">
               <template v-if="time === second">
-                <!--<span class="icon wukong wukong-shouji" />-->
+                <!--<span class="icon wk wk-shouji" />-->
                 <span>获取验证码</span>
               </template>
               <template v-else>

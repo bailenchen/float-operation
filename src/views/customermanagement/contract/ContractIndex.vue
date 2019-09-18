@@ -82,12 +82,13 @@
       </el-table>
       <div class="p-contianer">
         <el-pagination class="p-bar"
+                       background
                        @size-change="handleSizeChange"
                        @current-change="handleCurrentChange"
                        :current-page="currentPage"
                        :page-sizes="pageSizes"
                        :page-size.sync="pageSize"
-                       layout="total, sizes, prev, pager, next, jumper"
+                       layout="prev, pager, next, sizes, total, jumper"
                        :total="total">
         </el-pagination>
         <span class="money-bar">合同总金额：{{moneyPageData.contractMoney || 0}} / 已回款金额：{{moneyPageData.receivedMoney || 0}}</span>
@@ -156,7 +157,7 @@ export default {
         column.property === 'businessName' ||
         column.property === 'contactsName'
       ) {
-        return { color: '#3E84E9', cursor: 'pointer' }
+        return { color: '#2362FB', cursor: 'pointer' }
       } else {
         return ''
       }

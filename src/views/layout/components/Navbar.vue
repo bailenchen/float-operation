@@ -3,26 +3,22 @@
     <img class="logo"
          :src="logo" />
     <div class="nav-items-container">
-      <flexbox style="width: auto;">
-        <router-link @click.native="navItemsClick(item.type)"
-                     class="nav-item"
-                     :style="{ 'color' : item.type == navIndexChild ? '#3E84E9' : '#333333' }"
-                     :to="item.path"
-                     v-for="(item, index) in items"
-                     :key="index">
-          <i class="wukong"
-             :class="'wukong-' + item.icon"
-             style="margin-right: 10px;"
-             :style="{ 'color': item.type == navIndexChild ? '#3E84E9' : '#333333'}"></i>
-          <div class="nav-item-title">{{item.title}}</div>
-        </router-link>
-      </flexbox>
+      <el-menu :default-active="navActiveIndex"
+               mode="horizontal"
+               active-text-color="#2362FB"
+               @select="navItemsClick">
+        <el-menu-item v-for="(item, index) in items"
+                      :key="index"
+                      :index="item.path">
+          <router-link :to="item.path">{{item.title}}</router-link>
+        </el-menu-item>
+      </el-menu>
     </div>
 
     <el-popover placement="bottom"
                 :visible-arrow="false"
                 popper-class="no-padding-popover"
-                width="200"
+                width="210"
                 trigger="hover">
       <div class="auth-content">
         <div class="title">您暂未开通授权</div>
@@ -74,9 +70,7 @@ import { Loading } from 'element-ui'
 
 export default {
   data() {
-    return {
-      navIndexChild: 0
-    }
+    return {}
   },
   props: {
     navIndex: {
@@ -103,7 +97,8 @@ export default {
       'bi',
       'manage',
       'oa',
-      'project'
+      'project',
+      'navActiveIndex'
     ]),
     items() {
       var tempsItems = []
@@ -143,13 +138,14 @@ export default {
     }
   },
   mounted() {
-    this.navIndexChild = this.navIndex
+    if (this.navIndex && this.navIndex !== this.navActiveIndex) {
+      this.$store.commit('SET_NAVACTIVEINDEX', this.navIndex)
+    }
   },
   methods: {
-    navItemsClick(type) {
-      this.navIndexChild = type
-      this.$store.commit('SET_NAVACTIVEINDEX', type)
-      this.$emit('nav-items-click', type)
+    navItemsClick(path) {
+      this.$store.commit('SET_NAVACTIVEINDEX', path)
+      this.$emit('nav-items-click', path)
     },
     enterSystemSet() {
       this.$router.push({
@@ -246,18 +242,14 @@ export default {
   }
 }
 
-.nav-item {
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+.el-menu.el-menu--horizontal {
+  border-bottom: none;
 }
 
-.nav-item-img {
-  width: 24px;
-  height: 24px;
-  display: block;
-  margin-right: 5px;
+.el-menu-item {
+  padding: 0;
+  margin: 0 20px;
+  font-size: 16px;
 }
 
 .handel-items {
@@ -274,15 +266,15 @@ export default {
   }
   .handel-item:hover {
     background-color: #f7f8fa;
-    color: #3e84e9;
+    color: #2362fb;
   }
   .handel-box {
     padding: 0 15px;
     .handel-button {
       width: 100%;
       border-radius: 4px;
-      border-color: #009df0;
-      background-color: #009df0;
+      border-color: #2362fb;
+      background-color: #2362fb;
     }
   }
 }
@@ -297,11 +289,11 @@ export default {
   color: #888;
   padding: 20px;
   &:hover {
-    color: #3e84e9;
+    color: #2362fb;
   }
   &.active {
     font-weight: bold;
-    color: #3e84e9;
+    color: #2362fb;
   }
 }
 

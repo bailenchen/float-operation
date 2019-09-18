@@ -13,7 +13,8 @@ const app = {
     name: '',
     lang: localStorage.lang || 'cn',
     sidebar: {
-      activeIndex: '' // 目前激活的 行
+      activeIndex: '', // 目前激活的 行
+      collapse: true
     },
     navbar: {
       activeIndex: '' // 导航目前是第几个 个人中心需要
@@ -25,6 +26,9 @@ const app = {
   mutations: {
     SET_ACTIVEINDEX: (state, path) => {
       state.sidebar.activeIndex = path
+    },
+    SET_COLLAPSE: (state, collapse) => {
+      state.sidebar.collapse = collapse
     },
     SET_NAVACTIVEINDEX: (state, path) => {
       state.navbar.activeIndex = path

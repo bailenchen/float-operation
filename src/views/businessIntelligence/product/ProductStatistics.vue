@@ -159,7 +159,7 @@ export default {
       } else if (item.isAllSum == true) {
         return { backgroundColor: '#FFF3E8' }
       } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 4) {
-        return { color: '#3E84E9', cursor: 'pointer' }
+        return { color: '#2362FB', cursor: 'pointer' }
       }
     },
     /** 获取部门业绩完成信息 */

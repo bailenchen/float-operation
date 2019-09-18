@@ -245,7 +245,7 @@ export default {
   color: #666;
 }
 .subtasks-content {
-  border: 1px solid #3e84e9;
+  border: 1px solid #2362FB;
   border-radius: 3px;
   display: flex;
   flex-direction: row;
