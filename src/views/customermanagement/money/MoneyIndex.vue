@@ -45,10 +45,6 @@
                          :label="item.label"
                          :width="item.width"
                          :formatter="fieldFormatter">
-          <template slot="header"
-                    slot-scope="scope">
-            <div class="table-head-name">{{scope.column.label}}</div>
-          </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip
                          prop="checkStatus"
@@ -57,10 +53,6 @@
                          width="100"
                          align="center"
                          fixed="right">
-          <template slot="header"
-                    slot-scope="scope">
-            <div class="table-head-name">{{scope.column.label}}</div>
-          </template>
           <template slot-scope="scope">
             <div class="status_button"
                  :style="getStatusStyle(scope.row.checkStatus)">

@@ -77,10 +77,6 @@
                          :label="item.label"
                          :width="item.width"
                          :formatter="fieldFormatter">
-          <!-- <template slot="header"
-                    slot-scope="scope">
-            <div class="table-head-name">{{scope.column.label}}</div>
-          </template> -->
         </el-table-column>
         <el-table-column v-if="CRMConfig.customerConfig == 1"
                          prop="poolDay"

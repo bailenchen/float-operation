@@ -15,6 +15,9 @@
     color: #333333;
     font-size: 12px;
     font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     .sort-caret {
       transform: scale(0.8);
@@ -26,7 +29,8 @@
   }
 }
 
-.el-table /deep/ thead  {
+.el-table /deep/ thead {
+
   .is-sortable.ascending,
   .is-sortable.descending {
     background-color: #E7EDF4;
