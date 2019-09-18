@@ -210,7 +210,7 @@ export default {
   }
   div:nth-child(2) {
     font-size: 12px;
-    color: #999999;
+    color: #999;
   }
 }
 
@@ -226,14 +226,14 @@ export default {
 .section-header {
   padding: 3px 20px;
   font-size: 12px;
-  color: #333333;
+  color: #999;
 }
 
 .section-body {
   padding: 20px;
   .section-item {
     width: auto;
-    min-width: 200px;
+    min-width: 240px;
     position: relative;
     padding: 20px 35px 12px 20px;
     border: 1px solid #ebeef5;
@@ -270,6 +270,7 @@ export default {
   top: 0px;
   right: 8px;
   color: #999;
+  font-size: 12px;
 }
 
 .more-mark {
