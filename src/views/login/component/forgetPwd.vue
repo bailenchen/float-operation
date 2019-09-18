@@ -28,6 +28,7 @@
         <el-popover v-model="pwdPopover"
                     :width="width"
                     placement="bottom-start"
+                    popper-class="no-padding-popover"
                     trigger="focus">
           <div class="pwd-popover-content">
             <div class="box">

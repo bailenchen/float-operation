@@ -20,6 +20,7 @@
 
       <el-popover placement="top-start"
                   width="332"
+                  popper-class="no-padding-popover"
                   :disabled="isUser"
                   trigger="click">
         <slide-verify :l="42"
