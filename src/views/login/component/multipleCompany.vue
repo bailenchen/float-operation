@@ -7,7 +7,7 @@
           class="list-item"
           @click="selectedIndex = index">
         <!--<img src="~@/assets/login/m_company.png" alt="" class="icon">-->
-        <span class="icon wk wk-home" />
+        <span class="icon wk wk-enterprise" />
         <span class="text">
           {{ item.companyName }}
         </span>
