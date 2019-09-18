@@ -99,14 +99,13 @@ export default {
     collapse: function(val) {
       if (val) {
         this.buttonCollapse = val
+        this.changeMenu()
       } else {
         setTimeout(() => {
           this.buttonCollapse = val
+          this.changeMenu()
         }, 300)
       }
-      this.$nextTick(() => {
-        this.changeMenuItemPadding(this.$refs.menu)
-      })
     }
   },
   computed: {
@@ -161,11 +160,28 @@ export default {
   },
   mounted() {
     this.buttonCollapse = this.collapse
-    this.$nextTick(() => {
-      this.changeMenuItemPadding(this.$refs.menu)
-    })
+    this.changeMenu()
   },
   methods: {
+    changeMenu() {
+      this.$nextTick(() => {
+        this.checkMenuInfo()
+      })
+    },
+
+    checkMenuInfo() {
+      setTimeout(() => {
+        if (
+          (this.$refs.menu.$children && !this.$refs.menu.$children.length) ||
+          !this.$refs.menu.$children
+        ) {
+          this.checkMenuInfo()
+        } else if (this.$refs.menu.$children) {
+          this.changeMenuItemPadding(this.$refs.menu)
+        }
+      }, 0)
+    },
+
     changeMenuItemPadding(menus) {
       for (let index = 0; index < menus.$children.length; index++) {
         const element = menus.$children[index]
@@ -174,21 +190,21 @@ export default {
             const menuItem = element.$children[0]
             let paddingLeft = menuItem.$el.style.paddingLeft
             paddingLeft = paddingLeft.replace('px', '')
-
-            paddingLeft = parseFloat(paddingLeft) * 0.7
-
-            menuItem.$el.style.paddingLeft = paddingLeft + 'px'
+            if (parseFloat(paddingLeft) % 20 == 0) {
+              paddingLeft = parseFloat(paddingLeft) * 0.7
+              menuItem.$el.style.paddingLeft = paddingLeft + 'px'
+            }
           }
         } else if (element.$options.name === 'ElSubmenu') {
           if (element.$el.children && element.$el.children.length) {
             if (element.$refs['submenu-title']) {
               let paddingLeft = element.$refs['submenu-title'].style.paddingLeft
               paddingLeft = paddingLeft.replace('px', '')
-
-              paddingLeft = parseFloat(paddingLeft) * 0.7
-
-              element.$refs['submenu-title'].style.paddingLeft =
-                paddingLeft + 'px'
+              if (parseFloat(paddingLeft) % 20 == 0) {
+                paddingLeft = parseFloat(paddingLeft) * 0.7
+                element.$refs['submenu-title'].style.paddingLeft =
+                  paddingLeft + 'px'
+              }
             }
           }
 
