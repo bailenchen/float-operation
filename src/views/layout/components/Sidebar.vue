@@ -11,8 +11,7 @@
         <slot name="add"></slot>
         <div slot="reference"
              @click="quicklyCreate"
-             class="create-button"
-             :style="{ 'background-color': createButtonBackgroundColor }">
+             class="create-button">
           <div v-show="!buttonCollapse"
                class="button-name">{{createButtonTitle}}</div>
           <div v-show="!buttonCollapse"
@@ -158,13 +157,9 @@ export default {
       type: String,
       default: ''
     },
-    createButtonBackgroundColor: {
-      type: String,
-      default: '#2362FB'
-    },
     createButtonIcon: {
       type: String,
-      default: 'el-icon-arrow-right'
+      default: 'el-icon-plus'
     }
   },
   mounted() {
@@ -347,6 +342,8 @@ export default {
     padding: 0 15px;
     height: 36px;
     border-radius: 4px;
+    background-color: rgba($color: #fff, $alpha: 0.1);
+    color: #999;
 
     .button-name {
       flex: 1;
@@ -366,7 +363,8 @@ export default {
   }
 
   .create-button:hover {
-    background-color: rgba($color: #fff, $alpha: 0.1) !important;
+    color: white !important;
+    background-color: $xr-color-primary !important;
   }
 }
 
@@ -397,6 +395,7 @@ export default {
   position: absolute;
   top: 0;
   padding: 18px 20px;
+  cursor: pointer;
 }
 
 .wukong,
