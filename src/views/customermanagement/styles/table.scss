@@ -29,13 +29,17 @@
   }
 }
 
+.el-table /deep/ thead th:hover {
+  background-color: #E7EDF4;
+}
+
+
 .el-table /deep/ thead {
 
   .is-sortable.ascending,
   .is-sortable.descending {
     background-color: #E7EDF4;
   }
-
 }
 
 .el-table /deep/ td {
