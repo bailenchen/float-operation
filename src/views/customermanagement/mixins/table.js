@@ -305,10 +305,13 @@ export default {
           this.showDview = false
         }
       }
+      if (this.showDview) {
+        this.$store.commit('SET_COLLAPSE', this.showDview)
+      }
     },
     /**
      * 导出 线索 客户 联系人 产品
-     * @param {*} data 
+     * @param {*} data
      */
     // 导出操作
     exportInfos() {
@@ -352,7 +355,7 @@ export default {
           window.URL.revokeObjectURL(href) //释放掉blob对象
           loading.close()
         })
-        .catch(() => { 
+        .catch(() => {
           loading.close()
         })
     },

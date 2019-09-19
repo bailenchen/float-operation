@@ -7,7 +7,7 @@
                   trigger="click"
                   popper-class="no-padding-popover"
                   v-model="showScene"
-                  width="150">
+                  width="180">
         <el-input slot="reference"
                   placeholder="请选择选择"
                   v-model="sceneName"
@@ -39,12 +39,7 @@
              class="selection-bar">
       <div class="selected—title">已选中 <span class="selected—count">{{selectionList.length}}</span> 项</div>
       <flexbox class="selection-items-box">
-        <!-- <flexbox class="selection-item">
-          <img class="selection-item-icon"
-               :src="item.icon" />
-          <div class="selection-item-name"></div>
-        </flexbox> -->
-        <el-button icon="el-icon-user"
+        <el-button :icon="item.icon | wkIconPre"
                    v-for="(item, index) in getSelectionHandleItemsInfo()"
                    :key="index"
                    type="primary"
@@ -506,72 +501,72 @@ export default {
         transfer: {
           name: '转移',
           type: 'transfer',
-          icon: require('@/assets/img/selection_transfer.png')
+          icon: 'transfer'
         },
         transform: {
           name: '转化为客户',
           type: 'transform',
-          icon: require('@/assets/img/selection_convert_customer.png')
+          icon: 'transform'
         },
         export: {
           name: '导出选中',
           type: 'export',
-          icon: require('@/assets/img/selection_export.png')
+          icon: 'export'
         },
         delete: {
           name: '删除',
           type: 'delete',
-          icon: require('@/assets/img/selection_delete.png')
+          icon: 'delete'
         },
         put_seas: {
           name: '放入公海',
           type: 'put_seas',
-          icon: require('@/assets/img/selection_putseas.png')
+          icon: 'seas'
         },
         lock: {
           name: '锁定',
           type: 'lock',
-          icon: require('@/assets/img/selection_lock.png')
+          icon: 'lock'
         },
         unlock: {
           name: '解锁',
           type: 'unlock',
-          icon: require('@/assets/img/selection_unlock.png')
+          icon: 'unlock'
         },
         add_user: {
           name: '添加团队成员',
           type: 'add_user',
-          icon: require('@/assets/img/selection_add_user.png')
+          icon: 'add'
         },
         delete_user: {
           name: '移除团队成员',
           type: 'delete_user',
-          icon: require('@/assets/img/selection_delete_user.png')
+          icon: 'remove'
         },
         alloc: {
           name: '分配',
           type: 'alloc',
-          icon: require('@/assets/img/selection_alloc.png')
+          icon: 'alloc'
         },
         get: {
           name: '领取',
           type: 'get',
-          icon: require('@/assets/img/selection_get.png')
+          icon: 'receive'
         },
         start: {
           name: '上架',
           type: 'start',
-          icon: require('@/assets/img/selection_start.png')
+          icon: 'shelves'
         },
         disable: {
           name: '下架',
           type: 'disable',
-          icon: require('@/assets/img/selection_disable.png')
+          icon: 'sold-out'
         },
         deal_status: {
           name: '更改成交状态',
           type: 'deal_status',
-          icon: require('@/assets/img/selection_deal_status.png')
+          icon: 's-status'
         }
       }
       if (this.crmType == 'leads') {
@@ -731,7 +726,7 @@ export default {
   padding: 0 20px;
 
   .scene-select {
-    width: 150px;
+    width: 180px;
   }
 
   .filter-button {
@@ -786,6 +781,10 @@ export default {
     font-size: 12px;
     height: 28px;
     border-radius: 14px;
+    /deep/ i {
+      font-size: 12px;
+      margin-right: 5px;
+    }
   }
 
   .el-button--primary:hover {
