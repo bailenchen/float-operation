@@ -256,3 +256,15 @@ div[lazy=loading] {
   border-color: #fc7d63;
   color: #FFFFFF;
 }
+
+// 文本
+.text-one-line {
+  // text-overflow: ellipsis;
+  // display: -webkit-box;
+  // -webkit-line-clamp: 1;
+  // -webkit-box-orient: vertical;
+  // overflow: hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

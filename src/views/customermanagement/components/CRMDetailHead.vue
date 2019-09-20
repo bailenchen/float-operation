@@ -1,34 +1,36 @@
 <template>
-  <div style="position: relative;">
+  <div class="container">
     <flexbox class="t-section">
-      <img class="t-img"
-           :src="crmIcon" />
-      <div class="t-name">{{name}}</div>
+      <flexbox class="t-section-name">
+        <img class="t-section-name__hd"
+             :src="crmIcon" />
+        <div class="t-section-name__bd">
+          <span>{{typeName}}</span>
+          <p>{{name}}<i class="wk wk-circle-password"></i></p>
+        </div>
+      </flexbox>
+
       <el-button v-if="showTransfer"
                  class="head-handle-button"
                  @click.native="handleTypeClick('transfer')"
                  type="primary">转移</el-button>
       <el-button v-if="showEdit"
-                 class="head-handle-button"
+                 class="head-handle-button edit-btn--color"
+                 icon="wk wk-circle-edit"
                  @click.native="handleTypeClick('edit')"
                  type="primary">编辑</el-button>
       <el-dropdown trigger="click"
                    @command="handleTypeClick">
-        <flexbox class="t-more">
-          <div>更多</div>
-          <i class="el-icon-arrow-down el-icon--right"
-             style="color:#ccc;"></i>
-        </flexbox>
+        <el-button icon="el-icon-more"
+                   class="t-more"></el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="(item, index) in moreTypes"
                             :key="index"
+                            :icon="item.icon | wkIconPre"
                             v-if="whetherTypeShowByPermision(item.type)"
                             :command="item.type">{{item.name}}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <img @click="hideView"
-           class="t-close"
-           src="@/assets/img/task_close.png" />
     </flexbox>
     <flexbox class="h-section"
              align="stretch">
@@ -37,7 +39,7 @@
                     v-for="(item, index) in headDetails"
                     :key="index">
         <div class="h-title">{{item.title}}</div>
-        <div class="h-value">{{item.value}}</div>
+        <div class="h-value text-one-line">{{item.value}}</div>
       </flexbox-item>
     </flexbox>
     <slot></slot>
@@ -86,22 +88,20 @@ export default {
   computed: {
     ...mapGetters(['crm', 'CRMConfig']),
     crmIcon() {
-      if (this.crmType === 'customer') {
-        return require('@/assets/img/customer_detail.png')
-      } else if (this.crmType === 'leads') {
-        return require('@/assets/img/clue_detail.png')
-      } else if (this.crmType === 'business') {
-        return require('@/assets/img/business_detail.png')
-      } else if (this.crmType === 'contacts') {
-        return require('@/assets/img/contacts_detail.png')
-      } else if (this.crmType === 'contract') {
-        return require('@/assets/img/contract_detail.png')
-      } else if (this.crmType === 'receivables') {
-        return require('@/assets/img/money_detail.png')
-      } else if (this.crmType === 'product') {
-        return require('@/assets/img/product_detail.png')
-      }
-      return ''
+      return require(`@/assets/img/crm/${this.crmType}.png`)
+    },
+    typeName() {
+      return (
+        {
+          leads: '线索',
+          customer: '客户',
+          contacts: '联系人',
+          product: '产品',
+          business: '商机',
+          contract: '合同',
+          receivables: '回款'
+        }[this.crmType] || ''
+      )
     },
     name() {
       if (this.crmType === 'receivables') {
@@ -126,6 +126,16 @@ export default {
     },
     showEdit() {
       return this.isSeas ? false : this.crm[this.crmType].update
+    },
+
+    /**
+     * 客户是否锁定
+     */
+    isLock() {
+      if (this.detail) {
+        return this.detail.isLock == 1
+      }
+      return false
     }
   },
   watch: {
@@ -267,7 +277,7 @@ export default {
             })
             // 刷新待办
             this.$store.dispatch('GetMessageNum')
-            
+
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
@@ -322,9 +332,6 @@ export default {
           .catch(() => {})
       }
     },
-    hideView() {
-      this.$emit('close')
-    },
     // 子组件 回调的 结果
     handleCallBack(data) {
       this.$emit('handle', { type: data.type })
@@ -337,57 +344,72 @@ export default {
         transfer: {
           name: '转移',
           type: 'transfer',
-          icon: require('@/assets/img/selection_transfer.png')
+          icon: 'transfer'
         },
         transform: {
           name: '转化为客户',
           type: 'transform',
-          icon: require('@/assets/img/selection_convert_customer.png')
+          icon: 'transform'
+        },
+        export: {
+          name: '导出选中',
+          type: 'export',
+          icon: 'export'
         },
         delete: {
           name: '删除',
           type: 'delete',
-          icon: require('@/assets/img/selection_delete.png')
+          icon: 'delete'
         },
         put_seas: {
           name: '放入公海',
           type: 'put_seas',
-          icon: require('@/assets/img/selection_putseas.png')
+          icon: 'seas'
         },
         lock: {
           name: '锁定',
           type: 'lock',
-          icon: require('@/assets/img/selection_lock.png')
+          icon: 'lock'
         },
         unlock: {
           name: '解锁',
           type: 'unlock',
-          icon: require('@/assets/img/selection_unlock.png')
+          icon: 'unlock'
+        },
+        add_user: {
+          name: '添加团队成员',
+          type: 'add_user',
+          icon: 'add'
+        },
+        delete_user: {
+          name: '移除团队成员',
+          type: 'delete_user',
+          icon: 'remove'
         },
         alloc: {
           name: '分配',
           type: 'alloc',
-          icon: require('@/assets/img/selection_alloc.png')
+          icon: 'alloc'
         },
         get: {
           name: '领取',
           type: 'get',
-          icon: require('@/assets/img/selection_get.png')
+          icon: 'receive'
         },
         start: {
           name: '上架',
           type: 'start',
-          icon: require('@/assets/img/selection_start.png')
+          icon: 'shelves'
         },
         disable: {
           name: '下架',
           type: 'disable',
-          icon: require('@/assets/img/selection_disable.png')
+          icon: 'sold-out'
         },
         deal_status: {
           name: '更改成交状态',
           type: 'deal_status',
-          icon: require('@/assets/img/selection_deal_status.png')
+          icon: 's-status'
         }
       }
       if (this.crmType == 'leads') {
@@ -472,31 +494,50 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.container {
+  position: relative;
+  background-color: white;
+  border-bottom: 1px solid $xr-border-line-color;
+}
+
 .t-section {
   position: relative;
-  padding: 10px 17px;
+  padding: 30px 20px 5px;
   min-height: 60px;
-  .t-img {
-    display: block;
-    width: 35px;
-    height: 35px;
-    margin-right: 10px;
+  &-name {
+    &__hd {
+      display: block;
+      width: 40px;
+      height: 40px;
+      margin-right: 5px;
+    }
+    &__bd {
+      span {
+        color: #999;
+        font-size: 12px;
+      }
+
+      p {
+        color: #333;
+        font-size: 13px;
+        font-weight: 600;
+        i {
+          background-color: #f56c6c;
+          color: white;
+          margin-left: 5px;
+          border-radius: 3px;
+          font-size: 12px;
+          padding: 2px;
+          transform: scale(0.6);
+        }
+      }
+    }
   }
-  .t-name {
-    font-size: 14px;
-    color: #333333;
-    flex: 1;
-  }
+
   .t-more {
-    border: 1px solid #dcdfe6;
-    font-size: 12px;
-    color: #606266;
-    padding: 0 10px 0 12px;
-    border-radius: 2px;
-    font-weight: 500;
-    height: 25px;
-    cursor: pointer;
+    margin-left: 15px;
   }
+
   .t-close {
     display: block;
     width: 40px;
@@ -509,28 +550,23 @@ export default {
 
 .h-section {
   position: relative;
-  padding: 8px 17px 15px 17px;
-  min-height: 58px;
+  padding: 8px 20px 15px;
   .h-item {
     .h-title {
       font-size: 12px;
-      color: #777;
+      color: #666;
     }
     .h-value {
       min-height: 14px;
       margin-top: 8px;
       font-size: 13px;
-      color: #333333;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      color: #333;
+      padding-bottom: 2px;
     }
   }
 }
-.head-handle-button {
-  padding: 5px 15px;
-  margin-right: 10px;
+
+.el-button + .el-button {
+  margin-left: 15px;
 }
 </style>

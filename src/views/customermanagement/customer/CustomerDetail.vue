@@ -20,27 +20,33 @@
                          :headDetails="headDetails"
                          :id="id">
       </c-r-m-detail-head>
-      <div class="tabs">
+      <flexbox class="d-container-bd">
         <el-tabs v-model="tabCurrentName"
+                 type="border-card"
+                 class="d-container-bd--left"
                  @tab-click="handleClick">
           <el-tab-pane v-for="(item, index) in tabnames"
                        :key="index"
+                       lazy
                        :label="item.label"
                        :name="item.name">
+            <component v-bind:is="item.name"
+                       crmType="customer"
+                       :detail="detailData"
+                       :id="id"
+                       :isSeas="isSeasDetail"></component>
           </el-tab-pane>
         </el-tabs>
-      </div>
-      <div class="t-loading-content"
-           id="follow-log-content">
-        <keep-alive>
-          <component v-bind:is="tabName"
-                     crmType="customer"
-                     :detail="detailData"
-                     :id="id"
-                     :isSeas="isSeasDetail"></component>
-        </keep-alive>
-      </div>
+        <transition name="slide-fade">
+          <div v-if="showFirstDetail"
+               class="d-container-bd--right">hello</div>
+        </transition>
+
+      </flexbox>
     </flexbox>
+
+    <el-button class="firse-button"
+               @click="showFirstDetail= !showFirstDetail">重<br />要<br />信<br />息<br /><i class="el-icon-arrow-right el-icon--right"></i></el-button>
     <c-r-m-create-view v-if="isCreate"
                        crm-type="customer"
                        :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
@@ -123,54 +129,32 @@ export default {
         { title: '负责人', value: '' },
         { title: '更新时间', value: '' }
       ],
-      tabCurrentName: 'followlog',
+      tabCurrentName: 'customer-follow',
       isCreate: false // 编辑操作
     }
   },
   computed: {
-    tabName() {
-      if (this.tabCurrentName == 'followlog') {
-        return 'customer-follow'
-      } else if (this.tabCurrentName == 'basicinfo') {
-        return 'c-r-m-base-info'
-      } else if (this.tabCurrentName == 'contacts') {
-        return 'relative-contacts'
-      } else if (this.tabCurrentName == 'team') {
-        return 'relative-team'
-      } else if (this.tabCurrentName == 'business') {
-        return 'relative-business'
-      } else if (this.tabCurrentName == 'contract') {
-        return 'relative-contract'
-      } else if (this.tabCurrentName == 'returnedmoney') {
-        return 'relative-return-money'
-      } else if (this.tabCurrentName == 'file') {
-        return 'relative-files'
-      } else if (this.tabCurrentName == 'operationlog') {
-        return 'relative-handle'
-      }
-      return ''
-    },
     tabnames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '跟进记录', name: 'followlog' })
+      tempsTabs.push({ label: '跟进记录', name: 'customer-follow' })
       if (this.crm.customer && this.crm.customer.read) {
-        tempsTabs.push({ label: '基本信息', name: 'basicinfo' })
+        tempsTabs.push({ label: '基本信息', name: 'c-r-m-base-info' })
       }
       if (this.crm.contacts && this.crm.contacts.index) {
-        tempsTabs.push({ label: '联系人', name: 'contacts' })
+        tempsTabs.push({ label: '联系人', name: 'relative-contacts' })
       }
-      tempsTabs.push({ label: '相关团队', name: 'team' })
+      tempsTabs.push({ label: '相关团队', name: 'relative-team' })
       if (this.crm.business && this.crm.business.index) {
-        tempsTabs.push({ label: '商机', name: 'business' })
+        tempsTabs.push({ label: '商机', name: 'relative-business' })
       }
       if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: '合同', name: 'contract' })
+        tempsTabs.push({ label: '合同', name: 'relative-contract' })
       }
       if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: '回款信息', name: 'returnedmoney' })
+        tempsTabs.push({ label: '回款信息', name: 'relative-return-money' })
       }
       tempsTabs.push({ label: '附件', name: 'file' })
-      tempsTabs.push({ label: '操作记录', name: 'operationlog' })
+      tempsTabs.push({ label: '操作记录', name: 'relative-handle' })
       return tempsTabs
     },
     /**
@@ -218,5 +202,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.slide-fade-leave-active {
+  will-change: transform;
+  transition: all 0.1s;
+}
+.slide-fade-leave-to {
+  transform: translateX(100%);
+}
 @import '../styles/crmdetail.scss';
 </style>

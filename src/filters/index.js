@@ -7,8 +7,8 @@ import {
 /**
  * 时间戳到格式化时间
  * {{item.createTime|filterTimestampToFormatTime('MM-DD dddd')}}
- * @param {*} time 
- * @param {*} cFormat 
+ * @param {*} time
+ * @param {*} cFormat
  */
 export function filterTimestampToFormatTime(time, cFormat) {
   if (!cFormat) {
@@ -32,4 +32,11 @@ export function filterUserLazyImg(value) {
     error: require('@/assets/img/head.png'),
     loading: require('@/assets/img/loading.gif')
   }
+}
+
+/**
+ * wk 10.0 iconfont 前缀
+ */
+export function wkIconPre(name){
+  return `wk wk-${name}`
 }

@@ -361,6 +361,7 @@ export default {
   position: relative;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
+  background-color: white;
   .i-cont {
     padding: 8px 10px;
   }

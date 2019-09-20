@@ -140,6 +140,7 @@ export default {
 
 .slide-detail-card-container {
   position: relative;
+  background-color: $xr-backgroud;
 }
 
 .close-btn {

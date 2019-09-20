@@ -17,7 +17,7 @@ import cache from '@/utils/cache'
 cache.loadingCache()
 
 import '@/permission' // permission control
-import '@/styles/animate.css'
+import 'vue2-animate/dist/vue2-animate.min.css'
 
 /** 事件传递 */
 import VueBus from 'vue-bus'

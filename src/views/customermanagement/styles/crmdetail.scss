@@ -1,18 +1,51 @@
 //客户相关详情 头部类似布局
-.el-tabs /deep/ .el-tabs__nav-wrap::after {
-  display: none !important;
-}
+// .el-tabs /deep/ .el-tabs__nav-wrap::after {
+//   display: none !important;
+// }
 
-.el-tabs /deep/ .el-tabs__header {
-  background-color: #F5F6F9;
-  padding: 0 17px;
-  margin: 0 0 15px !important;
-}
+// .el-tabs /deep/ .el-tabs__header {
+//   background-color: #F5F6F9;
+//   padding: 0 17px;
+//   margin: 0 0 15px !important;
+// }
 
-.el-tabs /deep/ .el-tabs__item {
-  font-size: 13px !important;
-  height: 40px !important;
-  line-height: 40px !important;
+// .el-tabs /deep/ .el-tabs__item {
+//   font-size: 13px !important;
+//   height: 40px !important;
+//   line-height: 40px !important;
+// }
+
+// 详情
+.d-container-bd {
+  margin-top: 15px;
+  flex: 1;
+  /deep/ .el-tabs__item {
+    color: #333;
+    font-size: 12px;
+    top: 2px;
+    margin-top: -2px;
+  }
+
+  /deep/ .el-tabs__item.is-active {
+    border-top: 2px solid $xr-color-primary;
+    color: #333;
+  }
+
+  &--left {
+    flex: 1;
+    box-shadow: none;
+  }
+
+  &--right {
+    width: 400px;
+    flex-shrink: 0;
+    height: 100%;
+    background-color: white;
+    margin-left: 15px;
+    border-left: 1px solid $xr-border-line-color;
+    border-top: 1px solid $xr-border-line-color;
+
+  }
 }
 
 .d-container {
@@ -25,6 +58,8 @@
   position: relative;
   overflow-y: scroll;
   flex: 1;
+  background-color: white;
+  padding-top: 20px;
 }
 
 /** 审核信息 */
@@ -35,5 +70,28 @@
     border: 1px solid #e6e6e6;
     border-radius: 3px;
     padding: 17px;
+  }
+}
+
+// 重要按钮
+.firse-button {
+  position: absolute;
+  top: 200px;
+  right: -1px;
+  z-index: 1;
+  font-size: 12px;
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 6px 10px;
+  font-size: 12px;
+  background-color: #F1F5FD;
+  /deep/ span {
+    line-height: 13px;
+  }
+
+  /deep/ i {
+    margin-left: 0px;
+    margin-top: 5px;
   }
 }

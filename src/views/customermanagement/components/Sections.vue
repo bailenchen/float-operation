@@ -107,6 +107,7 @@ export default {
 .f-container {
   width: auto;
   margin-left: 40px;
+  background-color: white;
   .f-item {
     padding: 2px 4px;
     font-size: 12px;

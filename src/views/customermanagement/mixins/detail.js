@@ -3,7 +3,9 @@ import {
 } from 'vuex'
 export default {
   data() {
-    return {}
+    return {
+      showFirstDetail: true
+    }
   },
   props: {
     /** 是公海 默认是客户 */
