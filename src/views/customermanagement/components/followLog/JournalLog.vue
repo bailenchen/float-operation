@@ -36,7 +36,6 @@
 import { journalDelete, journalEdit } from '@/api/oamanagement/journal'
 import JournalCell from '@/views/OAManagement/journal/journalCell' // 办公日志
 import { crmQueryLogRelation } from '@/api/customermanagement/common'
-import { formatTimeToTimestamp } from '@/utils'
 
 export default {
   /** 日志 跟进记录*/
@@ -239,7 +238,7 @@ export default {
           this.$message.success('编辑成功')
           this.newLoading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.newLoading = false
           this.$message.error('编辑失败')
         })

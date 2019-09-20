@@ -134,7 +134,7 @@ export default {
           this.$emit('handle', 'member', res.data)
           this.$message.success('添加成功')
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },

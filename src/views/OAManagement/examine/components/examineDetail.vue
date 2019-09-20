@@ -244,9 +244,7 @@ import CreateSections from '@/components/CreateSections'
 import ExamineInfo from '@/components/Examine/ExamineInfo'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import FileCell from '@/views/OAManagement/components/fileCell'
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
-import { downloadFile, timestampToFormatTime } from '@/utils'
+import { downloadFile } from '@/utils'
 
 export default {
   /** 审批详情 */
@@ -340,7 +338,6 @@ export default {
         isDetail: 1 // 1详情 2 编辑
       })
         .then(res => {
-          var self = this
           this.list = res.data
           this.loading = false
         })

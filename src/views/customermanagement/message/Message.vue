@@ -122,15 +122,15 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters(['messageNum'])
+  },
+
   watch: {
     /** 变化就刷新数据 */
     messageNum() {
       this.refreshNum()
     }
-  },
-
-  computed: {
-    ...mapGetters(['messageNum'])
   },
 
   mounted() {

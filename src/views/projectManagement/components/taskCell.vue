@@ -158,7 +158,7 @@ export default {
         status: val.checked ? 5 : 1
       })
         .then(res => {})
-        .catch(err => {
+        .catch(() => {
           val.checked = false
         })
     },

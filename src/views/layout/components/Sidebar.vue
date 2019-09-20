@@ -39,8 +39,7 @@
       unique-opened
       @select="handleSelect">
       <template
-        v-for="(item, index) in items"
-        v-if="!item.hidden">
+        v-for="(item, index) in getShowMenu(items)">
         <router-link
           v-if="!item.children"
           :key="index"
@@ -77,8 +76,7 @@
             <span slot="title">{{ item.meta.title }}</span>
           </template>
           <router-link
-            v-for="(subitem, subindex) in item.children"
-            v-if="!item.hidden"
+            v-for="(subitem, subindex) in getShowMenu(item.children)"
             :key="subindex"
             :to="getFullPath(subitem.path)">
             <el-menu-item :index="getFullPath(subitem.path)">
@@ -110,29 +108,11 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Sidebar',
-  data() {
-    return {
-      buttonCollapse: false
-    }
-  },
-  watch: {
-    collapse: function(val) {
-      if (val) {
-        this.buttonCollapse = val
-      } else {
-        setTimeout(() => {
-          this.buttonCollapse = val
-        }, 300)
-      }
-    }
-  },
-  computed: {
-    ...mapGetters(['activeIndex', 'collapse']),
-    preIcon() {
-      return this.mainRouter == 'crm' ? 'wk' : 'wukong'
-    },
-    showTooltip() {
-      return !this.collapse
+  filters: {
+    showMenu(array) {
+      return array.filter(item => {
+        return !item.hidden
+      })
     }
   },
   props: {
@@ -147,7 +127,9 @@ export default {
     /** 选择项目 */
     items: {
       type: Array,
-      default: []
+      default: () => {
+        return []
+      }
     },
     backgroundColor: {
       type: String,
@@ -176,6 +158,31 @@ export default {
     createButtonIcon: {
       type: String,
       default: 'el-icon-plus'
+    }
+  },
+  data() {
+    return {
+      buttonCollapse: false
+    }
+  },
+  computed: {
+    ...mapGetters(['activeIndex', 'collapse']),
+    preIcon() {
+      return this.mainRouter == 'crm' ? 'wk' : 'wukong'
+    },
+    showTooltip() {
+      return !this.collapse
+    }
+  },
+  watch: {
+    collapse: function(val) {
+      if (val) {
+        this.buttonCollapse = val
+      } else {
+        setTimeout(() => {
+          this.buttonCollapse = val
+        }, 300)
+      }
     }
   },
   mounted() {
@@ -247,6 +254,12 @@ export default {
 
     getFullPath(path) {
       return `/${this.mainRouter}/${path}`
+    },
+
+    getShowMenu(array) {
+      return array.filter(item => {
+        return !item.hidden
+      })
     }
   }
 }

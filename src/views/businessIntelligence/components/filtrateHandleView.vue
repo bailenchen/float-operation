@@ -79,7 +79,6 @@
 <script type="text/javascript">
 import {
   adminStructuresSubIndex,
-  userListByStructid,
   getUserByDeptId
 } from '@/api/common'
 import { crmBusinessStatusList } from '@/api/customermanagement/business'

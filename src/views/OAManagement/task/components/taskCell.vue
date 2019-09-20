@@ -155,7 +155,7 @@ export default {
         .then(res => {
           this.$store.dispatch('GetOAMessageNum', 'task')
         })
-        .catch(err => {
+        .catch(() => {
           val.checked = false
         })
     },

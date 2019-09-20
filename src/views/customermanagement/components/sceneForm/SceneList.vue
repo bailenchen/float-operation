@@ -36,9 +36,6 @@ import { crmSceneIndex } from '@/api/customermanagement/common'
 export default {
   name: 'SceneList', // 客户管理下 重要提醒 回款计划提醒
   components: {},
-  computed: {
-    ...mapGetters(['crm'])
-  },
   props: {
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
@@ -52,6 +49,9 @@ export default {
       sceneSelectId: -1,
       sceneList: []
     }
+  },
+  computed: {
+    ...mapGetters(['crm'])
   },
   watch: {},
   mounted() {

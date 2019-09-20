@@ -170,7 +170,7 @@
 </template>
 
 <script>
-import { formatTimeToTimestamp, objDeepCopy } from '@/utils'
+import { objDeepCopy } from '@/utils'
 import { XhUserCell, XhProuctCate } from '@/components/CreateCom'
 import VDistpicker from 'v-distpicker'
 /**
@@ -193,11 +193,16 @@ export default {
     fieldList: {
       type: Array,
       required: true,
-      default: []
+      default: () => {
+        return []
+      }
     },
     obj: {
-      default: {},
-      required: true
+      type: Object,
+      required: true,
+      default: () => {
+        return {}
+      }
     },
     /** 获取客户管理下列表权限内的员工列表 针对 usersList */
     crmType: {

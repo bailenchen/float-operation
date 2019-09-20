@@ -76,7 +76,6 @@ import ExamineLog from '../../components/followLog/ExamineLog' // 审批列表
 import TaskLog from '../../components/followLog/TaskLog' // 任务日志列表
 import ScheduleLog from '../../components/followLog/ScheduleLog' // 日程日志列表
 import { crmContractRecordSave } from '@/api/customermanagement/contract'
-import { formatTimeToTimestamp } from '@/utils'
 import followLogType from '@/views/customermanagement/mixins/followLogType'
 
 export default {

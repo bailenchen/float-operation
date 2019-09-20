@@ -113,8 +113,6 @@ export default {
     dialogVisible: {
       handler(val) {
         this.visible = val
-        if (val) {
-        }
       },
       deep: true,
       immediate: true

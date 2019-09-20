@@ -84,7 +84,7 @@ export default {
           this.detailData = res.data
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },

@@ -26,8 +26,11 @@ export default {
   name: 'FilterContent',
   props: {
     obj: {
-      default: {},
-      required: true
+      type: Object,
+      required: true,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {

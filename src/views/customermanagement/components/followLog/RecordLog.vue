@@ -26,7 +26,6 @@ import { crmCustomerRecordIndex } from '@/api/customermanagement/customer'
 import { crmContactsRecordIndex } from '@/api/customermanagement/contacts'
 import { crmBusinessRecordIndex } from '@/api/customermanagement/business'
 import { crmContractRecordIndex } from '@/api/customermanagement/contract'
-import { formatTimeToTimestamp } from '@/utils'
 
 export default {
   /** 线索管理 的 线索详情 的 跟进记录*/

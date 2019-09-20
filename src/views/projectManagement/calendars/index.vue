@@ -45,7 +45,7 @@
 
 <script>
 import $ from 'jquery'
-import fullcalendar from 'fullcalendar'
+import 'fullcalendar'
 import 'fullcalendar/dist/locale/zh-cn.js'
 
 import newDialog from '../components/newDialog'
@@ -68,7 +68,6 @@ export default {
       },
       taskCreateShow: false,
       // 详情
-      taskDetailShow: false,
       hoverDialogList: {},
       loading: true,
       // 详情数据
@@ -181,7 +180,7 @@ export default {
               callback(taskData)
               this.loading = false
             })
-            .catch(err => {
+            .catch(() => {
               this.loading = false
             })
         }

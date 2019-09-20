@@ -96,15 +96,15 @@ export default {
       isPost: true
     }
   },
-  watch: {
-    $route(to, from) {
-      this.$router.go(0)
-    }
-  },
   computed: {
     ...mapGetters(['oa']),
     permissionSave() {
       return this.oa && this.oa.announcement && this.oa.announcement.save
+    }
+  },
+  watch: {
+    $route(to, from) {
+      this.$router.go(0)
     }
   },
   mounted() {
@@ -127,7 +127,6 @@ export default {
   },
   methods: {
     noticeDataFun(type, num) {
-      const _this = this
       noticeList({
         type: type,
         page: num,
@@ -148,7 +147,7 @@ export default {
           this.loading = false
           this.isPost = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loadText = ''
           this.loading = false
           this.isPost = false

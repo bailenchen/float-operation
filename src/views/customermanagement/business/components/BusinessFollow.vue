@@ -76,7 +76,6 @@ import ExamineLog from '../../components/followLog/ExamineLog' // 审批列表
 import TaskLog from '../../components/followLog/TaskLog' // 任务日志列表
 import ScheduleLog from '../../components/followLog/ScheduleLog' // 日程日志列表
 import { crmBusinessRecordSave } from '@/api/customermanagement/business'
-import { formatTimeToTimestamp } from '@/utils'
 import followLogType from '@/views/customermanagement/mixins/followLogType'
 
 export default {
@@ -107,15 +106,7 @@ export default {
       nextTime: '',
       /** 是否添加日程提醒 */
       isEvent: false,
-      logType: 'record',
-      logTypes: [
-        // { type: 'all', name: '全部' },
-        { type: 'record', name: '跟进记录' },
-        { type: 'log', name: '日志' },
-        { type: 'examine', name: '审批' },
-        { type: 'task', name: '任务' },
-        { type: 'schedule', name: '日程' }
-      ]
+      logType: 'record'
     }
   },
   computed: {

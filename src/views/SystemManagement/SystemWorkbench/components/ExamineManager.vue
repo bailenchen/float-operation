@@ -89,7 +89,6 @@ import {
 } from '@/api/systemManagement/workbench'
 import CreateExamineCategory from './CreateExamineCategory'
 import ExamineCategoryDetail from './examineCategoryDetail'
-import { timestampToFormatTime } from '@/utils'
 
 export default {
   name: 'ExamineManager',
@@ -212,7 +211,6 @@ export default {
           .join('、')
 
         const name = strName + userName
-        return name || '全公司'
         return name || '全公司'
       } else if (column.property === 'status') {
         if (row[column.property] === 0) {

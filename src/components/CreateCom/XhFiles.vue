@@ -62,7 +62,6 @@ export default {
     /** 图片选择出发 */
     xhUploadFile(event) {
       var files = event.target.files
-      var self = this
       var firstFile = files[0]
       this.sendFileRequest(firstFile, () => {
         for (let index = 1; index < files.length; index++) {

@@ -126,7 +126,7 @@ export default {
           this.$store.dispatch('GetOAMessageNum', 'announcement')
           this.data.isRead = 1
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     /**

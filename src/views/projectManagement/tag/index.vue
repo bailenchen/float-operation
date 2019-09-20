@@ -170,7 +170,7 @@ export default {
           this.labelName = res.data.name
           this.labelColor = res.data.color
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     /**
@@ -195,7 +195,7 @@ export default {
           })
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },

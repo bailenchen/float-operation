@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { SliderVerifyAPI } from '@/api/login'
+// import { SliderVerifyAPI } from '@/api/login'
 /**
  * vue-monoplasty-slide-verify
  * @see https://github.com/monoplasty/vue-monoplasty-slide-verify

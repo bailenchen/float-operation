@@ -48,6 +48,13 @@ export default {
     CreateView,
     VEdit
   },
+  props: {
+    titleList: Object,
+    btnShow: {
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       showEdit: false,
@@ -62,13 +69,6 @@ export default {
     },
     permissionDelete() {
       return this.oa && this.oa.announcement && this.oa.announcement.delete
-    }
-  },
-  props: {
-    titleList: Object,
-    btnShow: {
-      type: Boolean,
-      default: true
     }
   },
   methods: {
@@ -123,7 +123,7 @@ export default {
           this.$message.success('公告编辑成功')
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
           this.$message.error('公告编辑失败')
         })

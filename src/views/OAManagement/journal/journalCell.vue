@@ -38,12 +38,13 @@
                   </span>
                 </span>
                 <!-- hover部门 -->
-                <span
-                  v-for="(dep, depIndex) in data.sendDeptList"
-                  v-if="data.sendDeptList.legnth != 0"
-                  :key="depIndex">
-                  {{ depIndex == data.sendDeptList.length-1 ? dep.name : dep.name+"，" }}
-                </span>
+                <template v-if="data.sendDeptList.legnth != 0">
+                  <span
+                    v-for="(dep, depIndex) in data.sendDeptList"
+                    :key="depIndex">
+                    {{ depIndex == data.sendDeptList.length-1 ? dep.name : dep.name+"，" }}
+                  </span>
+                </template>
               </div>
             </div>
             <p
@@ -284,30 +285,6 @@ export default {
     FileCell
   },
   mixins: [],
-  computed: {
-    ...mapGetters(['userInfo']),
-    allData() {
-      const allData = {}
-      allData.business = this.data.businessList
-      allData.contacts = this.data.contactsList
-      allData.contract = this.data.contractList
-      allData.customer = this.data.customerList
-      return allData
-    },
-    allDataShow() {
-      if (
-        this.data.businessList.length != 0 ||
-        this.data.contactsList.length != 0 ||
-        this.data.contractList.length != 0 ||
-        this.data.customerList.length != 0
-      ) {
-        return true
-      } else {
-        return false
-      }
-    }
-  },
-  watch: {},
   props: {
     data: Object,
     logIndex: {
@@ -340,6 +317,30 @@ export default {
       replyList: []
     }
   },
+  computed: {
+    ...mapGetters(['userInfo']),
+    allData() {
+      const allData = {}
+      allData.business = this.data.businessList
+      allData.contacts = this.data.contactsList
+      allData.contract = this.data.contractList
+      allData.customer = this.data.customerList
+      return allData
+    },
+    allDataShow() {
+      if (
+        this.data.businessList.length != 0 ||
+        this.data.contactsList.length != 0 ||
+        this.data.contractList.length != 0 ||
+        this.data.customerList.length != 0
+      ) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  watch: {},
   mounted() {
     if (this.data.isRead == 0 && !this.showWorkbench) {
       this.$bus.on('journal-list-box-scroll', target => {
@@ -409,7 +410,7 @@ export default {
           this.$store.dispatch('GetOAMessageNum', 'log')
           this.data.isRead = 1
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     // 获取评论信息
@@ -509,7 +510,7 @@ export default {
               data: { item: this.data }
             })
           })
-          .catch(err => {
+          .catch(() => {
             this.$message.error('回复失败')
             this.contentLoading = false
           })
@@ -536,7 +537,7 @@ export default {
             this.$message.success('回复成功')
             this.contentLoading = false
           })
-          .catch(err => {
+          .catch(() => {
             this.$message.error('回复失败')
             this.contentLoading = false
           })

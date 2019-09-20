@@ -91,9 +91,6 @@ export default {
     EditInfo,
     EditPassword
   },
-  computed: {
-    ...mapGetters(['userInfo'])
-  },
   data() {
     return {
       loading: false,
@@ -112,6 +109,9 @@ export default {
         { name: '直属上级', props: 'parentName' }
       ]
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted() {
     this.getDetail()

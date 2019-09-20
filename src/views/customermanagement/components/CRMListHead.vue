@@ -59,19 +59,6 @@ export default {
     CRMCreateView,
     CRMImport
   },
-  computed: {
-    ...mapGetters(['crm']),
-    canSave() {
-      if (this.isSeas) {
-        return false
-      }
-      return this.crm[this.crmType].save
-    },
-
-    titleIcon() {
-      return require(`@/assets/img/crm/${this.crmType}.png`)
-    }
-  },
   props: {
     title: {
       type: String,
@@ -108,6 +95,19 @@ export default {
       isCreate: false, // 是创建
       // 导入
       showCRMImport: false
+    }
+  },
+  computed: {
+    ...mapGetters(['crm']),
+    canSave() {
+      if (this.isSeas) {
+        return false
+      }
+      return this.crm[this.crmType].save
+    },
+
+    titleIcon() {
+      return require(`@/assets/img/crm/${this.crmType}.png`)
     }
   },
   mounted() {

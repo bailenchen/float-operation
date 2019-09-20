@@ -97,7 +97,6 @@
 </template>
 
 <script>
-import { usersList, depList } from '@/api/common'
 // 关联业务 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 import XhUser from '@/components/CreateCom/XhUser'

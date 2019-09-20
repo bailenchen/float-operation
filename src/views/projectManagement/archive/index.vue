@@ -128,7 +128,7 @@ export default {
           this.list = res.data.list
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },
@@ -154,7 +154,7 @@ export default {
               this.$bus.$emit('recover-project', val.name, val.workId)
               this.loading = false
             })
-            .catch(err => {
+            .catch(() => {
               this.loading = false
             })
         })

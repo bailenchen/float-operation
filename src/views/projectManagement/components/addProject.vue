@@ -89,7 +89,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import CreateView from '@/components/CreateView'
-import { usersList } from '@/api/common'
 import { workWorkSaveAPI } from '@/api/projectManagement/project'
 import MembersDep from '@/components/selectEmployee/membersDep'
 
@@ -181,7 +180,7 @@ export default {
           this.$bus.$emit('add-project', this.name, res.work.workId)
           this.close()
         })
-        .catch(error => {
+        .catch(() => {
           this.loading = false
         })
     },

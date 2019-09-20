@@ -75,22 +75,18 @@
 import { mapGetters } from 'vuex'
 import {
   crmCustomerExcelImport,
-  crmCustomerExcelDownloadURL,
   crmCustomerDownloadExcelAPI
 } from '@/api/customermanagement/customer'
 import {
   crmLeadsExcelImport,
-  crmLeadsExcelDownloadURL,
   crmLeadsDownloadExcelAPI
 } from '@/api/customermanagement/clue'
 import {
   crmContactsExcelImport,
-  crmContactsExcelDownloadURL,
   crmContactsDownloadExcelAPI
 } from '@/api/customermanagement/contacts'
 import {
   crmProductExcelImport,
-  crmProductExcelDownloadURL,
   crmProductDownloadExcelAPI
 } from '@/api/customermanagement/product'
 import { XhUserCell } from '@/components/CreateCom'
@@ -100,6 +96,17 @@ export default {
   name: 'CRMImport', // 文件导入
   components: {
     XhUserCell
+  },
+  props: {
+    show: {
+      type: Boolean,
+      default: false
+    },
+    // CRM类型
+    crmType: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -129,17 +136,6 @@ export default {
         return '姓名/电话/手机'
       }
       return this.crmTypeName + '名称'
-    }
-  },
-  props: {
-    show: {
-      type: Boolean,
-      default: false
-    },
-    // CRM类型
-    crmType: {
-      type: String,
-      default: ''
     }
   },
   watch: {

@@ -50,10 +50,6 @@ export default {
     }
   },
 
-  beforeDestroy() {
-    this.$bus.off('message-scroll')
-  },
-
   methods: {
     /**
      * 当某一行被点击时会触发该事件
@@ -340,6 +336,7 @@ export default {
   },
 
   beforeDestroy() {
+    this.$bus.off('message-scroll')
     if (document.getElementById('crm-table')) {
       document.getElementById('crm-table').removeEventListener('click', e => {
         e.stopPropagation()

@@ -56,7 +56,7 @@
       @click="showFirstDetail= !showFirstDetail">重<br >要<br >信<br >息<br ><i class="el-icon-arrow-right el-icon--right"/></el-button>
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId}"
       crm-type="customer"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -79,9 +79,6 @@ import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import RelativeTeam from '../components/RelativeTeam' // 相关团队
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
-
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
 import detail from '../mixins/detail'
 
 export default {

@@ -207,7 +207,7 @@ export default {
 
           this.permission = data.authList.work || {}
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     tabClick(val) {
@@ -225,7 +225,7 @@ export default {
           this.membersList = res.data || []
           this.$bus.$emit('members-update', this.membersList)
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     /**
@@ -245,7 +245,7 @@ export default {
           this.$bus.$emit('members-update', res.data)
           this.$message.success('添加成功')
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     /**
@@ -270,7 +270,7 @@ export default {
               })
               this.$bus.$emit('delete-project', this.workId)
             })
-            .catch(err => {})
+            .catch(() => {})
         })
         .catch(() => {
           this.$message({
@@ -298,7 +298,7 @@ export default {
               })
               this.$bus.$emit('delete-project', this.workId)
             })
-            .catch(err => {})
+            .catch(() => {})
         })
         .catch(() => {
           this.$message({
@@ -326,7 +326,7 @@ export default {
               })
               this.$bus.$emit('delete-project', this.workId)
             })
-            .catch(err => {})
+            .catch(() => {})
         })
         .catch(() => {
           this.$message({

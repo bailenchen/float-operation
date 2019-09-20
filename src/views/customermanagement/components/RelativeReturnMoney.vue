@@ -13,7 +13,7 @@
       :data="palnList"
       :height="tableHeight"
       :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
+      :cell-style="cellPlanStyle"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;">
       <el-table-column
@@ -92,7 +92,7 @@ import {
   crmReceivablesPlanDeleteAPI
 } from '@/api/customermanagement/money'
 /** 注意  需要删除接口 */
-import { timestampToFormatTime, objDeepCopy } from '@/utils'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'RelativeReturnMoney', // 相关回款  可能再很多地方展示 放到客户管理目录下
@@ -366,7 +366,7 @@ export default {
     /**
      * 通过回调控制style
      */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
+    cellPlanStyle({ row, column, rowIndex, columnIndex }) {
       return { textAlign: 'center' }
     }
   }

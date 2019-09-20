@@ -230,7 +230,7 @@ export default {
           this.taskList = res.data
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },
@@ -278,7 +278,7 @@ export default {
         }
         workTaskUpdateTopAPI(params)
           .then(res => {})
-          .catch(err => {})
+          .catch(() => {})
       }
     },
 
@@ -306,7 +306,7 @@ export default {
         status: element.checked ? 5 : 1
       })
         .then(res => {})
-        .catch(err => {
+        .catch(() => {
           if (element.checked) {
             value.checkedNum--
           } else {

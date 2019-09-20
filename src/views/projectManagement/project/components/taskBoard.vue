@@ -3,8 +3,8 @@
     v-loading="loading"
     class="content-box">
     <draggable
-      id="task-board-body"
       v-scrollx="{ ignoreClass :['ignoreClass']}"
+      id="task-board-body"
       :list="taskList"
       :options="{ group: 'mission', forceFallback: false, dragClass: 'sortable-parent-drag', filter: '.ignore-elements'}"
       :move="moveParentTask"
@@ -328,7 +328,6 @@ import newDialog from '@/views/projectManagement/components/newDialog'
 import particulars from '@/views/projectManagement/components/particulars'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
-import { debounce } from 'throttle-debounce'
 
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
@@ -340,7 +339,6 @@ import {
   workTaskUpdateClassOrderAPI,
   workWorkOwnerListAPI
 } from '@/api/projectManagement/project'
-import { timestampToFormatTime } from '@/utils'
 
 export default {
   components: {
@@ -491,7 +489,7 @@ export default {
           }
           this.taskList = res.data
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },
@@ -508,7 +506,7 @@ export default {
           })
         })
           .then(res => {})
-          .catch(err => {})
+          .catch(() => {})
       }
     },
 
@@ -568,7 +566,7 @@ export default {
         }
         workTaskUpdateOrderAPI(params)
           .then(res => {})
-          .catch(err => {})
+          .catch(() => {})
       }
     },
 
@@ -595,7 +593,7 @@ export default {
         status: element.checked ? 5 : 1
       })
         .then(res => {})
-        .catch(err => {
+        .catch(() => {
           if (element.checked) {
             value.checkedNum--
           } else {
@@ -624,7 +622,7 @@ export default {
               this.$message.success('删除成功')
               val.taskHandleShow = false // 隐藏弹出框
             })
-            .catch(err => {})
+            .catch(() => {})
         })
         .catch(() => {
           this.$message({
@@ -666,7 +664,7 @@ export default {
         .then(res => {
           val.className = this.renameInput
         })
-        .catch(err => {})
+        .catch(() => {})
       val.renameShow = false
     },
 
@@ -682,7 +680,7 @@ export default {
           this.taskListName = ''
           this.getList()
         })
-        .catch(err => {})
+        .catch(() => {})
       this.createTaskListShow = false
     },
 
@@ -703,7 +701,7 @@ export default {
           this.loading = false
           this.getList()
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },

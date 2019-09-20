@@ -88,9 +88,6 @@ import ScheduleDetails from '../schedule/components/details'
 import ExamineDetail from '../examine/components/examineDetail'
 // 任务详情
 import particulars from '../task/components/particulars'
-import { detailsTask, readLoglist, deleteTask } from '@/api/oamanagement/task'
-import { crmFileIndex } from '@/api/common'
-import { timestampToFormatTime } from '@/utils'
 
 import tabJournal from './tabsJournal'
 export default {
@@ -143,28 +140,22 @@ export default {
           break
         // 公告
         case 3:
-          {
-            this.dialog = true
-            this.titleList = {
-              title: val.title,
-              createTime: val.createTime,
-              content: val.annContent
-            }
+          this.dialog = true
+          this.titleList = {
+            title: val.title,
+            createTime: val.createTime,
+            content: val.annContent
           }
           break
         // 任务
         case 4:
-          {
-            this.taskID = val.actionId
-            this.taskDetailShow = true
-          }
+          this.taskID = val.actionId
+          this.taskDetailShow = true
           break
         // 审批
         case 5:
-          {
-            this.examineData = { id: val.actionId }
-            this.showExamine = true
-          }
+          this.examineData = { id: val.actionId }
+          this.showExamine = true
           break
       }
     },

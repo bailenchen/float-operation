@@ -167,7 +167,6 @@ export default {
         userId: this.userSelectValue
       })
         .then(res => {
-          var self = this
           var receivabless = []
           var achiements = []
           var rates = []

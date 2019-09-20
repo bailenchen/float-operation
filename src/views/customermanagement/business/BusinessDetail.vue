@@ -118,7 +118,7 @@
     </flexbox>
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId}"
       crm-type="business"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -144,9 +144,6 @@ import RelativeProduct from '../components/RelativeProduct' // 相关团队
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
-
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
 import detail from '../mixins/detail'
 
 export default {
@@ -474,8 +471,7 @@ export default {
             })
           })
       } else {
-        var message = '确定将当前商机设为' + item.name + '吗?'
-        this.$confirm(message, '提示', {
+        this.$confirm('确定将当前商机设为' + item.name + '吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

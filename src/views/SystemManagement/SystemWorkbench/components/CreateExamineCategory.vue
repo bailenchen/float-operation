@@ -27,7 +27,7 @@
             label-position="top"
             class="crm-create-box">
             <el-form-item
-              v-for="(item, index) in this.crmForm.crmFields"
+              v-for="(item, index) in crmForm.crmFields"
               :key="item.key"
               :prop="'crmFields.' + index + '.value'"
               :class="{ 'crm-create-block-item': item.showblock, 'crm-create-item': !item.showblock }"
@@ -462,7 +462,7 @@ export default {
         var lastItem = index > 0 ? this.examineList[index - 1] : null
         var nextItem = null
         if (index < this.examineList.length - 1) {
-          var nextItem = this.examineList[index + 1]
+          nextItem = this.examineList[index + 1]
         }
 
         var removeTwo = false

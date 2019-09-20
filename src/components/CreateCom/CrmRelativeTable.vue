@@ -90,9 +90,6 @@ import {
   crmCustomerQueryContacts
 } from '@/api/customermanagement/customer'
 
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
-
 export default {
   name: 'CrmRelativeTable', // 相关模块CRMCell
   components: {

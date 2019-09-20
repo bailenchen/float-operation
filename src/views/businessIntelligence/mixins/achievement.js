@@ -153,8 +153,8 @@ export default {
         legend: {
           data: [
             '当月' + this.typeName,
-            '上月' + this.typeName, ,
-            '去年当月' + this.typeName, ,
+            '上月' + this.typeName,
+            '去年当月' + this.typeName,
             '环比增长',
             '同比增长'
           ],

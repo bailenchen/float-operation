@@ -166,11 +166,9 @@ export default {
     /** 图片选择出发 */
     uploadFile(event) {
       var files = event.target.files
-      var self = this
       for (let index = 0; index < files.length; index++) {
         const file = files[index]
         // if (file.type.indexOf('image') != -1) {
-        var params = {}
         var params = {}
         params.batchId = this.detail.batchId
         params.file = file

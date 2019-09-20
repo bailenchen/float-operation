@@ -159,8 +159,6 @@
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { crmSceneSave, crmSceneUpdate } from '@/api/customermanagement/common'
 import {
-  formatTimeToTimestamp,
-  timestampToFormatTime,
   objDeepCopy
 } from '@/utils'
 import { XhUserCell } from '@/components/CreateCom'
@@ -183,13 +181,16 @@ export default {
     fieldList: {
       type: Array,
       required: true,
-      default: []
+      default: () => {
+        return []
+      }
     },
     obj: {
+      type: Object,
+      required: true,
       default: () => {
         return {}
-      },
-      required: true
+      }
     },
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {

@@ -161,7 +161,7 @@ export default {
             this.$emit('success')
             this.close()
           })
-          .catch(err => {})
+          .catch(() => {})
       }
     },
 

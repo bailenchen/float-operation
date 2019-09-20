@@ -28,7 +28,6 @@
 
 <script>
 import TaskCell from '@/views/projectManagement/components/taskCell'
-import axios from 'axios'
 import { workTaskArchListAPI } from '@/api/projectManagement/project'
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import particulars from '@/views/projectManagement/components/particulars'
@@ -92,7 +91,7 @@ export default {
           }
           this.taskList = res.data
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },
@@ -106,7 +105,7 @@ export default {
         status: val.checked ? 5 : 1
       })
         .then(res => {})
-        .catch(err => {
+        .catch(() => {
           val.checked = false
         })
     },

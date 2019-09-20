@@ -106,7 +106,7 @@ import draggable from 'vuedraggable'
 import Field from './model/field'
 import FieldList from './model/fieldList'
 import FieldInfo from './components/FieldInfo'
-import { objDeepCopy, regexIsCRMMobile, regexIsCRMEmail } from '@/utils'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'Handlefield',
@@ -246,7 +246,7 @@ export default {
           this.rejectHandle = false
           this.loading = false
         })
-        .catch(error => {
+        .catch(() => {
           this.loading = false
         })
     },

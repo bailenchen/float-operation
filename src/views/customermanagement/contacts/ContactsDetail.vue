@@ -46,7 +46,7 @@
     </flexbox>
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId}"
       crm-type="contacts"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -65,9 +65,6 @@ import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
-
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
 import detail from '../mixins/detail'
 
 export default {

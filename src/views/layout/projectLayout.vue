@@ -42,6 +42,12 @@ export default {
     AppMain,
     AddProject
   },
+  data() {
+    return {
+      isCreate: false,
+      sidebarItems: []
+    }
+  },
   computed: {
     ...mapGetters(['project']),
     permissonProject() {
@@ -50,12 +56,6 @@ export default {
         this.project.projectManage &&
         this.project.projectManage.save
       )
-    }
-  },
-  data() {
-    return {
-      isCreate: false,
-      sidebarItems: []
     }
   },
   created() {

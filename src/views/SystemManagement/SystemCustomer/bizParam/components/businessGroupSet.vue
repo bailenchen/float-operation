@@ -69,8 +69,6 @@ import {
   businessGroupRead,
   businessGroupDelete
 } from '@/api/systemManagement/SystemCustomer'
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
 
 export default {
   name: 'BusinessGroupSet',

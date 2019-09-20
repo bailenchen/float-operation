@@ -186,8 +186,7 @@ export default {
         remarks: this.content
       }
       if (this.status == 1 && this.detail.examineType == 2) {
-        if (this.handleType == 1) {
-        } else {
+        if (this.handleType != 1) {
           params['nextUserId'] = this.selectUsers[0].userId
         }
       }

@@ -14,7 +14,6 @@ import {
   removeAuth
 } from '@/utils/auth'
 import Lockr from 'lockr'
-import { RSAencrypt } from '@/utils'
 
 const user = {
   state: {

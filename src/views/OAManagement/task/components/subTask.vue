@@ -168,7 +168,7 @@ export default {
               this.subtaskChange = false
               this.num = 0
             })
-            .catch(err => {
+            .catch(() => {
               this.$emit('on-handle', { type: 'add', result: 'error' })
               this.$message.error('子任务创建失败')
               this.num = 0
@@ -203,7 +203,7 @@ export default {
                 this.num = 0
                 this.$message.success('子任务编辑成功')
               })
-              .catch(err => {
+              .catch(() => {
                 this.$emit('on-handle', { type: 'edit', result: 'error' })
                 this.$message.error('子任务编辑失败')
                 this.num = 0

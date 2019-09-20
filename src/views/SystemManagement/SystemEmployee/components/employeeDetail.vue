@@ -99,7 +99,6 @@ export default {
       ]
     }
   },
-  watch: {},
   computed: {
     ...mapGetters(['manage']),
     // 员工编辑操作权限
@@ -111,6 +110,7 @@ export default {
       return this.manage && this.manage.users && this.manage.users.userEnables
     }
   },
+  watch: {},
   mounted() {},
   methods: {
     editBtn() {

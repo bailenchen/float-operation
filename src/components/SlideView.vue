@@ -30,7 +30,9 @@ export default {
     },
     bodyStyle: {
       type: Object,
-      default: { padding: 0 }
+      default: () => {
+        return { padding: 0 }
+      }
     },
     /** 监听点击事件 隐藏视图 */
     listenerIDs: {

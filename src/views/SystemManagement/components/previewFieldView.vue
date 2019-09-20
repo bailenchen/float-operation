@@ -25,7 +25,7 @@
                 label-position="top"
                 class="crm-create-box">
                 <el-form-item
-                  v-for="(item, index) in this.crmForm.crmFields"
+                  v-for="(item, index) in crmForm.crmFields"
                   :key="item.key"
                   :prop="'crmFields.' + index + '.value'"
                   :class="{ 'crm-create-block-item': item.showblock, 'crm-create-item': !item.showblock }"
@@ -198,7 +198,6 @@ export default {
     getField() {
       this.loading = true
       // 获取自定义字段的更新时间
-      var params = {}
       var params = {}
       params.label = this.label
       if (this.types === 'oa_examine') {

@@ -31,7 +31,7 @@
       </div>
     </div>
     <examine-section
-      :id="'examine-list-box' + this.by"
+      :id="'examine-list-box' + by"
       :list="list"
       class="list-box"
       @handle="searchBtn">
@@ -49,10 +49,8 @@
 <script>
 import {
   oaExamineMyCreateIndex,
-  oaExamineMyExamineIndex,
-  oaExamineDelete
+  oaExamineMyExamineIndex
 } from '@/api/oamanagement/examine'
-import { formatTimeToTimestamp } from '@/utils'
 import ExamineSection from './examineSection'
 
 export default {

@@ -44,7 +44,7 @@
     </flexbox>
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId}"
       crm-type="product"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>

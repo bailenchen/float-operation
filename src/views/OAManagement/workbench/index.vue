@@ -101,7 +101,7 @@ export default {
         this.calendarArr = res.data
         this.scheduleLoading = false
       })
-      .catch(err => {
+      .catch(() => {
         this.scheduleLoading = false
       })
     this.workbenchData(this.activeName, this.pageNum)
@@ -142,7 +142,7 @@ export default {
           this.isPost = false
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loadText = ''
           this.loading = false
           this.isPost = false
@@ -175,7 +175,7 @@ export default {
             }
           })
         })
-        .catch(err => {
+        .catch(() => {
           this.scheduleLoading = false
         })
     }

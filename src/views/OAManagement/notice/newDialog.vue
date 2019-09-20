@@ -85,7 +85,6 @@
 
 <script>
 import CreateView from '@/components/CreateView'
-import { usersList, depList } from '@/api/common'
 
 import membersDep from '@/components/selectEmployee/membersDep'
 // API
@@ -177,7 +176,7 @@ export default {
               }
               this.loading = false
             })
-            .catch(err => {
+            .catch(() => {
               this.$message.error('新建公告失败')
               this.loading = false
             })

@@ -72,7 +72,6 @@
 import MixAdd from '../../components/MixAdd'
 import RecordLog from '../../components/followLog/RecordLog' // 跟进记录
 import { crmLeadsRecordSave } from '@/api/customermanagement/clue'
-import { formatTimeToTimestamp } from '@/utils'
 import followLogType from '@/views/customermanagement/mixins/followLogType'
 
 export default {

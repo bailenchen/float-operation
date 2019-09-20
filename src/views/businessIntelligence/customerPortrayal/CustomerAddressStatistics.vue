@@ -24,7 +24,6 @@
 <script>
 import echarts from 'echarts'
 import 'echarts/map/js/china.js'
-import axios from 'axios'
 import { biAchievementAnalysisAPI } from '@/api/businessIntelligence/customerPortrayal'
 
 export default {
@@ -56,7 +55,6 @@ export default {
 
           const allData = []
           const dealData = []
-          const xAxis = []
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             if (element.allCustomer) {

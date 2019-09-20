@@ -61,6 +61,13 @@ export default {
     CRMCreateView
   },
 
+  data() {
+    return {
+      isCreate: false,
+      createCRMType: ''
+    }
+  },
+
   computed: {
     ...mapGetters(['crm', 'crmRouters']),
     // 快捷添加
@@ -120,13 +127,6 @@ export default {
     },
     quickAddOffset() {
       return Math.round(this.quickAddList.length / 2) * 25
-    }
-  },
-
-  data() {
-    return {
-      isCreate: false,
-      createCRMType: ''
     }
   },
 

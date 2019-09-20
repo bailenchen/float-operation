@@ -120,7 +120,6 @@
 <script>
 // API
 import { scheduleAdd, scheduleEdit } from '@/api/oamanagement/schedule'
-import { usersList } from '@/api/common'
 // 关联业务 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 import XhUser from '@/components/CreateCom/XhUser'
@@ -326,7 +325,7 @@ export default {
                 }
                 this.loading = false
               })
-              .catch(err => {
+              .catch(() => {
                 this.loading = false
               })
           } else {
@@ -381,7 +380,7 @@ export default {
                 this.$emit('onSubmit')
                 this.loading = false
               })
-              .catch(err => {
+              .catch(() => {
                 this.loading = false
               })
           }

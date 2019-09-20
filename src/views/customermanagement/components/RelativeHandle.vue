@@ -31,7 +31,6 @@
 import loading from '../mixins/loading'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { crmIndexFieldRecord } from '@/api/customermanagement/common'
-import { timestampToFormatTime } from '@/utils'
 
 export default {
   name: 'RelativeHandle', // 相关操作  可能再很多地方展示 放到客户管理目录下

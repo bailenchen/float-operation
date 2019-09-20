@@ -232,13 +232,6 @@ export default {
       showDview: false
     }
   },
-
-  watch: {
-    show() {
-      this.initTableHead()
-    }
-  },
-
   computed: {
     ...mapGetters(['CRMConfig']),
 
@@ -315,6 +308,12 @@ export default {
       }
 
       return []
+    }
+  },
+
+  watch: {
+    show() {
+      this.initTableHead()
     }
   },
 

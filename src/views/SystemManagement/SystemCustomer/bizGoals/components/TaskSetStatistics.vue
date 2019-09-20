@@ -40,7 +40,7 @@
         change-on-select
         @change="structuresValueChange"/>
       <el-select
-        v-if="this.tabType === 'user'"
+        v-if="tabType === 'user'"
         v-model="userSelectValue"
         :clearable="true"
         placeholder="选择员工">
@@ -215,7 +215,6 @@ export default {
         deptId: id
       })
         .then(res => {
-          var self = this
           this.list = res.data.map(item => {
             return this.getShowItem(item)
           })
@@ -480,7 +479,6 @@ export default {
         userId: this.userSelectValue
       })
         .then(res => {
-          var self = this
           this.list = res.data.map(item => {
             return this.getShowItem(item)
           })
@@ -509,12 +507,12 @@ export default {
             document.getElementById('task-set-table')
           )
         }
-        let wopts = {
-            bookType: 'xlsx',
-            bookSST: false,
-            type: 'binary'
-          },
-          wbout = XLSX.write(wb, wopts)
+        const wopts = {
+          bookType: 'xlsx',
+          bookSST: false,
+          type: 'binary'
+        }
+        const wbout = XLSX.write(wb, wopts)
 
         const name = `${this.dateSelect} 年${
           { department: '部门目标', user: '员工目标' }[this.tabType]
@@ -563,7 +561,7 @@ export default {
       } else {
         cuf = new Array(s.length)
         for (i = 0; i !== s.length; ++i) {
-          cuf[i] = s.charCodeAt(i) & oxFF
+          cuf[i] = s.charCodeAt(i) & 0xFF
         }
         return cuf
       }

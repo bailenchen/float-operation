@@ -39,10 +39,7 @@ import loading from '../mixins/loading'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import Sections from '../components/Sections'
 import { filedGetInformation } from '@/api/customermanagement/common'
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
 import MapView from '@/components/MapView' // 地图详情
-import { downloadFile } from '@/utils'
 
 export default {
   /** 客户管理 的 基本信息*/
@@ -99,7 +96,6 @@ export default {
         id: this.id
       })
         .then(res => {
-          var self = this
           this.list = res.data
           this.loading = false
         })

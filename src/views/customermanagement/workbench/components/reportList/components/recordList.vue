@@ -38,8 +38,6 @@
             style="color: #6394E5;cursor: pointer;">{{ item.typesName }}</div>
         </flexbox>
       </follow-record-cell>
-
-      </follow-record-cell>
       <div class="load">
         <el-button
           :loading="loadMoreLoading"

@@ -26,11 +26,11 @@ export default {
     Sidebar,
     AppMain
   },
-  computed: {
-    ...mapGetters(['navActiveIndex'])
-  },
   data() {
     return {}
+  },
+  computed: {
+    ...mapGetters(['navActiveIndex'])
   },
   methods: {
     navClick(index) {}

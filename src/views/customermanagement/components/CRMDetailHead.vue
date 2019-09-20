@@ -96,6 +96,41 @@ export default {
     AllocHandle,
     DealStatusHandle
   },
+  props: {
+    /** 模块ID */
+    id: [String, Number],
+    /** 没有值就是全部类型 有值就是当个类型 */
+    crmType: {
+      type: String,
+      default: ''
+    },
+    // 辅助 使用
+    isSeas: {
+      type: Boolean,
+      default: false
+    },
+    /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 */
+    detail: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    headDetails: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
+  data() {
+    return {
+      moreTypes: [], // 更多操作
+      transferDialogShow: false, // 转移操作
+      allocDialogShow: false, // 公海分配操作提示框
+      dealStatusShow: false // 成交状态修改框
+    }
+  },
   computed: {
     ...mapGetters(['crm', 'CRMConfig']),
     crmIcon() {
@@ -152,41 +187,6 @@ export default {
   watch: {
     isSeas() {
       this.moreTypes = this.getSelectionHandleItemsInfo()
-    }
-  },
-  props: {
-    /** 模块ID */
-    id: [String, Number],
-    /** 没有值就是全部类型 有值就是当个类型 */
-    crmType: {
-      type: String,
-      default: ''
-    },
-    // 辅助 使用
-    isSeas: {
-      type: Boolean,
-      default: false
-    },
-    /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 */
-    detail: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    headDetails: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    }
-  },
-  data() {
-    return {
-      moreTypes: [], // 更多操作
-      transferDialogShow: false, // 转移操作
-      allocDialogShow: false, // 公海分配操作提示框
-      dealStatusShow: false // 成交状态修改框
     }
   },
   mounted() {

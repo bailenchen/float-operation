@@ -32,13 +32,14 @@ export default {
     Sidebar,
     AppMain
   },
-  computed: {
-    ...mapGetters(['manage'])
-  },
   data() {
     return {
       routerItems: []
     }
+  },
+
+  computed: {
+    ...mapGetters(['manage'])
   },
 
   mounted() {
@@ -115,7 +116,7 @@ export default {
             }
           }
         })
-        .catch(err => {})
+        .catch(() => {})
     }
   }
 }

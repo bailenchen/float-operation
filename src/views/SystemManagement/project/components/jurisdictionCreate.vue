@@ -267,7 +267,6 @@ export default {
       for (let index = 0; index < array.length; index++) {
         if (item == array[index]) {
           return true
-          break
         }
       }
       return false

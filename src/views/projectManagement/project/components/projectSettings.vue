@@ -224,7 +224,7 @@ export default {
         .then(res => {
           this.optionList = res.data || []
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     /**
@@ -256,7 +256,7 @@ export default {
             this.$emit('submite', this.setTitle, this.setColor, this.setIsOpen)
             this.close()
           })
-          .catch(err => {
+          .catch(() => {
             this.loading = false
           })
       } else {
@@ -270,7 +270,7 @@ export default {
             this.$message.success('操作成功')
             this.close()
           })
-          .catch(err => {
+          .catch(() => {
             this.loading = false
           })
       }
@@ -301,7 +301,7 @@ export default {
           this.$emit('handle', 'member', res.data)
           this.$message.success('添加成功')
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     /**
@@ -314,7 +314,7 @@ export default {
       }).then(res => {
         this.membersList.splice(index, 1)
         this.$message.success('删除成功')
-      }).catch(err => {})
+      }).catch(() => {})
     }
   }
 }

@@ -46,7 +46,7 @@
       :accessory-file-list="accessoryFileList"
       :new-loading="newLoading"
       @close="newClose"
-      @submitBtn="submitBtn"/>
+      @submitBtn="submitBtn" />
   </div>
 </template>
 
@@ -144,7 +144,8 @@ export default {
         dom.onscroll = e => {
           if (e && e.target.id == 'list-box' + this.activeName) {
             this.$bus.emit('journal-list-box-scroll', e.target)
-            const scrollOff = dom.scrollTop + dom.clientHeight - dom.scrollHeight
+            const scrollOff =
+              dom.scrollTop + dom.clientHeight - dom.scrollHeight
             // 滚动条到底部的条件
             if (Math.abs(scrollOff) < 10 && this.loadMoreLoading == true) {
               if (!this.isPost) {
@@ -192,7 +193,7 @@ export default {
           this.loadMoreLoading = false
           this.isPost = false
         })
-        .catch(err => {
+        .catch(() => {
           this.journalLoading = false
           this.isPost = false
         })
@@ -241,8 +242,6 @@ export default {
     // 新建提交
     submitBtn(key, batchId, relevanceAll) {
       this.newLoading = true
-      const imgList = []
-      const fileList = []
       // 获取部门
       const dep = []
       if (this.formData.depData) {
@@ -284,7 +283,7 @@ export default {
             this.$message.success('新建成功')
             this.newClose()
           })
-          .catch(err => {
+          .catch(() => {
             this.newLoading = false
             this.$message.error('新建失败')
           })
@@ -311,7 +310,7 @@ export default {
             this.$message.success('编辑成功')
             this.newLoading = false
           })
-          .catch(err => {
+          .catch(() => {
             this.newLoading = false
             this.$message.error('编辑失败')
           })

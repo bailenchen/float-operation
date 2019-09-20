@@ -69,7 +69,7 @@
         class="thumbnailContainer">
         <ul>
           <li
-            v-for="(item, index) in this.imgData"
+            v-for="(item, index) in imgData"
             ref="thumbnailItem"
             :key="index"
             @click="switchImgUrl(index, $event)">
@@ -112,7 +112,6 @@
 </template>
 
 <script>
-var env = require('zrender/lib/core/env')
 import { getMaxIndex, downloadImage } from '@/utils'
 
 export default {
@@ -245,8 +244,6 @@ export default {
     },
     // rotate init
     rotateInit() {
-      const screenW =
-        document.documentElement.offsetWidth || document.body.offsetWidth
       const screenH =
         document.documentElement.scrollHeight || document.body.scrollHeight
       const ratio = [0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9]

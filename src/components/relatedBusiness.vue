@@ -91,34 +91,6 @@ export default {
     CrmRelative,
     RelatedBusinessCell
   },
-  data() {
-    return {
-      showTypes: ['customer', 'contacts', 'business', 'contract'],
-      showPopover: false,
-      relevanceAll: {
-        customerIds: [],
-        contractIds: [],
-        contactsIds: [],
-        businessIds: []
-      },
-      // 关联业务信息
-      relatedListData: {},
-      showRelative: false,
-      // 展示任务相关
-      showTaskRelative: false
-    }
-  },
-  computed: {
-    ...mapGetters(['crm']),
-    showCRMPermission() {
-      return this.crm
-    }
-  },
-  watch: {
-    allData: function() {
-      this.relatedListData = this.allData
-    }
-  },
   props: {
     marginLeft: {
       type: String,
@@ -149,6 +121,34 @@ export default {
     alterableColor: {
       type: String,
       default: '#999'
+    }
+  },
+  data() {
+    return {
+      showTypes: ['customer', 'contacts', 'business', 'contract'],
+      showPopover: false,
+      relevanceAll: {
+        customerIds: [],
+        contractIds: [],
+        contactsIds: [],
+        businessIds: []
+      },
+      // 关联业务信息
+      relatedListData: {},
+      showRelative: false,
+      // 展示任务相关
+      showTaskRelative: false
+    }
+  },
+  computed: {
+    ...mapGetters(['crm']),
+    showCRMPermission() {
+      return this.crm
+    }
+  },
+  watch: {
+    allData: function() {
+      this.relatedListData = this.allData
     }
   },
   mounted() {

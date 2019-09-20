@@ -124,34 +124,24 @@ export default {
       switch (remindtype) {
         case 0:
           return '无'
-          break
         case 1:
           return '准时提醒'
-          break
         case 2:
           return '5分钟前'
-          break
         case 3:
           return '15分钟前'
-          break
         case 4:
           return '30分钟前'
-          break
         case 5:
           return '一个小时前'
-          break
         case 6:
           return '二个小时前'
-          break
         case 7:
           return '一天前'
-          break
         case 8:
           return '二天前'
-          break
         case 9:
           return '一周前'
-          break
       }
       return ''
     }

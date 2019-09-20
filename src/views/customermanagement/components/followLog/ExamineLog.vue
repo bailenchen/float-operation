@@ -41,7 +41,6 @@ import ExamineCell from '@/views/OAManagement/examine/components/examineCell' //
 import ExamineCreateView from '@/views/OAManagement/examine/components/examineCreateView'
 import { crmQueryExamineRelation } from '@/api/customermanagement/common'
 import { oaExamineDelete } from '@/api/oamanagement/examine'
-import { formatTimeToTimestamp } from '@/utils'
 
 export default {
   /** 审批 跟进记录*/

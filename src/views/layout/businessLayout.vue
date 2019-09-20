@@ -33,6 +33,9 @@ export default {
     Sidebar,
     AppMain
   },
+  data() {
+    return {}
+  },
   computed: {
     ...mapGetters(['bi']),
     biRouterItems() {
@@ -42,9 +45,6 @@ export default {
       }
       return biRouterMenu
     }
-  },
-  data() {
-    return {}
   },
   methods: {
     navClick(index) {}

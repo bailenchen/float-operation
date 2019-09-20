@@ -624,7 +624,7 @@ import {
   deleteCommentAPI,
   queryCommentListAPI
 } from '@/api/oamanagement/common'
-import { usersList, depList, crmFileSave, crmFileIndex } from '@/api/common'
+import { crmFileSave } from '@/api/common'
 
 import membersDep from '@/components/selectEmployee/membersDep'
 import tagIndex from './tag/tagIndex'
@@ -638,7 +638,7 @@ import XhUser from '@/components/CreateCom/XhUser'
 import FileCell from '@/views/OAManagement/components/fileCell'
 import CRMFullScreenDetail from '@/views/customermanagement/components/CRMFullScreenDetail'
 import { mapGetters } from 'vuex'
-import { getMaxIndex, timestampToFormatTime } from '@/utils'
+import { getMaxIndex } from '@/utils'
 
 export default {
   components: {
@@ -790,7 +790,7 @@ export default {
           this.taskData = taskData
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
           this.closeBtn()
         })
@@ -833,7 +833,7 @@ export default {
           })
           this.$store.dispatch('GetOAMessageNum', 'task')
         })
-        .catch(err => {
+        .catch(() => {
           this.$emit('on-handle', {
             type: 'title-check',
             value: !this.taskData.checked,
@@ -873,7 +873,7 @@ export default {
           })
           this.priorityVisible = false
         })
-        .catch(err => {
+        .catch(() => {
           this.$message.error('编辑失败')
           this.taskData.priority = def
         })
@@ -950,7 +950,7 @@ export default {
         status: e ? 5 : 1
       })
         .then(res => {})
-        .catch(err => {
+        .catch(() => {
           this.$message.error('子任务标记失败')
           if (e) {
             this.$set(val, 'checked', false)
@@ -975,8 +975,6 @@ export default {
      */
     // 提交按钮
     editOwnerList(users, dep) {
-      const list1 = []
-      const list2 = []
       this.taskData.ownerUserList = []
       editTask({
         taskId: this.id,
@@ -1106,7 +1104,7 @@ export default {
             })
             this.commentsLoading = false
           })
-          .catch(err => {
+          .catch(() => {
             this.commentsLoading = false
           })
       }
@@ -1253,7 +1251,7 @@ export default {
               }
               this.$message.success('子任务删除成功')
             })
-            .catch(err => {
+            .catch(() => {
               this.$message.error('子任务删除失败')
             })
         })

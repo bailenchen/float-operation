@@ -52,7 +52,7 @@
     </flexbox>
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId}"
       crm-type="receivables"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -68,7 +68,6 @@ import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import ExamineInfo from '@/components/Examine/ExamineInfo'
-import { timestampToFormatTime } from '@/utils'
 import detail from '../mixins/detail'
 
 export default {

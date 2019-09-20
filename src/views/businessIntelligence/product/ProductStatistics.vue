@@ -200,7 +200,6 @@ export default {
       var allCount = 0 // 系列
       var allMoney = 0
 
-      var count
       for (let index = 0; index < this.list.length; index++) {
         const element = this.list[index]
 

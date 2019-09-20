@@ -48,13 +48,10 @@ import createSchedule from './components/createSchedule'
 import VDetails from './components/details'
 // API
 import {
-  scheduleList,
-  scheduleAdd,
-  scheduleEdit
+  scheduleList
 } from '@/api/oamanagement/schedule'
 
-import { getDateFromTimestamp, timestampToFormatTime } from '@/utils'
-import moment from 'moment'
+import { timestampToFormatTime } from '@/utils'
 
 export default {
   components: {
@@ -166,7 +163,7 @@ export default {
               callback(list)
               _this.loading = false
             })
-            .catch(err => {
+            .catch(() => {
               _this.loading = false
             })
         }

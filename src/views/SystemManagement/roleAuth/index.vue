@@ -375,7 +375,7 @@ export default {
           this.getUserList(this.roleActive)
           this.roleMenuLoading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.roleMenuLoading = false
         })
     },
@@ -690,7 +690,6 @@ export default {
       for (let index = 0; index < array.length; index++) {
         if (item == array[index]) {
           return true
-          break
         }
       }
       return false
@@ -718,7 +717,7 @@ export default {
           this.total = res.data.totalRow
           this.userLoading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.userLoading = false
         })
     },

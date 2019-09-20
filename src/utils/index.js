@@ -88,8 +88,8 @@ export function compressImage(file, quality, callback) {
       const img = new Image()
       img.src = result
       img.onload = function() {
-        // 如果图片大于四百万像素，计算压缩比并将大小压至400万以下
-        var initSize = img.src.length
+        // // 如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+        // var initSize = img.src.length
         var width = img.width
         var height = img.height
 

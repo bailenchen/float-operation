@@ -41,19 +41,6 @@ import { removeAuth } from '@/utils/auth'
 export default {
   name: 'EditPassword', // 编辑个人密码
   components: {},
-  computed: {
-    ...mapGetters(['userInfo'])
-  },
-  watch: {
-    show: {
-      handler(val) {
-        this.showDialog = val
-        this.ruleForm.id = this.userInfo.id
-      },
-      deep: true,
-      immediate: true
-    }
-  },
   props: {
     show: {
       type: Boolean,
@@ -79,6 +66,19 @@ export default {
         oldPwd: '',
         newPwd: ''
       }
+    }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  watch: {
+    show: {
+      handler(val) {
+        this.showDialog = val
+        this.ruleForm.id = this.userInfo.id
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {},

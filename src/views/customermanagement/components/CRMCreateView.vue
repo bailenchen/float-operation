@@ -25,7 +25,7 @@
                 label-position="top"
                 class="crm-create-box">
                 <el-form-item
-                  v-for="(item, index) in this.crmForm.crmFields"
+                  v-for="(item, index) in crmForm.crmFields"
                   :key="item.key"
                   :prop="'crmFields.' + index + '.value'"
                   :class="{ 'crm-create-block-item': item.showblock, 'crm-create-item': !item.showblock }"
@@ -100,7 +100,7 @@ import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
-import { crmLeadsSave, crmLeadsUpdate } from '@/api/customermanagement/clue'
+import { crmLeadsSave } from '@/api/customermanagement/clue'
 import { crmCustomerSave } from '@/api/customermanagement/customer'
 import { crmContactsSave } from '@/api/customermanagement/contacts'
 import {
@@ -113,13 +113,10 @@ import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
 
 import {
-  regexIsNumber,
   regexIsCRMNumber,
   regexIsCRMMoneyNumber,
   regexIsCRMMobile,
   regexIsCRMEmail,
-  formatTimeToTimestamp,
-  timestampToFormatTime,
   objDeepCopy
 } from '@/utils'
 
@@ -383,14 +380,14 @@ export default {
       } else if (this.crmType == 'receivables') {
         // 新建回款 选择客户 要将id交于 合同
         if (item.data.formType == 'customer') {
-          var planItem = null // 合同更改 重置回款计划
+          let planItem = null // 合同更改 重置回款计划
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
             if (element.key === 'contract_id') {
               // 如果是合同 改变合同样式和传入客户ID
               if (item.value.length > 0) {
                 element.disabled = false
-                var customerItem = item.value[0]
+                const customerItem = item.value[0]
                 customerItem['moduleType'] = 'customer'
                 customerItem['params'] = { checkStatus: 2 }
                 element['relation'] = customerItem
@@ -734,7 +731,11 @@ export default {
                     })
                     .join(',')
                 } else if (rule.item.fieldName == 'categoryId') {
-                  postValue = element.value[element.value.length - 1]
+                  if (value && value.length) {
+                    postValue = value[value.length - 1]
+                  } else {
+                    postValue = ''
+                  }
                 } else if (rule.item.formType == 'checkbox') {
                   postValue = value.join(',')
                 }

@@ -70,15 +70,11 @@
 import listTaskDetail from '../task/mixins/listTaskDetail.js'
 // API
 import {
-  detailsTask,
-  readLoglist,
-  editTask,
-  deleteTask
+  editTask
 } from '@/api/oamanagement/task'
 import { taskListAPI } from '@/api/oamanagement/workbench'
 // 详情
 import particulars from '../task/components/particulars'
-import { timestampToFormatTime } from '@/utils'
 
 export default {
   components: {
@@ -116,7 +112,7 @@ export default {
           this.list = res.data
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
         })
     },
@@ -144,7 +140,7 @@ export default {
           }
           this.$store.dispatch('GetOAMessageNum', 'task')
         })
-        .catch(err => {
+        .catch(() => {
           item.checked = !item.checked
         })
     },

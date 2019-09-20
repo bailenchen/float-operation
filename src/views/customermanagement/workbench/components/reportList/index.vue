@@ -17,12 +17,12 @@
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click.native="searchInput"/>
+              @click.native="searchInput" />
           </el-input>
           <img
             class="close"
             src="@/assets/img/task_close.png"
-            @click="hideView" >
+            @click="hideView">
         </div>
         <div class="list-body">
           <el-table
@@ -64,7 +64,7 @@
                 <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
                 <i
                   v-else
-                  class="wukong wukong-lock customer-lock"/>
+                  class="wukong wukong-lock customer-lock" />
               </template>
             </el-table-column>
             <el-table-column
@@ -89,7 +89,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column v-if="showFillColumn"/>
+            <el-table-column v-if="showFillColumn" />
           </el-table>
           <div
             v-if="showPagination"
@@ -103,7 +103,7 @@
               background
               layout="prev, pager, next, sizes, total, jumper"
               @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"/>
+              @current-change="handleCurrentChange" />
           </div>
         </div>
       </div>
@@ -113,14 +113,14 @@
         :crm-type="rowType"
         :id="rowID"
         class="d-view"
-        @handle="handleHandle"/>
+        @handle="handleHandle" />
 
       <record-list
         v-if="recordShow"
         :crm-type="rowType"
         :params="recordParams"
         @handle="getList"
-        @hide="recordShow = false"/>
+        @hide="recordShow = false" />
     </div>
   </transition>
 </template>
@@ -130,8 +130,6 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { getMaxIndex } from '@/utils/index'
 import { mapGetters } from 'vuex'
 import Lockr from 'lockr'
-import { getDateFromTimestamp } from '@/utils'
-import moment from 'moment'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import RecordList from './components/recordList'
 
@@ -141,40 +139,6 @@ export default {
     CRMAllDetail,
     RecordList
   },
-  computed: {
-    ...mapGetters(['crm', 'CRMConfig']),
-    showPoolDayField() {
-      if (this.crmType == 'customer' && this.CRMConfig.customerConfig == 1) {
-        return true
-      }
-      return false
-    },
-    showExamineStatus() {
-      if (this.crmType == 'contract' && this.crmType == 'receivables') {
-        return true
-      }
-      return false
-    },
-    sortable() {
-      if (this.fieldList && this.fieldList.length) {
-        return false
-      }
-      return 'custom'
-    },
-    showFillColumn() {
-      if (this.fieldList && this.fieldList.length) {
-        return false
-      }
-      return true
-    },
-    showPagination() {
-      if (this.fieldList && this.fieldList.length) {
-        return false
-      }
-      return true
-    }
-  },
-  watch: {},
   props: {
     /** 展示内容的上下padding */
     padding: {
@@ -220,6 +184,40 @@ export default {
       recordShow: false
     }
   },
+  computed: {
+    ...mapGetters(['crm', 'CRMConfig']),
+    showPoolDayField() {
+      if (this.crmType == 'customer' && this.CRMConfig.customerConfig == 1) {
+        return true
+      }
+      return false
+    },
+    showExamineStatus() {
+      if (this.crmType == 'contract' && this.crmType == 'receivables') {
+        return true
+      }
+      return false
+    },
+    sortable() {
+      if (this.fieldList && this.fieldList.length) {
+        return false
+      }
+      return 'custom'
+    },
+    showFillColumn() {
+      if (this.fieldList && this.fieldList.length) {
+        return false
+      }
+      return true
+    },
+    showPagination() {
+      if (this.fieldList && this.fieldList.length) {
+        return false
+      }
+      return true
+    }
+  },
+  watch: {},
   mounted() {
     document.body.appendChild(this.$el)
 

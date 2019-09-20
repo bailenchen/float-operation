@@ -34,7 +34,6 @@ import { crmQueryEventRelation } from '@/api/customermanagement/common'
 import FollowScheduleCell from './components/FollowScheduleCell'
 import { scheduleDelete } from '@/api/oamanagement/schedule'
 import CreateSchedule from '@/views/OAManagement/schedule/components/createSchedule'
-import { formatTimeToTimestamp } from '@/utils'
 
 export default {
   /** 日程 跟进记录*/
@@ -80,7 +79,6 @@ export default {
   },
   mounted() {
     // 分批次加载
-    const self = this
     const dom = document.getElementById('follow-log-content')
     dom.onscroll = () => {
       const scrollOff = dom.scrollTop + dom.clientHeight - dom.scrollHeight

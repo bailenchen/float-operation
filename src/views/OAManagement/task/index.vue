@@ -160,7 +160,7 @@ export default {
           this.newLoading = false
           this.dialogVisible = false
         })
-        .catch(err => {
+        .catch(() => {
           this.newLoading = false
           this.dialogVisible = false
         })
@@ -218,7 +218,7 @@ export default {
           this.isPost = false
           this.loading = false
         })
-        .catch(err => {
+        .catch(() => {
           this.isPost = false
           this.loading = false
         })

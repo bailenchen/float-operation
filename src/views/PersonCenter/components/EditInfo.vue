@@ -67,24 +67,6 @@ import { regexIsCRMMobile, regexIsCRMEmail } from '@/utils'
 export default {
   name: 'EditInfo', // 编辑个人信息
   components: {},
-  computed: {
-    ...mapGetters(['userInfo'])
-  },
-  watch: {
-    show: {
-      handler(val) {
-        this.showDialog = val
-        this.ruleForm = {
-          realname: this.userInfo.realname,
-          email: this.userInfo.email,
-          sex: this.userInfo.sex,
-          username: this.userInfo.username
-        }
-      },
-      deep: true,
-      immediate: true
-    }
-  },
   props: {
     show: {
       type: Boolean,
@@ -123,6 +105,24 @@ export default {
         sex: '',
         username: ''
       }
+    }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  watch: {
+    show: {
+      handler(val) {
+        this.showDialog = val
+        this.ruleForm = {
+          realname: this.userInfo.realname,
+          email: this.userInfo.email,
+          sex: this.userInfo.sex,
+          username: this.userInfo.username
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {},

@@ -18,14 +18,14 @@
           class="scene-select">
           <i
             slot="suffix"
-            :class="['el-input__icon', 'el-icon-' + iconClass]"/>
+            :class="['el-input__icon', 'el-icon-' + iconClass]" />
         </el-input>
         <scene-list
           ref="sceneList"
           :crm-type="crmType"
           @scene="sceneSelect"
           @scene-handle="sceneHandle"
-          @hidden-scene="showScene=false"/>
+          @hidden-scene="showScene=false" />
       </el-popover>
       <el-button
         :style="{ 'margin-left': isSeas ? 0 : '20px'}"
@@ -39,7 +39,7 @@
         :obj="filterObj"
         :crm-type="crmType"
         :is-seas="isSeas"
-        @filter="handleFilter"/>
+        @filter="handleFilter" />
     </flexbox>
     <flexbox
       v-if="selectionList.length > 0"
@@ -58,41 +58,41 @@
     <filter-content
       v-if="filterObj.form && filterObj.form.length > 0"
       :obj="filterObj"
-      @delete="handleDeleteField"/>
+      @delete="handleDeleteField" />
 
     <transfer-handle
       :crm-type="crmType"
       :selection-list="selectionList"
       :dialog-visible.sync="transferDialogShow"
-      @handle="handleCallBack"/>
+      @handle="handleCallBack" />
     <teams-handle
       :crm-type="crmType"
       :title="teamsTitle"
       :selection-list="selectionList"
       :dialog-visible.sync="teamsDialogShow"
-      @handle="handleCallBack"/>
+      @handle="handleCallBack" />
     <alloc-handle
       :crm-type="crmType"
       :selection-list="selectionList"
       :dialog-visible.sync="allocDialogShow"
-      @handle="handleCallBack"/>
+      @handle="handleCallBack" />
     <deal-status-handle
       :crm-type="crmType"
       :selection-list="selectionList"
       :visible.sync="dealStatusShow"
-      @handle="handleCallBack"/>
+      @handle="handleCallBack" />
 
     <scene-set
       :dialog-visible.sync="showSceneSet"
       :crm-type="crmType"
-      @save-success="updateSceneList"/>
+      @save-success="updateSceneList" />
 
     <scene-create
       :field-list="fieldList"
       :crm-type="crmType"
       :dialog-visible.sync="showSceneCreate"
       :obj="sceneFilterObj"
-      @saveSuccess="updateSceneList"/>
+      @saveSuccess="updateSceneList" />
   </div>
 </template>
 
@@ -101,7 +101,6 @@ import { mapGetters } from 'vuex'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   filterIndexfields,
-  crmSceneIndex,
   crmSceneSave
 } from '@/api/customermanagement/common'
 import {
@@ -153,15 +152,6 @@ export default {
     SceneSet,
     DealStatusHandle
   },
-  computed: {
-    ...mapGetters(['crm', 'CRMConfig']),
-    iconClass() {
-      return this.showScene ? 'arrow-up' : 'arrow-down'
-    },
-    sceneName() {
-      return this.sceneData.name || this.getDefaultSceneName()
-    }
-  },
   props: {
     title: {
       type: String,
@@ -202,6 +192,15 @@ export default {
       teamsTitle: '', // 团队操作标题名
       allocDialogShow: false, // 公海分配操作提示框
       dealStatusShow: false // 成交状态修改框
+    }
+  },
+  computed: {
+    ...mapGetters(['crm', 'CRMConfig']),
+    iconClass() {
+      return this.showScene ? 'arrow-up' : 'arrow-down'
+    },
+    sceneName() {
+      return this.sceneData.name || this.getDefaultSceneName()
     }
   },
   watch: {},

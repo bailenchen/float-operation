@@ -124,7 +124,7 @@
 
 <script>
 import axios from 'axios'
-import { crmFileSave, crmFileDelete, crmFileSaveUrl } from '@/api/common'
+import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import { guid } from '@/utils'
 import CreateView from '@/components/CreateView'
 // 部门员工优化版
@@ -324,9 +324,6 @@ export default {
       } else {
         this.$message.error('内容至少填写一项')
       }
-    },
-    beforeRemove() {
-      return this.$confirm('此操作将永久删除该图片, 是否继续？')
     },
     // 图片和附件
     // 上传图片

@@ -243,7 +243,7 @@ export default {
               this.handleClose()
               this.$emit('submit')
             })
-            .catch(err => {
+            .catch(() => {
               this.loading = false
             })
         } else {

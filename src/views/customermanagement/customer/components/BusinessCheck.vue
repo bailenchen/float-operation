@@ -42,6 +42,26 @@ export default {
   /** 客户管理 的 客户列表  相关商机列表*/
   name: 'BusinessCheck',
   components: {},
+  props: {
+    show: Boolean,
+    data: {
+      type: Object,
+      default: () => {
+        return {
+          row: {
+            name: ''
+          }
+        }
+      }
+    }
+  },
+  data() {
+    return {
+      loading: false,
+      list: [],
+      fieldList: []
+    }
+  },
   computed: {
     ...mapGetters(['crm']),
     canShowIndex() {
@@ -63,26 +83,6 @@ export default {
       },
       deep: true,
       immediate: true
-    }
-  },
-  props: {
-    show: Boolean,
-    data: {
-      type: Object,
-      default: () => {
-        return {
-          row: {
-            name: ''
-          }
-        }
-      }
-    }
-  },
-  data() {
-    return {
-      loading: false,
-      list: [],
-      fieldList: []
     }
   },
   mounted() {

@@ -169,7 +169,7 @@ export default {
             return item
           })
         })
-        .catch(err => {})
+        .catch(() => {})
     },
 
     close() {
