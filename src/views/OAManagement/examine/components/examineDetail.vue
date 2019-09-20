@@ -3,7 +3,7 @@
               class="d-view"
               :listenerIDs="['workbench-main-container']"
               :noListenerClass="noListenerClass"
-              @side-close="hideView"
+              @close="hideView"
               :body-style="{padding: '10px 30px', height: '100%'}">
     <flexbox orient="vertical"
              style="height: 100%;">

@@ -28,7 +28,7 @@
                     border
                     highlight-current-row
                     style="width: 100%"
-                    :cell-style="cellStyle"
+                    :cell-class-name="cellClassName"
                     @row-click="handleRowClick"
                     @sort-change="sortChange">
             <el-table-column v-for="(item, index) in showFieldList"
@@ -509,9 +509,9 @@ export default {
     },
 
     /**
-     * 通过回调控制style
+     * 通过回调控制class
      */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
+    cellClassName({ row, column, rowIndex, columnIndex }) {
       if (
         (column.property === 'customerName' ||
           column.property === 'businessName' ||
@@ -523,7 +523,7 @@ export default {
           (this.crmType === 'record' && column.property === 'count')) &&
         row[column.property]
       ) {
-        return { color: '#2362FB', cursor: 'pointer' }
+        return 'can-visit--underline'
       } else {
         return ''
       }

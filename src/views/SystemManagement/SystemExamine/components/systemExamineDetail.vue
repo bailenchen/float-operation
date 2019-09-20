@@ -2,7 +2,7 @@
   <slide-view class="d-view"
               :listenerIDs="['manager-main-container']"
               :noListenerIDs="['examine-table']"
-              @side-close="hideView"
+              @close="hideView"
               :appendToBody="true"
               :body-style="{padding: '10px 30px', height: '100%'}">
     <flexbox orient="vertical"

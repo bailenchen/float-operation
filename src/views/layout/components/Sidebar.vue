@@ -11,8 +11,7 @@
         <slot name="add"></slot>
         <div slot="reference"
              @click="quicklyCreate"
-             class="create-button"
-             :style="{ 'background-color': createButtonBackgroundColor }">
+             class="create-button">
           <div v-show="!buttonCollapse"
                class="button-name">{{createButtonTitle}}</div>
           <div v-show="!buttonCollapse"
@@ -37,25 +36,28 @@
         <router-link v-if="!item.children"
                      :key="index"
                      :to="getFullPath(item.path)">
-          <el-menu-item :index="getFullPath(item.path)">
-            <div class="menu-item-content">
-              <i class="wukong"
-                 :class="'wukong-' + item.meta.icon"
-                 :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
-              <span slot="title">{{item.meta.title}}</span>
-              <el-badge v-if="item.meta.num && item.meta.num > 0"
-                        :max="99"
-                        :value="item.meta.num"></el-badge>
-            </div>
-          </el-menu-item>
+          <el-tooltip :disabled="showTooltip"
+                      effect="dark"
+                      :content="item.meta.title"
+                      placement="right">
+            <el-menu-item :index="getFullPath(item.path)">
+              <div class="menu-item-content">
+                <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
+                   :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
+                <span slot="title">{{item.meta.title}}</span>
+                <el-badge v-if="item.meta.num && item.meta.num > 0"
+                          :max="99"
+                          :value="item.meta.num"></el-badge>
+              </div>
+            </el-menu-item>
+          </el-tooltip>
         </router-link>
         <el-submenu v-else
                     :key="index"
                     :index="getFullPath(item.path)">
           <template slot="title"
                     v-if="!item.hidden">
-            <i class="wukong"
-               :class="'wukong-' + item.meta.icon"
+            <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
                :style="{fontSize: item.meta.fontSize || '16px'}"></i>
             <span slot="title">{{item.meta.title}}</span>
           </template>
@@ -99,18 +101,23 @@ export default {
     collapse: function(val) {
       if (val) {
         this.buttonCollapse = val
+        this.changeMenu()
       } else {
         setTimeout(() => {
           this.buttonCollapse = val
+          this.changeMenu()
         }, 300)
       }
-      this.$nextTick(() => {
-        this.changeMenuItemPadding(this.$refs.menu)
-      })
     }
   },
   computed: {
-    ...mapGetters(['activeIndex', 'collapse'])
+    ...mapGetters(['activeIndex', 'collapse']),
+    preIcon() {
+      return this.mainRouter == 'crm' ? 'wk' : 'wukong'
+    },
+    showTooltip() {
+      return !this.collapse
+    }
   },
   props: {
     mainRouter: {
@@ -150,22 +157,35 @@ export default {
       type: String,
       default: ''
     },
-    createButtonBackgroundColor: {
-      type: String,
-      default: '#2362FB'
-    },
     createButtonIcon: {
       type: String,
-      default: 'el-icon-arrow-right'
+      default: 'el-icon-plus'
     }
   },
   mounted() {
     this.buttonCollapse = this.collapse
-    this.$nextTick(() => {
-      this.changeMenuItemPadding(this.$refs.menu)
-    })
+    this.changeMenu()
   },
   methods: {
+    changeMenu() {
+      this.$nextTick(() => {
+        this.checkMenuInfo()
+      })
+    },
+
+    checkMenuInfo() {
+      setTimeout(() => {
+        if (
+          (this.$refs.menu.$children && !this.$refs.menu.$children.length) ||
+          !this.$refs.menu.$children
+        ) {
+          this.checkMenuInfo()
+        } else if (this.$refs.menu.$children) {
+          this.changeMenuItemPadding(this.$refs.menu)
+        }
+      }, 0)
+    },
+
     changeMenuItemPadding(menus) {
       for (let index = 0; index < menus.$children.length; index++) {
         const element = menus.$children[index]
@@ -174,21 +194,21 @@ export default {
             const menuItem = element.$children[0]
             let paddingLeft = menuItem.$el.style.paddingLeft
             paddingLeft = paddingLeft.replace('px', '')
-
-            paddingLeft = parseFloat(paddingLeft) * 0.7
-
-            menuItem.$el.style.paddingLeft = paddingLeft + 'px'
+            if (parseFloat(paddingLeft) % 20 == 0) {
+              paddingLeft = parseFloat(paddingLeft) * 0.7
+              menuItem.$el.style.paddingLeft = paddingLeft + 'px'
+            }
           }
         } else if (element.$options.name === 'ElSubmenu') {
           if (element.$el.children && element.$el.children.length) {
             if (element.$refs['submenu-title']) {
               let paddingLeft = element.$refs['submenu-title'].style.paddingLeft
               paddingLeft = paddingLeft.replace('px', '')
-
-              paddingLeft = parseFloat(paddingLeft) * 0.7
-
-              element.$refs['submenu-title'].style.paddingLeft =
-                paddingLeft + 'px'
+              if (parseFloat(paddingLeft) % 20 == 0) {
+                paddingLeft = parseFloat(paddingLeft) * 0.7
+                element.$refs['submenu-title'].style.paddingLeft =
+                  paddingLeft + 'px'
+              }
             }
           }
 
@@ -322,6 +342,8 @@ export default {
     padding: 0 15px;
     height: 36px;
     border-radius: 4px;
+    background-color: rgba($color: #fff, $alpha: 0.1);
+    color: #999;
 
     .button-name {
       flex: 1;
@@ -341,7 +363,8 @@ export default {
   }
 
   .create-button:hover {
-    background-color: rgba($color: #fff, $alpha: 0.1) !important;
+    color: white !important;
+    background-color: $xr-color-primary !important;
   }
 }
 
@@ -372,9 +395,11 @@ export default {
   position: absolute;
   top: 0;
   padding: 18px 20px;
+  cursor: pointer;
 }
 
-.wukong {
+.wukong,
+.wk {
   margin-right: 8px;
 }
 

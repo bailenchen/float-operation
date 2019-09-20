@@ -14,7 +14,7 @@
               full: Boolean(form.phone),
               focus: focusKey === 'phone'
             }"
-                class="form-icon wk wk-username" />
+                class="form-icon wk wk-user" />
         </el-input>
       </el-form-item>
 

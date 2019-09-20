@@ -1,6 +1,7 @@
 <template>
   <div class="c-container">
-    <div class="title">{{title}}</div>
+    <flexbox class="title"><img :src="titleIcon"
+           class="title-icon">{{title}}</flexbox>
     <el-input class="sc-container"
               :placeholder="placeholder"
               v-model="inputContent"
@@ -13,7 +14,7 @@
     <div class="right-container">
       <el-button @click="createClick"
                  v-if="canSave"
-                 class="create-button--orange"
+                 class="create-btn--orange"
                  icon="el-icon-plus"
                  type="primary">{{mainTitle}}</el-button>
       <el-dropdown trigger="click"
@@ -23,6 +24,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="(item, index) in moreTypes"
                             :key="index"
+                            :icon="item.icon | wkIconPre"
                             :command="item.type">{{item.name}}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -57,6 +59,10 @@ export default {
         return false
       }
       return this.crm[this.crmType].save
+    },
+
+    titleIcon() {
+      return require(`@/assets/img/crm/${this.crmType}.png`)
     }
   },
   data() {
@@ -101,10 +107,10 @@ export default {
     // 线索和客户判断更多操作
     if (!this.isSeas) {
       if (this.crm[this.crmType].excelimport) {
-        this.moreTypes.push({ type: 'enter', name: '导入' })
+        this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
       }
       if (this.crm[this.crmType].excelexport) {
-        this.moreTypes.push({ type: 'out', name: '导出' })
+        this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
       }
     } else {
       // 客户池的导出关键字不同
@@ -162,15 +168,23 @@ export default {
   height: 60px;
   position: relative;
   z-index: 100;
+  .title-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+
   .title {
     float: left;
-    padding: 0 20px;
-    font-size: 18px;
-    line-height: 60px;
+    width: auto;
+    padding-left: 28px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 15px;
   }
   .sc-container {
     width: 300px;
-    margin: -18px 0 0 -150px;
+    margin: -16px 0 0 -150px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -187,10 +201,10 @@ export default {
   .right-container {
     margin-right: -10px;
     float: right;
-    margin: 12px 20px 0 0;
+    margin: 15px 20px 0 0;
     position: relative;
 
-    .create-button--orange {
+    .create-btn--orange {
       margin-right: 10px;
     }
 

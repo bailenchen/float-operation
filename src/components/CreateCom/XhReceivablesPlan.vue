@@ -14,8 +14,8 @@
 <script type="text/javascript">
 import stringMixin from './stringMixin'
 import {
-  crmContractQueryReceivablesPlan
-} from '@/api/customermanagement/contract'
+  crmReceivablesByContractId
+} from '@/api/customermanagement/money'
 
 export default {
   name: 'xh-receivables-plan', // 回款 下的 回款计划
@@ -53,7 +53,7 @@ export default {
   methods: {
     getPlanList() {
       this.loading = true
-      crmContractQueryReceivablesPlan({ contractId: this.relation.contractId, pageType: 0})
+      crmReceivablesByContractId({ contractId: this.relation.contractId})
         .then(res => {
           this.loading = false
           this.option = res.data

@@ -27,7 +27,7 @@
                 border
                 highlight-current-row
                 style="width: 100%"
-                :cell-style="cellStyle"
+                :cell-class-name="cellClassName"
                 @row-click="handleRowClick"
                 @sort-change="sortChange"
                 @header-dragend="handleHeaderDragend"
@@ -44,9 +44,8 @@
                          width="38">
           <template slot="header"
                     slot-scope="slot">
-            <i class="wukong wukong-business"
-               :style="{ 'color': '#2486E4'}"
-               style="cursor: not-allowed; opacity: 0.5;"></i>
+            <i class="wk wk-business"
+               style="cursor: not-allowed; color: #9DA9C2;"></i>
           </template>
           <template slot-scope="scope">
             <el-popover placement="right"
@@ -62,8 +61,8 @@
               </business-check>
               <i slot="reference"
                  @click="businessCheckClick($event, scope)"
-                 class="wukong wukong-business"
-                 style="color: '#2486E4'"
+                 class="wk wk-business"
+                 style="color: #FC6E51"
                  :style="{'opacity' :scope.row.businessCount > 0 ? 1 : 0}"></i>
             </el-popover>
           </template>
@@ -77,10 +76,6 @@
                          :label="item.label"
                          :width="item.width"
                          :formatter="fieldFormatter">
-          <!-- <template slot="header"
-                    slot-scope="scope">
-            <div class="table-head-name">{{scope.column.label}}</div>
-          </template> -->
         </el-table-column>
         <el-table-column v-if="CRMConfig.customerConfig == 1"
                          prop="poolDay"
@@ -97,12 +92,12 @@
         <el-table-column>
         </el-table-column>
         <el-table-column fixed="right"
-                         width="36">
+                         width="40"
+                         :resizable="false">
           <template slot="header"
                     slot-scope="slot">
-            <img src="@/assets/img/t_set.png"
-                 @click="handleTableSet"
-                 class="table-set" />
+            <i class="wk wk-config table-set"
+               @click="handleTableSet"></i>
           </template>
         </el-table-column>
       </el-table>
@@ -161,13 +156,15 @@ export default {
       this.rowType = 'business'
       this.showDview = true
     },
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (
-        column.property === 'customerName' ||
-        column.property === 'businessCheck'
-      ) {
-        return { color: '#2362FB', cursor: 'pointer' }
+
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'customerName') {
+        return 'can-visit--underline'
+      } else if (column.property === 'businessCheck') {
+        return 'can-visit'
       } else {
         return ''
       }

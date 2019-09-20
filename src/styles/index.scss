@@ -207,19 +207,6 @@ div[lazy=loading] {
   outline: none;
 }
 
-// 创建按钮
-.create-button--orange {
-  background-color: #fc6e51;
-  border-color: #fc6e51;
-}
-
-.create-button--orange:hover,
-.create-button--orange:focus {
-  background: #fc7d63;
-  border-color: #fc7d63;
-  color: #FFFFFF;
-}
-
 // Pagination 分页
 .el-pagination {
   * {
@@ -232,4 +219,40 @@ div[lazy=loading] {
     color: $xr-color-primary !important;
     background-color: #f4f4f5 !important;
   }
+}
+
+// 可访问
+.can-visit,
+.can-visit--underline {
+  color: #2362FB;
+  cursor: pointer
+}
+
+.can-visit--underline:hover {
+  text-decoration: underline;
+}
+
+// button
+// 编辑
+.edit-btn--color {
+  background-color: #389E0B;
+  border-color: #389E0B;
+
+  i {
+    font-size: 13px;
+    margin-right: 5px;
+  }
+}
+
+// 创建按钮
+.create-btn--orange {
+  background-color: #fc6e51;
+  border-color: #fc6e51;
+}
+
+.create-btn--orange:hover,
+.create-btn--orange:focus {
+  background: #fc7d63;
+  border-color: #fc7d63;
+  color: #FFFFFF;
 }

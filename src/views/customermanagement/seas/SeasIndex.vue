@@ -29,7 +29,7 @@
                 border
                 highlight-current-row
                 style="width: 100%"
-                :cell-style="cellStyle"
+                :cell-class-name="cellClassName"
                 @row-click="handleRowClick"
                 @sort-change="sortChange"
                 @header-dragend="handleHeaderDragend"
@@ -48,20 +48,16 @@
                          :label="item.label"
                          :width="item.width"
                          :formatter="fieldFormatter">
-          <template slot="header"
-                    slot-scope="scope">
-            <div class="table-head-name">{{scope.column.label}}</div>
-          </template>
         </el-table-column>
         <el-table-column>
         </el-table-column>
         <el-table-column fixed="right"
-                         width="36">
+                         width="40"
+                         :resizable="false">
           <template slot="header"
                     slot-scope="slot">
-            <img src="@/assets/img/t_set.png"
-                 @click="handleTableSet"
-                 class="table-set" />
+            <i class="wk wk-config table-set"
+               @click="handleTableSet"></i>
           </template>
         </el-table-column>
       </el-table>
@@ -111,13 +107,14 @@ export default {
   computed: {},
   mounted() {},
   methods: {
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (
-        column.property === 'customerName' ||
-        column.property === 'businessCheck'
-      ) {
-        return { color: '#2362FB', cursor: 'pointer' }
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'customerName') {
+        return 'can-visit--underline'
+      } else if (column.property === 'businessCheck') {
+        return 'can-visit'
       } else {
         return ''
       }

@@ -9,17 +9,15 @@
         {{item.name}}
       </div>
     </div>
-    <div>
+    <div class="handle-interval">
       <flexbox class="handle-button"
                @click.native="addScene">
-        <img class="handle-button-icon"
-             src="@/assets/img/scene_add.png" />
+        <i class="wk wk-add handle-button-icon"></i>
         <div class="handle-button-name">新建场景</div>
       </flexbox>
       <flexbox class="handle-button"
                @click.native="setScene">
-        <img class="handle-button-icon"
-             src="@/assets/img/scene_set.png" />
+        <i class="wk wk-manage handle-button-icon"></i>
         <div class="handle-button-name">管理</div>
       </flexbox>
     </div>
@@ -112,13 +110,14 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .scene-container {
   position: relative;
-  width: 150px;
+  width: 180px;
 }
 
 .scene-list {
   max-height: 240px;
   overflow-y: auto;
   font-size: 12px;
+  margin-bottom: 10px;
   .scene-list-item {
     color: #333;
     padding: 10px 15px;
@@ -137,19 +136,25 @@ export default {
 }
 
 .handle-button {
-  padding: 10px 20px;
+  padding: 6px 20px;
+  font-size: 12px;
   cursor: pointer;
+  color: $xr-color-primary;
   .handle-button-icon {
-    display: block;
-    width: 15px;
-    height: 15px;
     margin-right: 8px;
+    margin-top: 3px;
   }
   .handle-button-name {
     font-size: 12px;
   }
 }
 .handle-button:hover {
-  color: $xr-color-primary;
+  .handle-button-name {
+    text-decoration: underline;
+  }
+}
+
+.handle-interval {
+  border-top: 1px solid #EFEFEF;
 }
 </style>

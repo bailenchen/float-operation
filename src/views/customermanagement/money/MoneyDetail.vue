@@ -5,7 +5,7 @@
               :listenerIDs="listenerIDs"
               :noListenerIDs="noListenerIDs"
               :noListenerClass="noListenerClass"
-              @side-close="hideView"
+              @close="hideView"
               :body-style="{padding: 0, height: '100%'}">
     <flexbox v-if="canShowDetail"
              v-loading="loading"

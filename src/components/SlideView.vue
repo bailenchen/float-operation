@@ -6,6 +6,10 @@
              id="slide"
              class="slide-detail-card-container"
              :body-style="bodyStyle">
+      <el-button class="close-btn"
+                 type="primary"
+                 icon="el-icon-close"
+                 @click="close"></el-button>
       <slot></slot>
     </el-card>
   </transition>
@@ -24,6 +28,10 @@ export default {
     }
   },
   props: {
+    showClose: {
+      type: Boolean,
+      default: true
+    },
     bodyStyle: {
       type: Object,
       default: { padding: 0 }
@@ -97,11 +105,14 @@ export default {
         hidden = false
       }
       if (hidden) {
-        this.$emit('side-close')
+        this.close()
       }
     },
     afterEnter() {
       this.$emit('afterEnter')
+    },
+    close() {
+      this.$emit('close')
     }
   },
 
@@ -121,5 +132,27 @@ export default {
 .slide-fade-enter,
 .slide-fade-leave-to {
   transform: translateX(100%);
+}
+
+.el-card {
+  overflow: visible;
+}
+
+.slide-detail-card-container {
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 160px;
+  left: -40px;
+  z-index: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 6px;
+
+  /deep/ i {
+    font-size: 26px;
+  }
 }
 </style>

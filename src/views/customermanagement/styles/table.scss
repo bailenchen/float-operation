@@ -15,6 +15,9 @@
     color: #333333;
     font-size: 12px;
     font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     .sort-caret {
       transform: scale(0.8);
@@ -26,12 +29,17 @@
   }
 }
 
-.el-table /deep/ thead  {
+.el-table /deep/ thead th:hover {
+  background-color: #E7EDF4;
+}
+
+
+.el-table /deep/ thead {
+
   .is-sortable.ascending,
   .is-sortable.descending {
     background-color: #E7EDF4;
   }
-
 }
 
 .el-table /deep/ td {
@@ -86,6 +94,7 @@
   width: 15px;
   margin-top: 5px;
   cursor: pointer;
+  color: #9DA9C2;
 }
 
 // 列表状态
@@ -97,11 +106,3 @@
   font-size: 12px;
   margin: 0 auto;
 }
-
-// .el-table /deep/ .sort-caret.ascending {
-//   top: -6px;
-// }
-
-// .el-table /deep/ .caret-wrapper {
-//   height: 24px;
-// }
