@@ -1,24 +1,28 @@
 <template>
   <el-container>
     <el-header class="nav-container">
-      <navbar navIndex="/project"
-              @nav-items-click="navClick"></navbar>
+      <navbar
+        nav-index="/project"
+        @nav-items-click="navClick"/>
     </el-header>
     <el-container>
-      <el-aside width="auto"
-                class="aside-container">
-        <sidebar :items="sidebarItems"
-                 :createButtonTitle="permissonProject ? '创建项目' : ''"
-                 createButtonIcon="el-icon-plus"
-                 mainRouter="project"
-                 @quicklyCreate="quicklyCreate"></sidebar>
+      <el-aside
+        width="auto"
+        class="aside-container">
+        <sidebar
+          :items="sidebarItems"
+          :create-button-title="permissonProject ? '创建项目' : ''"
+          create-button-icon="el-icon-plus"
+          main-router="project"
+          @quicklyCreate="quicklyCreate"/>
       </el-aside>
       <el-main id="project-main-container">
-        <app-main></app-main>
+        <app-main/>
       </el-main>
     </el-container>
-    <add-project v-if="isCreate"
-                 @close="isCreate = false"></add-project>
+    <add-project
+      v-if="isCreate"
+      @close="isCreate = false"/>
   </el-container>
 </template>
 
@@ -60,6 +64,13 @@ export default {
     this.getTagMenu()
     this.addNotification()
   },
+
+  beforeDestroy() {
+    this.$bus.$off('project-setting')
+    this.$bus.$off('add-project')
+    this.$bus.$off('delete-project')
+    this.$bus.$off('recover-project')
+  },
   methods: {
     navClick(index) {},
 
@@ -73,7 +84,7 @@ export default {
     getProjectMenu() {
       // 获取项目列表
       let projectMenu = null
-      for (let item of this.sidebarItems) {
+      for (const item of this.sidebarItems) {
         if (item.meta && item.meta.title == '项目') {
           projectMenu = item
           break
@@ -84,7 +95,7 @@ export default {
         workIndexWorkListAPI()
           .then(res => {
             projectMenu.children = []
-            for (let item of res.data) {
+            for (const item of res.data) {
               projectMenu.children.push({
                 path: 'list/' + item.workId,
                 meta: {
@@ -103,7 +114,7 @@ export default {
      */
     getTagMenu() {
       let tagMenu = null
-      for (let item of this.sidebarItems) {
+      for (const item of this.sidebarItems) {
         if (item.meta && item.meta.title == '标签') {
           tagMenu = item
           break
@@ -114,7 +125,7 @@ export default {
         workTasklableIndexAPI()
           .then(res => {
             tagMenu.children = []
-            for (let item of res.data) {
+            for (const item of res.data) {
               tagMenu.children.push({
                 path: 'tag/' + item.labelId,
                 meta: {
@@ -134,9 +145,9 @@ export default {
     addNotification() {
       // 项目设置
       this.$bus.$on('project-setting', (name, id) => {
-        for (let item of this.sidebarItems) {
+        for (const item of this.sidebarItems) {
           if (item.meta && item.meta.title == '项目') {
-            for (let i in item.children) {
+            for (const i in item.children) {
               if (item.children[i].meta.id == id) {
                 item.children[i].meta.title = name
                 break
@@ -148,7 +159,7 @@ export default {
 
       // 项目新增
       this.$bus.$on('add-project', (name, id) => {
-        for (let item of this.sidebarItems) {
+        for (const item of this.sidebarItems) {
           if (item.meta && item.meta.title == '项目') {
             item.children.push({
               path: 'list/' + id,
@@ -172,7 +183,7 @@ export default {
 
       // 恢复项目
       this.$bus.$on('recover-project', (name, id) => {
-        for (let item of this.sidebarItems) {
+        for (const item of this.sidebarItems) {
           if (item.meta && item.meta.title == '项目') {
             item.children.push({
               path: 'list/' + id,
@@ -187,9 +198,9 @@ export default {
 
       // 项目删除
       this.$bus.$on('delete-project', id => {
-        for (let item of this.sidebarItems) {
+        for (const item of this.sidebarItems) {
           if (item.meta && item.meta.title == '项目') {
-            for (let i in item.children) {
+            for (const i in item.children) {
               if (item.children[i].meta.id == id) {
                 item.children.splice(i, 1)
                 this.$router.replace({
@@ -202,13 +213,6 @@ export default {
         }
       })
     }
-  },
-
-  beforeDestroy() {
-    this.$bus.$off('project-setting')
-    this.$bus.$off('add-project')
-    this.$bus.$off('delete-project')
-    this.$bus.$off('recover-project')
   }
 }
 </script>

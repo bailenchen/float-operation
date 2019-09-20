@@ -3,22 +3,26 @@
     <get-sms-code ref="smsCode" />
 
     <div class="control">
-      <div class="btn"
-           @click="handleLogin">
+      <div
+        class="btn"
+        @click="handleLogin">
         登&nbsp;&nbsp;&nbsp;录
       </div>
       <div class="others">
-        <div class="box"
-             @click="$emit('toggle', 'LoginByPwd')">
-          <span class="icon wk wk-password"
-                style="font-size: 14px" />
+        <div
+          class="box"
+          @click="$emit('toggle', 'LoginByPwd')">
+          <span
+            class="icon wk wk-password"
+            style="font-size: 14px" />
           <span class="text">密码登录</span>
         </div>
       </div>
     </div>
 
-    <div class="active-btn"
-         @click="$emit('toggle', 'CreateNewCompany')">
+    <div
+      class="active-btn"
+      @click="$emit('toggle', 'CreateNewCompany')">
       创建新企业
     </div>
   </div>
@@ -47,7 +51,7 @@ export default {
   },
   methods: {
     handleLogin() {
-      let data = this.$refs.smsCode.getData()
+      const data = this.$refs.smsCode.getData()
       if (!data) return
       this.$store
         .dispatch('Login', {

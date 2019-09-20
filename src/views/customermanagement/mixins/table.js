@@ -60,7 +60,7 @@ export default {
       search: '', // 搜索内容
       /** 控制详情展示 */
       rowID: '', // 行信息
-      rowType: '', //详情类型
+      rowType: '', // 详情类型
       showDview: false,
       /** 高级筛选 */
       filterObj: {}, // 筛选确定数据
@@ -105,7 +105,7 @@ export default {
       }
       if (this.sortData.order) {
         params.sortField = this.sortData.prop
-        params.order = this.sortData.order == "ascending" ? 2 : 1
+        params.order = this.sortData.order == 'ascending' ? 2 : 1
       }
 
       if (this.sceneId) {
@@ -336,23 +336,23 @@ export default {
           product: crmProductExcelAllExport
         }[this.crmType]
       }
-      let loading = Loading.service({ fullscreen: true, text: '导出中...' })
+      const loading = Loading.service({ fullscreen: true, text: '导出中...' })
       request(params)
         .then(res => {
           var blob = new Blob([res.data], {
             type: 'application/vnd.ms-excel;charset=utf-8'
           })
           var downloadElement = document.createElement('a')
-          var href = window.URL.createObjectURL(blob) //创建下载的链接
+          var href = window.URL.createObjectURL(blob) // 创建下载的链接
           downloadElement.href = href
           downloadElement.download =
             decodeURI(
               res.headers['content-disposition'].split('filename=')[1]
-            ) || '' //下载后文件名
+            ) || '' // 下载后文件名
           document.body.appendChild(downloadElement)
-          downloadElement.click() //点击下载
-          document.body.removeChild(downloadElement) //下载完成移除元素
-          window.URL.revokeObjectURL(href) //释放掉blob对象
+          downloadElement.click() // 点击下载
+          document.body.removeChild(downloadElement) // 下载完成移除元素
+          window.URL.revokeObjectURL(href) // 释放掉blob对象
           loading.close()
         })
         .catch(() => {

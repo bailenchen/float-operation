@@ -81,7 +81,7 @@ export function crmContractTransfer(data) {
 
 /**
  * 合同下回款
- * @param {*} data 
+ * @param {*} data
  */
 export function crmContractQueryReceivables(data) {
   return request({
@@ -93,7 +93,7 @@ export function crmContractQueryReceivables(data) {
 
 /**
  * 合同下回款计划
- * @param {*} data 
+ * @param {*} data
  */
 export function crmContractQueryReceivablesPlan(data) {
   return request({
@@ -105,7 +105,7 @@ export function crmContractQueryReceivablesPlan(data) {
 
 /**
  * 跟进记录
- * @param {*} data 
+ * @param {*} data
  */
 export function crmContractRecordSave(data) {
   return request({

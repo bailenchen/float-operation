@@ -1,136 +1,156 @@
 <template>
   <div class="register-new-company">
-    <get-sms-code v-show="!showNext"
-                  ref="smsCode" />
+    <get-sms-code
+      v-show="!showNext"
+      ref="smsCode" />
 
     <el-form v-show="showNext">
       <el-form-item>
-        <el-input ref="company_name"
-                  v-model.trim="form.company_name"
-                  :class="{error: !validateRes.company_name}"
-                  placeholder="请输入企业名称(必填)"
-                  type="text"
-                  @focus="focusKey = 'company_name'"
-                  @blur="checkFromItem('company_name', form.company_name)">
-          <span slot="prefix"
-                :class="{
+        <el-input
+          ref="company_name"
+          v-model.trim="form.company_name"
+          :class="{error: !validateRes.company_name}"
+          placeholder="请输入企业名称(必填)"
+          type="text"
+          @focus="focusKey = 'company_name'"
+          @blur="checkFromItem('company_name', form.company_name)">
+          <span
+            slot="prefix"
+            :class="{
               full: Boolean(form.company_name),
               focus: focusKey === 'company_name'
             }"
-                class="form-icon wk wk-enterprise"
-                style="font-size: 13px" />
+            class="form-icon wk wk-enterprise"
+            style="font-size: 13px" />
         </el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-input ref="company_credit_number"
-                  v-model.trim="form.company_credit_number"
-                  :class="{error: !validateRes.company_credit_number}"
-                  placeholder="请输入企业信用号(必填)"
-                  type="text"
-                  @focus="focusKey = 'company_credit_number'"
-                  @blur="checkFromItem('company_credit_number', form.company_credit_number)">
-          <span slot="prefix"
-                :class="{
+        <el-input
+          ref="company_credit_number"
+          v-model.trim="form.company_credit_number"
+          :class="{error: !validateRes.company_credit_number}"
+          placeholder="请输入企业信用号(必填)"
+          type="text"
+          @focus="focusKey = 'company_credit_number'"
+          @blur="checkFromItem('company_credit_number', form.company_credit_number)">
+          <span
+            slot="prefix"
+            :class="{
               full: Boolean(form.company_credit_number),
               focus: focusKey === 'company_credit_number'
             }"
-                class="form-icon wk wk-credit"
-                style="font-size: 16px" />
+            class="form-icon wk wk-credit"
+            style="font-size: 16px" />
         </el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-popover v-model="pwdPopover"
-                    :width="width"
-                    placement="bottom-start"
-                    popper-class="no-padding-popover"
-                    trigger="focus">
+        <el-popover
+          v-model="pwdPopover"
+          :width="width"
+          placement="bottom-start"
+          popper-class="no-padding-popover"
+          trigger="focus">
           <div class="pwd-popover-content">
             <div class="box">
               <span class="text">密码强度</span>
-              <i v-for="i in 4"
-                 :key="i"
-                 :class="{active: i <= rankIndex}"
-                 class="item" />
+              <i
+                v-for="i in 4"
+                :key="i"
+                :class="{active: i <= rankIndex}"
+                class="item" />
             </div>
             <div class="desc">
               <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
-              <span v-if="rankIndex >= 3"
-                    class="icon wk wk-success" />
-              <span v-else
-                    class="icon error wk wk-close" />
+              <span
+                v-if="rankIndex >= 3"
+                class="icon wk wk-success" />
+              <span
+                v-else
+                class="icon error wk wk-close" />
             </div>
           </div>
-          <div slot="reference"
-               class="pwd-popover-control">
-            <el-input ref="password"
-                      v-model.trim="form.password"
-                      :maxlength="20"
-                      :class="{error: !validateRes.password}"
-                      placeholder="请输入密码"
-                      type="password"
-                      @input.native="calcRank"
-                      @focus="focusKey = 'password'"
-                      @blur="checkFromItem('password', form.password)">
-              <span slot="prefix"
-                    :class="{
+          <div
+            slot="reference"
+            class="pwd-popover-control">
+            <el-input
+              ref="password"
+              v-model.trim="form.password"
+              :maxlength="20"
+              :class="{error: !validateRes.password}"
+              placeholder="请输入密码"
+              type="password"
+              @input.native="calcRank"
+              @focus="focusKey = 'password'"
+              @blur="checkFromItem('password', form.password)">
+              <span
+                slot="prefix"
+                :class="{
                   full: Boolean(form.password),
                   focus: focusKey === 'password'
                 }"
-                    class="form-icon wk wk-circle-password" />
+                class="form-icon wk wk-circle-password" />
             </el-input>
           </div>
         </el-popover>
       </el-form-item>
 
       <el-form-item>
-        <el-input ref="re_password"
-                  v-model.trim="form.re_password"
-                  :maxlength="20"
-                  :class="{error: !validateRes.re_password}"
-                  placeholder="请输入确认密码"
-                  type="password"
-                  @focus="focusKey = 're_password'"
-                  @blur="checkForm">
-          <span slot="prefix"
-                :class="{
+        <el-input
+          ref="re_password"
+          v-model.trim="form.re_password"
+          :maxlength="20"
+          :class="{error: !validateRes.re_password}"
+          placeholder="请输入确认密码"
+          type="password"
+          @focus="focusKey = 're_password'"
+          @blur="checkForm">
+          <span
+            slot="prefix"
+            :class="{
               full: Boolean(form.re_password),
               focus: focusKey === 're_password'
             }"
-                class="form-icon wk wk-circle-password" />
+            class="form-icon wk wk-circle-password" />
         </el-input>
       </el-form-item>
     </el-form>
 
-    <div :class="{ok: !Boolean(errorInfo)}"
-         class="error-info">
-      <div v-if="errorInfo"
-           class="box">
-        <img src="~@/assets/login/error.png"
-             alt=""
-             class="icon">
+    <div
+      :class="{ok: !Boolean(errorInfo)}"
+      class="error-info">
+      <div
+        v-if="errorInfo"
+        class="box">
+        <img
+          src="~@/assets/login/error.png"
+          alt=""
+          class="icon">
         <span>{{ errorInfo }}</span>
       </div>
     </div>
 
     <div class="control">
-      <el-button v-if="!showNext"
-           class="btn"
-           @click="handleNext">
+      <el-button
+        v-if="!showNext"
+        class="btn"
+        @click="handleNext">
         下 一 步
       </el-button>
-      <el-button v-else
-           :disabled="disabledBtn"
-           class="btn"
-           @click="handleRegister">
+      <el-button
+        v-else
+        :disabled="disabledBtn"
+        class="btn"
+        @click="handleRegister">
         立&nbsp;即&nbsp;创&nbsp;建
       </el-button>
     </div>
 
     <div class="to-login">
-      已有账号，<span class="special"
-            @click="$emit('toggle', 'LoginByPwd')">去登录</span>
+      已有账号，<span
+        class="special"
+        @click="$emit('toggle', 'LoginByPwd')">去登录</span>
     </div>
   </div>
 </template>
@@ -194,7 +214,7 @@ export default {
      */
     handleNext() {
       this.clearError()
-      let data = this.$refs.smsCode.getData()
+      const data = this.$refs.smsCode.getData()
       if (!data) return
       this.form = {
         ...this.form,
@@ -207,11 +227,11 @@ export default {
      * 注册
      */
     handleRegister() {
-      if (this.disabledBtn) return;
+      if (this.disabledBtn) return
       this.disabledBtn = true
-      let flag = this.checkForm()
+      const flag = this.checkForm()
       if (!flag) return
-      let params = Object.assign({}, this.form)
+      const params = Object.assign({}, this.form)
       if (params.hasOwnProperty('re_password')) {
         delete params.re_password
       }
@@ -234,9 +254,9 @@ export default {
      */
     checkForm() {
       this.clearError()
-      let arr = ['company_name', 'company_credit_number', 'password']
+      const arr = ['company_name', 'company_credit_number', 'password']
       for (let i = 0; i < arr.length; i++) {
-        let res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
+        const res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
         if (!res) return false
       }
       if (this.form.password !== this.form.re_password) {
@@ -261,7 +281,7 @@ export default {
      * 密码强度计算
      */
     calcRank() {
-      let pwd = this.form.password
+      const pwd = this.form.password
       if (pwd.length < 8) {
         this.rankIndex = 0
         return
@@ -271,13 +291,13 @@ export default {
       // let reg3 = /[0-9]/; // 至少一个数字
       // let reg4 = /[~!@#$%^&*()_+`\-={}:";'<>?,.\/]/; // 至少一个特殊字符
 
-      let regArr = [
+      const regArr = [
         /[A-Z]/,
         /[a-z]/,
         /[0-9]/,
         /[~!@#$%^&*()_+`\-={}:";'<>?,.\/]/
       ]
-      let resArr = []
+      const resArr = []
       regArr.forEach(reg => {
         resArr.push(reg.test(pwd))
       })

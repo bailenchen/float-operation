@@ -10,9 +10,9 @@ export default {
       if (!key) return false
       this.clearError()
       if (!this.rules.hasOwnProperty(key)) return true
-      let ruleArr = this.rules[key]
+      const ruleArr = this.rules[key]
       for (let i = 0; i < ruleArr.length; i++) {
-        let rule = ruleArr[i]
+        const rule = ruleArr[i]
         if (rule.hasOwnProperty('required') && rule.required) {
           if (!value) {
             this.setError(key, rule.msg)
@@ -35,6 +35,6 @@ export default {
         this.validateRes[key] = false
         this.errorInfo = msg
       }, 200)
-    },
+    }
   }
 }

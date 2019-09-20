@@ -1,57 +1,65 @@
 <template>
-  <slide-view v-empty="!canShowDetail"
-              xs-empty-icon="nopermission"
-              xs-empty-text="暂无权限"
-              :listenerIDs="listenerIDs"
-              :noListenerIDs="noListenerIDs"
-              :noListenerClass="noListenerClass"
-              @close="hideView"
-              :body-style="{padding: 0, height: '100%'}">
-    <flexbox v-if="canShowDetail"
-             v-loading="loading"
-             direction="column"
-             align="stretch"
-             class="d-container">
-      <c-r-m-detail-head crmType="customer"
-                         :isSeas="isSeasDetail"
-                         @handle="detailHeadHandle"
-                         @close="hideView"
-                         :detail="detailData"
-                         :headDetails="headDetails"
-                         :id="id">
-      </c-r-m-detail-head>
+  <slide-view
+    v-empty="!canShowDetail"
+    :listener-ids="listenerIDs"
+    :no-listener-ids="noListenerIDs"
+    :no-listener-class="noListenerClass"
+    :body-style="{padding: 0, height: '100%'}"
+    xs-empty-icon="nopermission"
+    xs-empty-text="暂无权限"
+    @close="hideView">
+    <flexbox
+      v-loading="loading"
+      v-if="canShowDetail"
+      direction="column"
+      align="stretch"
+      class="d-container">
+      <c-r-m-detail-head
+        :is-seas="isSeasDetail"
+        :detail="detailData"
+        :head-details="headDetails"
+        :id="id"
+        crm-type="customer"
+        @handle="detailHeadHandle"
+        @close="hideView"/>
       <flexbox class="d-container-bd">
-        <el-tabs v-model="tabCurrentName"
-                 type="border-card"
-                 class="d-container-bd--left"
-                 @tab-click="handleClick">
-          <el-tab-pane v-for="(item, index) in tabnames"
-                       :key="index"
-                       lazy
-                       :label="item.label"
-                       :name="item.name">
-            <component v-bind:is="item.name"
-                       crmType="customer"
-                       :detail="detailData"
-                       :id="id"
-                       :isSeas="isSeasDetail"></component>
+        <el-tabs
+          v-model="tabCurrentName"
+          type="border-card"
+          class="d-container-bd--left"
+          @tab-click="handleClick">
+          <el-tab-pane
+            v-for="(item, index) in tabnames"
+            :key="index"
+            :label="item.label"
+            :name="item.name"
+            lazy>
+            <component
+              :is="item.name"
+              :detail="detailData"
+              :id="id"
+              :is-seas="isSeasDetail"
+              crm-type="customer"/>
           </el-tab-pane>
         </el-tabs>
         <transition name="slide-fade">
-          <div v-if="showFirstDetail"
-               class="d-container-bd--right">hello</div>
+          <div
+            v-if="showFirstDetail"
+            class="d-container-bd--right">hello</div>
         </transition>
 
       </flexbox>
     </flexbox>
 
-    <el-button class="firse-button"
-               @click="showFirstDetail= !showFirstDetail">重<br />要<br />信<br />息<br /><i class="el-icon-arrow-right el-icon--right"></i></el-button>
-    <c-r-m-create-view v-if="isCreate"
-                       crm-type="customer"
-                       :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
-                       @save-success="editSaveSuccess"
-                       @hiden-view="isCreate=false"></c-r-m-create-view>
+    <el-button
+      class="firse-button"
+      @click="showFirstDetail= !showFirstDetail">重<br >要<br >信<br >息<br ><i class="el-icon-arrow-right el-icon--right"/></el-button>
+    <c-r-m-create-view
+      v-if="isCreate"
+      :action="{type: 'update', id: this.id, batchId: detailData.batchId}"
+      crm-type="customer"
+      @save-success="editSaveSuccess"
+      @hiden-view="isCreate=false"/>
   </slide-view>
 </template>
 
@@ -62,13 +70,13 @@ import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import CustomerFollow from './components/CustomerFollow' // 跟进记录
 import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
-import RelativeContacts from '../components/RelativeContacts' //相关联系人
-import RelativeBusiness from '../components/RelativeBusiness' //相关商机
-import RelativeContract from '../components/RelativeContract' //相关合同
-import RelativeReturnMoney from '../components/RelativeReturnMoney' //相关回款
-import RelativeFiles from '../components/RelativeFiles' //相关附件
-import RelativeHandle from '../components/RelativeHandle' //相关操作
-import RelativeTeam from '../components/RelativeTeam' //相关团队
+import RelativeContacts from '../components/RelativeContacts' // 相关联系人
+import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
+import RelativeContract from '../components/RelativeContract' // 相关合同
+import RelativeReturnMoney from '../components/RelativeReturnMoney' // 相关回款
+import RelativeFiles from '../components/RelativeFiles' // 相关附件
+import RelativeHandle from '../components/RelativeHandle' // 相关操作
+import RelativeTeam from '../components/RelativeTeam' // 相关团队
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 
@@ -78,7 +86,7 @@ import detail from '../mixins/detail'
 
 export default {
   /** 客户管理 的 客户详情 */
-  name: 'customer-detail',
+  name: 'CustomerDetail',
   components: {
     SlideView,
     CustomerFollow,
@@ -187,11 +195,11 @@ export default {
           this.loading = false
         })
     },
-    //** 点击关闭按钮隐藏视图 */
+    //* * 点击关闭按钮隐藏视图 */
     hideView() {
       this.$emit('hide-view')
     },
-    //** tab标签点击 */
+    //* * tab标签点击 */
     handleClick(tab, event) {},
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })

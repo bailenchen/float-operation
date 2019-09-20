@@ -37,6 +37,6 @@ export function filterUserLazyImg(value) {
 /**
  * wk 10.0 iconfont 前缀
  */
-export function wkIconPre(name){
+export function wkIconPre(name) {
   return `wk wk-${name}`
 }

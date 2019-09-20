@@ -1,34 +1,41 @@
 <template>
-  <div id="slideVerify"
-       v-loading="showLoading"
-       class="slide-verify"
-       onselectstart="return false;"
-       @click.stop>
-    <canvas ref="canvas"
-            :width="w"
-            :height="h" />
-    <div class="slide-verify-refresh-icon"
-         @click="refresh" />
-    <canvas ref="block"
-            :width="w"
-            :height="h"
-            class="slide-verify-block" />
+  <div
+    v-loading="showLoading"
+    id="slideVerify"
+    class="slide-verify"
+    onselectstart="return false;"
+    @click.stop>
+    <canvas
+      ref="canvas"
+      :width="w"
+      :height="h" />
+    <div
+      class="slide-verify-refresh-icon"
+      @click="refresh" />
+    <canvas
+      ref="block"
+      :width="w"
+      :height="h"
+      class="slide-verify-block" />
     <!-- container -->
-    <div :class="{
+    <div
+      :class="{
         'container-active': containerActive,
         'container-success': containerSuccess,
         'container-fail': containerFail
       }"
-         class="slide-verify-slider">
-      <div class="slide-verify-slider-mask"
-           :style="{width: sliderMaskWidth}">
+      class="slide-verify-slider">
+      <div
+        :style="{width: sliderMaskWidth}"
+        class="slide-verify-slider-mask">
         <!-- slider -->
-        <div :style="{left: sliderLeft}"
-             class="slide-verify-slider-mask-item"
-             @mousedown="sliderDown"
-             @touchstart="touchStartEvent"
-             @touchmove="touchMoveEvent"
-             @touchend="touchEndEvent">
+        <div
+          :style="{left: sliderLeft}"
+          class="slide-verify-slider-mask-item"
+          @mousedown="sliderDown"
+          @touchstart="touchStartEvent"
+          @touchmove="touchMoveEvent"
+          @touchend="touchEndEvent">
           <div class="slide-verify-slider-mask-item-icon" />
         </div>
       </div>
@@ -123,9 +130,9 @@ export default {
         this.showLoading = false
         this.canvasCtx.drawImage(img, 0, 0, this.w, this.h)
         this.blockCtx.drawImage(img, 0, 0, this.w, this.h)
-        let { block_x: x, block_y: y, r, L } = this
-        let _y = y - r * 2 - 1
-        let ImageData = this.blockCtx.getImageData(x, _y, L, L)
+        const { block_x: x, block_y: y, r, L } = this
+        const _y = y - r * 2 - 1
+        const ImageData = this.blockCtx.getImageData(x, _y, L, L)
         this.block.width = L
         this.blockCtx.putImageData(ImageData, 0, _y)
       })
@@ -144,7 +151,7 @@ export default {
       this.draw(this.blockCtx, this.block_x, this.block_y, 'clip')
     },
     draw(ctx, x, y, operation) {
-      let { l, r } = this
+      const { l, r } = this
       ctx.beginPath()
       ctx.moveTo(x, y)
       ctx.arc(x + l / 2, y - r + 2, r, 0.72 * PI, 2.26 * PI)
@@ -204,7 +211,7 @@ export default {
         const moveY = e.clientY - this.originY
         if (moveX < 0 || moveX + 38 >= this.w) return false
         this.sliderLeft = moveX + 'px'
-        let blockLeft = ((this.w - 40 - 20) / (this.w - 40)) * moveX
+        const blockLeft = ((this.w - 40 - 20) / (this.w - 40)) * moveX
         this.block.style.left = blockLeft + 'px'
         this.containerActive = true // add active
         this.sliderMaskWidth = moveX + 'px'
@@ -245,7 +252,7 @@ export default {
       const moveY = e.changedTouches[0].pageY - this.originY
       if (moveX < 0 || moveX + 38 >= this.w) return false
       this.sliderLeft = moveX + 'px'
-      let blockLeft = ((this.w - 40 - 20) / (this.w - 40)) * moveX
+      const blockLeft = ((this.w - 40 - 20) / (this.w - 40)) * moveX
       this.block.style.left = blockLeft + 'px'
       this.containerActive = true
       this.sliderMaskWidth = moveX + 'px'
@@ -289,7 +296,7 @@ export default {
       const stddev = Math.sqrt(deviations.map(square).reduce(sum) / arr.length) // 标准偏差
       const left = parseInt(this.block.style.left)
 
-      let res = {
+      const res = {
         spliced: Math.abs(left - this.block_x) < 10,
         TuringTest: average !== stddev // equal => not person operate
       }
@@ -323,7 +330,7 @@ export default {
       this.block.style.left = 0
       this.sliderMaskWidth = 0
       // canvas
-      let { w, h } = this
+      const { w, h } = this
       this.canvasCtx.clearRect(0, 0, w, h)
       this.blockCtx.clearRect(0, 0, w, h)
       this.block.width = w

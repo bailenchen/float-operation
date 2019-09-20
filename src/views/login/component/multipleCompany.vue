@@ -1,32 +1,36 @@
 <template>
   <div class="multiple-company">
     <ul class="list">
-      <li v-for="(item, index) in list"
-          :key="index"
-          :class="{active: selectedIndex === index}"
-          class="list-item"
-          @click="selectedIndex = index">
+      <li
+        v-for="(item, index) in list"
+        :key="index"
+        :class="{active: selectedIndex === index}"
+        class="list-item"
+        @click="selectedIndex = index">
         <!--<img src="~@/assets/login/m_company.png" alt="" class="icon">-->
         <span class="icon wk wk-enterprise" />
         <span class="text">
           {{ item.companyName }}
         </span>
-        <img v-if="selectedIndex === index"
-             src="~@/assets/login/m_checked.png"
-             alt=""
-             class="icon-checked">
+        <img
+          v-if="selectedIndex === index"
+          src="~@/assets/login/m_checked.png"
+          alt=""
+          class="icon-checked">
       </li>
     </ul>
 
     <div class="control">
-      <div class="btn"
-           @click="handlerSelect">
+      <div
+        class="btn"
+        @click="handlerSelect">
         进 入 企 业
       </div>
     </div>
 
-    <div class="active-btn"
-         @click="$emit('toggle', 'LoginByPwd')">
+    <div
+      class="active-btn"
+      @click="$emit('toggle', 'LoginByPwd')">
       返回上一步
     </div>
   </div>
@@ -59,7 +63,7 @@ export default {
   },
   methods: {
     handlerSelect() {
-      let item = this.list[this.selectedIndex]
+      const item = this.list[this.selectedIndex]
       ChooseLoginAPI({
         companyId: item.companyId
       })

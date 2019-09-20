@@ -1,40 +1,44 @@
 <template>
-  <div class="task-calendars"
-       v-loading="loading">
+  <div
+    v-loading="loading"
+    class="task-calendars">
     <div class="add-btn">
-      <el-button type="primary"
-                 @click="createTask">
+      <el-button
+        type="primary"
+        @click="createTask">
         创建任务
       </el-button>
     </div>
-    <div ref="hoverDialog"
-         class="hover-dialog"
-         :style="{'border-color': getPriorityColor(hoverDialogList.priority)}">
-      <flexbox class="title"
-               align="stretch">
-        <el-checkbox></el-checkbox>
-        <div>{{hoverDialogList.name}}</div>
+    <div
+      ref="hoverDialog"
+      :style="{'border-color': getPriorityColor(hoverDialogList.priority)}"
+      class="hover-dialog">
+      <flexbox
+        class="title"
+        align="stretch">
+        <el-checkbox/>
+        <div>{{ hoverDialogList.name }}</div>
       </flexbox>
       <div class="img-content">
-        <span>{{hoverDialogList.startTime + ' - ' + hoverDialogList.stopTime}}</span>
+        <span>{{ hoverDialogList.startTime + ' - ' + hoverDialogList.stopTime }}</span>
       </div>
     </div>
     <!-- 新建任务弹出框 newDialog-->
-    <new-dialog :visible="taskCreateShow"
-                :action="createActionInfo"
-                @handleClose="handleClose"
-                @submit="refetchCalendar">
-    </new-dialog>
+    <new-dialog
+      :visible="taskCreateShow"
+      :action="createActionInfo"
+      @handleClose="handleClose"
+      @submit="refetchCalendar"/>
     <!-- 详情 -->
-    <particulars v-if="taskDetailShow"
-                 ref="particulars"
-                 :id="taskID"
-                 :detailIndex="detailIndex"
-                 @on-handle="refetchCalendar"
-                 @close="closeBtn">
-    </particulars>
+    <particulars
+      v-if="taskDetailShow"
+      ref="particulars"
+      :id="taskID"
+      :detail-index="detailIndex"
+      @on-handle="refetchCalendar"
+      @close="closeBtn"/>
     <!-- 日历 -->
-    <div id='calendar'></div>
+    <div id="calendar"/>
   </div>
 </template>
 
@@ -111,8 +115,8 @@ export default {
         },
 
         header: {
-          left: 'today,   agendaDay,agendaWeek,month', //上一页、下一页、今天
-          center: 'prevYear,prev, title, next,nextYear', //居中：时间范围区间标题
+          left: 'today,   agendaDay,agendaWeek,month', // 上一页、下一页、今天
+          center: 'prevYear,prev, title, next,nextYear', // 居中：时间范围区间标题
           right: ''
         },
 
@@ -122,7 +126,7 @@ export default {
             document.getElementsByClassName('fc-day')[0].offsetWidth - 10 + 'px'
           this.$refs.hoverDialog.style.left =
             jsEvent.currentTarget.offsetLeft + 'px'
-          let styleTop = jsEvent.clientY - jsEvent.offsetY - 60
+          const styleTop = jsEvent.clientY - jsEvent.offsetY - 60
           this.$refs.hoverDialog.style.top = styleTop + 'px'
           this.hoverDialogList = {
             startTime: event.startTime || '无',
@@ -133,7 +137,7 @@ export default {
           }
 
           this.$nextTick(() => {
-            let hoverDialogRect = this.$refs.hoverDialog.getBoundingClientRect()
+            const hoverDialogRect = this.$refs.hoverDialog.getBoundingClientRect()
             if (
               hoverDialogRect.top + hoverDialogRect.height >
               document.body.clientHeight
@@ -155,7 +159,7 @@ export default {
             endTime: end.format('YYYY-MM-DD')
           })
             .then(res => {
-              let taskData = res.data.map(item => {
+              const taskData = res.data.map(item => {
                 if (item.startTime && item.stopTime) {
                   item.start = item.startTime
                   item.end = item.stopTime
@@ -244,7 +248,7 @@ export default {
         !this.$refs.particulars.$el.contains(e.target)
       ) {
         let hidden = true
-        let items = document.getElementsByClassName('fc-event-container')
+        const items = document.getElementsByClassName('fc-event-container')
         for (let index = 0; index < items.length; index++) {
           const element = items[index]
           if (element.contains(e.target)) {

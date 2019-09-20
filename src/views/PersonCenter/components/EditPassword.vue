@@ -1,28 +1,34 @@
 <template>
   <!-- 新建和编辑 -->
-  <el-dialog title="编辑密码"
-             :visible.sync="showDialog"
-             width="500px"
-             v-loading="loading"
-             :before-close="hiddenView">
-    <el-form :model="ruleForm"
-             :rules="rules"
-             ref="ruleForm"
-             label-width="80px"
-             label-position="top">
-      <el-form-item label="原密码"
-                    prop="oldPwd">
-        <el-input v-model="ruleForm.oldPwd"></el-input>
+  <el-dialog
+    v-loading="loading"
+    :visible.sync="showDialog"
+    :before-close="hiddenView"
+    title="编辑密码"
+    width="500px">
+    <el-form
+      ref="ruleForm"
+      :model="ruleForm"
+      :rules="rules"
+      label-width="80px"
+      label-position="top">
+      <el-form-item
+        label="原密码"
+        prop="oldPwd">
+        <el-input v-model="ruleForm.oldPwd"/>
       </el-form-item>
-      <el-form-item label="新密码"
-                    prop="newPwd">
-        <el-input v-model="ruleForm.newPwd"></el-input>
+      <el-form-item
+        label="新密码"
+        prop="newPwd">
+        <el-input v-model="ruleForm.newPwd"/>
       </el-form-item>
     </el-form>
-    <span slot="footer"
-          class="dialog-footer">
-      <el-button type="primary"
-                 @click="save">保 存</el-button>
+    <span
+      slot="footer"
+      class="dialog-footer">
+      <el-button
+        type="primary"
+        @click="save">保 存</el-button>
       <el-button @click="hiddenView">取 消</el-button>
     </span>
   </el-dialog>
@@ -33,7 +39,7 @@ import { adminUsersResetPassword } from '@/api/personCenter/personCenter'
 import { removeAuth } from '@/utils/auth'
 
 export default {
-  name: 'edit-password', // 编辑个人密码
+  name: 'EditPassword', // 编辑个人密码
   components: {},
   computed: {
     ...mapGetters(['userInfo'])
@@ -46,6 +52,12 @@ export default {
       },
       deep: true,
       immediate: true
+    }
+  },
+  props: {
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -67,12 +79,6 @@ export default {
         oldPwd: '',
         newPwd: ''
       }
-    }
-  },
-  props: {
-    show: {
-      type: Boolean,
-      default: false
     }
   },
   mounted() {},

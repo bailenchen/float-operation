@@ -1,43 +1,50 @@
 <template>
   <div class="c-container">
-    <flexbox class="title"><img :src="titleIcon"
-           class="title-icon">{{title}}</flexbox>
-    <el-input class="sc-container"
-              :placeholder="placeholder"
-              v-model="inputContent"
-              @input="inputChange"
-              @keyup.enter.native="searchInput">
-      <el-button slot="append"
-                 type="primary"
-                 @click.native="searchInput">搜索</el-button>
+    <flexbox class="title"><img
+      :src="titleIcon"
+      class="title-icon">{{ title }}</flexbox>
+    <el-input
+      :placeholder="placeholder"
+      v-model="inputContent"
+      class="sc-container"
+      @input="inputChange"
+      @keyup.enter.native="searchInput">
+      <el-button
+        slot="append"
+        type="primary"
+        @click.native="searchInput">搜索</el-button>
     </el-input>
     <div class="right-container">
-      <el-button @click="createClick"
-                 v-if="canSave"
-                 class="create-btn--orange"
-                 icon="el-icon-plus"
-                 type="primary">{{mainTitle}}</el-button>
-      <el-dropdown trigger="click"
-                   v-if="moreTypes.length > 0"
-                   @command="handleTypeDrop">
-        <el-button icon="el-icon-more"></el-button>
+      <el-button
+        v-if="canSave"
+        class="create-btn--orange"
+        icon="el-icon-plus"
+        type="primary"
+        @click="createClick">{{ mainTitle }}</el-button>
+      <el-dropdown
+        v-if="moreTypes.length > 0"
+        trigger="click"
+        @command="handleTypeDrop">
+        <el-button icon="el-icon-more"/>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="(item, index) in moreTypes"
-                            :key="index"
-                            :icon="item.icon | wkIconPre"
-                            :command="item.type">{{item.name}}</el-dropdown-item>
+          <el-dropdown-item
+            v-for="(item, index) in moreTypes"
+            :key="index"
+            :icon="item.icon | wkIconPre"
+            :command="item.type">{{ item.name }}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <c-r-m-create-view v-if="isCreate"
-                       :crm-type="createCRMType"
-                       :action="createActionInfo"
-                       @save-success="createSaveSuccess"
-                       @hiden-view="hideView"></c-r-m-create-view>
-    <c-r-m-import :show="showCRMImport"
-                  @close="showCRMImport=false"
-                  :crmType="crmType">
-    </c-r-m-import>
+    <c-r-m-create-view
+      v-if="isCreate"
+      :crm-type="createCRMType"
+      :action="createActionInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+    <c-r-m-import
+      :show="showCRMImport"
+      :crm-type="crmType"
+      @close="showCRMImport=false"/>
   </div>
 </template>
 
@@ -47,7 +54,7 @@ import CRMCreateView from './CRMCreateView'
 import CRMImport from './CRMImport'
 
 export default {
-  name: 'CRM-list-head', //客户管理下 重要提醒 回款计划提醒
+  name: 'CRMListHead', // 客户管理下 重要提醒 回款计划提醒
   components: {
     CRMCreateView,
     CRMImport
@@ -63,19 +70,6 @@ export default {
 
     titleIcon() {
       return require(`@/assets/img/crm/${this.crmType}.png`)
-    }
-  },
-  data() {
-    return {
-      inputContent: '',
-      /** 更多操作 */
-      moreTypes: [],
-      // 创建的相关信息
-      createActionInfo: { type: 'save' },
-      createCRMType: '',
-      isCreate: false, //是创建
-      // 导入
-      showCRMImport: false
     }
   },
   props: {
@@ -102,6 +96,19 @@ export default {
       default: false
     },
     search: String
+  },
+  data() {
+    return {
+      inputContent: '',
+      /** 更多操作 */
+      moreTypes: [],
+      // 创建的相关信息
+      createActionInfo: { type: 'save' },
+      createCRMType: '',
+      isCreate: false, // 是创建
+      // 导入
+      showCRMImport: false
+    }
   },
   mounted() {
     // 线索和客户判断更多操作

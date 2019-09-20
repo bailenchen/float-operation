@@ -1,17 +1,20 @@
 <template>
-  <div v-loading="loading"
-       class="main-container">
+  <div
+    v-loading="loading"
+    class="main-container">
     <flexbox class="content">
       <flexbox-item>
         <div class="axis-content">
-          <div class="axismain"
-               id="allChart"></div>
+          <div
+            id="allChart"
+            class="axismain"/>
         </div>
       </flexbox-item>
       <flexbox-item>
         <div class="axis-content">
-          <div class="axismain"
-               id="dealChart"></div>
+          <div
+            id="dealChart"
+            class="axismain"/>
         </div>
       </flexbox-item>
     </flexbox>
@@ -26,7 +29,7 @@ import { biAchievementAnalysisAPI } from '@/api/businessIntelligence/customerPor
 
 export default {
   /** 城市分布分析 */
-  name: 'customer-address-statistics',
+  name: 'CustomerAddressStatistics',
   data() {
     return {
       loading: false,
@@ -51,9 +54,9 @@ export default {
           this.loading = false
           // this.axisList = res.data || []
 
-          let allData = []
-          let dealData = []
-          let xAxis = []
+          const allData = []
+          const dealData = []
+          const xAxis = []
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             if (element.allCustomer) {
@@ -138,7 +141,7 @@ export default {
             showLegendSymbol: false,
             itemStyle: {
               normal: { label: { show: true }, borderColor: '#ccc' },
-              emphasis: { label: { show: true } }
+              emphasis: { label: { show: true }}
             },
             data: []
           }

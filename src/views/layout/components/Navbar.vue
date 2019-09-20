@@ -1,63 +1,75 @@
 <template>
   <div class="navbar">
-    <img class="logo"
-         :src="logo" />
+    <img
+      :src="logo"
+      class="logo" >
     <div class="nav-items-container">
-      <el-menu :default-active="navActiveIndex"
-               mode="horizontal"
-               active-text-color="#2362FB"
-               @select="navItemsClick">
-        <el-menu-item v-for="(item, index) in items"
-                      :key="index"
-                      :index="item.path">
-          <router-link :to="item.path">{{item.title}}</router-link>
+      <el-menu
+        :default-active="navActiveIndex"
+        mode="horizontal"
+        active-text-color="#2362FB"
+        @select="navItemsClick">
+        <el-menu-item
+          v-for="(item, index) in items"
+          :key="index"
+          :index="item.path">
+          <router-link :to="item.path">{{ item.title }}</router-link>
         </el-menu-item>
       </el-menu>
     </div>
 
-    <el-popover placement="bottom"
-                :visible-arrow="false"
-                popper-class="no-padding-popover"
-                width="210"
-                trigger="hover">
+    <el-popover
+      :visible-arrow="false"
+      placement="bottom"
+      popper-class="no-padding-popover"
+      width="210"
+      trigger="hover">
       <div class="auth-content">
         <div class="title">您暂未开通授权</div>
         <div class="detail">为了给您提供更好的服务支持<br>建议您购买官方授权</div>
         <span class="phone">400-0812-558</span>
       </div>
-      <button slot="reference"
-              type="text"
-              class="auth-button">开通授权</button>
+      <button
+        slot="reference"
+        type="text"
+        class="auth-button">开通授权</button>
     </el-popover>
 
-    <el-popover placement="bottom"
-                :visible-arrow="false"
-                popper-class="no-padding-popover"
-                width="200"
-                trigger="click">
+    <el-popover
+      :visible-arrow="false"
+      placement="bottom"
+      popper-class="no-padding-popover"
+      width="200"
+      trigger="click">
       <div class="handel-items">
-        <div class="handel-item"
-             @click="handleClick('person')"><i class="wukong wukong-personcenter"></i>个人中心</div>
-        <div class="handel-item"
-             @click="handleClick('goout')"><i class="wukong wukong-goout"></i>退出登录</div>
-        <div class="handel-item hr-top"
-             style="pointer-events: none;"
-             :style="{'margin-bottom': manage ? '15px' : '0'}"><i class="wukong wukong-versions"></i>版本 V9.2.1.190809</div>
-        <div v-if="manage"
-             class="handel-box">
-          <el-button @click="enterSystemSet()"
-                     type="primary"
-                     class="handel-button">进入企业管理后台</el-button>
+        <div
+          class="handel-item"
+          @click="handleClick('person')"><i class="wukong wukong-personcenter"/>个人中心</div>
+        <div
+          class="handel-item"
+          @click="handleClick('goout')"><i class="wukong wukong-goout"/>退出登录</div>
+        <div
+          :style="{'margin-bottom': manage ? '15px' : '0'}"
+          class="handel-item hr-top"
+          style="pointer-events: none;"><i class="wukong wukong-versions"/>版本 V9.2.1.190809</div>
+        <div
+          v-if="manage"
+          class="handel-box">
+          <el-button
+            type="primary"
+            class="handel-button"
+            @click="enterSystemSet()">进入企业管理后台</el-button>
         </div>
       </div>
-      <div slot="reference"
-           class="user-container">
-        <div v-photo="userInfo"
-             class="user-img div-photo"
-             :key="userInfo.img"
-             v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)">
-        </div>
-        <i class="el-icon-caret-bottom mark"></i>
+      <div
+        slot="reference"
+        class="user-container">
+        <div
+          v-photo="userInfo"
+          v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
+          :key="userInfo.img"
+          class="user-img div-photo"/>
+        <i class="el-icon-caret-bottom mark"/>
       </div>
     </el-popover>
 
@@ -69,15 +81,6 @@ import { mapGetters } from 'vuex'
 import { Loading } from 'element-ui'
 
 export default {
-  data() {
-    return {}
-  },
-  props: {
-    navIndex: {
-      type: [Number, String],
-      default: 0
-    }
-  },
   filters: {
     langName: function(value) {
       if (value) {
@@ -88,6 +91,15 @@ export default {
     }
   },
   components: {},
+  props: {
+    navIndex: {
+      type: [Number, String],
+      default: 0
+    }
+  },
+  data() {
+    return {}
+  },
   computed: {
     ...mapGetters([
       'userInfo',

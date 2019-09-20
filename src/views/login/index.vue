@@ -10,8 +10,9 @@
         <span class="text">帮助中心</span>
       </div>-->
 
-      <img src="~@/assets/logo_white.png"
-           alt="">
+      <img
+        src="~@/assets/logo_white.png"
+        alt="">
     </div>
     <div class="container">
       <div class="left">
@@ -23,9 +24,10 @@
           <br>
           为企业提供外勤、销售、人事、财务等方面的问题
         </div>
-        <img src="~@/assets/login/bg.png"
-             alt=""
-             class="bg">
+        <img
+          src="~@/assets/login/bg.png"
+          alt=""
+          class="bg">
       </div>
       <div class="right">
         <div class="main-content">
@@ -34,12 +36,14 @@
           </div>
 
           <template v-if="activeCom !== 'MultipleCompany'">
-            <component :is="activeCom"
-                       @toggle="handleToggleCom" />
+            <component
+              :is="activeCom"
+              @toggle="handleToggleCom" />
           </template>
           <template v-else>
-            <multiple-company :list="companyList"
-                              @toggle="handleToggleCom" />
+            <multiple-company
+              :list="companyList"
+              @toggle="handleToggleCom" />
           </template>
         </div>
 
@@ -50,9 +54,10 @@
           <div class="icon wk wk-android" />
           <div class="icon wk wk-ios" />
           <div class="popover">
-            <img src="~@/assets/login/qrcode.png"
-                 alt=""
-                 class="qrcode">
+            <img
+              src="~@/assets/login/qrcode.png"
+              alt=""
+              class="qrcode">
             <span class="down-text">
               扫描二维码<br>下载客户端
             </span>

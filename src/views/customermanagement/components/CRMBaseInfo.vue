@@ -1,31 +1,36 @@
 <template>
   <div class="b-cont">
     <div>
-      <sections class="b-cells"
-                title="基本信息"
-                m-color="#46CDCF"
-                content-height="auto">
-        <flexbox :gutter="0"
-                 wrap="wrap"
-                 style="padding: 10px 8px 0;">
-          <flexbox-item :span="0.5"
-                        v-for="(item, index) in list"
-                        :key="index"
-                        class="b-cell">
-            <flexbox align="stretch"
-                     class="b-cell-b">
-              <div class="b-cell-name">{{item.name}}</div>
-              <div class="b-cell-value">{{item.value}}</div>
+      <sections
+        class="b-cells"
+        title="基本信息"
+        m-color="#46CDCF"
+        content-height="auto">
+        <flexbox
+          :gutter="0"
+          wrap="wrap"
+          style="padding: 10px 8px 0;">
+          <flexbox-item
+            v-for="(item, index) in list"
+            :span="0.5"
+            :key="index"
+            class="b-cell">
+            <flexbox
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div class="b-cell-value">{{ item.value }}</div>
             </flexbox>
           </flexbox-item>
         </flexbox>
       </sections>
     </div>
-    <map-view v-if="showMapView"
-              :title="mapViewInfo.title"
-              :lat="mapViewInfo.lat"
-              :lng="mapViewInfo.lng"
-              @hidden="showMapView=false"></map-view>
+    <map-view
+      v-if="showMapView"
+      :title="mapViewInfo.title"
+      :lat="mapViewInfo.lat"
+      :lng="mapViewInfo.lng"
+      @hidden="showMapView=false"/>
   </div>
 </template>
 
@@ -41,17 +46,17 @@ import { downloadFile } from '@/utils'
 
 export default {
   /** 客户管理 的 基本信息*/
-  name: 'c-r-m-base-info',
+  name: 'CRMBaseInfo',
   components: {
     Sections,
     MapView
   },
-  mixins: [loading],
   filters: {
     addressShow: function(list) {
       return list ? list.join(' ') : ''
     }
   },
+  mixins: [loading],
   props: {
     /** 模块ID */
     id: [String, Number],
@@ -67,11 +72,6 @@ export default {
       default: ''
     }
   },
-  watch: {
-    id: function(val) {
-      this.getBaseInfo()
-    }
-  },
   data() {
     return {
       list: [],
@@ -80,6 +80,11 @@ export default {
     }
   },
   computed: {},
+  watch: {
+    id: function(val) {
+      this.getBaseInfo()
+    }
+  },
   mounted() {
     this.getBaseInfo()
   },

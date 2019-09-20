@@ -1,87 +1,105 @@
 <template>
   <div class="container">
-    <div class="create-button-container"
-         :style="{ 'padding-top': createButtonTitle != '' ? '40px' : '25px', 'background-color':backgroundColor }">
-      <el-popover v-if="createButtonTitle != ''"
-                  placement="right"
-                  :offset="addOffset"
-                  popper-class="no-padding-popover"
-                  :visible-arrow="false"
-                  trigger="hover">
-        <slot name="add"></slot>
-        <div slot="reference"
-             @click="quicklyCreate"
-             class="create-button">
-          <div v-show="!buttonCollapse"
-               class="button-name">{{createButtonTitle}}</div>
-          <div v-show="!buttonCollapse"
-               class="button-line"></div>
-          <i class="button-mark"
-             :class="createButtonIcon"></i>
+    <div
+      :style="{ 'padding-top': createButtonTitle != '' ? '40px' : '25px', 'background-color':backgroundColor }"
+      class="create-button-container">
+      <el-popover
+        v-if="createButtonTitle != ''"
+        :offset="addOffset"
+        :visible-arrow="false"
+        placement="right"
+        popper-class="no-padding-popover"
+        trigger="hover">
+        <slot name="add"/>
+        <div
+          slot="reference"
+          class="create-button"
+          @click="quicklyCreate">
+          <div
+            v-show="!buttonCollapse"
+            class="button-name">{{ createButtonTitle }}</div>
+          <div
+            v-show="!buttonCollapse"
+            class="button-line"/>
+          <i
+            :class="createButtonIcon"
+            class="button-mark"/>
         </div>
       </el-popover>
     </div>
-    <el-menu :default-active="activeIndex"
-             ref="menu"
-             :style="{'border-right-color': backgroundColor, 'padding-top': createButtonTitle != '' ? '90px' : '40px'}"
-             class="el-menu-vertical"
-             :text-color="textColor"
-             :background-color="backgroundColor"
-             :active-text-color="activeTextColor"
-             :collapse="collapse"
-             unique-opened
-             @select="handleSelect">
-      <template v-for="(item, index) in items"
-                v-if="!item.hidden">
-        <router-link v-if="!item.children"
-                     :key="index"
-                     :to="getFullPath(item.path)">
-          <el-tooltip :disabled="showTooltip"
-                      effect="dark"
-                      :content="item.meta.title"
-                      placement="right">
+    <el-menu
+      ref="menu"
+      :default-active="activeIndex"
+      :style="{'border-right-color': backgroundColor, 'padding-top': createButtonTitle != '' ? '90px' : '40px'}"
+      :text-color="textColor"
+      :background-color="backgroundColor"
+      :active-text-color="activeTextColor"
+      :collapse="collapse"
+      class="el-menu-vertical"
+      unique-opened
+      @select="handleSelect">
+      <template
+        v-for="(item, index) in items"
+        v-if="!item.hidden">
+        <router-link
+          v-if="!item.children"
+          :key="index"
+          :to="getFullPath(item.path)">
+          <el-tooltip
+            :disabled="showTooltip"
+            :content="item.meta.title"
+            effect="dark"
+            placement="right">
             <el-menu-item :index="getFullPath(item.path)">
               <div class="menu-item-content">
-                <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
-                   :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"></i>
-                <span slot="title">{{item.meta.title}}</span>
-                <el-badge v-if="item.meta.num && item.meta.num > 0"
-                          :max="99"
-                          :value="item.meta.num"></el-badge>
+                <i
+                  :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
+                  :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"/>
+                <span slot="title">{{ item.meta.title }}</span>
+                <el-badge
+                  v-if="item.meta.num && item.meta.num > 0"
+                  :max="99"
+                  :value="item.meta.num"/>
               </div>
             </el-menu-item>
           </el-tooltip>
         </router-link>
-        <el-submenu v-else
-                    :key="index"
-                    :index="getFullPath(item.path)">
-          <template slot="title"
-                    v-if="!item.hidden">
-            <i :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
-               :style="{fontSize: item.meta.fontSize || '16px'}"></i>
-            <span slot="title">{{item.meta.title}}</span>
+        <el-submenu
+          v-else
+          :key="index"
+          :index="getFullPath(item.path)">
+          <template
+            v-if="!item.hidden"
+            slot="title">
+            <i
+              :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
+              :style="{fontSize: item.meta.fontSize || '16px'}"/>
+            <span slot="title">{{ item.meta.title }}</span>
           </template>
-          <router-link v-for="(subitem, subindex) in item.children"
-                       v-if="!item.hidden"
-                       :key="subindex"
-                       :to="getFullPath(subitem.path)">
+          <router-link
+            v-for="(subitem, subindex) in item.children"
+            v-if="!item.hidden"
+            :key="subindex"
+            :to="getFullPath(subitem.path)">
             <el-menu-item :index="getFullPath(subitem.path)">
               <div class="menu-item-content">
-                {{subitem.meta.title}}
+                {{ subitem.meta.title }}
               </div>
             </el-menu-item>
           </router-link>
         </el-submenu>
       </template>
     </el-menu>
-    <div class="sidebar-bottom"
-         :style="{ 'background-color':backgroundColor }">
+    <div
+      :style="{ 'background-color':backgroundColor }"
+      class="sidebar-bottom">
       <div class="sidebar-container">
-        <img class="collapse-button"
-             :style="{ 'right': buttonCollapse ? '3px' : '0' }"
-             src="@/assets/img/collapse_white.png"
-             alt=""
-             @click="toggleSideBarClick">
+        <img
+          :style="{ 'right': buttonCollapse ? '3px' : '0' }"
+          class="collapse-button"
+          src="@/assets/img/collapse_white.png"
+          alt=""
+          @click="toggleSideBarClick">
       </div>
     </div>
   </div>

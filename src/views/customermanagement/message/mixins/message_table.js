@@ -57,9 +57,9 @@ export default {
   methods: {
     /**
      * 当某一行被点击时会触发该事件
-     * @param {*} row 
-     * @param {*} column 
-     * @param {*} event 
+     * @param {*} row
+     * @param {*} column
+     * @param {*} event
      */
     handleRowClick(row, column, event) {
       if (this.crmType === 'leads') {

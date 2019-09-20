@@ -1,16 +1,19 @@
 <template>
-  <transition name="slide-fade"
-              v-on:after-enter="afterEnter">
-    <el-card :style="{ 'z-index': zIndex }"
-             ref="slide"
-             id="slide"
-             class="slide-detail-card-container"
-             :body-style="bodyStyle">
-      <el-button class="close-btn"
-                 type="primary"
-                 icon="el-icon-close"
-                 @click="close"></el-button>
-      <slot></slot>
+  <transition
+    name="slide-fade"
+    @after-enter="afterEnter">
+    <el-card
+      id="slide"
+      ref="slide"
+      :style="{ 'z-index': zIndex }"
+      :body-style="bodyStyle"
+      class="slide-detail-card-container">
+      <el-button
+        class="close-btn"
+        type="primary"
+        icon="el-icon-close"
+        @click="close"/>
+      <slot/>
     </el-card>
   </transition>
 </template>
@@ -18,15 +21,8 @@
 import { getMaxIndex } from '@/utils/index'
 
 export default {
-  name: 'slide-view', // 客户管理详情 滑动view
+  name: 'SlideView', // 客户管理详情 滑动view
   components: {},
-  computed: {},
-  watch: {},
-  data() {
-    return {
-      zIndex: getMaxIndex()
-    }
-  },
   props: {
     showClose: {
       type: Boolean,
@@ -61,6 +57,13 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      zIndex: getMaxIndex()
+    }
+  },
+  computed: {},
+  watch: {},
   mounted() {
     if (this.appendToBody) {
       document.body.appendChild(this.$el)
@@ -72,6 +75,12 @@ export default {
           .addEventListener('click', this.handleDocumentClick, false)
       }
     })
+  },
+
+  beforeDestroy() {
+    if (this.appendToBody && this.$el && this.$el.parentNode) {
+      this.$el.parentNode.removeChild(this.$el)
+    }
   },
   methods: {
     handleDocumentClick(e) {
@@ -113,12 +122,6 @@ export default {
     },
     close() {
       this.$emit('close')
-    }
-  },
-
-  beforeDestroy() {
-    if (this.appendToBody && this.$el && this.$el.parentNode) {
-      this.$el.parentNode.removeChild(this.$el)
     }
   }
 }

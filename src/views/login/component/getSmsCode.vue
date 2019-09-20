@@ -2,48 +2,55 @@
   <div>
     <el-form>
       <el-form-item>
-        <el-input ref="telephone"
-                  v-model.trim="form.phone"
-                  :class="{error: !validateRes.phone}"
-                  placeholder="请输入手机号"
-                  type="text"
-                  @focus="focusKey = 'phone'"
-                  @blur="checkFromItem('phone', form.phone)">
-          <span slot="prefix"
-                :class="{
+        <el-input
+          ref="telephone"
+          v-model.trim="form.phone"
+          :class="{error: !validateRes.phone}"
+          placeholder="请输入手机号"
+          type="text"
+          @focus="focusKey = 'phone'"
+          @blur="checkFromItem('phone', form.phone)">
+          <span
+            slot="prefix"
+            :class="{
               full: Boolean(form.phone),
               focus: focusKey === 'phone'
             }"
-                class="form-icon wk wk-user" />
+            class="form-icon wk wk-user" />
         </el-input>
       </el-form-item>
 
-      <el-popover placement="top-start"
-                  width="332"
-                  popper-class="no-padding-popover"
-                  :disabled="isUser"
-                  trigger="click">
-        <slide-verify :l="42"
-                      :r="10"
-                      :w="330"
-                      :h="155"
-                      slider-text="向右滑动"
-                      @success="sliderSuccess"
-                      @fail="sliderFail"
-                      @refresh="sliderRefresh" />
-        <div slot="reference"
-             :class="{success: isUser}"
-             class="verify-picture">
+      <el-popover
+        :disabled="isUser"
+        placement="top-start"
+        width="332"
+        popper-class="no-padding-popover"
+        trigger="click">
+        <slide-verify
+          :l="42"
+          :r="10"
+          :w="330"
+          :h="155"
+          slider-text="向右滑动"
+          @success="sliderSuccess"
+          @fail="sliderFail"
+          @refresh="sliderRefresh" />
+        <div
+          slot="reference"
+          :class="{success: isUser}"
+          class="verify-picture">
           <template v-if="!isUser">
-            <img src="~@/assets/login/verify_picture.png"
-                 alt=""
-                 class="icon">
+            <img
+              src="~@/assets/login/verify_picture.png"
+              alt=""
+              class="icon">
             <span class="text">点击完成验证</span>
           </template>
           <template v-else>
-            <img src="~@/assets/login/verify_success.png"
-                 alt=""
-                 class="icon">
+            <img
+              src="~@/assets/login/verify_success.png"
+              alt=""
+              class="icon">
             <span class="text">验证成功</span>
           </template>
         </div>
@@ -51,13 +58,15 @@
 
       <el-form-item>
         <div class="sms-box">
-          <el-input ref="smscode"
-                    v-model.trim="form.smscode"
-                    :class="{error: !validateRes.smscode}"
-                    placeholder="请输入短信验证码"
-                    @blur="checkFromItem('smscode', form.smscode)" />
-          <el-button :disabled="time !== second"
-                     @click="getSmsCode">
+          <el-input
+            ref="smscode"
+            v-model.trim="form.smscode"
+            :class="{error: !validateRes.smscode}"
+            placeholder="请输入短信验证码"
+            @blur="checkFromItem('smscode', form.smscode)" />
+          <el-button
+            :disabled="time !== second"
+            @click="getSmsCode">
             <div class="btn-content">
               <template v-if="time === second">
                 <!--<span class="icon wk wk-shouji" />-->
@@ -72,13 +81,16 @@
       </el-form-item>
     </el-form>
 
-    <div :class="{ok: !Boolean(errorInfo)}"
-         class="error-info">
-      <div v-if="errorInfo"
-           class="box">
-        <img src="~@/assets/login/error.png"
-             alt=""
-             class="icon">
+    <div
+      :class="{ok: !Boolean(errorInfo)}"
+      class="error-info">
+      <div
+        v-if="errorInfo"
+        class="box">
+        <img
+          src="~@/assets/login/error.png"
+          alt=""
+          class="icon">
         <span>{{ errorInfo }}</span>
       </div>
     </div>
@@ -129,7 +141,7 @@ export default {
   },
   methods: {
     getSmsCode() {
-      let res = this.checkFromItem('phone', this.form.phone)
+      const res = this.checkFromItem('phone', this.form.phone)
       if (!res) return
       console.log(this.form, this.isUser)
 
@@ -172,9 +184,9 @@ export default {
         return null
       }
 
-      let arr = ['phone', 'smscode']
+      const arr = ['phone', 'smscode']
       for (let i = 0; i < arr.length; i++) {
-        let res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
+        const res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
         if (!res) return null
       }
 

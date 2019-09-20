@@ -1,113 +1,132 @@
 <template>
   <div class="forget-pwd">
-    <get-sms-code v-show="!showNext"
-                  ref="smsCode" />
+    <get-sms-code
+      v-show="!showNext"
+      ref="smsCode" />
 
-    <div v-if="showChooseList"
-         class="multiple-company">
+    <div
+      v-if="showChooseList"
+      class="multiple-company">
       <ul class="list">
-        <li v-for="(item, index) in list"
-            :key="index"
-            :class="{active: selectedIndex === index}"
-            class="list-item"
-            @click="selectedIndex = index">
+        <li
+          v-for="(item, index) in list"
+          :key="index"
+          :class="{active: selectedIndex === index}"
+          class="list-item"
+          @click="selectedIndex = index">
           <span class="icon wk wk-enterprise" />
           <span class="text">
             {{ item.companyName }}
           </span>
-          <img v-if="selectedIndex === index"
-               src="~@/assets/login/m_checked.png"
-               alt=""
-               class="icon-checked">
+          <img
+            v-if="selectedIndex === index"
+            src="~@/assets/login/m_checked.png"
+            alt=""
+            class="icon-checked">
         </li>
       </ul>
     </div>
 
     <el-form v-show="showRestPwd">
       <el-form-item>
-        <el-popover v-model="pwdPopover"
-                    :width="width"
-                    placement="bottom-start"
-                    popper-class="no-padding-popover"
-                    trigger="focus">
+        <el-popover
+          v-model="pwdPopover"
+          :width="width"
+          placement="bottom-start"
+          popper-class="no-padding-popover"
+          trigger="focus">
           <div class="pwd-popover-content">
             <div class="box">
               <span class="text">密码强度</span>
-              <i v-for="i in 4"
-                 :key="i"
-                 :class="{active: i <= rankIndex}"
-                 class="item" />
+              <i
+                v-for="i in 4"
+                :key="i"
+                :class="{active: i <= rankIndex}"
+                class="item" />
             </div>
             <div class="desc">
               <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
-              <span v-if="rankIndex >= 3"
-                    class="icon wk wk-success" />
-              <span v-else
-                    class="icon error wk wk-close" />
+              <span
+                v-if="rankIndex >= 3"
+                class="icon wk wk-success" />
+              <span
+                v-else
+                class="icon error wk wk-close" />
             </div>
           </div>
-          <div slot="reference"
-               class="pwd-popover-control">
-            <el-input ref="password"
-                      v-model="form.password"
-                      :maxlength="20"
-                      :class="{error: !validateRes.password}"
-                      placeholder="请输入密码"
-                      type="password"
-                      @input.native="calcRank"
-                      @focus="focusKey = 'password'"
-                      @blur="checkFromItem('password', form.password)">
-              <span slot="prefix"
-                    :class="{focus: focusKey === 'password'}"
-                    class="form-icon wk wk-circle-password" />
+          <div
+            slot="reference"
+            class="pwd-popover-control">
+            <el-input
+              ref="password"
+              v-model="form.password"
+              :maxlength="20"
+              :class="{error: !validateRes.password}"
+              placeholder="请输入密码"
+              type="password"
+              @input.native="calcRank"
+              @focus="focusKey = 'password'"
+              @blur="checkFromItem('password', form.password)">
+              <span
+                slot="prefix"
+                :class="{focus: focusKey === 'password'}"
+                class="form-icon wk wk-circle-password" />
             </el-input>
           </div>
         </el-popover>
       </el-form-item>
 
       <el-form-item>
-        <el-input ref="re_password"
-                  v-model="form.re_password"
-                  :class="{error: !validateRes.re_password}"
-                  :maxlength="20"
-                  placeholder="请输入确认密码"
-                  type="password"
-                  @focus="focusKey = 're_password'"
-                  @blur="checkForm">
-          <span slot="prefix"
-                :class="{focus: focusKey === 're_password'}"
-                class="form-icon wk wk-circle-password" />
+        <el-input
+          ref="re_password"
+          v-model="form.re_password"
+          :class="{error: !validateRes.re_password}"
+          :maxlength="20"
+          placeholder="请输入确认密码"
+          type="password"
+          @focus="focusKey = 're_password'"
+          @blur="checkForm">
+          <span
+            slot="prefix"
+            :class="{focus: focusKey === 're_password'}"
+            class="form-icon wk wk-circle-password" />
         </el-input>
       </el-form-item>
     </el-form>
 
-    <div :class="{ok: !Boolean(errorInfo)}"
-         class="error-info">
-      <div v-if="errorInfo"
-           class="box">
-        <img src="~@/assets/login/error.png"
-             alt=""
-             class="icon">
+    <div
+      :class="{ok: !Boolean(errorInfo)}"
+      class="error-info">
+      <div
+        v-if="errorInfo"
+        class="box">
+        <img
+          src="~@/assets/login/error.png"
+          alt=""
+          class="icon">
         <span>{{ errorInfo }}</span>
       </div>
     </div>
 
     <div class="control">
-      <div v-if="!showNext && !showRestPwd"
-           class="btn"
-           @click="handleNext">
+      <div
+        v-if="!showNext && !showRestPwd"
+        class="btn"
+        @click="handleNext">
         下 一 步
       </div>
-      <div v-else
-           class="btn"
-           @click="handleResetPwd">
+      <div
+        v-else
+        class="btn"
+        @click="handleResetPwd">
         确&nbsp;&nbsp;&nbsp;定
       </div>
     </div>
 
     <div class="to-login">
-      已有账号，<span class="special"
-            @click="$emit('toggle', 'LoginByPwd')">去登录</span>
+      已有账号，<span
+        class="special"
+        @click="$emit('toggle', 'LoginByPwd')">去登录</span>
     </div>
   </div>
 </template>
@@ -179,7 +198,7 @@ export default {
     handleNext() {
       this.clearError()
       if (!this.showRestPwd) {
-        let data = this.$refs.smsCode.getData()
+        const data = this.$refs.smsCode.getData()
         if (!data) return false
         this.form = {
           ...this.form,
@@ -230,10 +249,10 @@ export default {
         return
       }
 
-      let flag = this.checkForm()
+      const flag = this.checkForm()
       if (!flag) return
       console.log('RegisterAPI', this.form)
-      let params = Object.assign({}, this.form)
+      const params = Object.assign({}, this.form)
       if (params.hasOwnProperty('re_password')) {
         delete params.re_password
       }
@@ -254,9 +273,9 @@ export default {
      */
     checkForm() {
       this.clearError()
-      let arr = ['phone', 'smscode', 'password']
+      const arr = ['phone', 'smscode', 'password']
       for (let i = 0; i < arr.length; i++) {
-        let res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
+        const res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
         if (!res) return false
       }
       if (this.form.password !== this.form.re_password) {
@@ -271,7 +290,7 @@ export default {
      * 密码强度计算
      */
     calcRank() {
-      let pwd = this.form.password
+      const pwd = this.form.password
       if (pwd.length < 8) {
         this.rankIndex = 0
         return
@@ -281,13 +300,13 @@ export default {
       // let reg3 = /[0-9]/; // 至少一个数字
       // let reg4 = /[~!@#$%^&*()_+`\-={}:";'<>?,.\/]/; // 至少一个特殊字符
 
-      let regArr = [
+      const regArr = [
         /[A-Z]/,
         /[a-z]/,
         /[0-9]/,
         /[~!@#$%^&*()_+`\-={}:";'<>?,.\/]/
       ]
-      let resArr = []
+      const resArr = []
       regArr.forEach(reg => {
         resArr.push(reg.test(pwd))
       })

@@ -27,7 +27,7 @@ export default {
   },
 
   watch: {
-    id: function () {
+    id: function() {
       if (this.canShowDetail) {
         this.getDetial()
       }
@@ -52,6 +52,6 @@ export default {
     }
   },
 
-  deactivated: function () { }
+  deactivated: function() { }
 
 }

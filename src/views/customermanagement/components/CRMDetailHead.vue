@@ -2,59 +2,70 @@
   <div class="container">
     <flexbox class="t-section">
       <flexbox class="t-section-name">
-        <img class="t-section-name__hd"
-             :src="crmIcon" />
+        <img
+          :src="crmIcon"
+          class="t-section-name__hd" >
         <div class="t-section-name__bd">
-          <span>{{typeName}}</span>
-          <p>{{name}}<i class="wk wk-circle-password"></i></p>
+          <span>{{ typeName }}</span>
+          <p>{{ name }}<i class="wk wk-circle-password"/></p>
         </div>
       </flexbox>
 
-      <el-button v-if="showTransfer"
-                 class="head-handle-button"
-                 @click.native="handleTypeClick('transfer')"
-                 type="primary">转移</el-button>
-      <el-button v-if="showEdit"
-                 class="head-handle-button edit-btn--color"
-                 icon="wk wk-circle-edit"
-                 @click.native="handleTypeClick('edit')"
-                 type="primary">编辑</el-button>
-      <el-dropdown trigger="click"
-                   @command="handleTypeClick">
-        <el-button icon="el-icon-more"
-                   class="t-more"></el-button>
+      <el-button
+        v-if="showTransfer"
+        class="head-handle-button"
+        type="primary"
+        @click.native="handleTypeClick('transfer')">转移</el-button>
+      <el-button
+        v-if="showEdit"
+        class="head-handle-button edit-btn--color"
+        icon="wk wk-circle-edit"
+        type="primary"
+        @click.native="handleTypeClick('edit')">编辑</el-button>
+      <el-dropdown
+        trigger="click"
+        @command="handleTypeClick">
+        <el-button
+          icon="el-icon-more"
+          class="t-more"/>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="(item, index) in moreTypes"
-                            :key="index"
-                            :icon="item.icon | wkIconPre"
-                            v-if="whetherTypeShowByPermision(item.type)"
-                            :command="item.type">{{item.name}}</el-dropdown-item>
+          <el-dropdown-item
+            v-for="(item, index) in moreTypes"
+            v-if="whetherTypeShowByPermision(item.type)"
+            :key="index"
+            :icon="item.icon | wkIconPre"
+            :command="item.type">{{ item.name }}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </flexbox>
-    <flexbox class="h-section"
-             align="stretch">
-      <flexbox-item class="h-item"
-                    span="240"
-                    v-for="(item, index) in headDetails"
-                    :key="index">
-        <div class="h-title">{{item.title}}</div>
-        <div class="h-value text-one-line">{{item.value}}</div>
+    <flexbox
+      class="h-section"
+      align="stretch">
+      <flexbox-item
+        v-for="(item, index) in headDetails"
+        :key="index"
+        class="h-item"
+        span="240">
+        <div class="h-title">{{ item.title }}</div>
+        <div class="h-value text-one-line">{{ item.value }}</div>
       </flexbox-item>
     </flexbox>
-    <slot></slot>
-    <transfer-handle :crmType="crmType"
-                     :selectionList="[detail]"
-                     @handle="handleCallBack"
-                     :dialogVisible.sync="transferDialogShow"></transfer-handle>
-    <alloc-handle :crmType="crmType"
-                  :selectionList="[detail]"
-                  @handle="handleCallBack"
-                  :dialogVisible.sync="allocDialogShow"></alloc-handle>
-    <deal-status-handle :crmType="crmType"
-                        :selectionList="[detail]"
-                        @handle="handleCallBack"
-                        :visible.sync="dealStatusShow"></deal-status-handle>
+    <slot/>
+    <transfer-handle
+      :crm-type="crmType"
+      :selection-list="[detail]"
+      :dialog-visible.sync="transferDialogShow"
+      @handle="handleCallBack"/>
+    <alloc-handle
+      :crm-type="crmType"
+      :selection-list="[detail]"
+      :dialog-visible.sync="allocDialogShow"
+      @handle="handleCallBack"/>
+    <deal-status-handle
+      :crm-type="crmType"
+      :selection-list="[detail]"
+      :visible.sync="dealStatusShow"
+      @handle="handleCallBack"/>
   </div>
 </template>
 <script type="text/javascript">
@@ -79,7 +90,7 @@ import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
 
 export default {
-  name: 'c-r-m-detail-head',
+  name: 'CRMDetailHead',
   components: {
     TransferHandle,
     AllocHandle,
@@ -143,14 +154,6 @@ export default {
       this.moreTypes = this.getSelectionHandleItemsInfo()
     }
   },
-  data() {
-    return {
-      moreTypes: [], // 更多操作
-      transferDialogShow: false, // 转移操作
-      allocDialogShow: false, // 公海分配操作提示框
-      dealStatusShow: false // 成交状态修改框
-    }
-  },
   props: {
     /** 模块ID */
     id: [String, Number],
@@ -176,6 +179,14 @@ export default {
       default: () => {
         return []
       }
+    }
+  },
+  data() {
+    return {
+      moreTypes: [], // 更多操作
+      transferDialogShow: false, // 转移操作
+      allocDialogShow: false, // 公海分配操作提示框
+      dealStatusShow: false // 成交状态修改框
     }
   },
   mounted() {
@@ -295,7 +306,7 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'delete') {
-        let request = {
+        const request = {
           leads: crmLeadsDelete,
           customer: crmCustomerDelete,
           contacts: crmContactsDelete,
@@ -340,7 +351,7 @@ export default {
     /** 更多操作 */
     /** 获取展示items */
     getSelectionHandleItemsInfo() {
-      let handleInfos = {
+      const handleInfos = {
         transfer: {
           name: '转移',
           type: 'transfer',
