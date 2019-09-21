@@ -21,8 +21,8 @@
         :id="id"
         crm-type="customer"
         @handle="detailHeadHandle"
-        @close="hideView"/>
-      <flexbox class="d-container-bd">
+        @close="hideView" />
+      <flexbox class="d-container-bd" align="stretch">
         <el-tabs
           v-model="tabCurrentName"
           type="border-card"
@@ -33,19 +33,30 @@
             :key="index"
             :label="item.label"
             :name="item.name"
-            lazy>
+            lazy
+            class="t-loading-content">
             <component
               :is="item.name"
               :detail="detailData"
               :id="id"
+              :handle="activityHandle"
               :is-seas="isSeasDetail"
-              crm-type="customer"/>
+              crm-type="customer" />
           </el-tab-pane>
         </el-tabs>
         <transition name="slide-fade">
-          <div
+          <el-tabs
             v-if="showFirstDetail"
-            class="d-container-bd--right">hello</div>
+            value="chiefly-contacts"
+            type="border-card"
+            class="d-container-bd--right">
+            <el-tab-pane
+              label="重要信息"
+              name="chiefly-contacts"
+              lazy>
+              <chiefly-contacts/>
+            </el-tab-pane>
+          </el-tabs>
         </transition>
 
       </flexbox>
@@ -53,13 +64,13 @@
 
     <el-button
       class="firse-button"
-      @click="showFirstDetail= !showFirstDetail">重<br >要<br >信<br >息<br ><i class="el-icon-arrow-right el-icon--right"/></el-button>
+      @click="showFirstDetail= !showFirstDetail">重<br>要<br>信<br>息<br><i class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
       crm-type="customer"
       @save-success="editSaveSuccess"
-      @hiden-view="isCreate=false"/>
+      @hiden-view="isCreate=false" />
   </slide-view>
 </template>
 
@@ -69,6 +80,8 @@ import { crmCustomerRead } from '@/api/customermanagement/customer'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import CustomerFollow from './components/CustomerFollow' // 跟进记录
+import Activity from '../components/activity'
+import ChieflyContacts from './components/ChieflyContacts' // 首要联系人
 import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
 import RelativeContacts from '../components/RelativeContacts' // 相关联系人
 import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
@@ -87,6 +100,8 @@ export default {
   components: {
     SlideView,
     CustomerFollow,
+    Activity,
+    ChieflyContacts,
     CRMDetailHead,
     CRMBaseInfo,
     RelativeContacts,
@@ -134,14 +149,39 @@ export default {
         { title: '负责人', value: '' },
         { title: '更新时间', value: '' }
       ],
-      tabCurrentName: 'customer-follow',
-      isCreate: false // 编辑操作
+      tabCurrentName: 'Activity',
+      isCreate: false, // 编辑操作
+      // 活动操作
+      activityHandle: [
+        {
+          type: 'add-log',
+          label: '写跟进'
+        }, {
+          type: 'add-task',
+          label: '创建任务'
+        }, {
+          type: 'add-email',
+          label: '发邮件'
+        }, {
+          type: 'add-business',
+          label: '创建商机'
+        }, {
+          type: 'add-contract',
+          label: '创建合同'
+        }, {
+          type: 'add-contacts',
+          label: '创建联系人  '
+        }, {
+          type: 'add-receivables',
+          label: '创建回款  '
+        }
+      ]
     }
   },
   computed: {
     tabnames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '跟进记录', name: 'customer-follow' })
+      tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.customer && this.crm.customer.read) {
         tempsTabs.push({ label: '基本信息', name: 'c-r-m-base-info' })
       }
@@ -213,6 +253,7 @@ export default {
 }
 .slide-fade-leave-to {
   transform: translateX(100%);
+  opacity: 0;
 }
 @import '../styles/crmdetail.scss';
 </style>

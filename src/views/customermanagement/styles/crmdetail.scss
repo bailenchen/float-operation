@@ -17,8 +17,10 @@
 
 // 详情
 .d-container-bd {
-  margin-top: 15px;
+  padding-top: 15px;
   flex: 1;
+  overflow: hidden;
+
   /deep/ .el-tabs__item {
     color: #333;
     font-size: 12px;
@@ -31,35 +33,37 @@
     color: #333;
   }
 
+  /deep/ .el-tabs {
+    height: calc(100% - 15px) !important;
+  }
+
+  /deep/ .el-tabs__content {
+    height: calc(100% - 40px) !important;
+    overflow: auto;
+    position: relative;
+  }
+
   &--left {
     flex: 1;
     box-shadow: none;
+    position: relative;
   }
 
   &--right {
-    width: 400px;
+    width: 300px;
     flex-shrink: 0;
-    height: 100%;
+    height: calc(100% - 15px);
     background-color: white;
     margin-left: 15px;
     border-left: 1px solid $xr-border-line-color;
     border-top: 1px solid $xr-border-line-color;
-
+    border-bottom: 1px solid $xr-border-line-color;
   }
 }
 
 .d-container {
   position: relative;
   height: 100%;
-}
-
-/** 让element 查询到的标签 */
-.t-loading-content {
-  position: relative;
-  overflow-y: scroll;
-  flex: 1;
-  background-color: white;
-  padding-top: 20px;
 }
 
 /** 审核信息 */
@@ -76,7 +80,7 @@
 // 重要按钮
 .firse-button {
   position: absolute;
-  top: 200px;
+  top: 300px;
   right: -1px;
   z-index: 1;
   font-size: 12px;
@@ -86,6 +90,7 @@
   padding: 6px 10px;
   font-size: 12px;
   background-color: #F1F5FD;
+
   /deep/ span {
     line-height: 13px;
   }

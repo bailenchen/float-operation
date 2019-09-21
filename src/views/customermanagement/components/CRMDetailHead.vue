@@ -18,7 +18,7 @@
         @click.native="handleTypeClick('transfer')">转移</el-button>
       <el-button
         v-if="showEdit"
-        class="head-handle-button edit-btn--color"
+        class="head-handle-button edit-btn--green"
         icon="wk wk-circle-edit"
         type="primary"
         @click.native="handleTypeClick('edit')">编辑</el-button>
