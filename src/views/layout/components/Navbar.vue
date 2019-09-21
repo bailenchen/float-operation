@@ -146,6 +146,12 @@ export default {
           icon: 'project'
         })
       }
+      tempsItems.push({
+        title: '日志',
+        type: 3,
+        path: '/workLog',
+        icon: ''
+      })
       return tempsItems
     }
   },

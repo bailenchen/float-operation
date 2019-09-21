@@ -168,7 +168,7 @@ export default {
   computed: {
     ...mapGetters(['activeIndex', 'collapse']),
     preIcon() {
-      return this.mainRouter == 'crm' ? 'wk' : 'wukong'
+      return (['crm', 'workLog'].includes(this.mainRouter)) ? 'wk' : 'wukong'
     },
     showTooltip() {
       return !this.collapse

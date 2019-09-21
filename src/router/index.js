@@ -13,6 +13,8 @@ import { managerRouter } from './modules/manager'
 import personRouter from './modules/person'
 import { biRouter } from './modules/business'
 
+import workLogRouter from './modules/workLog'
+
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
 * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
@@ -38,6 +40,7 @@ export const constantRouterMap = [
   },
   projectRouter,
   personRouter,
+  workLogRouter,
   {
     path: '*',
     redirect: '/404',
