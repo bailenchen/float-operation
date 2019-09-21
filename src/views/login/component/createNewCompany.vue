@@ -230,7 +230,10 @@ export default {
       if (this.disabledBtn) return
       this.disabledBtn = true
       const flag = this.checkForm()
-      if (!flag) return
+      if (!flag) {
+        this.disabledBtn = false
+        return
+      }
       const params = Object.assign({}, this.form)
       if (params.hasOwnProperty('re_password')) {
         delete params.re_password

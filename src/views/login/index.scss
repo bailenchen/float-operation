@@ -137,6 +137,9 @@
     &:hover {
       background-color: #517aec;
     }
+    &.is-disabled {
+      cursor: not-allowed;
+    }
   }
 
   .others {
