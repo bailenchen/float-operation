@@ -6,24 +6,25 @@
       <div
         v-photo="userInfo"
         v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
-        class="div-photo cell-hd"/>
+        class="div-photo cell-hd" />
       <div class="cell-bd">
-        <span class="cell-bd__name"><span>王晶晶</span> <span class="cell-bd__name--des">销售总监</span></span> <br >
-        <span class="cell-bd__detail"><i class="wk wk-circle-iphone"/> <span>158-2359-8945</span></span> <br >
-        <span class="cell-bd__detail"><i class="wk wk-circle-email"/> <span>12345678@qq.com</span></span>
+        <p class="cell-bd__name"><span>王晶晶</span> <span class="cell-bd__name--des">销售总监</span></p>
+        <p class="cell-bd__detail"><i class="wk wk-circle-iphone" /> <span>158-2359-8945</span></p>
+        <p class="cell-bd__detail"><i class="wk wk-circle-email" /> <span>12345678@qq.com</span></p>
       </div>
-      <div class="cell-ft">
-        <span class="mark"><i class="wk wk-s-contacts"/>首要联系人</span>
-        <i class="wk wk-phone"/>
-      </div>
+      <span class="mark"><i class="wk wk-s-contacts" />首要联系人</span>
+      <i class="wk wk-phone" />
     </flexbox>
 
     <div class="content">
       <div class="content-title">基本信息</div>
-      <p v-for="(item , index) in list" :key="index" class="detail-cell">
+      <p
+        v-for="(item , index) in list"
+        :key="index"
+        class="detail-cell">
         <span class="detail-cell__label">
           {{ item.label }}
-        </span><br >
+        </span><br>
         <span class="detail-cell__value">
           {{ item.value }}
         </span>
@@ -46,7 +47,8 @@ export default {
         {
           label: '手机号',
           value: '158-2359-8945'
-        }, {
+        },
+        {
           label: '客户来源',
           value: '客户来源'
         },
@@ -56,7 +58,8 @@ export default {
         },
         {
           label: '备注',
-          value: '意向很大，重点客户。需要常联系客户，让客户记住自己意向很大， 重点客户。需要常联系客户，让客户...'
+          value:
+            '意向很大，重点客户。需要常联系客户，让客户记住自己意向很大， 重点客户。需要常联系客户，让客户...'
         },
         {
           label: '详细地址',
@@ -84,7 +87,8 @@ export default {
 .cell {
   padding: 5px;
   border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  position: relative;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 
   &-hd {
     position: relative;
@@ -101,8 +105,8 @@ export default {
       font-size: 13px;
       font-weight: 600;
       color: #333333;
-      display: inline-block;
       margin-top: 10px;
+      margin-bottom: 2px;
       &--des {
         margin-left: 5px;
         padding-left: 5px;
@@ -127,7 +131,7 @@ export default {
       font-size: 12px;
       color: #333333;
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 8px;
       i {
         color: $xr-color-primary;
         font-size: 13px;
@@ -135,29 +139,25 @@ export default {
     }
   }
 
-  &-ft {
-    overflow: hidden;
-    flex-shrink: 0;
-    width: 90px;
-    position: relative;
-    .mark {
-      position: absolute;
-      top: 0;
-      right: -7px;
-    }
+  .mark {
+    position: absolute;
+    top: 4px;
+    right: -2px;
+    z-index: 1;
+  }
 
-    .wk-phone {
-      position: absolute;
-      top: 30px;
-      right: 0;
-    }
+  .wk-phone {
+    position: absolute;
+    top: 30px;
+    right: 5px;
+    z-index: 1;
   }
 }
 
 .mark {
   display: inline-block;
-  color: #FB2337;
-  background-color: #FFF4F4;
+  color: #fb2337;
+  background-color: #fff4f4;
   font-size: 12px;
   padding: 5px;
   border-radius: 4px;
@@ -170,7 +170,7 @@ export default {
 
 .wk-phone {
   cursor: pointer;
-  background-color: #FB9323;
+  background-color: #fb9323;
   color: white;
   border-radius: 4px;
   display: inline-block;
