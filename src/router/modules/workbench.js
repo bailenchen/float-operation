@@ -45,7 +45,7 @@ const workbenchRouter = {
     path: 'notice',
     component: () => import('@/views/OAManagement/notice/index'),
     meta: {
-      requiresAuth: true,
+      requiresAuth: false,
       title: '公告',
       icon: 'notice',
       index: 1,
