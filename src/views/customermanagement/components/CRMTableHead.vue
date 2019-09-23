@@ -787,8 +787,8 @@ export default {
 
   .el-button {
     color: #666;
-    background-color: #f6f8fa;
-    border-color: #f6f8fa;
+    background-color: $xr--background-color-base;
+    border-color: $xr--background-color-base;
     font-size: 12px;
     height: 28px;
     border-radius: 14px;

@@ -9,10 +9,10 @@
 
 .el-table /deep/ thead th {
   padding: 3px 0;
-  background-color: #F6F8FA;
+  background-color: $xr--background-color-base;
 
   .cell {
-    color: #333333;
+    color: #333;
     font-size: 12px;
     font-weight: 600;
     overflow: hidden;
@@ -64,11 +64,12 @@
   border-right-color: transparent;
   border-bottom-color: $xr-border-line-color;
   font-size: 13px;
+  color: #333;
 }
 
-.el-table /deep/ tbody tr td:nth-child(2) {
-  border-right: 1px solid $xr-border-line-color;
-}
+// .el-table /deep/ tbody tr td:nth-child(2) {
+//   border-right: 1px solid $xr-border-line-color;
+// }
 
 .n-table--border {
   border-width: 0;
@@ -87,14 +88,6 @@
     float: right;
     margin: 5px 100px 0 0;
   }
-}
-
-// 设置
-.table-set {
-  width: 15px;
-  margin-top: 5px;
-  cursor: pointer;
-  color: #9DA9C2;
 }
 
 // 列表状态
