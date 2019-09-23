@@ -24,10 +24,7 @@
                 :key="index"
                 @click="addSkip(item)">
                 <i
-                  :class="'wukong-' + item.icon"
-                  class="wukong"/>
-                <span>{{ item.label }}</span>
-              </p>
+                  :class="['wk', 'wk-' + item.icon]"/><span>{{ item.label }}</span></p>
             </div>
           </div>
         </sidebar>
@@ -111,7 +108,7 @@ export default {
       }
       if (this.crm.receivables && this.crm.receivables.save) {
         addItems.push({
-          icon: 'money',
+          icon: 'receivables',
           index: 'money',
           label: '回款'
         })

@@ -279,6 +279,7 @@ export default {
 .el-menu-vertical {
   height: 100%;
   overflow: auto;
+  overflow-y: overlay;
   padding-bottom: 48px;
 }
 
@@ -435,7 +436,7 @@ export default {
 // 消息数
 .el-badge {
   position: absolute;
-  right: 8px;
+  right: 4px;
   top: 6px;
   /deep/ .el-badge__content {
     border-width: 0;
