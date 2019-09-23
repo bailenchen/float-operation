@@ -55,14 +55,10 @@
           prop="checkStatus"
           label="状态"
           width="100"
-          align="center"
           fixed="right">
           <template slot-scope="scope">
-            <div
-              :style="getStatusStyle(scope.row.checkStatus)"
-              class="status_button">
-              {{ getStatusName(scope.row.checkStatus) }}
-            </div>
+            <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
+            <span>{{ getStatusName(scope.row.checkStatus) }}</span>
           </template>
         </el-table-column>
         <el-table-column/>

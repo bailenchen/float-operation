@@ -106,3 +106,20 @@
   font-size: 12px;
   margin: 0 auto;
 }
+
+.status-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.deal-suc {
+  font-size: 14px;
+  color: #20b559;
+}
+
+.deal-un {
+  font-size: 14px;
+  color: #f95a5a;
+}

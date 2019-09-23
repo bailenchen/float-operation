@@ -84,7 +84,15 @@
           :width="item.width"
           :formatter="fieldFormatter"
           sortable="custom"
-          show-overflow-tooltip/>
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <template v-if="item.prop == 'dealStatus'">
+              <i :class="scope.row[item.prop] | dealIcon"/>
+              <span>{{ scope.row[item.prop] }}</span>
+            </template>
+            <template v-else>{{ scope.row[item.prop] }}</template>
+          </template>
+        </el-table-column>
         <el-table-column
           v-if="CRMConfig.customerConfig == 1"
           :resizable="false"
@@ -152,6 +160,11 @@ export default {
   components: {
     CRMAllDetail,
     BusinessCheck
+  },
+  filters: {
+    dealIcon(statu) {
+      return statu == '已成交' ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    }
   },
   mixins: [table],
   data() {

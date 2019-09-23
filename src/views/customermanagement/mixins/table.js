@@ -445,31 +445,27 @@ export default {
     getStatusStyle(status) {
       if (status == 0) {
         return {
-          'border-color': '#E6A23C',
-          'background-color': '#FDF6EC',
-          'color': '#E6A23C'
+          backgroundColor: '#ffc539'
         }
       } else if (status == 1) {
         return {
-          'border-color': '#409EFF',
-          'background-color': '#ECF5FF',
-          'color': '#409EFF'
+          backgroundColor: '#398dff'
         }
       } else if (status == 2) {
         return {
-          'border-color': '#67C23A',
-          'background-color': '#F0F9EB',
-          'color': '#67C23A'
+          backgroundColor: '#20b559'
         }
       } else if (status == 3) {
         return {
-          'border-color': '#F56C6B',
-          'background-color': '#FEF0F0',
-          'color': '#F56C6B'
+          backgroundColor: '#f95a5a'
         }
-      } else if (status == 4 || status == 5) {
+      } else if (status == 4) {
         return {
-          'background-color': '#FFFFFF'
+          backgroundColor: '#dee8ff'
+        }
+      } else if (status == 5) {
+        return {
+          backgroundColor: '#d9d9d9'
         }
       }
     },
