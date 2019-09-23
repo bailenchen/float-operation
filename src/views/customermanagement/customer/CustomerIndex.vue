@@ -141,10 +141,6 @@
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
-      <!-- <fields-set
-      :crm-type="crmType"
-      :dialog-visible.sync="showFieldSet"
-      @set-success="setSave"/> -->
   </div>
 </template>
 

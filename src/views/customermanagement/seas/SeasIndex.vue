@@ -60,9 +60,10 @@
           <template
             slot="header"
             slot-scope="slot">
-            <i
-              class="wk wk-config table-set"
-              @click="handleTableSet"/>
+            <field-set
+              :is-seas="isSeas"
+              :crm-type="crmType"
+              @change="setSave"/>
           </template>
         </el-table-column>
       </el-table>
@@ -86,23 +87,20 @@
       class="d-view"
       @handle="handleHandle"
       @hide-view="showDview=false"/>
-    <fields-set
-      :crm-type="crmType"
-      :is-seas="isSeas"
-      :dialog-visible.sync="showFieldSet"
-      @set-success="setSave"/>
   </div>
 </template>
 
 <script>
 import CustomerDetail from '../customer/CustomerDetail'
+import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 公海列表 */
   name: 'SeacIndex',
   components: {
-    CustomerDetail
+    CustomerDetail,
+    FieldSet
   },
   mixins: [table],
   data() {

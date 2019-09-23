@@ -14,7 +14,8 @@
 
       <div v-loading="loading" class="field-set__content">
         <draggable
-          v-model="fields">
+          v-model="fields"
+          :options="{ dragClass: 'sortable-drag' }">
           <div v-for="(item, index) in fields" :key="index" class="field-set__content--item text-one-line">
             <el-switch v-model="item.check"/>
             <span v-if="item.center">{{ item.left }}<span class="input-word">{{ item.center }}</span>{{ item.right }}</span>
@@ -245,5 +246,9 @@ export default {
 .input-word {
   background-color: $xr-color-primary;
   color: white;
+}
+
+.sortable-drag {
+  cursor: move;
 }
 </style>

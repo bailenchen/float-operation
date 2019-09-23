@@ -58,9 +58,9 @@
           <template
             slot="header"
             slot-scope="slot">
-            <i
-              class="wk wk-config table-set"
-              @click="handleTableSet"/>
+            <field-set
+              :crm-type="crmType"
+              @change="setSave"/>
           </template>
         </el-table-column>
       </el-table>
@@ -83,22 +83,20 @@
       class="d-view"
       @handle="handleHandle"
       @hide-view="showDview=false"/>
-    <fields-set
-      :crm-type="crmType"
-      :dialog-visible.sync="showFieldSet"
-      @set-success="setSave"/>
   </div>
 </template>
 
 <script>
 import ProductDetail from './ProductDetail'
+import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 产品列表 */
   name: 'ProductIndex',
   components: {
-    ProductDetail
+    ProductDetail,
+    FieldSet
   },
   mixins: [table],
   data() {

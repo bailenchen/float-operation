@@ -66,8 +66,6 @@ export default {
       filterObj: {}, // 筛选确定数据
       sceneId: '', // 场景筛选ID
       sceneName: '', // 场景名字
-      /** 列表展示字段管理 */
-      showFieldSet: false,
       /** 勾选行 */
       selectionList: [] // 勾选数据 用于全局导出
     }
@@ -398,10 +396,6 @@ export default {
         this.currentPage = 1
         this.getList()
       }
-    },
-    // 设置点击
-    handleTableSet() {
-      this.showFieldSet = true
     },
     /**
      * 字段排序

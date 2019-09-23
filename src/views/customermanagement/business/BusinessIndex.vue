@@ -57,9 +57,9 @@
           <template
             slot="header"
             slot-scope="slot">
-            <i
-              class="wk wk-config table-set"
-              @click="handleTableSet"/>
+            <field-set
+              :crm-type="crmType"
+              @change="setSave"/>
           </template>
         </el-table-column>
       </el-table>
@@ -83,22 +83,20 @@
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
-    <fields-set
-      :crm-type="crmType"
-      :dialog-visible.sync="showFieldSet"
-      @set-success="setSave"/>
   </div>
 </template>
 
 <script>
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
+import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 商机列表 */
   name: 'BusinessIndex',
   components: {
-    CRMAllDetail
+    CRMAllDetail,
+    FieldSet
   },
   mixins: [table],
   data() {
