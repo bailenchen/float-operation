@@ -11,7 +11,7 @@
       @on-search="crmSearch"
       @on-export="exportInfos"/>
     <div
-      v-empty="!crm.customer.pool"
+      v-empty="!crm.pool.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
