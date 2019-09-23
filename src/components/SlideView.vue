@@ -70,19 +70,19 @@ export default {
     if (this.appendToBody) {
       document.body.appendChild(this.$el)
     }
-    this.listenerIDs.forEach(element => {
-      if (document.getElementById(element)) {
-        document
-          .getElementById(element)
-          .addEventListener('click', this.handleDocumentClick, false)
-      }
-    })
+
+    document
+      .getElementById('app')
+      .addEventListener('click', this.handleDocumentClick, false)
   },
 
   beforeDestroy() {
     if (this.appendToBody && this.$el && this.$el.parentNode) {
       this.$el.parentNode.removeChild(this.$el)
     }
+    document
+      .getElementById('app')
+      .removeEventListener('click', this.handleDocumentClick, false)
   },
   methods: {
     handleDocumentClick(e) {
