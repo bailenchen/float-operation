@@ -158,8 +158,8 @@ export default {
       }
     },
     /** 获取字段 */
-    getFieldList() {
-      if (this.fieldList.length == 0) {
+    getFieldList(force) {
+      if (this.fieldList.length == 0 || force) {
         this.loading = true
         filedGetTableField({
           label: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8 是公海
@@ -386,7 +386,7 @@ export default {
     },
     /** 自定义字段管理 */
     setSave() {
-      this.getFieldList()
+      this.getFieldList(true)
     },
     /** */
     /** 页面头部操作 */
