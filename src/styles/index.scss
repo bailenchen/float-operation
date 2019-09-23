@@ -224,7 +224,7 @@ div[lazy=loading] {
 // 可访问
 .can-visit,
 .can-visit--underline {
-  color: #2362FB;
+  color: $--color-primary !important;
   cursor: pointer
 }
 
