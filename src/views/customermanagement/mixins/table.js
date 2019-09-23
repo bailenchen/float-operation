@@ -165,6 +165,7 @@ export default {
           label: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8 是公海
         })
           .then(res => {
+            const fieldList = []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
 
@@ -179,13 +180,13 @@ export default {
                 width = element.width
               }
 
-              this.fieldList.push({
+              fieldList.push({
                 prop: element.fieldName,
                 label: element.name,
                 width: width
               })
             }
-
+            this.fieldList = fieldList
             // 获取好字段开始请求数据
             this.getList()
           })
@@ -385,7 +386,6 @@ export default {
     },
     /** 自定义字段管理 */
     setSave() {
-      this.fieldList = []
       this.getFieldList()
     },
     /** */
