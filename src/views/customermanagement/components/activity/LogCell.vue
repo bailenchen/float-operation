@@ -4,17 +4,22 @@
       <div
         v-photo="{img: item.userImg, realname: item.realname}"
         v-lazy:background-image="$options.filters.filterUserLazyImg(item.userImg)"
-        class="div-photo fl-h-img"/>
+        class="div-photo fl-h-img" />
       <div class="fl-h-b">
         <div class="fl-h-name">{{ item.realname }}</div>
         <div class="fl-h-time">{{ item.createTime }}</div>
+      </div>
+      <div
+        v-if="item.category"
+        class="follow">
+        <span class="follow-info">{{ item.category }}</span>
       </div>
       <el-dropdown
         trigger="click"
         @command="handleCommand">
         <i
           style="color:#CDCDCD;margin-left: 8px;"
-          class="el-icon-arrow-down el-icon-more"/>
+          class="el-icon-arrow-down el-icon-more" />
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="delete">删除</el-dropdown-item>
         </el-dropdown-menu>
@@ -31,79 +36,90 @@
           v-for="(file, index) in item.img"
           :key="file.filePath"
           class="fl-b-img-item"
-          @click="previewImg(item.img, index)"/>
+          @click="previewImg(item.img, index)" />
       </flexbox>
-      <div
-        v-if="item.file && item.file.length > 0"
-        class="fl-b-files">
+
+      <div v-if="item.file && item.file.length > 0">
         <flexbox
           v-for="(file, index) in item.file"
           :key="index"
+          align="stretch"
           class="cell">
-          <img
-            class="cell-head"
-            src="@/assets/img/relevance_file.png" >
-          <div class="cell-body">{{ file.name }}<span style="color: #ccc;">（{{ file.size }}）</span></div>
-          <el-button
-            type="primary"
-            icon="el-icon-download"
-            @click="downloadFile(file)">下载</el-button>
+          <div class="cell-hd first-show">
+            <i class="wk wk-file" />
+          </div>
+          <div class="cell-hd first-show">
+            附件：
+          </div>
+          <div class="cell-bd text-one-line">
+            {{ file.name }}
+          </div>
+          <div class="cell-ft">
+            <span class="des">（{{ file.size }}）</span>
+            <a @click="downloadFile(file)">下载</a>
+          </div>
         </flexbox>
       </div>
-      <div
-        v-if="item.category || item.nextTime"
-        class="follow">
-        <span
-          v-if="item.category"
-          class="follow-info">{{ item.category }}</span>
-        <span
-          v-if="item.nextTime"
-          class="follow-info">{{ item.nextTime }}</span>
-      </div>
-      <div
-        v-if="item.contactsList && item.contactsList.length > 0"
-        class="fl-b-other">
-        <div class="fl-b-other-name">关联联系人</div>
-        <div>
-          <flexbox
+
+      <div v-if="item.contactsList && item.contactsList.length > 0">
+        <flexbox
+          align="stretch"
+          class="cell">
+          <div class="cell-hd">
+            <i class="wk wk-contacts" />
+          </div>
+          <div class="cell-bd text-one-line">
+            相关联系人：
+          </div>
+          <div
             v-for="(item, index) in item.contactsList"
             :key="index"
-            class="cell"
-            @click.native="checkRelationDetail('contacts', item.contactsId)">
-            <i
-              :style="{'opacity': index == 0 ? 1 : 0}"
-              class="wukong wukong-contacts cell-head crm-type"/>
-            <div
-              class="cell-body"
-              style="color: #6394E5;cursor: pointer;">{{ item.name }}</div>
-          </flexbox>
-        </div>
+            class="cell-ft__item">
+            <a @click="checkRelationDetail('contacts', item.contactsId)">{{ item.name }}</a>
+          </div>
+        </flexbox>
       </div>
-      <div
-        v-if="item.businessList && item.businessList.length > 0"
-        class="fl-b-other">
-        <div class="fl-b-other-name">关联商机</div>
-        <div>
-          <flexbox
-            v-for="(item, index) in item.businessList"
-            :key="index"
-            class="cell"
-            @click.native="checkRelationDetail('business', item.businessId)">
-            <i
-              :style="{'opacity': index == 0 ? 1 : 0}"
-              class="wukong wukong-business cell-head crm-type"/>
+
+      <div v-if="item.businessList && item.businessList.length > 0">
+        <flexbox
+          align="stretch"
+          class="cell">
+          <div class="cell-hd">
+            <i class="wk wk-business" />
+          </div>
+          <div class="cell-bd text-one-line">
+            相关商机：
+          </div>
+          <div class="cell-ft">
             <div
-              class="cell-body"
-              style="color: #6394E5;cursor: pointer;">{{ item.businessName }}</div>
-          </flexbox>
-        </div>
+              v-for="(item, index) in item.businessList"
+              :key="index"
+              class="cell-ft__item">
+              <a @click="checkRelationDetail('business', item.businessId)">{{ item.businessName }}</a>
+            </div>
+          </div>
+        </flexbox>
       </div>
-      <slot/>
+
+      <div v-if="item.nextTime">
+        <flexbox
+          align="stretch"
+          class="cell">
+          <div class="cell-hd">
+            <i class="wk wk-time" />
+          </div>
+          <div class="cell-bd text-one-line">
+            下次联系时间：{{ item.nextTime }}
+          </div>
+        </flexbox>
+      </div>
+
+      <slot />
     </div>
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :crm-type="relationCrmType"
-      :id="relationID"/>
+      :id="relationID" />
   </div>
 </template>
 
@@ -245,7 +261,7 @@ export default {
 
 /** 内容区域 */
 .fl-b {
-  margin: 20px 0 0 40px;
+  margin: 10px 0 0 40px;
 
   .fl-b-content {
     font-size: 13px;
@@ -286,7 +302,7 @@ export default {
 }
 
 .fl-c:before {
-  content: " ";
+  content: ' ';
   position: absolute;
   top: 0;
   right: 0;
@@ -312,67 +328,71 @@ export default {
 
 /** 关联附件 联系人 客户 行布局 */
 .cell {
-  padding: 8px;
-  background-color: #F5F7FA;
-  border-radius: 2px;
-  position: relative;
-
-  .cell-head {
-    display: block;
-    width: 15px;
-    height: 15px;
-    margin-right: 8px;
-  }
-
-  .cell-body {
-    flex: 1;
+  padding: 5px 0;
+  font-size: 12px;
+  &-hd {
+    flex-shrink: 0;
     color: #333;
-    font-size: 12px;
+    margin-right: 5px;
+    i {
+      font-size: 13px;
+      color: #8a94a6;
+    }
   }
 
-  .cell-foot {
-    display: block;
-    width: 20px;
-    padding: 0 4px;
-    margin-right: 8px;
+  &-hd.first-show {
+    opacity: 0;
+  }
+
+  &-bd {
+    color: #333;
+  }
+
+  &-ft {
+    flex-shrink: 0;
+    .des {
+      color: #999999;
+    }
+    &__item {
+      margin-bottom: 3px;
+      a {
+        color: $xr-color-primary;
+      }
+
+      a + a {
+        margin-bottom: 5px;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    }
+
+    a {
+      color: $xr-color-primary;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   }
 }
 
-.cell:before {
-  content: " ";
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 1px;
-  border-top: 1px solid #e5e5e5;
-  color: #e5e5e5;
-  -webkit-transform-origin: 0 0;
-  transform-origin: 0 0;
-  -webkit-transform: scaleY(0.5);
-  transform: scaleY(0.5);
-  left: 30px;
-  z-index: 2;
-}
-
-.cell:first-child:before {
-  display: none;
+.cell:first-child {
+  .first-show {
+    opacity: 1;
+  }
 }
 
 .follow {
   .follow-info {
-    padding: 5px 10px;
-    background-color: #f5f7fa;
-    color: #999;
+    padding: 3px 8px;
+    background-color: #f6f6f6;
+    color: #666666;
     height: 40px;
     line-height: 40px;
-    border-radius: 28px;
+    border-radius: 4px;
     font-size: 12px;
     margin-right: 10px;
   }
-}
-
-.crm-type {
-  color: rgb(99, 148, 229);
-  font-size: 14px;
 }
 </style>
