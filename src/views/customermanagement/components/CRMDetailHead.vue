@@ -4,10 +4,10 @@
       <flexbox class="t-section-name">
         <img
           :src="crmIcon"
-          class="t-section-name__hd" >
+          class="t-section-name__hd">
         <div class="t-section-name__bd">
           <span>{{ typeName }}</span>
-          <p>{{ name }}<i class="wk wk-circle-password"/></p>
+          <p>{{ name }}<i class="wk wk-circle-password" /></p>
         </div>
       </flexbox>
 
@@ -15,19 +15,29 @@
         v-if="showTransfer"
         class="head-handle-button"
         type="primary"
+        icon="wk wk-transfer"
         @click.native="handleTypeClick('transfer')">转移</el-button>
+
       <el-button
         v-if="showEdit"
         class="head-handle-button edit-btn--green"
         icon="wk wk-circle-edit"
         type="primary"
         @click.native="handleTypeClick('edit')">编辑</el-button>
+
+      <el-button
+        v-if="showDealStatus"
+        class="head-handle-button"
+        type="primary"
+        icon="wk wk-success"
+        @click.native="handleTypeClick('deal_status')">更改成交状态</el-button>
+
       <el-dropdown
         trigger="click"
         @command="handleTypeClick">
         <el-button
           icon="el-icon-more"
-          class="t-more"/>
+          class="t-more" />
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item
             v-for="(item, index) in moreTypes"
@@ -50,22 +60,22 @@
         <div class="h-value text-one-line">{{ item.value }}</div>
       </flexbox-item>
     </flexbox>
-    <slot/>
+    <slot />
     <transfer-handle
       :crm-type="crmType"
       :selection-list="[detail]"
       :dialog-visible.sync="transferDialogShow"
-      @handle="handleCallBack"/>
+      @handle="handleCallBack" />
     <alloc-handle
       :crm-type="crmType"
       :selection-list="[detail]"
       :dialog-visible.sync="allocDialogShow"
-      @handle="handleCallBack"/>
+      @handle="handleCallBack" />
     <deal-status-handle
       :crm-type="crmType"
       :selection-list="[detail]"
       :visible.sync="dealStatusShow"
-      @handle="handleCallBack"/>
+      @handle="handleCallBack" />
   </div>
 </template>
 <script type="text/javascript">
@@ -164,6 +174,7 @@ export default {
       if (
         this.crmType === 'receivables' ||
         this.crmType === 'product' ||
+        this.crmType === 'customer' ||
         this.isSeas
       ) {
         return false
@@ -182,6 +193,13 @@ export default {
         return this.detail.isLock == 1
       }
       return false
+    },
+
+    /**
+     * 展示成交按钮
+     */
+    showDealStatus() {
+      return this.crmType == 'customer'
     }
   },
   watch: {
@@ -437,6 +455,7 @@ export default {
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
+            'transfer',
             'put_seas',
             'deal_status',
             'lock',
@@ -579,5 +598,12 @@ export default {
 
 .el-button + .el-button {
   margin-left: 15px;
+}
+
+.head-handle-button {
+  /deep/ i {
+    font-size: 13px;
+    margin-right: 5px;
+  }
 }
 </style>
