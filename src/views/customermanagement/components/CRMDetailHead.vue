@@ -55,9 +55,9 @@
         v-for="(item, index) in headDetails"
         :key="index"
         class="h-item"
-        span="240">
+        span="200">
         <div class="h-title">{{ item.title }}</div>
-        <div class="h-value text-one-line">{{ item.value }}</div>
+        <div class="h-value text-one-line"><i v-if="item.showIcon" :style="item.style" :class="item.icon" />{{ item.value }}</div>
       </flexbox-item>
     </flexbox>
     <slot />

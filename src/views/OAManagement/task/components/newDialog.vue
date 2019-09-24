@@ -4,6 +4,7 @@
       v-loading="newLoading"
       :visible.sync="newDialogVisible"
       :show-close="false"
+      :modal="false"
       :close-on-click-modal="false"
       :before-close="handleClose"
       title="新建任务"

@@ -22,14 +22,16 @@
       :follow-types="followTypes"
       class="log-add"
       @send="sendLog"
-      @focus="handleType = 'add-log'"
+      @focus="handleType = 'log'"
       @close="handleClick(handleType)" />
     <div class="log">
       <div class="log-section">
         <div class="log-section__title">
           <span class="section-title"><span class="section-title__time">2019-09-02</span></span>
         </div>
-        <div v-if="list.length > 0" class="log-cells">
+        <div
+          v-if="list.length > 0"
+          class="log-cells">
           <log-cell
             v-for="(item, index) in list"
             :item="item"
@@ -46,6 +48,19 @@
         </div>
       </div>
     </div>
+
+    <!-- CRM相关新建 -->
+    <c-r-m-create-view
+      v-if="isCRMCreate"
+      :crm-type="createCRMType"
+      @save-success="createCRMSuccess"
+      @hiden-view="createCRMClose" />
+    <!-- 任务新建 -->
+    <new-dialog
+      :new-dialog-visible="isTaskCreate"
+      :new-loading="taskLoading"
+      @handleClose="createTaskClose"
+      @dialogVisibleSubmit="createTaskClick"/>
   </div>
 </template>
 
@@ -60,12 +75,17 @@ import { crmContactsRecordIndex } from '@/api/customermanagement/contacts'
 import { crmBusinessRecordIndex } from '@/api/customermanagement/business'
 import { crmContractRecordIndex } from '@/api/customermanagement/contract'
 import LogCell from './LogCell'
+import CRMCreateView from '@/views/customermanagement/components/CRMCreateView'
+import NewDialog from '@/views/OAManagement/task/components/newDialog'
+import { addTask } from '@/api/oamanagement/task'
 
 export default {
   name: 'Activity', // 活动
   components: {
     LogAdd,
-    LogCell
+    LogCell,
+    CRMCreateView,
+    NewDialog
   },
   props: {
     // 操作按钮
@@ -95,7 +115,12 @@ export default {
       followTypes: [],
       handleType: '',
       // 活动列表
-      list: []
+      list: [],
+      // 相关新建
+      isCRMCreate: false,
+      createCRMType: '',
+      isTaskCreate: false,
+      taskLoading: false
     }
   },
   computed: {
@@ -200,8 +225,15 @@ export default {
       } else {
         this.handleType = type
       }
-      if (type == 'add-log') {
+
+      if (type == 'log') {
         this.$refs.logAdd.isUnfold = this.handleType == type
+      } else if (type == 'task') {
+        this.isTaskCreate = true
+      } else if (type == 'email') {
+      } else {
+        this.createCRMType = type
+        this.isCRMCreate = true
       }
     },
 
@@ -238,6 +270,40 @@ export default {
           this.isPost = false
           // this.loading = false
         })
+    },
+
+    /**
+     * CRM新建成功
+     */
+    createCRMSuccess() {
+      this.handleType = ''
+    },
+
+    createCRMClose() {
+      this.isCRMCreate = false
+      this.handleType = ''
+    },
+
+    /**
+     * 提交任务
+     */
+    createTaskClick(val) {
+      this.taskLoading = true
+      addTask(val)
+        .then(res => {
+          this.$message.success('新建成功')
+          this.taskLoading = false
+          this.isTaskCreate = false
+        })
+        .catch(() => {
+          this.taskLoading = false
+          this.isTaskCreate = false
+        })
+    },
+
+    createTaskClose() {
+      this.isTaskCreate = false
+      this.handleType = ''
     }
   }
 }

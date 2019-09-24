@@ -154,25 +154,25 @@ export default {
       // 活动操作
       activityHandle: [
         {
-          type: 'add-log',
+          type: 'log',
           label: '写跟进'
         }, {
-          type: 'add-task',
+          type: 'task',
           label: '创建任务'
         }, {
-          type: 'add-email',
+          type: 'email',
           label: '发邮件'
         }, {
-          type: 'add-business',
+          type: 'business',
           label: '创建商机'
         }, {
-          type: 'add-contract',
+          type: 'contract',
           label: '创建合同'
         }, {
-          type: 'add-contacts',
+          type: 'contacts',
           label: '创建联系人  '
         }, {
-          type: 'add-receivables',
+          type: 'receivables',
           label: '创建回款  '
         }
       ]
@@ -224,7 +224,11 @@ export default {
           this.detailData = res.data
           // 负责人
           this.headDetails[0].value = res.data.客户级别
-          this.headDetails[1].value = res.data.dealStatus
+          const dealItem = this.headDetails[1]
+          dealItem.showIcon = true
+          dealItem.icon = res.data.dealStatus == '已成交' ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+          dealItem.style = res.data.dealStatus == '已成交' ? { fontSize: '14px', color: '#20b559', marginRight: '3px' } : { fontSize: '14px', color: '#f95a5a', marginRight: '3px' }
+          dealItem.value = res.data.dealStatus
           this.headDetails[2].value = res.data.ownerUserName
           this.headDetails[3].value = res.data.updateTime
         })
