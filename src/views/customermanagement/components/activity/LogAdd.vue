@@ -3,7 +3,7 @@
     <i
       v-if="isUnfold"
       class="wk wk-close"
-      @click="isUnfold = false" />
+      @click="close" />
     <div
       v-if="isUnfold"
       class="mix-content-select">
@@ -20,6 +20,7 @@
       </el-select>
       <el-select
         v-model="followType"
+        clearable
         placeholder="选择跟进方式">
         <el-option
           v-for="item in followTypes"
@@ -37,7 +38,7 @@
     <div :class="['i-cont', { 'unfold': !isUnfold }]">
       <i
         v-if="!isUnfold"
-        class="wk wk-edit" />
+        class="wk wk-write" />
       <el-input
         ref="textarea"
         v-model="content"
@@ -133,12 +134,12 @@
       <el-button
         type="text"
         class="handle-button"
-        icon="wk wk-alloc"
+        icon="wk wk-picture"
         @click="barClick('img')">图片</el-button>
       <el-button
         type="text"
         class="handle-button"
-        icon="wk wk-alloc"
+        icon="wk wk-file"
         @click="barClick('file')">附件</el-button>
       <el-popover
         v-if="showBusiness"
@@ -159,7 +160,7 @@
         <el-button
           slot="reference"
           type="text"
-          icon="wk wk-alloc"
+          icon="wk wk-associate"
           class="handle-button"
           style="margin-left: 10px;"
           @click="barClick('business')">关联商机</el-button>
@@ -284,10 +285,11 @@ export default {
       // 关联商机信息
       this.business = []
       // 关联联系人信息
-      this.contactsId = []
+      this.contactsId = ''
       // 展示关联弹窗
       this.showRelativeType = ''
       this.batchId = ''
+      this.followType = ''
     },
 
     /**
@@ -402,6 +404,7 @@ export default {
       this.isUnfold = true
       this.$nextTick(() => {
         this.$refs.textarea.focus()
+        this.$emit('focus')
       })
     },
 
@@ -420,6 +423,14 @@ export default {
         followType: this.followType,
         nextTime: this.nextTime
       })
+    },
+
+    /**
+     * 关闭
+     */
+    close() {
+      this.isUnfold = false
+      this.$emit('close')
     }
   }
 }
@@ -446,9 +457,9 @@ export default {
 
   .i-cont {
     padding: 8px 0px;
-    .wk-edit {
-      color: #999;
-      font-size: 14px;
+    .wk-write {
+      color: $xr-border-line-color;
+      font-size: 15px;
     }
   }
 }
@@ -460,10 +471,25 @@ export default {
   }
 }
 
+.mix-content.unfold:hover {
+  cursor: pointer;
+  border-color: #c0c4cc;
+  .i-cont {
+    cursor: pointer;
+    .wk-write {
+      color: $xr-color-primary;
+    }
+
+    /deep/ .el-textarea__inner {
+      cursor: pointer;
+    }
+  }
+}
+
 .wk-close {
   border: 0;
   color: #d9d9d9;
-  font-size: 12px;
+  font-size: 22px;
   cursor: pointer;
   position: absolute;
   top: 0;
@@ -667,7 +693,7 @@ export default {
   }
 
   .handle-button:hover {
-    color: #767676;
+    color: $xr-color-primary;
   }
 }
 /** 关闭按钮  */

@@ -102,7 +102,7 @@ export default {
   &-bd {
     flex: 1;
     &__name {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: #333333;
       margin-top: 10px;

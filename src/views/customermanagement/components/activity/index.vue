@@ -1,21 +1,51 @@
 <template>
-  <div class="mian">
+  <div
+    v-loading="loading"
+    class="mian">
     <div class="mian-handle">
       <el-button
         v-for="(item, index) in handle"
         :key="index"
+        :class="{ 'is-select' : handleType === item.type }"
         type="primary"
-        icon="wk wk-add">
+        icon="wk wk-add"
+        @click="handleClick(item.type)">
         {{ item.label }}
       </el-button>
     </div>
     <log-add
+      ref="logAdd"
+      :id="id"
       :show-business="showRelate"
       :show-contacts="showRelate"
       :contacts="contacts"
       :follow-types="followTypes"
       class="log-add"
-      @send="sendLog" />
+      @send="sendLog"
+      @focus="handleType = 'add-log'"
+      @close="handleClick(handleType)" />
+    <div class="log">
+      <div class="log-section">
+        <div class="log-section__title">
+          <span class="section-title"><span class="section-title__time">2019-09-02</span></span>
+        </div>
+        <div v-if="list.length > 0" class="log-cells">
+          <log-cell
+            v-for="(item, index) in list"
+            :item="item"
+            :index="index"
+            :crm-type="crmType"
+            :key="index" />
+          <i class="wk wk-message log-cells__mark" />
+        </div>
+        <div class="log-cells activity-cells">
+          <div class="activity-cell"><span class="activity-cell__label">2019-09-13 09:30 张强创建了商机：</span><span class="activity-cell__content">采购100台电脑</span></div>
+          <i
+            class="wk wk-business log-cells__mark"
+            style="background-color: #FB9323;" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -24,11 +54,18 @@ import LogAdd from './LogAdd'
 import { crmCustomerQueryContacts } from '@/api/customermanagement/customer'
 import { crmSettingRecordListAPI } from '@/api/customermanagement/common'
 import { crmCustomerRecordSave } from '@/api/customermanagement/customer'
+import { crmLeadsRecordIndex } from '@/api/customermanagement/clue'
+import { crmCustomerRecordIndex } from '@/api/customermanagement/customer'
+import { crmContactsRecordIndex } from '@/api/customermanagement/contacts'
+import { crmBusinessRecordIndex } from '@/api/customermanagement/business'
+import { crmContractRecordIndex } from '@/api/customermanagement/contract'
+import LogCell from './LogCell'
 
 export default {
   name: 'Activity', // 活动
   components: {
-    LogAdd
+    LogAdd,
+    LogCell
   },
   props: {
     // 操作按钮
@@ -53,8 +90,12 @@ export default {
   },
   data() {
     return {
+      loading: false,
       contacts: [],
-      followTypes: []
+      followTypes: [],
+      handleType: '',
+      // 活动列表
+      list: []
     }
   },
   computed: {
@@ -62,14 +103,28 @@ export default {
       return this.crmType == 'customer'
     }
   },
-  watch: {},
-  mounted() {
-    this.getLogTypeList()
-    if (this.showRelate) {
-      this.getContactsList()
+  watch: {
+    id() {
+      this.initInfo()
     }
   },
+  mounted() {
+    this.initInfo()
+  },
   methods: {
+    /**
+     * 初始化信息
+     */
+    initInfo() {
+      this.$refs.logAdd.resetInfo()
+      this.getLogTypeList()
+      if (this.showRelate) {
+        this.getContactsList()
+      }
+
+      this.getLogList()
+    },
+
     /**
      * 获取详情
      */
@@ -83,8 +138,7 @@ export default {
             }
           })
         })
-        .catch(() => {
-        })
+        .catch(() => {})
     },
 
     /**
@@ -129,14 +183,60 @@ export default {
           this.sendLoading = false
           this.$message.success('发布成功')
           // 重置页面
-          this.$refs.mixadd.resetInfo()
-          this.isEvent = false
-          this.nextTime = ''
-          // 刷新数据
-          this.$bus.emit('follow-log-refresh', { type: 'record-log' })
+          this.$refs.logAdd.resetInfo()
+          this.getLogList()
         })
         .catch(() => {
           this.sendLoading = false
+        })
+    },
+
+    /**
+     * 操作点击
+     */
+    handleClick(type) {
+      if (this.handleType == type) {
+        this.handleType = ''
+      } else {
+        this.handleType = type
+      }
+      if (type == 'add-log') {
+        this.$refs.logAdd.isUnfold = this.handleType == type
+      }
+    },
+
+    /**
+     * 活动日志
+     */
+    getLogList() {
+      this.loading = true
+      const request = {
+        customer: crmCustomerRecordIndex,
+        leads: crmLeadsRecordIndex,
+        contacts: crmContactsRecordIndex,
+        business: crmBusinessRecordIndex,
+        contract: crmContractRecordIndex
+      }[this.crmType]
+
+      const params = {
+        page: this.page,
+        limit: 10
+      }
+      params[this.crmType + 'Id'] = this.id
+      request(params)
+        .then(res => {
+          this.list = this.list.concat(res.data)
+          // if (res.data.length < 10) {
+          //   this.loadMoreLoading = false
+          // } else {
+          //   this.loadMoreLoading = true
+          // }
+          this.loading = false
+          // this.isPost = false
+        })
+        .catch(() => {
+          this.isPost = false
+          // this.loading = false
         })
     }
   }
@@ -166,6 +266,12 @@ export default {
   color: #ffffff;
 }
 
+.el-button.is-select {
+  background: $xr-color-primary;
+  border-color: $xr-color-primary;
+  color: #ffffff;
+}
+
 .scroll-div {
   height: 200px;
   background-color: red;
@@ -174,5 +280,94 @@ export default {
 
 .log-add {
   margin-top: 15px;
+}
+
+.log {
+  margin-top: 20px;
+  &-section {
+    &__title {
+      padding: 8px 0;
+      .section-title {
+        background-color: $xr-color-primary;
+        color: white;
+        font-size: 12px;
+        padding: 1px 5px;
+        height: 20px;
+        border-radius: 10px;
+        &__time::before {
+          content: ' ';
+          position: relative;
+          width: 6px;
+          height: 6px;
+          border-radius: 3px;
+          background-color: white;
+          margin-right: 5px;
+          bottom: 2px;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  &-cells {
+    margin-left: 30px;
+    padding: 8px;
+    position: relative;
+
+    &__mark {
+      position: absolute;
+      left: -10px;
+      top: 24px;
+      background-color: #487dff;
+      color: white;
+      border-radius: 4px;
+      padding: 4px;
+      font-size: 12px;
+      z-index: 1;
+    }
+  }
+
+  // 活动cell
+  &-cells.activity-cells {
+    .log-cells__mark {
+      top: 9px;
+    }
+  }
+
+  &-cells::before {
+    position: absolute;
+    content: ' ';
+    width: 1px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: $xr-border-line-color;
+  }
+  &-cells:nth-child(2)::before {
+    top: 24px;
+  }
+
+  &-cells:last-child::before {
+    bottom: 10px;
+  }
+
+  &-cell {
+    height: 300px;
+  }
+}
+
+.activity-cell {
+  font-size: 12px;
+  padding: 5px 10px;
+  &__label {
+    color: #666666;
+  }
+  &__content {
+    cursor: pointer;
+    color: $xr-color-primary;
+  }
+  &__content:hover {
+    text-decoration: underline;
+  }
 }
 </style>

@@ -530,7 +530,7 @@ export default {
 
       p {
         color: #333;
-        font-size: 13px;
+        font-size: 16px;
         font-weight: 600;
         i {
           background-color: #f56c6c;

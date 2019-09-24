@@ -65,7 +65,7 @@ export default {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: #2486e4;
+    background-color: $xr-color-primary;
     color: white;
     div {
       width: 100%;
