@@ -230,8 +230,7 @@ export default {
         this.$refs.logAdd.isUnfold = this.handleType == type
       } else if (type == 'task') {
         this.isTaskCreate = true
-      } else if (type == 'email') {
-      } else {
+      } else if (type != 'email') {
         this.createCRMType = type
         this.isCRMCreate = true
       }
