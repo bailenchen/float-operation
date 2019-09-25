@@ -35,7 +35,7 @@
 
     <create-log class="add-card card" @update="getList('update')" />
 
-    <div class="filter-control card">
+    <!--<div class="filter-control card">
       <el-tabs v-model="filterActiveTab" @tab-click="handleToggleRead">
         <el-tab-pane label="已读" name="read" />
         <el-tab-pane label="未读" name="unread" />
@@ -44,6 +44,14 @@
         <span class="icon wk wk-tag" />
         <span>标记全部已读</span>
       </div>
+    </div>-->
+
+    <div class="filter-control card">
+      <el-input />
+      <el-input />
+      <el-select>
+
+      </el-select>
     </div>
 
     <div
@@ -78,6 +86,12 @@ export default {
     return {
       filterActiveTab: 'read',
       listData: [],
+
+      options: [
+        { label: '日报', value: '' },
+        { label: '周报', value: '' },
+        { label: '月报', value: '' }
+      ],
 
       page: 0,
       now: moment(),

@@ -25,11 +25,11 @@
 
     <div class="add-control">
       <div class="control-item">
-        <span class="icon el-icon-picture" />
+        <span class="icon wk wk-picture" />
         <span>图片</span>
       </div>
       <div class="control-item">
-        <span class="icon el-icon-folder-opened" />
+        <span class="icon wk wk-file" />
         <span>附件</span>
       </div>
       <div class="control-item">
@@ -153,6 +153,7 @@ export default {
       align-items: center;
       justify-content: flex-start;
       .control-item {
+        color: #666;
         margin-right: 20px;
         display: flex;
         align-items: center;

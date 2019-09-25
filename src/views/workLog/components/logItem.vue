@@ -16,8 +16,8 @@
           </div>
           <div class="comment-status">
             <span class="icon wk wk-task" />
-            <span>日志-未点评</span>
-            <span class="dot" />
+            <span>{{ getCategory(data.categoryId) }}-{{ data.replyList.length === 0 ? '未点评' : '已点评' }}</span>
+            <span v-if="data.replyList.length === 0" class="dot" />
           </div>
         </div>
       </div>
@@ -76,9 +76,6 @@ export default {
     data: {
       type: Object,
       required: true
-    },
-    index: {
-      type: Number
     }
   },
   data() {
@@ -112,6 +109,14 @@ export default {
     this.$bus.off('load-more-work-log')
   },
   methods: {
+    getCategory(categoryId) {
+      const map = {
+        1: '日报',
+        2: '周报',
+        3: '月报'
+      }
+      return map[categoryId]
+    },
     /**
      * 编辑/删除
      * @param action
