@@ -47,10 +47,23 @@
     </div>-->
 
     <div class="filter-control card">
-      <el-input />
-      <el-input />
-      <el-select>
-
+      <xh-user-cell
+        class="xh-user-cell"
+        placeholder="选择人员"
+        @value-change="userChange" />
+      <el-date-picker
+        v-model="filterForm.createTime"
+        type="date"
+        value-format="yyyy-MM-dd"
+        placeholder="提交时间" />
+      <el-select
+        v-model="filterForm.categoryId"
+        placeholder="类型">
+        <el-option
+          v-for="(item, index) in options"
+          :key="index"
+          :label="item.label"
+          :value="item.value" />
       </el-select>
     </div>
 
@@ -75,12 +88,13 @@ import moment from 'moment'
 
 import LogItem from './components/logItem'
 import CreateLog from './components/createLog'
-
+import XhUserCell from '@/components/CreateCom/XhUserCell'
 export default {
   name: 'WorkLog',
   components: {
     LogItem,
-    CreateLog
+    CreateLog,
+    XhUserCell
   },
   data() {
     return {
@@ -88,10 +102,12 @@ export default {
       listData: [],
 
       options: [
-        { label: '日报', value: '' },
-        { label: '周报', value: '' },
-        { label: '月报', value: '' }
+        { label: '全部', value: 0 },
+        { label: '日报', value: 1 },
+        { label: '周报', value: 2 },
+        { label: '月报', value: 3 }
       ],
+      filterForm: {},
 
       page: 0,
       now: moment(),
@@ -114,6 +130,14 @@ export default {
       return this.userInfo.realname.slice(0, 1) + this.userInfo.sex === 1 ? '先生' : '女士'
     }
   },
+  watch: {
+    filterForm: {
+      handler() {
+        this.getList()
+      },
+      deep: true
+    }
+  },
   created() {
     this.now.locale('zh-cn')
     this.getList()
@@ -130,10 +154,15 @@ export default {
       } else {
         this.page++
       }
-      journalList({
+      const params = {
         page: this.page,
-        limit: 15
-      }).then(res => {
+        limit: 15,
+        ...this.filterForm
+      }
+      if (params.hasOwnProperty('categoryId') && params.categoryId === 0) {
+        delete params.categoryId
+      }
+      journalList(params).then(res => {
         console.log(res)
         if (this.page === 1) {
           this.listData = []
@@ -170,6 +199,20 @@ export default {
       this.listData[index].isRead = 1
     },
 
+    /**
+     * 筛选条件人员选择
+     */
+    userChange(data) {
+      if (data.value.length > 0) {
+        this.filterForm.createUserId = data.value[0].userId
+      } else {
+        this.filterForm.createUserId = null
+      }
+    },
+
+    /**
+     * 滚动初始化
+     */
     initScroll() {
       const dom = document.getElementsByClassName('scroll-body')[0].parentNode.parentNode
       console.log('dom', dom)
@@ -209,6 +252,7 @@ export default {
     background-color: white;
     border: 1px solid #E6E6E6;
     border-radius: 4px;
+    box-sizing: border-box;
     margin-bottom: 16px;
 
     &.hello-card {
@@ -276,25 +320,19 @@ export default {
     }
 
     &.filter-control {
-      position: relative;
-      height: 44px;
-      padding-top: 4px;
-      border-bottom: 0 none;
-      .read-all {
-        position: absolute;
-        top: 0;
-        right: 16px;
-        height: 100%;
-        color: #2362FB;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        .icon {
-          font-size: 14px;
-          margin-right: 5px;
-        }
+      padding: 8px;
+      display: block;
+      align-items: center;
+      justify-content: flex-start;
+      .xh-user-cell, .el-date-editor, .el-select {
+        width: 150px;
+      }
+      .el-date-editor, .el-select {
+        margin-left: 15px;
+      }
+      .xh-user-cell /deep/ .el-popover__reference {
+        width: 150px;
+        display: inline-block;
       }
     }
   }

@@ -12,7 +12,7 @@
             {{ data.realname }}
           </div>
           <div class="time">
-            创建日志于 {{ data.createTime }} {{ data.isRead === 1 ? '已读' : '未读' }}
+            创建日志于 {{ data.createTime }} <!--{{ data.isRead === 1 ? '已读' : '未读' }}-->
           </div>
           <div class="comment-status">
             <span class="icon wk wk-task" />
@@ -41,7 +41,30 @@
           <div class="content-text">{{ data.question }}</div>
         </div>
       </div>
+
+      <picture-list-view
+        v-if="data.img.length !== 0"
+        :list="data.img" />
+
+      <file-list-view
+        v-if="data.file.length !== 0"
+        :list="data.file" />
+
+      <div v-if="allDataLen > 0" class="related-list">
+        <div class="title">
+          <span class="wk wk-tag icon" />
+          <span>关联业务({{ allDataLen }})</span>
+        </div>
+        <!--<related-business :all-data="allData" />-->
+        <related-business-list :data="allData" />
+      </div>
+
+      <comment-list
+        v-if="data.replyList.length > 0"
+        :id="data.logId"
+        :list="data.replyList" />
     </div>
+
     <div class="footer">
       <el-dropdown
         trigger="click"
@@ -68,10 +91,21 @@ import {
   journalDelete,
   journalSetread
 } from '@/api/oamanagement/journal'
-import { mapGetters } from 'vuex'
+
+import PictureListView from '@/components/PictureListView'
+import FileListView from '@/components/FileListView'
+// import RelatedBusiness from '@/components/RelatedBusiness'
+import RelatedBusinessList from '@/components/RelatedBusinessList'
+import CommentList from './commentList'
 
 export default {
   name: 'LogItem',
+  components: {
+    PictureListView,
+    FileListView,
+    RelatedBusinessList,
+    CommentList
+  },
   props: {
     data: {
       type: Object,
@@ -84,9 +118,23 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
+    allData() {
+      return {
+        business: this.data ? this.data.businessList : [],
+        contacts: this.data ? this.data.contactsList : [],
+        contract: this.data ? this.data.contractList : [],
+        customer: this.data ? this.data.customerList : []
+      }
+    },
+    allDataLen() {
+      let res = 0
+      if (!this.data) return res
+      const keys = ['businessList', 'contactsList', 'contractList', 'customerList']
+      keys.forEach(key => {
+        res += this.data[key].length || 0
+      })
+      return res
+    }
   },
   created() {
     this.$nextTick(() => {
@@ -218,10 +266,13 @@ export default {
     }
 
     .content {
-      padding: 0 15px 0 68px;
+      margin: 0 15px 0 68px;
       .content-box {
         font-size: 12px;
         margin-bottom: 20px;
+        &:last-child {
+          margin-bottom: 15px;
+        }
         .content-title {
           color: #999;
           margin-bottom: 10px;
@@ -232,6 +283,33 @@ export default {
           word-wrap: break-word;
         }
       }
+    }
+
+    .picture-list-view {
+      margin: 0 15px 10px 68px;
+    }
+    .file-list-view {
+      width: 960px;
+      margin: 0 15px 10px 68px;
+    }
+    .related-list {
+      margin: 0 15px 10px 68px;
+      .title {
+        font-size: 12px;
+        margin-bottom: 10px;
+        .icon {
+          color: #8A94A6;
+          font-size: 12px;
+          margin-right: 5px;
+        }
+      }
+      .related-business-list {
+        width: 940px;
+        margin-left: 20px;
+      }
+    }
+    .comment-list {
+      border-top: 1px solid #e6e6e6;
     }
   }
 
