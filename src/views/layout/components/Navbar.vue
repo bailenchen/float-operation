@@ -8,12 +8,13 @@
         :default-active="navActiveIndex"
         mode="horizontal"
         active-text-color="#2362FB"
+        router
         @select="navItemsClick">
         <el-menu-item
           v-for="(item, index) in items"
           :key="index"
           :index="item.path">
-          <router-link :to="item.path">{{ item.title }}</router-link>
+          {{ item.title }}
         </el-menu-item>
       </el-menu>
     </div>
