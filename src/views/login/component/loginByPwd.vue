@@ -106,8 +106,8 @@ export default {
       rules: {
         username: [{ required: true, msg: '用户名不能为空' }],
         password: [
-          { required: true, msg: '密码不能为空' }
-          // { reg: pwdReg, msg: '密码必须由8-20位字母、数字、特殊符号组成' }
+          { required: true, msg: '密码不能为空' },
+          { reg: pwdReg, msg: '密码必须由8-20位字母、数字、特殊符号组成' }
         ]
       }
     }
