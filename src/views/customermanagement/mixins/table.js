@@ -39,6 +39,7 @@ import {
 } from '@/api/customermanagement/money'
 import Lockr from 'lockr'
 import { Loading } from 'element-ui'
+import CheckStatus from '@/mixins/CheckStatusMixin'
 
 export default {
   components: {
@@ -70,6 +71,8 @@ export default {
       selectionList: [] // 勾选数据 用于全局导出
     }
   },
+
+  mixins: [CheckStatus],
 
   computed: {
     ...mapGetters(['crm'])
@@ -437,47 +440,12 @@ export default {
     },
     // 0待审核、1审核中、2审核通过、3已拒绝 4已撤回 5未提交
     getStatusStyle(status) {
-      if (status == 0) {
-        return {
-          backgroundColor: '#ffc539'
-        }
-      } else if (status == 1) {
-        return {
-          backgroundColor: '#398dff'
-        }
-      } else if (status == 2) {
-        return {
-          backgroundColor: '#20b559'
-        }
-      } else if (status == 3) {
-        return {
-          backgroundColor: '#f95a5a'
-        }
-      } else if (status == 4) {
-        return {
-          backgroundColor: '#dee8ff'
-        }
-      } else if (status == 5) {
-        return {
-          backgroundColor: '#d9d9d9'
-        }
+      return {
+        backgroundColor: this.getCRMStatusColor(status)
       }
     },
     getStatusName(status) {
-      if (status == 0) {
-        return '待审核'
-      } else if (status == 1) {
-        return '审核中'
-      } else if (status == 2) {
-        return '通过'
-      } else if (status == 3) {
-        return '拒绝'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '未提交'
-      }
-      return ''
+      return this.getCRMStatusName(status)
     },
 
     /**

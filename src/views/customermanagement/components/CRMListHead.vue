@@ -17,7 +17,7 @@
     <div class="right-container">
       <el-button
         v-if="canSave"
-        class="create-btn--orange"
+        class="xr-btn--orange"
         icon="el-icon-plus"
         type="primary"
         @click="createClick">{{ mainTitle }}</el-button>
@@ -211,7 +211,7 @@ export default {
     margin: 15px 20px 0 0;
     position: relative;
 
-    .create-btn--orange {
+    .xr-btn--orange {
       margin-right: 10px;
     }
 

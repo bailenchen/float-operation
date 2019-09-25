@@ -142,6 +142,7 @@ export default {
      */
     initInfo() {
       this.$refs.logAdd.resetInfo()
+      this.list = []
       this.getLogTypeList()
       if (this.showRelate) {
         this.getContactsList()

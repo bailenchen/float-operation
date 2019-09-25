@@ -8,12 +8,13 @@
         :default-active="navActiveIndex"
         mode="horizontal"
         active-text-color="#2362FB"
+        router
         @select="navItemsClick">
         <el-menu-item
           v-for="(item, index) in items"
           :key="index"
           :index="item.path">
-          <router-link :to="item.path">{{ item.title }}</router-link>
+          {{ item.title }}
         </el-menu-item>
       </el-menu>
     </div>
@@ -142,10 +143,16 @@ export default {
         tempsItems.push({
           title: '项目管理',
           type: 2,
-          path: '/project',
-          icon: 'project'
+          path: '/project'
         })
       }
+      tempsItems.push({
+        title: '任务/审批',
+        type: 4,
+        path: '/taskExamine',
+        icon: ''
+      })
+
       tempsItems.push({
         title: '日志',
         type: 3,
