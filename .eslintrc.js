@@ -10,6 +10,11 @@ module.exports = {
     es6: true,
   },
   extends: ['plugin:vue/recommended', 'eslint:recommended'],
+  globals: {
+    "BMap": "readonly",
+    "BMAP_STATUS_SUCCESS": "readonly",
+    "fullcalendar": "readonly"
+  },
 
   // add your custom rules here
   //it is base on https://github.com/vuejs/eslint-config-vue
@@ -26,6 +31,7 @@ module.exports = {
     ],
     "vue/name-property-casing": ["error", "PascalCase"],
     'vue/no-v-html': 0,
+    'vue/require-default-prop': 0,
     'accessor-pairs': 2,
     'arrow-spacing': [2, {
       'before': true,
@@ -122,7 +128,7 @@ module.exports = {
     'no-octal-escape': 2,
     'no-path-concat': 2,
     'no-proto': 2,
-    'no-redeclare': 2,
+    'no-redeclare': 0,
     'no-regex-spaces': 2,
     'no-return-assign': [2, 'except-parens'],
     'no-self-assign': 2,
