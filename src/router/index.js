@@ -13,6 +13,7 @@ import { managerRouter } from './modules/manager'
 import personRouter from './modules/person'
 import { biRouter } from './modules/business'
 
+import taskExamineRouter from './modules/taskExamine'
 import workLogRouter from './modules/workLog'
 
 /**
@@ -41,6 +42,7 @@ export const constantRouterMap = [
   projectRouter,
   personRouter,
   workLogRouter,
+  taskExamineRouter,
   {
     path: '*',
     redirect: '/404',
