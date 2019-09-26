@@ -2,6 +2,7 @@
   <div class="related-business-list">
     <div
       v-for="(item, index) in options"
+      v-if="data[item.type].length > 0"
       :key="index"
       class="list-item">
       <div class="left">

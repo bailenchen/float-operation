@@ -87,6 +87,7 @@ export default {
     .file-item {
       width: 100%;
       font-size: 12px;
+      line-height: 1;
       box-sizing: border-box;
       padding: 5px 0;
       display: flex;

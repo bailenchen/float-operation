@@ -15,6 +15,7 @@ import { biRouter } from './modules/business'
 
 import taskExamineRouter from './modules/taskExamine'
 import workLogRouter from './modules/workLog'
+import addressBookRouter from './modules/addressBook'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -43,6 +44,7 @@ export const constantRouterMap = [
   personRouter,
   workLogRouter,
   taskExamineRouter,
+  addressBookRouter,
   {
     path: '*',
     redirect: '/404',

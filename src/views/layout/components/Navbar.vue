@@ -159,6 +159,12 @@ export default {
         path: '/workLog',
         icon: ''
       })
+      tempsItems.push({
+        title: '通讯录',
+        type: 6,
+        path: '/addressBook',
+        icon: ''
+      })
       return tempsItems
     }
   },
