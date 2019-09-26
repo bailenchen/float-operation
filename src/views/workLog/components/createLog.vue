@@ -6,47 +6,61 @@
       <el-tab-pane label="月报" name="month" />
     </el-tabs>
 
-    <el-form>
-      <el-form-item
-        v-for="(item, index) in textFormKeyList"
-        :key="index"
-        :label="item.label">
-        <el-input
-          v-model="form[item.key]"
-          :autosize="{
-            minRows: 2,
-            maxRows: 10
-          }"
-          type="textarea"
-          resize="none"
-          placeholder="请输入内容" />
-      </el-form-item>
-    </el-form>
+    <template v-if="!showMore">
+      <div class="content-box">
+        <flexbox
+          justify="flex-start"
+          class="box"
+          @click.native="showMore = true">
+          <span class="wk wk-write icon" />
+          <span class="info">请输入日志内容</span>
+        </flexbox>
+      </div>
+    </template>
+    <template v-else>
+      <el-form>
+        <el-form-item
+          v-for="(item, index) in textFormKeyList"
+          :key="index"
+          :label="item.label">
+          <el-input
+            v-model="form[item.key]"
+            :autosize="{
+              minRows: 2,
+              maxRows: 10
+            }"
+            type="textarea"
+            resize="none"
+            placeholder="请输入内容" />
+        </el-form-item>
+        <span class="wk wk-close close-icon" @click="showMore = false" />
+      </el-form>
 
-    <div class="add-control">
-      <div class="control-item">
-        <span class="icon wk wk-picture" />
-        <span>图片</span>
-      </div>
-      <div class="control-item">
-        <span class="icon wk wk-file" />
-        <span>附件</span>
-      </div>
-      <div class="control-item">
-        <span>发送给：</span>
-        <div class="add-box">
-          <span class="add-icon el-icon-plus" />
+      <div class="add-control">
+        <div class="control-item">
+          <span class="icon wk wk-picture" />
+          <span>图片</span>
+        </div>
+        <div class="control-item">
+          <span class="icon wk wk-file" />
+          <span>附件</span>
+        </div>
+        <div class="control-item">
+          <span>发送给：</span>
+          <div class="add-box">
+            <span class="add-icon el-icon-plus" />
+          </div>
+        </div>
+        <div class="others">
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleCreate">
+            发布
+          </el-button>
         </div>
       </div>
-      <div class="others">
-        <el-button
-          size="small"
-          type="primary"
-          @click="handleCreate">
-          发布
-        </el-button>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -68,7 +82,9 @@ export default {
         day: 1, // 日报
         week: 2, // 周报
         month: 3 // 月报
-      }
+      },
+
+      showMore: false
     }
   },
   created() {
@@ -127,7 +143,33 @@ export default {
   }
 
   .create-log {
+    .content-box {
+      padding: 15px 10px;
+      .box {
+        height: 35px;
+        border-radius: 3px;
+        border: 1px solid #e6e6e6;
+        padding: 0 10px;
+        cursor: pointer;
+        .icon {
+          font-size: 15px;
+          color: #e6e6e6;
+        }
+        .info {
+          color: #c0c4cc;
+          margin-left: 5px;
+        }
+        &:hover {
+          border-color: #c0c4cc;
+          .icon {
+            color: $xr-color-primary;
+          }
+        }
+      }
+    }
+
     .el-form {
+      position: relative;
       padding: 0 18px;
       margin-top: 15px;
       /deep/ .el-form-item {
@@ -136,13 +178,25 @@ export default {
         .el-form-item__label {
           font-size: 12px;
           line-height: 1.5;
-          color: #999;
+          color: #666;
         }
       }
       .el-textarea {
         /deep/ .el-textarea__inner {
           border: 0 none;
           padding: 0 5px;
+        }
+      }
+
+      .close-icon {
+        position: absolute;
+        top: 0;
+        right: 20px;
+        font-size: 18px;
+        color: #d9d9d9;
+        cursor: pointer;
+        &:hover {
+          color: $xr-color-primary;
         }
       }
     }
@@ -154,12 +208,14 @@ export default {
       justify-content: flex-start;
       .control-item {
         color: #666;
+        font-size: 13px;
         margin-right: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         .icon {
+          font-size: 14px;
           margin-right: 5px;
         }
         .add-box {
@@ -172,6 +228,9 @@ export default {
           .add-icon {
             width: 12px;
           }
+        }
+        &:hover {
+          color: $xr-color-primary;
         }
       }
       .others {

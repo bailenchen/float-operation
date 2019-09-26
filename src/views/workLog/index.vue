@@ -1,5 +1,5 @@
 <template>
-  <div class="work-log-index scroll-body">
+  <div class="work-log scroll-body">
     <div class="hello-card card">
       <div class="user-info">
         <div
@@ -35,17 +35,6 @@
 
     <create-log class="add-card card" @update="getList('update')" />
 
-    <!--<div class="filter-control card">
-      <el-tabs v-model="filterActiveTab" @tab-click="handleToggleRead">
-        <el-tab-pane label="已读" name="read" />
-        <el-tab-pane label="未读" name="unread" />
-      </el-tabs>
-      <div class="read-all">
-        <span class="icon wk wk-tag" />
-        <span>标记全部已读</span>
-      </div>
-    </div>-->
-
     <div class="filter-control card">
       <xh-user-cell
         class="xh-user-cell"
@@ -75,6 +64,7 @@
         :data="item"
         :index="index"
         @read="handleRead(index)"
+        @add-comment="handleAddComment"
         @delete="handleDelete" />
     </div>
   </div>
@@ -89,6 +79,7 @@ import moment from 'moment'
 import LogItem from './components/logItem'
 import CreateLog from './components/createLog'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
+
 export default {
   name: 'WorkLog',
   components: {
@@ -101,20 +92,22 @@ export default {
       filterActiveTab: 'read',
       listData: [],
 
+      page: 0,
+      distance: 15, // 滚动距离阀值
+      isOver: false,
+
       options: [
         { label: '全部', value: 0 },
         { label: '日报', value: 1 },
         { label: '周报', value: 2 },
         { label: '月报', value: 3 }
       ],
-      filterForm: {},
 
-      page: 0,
+      filterForm: {
+        categoryId: 0
+      },
       now: moment(),
-      distance: 15, // 滚动距离阀值
-
-      showLoading: false, // loading
-      isOver: false
+      showLoading: false // loading
     }
   },
   computed: {
@@ -169,6 +162,7 @@ export default {
         }
         this.isOver = res.data.lastPage
         this.showLoading = false
+        console.log('list', res.data.list)
         this.listData = this.listData.concat(res.data.list || [])
         this.$nextTick(() => {
           this.initScroll()
@@ -179,9 +173,11 @@ export default {
     },
 
     /**
-     * 日志已读未读切换
+     * 添加回复
      */
-    handleToggleRead() {},
+    handleAddComment(data) {
+      this.listData[data.index].replyList.unshift(data.data)
+    },
 
     /**
      * 日志删除
@@ -235,106 +231,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/ .el-tabs__header {
-  margin: 0;
-}
-/deep/ .el-tabs__nav-wrap {
-  padding: 0 18px;
-}
-
-/deep/ .el-tabs__nav-wrap::after {
-  height: 1px;
-}
-
-.work-log-index {
-  .card {
-    width: 1130px;
-    background-color: white;
-    border: 1px solid #E6E6E6;
-    border-radius: 4px;
-    box-sizing: border-box;
-    margin-bottom: 16px;
-
-    &.hello-card {
-      padding: 26px 32px 22px 15px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-
-      .user-info {
-        margin-right: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        .user-img {
-          width: 38px;
-          height: 38px;
-        }
-        .status {
-          font-size: 12px;
-          margin-top: 10px;
-          display: flex;
-          align-items: center;
-          .icon {
-            font-size: 12px;
-            color: #67C23A;
-            margin-right: 4px;
-          }
-        }
-      }
-
-      .greeting {
-        flex: 1;
-        .hello {
-          font-size: 16px;
-          font-weight: bold;
-        }
-        .text {
-          font-size: 14px;
-          color: #999;
-          margin-top: 15px;
-        }
-      }
-
-      .statistics {
-        font-size: 16px;
-        .title {
-          .icon {
-            color: #2772FF;
-            margin-right: 10px;
-          }
-        }
-        .info {
-          font-size: 12px;
-          text-align: center;
-          margin-top: 20px;
-          .special {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2772FF;
-            margin-right: 10px;
-          }
-        }
-      }
-    }
-
-    &.filter-control {
-      padding: 8px;
-      display: block;
-      align-items: center;
-      justify-content: flex-start;
-      .xh-user-cell, .el-date-editor, .el-select {
-        width: 150px;
-      }
-      .el-date-editor, .el-select {
-        margin-left: 15px;
-      }
-      .xh-user-cell /deep/ .el-popover__reference {
-        width: 150px;
-        display: inline-block;
-      }
-    }
-  }
-}
+  @import "./style";
 </style>

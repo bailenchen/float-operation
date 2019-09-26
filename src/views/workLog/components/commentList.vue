@@ -5,14 +5,16 @@
       :key="index"
       class="comment-list-item">
       <div class="parent-reply reply">
-        <div
-          v-photo="item.user"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(item.user.img)"
-          :key="item.user.img"
-          class="user-img div-photo" />
-        <div class="content">
-          <span class="user">{{ item.user.realname }}：</span>
-          <span class="text" v-html="emoji(item.content)" />
+        <div class="user-info">
+          <div
+            v-photo="item.user"
+            v-lazy:background-image="$options.filters.filterUserLazyImg(item.user.img)"
+            :key="item.user.img"
+            class="user-img div-photo" />
+          <span class="user">{{ item.user.realname }}</span>
+          <div class="time">
+            {{ item.createTime }}
+          </div>
           <div class="control">
             <el-button
               type="text"
@@ -26,29 +28,29 @@
             </el-button>
           </div>
         </div>
-        <div class="time">
-          {{ item.createTime }}
-        </div>
+        <div class="content" v-html="emoji(item.content)" />
+        <reply-comment
+          v-if="replyIndex === String(index)"
+          @reply="handleReply"
+          @close="replyIndex = null" />
       </div>
-      <reply-comment
-        v-if="replyIndex === String(index)"
-        @reply="handleReply"
-        @close="replyIndex = null" />
       <template v-if="item.childCommentList && item.childCommentList.length > 0">
         <div
-          v-for="(child, childIndex) in item.childCommentList"
+          v-for="(child, childIndex) in sortChildComment(item.childCommentList)"
           :key="childIndex">
           <div class="child-reply reply">
-            <div
-              v-photo="child.user"
-              v-lazy:background-image="$options.filters.filterUserLazyImg(child.user.img)"
-              :key="child.user.img"
-              class="user-img div-photo" />
-            <div class="content">
+            <div class="user-info">
+              <div
+                v-photo="child.user"
+                v-lazy:background-image="$options.filters.filterUserLazyImg(child.user.img)"
+                :key="child.user.img"
+                class="user-img div-photo" />
               <span class="user">
-                {{ child.user.realname }} @{{ child.replyUser.realname }}：
+                {{ child.user.realname }}
               </span>
-              <span class="text" v-html="emoji(child.content)" />
+              <div class="time">
+                {{ child.createTime }}
+              </div>
               <div class="control">
                 <el-button
                   type="text"
@@ -62,15 +64,18 @@
                 </el-button>
               </div>
             </div>
-            <div class="time">
-              {{ child.createTime }}
+            <div class="child-content">
+              <span>
+                回复 @{{ child.replyUser.realname }}：
+              </span>
+              <span class="content" v-html="emoji(child.content)" />
             </div>
+            <reply-comment
+              v-loading="commentLoading"
+              v-if="replyIndex === `${index}-${childIndex}`"
+              @reply="handleReply"
+              @close="replyIndex = null" />
           </div>
-          <reply-comment
-            v-loading="commentLoading"
-            v-if="replyIndex === `${index}-${childIndex}`"
-            @reply="handleReply"
-            @close="replyIndex = null" />
         </div>
       </template>
     </div>
@@ -83,10 +88,10 @@
  */
 import ReplyComment from '@/components/ReplyComment'
 import {
-  setCommentAPI,
-  deleteCommentAPI,
+  setCommentAPI
+  // deleteCommentAPI,
 } from '@/api/oamanagement/common'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CommentList',
@@ -122,8 +127,22 @@ export default {
      */
     handleToReply(index, childIndex = null) {
       const str = `${index}${childIndex !== null ? ('-' + childIndex) : ''}`
+      this.$emit('close-other-reply')
       if (str === this.replyIndex) return
       this.replyIndex = str
+    },
+    closeReply() {
+      this.replyIndex = null
+    },
+    /**
+     * 子评论排序
+     */
+    sortChildComment(childList) {
+      let arr = [].concat(childList || [])
+      arr = arr.sort((a, b) => {
+        return new Date(b.createTime) - new Date(a.createTime)
+      }) || []
+      return arr
     },
     /**
      * 回复
@@ -157,7 +176,7 @@ export default {
         }
         res.data.replyUser = c_comment.user
 
-        f_comment.childCommentList.push(res.data)
+        this.list[arr[0]].childCommentList.unshift(res.data)
         this.replyIndex = null
         this.commentLoading = false
       }).catch(() => {
@@ -170,32 +189,35 @@ export default {
 
 <style scoped lang="scss">
   .comment-list {
-    padding: 10px 100px 10px 60px;
     .comment-list-item {
       .user-img {
         width: 34px;
         height: 34px;
+        border-radius: 50%;
       }
       .reply {
-        font-size: 12px;
+        font-size: 13px;
+        border-bottom: 1px solid #e6e6e6;
         padding: 10px;
         margin-bottom: 5px;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-        .content {
-          flex: 1;
-          line-height: 1.5;
-          margin-left: 20px;
+
+        .user-info {
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
           .user {
             font-size: 14px;
+            margin-left: 20px;
           }
-          .text {
-            white-space: pre-wrap;
-            word-wrap: break-word;
+          .time {
+            flex: 1;
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
           }
           .control {
-            margin-top: 5px;
+            margin-left: 10px;
             visibility: hidden;
             display: flex;
             .el-button {
@@ -206,23 +228,32 @@ export default {
               }
             }
           }
-          .hide {
-            display: block;
+        }
+
+        .content {
+          line-height: 1.5;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          margin-left: 50px;
+          margin-top: 5px;
+        }
+
+        .child-content {
+          margin-left: 50px;
+          .content {
+            margin-left: 0;
           }
         }
-        .time {
-          color: #666;
-          margin-left: 10px;
-        }
+
         &:hover {
-          background-color: rgba(35,98,251,0.04);
-          .content .control {
+          background-color: #f4f7ff;
+          .user-info .control {
             visibility: unset;
           }
         }
       }
       .reply-comment {
-        margin-bottom: 10px;
+        margin-top: 10px;
       }
     }
   }

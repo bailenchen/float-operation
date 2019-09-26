@@ -86,23 +86,15 @@ export default {
   .file-list-view {
     .file-item {
       width: 100%;
-      height: 44px;
       font-size: 12px;
-      margin-bottom: 5px;
-      padding: 0 15px;
       box-sizing: border-box;
+      padding: 5px 0;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      &:hover {
-        background-color: rgba(35,98,251,.04);
-      }
-      &:last-child {
-        margin-bottom: 0;
-      }
 
       .pic-icon {
-        width: 24px;
+        width: 14px;
         margin-right: 16px;
       }
       .file-name {

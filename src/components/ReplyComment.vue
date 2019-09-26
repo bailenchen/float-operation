@@ -2,32 +2,41 @@
   <div
     v-loading="commentLoading"
     class="reply-comment">
-    <el-input
-      v-model="commentsTextarea"
-      :rows="3"
-      :maxlength="500"
-      show-word-limit
-      type="textarea"
-      placeholder="请输入内容" />
-    <div class="btn-group">
-      <el-popover
-        v-model="showEmoji"
-        placement="top"
-        width="400"
-        trigger="click">
-        <!-- 表情 -->
-        <emoji @select="selectEmoji" />
-        <img
-          slot="reference"
-          src="@/assets/img/smiling_face.png"
-          class="smiling-img">
-      </el-popover>
-      <div class="btn-box">
-        <el-button
-          type="primary"
-          @click="commentSubmit">回复</el-button>
-        <el-button @click="closeComment">取消</el-button>
+    <template v-if="!showNoFocus">
+      <el-input
+        v-model="commentsTextarea"
+        :rows="3"
+        :maxlength="500"
+        show-word-limit
+        type="textarea"
+        placeholder="请输入回复内容" />
+      <div class="btn-group">
+        <el-popover
+          v-model="showEmoji"
+          placement="top"
+          width="400"
+          trigger="click">
+          <!-- 表情 -->
+          <emoji @select="selectEmoji" />
+          <img
+            slot="reference"
+            src="@/assets/img/smiling_face.png"
+            class="smiling-img">
+        </el-popover>
+        <div class="btn-box">
+          <el-button
+            type="primary"
+            @click="commentSubmit">回复</el-button>
+          <el-button @click="closeComment">取消</el-button>
+        </div>
       </div>
+    </template>
+
+    <div
+      v-else
+      class="no-focus"
+      @click="toggleFocus()">
+      请输入回复内容
     </div>
   </div>
 </template>
@@ -35,8 +44,10 @@
 <script>
 /**
  * 回复输入框
- * event:   close 关闭输入框
- *          reply 确认输入  参数： {String} 输入框值
+ * event:      close 关闭输入框
+ *             reply 确认输入  参数： {String} 输入框值
+ *             toggle 状态切换
+ * public fn:  toggleFocus 切换输入框状态
  */
 import xss from 'xss'
 import emoji from '@/components/emoji'
@@ -50,7 +61,8 @@ export default {
     return {
       commentLoading: false, // 回复loading
       commentsTextarea: '', // 回复内容
-      showEmoji: false // emoji选择标志
+      showEmoji: false, // emoji选择标志
+      showNoFocus: false
     }
   },
   methods: {
@@ -79,6 +91,19 @@ export default {
     closeComment() {
       this.showEmoji = false
       this.$emit('close')
+      this.toggleFocus()
+    },
+
+    /**
+     * 切换输入框状态
+     */
+    toggleFocus(flag) {
+      if (typeof flag === 'boolean') {
+        this.showNoFocus = flag
+      } else {
+        this.showNoFocus = !this.showNoFocus
+      }
+      this.$emit('toggle', this.showNoFocus)
     }
   }
 }
@@ -88,6 +113,7 @@ export default {
   .reply-comment {
     border: 1px solid #e6e6e6;
     .btn-group {
+      background-color: white;
       padding: 0 10px 5px 10px;
       overflow: hidden;
       display: flex;
@@ -106,6 +132,16 @@ export default {
     .el-textarea /deep/ .el-textarea__inner {
       resize: none;
       border: 0;
+    }
+
+    .no-focus {
+      width: 100%;
+      font-size: 13px;
+      color: #c0c4cc;
+      background-color: white;
+      border-radius: 4px;
+      padding: 9px 8px;
+      cursor: pointer;
     }
   }
 </style>

@@ -1,44 +1,22 @@
 <template>
   <div class="related-business-list">
     <div
-      v-for="(item, index) in data.customer"
-      :key="`customer_${index}`"
+      v-for="(item, index) in options"
+      :key="index"
       class="list-item">
-      <span class="wk wk-customer icon" />
-      <span class="type">客户-</span>
-      <span class="name">
-        {{ item.customerName }}
-      </span>
-    </div>
-    <div
-      v-for="(item, index) in data.business"
-      :key="`business_${index}`"
-      class="list-item">
-      <span class="wk wk-business icon" />
-      <span class="type">商机-</span>
-      <span class="name">
-        {{ item.businessName }}
-      </span>
-    </div>
-    <div
-      v-for="(item, index) in data.contacts"
-      :key="`contacts_${index}`"
-      class="list-item">
-      <span class="wk wk-contacts icon" />
-      <span class="type">联系人-</span>
-      <span class="name">
-        {{ item.name }}
-      </span>
-    </div>
-    <div
-      v-for="(item, index) in data.contract"
-      :key="`contract_${index}`"
-      class="list-item">
-      <span class="wk wk-contract icon" />
-      <span class="type">合同-</span>
-      <span class="name">
-        {{ item.name }}
-      </span>
+      <div class="left">
+        <span :class="item.icon" class="wk icon" />
+        <span>相关{{ item.label }}：</span>
+      </div>
+      <div class="content">
+        <div
+          v-for="(child, childIndex) in data[item.type]"
+          :key="childIndex"
+          class="content-item"
+          @click="handlerToDetail(item.type, childIndex)">
+          {{ child[item.key] || child.name }}
+        </div>
+      </div>
     </div>
 
     <!--<c-r-m-all-detail
@@ -47,7 +25,7 @@
       :listener-ids="['workbench-main-container']"
       :no-listener-ids="['journal-list-box']"
       :id="relatedID"
-      class="d-view" />-->
+      class="d-view"/>-->
   </div>
 </template>
 
@@ -68,6 +46,46 @@ export default {
       type: Object,
       required: true
     }
+  },
+  data() {
+    return {
+      options: {
+        customer: {
+          label: '客户',
+          type: 'customer',
+          key: 'customerName',
+          icon: 'wk-customer'
+        },
+        contacts: {
+          label: '联系人',
+          type: 'contacts',
+          key: 'contactsName',
+          icon: 'wk-contacts'
+        },
+        business: {
+          label: '商机',
+          type: 'business',
+          key: 'businessName',
+          icon: 'wk-business'
+        },
+        contract: {
+          label: '合同',
+          type: 'contract',
+          key: 'name',
+          icon: 'wk-contract'
+        }
+      }
+    }
+  },
+  methods: {
+    /**
+     * 详情
+     * @param type
+     * @param index
+     */
+    handlerToDetail(type, index) {
+      console.log(type, this.data[type][index])
+    }
   }
 }
 </script>
@@ -77,20 +95,28 @@ export default {
     width: 100%;
     .list-item {
       font-size: 12px;
-      padding: 7px 15px;
-      &:hover {
-        background-color: rgba(35,98,251,.04);
+      padding: 3px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      .left {
+        color: #666;
+        .icon {
+          font-size: 14px;
+        }
       }
-      .icon {
-        color: #8A94A6;
-        font-size: 14px;
-        margin-right: 5px;
-      }
-      .name {
-        color: $xr-color-primary;
-        cursor: pointer;
-        &:hover {
-          text-decoration: underline;
+      .content {
+        .content-item {
+          line-height: 1.5;
+          color: $xr-color-primary;
+          margin-bottom: 3px;
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
       }
     }

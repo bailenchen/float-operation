@@ -17,7 +17,7 @@
           <div class="comment-status">
             <span class="icon wk wk-task" />
             <span>{{ getCategory(data.categoryId) }}-{{ data.replyList.length === 0 ? '未点评' : '已点评' }}</span>
-            <span v-if="data.replyList.length === 0" class="dot" />
+            <span :class="{active: data.replyList.length !== 0}" class="dot" />
           </div>
         </div>
       </div>
@@ -50,37 +50,43 @@
         v-if="data.file.length !== 0"
         :list="data.file" />
 
-      <div v-if="allDataLen > 0" class="related-list">
-        <div class="title">
-          <span class="wk wk-tag icon" />
-          <span>关联业务({{ allDataLen }})</span>
-        </div>
-        <!--<related-business :all-data="allData" />-->
-        <related-business-list :data="allData" />
-      </div>
-
-      <comment-list
-        v-if="data.replyList.length > 0"
-        :id="data.logId"
-        :list="data.replyList" />
+      <related-business-list
+        v-if="allDataLen > 0"
+        :data="allData" />
     </div>
 
     <div class="footer">
       <el-dropdown
         trigger="click"
         @command="handleCommand">
-        <i class="icon el-icon-more" />
+        <i class="more el-icon-more" />
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="edit">编辑</el-dropdown-item>
           <el-dropdown-item command="delete">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button
-        type="primary"
-        icon="el-icon-s-comment"
-        size="small">
-        回复
-      </el-button>
+      <div
+        class="reply-total"
+        @click="showReply = !showReply">
+        <span class="el-icon-s-comment icon" />
+        <span v-if="replyTotal > 0" class="text">({{ replyTotal }})</span>
+      </div>
+    </div>
+
+    <div
+      v-if="showReply"
+      class="reply-wrapper">
+      <reply-comment
+        v-loading="commentLoading"
+        ref="f_reply"
+        @toggle="closeOtherReply"
+        @reply="handleReply" />
+      <comment-list
+        v-if="replyList.length > 0"
+        ref="comment_list"
+        :id="data.logId"
+        :list="replyList"
+        @close-other-reply="$refs.f_reply.toggleFocus(true)" />
     </div>
   </div>
 </template>
@@ -91,12 +97,18 @@ import {
   journalDelete,
   journalSetread
 } from '@/api/oamanagement/journal'
+import {
+  setCommentAPI
+} from '@/api/oamanagement/common'
 
 import PictureListView from '@/components/PictureListView'
 import FileListView from '@/components/FileListView'
 // import RelatedBusiness from '@/components/RelatedBusiness'
+import ReplyComment from '@/components/ReplyComment'
 import RelatedBusinessList from '@/components/RelatedBusinessList'
 import CommentList from './commentList'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'LogItem',
@@ -104,20 +116,30 @@ export default {
     PictureListView,
     FileListView,
     RelatedBusinessList,
-    CommentList
+    CommentList,
+    ReplyComment
   },
   props: {
     data: {
       type: Object,
       required: true
+    },
+    index: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
-      isWaiting: false
+      isWaiting: false,
+      showReply: false,
+      commentLoading: false
     }
   },
   computed: {
+    ...mapGetters([
+      'userInfo'
+    ]),
     allData() {
       return {
         business: this.data ? this.data.businessList : [],
@@ -134,6 +156,21 @@ export default {
         res += this.data[key].length || 0
       })
       return res
+    },
+    replyTotal() {
+      let num = 0
+      this.data.replyList.forEach(item => {
+        num++
+        num += item.childCommentList.length || 0
+      })
+      return num
+    },
+    replyList() {
+      let arr = [].concat(this.data.replyList || [])
+      arr = arr.sort((a, b) => {
+        return new Date(b.createTime) - new Date(a.createTime)
+      }) || []
+      return arr
     }
   },
   created() {
@@ -207,6 +244,42 @@ export default {
       }).then(() => {
         this.$bus.off('load-more-work-log')
       }).catch()
+    },
+
+    /**
+     * 日志评论
+     */
+    handleReply(data) {
+      this.commentLoading = true
+      setCommentAPI({
+        type: 2,
+        content: data,
+        typeId: this.data.logId
+      }).then(res => {
+        res.data.user = {
+          userId: this.userInfo.userId,
+          realname: this.userInfo.realname,
+          img: this.data.userImg
+        }
+        res.data.childCommentList = []
+        this.$emit('add-comment', {
+          data: res.data,
+          index: this.index
+        })
+        this.commentLoading = false
+        this.showReply = false
+        this.$nextTick(() => {
+          this.showReply = true
+        })
+      }).catch(() => {
+        this.commentLoading = false
+      })
+    },
+
+    closeOtherReply(flag) {
+      if (!flag && this.$refs.comment_list) {
+        this.$refs.comment_list.closeReply()
+      }
     }
   }
 }
@@ -223,8 +296,8 @@ export default {
       align-items: center;
       justify-content: flex-start;
       .user-img {
-        width: 42px;
-        height: 42px;
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
         margin-right: 12px;
       }
@@ -235,7 +308,7 @@ export default {
         align-items: center;
         justify-content: flex-start;
         .username {
-          margin-right: 30px;
+          margin-right: 15px;
         }
         .time {
           flex: 1;
@@ -254,12 +327,15 @@ export default {
             margin-right: 5px;
           }
           .dot {
-            width: 5px;
-            height: 5px;
-            background-color: #D21111;
+            width: 7px;
+            height: 7px;
+            background-color: #F95A5A;
             border-radius: 50%;
             margin-left: 5px;
             display: inline-block;
+            &.active {
+              background-color: #4ca824;
+            }
           }
         }
       }
@@ -268,7 +344,7 @@ export default {
     .content {
       margin: 0 15px 0 68px;
       .content-box {
-        font-size: 12px;
+        font-size: 13px;
         margin-bottom: 20px;
         &:last-child {
           margin-bottom: 15px;
@@ -289,49 +365,58 @@ export default {
       margin: 0 15px 10px 68px;
     }
     .file-list-view {
-      width: 960px;
+      width: 800px;
       margin: 0 15px 10px 68px;
     }
-    .related-list {
+    .related-business-list {
+      width: 800px;
       margin: 0 15px 10px 68px;
-      .title {
-        font-size: 12px;
-        margin-bottom: 10px;
-        .icon {
-          color: #8A94A6;
-          font-size: 12px;
-          margin-right: 5px;
-        }
-      }
-      .related-business-list {
-        width: 940px;
-        margin-left: 20px;
-      }
     }
     .comment-list {
+      padding: 10px 30px 10px 60px;
       border-top: 1px solid #e6e6e6;
     }
   }
 
   .footer {
     width: 100%;
-    height: 50px;
+    height: 38px;
     background-color: #F4F7FF;
     padding: 0 15px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    .icon {
+    .more {
       font-size: 16px;
       color: #666;
       cursor: pointer;
-    }
-    .el-button {
-      margin-left: 16px;
-      &.el-button--small {
-        padding: 7px 10px;
+      &:hover {
+        color: $xr-color-primary;
       }
     }
+    .reply-total {
+      margin-left: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      .icon {
+        font-size: 16px;
+      }
+      .text {
+        font-size: 12px;
+        margin-left: 2px;
+      }
+      &:hover {
+        color: $xr-color-primary !important;
+      }
+    }
+  }
+
+  .reply-wrapper {
+    border-top: 1px solid #e6e6e6;
+    padding: 20px 20px 10px;
+    background-color: #F4F7FF;
   }
 }
 </style>
