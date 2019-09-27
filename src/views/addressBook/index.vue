@@ -6,11 +6,12 @@
         <span class="text">通讯录</span>
       </flexbox>
       <el-input
-        v-model="search"
+        v-model="params.search"
         placeholder="请输入员工姓名/手机号">
         <el-button
           slot="append"
-          type="primary">
+          type="primary"
+          @click="getList">
           搜索
         </el-button>
       </el-input>
@@ -38,7 +39,9 @@
           prop="startEn"
           width="80">
           <template slot-scope="scope">
-            {{ scope.row.startEn || '' }}
+            <span v-if="specialRowArr.includes(scope.$index)">
+              {{ scope.row.initial || '' }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -49,9 +52,9 @@
           <template slot-scope="scope">
             <span
               v-if="!specialRowArr.includes(scope.$index)"
-              :class="{active: scope.row.focus}"
+              :class="{active: scope.row.status === 1}"
               class="wk wk-focus-on focus-icon"
-              @click="toggleStar(scope.$index)" />
+              @click="toggleStar(scope.$index, scope.row.status)" />
           </template>
         </el-table-column>
         <el-table-column
@@ -96,6 +99,7 @@
 <script>
 import {
   addresslist,
+  toggleAttention,
   queryListNameByDept
 } from '@/api/oamanagement/addressBook'
 
@@ -103,7 +107,6 @@ export default {
   name: 'AddressBookIndex',
   data() {
     return {
-      search: '',
       listData: [],
       tableMap: [
         { label: '手机', key: 'mobile' },
@@ -116,12 +119,14 @@ export default {
       currentPage: 1,
       pageSizes: [15, 30, 60],
       pageSize: 10,
-      total: 100,
+      total: 0,
       loading: false,
 
       params: {
         page: 1,
-        limit: 15
+        limit: 15,
+        deptId: '',
+        search: ''
       }
     }
   },
@@ -134,27 +139,50 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      addresslist().then(res => {
+      addresslist(this.params).then(res => {
         this.loading = false
-        let list = []
-        this.specialRowArr = []
-        const keys = Object.keys(res.data)
-        keys.forEach(key => {
-          this.specialRowArr.push(list.length)
-          list.push({
-            realname: '',
-            mobile: '',
-            deptName: '',
-            postName: '',
-            startEn: key
-          })
-          res.data[key][0].focus = true
-          list = list.concat(res.data[key])
-        })
-        this.listData = list
+        this.total = res.data.totalRow
+        this.formatList(res.data.list)
       }).catch(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 格式化列表数据
+     */
+    formatList(list = []) {
+      this.specialRowArr = []
+      this.listData = []
+      if (list.length === 0) return []
+      const arr = []
+      const _emptyObj = {
+        deptId: '',
+        deptName: '',
+        mobile: '',
+        postName: '',
+        realname: ''
+      }
+      arr.push({
+        ..._emptyObj,
+        initial: list[0].initial
+      })
+      this.specialRowArr.push(0)
+      arr.push(list[0])
+      for (let i = 1; i < list.length; i++) {
+        const item = list[i]
+        if (item.initial === arr[arr.length - 1].initial) {
+          arr.push(item)
+        } else {
+          this.specialRowArr.push(arr.length)
+          arr.push({
+            ..._emptyObj,
+            initial: item.initial
+          })
+          arr.push(item)
+        }
+      }
+      this.listData = arr
     },
 
     /**
@@ -182,11 +210,19 @@ export default {
     /**
      * 切换关注状态
      * @param index
+     * @param status
      */
-    toggleStar(index) {
-      console.log(index)
-      this.listData[index].focus = !this.listData[index].focus
-      this.$set(this.listData, index, this.listData[index])
+    toggleStar(index, status) {
+      this.loading = true
+      toggleAttention({
+        userId: this.listData[index].userId
+      }).then(() => {
+        this.loading = false
+        this.listData[index].status = status === 0 ? 1 : 0
+        this.$set(this.listData, index, this.listData[index])
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     handleSizeChange(size) {
