@@ -5,7 +5,15 @@
         <img src="~@/assets/img/addressBook/address_logo.png" alt="" class="pic">
         <span class="text">通讯录</span>
       </flexbox>
-      <el-input placeholder="请输入员工姓名/手机号" />
+      <el-input
+        v-model="search"
+        placeholder="请输入员工姓名/手机号">
+        <el-button
+          slot="append"
+          type="primary">
+          搜索
+        </el-button>
+      </el-input>
     </div>
     <div class="container container-hook">
       <flexbox class="filter-box">
@@ -15,16 +23,19 @@
         </flexbox>
       </flexbox>
       <el-table
+        v-loading="loading"
         :data="listData"
         :height="tableHeight"
+        :row-class-name="getRowClass"
         stripe
         border
-        highlight-current-row
-        class="n-table--border">
+        class="n-table--border"
+        @sort-change="sortTableList">
         <el-table-column
-          sortable="date"
+          sortable="custom"
           label="排序"
           align="center"
+          prop="startEn"
           width="80">
           <template slot-scope="scope">
             {{ scope.row.startEn || '' }}
@@ -33,7 +44,32 @@
         <el-table-column
           prop="name"
           label="关注"
-          width="120" />
+          align="center"
+          width="120">
+          <template slot-scope="scope">
+            <span
+              v-if="!specialRowArr.includes(scope.$index)"
+              :class="{active: scope.row.focus}"
+              class="wk wk-focus-on focus-icon"
+              @click="toggleStar(scope.$index)" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="realname"
+          label="姓名">
+          <template slot-scope="scope">
+            <flexbox
+              v-if="!specialRowArr.includes(scope.$index)"
+              class="user-box">
+              <div
+                v-photo="scope.row"
+                v-lazy:background-image="$options.filters.filterUserLazyImg(scope.row.img || '')"
+                :key="scope.row.img || ''"
+                class="user-img div-photo" />
+              <span>{{ scope.row.realname }}</span>
+            </flexbox>
+          </template>
+        </el-table-column>
         <el-table-column
           v-for="(item, index) in tableMap"
           :key="index"
@@ -45,6 +81,7 @@
           :current-page="currentPage"
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
+          :pager-count="5"
           :total="total"
           class="p-bar"
           background
@@ -69,17 +106,23 @@ export default {
       search: '',
       listData: [],
       tableMap: [
-        { label: '名称', key: 'realname' },
         { label: '手机', key: 'mobile' },
         { label: '部门', key: 'deptName' },
         { label: '岗位', key: 'postName' }
       ],
       tableHeight: 0,
+      specialRowArr: [],
 
       currentPage: 1,
       pageSizes: [15, 30, 60],
       pageSize: 10,
-      total: 100
+      total: 100,
+      loading: false,
+
+      params: {
+        page: 1,
+        limit: 15
+      }
     }
   },
   created() {
@@ -90,10 +133,14 @@ export default {
   },
   methods: {
     getList() {
+      this.loading = true
       addresslist().then(res => {
+        this.loading = false
         let list = []
+        this.specialRowArr = []
         const keys = Object.keys(res.data)
         keys.forEach(key => {
+          this.specialRowArr.push(list.length)
           list.push({
             realname: '',
             mobile: '',
@@ -101,79 +148,59 @@ export default {
             postName: '',
             startEn: key
           })
+          res.data[key][0].focus = true
           list = list.concat(res.data[key])
         })
         this.listData = list
-      }).catch()
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
-    handleSizeChange() {},
-    handleCurrentChange() {}
+    /**
+     * 动态生成 table 行 className
+     * @param rowObj
+     * @return {string}
+     */
+    getRowClass(rowObj) {
+      if (this.specialRowArr.includes(rowObj.rowIndex)) {
+        return 'special-row'
+      } else {
+        return ''
+      }
+    },
+    /**
+     * 排序
+     */
+    sortTableList(sortObj) {
+      if (sortObj.order === 'ascending') {
+        // 升序
+      } else if (sortObj.order === 'descending') {
+        // 降序
+      }
+    },
+    /**
+     * 切换关注状态
+     * @param index
+     */
+    toggleStar(index) {
+      console.log(index)
+      this.listData[index].focus = !this.listData[index].focus
+      this.$set(this.listData, index, this.listData[index])
+    },
+
+    handleSizeChange(size) {
+      this.params.limit = size
+      this.getList()
+    },
+    handleCurrentChange(page) {
+      this.params.page = page
+      this.getList()
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-  @import "../customermanagement/styles/table";
-
-  .el-table /deep/ tbody tr td:nth-child(1) {
-    border-right-width: 0;
-  }
-
-  .el-table /deep/ tbody tr td:nth-child(2) {
-    border-right: 1px solid #e6e6e6;
-  }
-
-  .address-book-index {
-    width: 100%;
-    height: 100%;
-    .header {
-      position: relative;
-      width: 100%;
-      height: 60px;
-      padding: 0 28px;
-      display: flex;
-      .title {
-        width: unset;
-        margin: 15px 0;
-        .pic {
-          width: 30px;
-          height: 30px;
-          margin-right: 10px;
-        }
-        .text {
-          font-size: 16px;
-          font-weight: bold;
-        }
-      }
-      .el-input {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 300px;
-      }
-    }
-
-    .container {
-      width: 100%;
-      height: calc(100% - 80px);
-      background-color: white;
-      border-top: 1px solid #e6e6e6;
-      border-bottom: 1px solid #e6e6e6;
-      .filter-box {
-        width: 100%;
-        height: 50px;
-        font-size: 13px;
-        border-bottom: 1px solid #e6e6e6;
-        padding: 0 20px;
-        .form-core {
-          width: 180px;
-        }
-      }
-      .el-table {
-        width: 100%;
-      }
-    }
-  }
+  @import "./style";
 </style>
