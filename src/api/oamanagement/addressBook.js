@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 审批类型列表
+// 通讯录列表
 export function addresslist(data) {
   return request({
     url: 'system/user/queryListName',
@@ -13,6 +13,15 @@ export function addresslist(data) {
 export function queryListNameByDept(data) {
   return request({
     url: 'system/user/queryListNameByDept',
+    method: 'post',
+    data: data
+  })
+}
+
+// 通讯录关注状态切换
+export function toggleAttention(data) {
+  return request({
+    url: 'system/user/attention',
     method: 'post',
     data: data
   })
