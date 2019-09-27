@@ -187,7 +187,7 @@ div[lazy=loading] {
 }
 
 .task-tooltip {
-  z-index: 1 !important;
+  z-index: 10 !important;
 }
 
 // 关闭message 内容样式
@@ -253,8 +253,8 @@ div[lazy=loading] {
 
 // 按钮橙黄
 .xr-btn--orange {
-  background-color: #fc6e51;
-  border-color: #fc6e51;
+  background-color: #ff6a00;
+  border-color: #ff6a00;
 
   i {
     font-size: 13px;
