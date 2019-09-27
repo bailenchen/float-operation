@@ -62,7 +62,6 @@ export default {
   },
   mounted() {
     this.getDefaultSelectValue()
-    console.log('$listeners---', this.$listeners)
   },
 
   beforeDestroy() {},
