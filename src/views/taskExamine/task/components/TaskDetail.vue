@@ -1414,6 +1414,7 @@ $btn-b-hover-color: #eff4ff;
   flex: 1;
   font-size: 22px;
   color: #333;
+  cursor: pointer;
 }
 
 .task-name.is-checked {
@@ -1692,10 +1693,10 @@ $btn-b-hover-color: #eff4ff;
   }
 
   .edit-del-box {
-    display: none;
+    opacity: 0;
     flex-shrink: 0;
-      margin-left: 8px;
-    }
+    margin-left: 8px;
+  }
 
   &__ft {
     position: absolute;
