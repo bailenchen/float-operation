@@ -25,7 +25,9 @@
       </ul>
     </div>
     <div class="right">
-      <edit-user-info v-if="selectedIndex === 0" />
+      <edit-user-info
+        v-if="selectedIndex === 0"
+        @change="getDetail" />
       <edit-pwd v-if="selectedIndex === 1" />
     </div>
   </flexbox>
@@ -56,7 +58,18 @@ export default {
       'userInfo'
     ])
   },
+  created() {
+    this.getDetail()
+  },
   methods: {
+    getDetail() {
+      this.loading = true
+      this.$store.dispatch('GetUserInfo').then(() => {
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    }
   }
 }
 </script>
@@ -71,13 +84,16 @@ export default {
       padding-bottom: 100px;
       margin-right: 20px;
       .user-box {
+        width: 376px;
         padding: 15px 20px 20px;
         .user-img {
           width: 50px;
           height: 50px;
+          border-radius: 50%;
           margin-right: 22px;
         }
         .username {
+          flex: 1;
           font-size: 14px;
           color: #666;
         }

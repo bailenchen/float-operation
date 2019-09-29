@@ -30,6 +30,7 @@ const user = {
   mutations: {
     SET_USERINFO: (state, userInfo) => {
       state.userInfo = userInfo
+      localStorage.setItem('loginUserInfo', JSON.stringify(userInfo))
     },
     SET_ALLAUTH: (state, allAuth) => {
       state.allAuth = allAuth
