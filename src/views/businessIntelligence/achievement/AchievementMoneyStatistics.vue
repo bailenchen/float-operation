@@ -4,6 +4,7 @@
     class="main-container">
     <filtrate-handle-view
       :show-year-select="true"
+      title="合同金额分析"
       class="filtrate-bar"
       module-type="contract"
       @load="loading=true"

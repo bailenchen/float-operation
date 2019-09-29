@@ -175,14 +175,14 @@ export default {
             show: false
           },
           axisLabel: {
-            color: '#BDBDBD'
+            color: '#333'
           },
           /** 坐标轴轴线相关设置 */
           axisLine: {
             onZero: true,
             onZeroAxisIndex: 1,
             lineStyle: {
-              color: '#BDBDBD'
+              color: '#333'
             }
           },
           splitLine: {
@@ -199,13 +199,13 @@ export default {
             show: false
           },
           axisLabel: {
-            color: '#BDBDBD',
+            color: '#333',
             formatter: '{value}'
           },
           /** 坐标轴轴线相关设置 */
           axisLine: {
             lineStyle: {
-              color: '#BDBDBD'
+              color: '#333'
             }
           },
           splitLine: {
@@ -225,13 +225,13 @@ export default {
             }
           },
           axisLabel: {
-            color: '#BDBDBD',
+            color: '#333',
             formatter: '{value}%'
           },
           /** 坐标轴轴线相关设置 */
           axisLine: {
             lineStyle: {
-              color: '#BDBDBD'
+              color: '#333'
             }
           },
           splitLine: {

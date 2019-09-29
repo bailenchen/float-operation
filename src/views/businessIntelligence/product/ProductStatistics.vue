@@ -3,6 +3,7 @@
     v-loading="loading"
     class="main-container">
     <filtrate-handle-view
+      title="产品销售情况统计"
       class="filtrate-bar"
       module-type="product"
       @load="loading=true"
@@ -160,9 +161,9 @@ export default {
     cellStyle({ row, column, rowIndex, columnIndex }) {
       var item = this.spanList[rowIndex]
       if (item.isSum == true) {
-        return { backgroundColor: '#FFF9F2' }
+        return { backgroundColor: '#FFF9F2', borderRight: '0 none', fontWeight: 'bold' }
       } else if (item.isAllSum == true) {
-        return { backgroundColor: '#FFF3E8' }
+        return { backgroundColor: '#FFF3E8', borderRight: '0 none', fontWeight: 'bold' }
       } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 4) {
         return { color: '#2362FB', cursor: 'pointer' }
       }
@@ -251,7 +252,7 @@ export default {
             // 需要添加一个小计
             preItem.rowspan += 1
 
-            newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
+            newList.push({ productPrice: '合计', productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
             spanList.push({ rowspan: 0, productRowspan: 1, isSum: true }) // 产品小计Style
 
             spanList.push({ rowspan: 0, productRowspan: 1 }) // 新产品 第一条数据style
@@ -268,12 +269,12 @@ export default {
           // 最后一个产品的处理
           var preItem = spanList[seriesIndex]
           preItem.rowspan += 1
-          newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
+          newList.push({ productPrice: '合计', productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
           subCount = 0
           subMoney = 0 // 完成一个产品统计 清空数据
           spanList.push({ rowspan: 0, productRowspan: 1, isSum: true }) // 产品小计style
 
-          newList.push({ productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
+          newList.push({ productPrice: '合计', productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
           allCount = 0
           allMoney = 0 // 完成一个系列统计 清空数据
           spanList.push({ rowspan: 1, productRowspan: 1, isAllSum: true }) // 系列小计style
@@ -281,7 +282,9 @@ export default {
       }
 
       this.spanList = spanList
+      newList[newList.length - 1].productPrice = '总计'
       this.newList = newList
+      console.log('new list', this.newList)
     }
   }
 }
@@ -342,6 +345,15 @@ export default {
   }
   .money-cell:first-child {
     border-left: none;
+  }
+}
+
+/deep/ .el-table {
+  tr td:first-child, tr td:nth-child(2) {
+    border-right: 1px solid #e6e6e6;
+  }
+  tr td:first-child[rowspan='1'], tr td:nth-child(2)[rowspan='1'] {
+    border-right: 0 none !important;
   }
 }
 </style>

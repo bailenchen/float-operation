@@ -2,7 +2,13 @@
   <div
     v-loading="loading"
     class="main-container">
-    <div class="handle-bar">
+    <flexbox class="handle-bar">
+      <flexbox justify="flex-start" class="title-box">
+        <div class="icon-box">
+          <span class="wk wk-my-task icon" />
+        </div>
+        <span class="text">业绩目标完成情况</span>
+      </flexbox>
       <el-date-picker
         v-model="dateSelect"
         :clearable="false"
@@ -42,23 +48,26 @@
       <el-button
         type="primary"
         @click.native="handleClick('search')">搜索</el-button>
-    </div>
+    </flexbox>
     <div class="content">
       <div class="axis-content">
         <div id="axismain"/>
       </div>
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           stripe
           border
           height="400"
           highlight-current-row>
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
+            sortable="custom"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -69,6 +78,7 @@
 </template>
 
 <script>
+import sortMixins from './mixins/sort'
 import echarts from 'echarts'
 import { adminStructuresSubIndex, usersList } from '@/api/common'
 import { biAchievementStatistics } from '@/api/businessIntelligence/bi'
@@ -78,6 +88,7 @@ export default {
   /** 业绩目标完成情况 */
   name: 'TaskCompleteStatistics',
   components: {},
+  mixins: [sortMixins],
   data() {
     return {
       pickerOptions: {
@@ -253,11 +264,11 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD'
+              color: '#333'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -273,12 +284,12 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD',
+              color: '#333',
               formatter: '{value} 元'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -293,12 +304,12 @@ export default {
             },
             position: 'right',
             axisLabel: {
-              color: '#BDBDBD',
+              color: '#333',
               formatter: '{value} %'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -342,6 +353,24 @@ export default {
 .handle-bar {
   background-color: white;
   padding: 15px 20px 5px 20px;
+  .title-box {
+    width: 220px;
+    display: flex;
+    .icon-box {
+      width: 34px;
+      height: 34px;
+      text-align: center;
+      line-height: 34px;
+      color: $xr-color-primary;
+      background-color: #dfe8ff;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .text {
+      font-size: 17px;
+      font-weight: bold;
+    }
+  }
   .el-date-editor {
     width: 130px;
     margin-right: 15px;

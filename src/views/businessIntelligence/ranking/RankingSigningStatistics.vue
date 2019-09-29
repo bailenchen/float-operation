@@ -4,6 +4,7 @@
     class="main-container">
     <filtrate-handle-view
       :show-user-select="false"
+      title="签约合同排行"
       class="filtrate-bar"
       module-type="ranking"
       @load="loading=true"

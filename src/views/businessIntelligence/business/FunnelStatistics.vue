@@ -4,6 +4,7 @@
     class="main-container">
     <filtrate-handle-view
       :show-business-select="true"
+      title="销售漏斗"
       class="filtrate-bar"
       module-type="business"
       @load="loading=true"
@@ -14,16 +15,19 @@
       </div>
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           height="400"
           stripe
           border
-          highlight-current-row>
+          highlight-current-row
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
+            :sortable="item.sortable"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -36,6 +40,7 @@
 
 <script>
 import base from '../mixins/base'
+import sortMixins from '../mixins/sort'
 import echarts from 'echarts'
 import { biBusinessFunnel } from '@/api/businessIntelligence/bi'
 
@@ -43,7 +48,7 @@ export default {
   /** 销售漏斗 */
   name: 'FunnelStatistics',
   components: {},
-  mixins: [base],
+  mixins: [base, sortMixins],
   data() {
     return {
       loading: false,
@@ -51,8 +56,8 @@ export default {
       list: [],
       fieldList: [
         { field: 'name', name: '阶段' },
-        { field: 'money', name: '金额' },
-        { field: 'count', name: '商机数' }
+        { field: 'money', name: '金额', sortable: 'custom' },
+        { field: 'count', name: '商机数', sortable: 'custom' }
       ],
 
       funnelChart: null, // 漏斗图

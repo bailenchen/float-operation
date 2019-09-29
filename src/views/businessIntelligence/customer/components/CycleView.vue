@@ -4,6 +4,7 @@
     class="cycle-content">
     <filtrate-handle-view
       v-if="initView"
+      :title="filterTitle"
       class="filtrate-bar"
       module-type="customer"
       @load="loading=true"
@@ -17,16 +18,19 @@
       </div>
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           height="400"
           stripe
           border
-          highlight-current-row>
+          highlight-current-row
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
+            sortable="custom"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -37,6 +41,7 @@
 </template>
 <script type="text/javascript">
 import base from '../../mixins/base'
+import sortMixins from '../../mixins/sort'
 import echarts from 'echarts'
 import {
   biCustomerUserCycleAPI,
@@ -48,7 +53,7 @@ import {
 export default {
   name: 'CycleView',
   components: {},
-  mixins: [base],
+  mixins: [base, sortMixins],
   props: {
     type: {
       required: true,
@@ -78,6 +83,13 @@ export default {
         customer: '员工客户成交周期（根据合同下单时间和客户创建时间计算）',
         address: '地区成交周期（根据合同下单时间和客户创建时间计算）',
         product: '产品成交周期（根据合同下单时间和客户创建时间计算）'
+      }[this.type]
+    },
+    filterTitle() {
+      return {
+        customer: '员工客户成交周期分析',
+        address: '地区成交周期分析',
+        product: '产品成交周期分析'
       }[this.type]
     }
   },
@@ -190,11 +202,11 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD'
+              color: '#333'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -210,12 +222,12 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD',
+              color: '#333',
               formatter: '{value}天'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -229,12 +241,12 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD',
+              color: '#333',
               formatter: '{value}个'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false

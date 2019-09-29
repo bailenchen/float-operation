@@ -3,6 +3,7 @@
     v-loading="loading"
     class="main-container">
     <filtrate-handle-view
+      :title="filterTitle"
       class="filtrate-bar"
       module-type="portrait"
       @load="loading=true"
@@ -57,7 +58,15 @@ export default {
       fieldList: []
     }
   },
-  computed: {},
+  computed: {
+    filterTitle() {
+      return {
+        source: '客户来源分析',
+        industry: '客户行业分析',
+        level: '客户级别分析'
+      }[this.type] || ''
+    }
+  },
   created() {
     this.type = this.$route.params.type
   },

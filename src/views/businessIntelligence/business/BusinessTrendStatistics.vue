@@ -3,6 +3,7 @@
     v-loading="loading"
     class="main-container">
     <filtrate-handle-view
+      title="新增商机"
       class="filtrate-bar"
       module-type="business"
       @load="loading=true"
@@ -13,16 +14,19 @@
       </div>
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           height="400"
           stripe
           border
-          highlight-current-row>
+          highlight-current-row
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
+            sortable="custom"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -34,6 +38,7 @@
 
 <script>
 import base from '../mixins/base'
+import sortMixins from '../mixins/sort'
 import echarts from 'echarts'
 import {
   biBusinessTrendAPI,
@@ -43,7 +48,7 @@ import {
 export default {
   /** 新增商机数与金额趋势分析 */
   name: 'BusinessTrendStatistics',
-  mixins: [base],
+  mixins: [base, sortMixins],
   data() {
     return {
       loading: false,
@@ -170,11 +175,11 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD'
+              color: '#333'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -190,12 +195,12 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD',
+              color: '#333',
               formatter: '{value}万元'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -209,12 +214,12 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD',
+              color: '#333',
               formatter: '{value}个'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false

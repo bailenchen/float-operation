@@ -3,6 +3,7 @@
     v-loading="loading"
     class="main-container">
     <filtrate-handle-view
+      title="审批分析"
       class="filtrate-bar"
       module-type="oa"
       @load="loading=true"
@@ -15,6 +16,7 @@
     <div class="content">
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           :height="tableHeight"
           :cell-style="cellStyle"
@@ -22,7 +24,8 @@
           border
           show-overflow-tooltip
           highlight-current-row
-          @row-click="handleRowClick">
+          @row-click="handleRowClick"
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
@@ -31,6 +34,7 @@
             :prop="item.field"
             :min-width="item.width"
             :label="item.name"
+            sortable="custom"
             align="center"
             header-align="center"/>
         </el-table>
@@ -47,6 +51,7 @@
 </template>
 
 <script>
+import sortMixins from '../mixins/sort'
 import {
   biExamineStatisticsAPI,
   biExamineExcelExportAPI,
@@ -63,7 +68,7 @@ export default {
     filtrateHandleView,
     ExamineList
   },
-
+  mixins: [sortMixins],
   data() {
     return {
       loading: false,

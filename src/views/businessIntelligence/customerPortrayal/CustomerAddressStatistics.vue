@@ -2,6 +2,12 @@
   <div
     v-loading="loading"
     class="main-container">
+    <flexbox justify="flex-start" class="title-box">
+      <div class="icon-box">
+        <span class="wk wk-my-task icon" />
+      </div>
+      <span class="text">客户城市分布分析</span>
+    </flexbox>
     <flexbox class="content">
       <flexbox-item>
         <div class="axis-content">
@@ -152,4 +158,27 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
+
+.title-box {
+  padding: 15px 20px 5px;
+  display: flex;
+  .icon-box {
+    width: 34px;
+    height: 34px;
+    text-align: center;
+    line-height: 34px;
+    color: $xr-color-primary;
+    background-color: #dfe8ff;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  .text {
+    font-size: 17px;
+    font-weight: bold;
+  }
+}
+
+.vux-flexbox-item {
+  margin-bottom: 150px;
+}
 </style>

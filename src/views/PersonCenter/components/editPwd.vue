@@ -1,8 +1,8 @@
 <template>
   <div class="edit-pwd">
     <div class="head">
-      <span class="wk wk-user icon" />
-      <span class="text">个人信息</span>
+      <span class="wk wk-circle-password icon" />
+      <span class="text">账号密码</span>
     </div>
     <el-form
       ref="form"

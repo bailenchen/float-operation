@@ -33,7 +33,7 @@ export default {
             }
           },
           axisLabel: {
-            color: '#BDBDBD',
+            color: '#333',
             formatter: '{value}'
           },
           /** 坐标轴轴线相关设置 */
@@ -50,12 +50,12 @@ export default {
             }
           },
           axisLabel: {
-            color: '#BDBDBD'
+            color: '#333'
           },
           /** 坐标轴轴线相关设置 */
           axisLine: {
             lineStyle: {
-              color: '#BDBDBD'
+              color: '#333'
             }
           },
           splitLine: {

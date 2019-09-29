@@ -4,6 +4,7 @@
     class="main-container">
     <filtrate-handle-view
       :show-product-selct="true"
+      title="产品分类销量分析"
       class="filtrate-bar"
       module-type="product"
       @load="loading=true"

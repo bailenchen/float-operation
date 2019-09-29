@@ -350,7 +350,9 @@ export default {
           margin-bottom: 15px;
         }
         .content-title {
-          color: #999;
+          /*color: #999;*/
+          color: #333;
+          font-weight: bold;
           margin-bottom: 10px;
         }
         .content-text {

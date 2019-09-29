@@ -82,6 +82,8 @@ export default {
       width: 300px;
       background-color: white;
       padding-bottom: 100px;
+      border: 1px solid #e6e6e6;
+      border-radius: 4px;
       margin-right: 20px;
       .user-box {
         width: 376px;
@@ -111,7 +113,7 @@ export default {
           .icon {
             margin-right: 10px;
           }
-          &.active {
+          &:hover, &.active {
             color: #333;
             background-color: #F1F5F8;
           }
@@ -120,6 +122,9 @@ export default {
     }
     .right {
       flex: 1;
+      border: 1px solid #e6e6e6;
+      border-radius: 4px;
+      overflow: hidden;
     }
   }
 </style>

@@ -3,6 +3,7 @@
     v-loading="loading"
     class="main-container">
     <filtrate-handle-view
+      title="日志分析"
       class="filtrate-bar"
       module-type="oa"
       @load="loading=true"
@@ -15,16 +16,19 @@
     <div class="content">
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           :height="tableHeight"
           stripe
           border
-          highlight-current-row>
+          highlight-current-row
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
+            sortable="custom"
             align="center"
             header-align="center"/>
         </el-table>
@@ -34,6 +38,7 @@
 </template>
 
 <script>
+import sortMixins from '../mixins/sort'
 import {
   biLogStatisticsAPI,
   biLogExcelExportAPI
@@ -47,7 +52,7 @@ export default {
   components: {
     filtrateHandleView
   },
-
+  mixins: [sortMixins],
   data() {
     return {
       loading: false,

@@ -4,6 +4,7 @@
     v-loading="loading"
     class="main-container">
     <filtrate-handle-view
+      title="客户总量分析"
       class="filtrate-bar"
       module-type="customer"
       @load="loading=true"
@@ -14,16 +15,19 @@
       </div>
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           height="400"
           stripe
           border
-          highlight-current-row>
+          highlight-current-row
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
+            sortable="custom"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -35,6 +39,7 @@
 
 <script>
 import base from '../mixins/base'
+import sortMixins from '../mixins/sort'
 import echarts from 'echarts'
 import {
   biCustomerTotalListAPI,
@@ -44,7 +49,7 @@ import {
 export default {
   /** 客户总量分析 */
   name: 'CustomerTotalStatistics',
-  mixins: [base],
+  mixins: [base, sortMixins],
   data() {
     return {
       loading: false,
@@ -56,14 +61,14 @@ export default {
       list: [],
       axisList: [],
       fieldList: [
-        { field: 'realname', name: '员工姓名' },
-        { field: 'customerNum', name: '新增客户数' },
-        { field: 'dealCustomerNum', name: '成交客户数' },
-        { field: 'dealCustomerRate', name: '客户成交率(%)' },
-        { field: 'contractMoney', name: '合同总金额' },
-        { field: 'receivablesMoney', name: '回款金额' },
-        { field: 'unreceivedMoney', name: '未回款金额' },
-        { field: 'completedRate', name: '回款完成率(%)' }
+        { field: 'realname', name: '员工姓名', sortable: true },
+        { field: 'customerNum', name: '新增客户数', sortable: true },
+        { field: 'dealCustomerNum', name: '成交客户数', sortable: true },
+        { field: 'dealCustomerRate', name: '客户成交率(%)', sortable: true },
+        { field: 'contractMoney', name: '合同总金额', sortable: true },
+        { field: 'receivablesMoney', name: '回款金额', sortable: true },
+        { field: 'unreceivedMoney', name: '未回款金额', sortable: true },
+        { field: 'completedRate', name: '回款完成率(%)', sortable: true }
       ]
     }
   },
@@ -132,6 +137,7 @@ export default {
         .then(res => {
           this.loading = false
           this.list = res.data
+          console.log(this.list)
         })
         .catch(() => {
           this.loading = false
@@ -176,11 +182,11 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD'
+              color: '#333'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false
@@ -196,12 +202,12 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD',
+              color: '#333',
               formatter: '{value} 个'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
-              lineStyle: { color: '#BDBDBD' }
+              lineStyle: { color: '#333' }
             },
             splitLine: {
               show: false

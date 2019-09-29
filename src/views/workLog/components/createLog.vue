@@ -178,7 +178,8 @@ export default {
         .el-form-item__label {
           font-size: 12px;
           line-height: 1.5;
-          color: #666;
+          /*color: #666;*/
+          font-weight: bold;
         }
       }
       .el-textarea {

@@ -1,6 +1,11 @@
-
 <template>
-  <div class="filtrate-content">
+  <flexbox justify="flex-start" class="filtrate-content">
+    <flexbox justify="flex-start" class="title-box">
+      <div class="icon-box">
+        <span class="wk wk-my-task icon" />
+      </div>
+      <span class="text">{{ title }}</span>
+    </flexbox>
     <time-type-select
       v-if="!showYearSelect"
       @change="timeTypeChange"/>
@@ -73,7 +78,7 @@
       type="primary"
       @click.native="postFiltrateValue()">搜索</el-button>
     <slot/>
-  </div>
+  </flexbox>
 </template>
 
 <script type="text/javascript">
@@ -94,6 +99,11 @@ export default {
     moduleType: {
       required: true,
       type: String
+    },
+    // 模块标题
+    title: {
+      type: String,
+      default: ''
     },
     // 是否展示年
     showYearSelect: {
@@ -309,6 +319,24 @@ export default {
 <style lang="scss" scoped>
 .filtrate-content {
   padding: 15px 20px 5px 20px;
+  .title-box {
+    width: 220px;
+    display: flex;
+    .icon-box {
+      width: 34px;
+      height: 34px;
+      text-align: center;
+      line-height: 34px;
+      color: $xr-color-primary;
+      background-color: #dfe8ff;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .text {
+      font-size: 17px;
+      font-weight: bold;
+    }
+  }
   .el-date-editor {
     width: 130px;
     margin-right: 15px;

@@ -3,24 +3,29 @@
     v-loading="loading"
     class="main-container">
     <filtrate-handle-view
+      title="合同汇总表"
       class="filtrate-bar"
       module-type="contract"
       @load="loading=true"
       @change="getDataList"/>
     <div class="content">
-      <div class="content-title">签约合同数：{{ data.count_zong }}个；签约合同金额：{{ data.money_zong }}元；回款金额：{{ data.back_zong }}元；未收款金额：{{ data.w_back_zong }}元</div>
+      <div class="content-title">
+        签约合同数：{{ data.count_zong }}个；签约合同金额：<span class="special">{{ data.money_zong }}</span>元；回款金额：<span class="special">{{ data.back_zong }}</span>元；未收款金额：<span class="special">{{ data.w_back_zong }}</span>元</div>
       <div class="table-content">
         <el-table
+          v-if="showTable"
           :data="list"
           :height="tableHeight"
           stripe
           border
-          highlight-current-row>
+          highlight-current-row
+          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
+            sortable="custom"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -31,6 +36,7 @@
 </template>
 
 <script>
+import sortMixins from '../mixins/sort'
 import { biAchievementSummaryAPI } from '@/api/businessIntelligence/achievement'
 import filtrateHandleView from '../components/filtrateHandleView'
 
@@ -40,6 +46,7 @@ export default {
   components: {
     filtrateHandleView
   },
+  mixins: [sortMixins],
   data() {
     return {
       loading: false,
@@ -93,5 +100,9 @@ export default {
 @import '../styles/detail.scss';
 .content-title {
   padding-bottom: 15px;
+  .special {
+    font-weight: bold;
+    margin-right: 3px;
+  }
 }
 </style>
