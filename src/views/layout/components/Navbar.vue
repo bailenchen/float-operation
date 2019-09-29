@@ -131,21 +131,6 @@ export default {
           icon: 'customer'
         })
       }
-      if (this.bi) {
-        tempsItems.push({
-          title: '商业智能',
-          type: 5,
-          path: '/bi',
-          icon: 'statistics'
-        })
-      }
-      if (this.project) {
-        tempsItems.push({
-          title: '项目管理',
-          type: 2,
-          path: '/project'
-        })
-      }
       tempsItems.push({
         title: '任务/审批',
         type: 4,
@@ -165,6 +150,21 @@ export default {
         path: '/addressBook',
         icon: ''
       })
+      if (this.bi) {
+        tempsItems.push({
+          title: '商业智能',
+          type: 5,
+          path: '/bi',
+          icon: 'statistics'
+        })
+      }
+      if (this.project) {
+        tempsItems.push({
+          title: '项目管理',
+          type: 2,
+          path: '/project'
+        })
+      }
       return tempsItems
     }
   },

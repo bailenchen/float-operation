@@ -1,20 +1,23 @@
 <template>
   <flexbox class="cell">
-    <i
-      :class="'wukong-' + type"
-      class="cell-head wukong"/>
+    <div class="cell-head">
+      <i :class="type | wkIconPre" />
+      <span>
+        {{ `关联${typeName}-` }}
+      </span>
+    </div>
     <div
       :class="{'cursor-pointer' :cursorPointer}"
-      class="cell-body"
+      class="cell-body text-one-line"
       @click="bodyClick">
-      {{ getShowName() }}
+      {{ name }}
     </div>
-    <img
-      v-if="showFoot"
-      class="cell-foot"
-      style="cursor: pointer;"
-      src="@/assets/img/cancel_associated.png"
-      @click="footClick" >
+    <div class="cell-foot">
+      <a
+        v-if="showFoot"
+        class="cancel-btn"
+        @click="footClick">取消关联</a>
+    </div>
   </flexbox>
 </template>
 
@@ -52,6 +55,15 @@ export default {
         return '合同'
       }
       return ''
+    },
+
+    name() {
+      return (
+        this.data.name ||
+        this.data.businessName ||
+        this.data.customerName ||
+        this.data.number
+      )
     }
   },
   watch: {},
@@ -64,16 +76,6 @@ export default {
     },
     bodyClick() {
       this.$emit('detail', this.type, this.cellIndex, this.data)
-    },
-    getShowName(item) {
-      return (
-        this.typeName +
-        '-' +
-        (this.data.name ||
-          this.data.businessName ||
-          this.data.customerName ||
-          this.data.number)
-      )
     }
   }
 }
@@ -81,32 +83,46 @@ export default {
 <style lang="scss" scoped>
 .cell {
   padding: 8px;
-  background-color: #f5f7fa;
-  border-radius: 2px;
+  background-color: #f8faff;
+  border-radius: 4px;
   position: relative;
   margin-bottom: 5px;
+  color: #333333;
 
   .cell-head {
-    display: block;
-    width: 15px;
-    height: 15px;
-    margin-right: 8px;
-    color: #6394e5;
-    font-size: 14px;
+    flex-shrink: 0;
+    i {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
+      color: #8a94a6;
+      font-size: 14px;
+    }
   }
 
   .cell-body {
     flex: 1;
-    color: #2362FB;
+    color: $xr-color-primary;
     font-size: 12px;
   }
 
-  .cell-foot {
-    display: block;
-    width: 24px;
-    padding: 0 4px;
-    margin-right: 8px;
+  .cell-body:hover {
+    text-decoration: underline;
   }
+
+  .cell-foot {
+    flex-shrink: 0;
+  }
+}
+
+.cancel-btn {
+  font-size: 12px;
+  color: $xr-color-primary;
+}
+
+.cancel-btn:hover {
+  text-decoration: underline;
 }
 
 .cursor-pointer {

@@ -1,102 +1,101 @@
 <template>
-  <div class="edit-index">
-    <el-popover
-      :placement="placement"
-      :width="popoverWidth"
-      v-model="tagShow"
-      trigger="click">
-      <div
-        v-if="tagContent == 0"
-        class="tag-popover-box">
-        <div class="tag-top">
-          <span>选择标签</span>
+  <el-popover
+    :placement="placement"
+    :width="popoverWidth"
+    v-model="tagShow"
+    trigger="click">
+    <div
+      v-if="tagContent == 0"
+      class="tag-popover-box">
+      <div class="tag-top">
+        <span>选择标签</span>
+        <span
+          class="el-icon-close rt cursor-pointer"
+          @click="tagShow = false"/>
+      </div>
+      <el-input
+        v-model="tagInputChange"
+        placeholder="搜索标签"
+        prefix-icon="el-icon-search"
+        size="small"/>
+      <div class="tag-content">
+        <div
+          v-for="(item, index) in particularsTagList"
+          :key="index"
+          class="tag-list"
+          @click="tagBtn(item, particularsTagList)">
+          <i
+            :style="{ 'color': item.color}"
+            class="wukong wukong-black-label"/>
+          <span class="item-label">{{ item.name }}</span>
           <span
-            class="el-icon-close rt cursor-pointer"
-            @click="tagShow = false"/>
-        </div>
-        <el-input
-          v-model="tagInputChange"
-          placeholder="搜索标签"
-          prefix-icon="el-icon-search"
-          size="small"/>
-        <div class="tag-content">
-          <div
-            v-for="(item, index) in particularsTagList"
-            :key="index"
-            class="tag-list"
-            @click="tagBtn(item, particularsTagList)">
-            <i
-              :style="{ 'color': item.color}"
-              class="wukong wukong-black-label"/>
-            <span class="item-label">{{ item.name }}</span>
-            <span
-              v-if="item.check"
-              class="el-icon-check rt"/>
-          </div>
-        </div>
-        <div class="tag-footer">
-          <p
-            class="footer-row cursor-pointer"
-            @click="createTagFun">
-            <span class="el-icon-plus"/>
-            <span>创建新标签</span>
-          </p>
-          <p
-            class="footer-row cursor-pointer"
-            @click="managementTag">
-            <span class="el-icon-setting"/>
-            <span>标签管理</span>
-          </p>
+            v-if="item.check"
+            class="el-icon-check rt"/>
         </div>
       </div>
-      <!-- 新建标签页 -->
-      <new-tag
-        v-else-if="tagContent == 1"
-        :new-tag-title="newTagTitle"
-        :new-tag-input="newTagInput"
-        :bg-color-props="bgColorProps"
-        @changeColor="changeColor"
-        @close="tagClose"
-        @tagCreateSubmit="tagCreateSubmit"
-        @tagCancel="tagCancel"
-        @back="back"/>
-      <!-- 标签管理 -->
-      <editTag
-        v-else-if="tagContent == 2"
-        :edit-tag-list="editTagList"
-        @back="back"
-        @close="tagClose"
-        @editBtn="editBtn"
-        @deleteBtn="deleteBtn"/>
-      <!-- 标签管理 - 编辑 -->
-      <new-tag
-        v-else-if="tagContent == 3"
-        :new-tag-title="newTagTitle"
-        :new-tag-input="newTagInput"
-        :bg-color-props="bgColorProps"
-        @changeColor="changeColor"
-        @close="tagClose"
-        @tagCreateSubmit="tagCreateSubmit"
-        @tagCancel="tagCancel"
-        @back="back"/>
-      <span
-        slot="reference"
-        @click="referenceFun">
-        <slot name="editIndex"/>
-      </span>
-    </el-popover>
-  </div>
+      <div class="tag-footer">
+        <p
+          class="footer-row cursor-pointer"
+          @click="createTagAPIFun">
+          <span class="el-icon-plus"/>
+          <span>创建新标签</span>
+        </p>
+        <p
+          class="footer-row cursor-pointer"
+          @click="managementTag">
+          <span class="el-icon-setting"/>
+          <span>标签管理</span>
+        </p>
+      </div>
+    </div>
+    <!-- 新建标签页 -->
+    <new-tag
+      v-else-if="tagContent == 1"
+      :new-tag-title="newTagTitle"
+      :new-tag-input="newTagInput"
+      :bg-color-props="bgColorProps"
+      @changeColor="changeColor"
+      @close="tagClose"
+      @tagCreateSubmit="tagCreateSubmit"
+      @tagCancel="tagCancel"
+      @back="back"/>
+    <!-- 标签管理 -->
+    <editTag
+      v-else-if="tagContent == 2"
+      :edit-tag-list="editTagList"
+      @back="back"
+      @close="tagClose"
+      @editBtn="editBtn"
+      @deleteBtn="deleteBtn"/>
+    <!-- 标签管理 - 编辑 -->
+    <new-tag
+      v-else-if="tagContent == 3"
+      :new-tag-title="newTagTitle"
+      :new-tag-input="newTagInput"
+      :bg-color-props="bgColorProps"
+      @changeColor="changeColor"
+      @close="tagClose"
+      @tagCreateSubmit="tagCreateSubmit"
+      @tagCancel="tagCancel"
+      @back="back"/>
+    <span
+      slot="reference"
+      @click="referenceFun">
+      <slot name="editIndex"/>
+    </span>
+  </el-popover>
 </template>
 
 <script>
 import NewTag from './newTag'
 import EditTag from './editTag'
-import { workTasklableIndexAPI } from '@/api/projectManagement/tag'
-import { workTaskSaveAPI } from '@/api/projectManagement/task'
+import { tagList } from '@/api/oamanagement/task'
 import {
-  workTasklableDeleteAPI,
-  workTasklableSaveAPI
-} from '@/api/projectManagement/tag'
+  setTaskAPI,
+  createTagAPI,
+  deleteTagAPI,
+  editTagAPI
+} from '@/api/task/task'
 
 export default {
   components: {
@@ -146,7 +145,7 @@ export default {
   mounted() {},
   methods: {
     // 创建新标签
-    createTagFun() {
+    createTagAPIFun() {
       this.newTagTitle = '创建新标签'
       this.newTagInput = ''
       this.tagContent = 1
@@ -176,7 +175,7 @@ export default {
         }
       })
       if (value.check) {
-        workTaskSaveAPI({
+        setTaskAPI({
           taskId: this.taskData.taskId,
           labelId: labelIds
             .map(item => {
@@ -194,7 +193,7 @@ export default {
           value.check = false
         })
       } else {
-        workTaskSaveAPI({
+        setTaskAPI({
           taskId: this.taskData.taskId,
           labelId: labelIds
             .map(item => {
@@ -230,7 +229,7 @@ export default {
     tagCreateSubmit(val, color) {
       const _this = this
       if (this.newTagTitle == '创建新标签') {
-        workTasklableSaveAPI({
+        createTagAPI({
           name: val,
           color: color
         }).then(res => {
@@ -241,7 +240,7 @@ export default {
           this.$message.success('创建成功')
         })
       } else {
-        workTasklableSaveAPI({
+        editTagAPI({
           name: val,
           labelId: this.editTagId,
           color: color
@@ -289,7 +288,7 @@ export default {
         .then(() => {
           this.tagShow = true
           this.managementTag()
-          workTasklableDeleteAPI({
+          deleteTagAPI({
             labelId: val.labelId
           }).then(res => {
             for (const i in this.editTagList) {
@@ -314,7 +313,7 @@ export default {
     },
     tagListFun() {
       // 标签列表
-      workTasklableIndexAPI().then(res => {
+      tagList().then(res => {
         for (const item of res.data) {
           if (this.taskData.labelList) {
             for (const i of this.taskData.labelList) {

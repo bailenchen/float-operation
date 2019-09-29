@@ -19,16 +19,12 @@
         :show-types="showTypes"
         @close="crmrelativeClose"
         @changeCheckout="checkInfos"/>
-      <p
-        v-if="showCRMPermission"
-        slot="reference"
-        class="add-file"
-        @click="showRelative = true">
-        <img
-          src="@/assets/img/relevance_business.png"
-          alt="">
-        关联业务
-      </p>
+      <span
+        v-if="showCRMPermission" slot="reference"
+        class="add-btn" @click="showRelative = true">
+        <i class="wk wk-l-plus" />
+        <span class="label">关联业务</span>
+      </span>
     </el-popover>
     <p
       v-if="!alterable"
@@ -64,16 +60,12 @@
         :show-types="showTypes"
         @close="crmrelativeClose"
         @changeCheckout="checkInfos"/>
-      <p
-        v-if="showCRMPermission"
-        slot="reference"
-        class="add-file"
-        @click="showTaskRelative = true">
-        <img
-          src="@/assets/img/relevance_business.png"
-          alt="">
-        关联业务
-      </p>
+      <span
+        v-if="showCRMPermission" slot="reference"
+        class="add-btn" @click="showTaskRelative = true">
+        <i class="wk wk-l-plus" />
+        <span class="label">关联业务</span>
+      </span>
     </el-popover>
   </div>
 </template>
@@ -224,17 +216,30 @@ export default {
     padding-bottom: 10px;
     font-size: 13px;
   }
-  .add-file {
-    margin: 10px 0;
-    font-size: 13px;
-    color: #2362FB;
-    cursor: pointer;
-    display: inline-block;
-    img {
-      vertical-align: middle;
-      width: 15px;
-      margin-right: 5px;
-    }
+}
+
+// 添加btm
+$btn-b-color: #f8faff;
+$btn-color: #333333;
+$btn-b-hover-color: #eff4ff;
+
+.add-btn {
+  margin-top: 8px;
+  font-size: 12px;
+  color: $btn-color;
+  background-color: $btn-b-color;
+  border-radius: 4px;
+  display: inline-block;
+  padding: 3px 10px;
+  cursor: pointer;
+
+  .wk-l-plus {
+    font-size: 12px;
   }
+}
+
+.add-btn:hover {
+  color: $xr-color-primary;
+  background-color: $btn-b-hover-color;
 }
 </style>

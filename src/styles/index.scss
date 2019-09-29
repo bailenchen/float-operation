@@ -299,3 +299,25 @@ div[lazy=loading] {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+
+// 文字按钮
+$btn-delete-color: #f94e4e;
+.xr-text-btn {
+  font-size: 12px;
+  cursor: pointer;
+}
+.xr-text-btn.primary {
+  color: $xr-color-primary;
+}
+.xr-text-btn.delete {
+  color: $btn-delete-color;
+}
+
+.xr-text-btn:hover {
+  text-decoration: underline;
+}
+
+.xr-text-btn + .xr-text-btn {
+  margin-left: 8px;
+}

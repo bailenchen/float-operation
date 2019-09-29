@@ -1,30 +1,31 @@
 <template>
   <flexbox class="cell">
     <img
+      :src="fileIcon"
       class="cell-head"
-      src="@/assets/img/relevance_file.png"
       alt>
     <div
       :class="{'cursor-pointer' :cursorPointer}"
-      class="cell-body">
+      class="cell-body text-one-line">
       <span>{{ data.name.length > 20 ? data.name.substring(0, 20) + '...' : data.name }}</span>
-      <span class="size">({{ data.size }})</span>
+    </div>
+    <div class="size">
+      ({{ data.size }})
     </div>
     <div class="cell-foot">
-      <el-button
-        type="primary"
-        icon="el-icon-download"
-        @click="downloadClick">下载</el-button>
-      <i
+      <span
+        class="xr-text-btn primary"
+        @click="downloadClick">下载</span>
+      <span
         v-if="showDelete"
-        class="el-icon-delete"
-        @click="deleteClick"/>
+        class="xr-text-btn delete"
+        @click="deleteClick">删除</span>
     </div>
   </flexbox>
 </template>
 
 <script type="text/javascript">
-import { downloadFile } from '@/utils'
+import { downloadFile, getFileTypeIconWithSuffix } from '@/utils'
 import { crmFileDelete } from '@/api/common'
 
 export default {
@@ -49,7 +50,18 @@ export default {
   data() {
     return {}
   }, // 附件展示效果
-  computed: {},
+  computed: {
+    fileIcon() {
+      const temps = this.data.name ? this.data.name.split('.') : []
+      var ext = ''
+      if (temps.length > 0) {
+        ext = temps[temps.length - 1]
+      } else {
+        ext = ''
+      }
+      return getFileTypeIconWithSuffix(ext)
+    }
+  },
   watch: {},
   mounted() {},
 
@@ -87,34 +99,45 @@ export default {
 <style lang="scss" scoped>
 .cell {
   padding: 8px;
-  background-color: #f5f7fa;
-  border-radius: 2px;
+  background-color: #f8faff;
+  border-radius: 4px;
   position: relative;
   margin-bottom: 5px;
 
   .cell-head {
     display: block;
     width: 16px;
-    height: 16px;
-    margin-right: 5px;
   }
 
   .cell-body {
-    flex: 1;
-    color: #2362FB;
-    font-size: 13px;
-    .size {
-      color: #ccc;
-    }
+    margin-left: 12px;
+    color: $xr-color-primary;
+    font-size: 14px;
+  }
+
+  .size {
+    margin-left: 8px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: #ccc;
   }
 
   .cell-foot {
+    display: none;
+    margin-left: 8px;
+    flex-shrink: 0;
     margin-right: 8px;
     cursor: pointer;
     i {
       color: #ccc;
       padding: 0 2px;
     }
+  }
+}
+
+.cell:hover {
+  .cell-foot {
+    display: block;
   }
 }
 
