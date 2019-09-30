@@ -181,6 +181,8 @@ export default {
           var receivabless = []
           var achiements = []
           var rates = []
+          this.list = []
+
           for (let index = 0; index < 12; index++) {
             const element = res.data[index]
             receivabless.push(element.receivables)
