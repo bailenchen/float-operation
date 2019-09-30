@@ -234,6 +234,13 @@ div[lazy=loading] {
 
 // button
 // 编辑绿
+.xr-btn--primary {
+  i {
+    font-size: 13px;
+    margin-right: 5px;
+  }
+}
+
 .xr-btn--green {
   background-color: #389E0B;
   border-color: #389E0B;
@@ -271,8 +278,8 @@ div[lazy=loading] {
 
 // 拒绝红
 .xr-btn--red {
-  background-color: #F95A5A;
-  border-color: #F95A5A;
+  background-color: #f94e4e;
+  border-color: #f94e4e;
 
   i {
     font-size: 13px;
@@ -282,8 +289,8 @@ div[lazy=loading] {
 
 .xr-btn--red:hover,
 .xr-btn--red:focus {
-  background: #fc7d63;
-  border-color: #fc7d63;
+  background: #fa6060;
+  border-color: #fa6060;
   color: #FFFFFF;
 }
 

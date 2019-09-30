@@ -12,17 +12,20 @@
       direction="column"
       align="stretch"
       class="main">
-      <div class="main__hd task-hd">
+      <div v-if="taskData" class="main__hd task-hd">
         <flexbox
           class="task-hd__top"
           justify="space-between">
           <span
-            v-if="taskData && taskData.createUser"
+            v-if="taskData.createUser"
             class="task-hd__top--create">{{ taskData.createUser.realname }} 创建于 {{ taskData.createTime }}</span>
           <div>
-            <span class="task-hd__top--info">该任务已于 2019-09-27 14:20 被归档</span>
-            <el-button type="primary">激活</el-button>
-            <el-button type="primary">归档</el-button>
+            <span v-if="isArchive" class="task-hd__top--info">该任务已于 {{ taskData.archiveTime }} 被归档</span>
+            <el-button v-if="isArchive" class="xr-btn--primary" icon="wk wk-activation" type="primary" @click="activateTask">激活</el-button>
+            <span v-if="isRecycle" class="task-hd__top--info">该任务已于 {{ taskData.hiddenTime }} 被放入回收站</span>
+            <el-button v-if="isRecycle" class="xr-btn--primary" icon="wk wk-activation" type="primary" @click="recoverTask">恢复</el-button>
+            <el-button v-if="isRecycle" class="xr-btn--red" icon="el-icon-delete-solid" type="primary" @click="thoroughDeleteTask">彻底删除</el-button>
+            <el-button v-if="!isArchive && !isRecycle" class="xr-btn--green" icon="wk wk-archive" type="primary" @click="moreArchive">归档</el-button>
             <el-dropdown
               trigger="click"
               @command="morkDropdownClick">
@@ -62,10 +65,28 @@
         </flexbox>
         <flexbox class="task-hd__bottom">
           <flexbox-item class="priority">
-            <flexbox>
-              <span
-                :style="{ backgroundColor: priority.color }"
-                class="priority--icon">{{ priority.label }}</span>
+            <flexbox @click.native="priorityVisible = true">
+              <el-popover
+                v-model="priorityVisible"
+                popper-class="no-padding-popover"
+                placement="bottom"
+                trigger="click">
+                <flexbox class="priority-select">
+                  <div
+                    v-for="(item, index) in priorityList"
+                    :key="index"
+                    class="priority-select-item"
+                    @click="priorityBtn(item, taskData.priority)">
+                    <span
+                      :style="{ backgroundColor: item.color }"
+                      class="priority--icon">{{ item.label }}</span>
+                  </div>
+                </flexbox>
+                <span
+                  slot="reference"
+                  :style="{ backgroundColor: priority.color }"
+                  class="priority--icon">{{ priority.label }}</span>
+              </el-popover>
               <div class="head-btn__bd">
                 <div class="head-btn__bd--des">优先级</div>
               </div>
@@ -120,6 +141,7 @@
       </div>
 
       <flexbox
+        v-if="taskData"
         class="main__bd"
         align="stretch">
         <div class="main__bd--left">
@@ -461,7 +483,7 @@ export default {
       // 紧急弹出框
       priorityVisible: false,
       // 优先级列表
-      particularsList: [
+      priorityList: [
         { id: 3, label: '高', color: '#ED6363' },
         { id: 2, label: '中', color: '#FF9668' },
         { id: 1, label: '低', color: '#8bb5f0' },
@@ -494,7 +516,7 @@ export default {
       // 子任务ID
       subTaskID: null,
       // 任务详情
-      taskData: {},
+      taskData: null,
       activityList: [],
       fileList: [],
       // 评论列表
@@ -525,6 +547,20 @@ export default {
           label: '高'
         }
       }
+    },
+
+    /**
+     * 是归档
+     */
+    isArchive() {
+      return this.taskData.isArchive == 1 && this.taskData.ishidden != 1
+    },
+
+    /**
+     * 是回收站
+     */
+    isRecycle() {
+      return this.taskData.ishidden == 1
     },
 
     ownerListRequest() {
@@ -572,6 +608,7 @@ export default {
   },
   methods: {
     initInfo() {
+      this.taskData = null
       this.subTaskProgress = 0
       // 设置关联项列表
       this.allData = {
@@ -584,7 +621,10 @@ export default {
       this.activityList = []
       this.fileList = []
     },
-    // 基础详情
+
+    /**
+     * 详情
+     */
     getDetail() {
       this.loading = true
       detailsTaskAPI({ taskId: this.id })
@@ -619,7 +659,10 @@ export default {
           this.closeBtn()
         })
     },
-    // 获取活动信息
+
+    /**
+     * 活动信息
+     */
     getActivityList() {
       queryLogTaskAPI({
         taskId: this.id
@@ -630,7 +673,9 @@ export default {
         .catch(() => {})
     },
 
-    // 获取评论信息
+    /**
+     * 评论信息
+     */
     getCommentList() {
       commentListAPI({
         typeId: this.id,
@@ -670,9 +715,14 @@ export default {
           this.taskData.checked = !this.taskData.checked
         })
     },
+
+    /**
+     * 关闭
+     */
     closeBtn() {
       this.$emit('close')
     },
+
     // 评论 - 活动 切换功能
     footerTitle(key) {
       switch (key) {
@@ -1282,7 +1332,9 @@ export default {
     /**
      * 任务头部操作
      */
-    morkDropdownClick(command) {},
+    morkDropdownClick(command) {
+      this.moreDelete()
+    },
 
     /**
      * 关闭页面
@@ -1355,6 +1407,10 @@ $btn-b-hover-color: #eff4ff;
       color: #666;
       margin-right: 8px;
     }
+
+    .xr-btn--green {
+      margin-right: 9px;
+    }
   }
 
   &__middle {
@@ -1373,6 +1429,10 @@ $btn-b-hover-color: #eff4ff;
       border-left: 1px solid #efefef;
       font-size: 12px;
       padding-left: 20px;
+
+      .priority--icon {
+        margin-right: 8px;
+      }
 
       .head-btn__icon {
         margin-right: 12px;
@@ -1442,13 +1502,25 @@ $btn-b-hover-color: #eff4ff;
     line-height: 32px;
     color: white;
     border-radius: 16px;
-    margin-right: 8px;
+  }
+}
+
+.priority-select {
+  margin: 10px;
+  &-item {
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  &-item:hover {
+    background-color: #ecf5ff;
   }
 }
 
 // 操作图标
 .head-btn {
   cursor: pointer;
+  min-height: 34px;
 
   &__icon {
     font-size: 15px;
