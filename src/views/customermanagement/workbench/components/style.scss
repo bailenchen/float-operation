@@ -1,0 +1,41 @@
+.card {
+  background-color: white;
+  border-radius: 4px;
+  padding: 10px 12px 20px 16px;
+  &:hover {
+    box-shadow: 0 0 16px 0 rgba(0,0,0,0.08);
+  }
+  &-title {
+    &-left {
+      .icon {
+        color: #4983EF;
+        font-size: 18px;
+      }
+      .text {
+        font-size: 16px;
+        font-weight: bold;
+        margin-left: 5px;
+      }
+    }
+    &-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      .box {
+        height: 34px;
+        line-height: 34px;
+        padding: 0 10px;
+        background-color: #F2F2F2;
+        border-radius: 4px;
+        margin-left: 12px;
+      }
+    }
+  }
+  &-desc {
+    font-size: 12px;
+    color: #c6c6c6;
+    line-height: 1;
+    margin: 10px 0;
+  }
+}

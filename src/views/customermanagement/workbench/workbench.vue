@@ -1,191 +1,248 @@
 <template>
-  <div>
-    <flexbox class="user-container">
-      <div
-        v-photo="filtersInfo"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(filtersInfo.img)"
-        :key="filtersInfo.img"
-        class="div-photo user-img"/>
-      <div>
-        <flexbox class="user-info">
-          <div class="user-name">{{ filtersInfo.realname }}</div>
-          <div class="user-line"/>
-          <members-dep
-            :popover-display="'block'"
-            :user-checked-data="users"
-            :dep-checked-data="strucs"
-            @popoverSubmit="popoverSubmit">
-            <el-button
-              slot="membersDep"
-              type="text"
-              class="user-switch">切换</el-button>
-          </members-dep>
-          <time-type-select @change="timeTypeChange"/>
-        </flexbox>
-      </div>
-      <el-button
-        class="check"
-        type="primary"
-        icon="wukong wukong-check"
-        @click="showDuplicateCheck = true">数据查重</el-button>
+  <div class="crm-workbench">
+    <flexbox class="head">
+      <flexbox class="user-box">
+        <div
+          v-photo="userInfo"
+          v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img || '')"
+          class="user-img div-photo" />
+        <span class="username">{{ userInfo.username }}</span>
+        <span class="el-icon-caret-bottom icon" />
+      </flexbox>
+      <el-radio-group v-model="timeType">
+        <el-radio-button label="today">今日</el-radio-button>
+        <el-radio-button label="week">本周</el-radio-button>
+        <el-radio-button label="month">本月</el-radio-button>
+        <el-radio-button label="year">本年</el-radio-button>
+        <el-radio-button label="custom">自定义</el-radio-button>
+      </el-radio-group>
+      <flexbox justify="flex-end" class="others">
+        <el-button
+          type="primary"
+          icon="el-icon-menu">
+          管理仪表盘
+        </el-button>
+      </flexbox>
     </flexbox>
-    <customer-dash :data="dashData"/>
-    <duplicate-check
-      v-if="showDuplicateCheck"
-      @hiden-view="showDuplicateCheck=false"/>
+
+    <div class="brief">
+      <flexbox
+        v-for="(item, index) in briefList"
+        :key="index"
+        :span="2"
+        class="brief-item">
+        <flexbox class="brief-item__body">
+          <div
+            :style="{backgroundColor: item.color}"
+            class="icon-box">
+            <span :class="item.icon" class="icon wk" />
+          </div>
+          <div class="info">
+            <div class="title">
+              {{ item.label }}
+            </div>
+            <div class="number">
+              {{ item.num }}
+            </div>
+          </div>
+        </flexbox>
+        <flexbox direction="column" class="brief-item__others">
+          <div class="text">
+            同比
+          </div>
+          <div :class="item.status" class="rate">
+            <span class="rate__num">{{ item.rate }}%</span>
+            <span
+              :class="`el-icon-${item.status}`"
+              class="rate__icon" />
+          </div>
+        </flexbox>
+      </flexbox>
+    </div>
+
+    <flexbox class="section">
+      <sale-statistics class="left" />
+      <data-statistics class="right" />
+    </flexbox>
+    <flexbox class="section">
+      <received-statistics class="left" />
+      <sales-funnel class="right" />
+    </flexbox>
   </div>
 </template>
 
 <script>
-import timeTypeSelect from '@/components/timeTypeSelect'
-import CustomerDash from './components/CustomerDash'
-import DuplicateCheck from './components/duplicateCheck'
-import membersDep from '@/components/selectEmployee/membersDep'
 import { mapGetters } from 'vuex'
-
+import SaleStatistics from './components/saleStatistics'
+import DataStatistics from './components/dataStatistics'
+import ReceivedStatistics from './components/receivedStatistics'
+import SalesFunnel from './components/salesFunnel'
 export default {
-  /** 客户管理下的工作台 */
-  name: 'CustomerWorkbench',
+  name: 'Workbench',
   components: {
-    CustomerDash,
-    DuplicateCheck,
-    membersDep, // 员工部门
-    timeTypeSelect
+    SaleStatistics,
+    DataStatistics,
+    ReceivedStatistics,
+    SalesFunnel
   },
-  filters: {},
   data() {
     return {
-      /** 用户部门数组 */
-      users: [],
-      strucs: [],
-      // 条件
-      dashData: { users: [], strucs: [], timeTypeValue: {}},
-      filtersInfo: { realname: '', img: '' },
-      // 时间值
-      timeTypeValue: { label: '本季度', value: 'quarter' },
-      // 展示查重
-      showDuplicateCheck: false
+      timeType: 'today',
+      briefList: [
+        { label: '新增客户(人)', icon: 'wk-customer', num: '12', rate: '12', status: 'top', color: '#2362FB' },
+        { label: '新增联系人数(人)', icon: 'wk-contacts', num: '12', rate: '12', status: 'top', color: '#27BA4A' },
+        { label: '新增商机数(个)', icon: 'wk-business', num: '12', rate: '12', status: 'top', color: '#FB9323' },
+        { label: '阶段变化商机(个)', icon: 'wk-icon-opportunities', num: '12', rate: '1.5', status: 'bottom', color: '#AD5CFF' },
+        { label: '合同成交量(笔)', icon: 'wk-contract', num: '12', rate: '12', status: 'top', color: '#4A5BFD' },
+        { label: '收款金额(元)', icon: 'wk-receivables', num: '12', rate: '0.5', status: 'bottom', color: '#FFB940' },
+        { label: '新增跟进记录条(条)', icon: 'wk-record', num: '12', rate: '12', status: 'top', color: '#4A5BFD' },
+        { label: '公海新增客户数(个)', icon: 'wk-seas', num: '12', rate: '12', status: 'top', color: '#19B5F6' },
+        { label: '今日待联系客户(个)', icon: 'wk-customer', num: '8', rate: '4.5', status: 'bottom', color: '#2362FB' }
+      ]
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters([
+      'userInfo'
+    ])
   },
-  mounted() {
-    this.users.push(this.userInfo)
-    this.dashData = {
-      users: this.users,
-      strucs: [],
-      timeTypeValue: this.timeTypeValue
-    }
-    this.filtersInfo = this.userInfo
-  },
-  methods: {
-    // 类型选择
-    timeTypeChange(data) {
-      this.timeTypeValue = data
-      this.dashData = {
-        users: this.users,
-        strucs: this.strucs,
-        timeTypeValue: this.timeTypeValue
-      }
-    },
-    // 更改筛选条件
-    popoverSubmit(users, strucs) {
-      this.users = users
-      this.strucs = strucs
-      if (this.users.length === 1 && this.strucs.length === 0) {
-        this.dashData = {
-          users: this.users,
-          strucs: this.strucs,
-          timeTypeValue: this.timeTypeValue
-        }
-        this.filtersInfo = {
-          realname: this.users[0].realname,
-          img: this.users[0].img
-        }
-      } else if (this.users.length === 0 && this.strucs.length === 0) {
-        this.users = [this.userInfo]
-        this.dashData = {
-          users: this.users,
-          strucs: this.strucs,
-          timeTypeValue: this.timeTypeValue
-        }
-        this.filtersInfo = {
-          realname: this.userInfo.realname,
-          img: this.userInfo.img
-        }
-      } else {
-        this.dashData = {
-          users: this.users,
-          strucs: this.strucs,
-          timeTypeValue: this.timeTypeValue
-        }
-        var name = ''
-        if (this.users.length > 0) {
-          name = this.users.length + '个员工'
-        }
-        if (this.strucs.length > 0) {
-          if (this.users.length > 0) {
-            name = name + ','
-          }
-          name = name + this.strucs.length + '个部门'
-        }
-        this.filtersInfo = {
-          realname: name,
-          img: require('@/assets/img/crm_multiuser.png')
-        }
-      }
-    }
-  }
+  methods: {}
 }
 </script>
 
-<style lang="scss" scoped>
-.user-container {
-  margin-bottom: 20px;
-  position: relative;
-  .user-img {
-    display: block !important;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 16px;
-    margin-left: 0px;
-  }
-  .user-info {
-    .user-name {
-      font-size: 16px;
-      color: #333333;
-    }
-    .user-line {
-      width: 1px;
-      height: 12px;
-      background-color: #aaa;
-      margin: 0 14px;
-    }
-    .user-switch {
-      font-size: 12px;
-      margin-right: 15px;
-    }
-  }
-  .user-more {
-    margin-top: 5px;
-    font-size: 12px;
-    color: #999999;
-  }
+<style scoped lang="scss">
+  .crm-workbench {
+    width: 100%;
+    min-width: 1600px;
+    height: 100%;
+    padding: 20px;
+    overflow: auto;
 
-  .check {
-    position: absolute;
-    top: 3px;
-    right: 0;
-    color: white;
-    font-size: 13px;
-    border-radius: 3px;
+    .head {
+      margin-bottom: 20px;
+      .user-box {
+        width: unset;
+        height: 36px;
+        padding: 4px 7px;
+        border: 1px solid #E1E1E1;
+        border-radius: 4px;
+        background-color: white;
+        margin-right: 20px;
+        display: flex;
+        cursor: pointer;
+        .user-img {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+        }
+        .username {
+          font-size: 12px;
+          margin: 0 8px;
+        }
+      }
+      .el-radio-group {
+        /deep/ .el-radio-button__inner {
+          font-size: 12px;
+          padding: 11px 12px;
+        }
+      }
+      .others {
+        flex: 1;
+        .el-button {
+          font-size: 12px;
+          padding: 10px 12px;
+          /deep/ [class*="el-icon-"] + span {
+            margin-left: 0;
+          }
+        }
+      }
+    }
 
-    /deep/ .wukong-check {
-      margin-right: 4px;
-      font-size: 17px;
+    .brief {
+      width: 100%;
+      background-color: white;
+      padding: 10px 10px 14px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      .brief-item {
+        width: calc(20% - 20px);
+        height: 100px;
+        box-shadow: 0 0 16px 0 rgba(0,0,0,0.08);
+        border-radius: 4px;
+        margin: 10px;
+        .brief-item__body {
+          flex: 1;
+          .icon-box {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-left: 18px;
+            .icon {
+              color: white;
+              font-size: 24px;
+            }
+          }
+          .info {
+            .title {}
+            .number {
+              font-size: 28px;
+              font-weight: bold;
+              line-height: 1;
+              margin-top: 8px;
+            }
+          }
+        }
+        .brief-item__others {
+          position: relative;
+          width: 100px;
+          &:before {
+            position: absolute;
+            top: 7.5%;
+            left: 0;
+            content: '';
+            width: 1px;
+            height: 85%;
+            background-color: #e6e6e6;
+            display: block;
+          }
+          .text {
+            font-size: 12px;
+            margin-left: -5px;
+          }
+          .rate {
+            font-size: 14px;
+            margin-top: 8px;
+            .rate__icon {
+              font-size: 12px;
+            }
+            &.bottom {
+              color: #F24B4B;
+            }
+            &.top {
+              color: #2BBF24;
+            }
+          }
+        }
+        &:hover {
+          box-shadow: 0 0 16px 0 rgba(0,0,0,0.2);
+        }
+      }
+    }
+
+    .section {
+      margin-top: 18px;
+      .left {
+        width: calc(60.5% - 20px);
+        margin-right: 20px;
+      }
+      .right {
+        width: 39.5%;
+      }
     }
   }
-}
 </style>
