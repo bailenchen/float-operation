@@ -12,7 +12,9 @@
       direction="column"
       align="stretch"
       class="main">
-      <div v-if="taskData" class="main__hd task-hd">
+      <div
+        v-if="taskData"
+        class="main__hd task-hd">
         <flexbox
           class="task-hd__top"
           justify="space-between">
@@ -20,12 +22,36 @@
             v-if="taskData.createUser"
             class="task-hd__top--create">{{ taskData.createUser.realname }} 创建于 {{ taskData.createTime }}</span>
           <div>
-            <span v-if="isArchive" class="task-hd__top--info">该任务已于 {{ taskData.archiveTime }} 被归档</span>
-            <el-button v-if="isArchive" class="xr-btn--primary" icon="wk wk-activation" type="primary" @click="activateTask">激活</el-button>
-            <span v-if="isRecycle" class="task-hd__top--info">该任务已于 {{ taskData.hiddenTime }} 被放入回收站</span>
-            <el-button v-if="isRecycle" class="xr-btn--primary" icon="wk wk-activation" type="primary" @click="recoverTask">恢复</el-button>
-            <el-button v-if="isRecycle" class="xr-btn--red" icon="el-icon-delete-solid" type="primary" @click="thoroughDeleteTask">彻底删除</el-button>
-            <el-button v-if="!isArchive && !isRecycle" class="xr-btn--green" icon="wk wk-archive" type="primary" @click="moreArchive">归档</el-button>
+            <span
+              v-if="isArchive"
+              class="task-hd__top--info">该任务已于 {{ taskData.archiveTime }} 被归档</span>
+            <el-button
+              v-if="isArchive"
+              class="xr-btn--primary"
+              icon="wk wk-activation"
+              type="primary"
+              @click="activateTask">激活</el-button>
+            <span
+              v-if="isRecycle"
+              class="task-hd__top--info">该任务已于 {{ taskData.hiddenTime }} 被放入回收站</span>
+            <el-button
+              v-if="isRecycle"
+              class="xr-btn--primary"
+              icon="wk wk-activation"
+              type="primary"
+              @click="recoverTask">恢复</el-button>
+            <el-button
+              v-if="isRecycle"
+              class="xr-btn--red"
+              icon="el-icon-delete-solid"
+              type="primary"
+              @click="thoroughDeleteTask">彻底删除</el-button>
+            <el-button
+              v-if="!isArchive && !isRecycle"
+              class="xr-btn--green"
+              icon="wk wk-archive"
+              type="primary"
+              @click="moreArchive">归档</el-button>
             <el-dropdown
               trigger="click"
               @command="morkDropdownClick">
@@ -44,14 +70,17 @@
           <el-checkbox
             v-model="taskData.checked"
             @change="completeMainTask" />
-          <div v-if="!nameVinput" :class="['task-name', { 'is-checked': taskData.checked }]" @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          <div
+            v-if="!nameVinput"
+            :class="['task-name', { 'is-checked': taskData.checked }]"
+            @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
           <div
             v-else
             class="show-input">
             <el-input
               v-model="taskDataName"
               :maxlength="50"
-              size="medium"/>
+              size="medium" />
             <div class="btn-box">
               <el-button
                 type="primary"
@@ -391,7 +420,42 @@
 
           </div>
         </div>
-        <div class="main__bd--right" />
+        <div class="main__bd--right">
+          <el-tabs
+            value="comment"
+            type="border-card"
+            class="d-container-bd--right">
+            <el-tab-pane
+              label="评论"
+              name="comment"
+              lazy />
+            <el-tab-pane
+              label="活动"
+              name="activity"
+              lazy>
+              <div class="activity-cells">
+                <flexbox
+                  v-for="(item, index) in activityList"
+                  :key="index"
+                  align="stretch"
+                  class="activity-cell">
+                  <div
+                    v-photo="item"
+                    v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+                    :key="item.img"
+                    class="div-photo" />
+                  <div class="activity-cell__bd">
+                    <div class="activity-info">
+                      <span class="activity-info--name">{{ item.realname }}</span>
+                      <span class="activity-info--time">{{ item.createTime }}</span>
+                    </div>
+                    <div class="activity-content">{{ item.content }}</div>
+                  </div>
+                </flexbox>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
 
       </flexbox>
     </flexbox>
@@ -1377,6 +1441,31 @@ $btn-b-hover-color: #eff4ff;
     }
 
     &--right {
+      /deep/ .el-tabs__item {
+        color: #333;
+        font-size: 12px;
+        top: 2px;
+        margin-top: -2px;
+      }
+
+      /deep/ .el-tabs__item.is-active {
+        border-top: 2px solid $xr-color-primary;
+        color: #333;
+      }
+
+      /deep/ .el-tabs {
+        box-shadow: none;
+        border-right: none;
+        height: 100%;
+      }
+
+      /deep/ .el-tabs__content {
+        height: calc(100% - 40px) !important;
+        overflow: auto;
+        overflow-y: overlay;
+        position: relative;
+      }
+
       width: 300px;
       min-width: 300px;
       box-shadow: none;
@@ -1384,9 +1473,6 @@ $btn-b-hover-color: #eff4ff;
       height: calc(100% - 15px);
       background-color: white;
       margin-left: 15px;
-      border-left: 1px solid $xr-border-line-color;
-      border-top: 1px solid $xr-border-line-color;
-      border-bottom: 1px solid $xr-border-line-color;
     }
   }
 }
@@ -1767,8 +1853,8 @@ $btn-b-hover-color: #eff4ff;
   .edit-del-box {
     opacity: 0;
     flex-shrink: 0;
-      margin-left: 8px;
-    }
+    margin-left: 8px;
+  }
 
   &__ft {
     position: absolute;
@@ -1793,8 +1879,8 @@ $btn-b-hover-color: #eff4ff;
 
 .sub-task:hover {
   .edit-del-box {
-      opacity: 1;
-    }
+    opacity: 1;
+  }
 }
 
 // 附件
@@ -1802,6 +1888,46 @@ $btn-b-hover-color: #eff4ff;
   display: none;
 }
 
+// 活动
+
+.activity-cells {
+  .activity-cell {
+    padding: 10px 0;
+    color: #333;
+
+    .div-photo {
+      width: 26px;
+      height: 26px;
+      border-radius: 13px;
+      margin-right: 10px;
+    }
+
+    &__bd {
+      flex: 1;
+      margin-top: 3px;
+      .activity-info {
+        &--name {
+          font-size: 14px;
+          color: #333;
+          margin-right: 5px;
+          font-weight: 600;
+        }
+
+        &--time {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+
+      .activity-content {
+        margin-top: 5px;
+        font-size: 14px;
+        color: #666;
+        line-height: 17px;
+      }
+    }
+  }
+}
 
 .d-view {
   position: fixed;
