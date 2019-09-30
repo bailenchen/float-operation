@@ -51,7 +51,7 @@ export default {
         index: this.index,
         item: this.item,
         value: val,
-        valueContent: this.$refs.elCascader.currentLabels.join(',')
+        valueContent: this.$refs.elCascader.currentLabels?this.$refs.elCascader.currentLabels.join(','):null
       })
     }
   }
