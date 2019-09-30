@@ -503,7 +503,7 @@ export default {
         username: [
           { required: true, message: '手机号码不能为空', trigger: 'blur' },
           {
-            pattern: /^1\d{10}/,
+            pattern: /^1\d{10}$/,
             message: '目前只支持中国大陆的手机号码',
             trigger: 'blur'
           }
