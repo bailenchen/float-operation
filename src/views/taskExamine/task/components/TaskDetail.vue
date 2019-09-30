@@ -1695,8 +1695,8 @@ $btn-b-hover-color: #eff4ff;
   .edit-del-box {
     opacity: 0;
     flex-shrink: 0;
-    margin-left: 8px;
-  }
+      margin-left: 8px;
+    }
 
   &__ft {
     position: absolute;

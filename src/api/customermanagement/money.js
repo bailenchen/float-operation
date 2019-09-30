@@ -102,15 +102,3 @@ export function crmReceivablesRevokeCheck(data) {
     data: data
   })
 }
-
-/**
- * 新建回款查询回款计划
- * @param {*} data
- */
-export function crmReceivablesByContractId(data) {
-  return request({
-    url: 'CrmReceivables/queryReceivablesPlansByContractId',
-    method: 'post',
-    data: data
-  })
-}

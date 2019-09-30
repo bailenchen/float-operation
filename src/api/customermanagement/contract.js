@@ -158,3 +158,15 @@ export function crmContractUpdateMembers(data) {
     data: data
   })
 }
+
+/**
+ * 新建回款查询回款计划
+ * @param {*} data
+ */
+export function crmQueryReceivablesPlansByContractId(data) {
+  return request({
+    url: 'CrmContract/queryReceivablesPlansByContractId',
+    method: 'post',
+    data: data
+  })
+}
