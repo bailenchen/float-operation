@@ -210,6 +210,7 @@ export default {
     /** */
     /** 搜索操作 */
     crmSearch(value) {
+      this.currentPage = 1
       this.search = value
       if (this.fieldList.length) {
         this.getList()
@@ -404,6 +405,7 @@ export default {
      * 字段排序
      */
     sortChange(column, prop, order) {
+      this.currentPage = 1
       this.sortData = column
       this.getList()
     },
@@ -441,11 +443,11 @@ export default {
     // 0待审核、1审核中、2审核通过、3已拒绝 4已撤回 5未提交
     getStatusStyle(status) {
       return {
-        backgroundColor: this.getCRMStatusColor(status)
+        backgroundColor: this.getStatusColor(status)
       }
     },
     getStatusName(status) {
-      return this.getCRMStatusName(status)
+      return this.getStatusName(status)
     },
 
     /**
