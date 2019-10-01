@@ -46,7 +46,7 @@
         </el-tabs>
         <transition name="slide-fade">
           <el-tabs
-            v-if="showFirstDetail"
+            v-show="showFirstDetail"
             value="chiefly-contacts"
             type="border-card"
             class="d-container-bd--right">
@@ -54,7 +54,8 @@
               label="重要信息"
               name="chiefly-contacts"
               lazy>
-              <chiefly-contacts/>
+              <chiefly-contacts
+                :id="firstContactsId"/>
             </el-tab-pane>
           </el-tabs>
         </transition>
@@ -64,7 +65,7 @@
 
     <el-button
       class="firse-button"
-      @click="showFirstDetail= !showFirstDetail">重<br>要<br>信<br>息<br><i class="el-icon-arrow-right el-icon--right" /></el-button>
+      @click="showFirstDetail= !showFirstDetail">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showFirstDetail }" class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
@@ -210,6 +211,13 @@ export default {
         return this.detailData.isPool == 1
       }
       return this.isSeas
+    },
+
+    /**
+     * 首要联系人ID
+     */
+    firstContactsId() {
+      return this.detailData ? this.detailData.contactsId || '' : ''
     }
   },
   mounted() {},

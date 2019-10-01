@@ -1,29 +1,47 @@
 <template>
-  <div>
+  <div v-loading="loading" class="chiefly-contacts">
     <flexbox
+      v-if="detail"
       class="cell"
       align="stretch">
       <div
-        v-photo="userInfo"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
+        v-photo="headInfo"
+        v-lazy:background-image="$options.filters.filterUserLazyImg(headInfo.img)"
         class="div-photo cell-hd" />
       <div class="cell-bd">
-        <p class="cell-bd__name"><span>王晶晶</span> <span class="cell-bd__name--des">销售总监</span></p>
-        <p class="cell-bd__detail"><i class="wk wk-circle-iphone" /> <span>158-2359-8945</span></p>
-        <p class="cell-bd__detail"><i class="wk wk-circle-email" /> <span>12345678@qq.com</span></p>
+        <p class="cell-bd__name">
+          <span>{{ detail.name }}</span>
+          <span
+            v-if="detail.post"
+            class="cell-bd__name--des">{{ detail.post }}</span>
+        </p>
+        <p class="cell-bd__detail">
+          <i class="wk wk-circle-iphone" />
+          <span v-if="detail.mobile">{{ detail.mobile }}</span>
+          <span v-else class="no-data">暂无电话</span>
+        </p>
+        <p class="cell-bd__detail">
+          <i class="wk wk-circle-email" />
+          <span v-if="detail.email">{{ detail.email }}</span>
+          <span v-else class="no-data">暂无邮箱</span>
+        </p>
       </div>
       <span class="mark"><i class="wk wk-s-contacts" />首要联系人</span>
-      <i class="wk wk-phone" />
+      <i
+        class="wk wk-phone"
+        @click="callPhone" />
     </flexbox>
 
-    <div class="content">
+    <div
+      v-if="list.length"
+      class="content">
       <div class="content-title">基本信息</div>
       <p
         v-for="(item , index) in list"
         :key="index"
         class="detail-cell">
         <span class="detail-cell__label">
-          {{ item.label }}
+          {{ item.name }}
         </span><br>
         <span class="detail-cell__value">
           {{ item.value }}
@@ -34,56 +52,104 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { crmContactsRead } from '@/api/customermanagement/contacts'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
+import { filedGetInformation } from '@/api/customermanagement/common'
 
 export default {
   /** 首要联系人 */
   name: 'ChieflyContacts',
   components: {},
-  props: {},
+  props: {
+    id: [Number, String]
+  },
   data() {
     return {
-      list: [
-        {
-          label: '手机号',
-          value: '158-2359-8945'
-        },
-        {
-          label: '客户来源',
-          value: '客户来源'
-        },
-        {
-          label: '区域',
-          value: '区域'
-        },
-        {
-          label: '备注',
-          value:
-            '意向很大，重点客户。需要常联系客户，让客户记住自己意向很大， 重点客户。需要常联系客户，让客户...'
-        },
-        {
-          label: '详细地址',
-          value: '郑州市金水区吉祥花园小区12号楼1单元1201'
-        },
-        {
-          label: '下次联系时间',
-          value: '2019-09-02'
-        }
-      ]
+      loading: false,
+      detail: null,
+      list: []
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    // 有首要联系人
+    hasInfo() {
+      return this.id
+    },
+
+    // 联系人文字头像
+    headInfo() {
+      return {
+        img: '',
+        realname: this.detail.name
+      }
+    }
   },
-  watch: {},
-  mounted() {},
+  watch: {
+    id() {
+      this.detail = null
+      this.getDetial()
+    }
+  },
+  mounted() {
+    this.getDetial()
+  },
 
   beforeDestroy() {},
-  methods: {}
+  methods: {
+    /**
+     * 获取联系人详情
+     */
+    getDetial() {
+      if (this.hasInfo) {
+        this.loading = true
+        crmContactsRead({
+          contactsId: this.id
+        })
+          .then(res => {
+            this.loading = false
+            this.detail = res.data
+          })
+          .catch(() => {
+            this.loading = false
+          })
+        this.getBaseInfo()
+      }
+    },
+
+    /**
+     * 打电话
+     */
+    callPhone() {
+      this.$message.error('请先开通呼叫中心')
+    },
+
+    /**
+     * 获取基础信息
+     */
+    getBaseInfo() {
+      this.loading = true
+      filedGetInformation({
+        types: crmTypeModel['contacts'],
+        id: this.id
+      })
+        .then(res => {
+          this.list = res.data
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.chiefly-contacts {
+  overflow: auto;
+  height: 100%;
+}
+
 .cell {
   padding: 5px;
   border-radius: 4px;
@@ -130,11 +196,14 @@ export default {
     &__detail {
       font-size: 12px;
       color: #333333;
-      display: inline-block;
       margin-top: 8px;
       i {
         color: $xr-color-primary;
         font-size: 13px;
+      }
+
+      .no-data {
+        color: #999;
       }
     }
   }
