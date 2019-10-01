@@ -18,34 +18,34 @@
         :detail="detailData"
         :head-details="headDetails"
         :id="id"
-        crm-type="product"
+        :crm-type="crmType"
         @handle="detailHeadHandle"
         @close="hideView"/>
-      <div class="tabs">
+      <flexbox class="d-container-bd" align="stretch">
         <el-tabs
           v-model="tabCurrentName"
-          @tab-click="handleClick">
+          type="border-card"
+          class="d-container-bd--left">
           <el-tab-pane
-            v-for="(item, index) in tabnames"
+            v-for="(item, index) in tabNames"
             :key="index"
             :label="item.label"
-            :name="item.name"/>
+            :name="item.name"
+            lazy
+            class="t-loading-content">
+            <component
+              :is="item.name"
+              :detail="detailData"
+              :id="id"
+              :crm-type="crmType" />
+          </el-tab-pane>
         </el-tabs>
-      </div>
-      <div class="t-loading-content">
-        <keep-alive>
-          <component
-            :is="tabName"
-            :detail="detailData"
-            :id="id"
-            crm-type="product"/>
-        </keep-alive>
-      </div>
+      </flexbox>
     </flexbox>
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
-      crm-type="product"
+      :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
   </slide-view>
@@ -64,7 +64,7 @@ import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 
 export default {
-  /** 客户管理 的 客户详情 */
+  // 客户管理 的 产品详情
   name: 'ProductDetail',
   components: {
     SlideView,
@@ -101,38 +101,33 @@ export default {
   },
   data() {
     return {
-      loading: false, // 展示加载loading
+      // 展示加载loading
+      loading: false,
       crmType: 'product',
-      detailData: {}, // read 详情
+      // 详情
+      detailData: {},
       headDetails: [
         { title: '产品类别', value: '' },
         { title: '产品单位', value: '' },
         { title: '产品价格', value: '' },
         { title: '产品编码', value: '' }
       ],
-      tabnames: [
-        { label: '基本信息', name: 'basicinfo' },
-        { label: '附件', name: 'file' },
-        { label: '操作记录', name: 'operationlog' }
+      tabNames: [
+        { label: '基本信息', name: 'CRMBaseInfo' },
+        { label: '附件', name: 'RelativeFiles' },
+        { label: '操作记录', name: 'RelativeHandle' }
       ],
-      tabCurrentName: 'basicinfo',
-      isCreate: false // 编辑操作
+      tabCurrentName: 'CRMBaseInfo',
+      // 编辑操作
+      isCreate: false
     }
   },
-  computed: {
-    tabName() {
-      if (this.tabCurrentName == 'basicinfo') {
-        return 'c-r-m-base-info'
-      } else if (this.tabCurrentName == 'file') {
-        return 'relative-files'
-      } else if (this.tabCurrentName == 'operationlog') {
-        return 'relative-handle'
-      }
-      return ''
-    }
-  },
+  computed: {},
   mounted() {},
   methods: {
+    /**
+     * 详情
+     */
     getDetial() {
       this.loading = true
       crmProductRead({
@@ -151,12 +146,17 @@ export default {
           this.loading = false
         })
     },
-    //* * 点击关闭按钮隐藏视图 */
+
+    /**
+     * 关闭
+     */
     hideView() {
       this.$emit('hide-view')
     },
-    //* * tab标签点击 */
-    handleClick(tab, event) {},
+
+    /**
+     * 编辑成功
+     */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()

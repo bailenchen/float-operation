@@ -18,7 +18,7 @@
         :detail="detailData"
         :head-details="headDetails"
         :id="id"
-        crm-type="contract"
+        :crm-type="crmType"
         @handle="detailHeadHandle"
         @close="hideView"/>
 
@@ -55,7 +55,7 @@
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
-      crm-type="contract"
+      :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
   </slide-view>
