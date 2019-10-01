@@ -18,14 +18,12 @@
         :detail="detailData"
         :head-details="headDetails"
         :id="id"
-        crm-type="business"
+        :crm-type="crmType"
         @handle="detailHeadHandle"
-        @close="hideView">
-        <div class="busi-line"/>
-      </c-r-m-detail-head>
+        @close="hideView"/>
       <div
         v-if="status.length > 0"
-        style="padding:10px 50px;">
+        class="busi-state-main">
         <flexbox
           :style="{'opacity' : detailData.isEnd != 0 ? 1 : 1}"
           class="busi-state">
@@ -91,35 +89,53 @@
             </el-popover>
           </a>
         </flexbox>
-
       </div>
-      <div class="tabs">
+      <flexbox class="d-container-bd" align="stretch">
         <el-tabs
           v-model="tabCurrentName"
-          @tab-click="handleClick">
+          type="border-card"
+          class="d-container-bd--left">
           <el-tab-pane
-            v-for="(item, index) in tabnames"
+            v-for="(item, index) in tabNames"
             :key="index"
             :label="item.label"
-            :name="item.name"/>
+            :name="item.name"
+            lazy
+            class="t-loading-content">
+            <component
+              :is="item.name"
+              :detail="detailData"
+              :type-list="logTyps"
+              :id="id"
+              :handle="activityHandle"
+              :crm-type="crmType" />
+          </el-tab-pane>
         </el-tabs>
-      </div>
-      <div
-        id="follow-log-content"
-        class="t-loading-content">
-        <keep-alive>
-          <component
-            :is="tabName"
-            :detail="detailData"
-            :id="id"
-            crm-type="business"/>
-        </keep-alive>
-      </div>
+        <transition name="slide-fade">
+          <el-tabs
+            v-show="showImportInfo"
+            value="chiefly-contacts"
+            type="border-card"
+            class="d-container-bd--right">
+            <el-tab-pane
+              label="重要信息"
+              name="chiefly-contacts"
+              lazy>
+              <chiefly-contacts
+                :id="firstContactsId"/>
+            </el-tab-pane>
+          </el-tabs>
+        </transition>
+      </flexbox>
     </flexbox>
+
+    <el-button
+      class="firse-button"
+      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showImportInfo }" class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
-      crm-type="business"
+      :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
   </slide-view>
@@ -134,7 +150,8 @@ import {
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import BusinessFollow from './components/BusinessFollow' // 跟进记录
+import Activity from '../components/activity' // 活动
+import ChieflyContacts from '../components/ChieflyContacts' // 首要联系人
 import CRMBaseInfo from '../components/CRMBaseInfo' // 商机基本信息
 import RelativeContract from '../components/RelativeContract' // 相关合同
 import RelativeContacts from '../components/RelativeContacts' // 相关联系人
@@ -152,7 +169,8 @@ export default {
   components: {
     SlideView,
     CRMDetailHead,
-    BusinessFollow,
+    Activity,
+    ChieflyContacts,
     CRMBaseInfo,
     RelativeContract,
     RelativeContacts,
@@ -189,9 +207,11 @@ export default {
   },
   data() {
     return {
-      loading: false, // 展示加载loading
+      // 展示加载loading
+      loading: false,
       crmType: 'business',
-      detailData: {}, // read 详情
+      // 详情
+      detailData: {},
       headDetails: [
         { title: '客户名称', value: '' },
         { title: '商机金额（元）', value: '' },
@@ -199,10 +219,10 @@ export default {
         { title: '负责人', value: '' },
         { title: '创建时间', value: '' }
       ],
-      tabCurrentName: 'followlog',
-      /** 商机状态数据 */
+      tabCurrentName: 'Activity',
+      // 商机状态数据
       status: [],
-      /** 完结状态 */
+      // 完结状态
       statuHandleItems: [
         {
           name: '赢单',
@@ -223,57 +243,118 @@ export default {
           img: require('@/assets/img/check_cancel.png')
         }
       ],
-      isCreate: false // 编辑操作
+      // 编辑操作
+      isCreate: false,
+      // 活动操作
+      activityHandle: [
+        {
+          type: 'log',
+          label: '写跟进'
+        }, {
+          type: 'task',
+          label: '创建任务'
+        }, {
+          type: 'contract',
+          label: '创建合同'
+        }, {
+          type: 'receivables',
+          label: '创建回款'
+        }
+      ],
+      // 展示重要信息
+      showImportInfo: true
     }
   },
   computed: {
-    tabName() {
-      if (this.tabCurrentName == 'followlog') {
-        return 'business-follow'
-      } else if (this.tabCurrentName == 'basicinfo') {
-        return 'c-r-m-base-info'
-      } else if (this.tabCurrentName == 'team') {
-        return 'relative-team'
-      } else if (this.tabCurrentName == 'contract') {
-        return 'relative-contract'
-      } else if (this.tabCurrentName == 'operationlog') {
-        return 'relative-handle'
-      } else if (this.tabCurrentName == 'product') {
-        return 'relative-product'
-      } else if (this.tabCurrentName == 'file') {
-        return 'relative-files'
-      } else if (this.tabCurrentName == 'contacts') {
-        return 'relative-contacts'
-      }
-      return ''
-    },
-    tabnames() {
+    tabNames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '跟进记录', name: 'followlog' })
+      tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.business && this.crm.business.read) {
-        tempsTabs.push({ label: '基本信息', name: 'basicinfo' })
+        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       }
 
       if (this.crm.contacts && this.crm.contacts.index) {
-        tempsTabs.push({ label: '联系人', name: 'contacts' })
+        tempsTabs.push({ label: '联系人', name: 'RelativeContacts' })
       }
 
       if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: '合同', name: 'contract' })
+        tempsTabs.push({ label: '合同', name: 'RelativeContract' })
       }
 
       if (this.crm.product && this.crm.product.index) {
-        tempsTabs.push({ label: '产品', name: 'product' })
+        tempsTabs.push({ label: '产品', name: 'RelativeProduct' })
       }
 
-      tempsTabs.push({ label: '相关团队', name: 'team' })
-      tempsTabs.push({ label: '附件', name: 'file' })
-      tempsTabs.push({ label: '操作记录', name: 'operationlog' })
+      tempsTabs.push({ label: '相关团队', name: 'RelativeTeam' })
+      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
+    },
+
+    /**
+     * 首要联系人ID
+     */
+    firstContactsId() {
+      return this.detailData ? this.detailData.contactsId || '' : ''
+    },
+
+    /**
+     * 根据记录筛选
+     */
+    logTyps() {
+      return [{
+        icon: 'all',
+        color: '#2362FB',
+        command: '',
+        label: '全部活动'
+      }, {
+        icon: 'customer',
+        color: '#487DFF',
+        command: 2,
+        label: '客户'
+      }, {
+        icon: 'o-task',
+        color: '#D376FF',
+        command: 11,
+        label: '任务'
+      }, {
+        icon: 'business',
+        color: '#FB9323',
+        command: 5,
+        label: '商机'
+      }, {
+        icon: 'contract',
+        color: '#FD5B4A',
+        command: 6,
+        label: '合同'
+      }, {
+        icon: 'contacts',
+        color: '#27BA4A',
+        command: 3,
+        label: '联系人'
+      }, {
+        icon: 'receivables',
+        color: '#FFB940',
+        command: 7,
+        label: '回款'
+      }, {
+        icon: 'log',
+        color: '#5864FF',
+        command: 8,
+        label: '日志'
+      }, {
+        icon: 'approve',
+        color: '#9376FF',
+        command: 9,
+        label: '审批'
+      }]
     }
   },
   mounted() {},
   methods: {
+    /**
+     * 详情
+     */
     getDetial() {
       this.loading = true
       this.getBusinessStatusById()
@@ -296,7 +377,10 @@ export default {
           this.loading = false
         })
     },
-    // 获取详情下的状态信息
+
+    /**
+     * 状态信息
+     */
     getBusinessStatusById() {
       this.loading = true
       crmBusinessStatusById({
@@ -311,13 +395,17 @@ export default {
           this.loading = false
         })
     },
-    //* * 点击关闭按钮隐藏视图 */
+
+    /**
+     * 关闭
+     */
     hideView() {
       this.$emit('hide-view')
     },
-    //* * tab标签点击 */
-    handleClick(tab, event) {},
-    /** 处理商机状态数据 */
+
+    /**
+     * 处理商机状态数据
+     */
     handleBusinessStatus(isEnd, statusId, statusList, statusRemark) {
       this.status = []
       if (statusList && statusList.length > 0) {
@@ -378,7 +466,10 @@ export default {
         this.status.push(overItem)
       }
     },
-    /** 操作状态改变 */
+
+    /**
+     * 操作状态改变
+     */
     handleStatuChange(item, index) {
       if (this.detailData.isEnd != 0) {
         // 非完结状态下 可推进
@@ -414,7 +505,10 @@ export default {
           })
       }
     },
-    /** 完结状态结果 */
+
+    /**
+     * 完结状态结果
+     */
     handleStatuResult(item, index) {
       if (this.detailData.isEnd != 0) {
         // 非完结状态下 可推进
@@ -481,6 +575,10 @@ export default {
           })
       }
     },
+
+    /**
+     * 编辑成功
+     */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
@@ -491,13 +589,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/crmdetail.scss';
-.busi-line {
-  position: absolute;
-  bottom: 0;
-  left: 17px;
-  right: 17px;
-  height: 1px;
-  background-color: #e6e6e6;
+.busi-state-main {
+  margin-top: 15px;
+  padding: 15px;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
+  background-color: white;
 }
 
 .busi-state {
@@ -505,6 +602,7 @@ export default {
   padding-left: 20px;
   overflow-x: auto;
   overflow-y: hidden;
+  z-index: 1;
   a {
     flex-shrink: 0;
   }
@@ -554,48 +652,48 @@ export default {
 }
 
 .state-doing {
-  border-top: 2px solid #34cecf;
-  border-bottom: 2px solid #34cecf;
+  border-top: 2px solid #00CA9D;
+  border-bottom: 2px solid #00CA9D;
   background-color: white;
-  color: #34cecf;
+  color: #00CA9D;
   .circle-left {
-    border-color: #34cecf;
+    border-color: #00CA9D;
     background-color: white;
   }
   .circle-right {
-    border-color: #34cecf;
+    border-color: #00CA9D;
     background-color: white;
   }
   .arrow-left {
-    border-color: #34cecf;
+    border-color: #00CA9D;
     background-color: white;
   }
   .arrow-right {
-    border-color: #34cecf;
+    border-color: #00CA9D;
     background-color: white;
   }
 }
 
 .state-suc {
-  border-top: 2px solid #34cecf;
-  border-bottom: 2px solid #34cecf;
-  background-color: #34cecf;
+  border-top: 2px solid #00CA9D;
+  border-bottom: 2px solid #00CA9D;
+  background-color: #00CA9D;
   color: white;
   .circle-left {
-    border-color: #34cecf;
-    background-color: #34cecf;
+    border-color: #00CA9D;
+    background-color: #00CA9D;
   }
   .circle-right {
-    border-color: #34cecf;
-    background-color: #34cecf;
+    border-color: #00CA9D;
+    background-color: #00CA9D;
   }
   .arrow-left {
-    border-color: #34cecf;
+    border-color: #00CA9D;
     background-color: white;
   }
   .arrow-right {
-    border-color: #34cecf;
-    background-color: #34cecf;
+    border-color: #00CA9D;
+    background-color: #00CA9D;
   }
 }
 
