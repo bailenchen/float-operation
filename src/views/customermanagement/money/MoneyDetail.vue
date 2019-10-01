@@ -8,46 +8,50 @@
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
     @close="hideView">
-    <flexbox
+    <div
       v-loading="loading"
-      v-if="canShowDetail"
-      direction="column"
-      align="stretch"
-      class="d-container">
-      <c-r-m-detail-head
-        :detail="detailData"
-        :head-details="headDetails"
-        :id="id"
-        :crm-type="crmType"
-        @handle="detailHeadHandle"
-        @close="hideView"/>
-      <examine-info
-        :id="id"
-        :record-id="detailData.examineRecordId"
-        :owner-user-id="detailData.ownerUserId"
-        class="examine-info"
-        examine-type="crm_receivables"/>
-      <flexbox class="d-container-bd" align="stretch">
-        <el-tabs
-          v-model="tabCurrentName"
-          type="border-card"
-          class="d-container-bd--left">
-          <el-tab-pane
-            v-for="(item, index) in tabNames"
-            :key="index"
-            :label="item.label"
-            :name="item.name"
-            lazy
-            class="t-loading-content">
-            <component
-              :is="item.name"
-              :detail="detailData"
-              :id="id"
-              :crm-type="crmType" />
-          </el-tab-pane>
-        </el-tabs>
+      class="detail-main">
+      <flexbox
+        v-if="canShowDetail && detailData"
+        direction="column"
+        align="stretch"
+        class="d-container">
+        <c-r-m-detail-head
+          :detail="detailData"
+          :head-details="headDetails"
+          :id="id"
+          :crm-type="crmType"
+          @handle="detailHeadHandle"
+          @close="hideView"/>
+        <examine-info
+          :id="id"
+          :record-id="detailData.examineRecordId"
+          :owner-user-id="detailData.ownerUserId"
+          class="examine-info"
+          examine-type="crm_receivables"/>
+        <flexbox class="d-container-bd" align="stretch">
+          <el-tabs
+            v-model="tabCurrentName"
+            type="border-card"
+            class="d-container-bd--left">
+            <el-tab-pane
+              v-for="(item, index) in tabNames"
+              :key="index"
+              :label="item.label"
+              :name="item.name"
+              lazy
+              class="t-loading-content">
+              <component
+                :is="item.name"
+                :detail="detailData"
+                :id="id"
+                :crm-type="crmType" />
+            </el-tab-pane>
+          </el-tabs>
+        </flexbox>
       </flexbox>
-    </flexbox>
+    </div>
+
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
@@ -111,8 +115,6 @@ export default {
       crmType: 'receivables',
       // 名称
       name: '',
-      // 详情
-      detailData: {},
       headDetails: [
         { title: '客户名称', value: '' },
         { title: '合同金额', value: '' },

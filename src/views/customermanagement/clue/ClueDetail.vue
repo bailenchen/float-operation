@@ -8,56 +8,58 @@
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
     @close="hideView">
-    <flexbox
+    <div
       v-loading="loading"
-      v-if="canShowDetail"
-      direction="column"
-      align="stretch"
-      class="d-container">
-      <c-r-m-detail-head
-        :detail="detailData"
-        :head-details="headDetails"
-        :id="id"
-        :crm-type="crmType"
-        @handle="detailHeadHandle"
-        @close="hideView"/>
-      <flexbox class="d-container-bd" align="stretch">
-        <el-tabs
-          v-model="tabCurrentName"
-          type="border-card"
-          class="d-container-bd--left">
-          <el-tab-pane
-            v-for="(item, index) in tabNames"
-            :key="index"
-            :label="item.label"
-            :name="item.name"
-            lazy
-            class="t-loading-content">
-            <component
-              :is="item.name"
-              :detail="detailData"
-              :id="id"
-              :handle="activityHandle"
-              :crm-type="crmType" />
-          </el-tab-pane>
-        </el-tabs>
-        <transition name="slide-fade">
+      class="detail-main">
+      <flexbox
+        v-if="canShowDetail && detailData"
+        direction="column"
+        align="stretch"
+        class="d-container">
+        <c-r-m-detail-head
+          :detail="detailData"
+          :head-details="headDetails"
+          :id="id"
+          :crm-type="crmType"
+          @handle="detailHeadHandle"
+          @close="hideView"/>
+        <flexbox class="d-container-bd" align="stretch">
           <el-tabs
-            v-show="showImportInfo"
-            value="chiefly-contacts"
+            v-model="tabCurrentName"
             type="border-card"
-            class="d-container-bd--right">
+            class="d-container-bd--left">
             <el-tab-pane
-              label="重要信息"
-              name="chiefly-contacts"
-              lazy>
-              <import-info :list="importList" class="import-info" />
+              v-for="(item, index) in tabNames"
+              :key="index"
+              :label="item.label"
+              :name="item.name"
+              lazy
+              class="t-loading-content">
+              <component
+                :is="item.name"
+                :detail="detailData"
+                :id="id"
+                :handle="activityHandle"
+                :crm-type="crmType" />
             </el-tab-pane>
           </el-tabs>
-        </transition>
+          <transition name="slide-fade">
+            <el-tabs
+              v-show="showImportInfo"
+              value="chiefly-contacts"
+              type="border-card"
+              class="d-container-bd--right">
+              <el-tab-pane
+                label="重要信息"
+                name="chiefly-contacts"
+                lazy>
+                <import-info :list="importList" class="import-info" />
+              </el-tab-pane>
+            </el-tabs>
+          </transition>
+        </flexbox>
       </flexbox>
-    </flexbox>
-
+    </div>
     <el-button
       class="firse-button"
       @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showImportInfo }" class="el-icon-arrow-right el-icon--right" /></el-button>
@@ -129,8 +131,6 @@ export default {
       // 展示加载loading
       loading: false,
       crmType: 'leads',
-      // 详情
-      detailData: {},
       headDetails: [
         { title: '姓名', value: '' },
         { title: '线索来源', value: '' },

@@ -4,7 +4,8 @@ import {
 export default {
   data() {
     return {
-      showFirstDetail: true
+      showFirstDetail: true,
+      detailData: null
     }
   },
   props: {
@@ -19,7 +20,7 @@ export default {
     ...mapGetters(['crm']),
     // 能否查看详情
     canShowDetail() {
-      if (this.detailData.dataAuth === 0) {
+      if (this.detailData && this.detailData.dataAuth === 0) {
         return false
       }
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].read
@@ -29,6 +30,7 @@ export default {
   watch: {
     id: function() {
       if (this.canShowDetail) {
+        this.detailData = null
         this.getDetial()
       }
     }

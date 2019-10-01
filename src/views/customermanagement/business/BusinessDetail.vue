@@ -8,126 +8,129 @@
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
     @close="hideView">
-    <flexbox
+    <div
       v-loading="loading"
-      v-if="canShowDetail"
-      direction="column"
-      align="stretch"
-      class="d-container">
-      <c-r-m-detail-head
-        :detail="detailData"
-        :head-details="headDetails"
-        :id="id"
-        :crm-type="crmType"
-        @handle="detailHeadHandle"
-        @close="hideView"/>
-      <div
-        v-if="status.length > 0"
-        class="busi-state-main">
-        <flexbox
-          :style="{'opacity' : detailData.isEnd != 0 ? 1 : 1}"
-          class="busi-state">
-          <a
-            v-for="(item, index) in status"
-            :key="index">
-            <el-popover
-              :title="item.name"
-              :content="'赢单率' + item.rate + '%'"
-              placement="bottom"
-              width="150"
-              trigger="hover">
-              <div
-                v-if="status.length -1 !=index"
-                slot="reference"
-                :class="item.class"
-                class="busi-state-item"
-                @click="handleStatuChange(item, index)">
-                {{ item.name }}
+      class="detail-main">
+      <flexbox
+        v-if="canShowDetail && detailData"
+        direction="column"
+        align="stretch"
+        class="d-container">
+        <c-r-m-detail-head
+          :detail="detailData"
+          :head-details="headDetails"
+          :id="id"
+          :crm-type="crmType"
+          @handle="detailHeadHandle"
+          @close="hideView"/>
+        <div
+          v-if="status.length > 0"
+          class="busi-state-main">
+          <flexbox
+            :style="{'opacity' : detailData.isEnd != 0 ? 1 : 1}"
+            class="busi-state">
+            <a
+              v-for="(item, index) in status"
+              :key="index">
+              <el-popover
+                :title="item.name"
+                :content="'赢单率' + item.rate + '%'"
+                placement="bottom"
+                width="150"
+                trigger="hover">
                 <div
-                  v-if="index==0"
-                  class="state-circle circle-left"/>
-                <div
-                  v-if="index!=0"
-                  class="state-arrow arrow-left"/>
-                <div class="state-arrow arrow-right"/>
-              </div>
-            </el-popover>
+                  v-if="status.length -1 !=index"
+                  slot="reference"
+                  :class="item.class"
+                  class="busi-state-item"
+                  @click="handleStatuChange(item, index)">
+                  {{ item.name }}
+                  <div
+                    v-if="index==0"
+                    class="state-circle circle-left"/>
+                  <div
+                    v-if="index!=0"
+                    class="state-arrow arrow-left"/>
+                  <div class="state-arrow arrow-right"/>
+                </div>
+              </el-popover>
 
-            <el-popover
-              v-if="status.length -1 ==index"
-              :title="item.type == 0 ? '' : item.title"
-              :content="item.type == 0 ? '' : item.detail"
-              placement="bottom"
-              width="150"
-              trigger="hover">
-              <div
-                v-if="item.type == 0"
-                class="state-handel-cont">
-                <flexbox
-                  v-for="(item, index) in statuHandleItems"
-                  :key="index"
-                  class="state-handel-item"
-                  @click.native="handleStatuResult(item, index)">
-                  <img
-                    :src="item.img"
-                    class="state-handel-item-img">
-                  <div class="state-handel-item-name">{{ item.name }}</div>
-                  <div class="state-handel-item-value">{{ item.value }}</div>
-                </flexbox>
-              </div>
-              <div
-                slot="reference"
-                :class="item.class"
-                class="busi-state-item">
-                <i
-                  :class="item.overIcon"
-                  style="margin-right:8px;"/>
-                {{ item.name }}
-                <div class="state-arrow arrow-left"/>
-                <div class="state-circle circle-right"/>
-              </div>
-            </el-popover>
-          </a>
-        </flexbox>
-      </div>
-      <flexbox class="d-container-bd" align="stretch">
-        <el-tabs
-          v-model="tabCurrentName"
-          type="border-card"
-          class="d-container-bd--left">
-          <el-tab-pane
-            v-for="(item, index) in tabNames"
-            :key="index"
-            :label="item.label"
-            :name="item.name"
-            lazy
-            class="t-loading-content">
-            <component
-              :is="item.name"
-              :detail="detailData"
-              :type-list="logTyps"
-              :id="id"
-              :handle="activityHandle"
-              :crm-type="crmType" />
-          </el-tab-pane>
-        </el-tabs>
-        <transition name="slide-fade">
+              <el-popover
+                v-if="status.length -1 ==index"
+                :title="item.type == 0 ? '' : item.title"
+                :content="item.type == 0 ? '' : item.detail"
+                placement="bottom"
+                width="150"
+                trigger="hover">
+                <div
+                  v-if="item.type == 0"
+                  class="state-handel-cont">
+                  <flexbox
+                    v-for="(item, index) in statuHandleItems"
+                    :key="index"
+                    class="state-handel-item"
+                    @click.native="handleStatuResult(item, index)">
+                    <img
+                      :src="item.img"
+                      class="state-handel-item-img">
+                    <div class="state-handel-item-name">{{ item.name }}</div>
+                    <div class="state-handel-item-value">{{ item.value }}</div>
+                  </flexbox>
+                </div>
+                <div
+                  slot="reference"
+                  :class="item.class"
+                  class="busi-state-item">
+                  <i
+                    :class="item.overIcon"
+                    style="margin-right:8px;"/>
+                  {{ item.name }}
+                  <div class="state-arrow arrow-left"/>
+                  <div class="state-circle circle-right"/>
+                </div>
+              </el-popover>
+            </a>
+          </flexbox>
+        </div>
+        <flexbox class="d-container-bd" align="stretch">
           <el-tabs
-            v-show="showImportInfo"
-            value="chiefly-contacts"
+            v-model="tabCurrentName"
             type="border-card"
-            class="d-container-bd--right">
+            class="d-container-bd--left">
             <el-tab-pane
-              label="重要信息"
-              name="chiefly-contacts"
-              lazy>
-              <chiefly-contacts
-                :id="firstContactsId"/>
+              v-for="(item, index) in tabNames"
+              :key="index"
+              :label="item.label"
+              :name="item.name"
+              lazy
+              class="t-loading-content">
+              <component
+                :is="item.name"
+                :detail="detailData"
+                :type-list="logTyps"
+                :id="id"
+                :handle="activityHandle"
+                :crm-type="crmType" />
             </el-tab-pane>
           </el-tabs>
-        </transition>
+          <transition name="slide-fade">
+            <el-tabs
+              v-show="showImportInfo"
+              value="chiefly-contacts"
+              type="border-card"
+              class="d-container-bd--right">
+              <el-tab-pane
+                label="重要信息"
+                name="chiefly-contacts"
+                lazy>
+                <chiefly-contacts
+                  :id="firstContactsId"/>
+              </el-tab-pane>
+            </el-tabs>
+          </transition>
+        </flexbox>
       </flexbox>
-    </flexbox>
+    </div>
 
     <el-button
       class="firse-button"
@@ -210,8 +213,6 @@ export default {
       // 展示加载loading
       loading: false,
       crmType: 'business',
-      // 详情
-      detailData: {},
       headDetails: [
         { title: '客户名称', value: '' },
         { title: '商机金额（元）', value: '' },
@@ -253,6 +254,9 @@ export default {
         }, {
           type: 'task',
           label: '创建任务'
+        }, {
+          type: 'contacts',
+          label: '创建联系人'
         }, {
           type: 'contract',
           label: '创建合同'

@@ -8,50 +8,54 @@
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
     @close="hideView">
-    <flexbox
+    <div
       v-loading="loading"
-      v-if="canShowDetail"
-      direction="column"
-      align="stretch"
-      class="d-container">
-      <c-r-m-detail-head
-        :detail="detailData"
-        :head-details="headDetails"
-        :id="id"
-        :crm-type="crmType"
-        @handle="detailHeadHandle"
-        @close="hideView"/>
+      class="detail-main">
+      <flexbox
+        v-if="canShowDetail && detailData"
+        direction="column"
+        align="stretch"
+        class="d-container">
+        <c-r-m-detail-head
+          :detail="detailData"
+          :head-details="headDetails"
+          :id="id"
+          :crm-type="crmType"
+          @handle="detailHeadHandle"
+          @close="hideView"/>
 
-      <examine-info
-        :id="id"
-        :record-id="detailData.examineRecordId"
-        :owner-user-id="detailData.ownerUserId"
-        class="examine-info"
-        examine-type="crm_contract"/>
+        <examine-info
+          :id="id"
+          :record-id="detailData.examineRecordId"
+          :owner-user-id="detailData.ownerUserId"
+          class="examine-info"
+          examine-type="crm_contract"/>
 
-      <flexbox class="d-container-bd" align="stretch">
-        <el-tabs
-          v-model="tabCurrentName"
-          type="border-card"
-          class="d-container-bd--left">
-          <el-tab-pane
-            v-for="(item, index) in tabNames"
-            :key="index"
-            :label="item.label"
-            :name="item.name"
-            lazy
-            class="t-loading-content">
-            <component
-              :is="item.name"
-              :detail="detailData"
-              :type-list="logTyps"
-              :id="id"
-              :handle="activityHandle"
-              :crm-type="crmType" />
-          </el-tab-pane>
-        </el-tabs>
+        <flexbox class="d-container-bd" align="stretch">
+          <el-tabs
+            v-model="tabCurrentName"
+            type="border-card"
+            class="d-container-bd--left">
+            <el-tab-pane
+              v-for="(item, index) in tabNames"
+              :key="index"
+              :label="item.label"
+              :name="item.name"
+              lazy
+              class="t-loading-content">
+              <component
+                :is="item.name"
+                :detail="detailData"
+                :type-list="logTyps"
+                :id="id"
+                :handle="activityHandle"
+                :crm-type="crmType" />
+            </el-tab-pane>
+          </el-tabs>
+        </flexbox>
       </flexbox>
-    </flexbox>
+    </div>
+
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
@@ -124,8 +128,6 @@ export default {
       // 展示加载loading
       loading: false,
       crmType: 'contract',
-      // 详情
-      detailData: {},
       headDetails: [
         { title: '合同编号', value: '' },
         { title: '客户名称', value: '' },
