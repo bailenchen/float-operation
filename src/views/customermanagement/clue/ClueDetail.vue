@@ -18,7 +18,7 @@
         :detail="detailData"
         :head-details="headDetails"
         :id="id"
-        crm-type="leads"
+        :crm-type="crmType"
         @handle="detailHeadHandle"
         @close="hideView"/>
       <flexbox class="d-container-bd" align="stretch">
@@ -38,7 +38,7 @@
               :detail="detailData"
               :id="id"
               :handle="activityHandle"
-              crm-type="customer" />
+              :crm-type="crmType" />
           </el-tab-pane>
         </el-tabs>
         <transition name="slide-fade">
@@ -51,7 +51,7 @@
               label="重要信息"
               name="chiefly-contacts"
               lazy>
-              <import-info :list="importList" />
+              <import-info :list="importList" class="import-info" />
             </el-tab-pane>
           </el-tabs>
         </transition>
@@ -78,7 +78,7 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity'
-import ImportInfo from './components/ImportInfo' // 重要信息
+import ImportInfo from '../components/ImportInfo' // 重要信息
 import CRMBaseInfo from '../components/CRMBaseInfo' // 线索基本信息
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
@@ -140,6 +140,7 @@ export default {
       ],
       tabNames: [
         { label: '活动', name: 'Activity' },
+        { label: '基本信息', name: 'CRMBaseInfo' },
         { label: '附件', name: 'RelativeFiles' },
         { label: '操作记录', name: 'RelativeHandle' }
       ],
@@ -196,7 +197,7 @@ export default {
         id: this.id
       })
         .then(res => {
-          this.importList = res.data
+          this.importList = res.data.concat(res.data)
           this.loading = false
         })
         .catch(() => {
@@ -224,4 +225,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/crmdetail.scss';
+
+.import-info {
+  overflow: auto;
+  height: 100%;
+}
 </style>

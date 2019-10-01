@@ -32,22 +32,8 @@
         @click="callPhone" />
     </flexbox>
 
-    <div
-      v-if="list.length"
-      class="content">
-      <div class="content-title">基本信息</div>
-      <p
-        v-for="(item , index) in list"
-        :key="index"
-        class="detail-cell">
-        <span class="detail-cell__label">
-          {{ item.name }}
-        </span><br>
-        <span class="detail-cell__value">
-          {{ item.value }}
-        </span>
-      </p>
-    </div>
+    <import-info v-if="list.length" :list="list" />
+
   </div>
 </template>
 
@@ -55,11 +41,14 @@
 import { crmContactsRead } from '@/api/customermanagement/contacts'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { filedGetInformation } from '@/api/customermanagement/common'
+import ImportInfo from './ImportInfo'
 
 export default {
-  /** 首要联系人 */
+  // 首要联系人
   name: 'ChieflyContacts',
-  components: {},
+  components: {
+    ImportInfo
+  },
   props: {
     id: [Number, String]
   },
@@ -148,12 +137,14 @@ export default {
 .chiefly-contacts {
   overflow: auto;
   height: 100%;
+  overflow-y: overlay;
 }
 
 .cell {
-  padding: 5px;
+  padding: 12px;
   border-radius: 4px;
   position: relative;
+  border: 1px solid #EBEEF5;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
 
   &-hd {
@@ -247,25 +238,4 @@ export default {
   font-size: 14px;
 }
 
-.content {
-  padding: 20px 10px;
-  &-title {
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .detail-cell {
-    font-size: 12px;
-    margin: 20px 0;
-    &__label {
-      color: #666;
-    }
-    &__value {
-      display: inline-block;
-      margin-top: 5px;
-      color: #333;
-      line-height: 16px;
-    }
-  }
-}
 </style>

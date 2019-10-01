@@ -19,7 +19,7 @@
         :detail="detailData"
         :head-details="headDetails"
         :id="id"
-        crm-type="customer"
+        :crm-type="crmType"
         @handle="detailHeadHandle"
         @close="hideView" />
       <flexbox class="d-container-bd" align="stretch">
@@ -41,7 +41,7 @@
               :id="id"
               :handle="activityHandle"
               :is-seas="isSeasDetail"
-              crm-type="customer" />
+              :crm-type="crmType" />
           </el-tab-pane>
         </el-tabs>
         <transition name="slide-fade">
@@ -79,8 +79,8 @@ import { crmCustomerRead } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import Activity from '../components/activity'
-import ChieflyContacts from './components/ChieflyContacts' // 首要联系人
+import Activity from '../components/activity' // 活动
+import ChieflyContacts from '../components/ChieflyContacts' // 首要联系人
 import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
 import RelativeContacts from '../components/RelativeContacts' // 相关联系人
 import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
@@ -161,8 +161,8 @@ export default {
           type: 'task',
           label: '创建任务'
         }, {
-          type: 'email',
-          label: '发邮件'
+          type: 'contacts',
+          label: '创建联系人'
         }, {
           type: 'business',
           label: '创建商机'
@@ -170,11 +170,8 @@ export default {
           type: 'contract',
           label: '创建合同'
         }, {
-          type: 'contacts',
-          label: '创建联系人  '
-        }, {
           type: 'receivables',
-          label: '创建回款  '
+          label: '创建回款'
         }
       ],
       // 展示重要信息
@@ -271,11 +268,6 @@ export default {
         color: '#9376FF',
         command: 9,
         label: '审批'
-      }, {
-        icon: 'schedule',
-        color: '#1CBAF5',
-        command: 10,
-        label: '日程'
       }]
     }
   },

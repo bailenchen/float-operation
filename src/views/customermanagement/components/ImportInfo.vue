@@ -19,7 +19,7 @@
 <script>
 
 export default {
-  /** 重要信息 */
+  //  重要信息 中的列表展示
   name: 'ImportInfo',
   components: {},
   props: {
