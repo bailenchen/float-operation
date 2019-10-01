@@ -76,6 +76,7 @@ export default {
   watch: {
     id() {
       this.detail = null
+      this.list = []
       this.getDetial()
     }
   },

@@ -69,11 +69,13 @@ export default {
   watch: {
     customerId() {
       this.detail = null
+      this.list = []
       this.getDetial()
     },
 
     id() {
       this.detail = null
+      this.list = []
       this.getDetial()
     }
   },
