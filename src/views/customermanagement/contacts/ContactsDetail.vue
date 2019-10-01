@@ -18,36 +18,56 @@
         :detail="detailData"
         :head-details="headDetails"
         :id="id"
-        crm-type="contacts"
+        :crm-type="crmType"
         @handle="detailHeadHandle"
         @close="hideView"/>
-      <div class="tabs">
+      <flexbox class="d-container-bd" align="stretch">
         <el-tabs
           v-model="tabCurrentName"
-          @tab-click="handleClick">
+          type="border-card"
+          class="d-container-bd--left">
           <el-tab-pane
-            v-for="(item, index) in tabnames"
+            v-for="(item, index) in tabNames"
             :key="index"
             :label="item.label"
-            :name="item.name"/>
+            :name="item.name"
+            lazy
+            class="t-loading-content">
+            <component
+              :is="item.name"
+              :detail="detailData"
+              :type-list="logTyps"
+              :id="id"
+              :handle="activityHandle"
+              :crm-type="crmType" />
+          </el-tab-pane>
         </el-tabs>
-      </div>
-      <div
-        id="follow-log-content"
-        class="t-loading-content">
-        <keep-alive>
-          <component
-            :is="tabName"
-            :detail="detailData"
-            :id="id"
-            crm-type="contacts"/>
-        </keep-alive>
-      </div>
+        <transition name="slide-fade">
+          <el-tabs
+            v-show="showImportInfo"
+            value="chiefly-contacts"
+            type="border-card"
+            class="d-container-bd--right">
+            <el-tab-pane
+              label="重要信息"
+              name="chiefly-contacts"
+              lazy>
+              <contacts-import
+                :id="id"
+                :customer-id="customerId" />
+            </el-tab-pane>
+          </el-tabs>
+        </transition>
+      </flexbox>
     </flexbox>
+
+    <el-button
+      class="firse-button"
+      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showImportInfo }" class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
-      crm-type="contacts"
+      :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
   </slide-view>
@@ -58,7 +78,8 @@ import { crmContactsRead } from '@/api/customermanagement/contacts'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import ContactsFollow from './components/ContactsFollow' // 跟进记录
+import Activity from '../components/activity' // 活动
+import ContactsImport from './components/ContactsImport' // 重要信息
 import CRMBaseInfo from '../components/CRMBaseInfo' // 联系人基本信息
 
 import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
@@ -73,12 +94,13 @@ export default {
   components: {
     SlideView,
     CRMDetailHead,
-    ContactsFollow,
+    Activity,
     CRMBaseInfo,
     RelativeBusiness,
     RelativeHandle,
     RelativeFiles,
-    CRMCreateView
+    CRMCreateView,
+    ContactsImport
   },
   mixins: [detail],
   props: {
@@ -107,50 +129,102 @@ export default {
   },
   data() {
     return {
-      loading: false, // 展示加载loading
+      // 展示加载loading
+      loading: false,
       crmType: 'contacts',
-      detailData: {}, // 详情的完整信息
+      // 详情
+      detailData: {},
       headDetails: [
         { title: '客户名称', value: '' },
         { title: '职务', value: '' },
         { title: '手机', value: '' },
         { title: '创建时间', value: '' }
       ],
-      tabCurrentName: 'followlog',
-      isCreate: false // 编辑操作
+      tabCurrentName: 'Activity',
+      // 编辑操作
+      isCreate: false,
+      // 活动操作
+      activityHandle: [
+        {
+          type: 'log',
+          label: '写跟进'
+        }, {
+          type: 'task',
+          label: '创建任务'
+        }, {
+          type: 'business',
+          label: '创建商机'
+        }, {
+          type: 'contract',
+          label: '创建合同'
+        }, {
+          type: 'receivables',
+          label: '创建回款'
+        }
+      ],
+      // 展示重要信息
+      showImportInfo: true
     }
   },
   computed: {
-    tabName() {
-      if (this.tabCurrentName == 'followlog') {
-        return 'contacts-follow'
-      } else if (this.tabCurrentName == 'basicinfo') {
-        return 'c-r-m-base-info'
-      } else if (this.tabCurrentName == 'business') {
-        return 'relative-business'
-      } else if (this.tabCurrentName == 'file') {
-        return 'relative-files'
-      } else if (this.tabCurrentName == 'operationlog') {
-        return 'relative-handle'
-      }
-      return ''
-    },
-    tabnames() {
+    tabNames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '跟进记录', name: 'followlog' })
+      tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.contacts && this.crm.contacts.read) {
-        tempsTabs.push({ label: '基本信息', name: 'basicinfo' })
+        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       }
       if (this.crm.business && this.crm.business.index) {
-        tempsTabs.push({ label: '商机', name: 'business' })
+        tempsTabs.push({ label: '商机', name: 'RelativeBusiness' })
       }
-      tempsTabs.push({ label: '附件', name: 'file' })
-      tempsTabs.push({ label: '操作记录', name: 'operationlog' })
+      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
+    },
+
+    /**
+     * 根据记录筛选
+     */
+    logTyps() {
+      return [{
+        icon: 'all',
+        color: '#2362FB',
+        command: '',
+        label: '全部活动'
+      }, {
+        icon: 'contacts',
+        color: '#27BA4A',
+        command: 3,
+        label: '联系人'
+      }, {
+        icon: 'o-task',
+        color: '#D376FF',
+        command: 11,
+        label: '任务'
+      }, {
+        icon: 'log',
+        color: '#5864FF',
+        command: 8,
+        label: '日志'
+      }, {
+        icon: 'approve',
+        color: '#9376FF',
+        command: 9,
+        label: '审批'
+      }]
+    },
+
+    /**
+     * 客户ID
+     */
+    customerId() {
+      return this.detailData ? this.detailData.customerId || '' : ''
     }
   },
   mounted() {},
   methods: {
+    /**
+     * 详情
+     */
     getDetial() {
       this.loading = true
       crmContactsRead({
@@ -169,12 +243,17 @@ export default {
           this.loading = false
         })
     },
-    //* * 点击关闭按钮隐藏视图 */
+
+    /**
+     * 关闭
+     */
     hideView() {
       this.$emit('hide-view')
     },
-    //* * tab标签点击 */
-    handleClick(tab, event) {},
+
+    /**
+     * 编辑成功
+     */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()

@@ -258,3 +258,39 @@ export function crmRecordDelete(data) {
     data: data
   })
 }
+
+/**
+ * 查询活动分页列表
+ * @param {*} data
+ */
+export function crmActivityListAPI(data) {
+  return request({
+    url: 'CrmActivity/getCrmActivityPageList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 删除跟进记录
+ * @param {*} data
+ */
+export function crmActivityDeleteAPI(data) {
+  return request({
+    url: 'CrmActivity/deleteCrmActivityRecord',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 添加跟进记录
+ * @param {*} data
+ */
+export function crmActivityAddAPI(data) {
+  return request({
+    url: 'CrmActivity/addCrmActivityRecord',
+    method: 'post',
+    data: data
+  })
+}

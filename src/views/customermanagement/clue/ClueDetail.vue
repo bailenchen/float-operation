@@ -18,36 +18,53 @@
         :detail="detailData"
         :head-details="headDetails"
         :id="id"
-        crm-type="leads"
+        :crm-type="crmType"
         @handle="detailHeadHandle"
         @close="hideView"/>
-      <div class="tabs">
+      <flexbox class="d-container-bd" align="stretch">
         <el-tabs
           v-model="tabCurrentName"
-          @tab-click="handleClick">
+          type="border-card"
+          class="d-container-bd--left">
           <el-tab-pane
-            v-for="(item, index) in tabnames"
+            v-for="(item, index) in tabNames"
             :key="index"
             :label="item.label"
-            :name="item.name"/>
+            :name="item.name"
+            lazy
+            class="t-loading-content">
+            <component
+              :is="item.name"
+              :detail="detailData"
+              :id="id"
+              :handle="activityHandle"
+              :crm-type="crmType" />
+          </el-tab-pane>
         </el-tabs>
-      </div>
-      <div
-        id="follow-log-content"
-        class="t-loading-content">
-        <keep-alive>
-          <component
-            :is="tabName"
-            :detail="detailData"
-            :id="id"
-            crm-type="leads"/>
-        </keep-alive>
-      </div>
+        <transition name="slide-fade">
+          <el-tabs
+            v-show="showImportInfo"
+            value="chiefly-contacts"
+            type="border-card"
+            class="d-container-bd--right">
+            <el-tab-pane
+              label="重要信息"
+              name="chiefly-contacts"
+              lazy>
+              <import-info :list="importList" class="import-info" />
+            </el-tab-pane>
+          </el-tabs>
+        </transition>
+      </flexbox>
     </flexbox>
+
+    <el-button
+      class="firse-button"
+      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showImportInfo }" class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
-      crm-type="leads"
+      :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
   </slide-view>
@@ -55,10 +72,13 @@
 
 <script>
 import { crmLeadsRead } from '@/api/customermanagement/clue'
+import { filedGetInformation } from '@/api/customermanagement/common'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import ClueFollow from './components/ClueFollow' // 跟进记录
+import Activity from '../components/activity'
+import ImportInfo from '../components/ImportInfo' // 重要信息
 import CRMBaseInfo from '../components/CRMBaseInfo' // 线索基本信息
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
@@ -67,15 +87,16 @@ import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 
 export default {
-  /** 线索管理 的 线索详情 */
+  // 线索管理 的 线索详情
   name: 'ClueDetail',
   components: {
     SlideView,
     CRMDetailHead,
-    ClueFollow,
+    Activity,
     CRMBaseInfo,
     RelativeFiles,
     RelativeHandle,
+    ImportInfo,
     CRMCreateView
   },
   mixins: [detail],
@@ -105,9 +126,11 @@ export default {
   },
   data() {
     return {
-      loading: false, // 展示加载loading
+      // 展示加载loading
+      loading: false,
       crmType: 'leads',
-      detailData: {}, // read 详情
+      // 详情
+      detailData: {},
       headDetails: [
         { title: '姓名', value: '' },
         { title: '线索来源', value: '' },
@@ -115,32 +138,33 @@ export default {
         { title: '负责人', value: '' },
         { title: '创建时间', value: '' }
       ],
-      tabnames: [
-        { label: '跟进记录', name: 'followlog' },
-        { label: '基本信息', name: 'basicinfo' },
-        { label: '附件', name: 'file' },
-        { label: '操作记录', name: 'operationlog' }
+      tabNames: [
+        { label: '活动', name: 'Activity' },
+        { label: '基本信息', name: 'CRMBaseInfo' },
+        { label: '附件', name: 'RelativeFiles' },
+        { label: '操作记录', name: 'RelativeHandle' }
       ],
-      tabCurrentName: 'followlog',
-      isCreate: false // 编辑操作
+      tabCurrentName: 'Activity',
+      // 编辑操作
+      isCreate: false,
+      // 活动操作
+      activityHandle: [
+        {
+          type: 'log',
+          label: '写跟进'
+        }
+      ],
+      // 展示重要信息
+      showImportInfo: true,
+      importList: []
     }
   },
-  computed: {
-    tabName() {
-      if (this.tabCurrentName == 'followlog') {
-        return 'clue-follow'
-      } else if (this.tabCurrentName == 'basicinfo') {
-        return 'c-r-m-base-info'
-      } else if (this.tabCurrentName == 'file') {
-        return 'relative-files'
-      } else if (this.tabCurrentName == 'operationlog') {
-        return 'relative-handle'
-      }
-      return ''
-    }
-  },
+  computed: {},
   mounted() {},
   methods: {
+    /**
+     * 详情
+     */
     getDetial() {
       this.loading = true
       crmLeadsRead({
@@ -160,13 +184,37 @@ export default {
         .catch(() => {
           this.loading = false
         })
+      this.getBaseInfo()
     },
-    //* * 点击关闭按钮隐藏视图 */
+
+    /**
+     * 获取基础信息
+     */
+    getBaseInfo() {
+      this.loading = true
+      filedGetInformation({
+        types: crmTypeModel[this.crmType],
+        id: this.id
+      })
+        .then(res => {
+          this.importList = res.data.concat(res.data)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
+    /**
+     * 关闭
+     */
     hideView() {
       this.$emit('hide-view')
     },
-    //* * tab标签点击 */
-    handleClick(tab, event) {},
+
+    /**
+     * 编辑成功
+     */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
@@ -177,4 +225,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/crmdetail.scss';
+
+.import-info {
+  overflow: auto;
+  height: 100%;
+}
 </style>

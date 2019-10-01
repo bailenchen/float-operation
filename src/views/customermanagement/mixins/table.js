@@ -446,9 +446,6 @@ export default {
         backgroundColor: this.getStatusColor(status)
       }
     },
-    getStatusName(status) {
-      return this.getStatusName(status)
-    },
 
     /**
      * 更新表高

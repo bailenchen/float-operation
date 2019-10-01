@@ -22,9 +22,15 @@
 
   /deep/ .el-tabs__content {
     height: calc(100% - 40px) !important;
-    overflow: auto;
-    overflow-y: overlay;
+    // overflow: auto;
+    // overflow-y: overlay;
+    overflow: hidden;
     position: relative;
+
+    .el-tab-pane {
+      height: 100%;
+      overflow: hidden;
+    }
   }
 
   &--left {
@@ -69,7 +75,7 @@
   position: absolute;
   top: 300px;
   right: -1px;
-  z-index: 1;
+  z-index: 2;
   font-size: 12px;
   border-right: none;
   border-top-right-radius: 0;
@@ -82,8 +88,13 @@
     line-height: 13px;
   }
 
-  /deep/ i {
+  /deep/ .el-icon--right {
     margin-left: 0px;
     margin-top: 5px;
+    transition: transform .3s;
+  }
+
+  /deep/ .el-icon--right.is-reverse {
+    transform: rotateZ(180deg);
   }
 }
