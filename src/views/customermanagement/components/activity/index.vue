@@ -1,8 +1,10 @@
 <template>
   <div
     v-loading="loading"
-    class="mian">
-    <div class="mian-handle">
+    v-infinite-scroll="getLogList"
+    :infinite-scroll-disabled="scrollDisabled"
+    class="main">
+    <div class="main-handle">
       <el-button
         v-for="(item, index) in handle"
         :key="index"
@@ -25,28 +27,62 @@
       @focus="handleType = 'log'"
       @close="handleClick(handleType)" />
     <div class="log">
-      <div class="log-section">
+      <div
+        v-for="(seciton, secitonIndex) in list"
+        :key="secitonIndex"
+        class="log-section">
         <div class="log-section__title">
-          <span class="section-title"><span class="section-title__time">2019-09-02</span></span>
+          <span class="section-title"><span class="section-title__time">{{ seciton.time }}</span></span>
         </div>
-        <div
-          v-if="list.length > 0"
-          class="log-cells">
-          <log-cell
-            v-for="(item, index) in list"
-            :item="item"
-            :index="index"
-            :crm-type="crmType"
-            :key="index" />
-          <i class="wk wk-message log-cells__mark" />
-        </div>
-        <div class="log-cells activity-cells">
-          <div class="activity-cell"><span class="activity-cell__label">2019-09-13 09:30 张强创建了商机：</span><span class="activity-cell__content">采购100台电脑</span></div>
-          <i
-            class="wk wk-business log-cells__mark"
-            style="background-color: #FB9323;" />
-        </div>
+
+        <template v-for="(item, index) in seciton.list">
+          <div
+            v-if="item.type == 1"
+            :key="index"
+            :class="{ 'only-one': seciton.list.length == 1 }"
+            class="log-cell">
+            <log-cell
+              :item="item"
+              :section="secitonIndex"
+              :index="index"
+              :crm-type="crmType"
+              @crm-detail="checkCRMDetail"
+              @delete="logCellDelete" />
+            <i class="wk wk-message log-cell__mark" />
+          </div>
+          <div
+            v-else
+            :key="index"
+            :class="{ 'only-one': seciton.list.length == 1 }"
+            class="log-cell activity-cell">
+            <div
+              v-if="item.type == 2"
+              class="activity-cell">
+              <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}创建了{{ item.activityType | getActivityTypeName }}：</span><span
+                class="activity-cell__content"
+                @click="checkCRMDetail('business', item.activityTypeId)">{{ item.activityTypeName }}</span>
+            </div>
+            <div
+              v-if="item.type == 3"
+              class="activity-cell">
+              <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}将商机：</span>
+              <span
+                class="activity-cell__content"
+                @click="checkCRMDetail('business', item.activityTypeId)">{{ item.activityTypeName }}</span>
+              <span>{{ ` 阶段变为 ${item.content}` }}</span>
+            </div>
+            <i
+              class="wk wk-business log-cell__mark"
+              style="background-color: #FB9323;" />
+          </div>
+        </template>
       </div>
+      <p
+        v-if="loading"
+        class="scroll-bottom-tips">加载中...</p>
+      <p
+        v-if="noMore"
+        class="scroll-bottom-tips">没有更多了</p>
     </div>
 
     <!-- CRM相关新建 -->
@@ -60,24 +96,28 @@
       :new-dialog-visible="isTaskCreate"
       :new-loading="taskLoading"
       @handleClose="createTaskClose"
-      @dialogVisibleSubmit="createTaskClick"/>
+      @dialogVisibleSubmit="createTaskClick" />
+    <!-- CRM详情 -->
+    <c-r-m-full-screen-detail
+      :visible.sync="showFullDetail"
+      :crm-type="relationCrmType"
+      :id="relationID" />
   </div>
 </template>
 
 <script>
 import LogAdd from './LogAdd'
 import { crmCustomerQueryContacts } from '@/api/customermanagement/customer'
-import { crmSettingRecordListAPI } from '@/api/customermanagement/common'
-import { crmCustomerRecordSave } from '@/api/customermanagement/customer'
-import { crmLeadsRecordIndex } from '@/api/customermanagement/clue'
-import { crmCustomerRecordIndex } from '@/api/customermanagement/customer'
-import { crmContactsRecordIndex } from '@/api/customermanagement/contacts'
-import { crmBusinessRecordIndex } from '@/api/customermanagement/business'
-import { crmContractRecordIndex } from '@/api/customermanagement/contract'
+import {
+  crmSettingRecordListAPI,
+  crmActivityListAPI,
+  crmActivityAddAPI
+} from '@/api/customermanagement/common'
 import LogCell from './LogCell'
 import CRMCreateView from '@/views/customermanagement/components/CRMCreateView'
 import NewDialog from '@/views/OAManagement/task/components/newDialog'
 import { addTask } from '@/api/oamanagement/task'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 export default {
   name: 'Activity', // 活动
@@ -85,7 +125,28 @@ export default {
     LogAdd,
     LogCell,
     CRMCreateView,
-    NewDialog
+    NewDialog,
+    CRMFullScreenDetail: () =>
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
+  },
+  filters: {
+    getActivityTypeName(activityType) {
+      // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
+      return {
+        1: '线索',
+        2: '客户',
+        3: '联系人',
+        4: '产品',
+        5: '商机',
+        6: '合同',
+        7: '回款',
+        8: '日志',
+        9: '审批',
+        10: '日程',
+        11: '任务',
+        12: '发邮件'
+      }[activityType]
+    }
   },
   props: {
     // 操作按钮
@@ -116,16 +177,25 @@ export default {
       handleType: '',
       // 活动列表
       list: [],
+      noMore: false,
+      page: 1,
       // 相关新建
       isCRMCreate: false,
       createCRMType: '',
       isTaskCreate: false,
-      taskLoading: false
+      taskLoading: false,
+      // CRM详情
+      showFullDetail: false, // 查看相关客户管理详情
+      relationID: '', // 相关ID参数
+      relationCrmType: '' // 相关类型
     }
   },
   computed: {
     showRelate() {
       return this.crmType == 'customer'
+    },
+    scrollDisabled() {
+      return this.loading || this.noMore
     }
   },
   watch: {
@@ -142,17 +212,25 @@ export default {
      */
     initInfo() {
       this.$refs.logAdd.resetInfo()
-      this.list = []
+      this.refreshLogList()
       this.getLogTypeList()
       if (this.showRelate) {
         this.getContactsList()
       }
+    },
 
+    /**
+     * 初始化日志
+     */
+    refreshLogList() {
+      this.noMore = false
+      this.page = 1
+      this.list = []
       this.getLogList()
     },
 
     /**
-     * 获取详情
+     * 获取跟进类型详情
      */
     getLogTypeList() {
       crmSettingRecordListAPI()
@@ -190,7 +268,8 @@ export default {
       }
 
       const params = {}
-      params.typesId = data.id
+      params.activityType = crmTypeModel[this.crmType]
+      params.activityTypeId = data.id
       params.content = data.content
       params.category = data.followType
       const businessIds = data.business.map(function(element, index, array) {
@@ -204,13 +283,13 @@ export default {
       params.nextTime = data.nextTime || ''
       params.isEvent = 0
       this.sendLoading = true
-      crmCustomerRecordSave(params)
+      crmActivityAddAPI(params)
         .then(res => {
           this.sendLoading = false
           this.$message.success('发布成功')
           // 重置页面
           this.$refs.logAdd.resetInfo()
-          this.getLogList()
+          this.refreshLogList()
         })
         .catch(() => {
           this.sendLoading = false
@@ -242,33 +321,24 @@ export default {
      */
     getLogList() {
       this.loading = true
-      const request = {
-        customer: crmCustomerRecordIndex,
-        leads: crmLeadsRecordIndex,
-        contacts: crmContactsRecordIndex,
-        business: crmBusinessRecordIndex,
-        contract: crmContractRecordIndex
-      }[this.crmType]
-
       const params = {
         page: this.page,
-        limit: 10
+        crmType: crmTypeModel[this.crmType], // 8是公海
+        activityType: '',
+        activityTypeId: this.id
       }
-      params[this.crmType + 'Id'] = this.id
-      request(params)
+
+      crmActivityListAPI(params)
         .then(res => {
-          this.list = this.list.concat(res.data)
-          // if (res.data.length < 10) {
-          //   this.loadMoreLoading = false
-          // } else {
-          //   this.loadMoreLoading = true
-          // }
           this.loading = false
-          // this.isPost = false
+          this.noMore = res.data.list.length == 0
+          if (!this.noMore) {
+            this.list.push(res.data)
+            this.page++
+          }
         })
         .catch(() => {
-          this.isPost = false
-          // this.loading = false
+          this.loading = false
         })
     },
 
@@ -304,6 +374,22 @@ export default {
     createTaskClose() {
       this.isTaskCreate = false
       this.handleType = ''
+    },
+
+    /**
+     * 跟进日志查看详情
+     */
+    checkCRMDetail(type, id) {
+      this.relationID = id
+      this.relationCrmType = type
+      this.showFullDetail = true
+    },
+
+    /**
+     * 跟进日志删除
+     */
+    logCellDelete(data, index, seciton) {
+      this.list[seciton].list.splice(index, 1)
     }
   }
 }
@@ -311,8 +397,11 @@ export default {
 
 <style scoped lang="scss">
 .main {
+  height: 100%;
   position: relative;
   overflow: auto;
+  // overflow: auto;
+  // overflow-y: overlay;
 }
 
 .el-button {
@@ -375,7 +464,7 @@ export default {
     }
   }
 
-  &-cells {
+  &-cell {
     margin-left: 30px;
     padding: 8px;
     position: relative;
@@ -393,14 +482,19 @@ export default {
     }
   }
 
+  // 仅仅一个
+  &-cell.only-one::before {
+    display: none;
+  }
+
   // 活动cell
-  &-cells.activity-cells {
-    .log-cells__mark {
-      top: 9px;
+  &-cell.activity-cell {
+    .log-cell__mark {
+      top: 6px;
     }
   }
 
-  &-cells::before {
+  &-cell::before {
     position: absolute;
     content: ' ';
     width: 1px;
@@ -409,16 +503,15 @@ export default {
     bottom: 0;
     background-color: $xr-border-line-color;
   }
-  &-cells:nth-child(2)::before {
+  &-cell:nth-child(2)::before {
     top: 24px;
   }
 
-  &-cells:last-child::before {
-    bottom: 10px;
+  &-cell:last-child::before {
+    height: 40px;
   }
-
-  &-cell {
-    height: 300px;
+  &-cell.activity-cell:last-child::before {
+    height: 20px;
   }
 }
 

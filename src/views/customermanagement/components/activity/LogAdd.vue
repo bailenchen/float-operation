@@ -276,6 +276,7 @@ export default {
      * 重置数据
      */
     resetInfo() {
+      this.isUnfold = false
       // 输入法
       this.content = ''
       // 图片信息

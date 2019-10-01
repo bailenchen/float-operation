@@ -116,24 +116,17 @@
 
       <slot />
     </div>
-    <c-r-m-full-screen-detail
-      :visible.sync="showFullDetail"
-      :crm-type="relationCrmType"
-      :id="relationID" />
   </div>
 </template>
 
 <script>
 import { downloadFile } from '@/utils'
-import { crmRecordDelete } from '@/api/customermanagement/common'
+import { crmActivityDeleteAPI } from '@/api/customermanagement/common'
 
 export default {
   /** 客户管理 的 客户详情 的 跟进记录cell*/
-  name: 'FollowRecordCell',
-  components: {
-    CRMFullScreenDetail: () =>
-      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
-  },
+  name: 'LogCell',
+  components: {},
   props: {
     item: {
       type: Object,
@@ -141,18 +134,19 @@ export default {
         return {}
       }
     },
-    /** 没有值就是全部类型 有值就是当个类型 */
+    // 没有值就是全部类型 有值就是当个类型
     crmType: {
       type: String,
       default: ''
     },
+    // 块
+    section: [String, Number],
+    // 行
     index: [String, Number]
   },
   data() {
     return {
-      showFullDetail: false, // 查看相关客户管理详情
-      relationID: '', // 相关ID参数
-      relationCrmType: '' // 相关类型
+
     }
   },
   computed: {},
@@ -180,14 +174,11 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          crmRecordDelete({
-            recordId: this.item.recordId
+          crmActivityDeleteAPI({
+            activityId: this.item.activityId
           })
             .then(res => {
-              this.$emit('on-handle', {
-                type: command,
-                data: { item: this.item, index: this.index }
-              })
+              this.$emit('delete', this.item, this.index, this.section)
               // 刷新待办
               this.$store.dispatch('GetMessageNum')
 
@@ -206,9 +197,7 @@ export default {
      * 查看相关客户管理详情
      */
     checkRelationDetail(type, id) {
-      this.relationID = id
-      this.relationCrmType = type
-      this.showFullDetail = true
+      this.$emit('crm-detail', type, id)
     }
   }
 }

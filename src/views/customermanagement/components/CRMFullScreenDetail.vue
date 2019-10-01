@@ -134,7 +134,8 @@ export default {
 
 .d-view {
   position: fixed;
-  width: 950px;
+  min-width: 950px;
+  width: 75%;
   top: 0px;
   bottom: 0px;
   right: 0px;

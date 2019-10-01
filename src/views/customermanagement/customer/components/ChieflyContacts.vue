@@ -88,7 +88,7 @@ export default {
   padding: 5px;
   border-radius: 4px;
   position: relative;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
 
   &-hd {
     position: relative;

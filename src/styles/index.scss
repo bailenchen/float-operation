@@ -1,4 +1,5 @@
 @import './transition.scss';
+@import './button.scss';
 @import './element-ui.scss';
 @import './element-variables.scss';
 // 指令
@@ -232,99 +233,9 @@ div[lazy=loading] {
   text-decoration: underline;
 }
 
-// button
-// 编辑绿
-.xr-btn--primary {
-  i {
-    font-size: 13px;
-    margin-right: 5px;
-  }
-}
-
-.xr-btn--green {
-  background-color: #389E0B;
-  border-color: #389E0B;
-
-  i {
-    font-size: 13px;
-    margin-right: 5px;
-  }
-}
-
-.xr-btn--green:hover,
-.xr-btn--green:focus {
-  background: #4ca824;
-  border-color: #4ca824;
-  color: #FFFFFF;
-}
-
-// 按钮橙黄
-.xr-btn--orange {
-  background-color: #ff6a00;
-  border-color: #ff6a00;
-
-  i {
-    font-size: 13px;
-    margin-right: 5px;
-  }
-}
-
-.xr-btn--orange:hover,
-.xr-btn--orange:focus {
-  background: #fc7d63;
-  border-color: #fc7d63;
-  color: #FFFFFF;
-}
-
-// 拒绝红
-.xr-btn--red {
-  background-color: #f94e4e;
-  border-color: #f94e4e;
-
-  i {
-    font-size: 13px;
-    margin-right: 5px;
-  }
-}
-
-.xr-btn--red:hover,
-.xr-btn--red:focus {
-  background: #fa6060;
-  border-color: #fa6060;
-  color: #FFFFFF;
-}
-
-
-// 文本
-.text-one-line {
-  // text-overflow: ellipsis;
-  // display: -webkit-box;
-  // -webkit-line-clamp: 1;
-  // -webkit-box-orient: vertical;
-  // overflow: hidden;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-
-// 文字按钮
-$btn-delete-color: #f94e4e;
-.xr-text-btn {
+// 滚动
+.scroll-bottom-tips {
+  text-align: center;
   font-size: 12px;
-  cursor: pointer;
-}
-.xr-text-btn.primary {
-  color: $xr-color-primary;
-}
-.xr-text-btn.delete {
-  color: $btn-delete-color;
-}
-
-.xr-text-btn:hover {
-  text-decoration: underline;
-}
-
-.xr-text-btn + .xr-text-btn {
-  margin-left: 8px;
+  color: #666;
 }
