@@ -1,28 +1,31 @@
 <template>
-  <div class="sale-statistics card">
+  <div
+    v-loading="loading"
+    class="sale-statistics card">
     <flexbox class="card-title">
       <div class="card-title-left">
         <span class="icon wk wk-target" />
-        <span class="text">销售目标</span>
+        <span class="text">合同金额目标及完成情况</span>
       </div>
-      <div class="card-title-right">
-        <span class="box">{{ userInfo.username }}</span>
-        <span class="box">本月</span>
-      </div>
+      <!--<div class="card-title-right">
+        <span class="box">{{ filterText }}</span>
+        <span class="box">{{ timeLine }}</span>
+      </div>-->
     </flexbox>
     <div class="card-desc">
-      近一年的销售目标完成情况柱状图
+      近一年的合同目标完成情况柱状图
     </div>
     <div id="sale-statistics" />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import echarts from 'echarts'
-
+import chartMixins from './chartMixins'
+import { crmIndexSaletrend } from '@/api/customermanagement/workbench'
 export default {
   name: 'SaleStatistics',
+  mixins: [chartMixins],
   data() {
     return {
       chartOption: {
@@ -35,32 +38,27 @@ export default {
           }
         },
         grid: {
-          top: '5px',
+          top: '46px',
           left: '20px',
           right: '20px',
-          bottom: '20px',
+          bottom: '10px',
           containLabel: true,
           borderColor: '#fff'
+        },
+        legend: {
+          right: '20px',
+          data: ['目标金额', '回款金额']
         },
         xAxis: [
           {
             type: 'category',
-            data: [
-              '2019-01',
-              '2019-02',
-              '2019-03',
-              '2019-04',
-              '2019-05',
-              '2019-06',
-              '2019-07',
-              '2019-08'
-            ],
+            data: [],
             axisTick: {
               alignWithLabel: true,
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD'
+              color: '#333'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
@@ -78,9 +76,6 @@ export default {
               alignWithLabel: true,
               lineStyle: { width: 0 }
             },
-            axisLabel: {
-              color: '#BDBDBD'
-            },
             /** 坐标轴轴线相关设置 */
             axisLine: {
               lineStyle: { width: 0 }
@@ -95,7 +90,7 @@ export default {
         ],
         series: [
           {
-            name: '合同金额',
+            name: '目标金额',
             type: 'bar',
             stack: 'one',
             barWidth: 25,
@@ -112,21 +107,47 @@ export default {
           }
         ]
       },
-      chartObj: null
+      chartObj: null,
+      loading: false
     }
-  },
-  computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
   },
   mounted() {
     this.initChart()
+    this.getData()
   },
   methods: {
     initChart() {
       this.chartObj = echarts.init(document.getElementById('sale-statistics'))
       this.chartObj.setOption(this.chartOption, true)
+    },
+
+    getData() {
+      this.loading = true
+      crmIndexSaletrend(this.getBaseParams()).then(res => {
+        // this.trendData = {
+        //   totlaContractMoney: res.data.totlaContractMoney,
+        //   totlaReceivablesMoney: res.data.totlaReceivablesMoney
+        // }
+        const list = res.data.list || []
+        const contractList = []
+        const receivablesList = []
+        const xAxisData = []
+        for (let index = 0; index < list.length; index++) {
+          const element = list[index]
+          contractList.push(element.contractMoneys)
+          receivablesList.push(element.receivablesMoneys)
+          xAxisData.push(element.type)
+        }
+
+        this.chartOption.xAxis[0].data = xAxisData
+        this.chartOption.series[0].data = contractList
+        this.chartOption.series[1].data = receivablesList
+
+        this.chartObj.setOption(this.chartOption, true)
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }

@@ -1,8 +1,8 @@
 <template>
   <el-popover
     v-model="showTypePopover"
+    :width="width"
     placement="bottom"
-    width="200"
     popper-class="no-padding-popover"
     trigger="click">
     <div class="type-popper">
@@ -28,12 +28,12 @@
         <el-date-picker
           v-model="startTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy.MM.dd"
           placeholder="选择日期"/>
         <el-date-picker
           v-model="endTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy.MM.dd"
           placeholder="选择日期"/>
         <el-button @click="customSureClick">确定</el-button>
       </div>
@@ -42,6 +42,7 @@
       slot="reference"
       v-model="typeShowValue"
       :readonly="true"
+      :style="{width: width + 'px'}"
       placeholder="请选择选择"
       class="type-select">
       <i
@@ -55,7 +56,12 @@
 export default {
   name: 'TimeTypeSelect',
   props: {
-    defaultType: Object
+    defaultType: Object,
+    // 容器宽度，默认200px
+    width: {
+      type: Number,
+      default: 200
+    }
   },
   data() {
     return {
@@ -128,9 +134,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.type-select {
-  width: 200px;
+/deep/ .type-select {
   margin-right: 15px;
+  .el-input__inner {
+    height: inherit;
+  }
 }
 
 // 时间选择

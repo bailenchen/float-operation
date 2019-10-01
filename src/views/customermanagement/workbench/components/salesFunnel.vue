@@ -5,25 +5,57 @@
     <flexbox class="card-title">
       <div class="card-title-left">
         <span class="icon wk wk-funnel" />
-        <span class="text">销售漏斗</span>
+        <span class="text">
+          销售漏斗
+          <template v-if="businessId">
+            (商机组：{{ businessName }})
+          </template>
+        </span>
       </div>
       <div class="card-title-right">
-        <span class="box">{{ userInfo.username }}</span>
-        <span class="box">本月</span>
+        <!--<span class="box">{{ filterText }}</span>
+        <span class="box">{{ timeLine }}</span>-->
+        <el-dropdown
+          v-if="businessId"
+          trigger="click"
+          @command="handleCommand">
+          <span class="box">
+            {{ businessName }}<i class="el-icon-arrow-down el-icon--right" />
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              v-for="(item, index) in businessOptions"
+              :key="index"
+              :command="index">
+              {{ item.name }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </flexbox>
     <div id="sales-funnel" />
+    <flexbox justify="center" class="info-box">
+      <flexbox direction="column" class="info-item">
+        <div class="label">赢单</div>
+        <div class="value">{{ funnelData.winSingle }}元</div>
+      </flexbox>
+      <flexbox direction="column" class="info-item">
+        <div class="label">输单</div>
+        <div class="value">{{ funnelData.loseSingle }}元</div>
+      </flexbox>
+    </flexbox>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import echarts from 'echarts'
-import {
-  crmIndexFunnel
-} from '@/api/customermanagement/workbench'
+import chartMixins from './chartMixins'
+import { crmIndexFunnel } from '@/api/customermanagement/workbench'
+import { crmBusinessStatusList } from '@/api/customermanagement/business'
+
 export default {
   name: 'SalesFunnel',
+  mixins: [chartMixins],
   data() {
     return {
       chartOption: {
@@ -94,69 +126,34 @@ export default {
         ]
       },
       chartObj: null,
-      loading: false
+      loading: false,
+      businessOptions: [],
+      businessId: null,
+      businessName: '',
+
+      funnelData: {}
     }
   },
-  computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
-  },
   mounted() {
-    this.initFunnel()
-    this.getData()
+    this.initChart()
+    this.getBusinessStatusList()
   },
   methods: {
-    initFunnel() {
+    initChart() {
       this.chartObj = echarts.init(document.getElementById('sales-funnel'))
       this.chartObj.setOption(this.chartOption, true)
     },
+    /**
+     * 获取统计数据
+     */
     getData() {
-      const params = {}
       this.loading = true
-      crmIndexFunnel(params).then(res => {
+      crmIndexFunnel({
+        ...this.getBaseParams(),
+        typeId: this.businessId
+      }).then(res => {
         this.loading = false
         const data = []
-
-        /**
-         * 假数据
-         */
-        res.data = {
-          'sumMoney': '17082.00',
-          'list': [
-            {
-              'money': '17082.00',
-              'typeId': 52,
-              'count': 4,
-              'name': '验证客户',
-              'orderNum': 1
-            },
-            {
-              'money': '17452.00',
-              'typeId': 52,
-              'count': 2,
-              'name': '需求分析',
-              'orderNum': 5
-            },
-            {
-              'money': '21154.00',
-              'typeId': 52,
-              'count': 5,
-              'name': '方案报价',
-              'orderNum': 2
-            },
-            {
-              'money': '14562.00',
-              'typeId': 52,
-              'count': 3,
-              'name': '谈判审核',
-              'orderNum': 3
-            }
-          ],
-          'sumShu': 0,
-          'sumYing': 0
-        }
-
 
         let sumMoney = 0
         const legendArr = []
@@ -175,13 +172,41 @@ export default {
         this.chartOption.series[0].max = sumMoney < 1 ? 1 : sumMoney
         this.chartObj.setOption(this.chartOption, true)
 
-        // this.funnelData = {
-        //   winSingle: res.data.sumYing,
-        //   loseSingle: res.data.sumShu
-        // }
+        this.funnelData = {
+          winSingle: res.data.sumYing,
+          loseSingle: res.data.sumShu
+        }
       }).catch(() => {
         this.loading = false
       })
+    },
+    /**
+     * 获取商机状态组
+     */
+    getBusinessStatusList() {
+      this.loading = true
+      crmBusinessStatusList().then(res => {
+        this.businessOptions = res.data
+        if (res.data.length > 0) {
+          this.handleCommand(0)
+        } else {
+          this.loading = false
+        }
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    /**
+     * 下拉菜单选项选择
+     * @param index 选项序号
+     */
+    handleCommand(index) {
+      if (this.businessId === this.businessOptions[index].typeId) return
+      this.businessId = this.businessOptions[index].typeId || null
+      this.businessName = this.businessOptions[index].name || ''
+      if (this.businessId) {
+        this.getData()
+      }
     }
   }
 }
@@ -195,7 +220,35 @@ export default {
     margin-top: 10px;
   }
 
-  .card-title-left .icon {
-    color: #50CF9E;
+  .sales-funnel {
+    position: relative;
+    .card-title-left .icon {
+      color: #50CF9E;
+    }
+
+    .el-dropdown-selfdefine {
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .info-box {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      width: 100%;
+      .info-item {
+        width: 15%;
+        margin: 0 5px;
+        .label {
+          margin-bottom: 5px;
+        }
+        &:nth-child(1) {
+          color: #6ca2ff;
+        }
+        &:nth-child(2) {
+          color: #ff7474;
+        }
+      }
+    }
   }
 </style>

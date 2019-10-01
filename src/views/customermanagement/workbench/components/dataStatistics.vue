@@ -5,10 +5,10 @@
         <span class="icon wk wk-data" />
         <span class="text">数据汇总</span>
       </div>
-      <div class="card-title-right">
-        <span class="box">{{ userInfo.username }}</span>
-        <span class="box">本月</span>
-      </div>
+      <!--<div class="card-title-right">
+        <span class="box">{{ filterText }}</span>
+        <span class="box">{{ timeLine }}</span>
+      </div>-->
     </flexbox>
     <div class="card-desc">
       对于数据收集统计的汇总
@@ -59,13 +59,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import chartMixins from './chartMixins'
+
 export default {
   name: 'DataStatistics',
-  computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
+  mixins: [chartMixins],
+  methods: {
+    getData() {
+      // let params = this.getBaseParams()
+      // TODO 统计数据获取
+    }
   }
 }
 </script>

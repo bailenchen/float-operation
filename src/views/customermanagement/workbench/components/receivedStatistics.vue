@@ -3,12 +3,12 @@
     <flexbox class="card-title">
       <div class="card-title-left">
         <span class="icon wk wk-icon-receivable" />
-        <span class="text">回款目标</span>
+        <span class="text">回款金额目标及完成情况</span>
       </div>
-      <div class="card-title-right">
-        <span class="box">{{ userInfo.username }}</span>
-        <span class="box">本月</span>
-      </div>
+      <!--<div class="card-title-right">
+        <span class="box">{{ filterText }}</span>
+        <span class="box">{{ timeLine }}</span>
+      </div>-->
     </flexbox>
     <div class="card-desc">
       近一年的的回款目标完成情况柱状图
@@ -18,11 +18,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import echarts from 'echarts'
+import chartMixins from './chartMixins'
 
 export default {
   name: 'ReceivedStatistics',
+  mixins: [chartMixins],
   data() {
     return {
       chartOption: {
@@ -35,12 +36,16 @@ export default {
           }
         },
         grid: {
-          top: '5px',
+          top: '46px',
           left: '20px',
           right: '20px',
-          bottom: '20px',
+          bottom: '10px',
           containLabel: true,
           borderColor: '#fff'
+        },
+        legend: {
+          right: '20px',
+          data: ['目标金额', '回款金额']
         },
         xAxis: [
           {
@@ -60,7 +65,7 @@ export default {
               lineStyle: { width: 0 }
             },
             axisLabel: {
-              color: '#BDBDBD'
+              color: '#333'
             },
             /** 坐标轴轴线相关设置 */
             axisLine: {
@@ -78,9 +83,6 @@ export default {
               alignWithLabel: true,
               lineStyle: { width: 0 }
             },
-            axisLabel: {
-              color: '#BDBDBD'
-            },
             /** 坐标轴轴线相关设置 */
             axisLine: {
               lineStyle: { width: 0 }
@@ -95,7 +97,7 @@ export default {
         ],
         series: [
           {
-            name: '合同金额',
+            name: '目标金额',
             type: 'bar',
             stack: 'one',
             barWidth: 25,
@@ -115,11 +117,6 @@ export default {
       chartObj: null
     }
   },
-  computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
-  },
   mounted() {
     this.initChart()
   },
@@ -127,6 +124,10 @@ export default {
     initChart() {
       this.chartObj = echarts.init(document.getElementById('received-statistics'))
       this.chartObj.setOption(this.chartOption, true)
+    },
+    getData() {
+      // let params = this.getBaseParams()
+      // TODO 回款统计数据获取、渲染
     }
   }
 }
