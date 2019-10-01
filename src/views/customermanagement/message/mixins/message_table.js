@@ -289,10 +289,6 @@ export default {
       }
     },
 
-    getStatusName(status) {
-      return this.getStatusName(status)
-    },
-
     /**
      * 更新表高
      */
