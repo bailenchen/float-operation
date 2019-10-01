@@ -402,29 +402,42 @@ export default {
   overflow: auto;
   // overflow: auto;
   // overflow-y: overlay;
-}
 
-.el-button {
-  padding: 3px 4px;
-  font-size: 12px;
-  color: #666;
-  background-color: #f1f5fd;
-  border-color: #f1f5fd;
-  /deep/ i {
-    font-size: 13px;
+  &-handle {
+    // 新建按钮
+    .el-button {
+      margin-bottom: 5px;
+      padding: 3px 4px;
+      font-size: 12px;
+      color: #666;
+      background-color: #f1f5fd;
+      border-color: #f1f5fd;
+      /deep/ i {
+        font-size: 13px;
+      }
+    }
+
+    .el-button:first-child {
+      margin-right: 10px;
+    }
+
+    .el-button + .el-button {
+      margin-left: 0;
+      margin-right: 10px;
+    }
+
+    .el-button--primary:hover {
+      background: $xr-color-primary;
+      border-color: $xr-color-primary;
+      color: #ffffff;
+    }
+
+    .el-button.is-select {
+      background: $xr-color-primary;
+      border-color: $xr-color-primary;
+      color: #ffffff;
+    }
   }
-}
-
-.el-button--primary:hover {
-  background: $xr-color-primary;
-  border-color: $xr-color-primary;
-  color: #ffffff;
-}
-
-.el-button.is-select {
-  background: $xr-color-primary;
-  border-color: $xr-color-primary;
-  color: #ffffff;
 }
 
 .scroll-div {
