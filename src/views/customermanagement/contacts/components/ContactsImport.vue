@@ -135,6 +135,7 @@ export default {
 .contacts-import {
   overflow: auto;
   height: 100%;
+  padding: 15px;
   overflow-y: overlay;
 }
 

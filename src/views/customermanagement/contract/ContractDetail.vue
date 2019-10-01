@@ -31,7 +31,7 @@
           class="examine-info"
           examine-type="crm_contract"/>
 
-        <flexbox class="d-container-bd" align="stretch">
+        <div class="d-container-bd">
           <el-tabs
             v-model="tabCurrentName"
             type="border-card"
@@ -52,7 +52,7 @@
                 :crm-type="crmType" />
             </el-tab-pane>
           </el-tabs>
-        </flexbox>
+        </div>
       </flexbox>
     </div>
 

@@ -17,6 +17,10 @@
     margin-top: -2px;
   }
 
+  /deep/ .el-tabs__nav-scroll {
+    min-height: 39px;
+  }
+
   /deep/ .el-tabs__item.is-active {
     border-top: 2px solid $xr-color-primary;
     color: #333;
@@ -28,8 +32,7 @@
 
   /deep/ .el-tabs__content {
     height: calc(100% - 40px) !important;
-    // overflow: auto;
-    // overflow-y: overlay;
+    padding: 0;
     overflow: hidden;
     position: relative;
 

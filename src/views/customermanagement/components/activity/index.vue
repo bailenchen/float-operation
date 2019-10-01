@@ -480,6 +480,7 @@ export default {
   height: 100%;
   position: relative;
   overflow: auto;
+  padding: 15px;
 
   &-handle {
     // 新建按钮

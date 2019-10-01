@@ -137,6 +137,7 @@ export default {
 .chiefly-contacts {
   overflow: auto;
   height: 100%;
+  padding: 15px;
   overflow-y: overlay;
 }
 
