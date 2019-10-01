@@ -21,36 +21,36 @@
         crm-type="contract"
         @handle="detailHeadHandle"
         @close="hideView"/>
-      <div class="examine-info">
-        <examine-info
-          :id="id"
-          :record-id="detailData.examineRecordId"
-          :owner-user-id="detailData.ownerUserId"
-          class="examine-info-border"
-          examine-type="crm_contract"/>
-      </div>
-      <div class="tabs">
+
+      <examine-info
+        :id="id"
+        :record-id="detailData.examineRecordId"
+        :owner-user-id="detailData.ownerUserId"
+        class="examine-info"
+        examine-type="crm_contract"/>
+
+      <flexbox class="d-container-bd" align="stretch">
         <el-tabs
           v-model="tabCurrentName"
-          @tab-click="handleClick">
+          type="border-card"
+          class="d-container-bd--left">
           <el-tab-pane
-            v-for="(item, index) in tabnames"
+            v-for="(item, index) in tabNames"
             :key="index"
             :label="item.label"
-            :name="item.name"/>
+            :name="item.name"
+            lazy
+            class="t-loading-content">
+            <component
+              :is="item.name"
+              :detail="detailData"
+              :type-list="logTyps"
+              :id="id"
+              :handle="activityHandle"
+              :crm-type="crmType" />
+          </el-tab-pane>
         </el-tabs>
-      </div>
-      <div
-        id="follow-log-content"
-        class="t-loading-content">
-        <keep-alive>
-          <component
-            :is="tabName"
-            :detail="detailData"
-            :id="id"
-            crm-type="contract"/>
-        </keep-alive>
-      </div>
+      </flexbox>
     </flexbox>
     <c-r-m-create-view
       v-if="isCreate"
@@ -66,7 +66,7 @@ import { crmContractRead } from '@/api/customermanagement/contract'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import ContractFollow from './components/ContractFollow' // 跟进记录
+import Activity from '../components/activity' // 活动
 import CRMBaseInfo from '../components/CRMBaseInfo' // 商机基本信息
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import RelativeTeam from '../components/RelativeTeam' // 相关团队
@@ -79,12 +79,12 @@ import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 
 export default {
-  /** 客户管理 的 合同详情 */
+  // 客户管理 的 合同详情
   name: 'ContractDetail',
   components: {
     SlideView,
     CRMDetailHead,
-    ContractFollow,
+    Activity,
     CRMBaseInfo,
     RelativeHandle,
     RelativeTeam,
@@ -121,9 +121,11 @@ export default {
   },
   data() {
     return {
-      loading: false, // 展示加载loading
+      // 展示加载loading
+      loading: false,
       crmType: 'contract',
-      detailData: {}, // read 详情
+      // 详情
+      detailData: {},
       headDetails: [
         { title: '合同编号', value: '' },
         { title: '客户名称', value: '' },
@@ -132,51 +134,91 @@ export default {
         { title: '回款金额（元）', value: '' },
         { title: '负责人', value: '' }
       ],
-      tabCurrentName: 'followlog',
-      isCreate: false // 编辑操作
+      tabCurrentName: 'Activity',
+      // 编辑操作
+      isCreate: false,
+      // 活动操作
+      activityHandle: [
+        {
+          type: 'log',
+          label: '写跟进'
+        }, {
+          type: 'task',
+          label: '创建任务'
+        }, {
+          type: 'receivables',
+          label: '创建回款'
+        }
+      ]
     }
   },
   computed: {
-    tabName() {
-      if (this.tabCurrentName == 'followlog') {
-        return 'contract-follow'
-      } else if (this.tabCurrentName == 'basicinfo') {
-        return 'c-r-m-base-info'
-      } else if (this.tabCurrentName == 'team') {
-        return 'relative-team'
-      } else if (this.tabCurrentName == 'contract') {
-        return 'relative-contract'
-      } else if (this.tabCurrentName == 'operationlog') {
-        return 'relative-handle'
-      } else if (this.tabCurrentName == 'product') {
-        return 'relative-product'
-      } else if (this.tabCurrentName == 'returnedmoney') {
-        return 'relative-return-money'
-      } else if (this.tabCurrentName == 'file') {
-        return 'relative-files'
-      }
-      return ''
-    },
-    tabnames() {
+    tabNames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '跟进记录', name: 'followlog' })
       if (this.crm.contract && this.crm.contract.read) {
-        tempsTabs.push({ label: '基本信息', name: 'basicinfo' })
+        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       }
+
+      tempsTabs.push({ label: '活动', name: 'Activity' })
+
       if (this.crm.product && this.crm.product.index) {
-        tempsTabs.push({ label: '产品', name: 'product' })
+        tempsTabs.push({ label: '产品', name: 'RelativeProduct' })
       }
       if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: '回款信息', name: 'returnedmoney' })
+        tempsTabs.push({ label: '回款信息', name: 'RelativeReturnMoney' })
       }
-      tempsTabs.push({ label: '相关团队', name: 'team' })
-      tempsTabs.push({ label: '附件', name: 'file' })
-      tempsTabs.push({ label: '操作记录', name: 'operationlog' })
+      tempsTabs.push({ label: '相关团队', name: 'RelativeTeam' })
+      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
+    },
+
+    /**
+     * 根据记录筛选
+     */
+    logTyps() {
+      return [{
+        icon: 'all',
+        color: '#2362FB',
+        command: '',
+        label: '全部活动'
+      }, {
+        icon: 'contract',
+        color: '#FD5B4A',
+        command: 6,
+        label: '合同'
+      }, {
+        icon: 'o-task',
+        color: '#D376FF',
+        command: 11,
+        label: '任务'
+      }, {
+        icon: 'receivables',
+        color: '#FFB940',
+        command: 7,
+        label: '回款'
+      }, {
+        icon: 'log',
+        color: '#5864FF',
+        command: 8,
+        label: '日志'
+      }, {
+        icon: 'approve',
+        color: '#9376FF',
+        command: 9,
+        label: '审批'
+      }]
     }
   },
-  mounted() {},
+  mounted() {
+    if (this.crm.contract && this.crm.contract.read) {
+      this.tabCurrentName = 'CRMBaseInfo'
+    }
+  },
   methods: {
+    /**
+     * 详情
+     */
     getDetial() {
       this.loading = true
       crmContractRead({
@@ -184,7 +226,8 @@ export default {
       })
         .then(res => {
           this.loading = false
-          this.detailData = res.data // 创建回款计划的时候使用
+          // 创建回款计划的时候使用
+          this.detailData = res.data
 
           this.headDetails[0].value = res.data.num
           this.headDetails[1].value = res.data.customerName
@@ -197,12 +240,17 @@ export default {
           this.loading = false
         })
     },
-    //* * 点击关闭按钮隐藏视图 */
+
+    /**
+     * 关闭
+     */
     hideView() {
       this.$emit('hide-view')
     },
-    //* * tab标签点击 */
-    handleClick(tab, event) {},
+
+    /**
+     * 编辑成功
+     */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()

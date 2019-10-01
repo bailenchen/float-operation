@@ -141,7 +141,7 @@ export default {
       // 展示加载loading
       loading: false,
       crmType: 'customer',
-      // read 详情
+      // 详情
       detailData: {},
       headDetails: [
         { title: '客户级别', value: '' },

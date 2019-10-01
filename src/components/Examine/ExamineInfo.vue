@@ -1,40 +1,54 @@
 <template>
   <div
     v-loading="loading"
-    class="contract-flow-box">
+    class="approval-flow">
     <flexbox
-      direction="row-reverse"
-      style="position:relative;">
-      <el-popover
-        v-model="showFlowPopover"
-        placement="bottom"
-        width="300"
-        trigger="click">
-        <check-flow
-          ref="checkFlow"
-          :id="recordId"
-          :examine-type="examineType"
-          @close="showFlowPopover=false"/>
+      class="approval-flow__hd"
+      justify="space-between">
+
+      <div class="approval-flow__hd--left">
+        <span
+          class="flow-title">
+          <i class="wk wk-approve" />审批流信息
+        </span>
+
+        <el-popover
+          v-model="showFlowPopover"
+          placement="bottom"
+          width="300"
+          trigger="click">
+          <check-flow
+            ref="checkFlow"
+            :id="recordId"
+            :examine-type="examineType"
+            @close="showFlowPopover=false"/>
+          <el-button
+            slot="reference"
+            type="text">查看历史审批流程</el-button>
+        </el-popover>
+      </div>
+
+
+      <div class="approval-flow__hd--right">
         <el-button
-          slot="reference"
-          class="check-flow-button"
-          type="text">查看审批历史</el-button>
-      </el-popover>
-      <div style="min-height: 40px;">
+          v-if="examineInfo.isCheck == 1"
+          class="xr-btn--green"
+          icon="wk wk-success"
+          @click="examineHandle(1)">通过</el-button>
         <el-button
-          v-if="examineInfo.isRecheck==1"
-          class="flow-button white"
-          @click="examineHandle(4)">撤回审核</el-button>
-        <el-button
-          v-if="examineInfo.isCheck==1"
-          class="flow-button red"
+          v-if="examineInfo.isCheck == 1"
+          class="xr-btn--red"
+          icon="wk wk-close"
           @click="examineHandle(2)">拒绝</el-button>
         <el-button
-          v-if="examineInfo.isCheck==1"
-          class="flow-button blue"
-          @click="examineHandle(1)">通过</el-button>
+          v-if="examineInfo.isRecheck == 1"
+          class="xr-btn--primary"
+          icon="wk wk-reset"
+          @click="examineHandle(4)">撤回</el-button>
       </div>
     </flexbox>
+
+    <!-- 授权 -->
     <flexbox
       v-if="examineInfo.examineType == 2"
       class="check-items">
@@ -42,28 +56,18 @@
         v-for="(item, index) in examineInfo.steps"
         :key="index"
         class="check-item">
-        <div>
-          <flexbox
-            class="check-item-user"
-            style="width:auto;">
-            <div
-              v-photo="item.examinUser"
-              v-lazy:background-image="$options.filters.filterUserLazyImg(item.examinUser.img)"
-              class="div-photo check-item-img"/>
-            <div class="check-item-name">{{ item.examinUser.realname }}</div>
-          </flexbox>
-          <flexbox class="check-item-info">
-            <img
-              :src="item.examineStatus|statusIcon"
-              class="check-item-img">
-            <div class="check-item-name">{{ getStatusName(item.examineStatus) }}</div>
-          </flexbox>
-        </div>
+        <img
+          :src="item.examineStatus|statusIcon"
+          class="check-item-img">
+        <div class="check-item-name">{{ item.examinUser.realname }}</div>
+        <div class="check-item-status">{{ getStatusName(item.examineStatus) }}</div>
         <i
           v-if="examineInfo.steps.length -1 != index"
           class="el-icon-arrow-right check-item-arrow"/>
       </flexbox>
     </flexbox>
+
+    <!-- 固定 -->
     <flexbox
       v-else-if="examineInfo.examineType == 1"
       class="check-items"
@@ -94,23 +98,19 @@
         </div>
         <flexbox
           slot="reference"
-          class="fixed-examine-item">
-          <div class="fixed-examine-info">
-            <img src="@/assets/img/examine_head.png" >
-            <div class="detail">{{ item|detailName }}</div>
-            <flexbox class="check-item-info">
-              <img
-                :src="item.examineStatus|statusIcon"
-                class="check-item-img">
-              <div class="check-item-name">{{ getStatusName(item.examineStatus) }}</div>
-            </flexbox>
-          </div>
+          class="check-item">
+          <img
+            :src="item.examineStatus|statusIcon"
+            class="check-item-img">
+          <div class="check-item-name">{{ item|detailName }}</div>
+          <div class="check-item-status">{{ getStatusName(item.examineStatus) }}</div>
           <i
             v-if="examineInfo.steps.length -1 != index"
             class="el-icon-arrow-right check-item-arrow"/>
         </flexbox>
       </el-popover>
     </flexbox>
+
     <examine-handle
       :show="showExamineHandle"
       :id="id"
@@ -292,128 +292,74 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.contract-flow-box {
+.approval-flow{
   position: relative;
-  min-height: 100px;
-}
-.flow-button {
-  width: 75px;
-  height: 30px;
-  border-radius: 2px;
-  margin: 5px;
-  font-size: 13px;
-}
-.blue {
-  background-color: #2362FB;
-  color: white;
-  border: none;
-}
-.red {
-  background-color: #ff6767;
-  color: white;
-  border: none;
-}
-.white {
   background-color: white;
-  color: #777;
+  padding: 15px;
+
+  &__hd {
+    position:relative;
+
+    &--right {
+
+      .xr-btn--green,
+      .xr-btn--red {
+        color: white;
+      }
+    }
+  }
 }
-.check-flow-button {
-  font-size: 13px;
-  position: absolute;
-  left: 0;
-  top: 5px;
+
+// 头部标示
+.flow-title {
+  font-weight: 600;
+  color: #333333;
+  margin-right: 20px;
+  i {
+    color: white;
+    margin-right: 5px;
+    padding: 3px;
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: #1CBAF5;
+  }
 }
 
 /** 审核流程 */
 .check-items {
   overflow-x: auto;
   padding: 10px 0;
+  margin-top: 10px;
 }
 
 .check-item {
   width: auto;
   flex-shrink: 0;
-  .check-item-user {
-    width: auto;
-    .check-item-img {
-      display: block;
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
-      margin-right: 8px;
-    }
-    .check-item-name {
-      color: #333;
-      font-size: 15px;
-      font-weight: 500;
-    }
+  .check-item-img {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    margin-right: 8px;
   }
-  .check-item-info {
-    width: auto;
-    margin-top: 5px;
-    .check-item-img {
-      display: block;
-      width: 16px;
-      height: 16px;
-      border-radius: 8px;
-      margin-right: 8px;
-    }
-    .check-item-name {
-      color: #aaa;
-      font-size: 12px;
-    }
+  .check-item-name {
+    color: #333;
+    font-size: 14px;
+    margin-right: 8px;
   }
-  .check-item-arrow {
-    color: #ccc;
-    margin: 0 16px;
-    font-size: 20px;
-    font-weight: 600;
-  }
-}
-
-// 固定审批信息
-.fixed-examine-item {
-  width: auto;
-  flex-shrink: 0;
-
-  .fixed-examine-info {
-    padding: 10px 20px;
-    text-align: center;
-    img {
-      width: 40px;
-      height: 40px;
-    }
-    .detail {
-      color: #777777;
-      font-size: 12px;
-      padding: 2px 0;
-      transform: scale(0.9, 0.9);
-    }
-    .check-item-info {
-      width: auto;
-      margin-top: 5px;
-      .check-item-img {
-        display: block;
-        width: 16px;
-        height: 16px;
-        border-radius: 8px;
-        margin-right: 8px;
-      }
-      .check-item-name {
-        color: #aaa;
-        font-size: 12px;
-      }
-    }
+  .check-item-status {
+    color: #666;
+    font-size: 12px;
   }
 
   .check-item-arrow {
-    color: #ccc;
-    margin: 0 16px;
-    font-size: 20px;
-    font-weight: 600;
+    color: #666;
+    margin: 0 15px;
+    font-size: 13px;
   }
 }
 
+// 固定审批流详情
 .popover-detail {
   padding: 0 5px;
 }
