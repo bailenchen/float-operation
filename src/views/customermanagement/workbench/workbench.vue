@@ -315,6 +315,8 @@ export default {
     .brief-box {
       width: 100%;
       background-color: white;
+      border: 1px solid #e6e6e6;
+      border-radius: 4px;
       .brief-title {
         padding: 15px 20px 0;
         .icon {
