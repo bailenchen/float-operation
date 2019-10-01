@@ -13,6 +13,7 @@ import {
   crmMessagRemindreceivablesplanAPI,
   crmMessagRemindCustomerAPI
 } from '@/api/customermanagement/message'
+import CheckStatus from '@/mixins/CheckStatusMixin'
 
 export default {
   components: {},
@@ -29,6 +30,8 @@ export default {
     }
   },
 
+  mixins: [CheckStatus],
+
   computed: {
     // 展示options下拉选择
     showOptions() {
@@ -42,6 +45,10 @@ export default {
   mounted() {
     this.$bus.on('message-scroll', tableHeight => {
       this.tableHeight = tableHeight
+    })
+
+    this.$bus.on('examine-handle-bus', () => {
+      this.getList()
     })
 
     /** 控制table的高度 */
@@ -277,52 +284,13 @@ export default {
 
     // 0待审核、1审核中、2审核通过、3审核未通过
     getStatusStyle(status) {
-      if (status == 0) {
-        return {
-          'border-color': '#E6A23C',
-          'background-color': '#FDF6EC',
-          'color': '#E6A23C'
-        }
-      } else if (status == 1) {
-        return {
-          'border-color': '#409EFF',
-          'background-color': '#ECF5FF',
-          'color': '#409EFF'
-        }
-      } else if (status == 2) {
-        return {
-          'border-color': '#67C23A',
-          'background-color': '#F0F9EB',
-          'color': '#67C23A'
-        }
-      } else if (status == 3) {
-        return {
-          'border-color': '#F56C6B',
-          'background-color': '#FEF0F0',
-          'color': '#F56C6B'
-        }
-      } else if (status == 4 || status == 5) {
-        return {
-          'background-color': '#FFFFFF'
-        }
+      return {
+        backgroundColor: this.getStatusColor(status)
       }
     },
 
     getStatusName(status) {
-      if (status == 0) {
-        return '待审核'
-      } else if (status == 1) {
-        return '审核中'
-      } else if (status == 2) {
-        return '通过'
-      } else if (status == 3) {
-        return '拒绝'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '未提交'
-      }
-      return ''
+      return this.getStatusName(status)
     },
 
     /**
@@ -337,6 +305,8 @@ export default {
 
   beforeDestroy() {
     this.$bus.off('message-scroll')
+    this.$bus.off('examine-handle-bus')
+
     if (document.getElementById('crm-table')) {
       document.getElementById('crm-table').removeEventListener('click', e => {
         e.stopPropagation()

@@ -73,6 +73,17 @@ export function customFieldList(data) {
   })
 }
 
+export function oaFieldHandle(data) {
+  return request({
+    url: 'field/examineFieldSave',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 /** 自定义字段（字段数据）的列表更新时间 */
 export function customFieldIndex(data) {
   return request({

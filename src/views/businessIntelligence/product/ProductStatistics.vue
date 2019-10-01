@@ -129,7 +129,7 @@ export default {
     /** 列表操作 */
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      if (column.property === 'customerId') {
+      if (column.property === 'customerName') {
         if (this.showProductview) {
           this.showProductview = false
         }
@@ -147,7 +147,7 @@ export default {
         }
         this.rowID = row.productId
         this.showProductview = true
-      } else if (column.property === 'contractId') {
+      } else if (column.property === 'contracNum') {
         if (this.showProductview) {
           this.showProductview = false
         }

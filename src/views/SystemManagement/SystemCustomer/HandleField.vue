@@ -90,6 +90,7 @@
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   customFieldHandle,
+  oaFieldHandle,
   customFieldList
 } from '@/api/systemManagement/SystemCustomer'
 import { filedGetField } from '@/api/customermanagement/common'
@@ -332,7 +333,10 @@ export default {
             }
           }
         }
-        customFieldHandle(params)
+
+        // 请求
+        const request = this.$route.params.type === 'oa_examine' ? oaFieldHandle : customFieldHandle
+        request(params)
           .then(res => {
             this.$message({
               type: 'success',

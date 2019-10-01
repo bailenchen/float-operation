@@ -162,6 +162,7 @@ export default {
             this.$store.dispatch('GetMessageNum')
           }
 
+          this.$bus.emit('examine-handle-bus')
           this.$emit('save')
           this.hiddenView()
         })
@@ -195,6 +196,7 @@ export default {
           this.loading = false
           this.$message.success('操作成功')
           this.$emit('save', { type: this.status })
+          this.$bus.emit('examine-handle-bus')
           this.hiddenView()
         })
         .catch(() => {

@@ -51,7 +51,7 @@ export default {
         index: this.index,
         item: this.item,
         value: val,
-        valueContent: this.$refs.elCascader.currentLabels.join(',')
+        valueContent: this.$refs.elCascader.getCheckedNodes()[0].label // 参考 https://segmentfault.com/q/1010000013063478
       })
     }
   }

@@ -80,6 +80,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Loading } from 'element-ui'
+import { adminGroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
 
 export default {
   filters: {
@@ -95,7 +96,8 @@ export default {
   props: {
     navIndex: {
       type: [Number, String],
-      default: 0
+      default: 0,
+      authRedirect: ''
     }
   },
   data() {
@@ -131,21 +133,6 @@ export default {
           icon: 'customer'
         })
       }
-      if (this.bi) {
-        tempsItems.push({
-          title: '商业智能',
-          type: 5,
-          path: '/bi',
-          icon: 'statistics'
-        })
-      }
-      if (this.project) {
-        tempsItems.push({
-          title: '项目管理',
-          type: 2,
-          path: '/project'
-        })
-      }
       tempsItems.push({
         title: '任务/审批',
         type: 4,
@@ -165,12 +152,39 @@ export default {
         path: '/addressBook',
         icon: ''
       })
+      if (this.bi) {
+        tempsItems.push({
+          title: '商业智能',
+          type: 5,
+          path: '/bi',
+          icon: 'statistics'
+        })
+      }
+      if (this.project) {
+        tempsItems.push({
+          title: '项目管理',
+          type: 2,
+          path: '/project'
+        })
+      }
       return tempsItems
     }
   },
   mounted() {
     if (this.navIndex && this.navIndex !== this.navActiveIndex) {
       this.$store.commit('SET_NAVACTIVEINDEX', this.navIndex)
+    }
+
+    if (
+      this.manage &&
+      (!this.manage.system ||
+        (this.manage.system && !this.manage.system.read)) &&
+        (!this.manage.configSet ||
+        (this.manage.configSet && !this.manage.configSet.read)) &&
+        (!this.manage.users ||
+        (this.manage.users && !this.manage.users.read))
+    ) {
+      this.getAuthPath()
     }
   },
   methods: {
@@ -180,7 +194,7 @@ export default {
     },
     enterSystemSet() {
       this.$router.push({
-        name: 'manager'
+        path: this.authRedirect || '/manager'
       })
     },
     handleClick(type) {
@@ -215,6 +229,18 @@ export default {
     switchLang(item) {
       this.$store.commit('SET_LANG', item.lang)
       this.langName = item.name
+    },
+    getAuthPath() {
+      adminGroupsTypeListAPI()
+        .then(res => {
+          if (res.data && res.data.length) {
+            const item = res.data[0]
+            this.authRedirect = `/manager/role-auth/${item.roleType}/${encodeURI(
+              item.name
+            )}`
+          }
+        })
+        .catch(() => {})
     }
   }
 }

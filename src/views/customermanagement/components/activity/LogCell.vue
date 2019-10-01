@@ -359,13 +359,13 @@ export default {
         color: $xr-color-primary;
       }
 
-      a + a {
-        margin-bottom: 5px;
-      }
-
       a:hover {
         text-decoration: underline;
       }
+    }
+
+    &__item + &__item {
+      margin-bottom: 5px;
     }
 
     a {

@@ -82,8 +82,14 @@
             type="primary">发布</el-button>
         </div>
       </flexbox>
-
     </div>
+
+    <task-detail
+      v-if="taskDetailShow"
+      ref="particulars"
+      :id="taskID"
+      :detail-index="detailIndex"
+      @close="taskDetailShow = false" />
   </div>
 </template>
 
@@ -91,6 +97,7 @@
 import { mapGetters } from 'vuex'
 import TaskTabsHead from './components/TaskTabsHead'
 import TaskCell from './components/TaskCell'
+import TaskDetail from './components/TaskDetail'
 import { taskListAPI } from '@/api/oamanagement/task'
 
 export default {
@@ -98,7 +105,8 @@ export default {
   name: 'Index',
   components: {
     TaskTabsHead,
-    TaskCell
+    TaskCell,
+    TaskDetail
   },
   props: {},
   data() {
@@ -127,7 +135,13 @@ export default {
       ],
       // 添加
       sendContent: '',
-      stopTime: ''
+      stopTime: '',
+
+      // 详情
+      // 详情数据
+      taskID: '',
+      detailIndex: -1,
+      taskDetailShow: false
     }
   },
   computed: {
@@ -236,7 +250,13 @@ export default {
     /**
      * 任务cell 操作
      */
-    taskCellHandle(data) {},
+    taskCellHandle(type, data, index) {
+      if (type == 'view') {
+        this.taskID = data.taskId
+        this.detailIndex = index
+        this.taskDetailShow = true
+      }
+    },
 
     /**
      * 任务添加

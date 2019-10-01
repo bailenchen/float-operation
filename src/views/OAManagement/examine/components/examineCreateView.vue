@@ -497,65 +497,6 @@ export default {
           }
         }
 
-        // 验证唯一
-        if (item.isUnique == 1) {
-          var validateUnique = (rule, value, callback) => {
-            if ((isArray(value) && value.length == 0) || !value) {
-              callback()
-            } else {
-              var validatesParams = {}
-              validatesParams.name = item.name
-              if (isArray(value)) {
-                let postValue = ''
-                if (value.length > 0) {
-                  if (
-                    rule.item.formType == 'user' ||
-                    rule.item.formType == 'structure'
-                  ) {
-                    postValue = value
-                      .map(valueItem => {
-                        return rule.item.formType == 'user'
-                          ? valueItem.userId
-                          : valueItem.id
-                      })
-                      .join(',')
-                  } else if (rule.item.fieldName == 'categoryId') {
-                    if (value && value.length) {
-                      postValue = value[value.length - 1]
-                    } else {
-                      postValue = ''
-                    }
-                  } else if (rule.item.formType == 'checkbox') {
-                    postValue = value.join(',')
-                  }
-                }
-                validatesParams.val = postValue
-              } else {
-                validatesParams.val = value
-              }
-              validatesParams.types = 10
-              if (this.action.type == 'update') {
-                validatesParams.id = this.action.id
-              }
-              filedValidates(validatesParams)
-                .then(res => {
-                  callback()
-                })
-                .catch(error => {
-                  callback(new Error(error.error ? error.error : '验证出错'))
-                })
-            }
-          }
-          tempList.push({
-            validator: validateUnique,
-            item: item,
-            trigger:
-              item.formType == 'checkbox' || item.formType == 'select'
-                ? ['change']
-                : ['blur']
-          })
-        }
-
         // 特殊字符
         if (item.formType == 'number') {
           var validateCRMNumber = (rule, value, callback) => {

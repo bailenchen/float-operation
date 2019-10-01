@@ -715,7 +715,7 @@ export default {
             callback()
           } else {
             var validatesParams = {}
-            validatesParams.fieldName = item.fieldName
+            validatesParams.fieldId = item.fieldId
             if (isArray(value)) {
               let postValue = ''
               if (value.length > 0) {
@@ -740,21 +740,19 @@ export default {
                   postValue = value.join(',')
                 }
               }
-              validatesParams.val = postValue
+              validatesParams.value = postValue
             } else {
-              validatesParams.val = value
+              validatesParams.value = value
             }
-            validatesParams.types = crmTypeModel[this.crmType]
-            validatesParams.fieldType = item.fieldType
             if (this.action.type == 'update') {
-              validatesParams.id = this.action.id
+              validatesParams.batchId = this.action.batchId
             }
             filedValidates(validatesParams)
               .then(res => {
                 callback()
               })
               .catch(error => {
-                callback(new Error(error.error ? error.error : '验证出错'))
+                callback(new Error(error.msg ? error.msg : '验证出错'))
               })
           }
         }

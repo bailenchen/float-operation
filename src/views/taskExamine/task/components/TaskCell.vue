@@ -97,7 +97,7 @@
 
       <div class="item-own-box">
         <el-tooltip
-          v-if="data.mainUser && data.mainUser.id"
+          v-if="data.mainUser && data.mainUser.userId"
           placement="bottom"
           effect="light"
           popper-class="tooltip-change-border">
@@ -185,10 +185,7 @@ export default {
     },
     // 点击显示详情
     rowFun(val) {
-      this.$emit('on-handle', {
-        type: 'view',
-        data: { item: this.data, index: this.dataIndex }
-      })
+      this.$emit('on-handle', 'view', this.data, this.dataIndex)
     },
     onmouseoverFun(item) {
       if (
