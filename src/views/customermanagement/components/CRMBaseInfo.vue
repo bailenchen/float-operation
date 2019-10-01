@@ -42,7 +42,7 @@ import { filedGetInformation } from '@/api/customermanagement/common'
 import MapView from '@/components/MapView' // 地图详情
 
 export default {
-  /** 客户管理 的 基本信息*/
+  // 客户管理 的 基本信息
   name: 'CRMBaseInfo',
   components: {
     Sections,
@@ -55,7 +55,7 @@ export default {
   },
   mixins: [loading],
   props: {
-    /** 模块ID */
+    // 模块ID
     id: [String, Number],
     detail: {
       type: Object,
@@ -63,7 +63,7 @@ export default {
         return {}
       }
     },
-    /** 没有值就是全部类型 有值就是当个类型 */
+    // 没有值就是全部类型 有值就是当个类型
     crmType: {
       type: String,
       default: ''
@@ -72,8 +72,10 @@ export default {
   data() {
     return {
       list: [],
-      showMapView: false, // 控制展示地图详情
-      mapViewInfo: {} // 地图详情信息
+      // 控制展示地图详情
+      showMapView: false,
+      // 地图详情信息
+      mapViewInfo: {}
     }
   },
   computed: {},
@@ -88,7 +90,9 @@ export default {
   activated: function() {},
   deactivated: function() {},
   methods: {
-    // 获取基础信息
+    /**
+     * 获取基础信息
+     */
     getBaseInfo() {
       this.loading = true
       filedGetInformation({

@@ -27,6 +27,27 @@
       @focus="handleType = 'log'"
       @close="handleClick(handleType)" />
     <div class="log">
+      <!-- 筛选 -->
+      <el-dropdown
+        v-if="typeList.length > 1"
+        trigger="click"
+        class="tabs-head-select"
+        @command="handleSelectClick">
+        <span class="el-dropdown-link">
+          <i
+            :class="['wk', 'dropdown-icon', 'wk-' + activityType.icon]"
+            :style="{ backgroundColor: activityType.color }" />{{ activityType.label }}<i class="el-icon-arrow-down el-icon--right" />
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item
+            v-for="(item, index) in typeList"
+            :key="index"
+            :command="item"> <i
+              :class="['wk', 'dropdown-icon', 'wk-' + item.icon]"
+              :style="{ backgroundColor: item.color }" />{{ item.label }}</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+
       <div
         v-for="(seciton, secitonIndex) in list"
         :key="secitonIndex"
@@ -167,7 +188,15 @@ export default {
     isSeas: {
       type: Boolean,
       default: false
+    },
+    // 筛选数据源
+    typeList: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
+
   },
   data() {
     return {
@@ -175,6 +204,12 @@ export default {
       contacts: [],
       followTypes: [],
       handleType: '',
+      activityType: {
+        icon: 'all',
+        color: '#2362FB',
+        command: '',
+        label: '全部活动'
+      },
       // 活动列表
       list: [],
       noMore: false,
@@ -207,28 +242,6 @@ export default {
     this.initInfo()
   },
   methods: {
-    /**
-     * 初始化信息
-     */
-    initInfo() {
-      this.$refs.logAdd.resetInfo()
-      this.refreshLogList()
-      this.getLogTypeList()
-      if (this.showRelate) {
-        this.getContactsList()
-      }
-    },
-
-    /**
-     * 初始化日志
-     */
-    refreshLogList() {
-      this.noMore = false
-      this.page = 1
-      this.list = []
-      this.getLogList()
-    },
-
     /**
      * 获取跟进类型详情
      */
@@ -317,6 +330,36 @@ export default {
     },
 
     /**
+     * 初始化信息
+     */
+    initInfo() {
+      this.$refs.logAdd.resetInfo()
+      this.refreshLogList()
+      this.getLogTypeList()
+      if (this.showRelate) {
+        this.getContactsList()
+      }
+    },
+
+    /**
+     * 初始化日志
+     */
+    refreshLogList() {
+      this.noMore = false
+      this.page = 1
+      this.list = []
+      this.getLogList()
+    },
+
+    /**
+     * 活动筛选
+     */
+    handleSelectClick(value) {
+      this.activityType = value
+      this.refreshLogList()
+    },
+
+    /**
      * 活动日志
      */
     getLogList() {
@@ -324,7 +367,7 @@ export default {
       const params = {
         page: this.page,
         crmType: crmTypeModel[this.crmType], // 8是公海
-        activityType: '',
+        activityType: this.activityType.command,
         activityTypeId: this.id
       }
 
@@ -400,8 +443,6 @@ export default {
   height: 100%;
   position: relative;
   overflow: auto;
-  // overflow: auto;
-  // overflow-y: overlay;
 
   &-handle {
     // 新建按钮
@@ -452,6 +493,7 @@ export default {
 
 .log {
   margin-top: 20px;
+  position: relative;
   &-section {
     &__title {
       padding: 8px 0;
@@ -541,5 +583,28 @@ export default {
   &__content:hover {
     text-decoration: underline;
   }
+}
+
+// 下拉筛选效果
+.tabs-head-select {
+  position: absolute;
+  top: 0;
+  right: 15px;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: #333333;
+  .el-icon--right {
+    color: #666666;
+  }
+}
+
+.dropdown-icon {
+  color: white;
+  margin-right: 5px;
+  padding: 3px;
+  font-size: 12px;
+  border-radius: 4px;
 }
 </style>

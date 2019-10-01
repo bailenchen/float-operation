@@ -26,10 +26,9 @@
         <el-tabs
           v-model="tabCurrentName"
           type="border-card"
-          class="d-container-bd--left"
-          @tab-click="handleClick">
+          class="d-container-bd--left">
           <el-tab-pane
-            v-for="(item, index) in tabnames"
+            v-for="(item, index) in tabNames"
             :key="index"
             :label="item.label"
             :name="item.name"
@@ -38,6 +37,7 @@
             <component
               :is="item.name"
               :detail="detailData"
+              :type-list="logTyps"
               :id="id"
               :handle="activityHandle"
               :is-seas="isSeasDetail"
@@ -46,7 +46,7 @@
         </el-tabs>
         <transition name="slide-fade">
           <el-tabs
-            v-show="showFirstDetail"
+            v-show="showImportInfo"
             value="chiefly-contacts"
             type="border-card"
             class="d-container-bd--right">
@@ -59,13 +59,12 @@
             </el-tab-pane>
           </el-tabs>
         </transition>
-
       </flexbox>
     </flexbox>
 
     <el-button
       class="firse-button"
-      @click="showFirstDetail= !showFirstDetail">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showFirstDetail }" class="el-icon-arrow-right el-icon--right" /></el-button>
+      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showImportInfo }" class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
@@ -80,7 +79,6 @@ import { crmCustomerRead } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import CustomerFollow from './components/CustomerFollow' // 跟进记录
 import Activity from '../components/activity'
 import ChieflyContacts from './components/ChieflyContacts' // 首要联系人
 import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
@@ -96,11 +94,10 @@ import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 
 export default {
-  /** 客户管理 的 客户详情 */
+  // 客户管理 的 客户详情
   name: 'CustomerDetail',
   components: {
     SlideView,
-    CustomerFollow,
     Activity,
     ChieflyContacts,
     CRMDetailHead,
@@ -141,9 +138,11 @@ export default {
   },
   data() {
     return {
-      loading: false, // 展示加载loading
+      // 展示加载loading
+      loading: false,
       crmType: 'customer',
-      detailData: {}, // read 详情
+      // read 详情
+      detailData: {},
       headDetails: [
         { title: '客户级别', value: '' },
         { title: '成交状态', value: '' },
@@ -151,7 +150,8 @@ export default {
         { title: '更新时间', value: '' }
       ],
       tabCurrentName: 'Activity',
-      isCreate: false, // 编辑操作
+      // 编辑操作
+      isCreate: false,
       // 活动操作
       activityHandle: [
         {
@@ -176,31 +176,33 @@ export default {
           type: 'receivables',
           label: '创建回款  '
         }
-      ]
+      ],
+      // 展示重要信息
+      showImportInfo: true
     }
   },
   computed: {
-    tabnames() {
+    tabNames() {
       var tempsTabs = []
       tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.customer && this.crm.customer.read) {
-        tempsTabs.push({ label: '基本信息', name: 'c-r-m-base-info' })
+        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       }
       if (this.crm.contacts && this.crm.contacts.index) {
-        tempsTabs.push({ label: '联系人', name: 'relative-contacts' })
+        tempsTabs.push({ label: '联系人', name: 'RelativeContacts' })
       }
-      tempsTabs.push({ label: '相关团队', name: 'relative-team' })
+      tempsTabs.push({ label: '相关团队', name: 'RelativeTeam' })
       if (this.crm.business && this.crm.business.index) {
-        tempsTabs.push({ label: '商机', name: 'relative-business' })
+        tempsTabs.push({ label: '商机', name: 'RelativeBusiness' })
       }
       if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: '合同', name: 'relative-contract' })
+        tempsTabs.push({ label: '合同', name: 'RelativeContract' })
       }
       if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: '回款信息', name: 'relative-return-money' })
+        tempsTabs.push({ label: '回款信息', name: 'RelativeReturnMoney' })
       }
-      tempsTabs.push({ label: '附件', name: 'file' })
-      tempsTabs.push({ label: '操作记录', name: 'relative-handle' })
+      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
     },
     /**
@@ -218,10 +220,70 @@ export default {
      */
     firstContactsId() {
       return this.detailData ? this.detailData.contactsId || '' : ''
+    },
+
+    /**
+     * 根据记录筛选
+     */
+    logTyps() {
+      return [{
+        icon: 'all',
+        color: '#2362FB',
+        command: '',
+        label: '全部活动'
+      }, {
+        icon: 'customer',
+        color: '#487DFF',
+        command: 2,
+        label: '客户'
+      }, {
+        icon: 'o-task',
+        color: '#D376FF',
+        command: 11,
+        label: '任务'
+      }, {
+        icon: 'business',
+        color: '#FB9323',
+        command: 5,
+        label: '商机'
+      }, {
+        icon: 'contract',
+        color: '#FD5B4A',
+        command: 6,
+        label: '合同'
+      }, {
+        icon: 'contacts',
+        color: '#27BA4A',
+        command: 3,
+        label: '联系人'
+      }, {
+        icon: 'receivables',
+        color: '#FFB940',
+        command: 7,
+        label: '回款'
+      }, {
+        icon: 'log',
+        color: '#5864FF',
+        command: 8,
+        label: '日志'
+      }, {
+        icon: 'approve',
+        color: '#9376FF',
+        command: 9,
+        label: '审批'
+      }, {
+        icon: 'schedule',
+        color: '#1CBAF5',
+        command: 10,
+        label: '日程'
+      }]
     }
   },
   mounted() {},
   methods: {
+    /**
+     * 详情
+     */
     getDetial() {
       this.loading = true
       crmCustomerRead({
@@ -244,12 +306,17 @@ export default {
           this.loading = false
         })
     },
-    //* * 点击关闭按钮隐藏视图 */
+
+    /**
+     * 关闭
+     */
     hideView() {
       this.$emit('hide-view')
     },
-    //* * tab标签点击 */
-    handleClick(tab, event) {},
+
+    /**
+     * 编辑成功
+     */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
