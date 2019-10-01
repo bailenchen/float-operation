@@ -110,6 +110,7 @@
     <c-r-m-create-view
       v-if="isCRMCreate"
       :crm-type="createCRMType"
+      :action="createActionInfo"
       @save-success="createCRMSuccess"
       @hiden-view="createCRMClose" />
     <!-- 任务新建 -->
@@ -139,6 +140,7 @@ import CRMCreateView from '@/views/customermanagement/components/CRMCreateView'
 import NewDialog from '@/views/OAManagement/task/components/newDialog'
 import { addTask } from '@/api/oamanagement/task'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'Activity', // 活动
@@ -195,8 +197,14 @@ export default {
       default: () => {
         return []
       }
+    },
+    // 详情
+    detail: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
-
   },
   data() {
     return {
@@ -216,6 +224,7 @@ export default {
       page: 1,
       // 相关新建
       isCRMCreate: false,
+      createActionInfo: { type: 'relative', crmType: this.crmType, data: {}},
       createCRMType: '',
       isTaskCreate: false,
       taskLoading: false,
@@ -323,7 +332,33 @@ export default {
         this.$refs.logAdd.isUnfold = this.handleType == type
       } else if (type == 'task') {
         this.isTaskCreate = true
-      } else if (type != 'email') {
+      } else {
+        const aciton = { type: 'relative', crmType: this.crmType, data: {}}
+        if (this.crmType == 'contacts') {
+          aciton.data['customer'] = objDeepCopy(this.detail)
+          // 联系人下新建商机直接关联
+          if (type == 'business') {
+            aciton.relativeData = {
+              contactsId: this.detail.contactsId
+            }
+          }
+        } else if (this.crmType == 'customer') {
+          aciton.data['customer'] = objDeepCopy(this.detail)
+        } else if (this.crmType == 'business') {
+          aciton.data['customer'] = objDeepCopy(this.detail)
+          aciton.data['business'] = objDeepCopy(this.detail)
+          // 商机下新建联系人直接关联
+          if (type == 'contacts') {
+            aciton.relativeData = {
+              businessId: this.detail.businessId
+            }
+          }
+        } else if (this.crmType == 'contract') {
+          aciton.data['customer'] = objDeepCopy(this.detail)
+          aciton.data['contract'] = objDeepCopy(this.detail)
+        }
+
+        this.createActionInfo = aciton
         this.createCRMType = type
         this.isCRMCreate = true
       }
@@ -391,6 +426,7 @@ export default {
      */
     createCRMSuccess() {
       this.handleType = ''
+      this.refreshLogList()
     },
 
     createCRMClose() {

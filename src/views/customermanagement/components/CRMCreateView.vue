@@ -389,7 +389,7 @@ export default {
                 element.disabled = false
                 const customerItem = item.value[0]
                 customerItem['moduleType'] = 'customer'
-                customerItem['params'] = { checkStatus: 2 }
+                customerItem['params'] = { checkStatus: 1 }
                 element['relation'] = customerItem
               } else {
                 element.disabled = true
@@ -609,7 +609,7 @@ export default {
             params['relation'] = customerItem
           } else if (item.formType == 'contract' && customerItem) {
             customerItem['moduleType'] = 'customer'
-            customerItem['params'] = { checkStatus: 2 }
+            customerItem['params'] = { checkStatus: 1 }
             params['relation'] = customerItem
           }
         }
@@ -648,6 +648,7 @@ export default {
             business: { customer: true }
           },
           contract: {
+            contacts: { customer: true },
             customer: { customer: true },
             business: { customer: true, business: true }
           },
@@ -656,10 +657,14 @@ export default {
             customer: { customer: true }
           },
           receivables: {
-            contract: { customer: true, contract: true },
-            customer: { customer: true }
+            contacts: { customer: true },
+            customer: { customer: true },
+            business: { customer: true },
+            contract: { customer: true, contract: true }
           }
         }
+
+
         // 添加类型
         const crmTypeDisInfos = relativeDisInfos[this.crmType]
         if (crmTypeDisInfos) {
