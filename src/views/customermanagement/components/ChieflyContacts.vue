@@ -1,5 +1,7 @@
 <template>
-  <div v-loading="loading" class="chiefly-contacts">
+  <div
+    v-loading="loading"
+    class="chiefly-contacts">
     <flexbox
       v-if="detail"
       class="cell"
@@ -18,12 +20,16 @@
         <p class="cell-bd__detail">
           <i class="wk wk-circle-iphone" />
           <span v-if="detail.mobile">{{ detail.mobile }}</span>
-          <span v-else class="no-data">暂无电话</span>
+          <span
+            v-else
+            class="no-data">暂无电话</span>
         </p>
         <p class="cell-bd__detail">
           <i class="wk wk-circle-email" />
           <span v-if="detail.email">{{ detail.email }}</span>
-          <span v-else class="no-data">暂无邮箱</span>
+          <span
+            v-else
+            class="no-data">暂无邮箱</span>
         </p>
       </div>
       <span class="mark"><i class="wk wk-s-contacts" />首要联系人</span>
@@ -32,7 +38,16 @@
         @click="callPhone" />
     </flexbox>
 
-    <import-info v-if="list.length" :list="list" />
+    <import-info-empty
+      v-else
+      :title="emptyName"
+      :btn-name="emptyBtnName"
+      class="empty-info"
+      v-on="$listeners" />
+
+    <import-info
+      v-if="list.length"
+      :list="list" />
 
   </div>
 </template>
@@ -42,15 +57,22 @@ import { crmContactsRead } from '@/api/customermanagement/contacts'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { filedGetInformation } from '@/api/customermanagement/common'
 import ImportInfo from './ImportInfo'
+import ImportInfoEmpty from './ImportInfoEmpty'
 
 export default {
   // 首要联系人
   name: 'ChieflyContacts',
   components: {
-    ImportInfo
+    ImportInfo,
+    ImportInfoEmpty
   },
   props: {
-    id: [Number, String]
+    id: [Number, String],
+    crmType: {
+      required: true,
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -71,6 +93,20 @@ export default {
         img: '',
         realname: this.detail.name
       }
+    },
+
+    // 空数据按钮文字 为空不展示
+    emptyBtnName() {
+      return this.$listeners.add ? '新建联系人' : ''
+    },
+
+    emptyName() {
+      return (
+        {
+          customer: '暂无客户首要联系人',
+          business: '暂无商机首要联系人'
+        }[this.crmType] || '暂无数据'
+      )
     }
   },
   watch: {
@@ -81,6 +117,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.$listeners, this.$attrs)
     this.getDetial()
   },
 
@@ -146,7 +183,7 @@ export default {
   padding: 12px;
   border-radius: 4px;
   position: relative;
-  border: 1px solid #EBEEF5;
+  border: 1px solid #ebeef5;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
 
   &-hd {
@@ -240,4 +277,12 @@ export default {
   font-size: 14px;
 }
 
+// 无数据
+.empty-info {
+  border-radius: 4px;
+  position: relative;
+  border: 1px solid #ebeef5;
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
+  height: 96px;
+}
 </style>

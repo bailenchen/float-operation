@@ -57,7 +57,9 @@
                 name="chiefly-contacts"
                 lazy>
                 <chiefly-contacts
-                  :id="firstContactsId"/>
+                  :id="firstContactsId"
+                  :crm-type="crmType"
+                  @add="addChieflyContacts"/>
               </el-tab-pane>
             </el-tabs>
           </transition>
@@ -69,8 +71,8 @@
       @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showImportInfo }" class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: id, batchId: detailData.batchId}"
-      :crm-type="crmType"
+      :action="createActionInfo"
+      :crm-type="createCRMType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false" />
   </slide-view>
@@ -151,6 +153,8 @@ export default {
       ],
       tabCurrentName: 'Activity',
       // 编辑操作
+      createActionInfo: null,
+      createCRMType: '',
       isCreate: false,
       // 活动操作
       activityHandle: [
@@ -318,6 +322,30 @@ export default {
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
+    },
+
+    /**
+     * 首要联系人添加
+     */
+    addChieflyContacts() {
+      this.createCRMType = 'contacts'
+      this.createActionInfo = { type: 'relative', crmType: this.crmType, data: { customer: this.detailData }}
+      this.isCreate = true
+    },
+
+    /**
+     * 顶部头 操作
+     * @param {*} data
+     */
+    detailHeadHandle(data) {
+      if (data.type === 'edit') {
+        this.createCRMType = 'customer'
+        this.createActionInfo = { type: 'update', id: this.id, batchId: this.detailData.batchId }
+        this.isCreate = true
+      } else if (data.type === 'delete') {
+        this.hideView()
+      }
+      this.$emit('handle', data)
     }
   }
 }

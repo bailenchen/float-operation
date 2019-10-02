@@ -47,7 +47,7 @@
               type="primary"
               @click="thoroughDeleteTask">彻底删除</el-button>
             <el-button
-              v-if="!isArchive && !isRecycle"
+              v-if="showArchiveBtn"
               class="xr-btn--green"
               icon="wk wk-archive"
               type="primary"
@@ -625,6 +625,13 @@ export default {
      */
     isRecycle() {
       return this.taskData.ishidden == 1
+    },
+
+    /**
+     * 展示归档
+     */
+    showArchiveBtn() {
+      return this.workId && !this.isArchive && !this.isRecycle
     },
 
     ownerListRequest() {

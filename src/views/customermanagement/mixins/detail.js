@@ -43,7 +43,10 @@ export default {
   },
 
   methods: {
-    /** 顶部头 操作 */
+    /**
+     * 顶部头 操作
+     * @param {*} data
+     */
     detailHeadHandle(data) {
       if (data.type === 'edit') {
         this.isCreate = true

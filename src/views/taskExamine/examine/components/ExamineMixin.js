@@ -9,8 +9,8 @@ export default {
       if (type <= 6 && type > 0) {
         return [
           {
-            icon: 'approve',
-            color: '#9376FF'
+            icon: 'l-record',
+            color: '#3ABCFB'
           },
           {
             icon: 'leave',
