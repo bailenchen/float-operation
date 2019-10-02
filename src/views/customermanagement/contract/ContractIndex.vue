@@ -154,6 +154,12 @@ export default {
         column.property === 'contactsName'
       ) {
         return 'can-visit--underline'
+      } else if (column.property === 'money') {
+        return 'xr-money'
+      } else if (column.property === 'receivedMoney') {
+        return 'xr-money green'
+      } else if (column.property === 'unreceivedMoney') {
+        return 'xr-money red'
       } else {
         return ''
       }
