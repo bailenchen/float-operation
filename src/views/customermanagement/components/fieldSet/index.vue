@@ -149,14 +149,14 @@ export default {
      * 保存更改
      */
     save() {
-      const hideIds = this.fields.filter(item => {
-        return !item.check
+      const noHideIds = this.fields.filter(item => {
+        return item.check
       })
-      if (hideIds.length < 2) {
+      if (noHideIds.length < 2) {
         this.$message.error('至少要显示两列')
       } else {
-        const noHideIds = this.fields.filter(item => {
-          return item.check
+        const hideIds = this.fields.filter(item => {
+          return !item.check
         })
         this.loading = true
         crmFieldConfig({
