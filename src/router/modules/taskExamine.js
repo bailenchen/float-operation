@@ -4,7 +4,7 @@ import Layout from '@/views/layout/taskExamineLayout'
 const taskExamineLayout = {
   path: '/taskExamine',
   component: Layout,
-  redirect: '/taskExamine/send',
+  redirect: '/taskExamine/task-index/1',
   name: 'taskExamine',
   hidden: true,
   meta: {

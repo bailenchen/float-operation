@@ -207,8 +207,12 @@ export default {
 /** 跟进记录相关的 日志 审批任务 日程 项目 公共css */
 .fl-c {
   background-color: white;
-  padding: 10px 10px 10px 25px;
+  padding: 10px 15px;
   position: relative;
+}
+
+.margin-top {
+   margin-top: 5px;
 }
 
 /** 头部布局 名字 头像 */
@@ -255,7 +259,6 @@ export default {
   .fl-b-content {
     font-size: 13px;
     color: #333;
-    margin-bottom: 10px;
     white-space: pre-wrap;
     word-wrap: break-word;
     letter-spacing: 0.5px;
@@ -263,7 +266,7 @@ export default {
   }
 
   .fl-b-images {
-    margin-top: 5px;
+    margin-top: 15px;
     width: 310px;
 
     .fl-b-img-item {

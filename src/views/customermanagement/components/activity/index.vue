@@ -81,7 +81,7 @@
               class="activity-cell">
               <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}创建了{{ item.activityType | getActivityTypeName }}：</span><span
                 class="activity-cell__content"
-                @click="checkCRMDetail('business', item.activityTypeId)">{{ item.activityTypeName }}</span>
+                @click="checkCRMDetail(getActivityType(item.activityType), item.activityTypeId)">{{ item.activityTypeName }}</span>
             </div>
             <div
               v-if="item.type == 3"
@@ -93,7 +93,9 @@
               <span>{{ ` 阶段变为 ${item.content}` }}</span>
             </div>
             <i
-              class="wk wk-business log-cell__mark"
+              :class="[item.type == 3 ? 'wk-business' : `wk-${getActivityType(item.activityType)}`]"
+              :style="{ backgroundColor: getActivityTypeColor(item.activityType) }"
+              class="wk log-cell__mark"
               style="background-color: #FB9323;" />
           </div>
         </template>
@@ -466,6 +468,39 @@ export default {
     },
 
     /**
+     * 获取CRM关键字
+     */
+    getActivityType(activityType) {
+      // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
+      return {
+        1: 'leads',
+        2: 'customer',
+        3: 'contacts',
+        4: 'product',
+        5: 'business',
+        6: 'contract',
+        7: 'receivables',
+        8: 'log',
+        9: 'examine',
+        11: 'task'
+      }[activityType]
+    },
+
+    getActivityTypeColor(activityType) {
+      // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
+      return {
+        2: '#487DFF',
+        3: '#27BA4A',
+        5: '#FB9323',
+        6: '#FD5B4A',
+        7: '#FFB940',
+        8: '#5864FF',
+        9: '#9376FF',
+        11: '#D376FF'
+      }[activityType]
+    },
+
+    /**
      * 跟进日志删除
      */
     logCellDelete(data, index, seciton) {
@@ -610,7 +645,7 @@ export default {
 
 .activity-cell {
   font-size: 12px;
-  padding: 5px 10px;
+  padding: 5px 13px;
   &__label {
     color: #666666;
   }

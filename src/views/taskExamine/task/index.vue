@@ -19,6 +19,7 @@
           v-model="dueDate"
           type="date"
           placeholder="选择日期"
+          value-format="yyyy-MM-dd"
           @change="refreshList" />
         <span class="label">优先级</span>
         <el-select
@@ -34,7 +35,7 @@
 
         <span class="label">显示已完成</span>
         <el-switch
-          v-model="showHide"
+          v-model="showDone"
           @change="refreshList" />
       </flexbox>
 
@@ -42,13 +43,22 @@
         class="cell-section__bd"
         align="stretch"
         direction="column">
-        <div class="xr-cells">
+        <div
+          v-infinite-scroll="getList"
+          :infinite-scroll-disabled="scrollDisabled"
+          class="xr-cells">
           <task-cell
             v-for="(item, index) in list"
             :key="index"
             :data="item"
             :data-index="index"
             @on-handle="taskCellHandle" />
+          <p
+            v-if="loading"
+            class="scroll-bottom-tips">加载中...</p>
+          <p
+            v-if="noMore"
+            class="scroll-bottom-tips">没有更多了</p>
         </div>
         <div :class="['add', { 'unfold': isUnfold, 'is-close': !isUnfold }]">
           <i
@@ -111,12 +121,24 @@ export default {
   props: {},
   data() {
     return {
-      isUnfold: false, // 默认闭合
+      // 默认闭合
+      isUnfold: false,
+      // 任务类型 区分我的任务和下属任务
+      taskType: '',
       list: [],
+      loading: false,
+      noMore: false,
+      page: 1,
       type: '0',
       dueDate: '',
       priority: '',
-      showHide: true,
+      showDone: true,
+      // 任务总进程
+      progress: {
+        totalPage: 0,
+        // 总数量
+        totalRow: 0
+      },
       // 优先级
       priorityOptions: [
         { label: '全部', key: '' },
@@ -148,7 +170,7 @@ export default {
     ...mapGetters(['userInfo']),
 
     tabs() {
-      if (this.$route.params.type == 1) {
+      if (this.taskType == 1) {
         return [
           {
             label: '全部',
@@ -179,16 +201,24 @@ export default {
           }
         ]
       }
+    },
+
+    // 无线滚动控制
+    scrollDisabled() {
+      return this.loading || this.noMore
     }
   },
   watch: {},
   mounted() {
-    this.getList()
+    this.taskType = this.$route.params.type
   },
   beforeRouteUpdate(to, from, next) {
+    this.taskType = to.params.type
+    this.showDone = true
     this.type = '0'
     this.dueDate = ''
     this.priority = ''
+
     this.refreshList()
     next()
   },
@@ -199,13 +229,15 @@ export default {
      * 头部逻辑
      */
     progressFormat(percentage) {
-      return '1/6'
+      return `${this.progress.totalPage}/${this.progress.totalRow}`
     },
 
     /**
      * 刷新列表
      */
     refreshList() {
+      this.noMore = false
+      this.page = 1
       this.list = []
       this.getList()
     },
@@ -216,27 +248,37 @@ export default {
     getList() {
       this.loading = true
       const params = {
-        page: 1,
+        page: this.page,
         limit: 15,
         type: this.type,
         priority: this.priority,
-        dueDate: this.dueDate
+        dueDate: this.dueDate,
+        status: this.showDone ? '' : '1'
       }
-      console.log('this.$route.params.type---', this.$route.params.type)
-      if (this.$route.params.type != 1) {
-        params.mold = 1
+
+      if (this.taskType != 1) {
+        params.mold = 1 // 下属任务
       }
 
       taskListAPI(params)
         .then(res => {
-          for (const item of res.data.list) {
-            if (item.status == 5) {
-              item.checked = true
+          this.loading = false
+          this.noMore = res.data.list.length == 0
+          if (!this.noMore) {
+            for (const item of res.data.list) {
+              if (item.status == 5) {
+                item.checked = true
+              }
             }
+            this.list = this.list.concat(res.data.list)
+            this.page++
           }
-          this.list = this.list.concat(res.data.list)
+          this.progress = res.data
         })
-        .catch(() => {})
+        .catch(() => {
+          this.noMore = true
+          this.loading = false
+        })
     },
 
     /**
@@ -342,7 +384,6 @@ export default {
 .xr-cells {
   flex: 1;
   overflow: auto;
-  overflow: overlay;
 }
 
 // 添加
