@@ -3,10 +3,10 @@ export default {
     /**
      * 获取图标
      */
-    getCategoryIcon(categoryId) {
+    getCategoryIcon(type) {
       // 系统审批
-      categoryId = parseInt(categoryId)
-      if (categoryId <= 6 && categoryId > 0) {
+      type = parseInt(type)
+      if (type <= 6 && type > 0) {
         return [
           {
             icon: 'approve',
@@ -32,7 +32,7 @@ export default {
             icon: 'go-out',
             color: '#FF6033'
           }
-        ][categoryId - 1]
+        ][type - 1]
       } else {
         return {
           icon: 'approve',

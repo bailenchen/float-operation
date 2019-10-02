@@ -6,11 +6,20 @@
       @change="tabsChange"
       @select="tabsSelect" />
 
-    <div class="cell-section">
+    <div
+      v-infinite-scroll="getList"
+      :infinite-scroll-disabled="scrollDisabled"
+      class="cell-section">
       <examine-cell
         v-for="(item, index) in list"
         :key="index"
         :data="item" />
+      <p
+        v-if="loading"
+        class="scroll-bottom-tips">加载中...</p>
+      <p
+        v-if="noMore"
+        class="scroll-bottom-tips">没有更多了</p>
     </div>
   </div>
 </template>
@@ -51,17 +60,24 @@ export default {
         }
       ],
       list: [],
+      loading: false,
+      noMore: false,
+      page: 1,
       // 空是全部
       selectId: '',
       // 空是全部
       status: ''
     }
   },
-  computed: {},
+  computed: {
+    // 无线滚动控制
+    scrollDisabled() {
+      return this.loading || this.noMore
+    }
+  },
   watch: {},
   mounted() {
     this.getSelectList()
-    this.getList()
   },
 
   beforeDestroy() {},
@@ -70,6 +86,8 @@ export default {
      * 刷新列表
      */
     refreshList() {
+      this.noMore = false
+      this.page = 1
       this.list = []
       this.getList()
     },
@@ -80,7 +98,7 @@ export default {
     getList() {
       this.loading = true
       const params = {
-        page: 1,
+        page: this.page,
         limit: 15,
         categoryId: this.selectId
       }
@@ -88,9 +106,17 @@ export default {
 
       oaExamineMyExamineIndex(params)
         .then(res => {
-          this.list = this.list.concat(res.data.list)
+          this.loading = false
+          if (!this.noMore) {
+            this.list = this.list.concat(res.data.list)
+            this.page++
+          }
+          this.noMore = res.data.list.length < 15
         })
-        .catch(() => {})
+        .catch(() => {
+          this.noMore = true
+          this.loading = false
+        })
     },
 
     /**
@@ -100,7 +126,7 @@ export default {
       oaExamineCategoryList()
         .then(res => {
           this.selectList = res.data.map(item => {
-            const iconItem = this.getCategoryIcon(item.categoryId)
+            const iconItem = this.getCategoryIcon(item.type)
             iconItem.label = item.title
             iconItem.command = item.categoryId
             return iconItem

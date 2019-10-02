@@ -79,7 +79,7 @@ export default {
   },
   computed: {
     iconObj() {
-      return this.getCategoryIcon(this.data.categoryId)
+      return this.getCategoryIcon(this.data.type)
     }
   },
   watch: {},

@@ -62,7 +62,7 @@ export default {
         .then(res => {
           this.loading = false
           this.categorys = res.data.map(item => {
-            item.iconClass = this.getCategoryIcon(item.categoryId)
+            item.iconClass = this.getCategoryIcon(item.type)
             return item
           })
         })
@@ -83,10 +83,10 @@ export default {
     /**
      * 获取图标
      */
-    getCategoryIcon(categoryId) {
+    getCategoryIcon(type) {
       // 系统审批
-      categoryId = parseInt(categoryId)
-      if (categoryId <= 6) {
+      type = parseInt(type)
+      if (type <= 6) {
         return [
           'wukong-examine-category-ordinary',
           'wukong-examine-category-leave',
@@ -94,7 +94,7 @@ export default {
           'wukong-examine-category-overtime',
           'wukong-examine-category-billing',
           'wukong-examine-category-borrowing'
-        ][categoryId - 1]
+        ][type - 1]
       } else {
         return [
           'wukong-examine-category-one',
@@ -106,7 +106,7 @@ export default {
           'wukong-examine-category-seven',
           'wukong-examine-category-eight',
           'wukong-examine-category-nine'
-        ][categoryId % 9]
+        ][type % 9]
       }
     }
   }
