@@ -34,7 +34,7 @@
           :selected-data="{ 'contacts': list }"
           crm-type="contacts"
           @close="showRelativeView = false"
-          @changeCheckout="checkRelativeInfos"/>
+          @changeCheckout="checkRelativeInfos" />
         <el-button
           slot="reference"
           class="rc-head-item"
@@ -45,6 +45,7 @@
 
     </flexbox>
     <el-table
+      v-show="fieldList.length > 0"
       :data="list"
       :height="tableHeight"
       :header-cell-style="headerRowStyle"
@@ -54,39 +55,60 @@
       @row-click="handleRowClick"
       @selection-change="selectionList = $event">
       <el-table-column
-        v-if="canRelation && fieldList.length > 0"
+        v-if="canRelation"
         show-overflow-tooltip
         type="selection"
         align="center"
-        width="55"/>
+        width="55" />
       <el-table-column
         v-for="(item, index) in fieldList"
         :key="index"
         :prop="item.prop"
         :label="item.label"
-        show-overflow-tooltip/>
+        show-overflow-tooltip />
+      <el-table-column
+        label="操作"
+        width="100">
+        <template slot-scope="scope">
+          <flexbox justify="center">
+            <span
+              v-if="contactsId == scope.row.contactsId"
+              class="chief">
+            <i class="wk wk-success" />首要联系人</span>
+            <el-button
+              v-else
+              class="set-chief-btn"
+              type="text"
+              @click.native="setChieflyContacts(scope)">设为首要联系人</el-button>
+          </flexbox>
+        </template>
+      </el-table-column>
     </el-table>
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
-      :id="contactsId"
-      crm-type="contacts"/>
+      :id="detailId"
+      crm-type="contacts" />
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
       crm-type="contacts"
       @save-success="createSaveSuccess"
-      @hiden-view="isCreate=false"/>
+      @hiden-view="isCreate=false" />
   </div>
 </template>
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
-import { crmCustomerQueryContacts } from '@/api/customermanagement/customer'
+import {
+  crmCustomerQueryContacts,
+  crmCustomerSetContactsAPI
+} from '@/api/customermanagement/customer'
 import {
   crmBusinessQueryContactsAPI,
   crmBusinessRelateContactsAPI,
-  crmBusinessUnrelateContactsAPI
+  crmBusinessUnrelateContactsAPI,
+  crmBusinessSetContactsAPI
 } from '@/api/customermanagement/business'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 
@@ -99,19 +121,21 @@ export default {
   },
   mixins: [loading],
   props: {
-    /** 模块ID */
+    // 模块ID
     id: [String, Number],
-    /** 没有值就是全部类型 有值就是当个类型 */
+    // 首要联系人ID
+    contactsId: [String, Number],
+    // 客户类型
     crmType: {
       type: String,
       default: ''
     },
-    /** 是公海 默认是客户 */
+    // 是公海 默认是客户
     isSeas: {
       type: Boolean,
       default: false
     },
-    /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 */
+    // 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息
     detail: {
       type: Object,
       default: () => {
@@ -126,15 +150,15 @@ export default {
       fieldList: [],
       tableHeight: '400px',
       showFullDetail: false,
-      isCreate: false, // 控制新建
-      contactsId: '', // 查看全屏联系人详情的 ID
+      // 控制新建
+      isCreate: false,
+      // 查看全屏联系人详情的 ID
+      detailId: '',
       // 创建的相关信息
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {}},
-      /**
-       * 关联的逻辑
-       */
-      showRelativeView: false, // 控制关联信息视图
-      selectionList: [] // 取消关联勾选的数据
+      // 关联的逻辑
+      showRelativeView: false,
+      selectionList: []
     }
   },
   computed: {
@@ -251,22 +275,36 @@ export default {
           this.loading = false
         })
     },
-    // 当某一行被点击时会触发该事件
+
+    /**
+     * 当某一行被点击时会触发该事件
+     */
     handleRowClick(row, column, event) {
-      this.contactsId = row.contactsId
-      this.showFullDetail = true
+      if (column.property) {
+        this.detailId = row.contactsId
+        this.showFullDetail = true
+      }
     },
-    /** 通过回调控制表头style */
+
+    /**
+     * 通过回调控制表头style
+     */
     headerRowStyle({ row, column, rowIndex, columnIndex }) {
       return { textAlign: 'center' }
     },
-    /** 通过回调控制style */
+
+    /**
+     * 通过回调控制style
+     */
     cellStyle({ row, column, rowIndex, columnIndex }) {
       return { textAlign: 'center' }
     },
-    /** 新建 */
+
+    /**
+     * 新建
+     */
     createClick() {
-      /** 客户 下新建联系人 */
+      //  客户 下新建联系人
       if (this.crmType == 'customer') {
         this.createActionInfo.data['customer'] = this.detail
       } else if (this.crmType == 'business') {
@@ -283,10 +321,47 @@ export default {
       } else {
         this.getDetail()
       }
+    },
+
+    /**
+     * 设置首要联系人
+     */
+    setChieflyContacts(data) {
+      const request = {
+        customer: crmCustomerSetContactsAPI,
+        business: crmBusinessSetContactsAPI
+      }[this.crmType]
+
+      const params = { contactsId: data.row.contactsId }
+      params[this.crmType + 'Id'] = this.id
+      this.loading = true
+      request(params)
+        .then(res => {
+          this.$message.success('操作成功')
+          this.$emit('update:contactsId', data.row.contactsId)
+          this.loading = false
+        })
+        .catch(data => {
+          this.loading = false
+        })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 @import '../styles/relativecrm.scss';
+
+.set-chief-btn {
+  font-size: 12px;
+}
+
+.chief {
+  font-size: 12px;
+  color: #333;
+  i {
+    font-size: 14px;
+    color: #389e0b;
+    margin-right: 3px;
+  }
+}
 </style>

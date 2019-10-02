@@ -197,3 +197,16 @@ export function crmBusinessQueryContactsAPI(data) {
     data: data
   })
 }
+
+/**
+ * 设置首要联系人
+ * @param {*} data
+ *
+ */
+export function crmBusinessSetContactsAPI(data) {
+  return request({
+    url: 'CrmBusiness/setContacts',
+    method: 'post',
+    data: data
+  })
+}

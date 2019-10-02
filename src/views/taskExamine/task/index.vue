@@ -136,9 +136,9 @@ export default {
       showDone: true,
       // 任务总进程
       progress: {
-        totalPage: 0,
+        stopTask: 0,
         // 总数量
-        totalRow: 0
+        allTask: 0
       },
       // 优先级
       priorityOptions: [
@@ -230,7 +230,7 @@ export default {
      * 头部逻辑
      */
     progressFormat(percentage) {
-      return `${this.progress.totalPage}/${this.progress.totalRow}`
+      return `${this.progress.stopTask}/${this.progress.allTask}`
     },
 
     /**
@@ -274,7 +274,7 @@ export default {
             this.list = this.list.concat(res.data.list)
             this.page++
           }
-          this.progress = res.data
+          this.progress = res
         })
         .catch(() => {
           this.noMore = true

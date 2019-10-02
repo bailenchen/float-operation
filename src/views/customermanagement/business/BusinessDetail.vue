@@ -110,7 +110,8 @@
                 :type-list="logTyps"
                 :id="id"
                 :handle="activityHandle"
-                :crm-type="crmType" />
+                :crm-type="crmType"
+                :contacts-id.sync="firstContactsId" />
             </el-tab-pane>
           </el-tabs>
           <transition name="slide-fade">
@@ -267,7 +268,9 @@ export default {
         }
       ],
       // 展示重要信息
-      showImportInfo: true
+      showImportInfo: true,
+      // 首要联系人信息
+      firstContactsId: ''
     }
   },
   computed: {
@@ -294,13 +297,6 @@ export default {
       tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
-    },
-
-    /**
-     * 首要联系人ID
-     */
-    firstContactsId() {
-      return this.detailData ? this.detailData.contactsId || '' : ''
     },
 
     /**
@@ -361,6 +357,7 @@ export default {
      * 详情
      */
     getDetial() {
+      this.firstContactsId = ''
       this.loading = true
       this.getBusinessStatusById()
       crmBusinessRead({
@@ -369,6 +366,7 @@ export default {
         .then(res => {
           this.loading = false
           this.detailData = res.data
+          this.firstContactsId = this.detailData.contactsId
 
           this.headDetails[0].value = res.data.customerName
 

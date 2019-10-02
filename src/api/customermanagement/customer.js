@@ -359,3 +359,16 @@ export function crmCustomerDealStatusAPI(data) {
     data: data
   })
 }
+
+/**
+ * 设置首要联系人
+ * @param {*} data
+ *
+ */
+export function crmCustomerSetContactsAPI(data) {
+  return request({
+    url: 'CrmCustomer/setContacts',
+    method: 'post',
+    data: data
+  })
+}

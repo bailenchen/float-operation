@@ -43,7 +43,8 @@
                 :id="id"
                 :handle="activityHandle"
                 :is-seas="isSeasDetail"
-                :crm-type="crmType" />
+                :crm-type="crmType"
+                :contacts-id.sync="firstContactsId" />
             </el-tab-pane>
           </el-tabs>
           <transition name="slide-fade">
@@ -179,7 +180,9 @@ export default {
         }
       ],
       // 展示重要信息
-      showImportInfo: true
+      showImportInfo: true,
+      // 首要联系人信息
+      firstContactsId: ''
     }
   },
   computed: {
@@ -214,13 +217,6 @@ export default {
         return this.detailData.isPool == 1
       }
       return this.isSeas
-    },
-
-    /**
-     * 首要联系人ID
-     */
-    firstContactsId() {
-      return this.detailData ? this.detailData.contactsId || '' : ''
     },
 
     /**
@@ -281,6 +277,7 @@ export default {
      * 详情
      */
     getDetial() {
+      this.firstContactsId = ''
       this.loading = true
       crmCustomerRead({
         customerId: this.id
@@ -288,6 +285,8 @@ export default {
         .then(res => {
           this.loading = false
           this.detailData = res.data
+          this.firstContactsId = this.detailData.contactsId
+
           // 负责人
           this.headDetails[0].value = res.data.客户级别
           const dealItem = this.headDetails[1]
