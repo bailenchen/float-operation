@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       loading: true,
-      status: '已成交',
+      status: 1,
       options: [
         {
           label: '已成交',

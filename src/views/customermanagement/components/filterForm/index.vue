@@ -73,7 +73,7 @@
                   :value="item"/>
               </el-select>
               <el-select
-                v-else-if="formItem.formType === 'checkStatus'"
+                v-else-if="formItem.formType === 'checkStatus' || formItem.formType === 'dealStatus'"
                 v-model="formItem.value"
                 placeholder="请选择筛选条件">
                 <el-option
@@ -327,7 +327,8 @@ export default {
         formType == 'select' ||
         formType == 'checkbox' ||
         formType == 'user' ||
-        formType == 'checkStatus'
+        formType == 'checkStatus' ||
+        formType == 'dealStatus'
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
@@ -400,7 +401,8 @@ export default {
           formItem.value = ''
         } else if (
           formItem.formType == 'select' ||
-          formItem.formType == 'checkStatus'
+          formItem.formType == 'checkStatus' ||
+          formItem.formType == 'dealStatus'
         ) {
           formItem.setting = obj.setting || []
           formItem.value = ''
