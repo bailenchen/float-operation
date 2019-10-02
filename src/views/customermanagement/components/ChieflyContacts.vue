@@ -39,7 +39,7 @@
     </flexbox>
 
     <import-info-empty
-      v-else
+      v-else-if="!contactsId"
       :title="emptyName"
       :btn-name="emptyBtnName"
       class="empty-info"
@@ -68,6 +68,7 @@ export default {
   },
   props: {
     id: [Number, String],
+    contactsId: [Number, String],
     crmType: {
       required: true,
       type: String,
@@ -84,7 +85,7 @@ export default {
   computed: {
     // 有首要联系人
     hasInfo() {
-      return this.id
+      return this.contactsId
     },
 
     // 联系人文字头像
@@ -110,15 +111,21 @@ export default {
     }
   },
   watch: {
-    id() {
+    contactsId() {
       this.detail = null
+      this.getDetial()
+    },
+
+    id() {
       this.list = []
+      this.detail = null
+      this.getBaseInfo()
       this.getDetial()
     }
   },
   mounted() {
-    console.log(this.$listeners, this.$attrs)
     this.getDetial()
+    this.getBaseInfo()
   },
 
   beforeDestroy() {},
@@ -130,7 +137,7 @@ export default {
       if (this.hasInfo) {
         this.loading = true
         crmContactsRead({
-          contactsId: this.id
+          contactsId: this.contactsId
         })
           .then(res => {
             this.loading = false
@@ -139,7 +146,6 @@ export default {
           .catch(() => {
             this.loading = false
           })
-        this.getBaseInfo()
       }
     },
 
@@ -156,7 +162,7 @@ export default {
     getBaseInfo() {
       this.loading = true
       filedGetInformation({
-        types: crmTypeModel['contacts'],
+        types: crmTypeModel[this.crmType],
         id: this.id
       })
         .then(res => {

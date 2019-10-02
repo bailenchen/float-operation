@@ -58,7 +58,8 @@
                 name="chiefly-contacts"
                 lazy>
                 <chiefly-contacts
-                  :id="firstContactsId"
+                  :contacts-id="firstContactsId"
+                  :id="id"
                   :crm-type="crmType"
                   @add="addChieflyContacts"/>
               </el-tab-pane>

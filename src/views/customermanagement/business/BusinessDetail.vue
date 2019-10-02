@@ -125,7 +125,8 @@
                 name="chiefly-contacts"
                 lazy>
                 <chiefly-contacts
-                  :id="firstContactsId"
+                  :contacts-id="firstContactsId"
+                  :id="id"
                   :crm-type="crmType"/>
               </el-tab-pane>
             </el-tabs>
