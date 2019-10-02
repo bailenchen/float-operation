@@ -58,6 +58,8 @@ import empty from './directives/empty'
 Vue.use(empty)
 import photo from './directives/photo'
 Vue.use(photo)
+import debounce from './directives/clickDebounce'
+Vue.use(debounce)
 
 // 表情
 import {

@@ -239,3 +239,24 @@ div[lazy=loading] {
   font-size: 12px;
   color: #666;
 }
+
+// 金额展示
+.xr-money {
+  font-weight: 600;
+  color: #333;
+}
+
+.xr-money.green {
+  color: #20B559 !important;
+}
+
+.xr-money.red {
+  color: #F94E4E !important;
+}
+
+
+// 禁止交互
+.xr-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}

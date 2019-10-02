@@ -87,6 +87,7 @@
           </div>
 
           <el-button
+            v-debounce="send"
             icon="wk wk-top"
             class="send-btn"
             type="primary">发布</el-button>
@@ -308,6 +309,13 @@ export default {
       this.$nextTick(() => {
         this.$refs.input.focus()
       })
+    },
+
+    /**
+     * 创建任务
+     */
+    send() {
+      console.log(123123)
     },
 
     /**
