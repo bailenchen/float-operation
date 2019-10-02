@@ -15,7 +15,7 @@
           <span v-else class="no-data">暂无电话</span>
           <div class="deal-info">
             <span :class="[ 'mark', isDeal ? 'mark-suc' : 'mark-un' ]"><i
-              :class="dealIcon" />{{ detail.dealStatus }}</span>
+              :class="dealIcon" />{{ dealName }}</span>
           </div>
         </div>
       </div>
@@ -59,11 +59,15 @@ export default {
 
     // 是成交
     isDeal() {
-      return this.detail.dealStatus == '已成交'
+      return this.detail.dealStatus == 1
     },
 
     dealIcon() {
       return this.isDeal ? 'wk wk-success' : 'wk wk-close'
+    },
+
+    dealName() {
+      return this.isDeal ? '已成交' : '未成交'
     }
   },
   watch: {

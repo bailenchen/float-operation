@@ -88,7 +88,7 @@
           <template slot-scope="scope">
             <template v-if="item.prop == 'dealStatus'">
               <i :class="scope.row[item.prop] | dealIcon"/>
-              <span>{{ scope.row[item.prop] }}</span>
+              <span>{{ scope.row[item.prop] | dealName }}</span>
             </template>
             <template v-else>{{ scope.row[item.prop] }}</template>
           </template>
@@ -161,7 +161,11 @@ export default {
   },
   filters: {
     dealIcon(statu) {
-      return statu == '已成交' ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+      return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    },
+
+    dealName(statu) {
+      return statu == 1 ? '已成交' : '未成交'
     }
   },
   mixins: [table],

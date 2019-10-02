@@ -288,9 +288,15 @@ export default {
           this.headDetails[0].value = res.data.客户级别
           const dealItem = this.headDetails[1]
           dealItem.showIcon = true
-          dealItem.icon = res.data.dealStatus == '已成交' ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
-          dealItem.style = res.data.dealStatus == '已成交' ? { fontSize: '14px', color: '#20b559', marginRight: '3px' } : { fontSize: '14px', color: '#f95a5a', marginRight: '3px' }
-          dealItem.value = res.data.dealStatus
+          if (res.data.dealStatus == 1) {
+            dealItem.icon = 'wk wk-success deal-suc'
+            dealItem.style = { fontSize: '14px', color: '#20b559', marginRight: '3px' }
+            dealItem.value = '已成交'
+          } else {
+            dealItem.icon = 'wk wk-close deal-un'
+            dealItem.style = { fontSize: '14px', color: '#f95a5a', marginRight: '3px' }
+            dealItem.value = '未成交'
+          }
           this.headDetails[2].value = res.data.ownerUserName
           this.headDetails[3].value = res.data.updateTime
         })

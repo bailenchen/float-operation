@@ -69,11 +69,11 @@ export default {
       options: [
         {
           label: '已成交',
-          value: '已成交'
+          value: 1
         },
         {
           label: '未成交',
-          value: '未成交'
+          value: 0
         }
       ]
     }
