@@ -246,7 +246,7 @@ export default {
         contacts: crmContactsQueryBusiness,
         customer: crmCustomerQueryBusiness
       }[this.crmType]
-      const params = {}
+      const params = { pageType: 0 }
       params[this.crmType + 'Id'] = this.id
       request(params)
         .then(res => {
@@ -255,7 +255,7 @@ export default {
           }
           this.nopermission = false
           this.loading = false
-          this.list = res.data.list
+          this.list = res.data
         })
         .catch(data => {
           if (data.code == 102) {
