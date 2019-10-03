@@ -128,11 +128,6 @@
                   {{ scope.row.realname }}
                 </div>
               </template>
-              <template
-                slot="header"
-                slot-scope="scope">
-                <div class="table-head-name">{{ scope.column.label }}</div>
-              </template>
             </el-table-column>
             <el-table-column
               v-for="(item, index) in fieldList"
@@ -141,13 +136,7 @@
               :prop="item.field"
               :label="item.value"
               :formatter="tableFormatter"
-              show-overflow-tooltip>
-              <template
-                slot="header"
-                slot-scope="scope">
-                <div class="table-head-name">{{ scope.column.label }}</div>
-              </template>
-            </el-table-column>
+              show-overflow-tooltip/>
             <el-table-column/>
           </el-table>
           <div class="p-contianer">

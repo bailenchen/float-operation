@@ -2,7 +2,7 @@
   <div
     v-empty="list"
     class="rc-cont"
-    style="padding-right:250px;min-height:500px;">
+    style="padding-right:10%;min-height:500px;">
     <flexbox
       v-for="(item, index) in list"
       :key="index"

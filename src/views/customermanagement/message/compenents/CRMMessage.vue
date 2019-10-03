@@ -125,11 +125,6 @@
         width="100"
         align="center"
         fixed="right">
-        <template
-          slot="header"
-          slot-scope="scope">
-          <div class="table-head-name">{{ scope.column.label }}</div>
-        </template>
         <template slot-scope="scope">
           <div
             :style="getStatusStyle(scope.row.checkStatus)"

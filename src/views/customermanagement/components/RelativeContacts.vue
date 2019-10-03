@@ -353,6 +353,7 @@ export default {
 
 .set-chief-btn {
   font-size: 12px;
+  padding: 4px 12px;
 }
 
 .chief {

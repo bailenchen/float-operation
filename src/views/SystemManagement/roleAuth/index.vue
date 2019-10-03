@@ -91,13 +91,7 @@
                   :prop="item.field"
                   :label="item.label"
                   :key="index"
-                  show-overflow-tooltip>
-                  <template
-                    slot="header"
-                    slot-scope="scope">
-                    <div class="table-head-name">{{ scope.column.label }}</div>
-                  </template>
-                </el-table-column>
+                  show-overflow-tooltip/>
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <!-- <span class="el-icon-edit content-table-span"

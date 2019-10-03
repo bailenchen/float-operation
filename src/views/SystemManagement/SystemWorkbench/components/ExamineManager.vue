@@ -23,13 +23,7 @@
         :prop="item.prop"
         :width="item.width"
         :label="item.label"
-        show-overflow-tooltip>
-        <template
-          slot="header"
-          slot-scope="scope">
-          <div class="table-head-name">{{ scope.column.label }}</div>
-        </template>
-      </el-table-column>
+        show-overflow-tooltip/>
       <el-table-column/>
       <el-table-column
         fixed="right"

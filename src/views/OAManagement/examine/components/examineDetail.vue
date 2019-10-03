@@ -153,13 +153,7 @@
               :key="index"
               :prop="item.prop"
               :label="item.label"
-              show-overflow-tooltip>
-              <template
-                slot="header"
-                slot-scope="scope">
-                <div class="table-head-name">{{ scope.column.label }}</div>
-              </template>
-            </el-table-column>
+              show-overflow-tooltip/>
           </el-table>
         </create-sections>
         <create-sections
@@ -177,13 +171,7 @@
               :key="index"
               :prop="item.prop"
               :label="item.label"
-              show-overflow-tooltip>
-              <template
-                slot="header"
-                slot-scope="scope">
-                <div class="table-head-name">{{ scope.column.label }}</div>
-              </template>
-            </el-table-column>
+              show-overflow-tooltip/>
             <el-table-column
               label="发票"
               width="50">
@@ -557,14 +545,6 @@ export default {
       }
     }
   }
-}
-
-// 表头
-.table-head-name {
-  color: #909399;
-  font-size: 13px;
-  line-height: 23px;
-  padding: 0;
 }
 
 .detail-body {

@@ -46,13 +46,7 @@
               :label="item.label"
               :width="item.width"
               :formatter="fieldFormatter"
-              show-overflow-tooltip>
-              <template
-                slot="header"
-                slot-scope="scope">
-                <div class="table-head-name">{{ scope.column.label }}</div>
-              </template>
-            </el-table-column>
+              show-overflow-tooltip/>
             <el-table-column
               v-if="showPoolDayField"
               :resizable="false"
@@ -76,11 +70,6 @@
               width="100"
               align="center"
               fixed="right">
-              <template
-                slot="header"
-                slot-scope="scope">
-                <div class="table-head-name">{{ scope.column.label }}</div>
-              </template>
               <template slot-scope="scope">
                 <div
                   :style="getStatusStyle(scope.row.checkStatus)"
@@ -631,13 +620,6 @@ export default {
   display: inline-block;
   font-size: 12px;
   margin: 0 auto;
-}
-
-.table-head-name {
-  font-size: 14px;
-  color: #475059;
-  line-height: 23px;
-  padding: 0;
 }
 
 .el-table /deep/ thead th {

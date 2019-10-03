@@ -1,0 +1,92 @@
+.el-table /deep/ thead th:hover {
+  background-color: #E7EDF4;
+}
+
+
+.el-table /deep/ thead {
+  th {
+    padding: 8px 0;
+    background-color: $xr--background-color-base;
+  }
+
+  th.is-sortable {
+    padding: 3px;
+  }
+
+
+  th:hover {
+    background-color: #E7EDF4;
+  }
+
+  .cell {
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    .sort-caret {
+      transform: scale(0.8);
+    }
+
+    .sort-caret.ascending {
+      top: 7px;
+    }
+  }
+
+  .is-sortable.ascending,
+  .is-sortable.descending {
+    background-color: #E7EDF4;
+  }
+}
+
+.el-table /deep/ td {
+  padding: 8px 0;
+}
+
+.el-table /deep/ .el-table__row.current-row {
+  td:first-child::before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #5383ED;
+  }
+}
+
+.el-table /deep/ tbody tr td {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: $xr-border-line-color;
+  font-size: 13px;
+  color: #333;
+}
+
+
+.n-table--border {
+  border-width: 0;
+}
+
+.el-table::after {
+  display: none;
+}
+
+.el-table::before {
+  display: none;
+}
+
+// 分页
+.p-contianer {
+  position: relative;
+  background-color: white;
+  height: 44px;
+
+  .p-bar {
+    float: right;
+    margin: 5px 100px 0 0;
+  }
+}
