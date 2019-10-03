@@ -136,7 +136,7 @@
   </create-view>
 </template>
 <script type="text/javascript">
-import { filedGetField, filedValidates } from '@/api/customermanagement/common'
+import { filedGetField } from '@/api/customermanagement/common'
 import { OaExamineGetField } from '@/api/oamanagement/examine'
 import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import axios from 'axios'
@@ -148,7 +148,6 @@ import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import XhExpenses from './xhExpenses' // 报销事项
 import XhLeaves from './xhLeaves' // 出差事项
 import RelatedBusiness from './relatedBusiness'
-import { isArray } from '@/utils/types'
 
 import {
   regexIsCRMNumber,
