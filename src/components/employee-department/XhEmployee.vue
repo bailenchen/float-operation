@@ -1,91 +1,113 @@
 <template>
   <el-popover
+    v-model="showPopver"
     :disabled="disabled"
     placement="bottom"
     width="300"
-    popper-class="no-padding-popover"
     trigger="click">
-    <xh-user
-      v-if="!disabled&&showSelectView"
+    <employee
       ref="xhuser"
-      :info-type="infoType"
-      :info-params="infoParams"
-      :radio="radio"
-      :selected-data="dataValue"
-      @changeCheckout="checkUsers"/>
-    <div slot="reference">
-      <flexbox
-        :class="[disabled ? 'is_disabled' : 'is_valid']"
-        wrap="wrap"
-        class="user-container"
-        @click.native="focusClick">
-        <div
-          v-for="(item, index) in dataValue"
-          :key="index"
-          class="user-item"
-          @click.stop="deleteuser(index)">{{ item.realname }}
-          <i class="delete-icon el-icon-close"/>
-        </div>
-        <div class="add-item">+{{ placeholder }}</div>
-      </flexbox>
-    </div>
-  </el-popover>
+      v-bind="$attrs">
+      <div slot="reference">
+        <flexbox
+          :class="[disabled ? 'is_disabled' : 'is_valid']"
+          wrap="wrap"
+          class="user-container"
+          @click.native="focusClick">
+          <div
+            v-for="(item, index) in showValue"
+            :key="index"
+            class="user-item"
+            @click.stop="deleteuser(index)">{{ item.realname }}
+            <i class="delete-icon el-icon-close"/>
+          </div>
+          <div class="add-item">+{{ placeholder }}</div>
+        </flexbox>
+      </div>
+  </employee></el-popover>
 
 </template>
 <script type="text/javascript">
-import XhUser from './XhUser'
-import arrayMixin from './arrayMixin'
+import { usersList } from '@/api/common'
+import Employee from './Employee'
 
 export default {
-  name: 'XhUserCell', // 新建 user-cell
+  name: 'XhEmployee',
   components: {
-    XhUser
+    Employee
   },
-  mixins: [arrayMixin],
+  inheritAttrs: false,
   props: {
     radio: {
-      // 是否单选
       type: Boolean,
       default: true
     },
+
     placeholder: {
       type: String,
       default: '添加员工'
     },
-    /** 获取不同的员工展示列表 */
-    infoType: {
-      type: String,
-      default: 'default' // 返回全部  crm_contract crm_receivables oa_examine 合同审核人自选列表
-    },
-    /** 请求辅助参数 */
-    infoParams: {
-      type: Object,
-      default: () => {
-        return {}
-      }
+
+    // 自定义请求
+    request: Function,
+    // 请求辅助参数
+    params: Object,
+
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      showPopover: false, // 展示popover
-      showSelectView: false // 展示选择内容列表
+      showValue: [],
+      list: [],
+      showPopver: false
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    showPopver(val) {
+      if (val && this.list.length == 0) {
+        this.getList()
+      }
+    }
+  },
   mounted() {},
   methods: {
+    /**
+     * 获取列表
+     */
+    getList() {
+      this.loading = true
+      const request = this.request || usersList
+      const params = this.params || {}
+      params.pageType = 0
+
+      request()(params)
+        .then(res => {
+          this.list = res.data
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
     /** 选中 */
     checkUsers(data) {
-      this.dataValue = data
+      this.dataValue = data.data
       this.$emit('value-change', {
         item: this.item,
         index: this.index,
-        value: data
+        value: data.data
       })
     },
     /** 删除 */
     deleteuser(index) {
+      if (this.$refs.xhuser) {
+        this.$refs.xhuser.cancelCheckItem(this.dataValue[index])
+      }
       this.dataValue.splice(index, 1)
       this.$emit('value-change', {
         item: this.item,

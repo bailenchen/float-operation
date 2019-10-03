@@ -4,21 +4,14 @@
     :placement="placement"
     :width="popoverWidth"
     v-model="popoverVisible"
-    popper-class="project-com-popover"
+    popper-class="no-padding-popover"
     trigger="click">
     <div v-if="popoverContentShow">
-      <div class="title-icon">
-        <span>{{ title }}</span>
-        <span
-          class="el-icon-close rt"
-          @click="popoverVisible = false"/>
-      </div>
       <div class="popover-content-box">
         <div class="select-input">
           <!-- 搜索员工列表 -->
           <el-tabs
             v-model="activeTabName"
-            :stretch="true"
             @tab-click="tabClick">
             <el-tab-pane
               v-loading="userLoading"
@@ -28,24 +21,32 @@
               <el-input
                 v-model="searchUserInput"
                 placeholder="搜索员工"
-                size="mini"
+                size="small"
                 prefix-icon="el-icon-search"
-                @input="userSearchChange"/>
+                class="search-input"
+                @input="userSearchChange" />
               <div class="search-list">
-                <div
-                  v-for="(user, index) in userList"
-                  v-if="!user.hidden"
-                  :key="index"
-                  class="colleagues-list">
-                  <el-checkbox
-                    v-model="user.isCheck"
-                    @change="userCheckboxChange(user, index)">
-                    <div
-                      v-photo="user"
-                      v-lazy:background-image="$options.filters.filterUserLazyImg(user.img)"
-                      class="div-photo search-img header-circle"/>
-                    <span>{{ user.realname }}</span>
-                  </el-checkbox>
+                <el-checkbox
+                  :indeterminate="isIndeterminate"
+                  v-model="checkAll"
+                  class="all-check"
+                  @change="handleCheckAllChange">全选</el-checkbox>
+                <div class="checkout-boxs">
+                  <div
+                    v-for="(user, index) in userList"
+                    v-if="!user.hidden"
+                    :key="index"
+                    class="colleagues-list">
+                    <el-checkbox
+                      v-model="user.isCheck"
+                      @change="userCheckboxChange(user, index)">
+                      <div
+                        v-photo="user"
+                        v-lazy:background-image="$options.filters.filterUserLazyImg(user.img)"
+                        class="div-photo search-img header-circle" />
+                      <span>{{ user.realname }}</span>
+                    </el-checkbox>
+                  </div>
                 </div>
               </div>
             </el-tab-pane>
@@ -57,10 +58,11 @@
               <el-input
                 v-model="searchDepInput"
                 placeholder="搜索部门"
-                size="mini"
+                size="small"
                 style="margin-bottom:10px;"
                 prefix-icon="el-icon-search"
-                @input="depSearchChange"/>
+                class="search-input"
+                @input="depSearchChange" />
               <div class="search-list">
                 <el-breadcrumb separator-class="el-icon-arrow-right">
                   <el-breadcrumb-item
@@ -71,19 +73,21 @@
                       @click="breadcrumbBtn(item, index)">{{ item.label }}</a>
                   </el-breadcrumb-item>
                 </el-breadcrumb>
-                <div
-                  v-for="(depItem, index) in depShowList"
-                  v-if="!depItem.hidden"
-                  :key="index"
-                  class="checkout-box">
-                  <el-checkbox
-                    v-model="depItem.isCheck"
-                    @change="depCheckboxChange(depItem, index)"/>
-                  <div @click="enterDepChildren(depItem)">
-                    <span>{{ depItem.name }}</span>
-                    <span
-                      v-if="depItem.children"
-                      class="el-icon-arrow-right"/>
+                <div class="checkout-boxs">
+                  <div
+                    v-for="(depItem, index) in depShowList"
+                    v-if="!depItem.hidden"
+                    :key="index"
+                    class="checkout-box">
+                    <el-checkbox
+                      v-model="depItem.isCheck"
+                      @change="depCheckboxChange(depItem, index)" />
+                    <div @click="enterDepChildren(depItem)">
+                      <span>{{ depItem.name }}</span>
+                      <span
+                        v-if="depItem.children"
+                        class="el-icon-arrow-right" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -92,49 +96,37 @@
         </div>
         <div class="checked-content">
           <div class="checked-top">
-            <span class="title">已选择</span>
-            <span
-              v-if="!closeUser"
-              class="title">员工 ({{ userSelectCount }})</span>
-            <span
-              v-if="!closeDep"
-              class="title">部门 ({{ depSelectCount }})</span>
+            <span class="select-info">已选择<span class="select-info--num">{{ userSelectCount + depSelectCount }}</span>项</span>
             <el-button
               type="text"
-              class="rt"
-              @click="emptyClick">清空</el-button>
+              @click="clearAll">清空</el-button>
           </div>
-          <div class="border-content">
-            <div
-              v-for="(item, index) in checkedUserDepList"
-              :key="index"
-              class="checked-list">
-              <div
-                v-photo="item"
-                v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-                v-if="item.type == 'user'"
-                class="div-photo"/>
-              <span v-if="item.type == 'user'"> {{ item.realname }} </span>
-              <span v-else> {{ item.name }} </span>
+          <div class="select-content">
+            <flexbox
+              justify="stretch"
+              wrap="wrap">
               <span
-                class="rt el-icon-close"
-                @click="selectDelect(item, index)"/>
-            </div>
+                v-for="(item, index) in checkedUserDepList"
+                :key="index"
+                class="select-item">{{ item.realname || item.name }}<i
+                  class="el-icon-close"
+                  @click="selectDelete(item, index)" /></span>
+            </flexbox>
           </div>
         </div>
       </div>
       <div class="popover-footer">
+        <el-button @click="popoverVisible = false">取 消</el-button>
         <el-button
           type="primary"
           @click="popoverSubmit">确 定</el-button>
-        <el-button @click="popoverVisible = false">取 消</el-button>
       </div>
     </div>
     <div
       slot="reference"
       :style="{'display':contentBlock ? 'block' : 'inline-block'}"
       @click="showContentClick">
-      <slot name="membersDep"/>
+      <slot name="membersDep" />
     </div>
   </el-popover>
 
@@ -147,11 +139,6 @@ export default {
     popoverWidth: {
       type: String,
       default: '600'
-    },
-    // 标题
-    title: {
-      type: String,
-      default: '选择成员'
     },
     // 显示位置
     placement: {
@@ -196,6 +183,8 @@ export default {
       searchUserInput: '',
       searchDepInput: '',
       popoverVisible: false,
+      checkAll: false,
+      isIndeterminate: false,
       // 内容展示
       popoverContentShow: false,
       // 加载动画
@@ -234,6 +223,12 @@ export default {
       if (val) {
         this.updateCheckInfoByWatch()
       }
+    },
+    userList() {
+      const selectItems = this.userList.filter(item => {
+        return item.isCheck
+      })
+      this.refreshAllCheck(selectItems.length)
     }
   },
   methods: {
@@ -377,6 +372,32 @@ export default {
       this.$set(this.userList, aindex, item)
       this.updateCheckedUserDepListByCheck(item, 'user')
     },
+
+    /**
+     * 刷新总check
+     */
+    refreshAllCheck(checkedCount) {
+      this.checkAll = checkedCount === this.userList.length
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.userList.length
+    },
+
+    /**
+     * 全部勾选
+     */
+    handleCheckAllChange(val) {
+      const depList = this.checkedUserDepList.filter(item => {
+        return item.type == 'dep'
+      })
+
+      this.userList = this.userList.map(item => {
+        item.isCheck = val
+        return item
+      })
+
+      this.checkedUserDepList = val ? depList.concat(this.userList) : depList
+    },
+
     // check 操作后的 存储数据刷新
     updateCheckedUserDepListByCheck(item, type) {
       var removeIndex = -1
@@ -416,7 +437,7 @@ export default {
      * 删除 清空 等操作
      */
     // 删除一个选择员工或部门
-    selectDelect(selectItem, index) {
+    selectDelete(selectItem, index) {
       this.checkedUserDepList.splice(index, 1)
       if (selectItem.type == 'dep') {
         this.depShowList = this.depShowList.map((item, index, array) => {
@@ -444,15 +465,17 @@ export default {
       )
     },
     // 清空按钮
-    emptyClick() {
+    clearAll() {
       this.checkedUserDepList = []
-      for (let index = 0; index < this.userList.length; index++) {
-        this.userList[index].isCheck = false
-      }
+      this.userList = this.userList.map(item => {
+        item.isCheck = false
+        return item
+      })
 
-      for (let index = 0; index < this.depShowList.length; index++) {
-        this.depShowList[index].isCheck = false
-      }
+      this.depShowList = this.depShowList.map(item => {
+        item.isCheck = false
+        return item
+      })
     },
     // 内容可见
     showContentClick() {
@@ -474,10 +497,7 @@ export default {
             return item
           })
         )
-      this.userList = this.userList.map(item => {
-        item.isCheck = this.getItemCheckInfo(item, 'user')
-        return item
-      })
+
       this.depShowList = this.depShowList.map((item, index, array) => {
         item.isCheck = this.getItemCheckInfo(item, 'dep')
         return item
@@ -493,21 +513,32 @@ export default {
   display: flex;
   .select-input {
     flex: 1;
-    margin-right: 30px;
+    border-right: 1px solid $xr-border-line-color;
     .select-input > .el-input {
       margin: 10px 0;
     }
   }
   .select-input /deep/ .el-tabs {
-    .el-tabs__active-bar {
-      display: none;
+    /deep/ .el-tabs__nav-wrap {
+      padding: 0 12px;
     }
     .el-tabs__nav-wrap::after {
-      height: 0;
+      height: 1px;
     }
+
+    /deep/ .el-tabs__header {
+      margin-bottom: 12px;
+    }
+
+    /deep/ .el-tabs__item {
+      font-size: 12px;
+      color: #333;
+      padding-right: 0;
+    }
+
     .el-tabs__content {
-      border: 1px solid #e6e6e6;
-      height: 300px;
+      margin: 0 12px;
+      height: 220px;
       .el-checkbox {
         margin-left: 0;
         margin-right: 10px;
@@ -530,75 +561,68 @@ export default {
       }
     }
     .el-tab-pane {
-      padding: 10px;
       height: 100%;
-    }
-    .el-tab-pane > .el-input {
-      width: 90%;
-      margin: auto 5%;
-      .el-input__inner {
-        border-radius: 15px;
-      }
     }
   }
   .checked-content {
     flex: 1;
     .checked-top {
+      padding: 0 12px;
       height: 40px;
       line-height: 40px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid $xr-border-line-color;
       .title {
         color: #999999;
       }
     }
-    .border-content {
-      border: 1px solid #e6e6e6;
-      height: 300px;
+    .select-content {
+      padding: 0 12px;
+      height: 220px;
       overflow: auto;
-      padding: 20px 0;
-      @include scrollBar;
-      .checked-list {
-        height: 30px;
-        line-height: 30px;
-        padding: 0 20px;
-        cursor: pointer;
-        .el-icon-close {
-          opacity: 0;
-          margin-top: 8px;
-          margin-right: 0;
+      .select-item {
+        flex-shrink: 0;
+        display: inline-block;
+        background-color: #f3f7ff;
+        height: 28px;
+        line-height: 28px;
+        font-size: 12px;
+        padding: 0 5px;
+        border-radius: 4px;
+        color: #333;
+        margin: 0 10px 10px 0;
+
+        i {
+          cursor: pointer;
+          color: #666;
+          margin-left: 5px;
         }
-        .div-photo {
-          width: 24px;
-          height: 24px;
-          border-radius: 12px;
-          vertical-align: middle;
-          margin-right: 8px;
-        }
-      }
-      .checked-list:hover {
-        -webkit-box-shadow: 0 0 8px 2px #eee;
-        box-shadow: 0 0 8px 2px #eee;
-        .el-icon-close {
-          opacity: 1;
+
+        i:hover {
+          color: $xr-color-primary;
         }
       }
     }
   }
 }
-.title-icon {
-  padding: 10px 20px 15px;
-  border-bottom: 1px solid #e6e6e6;
-  margin-bottom: 10px;
-  font-size: 16px;
-  .el-icon-close {
-    font-size: 20px;
-    color: #ccc;
-    margin-right: 0;
-  }
-}
+
 .popover-footer {
-  float: right;
-  margin: 20px 0 0;
+  background-color: #f7f8fa;
+  padding: 0 10px;
+  height: 40px;
+  line-height: 40px;
+  border-top: 1px solid $xr-border-line-color;
+
+  .el-button {
+    float: right;
+    margin-top: 6px;
+    padding: 6px 12px;
+  }
+
+  .el-button + .el-button {
+    margin-left: 0;
+    margin-right: 10px;
+  }
 }
 /* 选择员工 */
 .search-img {
@@ -610,14 +634,48 @@ export default {
 }
 .search-list {
   margin: 5px;
-  height: 248px;
+  height: 180px;
   overflow: auto;
   margin-right: -10px;
   padding-right: 10px;
-  @include scrollBar;
 }
+
+.checkout-boxs {
+  height: 150px;
+  overflow: auto;
+}
+
 .colleagues-list {
-  padding: 5px;
+  padding: 5px 0;
+}
+
+// 选择信息
+.select-info {
+  display: inline-block;
+  width: calc(100% - 40px);
+
+  &--num {
+    color: $xr-color-primary;
+  }
+}
+
+// check样式
+.el-checkbox {
+  /deep/ .el-checkbox__label {
+    color: #333;
+  }
+}
+
+.all-check {
+  display: inline-block;
+  padding: 5px 0;
+}
+
+.search-input {
+  /deep/ .el-input__inner {
+    background-color: #F4F4F4;
+    border: none;
+  }
 }
 </style>
 

@@ -1,42 +1,52 @@
 <template>
-  <div>
-    <el-input
-      v-model="searchInput"
-      placeholder="搜索部门名称"
-      size="small"
-      suffix-icon="el-icon-search"
-      @input="inputchange"/>
-    <div
-      v-loading="loading"
-      class="search-list">
-      <el-breadcrumb
-        style="padding: 5px 0;"
-        separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item
-          v-for="(item, index) in breadcrumbList"
-          :key="index">
-          <a
-            href="javascript:;"
-            @click="breadcrumbBtn(item, index)">{{ item.label }}</a>
-        </el-breadcrumb-item>
-      </el-breadcrumb>
-      <flexbox
-        v-for="(item, index) in showlist"
-        v-if="item.show"
-        :key="index"
-        class="stru-list">
-        <el-checkbox
-          v-model="item.isCheck"
-          :disabled="item.disabled"
-          class="stru-check"
-          @change="checkChange(item, index)"/>
-        <div
-          class="stru-name"
-          @click="enterChildren(item)">{{ item.name }}</div>
-        <div
-          v-if="item.children"
-          class="el-icon-arrow-right stru-enter"/>
-      </flexbox>
+  <div class="xh-stru">
+    <div class="xh-stru__hd">
+      部门
+    </div>
+    <div class="xh-stru__bd">
+      <el-input
+        v-model="searchInput"
+        placeholder="搜索部门名称"
+        size="small"
+        prefix-icon="el-icon-search"
+        class="search-input"
+        @input="inputchange"/>
+      <div
+        v-loading="loading"
+        class="search-list">
+        <el-breadcrumb
+          style="padding: 5px 0;"
+          separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item
+            v-for="(item, index) in breadcrumbList"
+            :key="index">
+            <a
+              href="javascript:;"
+              @click="breadcrumbBtn(item, index)">{{ item.label }}</a>
+          </el-breadcrumb-item>
+        </el-breadcrumb>
+        <flexbox
+          v-for="(item, index) in showlist"
+          v-if="item.show"
+          :key="index"
+          class="stru-list">
+          <el-checkbox
+            v-model="item.isCheck"
+            :disabled="item.disabled"
+            class="stru-check"
+            @change="checkChange(item, index)"/>
+          <div
+            class="stru-name"
+            @click="enterChildren(item)">{{ item.name }}</div>
+          <div
+            v-if="item.children"
+            class="el-icon-arrow-right stru-enter"/>
+        </flexbox>
+      </div>
+    </div>
+    <div class="xh-stru__ft">
+      <span class="select-info">已选择<span class="select-info--num">{{ selectItems.length }}</span>项</span>
+      <el-button type="text" @click="clearAll">清空</el-button>
     </div>
   </div>
 </template>
@@ -143,7 +153,7 @@ export default {
         }
       }
 
-      this.$emit('changeCheckout', { data: this.selectItems })
+      this.$emit('changeCheckout', this.selectItems)
     },
     /** 数据重新刷新时 循环标记展示数组 */
     handelCheck(list) {
@@ -220,6 +230,15 @@ export default {
         }
         return item
       })
+    },
+
+    clearAll() {
+      this.selectItems = []
+      this.showlist = this.showlist.map(item => {
+        item.isCheck = false
+        return item
+      })
+      this.$emit('changeCheckout', this.selectItems)
     }
   }
 }
@@ -241,6 +260,55 @@ export default {
   }
   .stru-enter {
     margin-right: 8px;
+  }
+}
+
+// 框子
+.xh-stru {
+  color: #333;
+  font-size: 12px;
+  &__hd {
+    padding: 0 15px;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid $xr-border-line-color;
+  }
+
+  &__bd {
+    padding: 10px 12px;
+  }
+
+  &__ft {
+    padding: 5px 12px;
+    background: #f7f8fa;
+    border-top: 1px solid $xr-border-line-color;
+    .el-button {
+      font-size: 12px;
+    }
+  }
+}
+
+// 选择信息
+.select-info {
+  display: inline-block;
+  width: calc(100% - 30px);
+
+  &--num {
+    color: $xr-color-primary;
+  }
+}
+
+// check样式
+.el-checkbox {
+  /deep/ .el-checkbox__label {
+    color: #333;
+  }
+}
+
+.search-input {
+  /deep/ .el-input__inner {
+    background-color: #F4F4F4;
+    border: none;
   }
 }
 </style>

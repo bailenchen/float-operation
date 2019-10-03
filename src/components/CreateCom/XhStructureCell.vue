@@ -3,6 +3,7 @@
     :disabled="disabled"
     placement="bottom"
     width="300"
+    popper-class="no-padding-popover"
     trigger="click">
     <xh-structure
       v-if="!disabled && showSelectView"
@@ -57,10 +58,10 @@ export default {
   methods: {
     /** 选中 */
     checkStructure(data) {
-      this.dataValue = data.data
+      this.dataValue = data
       this.$emit('value-change', {
         index: this.index,
-        value: data.data
+        value: data
       })
     },
     /** 删除 */

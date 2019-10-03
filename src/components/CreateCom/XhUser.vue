@@ -1,31 +1,46 @@
 <template>
-  <div>
-    <el-input
-      v-model="searchInput"
-      placeholder="搜索成员"
-      size="small"
-      suffix-icon="el-icon-search"
-      @input="inputchange"/>
-    <div
-      v-loading="loading"
-      class="search-list">
-      <el-checkbox-group
-        v-model="selectItems"
-        @change="changeCheckout">
+  <div class="xh-user">
+    <div class="xh-user__hd">
+      员工
+    </div>
+    <div class="xh-user__bd">
+      <el-input
+        v-model="searchInput"
+        placeholder="搜索成员"
+        size="small"
+        prefix-icon="el-icon-search"
+        class="search-input"
+        @input="inputchange" />
+      <div
+        v-loading="loading"
+        class="search-list">
         <el-checkbox
-          v-for="(item, i) in list"
-          v-if="item.show"
-          :key="i"
-          :label="item"
-          :disabled="item.disabled"
-          class="colleagues-list">
-          <div
-            v-photo="item"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-            class="div-photo search-img"/>
-          <span>{{ item.realname }}</span>
-        </el-checkbox>
-      </el-checkbox-group>
+          :indeterminate="isIndeterminate"
+          v-model="checkAll"
+          class="all-check"
+          @change="handleCheckAllChange">全选</el-checkbox>
+        <el-checkbox-group
+          ref="checkboxGroup"
+          v-model="selectIds"
+          :max="max"
+          @change="changeCheckout">
+          <el-checkbox
+            v-for="(item, i) in showList"
+            :key="i"
+            :label="item.userId"
+            class="colleagues-list">
+            <div
+              v-photo="item"
+              v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+              class="div-photo search-img" />
+            <span>{{ item.realname }}</span>
+          </el-checkbox>
+        </el-checkbox-group>
+      </div>
+    </div>
+    <div class="xh-user__ft">
+      <span class="select-info">已选择<span class="select-info--num">{{ selectIds.length }}</span>项</span>
+      <el-button type="text" @click="clearAll">清空</el-button>
     </div>
   </div>
 </template>
@@ -69,12 +84,24 @@ export default {
   data() {
     return {
       list: [],
-      selectItems: [], // 选择项
+      selectIds: [], // 选择项
       loading: false, // 加载动画
-      searchInput: ''
+      searchInput: '',
+      checkAll: false,
+      isIndeterminate: false
     }
   },
-  computed: {},
+  computed: {
+    showList() {
+      return this.list.filter(item => {
+        return !item.hidden
+      })
+    },
+
+    max() {
+      return this.radio ? 1 : undefined
+    }
+  },
   watch: {
     selectedData: function(value) {
       this.checkItems(value)
@@ -84,36 +111,24 @@ export default {
     this.getUserList()
   },
   methods: {
-    // 获取员工列表
+    /**
+     * 获取数据
+     */
     getUserList() {
       this.loading = true
       this.getRequest()(this.getParams())
         .then(res => {
-          var self = this
-          this.list = res.data.map(function(item, index, array) {
-            item.disabled = false // 要求单选
-            item.show = true
-            if (self.selectedData.length > 0) {
-              let disabled = true
-              for (let index = 0; index < self.selectedData.length; index++) {
-                const element = self.selectedData[index]
-                if (element.userId == item.userId) {
-                  disabled = false
-                  self.selectItems.push(item)
-                }
-              }
-              if (self.radio) {
-                item.disabled = disabled
-              }
-            }
-            return item
-          })
+          this.list = res.data
           this.loading = false
         })
         .catch(() => {
           this.loading = false
         })
     },
+
+    /**
+     * 请求
+     */
     getRequest() {
       if (this.infoRequest) {
         return this.infoRequest
@@ -144,76 +159,75 @@ export default {
         return params
       }
     },
-    changeCheckout(items) {
-      if (this.radio) {
-        if (items.length) {
-          var element = items[0]
-          this.list = this.list.map(function(item, index, array) {
-            if (element.userId == item.userId) {
-              item.disabled = false
-            } else {
-              item.disabled = true
-            }
-            return item
-          })
-        } else {
-          this.list = this.list.map(function(item, index, array) {
-            item.disabled = false
-            return item
-          })
-        }
-      }
 
-      this.$emit('changeCheckout', { data: this.selectItems })
-    },
-    /** 取消勾选 */
-    cancelCheckItem(item) {
-      var removeIndex = -1
-      for (let index = 0; index < this.selectItems.length; index++) {
-        const element = this.selectItems[index]
-        if (element.userId == item.userId) {
-          removeIndex = index
+    /**
+     * 勾选
+     */
+    changeCheckout(val) {
+      this.refreshAllCheck(val.length)
+      const children = this.$refs.checkboxGroup.$children || []
+      const selectItems = []
+      for (let index = 0; index < children.length; index++) {
+        const check = children[index].isChecked
+        if (check) {
+          selectItems.push(this.list[index])
         }
       }
-      this.selectItems.splice(removeIndex, 1)
-      if (this.radio && this.selectItems.length == 0) {
-        this.list = this.list.map(function(item, index, array) {
-          item.disabled = false
-          return item
+      this.$emit('changeCheckout', selectItems, val)
+    },
+
+    /**
+     * 全部勾选
+     */
+    handleCheckAllChange(val) {
+      this.selectIds = val
+        ? this.list.map(item => {
+          return item.userId
         })
-      }
+        : []
+      this.isIndeterminate = false
+      const selectItems = val ? this.list : []
+      this.$emit('changeCheckout', selectItems, this.selectIds)
     },
-    /** 标记勾选 */
-    checkItems(items) {
-      this.selectItems = []
-      if (items.length > 0) {
-        for (let bigIndex = 0; bigIndex < this.list.length; bigIndex++) {
-          const item = this.list[bigIndex]
 
-          let disabled = true
-          for (let index = 0; index < items.length; index++) {
-            const element = items[index]
-            if (element.userId == item.userId) {
-              disabled = false
-              this.selectItems.push(item)
-            }
-          }
-          if (this.radio) {
-            item.disabled = disabled
-          }
-        }
-      }
+    /**
+     * 刷新总check
+     */
+    refreshAllCheck(checkedCount) {
+      this.checkAll = checkedCount === this.list.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.list.length
     },
-    // 搜索
+
+    /**
+     * 标记勾选
+     */
+    checkItems(items) {
+      this.selectIds = items.map(item => {
+        return item.userId
+      })
+      this.refreshAllCheck(this.selectIds.length)
+    },
+
+    /**
+     * 搜索
+     */
     inputchange(val) {
       this.list = this.list.map(function(item, index, array) {
         if (item.realname.indexOf(val) != -1) {
-          item.show = true
+          item.hidden = false
         } else {
-          item.show = false
+          item.hidden = true
         }
         return item
       })
+    },
+
+    /**
+     * 清空全部
+     */
+    clearAll() {
+      this.selectItems = []
+      this.$emit('changeCheckout', [], [])
     }
   }
 }
@@ -228,13 +242,66 @@ export default {
   margin-right: 8px;
 }
 .search-list {
-  padding: 5px;
-  height: 248px;
+  padding: 5px 0;
+  height: 200px;
   overflow: auto;
 }
 .colleagues-list {
-  padding: 5px;
+  padding: 5px 0;
   display: block;
   margin-left: 0;
+}
+
+.xh-user {
+  color: #333;
+  font-size: 12px;
+  &__hd {
+    padding: 0 15px;
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid $xr-border-line-color;
+  }
+
+  &__bd {
+    padding: 10px 12px;
+  }
+
+  &__ft {
+    padding: 5px 12px;
+    background: #f7f8fa;
+    border-top: 1px solid $xr-border-line-color;
+    .el-button {
+      font-size: 12px;
+    }
+  }
+}
+
+// 选择信息
+.select-info {
+  display: inline-block;
+  width: calc(100% - 30px);
+
+  &--num {
+    color: $xr-color-primary;
+  }
+}
+
+// check样式
+.el-checkbox {
+  /deep/ .el-checkbox__label {
+    color: #333;
+  }
+}
+
+.all-check {
+  display: inline-block;
+  padding: 5px 0;
+}
+
+.search-input {
+  /deep/ .el-input__inner {
+    background-color: #F4F4F4;
+    border: none;
+  }
 }
 </style>
