@@ -71,10 +71,12 @@
   border-width: 0;
 }
 
+// 右侧边线
 .el-table::after {
   display: none;
 }
 
+// 底部边线
 .el-table::before {
   display: none;
 }
