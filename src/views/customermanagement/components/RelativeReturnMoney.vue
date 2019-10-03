@@ -5,9 +5,10 @@
       class="rc-head"
       direction="row-reverse">
       <el-button
-        class="rc-head-item"
+        class="xr-btn--orange rc-head-item"
+        icon="el-icon-plus"
         type="primary"
-        @click.native="createClick('plan')">新建回款计划</el-button>
+        @click="createClick('plan')">新建回款计划</el-button>
     </flexbox>
     <el-table
       :data="palnList"
@@ -44,9 +45,10 @@
       style="margin-top: 15px;">
       <el-button
         v-if="!isSeas"
-        class="rc-head-item"
+        class="xr-btn--orange rc-head-item"
+        icon="el-icon-plus"
         type="primary"
-        @click.native="createClick('money')">新建回款</el-button>
+        @click="createClick('money')">新建回款</el-button>
     </flexbox>
     <el-table
       :data="list"

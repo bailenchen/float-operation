@@ -9,10 +9,10 @@
       class="rc-head"
       direction="row-reverse">
       <el-button
-        class="rc-head-item"
+        class="xr-btn--orange rc-head-item"
+        icon="el-icon-plus"
         type="primary"
-        @click.native="createClick">新建合同
-      </el-button>
+        @click="createClick">新建合同</el-button>
     </flexbox>
     <el-table
       :data="list"

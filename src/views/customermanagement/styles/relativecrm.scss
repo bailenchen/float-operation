@@ -1,32 +1,28 @@
 /**客户下相关信息 table 效果 */
 .rc-cont {
+  position: relative;
+  padding: 15px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-y: overlay;
+
+  .rc-head {
+    margin-bottom: 15px;
     position: relative;
-    padding: 15px;
-    height: 100%;
-    overflow-y: auto;
-    overflow-y: overlay;
-    .rc-head {
-        margin-bottom: 15px;
-        position: relative;
-        .rc-head-item {
-            font-size: 12px;
-            padding: 8px 5px;
-            border-radius: 2px;
-            margin-right: 20px;
-            margin-left: 0px;
-        }
-        .rc-head-item:first-child {
-            margin-right: 0;
-        }
+
+    .rc-head-item {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 4px;
     }
-}
 
-.el-table /deep/ thead th{
-    background-color: #F5F5F5;
-    font-weight: 400;
-    font-size: 12px;
-}
+    .rc-head-item:first-child {
+      margin-right: 0;
+    }
 
-.el-table /deep/ tbody{
-    font-size: 13px;
+    .el-button+.el-button {
+      margin-left: 0;
+      margin-right: 10px;
+    }
+  }
 }

@@ -13,9 +13,10 @@
         type="primary"
         @click.native="handleClick('edit')">编辑</el-button>
       <el-button
-        class="rc-head-item"
+        class="xr-btn--orange rc-head-item"
+        icon="el-icon-plus"
         type="primary"
-        @click.native="handleClick('add')">添加团队成员</el-button>
+        @click="handleClick('add')">团队成员</el-button>
     </flexbox>
     <el-table
       :data="list"
