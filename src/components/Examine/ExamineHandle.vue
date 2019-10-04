@@ -66,8 +66,9 @@ export default {
     show: {
       type: Boolean,
       default: false
-    }, // 审核状态 1 审核通过 2 审核拒绝 4 已撤回
-    /** 操作类型  1通过0拒绝2撤回*/ status: {
+    },
+    // 审核 1 审核通过 2 审核拒绝 4 已撤回
+    status: {
       type: [String, Number],
       default: 1
     },

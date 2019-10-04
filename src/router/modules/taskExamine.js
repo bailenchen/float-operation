@@ -33,15 +33,20 @@ const taskExamineLayout = {
       }
     },
     {
-      path: 'send',
-      component: () => import('@/views/taskExamine/examine/send'),
+      path: 'examine-index/:type',
+      hidden: true,
+      component: () => import('@/views/taskExamine/examine/index')
+    },
+    {
+      path: 'examine-index/my',
+      component: () => import('@/views/taskExamine/examine/index'),
       meta: {
         title: '我发出的审批',
         icon: 'apply-for'
       }
     },
     {
-      path: 'index',
+      path: 'examine-index/wait',
       component: () => import('@/views/taskExamine/examine/index'),
       meta: {
         title: '待我审批',

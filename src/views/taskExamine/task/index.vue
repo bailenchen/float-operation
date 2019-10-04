@@ -117,6 +117,7 @@
       ref="particulars"
       :id="taskID"
       :detail-index="detailIndex"
+      :no-listener-class="['xr-cells']"
       @close="taskDetailShow = false" />
   </div>
 </template>

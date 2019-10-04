@@ -6,6 +6,7 @@
     :id="id"
     :listener-ids="listenerIDs"
     :no-listener-ids="noListenerIDs"
+    :no-listener-class="noListenerClass"
     class="d-view"
     @handle="detailHandle"
     @hide-view="hiddenView"/>

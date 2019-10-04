@@ -8,7 +8,7 @@
       @tab-click="handleTabsClick">
       <el-tab-pane
         v-for="(item, index) in tabs"
-        :key="index"
+        :key="index + item.name"
         :label="item.label"
         :name="item.name"/>
     </el-tabs>

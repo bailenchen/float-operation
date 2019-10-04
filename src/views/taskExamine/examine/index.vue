@@ -4,7 +4,8 @@
       :tabs="tabs"
       :select-list="selectList"
       @change="tabsChange"
-      @select="tabsSelect" />
+      @select="tabsSelect"
+      @add="createClick" />
 
     <div
       v-infinite-scroll="getList"
@@ -13,7 +14,9 @@
       <examine-cell
         v-for="(item, index) in list"
         :key="index"
-        :data="item" />
+        :data="item"
+        :index="index"
+        @handle="cellHandle" />
       <p
         v-if="loading"
         class="scroll-bottom-tips">加载中...</p>
@@ -21,44 +24,81 @@
         v-if="noMore"
         class="scroll-bottom-tips">没有更多了</p>
     </div>
+
+    <!-- 创建 -->
+    <examine-category-select
+      :show="showCategorySelect"
+      @select="selcetExamineCategory"
+      @close="showCategorySelect=false" />
+    <examine-create-view
+      v-if="isCreate"
+      :category-id="createInfo.categoryId"
+      :type="createInfo.type"
+      :category-title="createInfo.title"
+      :action="createAction"
+      @save-success="refreshList"
+      @hiden-view="createHideView" />
+
+    <!-- 列表操作 -->
+    <examine-detail
+      v-if="showDview"
+      :id="rowID"
+      :no-listener-class="['examine-content']"
+      class="d-view"
+      @hide-view="showDview=false" />
+
+    <c-r-m-all-detail
+      :visible.sync="showRelatedDetail"
+      :crm-type="relatedCRMType"
+      :id="relatedID"
+      :no-listener-class="['relate-cell']" />
+
+    <examine-handle
+      :show="showExamineHandle"
+      :id="rowID"
+      :record-id="rowData.examineRecordId"
+      :detail="rowData"
+      :status="examineStatus"
+      examine-type="oa_examine"
+      @close="showExamineHandle = false" />
   </div>
 </template>
 
 <script>
 import {
   oaExamineCategoryList,
-  oaExamineMyExamineIndex
+  oaExamineMyExamineIndex,
+  oaExamineDelete
 } from '@/api/oamanagement/examine'
 import ExamineTabsHead from './components/ExamineTabsHead'
 import ExamineCell from './components/ExamineCell'
 import Examine from './components/ExamineMixin'
+import ExamineCategorySelect from '@/views/OAManagement/examine/components/examineCategorySelect'
+import ExamineCreateView from '@/views/OAManagement/examine//components/examineCreateView'
+
+import ExamineDetail from '@/views/OAManagement/examine/components/examineDetail'
+import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
+import ExamineHandle from '@/components/Examine/ExamineHandle'
 
 export default {
   /** 审批 */
   name: 'Index',
   components: {
     ExamineTabsHead,
-    ExamineCell
+    ExamineCell,
+    ExamineCategorySelect,
+    ExamineCreateView,
+
+    ExamineDetail,
+    CRMAllDetail,
+    ExamineHandle
   },
   mixins: [Examine],
   props: {},
   data() {
     return {
       selectList: [],
-      tabs: [
-        {
-          label: '全部',
-          name: 'all'
-        },
-        {
-          label: '待我审批的',
-          name: '1'
-        },
-        {
-          label: '我已审批的',
-          name: '2'
-        }
-      ],
+      examineType: '',
       list: [],
       loading: false,
       noMore: false,
@@ -66,18 +106,91 @@ export default {
       // 空是全部
       selectId: '',
       // 空是全部
-      status: ''
+      status: '',
+
+      // 新建
+      showCategorySelect: false,
+      isCreate: false, // 是创建
+      createAction: { type: 'save' },
+      createInfo: {}, // 创建所需要的id 标题名信息
+
+      // 控制详情展示
+      rowID: '',
+      rowData: {}, // 行全部信息
+      showDview: false,
+
+      // 相关详情的查看
+      relatedID: '',
+      relatedCRMType: '',
+      showRelatedDetail: false,
+
+      // 撤回操作
+      showExamineHandle: false,
+      recordId: '',
+      // 审核操作 1 审核通过 2 审核拒绝 4 已撤回
+      examineStatus: 1
     }
   },
   computed: {
     // 无线滚动控制
     scrollDisabled() {
       return this.loading || this.noMore
+    },
+
+    tabs() {
+      if (this.examineType == 'my') {
+        // checkStatus
+        return [
+          {
+            label: '全部',
+            name: 'all'
+          },
+          {
+            label: '待审批',
+            name: '0'
+          },
+          {
+            label: '审批通过',
+            name: '1'
+          },
+          {
+            label: '审批拒绝',
+            name: '2'
+          }
+        ]
+      } else if (this.examineType == 'wait') {
+        // status
+        return [
+          {
+            label: '全部',
+            name: 'all'
+          },
+          {
+            label: '待我审批的',
+            name: '1'
+          },
+          {
+            label: '我已审批的',
+            name: '2'
+          }
+        ]
+      }
+      return []
     }
   },
   watch: {},
   mounted() {
+    this.examineType = this.$route.params.type
     this.getSelectList()
+  },
+
+  beforeRouteUpdate(to, from, next) {
+    this.examineType = to.params.type
+    this.status = ''
+    this.selectId = ''
+
+    this.refreshList()
+    next()
   },
 
   beforeDestroy() {},
@@ -102,7 +215,12 @@ export default {
         limit: 15,
         categoryId: this.selectId
       }
-      params.status = this.status
+
+      if (this.examineType == 'my') {
+        params.checkStatus = this.status
+      } else if (this.examineType == 'wait') {
+        params.status = this.status
+      }
 
       oaExamineMyExamineIndex(params)
         .then(res => {
@@ -157,6 +275,83 @@ export default {
     tabsSelect(id) {
       this.selectId = id
       this.refreshList()
+    },
+
+    /**
+     * cell 操作
+     */
+    cellHandle(type, data, index) {
+      if (type == 'detail') {
+        this.showRelatedDetail = false
+        this.rowID = data.examineId
+        this.showDview = true
+      } else if (type == 'relate-detail') {
+        this.showDview = false
+        this.relatedID = data.id
+        this.relatedCRMType = data.type
+        this.showRelatedDetail = true
+      } else if (type == 'edit') {
+        data.title = data.categoryName
+        this.createInfo = data
+        this.createAction = { type: 'update', id: data.examineId, data: data }
+        this.isCreate = true
+      } else if (type == 'delete') {
+        this.$confirm('确定删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            oaExamineDelete({
+              examineId: data.examineId
+            }).then(res => {
+              this.list.splice(index, 1)
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+            })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      } else if (type == 'reject' || type == 'pass' || type == 'withdraw') {
+        // 审核操作 1 审核通过 2 审核拒绝 4 已撤回
+        this.rowID = data.examineId
+        this.examineStatus = {
+          pass: 1,
+          reject: 2,
+          withdraw: 4
+        }[type]
+        this.rowData = data
+        this.showExamineHandle = true
+      }
+    },
+
+    /**
+     * 新建 审批类型选择
+     */
+    selcetExamineCategory(item) {
+      this.createInfo = item
+      this.createAction = { type: 'save' }
+      this.isCreate = true
+    },
+
+    /**
+     * 创建
+     */
+    createClick() {
+      this.showCategorySelect = true
+    },
+
+    /**
+     * 创建关闭
+     */
+    createHideView() {
+      this.isCreate = false
     }
   }
 }

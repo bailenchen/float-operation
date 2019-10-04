@@ -33,7 +33,7 @@
             :style="{ backgroundColor: iconObj.color}" />
           <div class="examine-content__bd">
             <div>
-              <a>{{ data.categoryTitle }}</a>
+              <a @click="handleClick('detail')">{{ data.categoryTitle }}</a>
             </div>
             <div
               v-if="data.causeTitle"
@@ -43,6 +43,32 @@
 
         <div class="examine-stage">
           <i class="wk wk-time" /><span>待张倩进行审批</span>
+        </div>
+
+        <div
+          v-if="relateList.length"
+          class="examine-relate">
+          <div class="examine-relate__hd">关联业务</div>
+          <div class="examine-relate__bd">
+            <flexbox
+              v-for="(item, index) in relateList"
+              :key="index"
+              align="stretch"
+              class="relate-cell">
+              <div class="relate-cell__hd">
+                <i class="wk wk-contacts" />
+                <span>{{ `相关${item.name}` }}：</span>
+              </div>
+              <div class="relate-cell__bd">
+                <div
+                  v-for="(child, childIndex) in item.list"
+                  :key="childIndex"
+                  class="relate-cell__bd--item text-one-line">
+                  <a @click="checkRelationDetail(item.type, child[`${item.type}Id`])">{{ child[`${item.type}Name`] || child.name }}</a>
+                </div>
+              </div>
+            </flexbox>
+          </div>
         </div>
       </div>
     </div>
@@ -58,6 +84,22 @@
         icon="wk wk-success"
         type="primary"
         @click.native="handleClick('pass')">通过</el-button>
+      <el-dropdown
+        v-if="moreTypes.length > 0"
+        trigger="click"
+        style="float: right;"
+        @command="handleTypeDrop">
+        <el-button
+          icon="el-icon-more"
+          class="handle-button" />
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item
+            v-for="(item, index) in moreTypes"
+            :key="index"
+            :icon="item.icon | wkIconPre"
+            :command="item.type">{{ item.name }}</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
   </div>
 </template>
@@ -72,7 +114,9 @@ export default {
   components: {},
   mixins: [Examine, CheckStatus],
   props: {
-    data: Object
+    data: Object,
+    section: Number,
+    index: Number
   },
   data() {
     return {}
@@ -80,6 +124,38 @@ export default {
   computed: {
     iconObj() {
       return this.getCategoryIcon(this.data.type)
+    },
+    relateList() {
+      const keys = ['contacts', 'customer', 'business', 'contract']
+      const names = ['联系人', '客户', '商机', '合同']
+      const allList = []
+      for (let index = 0; index < keys.length; index++) {
+        const key = keys[index]
+        const list = this.data[`${key}List`]
+        if (list && list.length > 0) {
+          allList.push({
+            type: key,
+            name: names[index],
+            list: list
+          })
+        }
+      }
+      return allList
+    },
+    moreTypes() {
+      const mores = []
+      if (this.data.permission) {
+        mores.push({ type: 'withdraw', name: '撤销', icon: 'reset' })
+
+        // if (this.data.permission.isUpdate) {
+        mores.push({ type: 'edit', name: '编辑', icon: 'edit' })
+        // }
+
+        if (this.data.permission.isDelete) {
+          mores.push({ type: 'delete', name: '删除', icon: 'delete' })
+        }
+      }
+      return mores
     }
   },
   watch: {},
@@ -88,7 +164,21 @@ export default {
   beforeDestroy() {},
   methods: {
     handleClick(type) {
-      console.log('handleClick---', type)
+      this.$emit('handle', type, this.data, this.index, this.section)
+    },
+
+    checkRelationDetail(type, id) {
+      this.$emit(
+        'handle',
+        'relate-detail',
+        { type, id },
+        this.index,
+        this.section
+      )
+    },
+
+    handleTypeDrop(command) {
+      this.$emit('handle', command, this.data, this.index, this.section)
     }
   }
 }
@@ -105,12 +195,13 @@ export default {
     background-color: #f4f7ff;
     overflow: hidden;
     padding-right: 10px;
-    .el-button {
-      padding: 6px 10px;
-      margin: 5px 5px 5px 0;
-      float: right;
-    }
   }
+}
+
+.handle-button {
+  padding: 6px 10px;
+  margin: 5px 5px 5px 0;
+  float: right;
 }
 
 .examine-cell {
@@ -219,6 +310,55 @@ export default {
     height: 6px;
     border-radius: 50%;
     margin-right: 5px;
+  }
+}
+
+/** 关联附件 联系人 客户 行布局 */
+.examine-relate {
+  &__hd {
+    margin-top: 10px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: #333;
+    font-weight: 400;
+  }
+}
+
+.relate-cell {
+  padding: 5px 0;
+  font-size: 12px;
+  &__hd {
+    flex-shrink: 0;
+    color: #333;
+    margin-right: 5px;
+    i {
+      font-size: 13px;
+      color: #8a94a6;
+    }
+  }
+
+  &__bd {
+    &--item {
+      margin-bottom: 3px;
+      a {
+        color: $xr-color-primary;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &--item + &--item {
+      margin-bottom: 5px;
+    }
+
+    a {
+      color: $xr-color-primary;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   }
 }
 </style>
