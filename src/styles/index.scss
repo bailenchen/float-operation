@@ -261,3 +261,15 @@ div[lazy=loading] {
   cursor: not-allowed;
   pointer-events: none;
 }
+
+// 文本
+.text-one-line {
+  // text-overflow: ellipsis;
+  // display: -webkit-box;
+  // -webkit-line-clamp: 1;
+  // -webkit-box-orient: vertical;
+  // overflow: hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

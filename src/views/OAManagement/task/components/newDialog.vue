@@ -54,6 +54,7 @@
             <el-popover
               placement="bottom-end"
               width="280"
+              popper-class="no-padding-popover"
               trigger="click">
               <xh-user
                 ref="xhuser"
@@ -200,7 +201,7 @@ export default {
       this.relevanceAll = val
     },
     changeCheckout(data) {
-      this.colleaguesList = data.data
+      this.colleaguesList = data
     },
     // 删除选择员工
     selectDelect(value, index) {

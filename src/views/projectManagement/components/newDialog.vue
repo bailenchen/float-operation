@@ -53,6 +53,7 @@
             <el-popover
               placement="bottom-end"
               width="280"
+              popper-class="no-padding-popover"
               trigger="click">
               <xh-user
                 ref="xhuser"
@@ -263,7 +264,7 @@ export default {
      * 选择人员
      */
     changeCheckout(data) {
-      this.colleaguesList = data.data
+      this.colleaguesList = data
     },
 
     /**
