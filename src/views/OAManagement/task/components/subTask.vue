@@ -40,6 +40,7 @@
         <el-popover
           placement="bottom-end"
           width="280"
+          popper-class="no-padding-popover"
           trigger="click">
           <xh-user
             ref="xhuser"
@@ -217,13 +218,13 @@ export default {
       }
     },
     xhUserCheckout(data) {
-      if (data.data.length != 0) {
+      if (data.length != 0) {
         this.subtaskChange = true
         if (this.xhUserData.length != 0) {
-          this.$set(this.xhUserData[0], 'img', data.data[0].img)
-          this.$set(this.xhUserData[0], 'realname', data.data[0].realname)
+          this.$set(this.xhUserData[0], 'img', data[0].img)
+          this.$set(this.xhUserData[0], 'realname', data[0].realname)
         } else {
-          this.xhUserData = data.data
+          this.xhUserData = data
         }
         this.isNum = 1
       } else {

@@ -173,6 +173,7 @@
                     <el-popover
                       placement="bottom"
                       width="280"
+                      popper-class="no-padding-popover"
                       trigger="click">
                       <xh-user
                         ref="xhuser"
@@ -1113,11 +1114,11 @@ export default {
     editMainUser(val) {
       workTaskSaveAPI({
         taskId: this.id,
-        mainUserId: val ? val.data[0].userId : ''
+        mainUserId: val.length ? val[0].userId : ''
       })
         .then(res => {
-          if (val) {
-            this.$set(this.taskData, 'mainUser', val.data[0])
+          if (val.length) {
+            this.$set(this.taskData, 'mainUser', val[0])
           } else {
             this.$set(this.taskData, 'mainUser', null)
           }

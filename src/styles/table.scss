@@ -1,51 +1,88 @@
-.el-table /deep/ thead th:hover {
+// https://github.com/ElemeFE/element/issues/10308
+.el-table th.is-leaf {
+  padding: 8px 0;
+  background-color: $xr--background-color-base;
+}
+
+.el-table th.is-sortable {
+  padding: 3px;
+}
+
+.el-table th:hover {
   background-color: #E7EDF4;
 }
 
-
-.el-table /deep/ thead {
-  th {
-    padding: 8px 0;
-    background-color: $xr--background-color-base;
-  }
-
-  th.is-sortable {
-    padding: 3px;
-  }
-
-
-  th:hover {
-    background-color: #E7EDF4;
-  }
-
-  .cell {
-    color: #333;
-    font-size: 12px;
-    font-weight: 600;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-
-    .sort-caret {
-      transform: scale(0.8);
-    }
-
-    .sort-caret.ascending {
-      top: 7px;
-    }
-  }
-
-  .is-sortable.ascending,
-  .is-sortable.descending {
-    background-color: #E7EDF4;
-  }
+.el-table th>.cell {
+  color: #333;
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.el-table /deep/ td {
+.el-table .sort-caret {
+  transform: scale(0.8);
+}
+
+.el-table .sort-caret.ascending {
+  top: 7px;
+}
+
+.el-table th.is-sortable.ascending,
+.el-table th.is-sortable.descending {
+  background-color: #E7EDF4;
+}
+
+// .el-table /deep/ thead {
+//   th {
+//     padding: 8px 0;
+//     background-color: $xr--background-color-base;
+//   }
+
+//   th.is-sortable {
+//     padding: 3px;
+//   }
+
+
+//   th:hover {
+//     background-color: #E7EDF4;
+//   }
+
+//   .cell {
+//     color: #333;
+//     font-size: 12px;
+//     font-weight: 600;
+//     overflow: hidden;
+//     white-space: nowrap;
+//     text-overflow: ellipsis;
+
+//     .sort-caret {
+//       transform: scale(0.8);
+//     }
+
+//     .sort-caret.ascending {
+//       top: 7px;
+//     }
+//   }
+
+//   .is-sortable.ascending,
+//   .is-sortable.descending {
+//     background-color: #E7EDF4;
+//   }
+// }
+
+.el-table--enable-row-transition .el-table__body td {
   padding: 8px 0;
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: $xr-border-line-color;
+  font-size: 13px;
+  color: #333;
 }
 
-.el-table /deep/ .el-table__row.current-row {
+.el-table .el-table__row.current-row {
   td:first-child::before {
     content: ' ';
     position: absolute;
@@ -57,14 +94,14 @@
   }
 }
 
-.el-table /deep/ tbody tr td {
-  border-top-color: transparent;
-  border-left-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: $xr-border-line-color;
-  font-size: 13px;
-  color: #333;
-}
+// .el-table /deep/ tbody tr td {
+//   border-top-color: transparent;
+//   border-left-color: transparent;
+//   border-right-color: transparent;
+//   border-bottom-color: $xr-border-line-color;
+//   font-size: 13px;
+//   color: #333;
+// }
 
 
 .n-table--border {

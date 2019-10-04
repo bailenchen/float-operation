@@ -16,6 +16,7 @@
         class="search-list">
         <el-checkbox
           :indeterminate="isIndeterminate"
+          :disabled="radio"
           v-model="checkAll"
           class="all-check"
           @change="handleCheckAllChange">全选</el-checkbox>

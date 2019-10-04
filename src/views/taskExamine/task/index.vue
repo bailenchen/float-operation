@@ -60,7 +60,7 @@
             v-if="noMore"
             class="scroll-bottom-tips">没有更多了</p>
         </div>
-        <div :class="['add', { 'unfold': isUnfold, 'is-close': !isUnfold }]">
+        <div v-loading="sendLoading" :class="['add', { 'unfold': isUnfold, 'is-close': !isUnfold }]">
           <i
             v-if="isUnfold"
             class="wk wk-close"
@@ -71,20 +71,37 @@
             :maxlength="50"
             :prefix-icon="isUnfold ? '' : 'el-icon-plus'"
             class="input"
-            clearable
             placeholder="添加任务"
             @focus="inputFocus" />
 
-          <div class="add-info">
+          <flexbox class="add-info">
             <el-date-picker
               ref="endTime"
-              :class="{ 'no-time-top': !stopTime }"
-              v-model="stopTime"
+              :class="{ 'no-time-top': !sendStopTime }"
+              v-model="sendStopTime"
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="" />
-            <i class="wk wk-persons add-info--person" />
-          </div>
+            <xh-user-cell
+              :value="mainUser"
+              placement="top"
+              @value-change="selectMainUser">
+              <div
+                slot="reference"
+                class="select-user">
+                <i
+                  v-if="!createMainUser"
+                  class="wk wk-persons add-info--person" />
+                <div
+                  v-photo="createMainUser"
+                  v-lazy:background-image="$options.filters.filterUserLazyImg(createMainUser.img)"
+                  v-else
+                  :key="createMainUser.img"
+                  class="div-photo" />
+              </div>
+
+            </xh-user-cell>
+          </flexbox>
 
           <el-button
             v-debounce="send"
@@ -109,7 +126,8 @@ import { mapGetters } from 'vuex'
 import TaskTabsHead from './components/TaskTabsHead'
 import TaskCell from './components/TaskCell'
 import TaskDetail from './components/TaskDetail'
-import { taskListAPI } from '@/api/oamanagement/task'
+import { taskListAPI, setTaskAPI } from '@/api/task/task'
+import { XhUserCell } from '@/components/CreateCom'
 
 export default {
   /** 任务列表 */
@@ -117,7 +135,8 @@ export default {
   components: {
     TaskTabsHead,
     TaskCell,
-    TaskDetail
+    TaskDetail,
+    XhUserCell
   },
   props: {},
   data() {
@@ -157,8 +176,10 @@ export default {
         }
       ],
       // 添加
+      sendLoading: false,
       sendContent: '',
-      stopTime: '',
+      sendStopTime: '',
+      mainUser: [],
 
       // 详情
       // 详情数据
@@ -207,6 +228,10 @@ export default {
     // 无线滚动控制
     scrollDisabled() {
       return this.loading || this.noMore
+    },
+
+    createMainUser() {
+      return this.mainUser.length ? this.mainUser[0] : null
     }
   },
   watch: {},
@@ -312,10 +337,41 @@ export default {
     },
 
     /**
+     * 选择负责人
+     */
+    selectMainUser(data) {
+      this.mainUser = data.value
+    },
+
+    /**
      * 创建任务
      */
     send() {
-      console.log(123123)
+      if (!this.sendContent.length) {
+        this.$message.error('请填写任务标题')
+      } else {
+        this.sendLoading = true
+        setTaskAPI({
+          name: this.sendContent,
+          stopTime: this.sendStopTime,
+          mainUserId: this.createMainUser ? this.createMainUser.userId : ''
+        })
+          .then(res => {
+            this.sendLoading = false
+            this.resetSendData()
+            this.refreshList()
+          })
+          .catch(() => {
+            this.sendLoading = false
+          })
+      }
+    },
+
+    resetSendData() {
+      this.sendContent = ''
+      this.sendStopTime = ''
+      this.mainUser = []
+      this.isUnfold = false
     },
 
     /**
@@ -413,11 +469,11 @@ export default {
   }
 
   .add-info {
-    display: none;
     padding: 0 8px;
     .el-date-editor {
       width: 100px;
       font-size: 12px;
+      margin-right: 8px;
       /deep/ .el-input__prefix {
         left: 0;
         .el-icon-date {
@@ -480,6 +536,12 @@ export default {
   }
 }
 
+.add.is-close {
+  .add-info {
+    display: none;
+  }
+}
+
 // 闭合
 .add.is-close:hover {
   cursor: pointer;
@@ -493,10 +555,6 @@ export default {
 
 // 展开
 .add.unfold {
-  .add-info {
-    display: block;
-  }
-
   .input {
     margin-bottom: 15px;
   }
@@ -511,6 +569,15 @@ export default {
   /deep/ i {
     font-size: 13px;
     margin-right: 5px;
+  }
+}
+
+// 选择负责人
+.select-user {
+  display: inline-block;
+  .div-photo {
+    width: 24px;
+    height: 24px;
   }
 }
 

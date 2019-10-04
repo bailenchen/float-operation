@@ -44,6 +44,7 @@
             <template v-else-if="item.type == 'participant'">
               <el-popover
                 placement="bottom-end"
+                popper-class="no-padding-popover"
                 width="280"
                 trigger="click">
                 <xh-user
@@ -405,7 +406,7 @@ export default {
       this.$set(this.formData, 'color', val)
     },
     changeCheckout(data) {
-      this.colleaguesList = data.data
+      this.colleaguesList = data
     },
     // 删除选择员工
     selectDelect(value, index) {

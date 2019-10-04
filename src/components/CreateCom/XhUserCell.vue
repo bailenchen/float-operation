@@ -1,7 +1,8 @@
 <template>
   <el-popover
     :disabled="disabled"
-    placement="bottom"
+    :placement="placement"
+    v-model="showSelectView"
     width="300"
     popper-class="no-padding-popover"
     trigger="click">
@@ -13,22 +14,23 @@
       :radio="radio"
       :selected-data="dataValue"
       @changeCheckout="checkUsers"/>
-    <div slot="reference">
-      <flexbox
-        :class="[disabled ? 'is_disabled' : 'is_valid']"
-        wrap="wrap"
-        class="user-container"
-        @click.native="focusClick">
-        <div
-          v-for="(item, index) in dataValue"
-          :key="index"
-          class="user-item"
-          @click.stop="deleteuser(index)">{{ item.realname }}
-          <i class="delete-icon el-icon-close"/>
-        </div>
-        <div class="add-item">+{{ placeholder }}</div>
-      </flexbox>
-    </div>
+    <flexbox
+      v-if="!$slots.reference"
+      slot="reference"
+      :class="[disabled ? 'is_disabled' : 'is_valid']"
+      wrap="wrap"
+      class="user-container"
+      @click.native="focusClick">
+      <div
+        v-for="(item, index) in dataValue"
+        :key="index"
+        class="user-item"
+        @click.stop="deleteuser(index)">{{ item.realname }}
+        <i class="delete-icon el-icon-close"/>
+      </div>
+      <div class="add-item">+{{ placeholder }}</div>
+    </flexbox>
+    <slot v-else slot="reference" name="reference"/>
   </el-popover>
 
 </template>
@@ -63,6 +65,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    placement: {
+      type: String,
+      default: 'bottom'
     }
   },
   data() {
