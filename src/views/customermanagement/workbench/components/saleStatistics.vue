@@ -48,7 +48,7 @@ export default {
         },
         legend: {
           right: '20px',
-          data: ['目标金额', '合同金额']
+          data: ['目标合同金额', '合同金额']
         },
         xAxis: [
           {
@@ -91,7 +91,7 @@ export default {
         ],
         series: [
           {
-            name: '目标金额',
+            name: '目标合同金额',
             type: 'bar',
             stack: 'one',
             barWidth: 25,

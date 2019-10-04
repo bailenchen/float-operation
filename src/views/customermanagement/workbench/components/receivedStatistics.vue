@@ -46,7 +46,7 @@ export default {
         },
         legend: {
           right: '20px',
-          data: ['目标金额', '回款金额']
+          data: ['目标金额', '回款回款金额']
         },
         xAxis: [
           {
@@ -89,7 +89,7 @@ export default {
         ],
         series: [
           {
-            name: '目标金额',
+            name: '目标回款金额',
             type: 'bar',
             stack: 'one',
             barWidth: 25,

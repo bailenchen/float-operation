@@ -53,7 +53,7 @@
           回款金额
         </div>
         <div class="info">
-          回款金额<span class="bold">{{ data.receivablesMoney }}</span>元，预计回款金额<span class="bold">{{ data.unReceivablesMoney }}</span>元
+          回款金额<span class="bold">{{ data.receivablesMoney }}</span>元，预计回款金额<span class="bold">{{ data.planMoney }}</span>元
         </div>
       </div>
     </div>
