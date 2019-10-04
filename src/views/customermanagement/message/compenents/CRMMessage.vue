@@ -1,12 +1,15 @@
 <template>
   <div class="ec-container">
-    <div class="title">{{ infoTitle }}
+    <div class="title">
+      <i
+        :class="['title-icon', iconData.iconClass]"
+        :style="{ backgroundColor: iconData.color }" />{{ infoTitle }}
       <el-tooltip
         v-if="infoTips"
         :content="infoTips"
         effect="dark"
         placement="top">
-        <i class="wukong wukong-help_tips"/>>
+        <i class="wk wk-help"/>>
       </el-tooltip>
     </div>
     <div class="option-bar">
@@ -35,15 +38,13 @@
             :label="item.name"
             :value="item.value"/>
         </el-select>
-        <div
+        <el-button
           v-if="showFilterView"
-          class="filtrate-button"
-          @click="getFilterFieldInfo">
-          <img
-            class="filtrate-button-img"
-            src="@/assets/img/c_filtrate.png" >
-          <span class="filtrate-button-title">高级筛选</span>
-        </div>
+          style="margin-left: 10px;"
+          type="primary"
+          class="filter-button"
+          icon="wk wk-screening"
+          @click="getFilterFieldInfo">高级筛选</el-button>
         <filter-form
           :field-list="filterFieldList"
           :dialog-visible.sync="showFilter"
@@ -196,6 +197,12 @@ export default {
     },
 
     infoTips: {
+      type: String,
+      default: ''
+    },
+
+    // 标示信息
+    iconData: {
       type: String,
       default: ''
     },
@@ -473,23 +480,31 @@ export default {
 }
 
 .title {
-  padding: 0 20px;
-  font-size: 16px;
-  line-height: 60px;
-  height: 60px;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #333;
 
-  i {
+  .title-icon {
+    display: inline-block;
+    font-size: 12px;
+    padding: 6px;
+    border-radius: 4px;
+    color: white;
+    margin-right: 10px;
+  }
+  .wk-help {
     cursor: pointer;
     margin-left: 5px;
+    font-size: 12px;
     color: #dcdfe6;
   }
 
-  i:hover {
+  .wk-help:hover {
     color: $xr-color-primary;
   }
 }
 .option-bar {
-  padding: 5px 20px;
+  padding: 15px 20px;
 }
 
 /** 勾选操作 */
@@ -526,5 +541,9 @@ export default {
       color: $xr-color-primary;
     }
   }
+}
+
+.n-table--border {
+  border-top: 1px solid $xr-border-line-color;
 }
 </style>

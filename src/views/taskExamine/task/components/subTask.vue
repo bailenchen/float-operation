@@ -45,7 +45,7 @@
           <xh-user
             ref="xhuser"
             :info-request="ownerListRequest"
-            :info-params="{ workId: workId }"
+            :info-params="ownerListParams"
             :selected-data="xhUserData"
             radio
             @changeCheckout="xhUserCheckout"/>
@@ -127,8 +127,13 @@ export default {
   },
   computed: {
     ownerListRequest() {
-      return workWorkOwnerListAPI
+      return this.workId ? workWorkOwnerListAPI : null
     },
+
+    ownerListParams() {
+      return this.workId ? { workId: this.workId } : null
+    },
+
     workId() {
       return this.taskData.workId
     }

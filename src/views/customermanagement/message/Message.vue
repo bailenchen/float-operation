@@ -1,28 +1,25 @@
 <template>
   <div style="height:100%;">
-    <div class="message-header">
-      待办事项
-    </div>
+    <flexbox class="message-header"><img
+      src="@/assets/img/crm/todo.png"
+      class="title-icon">
+      <span class="title">待办事项</span>
+    </flexbox>
     <div class="message-body">
       <div class="message-content">
         <div class="message-body-side">
-          <div
-            v-for="(item, index) in leftSides"
-            v-if="!item.hidden"
+          <xr-menu-item
+            v-for="(item, index) in showLeftSides"
             :key="index"
-            :class="leftType==item.infoType? 'side-item-select' : 'side-item-default'"
-            class="side-item"
-            @click="sideClick(item)">
-            {{ item.name }}
-            <el-badge
-              v-if="item.num > 0"
-              :max="99"
-              :value="item.num"/>
-          </div>
+            :label="item.name"
+            :icon-color="item.color"
+            :icon-class="item.iconClass"
+            :select="leftType==item.infoType"
+            @click.native="sideClick(item)"/>
         </div>
         <div class="message-body-content">
           <c-r-m-message
-            v-for="(item, index) in leftSides"
+            v-for="(item, index) in showLeftSides"
             v-show="leftType==item.infoType"
             :key="index"
             :crm-type="item.crmType"
@@ -30,6 +27,7 @@
             :info-title="item.name"
             :info-tips="item.tips"
             :show="leftType==item.infoType"
+            :icon-data="item"
             @on-handle="messageHandle"/>
         </div>
       </div>
@@ -41,13 +39,15 @@
 import CRMMessage from './compenents/CRMMessage' // 系统消息
 import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
+import XrMenuItem from '@/components/xr-menu/XrMenuItem'
 
 export default {
   /** 客户管理 的 消息列表 */
   name: 'Message',
 
   components: {
-    CRMMessage
+    CRMMessage,
+    XrMenuItem
   },
 
   data() {
@@ -57,6 +57,8 @@ export default {
         {
           name: '今日需联系客户',
           crmType: 'customer',
+          color: '#2362FB',
+          iconClass: 'wk wk-customer',
           infoType: 'todayCustomer',
           num: 0,
           tips: '下次跟进时间为今日的客户',
@@ -65,6 +67,8 @@ export default {
         {
           name: '分配给我的线索',
           crmType: 'leads',
+          color: '#704AFD',
+          iconClass: 'wk wk-leads',
           infoType: 'followLeads',
           num: 0,
           tips: '转移之后未跟进的线索',
@@ -73,6 +77,8 @@ export default {
         {
           name: '分配给我的客户',
           crmType: 'customer',
+          color: '#19B5F6',
+          iconClass: 'wk wk-s-seas',
           infoType: 'followCustomer',
           num: 0,
           tips: '转移、领取、分配之后未跟进的客户，默认显示自己负责的客户',
@@ -81,6 +87,8 @@ export default {
         {
           name: '待进入公海的客户',
           crmType: 'customer',
+          color: '#26D4DA',
+          iconClass: 'wk wk-seas',
           infoType: 'putInPoolRemind',
           num: 0,
           tips: '',
@@ -89,6 +97,8 @@ export default {
         {
           name: '待审核合同',
           crmType: 'contract',
+          color: '#FD5B4A',
+          iconClass: 'wk wk-contract',
           infoType: 'checkContract',
           num: 0,
           tips: '',
@@ -97,6 +107,8 @@ export default {
         {
           name: '待审核回款',
           crmType: 'receivables',
+          color: '#FFB940',
+          iconClass: 'wk wk-receivables',
           infoType: 'checkReceivables',
           num: 0,
           tips: '',
@@ -105,6 +117,8 @@ export default {
         {
           name: '待回款提醒',
           crmType: 'receivables_plan',
+          color: '#27BA4A',
+          iconClass: 'wk wk-bell',
           infoType: 'remindReceivablesPlan',
           num: 0,
           tips: '',
@@ -113,6 +127,8 @@ export default {
         {
           name: '即将到期的合同',
           crmType: 'contract',
+          color: '#FF7A38',
+          iconClass: 'wk wk-contract',
           infoType: 'endContract',
           num: 0,
           tips: '根据“合同到期时间”及设置的“提前提醒天数”提醒',
@@ -123,7 +139,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['messageNum'])
+    ...mapGetters(['messageNum']),
+
+    showLeftSides() {
+      return this.leftSides.filter(item => {
+        return !item.hidden
+      })
+    }
   },
 
   watch: {
@@ -182,14 +204,23 @@ export default {
 
 <style lang="scss" scoped>
 .message-header {
+  margin-left: 28px;
   height: 60px;
-  font-size: 18px;
-  padding: 0 20px;
-  line-height: 60px;
+  .title-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 .message-body {
   position: relative;
-  height: calc(100% - 60px);
+  height: calc(100% - 75px);
+  padding-left: 15px;
 }
 .message-content {
   position: relative;
