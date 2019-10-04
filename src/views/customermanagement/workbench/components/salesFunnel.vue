@@ -147,6 +147,7 @@ export default {
      * 获取统计数据
      */
     getData() {
+      if (!this.businessId) return
       this.loading = true
       crmIndexFunnel({
         ...this.getBaseParams(),
@@ -156,7 +157,6 @@ export default {
         const data = []
 
         let sumMoney = 0
-        const legendArr = []
         for (let index = 0; index < res.data.list.length; index++) {
           const element = res.data.list[index]
           data.push({
@@ -164,7 +164,6 @@ export default {
             value: element.money
           })
           sumMoney += parseFloat(element.money || 0)
-          legendArr.push(element.name || '')
         }
 
         this.chartOption.series[0].data = data

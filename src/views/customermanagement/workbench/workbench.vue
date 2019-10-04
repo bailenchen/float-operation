@@ -101,8 +101,7 @@ import timeTypeSelect from '@/components/timeTypeSelect'
 import { crmIndexIndex } from '@/api/customermanagement/workbench'
 
 /**
- * TODO 1、销售简报及点击查看详情（回款金额只需要保留整数）
- *      2、员工部门筛选选择，
+ * TODO 2、员工部门筛选选择，
  *      3、员工部门筛选后刷新销售简报数据
  */
 
@@ -119,14 +118,14 @@ export default {
   data() {
     return {
       briefList: [
-        { label: '新增客户(人)', field: '', icon: 'wk-customer', num: '12', rate: '88.5', status: 'top', color: '#2362FB' },
-        { label: '新增联系人(人)', field: '', icon: 'wk-contacts', num: '12', rate: '12', status: 'top', color: '#27BA4A' },
-        { label: '新增商机(个)', field: '', icon: 'wk-business', num: '12', rate: '12', status: 'top', color: '#FB9323' },
-        { label: '新增合同(个)', field: '', icon: 'wk-contract', num: '12', rate: '12', status: 'top', color: '#4A5BFD' },
-        { label: '阶段变化商机(个)', field: '', icon: 'wk-icon-opportunities', num: '12', rate: '1.5', status: 'bottom', color: '#AD5CFF' },
-        { label: '回款金额(元)', field: '', icon: 'wk-receivables', num: '56218', rate: '0.5', status: 'bottom', color: '#FFB940' },
-        { label: '新增跟进记录(条)', field: '', icon: 'wk-record', num: '12', rate: '12', status: 'top', color: '#4A5BFD' },
-        { label: '公海新增客户(个)', field: '', icon: 'wk-seas', num: '12', rate: '0.00', status: '', color: '#19B5F6' }
+        { label: '新增客户(人)', field: 'customerCount', icon: 'wk-customer', num: '', rate: '', status: '', color: '#2362FB' },
+        { label: '新增联系人(人)', field: 'contactsCount', icon: 'wk-contacts', num: '', rate: '', status: '', color: '#27BA4A' },
+        { label: '新增商机(个)', field: 'businessCount', icon: 'wk-business', num: '', rate: '', status: '', color: '#FB9323' },
+        { label: '新增合同(个)', field: 'contractCount', icon: 'wk-contract', num: '', rate: '', status: '', color: '#4A5BFD' },
+        { label: '合同金额(元)', field: 'contractMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#19B5F6' },
+        { label: '商机金额(元)', field: 'recordStatusCount', icon: 'wk-icon-opportunities', num: '', rate: '', status: '', color: '#AD5CFF' },
+        { label: '回款金额(元)', field: 'receivablesMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#FFB940' },
+        { label: '新增跟进记录(条)', field: 'recordCount', icon: 'wk-record', num: '', rate: '', status: '', color: '#4A5BFD' }
       ],
       filterValue: {
         users: [],
@@ -192,7 +191,6 @@ export default {
   },
   created() {
     this.filterValue.users.push(this.userInfo)
-    this.getBriefData()
   },
   mounted() {
     this.$nextTick(() => {
@@ -244,15 +242,17 @@ export default {
     getBriefData() {
       this.loading = true
       crmIndexIndex(this.getBaseParams()).then(res => {
-        // const data = res.data
-        // this.briefList.forEach(item => {
-        //   if (res.data.hasOwnProperty(item.field)) {
-        //     item.num = data[item.field].num || 0 // 数量
-        //     item.status = data[item.field].status || '' // 状态 top 增长  bottom 下降 '' 持平
-        //     item.rate = data[item.field].rate || '0.00' // 增长比例/下降比例
-        //   }
-        // })
         this.loading = false
+        this.briefList.forEach(item => {
+          item.num = res.data[item.field] || 0 // 数量
+          if (Number(res.prev[item.field]) !== 0) {
+            // status状态   top 增长  bottom 下降 '' 持平
+            item.status = Number(res.prev[item.field]) > 0 ? 'top' : 'bottom'
+          } else {
+            item.status = ''
+          }
+          item.rate = res.prev[item.field] * 100 // 增长比例/下降比例
+        })
       }).catch(() => {
         this.loading = false
       })

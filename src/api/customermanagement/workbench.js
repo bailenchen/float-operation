@@ -9,6 +9,15 @@ export function crmIndexIndex(data) {
   })
 }
 
+// 数据汇总
+export function QueryDataInfo(data) {
+  return request({
+    url: 'Crm/Instrument/queryDataInfo',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 销售简报列表
  */
@@ -67,3 +76,13 @@ export function crmIndexGetRecordListAPI(data) {
     data: data
   })
 }
+
+
+// 获取简报 跟进记录信息
+// export function crmIndexGetRecordListAPI(data) {
+//   return request({
+//     url: 'Crm/Instrument/queryRecordList',
+//     method: 'post',
+//     data: data
+//   })
+// }

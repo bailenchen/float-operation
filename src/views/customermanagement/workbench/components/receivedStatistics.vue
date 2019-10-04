@@ -20,6 +20,7 @@
 <script>
 import echarts from 'echarts'
 import chartMixins from './chartMixins'
+import { crmIndexSaletrend } from '@/api/customermanagement/workbench'
 
 export default {
   name: 'ReceivedStatistics',
@@ -50,16 +51,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: [
-              '2019-01',
-              '2019-02',
-              '2019-03',
-              '2019-04',
-              '2019-05',
-              '2019-06',
-              '2019-07',
-              '2019-08'
-            ],
+            data: [],
             axisTick: {
               alignWithLabel: true,
               lineStyle: { width: 0 }
@@ -102,7 +94,7 @@ export default {
             stack: 'one',
             barWidth: 25,
             barGap: '0',
-            data: [1000, 1570, 3589, 2578, 5744, 4145, 2457, 554]
+            data: []
           },
           {
             name: '回款金额',
@@ -110,7 +102,7 @@ export default {
             stack: 'two',
             barWidth: 25,
             barGap: '0%',
-            data: [258, 14255, 4558, 5274, 2545, 2547, 5745, 7565]
+            data: []
           }
         ]
       },
@@ -126,8 +118,35 @@ export default {
       this.chartObj.setOption(this.chartOption, true)
     },
     getData() {
-      // let params = this.getBaseParams()
-      // TODO 回款统计数据获取、渲染
+      this.loading = true
+      crmIndexSaletrend({
+        label: 2,
+        ...this.getBaseParams()
+      }).then(res => {
+        // this.trendData = {
+        //   totlaContractMoney: res.data.totlaContractMoney,
+        //   totlaReceivablesMoney: res.data.totlaReceivablesMoney
+        // }
+
+        const list = res.data.list || []
+        const contractList = []
+        const receivablesList = []
+        const xAxisData = []
+        for (let index = 0; index < list.length; index++) {
+          const element = list[index]
+          contractList.push(element.achievement)
+          receivablesList.push(element.money)
+          xAxisData.push(element.type)
+        }
+        this.chartOption.xAxis[0].data = xAxisData
+        this.chartOption.series[0].data = contractList
+        this.chartOption.series[1].data = receivablesList
+
+        this.chartObj.setOption(this.chartOption, true)
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }

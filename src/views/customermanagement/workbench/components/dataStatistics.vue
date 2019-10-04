@@ -1,5 +1,7 @@
 <template>
-  <div class="data-statistics card">
+  <div
+    v-loading="loading"
+    class="data-statistics card">
     <flexbox class="card-title">
       <div class="card-title-left">
         <span class="icon wk wk-data" />
@@ -19,7 +21,7 @@
           客户汇总
         </div>
         <div class="info">
-          共有<span class="bold">200</span>个客户，成交客户<span class="bold">200</span>个，未成交<span class="bold">200</span>个
+          新增<span class="bold">{{ data.allCustomer }}</span>个客户，转成交客户<span class="bold">{{ data.dealCustomer }}</span>个
         </div>
       </div>
       <div class="list-item">
@@ -27,7 +29,7 @@
           跟进汇总
         </div>
         <div class="info">
-          添加新增客户<span class="bold">200</span>人，未跟进<span class="bold">200</span>人
+          跟进客户<span class="bold">{{ data.activityNum }}</span>个，新增客户中未跟进<span class="bold">{{ data.allCustomer - data.activityNum }}</span>个
         </div>
       </div>
       <div class="list-item">
@@ -35,7 +37,7 @@
           商机汇总
         </div>
         <div class="info">
-          共有<span class="bold">200</span>个商机，商机总金额<span class="bold">2000.00</span>元，成交商机<span class="bold">200</span>个
+          新增<span class="bold">{{ data.allBusiness }}</span>个商机，商机总金额<span class="bold">{{ data.businessMoney }}</span>元，赢单商机<span class="bold">{{ data.endBusiness }}</span>个
         </div>
       </div>
       <div class="list-item">
@@ -43,7 +45,7 @@
           合同汇总
         </div>
         <div class="info">
-          合同签订<span class="bold">200</span>份，合同金额<span class="bold">2000.00</span>元
+          合同签订<span class="bold">{{ data.allContract }}</span>份，合同金额<span class="bold">{{ data.contractMoney }}</span>元
         </div>
       </div>
       <div class="list-item">
@@ -51,7 +53,7 @@
           回款金额
         </div>
         <div class="info">
-          回款金额<span class="bold">200</span>元，未回款<span class="bold">5000.00</span>元
+          回款金额<span class="bold">{{ data.receivablesMoney }}</span>元，预计回款金额<span class="bold">{{ data.unReceivablesMoney }}</span>元
         </div>
       </div>
     </div>
@@ -60,14 +62,26 @@
 
 <script>
 import chartMixins from './chartMixins'
+import { QueryDataInfo } from '@/api/customermanagement/workbench'
 
 export default {
   name: 'DataStatistics',
   mixins: [chartMixins],
+  data() {
+    return {
+      data: {},
+      loading: false
+    }
+  },
   methods: {
     getData() {
-      // let params = this.getBaseParams()
-      // TODO 统计数据获取
+      this.loading = true
+      QueryDataInfo(this.getBaseParams()).then(res => {
+        this.loading = false
+        this.data = res.data || {}
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }

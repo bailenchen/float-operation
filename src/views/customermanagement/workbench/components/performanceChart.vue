@@ -108,8 +108,8 @@ export default {
         { name: '回款金额', value: 2 },
         { name: '合同金额', value: 1 }
       ],
-      optionName: '',
-      optionValue: null
+      optionName: '回款金额',
+      optionValue: 2
     }
   },
   mounted() {
@@ -125,6 +125,7 @@ export default {
      * 获取统计数据
      */
     getData() {
+      if (this.loading) return
       this.loading = true
       crmIndexAchievementData({
         ...this.getBaseParams(),

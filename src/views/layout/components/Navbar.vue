@@ -48,11 +48,12 @@
       <div
         slot="reference"
         class="user-container">
-        <div
-          v-photo="userInfo"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
-          :key="userInfo.img"
-          class="user-img div-photo"/>
+        <template v-if="userInfo && Object.keys(userInfo).length > 0">
+          <div
+            v-photo="userInfo"
+            v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img || '')"
+            class="user-img div-photo"/>
+        </template>
         <i class="el-icon-caret-bottom mark"/>
       </div>
     </el-popover>

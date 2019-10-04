@@ -23,6 +23,7 @@
 import echarts from 'echarts'
 import chartMixins from './chartMixins'
 import { crmIndexSaletrend } from '@/api/customermanagement/workbench'
+
 export default {
   name: 'SaleStatistics',
   mixins: [chartMixins],
@@ -47,7 +48,7 @@ export default {
         },
         legend: {
           right: '20px',
-          data: ['目标金额', '回款金额']
+          data: ['目标金额', '合同金额']
         },
         xAxis: [
           {
@@ -95,15 +96,15 @@ export default {
             stack: 'one',
             barWidth: 25,
             barGap: '0',
-            data: [1000, 1570, 3589, 2578, 5744, 4145, 2457, 554]
+            data: []
           },
           {
-            name: '回款金额',
+            name: '合同金额',
             type: 'bar',
             stack: 'two',
             barWidth: 25,
             barGap: '0%',
-            data: [258, 14255, 4558, 5274, 2545, 2547, 5745, 7565]
+            data: []
           }
         ]
       },
@@ -113,7 +114,6 @@ export default {
   },
   mounted() {
     this.initChart()
-    this.getData()
   },
   methods: {
     initChart() {
@@ -123,22 +123,25 @@ export default {
 
     getData() {
       this.loading = true
-      crmIndexSaletrend(this.getBaseParams()).then(res => {
+      crmIndexSaletrend({
+        label: 1,
+        ...this.getBaseParams()
+      }).then(res => {
         // this.trendData = {
         //   totlaContractMoney: res.data.totlaContractMoney,
         //   totlaReceivablesMoney: res.data.totlaReceivablesMoney
         // }
+
         const list = res.data.list || []
         const contractList = []
         const receivablesList = []
         const xAxisData = []
         for (let index = 0; index < list.length; index++) {
           const element = list[index]
-          contractList.push(element.contractMoneys)
-          receivablesList.push(element.receivablesMoneys)
+          contractList.push(element.achievement)
+          receivablesList.push(element.money)
           xAxisData.push(element.type)
         }
-
         this.chartOption.xAxis[0].data = xAxisData
         this.chartOption.series[0].data = contractList
         this.chartOption.series[1].data = receivablesList
