@@ -52,10 +52,6 @@ export default {
   name: 'XhUser', // 新建 user
   components: {},
   props: {
-    value: {
-      type: String,
-      default: ''
-    },
     /** 多选框 只能选一个 */
     radio: {
       type: Boolean,
@@ -120,6 +116,7 @@ export default {
       this.getRequest()(this.getParams())
         .then(res => {
           this.list = res.data
+          this.checkItems(this.selectedData)
           this.loading = false
         })
         .catch(() => {
@@ -143,6 +140,7 @@ export default {
         return usersList
       }
     },
+
     getParams() {
       const params =
         this.infoParams && Object.keys(this.infoParams.length !== 0)

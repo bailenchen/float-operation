@@ -122,28 +122,41 @@
             </flexbox>
           </flexbox-item>
           <flexbox-item>
-            <flexbox class="head-btn">
-              <i class="wk wk-l-plus head-btn__icon is-null" />
-              <div class="head-btn__bd">
-                <!-- <div class="head-btn__bd--title">张先生</div> -->
-                <div class="head-btn__bd--des">负责人</div>
-              </div>
-            </flexbox>
+            <xh-user-cell
+              :value="taskData.mainUser ? [taskData.mainUser] : []"
+              style="width: 100%;"
+              placement="top"
+              @value-change="editMainUser">
+              <flexbox slot="reference" class="head-btn">
+                <i v-if="!taskData.mainUser" class="wk wk-l-plus head-btn__icon is-null" />
+                <div
+                  v-photo="taskData.mainUser"
+                  v-lazy:background-image="$options.filters.filterUserLazyImg(taskData.mainUser.img)"
+                  v-else
+                  :key="taskData.mainUser.img"
+                  class="div-photo" />
+                <div class="head-btn__bd">
+                  <div v-if="taskData.mainUser" class="head-btn__bd--title">{{ taskData.mainUser.realname }}</div>
+                  <div class="head-btn__bd--des">负责人</div>
+                </div>
+              </flexbox>
+            </xh-user-cell>
           </flexbox-item>
           <flexbox-item>
             <flexbox class="head-btn">
               <i
-                :class="[ startTime ? 'is-valve' : 'is-null']"
+                :class="[ taskData.startTime ? 'is-valve' : 'is-null']"
                 class="wk wk-l-time head-btn__icon" />
               <el-date-picker
-                v-model="startTime"
+                v-model="taskData.startTime"
                 :clearable="false"
                 type="date"
-                value-format="yyyy-MM-dd" />
+                value-format="yyyy-MM-dd"
+                @change="timeChange('startTime')" />
               <div class="head-btn__bd">
                 <div
-                  v-if="startTime"
-                  class="head-btn__bd--title">{{ startTime | moment('MM月DD日') }}</div>
+                  v-if="taskData.startTime"
+                  class="head-btn__bd--title">{{ taskData.startTime | moment('MM月DD日') }}</div>
                 <div class="head-btn__bd--des">开始时间</div>
               </div>
             </flexbox>
@@ -151,17 +164,18 @@
           <flexbox-item>
             <flexbox class="head-btn">
               <i
-                :class="[ endTime ? 'is-valve' : 'is-null']"
+                :class="[ taskData.stopTime ? 'is-valve' : 'is-null']"
                 class="wk wk-l-minus head-btn__icon" />
               <el-date-picker
-                v-model="endTime"
+                v-model="taskData.stopTime"
                 :clearable="false"
                 type="date"
-                value-format="yyyy-MM-dd" />
+                value-format="yyyy-MM-dd"
+                @change="timeChange('stopTime')" />
               <div class="head-btn__bd">
                 <div
-                  v-if="endTime"
-                  class="head-btn__bd--title">{{ endTime | moment('MM月DD日') }}</div>
+                  v-if="taskData.stopTime"
+                  class="head-btn__bd--title">{{ taskData.stopTime | moment('MM月DD日') }}</div>
                 <div class="head-btn__bd--des">结束时间</div>
               </div>
             </flexbox>
@@ -205,7 +219,7 @@
                   :content-block="false"
                   :user-checked-data="taskData.ownerUserList"
                   :user-request="ownerListRequest"
-                  :user-params="{ workId: workId }"
+                  :user-params="ownerListParams"
                   @popoverSubmit="editOwnerList">
                   <i
                     slot="membersDep"
@@ -216,7 +230,7 @@
             <flexbox-item class="label">
               <div class="label-title">标签</div>
               <span
-                v-for="(item, index) in taskData.labelList"
+                v-for="(item, index) in labelList"
                 :style="{'background': item.color ? item.color : '#ccc'}"
                 :key="index"
                 class="item-color">
@@ -304,14 +318,14 @@
             <div class="section">
               <div class="section__hd">
                 <i class="wukong wukong-sub-task" />
-                <span>子任务({{ subTaskProgress }}/{{ taskData.childTask.length }})</span>
+                <span>子任务({{ subTaskDoneNum }}/{{ taskData.childTask.length }})</span>
               </div>
               <div class="section__bd">
                 <div v-if="taskData.pid == 0">
                   <div>
                     <template v-if="taskData.childTask.length != 0">
                       <el-progress
-                        :percentage="subTaskProgress/taskData.childTask.length*100"
+                        :percentage="subTaskProgress"
                         :stroke-width="10" />
                     </template>
                     <template v-else>
@@ -479,6 +493,7 @@ import {
   detailsTaskAPI,
   queryLogTaskAPI
 } from '@/api/task/task'
+// 项目参与人
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 import { crmFileSave } from '@/api/common'
 import {
@@ -493,7 +508,7 @@ import SubTask from './subTask'
 import emoji from '@/components/emoji'
 // 关联业务 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
-import XhUser from '@/components/CreateCom/XhUser'
+import { XhUserCell } from '@/components/CreateCom'
 import FileCell from '@/views/OAManagement/components/fileCell'
 import CRMFullScreenDetail from '@/views/customermanagement/components/CRMFullScreenDetail'
 import { mapGetters } from 'vuex'
@@ -505,11 +520,11 @@ export default {
     membersDep,
     emoji,
     relatedBusiness,
-    XhUser,
     TagIndex,
     CRMFullScreenDetail,
     SubTask,
-    FileCell
+    FileCell,
+    XhUserCell
   },
   props: {
     id: [String, Number],
@@ -559,14 +574,12 @@ export default {
       nameVinput: false,
       // 任务名
       taskDataName: '',
-      startTime: '',
-      endTime: '',
       // 是否显示描述
       addDescriptionShow: false,
       // 描述内容
       addDescriptionTextarea: '',
       // 子任务进度
-      subTaskProgress: 0,
+      subTaskDoneNum: 0,
       blurIndex: 0,
       // 是否显示评论框
       addComments: false,
@@ -634,12 +647,31 @@ export default {
       return this.workId && !this.isArchive && !this.isRecycle
     },
 
-    ownerListRequest() {
-      return workWorkOwnerListAPI
+    /**
+     * 子任务完成进度
+     */
+    subTaskProgress() {
+      return parseInt(this.subTaskDoneNum / this.taskData.childTask.length * 100)
     },
+
+    ownerListRequest() {
+      return this.workId ? workWorkOwnerListAPI : null
+    },
+
+    ownerListParams() {
+      return this.workId ? { workId: this.workId } : null
+    },
+
+    /**
+     * 项目ID 说明是项目
+     */
     workId() {
       return this.taskData.workId
     },
+
+    /**
+     * 标签
+     */
     labelList() {
       if (!this.taskData) {
         return []
@@ -680,7 +712,7 @@ export default {
   methods: {
     initInfo() {
       this.taskData = null
-      this.subTaskProgress = 0
+      this.subTaskDoneNum = 0
       // 设置关联项列表
       this.allData = {
         business: [],
@@ -707,7 +739,7 @@ export default {
             for (const item of taskData.childTask) {
               if (item.status == 5) {
                 item.checked = true
-                this.subTaskProgress++
+                this.subTaskDoneNum++
               } else {
                 item.checked = false
               }
@@ -909,15 +941,15 @@ export default {
     subtasksCheckbox(val, e) {
       if (e) {
         this.$set(val, 'checked', true)
-        this.subTaskProgress++
+        this.subTaskDoneNum++
       } else {
         this.$set(val, 'checked', false)
-        this.subTaskProgress--
+        this.subTaskDoneNum--
       }
       this.$emit('on-handle', {
         type: 'change-sub-task',
         value: {
-          subdonecount: this.subTaskProgress,
+          subdonecount: this.subTaskDoneNum,
           allcount: this.taskData.childTask.length
         },
         index: this.detailIndex,
@@ -932,15 +964,15 @@ export default {
           this.$message.error('子任务标记失败')
           if (e) {
             this.$set(val, 'checked', false)
-            this.subTaskProgress--
+            this.subTaskDoneNum--
           } else {
             this.$set(val, 'checked', true)
-            this.subTaskProgress++
+            this.subTaskDoneNum++
           }
           this.$emit('on-handle', {
             type: 'change-sub-task',
             value: {
-              subdonecount: this.subTaskProgress,
+              subdonecount: this.subTaskDoneNum,
               allcount: this.taskData.childTask.length
             },
             index: this.detailIndex,
@@ -952,7 +984,6 @@ export default {
     /**
      * 参与人操作
      */
-    // 提交按钮
     editOwnerList(users, dep) {
       setTaskAPI({
         taskId: this.id,
@@ -985,22 +1016,26 @@ export default {
         })
         .catch(() => {})
     },
-    // 编辑负责人
-    editMainUser(val) {
+
+    /**
+     * 编辑负责人
+     */
+    editMainUser(data) {
+      const mainUser = data.value.length > 0 ? data.value[0] : null
       setTaskAPI({
         taskId: this.id,
-        mainUserId: val ? val.data[0].userId : ''
+        mainUserId: mainUser ? mainUser.userId : ''
       })
         .then(res => {
-          if (val) {
-            this.$set(this.taskData, 'mainUser', val.data[0])
+          if (mainUser) {
+            this.$set(this.taskData, 'mainUser', mainUser)
           } else {
             this.$set(this.taskData, 'mainUser', null)
           }
 
           this.$emit('on-handle', {
             type: 'change-main-user',
-            value: val ? val.data[0] : null,
+            value: mainUser,
             index: this.detailIndex,
             section: this.detailSection
           })
@@ -1026,16 +1061,18 @@ export default {
         })
         .catch(() => {})
     },
-    // 截至日期API
-    endTimeChange(val) {
-      setTaskAPI({
-        stopTime: val,
-        taskId: this.id
-      })
+
+    /**
+     * 截至日期API
+     */
+    timeChange(type) {
+      const params = { taskId: this.id }
+      params[type] = this.taskData[type]
+      setTaskAPI(params)
         .then(res => {
           this.$emit('on-handle', {
-            type: 'change-stop-time',
-            value: val,
+            type: type,
+            value: this[type],
             index: this.detailIndex,
             section: this.detailSection
           })
@@ -1240,11 +1277,11 @@ export default {
                 }
               }
               if (val.checked) {
-                this.subTaskProgress--
+                this.subTaskDoneNum--
                 this.$emit('on-handle', {
                   type: 'change-sub-task',
                   value: {
-                    subdonecount: this.subTaskProgress,
+                    subdonecount: this.subTaskDoneNum,
                     allcount: this.taskData.childTask.length
                   },
                   index: this.detailIndex,
@@ -1284,7 +1321,7 @@ export default {
           this.$emit('on-handle', {
             type: 'change-sub-task',
             value: {
-              subdonecount: this.subTaskProgress,
+              subdonecount: this.subTaskDoneNum,
               allcount: this.taskData.childTask.length + 1
             },
             index: this.detailIndex,
@@ -1294,7 +1331,7 @@ export default {
           this.$emit('on-handle', {
             type: 'change-sub-task',
             value: {
-              subdonecount: this.subTaskProgress,
+              subdonecount: this.subTaskDoneNum,
               allcount: this.taskData.childTask.length - 1
             },
             index: this.detailIndex,
@@ -1453,6 +1490,10 @@ $btn-b-hover-color: #eff4ff;
         font-size: 12px;
         top: 2px;
         margin-top: -2px;
+      }
+
+      /deep/ .el-tabs__nav-scroll {
+        min-height: 39px;
       }
 
       /deep/ .el-tabs__item.is-active {
@@ -1644,7 +1685,14 @@ $btn-b-hover-color: #eff4ff;
   //   display: inline-block;
   // }
 
+  .div-photo {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+  }
+
   &__bd {
+    flex: 1;
     &--title {
       color: #333333;
       font-size: 16px;

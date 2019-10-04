@@ -410,6 +410,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../styles/content.scss';
+.d-view {
+  /deep/ .el-card__body {
+    background-color: white;
+  }
+}
 
 .detail-header {
   position: relative;

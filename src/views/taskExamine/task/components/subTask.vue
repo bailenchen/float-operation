@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { workTaskSaveAPI } from '@/api/projectManagement/task'
+import { setTaskAPI } from '@/api/task/task'
 import XhUser from '@/components/CreateCom/XhUser'
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 
@@ -156,7 +156,7 @@ export default {
         this.num = 1
         if (this.subTaskCom == 'new') {
           this.$emit('on-handle', { type: 'add', result: 'success' })
-          workTaskSaveAPI({
+          setTaskAPI({
             pid: this.taskData.taskId,
             name: this.subtasksTextarea,
             stopTime: this.subtasksDate,
@@ -189,7 +189,7 @@ export default {
             this.subtasksDate != this.time
           ) {
             this.$emit('on-handle', { type: 'edit', result: 'success' })
-            workTaskSaveAPI({
+            setTaskAPI({
               taskId: this.taskId,
               stopTime: this.subtasksDate,
               mainUserId:

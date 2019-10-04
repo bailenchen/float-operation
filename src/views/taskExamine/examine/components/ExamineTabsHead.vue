@@ -86,8 +86,11 @@ export default {
       this.$emit('select', value.command)
     },
 
+    /**
+     * 创建
+     */
     createClick() {
-      this.$emit('create')
+      this.$emit('add')
     }
   }
 }

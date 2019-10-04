@@ -68,13 +68,13 @@
           <div class="cell-hd">
             <i class="wk wk-contacts" />
           </div>
-          <div class="cell-bd text-one-line">
+          <div class="cell-bd">
             相关联系人：
           </div>
           <div
             v-for="(item, index) in item.contactsList"
             :key="index"
-            class="cell-ft__item">
+            class="cell-ft__item text-one-line">
             <a @click="checkRelationDetail('contacts', item.contactsId)">{{ item.name }}</a>
           </div>
         </flexbox>
@@ -87,14 +87,14 @@
           <div class="cell-hd">
             <i class="wk wk-business" />
           </div>
-          <div class="cell-bd text-one-line">
+          <div class="cell-bd">
             相关商机：
           </div>
           <div class="cell-ft">
             <div
               v-for="(item, index) in item.businessList"
               :key="index"
-              class="cell-ft__item">
+              class="cell-ft__item text-one-line">
               <a @click="checkRelationDetail('business', item.businessId)">{{ item.businessName }}</a>
             </div>
           </div>
