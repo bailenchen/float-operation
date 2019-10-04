@@ -123,7 +123,7 @@ export default {
         { label: '新增商机(个)', field: 'businessCount', icon: 'wk-business', num: '', rate: '', status: '', color: '#FB9323' },
         { label: '新增合同(个)', field: 'contractCount', icon: 'wk-contract', num: '', rate: '', status: '', color: '#4A5BFD' },
         { label: '合同金额(元)', field: 'contractMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#19B5F6' },
-        { label: '商机金额(元)', field: 'recordStatusCount', icon: 'wk-icon-opportunities', num: '', rate: '', status: '', color: '#AD5CFF' },
+        { label: '商机金额(元)', field: 'businessMoney', icon: 'wk-icon-opportunities', num: '', rate: '', status: '', color: '#AD5CFF' },
         { label: '回款金额(元)', field: 'receivablesMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#FFB940' },
         { label: '新增跟进记录(条)', field: 'recordCount', icon: 'wk-record', num: '', rate: '', status: '', color: '#4A5BFD' }
       ],
