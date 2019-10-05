@@ -659,6 +659,9 @@ export default {
      * 子任务完成进度
      */
     subTaskProgress() {
+      if (this.subTaskDoneNum == 0) {
+        return 0
+      }
       return parseInt(this.subTaskDoneNum / this.taskData.childTask.length * 100)
     },
 
@@ -682,7 +685,7 @@ export default {
      */
     labelList() {
       if (!this.taskData) {
-        return []
+        return null
       }
       return this.taskData.labelList || []
     }
@@ -695,13 +698,15 @@ export default {
       this.getActivityList()
     },
 
-    labelList(val) {
-      this.$emit('on-handle', {
-        type: 'change-label',
-        value: val,
-        index: this.detailIndex,
-        section: this.detailSection
-      })
+    labelList(newValue, oldValue) {
+      if (oldValue) {
+        this.$emit('on-handle', {
+          type: 'change-label',
+          value: newValue,
+          index: this.detailIndex,
+          section: this.detailSection
+        })
+      }
     }
   },
   mounted() {
@@ -817,12 +822,12 @@ export default {
           this.$store.dispatch('GetOAMessageNum', 'task')
         })
         .catch(() => {
-          this.$emit('on-handle', {
-            type: 'title-check',
-            value: !this.taskData.checked,
-            index: this.detailIndex,
-            section: this.detailSection
-          })
+          // this.$emit('on-handle', {
+          //   type: 'title-check',
+          //   value: !this.taskData.checked,
+          //   index: this.detailIndex,
+          //   section: this.detailSection
+          // })
           this.taskData.checked = !this.taskData.checked
         })
     },
@@ -954,29 +959,20 @@ export default {
         this.$set(val, 'checked', false)
         this.subTaskDoneNum--
       }
-      this.$emit('on-handle', {
-        type: 'change-sub-task',
-        value: {
-          subdonecount: this.subTaskDoneNum,
-          allcount: this.taskData.childTask.length
-        },
-        index: this.detailIndex,
-        section: this.detailSection
-      })
+      // this.$emit('on-handle', {
+      //   type: 'change-sub-task',
+      //   value: {
+      //     subdonecount: this.subTaskDoneNum,
+      //     allcount: this.taskData.childTask.length
+      //   },
+      //   index: this.detailIndex,
+      //   section: this.detailSection
+      // })
       setTaskAPI({
         taskId: val.taskId,
         status: e ? 5 : 1
       })
-        .then(res => {})
-        .catch(() => {
-          this.$message.error('子任务标记失败')
-          if (e) {
-            this.$set(val, 'checked', false)
-            this.subTaskDoneNum--
-          } else {
-            this.$set(val, 'checked', true)
-            this.subTaskDoneNum++
-          }
+        .then(res => {
           this.$emit('on-handle', {
             type: 'change-sub-task',
             value: {
@@ -986,6 +982,25 @@ export default {
             index: this.detailIndex,
             section: this.detailSection
           })
+        })
+        .catch(() => {
+          this.$message.error('子任务标记失败')
+          if (e) {
+            this.$set(val, 'checked', false)
+            this.subTaskDoneNum--
+          } else {
+            this.$set(val, 'checked', true)
+            this.subTaskDoneNum++
+          }
+          // this.$emit('on-handle', {
+          //   type: 'change-sub-task',
+          //   value: {
+          //     subdonecount: this.subTaskDoneNum,
+          //     allcount: this.taskData.childTask.length
+          //   },
+          //   index: this.detailIndex,
+          //   section: this.detailSection
+          // })
           // this.$emit('', val, e)
         })
     },
@@ -1006,7 +1021,10 @@ export default {
         })
         .catch(() => {})
     },
-    // 参与人删除按钮
+
+    /**
+     * 参与人删除按钮
+     */
     deleteOwnerList(item, index) {
       setTaskAPI({
         taskId: this.id,
@@ -1142,7 +1160,9 @@ export default {
       })
     },
 
-    // 评论发布
+    /**
+     * 评论发布
+     */
     commentsSub() {
       if (this.commentsTextarea) {
         this.commentsLoading = true
@@ -1272,6 +1292,11 @@ export default {
       })
         .then(res => {
           this.$message.success('关联成功')
+          this.$emit('on-handle', {
+            type: 'relation-business',
+            index: this.detailIndex,
+            section: this.detailSection
+          })
         })
         .catch(() => {})
     },
@@ -1380,6 +1405,11 @@ export default {
       })
         .then(res => {
           this.$set(this.taskData, 'stopTime', '')
+          this.$emit('on-handle', {
+            type: 'stop-time',
+            index: this.detailIndex,
+            section: this.detailSection
+          })
         })
         .catch(() => {})
     },

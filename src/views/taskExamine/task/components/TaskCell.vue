@@ -178,6 +178,7 @@ export default {
       })
         .then(res => {
           this.$store.dispatch('GetOAMessageNum', 'task')
+          this.$emit('on-handle', 'complete', this.data, this.dataIndex)
         })
         .catch(() => {
           val.checked = false

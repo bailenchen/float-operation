@@ -11,8 +11,7 @@
           v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
           class="div-photo head-img" />
         <el-progress
-          :percentage="20"
-          :stroke-width="8"
+          :percentage="progressValue"
           :format="progressFormat" />
         <span class="label margin-left">截止时间</span>
         <el-date-picker
@@ -118,6 +117,7 @@
       :id="taskID"
       :detail-index="detailIndex"
       :no-listener-class="['xr-cells']"
+      @on-handle="detailHandle"
       @close="taskDetailShow = false" />
   </div>
 </template>
@@ -233,6 +233,16 @@ export default {
 
     createMainUser() {
       return this.mainUser.length ? this.mainUser[0] : null
+    },
+
+    /**
+     * 子任务完成进度
+     */
+    progressValue() {
+      if (this.progress.stopTask == 0) {
+        return 0
+      }
+      return parseInt(this.progress.stopTask / this.progress.allTask * 100)
     }
   },
   watch: {},
@@ -253,7 +263,7 @@ export default {
   beforeDestroy() {},
   methods: {
     /**
-     * 头部逻辑
+     * 总完成进度展示
      */
     progressFormat(percentage) {
       return `${this.progress.stopTask}/${this.progress.allTask}`
@@ -324,6 +334,53 @@ export default {
         this.taskID = data.taskId
         this.detailIndex = index
         this.taskDetailShow = true
+      } else if (type == 'complete') {
+        this.progress.stopTask = data.checked ? ++this.progress.stopTask : --this.progress.stopTask
+      }
+    },
+
+    /**
+     * 详情操作
+     */
+    detailHandle(data) {
+      if (data.type == 'delete') {
+        this.list.splice(data.index, 1)
+      } else {
+        // 获取5条数据
+        let page = 1
+        if (data.index > 0) {
+          page = Math.ceil(data.index / 5)
+        }
+        const params = {
+          page: page,
+          limit: 5,
+          type: this.type,
+          priority: this.priority,
+          dueDate: this.dueDate,
+          status: this.showDone ? '' : '1'
+        }
+
+        if (this.taskType != 1) {
+          params.mold = 1 // 下属任务
+        }
+
+        taskListAPI(params)
+          .then(res => {
+            const task = this.list[data.index]
+            for (let index = 0; index < res.data.list.length; index++) {
+              const element = res.data.list[index]
+              if (element.taskId == task.taskId) {
+                if (element.status == 5) {
+                  element.checked = true
+                }
+                this.list.splice(index, 1, element)
+                break
+              }
+            }
+            this.progress = res
+          })
+          .catch(() => {
+          })
       }
     },
 

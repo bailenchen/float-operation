@@ -56,7 +56,7 @@ export default {
       } else if (status == 3) {
         return '#398dff'
       } else if (status == 4) {
-        return '#dee8ff'
+        return '#999'
       } else if (status == 5) {
         return '#d9d9d9'
       }

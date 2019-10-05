@@ -160,7 +160,7 @@ export default {
       if (this.subtasksTextarea && this.num == 0) {
         this.num = 1
         if (this.subTaskCom == 'new') {
-          this.$emit('on-handle', { type: 'add', result: 'success' })
+          // this.$emit('on-handle', { type: 'add', result: 'success' })
           setTaskAPI({
             pid: this.taskData.taskId,
             name: this.subtasksTextarea,
@@ -181,6 +181,7 @@ export default {
               this.subtasksDate = ''
               this.subtaskChange = false
               this.num = 0
+              this.$emit('on-handle', { type: 'add', result: 'success' })
             })
             .catch(() => {
               this.$emit('on-handle', { type: 'add', result: 'error' })
@@ -193,7 +194,7 @@ export default {
             this.text != this.subtasksTextarea ||
             this.subtasksDate != this.time
           ) {
-            this.$emit('on-handle', { type: 'edit', result: 'success' })
+            // this.$emit('on-handle', { type: 'edit', result: 'success' })
             setTaskAPI({
               taskId: this.taskId,
               stopTime: this.subtasksDate,
@@ -215,6 +216,7 @@ export default {
                   }
                 }
                 this.num = 0
+                this.$emit('on-handle', { type: 'edit', result: 'success' })
                 this.$message.success('子任务编辑成功')
               })
               .catch(() => {
