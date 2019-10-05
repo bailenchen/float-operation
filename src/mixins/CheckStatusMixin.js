@@ -81,6 +81,26 @@ export default {
         return '未提交'
       }
       return ''
+    },
+
+    /**
+     * 审核图标
+     */
+    getStatusIcon(status) {
+      if (status == 0) {
+        return 'wk wk-time'
+      } else if (status == 1) {
+        return 'wk wk-success'
+      } else if (status == 2) {
+        return 'wk wk-close'
+      } else if (status == 3) {
+        return 'wk wk-time'
+      } else if (status == 4) {
+        return 'wk wk-reset'
+      } else if (status == 5) {
+        return 'wk wk-time'
+      }
+      return ''
     }
   }
 }

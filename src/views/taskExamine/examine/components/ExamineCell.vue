@@ -42,7 +42,7 @@
         </flexbox>
 
         <div class="examine-stage">
-          <i class="wk wk-time" /><span>待张倩进行审批</span>
+          <i :class="getStatusIcon(data.examineStatus)" :style="{ color: getStatusColor(data.examineStatus) }" /><span>{{ `${data.examineName || ''}${getStatusName(data.examineStatus)}` }}</span>
         </div>
 
         <div
@@ -75,11 +75,13 @@
 
     <div class="section__ft">
       <el-button
+        v-if="canCheck"
         class="xr-btn--red handle-button"
         icon="wk wk-close"
         type="primary"
         @click="handleClick('reject')">驳回</el-button>
       <el-button
+        v-if="canCheck"
         class="xr-btn--green handle-button"
         icon="wk wk-success"
         type="primary"
@@ -142,20 +144,29 @@ export default {
       }
       return allList
     },
+
     moreTypes() {
       const mores = []
       if (this.data.permission) {
-        mores.push({ type: 'withdraw', name: '撤销', icon: 'reset' })
-
-        // if (this.data.permission.isUpdate) {
-        mores.push({ type: 'edit', name: '编辑', icon: 'edit' })
-        // }
+        if (this.data.permission.isRecheck) {
+          mores.push({ type: 'withdraw', name: '撤销', icon: 'reset' })
+        }
+        if (this.data.permission.isUpdate) {
+          mores.push({ type: 'edit', name: '编辑', icon: 'edit' })
+        }
 
         if (this.data.permission.isDelete) {
           mores.push({ type: 'delete', name: '删除', icon: 'delete' })
         }
       }
       return mores
+    },
+
+    /**
+     * 是否能审核 通过拒绝
+     */
+    canCheck() {
+      return this.data.permission && this.data.permission.isCheck
     }
   },
   watch: {},
