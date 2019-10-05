@@ -131,16 +131,20 @@
         </div>
       </div>
     </flexbox>
+
     <div class="handle-bar">
       <div
         class="handle-bar-add"
         @click="addAndEditScene('add',{})">+ 新建场景</div>
-      <div class="handle-bar-save">
-        <el-button @click.native="handleCancel">取消</el-button>
-        <el-button
-          type="primary"
-          @click.native="handleConfirm">保存</el-button>
-      </div>
+    </div>
+
+    <div
+      slot="footer"
+      class="dialog-footer">
+      <el-button @click.native="handleCancel">取消</el-button>
+      <el-button
+        type="primary"
+        @click.native="handleConfirm">保存</el-button>
     </div>
     <scene-create
       :field-list="fieldList"
@@ -634,7 +638,7 @@ export default {
   .handle-bar-add {
     cursor: pointer;
     color: #2362FB;
-    padding: 20px 10px;
+    padding: 20px 10px 0;
   }
   .handle-bar-save {
     position: relative;
