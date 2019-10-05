@@ -5,7 +5,6 @@
     class="d-view"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
-    append-to-body
     @close="hideView">
     <flexbox
       v-loading="loading"
@@ -518,7 +517,6 @@ import emoji from '@/components/emoji'
 import relatedBusiness from '@/components/relatedBusiness'
 import { XhUserCell } from '@/components/CreateCom'
 import FileCell from '@/views/OAManagement/components/fileCell'
-import CRMFullScreenDetail from '@/views/customermanagement/components/CRMFullScreenDetail'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -529,7 +527,8 @@ export default {
     emoji,
     relatedBusiness,
     TagIndex,
-    CRMFullScreenDetail,
+    CRMFullScreenDetail: () =>
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue'),
     SubTask,
     FileCell,
     XhUserCell
@@ -538,10 +537,6 @@ export default {
     id: [String, Number],
     detailIndex: Number,
     detailSection: Number,
-    appendToBody: {
-      type: Boolean,
-      default: false
-    },
     noListenerClass: {
       type: Array,
       default: () => {
@@ -718,9 +713,6 @@ export default {
   },
 
   beforeDestroy() {
-    if (this.appendToBody && this.$el && this.$el.parentNode) {
-      this.$el.parentNode.removeChild(this.$el)
-    }
   },
   methods: {
     initInfo() {
@@ -1505,6 +1497,7 @@ export default {
      */
     hideView() {
       this.$emit('close')
+      this.$emit('hide-view')
     }
   }
 }

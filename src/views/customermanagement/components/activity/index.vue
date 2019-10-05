@@ -126,20 +126,6 @@
       :visible.sync="showFullDetail"
       :crm-type="relationCrmType"
       :id="relationID" />
-    <!-- 审批详情 -->
-    <examine-detail
-      v-if="showExamineDetail"
-      :id="relationID"
-      :no-listener-class="['examine-content']"
-      class="d-view"
-      @hide-view="showExamineDetail=false" />
-    <!-- 任务详情 -->
-    <task-detail
-      v-if="showTaskDetail"
-      ref="particulars"
-      :id="relationID"
-      :no-listener-class="['xr-cells']"
-      @close="showTaskDetail = false" />
   </div>
 </template>
 
@@ -166,12 +152,7 @@ export default {
     CRMCreateView,
     NewDialog,
     CRMFullScreenDetail: () =>
-      import('@/views/customermanagement/components/CRMFullScreenDetail.vue'),
-    ExamineDetail: () =>
-      import('@/views/OAManagement/examine/components/examineDetail'),
-    TaskDetail: () =>
-      import('@/views/taskExamine/task/components/TaskDetail')
-
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
   filters: {
     getActivityTypeName(activityType) {
@@ -252,11 +233,7 @@ export default {
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
-      relationCrmType: '', // 相关类型
-      // 审批详情
-      showExamineDetail: false,
-      // 任务详情
-      showTaskDetail: false
+      relationCrmType: '' // 相关类型
     }
   },
   computed: {
@@ -423,7 +400,7 @@ export default {
      * 活动日志
      */
     getLogList() {
-      this.loading = true
+      // this.loading = true
       const params = {
         page: this.page,
         crmType: crmTypeModel[this.crmType], // 8是公海
@@ -433,7 +410,7 @@ export default {
 
       crmActivityListAPI(params)
         .then(res => {
-          this.loading = false
+          // this.loading = false
           this.noMore = res.data.list.length == 0
           if (!this.noMore) {
             this.list.push(res.data)
@@ -442,7 +419,7 @@ export default {
         })
         .catch(() => {
           this.noMore = true
-          this.loading = false
+          // this.loading = false
         })
     },
 
@@ -485,14 +462,9 @@ export default {
      * 跟进日志查看详情
      */
     checkCRMDetail(type, id) {
+      console.log('checkCRMDetail---', type, id)
       if (type == 'log') {
 
-      } else if (type == 'approve') {
-        this.relationID = id
-        this.showExamineDetail = true
-      } else if (type == 'task') {
-        this.relationID = id
-        this.showTaskDetail = true
       } else {
         this.relationID = id
         this.relationCrmType = type
