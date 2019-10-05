@@ -85,7 +85,7 @@
               <el-button
                 type="primary"
                 size="mini"
-                @click="nameVShow(taskDataName)">保 存</el-button>
+                @click="submiteTaskName(taskDataName)">保 存</el-button>
               <el-button
                 size="mini"
                 @click="nameVinput = false">取 消</el-button>
@@ -126,7 +126,7 @@
               :value="taskData.mainUser ? [taskData.mainUser] : []"
               style="width: 100%;"
               placement="top"
-              @value-change="editMainUser">
+              @value-change="mainUserChange">
               <flexbox slot="reference" class="head-btn">
                 <i v-if="!taskData.mainUser" class="wk wk-l-plus head-btn__icon is-null" />
                 <div
@@ -139,6 +139,7 @@
                   <div v-if="taskData.mainUser" class="head-btn__bd--title">{{ taskData.mainUser.realname }}</div>
                   <div class="head-btn__bd--des">负责人</div>
                 </div>
+                <i v-show="taskData.mainUser" class="el-icon-close head-btn__close" @click="submiteMainUser(null)" />
               </flexbox>
             </xh-user-cell>
           </flexbox-item>
@@ -159,6 +160,7 @@
                   class="head-btn__bd--title">{{ taskData.startTime | moment('MM月DD日') }}</div>
                 <div class="head-btn__bd--des">开始时间</div>
               </div>
+              <i v-show="taskData.startTime" class="el-icon-close head-btn__close" @click="deleteTime('startTime')" />
             </flexbox>
           </flexbox-item>
           <flexbox-item>
@@ -178,6 +180,7 @@
                   class="head-btn__bd--title">{{ taskData.stopTime | moment('MM月DD日') }}</div>
                 <div class="head-btn__bd--des">结束时间</div>
               </div>
+              <i v-show="taskData.stopTime" class="el-icon-close head-btn__close" @click="deleteTime('stopTime')" />
             </flexbox>
           </flexbox-item>
         </flexbox>
@@ -287,7 +290,7 @@
                     <el-button
                       type="primary"
                       size="mini"
-                      @click="addDescriptionSubmit">保 存</el-button>
+                      @click="submiteDescription">保 存</el-button>
                     <el-button
                       type="text"
                       size="mini"
@@ -473,6 +476,11 @@
 
       </flexbox>
     </flexbox>
+
+    <c-r-m-full-screen-detail
+      :visible.sync="showRelatedDetail"
+      :crm-type="relatedCRMType"
+      :id="relatedID"/>
   </slide-view>
 </template>
 
@@ -1020,8 +1028,15 @@ export default {
     /**
      * 编辑负责人
      */
-    editMainUser(data) {
+    mainUserChange(data) {
       const mainUser = data.value.length > 0 ? data.value[0] : null
+      this.submiteMainUser(mainUser)
+    },
+
+    /**
+     * 上传负责人信息
+     */
+    submiteMainUser(mainUser) {
       setTaskAPI({
         taskId: this.id,
         mainUserId: mainUser ? mainUser.userId : ''
@@ -1042,8 +1057,11 @@ export default {
         })
         .catch(() => {})
     },
-    // 编辑任务名
-    nameVShow(val) {
+
+    /**
+     * 编辑任务名
+     */
+    submiteTaskName(val) {
       setTaskAPI({
         name: val,
         taskId: this.id
@@ -1065,6 +1083,11 @@ export default {
     /**
      * 截至日期API
      */
+    deleteTime(type) {
+      this.taskData[type] = ''
+      this.timeChange(type)
+    },
+
     timeChange(type) {
       const params = { taskId: this.id }
       params[type] = this.taskData[type]
@@ -1079,8 +1102,11 @@ export default {
         })
         .catch(() => {})
     },
-    // 描述提交按钮
-    addDescriptionSubmit() {
+
+    /**
+     * 描述提交按钮
+     */
+    submiteDescription() {
       setTaskAPI({
         taskId: this.id,
         description: this.addDescriptionTextarea
@@ -1654,6 +1680,7 @@ $btn-b-hover-color: #eff4ff;
 // 操作图标
 .head-btn {
   cursor: pointer;
+  position: relative;
   min-height: 34px;
 
   &__icon {
@@ -1679,11 +1706,6 @@ $btn-b-hover-color: #eff4ff;
     background-color: #f56c6c;
     color: white;
   }
-  // &__icon::before {
-  //   margin-top: 1px;
-  //   margin-left: 2px;
-  //   display: inline-block;
-  // }
 
   .div-photo {
     width: 32px;
@@ -1693,6 +1715,7 @@ $btn-b-hover-color: #eff4ff;
 
   &__bd {
     flex: 1;
+    padding-right: 8px;
     &--title {
       color: #333333;
       font-size: 16px;
@@ -1703,12 +1726,27 @@ $btn-b-hover-color: #eff4ff;
       color: #999;
     }
   }
+
+  &__close {
+    flex-shrink: 0;
+    color: #999;
+    font-size: 16px;
+    opacity: 0;
+  }
+
+  &__close:hover {
+    color: #fa6060;
+  }
 }
 
 .head-btn:hover {
   .head-btn__icon.is-null {
     color: $xr-color-primary;
     background-color: $btn-b-hover-color;
+  }
+
+  .head-btn__close {
+    opacity: 1;
   }
 }
 

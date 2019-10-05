@@ -81,7 +81,7 @@
               class="activity-cell">
               <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}创建了{{ item.activityType | getActivityTypeName }}：</span><span
                 class="activity-cell__content"
-                @click="checkCRMDetail(getActivityType(item.activityType), item.activityTypeId)">{{ item.activityTypeName }}</span>
+                @click="checkCRMDetail(getActivityType(item.activityType), item.activityTypeId)">{{ item.activityTypeName || '查看详情' }}</span>
             </div>
             <div
               v-if="item.type == 3"
@@ -93,7 +93,7 @@
               <span>{{ ` 阶段变为 ${item.content}` }}</span>
             </div>
             <i
-              :class="[item.type == 3 ? 'wk-business' : `wk-${getActivityType(item.activityType)}`]"
+              :class="[item.type == 3 ? 'wk-business' : `wk-${getActivityIcon(item.activityType)}`]"
               :style="{ backgroundColor: getActivityTypeColor(item.activityType) }"
               class="wk log-cell__mark"
               style="background-color: #FB9323;" />
@@ -126,6 +126,20 @@
       :visible.sync="showFullDetail"
       :crm-type="relationCrmType"
       :id="relationID" />
+    <!-- 审批详情 -->
+    <examine-detail
+      v-if="showExamineDetail"
+      :id="relationID"
+      :no-listener-class="['examine-content']"
+      class="d-view"
+      @hide-view="showExamineDetail=false" />
+    <!-- 任务详情 -->
+    <task-detail
+      v-if="showTaskDetail"
+      ref="particulars"
+      :id="relationID"
+      :no-listener-class="['xr-cells']"
+      @close="showTaskDetail = false" />
   </div>
 </template>
 
@@ -152,7 +166,12 @@ export default {
     CRMCreateView,
     NewDialog,
     CRMFullScreenDetail: () =>
-      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue'),
+    ExamineDetail: () =>
+      import('@/views/OAManagement/examine/components/examineDetail'),
+    TaskDetail: () =>
+      import('@/views/taskExamine/task/components/TaskDetail')
+
   },
   filters: {
     getActivityTypeName(activityType) {
@@ -233,7 +252,11 @@ export default {
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
-      relationCrmType: '' // 相关类型
+      relationCrmType: '', // 相关类型
+      // 审批详情
+      showExamineDetail: false,
+      // 任务详情
+      showTaskDetail: false
     }
   },
   computed: {
@@ -462,9 +485,19 @@ export default {
      * 跟进日志查看详情
      */
     checkCRMDetail(type, id) {
-      this.relationID = id
-      this.relationCrmType = type
-      this.showFullDetail = true
+      if (type == 'log') {
+
+      } else if (type == 'approve') {
+        this.relationID = id
+        this.showExamineDetail = true
+      } else if (type == 'task') {
+        this.relationID = id
+        this.showTaskDetail = true
+      } else {
+        this.relationID = id
+        this.relationCrmType = type
+        this.showFullDetail = true
+      }
     },
 
     /**
@@ -483,6 +516,22 @@ export default {
         8: 'log',
         9: 'examine',
         11: 'task'
+      }[activityType]
+    },
+
+    getActivityIcon(activityType) {
+      // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
+      return {
+        1: 'leads',
+        2: 'customer',
+        3: 'contacts',
+        4: 'product',
+        5: 'business',
+        6: 'contract',
+        7: 'receivables',
+        8: 'log',
+        9: 'approve',
+        11: 'o-task'
       }[activityType]
     },
 

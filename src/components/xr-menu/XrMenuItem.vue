@@ -38,6 +38,7 @@ export default {
 .xr-menu-item {
   padding: 12px 20px;
   position: relative;
+  cursor: pointer;
 
   &__icon {
     display: inline-block;

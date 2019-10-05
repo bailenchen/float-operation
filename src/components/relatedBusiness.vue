@@ -72,7 +72,7 @@
 
 <script>
 // 关联业务 - 弹出框
-import { editTaskRelation } from '@/api/oamanagement/task'
+import { editTaskRelationAPI } from '@/api/task/task'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import { objDeepCopy } from '@/utils'
@@ -187,7 +187,7 @@ export default {
               })
               .join(',')
           }
-          editTaskRelation(params)
+          editTaskRelationAPI(params)
             .then(res => {
               this.relatedListData[field].splice(index, 1)
               this.relatedListData = objDeepCopy(this.relatedListData)

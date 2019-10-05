@@ -283,7 +283,6 @@ export default {
     /**
      * 部门信息
      */
-    // 部门列表数据
     getDepList() {
       this.depLoading = true
       depList({ type: 'tree' })
@@ -498,10 +497,16 @@ export default {
           })
         )
 
-      this.depShowList = this.depShowList.map((item, index, array) => {
-        item.isCheck = this.getItemCheckInfo(item, 'dep')
-        return item
-      })
+      if (this.depShowList.length) {
+        this.depShowList.forEach(item => {
+          item.isCheck = this.getItemCheckInfo(item, 'dep')
+        })
+      }
+      if (this.userList.length) {
+        this.userList.forEach(item => {
+          item.isCheck = this.getItemCheckInfo(item, 'user')
+        })
+      }
     }
   }
 }
