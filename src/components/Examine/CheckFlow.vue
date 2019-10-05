@@ -81,7 +81,8 @@ export default {
       default: ''
     },
     // 详情信息id
-    id: [String, Number]
+    id: [String, Number],
+    show: Boolean
   },
   data() {
     return {
@@ -91,14 +92,16 @@ export default {
   },
   computed: {},
   watch: {
-    id: function(val) {
+    show: function(val) {
       if (val) {
         this.list = []
         this.getDetail()
       }
     }
   },
-  mounted() {},
+  mounted() {
+
+  },
   methods: {
     getDetail() {
       if (this.id) {

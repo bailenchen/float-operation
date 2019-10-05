@@ -14,11 +14,11 @@
 
         <el-popover
           v-model="showFlowPopover"
-          placement="bottom"
           width="300"
           trigger="click">
           <check-flow
             ref="checkFlow"
+            :show="showFlowPopover"
             :id="recordId"
             :examine-type="examineType"
             @close="showFlowPopover=false"/>

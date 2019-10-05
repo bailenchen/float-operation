@@ -163,6 +163,7 @@ export default {
             this.$store.dispatch('GetMessageNum')
           }
 
+          this.resetInfo()
           this.$bus.emit('examine-handle-bus')
           this.$emit('save')
           this.hiddenView()
@@ -196,6 +197,7 @@ export default {
         .then(res => {
           this.loading = false
           this.$message.success('操作成功')
+          this.resetInfo()
           this.$emit('save', { type: this.status })
           this.$bus.emit('examine-handle-bus')
           this.hiddenView()
@@ -220,6 +222,13 @@ export default {
     },
     hiddenView() {
       this.$emit('close')
+    },
+
+    /**
+     * 提交后重置信息
+     */
+    resetInfo() {
+      this.content = ''
     }
   }
 }

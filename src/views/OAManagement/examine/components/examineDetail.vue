@@ -256,6 +256,9 @@ export default {
   props: {
     // 详情信息id
     id: [String, Number],
+    // 列表索引
+    detailIndex: [String, Number],
+    detailSection: [String, Number],
     noListenerClass: {
       type: Array,
       default: () => {
@@ -418,7 +421,7 @@ export default {
     // 审批操作
     examineHandle(data) {
       this.$store.dispatch('GetOAMessageNum', 'examine')
-      this.$emit('on-examine-handle', data)
+      this.$emit('on-examine-handle', data, this.detailIndex)
     }
   }
 }
