@@ -3,18 +3,19 @@
     v-loading="loading"
     :listener-ids="['workbench-main-container']"
     :no-listener-class="noListenerClass"
-    :body-style="{padding: '10px 30px', height: '100%'}"
     class="d-view"
     @close="hideView">
     <flexbox
+      v-if="detail"
       orient="vertical"
-      style="height: 100%;">
+      class="detail-main">
       <flexbox class="detail-header">
+        <div
+          :style="{ backgroundColor: detailIcon.color }"
+          class="header-icon">
+          <i :class="['wk', 'wk-' + detailIcon.icon]" />
+        </div>
         <div class="header-name">{{ categoryName }}</div>
-        <img
-          class="header-close"
-          src="@/assets/img/task_close.png"
-          @click="hideView" >
       </flexbox>
       <div class="detail-body">
         <!-- 基本信息 -->
@@ -60,9 +61,8 @@
               </div>
             </flexbox> -->
 
-            <flexbox
+            <div
               v-if="item.formType === 'checkbox'"
-              align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
               <div class="b-cell-value">
@@ -77,11 +77,10 @@
                   </div>
                 </flexbox>
               </div>
-            </flexbox>
+            </div>
 
-            <flexbox
+            <div
               v-else-if="item.formType === 'file'"
-              align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
               <div class="b-cell-value">
@@ -91,7 +90,7 @@
                   class="f-item">
                   <img
                     class="f-img"
-                    src="@/assets/img/relevance_file.png" >
+                    src="@/assets/img/relevance_file.png">
                   <div class="f-name">{{ file.name.length > 15 ? (file.name.substring(0, 15) + '...'): file.name+'('+file.size+')' }}</div>
                   <el-button
                     type="text"
@@ -101,47 +100,52 @@
                     @click.native="handleFile('download', file, index)">下载</el-button>
                 </flexbox>
               </div>
-            </flexbox>
+            </div>
 
-            <flexbox
+            <div
               v-else
-              align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
               <div class="b-cell-value">{{ item.value }}</div>
-            </flexbox>
+            </div>
           </flexbox-item>
         </flexbox>
         <!-- 图片 附件 -->
         <div
-          v-if="fileList.length > 0 || imgList.length > 0"
-          class="accessory">
-          <!-- 图片 -->
-          <div class="upload-img-box">
-            <div
-              v-for="(imgItem, k) in imgList"
-              :key="k"
-              class="img-list"
-              @click="imgZoom(imgList, k)">
-              <img
-                v-lazy="imgItem.filePath"
-                :key="imgItem.filePath">
-            </div>
+          v-if="imgList.length > 0"
+          class="img-box">
+          <div
+            v-for="(imgItem, k) in imgList"
+            :key="k"
+            class="img-list"
+            @click="imgZoom(imgList, k)">
+            <img
+              v-lazy="imgItem.filePath"
+              :key="imgItem.filePath">
           </div>
-          <!-- 附件 -->
-          <div class="accessory-box">
+        </div>
+
+        <!-- 附件 -->
+        <div v-if="fileList.length" class="section">
+          <div class="section__hd">
+            <i class="wukong wukong-file" />
+            <span>附件</span>
+            <span>({{ fileList.length }})</span>
+          </div>
+          <div class="section__bd">
             <file-cell
               v-for="(file, fileIndex) in fileList"
               :key="fileIndex"
               :data="file"
-              :cell-index="fileIndex"/>
+              :cell-index="fileIndex" />
           </div>
         </div>
+
         <!-- 行程 报销 -->
-        <create-sections
+        <div
           v-if="type && type == 3 && travelList && travelList.length > 0"
-          title="行程"
-          class="create-sections">
+          class="table-sections">
+          <div class="table-sections__title">行程</div>
           <el-table
             :data="travelList"
             style="font-size: 13px;"
@@ -153,13 +157,14 @@
               :key="index"
               :prop="item.prop"
               :label="item.label"
-              show-overflow-tooltip/>
+              show-overflow-tooltip />
           </el-table>
-        </create-sections>
-        <create-sections
+        </div>
+
+        <div
           v-if="type && type == 5 && travelList && travelList.length > 0"
-          title="报销"
-          class="create-sections">
+          class="table-sections">
+          <div class="table-sections__title">报销</div>
           <el-table
             :data="travelList"
             style="font-size: 13px;"
@@ -171,7 +176,7 @@
               :key="index"
               :prop="item.prop"
               :label="item.label"
-              show-overflow-tooltip/>
+              show-overflow-tooltip />
             <el-table-column
               label="发票"
               width="50">
@@ -184,13 +189,16 @@
               </template>
             </el-table-column>
           </el-table>
-        </create-sections>
+        </div>
         <!-- 关联业务 -->
-        <create-sections
+        <div
           v-if="relatedListData.contacts.length > 0 || relatedListData.customer.length > 0 || relatedListData.business.length > 0 || relatedListData.contract.length > 0"
-          title="关联业务"
-          class="create-sections">
-          <div class="related-business create-sections-content">
+          class="section">
+          <div class="section__hd">
+            <i class="wukong wukong-relevance" />
+            <span>关联业务</span>
+          </div>
+          <div class="section__bd">
             <div
               v-for="(items, key) in relatedListData"
               :key="key">
@@ -201,51 +209,50 @@
                 :type="key"
                 :key="itemIndex"
                 :show-foot="false"
-                @click.native="checkRelatedDetail(key, item)"/>
+                @click.native="checkRelatedDetail(key, item)" />
             </div>
           </div>
-        </create-sections>
+        </div>
+
         <!-- 审核信息 -->
-        <create-sections
-          title="审核信息"
-          class="create-sections">
+        <div class="examine-section">
           <examine-info
             :id="id"
             :record-id="detail.examineRecordId"
             class="create-sections-content"
             examine-type="oa_examine"
-            @on-handle="examineHandle"/>
-        </create-sections>
+            @on-handle="examineHandle" />
+        </div>
       </div>
     </flexbox>
     <c-r-m-full-screen-detail
       :visible.sync="showRelatedDetail"
       :crm-type="relatedCRMType"
-      :id="relatedID"/>
+      :id="relatedID" />
   </slide-view>
 </template>
 
 <script>
 import { oaExamineRead, OaExamineGetField } from '@/api/oamanagement/examine'
 import SlideView from '@/components/SlideView'
-import CreateSections from '@/components/CreateSections'
 import ExamineInfo from '@/components/Examine/ExamineInfo'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import FileCell from '@/views/OAManagement/components/fileCell'
 import { downloadFile } from '@/utils'
+import ExamineMixin from '@/views/taskExamine/examine/components/ExamineMixin'
 
 export default {
   /** 审批详情 */
   name: 'ExamineDetail',
   components: {
     SlideView,
-    CreateSections,
     ExamineInfo,
     RelatedBusinessCell,
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue'),
     FileCell
   },
+  mixins: [ExamineMixin],
   props: {
     // 详情信息id
     id: [String, Number],
@@ -261,9 +268,7 @@ export default {
       loading: false,
       categoryId: '',
       type: '',
-      detail: {
-        examineRecordId: ''
-      },
+      detail: null,
       list: [], // 基本信息
       categoryName: '',
 
@@ -300,6 +305,9 @@ export default {
     }
   },
   computed: {
+    /**
+     * 相关信息
+     */
     relatedListData() {
       return {
         contacts: this.detail.contactsList || [],
@@ -307,10 +315,18 @@ export default {
         business: this.detail.businessList || [],
         contract: this.detail.contractList || []
       }
+    },
+
+    /**
+     * 详情logo
+     */
+    detailIcon() {
+      return this.getCategoryIcon(this.detail.type)
     }
   },
   watch: {
     id: function(val) {
+      this.detail = null
       this.getDetial()
     }
   },
@@ -410,40 +426,42 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../styles/content.scss';
+.detail-main {
+  height: 100%;
+  overflow-y: auto;
+  overflow-y: overlay;
+}
+
 .d-view {
+  background-color: white;
+  padding: 15px;
   /deep/ .el-card__body {
-    background-color: white;
+    height: 100%;
   }
 }
 
 .detail-header {
-  position: relative;
-  min-height: 60px;
-  .header-name {
-    font-size: 14px;
-    color: #333333;
-    flex: 1;
-  }
-  .header-close {
-    display: block;
+  .header-icon {
     width: 40px;
     height: 40px;
-    margin-left: 20px;
-    padding: 10px;
-    cursor: pointer;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 4px;
+    margin-right: 20px;
+    .wk {
+      color: white;
+      font-size: 26px;
+    }
+  }
+  .header-name {
+    font-size: 16px;
+    color: #333333;
+    flex: 1;
+    font-weight: 600;
   }
 }
 
-.create-sections {
-  padding: 5px 0;
-  /deep/ .section-header {
-    padding: 5px 0;
-  }
-}
 
-.create-sections-content {
-  padding: 0;
-}
 
 .related-business {
   margin: 15px 0;
@@ -453,7 +471,7 @@ export default {
   }
   p {
     cursor: pointer;
-    color: #2362FB;
+    color: #2362fb;
     background: #f5f7fa;
     line-height: 30px;
     margin-bottom: 5px;
@@ -475,12 +493,12 @@ export default {
     .b-cell-name {
       width: 100px;
       margin-right: 10px;
-      font-size: 13px;
+      font-size: 12px;
       flex-shrink: 0;
-      color: #777;
+      color: #666;
     }
     .b-cell-value {
-      font-size: 13px;
+      font-size: 14px;
       color: #333;
     }
     .b-cell-foot {
@@ -511,51 +529,109 @@ export default {
 }
 
 // 图片 附件
-.accessory {
-  margin: 0 10px;
-  .upload-img-box {
-    margin: 10px 0;
-    .img-list {
-      display: inline-block;
-      position: relative;
-      margin-right: 10px;
+.img-box {
+  margin: 10px 0;
+  .img-list {
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    width: 80px;
+    height: 60px;
+    line-height: 60px;
+    cursor: pointer;
+    img {
       width: 80px;
       height: 60px;
-      line-height: 60px;
-      cursor: pointer;
-      img {
-        width: 80px;
-        height: 60px;
-      }
-      .img-hover {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        text-align: center;
-        font-size: 12px;
-        color: #fff;
-        display: none;
-        span {
-          @include cursor;
-          display: inline-block;
-        }
-      }
     }
-    .img-list:hover {
-      .img-hover {
+    .img-hover {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      text-align: center;
+      font-size: 12px;
+      color: #fff;
+      display: none;
+      span {
+        @include cursor;
         display: inline-block;
       }
     }
   }
+  .img-list:hover {
+    .img-hover {
+      display: inline-block;
+    }
+  }
+}
+
+// 详情其他模块
+.section {
+  padding: 10px 0;
+
+  &__hd {
+    span {
+      font-size: 16px;
+      color: #333;
+      font-weight: 600;
+    }
+    .wk {
+      color: #363636;
+      font-size: 15px;
+      margin-right: 5px;
+    }
+  }
+
+  &__bd {
+    margin-top: 15px;
+    padding-left: 25px;
+  }
+}
+
+.secitons {
+  position: relative;
+  margin-top: 15px;
 }
 
 .detail-body {
   flex: 1;
+  padding-top: 30px;
   overflow-y: auto;
   width: 100%;
+}
+
+// 行程 报销效果
+.table-sections {
+  margin-top: 8px;
+  padding: 10px 0;
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    padding-left: 15px;
+    position: relative;
+    margin-bottom: 15px;
+  }
+
+  &__title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 2px;
+    background-color: $xr-color-primary;
+  }
+}
+
+// 审核信息
+.examine-section {
+  padding: 10px 20px;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
 }
 
 .d-view {

@@ -72,7 +72,7 @@ import {
 } from '@/api/oamanagement/examine'
 import ExamineTabsHead from './components/ExamineTabsHead'
 import ExamineCell from './components/ExamineCell'
-import Examine from './components/ExamineMixin'
+import ExamineMixin from './components/ExamineMixin'
 import ExamineCategorySelect from '@/views/OAManagement/examine/components/examineCategorySelect'
 import ExamineCreateView from '@/views/OAManagement/examine//components/examineCreateView'
 
@@ -93,7 +93,7 @@ export default {
     CRMAllDetail,
     ExamineHandle
   },
-  mixins: [Examine],
+  mixins: [ExamineMixin],
   props: {},
   data() {
     return {

@@ -88,6 +88,7 @@ export default {
   position: relative;
   margin-bottom: 5px;
   color: #333333;
+  font-size: 12px;
 
   .cell-head {
     flex-shrink: 0;
