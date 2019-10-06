@@ -102,7 +102,7 @@ export default {
         page: this.currentPage,
         limit: this.pageSize,
         search: this.search,
-        type: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8是公海
+        type: this.isSeas ? 9 : crmTypeModel[this.crmType] // 9是公海
       }
       if (this.sortData.order) {
         params.sortField = this.sortData.prop

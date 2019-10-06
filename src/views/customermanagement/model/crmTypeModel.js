@@ -6,6 +6,6 @@ export default {
   business: 5,
   contract: 6,
   receivables: 7,
-  // 公海 8
+  // 公海 9
   receivables_plan: 8
 }

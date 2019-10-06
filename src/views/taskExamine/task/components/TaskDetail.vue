@@ -2048,7 +2048,7 @@ $btn-b-hover-color: #eff4ff;
   position: fixed;
   min-width: 926px;
   width: 75%;
-  top: 0px;
+  top: 60px;
   bottom: 0px;
   right: 0px;
 }
