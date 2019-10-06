@@ -180,10 +180,14 @@ export default {
       setCommentAPI(params).then(res => {
         res.data.user = {
           userId: this.userInfo.id,
-          realname: this.userInfo.realname
+          realname: this.userInfo.realname,
+          img: this.userInfo.img
         }
-        res.data.replyUser = c_comment.user
-
+        if (c_comment) {
+          res.data.replyUser = c_comment.user
+        } else {
+          res.data.replyUser = f_comment.user
+        }
         this.list[arr[0]].childCommentList.unshift(res.data)
         this.replyIndex = null
         this.commentLoading = false

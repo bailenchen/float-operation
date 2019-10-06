@@ -59,6 +59,7 @@
             v-if="noMore"
             class="scroll-bottom-tips">没有更多了</p>
         </div>
+
         <div v-loading="sendLoading" :class="['add', { 'unfold': isUnfold, 'is-close': !isUnfold }]">
           <i
             v-if="isUnfold"
