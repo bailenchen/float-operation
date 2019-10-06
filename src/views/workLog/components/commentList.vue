@@ -11,9 +11,11 @@
             v-lazy:background-image="$options.filters.filterUserLazyImg(item.user.img)"
             :key="item.user.img"
             class="user-img div-photo" />
-          <span class="user">{{ item.user.realname }}</span>
-          <div class="time">
-            {{ item.createTime }}
+          <div class="user-info__bd">
+            <div class="user">{{ item.user.realname }}</div>
+            <div class="time">
+              {{ item.createTime }}
+            </div>
           </div>
           <div class="control">
             <el-button
@@ -23,7 +25,8 @@
             </el-button>
             <el-button
               class="danger"
-              type="text">
+              type="text"
+              @click="handleToDelete(item, index)">
               删除
             </el-button>
           </div>
@@ -45,11 +48,13 @@
                 v-lazy:background-image="$options.filters.filterUserLazyImg(child.user.img)"
                 :key="child.user.img"
                 class="user-img div-photo" />
-              <span class="user">
-                {{ child.user.realname }}
-              </span>
-              <div class="time">
-                {{ child.createTime }}
+              <div class="user-info__bd">
+                <div class="user">
+                  {{ child.user.realname }}
+                </div>
+                <div class="time">
+                  {{ child.createTime }}
+                </div>
               </div>
               <div class="control">
                 <el-button
@@ -88,10 +93,11 @@
  */
 import ReplyComment from '@/components/ReplyComment'
 import {
-  setCommentAPI
-  // deleteCommentAPI,
+  setCommentAPI,
+  deleteCommentAPI
 } from '@/api/oamanagement/common'
 import { mapGetters } from 'vuex'
+import xss from 'xss'
 
 export default {
   name: 'CommentList',
@@ -153,7 +159,7 @@ export default {
     handleReply(data) {
       const params = {
         type: this.type,
-        content: data,
+        content: xss(data),
         typeId: this.id
       }
       let c_comment = null
@@ -184,6 +190,33 @@ export default {
       }).catch(() => {
         this.commentLoading = false
       })
+    },
+    /**
+     * 删除回复
+     */
+    handleToDelete(data, index) {
+      this.$confirm('确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deleteCommentAPI({
+            commentId: data.commentId
+          }).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.list.splice(index, 1)
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   }
 }
@@ -196,6 +229,7 @@ export default {
         width: 34px;
         height: 34px;
         border-radius: 50%;
+        margin-right: 15px;
       }
       .reply {
         font-size: 13px;
@@ -208,15 +242,16 @@ export default {
           display: flex;
           align-items: center;
           justify-content: flex-start;
-          .user {
-            font-size: 14px;
-            margin-left: 20px;
-          }
-          .time {
+          &__bd {
             flex: 1;
-            font-size: 12px;
-            color: #666;
-            margin-left: 10px;
+            .user {
+              font-size: 14px;
+            }
+            .time {
+              font-size: 12px;
+              color: #666;
+              margin-top: 3px;
+            }
           }
           .control {
             margin-left: 10px;

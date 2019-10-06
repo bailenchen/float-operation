@@ -156,15 +156,15 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
             this.loading = true
             productCategoryDelete({
               id: command.node.data.categoryId
             })
               .then(res => {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
                 this.getProductCategoryIndex()
                 this.loading = false
               })

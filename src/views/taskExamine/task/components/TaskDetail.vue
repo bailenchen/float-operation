@@ -129,8 +129,12 @@
               style="width: 100%;"
               placement="top"
               @value-change="mainUserChange">
-              <flexbox slot="reference" class="head-btn">
-                <i v-if="!taskData.mainUser" class="wk wk-l-plus head-btn__icon is-null" />
+              <flexbox
+                slot="reference"
+                class="head-btn">
+                <i
+                  v-if="!taskData.mainUser"
+                  class="wk wk-l-plus head-btn__icon is-null" />
                 <div
                   v-photo="taskData.mainUser"
                   v-lazy:background-image="$options.filters.filterUserLazyImg(taskData.mainUser.img)"
@@ -138,10 +142,15 @@
                   :key="taskData.mainUser.img"
                   class="div-photo" />
                 <div class="head-btn__bd">
-                  <div v-if="taskData.mainUser" class="head-btn__bd--title">{{ taskData.mainUser.realname }}</div>
+                  <div
+                    v-if="taskData.mainUser"
+                    class="head-btn__bd--title">{{ taskData.mainUser.realname }}</div>
                   <div class="head-btn__bd--des">负责人</div>
                 </div>
-                <i v-show="taskData.mainUser" class="el-icon-close head-btn__close" @click="submiteMainUser(null)" />
+                <i
+                  v-show="taskData.mainUser"
+                  class="el-icon-close head-btn__close"
+                  @click="submiteMainUser(null)" />
               </flexbox>
             </xh-user-cell>
           </flexbox-item>
@@ -162,7 +171,10 @@
                   class="head-btn__bd--title">{{ taskData.startTime | moment('MM月DD日') }}</div>
                 <div class="head-btn__bd--des">开始时间</div>
               </div>
-              <i v-show="taskData.startTime" class="el-icon-close head-btn__close" @click="deleteTime('startTime')" />
+              <i
+                v-show="taskData.startTime"
+                class="el-icon-close head-btn__close"
+                @click="deleteTime('startTime')" />
             </flexbox>
           </flexbox-item>
           <flexbox-item>
@@ -182,7 +194,10 @@
                   class="head-btn__bd--title">{{ taskData.stopTime | moment('MM月DD日') }}</div>
                 <div class="head-btn__bd--des">结束时间</div>
               </div>
-              <i v-show="taskData.stopTime" class="el-icon-close head-btn__close" @click="deleteTime('stopTime')" />
+              <i
+                v-show="taskData.stopTime"
+                class="el-icon-close head-btn__close"
+                @click="deleteTime('stopTime')" />
             </flexbox>
           </flexbox-item>
         </flexbox>
@@ -449,19 +464,22 @@
               label="评论"
               name="comment"
               lazy>
-              <div v-loading="commentsLoading">
-                <reply-comment
-                  ref="f_reply"
-                  @toggle="closeOtherReply"
-                  @reply="handleReply" />
+              <flexbox
+                v-loading="commentsLoading"
+                direction="column"
+                align="stretch"
+                class="comment-cells">
                 <comment-list
-                  v-if="replyList.length > 0"
                   ref="comment_list"
                   :id="taskData.taskId"
                   :list="replyList"
                   type="1"
                   @close-other-reply="$refs.f_reply.toggleFocus(true)" />
-              </div>
+                <reply-comment
+                  ref="f_reply"
+                  @toggle="closeOtherReply"
+                  @reply="handleReply" />
+              </flexbox>
             </el-tab-pane>
             <el-tab-pane
               label="活动"
@@ -497,7 +515,7 @@
     <c-r-m-full-screen-detail
       :visible.sync="showRelatedDetail"
       :crm-type="relatedCRMType"
-      :id="relatedID"/>
+      :id="relatedID" />
   </slide-view>
 </template>
 
@@ -569,21 +587,6 @@ export default {
   data() {
     return {
       loading: false,
-      // 评论 - 活动
-      // 评论 - 活动显示的内容
-      commentsActivities: true,
-      // 评论框
-      commentsTextarea: '',
-      // 回复
-      childCommentsTextarea: '',
-      // 评论 - 是否弹出表情
-      // 回复的一行用户数据
-      replyChildComment: null, // 被评论对象
-      replyChildIndex: -1, // -1 是主评论 0以上为子评论
-      contentLoading: false, // 回复按钮loading
-      commentsPopover: false,
-      // 回复弹出框
-      childCommentsPopover: false,
       // 紧急弹出框
       priorityVisible: false,
       // 优先级列表
@@ -605,11 +608,9 @@ export default {
       addDescriptionTextarea: '',
       // 子任务进度
       subTaskDoneNum: 0,
-      blurIndex: 0,
       // 是否显示评论框
       addComments: false,
       allData: {},
-      isComment: true,
       commentsLoading: false,
       // 相关详情的查看
       relatedID: '',
@@ -679,7 +680,9 @@ export default {
       if (this.subTaskDoneNum == 0) {
         return 0
       }
-      return parseInt(this.subTaskDoneNum / this.taskData.childTask.length * 100)
+      return parseInt(
+        (this.subTaskDoneNum / this.taskData.childTask.length) * 100
+      )
     },
 
     ownerListRequest() {
@@ -734,8 +737,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   methods: {
     initInfo() {
       this.taskData = null
@@ -853,20 +855,9 @@ export default {
       this.$emit('close')
     },
 
-    // 评论 - 活动 切换功能
-    footerTitle(key) {
-      switch (key) {
-        case 0:
-          this.commentsActivities = true
-          this.isComment = true
-          break
-        case 1:
-          this.commentsActivities = false
-          this.isComment = false
-          break
-      }
-    },
-    // 紧急按钮
+    /**
+     * 紧急按钮
+     */
     priorityBtn(value, def) {
       this.taskData.priority = value.id
       setTaskAPI({
@@ -1149,30 +1140,6 @@ export default {
         })
         .catch(() => {})
     },
-    // 评论选中功能
-    selectEmoji(val) {
-      const list = this.commentsTextarea.split('')
-      list.splice(this.blurIndex, 0, val)
-      this.commentsTextarea = list.join('')
-      this.commentsPopover = false
-    },
-    // 评论回复 -- 选中功能
-    selectEmojiChild(val) {
-      const list = this.childCommentsTextarea.split('')
-      list.splice(this.blurIndex, 0, val)
-      this.childCommentsTextarea = list.join('')
-      this.childCommentsPopover = false
-    },
-
-    /**
-     * 点击添加回复
-     */
-    addCommentsClick() {
-      this.addComments = true
-      this.$nextTick(() => {
-        this.$refs.commentsTextareaRef.focus()
-      })
-    },
 
     /**
      * 评论发布
@@ -1203,38 +1170,7 @@ export default {
           })
       }
     },
-    // 回复评论
-    childCommentSubmit() {
-      if (this.replyChildComment && this.childCommentsTextarea) {
-        var item =
-          this.replyChildIndex == -1
-            ? this.replyChildComment
-            : this.replyChildComment.childCommentList[this.replyChildIndex]
-        setCommentAPI({
-          pid: item.userId,
-          typeId: item.typeId,
-          mainId: item.mainId == 0 ? item.commentId : item.mainId,
-          type: 1,
-          content: xss(this.childCommentsTextarea)
-        })
-          .then(res => {
-            this.childCommentsPopover = false
-            res.data.user = this.userInfo
-            res.data.replyUser = item.user
-            this.replyChildComment.childCommentList.push(res.data)
-            this.replyChildComment.show = false
-            this.replyChildComment = null
-            this.childCommentsTextarea = ''
-            this.$emit('on-handle', {
-              type: 'change-comments',
-              value: 'add',
-              index: this.detailIndex,
-              section: this.detailSection
-            })
-          })
-          .catch(() => {})
-      }
-    },
+
     // 删除评论
     discussDelete(val, items, index) {
       this.$confirm('确定删除?', '提示', {
@@ -1265,23 +1201,7 @@ export default {
           })
         })
     },
-    // 点击回复按钮
-    discussBtn(item, index) {
-      if (item.show) {
-        this.$set(item, 'show', false)
-        this.replyChildComment = null
-      } else {
-        this.$set(item, 'show', true)
-        this.replyChildComment = item
-        this.replyChildIndex = index
-        this.$nextTick(() => {
-          this.$refs.childCommentsTextareaRef[0].focus()
-        })
-      }
-    },
-    blurFun(eve) {
-      this.blurIndex = eve.target.selectionEnd
-    },
+
     // 关联业务提交按钮
     checkInfos(val) {
       editTaskRelationAPI({
@@ -1313,14 +1233,19 @@ export default {
         })
         .catch(() => {})
     },
-    commentsSubmit(event) {
-      this.addComments = false
-    },
+
+    /**
+     * 查看相关详情
+     */
     checkRelatedDetail(crmType, item) {
       this.relatedID = item.key
       this.relatedCRMType = crmType
       this.showRelatedDetail = true
     },
+
+    /**
+     * 删除任务
+     */
     deleteSubTask(val) {
       this.$confirm('此操作将删除该任务, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -1365,6 +1290,10 @@ export default {
           })
         })
     },
+
+    /**
+     * 编辑子任务
+     */
     editSubTask(val) {
       this.subTaskID = val.taskId
       const dataList = this.taskData.childTask
@@ -1376,6 +1305,10 @@ export default {
         }
       }
     },
+
+    /**
+     * 子任务回调
+     */
     handleSubTasksBlock(data, item) {
       if (data.type == 'edit') {
         this.$set(item, 'showEdit', false)
@@ -1410,7 +1343,10 @@ export default {
         }
       }
     },
-    // 删除截止时间
+
+    /**
+     * 删除截止时间
+     */
     deleteTimeTop() {
       setTaskAPI({
         taskId: this.id,
@@ -1506,6 +1442,7 @@ export default {
           })
         })
     },
+
     /**
      * 任务头部操作
      */
@@ -1592,6 +1529,9 @@ $btn-b-hover-color: #eff4ff;
         overflow: auto;
         overflow-y: overlay;
         position: relative;
+        .el-tab-pane {
+          height: 100%;
+        }
       }
 
       width: 300px;
@@ -2073,6 +2013,51 @@ $btn-b-hover-color: #eff4ff;
         line-height: 17px;
       }
     }
+  }
+}
+
+// 评论
+.comment-cells {
+  height: 100%;
+  .comment-list {
+    flex: 1;
+    overflow: auto;
+    /deep/ .user-info {
+      .user-img {
+        width: 26px;
+        height: 26px;
+        border-radius: 13px;
+        margin-right: 10px;
+      }
+
+      .user {
+        font-size: 14px;
+        color: #333;
+        font-weight: 600;
+      }
+    }
+
+    /deep/ .reply {
+      border-bottom: none;
+      padding: 0 0 20px;
+      .content {
+        margin-left: 40px;
+      }
+
+      .child-content {
+        margin-top: 5px;
+        margin-left: 40px;
+      }
+    }
+
+    /deep/ .reply:hover {
+      background-color: white;
+    }
+  }
+
+  .reply-comment {
+    flex-shrink: 0;
+    margin-top: 15px;
   }
 }
 

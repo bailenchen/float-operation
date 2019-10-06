@@ -112,6 +112,8 @@ export default {
 <style scoped lang="scss">
   .reply-comment {
     border: 1px solid #e6e6e6;
+    border-radius: 4px;
+    overflow: hidden;
     .btn-group {
       background-color: white;
       padding: 0 10px 5px 10px;
