@@ -95,6 +95,7 @@ import {
 } from '@/api/customermanagement/money'
 /** 注意  需要删除接口 */
 import { objDeepCopy } from '@/utils'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
   name: 'RelativeReturnMoney', // 相关回款  可能再很多地方展示 放到客户管理目录下
@@ -104,7 +105,7 @@ export default {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue')
   },
 
-  mixins: [loading],
+  mixins: [loading, CheckStatusMixin],
 
   props: {
     /** 模块ID */
@@ -336,26 +337,6 @@ export default {
         return this.getStatusName(row.checkStatus)
       }
       return row[column.property]
-    },
-
-    /**
-     * 对应的状态名
-     */
-    getStatusName(status) {
-      if (status == 0) {
-        return '待审核'
-      } else if (status == 1) {
-        return '审核中'
-      } else if (status == 2) {
-        return '通过'
-      } else if (status == 3) {
-        return '拒绝'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '未提交'
-      }
-      return ''
     },
 
     /**

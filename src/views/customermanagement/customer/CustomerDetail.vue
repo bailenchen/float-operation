@@ -23,8 +23,12 @@
           :id="id"
           :crm-type="crmType"
           @handle="detailHeadHandle"
-          @close="hideView" />
-        <flexbox class="d-container-bd" align="stretch">
+          @close="hideView">
+          <p slot="name" class="customer-name">{{ detailData.customerName }}<i v-if="detailData.isLock" class="wk wk-circle-password" /></p>
+        </c-r-m-detail-head>
+        <flexbox
+          class="d-container-bd"
+          align="stretch">
           <el-tabs
             v-model="tabCurrentName"
             type="border-card"
@@ -61,7 +65,7 @@
                   :contacts-id="firstContactsId"
                   :id="id"
                   :crm-type="crmType"
-                  @add="addChieflyContacts"/>
+                  @add="addChieflyContacts" />
               </el-tab-pane>
             </el-tabs>
           </transition>
@@ -70,7 +74,9 @@
     </div>
     <el-button
       class="firse-button"
-      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i :class="{ 'is-reverse': !showImportInfo }" class="el-icon-arrow-right el-icon--right" /></el-button>
+      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i
+        :class="{ 'is-reverse': !showImportInfo }"
+        class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
@@ -163,19 +169,24 @@ export default {
         {
           type: 'log',
           label: '写跟进'
-        }, {
+        },
+        {
           type: 'task',
           label: '创建任务'
-        }, {
+        },
+        {
           type: 'contacts',
           label: '创建联系人'
-        }, {
+        },
+        {
           type: 'business',
           label: '创建商机'
-        }, {
+        },
+        {
           type: 'contract',
           label: '创建合同'
-        }, {
+        },
+        {
           type: 'receivables',
           label: '创建回款'
         }
@@ -224,52 +235,62 @@ export default {
      * 根据记录筛选
      */
     logTyps() {
-      return [{
-        icon: 'all',
-        color: '#2362FB',
-        command: '',
-        label: '全部活动'
-      }, {
-        icon: 'customer',
-        color: '#487DFF',
-        command: 2,
-        label: '客户'
-      }, {
-        icon: 'o-task',
-        color: '#D376FF',
-        command: 11,
-        label: '任务'
-      }, {
-        icon: 'business',
-        color: '#FB9323',
-        command: 5,
-        label: '商机'
-      }, {
-        icon: 'contract',
-        color: '#FD5B4A',
-        command: 6,
-        label: '合同'
-      }, {
-        icon: 'contacts',
-        color: '#27BA4A',
-        command: 3,
-        label: '联系人'
-      }, {
-        icon: 'receivables',
-        color: '#FFB940',
-        command: 7,
-        label: '回款'
-      }, {
-        icon: 'log',
-        color: '#5864FF',
-        command: 8,
-        label: '日志'
-      }, {
-        icon: 'approve',
-        color: '#9376FF',
-        command: 9,
-        label: '审批'
-      }]
+      return [
+        {
+          icon: 'all',
+          color: '#2362FB',
+          command: '',
+          label: '全部活动'
+        },
+        {
+          icon: 'customer',
+          color: '#487DFF',
+          command: 2,
+          label: '客户'
+        },
+        {
+          icon: 'o-task',
+          color: '#D376FF',
+          command: 11,
+          label: '任务'
+        },
+        {
+          icon: 'business',
+          color: '#FB9323',
+          command: 5,
+          label: '商机'
+        },
+        {
+          icon: 'contract',
+          color: '#FD5B4A',
+          command: 6,
+          label: '合同'
+        },
+        {
+          icon: 'contacts',
+          color: '#27BA4A',
+          command: 3,
+          label: '联系人'
+        },
+        {
+          icon: 'receivables',
+          color: '#FFB940',
+          command: 7,
+          label: '回款'
+        },
+        {
+          icon: 'log',
+          color: '#5864FF',
+          command: 8,
+          label: '日志'
+        },
+        {
+          icon: 'approve',
+          color: '#9376FF',
+          command: 9,
+          label: '审批'
+        }
+      ]
     }
   },
   mounted() {},
@@ -294,11 +315,19 @@ export default {
           dealItem.showIcon = true
           if (res.data.dealStatus == 1) {
             dealItem.icon = 'wk wk-success deal-suc'
-            dealItem.style = { fontSize: '14px', color: '#20b559', marginRight: '3px' }
+            dealItem.style = {
+              fontSize: '14px',
+              color: '#20b559',
+              marginRight: '3px'
+            }
             dealItem.value = '已成交'
           } else {
             dealItem.icon = 'wk wk-close deal-un'
-            dealItem.style = { fontSize: '14px', color: '#f95a5a', marginRight: '3px' }
+            dealItem.style = {
+              fontSize: '14px',
+              color: '#f95a5a',
+              marginRight: '3px'
+            }
             dealItem.value = '未成交'
           }
           this.headDetails[2].value = res.data.ownerUserName
@@ -329,7 +358,11 @@ export default {
      */
     addChieflyContacts() {
       this.createCRMType = 'contacts'
-      this.createActionInfo = { type: 'relative', crmType: this.crmType, data: { customer: this.detailData }}
+      this.createActionInfo = {
+        type: 'relative',
+        crmType: this.crmType,
+        data: { customer: this.detailData }
+      }
       this.isCreate = true
     },
 
@@ -340,7 +373,11 @@ export default {
     detailHeadHandle(data) {
       if (data.type === 'edit') {
         this.createCRMType = 'customer'
-        this.createActionInfo = { type: 'update', id: this.id, batchId: this.detailData.batchId }
+        this.createActionInfo = {
+          type: 'update',
+          id: this.id,
+          batchId: this.detailData.batchId
+        }
         this.isCreate = true
       } else if (data.type === 'delete') {
         this.hideView()
@@ -359,6 +396,21 @@ export default {
 .slide-fade-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+
+.customer-name {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  i {
+    background-color: #f56c6c;
+    color: white;
+    margin-left: 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    padding: 2px;
+    transform: scale(0.6);
+  }
 }
 @import '../styles/crmdetail.scss';
 </style>

@@ -45,6 +45,7 @@
 <script>
 import { crmExamineFlowRecordList } from '@/api/customermanagement/common' // 审批记录
 import { oaExamineFlowRecordList } from '@/api/oamanagement/examine'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 import Nzhcn from 'nzh/cn'
 
@@ -75,6 +76,7 @@ export default {
       return '第' + Nzhcn.encodeS(index) + '级'
     }
   },
+  mixins: [CheckStatusMixin],
   props: {
     examineType: {
       type: String,
@@ -128,26 +130,7 @@ export default {
           })
       }
     },
-    // 获取状态名称
-    getStatusName(status) {
-      // 0拒绝，1通过，2撤回，3创建，4待审核
-      if (status == 0) {
-        return '未审核 '
-      } else if (status == 1) {
-        return '通过'
-      } else if (status == 2) {
-        return '拒绝'
-      } else if (status == 3) {
-        return '审核中'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '创建'
-      } else if (status == 6) {
-        return '待提交'
-      }
-      return ''
-    },
+
     close() {
       this.$emit('close')
     }

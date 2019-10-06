@@ -235,9 +235,9 @@ export default {
       this.fieldList.push({
         prop: 'typeName',
         width: '200',
-        label: '商机状态组'
+        label: '商机组'
       })
-      this.fieldList.push({ prop: 'statusName', width: '200', label: '状态' })
+      this.fieldList.push({ prop: 'statusName', width: '200', label: '商机阶段' })
     },
 
     getDetail() {

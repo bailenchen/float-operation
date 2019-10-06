@@ -13,7 +13,7 @@ import {
   crmMessagRemindreceivablesplanAPI,
   crmMessagRemindCustomerAPI
 } from '@/api/customermanagement/message'
-import CheckStatus from '@/mixins/CheckStatusMixin'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
   components: {},
@@ -30,7 +30,7 @@ export default {
     }
   },
 
-  mixins: [CheckStatus],
+  mixins: [CheckStatusMixin],
 
   computed: {
     // 展示options下拉选择

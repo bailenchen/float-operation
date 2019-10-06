@@ -129,6 +129,7 @@ import { oaExamineFlowStepList } from '@/api/oamanagement/examine'
 import Nzhcn from 'nzh/cn'
 import ExamineHandle from './ExamineHandle' // 审批操作理由
 import CheckFlow from './CheckFlow' // 审批流程
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 // 审核信息 config 1 固定 0 自选
 export default {
@@ -173,6 +174,7 @@ export default {
       return '第' + Nzhcn.encodeS(index) + '级'
     }
   },
+  mixins: [CheckStatusMixin],
   props: {
     examineType: {
       type: String,
@@ -242,25 +244,6 @@ export default {
     examineHandle(status) {
       this.examineHandleInfo.status = status
       this.showExamineHandle = true
-    },
-    // 获取状态名称
-    getStatusName(status) {
-      if (status == 0) {
-        return '未审核'
-      } else if (status == 1) {
-        return '通过'
-      } else if (status == 2) {
-        return '拒绝'
-      } else if (status == 3) {
-        return '审核中'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '创建'
-      } else if (status == 6) {
-        return '待提交'
-      }
-      return ''
     },
     getContentFilters(array) {
       var content = ''

@@ -48,6 +48,7 @@ import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
 import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
   name: 'RelativeContract', // 相关联系人  可能再很多地方展示 放到客户管理目录下
@@ -55,7 +56,7 @@ export default {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue'),
     CRMCreateView
   },
-  mixins: [loading],
+  mixins: [loading, CheckStatusMixin],
   props: {
     /** 模块ID */
     id: [String, Number],
@@ -158,25 +159,6 @@ export default {
       return row[column.property]
     },
 
-    /**
-     * 对应的状态名
-     */
-    getStatusName(status) {
-      if (status == 0) {
-        return '待审核'
-      } else if (status == 1) {
-        return '审核中'
-      } else if (status == 2) {
-        return '通过'
-      } else if (status == 3) {
-        return '拒绝'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '未提交'
-      }
-      return ''
-    },
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
       this.contractId = row.contractId
