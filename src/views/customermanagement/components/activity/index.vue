@@ -385,7 +385,6 @@ export default {
       this.noMore = false
       this.page = 1
       this.list = []
-      this.getLogList()
     },
 
     /**

@@ -21,11 +21,8 @@
     <el-table
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
-      @row-click="handleRowClick"
       @selection-change="handleSelectionChange">
       <el-table-column
         :selectable="handleSelectable"
@@ -100,21 +97,21 @@ export default {
   },
   mixins: [loading],
   props: {
-    /** 模块ID */
+    // 模块ID
     id: [String, Number],
-    /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 */
+    // 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息
     detail: {
       type: Object,
       default: () => {
         return {}
       }
     },
-    /** 没有值就是全部类型 有值就是当个类型 */
+    // 没有值就是全部类型 有值就是当个类型
     crmType: {
       type: String,
       default: ''
     },
-    /** 是公海 默认是客户 */
+    // 是公海 默认是客户
     isSeas: {
       type: Boolean,
       default: false
@@ -167,7 +164,10 @@ export default {
           this.loading = false
         })
     },
-    // 当选择项发生变化时会触发该事件
+
+    /**
+     * 当选择项发生变化时会触发该事件
+     */
     handleSelectionChange(val) {
       this.selectionList = val
     },
@@ -230,11 +230,17 @@ export default {
         }
       }
     },
-    /** 添加操作 */
+
+    /**
+     * 添加操作
+     */
     handleCallBack(data) {
       this.getDetail()
     },
-    /** 编辑操作确定 */
+
+    /**
+     * 编辑操作确定
+     */
     handleEditConfirm() {
       var userIds = this.selectionList.map(function(item, index, array) {
         return item.id
@@ -263,22 +269,15 @@ export default {
           this.loading = false
         })
     },
-    // 返回值用来决定这一行的 CheckBox 是否可以勾选
+
+    /**
+     * 返回值用来决定这一行的 CheckBox 是否可以勾选
+     */
     handleSelectable(row, index) {
       if (row.power == '负责人权限') {
         return false
       }
       return true
-    },
-    // 当某一行被点击时会触发该事件
-    handleRowClick(row, column, event) {},
-    /** 通过回调控制表头style */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
     }
   }
 }

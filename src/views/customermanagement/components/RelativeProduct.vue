@@ -10,8 +10,7 @@
     <el-table
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
+      :cell-class-name="cellClassName"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -151,18 +150,26 @@ export default {
         }
       }
     },
-    // 当某一行被点击时会触发该事件
+
+    /**
+     * 当某一行被点击时会触发该事件
+     */
     handleRowClick(row, column, event) {
-      this.productId = row.productId
-      this.showFullDetail = true
+      if (column.property == 'productName') {
+        this.productId = row.productId
+        this.showFullDetail = true
+      }
     },
-    /** 通过回调控制表头style */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
+
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'productName') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
     }
   }
 }

@@ -17,8 +17,7 @@
     <el-table
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
+      :cell-class-name="cellClassName"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -105,12 +104,12 @@ export default {
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
       this.fieldList.push({
         prop: 'contractName',
         width: '200',
         label: '合同名称'
       })
+      this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
       this.fieldList.push({
         prop: 'customerName',
         width: '200',
@@ -150,7 +149,10 @@ export default {
           this.loading = false
         })
     },
-    /** 格式化字段 */
+
+    /**
+     * 格式化字段
+     */
     fieldFormatter(row, column) {
       // 如果需要格式化
       if (column.property === 'checkStatus') {
@@ -159,22 +161,32 @@ export default {
       return row[column.property]
     },
 
-    // 当某一行被点击时会触发该事件
+    /**
+     * 当某一行被点击时会触发该事件
+     */
     handleRowClick(row, column, event) {
-      this.contractId = row.contractId
-      this.showFullDetail = true
+      if (column.property == 'contractName') {
+        this.contractId = row.contractId
+        this.showFullDetail = true
+      }
     },
-    /** 通过回调控制表头style */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
+
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'contractName') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
     },
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-    /** 新建 */
+
+    /**
+     * 新建
+     */
     createClick() {
-      /** 客户 和 商机 下新建合同 */
+      // 客户 和 商机 下新建合同
       if (this.crmType == 'business') {
         this.createActionInfo.data['customer'] = this.detail
         this.createActionInfo.data['business'] = this.detail
