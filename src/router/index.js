@@ -6,7 +6,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-import workbenchRouter from './modules/workbench'
+// import workbenchRouter from './modules/workbench'
 import customerRouter from './modules/customer'
 import projectRouter from './modules/project/index'
 import { managerRouter } from './modules/manager'
@@ -61,7 +61,7 @@ export default new Router({
 })
 
 export const asyncRouterMap = [
-  workbenchRouter,
+  // workbenchRouter,
   customerRouter,
   biRouter,
   managerRouter

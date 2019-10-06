@@ -144,7 +144,7 @@ export default {
 }
 
 .slide-detail-card-container {
-  position: relative;
+  // position: relative;
   background-color: $xr-backgroud;
 }
 
