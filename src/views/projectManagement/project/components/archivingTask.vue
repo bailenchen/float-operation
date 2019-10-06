@@ -15,7 +15,7 @@
     </div>
 
     <!-- 任务详情 -->
-    <particulars
+    <task-detail
       v-if="taskDetailShow"
       ref="particulars"
       :id="taskID"
@@ -30,11 +30,11 @@
 import TaskCell from '@/views/projectManagement/components/taskCell'
 import { workTaskArchListAPI } from '@/api/projectManagement/project'
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
-import particulars from '@/views/projectManagement/components/particulars'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 
 export default {
   components: {
-    particulars,
+    TaskDetail,
     TaskCell
   },
 

@@ -313,7 +313,7 @@
     </draggable>
 
     <!-- 详情 -->
-    <particulars
+    <task-detail
       v-if="taskDetailShow"
       ref="particulars"
       :id="taskID"
@@ -325,7 +325,7 @@
 </template>
 <script>
 import newDialog from '@/views/projectManagement/components/newDialog'
-import particulars from '@/views/projectManagement/components/particulars'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
 
@@ -344,7 +344,7 @@ export default {
   components: {
     draggable,
     newDialog,
-    particulars
+    TaskDetail
   },
 
   directives: {
