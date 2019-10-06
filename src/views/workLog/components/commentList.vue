@@ -106,7 +106,9 @@ export default {
     id: {
       type: [String, Number],
       required: true
-    }
+    },
+    // 1是任务 2是日志
+    type: [String, Number]
   },
   data() {
     return {
@@ -150,7 +152,7 @@ export default {
      */
     handleReply(data) {
       const params = {
-        type: 2,
+        type: this.type,
         content: data,
         typeId: this.id
       }

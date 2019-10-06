@@ -412,7 +412,14 @@ export default {
           // this.loading = false
           this.noMore = res.data.list.length == 0
           if (!this.noMore) {
-            this.list.push(res.data)
+            if (this.list.length) {
+              const lastLog = this.list[this.list.length - 1]
+              if (lastLog.time != res.data.time) {
+                this.list.push(res.data)
+              }
+            } else {
+              this.list.push(res.data)
+            }
             this.page++
           }
         })
