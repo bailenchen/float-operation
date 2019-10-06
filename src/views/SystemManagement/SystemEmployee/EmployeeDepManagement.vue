@@ -469,7 +469,7 @@ export default {
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           {
-            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/,
             message: '同时包含字母、数字、特殊符号'
           }
         ],
@@ -485,7 +485,7 @@ export default {
         password: [
           { required: true, message: '密码不能为空', trigger: 'blur' },
           {
-            pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/,
+            pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/,
             message: '同时包含字母、数字、特殊符号'
           }
         ],

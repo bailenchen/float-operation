@@ -145,7 +145,7 @@ export default {
   },
   mixins: [mixins],
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
       form: {},
       validateRes: {
@@ -303,8 +303,7 @@ export default {
       const regArr = [
         /[A-Z]/,
         /[a-z]/,
-        /[0-9]/,
-        /[~!@#$%^&*()_+`\-={}:";'<>?,.\/]/
+        /[0-9]/
       ]
       const resArr = []
       regArr.forEach(reg => {
