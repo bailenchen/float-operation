@@ -947,12 +947,12 @@ export default {
       var params = { entity: {}, field: [] }
       for (let index = 0; index < array.length; index++) {
         const element = array[index]
-        if (element.key == 'product') {
+        if (element.data.formType == 'product') {
           this.getProductParams(params, element)
+        } else if (element.data.formType == 'map_address') {
+          this.getCustomerAddressParams(params.entity, element)
         } else if (element.data.fieldType == 1) {
           params.entity[element.key] = this.getRealParams(element) || ''
-        } else if (element.key == 'map_address') {
-          this.getCustomerAddressParams(params.entity, element)
         } else {
           element.data.value = this.getRealParams(element)
           params.field.push(element.data)

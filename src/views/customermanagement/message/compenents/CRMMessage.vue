@@ -202,10 +202,7 @@ export default {
     },
 
     // 标示信息
-    iconData: {
-      type: String,
-      default: ''
-    },
+    iconData: Object,
 
     // 展示的时候 才发请求
     show: Boolean

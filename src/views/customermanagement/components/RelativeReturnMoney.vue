@@ -13,8 +13,6 @@
     <el-table
       :data="palnList"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellPlanStyle"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;">
       <el-table-column
@@ -53,8 +51,7 @@
     <el-table
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
+      :cell-class-name="cellClassName"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -95,6 +92,7 @@ import {
 } from '@/api/customermanagement/money'
 /** 注意  需要删除接口 */
 import { objDeepCopy } from '@/utils'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
   name: 'RelativeReturnMoney', // 相关回款  可能再很多地方展示 放到客户管理目录下
@@ -104,7 +102,7 @@ export default {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue')
   },
 
-  mixins: [loading],
+  mixins: [loading, CheckStatusMixin],
 
   props: {
     /** 模块ID */
@@ -237,19 +235,10 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
-      this.showFullId = row.receivablesId
-      this.showFullCrmType = 'receivables'
-      this.showFullDetail = true
-    },
-
-    /**
-     * 通过回调控制style
-     */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex == 1) {
-        return { color: '#2362FB' }
-      } else {
-        return ''
+      if (column.property == 'receivablesNum') {
+        this.showFullId = row.receivablesId
+        this.showFullCrmType = 'receivables'
+        this.showFullDetail = true
       }
     },
 
@@ -339,37 +328,14 @@ export default {
     },
 
     /**
-     * 对应的状态名
+     * 通过回调控制class
      */
-    getStatusName(status) {
-      if (status == 0) {
-        return '待审核'
-      } else if (status == 1) {
-        return '审核中'
-      } else if (status == 2) {
-        return '通过'
-      } else if (status == 3) {
-        return '拒绝'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '未提交'
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'receivablesNum') {
+        return 'can-visit--underline'
+      } else {
+        return ''
       }
-      return ''
-    },
-
-    /**
-     * 通过回调控制表头style
-     */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-
-    /**
-     * 通过回调控制style
-     */
-    cellPlanStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
     }
   }
 }

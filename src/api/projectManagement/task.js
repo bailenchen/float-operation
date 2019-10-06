@@ -18,7 +18,7 @@ export function workTaskMyTaskAPI(data) {
  */
 export function workTaskSaveAPI(data) {
   return request({
-    url: 'task/setWorkTask',
+    url: 'task/setTask',
     method: 'post',
     data: data
   })
@@ -165,7 +165,7 @@ export function queryCommentListAPI(data) {
  */
 export function taskSvaeTaskRelationAPI(data) {
   return request({
-    url: 'task/svaeTaskRelation',
+    url: 'task/saveTaskRelation',
     method: 'post',
     data: data
   })

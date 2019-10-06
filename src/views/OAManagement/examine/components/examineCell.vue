@@ -96,6 +96,7 @@
 <script type="text/javascript">
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import FileCell from '@/views/OAManagement/components/fileCell'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
   name: 'ExamineCell', // 审批cell
@@ -103,7 +104,7 @@ export default {
     RelatedBusinessCell,
     FileCell
   },
-  mixins: [],
+  mixins: [CheckStatusMixin],
   props: {
     data: Object
   },
@@ -123,35 +124,6 @@ export default {
   watch: {},
   mounted() {},
   methods: {
-    // 获取状态名称  0 未审核 1 审核通过 2 审核拒绝 3 审核中 4 已撤回
-    getStatusName(status) {
-      if (status == 0) {
-        return '待审'
-      } else if (status == 1) {
-        return '审核通过'
-      } else if (status == 2) {
-        return '审核拒绝'
-      } else if (status == 3) {
-        return '审核中'
-      } else if (status == 4) {
-        return '撤回'
-      }
-      return ''
-    },
-    getStatusColor(status) {
-      if (status == 0) {
-        return '#F3A633'
-      } else if (status == 1) {
-        return '#93E06D'
-      } else if (status == 2) {
-        return '#FF0000'
-      } else if (status == 3) {
-        return '#F3A633'
-      } else if (status == 4) {
-        return '#FF0000'
-      }
-      return ''
-    },
     // 放大图片
     imgZoom(images, k) {
       this.$bus.emit('preview-image-bus', {

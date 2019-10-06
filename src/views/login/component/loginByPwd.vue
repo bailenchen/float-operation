@@ -94,7 +94,7 @@ export default {
   name: 'LoginByPwd',
   mixins: [mixins],
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
       redirect: undefined,
       form: {},

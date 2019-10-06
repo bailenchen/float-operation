@@ -43,7 +43,7 @@ import { removeAuth } from '@/utils/auth'
 export default {
   name: 'EditPwd',
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
       form: {},
       rules: {

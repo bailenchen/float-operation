@@ -219,7 +219,7 @@ export default {
       headDetails: [
         { title: '客户名称', value: '' },
         { title: '商机金额（元）', value: '' },
-        { title: '商机状态', value: '' },
+        { title: '商机组', value: '' },
         { title: '负责人', value: '' },
         { title: '创建时间', value: '' }
       ],

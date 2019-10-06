@@ -79,7 +79,7 @@
       </div>
     </div>
     <!-- 详情 -->
-    <particulars
+    <task-detail
       v-if="taskDetailShow"
       ref="particulars"
       :id="taskID"
@@ -98,11 +98,11 @@ import {
   workTasklableSaveAPI
 } from '@/api/projectManagement/tag'
 import TaskCell from '@/views/projectManagement/components/taskCell'
-import particulars from '../components/particulars'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 
 export default {
   components: {
-    particulars,
+    TaskDetail,
     TaskCell
   },
   data() {

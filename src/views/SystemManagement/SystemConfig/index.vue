@@ -135,12 +135,18 @@ export default {
         this.loading = true
         var param = new FormData()
         param.append('name', this.systemName)
+        // 编辑头像了
         if (this.editedImage) {
           param.append(
             'file',
             this.editedImage.blob,
             this.editedImage.file.name
           )
+        } else {
+          // 头像删除时 传
+          if (!this.systemImage) {
+            param.append('company_logo', '')
+          }
         }
         adminSystemSave(param)
           .then(res => {

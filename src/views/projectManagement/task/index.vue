@@ -143,7 +143,7 @@
       @handleClose="handleClose"
       @submit="getList"/>
     <!-- 详情 -->
-    <particulars
+    <task-detail
       v-if="taskDetailShow"
       ref="particulars"
       :id="taskID"
@@ -155,7 +155,7 @@
 </template>
 <script>
 import newDialog from '../components/newDialog'
-import particulars from '../components/particulars'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
 import {
@@ -168,7 +168,7 @@ export default {
   components: {
     draggable,
     newDialog,
-    particulars
+    TaskDetail
   },
 
   directives: {

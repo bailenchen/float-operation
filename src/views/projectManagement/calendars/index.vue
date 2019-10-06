@@ -29,16 +29,17 @@
       :action="createActionInfo"
       @handleClose="handleClose"
       @submit="refetchCalendar"/>
+    <!-- 日历 -->
+    <div id="calendar"/>
     <!-- 详情 -->
-    <particulars
+    <task-detail
       v-if="taskDetailShow"
       ref="particulars"
+      :no-listener-class="['fc-event-container']"
       :id="taskID"
       :detail-index="detailIndex"
       @on-handle="refetchCalendar"
       @close="closeBtn"/>
-    <!-- 日历 -->
-    <div id="calendar"/>
   </div>
 </template>
 
@@ -49,14 +50,14 @@ import 'fullcalendar'
 import 'fullcalendar/dist/locale/zh-cn.js'
 
 import newDialog from '../components/newDialog'
-import particulars from '../components/particulars'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 // API
 import { workTaskDateListAPI } from '@/api/projectManagement/calendars'
 
 export default {
   components: {
     newDialog,
-    particulars
+    TaskDetail
   },
 
   data() {
@@ -84,9 +85,6 @@ export default {
   },
 
   mounted() {
-    document
-      .getElementById('project-main-container')
-      .addEventListener('click', this.taskShowHandle, false)
   },
 
   methods: {
@@ -236,27 +234,6 @@ export default {
      */
     closeBtn() {
       this.taskDetailShow = false
-    },
-
-    /**
-     * 点击空白处关闭详情
-     */
-    taskShowHandle(e) {
-      if (
-        this.$refs.particulars &&
-        !this.$refs.particulars.$el.contains(e.target)
-      ) {
-        let hidden = true
-        const items = document.getElementsByClassName('fc-event-container')
-        for (let index = 0; index < items.length; index++) {
-          const element = items[index]
-          if (element.contains(e.target)) {
-            hidden = false
-            break
-          }
-        }
-        this.taskDetailShow = !hidden
-      }
     }
   }
 }

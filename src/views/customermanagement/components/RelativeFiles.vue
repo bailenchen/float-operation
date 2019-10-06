@@ -19,10 +19,6 @@
     <el-table
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
-      align="center"
-      header-align="center"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -237,14 +233,6 @@ export default {
           })
           .catch(() => {})
       }
-    },
-    /** 通过回调控制表头style */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
     }
   }
 }

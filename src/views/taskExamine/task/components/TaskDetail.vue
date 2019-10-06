@@ -14,6 +14,7 @@
       <div
         v-if="taskData"
         class="main__hd task-hd">
+
         <flexbox
           class="task-hd__top"
           justify="space-between">
@@ -63,6 +64,7 @@
             </el-dropdown>
           </div>
         </flexbox>
+
         <flexbox
           class="task-hd__middle"
           align="stretch">
@@ -91,6 +93,7 @@
             </div>
           </div>
         </flexbox>
+
         <flexbox class="task-hd__bottom">
           <flexbox-item class="priority">
             <flexbox @click.native="priorityVisible = true">
@@ -189,6 +192,7 @@
         v-if="taskData"
         class="main__bd"
         align="stretch">
+
         <div class="main__bd--left">
           <flexbox>
             <flexbox-item class="participant">
@@ -435,6 +439,7 @@
 
           </div>
         </div>
+
         <div class="main__bd--right">
           <el-tabs
             value="comment"
@@ -443,7 +448,21 @@
             <el-tab-pane
               label="评论"
               name="comment"
-              lazy />
+              lazy>
+              <div v-loading="commentsLoading">
+                <reply-comment
+                  ref="f_reply"
+                  @toggle="closeOtherReply"
+                  @reply="handleReply" />
+                <comment-list
+                  v-if="replyList.length > 0"
+                  ref="comment_list"
+                  :id="taskData.taskId"
+                  :list="replyList"
+                  type="1"
+                  @close-other-reply="$refs.f_reply.toggleFocus(true)" />
+              </div>
+            </el-tab-pane>
             <el-tab-pane
               label="活动"
               name="activity"
@@ -517,6 +536,8 @@ import relatedBusiness from '@/components/relatedBusiness'
 import { XhUserCell } from '@/components/CreateCom'
 import FileCell from '@/views/OAManagement/components/fileCell'
 import { mapGetters } from 'vuex'
+import CommentList from '@/views/workLog/components/commentList'
+import ReplyComment from '@/components/ReplyComment'
 
 export default {
   name: 'TaskDetail',
@@ -530,7 +551,9 @@ export default {
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue'),
     SubTask,
     FileCell,
-    XhUserCell
+    XhUserCell,
+    CommentList,
+    ReplyComment
   },
   props: {
     id: [String, Number],
@@ -1154,20 +1177,19 @@ export default {
     /**
      * 评论发布
      */
-    commentsSub() {
-      if (this.commentsTextarea) {
+    handleReply(data) {
+      if (data) {
         this.commentsLoading = true
         setCommentAPI({
           typeId: this.id,
           type: 1,
-          content: xss(this.commentsTextarea)
+          content: xss(data)
         })
           .then(res => {
             res.data.childCommentList = []
             res.data.show = false
             res.data.user = this.userInfo
             this.replyList.push(res.data)
-            this.commentsTextarea = ''
             this.$emit('on-handle', {
               type: 'change-comments',
               value: 'add',
@@ -1497,6 +1519,16 @@ export default {
     hideView() {
       this.$emit('close')
       this.$emit('hide-view')
+    },
+
+    /**
+     * 日志评论
+     */
+
+    closeOtherReply(flag) {
+      if (!flag && this.$refs.comment_list) {
+        this.$refs.comment_list.closeReply()
+      }
     }
   }
 }
@@ -2048,7 +2080,7 @@ $btn-b-hover-color: #eff4ff;
   position: fixed;
   min-width: 926px;
   width: 75%;
-  top: 0px;
+  top: 60px;
   bottom: 0px;
   right: 0px;
 }

@@ -101,14 +101,14 @@ export default {
     ]),
     items() {
       var tempsItems = []
-      if (this.oa) {
-        tempsItems.push({
-          title: '办公',
-          type: 0,
-          path: '/workbench',
-          icon: 'workbench'
-        })
-      }
+      // if (this.oa) {
+      //   tempsItems.push({
+      //     title: '办公',
+      //     type: 0,
+      //     path: '/workbench',
+      //     icon: 'workbench'
+      //   })
+      // }
       if (this.crm) {
         tempsItems.push({
           title: '客户管理',

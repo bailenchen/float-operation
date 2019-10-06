@@ -7,7 +7,8 @@
           class="t-section-name__hd">
         <div class="t-section-name__bd">
           <span>{{ typeName }}</span>
-          <p>{{ name }}<i class="wk wk-circle-password" /></p>
+          <p v-if="!$slots.name">{{ name }}</p>
+          <slot name="name" />
         </div>
       </flexbox>
 
@@ -554,15 +555,6 @@ export default {
         color: #333;
         font-size: 16px;
         font-weight: 600;
-        i {
-          background-color: #f56c6c;
-          color: white;
-          margin-left: 5px;
-          border-radius: 3px;
-          font-size: 12px;
-          padding: 2px;
-          transform: scale(0.6);
-        }
       }
     }
   }

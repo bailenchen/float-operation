@@ -86,6 +86,7 @@
         ref="comment_list"
         :id="data.logId"
         :list="replyList"
+        type="2"
         @close-other-reply="$refs.f_reply.toggleFocus(true)" />
     </div>
   </div>

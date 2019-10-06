@@ -16,7 +16,7 @@
     </div>
 
     <!-- 详情 -->
-    <particulars
+    <task-detail
       v-if="taskDetailShow"
       ref="particulars"
       :id="taskID"
@@ -29,11 +29,11 @@
 <script>
 import { workTrashIndexAPI } from '@/api/projectManagement/recycle'
 import TaskCell from '@/views/projectManagement/components/taskCell'
-import particulars from '../components/particulars'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 
 export default {
   components: {
-    particulars,
+    TaskDetail,
     TaskCell
   },
 

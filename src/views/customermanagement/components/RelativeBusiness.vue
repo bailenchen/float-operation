@@ -48,8 +48,7 @@
     <el-table
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
+      :cell-class-name="cellClassName"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick"
@@ -235,9 +234,9 @@ export default {
       this.fieldList.push({
         prop: 'typeName',
         width: '200',
-        label: '商机状态组'
+        label: '商机组'
       })
-      this.fieldList.push({ prop: 'statusName', width: '200', label: '状态' })
+      this.fieldList.push({ prop: 'statusName', width: '200', label: '商机阶段' })
     },
 
     getDetail() {
@@ -264,22 +263,33 @@ export default {
           this.loading = false
         })
     },
-    // 当某一行被点击时会触发该事件
+
+    /**
+     * 当某一行被点击时会触发该事件
+     */
     handleRowClick(row, column, event) {
-      this.businessId = row.businessId
-      this.showFullDetail = true
+      if (column.property == 'businessName') {
+        this.businessId = row.businessId
+        this.showFullDetail = true
+      }
     },
-    /** 通过回调控制表头style */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
+
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'businessName') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
     },
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-    /** 新建 */
+
+    /**
+     * 新建
+     */
     createClick() {
-      /** 客户 和 联系人 下可新建商机  */
+      // 客户 和 联系人 下可新建商机
       if (this.crmType == 'contacts') {
         this.createActionInfo.data['customer'] = this.detail
         this.createActionInfo.relativeData = {

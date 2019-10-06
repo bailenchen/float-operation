@@ -49,8 +49,7 @@
       v-show="fieldList.length > 0"
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
+      :cell-class-name="cellClassName"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick"
@@ -281,24 +280,21 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
-      if (column.property) {
+      if (column.property == 'name') {
         this.detailId = row.contactsId
         this.showFullDetail = true
       }
     },
 
     /**
-     * 通过回调控制表头style
+     * 通过回调控制class
      */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-
-    /**
-     * 通过回调控制style
-     */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'name') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
     },
 
     /**

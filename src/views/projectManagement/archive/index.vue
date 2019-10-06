@@ -70,14 +70,11 @@
 </template>
 
 <script>
-import particulars from '../components/particulars'
 import { workWorkArchiveListAPI } from '@/api/projectManagement/archive'
 import { workWorkSaveAPI } from '@/api/projectManagement/project'
 
 export default {
-  components: {
-    particulars
-  },
+  components: {},
   data() {
     return {
       loading: false,

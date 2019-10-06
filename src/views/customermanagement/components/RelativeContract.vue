@@ -17,8 +17,7 @@
     <el-table
       :data="list"
       :height="tableHeight"
-      :header-cell-style="headerRowStyle"
-      :cell-style="cellStyle"
+      :cell-class-name="cellClassName"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -48,6 +47,7 @@ import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
 import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
   name: 'RelativeContract', // 相关联系人  可能再很多地方展示 放到客户管理目录下
@@ -55,7 +55,7 @@ export default {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue'),
     CRMCreateView
   },
-  mixins: [loading],
+  mixins: [loading, CheckStatusMixin],
   props: {
     /** 模块ID */
     id: [String, Number],
@@ -104,12 +104,12 @@ export default {
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
       this.fieldList.push({
         prop: 'contractName',
         width: '200',
         label: '合同名称'
       })
+      this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
       this.fieldList.push({
         prop: 'customerName',
         width: '200',
@@ -149,7 +149,10 @@ export default {
           this.loading = false
         })
     },
-    /** 格式化字段 */
+
+    /**
+     * 格式化字段
+     */
     fieldFormatter(row, column) {
       // 如果需要格式化
       if (column.property === 'checkStatus') {
@@ -159,40 +162,31 @@ export default {
     },
 
     /**
-     * 对应的状态名
+     * 当某一行被点击时会触发该事件
      */
-    getStatusName(status) {
-      if (status == 0) {
-        return '待审核'
-      } else if (status == 1) {
-        return '审核中'
-      } else if (status == 2) {
-        return '通过'
-      } else if (status == 3) {
-        return '拒绝'
-      } else if (status == 4) {
-        return '撤回'
-      } else if (status == 5) {
-        return '未提交'
-      }
-      return ''
-    },
-    // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      this.contractId = row.contractId
-      this.showFullDetail = true
+      if (column.property == 'contractName') {
+        this.contractId = row.contractId
+        this.showFullDetail = true
+      }
     },
-    /** 通过回调控制表头style */
-    headerRowStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
+
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'contractName') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
     },
-    /** 通过回调控制style */
-    cellStyle({ row, column, rowIndex, columnIndex }) {
-      return { textAlign: 'center' }
-    },
-    /** 新建 */
+
+    /**
+     * 新建
+     */
     createClick() {
-      /** 客户 和 商机 下新建合同 */
+      // 客户 和 商机 下新建合同
       if (this.crmType == 'business') {
         this.createActionInfo.data['customer'] = this.detail
         this.createActionInfo.data['business'] = this.detail
