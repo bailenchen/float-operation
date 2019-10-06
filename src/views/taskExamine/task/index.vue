@@ -60,55 +60,8 @@
             class="scroll-bottom-tips">没有更多了</p>
         </div>
 
-        <div v-loading="sendLoading" :class="['add', { 'unfold': isUnfold, 'is-close': !isUnfold }]">
-          <i
-            v-if="isUnfold"
-            class="wk wk-close"
-            @click="addClose" />
-          <el-input
-            ref="input"
-            v-model="sendContent"
-            :maxlength="50"
-            :prefix-icon="isUnfold ? '' : 'el-icon-plus'"
-            class="input"
-            placeholder="添加任务"
-            @focus="inputFocus" />
+        <task-quick-add class="task-quick-add" @send="refreshList"/>
 
-          <flexbox class="add-info">
-            <el-date-picker
-              ref="endTime"
-              :class="{ 'no-time-top': !sendStopTime }"
-              v-model="sendStopTime"
-              type="date"
-              value-format="yyyy-MM-dd"
-              placeholder="" />
-            <xh-user-cell
-              :value="mainUser"
-              placement="top"
-              @value-change="selectMainUser">
-              <div
-                slot="reference"
-                class="select-user">
-                <i
-                  v-if="!createMainUser"
-                  class="wk wk-persons add-info--person" />
-                <div
-                  v-photo="createMainUser"
-                  v-lazy:background-image="$options.filters.filterUserLazyImg(createMainUser.img)"
-                  v-else
-                  :key="createMainUser.img"
-                  class="div-photo" />
-              </div>
-
-            </xh-user-cell>
-          </flexbox>
-
-          <el-button
-            v-debounce="send"
-            icon="wk wk-top"
-            class="send-btn"
-            type="primary">发布</el-button>
-        </div>
       </flexbox>
     </div>
 
@@ -128,8 +81,9 @@ import { mapGetters } from 'vuex'
 import TaskTabsHead from './components/TaskTabsHead'
 import TaskCell from './components/TaskCell'
 import TaskDetail from './components/TaskDetail'
-import { taskListAPI, setTaskAPI } from '@/api/task/task'
-import { XhUserCell } from '@/components/CreateCom'
+import TaskQuickAdd from './components/TaskQuickAdd'
+import { taskListAPI } from '@/api/task/task'
+
 
 export default {
   /** 任务列表 */
@@ -138,13 +92,11 @@ export default {
     TaskTabsHead,
     TaskCell,
     TaskDetail,
-    XhUserCell
+    TaskQuickAdd
   },
   props: {},
   data() {
     return {
-      // 默认闭合
-      isUnfold: false,
       // 任务类型 区分我的任务和下属任务
       taskType: '',
       list: [],
@@ -177,11 +129,10 @@ export default {
           icon: 'eye'
         }
       ],
-      // 添加
-      sendLoading: false,
-      sendContent: '',
-      sendStopTime: '',
-      mainUser: [],
+
+
+
+
 
       // 详情
       // 详情数据
@@ -230,10 +181,6 @@ export default {
     // 无线滚动控制
     scrollDisabled() {
       return this.loading || this.noMore
-    },
-
-    createMainUser() {
-      return this.mainUser.length ? this.mainUser[0] : null
     },
 
     /**
@@ -383,61 +330,6 @@ export default {
           .catch(() => {
           })
       }
-    },
-
-    /**
-     * 任务添加
-     */
-    inputFocus() {
-      this.isUnfold = true
-      this.$nextTick(() => {
-        this.$refs.input.focus()
-      })
-    },
-
-    /**
-     * 选择负责人
-     */
-    selectMainUser(data) {
-      this.mainUser = data.value
-    },
-
-    /**
-     * 创建任务
-     */
-    send() {
-      if (!this.sendContent.length) {
-        this.$message.error('请填写任务标题')
-      } else {
-        this.sendLoading = true
-        setTaskAPI({
-          name: this.sendContent,
-          stopTime: this.sendStopTime,
-          mainUserId: this.createMainUser ? this.createMainUser.userId : ''
-        })
-          .then(res => {
-            this.sendLoading = false
-            this.resetSendData()
-            this.refreshList()
-          })
-          .catch(() => {
-            this.sendLoading = false
-          })
-      }
-    },
-
-    resetSendData() {
-      this.sendContent = ''
-      this.sendStopTime = ''
-      this.mainUser = []
-      this.isUnfold = false
-    },
-
-    /**
-     * 关闭
-     */
-    addClose() {
-      this.isUnfold = false
     }
   }
 }
@@ -509,152 +401,10 @@ export default {
   overflow: auto;
 }
 
-// 添加
-.add {
-  position: relative;
+// 快捷添加
+.task-quick-add {
   flex-shrink: 0;
-  background-color: white;
-  border-radius: 4px;
-  border: 1px solid $xr-border-line-color;
-  padding: 5px;
   margin: 15px;
-
-  .input {
-    width: calc(100% - 50px);
-
-    /deep/.el-input__inner {
-      border: none;
-    }
-  }
-
-  .add-info {
-    padding: 0 8px;
-    .el-date-editor {
-      width: 100px;
-      font-size: 12px;
-      margin-right: 8px;
-      /deep/ .el-input__prefix {
-        left: 0;
-        .el-icon-date {
-          width: 24px;
-          line-height: 24px;
-        }
-      }
-
-      /deep/ .el-input__inner {
-        border-radius: 12px;
-        line-height: 24px;
-        height: 24px;
-        padding-left: 20px;
-        padding-right: 5px;
-        border: none;
-        background-color: #f0f0f0;
-      }
-    }
-
-    &--person {
-      margin-left: 5px;
-      border: 1px solid #e6e6e6;
-      color: #c0c4cc;
-      width: 24px;
-      height: 24px;
-      border-radius: 12px;
-      display: inline-block;
-      text-align: center;
-      line-height: 24px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    &--person:hover {
-      border-color: $xr-color-primary;
-      color: $xr-color-primary;
-    }
-
-    .no-time-top {
-      width: 24px;
-      cursor: pointer;
-      /deep/ .el-input__inner {
-        background-color: white;
-        border: 1px solid $xr-border-line-color;
-        padding: 0;
-        line-height: 24px;
-        height: 24px;
-      }
-    }
-
-    .no-time-top:hover {
-      /deep/ .el-input__inner {
-        border-color: $xr-color-primary;
-      }
-
-      /deep/ .el-icon-date {
-        color: $xr-color-primary;
-      }
-    }
-  }
 }
 
-.add.is-close {
-  .add-info {
-    display: none;
-  }
-}
-
-// 闭合
-.add.is-close:hover {
-  cursor: pointer;
-  border-color: #c0c4cc;
-  .input {
-    /deep/ .el-icon-plus {
-      color: $xr-color-primary;
-    }
-  }
-}
-
-// 展开
-.add.unfold {
-  .input {
-    margin-bottom: 15px;
-  }
-}
-
-.send-btn {
-  position: absolute;
-  z-index: 1;
-  right: 10px;
-  bottom: 5px;
-
-  /deep/ i {
-    font-size: 13px;
-    margin-right: 5px;
-  }
-}
-
-// 选择负责人
-.select-user {
-  display: inline-block;
-  .div-photo {
-    width: 24px;
-    height: 24px;
-  }
-}
-
-// 关闭按钮
-.wk-close {
-  border: 0;
-  color: #d9d9d9;
-  font-size: 22px;
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  padding: 4px;
-  transform: scale(0.8);
-}
-
-.wk-close:hover {
-  color: #2362fb;
-}
 </style>

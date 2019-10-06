@@ -16,6 +16,7 @@
       </el-button>
     </div>
     <log-add
+      v-if="!isTaskCreate"
       ref="logAdd"
       :id="id"
       :show-business="showRelate"
@@ -26,6 +27,14 @@
       @send="sendLog"
       @focus="handleType = 'log'"
       @close="handleClick(handleType)" />
+
+    <task-quick-add
+      v-else
+      ref="taskAdd"
+      :params="taskParams"
+      class="task-quick-add"
+      @send="refreshLogList" />
+
     <div class="log">
       <!-- 筛选 -->
       <el-dropdown
@@ -115,12 +124,7 @@
       :action="createActionInfo"
       @save-success="createCRMSuccess"
       @hiden-view="createCRMClose" />
-    <!-- 任务新建 -->
-    <new-dialog
-      :new-dialog-visible="isTaskCreate"
-      :new-loading="taskLoading"
-      @handleClose="createTaskClose"
-      @dialogVisibleSubmit="createTaskClick" />
+
     <!-- CRM详情 -->
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
@@ -139,8 +143,7 @@ import {
 } from '@/api/customermanagement/common'
 import LogCell from './LogCell'
 import CRMCreateView from '@/views/customermanagement/components/CRMCreateView'
-import NewDialog from '@/views/OAManagement/task/components/newDialog'
-import { addTask } from '@/api/oamanagement/task'
+import TaskQuickAdd from '@/views/taskExamine/task/components/TaskQuickAdd'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { objDeepCopy } from '@/utils'
 
@@ -150,7 +153,7 @@ export default {
     LogAdd,
     LogCell,
     CRMCreateView,
-    NewDialog,
+    TaskQuickAdd,
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
@@ -228,8 +231,8 @@ export default {
       isCRMCreate: false,
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {}},
       createCRMType: '',
+      // 任务创建
       isTaskCreate: false,
-      taskLoading: false,
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
@@ -240,13 +243,21 @@ export default {
     showRelate() {
       return this.crmType == 'customer'
     },
+
     scrollDisabled() {
       return this.loading || this.noMore
+    },
+
+    taskParams() {
+      const params = {}
+      params[`${this.crmType}Ids`] = this.id
+      return params
     }
   },
   watch: {
     id() {
       this.initInfo()
+      this.refreshLogList()
     }
   },
   mounted() {
@@ -331,10 +342,17 @@ export default {
       }
 
       if (type == 'log') {
-        this.$refs.logAdd.isUnfold = this.handleType == type
+        this.isTaskCreate = false
+        this.$nextTick(() => {
+          this.$refs.logAdd.isUnfold = this.handleType == type
+        })
       } else if (type == 'task') {
         this.isTaskCreate = true
+        this.$nextTick(() => {
+          this.$refs.taskAdd.inputFocus()
+        })
       } else {
+        this.isTaskCreate = false
         const aciton = { type: 'relative', crmType: this.crmType, data: {}}
         if (this.crmType == 'contacts') {
           aciton.data['customer'] = objDeepCopy(this.detail)
@@ -371,7 +389,6 @@ export default {
      */
     initInfo() {
       this.$refs.logAdd.resetInfo()
-      this.refreshLogList()
       this.getLogTypeList()
       if (this.showRelate) {
         this.getContactsList()
@@ -385,6 +402,7 @@ export default {
       this.noMore = false
       this.page = 1
       this.list = []
+      this.getLogList()
     },
 
     /**
@@ -443,34 +461,11 @@ export default {
     },
 
     /**
-     * 提交任务
-     */
-    createTaskClick(val) {
-      this.taskLoading = true
-      addTask(val)
-        .then(res => {
-          this.$message.success('新建成功')
-          this.taskLoading = false
-          this.isTaskCreate = false
-        })
-        .catch(() => {
-          this.taskLoading = false
-          this.isTaskCreate = false
-        })
-    },
-
-    createTaskClose() {
-      this.isTaskCreate = false
-      this.handleType = ''
-    },
-
-    /**
      * 跟进日志查看详情
      */
     checkCRMDetail(type, id) {
       console.log('checkCRMDetail---', type, id)
       if (type == 'log') {
-
       } else {
         this.relationID = id
         this.relationCrmType = type
@@ -587,6 +582,7 @@ export default {
   margin-top: 20px;
 }
 
+.task-quick-add,
 .log-add {
   margin-top: 15px;
 }

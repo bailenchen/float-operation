@@ -1154,8 +1154,11 @@ export default {
         })
           .then(res => {
             res.data.childCommentList = []
-            res.data.show = false
-            res.data.user = this.userInfo
+            res.data.user = {
+              userId: this.userInfo.id,
+              realname: this.userInfo.realname,
+              img: this.userInfo.img
+            }
             this.replyList.push(res.data)
             this.$emit('on-handle', {
               type: 'change-comments',
