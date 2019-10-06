@@ -300,7 +300,6 @@ export default {
       taskListAPI(params)
         .then(res => {
           this.loading = false
-          this.noMore = res.data.list.length == 0
           if (!this.noMore) {
             for (const item of res.data.list) {
               if (item.status == 5) {
@@ -310,6 +309,7 @@ export default {
             this.list = this.list.concat(res.data.list)
             this.page++
           }
+          this.noMore = res.data.lastPage
           this.progress = res
         })
         .catch(() => {

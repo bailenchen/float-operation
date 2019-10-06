@@ -234,7 +234,7 @@ export default {
             this.list = this.list.concat(res.data.list)
             this.page++
           }
-          this.noMore = res.data.list.length < 15
+          this.noMore = res.data.lastPage
         })
         .catch(() => {
           this.noMore = true

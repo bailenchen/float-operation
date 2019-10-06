@@ -410,7 +410,6 @@ export default {
       crmActivityListAPI(params)
         .then(res => {
           // this.loading = false
-          this.noMore = res.data.list.length == 0
           if (!this.noMore) {
             if (this.list.length) {
               const lastLog = this.list[this.list.length - 1]
@@ -422,6 +421,7 @@ export default {
             }
             this.page++
           }
+          this.noMore = res.lastPage
         })
         .catch(() => {
           this.noMore = true
