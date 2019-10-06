@@ -71,8 +71,34 @@
 
  .el-dialog__close {
    font-weight: 600 !important;
+   font-size: 18px !important;
  }
 
  .el-dialog__title {
    font-weight: 600 !important;
+ }
+
+ // 消息框
+ .el-message-box__title {
+   font-weight: 600 !important;
+ }
+
+ .el-message-box__close {
+   font-weight: 600 !important;
+   font-size: 18px !important;
+ }
+
+ .el-message-box {
+   padding: 0 !important;
+   ;
+ }
+
+ .el-message-box__btns {
+   padding: 8px 15px !important;
+   background-color: #F7F8FA;
+   border-top: 1px solid $xr-border-line-color;
+ }
+
+ .el-message-box__content {
+   padding-bottom: 20px !important;
  }
