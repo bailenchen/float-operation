@@ -11,7 +11,7 @@
         <img
           class="close"
           src="@/assets/img/task_close.png"
-          @click="hidenView" >
+          @click="hidenView">
       </flexbox>
       <div class="crm-create-flex">
         <create-sections title="基本信息">
@@ -50,7 +50,7 @@
                     :relation="item.relation"
                     :radio="false"
                     :disabled="item.disabled"
-                    @value-change="fieldValueChange"/>
+                    @value-change="fieldValueChange" />
                 </el-form-item>
               </el-form>
             </div>
@@ -67,7 +67,7 @@
             ref="examineInfo"
             :types="'crm_' + crmType"
             :types-id="action.id"
-            @value-change="examineValueChange"/>
+            @value-change="examineValueChange" />
         </create-sections>
       </div>
 
@@ -519,6 +519,25 @@ export default {
           params['showblock'] = true // 展示整行效果
           if (index % 2 == 0) {
             showStyleIndex = -1
+          }
+
+          // 相关添加 并且商机存在 获取产品
+          if (this.action.type == 'relative') {
+            const businessData = this.action.data.business
+            if (businessData) {
+              crmBusinessProduct({
+                businessId: businessData.businessId,
+                pageType: 0
+              })
+                .then(res => {
+                  params['value'] = {
+                    product: res.data.list,
+                    totalPrice: res.data.money,
+                    discountRate: res.data.discountRate
+                  }
+                })
+                .catch(() => {})
+            }
           }
           this.crmForm.crmFields.push(params)
         } else if (item.formType == 'map_address') {
