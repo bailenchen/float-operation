@@ -74,17 +74,13 @@
             @change="uploadFile">
         </div>
       </flexbox>
-      <div
-        class="img-bar"
-        @click="deleteAllImg">全部删除</div>
+      <el-button type="text" @click="deleteAllImg">全部删除</el-button>
     </section>
     <section
       v-if="files.length > 0 && isUnfold"
       class="file-cont">
       <flexbox class="f-header">
-        <img
-          class="f-logo"
-          src="@/assets/img/send_file.png">
+        <i class="wk wk-file"/>
         <div class="f-name">附件</div>
       </flexbox>
       <div class="f-body">
@@ -101,17 +97,13 @@
             @click="deleteImgOrFile('file', item, index)">×</div>
         </flexbox>
       </div>
-      <div
-        class="img-bar"
-        @click="files=[]">全部删除</div>
+      <el-button type="text" @click="files=[]">全部删除</el-button>
     </section>
     <section
       v-if="business.length > 0 && isUnfold"
       class="c-cont">
       <flexbox class="c-header">
-        <img
-          class="c-logo"
-          src="@/assets/img/send_business.png">
+        <i class="wk wk-business"/>
         <div class="c-name">商机</div>
       </flexbox>
       <div class="c-body">
@@ -579,7 +571,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #2888e4;
+    background-color: $xr-color-primary;
   }
   .img-item-add:after {
     width: 39.5px;
@@ -589,13 +581,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #2888e4;
-  }
-  .img-bar {
-    color: #5a8ae2;
-    font-size: 12px;
-    padding: 5px 0;
-    cursor: pointer;
+    background-color: $xr-color-primary;
   }
 }
 /** 附件  */
@@ -605,15 +591,14 @@ export default {
   border: 1px dashed #dfdfdf;
   .f-header {
     padding: 8px 0 15px;
-    .f-logo {
-      position: block;
-      width: 15px;
-      height: 15px;
+    color: #333;
+    font-size: 13px;
+    .wk {
+      font-size: 13px;
       margin-right: 8px;
     }
     .f-name {
-      color: #777;
-      font-size: 12px;
+      font-weight: 600;
     }
   }
 
@@ -634,12 +619,6 @@ export default {
     }
   }
 
-  .img-bar {
-    color: #5a8ae2;
-    font-size: 12px;
-    padding: 5px 0;
-    cursor: pointer;
-  }
 }
 /** CRM  */
 .c-cont {
@@ -648,15 +627,16 @@ export default {
   border: 1px dashed #dfdfdf;
   .c-header {
     padding: 8px 0 15px;
-    .c-logo {
-      position: block;
-      width: 15px;
-      height: 15px;
+    font-size: 13px;
+    color: #333;
+
+    .wk {
+      font-size: 14px;
+      color: #333;
       margin-right: 8px;
     }
     .c-name {
-      color: #777;
-      font-size: 12px;
+      font-weight: 600;
     }
   }
 
@@ -667,7 +647,7 @@ export default {
       border-radius: 12px;
       padding: 0 8px;
       margin: 0 5px 5px 0;
-      background-color: #3487e2;
+      background-color: $xr-color-primary;
       color: white;
       width: auto;
       cursor: pointer;
@@ -706,6 +686,10 @@ export default {
   height: 16px;
   font-size: 17px;
   text-align: center;
+}
+
+.close-button:hover {
+  color: $xr-color-primary;
 }
 
 .file-input {
