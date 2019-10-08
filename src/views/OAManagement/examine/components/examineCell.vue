@@ -72,11 +72,11 @@
             :cell-index="fileIndex"/>
         </div>
       </div>
-      <!-- 关联业务 -->
+      <!-- 相关信息 -->
       <div
         v-if="relatedListData.contacts.length > 0 || relatedListData.customer.length > 0 || relatedListData.business.length > 0 || relatedListData.contract.length > 0"
         class="related-business">
-        <div class="label">关联业务</div>
+        <div class="label">相关信息</div>
         <div
           v-for="(items, key) in relatedListData"
           :key="key">

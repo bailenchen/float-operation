@@ -68,11 +68,11 @@
           <div>{{ data.remark }}</div>
         </flexbox>
       </div>
-      <!-- 关联业务 -->
+      <!-- 相关信息 -->
       <div
         v-if="data.contactsList.length > 0 || data.customerList.length > 0 || data.businessList.length > 0 || data.contractList.length > 0"
         class="related-business">
-        <div class="label">关联业务</div>
+        <div class="label">相关信息</div>
         <p
           v-for="(contacts, i) in data.contactsList"
           :key="'contacts' + i"
@@ -213,7 +213,7 @@ export default {
   margin-right: 2px;
 }
 
-// 关联业务
+// 相关信息
 .related-business {
   margin: 15px 0;
   .label {

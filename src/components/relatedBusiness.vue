@@ -2,7 +2,7 @@
   <div
     :style="{'margin-left': marginLeft}"
     class="related-business">
-    <!-- 新建- 关联业务 -->
+    <!-- 新建- 相关信息 -->
     <el-popover
       v-if="!isTask && alterable"
       v-model="showPopover"
@@ -29,7 +29,7 @@
     <p
       v-if="!alterable"
       :style="{color: alterableColor}"
-      class="alterable-p">关联业务</p>
+      class="alterable-p">相关信息</p>
     <div
       v-for="(items, key) in relatedListData"
       :key="key">
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-// 关联业务 - 弹出框
+// 相关信息 - 弹出框
 import { editTaskRelationAPI } from '@/api/task/task'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
@@ -125,7 +125,7 @@ export default {
         contactsIds: [],
         businessIds: []
       },
-      // 关联业务信息
+      // 相关信息信息
       relatedListData: {},
       showRelative: false,
       // 展示任务相关

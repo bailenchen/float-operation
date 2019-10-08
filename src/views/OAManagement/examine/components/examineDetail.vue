@@ -190,13 +190,13 @@
             </el-table-column>
           </el-table>
         </div>
-        <!-- 关联业务 -->
+        <!-- 相关信息 -->
         <div
           v-if="relatedListData.contacts.length > 0 || relatedListData.customer.length > 0 || relatedListData.business.length > 0 || relatedListData.contract.length > 0"
           class="section">
           <div class="section__hd">
             <i class="wukong wukong-relevance" />
-            <span>关联业务</span>
+            <span>相关信息</span>
           </div>
           <div class="section__bd">
             <div
@@ -378,7 +378,7 @@ export default {
     hideView() {
       this.$emit('hide-view')
     },
-    // 查看关联业务详情
+    // 查看相关信息详情
     checkRelatedDetail(crmType, item) {
       this.relatedID = item[crmType + 'Id']
       this.relatedCRMType = crmType

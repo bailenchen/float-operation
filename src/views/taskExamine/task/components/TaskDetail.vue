@@ -318,11 +318,11 @@
               </div>
             </div>
 
-            <!-- 关联业务 -->
+            <!-- 相关信息 -->
             <div class="section">
               <div class="section__hd">
                 <i class="wukong wukong-relevance" />
-                <span>关联业务</span>
+                <span>相关信息</span>
               </div>
               <div class="section__bd">
                 <related-business
@@ -549,7 +549,7 @@ import TagIndex from './tag/tagIndex'
 import SubTask from './subTask'
 // emoji
 import emoji from '@/components/emoji'
-// 关联业务 - 选中列表
+// 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 import { XhUserCell } from '@/components/CreateCom'
 import FileCell from '@/views/OAManagement/components/fileCell'
@@ -1205,7 +1205,7 @@ export default {
         })
     },
 
-    // 关联业务提交按钮
+    // 相关信息提交按钮
     checkInfos(val) {
       editTaskRelationAPI({
         taskId: this.id,

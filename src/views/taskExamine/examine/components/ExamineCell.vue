@@ -48,7 +48,7 @@
         <div
           v-if="relateList.length"
           class="examine-relate">
-          <div class="examine-relate__hd">关联业务</div>
+          <div class="examine-relate__hd">相关信息</div>
           <div class="examine-relate__bd">
             <flexbox
               v-for="(item, index) in relateList"

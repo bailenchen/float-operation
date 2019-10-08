@@ -98,7 +98,7 @@
 </template>
 
 <script>
-// 关联业务 - 选中列表
+// 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 import XhUser from '@/components/CreateCom/XhUser'
 import { workTaskSaveAPI } from '@/api/projectManagement/task'

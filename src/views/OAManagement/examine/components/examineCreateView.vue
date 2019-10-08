@@ -102,7 +102,7 @@
             </el-upload>
           </p>
         </div>
-        <!-- 关联业务 -->
+        <!-- 相关信息 -->
         <related-business
           :selected-infos="relatedBusinessInfo"
           class="related-business"
@@ -275,7 +275,7 @@ export default {
       fileList: [],
       // 审批信息
       examineInfo: {},
-      relatedBusinessInfo: {} // 关联业务信息
+      relatedBusinessInfo: {} // 相关信息信息
     }
   },
   computed: {
@@ -310,7 +310,7 @@ export default {
     }
   },
   methods: {
-    // 关联业务的值更新
+    // 相关信息的值更新
     relativeValueChange(data) {
       this.relatedBusinessInfo = data.value
     },
@@ -382,7 +382,7 @@ export default {
           this.loading = false
         })
     },
-    // 更新图片附件关联业务信息
+    // 更新图片附件相关信息信息
     getUpdateOtherInfo() {
       this.imgFileList = this.action.data.img.map(function(item, index, array) {
         item.url = item.filePath
@@ -397,7 +397,7 @@ export default {
         customer: this.action.data.customerList,
         business: this.action.data.businessList,
         contract: this.action.data.contractList
-      } // 关联业务信息
+      } // 相关信息信息
     },
     // 根据自定义字段获取自定义字段规则
     getcrmRulesAndModel(list) {

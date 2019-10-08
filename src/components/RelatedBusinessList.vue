@@ -32,7 +32,7 @@
 
 <script>
 /**
- * 关联业务列表
+ * 相关信息列表
  * @props data {Object}
  */
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'

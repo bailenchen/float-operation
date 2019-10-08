@@ -113,7 +113,7 @@
             :cell-index="fileIndex"/>
         </div>
       </div>
-      <!-- 关联业务 -->
+      <!-- 相关信息 -->
       <related-business
         v-if="allDataShow"
         :margin-left="'0'"
@@ -271,7 +271,7 @@ import {
   queryCommentListAPI
 } from '@/api/oamanagement/common'
 
-// 关联业务 - 选中列表
+// 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 
 import { mapGetters } from 'vuex'

@@ -208,7 +208,7 @@ export default {
       } else if (this.crmType == 'contract') {
         return '关联合同模块'
       } else {
-        return '关联业务模块'
+        return '关联相关信息'
       }
     }
   }

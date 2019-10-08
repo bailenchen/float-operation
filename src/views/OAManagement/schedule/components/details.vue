@@ -39,7 +39,7 @@
           <span v-else-if="item.type=='createUser'">{{ listData.createUser.realname }}</span>
           <span v-else-if="item.type=='bz'">{{ listData[item.value] }}</span>
         </div>
-        <!-- 关联业务 -->
+        <!-- 相关信息 -->
         <related-business
           :margin-left="'0'"
           :alterable="false"
@@ -70,7 +70,7 @@
 
 <script>
 import { scheduleDelete } from '@/api/oamanagement/schedule'
-// 关联业务 - 选中列表
+// 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 import CRMFullScreenDetail from '@/views/customermanagement/components/CRMFullScreenDetail'
 export default {

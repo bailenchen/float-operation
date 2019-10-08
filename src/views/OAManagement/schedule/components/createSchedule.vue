@@ -103,7 +103,7 @@
               v-model="formData[item.field]"/>
           </el-form-item>
         </el-form>
-        <!-- 关联业务 -->
+        <!-- 相关信息 -->
         <related-business
           :all-data="allData"
           @checkInfos="checkInfos"/>
@@ -121,7 +121,7 @@
 <script>
 // API
 import { scheduleAdd, scheduleEdit } from '@/api/oamanagement/schedule'
-// 关联业务 - 选中列表
+// 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 import XhUser from '@/components/CreateCom/XhUser'
 import { getMaxIndex, formatTimeToTimestamp } from '@/utils/index'

@@ -286,7 +286,7 @@
                 <i class="wukong wukong-relevance"/>
                 <span>关联业务</span>
               </span>
-              <!-- 关联业务 -->
+              <!-- 相关信息 -->
               <related-business
                 :margin-left="'0'"
                 :is-task="true"
@@ -633,7 +633,7 @@ import subTask from './subTask'
 // emoji
 import xss from 'xss'
 import emoji from '@/components/emoji'
-// 关联业务 - 选中列表
+// 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
 import XhUser from '@/components/CreateCom/XhUser'
 import FileCell from '@/views/OAManagement/components/fileCell'
@@ -1186,7 +1186,7 @@ export default {
     blurFun(eve) {
       this.blurIndex = eve.target.selectionEnd
     },
-    // 关联业务提交按钮
+    // 相关信息提交按钮
     checkInfos(val) {
       editTaskRelation({
         taskId: this.id,
