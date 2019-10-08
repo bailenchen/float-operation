@@ -90,21 +90,13 @@
               <i :class="scope.row[item.prop] | dealIcon"/>
               <span>{{ scope.row[item.prop] | dealName }}</span>
             </template>
+            <template v-else-if="item.prop == 'poolDay'" slot-scope="scope">
+              <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
+              <i
+                v-else
+                class="wukong wukong-lock customer-lock"/>
+            </template>
             <template v-else>{{ scope.row[item.prop] }}</template>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-if="CRMConfig.customerConfig == 1"
-          :resizable="false"
-          prop="poolDay"
-          show-overflow-tooltip
-          label="距进入公海天数"
-          width="120">
-          <template slot-scope="scope">
-            <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
-            <i
-              v-else
-              class="wukong wukong-lock customer-lock"/>
           </template>
         </el-table-column>
         <el-table-column/>

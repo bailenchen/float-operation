@@ -48,17 +48,15 @@
           :width="item.width"
           :formatter="fieldFormatter"
           sortable="custom"
-          show-overflow-tooltip/>
-        <el-table-column
-          :resizable="false"
-          show-overflow-tooltip
-          prop="checkStatus"
-          label="状态"
-          width="100"
-          fixed="right">
+          show-overflow-tooltip>
           <template slot-scope="scope">
-            <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
-            <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+            <template v-if="item.prop == 'checkStatus'">
+              <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
+              <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+            </template>
+            <template v-else>
+              {{ scope.row[item.prop] }}
+            </template>
           </template>
         </el-table-column>
         <el-table-column/>
