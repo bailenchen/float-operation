@@ -59,6 +59,8 @@ export default {
         return '#999'
       } else if (status == 5) {
         return '#d9d9d9'
+      } else if (status == 6) {
+        return '#2362FB'
       }
     },
 
@@ -79,6 +81,8 @@ export default {
         return '撤回'
       } else if (status == 5) {
         return '未提交'
+      } else if (status == 6) {
+        return '创建'
       }
       return ''
     },
@@ -99,6 +103,8 @@ export default {
         return 'wk wk-reset'
       } else if (status == 5) {
         return 'wk wk-time'
+      } else if (status == 6) {
+        return 'wk wk-l-plus'
       }
       return ''
     }

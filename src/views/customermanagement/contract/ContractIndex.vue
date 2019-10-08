@@ -129,7 +129,7 @@ export default {
         for (let index = 0; index < this.selectionList.length; index++) {
           const element = this.selectionList[index]
           // 2 审核通过的合同
-          if (element.checkStatus == 2) {
+          if (element.checkStatus == 1) {
             contractMoney += parseFloat(element.money)
             receivedMoney += parseFloat(element.receivedMoney)
           }
