@@ -420,7 +420,7 @@ export default {
       // this.loading = true
       const params = {
         page: this.page,
-        crmType: crmTypeModel[this.crmType], // 8是公海
+        crmType: crmTypeModel[this.crmType], // 9是公海
         activityType: this.activityType.command,
         activityTypeId: this.id
       }

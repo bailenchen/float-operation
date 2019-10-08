@@ -102,7 +102,7 @@ export default {
         page: this.currentPage,
         limit: this.pageSize,
         search: this.search,
-        type: this.isSeas ? 9 : crmTypeModel[this.crmType] // 9是公海
+        type: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType] // 9是公海
       }
       if (this.sortData.order) {
         params.sortField = this.sortData.prop
@@ -165,7 +165,7 @@ export default {
       if (this.fieldList.length == 0 || force) {
         this.loading = true
         filedGetTableField({
-          label: this.isSeas ? 8 : crmTypeModel[this.crmType] // 8 是公海
+          label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType] // 9 是公海
         })
           .then(res => {
             const fieldList = []
