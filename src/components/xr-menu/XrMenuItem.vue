@@ -6,6 +6,10 @@
       :class="['xr-menu-item__icon', iconClass]"
       :style="{ backgroundColor: iconColor }" />
     <span class="xr-menu-item__label">{{ label }}</span>
+    <el-badge
+      v-if="num > 0"
+      :max="99"
+      :value="num"/>
   </div>
 </template>
 
@@ -20,6 +24,7 @@ export default {
     label: String,
     // 关键字
     name: String,
+    num: [String, Number],
     select: Boolean
   },
   data() {
@@ -73,5 +78,16 @@ export default {
 
 .xr-menu-item.is-select::before {
   opacity: 1;
+}
+
+.el-badge /deep/ .el-badge__content {
+  border: none;
+  top: 0;
+}
+
+.el-badge {
+  position: absolute;
+  right: 10px;
+  top: 15px;
 }
 </style>

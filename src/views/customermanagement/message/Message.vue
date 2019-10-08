@@ -12,6 +12,7 @@
             v-for="(item, index) in showLeftSides"
             :key="index"
             :label="item.name"
+            :num="item.num"
             :icon-color="item.color"
             :icon-class="item.iconClass"
             :select="leftType==item.infoType"
@@ -273,16 +274,5 @@ export default {
 
 .block {
   padding: 10px;
-}
-
-.el-badge /deep/ .el-badge__content {
-  border: none;
-  top: 0;
-}
-
-.el-badge {
-  position: absolute;
-  right: 15px;
-  top: 0;
 }
 </style>
