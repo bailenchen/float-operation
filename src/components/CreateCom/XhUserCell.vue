@@ -9,9 +9,7 @@
     <xh-user
       v-if="!disabled&&showSelectView"
       ref="xhuser"
-      :info-type="infoType"
-      :info-params="infoParams"
-      :radio="radio"
+      v-bind="$attrs"
       :selected-data="dataValue"
       @changeCheckout="checkUsers"/>
     <flexbox
@@ -44,27 +42,11 @@ export default {
     XhUser
   },
   mixins: [arrayMixin],
+  inheritAttrs: false,
   props: {
-    radio: {
-      // 是否单选
-      type: Boolean,
-      default: true
-    },
     placeholder: {
       type: String,
       default: '添加员工'
-    },
-    /** 获取不同的员工展示列表 */
-    infoType: {
-      type: String,
-      default: 'default' // 返回全部  crm_contract crm_receivables oa_examine 合同审核人自选列表
-    },
-    /** 请求辅助参数 */
-    infoParams: {
-      type: Object,
-      default: () => {
-        return {}
-      }
     },
     placement: {
       type: String,
@@ -81,7 +63,9 @@ export default {
   watch: {},
   mounted() {},
   methods: {
-    /** 选中 */
+    /**
+     * 选中
+     */
     checkUsers(data) {
       this.dataValue = data
       this.$emit('value-change', {
@@ -90,7 +74,10 @@ export default {
         value: data
       })
     },
-    /** 删除 */
+
+    /**
+     * 删除
+     */
     deleteuser(index) {
       this.dataValue.splice(index, 1)
       this.$emit('value-change', {
@@ -99,7 +86,10 @@ export default {
         value: this.dataValue
       })
     },
-    /** 聚焦动作 */
+
+    /**
+     * 聚焦动作
+     */
     focusClick() {
       this.showSelectView = true
       this.$emit('focus')

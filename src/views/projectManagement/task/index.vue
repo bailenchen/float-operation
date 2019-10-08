@@ -126,9 +126,16 @@
                 </div>
               </div>
             </draggable>
+            <!-- 新建任务 -->
+            <list-task-add
+              v-if="item.showTaskAdd"
+              :is-top="item.isTop"
+              @send="getList"
+              @close="item.showTaskAdd = false"/>
             <div
+              v-else
               class="new-task"
-              @click="createTaskByTop(item.isTop)">
+              @click="item.showTaskAdd = true">
               <span class="el-icon-plus"/>
               <span>新建任务</span>
             </div>
@@ -136,12 +143,6 @@
         </div>
       </div>
     </div>
-    <!-- 新建任务弹出框 newDialog-->
-    <new-dialog
-      :visible="taskCreateShow"
-      :params="{isTop: topId}"
-      @handleClose="handleClose"
-      @submit="getList"/>
     <!-- 详情 -->
     <task-detail
       v-if="taskDetailShow"
@@ -154,7 +155,7 @@
   </div>
 </template>
 <script>
-import newDialog from '../components/newDialog'
+import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
@@ -167,7 +168,7 @@ import {
 export default {
   components: {
     draggable,
-    newDialog,
+    ListTaskAdd,
     TaskDetail
   },
 
@@ -178,12 +179,8 @@ export default {
   data() {
     return {
       taskList: [],
-      // 新建任务弹出框
-      taskCreateShow: false,
       // 加载中
       loading: true,
-      // 拖拽的任务列表id
-      topId: '',
       // 详情数据
       taskID: '',
       detailIndex: -1,
@@ -218,6 +215,7 @@ export default {
         .then(res => {
           for (const item of res.data) {
             item.checkedNum = 0
+            item.showTaskAdd = false
             for (const i of item.list) {
               if (i.status == 5) {
                 i.checked = true
@@ -317,25 +315,9 @@ export default {
     },
 
     /**
-     * 新增按钮
-     */
-    createTaskByTop(isTop) {
-      this.topId = isTop
-      this.taskCreateShow = true
-    },
-
-    /**
-     * 关闭新建窗口
-     */
-    handleClose() {
-      this.taskCreateShow = false
-    },
-
-    /**
      * 点击显示详情
      */
     showDetailView(val, seciton, index) {
-      this.topId = val.isTop
       this.taskID = val.taskId
       this.detailIndex = index
       this.detailSection = seciton
@@ -620,6 +602,11 @@ export default {
     height: 20px;
     transform: translate(-50%, -50%);
   }
+}
+
+// 快捷添加
+.list-task-add {
+  padding-top: 10px;
 }
 </style>
 

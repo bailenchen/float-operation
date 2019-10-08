@@ -52,25 +52,24 @@ export default {
   name: 'XhUser', // 新建 user
   components: {},
   props: {
-    /** 多选框 只能选一个 */
     radio: {
       type: Boolean,
       default: false
     },
-    /** 已选信息 */
+    // 已选信息
     selectedData: {
       type: Array,
       default: () => {
         return []
       }
     },
-    /** 获取不同的员工展示列表 */
+    // 请求加强
     infoType: {
       type: String,
       default: 'default' // 返回全部  crm_contract crm_receivables oa_examine 合同审核人自选列表
     },
+    // 自定义请求
     infoRequest: Function,
-    /** 请求辅助参数 */
     infoParams: {
       type: Object,
       default: () => {

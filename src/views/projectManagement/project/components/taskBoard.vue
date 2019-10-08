@@ -194,83 +194,12 @@
             </div>
           </draggable>
           <!-- 新建任务 -->
-          <div
+          <list-task-add
             v-if="createSubTaskClassId == item.classId"
-            class="new-task-input">
-            <el-input
-              :rows="2"
-              v-model="subTaskContent"
-              type="textarea"
-              placeholder="请输入内容"/>
-            <div class="img-box">
-              <span class="stop-time">
-                <span
-                  v-if="subTaskStopTimeDate"
-                  class="bg-color">{{ subTaskStopTimeDate | moment('MM-DD') }}<i
-                    class="el-icon-close"
-                    @click="subTaskStopTimeDate = ''"/></span>
-                <i
-                  v-else
-                  class="wukong wukong-time-task"/>
-                <el-date-picker
-                  v-model="subTaskStopTimeDate"
-                  :style="{'width': subTaskStopTimeDate ? '54px' : '18px'}"
-                  type="date"
-                  value-format="yyyy-MM-dd"
-                  placeholder="选择日期"/>
-              </span>
-
-              <el-popover
-                v-model="item.ownerListShow"
-                placement="bottom-start"
-                width="250"
-                style=""
-                trigger="click">
-                <div class="task-board-personnel-list-popover">
-                  <el-input
-                    size="mini"
-                    placeholder="搜索成员"/>
-                  <div class="list-box">
-                    <div
-                      v-for="(k, i) in ownerList"
-                      :key="i"
-                      :class="k.checked ? 'personnel-list personnel-list-active' : 'personnel-list'"
-                      @click="selectOwnerList(item, k)">
-                      <div
-                        v-photo="k"
-                        v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
-                        :key="k.img"
-                        class="div-photo k-img"/>
-                      <span>{{ k.realname }}</span>
-                      <i class="el-icon-check"/>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  v-photo="selectMainUser"
-                  v-lazy:background-image="$options.filters.filterUserLazyImg(selectMainUser.img)"
-                  v-if="selectMainUser"
-                  slot="reference"
-                  :key="selectMainUser.img"
-                  class="div-photo head-img"
-                  @click="showOwnerListClick(item)"/>
-                <i
-                  v-else
-                  slot="reference"
-                  class="wukong wukong-user"
-                  @click="showOwnerListClick(item)"/>
-              </el-popover>
-            </div>
-            <div class="btn-box">
-              <el-button
-                size="mini"
-                type="primary"
-                @click="addSubTask(item)">确定</el-button>
-              <el-button
-                size="mini"
-                @click="createSubTaskClassId = 'hidden'">取消</el-button>
-            </div>
-          </div>
+            :work-id="workId"
+            :class-id="item.classId"
+            @send="addSubTaskSuc"
+            @close="createSubTaskClassId = 'hidden'"/>
           <div
             v-else-if="canCreateTask && item.classId != -1"
             class="new-task"
@@ -324,7 +253,7 @@
   </div>
 </template>
 <script>
-import newDialog from '@/views/projectManagement/components/newDialog'
+import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
@@ -336,14 +265,13 @@ import {
   workTaskIndexAPI,
   workTaskArchiveTaskAPI,
   workTaskUpdateOrderAPI,
-  workTaskUpdateClassOrderAPI,
-  workWorkOwnerListAPI
+  workTaskUpdateClassOrderAPI
 } from '@/api/projectManagement/project'
 
 export default {
   components: {
     draggable,
-    newDialog,
+    ListTaskAdd,
     TaskDetail
   },
 
@@ -367,13 +295,6 @@ export default {
       // 新建任务弹出框
       createTaskListShow: false,
       createSubTaskClassId: 'hidden',
-      subTaskContent: '',
-      // 选中的人员数据
-      selectMainUser: null,
-      // 选择截止的时间
-      subTaskStopTimeDate: '',
-      // 人员列表
-      ownerList: [],
       // 新建列表
       taskListName: '',
       // 重命名
@@ -438,11 +359,6 @@ export default {
         labelId: tagIds
       })
     })
-
-    // 成员列表
-    this.$bus.$on('members-update', userList => {
-      this.ownerList = userList
-    })
   },
 
   mounted() {
@@ -459,7 +375,6 @@ export default {
 
   beforeDestroy() {
     this.$bus.$off('search')
-    this.$bus.$off('members-update')
   },
 
   methods: {
@@ -687,75 +602,19 @@ export default {
     /**
      * 新建任务
      */
-    addSubTask(val) {
-      this.loading = true
-      workTaskSaveAPI({
-        name: this.subTaskContent,
-        stopTime: this.subTaskStopTimeDate,
-        mainUserId: this.selectMainUser.userId,
-        workId: this.workId,
-        classId: val.classId
-      })
-        .then(res => {
-          this.createSubTaskClassId = 'hidden'
-          this.loading = false
-          this.getList()
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
-
-    /**
-     * 展示成员列表
-     */
-    showOwnerListClick(item) {
-      item.ownerListShow = true
-      if (this.ownerList.length == 0) {
-        this.getOwnerList()
-      }
-    },
-
-    /**
-     * 获取成员
-     */
-    getOwnerList() {
-      workWorkOwnerListAPI({
-        workId: this.workId
-      }).then(res => {
-        this.ownerList = res.data
-      })
+    addSubTaskSuc() {
+      this.createSubTaskClassId = 'hidden'
+      this.getList()
     },
 
     /**
      * 创建新任务
      */
     createSubTaskClick(val) {
-      this.subTaskContent = ''
-      this.subTaskStopTimeDate = ''
-      this.selectMainUser = ''
-
       this.createSubTaskClassId = val.classId
-
       if (val.taskHandleShow) {
         val.taskHandleShow = false
       }
-    },
-
-    /**
-     * 新建任务 -- 选择人员
-     */
-    selectOwnerList(item, val) {
-      this.selectMainUser = val
-      for (const item of this.ownerList) {
-        if (item.userId == val.userId) {
-          item.checked = true
-        } else {
-          item.checked = false
-        }
-      }
-      // 关闭弹出框
-      item.ownerListShow = false
     },
 
     /**
@@ -885,43 +744,7 @@ export default {
     color: #2362FB;
   }
 }
-.task-board-personnel-list-popover {
-  .list-box {
-    margin-top: 10px;
-    height: 300px;
-    overflow-y: auto;
-    .personnel-list {
-      height: 30px;
-      line-height: 30px;
-      font-size: 13px;
-      padding: 0 10px;
-      cursor: pointer;
-      img {
-        vertical-align: middle;
-      }
-      .el-icon-check {
-        opacity: 0;
-        float: right;
-        color: #ccc;
-        font-size: 16px;
-        margin-top: 6px;
-      }
-    }
-    .personnel-list-active {
-      background: #f3f3f3;
-      .el-icon-check {
-        opacity: 1;
-      }
-    }
-    .k-img {
-      width: 24px;
-      height: 24px;
-      border-radius: 12px;
-      vertical-align: middle;
-      margin-right: 5px;
-    }
-  }
-}
+
 .task-board-rechristen-popover {
   padding: 0;
   .task-board-rechristen-box {
@@ -1058,74 +881,6 @@ export default {
         font-weight: 700;
       }
     }
-    .new-task-input {
-      // position: absolute;
-      // bottom: 0;
-      .img-box {
-        text-align: right;
-        margin: 15px 0 10px;
-        position: relative;
-        color: #999;
-        min-height: 24px;
-        i {
-          cursor: pointer;
-          vertical-align: middle;
-        }
-
-        .stop-time {
-          position: relative;
-          vertical-align: middle;
-        }
-
-        .el-date-editor {
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          opacity: 0;
-        }
-        .el-date-editor /deep/ .el-input__inner {
-          padding: 0;
-          height: 18px;
-          .el-input__icon {
-            line-height: 18px;
-          }
-        }
-        .el-date-editor /deep/ .el-input__prefix {
-          left: 0;
-          right: 0;
-          .el-input__icon {
-            width: 100%;
-          }
-        }
-        .el-date-editor /deep/ .el-input__suffix {
-          display: none;
-        }
-        .bg-color {
-          background: #e6e6e6;
-          padding: 3px 10px;
-          border-radius: 14px;
-          .el-icon-close {
-            font-size: 14px;
-            color: #ccc;
-          }
-        }
-        .head-img {
-          vertical-align: middle;
-          width: 24px;
-          height: 24px;
-          border-radius: 12px;
-          margin-left: 7px;
-        }
-      }
-      .btn-box {
-        text-align: right;
-      }
-      .el-textarea /deep/ .el-textarea__inner {
-        resize: none;
-      }
-    }
   }
 }
 
@@ -1205,6 +960,11 @@ export default {
     height: 20px;
     transform: translate(-50%, -50%);
   }
+}
+
+// 快捷添加
+.list-task-add {
+  padding-top: 10px;
 }
 </style>
 
