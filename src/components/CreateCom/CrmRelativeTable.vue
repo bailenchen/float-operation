@@ -2,23 +2,14 @@
   <div class="cr-body-content">
     <flexbox class="content-header">
       <div v-if="!isRelationShow">场景：</div>
-      <el-dropdown
-        v-if="!isRelationShow"
-        trigger="click"
-        @command="handleTypeDrop">
-        <flexbox>
-          <div>{{ sceneInfo ? sceneInfo.name : '请选择' }}</div>
-          <i
-            class="el-icon-arrow-down el-icon--right"
-            style="color:#777;"/>
-        </flexbox>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item
-            v-for="(item, index) in scenesList"
-            :key="index"
-            :command="item ">{{ item.name }}</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      <el-select v-if="!isRelationShow" v-model="sceneId" placeholder="请选择">
+        <el-option
+          v-for="item in scenesList"
+          :key="item.sceneId"
+          :label="item.name"
+          :value="item.sceneId"/>
+      </el-select>
+
       <el-input
         v-model="searchContent"
         class="search-container">
@@ -28,7 +19,8 @@
           @click.native="searchInput"/>
       </el-input>
       <el-button
-        class="create-button"
+        class="xr-btn--orange"
+        icon="el-icon-plus"
         type="primary"
         @click="isCreate=true">新建</el-button>
     </flexbox>
@@ -37,7 +29,6 @@
       ref="relativeTable"
       :data="list"
       :height="250"
-      class="cr-table"
       stripe
       border
       highlight-current-row
@@ -138,7 +129,7 @@ export default {
       searchContent: '', // 输入内容
       isCreate: false, // 控制新建
       scenesList: [], // 场景信息
-      sceneInfo: null,
+      sceneId: '',
 
       list: [], // 表数据
       fieldList: [], // 表头数据
@@ -164,7 +155,7 @@ export default {
     },
     action: function(val) {
       if (this.action != val) {
-        this.sceneInfo = null
+        this.sceneId = ''
         this.list = [] // 表数据
         this.fieldList = [] // 表头数据
         this.currentPage = 1 // 当前页数
@@ -216,12 +207,13 @@ export default {
           })
           this.scenesList = res.data
           if (defaultScene && defaultScene.length > 0) {
-            this.sceneInfo = defaultScene[0]
+            this.sceneId = defaultScene[0].sceneId
+          } else {
+            this.sceneId = ''
           }
-          if (this.scenesList.length == 0) {
-            this.scenesList.push({ sceneId: '', name: '全部' })
-            this.sceneInfo = this.scenesList[0]
-          }
+
+          this.scenesList.unshift({ sceneId: '', name: '全部' })
+
           this.getFieldList()
         })
         .catch(() => {
@@ -297,8 +289,8 @@ export default {
       let crmIndexRequest = this.getIndexRequest()
       const params = { search: this.searchContent }
       // 注入场景
-      if (this.sceneInfo) {
-        params.sceneId = this.sceneInfo.sceneId
+      if (this.sceneId) {
+        params.sceneId = this.sceneId
       }
       // 注入关联ID
       if (this.isRelationShow) {
@@ -395,8 +387,7 @@ export default {
       }
     },
     // 场景选择
-    handleTypeDrop(command) {
-      this.sceneInfo = command
+    sceneSelect() {
       this.getList()
     },
     /** 列表操作 */
@@ -457,11 +448,18 @@ export default {
 .content-header {
   position: relative;
   padding: 10px 20px;
+  color: #333;
+  font-size: 13px;
+  .el-select {
+    width: 120px;
+  }
+
   .search-container {
     margin: 0 20px;
     width: 200px;
   }
-  .create-button {
+
+  .xr-btn--orange {
     position: absolute;
     right: 10px;
     top: 15px;
@@ -492,5 +490,8 @@ body .el-table th.gutter {
 
 .el-table /deep/ .el-table__body-wrapper {
   height: calc(100% - 48px) !important;
+}
+.el-table--border {
+  border-left: none;
 }
 </style>
