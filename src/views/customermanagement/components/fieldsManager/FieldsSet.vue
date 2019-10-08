@@ -195,7 +195,7 @@ export default {
   methods: {
     getFieldConfigIndex() {
       crmFieldConfigIndex({
-        label: this.isSeas ? 8 : crmTypeModel[this.crmType]
+        label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType]
       })
         .then(res => {
           this.checkedLeftData = res.data.value.map(function(item, index) {
@@ -245,7 +245,7 @@ export default {
         this.$message.error('至少要显示两列')
       } else {
         crmFieldConfig({
-          label: this.isSeas ? 8 : crmTypeModel[this.crmType],
+          label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType],
           noHideIds: this.checkedLeftData
             .map(item => {
               return item.id

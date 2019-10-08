@@ -98,7 +98,7 @@ export default {
     getList() {
       this.loading = this.fields.length == 0
       crmFieldConfigIndex({
-        label: this.isSeas ? 8 : crmTypeModel[this.crmType]
+        label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType]
       })
         .then(res => {
           const showList = res.data.value.map(function(item, index) {
@@ -160,7 +160,7 @@ export default {
         })
         this.loading = true
         crmFieldConfig({
-          label: this.isSeas ? 8 : crmTypeModel[this.crmType],
+          label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType],
           noHideIds: noHideIds
             .map(item => {
               return item.id
