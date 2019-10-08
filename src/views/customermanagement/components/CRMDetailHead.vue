@@ -472,7 +472,7 @@ export default {
       } else if (this.crmType == 'business') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'contract') {
-        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
+        return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'product') {
