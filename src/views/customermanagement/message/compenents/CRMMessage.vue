@@ -101,39 +101,28 @@
         :label="item.label"
         :width="item.width"
         :formatter="fieldFormatter"
-        show-overflow-tooltip/>
-      <el-table-column
-        v-if="showPoolDay && CRMConfig.customerConfig == 1"
-        :resizable="false"
-        prop="poolDay"
-        show-overflow-tooltip
-        label="距进入公海天数"
-        width="120">
+        show-overflow-tooltip>
         <template slot-scope="scope">
-          <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
-          <i
-            v-else
-            class="wukong wukong-lock customer-lock"/>
+          <template v-if="item.prop == 'dealStatus'">
+            <i :class="scope.row[item.prop] | dealIcon"/>
+            <span>{{ scope.row[item.prop] | dealName }}</span>
+          </template>
+          <template v-else-if="item.prop == 'poolDay'" slot-scope="scope">
+            <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
+            <i
+              v-else
+              class="wukong wukong-lock customer-lock"/>
+          </template>
+          <template v-else-if="item.prop == 'checkStatus'">
+            <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
+            <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+          </template>
+          <template v-else>
+            {{ scope.row[item.prop] }}
+          </template>
         </template>
       </el-table-column>
       <el-table-column :resizable="false"/>
-      <el-table-column
-        v-if="showCheckStatus"
-        :resizable="false"
-        show-overflow-tooltip
-        prop="checkStatus"
-        label="状态"
-        width="100"
-        align="center"
-        fixed="right">
-        <template slot-scope="scope">
-          <div
-            :style="getStatusStyle(scope.row.checkStatus)"
-            class="status_button">
-            {{ getStatusName(scope.row.checkStatus) }}
-          </div>
-        </template>
-      </el-table-column>
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -175,6 +164,16 @@ export default {
     filterForm,
     filterContent,
     CRMAllDetail
+  },
+
+  filters: {
+    dealIcon(statu) {
+      return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    },
+
+    dealName(statu) {
+      return statu == 1 ? '已成交' : '未成交'
+    }
   },
 
   mixins: [message_table],
