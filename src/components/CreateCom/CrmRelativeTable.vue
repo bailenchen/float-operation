@@ -263,7 +263,7 @@ export default {
       } else if (this.crmType === 'business') {
         return [
           { name: '商机名称', field: 'businessName', formType: 'text' },
-          { name: '商机金额', field: 'totalPrice', formType: 'text' },
+          { name: '商机金额', field: 'money', formType: 'text' },
           { name: '客户名称', field: 'customerName', formType: 'text' },
           { name: '商机状态组 ', field: 'typeName', formType: 'text' },
           { name: '状态 ', field: 'statusName', formType: 'text' }
