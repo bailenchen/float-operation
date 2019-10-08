@@ -29,7 +29,8 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    receivablesId: [String, Number]
   },
   data() {
     return {
@@ -54,7 +55,11 @@ export default {
   methods: {
     getPlanList() {
       this.loading = true
-      crmQueryReceivablesPlansByContractId({ contractId: this.relation.contractId })
+      const params = { contractId: this.relation.contractId }
+      if (this.receivablesId) {
+        params.receivablesId = this.receivablesId
+      }
+      crmQueryReceivablesPlansByContractId(params)
         .then(res => {
           this.loading = false
           this.option = res.data

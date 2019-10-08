@@ -50,6 +50,7 @@
                     :relation="item.relation"
                     :radio="false"
                     :disabled="item.disabled"
+                    :receivables-id="editId"
                     @value-change="fieldValueChange" />
                 </el-form-item>
               </el-form>
@@ -268,6 +269,10 @@ export default {
         return '提交审核'
       }
       return '保存'
+    },
+    // 编辑ID
+    editId() {
+      return this.action.type == 'update' ? this.action.id : ''
     }
   },
   watch: {
