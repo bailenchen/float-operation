@@ -49,11 +49,11 @@ export default {
       rules: {
         oldPwd: [
           { required: true, message: '请输入原密码', trigger: 'blur' },
-          { pattern: pwdReg, message: '密码必须由8-20位字母、数字、特殊符号组成', trigger: 'blur' }
+          { pattern: pwdReg, message: '密码必须由8-20位字母、数字组成', trigger: 'blur' }
         ],
         newPwd: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { pattern: pwdReg, message: '密码必须由8-20位字母、数字、特殊符号组成', trigger: 'blur' }
+          { pattern: pwdReg, message: '密码必须由8-20位字母、数字组成', trigger: 'blur' }
         ],
         confirmPwd: [
           { required: true, message: '请再次输入密码', trigger: 'blur' },
