@@ -3,7 +3,7 @@
     <div class="cell-head">
       <i :class="type | wkIconPre" />
       <span>
-        {{ `关联${typeName}-` }}
+        {{ `相关${typeName}-` }}
       </span>
     </div>
     <div
