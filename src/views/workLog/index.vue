@@ -70,7 +70,9 @@
           :index="index"
           @read="handleRead(index)"
           @add-comment="handleAddComment"
-          @delete="handleDelete" />
+          @delete="handleDelete"
+          @edit="handleEdit"
+          @relate-detail="enterRelateDetail" />
       </div>
       <p
         v-if="loading"
@@ -79,11 +81,27 @@
         v-if="noMore"
         class="scroll-bottom-tips">没有更多了</p>
     </div>
+
+    <c-r-m-all-detail
+      :visible.sync="showRelatedDetail"
+      :crm-type="relatedCRMType"
+      :id="relatedID"
+      :no-listener-class="['content-item']" />
+
+    <new-dialog
+      v-if="showNewDialog"
+      :form-data="formData"
+      :img-file-list="imgFileList"
+      :accessory-file-list="accessoryFileList"
+      :new-loading="newLoading"
+      dialog-title="编辑日志"
+      @close="showNewDialog = false"
+      @submitBtn="submitEdit" />
   </div>
 </template>
 
 <script>
-import { journalList } from '@/api/oamanagement/journal'
+import { journalList, journalEdit } from '@/api/oamanagement/journal'
 
 import { mapGetters } from 'vuex'
 import moment from 'moment'
@@ -91,13 +109,17 @@ import moment from 'moment'
 import LogItem from './components/logItem'
 import CreateLog from './components/createLog'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
+import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
+import newDialog from '@/views/OAManagement/journal/newDialog'
 
 export default {
   name: 'WorkLog',
   components: {
     LogItem,
     CreateLog,
-    XhUserCell
+    XhUserCell,
+    CRMAllDetail,
+    newDialog
   },
   data() {
     return {
@@ -119,7 +141,19 @@ export default {
         categoryId: 0,
         createUserId: ''
       },
-      now: moment()
+      now: moment(),
+
+      // 相关详情的查看
+      relatedID: '',
+      relatedCRMType: '',
+      showRelatedDetail: false,
+
+      // 编辑
+      newLoading: false,
+      showNewDialog: false,
+      formData: {},
+      imgFileList: [],
+      accessoryFileList: []
     }
   },
   computed: {
@@ -197,13 +231,19 @@ export default {
 
       if (this.logType != 'all') {
         params.by = {
-          send: 2,
-          received: 3
+          send: 1,
+          received: 2
         }[this.logType]
       }
+
+      if (this.logType == 'send' && params.hasOwnProperty('createUserId')) {
+        delete params.createUserId
+      }
+
       if (params.hasOwnProperty('categoryId') && params.categoryId === 0) {
         delete params.categoryId
       }
+
       journalList(params).then(res => {
         this.loading = false
         if (!this.noMore) {
@@ -232,6 +272,68 @@ export default {
     },
 
     /**
+     * 日志编辑
+     * @param index {number}
+     */
+    handleEdit(index, data) {
+      this.formData = data
+      this.imgFileList = data.img
+      // 附件
+      this.accessoryFileList = data.file
+      // 员工部门赋值
+      this.formData.depData = data.sendDeptList ? data.sendDeptList : []
+      this.formData.sentWhoList = data.sendUserList ? data.sendUserList : []
+      this.showNewDialog = true
+    },
+
+    /**
+     * 编辑提交
+     */
+    submitEdit(key, batchId, relevanceAll) {
+      this.newLoading = true
+      // 获取部门
+      const dep = []
+      if (this.formData.depData) {
+        for (const j of this.formData.depData) {
+          dep.push(j.id)
+        }
+      }
+      // 获取员工
+      const staff = []
+      if (this.formData.sentWhoList) {
+        for (const h of this.formData.sentWhoList) {
+          staff.push(h.userId)
+        }
+      }
+
+      const pramas = {
+        logId: this.formData.logId,
+        categoryId: key,
+        content: this.formData.content,
+        tomorrow: this.formData.tomorrow,
+        question: this.formData.question,
+        batchId: batchId,
+        sendUserIds: staff.join(','),
+        sendDeptIds: dep.join(','),
+        customerIds: relevanceAll.customerIds.join(','),
+        contactsIds: relevanceAll.contactsIds.join(','),
+        businessIds: relevanceAll.businessIds.join(','),
+        contractIds: relevanceAll.contractIds.join(',')
+      }
+      journalEdit(pramas)
+        .then(res => {
+          this.showNewDialog = false
+          this.refreshList()
+          this.$message.success('编辑成功')
+          this.newLoading = false
+        })
+        .catch(() => {
+          this.newLoading = false
+          this.$message.error('编辑失败')
+        })
+    },
+
+    /**
      * 日志已读
      * @param index
      */
@@ -250,6 +352,15 @@ export default {
       } else {
         this.filterForm.createUserId = ''
       }
+    },
+
+    /**
+     * 进入相关详情
+     */
+    enterRelateDetail(type, data) {
+      this.relatedID = data[`${type}Id`]
+      this.relatedCRMType = type
+      this.showRelatedDetail = true
     }
   }
 }
