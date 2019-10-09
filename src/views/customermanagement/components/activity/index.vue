@@ -430,17 +430,18 @@ export default {
         .then(res => {
           // this.loading = false
           if (!this.noMore) {
+            this.page++
+
             if (this.list.length) {
               const lastLog = this.list[this.list.length - 1]
-              if (lastLog.time != res.data.time) {
+              if (res.data.time && res.data.list.length && lastLog.time != res.data.time) {
                 this.list.push(res.data)
               }
             } else {
-              if (res.data.list.length) {
+              if (res.data.time && res.data.list.length) {
                 this.list.push(res.data)
               }
             }
-            this.page++
           }
           this.noMore = res.lastPage
         })
