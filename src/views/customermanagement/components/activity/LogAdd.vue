@@ -49,77 +49,23 @@
         placeholder="请输入内容"
         @focus="inputFocus" />
     </div>
-    <section
+    <add-image-list
       v-if="imgFiles.length > 0 && isUnfold"
-      class="img-cont">
-      <flexbox wrap="wrap">
-        <div
-          v-for="(item, index) in imgFiles"
-          :key="index"
-          :style="{ 'background-image': `url('${item.url}')` }"
-          class="img-item"
-          @mouseover="mouseImgOver(item, index)"
-          @mouseleave="mouseImgLeave(item, index)">
-          <div
-            v-if="item.showDelete"
-            class="img-delete"
-            @click="deleteImgOrFile('image', item, index)">×</div>
-        </div>
-        <div class="img-item-add">
-          <input
-            type="file"
-            class="img-item-iput"
-            accept="image/*"
-            multiple
-            @change="uploadFile">
-        </div>
-      </flexbox>
-      <el-button type="text" @click="deleteAllImg">全部删除</el-button>
-    </section>
-    <section
+      :data="imgFiles"
+      @delete="deleteImage"
+      @delete-all="imgFiles = []"
+      @upload="uploadFile" />
+    <add-file-list
       v-if="files.length > 0 && isUnfold"
-      class="file-cont">
-      <flexbox class="f-header">
-        <i class="wk wk-file"/>
-        <div class="f-name">附件</div>
-      </flexbox>
-      <div class="f-body">
-        <flexbox
-          v-for="(item, index) in files"
-          :key="index"
-          class="f-item">
-          <img
-            :src="item.icon"
-            class="f-img">
-          <div class="f-name">{{ item.name+'('+item.size+')' }}</div>
-          <div
-            class="close-button"
-            @click="deleteImgOrFile('file', item, index)">×</div>
-        </flexbox>
-      </div>
-      <el-button type="text" @click="files=[]">全部删除</el-button>
-    </section>
-    <section
+      :data="files"
+      @delete="deleteFile"
+      @delete-all="files = []" />
+    <add-relate-list
       v-if="business.length > 0 && isUnfold"
-      class="c-cont">
-      <flexbox class="c-header">
-        <i class="wk wk-business"/>
-        <div class="c-name">商机</div>
-      </flexbox>
-      <div class="c-body">
-        <flexbox wrap="wrap">
-          <flexbox
-            v-for="(item, index) in business"
-            :key="index"
-            class="c-item">
-            <div class="c-item-name">{{ item.businessName }}</div>
-            <div
-              class="c-item-close"
-              @click="business.splice(index, 1)">×</div>
-          </flexbox>
-        </flexbox>
-      </div>
-    </section>
+      :data="business"
+      type="business"
+      @delete="deleteRelate" />
+
     <div
       v-if="isUnfold"
       class="bar-cont">
@@ -157,7 +103,10 @@
           style="margin-left: 10px;"
           @click="barClick('business')">关联商机</el-button>
       </el-popover>
-      <el-button type="primary" class="send-btn" @click="sendClick">发布</el-button>
+      <el-button
+        type="primary"
+        class="send-btn"
+        @click="sendClick">发布</el-button>
     </div>
 
     <!-- 附件 -->
@@ -182,12 +131,18 @@
 import { fileSize, getFileTypeIcon } from '@/utils/index'
 import { crmFileSave, crmFileDelete } from '@/api/common'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
+import AddImageList from '@/components/quickAdd/AddImageList'
+import AddFileList from '@/components/quickAdd/AddFileList'
+import AddRelateList from '@/components/quickAdd/AddRelateList'
 
 export default {
   /** 跟进记录 下的 添加 有添加框的都需要*/
   name: 'LogAdd',
   components: {
-    CrmRelative
+    CrmRelative,
+    AddImageList,
+    AddFileList,
+    AddRelateList
   },
   props: {
     // 展示相关商机关联
@@ -250,8 +205,7 @@ export default {
     this.getDefalutFollowType()
   },
 
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   methods: {
     /**
      * 跟进类型初始值
@@ -361,11 +315,16 @@ export default {
     },
 
     /**
-     * 删除全部图片
+     * 图片附件删除
      */
-    deleteAllImg() {
-      this.imgFiles = []
+    deleteImage(item, index) {
+      this.deleteImgOrFile('image', item, index)
     },
+
+    deleteFile(item, index) {
+      this.deleteImgOrFile('file', item, index)
+    },
+
     deleteImgOrFile(type, item, index) {
       crmFileDelete({
         id: item.fileId
@@ -382,15 +341,10 @@ export default {
     },
 
     /**
-     *  鼠标移入和移除 图片区域
+     * 删除相关
      */
-    mouseImgOver(item, index) {
-      item.showDelete = true
-      this.$set(this.imgFiles, index, item)
-    },
-    mouseImgLeave(item, index) {
-      item.showDelete = false
-      this.$set(this.imgFiles, index, item)
+    deleteRelate(data, index) {
+      this.business.splice(index, 1)
     },
 
     inputFocus() {
@@ -505,162 +459,11 @@ export default {
   /deep/ .el-textarea {
     width: calc(100% - 50px);
   }
-   /deep/ .el-textarea__inner {
+  /deep/ .el-textarea__inner {
     overflow: hidden;
   }
 }
 
-/** 图片  */
-.img-cont {
-  padding: 0 10px;
-  margin-bottom: 15px;
-  .img-item {
-    width: 98px;
-    height: 98px;
-    border: 1px solid #ccc;
-    display: inline-block;
-    margin: 0 4px 4px 0;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    position: relative;
-    .img-delete {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      right: 0;
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-      text-align: center;
-      font-size: 17px;
-      background-color: #666;
-      color: white;
-    }
-  }
-  .img-item-add {
-    width: 98px;
-    height: 98px;
-    line-height: 98px;
-    font-size: 60px;
-    color: #ccc;
-    text-align: center;
-    margin: 0 4px 4px 0;
-    cursor: pointer;
-    display: inline-block;
-    border-width: 1px;
-    border-style: dashed;
-    border-color: #ddd;
-    position: relative;
-    font-weight: 100;
-    .img-item-iput {
-      position: absolute;
-      top: 0;
-      right: 0;
-      height: 98px;
-      width: 98px;
-      opacity: 0;
-      cursor: pointer;
-    }
-  }
-  .img-item-add:before {
-    width: 2px;
-    height: 39.5px;
-    content: ' ';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: $xr-color-primary;
-  }
-  .img-item-add:after {
-    width: 39.5px;
-    height: 2px;
-    content: ' ';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: $xr-color-primary;
-  }
-}
-/** 附件  */
-.file-cont {
-  padding: 0 10px;
-  margin: 0 10px 15px;
-  border: 1px dashed #dfdfdf;
-  .f-header {
-    padding: 8px 0 15px;
-    color: #333;
-    font-size: 13px;
-    .wk {
-      font-size: 13px;
-      margin-right: 8px;
-    }
-    .f-name {
-      font-weight: 600;
-    }
-  }
-
-  .f-body {
-    .f-item {
-      padding: 3px 0;
-      height: 25px;
-      .f-img {
-        position: block;
-        width: 15px;
-        height: 15px;
-        margin-right: 8px;
-      }
-      .f-name {
-        color: #666;
-        font-size: 12px;
-      }
-    }
-  }
-
-}
-/** CRM  */
-.c-cont {
-  padding: 0 10px;
-  margin: 0 10px 15px;
-  border: 1px dashed #dfdfdf;
-  .c-header {
-    padding: 8px 0 15px;
-    font-size: 13px;
-    color: #333;
-
-    .wk {
-      font-size: 14px;
-      color: #333;
-      margin-right: 8px;
-    }
-    .c-name {
-      font-weight: 600;
-    }
-  }
-
-  .c-body {
-    margin-bottom: 10px;
-    .c-item {
-      height: 24px;
-      border-radius: 12px;
-      padding: 0 8px;
-      margin: 0 5px 5px 0;
-      background-color: $xr-color-primary;
-      color: white;
-      width: auto;
-      cursor: pointer;
-      .c-item-name {
-        font-size: 12px;
-      }
-      .c-item-close {
-        padding-left: 5px;
-        font-size: 17px;
-      }
-    }
-  }
-}
 /** 底部bar  */
 .bar-cont {
   .handle-button {
@@ -676,20 +479,6 @@ export default {
   .handle-button:hover {
     color: $xr-color-primary;
   }
-}
-/** 关闭按钮  */
-.close-button {
-  width: 30px;
-  line-height: 16px;
-  cursor: pointer;
-  color: #ccc;
-  height: 16px;
-  font-size: 17px;
-  text-align: center;
-}
-
-.close-button:hover {
-  color: $xr-color-primary;
 }
 
 .file-input {

@@ -344,7 +344,7 @@ export default {
     margin-right: 5px;
     i {
       font-size: 13px;
-      color: #8a94a6;
+      color: #666;
     }
   }
 
