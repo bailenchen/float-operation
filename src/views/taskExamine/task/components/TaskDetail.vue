@@ -128,6 +128,7 @@
               :value="taskData.mainUser ? [taskData.mainUser] : []"
               style="width: 100%;"
               placement="top"
+              radio
               @value-change="mainUserChange">
               <flexbox
                 slot="reference"
