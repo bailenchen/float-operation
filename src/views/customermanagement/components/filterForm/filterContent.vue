@@ -10,6 +10,7 @@
         <span v-else-if="item.formType === 'business_type'">{{ item.name +'&nbsp;“' + getTypesName(item) + getStatusName(item) + '”' }}</span>
         <span v-else-if="item.formType === 'map_address'">{{ `${item.name} ${item.address.state} ${item.address.city} ${item.address.area}` }}</span>
         <span v-else-if="item.formType === 'checkStatus'">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getCheckName(item) }}</span>
+        <span v-else-if="item.formType === 'dealStatus'">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getDealStatus(item.value) }}</span>
         <span v-else-if="item.formType === 'user'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
         <span v-else-if="item.formType === 'category' && item.value.length > 0">{{ item.name +'&nbsp;“' + item.valueContent + '”' }}</span>
         <span v-else>{{ item.name + '&nbsp;' + optionsNames[item.condition] + '“' + item.value + '”' }}</span>
@@ -75,7 +76,10 @@ export default {
       this.showObj.form.splice(index, 1)
       this.$emit('delete', { item: item, index: index, obj: this.showObj })
     },
-    // 商机组展示名称
+
+    /**
+     * 商机组展示名称
+     */
     getTypesName(data) {
       if (data.typeId) {
         const obj = data.typeOption.find(item => {
@@ -95,7 +99,10 @@ export default {
       })
       return value
     },
-    // 商机阶段展示名称
+
+    /**
+     * 商机阶段展示名称
+     */
     getStatusName(data) {
       if (data.statusId) {
         const obj = data.statusOption.find(item => {
@@ -105,6 +112,18 @@ export default {
           return '-' + obj.name
         }
         return ''
+      }
+      return ''
+    },
+
+    /**
+     * 成交状态名称
+     */
+    getDealStatus(type) {
+      if (type == 0) {
+        return '未成交'
+      } else if (type == 0) {
+        return '已成交'
       }
       return ''
     }
