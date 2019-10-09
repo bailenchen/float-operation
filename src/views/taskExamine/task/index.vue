@@ -4,8 +4,8 @@
       :tabs="tabs"
       @change="tabsChange" />
 
-    <div class="cell-section">
-      <flexbox class="cell-section__hd">
+    <div class="content-wrapper">
+      <flexbox class="content-wrapper__hd">
         <div
           v-photo="userInfo"
           v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
@@ -37,36 +37,28 @@
           v-model="showDone"
           @change="refreshList" />
       </flexbox>
-
-      <flexbox
-        class="cell-section__bd"
-        align="stretch"
-        direction="column">
+      <div class="cell-section">
         <div
-          class="xr-cells">
-          <div class="xr-cells__scroll">
-            <div
-              v-infinite-scroll="getList"
-              infinite-scroll-disabled="scrollDisabled">
-              <task-cell
-                v-for="(item, index) in list"
-                :key="index"
-                :data="item"
-                :data-index="index"
-                @on-handle="taskCellHandle" />
-            </div>
-            <p
-              v-if="loading"
-              class="scroll-bottom-tips">加载中...</p>
-            <p
-              v-if="noMore"
-              class="scroll-bottom-tips">没有更多了</p>
-          </div>
+          v-infinite-scroll="getList"
+          infinite-scroll-disabled="scrollDisabled">
+          <task-cell
+            v-for="(item, index) in list"
+            :key="index"
+            :data="item"
+            :data-index="index"
+            @on-handle="taskCellHandle" />
         </div>
+        <p
+          v-if="loading"
+          class="scroll-bottom-tips">加载中...</p>
+        <p
+          v-if="noMore"
+          class="scroll-bottom-tips">没有更多了</p>
+      </div>
+    </div>
 
-        <task-quick-add class="task-quick-add" @send="refreshList"/>
-
-      </flexbox>
+    <div class="task-add">
+      <task-quick-add @send="refreshList"/>
     </div>
 
     <task-detail
@@ -133,10 +125,6 @@ export default {
           icon: 'eye'
         }
       ],
-
-
-
-
 
       // 详情
       // 详情数据
@@ -349,14 +337,14 @@ export default {
   margin-bottom: 15px;
 }
 
-.cell-section {
+.content-wrapper {
   height: calc(100% - 70px);
-  overflow: auto;
-  overflow: overlay;
+  overflow: hidden;
   margin-top: 15px;
   background-color: white;
   border-radius: 4px;
   border: 1px solid $xr-border-line-color;
+  padding-bottom: 70px;
 
   &__hd {
     padding: 15px;
@@ -391,26 +379,25 @@ export default {
       margin-left: 30px;
     }
   }
-
-  &__bd {
-    height: calc(100% - 75px);
-    overflow: hidden;
-  }
 }
 
-// 列表区域
-.xr-cells {
-  flex: 1;
-  &__scroll {
-    height: 100%;
-    overflow-y: auto;
-  }
+.cell-section {
+  height: 100%;
+  overflow: auto;
+}
+
+.scroll-bottom-tips {
+  margin-bottom: 80px;
 }
 
 // 快捷添加
-.task-quick-add {
-  flex-shrink: 0;
-  margin: 15px;
+.task-add {
+  position: absolute;
+  left: 1px;
+  bottom: 7px;
+  right: 1px;
+  z-index: 5;
+  background-color: white;
+  padding: 15px;
 }
-
 </style>
