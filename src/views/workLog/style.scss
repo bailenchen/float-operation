@@ -9,6 +9,11 @@
   height: 1px;
 }
 
+.main {
+  height: 100%;
+  overflow: auto;
+}
+
 .work-log {
   .card {
     width: 920px;
@@ -84,19 +89,17 @@
 
     &.filter-control {
       padding: 8px;
-      display: block;
-      align-items: center;
-      justify-content: flex-start;
-      .xh-user-cell, .el-date-editor, .el-select {
-        width: 150px;
+      .xh-user-cell {
+        width: 180px;
+        margin-right: 15px;
       }
-      .el-date-editor, .el-select {
-        margin-left: 15px;
-      }
-      .xh-user-cell /deep/ .el-popover__reference {
-        width: 150px;
-        display: inline-block;
+      .el-date-editor {
+        margin-right: 15px;
       }
     }
   }
+}
+
+.scroll-bottom-tips {
+  width: 920px;
 }

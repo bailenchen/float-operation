@@ -232,7 +232,7 @@ export default {
     getDefaultField() {
       if (this.crmType === 'leads') {
         return [
-          { name: '线索名称', field: 'name', formType: 'leads' },
+          { name: '线索名称', field: 'leadsName', formType: 'leads' },
           { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
           { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
           { name: '创建时间 ', field: 'createTime', formType: 'datetime' }
@@ -262,12 +262,12 @@ export default {
         ]
       } else if (this.crmType === 'contract') {
         return [
-          { name: '合同编号', field: 'num', formType: 'text' },
           {
             name: '合同名称',
             field: this.isRelationShow ? 'contractName' : 'name',
             formType: 'text'
           },
+          { name: '合同编号', field: 'num', formType: 'text' },
           { name: '客户名称', field: 'customerName', formType: 'text' },
           { name: '合同金额', field: 'money', formType: 'text' },
           { name: '开始日期', field: 'startTime', formType: 'text' },
@@ -340,10 +340,10 @@ export default {
     },
     // 标记选择数据
     checkItemsWithSelectedData() {
-      const selectedArray = this.selectedData[this.crmType].map(item => {
+      const selectedArray = this.selectedData[this.crmType] ? this.selectedData[this.crmType].map(item => {
         item.has = false
         return item
-      })
+      }) : []
 
       const selectedRows = []
       this.otherItems = []

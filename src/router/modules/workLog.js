@@ -4,7 +4,7 @@ import Layout from '@/views/layout/workLog'
 const workLogRouter = {
   path: '/workLog',
   component: Layout,
-  redirect: '/workLog/index',
+  redirect: '/workLog/index/all',
   name: 'workLog',
   hidden: true,
   meta: {
@@ -15,7 +15,13 @@ const workLogRouter = {
   },
   children: [
     {
-      path: 'index',
+      path: 'index/:type',
+      hidden: true,
+      component: () => import('@/views/workLog/index'),
+      meta: {}
+    },
+    {
+      path: 'index/all',
       component: () => import('@/views/workLog/index'),
       meta: {
         title: '全部',
@@ -23,16 +29,16 @@ const workLogRouter = {
       }
     },
     {
-      path: 'send',
-      component: () => import('@/views/workLog/send'),
+      path: 'index/send',
+      component: () => import('@/views/workLog/index'),
       meta: {
         title: '我发出的',
         icon: 'copy-to'
       }
     },
     {
-      path: 'received',
-      component: () => import('@/views/workLog/received'),
+      path: 'index/received',
+      component: () => import('@/views/workLog/index'),
       meta: {
         title: '我收到的',
         icon: 'email'

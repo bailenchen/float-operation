@@ -108,12 +108,12 @@ export default {
   computed: {},
   watch: {
     selectedData: function(data) {
-      this.currentSelectedData = objDeepCopy(data)
+      this.handleCurrentSelectData(data)
     },
     // 刷新标记
     show(val) {
       if (val) {
-        this.currentSelectedData = objDeepCopy(this.selectedData)
+        this.handleCurrentSelectData(this.selectedData)
       }
     }
   },
@@ -156,6 +156,27 @@ export default {
     this.currentSelectedData = objDeepCopy(this.selectedData)
   },
   methods: {
+    /**
+     * 目前选择值
+     */
+    handleCurrentSelectData(data) {
+      if (data && Object.keys(data).length) {
+        this.currentSelectedData = objDeepCopy(data)
+      } else {
+        const tempData = {}
+        if (this.crmType) {
+          tempData[this.crmType] = []
+          this.currentSelectedData = tempData
+        } else {
+          for (let index = 0; index < this.showTypes.length; index++) {
+            const key = this.showTypes[index]
+            tempData[key] = []
+          }
+          this.currentSelectedData = tempData
+        }
+      }
+    },
+
     /**
      * 刷新列表
      */
