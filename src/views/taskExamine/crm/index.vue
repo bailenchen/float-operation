@@ -6,7 +6,7 @@
 
     <div
       v-infinite-scroll="getList"
-      :infinite-scroll-disabled="scrollDisabled"
+      infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <crm-cell
         v-for="(item, index) in list"
@@ -129,10 +129,9 @@ export default {
      * 刷新列表
      */
     refreshList() {
-      this.noMore = false
       this.page = 1
       this.list = []
-      this.getList()
+      this.noMore = false
     },
 
     /**

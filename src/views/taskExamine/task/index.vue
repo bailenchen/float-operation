@@ -43,21 +43,25 @@
         align="stretch"
         direction="column">
         <div
-          v-infinite-scroll="getList"
-          :infinite-scroll-disabled="scrollDisabled"
           class="xr-cells">
-          <task-cell
-            v-for="(item, index) in list"
-            :key="index"
-            :data="item"
-            :data-index="index"
-            @on-handle="taskCellHandle" />
-          <p
-            v-if="loading"
-            class="scroll-bottom-tips">加载中...</p>
-          <p
-            v-if="noMore"
-            class="scroll-bottom-tips">没有更多了</p>
+          <div class="xr-cells__scroll">
+            <div
+              v-infinite-scroll="getList"
+              infinite-scroll-disabled="scrollDisabled">
+              <task-cell
+                v-for="(item, index) in list"
+                :key="index"
+                :data="item"
+                :data-index="index"
+                @on-handle="taskCellHandle" />
+            </div>
+            <p
+              v-if="loading"
+              class="scroll-bottom-tips">加载中...</p>
+            <p
+              v-if="noMore"
+              class="scroll-bottom-tips">没有更多了</p>
+          </div>
         </div>
 
         <task-quick-add class="task-quick-add" @send="refreshList"/>
@@ -221,10 +225,9 @@ export default {
      * 刷新列表
      */
     refreshList() {
-      this.noMore = false
       this.page = 1
       this.list = []
-      this.getList()
+      this.noMore = false
     },
 
     /**
@@ -398,7 +401,10 @@ export default {
 // 列表区域
 .xr-cells {
   flex: 1;
-  overflow: auto;
+  &__scroll {
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 
 // 快捷添加
