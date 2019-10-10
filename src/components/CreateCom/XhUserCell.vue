@@ -53,7 +53,7 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: '添加员工'
+      default: '选择员工'
     },
     placement: {
       type: String,
@@ -122,7 +122,7 @@ export default {
   position: relative;
   border-radius: 4px;
   font-size: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #e6e6e6;
   color: #333333;
   padding: 0.5px;
   line-height: 15px;

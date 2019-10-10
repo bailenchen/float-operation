@@ -1,4 +1,3 @@
-@import "../customermanagement/styles/table";
 
 .el-table /deep/ tbody tr td:nth-child(1) {
   border-right: 1px solid transparent;
@@ -6,6 +5,10 @@
 
 .el-table /deep/ tbody tr td:nth-child(2) {
   border-right: 1px solid #e6e6e6;
+}
+
+.el-table {
+  border-top: 1px solid $xr-border-line-color;
 }
 
 .address-book-index {
@@ -50,14 +53,18 @@
     background-color: white;
     border-top: 1px solid #e6e6e6;
     border-bottom: 1px solid #e6e6e6;
-    .filter-box {
-      width: 100%;
-      height: 50px;
-      font-size: 13px;
-      border-bottom: 1px solid #e6e6e6;
-      padding: 0 20px;
-      .form-core {
-        width: 180px;
+
+    .filter {
+      padding: 0 15px;
+      &__label {
+        color: #333;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+
+      // 部门
+      .xh-structure-cell {
+        width: 150px;
       }
     }
 
