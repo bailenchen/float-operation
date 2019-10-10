@@ -83,7 +83,9 @@
         v-if="data.permission && (data.permission.isUpdate || data.permission.isDelete)"
         trigger="click"
         @command="handleCommand">
-        <i class="more el-icon-more" />
+        <el-button
+          icon="el-icon-more"
+          class="more" />
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item
             v-if="data.permission.isUpdate"
@@ -93,32 +95,30 @@
             command="delete">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <el-button
+        type="primary"
+        icon="el-icon-s-comment"
+        class="replay-btn"
+        @click="showReply = !showReply">{{ '回复' + (replyTotal > 0 ? `(${replyTotal})` : '') }}</el-button>
+
       <div
-        class="reply-total"
-        @click="showReply = !showReply">
-        <span class="el-icon-s-comment icon" />
-        <span v-if="replyTotal > 0" class="text">({{ replyTotal }})</span>
+        v-if="showReply"
+        class="reply-wrapper">
+        <reply-comment
+          v-loading="commentLoading"
+          ref="f_reply"
+          @toggle="closeOtherReply"
+          @reply="handleReply" />
+        <comment-list
+          v-if="replyList.length > 0"
+          ref="comment_list"
+          :id="data.logId"
+          :list="replyList"
+          type="2"
+          @close-other-reply="$refs.f_reply.toggleFocus(true)" />
       </div>
     </div>
-
-    <div
-      v-if="showReply"
-      class="reply-wrapper">
-      <reply-comment
-        v-loading="commentLoading"
-        ref="f_reply"
-        @toggle="closeOtherReply"
-        @reply="handleReply" />
-      <comment-list
-        v-if="replyList.length > 0"
-        ref="comment_list"
-        :id="data.logId"
-        :list="replyList"
-        type="2"
-        @close-other-reply="$refs.f_reply.toggleFocus(true)" />
-    </div>
-  </div>
-</template>
+</div></template>
 
 <script>
 // API
@@ -426,30 +426,12 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    .more {
-      font-size: 16px;
-      color: #666;
-      cursor: pointer;
-      &:hover {
-        color: $xr-color-primary;
-      }
+    .replay-btn {
+      margin-left: 10px;
     }
-    .reply-total {
-      margin-left: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      .icon {
-        font-size: 16px;
-      }
-      .text {
-        font-size: 12px;
-        margin-left: 2px;
-      }
-      &:hover {
-        color: $xr-color-primary !important;
-      }
+
+    .el-button {
+      padding: 6px 10px;
     }
   }
 
