@@ -4,22 +4,20 @@
     class="main"
     infinite-scroll-disabled="scrollDisabled">
     <div class="work-log scroll-body">
-      <div class="hello-card card">
-        <div class="user-info">
-          <div
-            v-photo="userInfo"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
-            :key="userInfo.img"
-            class="user-img div-photo"/>
-          <div class="status">
-            <span class="icon wk wk-success" />
-            <span>今日已完成</span>
-          </div>
-        </div>
+      <flexbox class="hello-card card">
+        <div
+          v-photo="userInfo"
+          v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
+          :key="userInfo.img"
+          class="user-img div-photo"/>
 
         <div class="greeting">
           <div class="hello">
             {{ now.format('A') }}好，{{ nickName }}
+            <span class="status">
+              <span class="icon wk wk-success" />
+              <span>今日已完成</span>
+            </span>
           </div>
           <div class="text">
             工作一天幸苦啦，完成日志结束一天的工作吧！
@@ -28,14 +26,15 @@
 
         <div class="statistics">
           <div class="title">
-            <span class="icon wk wk-task" />
+            <!-- <span class="icon wk wk-task" /> -->
             <span>本月完成日志</span>
           </div>
           <div class="info">
             <span class="special">28</span>篇
           </div>
+
         </div>
-      </div>
+      </flexbox>
 
       <create-log v-if="showAdd" class="add-card card" @update="refreshList" />
 
