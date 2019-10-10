@@ -1,6 +1,9 @@
 <template>
   <div class="se-container">
-    <div class="se-header">自定义项目权限</div>
+    <xr-header
+      icon-class="wk wk-project"
+      icon-color="#33D08F"
+      label="自定义项目权限" />
     <div class="se-body">
       <div class="se-table-header">
         <reminder
@@ -56,19 +59,22 @@
 </template>
 
 <script>
-import JurisdictionCreate from './components/jurisdictionCreate'
-import Reminder from '@/components/reminder'
 import {
   systemRoleQueryProjectRoleListAPI,
   systemRoleDeleteWorkRoleAPI
 } from '@/api/systemManagement/project'
+
+import JurisdictionCreate from './components/jurisdictionCreate'
+import Reminder from '@/components/reminder'
+import XrHeader from '@/components/xr-header'
 
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
   components: {
     JurisdictionCreate,
-    Reminder
+    Reminder,
+    XrHeader
   },
   mixins: [],
   data() {
@@ -167,15 +173,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.se-header {
-  height: 60px;
-  position: relative;
-  z-index: 100;
-  padding: 0 20px;
-  font-size: 18px;
-  line-height: 60px;
-}
-
 .se-body {
   background-color: white;
   border: 1px solid #e6e6e6;

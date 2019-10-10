@@ -1,6 +1,9 @@
 <template>
   <div class="system-customer">
-    <div class="title">业务参数设置</div>
+    <xr-header
+      icon-class="wk wk-s-seas"
+      icon-color="#487DFF"
+      label="业务参数设置" />
     <div class="customer-content">
       <!-- 客户管理导航 -->
       <div class="system-view-nav">
@@ -31,6 +34,7 @@ import BusinessGroupSet from './components/businessGroupSet' // 商机组设置
 import ProductCategorySet from './components/productCategorySet' // 产品类别设置
 import ContractExpireSet from './components/contractExpireSet' // 合同到期提醒设置
 import CustomerLimitSet from './components/customerLimitSet' // 拥有/锁定客户数限制
+import XrHeader from '@/components/xr-header'
 
 export default {
   name: 'BizParam',
@@ -40,7 +44,8 @@ export default {
     ProductCategorySet,
     FollowLogTypeSet,
     ContractExpireSet,
-    CustomerLimitSet
+    CustomerLimitSet,
+    XrHeader
   },
 
   data() {
@@ -83,14 +88,6 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-}
-.title {
-  font-size: 18px;
-  height: 40px;
-  padding: 0 20px;
-  line-height: 40px;
-  margin: 10px 0;
-  color: #333;
 }
 .customer-content {
   flex: 1;

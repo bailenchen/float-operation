@@ -1,6 +1,9 @@
 <template>
   <div class="system-customer">
-    <div class="title">客户管理</div>
+    <xr-header
+      icon-class="wk wk-s-seas"
+      icon-color="#487DFF"
+      label="客户公海规则设置" />
     <div
       v-loading="loading"
       class="customer-content">
@@ -72,10 +75,14 @@
 <script>
 import { crmSettingConfig } from '@/api/systemManagement/SystemCustomer'
 
+import XrHeader from '@/components/xr-header'
+
 export default {
   name: 'Customer', // 客户设置
 
-  components: {},
+  components: {
+    XrHeader
+  },
 
   data() {
     return {
@@ -141,14 +148,6 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-}
-.title {
-  font-size: 18px;
-  height: 40px;
-  padding: 0 20px;
-  line-height: 40px;
-  margin: 10px 0;
-  color: #333;
 }
 .customer-content {
   flex: 1;

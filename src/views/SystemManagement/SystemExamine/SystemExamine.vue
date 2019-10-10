@@ -1,6 +1,9 @@
 <template>
   <div class="se-container">
-    <div class="se-header">审批流程管理</div>
+    <xr-header
+      icon-class="wk wk-approve"
+      icon-color="#FFB940"
+      label="审批流程管理" />
     <div class="se-body">
       <div class="se-table-header">
         <el-button
@@ -77,19 +80,22 @@
 </template>
 
 <script>
-import CreateSystemExamine from './components/CreateSystemExamine'
-import SystemExamineDetail from './components/systemExamineDetail'
 import {
   examineFlowIndex,
   examineFlowUpdateStatus
 } from '@/api/systemManagement/examineflow'
+
+import CreateSystemExamine from './components/CreateSystemExamine'
+import SystemExamineDetail from './components/systemExamineDetail'
+import XrHeader from '@/components/xr-header'
 
 export default {
   /** 系统管理 的 审核管理 */
   name: 'SystemExamine',
   components: {
     CreateSystemExamine,
-    SystemExamineDetail
+    SystemExamineDetail,
+    XrHeader
   },
   mixins: [],
   data() {
@@ -323,15 +329,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.se-header {
-  height: 60px;
-  position: relative;
-  z-index: 100;
-  padding: 0 20px;
-  font-size: 18px;
-  line-height: 60px;
-}
-
 .se-body {
   background-color: white;
   border: 1px solid #e6e6e6;

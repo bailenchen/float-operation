@@ -3,9 +3,10 @@
     style="height:100%;"
     direction="column"
     align="stretch">
-    <div class="header">
-      企业首页
-    </div>
+    <xr-header
+      icon-class="wk wk-enterprise"
+      icon-color="#2362FB"
+      label="企业首页" />
     <div
       v-loading="loading"
       class="body">
@@ -59,13 +60,16 @@
 
 <script>
 import { adminSystemSave } from '@/api/systemManagement/SystemConfig'
+
 import EditImage from '@/components/EditImage'
+import XrHeader from '@/components/xr-header'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'SystemConfig',
   components: {
-    EditImage
+    EditImage,
+    XrHeader
   },
   data() {
     return {
@@ -164,15 +168,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  height: 60px;
-  line-height: 60px;
-  position: relative;
-  z-index: 100;
-  padding: 0 20px;
-  font-size: 18px;
-}
-
 .body {
   flex: 1;
   overflow-y: auto;

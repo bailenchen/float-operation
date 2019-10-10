@@ -3,9 +3,10 @@
     style="height:100%;"
     direction="column"
     align="stretch">
-    <div class="sw-header">
-      工作台
-    </div>
+    <xr-header
+      icon-class="wk wk-workbench"
+      icon-color="#5864FF"
+      label="工作台" />
     <div class="sw-body">
       <flexbox
         align="stretch"
@@ -30,10 +31,12 @@
 
 <script>
 import ExamineManager from './components/ExamineManager'
+import XrHeader from '@/components/xr-header'
 
 export default {
   components: {
-    ExamineManager
+    ExamineManager,
+    XrHeader
   },
   data() {
     return {
@@ -52,12 +55,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sw-header {
-  height: 60px;
-  font-size: 18px;
-  padding: 0 20px;
-  line-height: 60px;
-}
 .sw-body {
   position: relative;
   flex: 1;

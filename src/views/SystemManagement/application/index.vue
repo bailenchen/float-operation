@@ -3,9 +3,10 @@
     style="height:100%;"
     direction="column"
     align="stretch">
-    <div class="header">
-      <div>应用管理</div>
-    </div>
+    <xr-header
+      icon-class="wk wk-all"
+      icon-color="#FD964A"
+      label="应用管理" />
     <div
       v-loading="loading"
       class="body">
@@ -53,14 +54,19 @@ import {
   adminConfigsetIndex,
   adminConfigsetUpdate
 } from '@/api/systemManagement/applicationManagement'
-import CallDetail from './components/callDetail'
+
 import { mapGetters } from 'vuex'
+
+import CallDetail from './components/callDetail'
+import XrHeader from '@/components/xr-header'
+
 
 export default {
   /** 系统管理 的 应用管理 */
   name: 'SystemModule',
   components: {
-    CallDetail
+    CallDetail,
+    XrHeader
   },
   mixins: [],
   data() {
@@ -206,21 +212,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  height: 60px;
-  position: relative;
-  z-index: 100;
-  padding: 0 20px;
-  font-size: 18px;
-  div:first-child {
-    margin-top: 15px;
-    margin-bottom: 5px;
-  }
-  div:nth-child(2) {
-    font-size: 12px;
-    color: #999;
-  }
-}
 
 .body {
   flex: 1;

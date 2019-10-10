@@ -1,6 +1,9 @@
 <template>
   <div class="system-customer">
-    <div class="title">客户管理</div>
+    <xr-header
+      icon-class="wk wk-double-gear"
+      icon-color="#1CBAF5"
+      label="自定义字段设置" />
     <div class="customer-content">
       <div
         v-loading="loading"
@@ -44,13 +47,16 @@
 
 <script>
 import { customFieldIndex } from '@/api/systemManagement/SystemCustomer'
+
 import PreviewFieldView from '@/views/SystemManagement/components/previewFieldView'
+import XrHeader from '@/components/xr-header'
 
 export default {
   name: 'CustomField',
 
   components: {
-    PreviewFieldView
+    PreviewFieldView,
+    XrHeader
   },
 
   data() {
@@ -135,14 +141,6 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-}
-.title {
-  font-size: 18px;
-  height: 40px;
-  padding: 0 20px;
-  line-height: 40px;
-  margin: 10px 0;
-  color: #333;
 }
 .customer-content {
   flex: 1;

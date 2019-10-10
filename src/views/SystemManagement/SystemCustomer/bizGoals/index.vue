@@ -1,6 +1,9 @@
 <template>
   <div class="system-customer">
-    <div class="title">业绩目标设置</div>
+    <xr-header
+      icon-class="wk wk-customer"
+      icon-color="#2362FB"
+      label="业绩目标设置" />
     <div class="customer-content">
       <!-- 业绩目标设置 -->
       <div class="system-view-table">
@@ -12,12 +15,14 @@
 
 <script>
 import TaskSetStatistics from './components/TaskSetStatistics' // 业绩目标设置
+import XrHeader from '@/components/xr-header'
 
 export default {
   name: 'BizGoals', // 业绩目标设置
 
   components: {
-    TaskSetStatistics
+    TaskSetStatistics,
+    XrHeader
   },
 
   data() {
@@ -38,14 +43,6 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-}
-.title {
-  font-size: 18px;
-  height: 40px;
-  padding: 0 20px;
-  line-height: 40px;
-  margin: 10px 0;
-  color: #333;
 }
 .customer-content {
   flex: 1;

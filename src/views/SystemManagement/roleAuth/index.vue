@@ -1,8 +1,9 @@
 <template>
   <div class="role-authorization">
-    <p
-      ref="title"
-      class="title"> {{ title }} </p>
+    <xr-header
+      :label="title"
+      icon-class="wk wk-user"
+      icon-color="#19B5F6" />
     <div class="role-box">
       <!-- 左边导航 -->
       <div
@@ -184,9 +185,7 @@
 </template>
 
 <script>
-import RelateEmpoyee from './components/relateEmpoyee'
 import { usersList } from '@/api/common'
-import Reminder from '@/components/reminder'
 import {
   systemRuleByTypeAPI,
   roleAdd,
@@ -198,10 +197,15 @@ import {
   systemRoleByTypeAPI
 } from '@/api/systemManagement/RoleAuthorization'
 
+import RelateEmpoyee from './components/relateEmpoyee'
+import Reminder from '@/components/reminder'
+import XrHeader from '@/components/xr-header'
+
 export default {
   components: {
     RelateEmpoyee,
-    Reminder
+    Reminder,
+    XrHeader
   },
 
   data() {

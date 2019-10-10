@@ -1,6 +1,9 @@
 <template>
   <div class="employee-dep-management">
-    <p class="title"> 员工与部门管理 </p>
+    <xr-header
+      icon-class="wk wk-s-seas"
+      icon-color="#26D4DA"
+      label="员工与部门管理" />
     <div class="system-content">
       <!-- 左边导航栏 -->
       <div
@@ -377,14 +380,18 @@ import {
   usersEditStatus
 } from '@/api/systemManagement/EmployeeDepManagement'
 import { usersList, depList } from '@/api/common' // 直属上级接口
-import EmployeeDetail from './components/employeeDetail'
+
 import { mapGetters } from 'vuex'
+
+import EmployeeDetail from './components/employeeDetail'
+import XrHeader from '@/components/xr-header'
 
 export default {
   /** 系统管理 的 员工部门管理 */
   name: 'EmployeeDepManagement',
   components: {
-    EmployeeDetail
+    EmployeeDetail,
+    XrHeader
   },
   data() {
     return {
@@ -1105,14 +1112,6 @@ export default {
   background: #fff;
   padding-top: 20px;
   border: 1px solid #e6e6e6;
-}
-.title {
-  font-size: 18px;
-  height: 40px;
-  line-height: 40px;
-  margin: 10px 0;
-  color: #333;
-  padding: 0 20px;
 }
 .system-view-table {
   background: #fff;
