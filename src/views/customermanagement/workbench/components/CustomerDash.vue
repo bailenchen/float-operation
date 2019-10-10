@@ -489,7 +489,7 @@ export default {
           for (let index = 0; index < res.data.list.length; index++) {
             const element = res.data.list[index]
             data.push({
-              name: (element.name || '') + '(' + element.orderNum + ')',
+              name: (element.name || '') + '(' + element.count + ')',
               value: element.money
             })
             sumMoney += parseFloat(element.money || 0)

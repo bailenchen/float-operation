@@ -10,7 +10,9 @@
           :key="index"
           :class="leftType===item.type? 'side-item-select' : 'side-item-default'"
           class="side-item"
-          @click="sideClick(item)">{{ item.name }}</div>
+          @click="sideClick(item)">{{ item.name }}
+          <span v-if="getMenuCrmNum(item.type)" class="side-item__num">{{ `(${getMenuCrmNum(item.type)})` }}</span>
+        </div>
       </div>
       <div :style="{ 'padding-left': crmType == '' ? '150px' : '0'}">
         <crm-relative-table
@@ -23,7 +25,7 @@
           :crm-type="item.type"
           :selected-data="currentSelectedData"
           :action="action"
-          @changeCheckout="checkCrmTypeInfos"/>
+          @changeCheckout="checkCrmTypeInfos" />
       </div>
     </div>
     <div class="handle-bar">
@@ -106,12 +108,12 @@ export default {
   computed: {},
   watch: {
     selectedData: function(data) {
-      this.currentSelectedData = objDeepCopy(data)
+      this.handleCurrentSelectData(data)
     },
     // 刷新标记
     show(val) {
       if (val) {
-        this.currentSelectedData = objDeepCopy(this.selectedData)
+        this.handleCurrentSelectData(this.selectedData)
       }
     }
   },
@@ -155,6 +157,27 @@ export default {
   },
   methods: {
     /**
+     * 目前选择值
+     */
+    handleCurrentSelectData(data) {
+      if (data && Object.keys(data).length) {
+        this.currentSelectedData = objDeepCopy(data)
+      } else {
+        const tempData = {}
+        if (this.crmType) {
+          tempData[this.crmType] = []
+          this.currentSelectedData = tempData
+        } else {
+          for (let index = 0; index < this.showTypes.length; index++) {
+            const key = this.showTypes[index]
+            tempData[key] = []
+          }
+          this.currentSelectedData = tempData
+        }
+      }
+    },
+
+    /**
      * 刷新列表
      */
     refreshList() {
@@ -169,16 +192,25 @@ export default {
         this.$refs['crm' + this.crmType][0].clearAll()
       }
     },
-    // 	当用户手动勾选全选 Checkbox 时触发的事件
+
+    /**
+     * 当用户手动勾选全选 Checkbox 时触发的事件
+     */
     selectAll() {},
-    // 关闭操作
+
+    /**
+     * 关闭操作
+     */
     closeView() {
       this.$emit('close')
     },
     checkCrmTypeInfos(data) {
       this.currentSelectedData[data.type] = data.data
     },
-    // 确定选择
+
+    /**
+     * 确定选择
+     */
     confirmClick() {
       if (this.crmType) {
         // 以单类型传值
@@ -193,7 +225,19 @@ export default {
 
       this.$emit('close')
     },
-    // 根据类型获取标题展示名称
+
+    /**
+     * 获取菜单数量
+     */
+    getMenuCrmNum(type) {
+      return this.currentSelectedData[type]
+        ? this.currentSelectedData[type].length
+        : 0
+    },
+
+    /**
+     * 根据类型获取标题展示名称
+     */
     getTitle() {
       if (this.crmType == 'leads') {
         return '关联线索模块'
@@ -224,6 +268,7 @@ export default {
 .title {
   padding: 0 20px;
   font-size: 16px;
+  font-weight: 600;
   line-height: 50px;
   height: 50px;
   position: absolute;
@@ -241,6 +286,8 @@ export default {
   left: 0;
   right: 0;
   z-index: 2;
+  background-color: #f7f8fa;
+  border-top: 1px solid $xr-border-line-color;
   button {
     float: right;
     margin-top: 10px;
@@ -261,10 +308,30 @@ export default {
   height: 100%;
   border-right: 1px solid $xr-border-line-color;
   .side-item {
-    height: 35px;
-    line-height: 35px;
+    position: relative;
+    height: 40px;
+    line-height: 40px;
     padding: 0 20px;
+    font-size: 14px;
+    color: #333;
     cursor: pointer;
+
+    &__num {
+      color: #666;
+      font-size: 12px;
+      position: absolute;
+      top: 0;
+      right: 5px;
+    }
+  }
+
+  .side-item::before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 2px;
   }
 }
 
@@ -273,7 +340,10 @@ export default {
 }
 
 .side-item-select {
-  color: #409eff;
-  background-color: #ecf5ff;
+  background-color: #f6f8fa;
+}
+
+.side-item-select::before {
+  background-color: $xr-color-primary;
 }
 </style>

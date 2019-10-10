@@ -2,119 +2,121 @@
   <div
     v-loading="loading"
     v-infinite-scroll="getLogList"
-    :infinite-scroll-disabled="scrollDisabled"
+    infinite-scroll-disabled="scrollDisabled"
     class="main">
-    <div class="main-handle">
-      <el-button
-        v-for="(item, index) in handle"
-        :key="index"
-        :class="{ 'is-select' : handleType === item.type }"
-        type="primary"
-        icon="wk wk-add"
-        @click="handleClick(item.type)">
-        {{ item.label }}
-      </el-button>
-    </div>
-    <log-add
-      v-if="!isTaskCreate"
-      ref="logAdd"
-      :id="id"
-      :show-business="showRelate"
-      :show-contacts="showRelate"
-      :contacts="contacts"
-      :follow-types="followTypes"
-      class="log-add"
-      @send="sendLog"
-      @focus="handleType = 'log'"
-      @close="handleClick(handleType)" />
-
-    <task-quick-add
-      v-else
-      ref="taskAdd"
-      :params="taskParams"
-      class="task-quick-add"
-      @send="refreshLogList" />
-
-    <div class="log">
-      <!-- 筛选 -->
-      <el-dropdown
-        v-if="typeList.length > 1"
-        trigger="click"
-        class="tabs-head-select"
-        @command="handleSelectClick">
-        <span class="el-dropdown-link">
-          <i
-            :class="['wk', 'dropdown-icon', 'wk-' + activityType.icon]"
-            :style="{ backgroundColor: activityType.color }" />{{ activityType.label }}<i class="el-icon-arrow-down el-icon--right" />
-        </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item
-            v-for="(item, index) in typeList"
-            :key="index"
-            :command="item"> <i
-              :class="['wk', 'dropdown-icon', 'wk-' + item.icon]"
-              :style="{ backgroundColor: item.color }" />{{ item.label }}</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-
-      <div
-        v-for="(seciton, secitonIndex) in list"
-        :key="secitonIndex"
-        class="log-section">
-        <div class="log-section__title">
-          <span class="section-title"><span class="section-title__time">{{ seciton.time }}</span></span>
-        </div>
-
-        <template v-for="(item, index) in seciton.list">
-          <div
-            v-if="item.type == 1"
-            :key="index"
-            :class="{ 'only-one': seciton.list.length == 1 }"
-            class="log-cell">
-            <log-cell
-              :item="item"
-              :section="secitonIndex"
-              :index="index"
-              :crm-type="crmType"
-              @crm-detail="checkCRMDetail"
-              @delete="logCellDelete" />
-            <i class="wk wk-message log-cell__mark" />
-          </div>
-          <div
-            v-else
-            :key="index"
-            :class="{ 'only-one': seciton.list.length == 1 }"
-            class="log-cell activity-cell">
-            <div
-              v-if="item.type == 2"
-              class="activity-cell">
-              <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}创建了{{ item.activityType | getActivityTypeName }}：</span><span
-                class="activity-cell__content"
-                @click="checkCRMDetail(getActivityType(item.activityType), item.activityTypeId)">{{ item.activityTypeName || '查看详情' }}</span>
-            </div>
-            <div
-              v-if="item.type == 3"
-              class="activity-cell">
-              <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}将商机：</span>
-              <span
-                class="activity-cell__content"
-                @click="checkCRMDetail('business', item.activityTypeId)">{{ item.activityTypeName }}</span>
-              <span>{{ ` 阶段变为 ${item.content}` }}</span>
-            </div>
-            <i
-              :class="[item.type == 3 ? 'wk-business' : `wk-${getActivityIcon(item.activityType)}`]"
-              :style="{ backgroundColor: getActivityTypeColor(item.activityType) }"
-              class="wk log-cell__mark"
-              style="background-color: #FB9323;" />
-          </div>
-        </template>
+    <div>
+      <div class="main-handle">
+        <el-button
+          v-for="(item, index) in handle"
+          :key="index"
+          :class="{ 'is-select' : handleType === item.type }"
+          type="primary"
+          icon="wk wk-add"
+          @click="handleClick(item.type)">
+          {{ item.label }}
+        </el-button>
       </div>
-      <p
-        v-if="loading"
-        class="scroll-bottom-tips">加载中...</p>
-      <p
-        v-if="noMore"
-        class="scroll-bottom-tips">没有更多了</p>
+      <log-add
+        v-if="!isTaskCreate"
+        ref="logAdd"
+        :id="id"
+        :show-business="showRelate"
+        :show-contacts="showRelate"
+        :contacts="contacts"
+        :follow-types="followTypes"
+        class="log-add"
+        @send="sendLog"
+        @focus="handleType = 'log'"
+        @close="handleClick(handleType)" />
+
+      <task-quick-add
+        v-else
+        ref="taskAdd"
+        :params="taskParams"
+        class="task-quick-add"
+        @send="refreshLogList" />
+
+      <div class="log">
+        <!-- 筛选 -->
+        <el-dropdown
+          v-if="typeList.length > 1"
+          trigger="click"
+          class="tabs-head-select"
+          @command="handleSelectClick">
+          <span class="el-dropdown-link">
+            <i
+              :class="['wk', 'dropdown-icon', 'wk-' + activityType.icon]"
+              :style="{ backgroundColor: activityType.color }" />{{ activityType.label }}<i class="el-icon-arrow-down el-icon--right" />
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              v-for="(item, index) in typeList"
+              :key="index"
+              :command="item"> <i
+                :class="['wk', 'dropdown-icon', 'wk-' + item.icon]"
+                :style="{ backgroundColor: item.color }" />{{ item.label }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+
+        <div
+          v-for="(seciton, secitonIndex) in list"
+          :key="secitonIndex"
+          class="log-section">
+          <div class="log-section__title">
+            <span class="section-title"><span class="section-title__time">{{ seciton.time }}</span></span>
+          </div>
+
+          <template v-for="(item, index) in seciton.list">
+            <div
+              v-if="item.type == 1"
+              :key="index"
+              :class="{ 'only-one': seciton.list.length == 1 }"
+              class="log-cell">
+              <log-cell
+                :item="item"
+                :section="secitonIndex"
+                :index="index"
+                :crm-type="crmType"
+                @crm-detail="checkCRMDetail"
+                @delete="logCellDelete" />
+              <i class="wk wk-message log-cell__mark" />
+            </div>
+            <div
+              v-else
+              :key="index"
+              :class="{ 'only-one': seciton.list.length == 1 }"
+              class="log-cell activity-cell">
+              <div
+                v-if="item.type == 2"
+                class="activity-cell">
+                <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}创建了{{ item.activityType | getActivityTypeName }}：</span><span
+                  class="activity-cell__content"
+                  @click="checkCRMDetail(getActivityType(item.activityType), item.activityTypeId)">{{ item.activityTypeName || '查看详情' }}</span>
+              </div>
+              <div
+                v-if="item.type == 3"
+                class="activity-cell">
+                <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}将商机：</span>
+                <span
+                  class="activity-cell__content"
+                  @click="checkCRMDetail('business', item.activityTypeId)">{{ item.activityTypeName }}</span>
+                <span>{{ ` 阶段变为 ${item.content}` }}</span>
+              </div>
+              <i
+                :class="[item.type == 3 ? 'wk-business' : `wk-${getActivityIcon(item.activityType)}`]"
+                :style="{ backgroundColor: getActivityTypeColor(item.activityType) }"
+                class="wk log-cell__mark"
+                style="background-color: #FB9323;" />
+            </div>
+          </template>
+        </div>
+        <p
+          v-if="loading"
+          class="scroll-bottom-tips">加载中...</p>
+        <p
+          v-if="noMore"
+          class="scroll-bottom-tips">没有更多了</p>
+      </div>
     </div>
 
     <!-- CRM相关新建 -->
@@ -134,18 +136,20 @@
 </template>
 
 <script>
-import LogAdd from './LogAdd'
 import { crmCustomerQueryContacts } from '@/api/customermanagement/customer'
 import {
   crmSettingRecordListAPI,
   crmActivityListAPI,
   crmActivityAddAPI
 } from '@/api/customermanagement/common'
+
+import { objDeepCopy } from '@/utils'
+
+import LogAdd from './LogAdd'
 import LogCell from './LogCell'
 import CRMCreateView from '@/views/customermanagement/components/CRMCreateView'
 import TaskQuickAdd from '@/views/taskExamine/task/components/TaskQuickAdd'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
-import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'Activity', // 活动
@@ -399,10 +403,9 @@ export default {
      * 初始化日志
      */
     refreshLogList() {
-      this.noMore = false
       this.page = 1
       this.list = []
-      this.getLogList()
+      this.noMore = false
     },
 
     /**
@@ -429,15 +432,18 @@ export default {
         .then(res => {
           // this.loading = false
           if (!this.noMore) {
+            this.page++
+
             if (this.list.length) {
               const lastLog = this.list[this.list.length - 1]
-              if (lastLog.time != res.data.time) {
+              if (res.data.time && res.data.list.length && lastLog.time != res.data.time) {
                 this.list.push(res.data)
               }
             } else {
-              this.list.push(res.data)
+              if (res.data.time && res.data.list.length) {
+                this.list.push(res.data)
+              }
             }
-            this.page++
           }
           this.noMore = res.lastPage
         })
@@ -464,13 +470,9 @@ export default {
      * 跟进日志查看详情
      */
     checkCRMDetail(type, id) {
-      console.log('checkCRMDetail---', type, id)
-      if (type == 'log') {
-      } else {
-        this.relationID = id
-        this.relationCrmType = type
-        this.showFullDetail = true
-      }
+      this.relationID = id
+      this.relationCrmType = type
+      this.showFullDetail = true
     },
 
     /**

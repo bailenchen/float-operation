@@ -97,7 +97,7 @@ export default {
       width: 15px;
       height: 15px;
       margin-right: 5px;
-      color: #8a94a6;
+      color: #666;
       font-size: 14px;
     }
   }

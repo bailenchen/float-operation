@@ -218,6 +218,18 @@ export function crmExamineFlowStepList(data) {
   })
 }
 
+/**
+ * 客户管理下 合同回款的待审批
+ * @param {*} data
+ */
+export function crmExamineMyExamine(data) {
+  return request({
+    url: 'examineRecord/myExamine',
+    method: 'post',
+    data: data
+  })
+}
+
 // CRM合同回款创建时候的审批流
 export function crmCreateExamineFlow(data) {
   return request({

@@ -4,7 +4,7 @@ import Layout from '@/views/layout/addressBook'
 const addressBookRouter = {
   path: '/addressBook',
   component: Layout,
-  redirect: '/addressBook/index',
+  redirect: '/addressBook/index/all',
   name: 'addressBook',
   hidden: true,
   meta: {
@@ -15,7 +15,14 @@ const addressBookRouter = {
   },
   children: [
     {
-      path: 'index',
+      path: 'index/:type',
+      hidden: true,
+      component: () => import('@/views/addressBook/index'),
+      meta: {
+      }
+    },
+    {
+      path: 'index/all',
       component: () => import('@/views/addressBook/index'),
       meta: {
         title: '全部',
@@ -23,8 +30,8 @@ const addressBookRouter = {
       }
     },
     {
-      path: 'attention',
-      component: () => import('@/views/addressBook/attention'),
+      path: 'index/attention',
+      component: () => import('@/views/addressBook/index'),
       meta: {
         title: '我的关注',
         icon: 'copy-to'

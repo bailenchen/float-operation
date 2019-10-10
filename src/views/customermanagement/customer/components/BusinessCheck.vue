@@ -4,14 +4,12 @@
     class="container"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限">
-    <flexbox class="header">
-      <div class="name">{{ data.row.customerName }}</div>
-      <div class="detail">商机（{{ list.length }}）</div>
-      <img
-        class="close"
-        src="@/assets/img/task_close.png"
-        @click="hidenView" >
-    </flexbox>
+    <div class="header">
+      <i class="wk wk-customer" />
+      <span class="name">{{ data.row.customerName }}</span>
+      <span class="detail">{{ `商机个数：（${list.length}）个` }}</span>
+      <i class="el-icon-close close" @click="hidenView"/>
+    </div>
     <el-table
       v-loading="loading"
       :data="list"
@@ -146,25 +144,36 @@ export default {
 .header {
   height: 40px;
   padding: 0 10px;
-  flex-shrink: 0;
+  line-height: 40px;
+  color: #333;
+
   .name {
-    font-size: 13px;
-    padding: 0 10px;
-    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 10px 0 5px;
+
   }
   .detail {
     font-size: 12px;
-    padding: 0 10px;
-    color: #aaaaaa;
-    border-left: 1px solid #aaaaaa;
   }
   .close {
+    cursor: pointer;
     position: absolute;
-    width: 40px;
-    height: 40px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #909399;
     top: 0;
     right: 10px;
     padding: 10px;
   }
+}
+
+.wk-customer {
+  color: $xr-color-primary;
+  font-size: 12px;
+}
+
+.el-table {
+  border-top: 1px solid $xr-border-line-color;
 }
 </style>

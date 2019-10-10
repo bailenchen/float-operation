@@ -11,7 +11,7 @@
         class="aside-container">
         <sidebar
           :items="sidebarItems"
-          create-button-title="快速创建"
+          create-button-title=""
           main-router="addressBook">
           <div
             slot="add"

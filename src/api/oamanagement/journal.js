@@ -65,3 +65,15 @@ export function journalSetread(data) {
     data
   })
 }
+
+/**
+ * 日志详情
+ * @param {*} data
+ */
+export function journalQueryByIdAPI(data) {
+  return request({
+    url: 'OaLog/queryById',
+    method: 'post',
+    data
+  })
+}

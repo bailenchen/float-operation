@@ -1,5 +1,6 @@
 <template>
   <el-popover
+    v-model="showPopover"
     :disabled="disabled"
     placement="bottom"
     width="300"
@@ -18,13 +19,16 @@
         class="structure-container"
         @click.native="focusClick">
         <div
-          v-for="(item, index) in dataValue"
+          v-for="(item, index) in showDataValue"
           :key="index"
           class="user-item"
           @click.stop="deletestru(item,index)">{{ item.name }}
           <i class="delete-icon el-icon-close"/>
         </div>
-        <div class="add-item">+添加部门</div>
+        <i v-if="dataValue.length > max" class="el-icon-more" />
+        <div
+          v-if="dataValue.length == 0"
+          class="add-item">{{ placeholder }}</div>
       </flexbox>
     </div>
   </el-popover>
@@ -40,10 +44,18 @@ export default {
   },
   mixins: [arrayMixin],
   props: {
+    placeholder: {
+      type: String,
+      default: '选择部门'
+    },
     radio: {
       // 是否单选
       type: Boolean,
       default: true
+    },
+    max: {
+      type: Number,
+      default: 2
     }
   },
   data() {
@@ -52,12 +64,22 @@ export default {
       showSelectView: false // 展示选择内容列表
     }
   },
-  computed: {},
+  computed: {
+    showDataValue() {
+      if (this.dataValue && this.dataValue.length > this.max) {
+        return this.dataValue.slice(0, this.max)
+      }
+      return this.dataValue
+    }
+  },
   watch: {},
   mounted() {},
   methods: {
     /** 选中 */
     checkStructure(data) {
+      if (this.radio && data && data.length) {
+        this.showPopover = false
+      }
       this.dataValue = data
       this.$emit('value-change', {
         index: this.index,
@@ -91,7 +113,7 @@ export default {
   position: relative;
   border-radius: 3px;
   font-size: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #e6e6e6;
   color: #333333;
   padding: 0.5px;
   line-height: 15px;
@@ -99,14 +121,14 @@ export default {
   overflow-y: auto;
   .user-item {
     padding: 5px;
-    background-color: #e2ebf9;
+    background-color: #F3F7FF;
     border-radius: 3px;
     margin: 3px;
     cursor: pointer;
   }
   .add-item {
     padding: 5px;
-    color: #2362FB;
+    color: #ddd;
     cursor: pointer;
   }
   .delete-icon {
@@ -139,5 +161,20 @@ export default {
 
 .structure-container.is_valid:hover {
   border-color: #c0c4cc;
+}
+
+.el-icon-more {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background-color: #F3F7FF;
+  color: #666;
+  border-radius: 4px;
+  &:hover {
+    background-color: $xr-color-primary;
+    color: white;
+  }
 }
 </style>

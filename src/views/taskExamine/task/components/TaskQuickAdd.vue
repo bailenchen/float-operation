@@ -1,5 +1,8 @@
 <template>
-  <div v-loading="sendLoading" :class="['add', { 'unfold': isUnfold, 'is-close': !isUnfold }]">
+  <div
+    v-loading="sendLoading"
+    :class="['add', { 'unfold': isUnfold, 'is-close': !isUnfold }]"
+    class="task-quick-add">
     <i
       v-if="isUnfold"
       class="wk wk-close"
@@ -23,6 +26,7 @@
         placeholder="" />
       <xh-user-cell
         :value="mainUser"
+        radio
         placement="top"
         @value-change="selectMainUser">
         <div
@@ -151,7 +155,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 // 添加
 .add {
   position: relative;

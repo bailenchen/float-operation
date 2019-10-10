@@ -52,45 +52,73 @@
 
       <related-business-list
         v-if="allDataLen > 0"
-        :data="allData" />
+        :data="allData"
+        @select="relatedClick" />
+
+      <flexbox v-if="data.sendUserList && data.sendUserList.length" class="send-list">
+        <span class="send-list__label">发送给：</span>
+        <span
+          v-for="(item, index) in data.sendUserList"
+          :key="index"
+          class="send-list__user">
+          <el-tooltip
+            placement="bottom"
+            effect="light"
+            popper-class="tooltip-change-border">
+            <div slot="content">
+              <span>{{ item.realname }}</span>
+            </div>
+            <div
+              v-photo="item"
+              v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
+              :key="item.img"
+              class="div-photo item-img" />
+          </el-tooltip>
+        </span>
+      </flexbox>
     </div>
 
     <div class="footer">
       <el-dropdown
+        v-if="data.permission && (data.permission.isUpdate || data.permission.isDelete)"
         trigger="click"
         @command="handleCommand">
-        <i class="more el-icon-more" />
+        <el-button
+          icon="el-icon-more"
+          class="more" />
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="edit">编辑</el-dropdown-item>
-          <el-dropdown-item command="delete">删除</el-dropdown-item>
+          <el-dropdown-item
+            v-if="data.permission.isUpdate"
+            command="edit">编辑</el-dropdown-item>
+          <el-dropdown-item
+            v-if="data.permission.isDelete"
+            command="delete">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <el-button
+        type="primary"
+        icon="el-icon-s-comment"
+        class="replay-btn"
+        @click="showReply = !showReply">{{ '回复' + (replyTotal > 0 ? `(${replyTotal})` : '') }}</el-button>
+
       <div
-        class="reply-total"
-        @click="showReply = !showReply">
-        <span class="el-icon-s-comment icon" />
-        <span v-if="replyTotal > 0" class="text">({{ replyTotal }})</span>
+        v-if="showReply"
+        class="reply-wrapper">
+        <reply-comment
+          v-loading="commentLoading"
+          ref="f_reply"
+          @toggle="closeOtherReply"
+          @reply="handleReply" />
+        <comment-list
+          v-if="replyList.length > 0"
+          ref="comment_list"
+          :id="data.logId"
+          :list="replyList"
+          type="2"
+          @close-other-reply="$refs.f_reply.toggleFocus(true)" />
       </div>
     </div>
-
-    <div
-      v-if="showReply"
-      class="reply-wrapper">
-      <reply-comment
-        v-loading="commentLoading"
-        ref="f_reply"
-        @toggle="closeOtherReply"
-        @reply="handleReply" />
-      <comment-list
-        v-if="replyList.length > 0"
-        ref="comment_list"
-        :id="data.logId"
-        :list="replyList"
-        type="2"
-        @close-other-reply="$refs.f_reply.toggleFocus(true)" />
-    </div>
-  </div>
-</template>
+</div></template>
 
 <script>
 // API
@@ -175,24 +203,24 @@ export default {
     }
   },
   created() {
-    this.$nextTick(() => {
-      if (this.data.isRead === 1) return
-      this.$bus.on('load-more-work-log', clientHeight => {
-        if (this.isWaiting) return
-        if (this.calcVisible(clientHeight)) {
-          this.isWaiting = true
-          setTimeout(() => {
-            this.isWaiting = false
-            if (this.calcVisible(clientHeight)) {
-              this.readLog()
-            }
-          }, 3000)
-        }
-      })
-    })
+    // this.$nextTick(() => {
+    //   if (this.data.isRead === 1) return
+    //   this.$bus.on('load-more-work-log', clientHeight => {
+    //     if (this.isWaiting) return
+    //     if (this.calcVisible(clientHeight)) {
+    //       this.isWaiting = true
+    //       setTimeout(() => {
+    //         this.isWaiting = false
+    //         if (this.calcVisible(clientHeight)) {
+    //           this.readLog()
+    //         }
+    //       }, 3000)
+    //     }
+    //   })
+    // })
   },
   beforeDestroy() {
-    this.$bus.off('load-more-work-log')
+    // this.$bus.off('load-more-work-log')
   },
   methods: {
     getCategory(categoryId) {
@@ -217,11 +245,13 @@ export default {
         }).then(() => {
           journalDelete({ logId: this.data.logId }).then(() => {
             this.$message.success('删除成功!')
-            this.$emit('delete')
+            this.$emit('delete', index)
           })
         }).catch(() => {
           this.$message.info('已取消删除')
         })
+      } else {
+        this.$emit('edit', this.index, this.data)
       }
     },
 
@@ -281,6 +311,13 @@ export default {
       if (!flag && this.$refs.comment_list) {
         this.$refs.comment_list.closeReply()
       }
+    },
+
+    /**
+     * 相关信息点击
+     */
+    relatedClick(type, data) {
+      this.$emit('relate-detail', type, data)
     }
   }
 }
@@ -389,30 +426,12 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    .more {
-      font-size: 16px;
-      color: #666;
-      cursor: pointer;
-      &:hover {
-        color: $xr-color-primary;
-      }
+    .replay-btn {
+      margin-left: 10px;
     }
-    .reply-total {
-      margin-left: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      .icon {
-        font-size: 16px;
-      }
-      .text {
-        font-size: 12px;
-        margin-left: 2px;
-      }
-      &:hover {
-        color: $xr-color-primary !important;
-      }
+
+    .el-button {
+      padding: 6px 10px;
     }
   }
 
@@ -420,6 +439,29 @@ export default {
     border-top: 1px solid #e6e6e6;
     padding: 20px 20px 10px;
     background-color: #F4F7FF;
+  }
+}
+
+.send-list {
+  padding: 8px 15px 8px 68px;
+  &__label {
+    color: #333;
+    font-size: 12px;
+  }
+
+  &__user {
+    position: relative;
+    display: inline-block;
+
+  .item-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+    }
+  }
+
+  &__user + &__user {
+    margin-left: 7px;
   }
 }
 </style>

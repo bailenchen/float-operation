@@ -113,7 +113,7 @@ export default {
   overflow-y: auto;
   .user-item {
     padding: 5px;
-    background-color: #e2ebf9;
+    background-color: #F3F7FF;
     border-radius: 3px;
     margin: 3px;
     cursor: pointer;

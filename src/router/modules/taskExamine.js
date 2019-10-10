@@ -49,8 +49,29 @@ const taskExamineLayout = {
       path: 'examine-index/wait',
       component: () => import('@/views/taskExamine/examine/index'),
       meta: {
-        title: '待我审批',
+        title: '待我审批（办公）',
         icon: 'approve'
+      }
+    },
+    {
+      path: 'crm/:type',
+      hidden: true,
+      component: () => import('@/views/taskExamine/crm/index')
+    },
+    {
+      path: 'crm/contract',
+      component: () => import('@/views/taskExamine/crm/index'),
+      meta: {
+        title: '待我审批（合同）',
+        icon: 'contract'
+      }
+    },
+    {
+      path: 'crm/receivables',
+      component: () => import('@/views/taskExamine/crm/index'),
+      meta: {
+        title: '待我审批（回款）',
+        icon: 'receivables'
       }
     }
   ]

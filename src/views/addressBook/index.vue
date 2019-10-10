@@ -17,11 +17,11 @@
       </el-input>
     </div>
     <div class="container container-hook">
-      <flexbox class="filter-box">
-        <flexbox class="form-item">
-          <span class="label">选择部门：</span>
-          <el-input class="form-core" />
-        </flexbox>
+      <flexbox class="filter">
+        <span class="filter__label">选择部门</span>
+        <xh-structure-cell
+          class="xh-structure-cell"
+          @value-change="structureChange" />
       </flexbox>
       <el-table
         v-loading="loading"
@@ -99,14 +99,20 @@
 <script>
 import {
   addresslist,
-  toggleAttention,
-  queryListNameByDept
+  toggleAttention
 } from '@/api/oamanagement/addressBook'
+
+import XhStructureCell from '@/components/CreateCom/XhStructureCell'
 
 export default {
   name: 'AddressBookIndex',
+  components: {
+    XhStructureCell
+  },
   data() {
     return {
+      bookType: '', // all 全部 attention 关注的
+
       listData: [],
       tableMap: [
         { label: '手机', key: 'mobile' },
@@ -122,19 +128,24 @@ export default {
       total: 0,
       loading: false,
 
-      params: {
-        page: 1,
-        limit: 15,
-        deptId: '',
-        search: ''
-      }
+      params: null
     }
   },
   created() {
+    this.bookType = this.$route.params.type
+    this.params = this.getDefaultParams(this.bookType)
+
     this.getList()
     this.$nextTick(() => {
       this.tableHeight = document.getElementsByClassName('container-hook')[0].clientHeight - 94
     })
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.bookType = to.params.type
+    this.params = this.getDefaultParams(this.bookType)
+    this.listData = []
+    this.getList()
+    next()
   },
   methods: {
     getList() {
@@ -146,6 +157,23 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 默认初始化参数
+     */
+    getDefaultParams(type) {
+      const params = {
+        page: 1,
+        limit: 15,
+        deptId: '',
+        search: ''
+      }
+      if (this.bookType == 'attention') {
+        params.status = 1
+      }
+
+      return params
     },
 
     /**
@@ -231,6 +259,15 @@ export default {
     },
     handleCurrentChange(page) {
       this.params.page = page
+      this.getList()
+    },
+
+    /**
+     * 部门修改
+     */
+    structureChange(data) {
+      this.params.page = 1
+      this.params.deptId = data.value.length ? data.value[0].id : ''
       this.getList()
     }
   }

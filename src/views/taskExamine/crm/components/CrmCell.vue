@@ -13,7 +13,6 @@
 
         <div class="rt-setting">
           <span class="dep">
-            <span>{{ data.categoryTitle }} - </span>
             <span>{{ getStatusName(data.examineStatus) }}</span>
           </span>
           <span
@@ -33,7 +32,7 @@
             :style="{ backgroundColor: iconObj.color}" />
           <div class="examine-content__bd">
             <div>
-              <a @click="handleClick('detail')">{{ data.categoryTitle }}</a>
+              <a @click="handleClick('detail')">{{ data.catagory }}</a>
             </div>
             <div
               v-if="data.causeTitle"
@@ -46,25 +45,21 @@
         </div>
 
         <div
-          v-if="relateList.length"
+          v-if="relateData && relateData.id"
           class="examine-relate">
           <div class="examine-relate__hd">相关信息</div>
           <div class="examine-relate__bd">
             <flexbox
-              v-for="(item, index) in relateList"
-              :key="index"
               align="stretch"
               class="relate-cell">
               <div class="relate-cell__hd">
                 <i class="wk wk-contacts" />
-                <span>{{ `相关${item.name}` }}：</span>
+                <span>{{ `相关${relateData.typeName}` }}：</span>
               </div>
               <div class="relate-cell__bd">
                 <div
-                  v-for="(child, childIndex) in item.list"
-                  :key="childIndex"
                   class="relate-cell__bd--item text-one-line">
-                  <a @click="checkRelationDetail(item.type, child[`${item.type}Id`])">{{ child[`${item.type}Name`] || child.name }}</a>
+                  <a @click="checkRelationDetail">{{ relateData.name }}</a>
                 </div>
               </div>
             </flexbox>
@@ -107,15 +102,15 @@
 </template>
 
 <script>
-import Examine from './ExamineMixin'
 import CheckStatus from '@/mixins/CheckStatusMixin'
 
 export default {
-  /** 审批Cell */
-  name: 'ExamineCell',
+  // 合同和回款审批布局
+  name: 'CrmCell',
   components: {},
-  mixins: [Examine, CheckStatus],
+  mixins: [CheckStatus],
   props: {
+    crmType: String,
     data: Object,
     section: Number,
     index: Number
@@ -125,24 +120,33 @@ export default {
   },
   computed: {
     iconObj() {
-      return this.getCategoryIcon(this.data.type)
+      return {
+        icon: this.crmType,
+        color: {
+          contract: '#FD5B4A',
+          receivables: '#FFB940'
+        }[this.crmType]
+      }
     },
-    relateList() {
-      const keys = ['contacts', 'customer', 'business', 'contract']
-      const names = ['联系人', '客户', '商机', '合同']
-      const allList = []
-      for (let index = 0; index < keys.length; index++) {
-        const key = keys[index]
-        const list = this.data[`${key}List`]
-        if (list && list.length > 0) {
-          allList.push({
-            type: key,
-            name: names[index],
-            list: list
-          })
+
+    relateData() {
+      if (this.crmType == 'contract') {
+        return {
+          type: 'customer',
+          typeName: '客户',
+          id: this.data.catagoryCiteId,
+          name: this.data.catagoryCiteName
+        }
+      } else if (this.crmType == 'receivables') {
+        return {
+          type: 'contract',
+          typeName: '合同',
+          id: this.data.catagoryCiteId,
+          name: this.data.catagoryCiteName
         }
       }
-      return allList
+
+      return null
     },
 
     moreTypes() {
@@ -150,13 +154,6 @@ export default {
       if (this.data.permission) {
         if (this.data.permission.isRecheck) {
           mores.push({ type: 'withdraw', name: '撤销', icon: 'reset' })
-        }
-        if (this.data.permission.isUpdate) {
-          mores.push({ type: 'edit', name: '编辑', icon: 'edit' })
-        }
-
-        if (this.data.permission.isDelete) {
-          mores.push({ type: 'delete', name: '删除', icon: 'delete' })
         }
       }
       return mores
@@ -178,11 +175,11 @@ export default {
       this.$emit('handle', type, this.data, this.index, this.section)
     },
 
-    checkRelationDetail(type, id) {
+    checkRelationDetail() {
       this.$emit(
         'handle',
         'relate-detail',
-        { type, id },
+        this.relateData,
         this.index,
         this.section
       )
