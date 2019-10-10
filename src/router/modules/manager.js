@@ -79,7 +79,7 @@ const systemEmployeeRouter = {
     meta: {
       requiresAuth: true,
       title: '企业首页',
-      icon: 'systemconfig',
+      icon: 'enterprise',
       index: 2,
       type: 'manage',
       subType: ['system', 'read']
@@ -92,7 +92,7 @@ const systemEmployeeRouter = {
     meta: {
       requiresAuth: true,
       title: '应用管理',
-      icon: 'product',
+      icon: 'all',
       index: 2,
       type: 'manage',
       subType: ['configSet', 'read']
@@ -105,7 +105,7 @@ const systemEmployeeRouter = {
     meta: {
       requiresAuth: true,
       title: '员工与部门管理',
-      icon: 'department',
+      icon: 's-seas',
       index: 2,
       type: 'manage',
       subType: ['users', 'read']
@@ -132,7 +132,7 @@ const authRouter = {
     meta: {
       requiresAuth: true,
       title: '角色权限管理',
-      icon: 'contacts',
+      icon: 'user',
       index: 1,
       type: 'manage',
       subType: 'permission'
@@ -176,7 +176,7 @@ const examineWorkbenchRouter = {
       meta: {
         requiresAuth: true,
         title: '审批流程管理',
-        icon: 'examine',
+        icon: 'approve',
         index: 1,
         type: 'manage',
         subType: 'examineFlow'

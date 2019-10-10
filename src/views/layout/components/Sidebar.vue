@@ -52,7 +52,7 @@
             <el-menu-item :index="getFullPath(item.path)">
               <div class="menu-item-content">
                 <i
-                  :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
+                  :class="['wk', `wk-${item.meta.icon}`]"
                   :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"/>
                 <span slot="title">{{ item.meta.title }}</span>
                 <el-badge
@@ -71,7 +71,7 @@
             v-if="!item.hidden"
             slot="title">
             <i
-              :class="[preIcon, `${preIcon}-${item.meta.icon}`]"
+              :class="['wk', `wk-${item.meta.icon}`]"
               :style="{fontSize: item.meta.fontSize || '16px'}"/>
             <span slot="title">{{ item.meta.title }}</span>
           </template>
@@ -167,9 +167,6 @@ export default {
   },
   computed: {
     ...mapGetters(['activeIndex', 'collapse']),
-    preIcon() {
-      return (['crm', 'workLog', 'taskExamine', 'addressBook'].includes(this.mainRouter)) ? 'wk' : 'wukong'
-    },
     showTooltip() {
       return !this.collapse
     }

@@ -12,7 +12,7 @@ const customerAuth = {
 const customerRouter = {
   path: 'customer',
   meta: {
-    icon: 'employeestatistics',
+    icon: 'customer-solid',
     title: '员工客户分析',
     ...customerAuth
   },
@@ -73,7 +73,7 @@ const businessAuth = {
 const businessRouter = {
   path: 'business',
   meta: {
-    icon: 'funnelstatistics',
+    icon: 'funnel-solid',
     title: '销售漏斗分析',
     ...businessAuth
   },
@@ -113,7 +113,7 @@ const achievementAuth = {
 const achievementRouter = {
   path: 'achievement',
   meta: {
-    icon: 'BI_Employee_performance',
+    icon: 'results-solid',
     title: '员工业绩分析',
     ...achievementAuth
   },
@@ -160,7 +160,7 @@ const portraitAuth = {
 const portrayalRouter = {
   path: 'portrayal',
   meta: {
-    icon: 'customer',
+    icon: 's-seas',
     title: '客户画像分析',
     ...portraitAuth
   },
@@ -185,7 +185,7 @@ const portrayalRouter = {
 const portrayalRouterMenu = {
   path: 'portrayal',
   meta: {
-    icon: 'customer',
+    icon: 's-seas',
     title: '客户画像分析',
     ...portraitAuth
   },
@@ -232,7 +232,7 @@ const productAuth = {
 const productRouter = {
   path: 'product',
   meta: {
-    icon: 'productstatistics',
+    icon: 'product',
     title: '产品分析',
     ...productAuth
   },
@@ -267,7 +267,7 @@ const rankingAuth = {
 const rankingRouter = {
   path: 'ranking',
   meta: {
-    icon: 'BI_Leaderboard',
+    icon: 'left-trophy',
     title: '排行榜',
     ...rankingAuth
   },
@@ -358,7 +358,7 @@ const oaAuth = {
 const oaRouter = {
   path: 'oa',
   meta: {
-    icon: 'oa_analysis',
+    icon: 'office',
     title: '办公分析',
     ...oaAuth
   },
@@ -387,7 +387,7 @@ const taskCompleteRouteItem = {
   meta: {
     requiresAuth: true,
     title: '业绩目标完成情况',
-    icon: 'taskCompletestatistics',
+    icon: 'target-solid',
     index: 1,
     type: 'bi',
     subType: 'achievement'

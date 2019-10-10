@@ -39,7 +39,7 @@ const statisticsRouter = {
   path: 'statistics',
   component: () => import('@/views/projectManagement/statistics/index'),
   meta: {
-    icon: 'statistics',
+    icon: 'results-solid',
     title: '统计分析'
   }
 }
@@ -49,7 +49,7 @@ const archiveRouter = {
   path: 'archive-project',
   component: () => import('@/views/projectManagement/archive/index'),
   meta: {
-    icon: 'product',
+    icon: 'archive',
     title: '归档项目'
   }
 }
@@ -58,7 +58,7 @@ const archiveRouter = {
 const tagRouter = {
   path: 'tag',
   meta: {
-    icon: 'tag',
+    icon: 'label',
     title: '标签',
     fontSize: '18px'
   },
@@ -70,7 +70,7 @@ const recycleRouter = {
   path: 'recycle',
   component: () => import('@/views/projectManagement/recycle/index'),
   meta: {
-    icon: 'recycle',
+    icon: 'bin',
     title: '回收站',
     fontSize: '18px'
   }
