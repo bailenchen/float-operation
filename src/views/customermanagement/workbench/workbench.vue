@@ -251,11 +251,34 @@ export default {
           } else {
             item.status = ''
           }
-          item.rate = res.prev[item.field] * 100 // 增长比例/下降比例
+          item.rate = this.accMul(res.prev[item.field], 100) // 增长比例/下降比例
         })
       }).catch(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 两个浮点数相乘
+     * @param arg1
+     * @param arg2
+     * @return {number}
+     */
+    accMul(arg1, arg2) {
+      let m = 0
+      const s1 = arg1.toString()
+      const s2 = arg2.toString()
+      try {
+        m += s1.split('.')[1].length
+      } catch (e) {
+        console.log(e)
+      }
+      try {
+        m += s2.split('.')[1].length
+      } catch (e) {
+        console.log(e)
+      }
+      return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)
     }
   }
 }
