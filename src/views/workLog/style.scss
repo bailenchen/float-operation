@@ -42,11 +42,18 @@
           .status {
             font-size: 12px;
             font-weight: 400;
-            .icon {
+            .wk {
               font-size: 12px;
-              color: #67C23A;
               margin-right: 1px;
               margin-left: 15px;
+            }
+
+            .wk-success {
+              color: #20b559;
+            }
+
+            .wk-close {
+              color: #f95a5a;
             }
           }
         }

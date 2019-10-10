@@ -34,7 +34,7 @@ const addressBookRouter = {
       component: () => import('@/views/addressBook/index'),
       meta: {
         title: '我的关注',
-        icon: 'copy-to'
+        icon: 'focus-on'
       }
     }
   ]

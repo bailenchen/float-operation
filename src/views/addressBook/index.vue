@@ -167,7 +167,8 @@ export default {
         page: 1,
         limit: 15,
         deptId: '',
-        search: ''
+        search: '',
+        initial: 1 // 1正序 2 倒序
       }
       if (this.bookType == 'attention') {
         params.status = 1
@@ -230,10 +231,11 @@ export default {
      */
     sortTableList(sortObj) {
       if (sortObj.order === 'ascending') {
-        // 升序
+        this.params.initial = 1
       } else if (sortObj.order === 'descending') {
-        // 降序
+        this.params.initial = 2
       }
+      this.getList()
     },
     /**
      * 切换关注状态

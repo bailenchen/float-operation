@@ -77,3 +77,15 @@ export function journalQueryByIdAPI(data) {
     data
   })
 }
+
+/**
+ * 日志概要
+ * @param {*} data
+ */
+export function journalQueryBulletinAPI(data) {
+  return request({
+    url: 'OaLog/queryLogBulletin',
+    method: 'post',
+    data
+  })
+}

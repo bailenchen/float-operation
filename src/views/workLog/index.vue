@@ -13,14 +13,14 @@
 
         <div class="greeting">
           <div class="hello">
-            {{ now.format('A') }}好，{{ nickName }}
+            {{ headData.timeLabel }}，{{ nickName }}
             <span class="status">
-              <span class="icon wk wk-success" />
-              <span>今日已完成</span>
+              <span :class="userDoneStatus.icon" class="icon wk" />
+              <span>{{ userDoneStatus.label }}</span>
             </span>
           </div>
           <div class="text">
-            工作一天幸苦啦，完成日志结束一天的工作吧！
+            {{ headData.timeRemind }}
           </div>
         </div>
 
@@ -30,13 +30,13 @@
             <span>本月完成日志</span>
           </div>
           <div class="info">
-            <span class="special">28</span>篇
+            <span class="special">{{ headData.allNum }}</span>篇
           </div>
 
         </div>
       </flexbox>
 
-      <create-log v-if="showAdd" class="add-card card" @update="refreshList" />
+      <create-log v-if="showAdd" class="add-card card" @update="addLogSuccess" />
 
       <flexbox class="filter-control card">
         <xh-user-cell
@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { journalList, journalEdit } from '@/api/oamanagement/journal'
+import { journalList, journalEdit, journalQueryBulletinAPI } from '@/api/oamanagement/journal'
 
 import { mapGetters } from 'vuex'
 import moment from 'moment'
@@ -123,6 +123,13 @@ export default {
   data() {
     return {
       logType: '', // all send 我发出的 received 我收到的
+      // 头部信息
+      headData: {
+        nowNum: 0,
+        allNum: 0,
+        timeLabel: '',
+        timeRemind: ''
+      },
 
       listData: [],
       loading: false, // loading
@@ -140,7 +147,6 @@ export default {
         categoryId: 0,
         createUserId: ''
       },
-      now: moment(),
 
       // 相关详情的查看
       relatedID: '',
@@ -168,6 +174,13 @@ export default {
       return this.logType != 'received'
     },
 
+    userDoneStatus() {
+      return {
+        icon: this.headData.nowNum > 0 ? 'wk-success' : 'wk-close',
+        label: this.headData.nowNum > 0 ? '今天日志已完成' : '今天日志还未完成'
+      }
+    },
+
     // 无线滚动控制
     scrollDisabled() {
       return this.loading || this.noMore
@@ -192,8 +205,8 @@ export default {
   },
   created() {
     this.logType = this.$route.params.type
-
-    this.now.locale('zh-cn')
+    this.getLogRemind()
+    this.getHeadDetail()
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -202,11 +215,59 @@ export default {
       categoryId: 0,
       createUserId: ''
     }
-
     this.refreshList()
     next()
   },
   methods: {
+    /**
+     * 获取概要
+     */
+    getHeadDetail() {
+      journalQueryBulletinAPI().then(res => {
+        this.headData.nowNum = res.data.nowNum
+        this.headData.allNum = res.data.allNum
+      }).catch(() => {
+
+      })
+    },
+
+    getLogRemind() {
+      const hour = moment().format('H')
+      if (hour < 12) {
+        const num = Math.floor(Math.random() * 6)
+        this.headData.timeLabel = '早上好'
+        this.headData.timeRemind = [
+          '给自己一个微笑，告诉自己今天会更美好',
+          '生命的意义在于和别人的不同之处',
+          '美丽的早晨，灿烂的你，美好的一天在等你',
+          '暖暖的阳光照，柔柔的轻风笑，绵绵的岁月长，真真的祝福到',
+          '美好的一天开始了，每天给自己一个希望',
+          '蓝天是宁静的，空气是清新的，阳光是明媚的'
+        ][num]
+      } else if (hour < 18) {
+        const num = Math.floor(Math.random() * 6)
+        this.headData.timeLabel = '下午好'
+        this.headData.timeRemind = [
+          '认真对待工作，终有一天，你的每一份努力，都将绚烂成花',
+          '通过辛勤的工作获得的财富才是人生的大快事',
+          '生命之中总是有太多的感动，难忘的是你灿烂的笑容',
+          '努力工作，永远不要向命运低头，不要向生活妥协',
+          '生命，是一树花开，或安静或热烈',
+          '人生，最快乐的那莫过于奋斗'
+        ][num]
+      } else {
+        const num = Math.floor(Math.random() * 5)
+        this.headData.timeLabel = '晚上好'
+        this.headData.timeRemind = [
+          '工作一天辛苦了，这世界不会辜负每一份努力和坚持',
+          '无须缅怀昨天，不必奢望明天，只要认真过好每个今',
+          '每一份坚持都是成功的累积，相信自己，总会遇到惊喜',
+          '不要失去希望，你永远不知道明天会带来什么',
+          '工作一天辛苦了，人生，最快乐的那莫过于奋斗'
+        ][num]
+      }
+    },
+
     /**
      * 刷新列表
      */
@@ -268,6 +329,16 @@ export default {
      */
     handleDelete(index) {
       this.listData.splice(index, 1)
+      this.getHeadDetail()
+    },
+
+    /**
+     * 日志添加成功
+     */
+    addLogSuccess() {
+      this.refreshList()
+      this.headData.nowNum++
+      this.headData.allNum++
     },
 
     /**
