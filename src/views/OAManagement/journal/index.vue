@@ -190,7 +190,6 @@ export default {
 
           this.journalData = this.journalData.concat(res.data.list)
           this.createInitAwaitMessage()
-          this.loadMoreLoading = false
           this.isPost = false
         })
         .catch(() => {

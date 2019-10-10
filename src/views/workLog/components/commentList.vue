@@ -18,17 +18,12 @@
             </div>
           </div>
           <div class="control">
-            <el-button
-              type="text"
-              @click="handleToReply(index)">
-              回复
-            </el-button>
-            <el-button
-              class="danger"
-              type="text"
-              @click="handleToDelete(item, index)">
-              删除
-            </el-button>
+            <i
+              class="el-icon-s-comment reply-btn"
+              @click="handleToReply(index)" />
+            <i
+              class="el-icon-delete-solid delete-btn"
+              @click="handleToDelete(item, index)" />
           </div>
         </div>
         <div class="content" v-html="emoji(item.content)" />
@@ -39,7 +34,7 @@
       </div>
       <template v-if="item.childCommentList && item.childCommentList.length > 0">
         <div
-          v-for="(child, childIndex) in sortChildComment(item.childCommentList)"
+          v-for="(child, childIndex) in item.childCommentList"
           :key="childIndex">
           <div class="child-reply reply">
             <div class="user-info">
@@ -57,16 +52,12 @@
                 </div>
               </div>
               <div class="control">
-                <el-button
-                  type="text"
-                  @click="handleToReply(index, childIndex)">
-                  回复
-                </el-button>
-                <el-button
-                  class="danger"
-                  type="text">
-                  删除
-                </el-button>
+                <i
+                  class="el-icon-s-comment reply-btn"
+                  @click="handleToReply(index, childIndex)" />
+                <i
+                  class="el-icon-delete-solid delete-btn"
+                  @click="handleToDelete(child, index, childIndex)" />
               </div>
             </div>
             <div class="child-content">
@@ -98,6 +89,7 @@ import {
 } from '@/api/oamanagement/common'
 import { mapGetters } from 'vuex'
 import xss from 'xss'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'CommentList',
@@ -198,7 +190,7 @@ export default {
     /**
      * 删除回复
      */
-    handleToDelete(data, index) {
+    handleToDelete(data, index, childIndex = -1) {
       this.$confirm('确定删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -212,7 +204,14 @@ export default {
               type: 'success',
               message: '删除成功!'
             })
-            this.list.splice(index, 1)
+
+            if (childIndex >= 0) {
+              this.list[index].childCommentList.splice(childIndex, 1)
+            } else {
+              const copyList = objDeepCopy(this.list)
+              copyList.splice(index, 1)
+              this.list = copyList
+            }
           })
         })
         .catch(() => {
@@ -260,13 +259,17 @@ export default {
           .control {
             margin-left: 10px;
             visibility: hidden;
-            display: flex;
-            .el-button {
-              font-size: 12px;
-              padding: 0;
-              &.danger {
-                color: #F56C6C;
-              }
+            i {
+              font-size: 16px;
+              color: #666;
+            }
+
+            .reply-btn:hover {
+              color: $xr-color-primary;
+            }
+
+            .delete-btn:hover {
+              color: #F56C6C;
             }
           }
         }
@@ -287,7 +290,7 @@ export default {
         }
 
         &:hover {
-          background-color: #f4f7ff;
+          background-color: #f9f9f9;
           .user-info .control {
             visibility: unset;
           }

@@ -100,25 +100,25 @@
         icon="el-icon-s-comment"
         class="replay-btn"
         @click="showReply = !showReply">{{ '回复' + (replyTotal > 0 ? `(${replyTotal})` : '') }}</el-button>
-
-      <div
-        v-if="showReply"
-        class="reply-wrapper">
-        <reply-comment
-          v-loading="commentLoading"
-          ref="f_reply"
-          @toggle="closeOtherReply"
-          @reply="handleReply" />
-        <comment-list
-          v-if="replyList.length > 0"
-          ref="comment_list"
-          :id="data.logId"
-          :list="replyList"
-          type="2"
-          @close-other-reply="$refs.f_reply.toggleFocus(true)" />
-      </div>
     </div>
-</div></template>
+    <div
+      v-if="showReply"
+      class="reply-wrapper">
+      <reply-comment
+        v-loading="commentLoading"
+        ref="f_reply"
+        @toggle="closeOtherReply"
+        @reply="handleReply" />
+      <comment-list
+        v-if="replyList.length > 0"
+        ref="comment_list"
+        :id="data.logId"
+        :list="replyList"
+        type="2"
+        @close-other-reply="$refs.f_reply.toggleFocus(true)" />
+    </div>
+  </div>
+</template>
 
 <script>
 // API
@@ -438,7 +438,7 @@ export default {
   .reply-wrapper {
     border-top: 1px solid #e6e6e6;
     padding: 20px 20px 10px;
-    background-color: #F4F7FF;
+    background-color: #f9f9f9;
   }
 }
 

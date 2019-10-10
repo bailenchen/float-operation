@@ -285,7 +285,7 @@ export default {
       this.loading = true
       const params = {
         page: this.page,
-        limit: 15,
+        limit: 5,
         ...this.filterForm
       }
 
