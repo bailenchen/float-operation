@@ -136,18 +136,20 @@
 </template>
 
 <script>
-import LogAdd from './LogAdd'
 import { crmCustomerQueryContacts } from '@/api/customermanagement/customer'
 import {
   crmSettingRecordListAPI,
   crmActivityListAPI,
   crmActivityAddAPI
 } from '@/api/customermanagement/common'
+
+import { objDeepCopy } from '@/utils'
+
+import LogAdd from './LogAdd'
 import LogCell from './LogCell'
 import CRMCreateView from '@/views/customermanagement/components/CRMCreateView'
 import TaskQuickAdd from '@/views/taskExamine/task/components/TaskQuickAdd'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
-import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'Activity', // 活动
@@ -468,13 +470,9 @@ export default {
      * 跟进日志查看详情
      */
     checkCRMDetail(type, id) {
-      console.log('checkCRMDetail---', type, id)
-      if (type == 'log') {
-      } else {
-        this.relationID = id
-        this.relationCrmType = type
-        this.showFullDetail = true
-      }
+      this.relationID = id
+      this.relationCrmType = type
+      this.showFullDetail = true
     },
 
     /**

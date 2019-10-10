@@ -314,7 +314,7 @@ export default {
       this.batchId = guid()
       this.imgFiles = []
       this.files = []
-      this.sendUserIds = []
+      this.sendUserList = []
       this.relateData = {}
     },
 

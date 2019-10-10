@@ -192,7 +192,7 @@
         </div>
         <!-- 相关信息 -->
         <div
-          v-if="relatedListData.contacts.length > 0 || relatedListData.customer.length > 0 || relatedListData.business.length > 0 || relatedListData.contract.length > 0"
+          v-if="Object.keys(relatedListData).length > 0"
           class="section">
           <div class="section__hd">
             <i class="wukong wukong-relevance" />
@@ -312,12 +312,16 @@ export default {
      * 相关信息
      */
     relatedListData() {
-      return {
-        contacts: this.detail.contactsList || [],
-        customer: this.detail.customerList || [],
-        business: this.detail.businessList || [],
-        contract: this.detail.contractList || []
+      const tempsData = {}
+      const keys = ['contacts', 'customer', 'business', 'contract']
+      for (let index = 0; index < keys.length; index++) {
+        const key = keys[index]
+        const list = this.detail[`${key}List`] || []
+        if (list.length > 0) {
+          tempsData[key] = list
+        }
       }
+      return tempsData
     },
 
     /**
@@ -330,11 +334,11 @@ export default {
   watch: {
     id: function(val) {
       this.detail = null
-      this.getDetial()
+      this.getDetail()
     }
   },
   mounted() {
-    this.getDetial()
+    this.getDetail()
   },
   methods: {
     // 获取基础信息
@@ -352,7 +356,7 @@ export default {
           this.loading = false
         })
     },
-    getDetial() {
+    getDetail() {
       this.loading = true
       oaExamineRead({
         examineId: this.id
