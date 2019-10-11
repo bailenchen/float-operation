@@ -95,3 +95,35 @@ export function usersEditStatus(data) {
     data: data
   })
 }
+
+/**
+ * 用户导入模板
+ * @param {*} data
+ */
+export const userImportTemplateURL = process.env.BASE_API + 'user_import.xlsx'
+export function userImportTemplateAPI(data) {
+  return request({
+    url: 'user_import.xlsx',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 用户导入
+ * @param {*} data
+ */
+export function userExcelImportAPI(data) {
+  var param = new FormData()
+  Object.keys(data).forEach(key => {
+    param.append(key, data[key])
+  })
+  return request({
+    url: 'system/user/excelImport',
+    method: 'post',
+    data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

@@ -8,13 +8,6 @@
     <flexbox
       orient="vertical"
       style="height: 100%;">
-      <flexbox class="detail-header">
-        <div class="header-name"/>
-        <img
-          class="header-close"
-          src="@/assets/img/task_close.png"
-          @click="hideView" >
-      </flexbox>
       <div class="detail-body">
         <div class="dialog-top">
           <img
@@ -128,24 +121,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.detail-header {
-  position: relative;
-  min-height: 60px;
-  .header-name {
-    font-size: 14px;
-    color: #333333;
-    flex: 1;
-  }
-  .header-close {
-    display: block;
-    width: 40px;
-    height: 40px;
-    margin-left: 20px;
-    padding: 10px;
-    cursor: pointer;
-  }
-}
-
 .dialog-top > img {
   vertical-align: middle;
   margin-right: 10px;
@@ -191,6 +166,7 @@ export default {
   top: 60px;
   bottom: 0px;
   right: 0px;
+  background-color: white;
 }
 </style>
 

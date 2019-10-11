@@ -1,75 +1,134 @@
 <template>
   <div class="employee-dep-management">
     <xr-header
+      v-model="searchInput"
+      show-search
       icon-class="wk wk-s-seas"
       icon-color="#26D4DA"
-      label="员工与部门管理" />
+      label="员工与部门管理"
+      @search="headerSearch">
+      <el-button
+        slot="ft"
+        class="xr-btn--orange"
+        type="primary" @click="bulkImportClick">批量导入</el-button>
+    </xr-header>
     <div class="system-content">
       <!-- 左边导航栏 -->
       <div
         v-loading="depLoading"
-        class="system-view-nav">
-        <el-tree
-          ref="tree"
-          :data="treeData"
-          :expand-on-click-node="false"
-          node-key="id"
-          default-expand-all
-          highlight-current
-          @node-click="changeDepClick">
-          <flexbox
-            slot-scope="{ node, data }"
-            class="node-data">
-            <img
-              v-if="node.expanded"
-              class="node-img"
-              src="@/assets/img/fold.png"
-              @click="handleExpand('close',node, data)">
-            <img
-              v-if="!node.expanded"
-              class="node-img"
-              src="@/assets/img/unfold.png"
-              @click="handleExpand('open',node, data)">
-            <div class="node-label">{{ node.label }}</div>
-            <div class="node-label-set">
-              <el-button
-                v-if="strucSaveAuth"
-                type="text"
-                size="mini"
-                @click.stop="() => append(data)">
-                <i class="el-icon-plus"/>
-              </el-button>
-              <el-button
-                v-if="strucUpdateAuth"
-                type="text"
-                size="mini"
-                @click.stop="() => edit(node, data)">
-                <i class="el-icon-edit"/>
-              </el-button>
-              <el-button
-                v-if="strucDeleteAuth"
-                type="text"
-                size="mini"
-                @click.stop="() => remove(node, data)">
-                <i class="el-icon-close"/>
-              </el-button>
+        class="system-nav">
+        <div class="system-nav__title">
+          企业组织架构
+        </div>
+        <div class="system-nav__content">
+          <div class="section">
+            <div class="section__title">员工</div>
+            <div class="section__content">
+              <flexbox
+                v-for="(item, index) in employeeMenu"
+                :key="index"
+                :class="['menu-item', { 'is-select' : currentMenuData && currentMenuData.type == item.type}]"
+                @click.native="changeUserClick(item)">
+                <i
+                  :class="item.icon"
+                  class="menu-item__icon" />
+                <div class="menu-item__content">{{ item.label }}</div>
+              </flexbox>
             </div>
-          </flexbox>
-        </el-tree>
+          </div>
+
+          <div class="section">
+            <div class="section__title">部门
+              <el-button
+                type="text"
+                icon="el-icon-circle-plus"
+                class="add-btn"
+                @click="addStruc">创建部门</el-button>
+            </div>
+            <div class="section__content">
+              <el-tree
+                ref="tree"
+                :data="treeData"
+                node-key="id"
+                highlight-current
+                @node-click="changeDepClick">
+                <flexbox
+                  slot-scope="{ node }"
+                  :class="{ 'is-current': node.isCurrent}"
+                  class="node-data">
+                  <!-- <img
+                v-if="node.expanded"
+                class="node-img"
+                src="@/assets/img/fold.png"
+                @click="handleExpand('close',node, data)">
+              <img
+                v-if="!node.expanded"
+                class="node-img"
+                src="@/assets/img/unfold.png"
+                @click="handleExpand('open',node, data)"> -->
+                  <i
+                    v-if="node.level == 1"
+                    class="wk wk-department" />
+                  <span
+                    v-else
+                    class="node-data__mark" />
+
+                  <div class="node-data__label text-one-line ">{{ node.label }}</div>
+                  <i
+                    v-if="node.childNodes && node.childNodes.length"
+                    :class="{ 'is-close': !node.expanded }"
+                    class="wk wk-up-unfold" />
+                    <!-- <div class="node-label-set">
+                <el-button
+                  v-if="strucSaveAuth"
+                  type="text"
+                  size="mini"
+                  @click.stop="() => appendStruc(data)">
+                  <i class="el-icon-plus"/>
+                </el-button>
+                <el-button
+                  v-if="strucUpdateAuth"
+                  type="text"
+                  size="mini"
+                  @click.stop="() => editStruc(node, data)">
+                  <i class="el-icon-edit"/>
+                </el-button>
+                <el-button
+                  v-if="strucDeleteAuth"
+                  type="text"
+                  size="mini"
+                  @click.stop="() => deleteStruc(node, data)">
+                  <i class="el-icon-close"/>
+                </el-button>
+              </div> -->
+                </flexbox>
+              </el-tree>
+            </div>
+          </div>
+
+        </div>
       </div>
       <!-- 右边内容 -->
       <div class="system-view-table flex-index">
-        <div
+        <flexbox
           v-if="selectionList.length === 0"
+          justify="space-between"
           class="table-top">
-          <div class="icon-search lt">
+          <div class="table-top__title">
+            <span>{{ `${currentMenuData ? currentMenuData.label : ''}：${ total || 0 }` }}</span>
+            <reminder
+              v-if="currentMenuData && currentMenuData.type && currentMenuData.type == 'all'"
+              class="all-user-reminder"
+              content="未添加部门和角色的员工无法正常登录系统"/>
+          </div>
+          <!-- <div class="icon-search lt">
             <el-input
-              v-model="importInput"
+              v-model="searchInput"
               placeholder="请输入员工名称"
-              @keyup.enter.native="searchClick"/>
+              @keyup.enter.native="searchClick" />
             <i
               class="el-icon-search"
-              @click="searchClick"/>
+              @click="searchClick" />
           </div>
           <div class="status">
             <span>状态</span>
@@ -82,30 +141,47 @@
                 v-for="item in statusOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"/>
+                :value="item.value" />
             </el-select>
+          </div> -->
+
+          <div>
+            <el-button
+              v-if="userSaveAuth"
+              type="text"
+              icon="el-icon-circle-plus"
+              @click="addEmployee">添加员工</el-button>
+            <el-button
+              v-if="strucSaveAuth && currentMenuData && currentMenuData.id"
+              type="text"
+              icon="el-icon-circle-plus"
+              @click="appendStruc(currentMenuData)">创建子部门</el-button>
+            <el-dropdown
+              v-if="currentMenuData && currentMenuData.id && strucMoreOptions.length > 0"
+              trigger="click"
+              @command="strucMoreHandleClick">
+              <el-button icon="el-icon-more"/>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  v-for="(item, index) in strucMoreOptions"
+                  :key="index"
+                  :icon="item.icon | wkIconPre"
+                  :command="item.type">{{ item.name }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
-          <el-button
-            v-if="userSaveAuth"
-            type="primary"
-            class="rt"
-            @click="newBtn">新建员工</el-button>
-        </div>
+        </flexbox>
         <flexbox
           v-if="selectionList.length > 0"
           class="selection-bar">
-          <div class="selected—title">已选中<span class="selected—count">{{ selectionList.length }}</span>项</div>
+          <div class="selected—title">已选中 <span class="selected—count">{{ selectionList.length }}</span> 项</div>
           <flexbox class="selection-items-box">
-            <flexbox
+            <el-button
               v-for="(item, index) in selectionInfo"
+              :icon="item.icon | wkIconPre"
               :key="index"
-              class="selection-item"
-              @click.native="selectionBarClick(item.type)">
-              <img
-                :src="item.icon"
-                class="selection-item-icon" >
-              <div class="selection-item-name">{{ item.name }}</div>
-            </flexbox>
+              type="primary"
+              @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
           </flexbox>
         </flexbox>
         <div class="flex-box">
@@ -119,7 +195,7 @@
             <el-table-column
               v-if="tableUpdateAuth"
               type="selection"
-              width="55"/>
+              width="55" />
             <el-table-column
               prop="realname"
               width="100"
@@ -127,7 +203,7 @@
               label="姓名">
               <template slot-scope="scope">
                 <div class="status-name">
-                  <div :style="{'background-color' : getStatusColor(scope.row.status)}"/>
+                  <div :style="{'background-color' : getStatusColor(scope.row.status)}" />
                   {{ scope.row.realname }}
                 </div>
               </template>
@@ -139,8 +215,8 @@
               :prop="item.field"
               :label="item.value"
               :formatter="tableFormatter"
-              show-overflow-tooltip/>
-            <el-table-column/>
+              show-overflow-tooltip />
+            <el-table-column />
           </el-table>
           <div class="p-contianer">
             <div class="status-des">
@@ -148,7 +224,7 @@
                 v-for="item in statusOptions"
                 :key="item.value"
                 class="status-des-item">
-                <div :style="{'background-color' : getStatusColor(item.value)}"/>
+                <div :style="{'background-color' : getStatusColor(item.value)}" />
                 {{ item.label }}
               </div>
             </div>
@@ -161,7 +237,7 @@
               background
               layout="prev, pager, next, sizes, total, jumper"
               @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"/>
+              @current-change="handleCurrentChange" />
           </div>
         </div>
       </div>
@@ -176,7 +252,7 @@
         <label>{{ labelName }}：</label>
         <el-input
           v-model="treeInput"
-          placeholder="请输入内容"/>
+          placeholder="请输入内容" />
       </div>
       <div
         v-if="depSelect != 0"
@@ -190,7 +266,7 @@
             v-for="item in dialogOptions"
             :key="item.id"
             :label="item.name"
-            :value="item.id"/>
+            :value="item.id" />
         </el-select>
       </div>
       <span
@@ -208,7 +284,7 @@
       :data="dialogData"
       @edit="editBtn"
       @command="handleCommand"
-      @hide-view="employeeDetailDialog=false"/>
+      @hide-view="employeeDetailDialog=false" />
     <!-- 重置密码 -->
     <el-dialog
       v-loading="loading"
@@ -228,7 +304,7 @@
             prop="password">
             <el-input
               v-model="passForm.password"
-              type="password"/>
+              type="password" />
           </el-form-item>
         </el-form>
       </div>
@@ -259,14 +335,14 @@
           <el-form-item
             label="新账号（手机号）"
             prop="username">
-            <el-input v-model="resetUserNameForm.username"/>
+            <el-input v-model="resetUserNameForm.username" />
           </el-form-item>
           <el-form-item
             label="新密码"
             prop="password">
             <el-input
               v-model="resetUserNameForm.password"
-              type="password"/>
+              type="password" />
           </el-form-item>
         </el-form>
         <div
@@ -315,7 +391,7 @@
             :content="item.tips"
             effect="dark"
             placement="top">
-            <i class="wukong wukong-help_tips"/>
+            <i class="wukong wukong-help_tips" />
           </el-tooltip>
           <template v-if="item.type == 'select'">
             <el-select
@@ -326,7 +402,7 @@
                 v-for="optionItem in optionsList[item.field].list"
                 :key="optionItem.id"
                 :label="optionItem.name"
-                :value="optionItem.id"/>
+                :value="optionItem.id" />
             </el-select>
           </template>
           <template v-else-if="item.type == 'selectCheckout'">
@@ -345,14 +421,14 @@
                   v-for="item in group.list"
                   :key="item.id"
                   :label="item.title"
-                  :value="item.id"/>
+                  :value="item.id" />
               </el-option-group>
             </el-select>
           </template>
           <el-input
             v-else
             v-model="formInline[item.field]"
-            :disabled="dialogTitle == '编辑员工' && item.field == 'username'"/>
+            :disabled="dialogTitle == '编辑员工' && item.field == 'username'" />
         </el-form-item>
       </el-form>
       <span
@@ -364,6 +440,12 @@
         <el-button @click="employeeCreateDialog = false">取 消</el-button>
       </span>
     </el-dialog>
+
+    <!-- 批量导入 -->
+    <bulk-import-user
+      :show="bulkImportShow"
+      @close="bulkImportShow=false"
+      @success="refreshUserList"/>
   </div>
 </template>
 
@@ -383,29 +465,57 @@ import { usersList, depList } from '@/api/common' // 直属上级接口
 
 import { mapGetters } from 'vuex'
 
+import BulkImportUser from './components/BulkImportUser'
 import EmployeeDetail from './components/employeeDetail'
 import XrHeader from '@/components/xr-header'
+import Reminder from '@/components/reminder'
 
 export default {
   /** 系统管理 的 员工部门管理 */
   name: 'EmployeeDepManagement',
   components: {
     EmployeeDetail,
-    XrHeader
+    BulkImportUser,
+    XrHeader,
+    Reminder
   },
   data() {
     return {
+      employeeMenu: [
+        {
+          icon: 'wk wk-employees',
+          label: '所有员工',
+          type: 'all'
+        },
+        {
+          icon: 'wk wk-new-employee',
+          label: '新加入的员工',
+          type: 'new'
+        },
+        {
+          icon: 'wk wk-inactive-employee',
+          label: '未激活员工',
+          type: 'inactive'
+        },
+        {
+          icon: 'wk wk-disable-employees',
+          label: '停用员工',
+          type: 'disable'
+        }
+      ],
+
       // 右边导航
       navBtnTitle: '新建',
       depCreateDialog: false, // 控制部门新增 编辑 数据
       depSelect: '',
       dialogOptions: [],
       labelName: '',
+      allDepData: [], // 包含全部部门信息
       treeData: [],
       depLoading: false, // 左侧部门loading效果
       // 列表
       loading: false, // 表的加载动画
-      importInput: '', // 搜索
+      searchInput: '', // 搜索
       statusOptions: [
         { value: '0', label: '禁用' },
         { value: '1', label: '激活' },
@@ -434,8 +544,9 @@ export default {
       ],
       selectionList: [], // 批量勾选数据
       tableData: [],
-      tableHeight: document.documentElement.clientHeight - 260, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 240, // 表的高度
       /** 分页逻辑 */
+      currentMenuData: null,
       structureValue: '', // 左侧列表选中的值 用于筛选
       currentPage: 1,
       pageSize: 15,
@@ -521,7 +632,9 @@ export default {
       resetUserNameForm: {
         username: '',
         password: ''
-      }
+      },
+      // 批量导入
+      bulkImportShow: false
     }
   },
   computed: {
@@ -554,6 +667,23 @@ export default {
     strucDeleteAuth() {
       return this.manage && this.manage.users && this.manage.users.deptDelete
     },
+
+    /**
+     * 部门更多操作
+     */
+    strucMoreOptions() {
+      const moreList = []
+      if (this.strucUpdateAuth) {
+        moreList.push({ type: 'edit', name: '编辑', icon: 'edit' })
+      }
+
+      if (this.strucDeleteAuth) {
+        moreList.push({ type: 'delete', name: '删除', icon: 'delete' })
+      }
+
+      return moreList
+    },
+
     selectionInfo: function() {
       let temps = []
       if (this.userEnablesAuth) {
@@ -561,12 +691,12 @@ export default {
           {
             name: '禁用',
             type: 'lock',
-            icon: require('@/assets/img/selection_disable.png')
+            icon: 'wk wk-remove'
           },
           {
             name: '激活',
             type: 'unlock',
-            icon: require('@/assets/img/selection_start.png')
+            icon: 'wk wk-activation'
           }
         ]
       }
@@ -576,17 +706,17 @@ export default {
             {
               name: '编辑',
               type: 'edit',
-              icon: require('@/assets/img/selection_edit.png')
+              icon: 'wk wk-edit'
             },
             {
               name: '重置密码',
               type: 'reset',
-              icon: require('@/assets/img/selection_reset.png')
+              icon: 'wk wk-circle-password'
             },
             {
               name: '重置登录账号',
               type: 'resetName',
-              icon: require('@/assets/img/section_reset_name.png')
+              icon: 'wk wk-reset'
             }
           ])
         } else {
@@ -594,7 +724,7 @@ export default {
             {
               name: '重置密码',
               type: 'reset',
-              icon: require('@/assets/img/selection_reset.png')
+              icon: 'wk wk-circle-password'
             }
           ])
         }
@@ -638,13 +768,14 @@ export default {
     var self = this
     /** 控制table的高度 */
     window.onresize = function() {
-      self.tableHeight = document.documentElement.clientHeight - 260
+      self.tableHeight = document.documentElement.clientHeight - 240
     }
 
     // 部门树形列表
-    this.treeListFun()
+    this.currentMenuData = this.employeeMenu[0]
+    this.getDepTreeList()
     this.getSelectUserList() // 直属上级列表
-    this.usersListFun()
+    this.getUserList()
     this.getDepList()
     // 角色列表
     roleList().then(res => {
@@ -653,16 +784,74 @@ export default {
     document.getElementsByClassName('el-select-dropdown')[0].style.color = 'red'
   },
   methods: {
-    // 改变部门
+    /**
+     * 选择部门
+     */
     changeDepClick(data) {
-      this.currentPage = 1
+      this.currentMenuData = data
       this.structureValue = data.id
-      this.usersListFun()
+      this.refreshUserList()
     },
+
+    /**
+     * 选择员工
+     */
+    changeUserClick(data) {
+      this.structureValue = ''
+      this.currentMenuData = data
+      this.refreshUserList()
+    },
+
+    /**
+     * 刷新员工列表
+     */
+    refreshUserList() {
+      this.currentPage = 1
+      this.getUserList()
+    },
+
+    /**
+     * 用户列表
+     */
+    getUserList() {
+      this.loading = true
+      usersList({
+        page: this.currentPage,
+        limit: this.pageSize,
+        realname: this.searchInput,
+        deptId: this.structureValue,
+        status: this.selectModel
+      })
+        .then(res => {
+          this.tableData = res.data.list
+          this.total = res.data.totalRow
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
+    /**
+     * 头部搜索
+     */
+    headerSearch(search) {
+      this.searchInput = search
+      this.refreshUserList()
+    },
+
+    /**
+     * 批量导入
+     */
+    bulkImportClick() {
+      this.bulkImportShow = true
+    },
+
     /**
      * 展开闭合操作
      */
     handleExpand(type, node, data) {
+      console.log('type---', type, node, data)
       if (type == 'close') {
         if (data.children) {
           node.expanded = false
@@ -686,11 +875,12 @@ export default {
       this.employeeCreateDialog = false
     },
     // 新建用户
-    newBtn() {
+    addEmployee() {
       this.employeeCreateDialog = true
       this.dialogTitle = '新建员工'
       this.formInline = {
-        roleId: []
+        roleId: [],
+        deptId: this.currentMenuData && this.currentMenuData.id ? this.currentMenuData.id : ''
       }
     },
     // 详情 -- 编辑用户
@@ -728,7 +918,38 @@ export default {
         this.optionsList['deptId'].list = response.data
       })
     },
-    append(data) {
+
+    /**
+     * 创建部门
+     */
+    addStruc() {
+      const id =
+        this.allDepData && this.allDepData.length ? this.allDepData[0].id : ''
+      if (id) {
+        this.treeInput = ''
+        this.labelName = '新增部门'
+        this.navBtnTitle = '新增部门'
+        this.depSelect = id
+        this.getStructuresListBySuperior({ id: id, type: 'save' })
+        this.depCreateDialog = true
+      }
+    },
+
+    /**
+     * 部门更多操作
+     */
+    strucMoreHandleClick(command) {
+      if (command == 'edit') {
+        this.editStruc(this.currentMenuData)
+      } else if (command == 'delete') {
+        this.deleteStruc(this.currentMenuData)
+      }
+    },
+
+    /**
+     * 新增部门
+     */
+    appendStruc(data) {
       this.treeInput = ''
       this.labelName = '新增部门'
       this.navBtnTitle = '新增部门'
@@ -736,15 +957,21 @@ export default {
       this.getStructuresListBySuperior({ id: data.id, type: 'save' })
       this.depCreateDialog = true
     },
-    // 获取新增部门 上级部门信息
+
+    /**
+     * 获取新增部门 上级部门信息
+     */
     getStructuresListBySuperior(data) {
       this.dialogOptions = []
       depList(data).then(response => {
         this.dialogOptions = response.data
       })
     },
-    // 编辑组织架构
-    edit(node, data) {
+
+    /**
+     * 编辑部门
+     */
+    editStruc(data) {
       this.treeInput = data.label
       this.treeEditId = data.id
       this.depSelect = data.pid
@@ -753,8 +980,11 @@ export default {
       this.getStructuresListBySuperior({ id: data.id, type: 'update' })
       this.depCreateDialog = true
     },
-    // 删除组织架构
-    remove(node, data) {
+
+    /**
+     * 删除部门
+     */
+    deleteStruc(data) {
       this.$confirm('此操作将永久删除, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -764,7 +994,7 @@ export default {
           this.loading = true
           depDelete({ id: data.id })
             .then(res => {
-              this.treeListFun()
+              this.getDepTreeList()
               this.$message.success('删除成功')
               this.loading = false
             })
@@ -788,7 +1018,7 @@ export default {
       if (this.labelName == '新增部门') {
         depSave({ name: this.treeInput, pid: this.depSelect }).then(res => {
           this.getDepList() // 增加了新部门 刷新数据
-          this.treeListFun()
+          this.getDepTreeList()
           this.navHandleClose()
         })
       } else {
@@ -798,33 +1028,28 @@ export default {
           pid: this.depSelect
         }).then(res => {
           this.$message.success('操作成功')
-          this.treeListFun()
+          this.getDepTreeList()
           this.navHandleClose()
         })
       }
     },
     // 获取树形列表
-    treeListFun() {
+    getDepTreeList() {
       this.depLoading = true
       depList({ type: 'tree' })
         .then(response => {
-          this.treeData = response.data
+          this.allDepData = response.data
+          this.treeData =
+            response.data && response.data.length
+              ? response.data[0].children
+              : []
           this.depLoading = false
         })
         .catch(() => {
           this.depLoading = false
         })
     },
-    // 搜索框
-    searchClick() {
-      this.currentPage = 1
-      this.usersListFun()
-    },
-    // 状态筛选
-    statusChange() {
-      this.currentPage = 1
-      this.usersListFun()
-    },
+
     // 用户新建
     newDialogSubmit() {
       this.$refs.dialogRef.validate(valid => {
@@ -836,7 +1061,7 @@ export default {
               .then(res => {
                 this.$message.success('新增成功')
                 this.employeeCreateDialog = false
-                this.usersListFun()
+                this.refreshUserList()
                 this.getSelectUserList()
                 this.loading = false
               })
@@ -853,7 +1078,7 @@ export default {
                 }
                 this.employeeCreateDialog = false
                 this.$message.success('编辑成功')
-                this.usersListFun()
+                this.getUserList()
                 this.getSelectUserList()
                 this.loading = false
               })
@@ -883,7 +1108,7 @@ export default {
           }).then(res => {
             this.employeeDetailDialog = false
             this.$message.success('修改成功')
-            this.usersListFun()
+            this.getUserList()
           })
           break
       }
@@ -911,7 +1136,7 @@ export default {
               .then(res => {
                 this.loading = false
                 this.$message.success('修改成功')
-                this.usersListFun()
+                this.getUserList()
               })
               .catch(() => {
                 this.loading = false
@@ -1017,39 +1242,26 @@ export default {
       })
     },
 
-    // 更改每页展示数量
+    /**
+     * 更改每页展示数量
+     */
     handleSizeChange(val) {
       this.pageSize = val
-      this.usersListFun()
+      this.refreshUserList()
     },
-    // 更改当前页数
+
+    /**
+     * 更改当前页数
+     */
     handleCurrentChange(val) {
       this.currentPage = val
-      this.usersListFun()
+      this.getUserList()
     },
     // 勾选
     handleSelectionChange(val) {
       this.selectionList = val // 勾选的行
     },
-    // 用户列表
-    usersListFun() {
-      this.loading = true
-      usersList({
-        page: this.currentPage,
-        limit: this.pageSize,
-        realname: this.importInput,
-        deptId: this.structureValue,
-        status: this.selectModel
-      })
-        .then(res => {
-          this.tableData = res.data.list
-          this.total = res.data.totalRow
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
+
     /** 获取选择直属上级列表 */
     getSelectUserList() {
       this.loading = true
@@ -1104,37 +1316,117 @@ export default {
   display: flex;
   overflow: hidden;
 }
-.system-view-nav {
-  width: 200px;
+.system-nav {
+  width: 280px;
   height: 100%;
   overflow: auto;
   margin-right: 10px;
   background: #fff;
-  padding-top: 20px;
-  border: 1px solid #e6e6e6;
+
+  &__title {
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #e6e6e6;
+  }
+
+  &__content {
+    overflow: auto;
+    height: calc(100% - 50px);
+    overflow-y: overlay;
+    overflow-x: overlay;
+  }
 }
+// 菜单
+.section {
+  position: relative;
+  &__title {
+    position: relative;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    padding: 15px;
+    .add-btn {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
+  }
+}
+
+.menu-item {
+  position: relative;
+  cursor: pointer;
+  padding: 10px 15px;
+  color: #333;
+
+  &__icon {
+    font-size: 14px;
+    margin-right: 8px;
+    color: #8a94a6;
+  }
+
+  &__content {
+    font-size: 14px;
+  }
+}
+
+.menu-item.is-select {
+  background-color: #f6f8fa;
+}
+
+.menu-item.is-select::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #5383ed;
+}
+
 .system-view-table {
   background: #fff;
-  border: 1px solid #e6e6e6;
+  // border: 1px solid #e6e6e6;
   /* flex: 1; */
   position: absolute;
   top: 0;
-  left: 210px;
+  left: 295px;
   bottom: 0;
   right: 0;
 }
 
 .table-top {
-  padding: 10px 0;
+  padding: 0 30px;
+  height: 50px;
+
+  &__title {
+    font-size: 16px;
+    color: #333;
+  }
+
+  .el-dropdown {
+    margin-left: 7px;
+  }
 }
 
-.status {
+.all-user-reminder {
+  width: auto;
+  margin-left: 5px;
   display: inline-block;
-  margin-left: 50px;
 }
-.status > span {
-  margin-right: 10px;
+
+.el-table /deep/ .el-table-column--selection .cell {
+  padding-left: 14px;
 }
+
+// .status {
+//   display: inline-block;
+//   margin-left: 50px;
+// }
+// .status > span {
+//   margin-right: 10px;
+// }
 
 .status-name {
   div {
@@ -1215,42 +1507,97 @@ export default {
   display: none;
 }
 .el-tree /deep/ .el-tree-node__content {
-  height: 30px;
+  height: 40px;
 
   .node-data {
-    .node-img {
-      width: 15px;
-      height: 15px;
-      display: block;
+    // .node-img {
+    //   width: 15px;
+    //   height: 15px;
+    //   display: block;
+    //   margin-right: 8px;
+    //   margin-left: 24px;
+    // }
+    height: 40px;
+    padding: 0 15px;
+    position: relative;
+    border-radius: 4px;
+
+    .wk {
+      font-size: 14px;
+      color: #8a94a6;
+      flex-shrink: 0;
+    }
+
+    .wk-department {
       margin-right: 8px;
-      margin-left: 24px;
     }
-    .node-label {
+
+    &__mark {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #e6e6e6;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    &__label {
+      flex: 1;
+      color: #333;
+      font-size: 14px;
       margin-right: 8px;
     }
-    .node-label-set {
-      display: none;
+
+    .wk-up-unfold {
+      margin-left: 8px;
+      transition: transform 0.3s;
     }
+
+    .wk-up-unfold.is-close {
+      transform: rotateZ(180deg);
+    }
+    // .node-label-set {
+    //   display: none;
+    // }
   }
 
-  .node-data:hover .node-label-set {
-    display: block;
+  .node-data.is-current,
+  .node-data:hover {
+    background-color: #f6f8fa;
   }
+
+  // .node-data:hover .node-label-set {
+  //   display: block;
+  // }
 }
-.el-tree /deep/ .el-tree-node.is-current > .el-tree-node__content {
-  background-color: #ebf3ff;
-  border-right: 2px solid #46cdcf;
-  .node-label-set {
-    display: block;
-  }
-}
-.system-view-nav /deep/ .el-tree-node > .el-tree-node__children {
+// .el-tree /deep/ .el-tree-node.is-current > .el-tree-node__content {
+//   background-color: #ebf3ff;
+//   border-right: 2px solid #46cdcf;
+//   .node-label-set {
+//     display: block;
+//   }
+// }
+.system-nav /deep/ .el-tree-node > .el-tree-node__children {
   overflow: visible;
 }
-.system-view-nav /deep/ .el-tree > .el-tree-node {
+.system-nav /deep/ .el-tree > .el-tree-node {
   min-width: 100%;
   display: inline-block !important;
 }
+
+.system-nav
+  /deep/
+  .el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: white;
+}
+
+.system-nav /deep/ .el-tree-node__content:hover {
+  background-color: white;
+}
+
 /* 搜索框图标按钮 */
 .icon-search .el-icon-search {
   position: absolute;
@@ -1272,7 +1619,7 @@ export default {
 /* 设置占位 */
 .flex-box {
   flex: 1;
-  border-bottom: 1px solid #e6e6e6;
+  // border-bottom: 1px solid #e6e6e6;
 }
 /* 搜索框 */
 .icon-search {
@@ -1298,15 +1645,14 @@ export default {
 /** 勾选操作 */
 .selection-bar {
   font-size: 12px;
-  height: 54px;
-  min-height: 54px;
+  height: 50px;
   padding: 0 20px;
   color: #777;
 
   .selected—title {
     flex-shrink: 0;
     padding-right: 20px;
-    border-right: 1px solid $--table-border-color;
+    color: #333;
     .selected—count {
       color: $xr-color-primary;
     }
@@ -1314,22 +1660,30 @@ export default {
 }
 
 .selection-items-box {
-  .selection-item {
-    width: auto;
-    padding: 15px;
-    .selection-item-icon {
-      display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 15px;
+  .el-button {
+    color: #666;
+    background-color: $xr--background-color-base;
+    border-color: $xr--background-color-base;
+    font-size: 12px;
+    height: 28px;
+    border-radius: 14px;
+    /deep/ i {
+      font-size: 12px;
       margin-right: 5px;
-      width: 15px;
-      height: 15px;
     }
-    .selection-item-name {
-      cursor: pointer;
-      color: #777;
-    }
-    .selection-item-name:hover {
-      color: $xr-color-primary;
-    }
+  }
+
+  .el-button--primary:hover {
+    background: $xr-color-primary;
+    border-color: $xr-color-primary;
+    color: #ffffff;
+  }
+
+  .el-button + .el-button {
+    margin-left: 15px;
   }
 }
 .new-dialog-form
