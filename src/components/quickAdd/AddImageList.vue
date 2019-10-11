@@ -57,7 +57,7 @@ export default {
       this.$set(this.data, index, item)
     },
 
-    deleteItem(type, item, index) {
+    deleteItem(item, index) {
       this.$emit('delete', item, index)
     },
 

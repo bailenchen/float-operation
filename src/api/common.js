@@ -102,6 +102,15 @@ export function crmFileDelete(data) {
   })
 }
 
+// 根据批次ID删除文件
+export function crmFileRemoveByBatchId(data) {
+  return request({
+    url: 'file/removeByBatchId',
+    method: 'post',
+    data: data
+  })
+}
+
 // 附件重命名
 export function crmFileUpdate(data) {
   return request({

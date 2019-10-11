@@ -53,13 +53,13 @@
       v-if="imgFiles.length > 0 && isUnfold"
       :data="imgFiles"
       @delete="deleteImage"
-      @delete-all="imgFiles = []"
+      @delete-all="deleteAllFile(2)"
       @upload="uploadFile" />
     <add-file-list
       v-if="files.length > 0 && isUnfold"
       :data="files"
       @delete="deleteFile"
-      @delete-all="files = []" />
+      @delete-all="deleteAllFile(1)" />
     <add-relate-list
       v-if="business.length > 0 && isUnfold"
       :data="business"
@@ -129,7 +129,7 @@
 
 <script>
 import { fileSize, getFileTypeIcon } from '@/utils/index'
-import { crmFileSave, crmFileDelete } from '@/api/common'
+import { crmFileSave, crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import AddImageList from '@/components/quickAdd/AddImageList'
 import AddFileList from '@/components/quickAdd/AddFileList'
@@ -326,18 +326,65 @@ export default {
     },
 
     deleteImgOrFile(type, item, index) {
-      crmFileDelete({
-        id: item.fileId
+      this.$confirm('确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(res => {
-          if (type == 'image') {
-            this.imgFiles.splice(index, 1)
-          } else {
-            this.files.splice(index, 1)
-          }
-          this.$message.success('操作成功')
+        .then(() => {
+          crmFileDelete({
+            id: item.fileId
+          })
+            .then(res => {
+              if (type == 'image') {
+                this.imgFiles.splice(index, 1)
+              } else {
+                this.files.splice(index, 1)
+              }
+              this.$message.success('操作成功')
+            })
+            .catch(() => {})
         })
-        .catch(() => {})
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    },
+
+    /**
+     * 删除全部 type 1 是附件 2 是图片
+     */
+    deleteAllFile(type) {
+      if (this.batchId) {
+        this.$confirm('确定删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            crmFileRemoveByBatchId({
+              batchId: this.batchId,
+              type
+            })
+              .then(res => {
+                if (type == 2) {
+                  this.imgFiles = []
+                } else {
+                  this.files = []
+                }
+                this.$message.success('操作成功')
+              })
+              .catch(() => {})
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            })
+          })
+      }
     },
 
     /**
