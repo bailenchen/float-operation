@@ -71,7 +71,6 @@ export default {
           this.$store.commit('SET_AUTH', res)
           this.$router.push({ path: this.redirect || '/' })
           // if (res) this.$router.push('/')
-          alert('choose login')
         })
         .catch()
     }
