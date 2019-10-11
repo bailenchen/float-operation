@@ -63,7 +63,7 @@ export default {
   mounted() {
     this.fieldList = [
       { field: 'realname', name: '签订人' },
-      { field: 'structureName', name: '归属人' },
+      { field: 'structureName', name: '部门' },
       { field: 'money', name: '回款金额（元）' }
     ]
     this.initAxis()
