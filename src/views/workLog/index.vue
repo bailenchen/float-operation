@@ -41,6 +41,7 @@
       <flexbox class="filter-control card">
         <xh-user-cell
           v-if="showUserSelect"
+          :radio="false"
           class="xh-user-cell"
           placeholder="选择人员"
           @value-change="userChange" />

@@ -126,6 +126,8 @@
           <flexbox-item>
             <xh-user-cell
               :value="taskData.mainUser ? [taskData.mainUser] : []"
+              :info-request="ownerListRequest"
+              :info-params="ownerListParams"
               style="width: 100%;"
               placement="top"
               radio

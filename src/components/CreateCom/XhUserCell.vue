@@ -11,6 +11,7 @@
       ref="xhuser"
       v-bind="$attrs"
       :selected-data="dataValue"
+      :radio="radio"
       @changeCheckout="checkUsers" />
     <flexbox
       v-if="!$slots.reference"
@@ -43,6 +44,7 @@
 import XhUser from './XhUser'
 import arrayMixin from './arrayMixin'
 
+
 export default {
   name: 'XhUserCell', // 新建 user-cell
   components: {
@@ -51,6 +53,11 @@ export default {
   mixins: [arrayMixin],
   inheritAttrs: false,
   props: {
+    radio: {
+      // 是否单选
+      type: Boolean,
+      default: true
+    },
     placeholder: {
       type: String,
       default: '选择员工'
