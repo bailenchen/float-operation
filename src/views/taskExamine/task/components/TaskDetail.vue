@@ -368,11 +368,10 @@
                             v-model="item.checked"
                             @change="subtasksCheckbox(item, $event)" />
                         </div>
-                        <div class="sub-task__bd text-one-line">
-                          <div
-                            :class="{ 'is-checked' : item.checked }"
-                            class="sub-name">{{ item.name }}</div>
-
+                        <div
+                          :class="{ 'is-checked' : item.checked }"
+                          class="sub-task__bd text-one-line">
+                          {{ item.name }}
                         </div>
 
                         <div class="edit-del-box">
@@ -384,17 +383,16 @@
                             @click="deleteSubTask(item)">删除</span>
                         </div>
 
-                        <div class="sub-task__ft">
-                          <div
-                            v-if="item.stopTime"
-                            class="bg-color task-bg-color">{{ item.stopTime | moment("MM-DD") }} 截止</div>
-                          <div
-                            v-photo="item.mainUser"
-                            v-lazy:background-image="$options.filters.filterUserLazyImg(item.mainUser.img)"
-                            v-if="item.mainUser"
-                            :key="item.mainUser.img"
-                            class="div-photo" />
-                        </div>
+                        <div
+                          v-if="item.stopTime"
+                          class="bg-color task-bg-color">{{ item.stopTime | moment("MM-DD") }} 截止</div>
+                        <div
+                          v-photo="item.mainUser"
+                          v-lazy:background-image="$options.filters.filterUserLazyImg(item.mainUser.img)"
+                          v-if="item.mainUser"
+                          :key="item.mainUser.img"
+                          class="div-photo" />
+
                       </flexbox>
                       <sub-task
                         v-else
@@ -1913,7 +1911,7 @@ $btn-b-hover-color: #eff4ff;
 // 子任务
 .sub-task {
   font-size: 14px;
-  padding: 8px 40px 8px 8px;
+  padding: 8px;
   background-color: #f8faff;
   border-radius: 4px;
   margin: 3px 0;
@@ -1937,11 +1935,12 @@ $btn-b-hover-color: #eff4ff;
   &__bd {
     padding-left: 5px;
     position: relative;
+    flex: 1;
+  }
 
-    .sub-name.is-checked {
-      color: #8f8f8f;
-      text-decoration: line-through;
-    }
+  &__bd.is-checked {
+    color: #8f8f8f;
+    text-decoration: line-through;
   }
 
   .edit-del-box {
@@ -1950,24 +1949,16 @@ $btn-b-hover-color: #eff4ff;
     margin-left: 8px;
   }
 
-  &__ft {
-    position: absolute;
-    top: 3px;
-    right: 3px;
-    margin-left: 8px;
-    .bg-color {
-      font-size: 12px;
-      padding: 0 8px !important;
-      vertical-align: middle;
-      height: 30px;
-      line-height: 30px;
-    }
-    .div-photo {
-      width: 25px;
-      height: 25px;
-      border-radius: 12.5px;
-      margin-left: 10px;
-    }
+  .bg-color {
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .div-photo {
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    border-radius: 12.5px;
+    margin-left: 10px;
   }
 }
 
