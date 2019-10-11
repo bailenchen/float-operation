@@ -24,6 +24,7 @@
           v-model="handleType"
           :label="2"><span/></el-radio>
         <xh-user-cell
+          :value="selectUsers"
           class="select-user"
           placeholder="选择下一审批人"
           @focus="selectUserFocus"
@@ -209,6 +210,7 @@ export default {
     handleClick(type) {
       if (type == 'cancel') {
         this.hiddenView()
+        this.resetInfo()
       } else if (type == 'confirm') {
         this.submitInfo()
       }
@@ -228,6 +230,8 @@ export default {
      * 提交后重置信息
      */
     resetInfo() {
+      this.handleType = 1
+      this.selectUsers = []
       this.content = ''
     }
   }

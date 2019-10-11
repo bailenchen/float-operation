@@ -1162,6 +1162,7 @@ export default {
               realname: this.userInfo.realname,
               img: this.userInfo.img
             }
+            this.$refs.f_reply.commentsTextarea = ''
             this.replyList.push(res.data)
             this.$emit('on-handle', {
               type: 'change-comments',
