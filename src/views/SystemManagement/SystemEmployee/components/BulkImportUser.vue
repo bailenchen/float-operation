@@ -50,7 +50,8 @@
 <script>
 import {
   userImportTemplateURL,
-  userExcelImportAPI
+  userExcelImportAPI,
+  userErrorExcelDownAPI
 } from '@/api/systemManagement/EmployeeDepManagement'
 
 import { Loading } from 'element-ui'
@@ -98,14 +99,48 @@ export default {
         })
           .then(res => {
             loading.close()
+            if (res.errSize > 0) {
+              this.getImportError(res.token)
+            } else {
+              this.$message.success('操作成功')
+            }
             this.$emit('success')
-            this.$message.success('操作成功')
             this.closeView()
           })
           .catch(() => {
             loading.close()
           })
       }
+    },
+
+    /**
+     * 导入错误下载
+     */
+    getImportError(token) {
+      const loading = Loading.service({ fullscreen: true })
+      userErrorExcelDownAPI({
+        token
+      })
+        .then(res => {
+          var blob = new Blob([res.data], {
+            type: 'application/vnd.ms-excel;charset=utf-8'
+          })
+          var downloadElement = document.createElement('a')
+          var href = window.URL.createObjectURL(blob) // 创建下载的链接
+          downloadElement.href = href
+          downloadElement.download =
+              decodeURI(
+                res.headers['content-disposition'].split('filename=')[1]
+              ) || '' // 下载后文件名
+          document.body.appendChild(downloadElement)
+          downloadElement.click() // 点击下载
+          document.body.removeChild(downloadElement) // 下载完成移除元素
+          window.URL.revokeObjectURL(href) // 释放掉blob对象
+          loading.close()
+        })
+        .catch(() => {
+          loading.close()
+        })
     },
 
     /**

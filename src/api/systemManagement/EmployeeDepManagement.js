@@ -124,6 +124,21 @@ export function userExcelImportAPI(data) {
     data: param,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    timeout: 60000
+  })
+}
+
+/**
+ * 下载用户导入错误数据
+ * @param {*} data
+ *
+ */
+export function userErrorExcelDownAPI(data) {
+  return request({
+    url: 'system/user/downExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
