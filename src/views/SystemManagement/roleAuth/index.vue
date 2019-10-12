@@ -1,26 +1,31 @@
 <template>
   <div class="role-authorization">
     <xr-header
-      :label="title"
+      show-search
+      label="角色权限控制"
       icon-class="wk wk-user"
-      icon-color="#19B5F6" />
+      icon-color="#19B5F6"
+      @search="headerSearch" />
     <div class="role-box">
       <!-- 左边导航 -->
       <div
         v-loading="roleMenuLoading"
         class="nav">
-        <div class="nav-new-btn">
+        <div class="nav__hd">
+          {{ title }}
           <el-button
-            size="medium"
-            @click="newRoleBtn"> 新建角色 </el-button>
+            type="text"
+            icon="el-icon-circle-plus"
+            class="add-btn"
+            @click="newRoleBtn">创建部门</el-button>
         </div>
         <!-- 角色列表 -->
         <div class="role-nav-box">
           <div
             v-for="(item, index) in roleList"
             :key="index"
-            :class="{'item-list-hover' : item.roleId == roleActive.roleId}"
-            class="item-list"
+            :class="{'is-select' : item.roleId == roleActive.roleId}"
+            class="menu-item"
             @click="roleMenuSelect(item)">
             {{ item.roleName }}
             <div
@@ -212,6 +217,7 @@ export default {
     return {
       pid: '',
       title: '',
+      searchInput: '',
       tableData: [], // 与角色关联的员工
       tableHeight: document.documentElement.clientHeight - 305, // 表的高度
       treeHeight: document.documentElement.clientHeight - 230, // 表的3度
@@ -370,7 +376,7 @@ export default {
             this.roleActive = this.roleList[0]
             this.getRoleRulesInfo()
           }
-          this.getUserList(this.roleActive)
+          this.refreshUserList()
           this.roleMenuLoading = false
         })
         .catch(() => {
@@ -390,7 +396,7 @@ export default {
      */
     employeesSave(val) {
       this.relateEmpoyeeShow = false
-      this.getUserList(this.roleActive)
+      this.getUserList()
     },
 
     /**
@@ -409,7 +415,7 @@ export default {
             roleId: this.roleActive.roleId
           }).then(res => {
             this.userLoading = true
-            this.getUserList(this.roleActive)
+            this.getUserList()
             this.$message.success('删除成功')
           })
         })
@@ -561,7 +567,7 @@ export default {
 
       this.getRoleRulesInfo()
 
-      this.getUserList(this.roleActive)
+      this.refreshUserList()
     },
 
     /**
@@ -694,21 +700,35 @@ export default {
     },
 
     /**
+     * 头部搜索
+     */
+    headerSearch(search) {
+      this.searchInput = search
+      this.refreshUserList()
+    },
+
+    /**
+     * 刷新员工列表
+     */
+    refreshUserList() {
+      this.currentPage = 1
+      this.getUserList()
+    },
+
+    /**
      * 员工列表
      */
-    getUserList(role, noReset) {
-      if (!role) {
+    getUserList() {
+      if (!this.roleActive) {
         return
       }
 
-      if (!noReset) {
-        this.currentPage = 1
-      }
       this.userLoading = true
       usersList({
         page: this.currentPage,
         limit: this.pageSize,
-        roleId: role.roleId
+        roleId: this.roleActive.roleId,
+        realname: this.searchInput
       })
         .then(res => {
           this.tableData = res.data.list
@@ -724,14 +744,15 @@ export default {
      */
     handleSizeChange(val) {
       this.pageSize = val
-      this.getUserList(this.roleActive, true)
+      this.refreshUserList()
     },
+
     /**
      * 更改当前页数
      */
     handleCurrentChange(val) {
       this.currentPage = val
-      this.getUserList(this.roleActive, true)
+      this.getUserList()
     },
 
     // 权限提交
@@ -795,30 +816,34 @@ export default {
   position: relative;
 }
 .nav {
-  width: 200px;
+  width: 280px;
   background: #fff;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
 }
-.nav-new-btn {
-  text-align: center;
-  padding-top: 15px;
-  padding-bottom: 15px;
+.nav__hd {
+  position: relative;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid $xr-border-line-color;
+
+  .el-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+  }
 }
-.nav-new-btn .el-button {
-  background: #4ab8b8;
-  border-color: #4ab8b8;
-  color: #fff;
-  width: 140px;
-  border-radius: 2px;
-}
+
 .content-box {
   background: #fff;
-  border: 1px solid #e6e6e6;
-  margin-left: 215px;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
+  margin-left: 295px;
   height: 100%;
   overflow: hidden;
   padding-top: 10px;
@@ -871,7 +896,7 @@ export default {
   position: relative;
 }
 .jurisdiction-content-checkbox {
-  border-right: 1px dashed #e6e6e6;
+  border-right: 1px dashed $xr-border-line-color;
   height: calc(100% - 47px);
   overflow-y: scroll;
   padding: 20px;
@@ -916,16 +941,16 @@ export default {
 .role-nav-box {
   line-height: 30px;
   overflow-y: auto;
-  padding: 5px 0 20px 0;
-  height: calc(100% - 65px);
+  padding: 0 0 20px;
+  height: calc(100% - 50px);
 }
-.role-nav-box .item-list {
+// 菜单
+.menu-item {
   color: #333;
   font-size: 13px;
-  padding-left: 30px;
+  padding: 0 15px;
   height: 40px;
   line-height: 40px;
-  border-right: 2px solid transparent;
   cursor: pointer;
   position: relative;
   .icon-close {
@@ -936,19 +961,24 @@ export default {
     display: none;
   }
 }
-.role-nav-box .item-list:hover {
-  background: #ebf3ff;
-  border-right-color: #46cdcf;
-  .icon-close {
-    display: block;
-  }
-}
-.item-list-hover {
-  background: #ebf3ff;
-  border-right: 2px solid #46cdcf;
+
+.menu-item:hover,
+.menu-item.is-select {
+  background-color: #f6f8fa;
 }
 
-.role-nav-box .item-list:hover .icon-close {
+.menu-item:hover::before,
+.menu-item.is-select::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #5383ed;
+}
+
+.role-nav-box .menu-item:hover .icon-close {
   display: block;
   float: right;
 }

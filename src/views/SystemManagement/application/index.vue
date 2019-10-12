@@ -218,8 +218,8 @@ export default {
   overflow-y: auto;
   padding-top: 20px;
   background-color: white;
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
 }
 
 .section-header {

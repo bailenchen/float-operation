@@ -1,7 +1,6 @@
 <template>
   <div class="employee-dep-management">
     <xr-header
-      v-model="searchInput"
       show-search
       icon-class="wk wk-s-seas"
       icon-color="#26D4DA"
@@ -48,7 +47,7 @@
             <div class="section__content">
               <el-tree
                 ref="tree"
-                :data="treeData"
+                :data="showDepData"
                 node-key="id"
                 highlight-current
                 @node-click="changeDepClick">
@@ -242,16 +241,16 @@
         </div>
       </div>
     </div>
-    <!-- 导航新增编辑弹出框 -->
+    <!-- 导航新增部门 -->
     <el-dialog
       :visible.sync="depCreateDialog"
-      :title="navBtnTitle"
-      :before-close="navHandleClose"
+      :title="depCreateTitle"
+      :before-close="depCreateClose"
       width="30%">
       <div class="nav-dialog-div">
-        <label>{{ labelName }}：</label>
+        <label>{{ depCreateLabel }}：</label>
         <el-input
-          v-model="treeInput"
+          v-model="depCreateLabelValue"
           placeholder="请输入内容" />
       </div>
       <div
@@ -263,7 +262,7 @@
           :clearable="false"
           placeholder="请选择">
           <el-option
-            v-for="item in dialogOptions"
+            v-for="item in superDepList"
             :key="item.id"
             :label="item.name"
             :value="item.id" />
@@ -505,13 +504,14 @@ export default {
       ],
 
       // 右边导航
-      navBtnTitle: '新建',
+      depCreateTitle: '新建',
       depCreateDialog: false, // 控制部门新增 编辑 数据
       depSelect: '',
-      dialogOptions: [],
-      labelName: '',
+      // 上级部门
+      superDepList: [],
+      depCreateLabel: '',
       allDepData: [], // 包含全部部门信息
-      treeData: [],
+      showDepData: [],
       depLoading: false, // 左侧部门loading效果
       // 列表
       loading: false, // 表的加载动画
@@ -521,7 +521,7 @@ export default {
         { value: '1', label: '激活' },
         { value: '2', label: '未激活' }
       ],
-      selectModel: '', // 状态值 用于筛选
+      // selectModel: '', // 状态值 用于筛选
       /** 列表 */
       fieldList: [
         { field: 'username', value: '手机号（登录名）', width: '150' },
@@ -547,7 +547,7 @@ export default {
       tableHeight: document.documentElement.clientHeight - 240, // 表的高度
       /** 分页逻辑 */
       currentMenuData: null,
-      structureValue: '', // 左侧列表选中的值 用于筛选
+      // structureValue: '', // 左侧列表选中的值 用于筛选
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
@@ -559,7 +559,7 @@ export default {
       employeeCreateDialog: false,
       dialogTitle: '新建员工',
       formInline: {},
-      treeInput: '',
+      depCreateLabelValue: '',
       // 编辑部门时id
       treeEditId: '',
       optionsList: {
@@ -774,14 +774,7 @@ export default {
     // 部门树形列表
     this.currentMenuData = this.employeeMenu[0]
     this.getDepTreeList()
-    this.getSelectUserList() // 直属上级列表
     this.getUserList()
-    this.getDepList()
-    // 角色列表
-    roleList().then(res => {
-      this.groupsList = res.data
-    })
-    document.getElementsByClassName('el-select-dropdown')[0].style.color = 'red'
   },
   methods: {
     /**
@@ -789,7 +782,7 @@ export default {
      */
     changeDepClick(data) {
       this.currentMenuData = data
-      this.structureValue = data.id
+      // this.structureValue = data.id
       this.refreshUserList()
     },
 
@@ -797,7 +790,7 @@ export default {
      * 选择员工
      */
     changeUserClick(data) {
-      this.structureValue = ''
+      // this.structureValue = ''
       this.currentMenuData = data
       this.refreshUserList()
     },
@@ -815,13 +808,26 @@ export default {
      */
     getUserList() {
       this.loading = true
-      usersList({
+      const params = {
         page: this.currentPage,
         limit: this.pageSize,
-        realname: this.searchInput,
-        deptId: this.structureValue,
-        status: this.selectModel
-      })
+        realname: this.searchInput
+      }
+
+      if (this.currentMenuData) {
+        // 员工有type值
+        if (this.currentMenuData.type) {
+          params.label = {
+            all: 0,
+            new: 1,
+            inactive: 2,
+            disable: 3
+          }[this.currentMenuData.type]
+        } else if (this.currentMenuData.id) {
+          params.deptId = this.currentMenuData.id
+        }
+      }
+      usersList(params)
         .then(res => {
           this.tableData = res.data.list
           this.total = res.data.totalRow
@@ -847,19 +853,18 @@ export default {
       this.bulkImportShow = true
     },
 
-    /**
-     * 展开闭合操作
-     */
-    handleExpand(type, node, data) {
-      console.log('type---', type, node, data)
-      if (type == 'close') {
-        if (data.children) {
-          node.expanded = false
-        }
-      } else if (type == 'open') {
-        node.expanded = true
-      }
-    },
+    // /**
+    //  * 展开闭合操作
+    //  */
+    // handleExpand(type, node, data) {
+    //   if (type == 'close') {
+    //     if (data.children) {
+    //       node.expanded = false
+    //     }
+    //   } else if (type == 'open') {
+    //     node.expanded = true
+    //   }
+    // },
     handleClose() {
       this.employeeDetailDialog = false
     },
@@ -876,16 +881,28 @@ export default {
     },
     // 新建用户
     addEmployee() {
-      this.employeeCreateDialog = true
+      this.getHandleEmployeeRelateData()
       this.dialogTitle = '新建员工'
       this.formInline = {
         roleId: [],
         deptId: this.currentMenuData && this.currentMenuData.id ? this.currentMenuData.id : ''
       }
+      this.employeeCreateDialog = true
     },
+
+    /**
+     * 新建或编辑员工 需要获取的信息
+     */
+    getHandleEmployeeRelateData() {
+      this.getSelectUserList() // 直属上级列表
+      this.getDepList()
+      this.getRoleList()
+    },
+
     // 详情 -- 编辑用户
     editBtn() {
       this.dialogTitle = '编辑员工'
+      this.getHandleEmployeeRelateData()
       var detail = {}
       for (let index = 0; index < this.tableList.length; index++) {
         const element = this.tableList[index]
@@ -911,12 +928,25 @@ export default {
       this.formInline = detail
       this.employeeCreateDialog = true
     },
-    // 增加组织架构
-    // 部门非树形结构列表 用于部门添加
+
+
+    /**
+     * 新建编辑员工的  部门信息
+     */
     getDepList() {
       depList().then(response => {
         this.optionsList['deptId'].list = response.data
-      })
+      }).catch(() => {})
+    },
+
+    /**
+     * 获取角色列表
+     */
+    getRoleList() {
+      // 角色列表
+      roleList().then(res => {
+        this.groupsList = res.data
+      }).catch(() => {})
     },
 
     /**
@@ -926,9 +956,9 @@ export default {
       const id =
         this.allDepData && this.allDepData.length ? this.allDepData[0].id : ''
       if (id) {
-        this.treeInput = ''
-        this.labelName = '新增部门'
-        this.navBtnTitle = '新增部门'
+        this.depCreateLabelValue = ''
+        this.depCreateLabel = '新增部门'
+        this.depCreateTitle = '新增部门'
         this.depSelect = id
         this.getStructuresListBySuperior({ id: id, type: 'save' })
         this.depCreateDialog = true
@@ -950,9 +980,9 @@ export default {
      * 新增部门
      */
     appendStruc(data) {
-      this.treeInput = ''
-      this.labelName = '新增部门'
-      this.navBtnTitle = '新增部门'
+      this.depCreateLabelValue = ''
+      this.depCreateLabel = '新增部门'
+      this.depCreateTitle = '新增部门'
       this.depSelect = data.id
       this.getStructuresListBySuperior({ id: data.id, type: 'save' })
       this.depCreateDialog = true
@@ -962,21 +992,21 @@ export default {
      * 获取新增部门 上级部门信息
      */
     getStructuresListBySuperior(data) {
-      this.dialogOptions = []
+      this.superDepList = []
       depList(data).then(response => {
-        this.dialogOptions = response.data
-      })
+        this.superDepList = response.data
+      }).catch(() => {})
     },
 
     /**
      * 编辑部门
      */
     editStruc(data) {
-      this.treeInput = data.label
+      this.depCreateLabelValue = data.label
       this.treeEditId = data.id
       this.depSelect = data.pid
-      this.navBtnTitle = '编辑部门'
-      this.labelName = '编辑部门'
+      this.depCreateTitle = '编辑部门'
+      this.depCreateLabel = '编辑部门'
       this.getStructuresListBySuperior({ id: data.id, type: 'update' })
       this.depCreateDialog = true
     },
@@ -995,6 +1025,7 @@ export default {
           depDelete({ id: data.id })
             .then(res => {
               this.getDepTreeList()
+              this.currentMenuData = this.employeeMenu[0]
               this.$message.success('删除成功')
               this.loading = false
             })
@@ -1010,26 +1041,26 @@ export default {
         })
     },
     // 关闭新增或编辑
-    navHandleClose() {
+    depCreateClose() {
       this.depCreateDialog = false
     },
     // 新增或编辑确定按钮
     submitDialog() {
-      if (this.labelName == '新增部门') {
-        depSave({ name: this.treeInput, pid: this.depSelect }).then(res => {
+      if (this.depCreateLabel == '新增部门') {
+        depSave({ name: this.depCreateLabelValue, pid: this.depSelect }).then(res => {
           this.getDepList() // 增加了新部门 刷新数据
           this.getDepTreeList()
-          this.navHandleClose()
+          this.depCreateClose()
         })
       } else {
         depEdit({
-          name: this.treeInput,
+          name: this.depCreateLabelValue,
           deptId: this.treeEditId,
           pid: this.depSelect
         }).then(res => {
           this.$message.success('操作成功')
           this.getDepTreeList()
-          this.navHandleClose()
+          this.depCreateClose()
         })
       }
     },
@@ -1039,7 +1070,7 @@ export default {
       depList({ type: 'tree' })
         .then(response => {
           this.allDepData = response.data
-          this.treeData =
+          this.showDepData =
             response.data && response.data.length
               ? response.data[0].children
               : []
@@ -1156,6 +1187,7 @@ export default {
         this.dialogData = this.selectionList[0]
 
         this.dialogTitle = '编辑员工'
+        this.getHandleEmployeeRelateData()
         var detail = {}
         for (let index = 0; index < this.tableList.length; index++) {
           const element = this.tableList[index]
@@ -1322,12 +1354,14 @@ export default {
   overflow: auto;
   margin-right: 10px;
   background: #fff;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
 
   &__title {
     padding: 15px;
     font-size: 16px;
     font-weight: 600;
-    border-bottom: 1px solid #e6e6e6;
+    border-bottom: 1px solid $xr-border-line-color;
   }
 
   &__content {
@@ -1357,7 +1391,7 @@ export default {
 .menu-item {
   position: relative;
   cursor: pointer;
-  padding: 10px 15px;
+  padding: 12px 15px;
   color: #333;
 
   &__icon {
@@ -1371,10 +1405,12 @@ export default {
   }
 }
 
+.menu-item:hover,
 .menu-item.is-select {
   background-color: #f6f8fa;
 }
 
+.menu-item:hover::before,
 .menu-item.is-select::before {
   content: ' ';
   position: absolute;
@@ -1387,8 +1423,8 @@ export default {
 
 .system-view-table {
   background: #fff;
-  // border: 1px solid #e6e6e6;
-  /* flex: 1; */
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
   position: absolute;
   top: 0;
   left: 295px;
@@ -1464,7 +1500,7 @@ export default {
 .dialog-content {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid $xr-border-line-color;
 }
 .dialog-content > div {
   padding: 10px 0;
@@ -1619,7 +1655,7 @@ export default {
 /* 设置占位 */
 .flex-box {
   flex: 1;
-  // border-bottom: 1px solid #e6e6e6;
+  // border-bottom: 1px solid $xr-border-line-color;
 }
 /* 搜索框 */
 .icon-search {

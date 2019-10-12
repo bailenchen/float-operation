@@ -94,6 +94,12 @@ export default {
     position: absolute;
     left: 50%;
     top: 50%;
+
+    /deep/ .el-input-group__append {
+      background-color: $xr-color-primary;
+      border-color: $xr-color-primary;
+      color: white;
+    }
   }
 
   &__ft {
