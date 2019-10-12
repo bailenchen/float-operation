@@ -143,11 +143,14 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .system-customer {
-  /* padding: 0 20px 20px; */
   height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+
+  /deep/ .xr-header {
+    padding: 15px 30px;
+  }
 }
 .customer-content {
   flex: 1;

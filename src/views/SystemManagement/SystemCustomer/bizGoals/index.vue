@@ -43,6 +43,10 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+
+  /deep/ .xr-header {
+    padding: 15px 30px;
+  }
 }
 .customer-content {
   flex: 1;

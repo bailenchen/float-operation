@@ -7,16 +7,14 @@
     <div class="customer-content">
       <!-- 客户管理导航 -->
       <div class="system-view-nav">
-        <el-menu
-          default-active="follow-log-type-set"
-          @select="menuSelect">
-          <el-menu-item
-            v-for="(item, index) in menuList"
-            :key="index"
-            :index="item.key">
-            <span slot="title">{{ item.label }}</span>
-          </el-menu-item>
-        </el-menu>
+        <div
+          v-for="(item, index) in menuList"
+          :key="index"
+          :class="{'is-select' : item.key == menuIndex}"
+          class="menu-item"
+          @click="menuSelect(item.key)">
+          {{ item.label }}
+        </div>
       </div>
       <keep-alive>
         <component
@@ -67,7 +65,7 @@ export default {
     /**
      * 菜单选择
      */
-    menuSelect(i, key) {
+    menuSelect(i) {
       if (i == 'own' || i == 'lock') {
         this.types = {
           own: 1,
@@ -88,6 +86,7 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  padding: 0 15px;
 }
 .customer-content {
   flex: 1;
@@ -100,32 +99,51 @@ export default {
   background: #fff;
   margin-right: 10px;
   padding-top: 20px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
+
 }
 .system-view-content {
   flex: 1;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
   background: #fff;
   display: flex;
   flex-direction: column;
   overflow-x: auto;
 }
-.system-view-nav .is-active {
-  border-right: 2px solid #46cdcf;
-  background-color: #ecf5ff;
+
+// 菜单
+.menu-item {
+  color: #333;
+  font-size: 13px;
+  padding: 0 15px;
+  height: 40px;
+  line-height: 40px;
+  cursor: pointer;
+  position: relative;
+  .icon-close {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    z-index: 1;
+    display: none;
+  }
 }
-.system-view-nav /deep/ .el-menu {
-  border-right: none;
-  margin-right: 1px;
+
+.menu-item:hover,
+.menu-item.is-select {
+  background-color: #f6f8fa;
 }
-.content-title {
-  padding: 10px;
-  border-bottom: 1px solid #e6e6e6;
-}
-.content-title > span {
-  display: inline-block;
-  height: 36px;
-  line-height: 36px;
-  margin-left: 20px;
+
+.menu-item:hover::before,
+.menu-item.is-select::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #5383ed;
 }
 </style>

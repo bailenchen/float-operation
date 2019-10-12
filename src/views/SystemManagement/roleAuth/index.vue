@@ -947,7 +947,7 @@ export default {
 .role-nav-box {
   line-height: 30px;
   overflow-y: auto;
-  padding: 0 0 20px;
+  padding: 20px 0;
   height: calc(100% - 50px);
 }
 // 菜单

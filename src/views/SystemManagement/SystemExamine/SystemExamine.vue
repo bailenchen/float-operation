@@ -155,9 +155,8 @@ export default {
   },
   computed: {},
   mounted() {
-    var self = this
-    /** 控制table的高度 */
-    window.onresize = function() {
+    // 控制table的高度
+    window.onresize = () => {
       self.tableHeight = document.documentElement.clientHeight - 240
     }
 

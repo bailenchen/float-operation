@@ -229,6 +229,7 @@ export default {
 }
 
 .message-body-side {
+  padding: 20px 0;
   width: 200px;
   font-size: 14px;
   background-color: white;
@@ -237,8 +238,8 @@ export default {
   left: 0;
   bottom: 0;
   z-index: 1;
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
   overflow-y: auto;
   .side-item {
     position: relative;
@@ -258,7 +259,7 @@ export default {
   overflow: hidden;
   background-color: white;
   border: 1px solid #e6e6e6;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .side-item-default {
