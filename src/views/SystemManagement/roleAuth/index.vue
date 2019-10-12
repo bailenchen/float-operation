@@ -1,6 +1,7 @@
 <template>
   <div class="role-authorization">
     <xr-header
+      ref="xrHeader"
       show-search
       label="角色权限控制"
       icon-class="wk wk-user"
@@ -313,6 +314,10 @@ export default {
     this.currentPage = 1
     this.total = 0
     this.tableData = []
+    if (this.$refs.xrHeader) {
+      this.$refs.xrHeader.search = ''
+      this.searchInput = ''
+    }
     this.getRulesList()
     this.getRoleList()
     next()
@@ -798,6 +803,7 @@ export default {
 
 <style lang="scss" scoped>
 .role-authorization {
+  padding: 0 15px;
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;

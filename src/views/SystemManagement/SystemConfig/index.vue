@@ -1,6 +1,6 @@
 <template>
   <flexbox
-    style="height:100%;"
+    class="main"
     direction="column"
     align="stretch">
     <xr-header
@@ -168,13 +168,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main {
+  padding: 0 15px;
+  height: 100%;
+}
+
 .body {
   flex: 1;
   overflow-y: auto;
   padding: 40px 30px 20px 30px;
   background-color: white;
   border: 1px solid #e6e6e6;
-  border-radius: 2px;
+  border-radius: 4px;
   position: relative;
 }
 

@@ -1,6 +1,7 @@
 <template>
   <flexbox
     :style="{'height': contentHeight + 'px'}"
+    class="main"
     orient="vertical"
     align="stretch">
     <div class="title">{{ '编辑'+getTitle()+'字段' }}</div>
@@ -168,7 +169,7 @@ export default {
       // 展示表单预览
       tablePreviewData: { types: '', id: '' },
       showTablePreview: false,
-      contentHeight: document.documentElement.clientHeight - 100,
+      contentHeight: document.documentElement.clientHeight - 75,
       // 转移匹配字段源
       transformData: null
     }
@@ -194,7 +195,7 @@ export default {
   },
   mounted() {
     window.onresize = () => {
-      this.contentHeight = document.documentElement.clientHeight - 100
+      this.contentHeight = document.documentElement.clientHeight - 75
     }
     // 获取当前模块的自定义数据
     this.getCustomInfo()
@@ -476,11 +477,14 @@ export default {
 
 <style scoped lang="scss">
 @import '@/styles/mixin.scss';
+.main {
+  padding: 0px 15px 0;
+}
 
 .el-form-item {
   margin: 0;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e1e1e1;
+  border-bottom: 1px solid $xr-border-line-color;
   .desc {
     color: #999;
     font-size: 12px;
@@ -491,15 +495,18 @@ export default {
 }
 
 .title {
-  padding-bottom: 20px;
-  font-size: 18px;
+  padding: 0 30px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 16px;
+  font-weight: 600;
   color: #333;
-  font-weight: normal;
 }
 
 .wrapper {
-  padding: 10px 0;
   background-color: white;
+  border: 1px solid $xr-border-line-color;
+  border-radius: 4px;
   min-width: 1000px;
   overflow: hidden;
   flex: 1;
@@ -540,10 +547,10 @@ export default {
   }
 
   .content {
-    border-left: 1px solid #e1e1e1;
-    border-right: 1px solid #e1e1e1;
+    border-left: 1px solid $xr-border-line-color;
+    border-right: 1px solid $xr-border-line-color;
     .el-header {
-      border-bottom: 1px solid #e1e1e1;
+      border-bottom: 1px solid $xr-border-line-color;
       @include right;
     }
     .el-main {
@@ -564,7 +571,7 @@ export default {
     font-size: 14px;
     .mini-title {
       height: 60px;
-      border-bottom: 1px solid #e1e1e1;
+      border-bottom: 1px solid $xr-border-line-color;
       padding-left: 20px;
       @include left;
     }

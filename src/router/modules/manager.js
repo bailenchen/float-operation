@@ -175,7 +175,7 @@ const examineWorkbenchRouter = {
       component: () => import('@/views/SystemManagement/SystemExamine/SystemExamine'),
       meta: {
         requiresAuth: true,
-        title: '审批流程管理',
+        title: '审批流（合同/回款）',
         icon: 'approve',
         index: 1,
         type: 'manage',
@@ -184,11 +184,11 @@ const examineWorkbenchRouter = {
     },
     {
       name: 'system-workbench',
-      path: 'system-workbench', // 工作台
+      path: 'system-workbench', // 审批流（办公）
       component: () => import('@/views/SystemManagement/SystemWorkbench'),
       meta: {
         requiresAuth: true,
-        title: '工作台',
+        title: '审批流（办公）',
         icon: 'workbench',
         index: 1,
         type: 'manage',

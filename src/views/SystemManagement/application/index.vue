@@ -1,6 +1,6 @@
 <template>
   <flexbox
-    style="height:100%;"
+    class="main"
     direction="column"
     align="stretch">
     <xr-header
@@ -212,6 +212,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main {
+  padding: 0 15px;
+  height: 100%;
+}
 
 .body {
   flex: 1;

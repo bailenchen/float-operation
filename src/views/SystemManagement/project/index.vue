@@ -1,16 +1,16 @@
 <template>
-  <div class="se-container">
+  <div class="main">
     <xr-header
       icon-class="wk wk-project"
       icon-color="#33D08F"
       label="自定义项目权限" />
-    <div class="se-body">
-      <div class="se-table-header">
+    <div class="main-body">
+      <div class="main-table-header">
         <reminder
           class="project-reminder"
           content="为不同场景下的项目成员所需的权限设置匹配的项目、任务列表、任务的操作权限"/>
         <el-button
-          class="se-table-header-button"
+          class="main-table-header-button"
           type="primary"
           @click="addJurisdiction">新建权限</el-button>
       </div>
@@ -173,17 +173,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.se-body {
-  background-color: white;
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
+.main {
+  height:100%;
+
+  /deep/ .xr-header {
+    padding: 15px 30px;
+  }
 }
 
-.se-table-header {
+.main-body {
+  background-color: white;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
+}
+
+.main-table-header {
   height: 50px;
   background-color: white;
   position: relative;
-  .se-table-header-button {
+  .main-table-header-button {
     float: right;
     margin-right: 20px;
     margin-top: 10px;

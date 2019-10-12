@@ -138,7 +138,7 @@ export default {
 
 #manager-main-container {
   max-height: 100%;
-  padding-top: 0;
+  padding: 0 0 15px;
 }
 
 .el-container {

@@ -5,35 +5,49 @@
       icon-color="#1CBAF5"
       label="自定义字段设置" />
     <div class="customer-content">
-      <div
+      <el-table
         v-loading="loading"
-        class="system-view-table">
-        <div class="content-title">
-          <span>自定义字段设置</span>
-        </div>
-        <div class="table-box">
-          <div
-            v-for="(item, index) in tableList"
-            :key="index"
-            class="table-list">
+        :data="tableList"
+        :height="tableHeight"
+        highlight-current-row
+        style="width: 100%"
+        @row-click="handleRowClick">
+        <el-table-column
+          prop="name"
+          label="模块"
+          show-overflow-tooltip>
+          <template slot-scope="scope">
             <img
-              :src="getCustomFieldIcon(item.types)"
+              :src="getCustomFieldIcon( scope.row.types)"
               class="table-item-icon" >
-            <div class="table-item-label">{{ item.name }}</div>
-            <div class="table-item-time">{{ item.updateTime == 0 ? '暂无' : item.updateTime }}更新</div>
-            <div class="table-right-btn">
-              <el-button
-                style="font-weight: 400;"
-                type="text"
-                @click="handleCustomField('edit', item, index)">编 辑</el-button>
-              <el-button
-                style="font-weight: 400;"
-                type="text"
-                @click="handleCustomField('preview', item, index)">预 览</el-button>
-            </div>
-          </div>
-        </div>
-      </div>
+            <span class="table-item-label">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="更新时间"
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span class="table-item-time">{{ scope.row.updateTime == 0 ? '暂无' : scope.row.updateTime }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          fixed="right"
+          label="操作"
+          width="100">
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              size="small"
+              @click="handleCustomField('edit', scope.row, scope.$index)">编辑</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleCustomField('delete', scope.row, scope.$index)">预览</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <!-- 表单预览 -->
     <preview-field-view
@@ -62,6 +76,7 @@ export default {
   data() {
     return {
       loading: false,
+      tableHeight: document.documentElement.clientHeight - 140, // 表的高度
       // 自定义字段设置
       tableList: [],
       // 展示表单预览
@@ -71,6 +86,11 @@ export default {
   },
 
   created() {
+    // 控制table的高度
+    window.onresize = () => {
+      self.tableHeight = document.documentElement.clientHeight - 140
+    }
+
     this.getDetail()
   },
 
@@ -136,65 +156,24 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .system-customer {
-  /* padding: 0 20px 20px; */
   height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
 }
 .customer-content {
-  flex: 1;
-  position: relative;
-  display: flex;
-  overflow: hidden;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
 }
-.system-view-table {
-  flex: 1;
-  border: 1px solid #e6e6e6;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  overflow-x: auto;
-}
-.content-title {
-  padding: 10px;
-  border-bottom: 1px solid #e6e6e6;
-}
-.content-title > span {
-  display: inline-block;
-  height: 36px;
-  line-height: 36px;
-  margin-left: 20px;
-}
-.table-list {
-  border-bottom: 1px solid #e6e6e6;
-  height: 60px;
-  overflow: hidden;
-  align-items: center;
-  font-size: 13px;
-  display: flex;
-}
+
 .table-item-label {
-  text-align: left;
-  flex: 1;
+  vertical-align:middle;
 }
 .table-item-icon {
-  display: block;
-  width: 35px;
-  height: 35px;
-  margin-right: 15px;
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  vertical-align:middle;
 }
-.table-box {
-  margin: 30px;
-  overflow: auto;
-}
-.table-right-btn {
-  text-align: right;
-  flex: 1;
-  padding-right: 40px;
-}
+
 .table-item-time {
-  flex: 1;
   color: #999;
 }
 </style>

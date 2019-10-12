@@ -1,13 +1,13 @@
 <template>
-  <div class="se-container">
+  <div class="main">
     <xr-header
       icon-class="wk wk-approve"
       icon-color="#FFB940"
-      label="审批流程管理" />
-    <div class="se-body">
-      <div class="se-table-header">
+      label="审批流（合同/回款）" />
+    <div class="main-body">
+      <div class="main-table-header">
         <el-button
-          class="se-table-header-button"
+          class="main-table-header-button"
           type="primary"
           @click="addExamine">添加审批流程</el-button>
       </div>
@@ -329,17 +329,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.se-body {
-  background-color: white;
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
+.main {
+  height:100%;
+
+  /deep/ .xr-header {
+    padding: 15px 30px;
+  }
 }
 
-.se-table-header {
+.main-body {
+  background-color: white;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
+}
+
+.main-table-header {
   height: 50px;
   background-color: white;
   position: relative;
-  .se-table-header-button {
+  .main-table-header-button {
     float: right;
     margin-right: 20px;
     margin-top: 10px;

@@ -3,7 +3,7 @@
     <flexbox
       align="stretch"
       class="reminder-body">
-      <i class="wukong wukong-reminder reminder-icon"/>
+      <i class="wk wk-warning reminder-icon"/>
       <div
         :style="{'font-size': fontSize + 'px'}"
         class="reminder-content">
@@ -26,7 +26,7 @@ export default {
     },
     fontSize: {
       type: String,
-      default: '13'
+      default: '12'
     }
   },
   data() {
@@ -42,18 +42,19 @@ export default {
 .reminder-wrapper {
   .reminder-body {
     width: auto;
-    padding: 8px 15px;
+    padding: 0 8px;
+    height: 28px;
+    line-height: 28px;
     border-radius: 4px;
-    background-color: #fff4e7;
+    background-color: #FFF6E7;
     .reminder-icon {
-      color: #ff7922;
-      flex-shrink: 0;
-      margin-right: 8px;
+      color: #F9A74E;
+      margin-right: 5px;
+      font-size: 14px;
     }
 
     .reminder-content {
-      color: #9c9c9b;
-      line-height: 17px;
+      color: #666666;
     }
   }
 }

@@ -1,30 +1,14 @@
 <template>
   <flexbox
-    style="height:100%;"
+    class="main"
     direction="column"
     align="stretch">
     <xr-header
       icon-class="wk wk-workbench"
       icon-color="#5864FF"
-      label="工作台" />
-    <div class="sw-body">
-      <flexbox
-        align="stretch"
-        class="sw-box">
-        <div class="sw-body-side">
-          <div
-            v-for="(item, index) in leftSides"
-            :key="index"
-            :class="leftType==item.type? 'side-item-select' : 'side-item-default'"
-            class="side-item"
-            @click="sideClick(item)">
-            {{ item.name }}
-          </div>
-        </div>
-        <div class="sw-body-content">
-          <component :is="leftType"/>
-        </div>
-      </flexbox>
+      label="审批流（办公）" />
+    <div class="main__bd">
+      <component :is="leftType"/>
     </div>
   </flexbox>
 </template>
@@ -55,49 +39,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sw-body {
-  position: relative;
-  flex: 1;
-}
-.sw-box {
-  position: relative;
-  height: 100%;
-}
+.main {
+  height:100%;
 
-.sw-body-side {
-  padding-top: 20px;
-  width: 200px;
-  font-size: 14px;
-  background-color: white;
-  margin-right: 10px;
-  flex-shrink: 0;
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
-  .side-item {
-    height: 50px;
-    line-height: 50px;
-    padding: 0 20px;
-    font-size: 13px;
-    cursor: pointer;
+  /deep/ .xr-header {
+    padding: 15px 30px;
+  }
+
+  &__bd {
+    border-top: 1px solid $xr-border-line-color;
+    border-bottom: 1px solid $xr-border-line-color;
   }
 }
-.sw-body-content {
-  flex: 1;
-  overflow-x: auto;
-  background-color: white;
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
-}
 
-.side-item-default {
-  color: #333;
-  border-right: 2px solid transparent;
-}
 
-.side-item-select {
-  color: #409eff;
-  border-right: 2px solid #46cdcf;
-  background-color: #ecf5ff;
-}
 </style>
 
