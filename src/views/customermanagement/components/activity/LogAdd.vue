@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { fileSize, getFileTypeIcon } from '@/utils/index'
+import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
 import { crmFileSave, crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import AddImageList from '@/components/quickAdd/AddImageList'
@@ -185,7 +185,7 @@ export default {
       nextTime: '',
       /** 展示关联弹窗 */
       showRelativeType: '',
-      batchId: '' // 批次ID
+      batchId: guid() // 批次ID
     }
   },
   computed: {
@@ -235,7 +235,7 @@ export default {
       this.contactsId = ''
       // 展示关联弹窗
       this.showRelativeType = ''
-      this.batchId = ''
+      this.batchId = guid()
       this.followType = ''
     },
 
@@ -276,30 +276,20 @@ export default {
         }
 
         var type = event.target.accept == 'image/*' ? 'img' : 'file'
-        var firstFile = files[0]
-        this.sendFileRequest(firstFile, type, () => {
-          for (let index = 1; index < files.length; index++) {
-            const file = files[index]
-            this.sendFileRequest(file, type)
-          }
-          event.target.value = ''
-        })
+        for (let index = 0; index < files.length; index++) {
+          const file = files[index]
+          this.uploadFileRequest(file, type)
+        }
+        event.target.value = ''
       }
     },
 
     /**
      * 文件上传
      */
-    sendFileRequest(file, type, result) {
-      var params = { file: file, type: type }
-      if (this.batchId) {
-        params.batchId = this.batchId
-      }
-      crmFileSave(params)
+    uploadFileRequest(file, type, result) {
+      crmFileSave({ file: file, type: type, batchId: this.batchId })
         .then(res => {
-          if (this.batchId == '') {
-            this.batchId = res.batchId
-          }
           res.size = fileSize(file.size)
           if (type == 'img') {
             this.imgFiles.push(res)
