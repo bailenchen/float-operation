@@ -25,7 +25,7 @@ export default {
             color: '#FAAD14'
           },
           {
-            icon: 'trip',
+            icon: 'reimbursement',
             color: '#3ABCFB'
           },
           {

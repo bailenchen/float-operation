@@ -17,6 +17,17 @@
       style="width: 100%"
       @row-click="handleRowClick">
       <el-table-column
+        width="80"
+        label="审批流图标">
+        <template slot-scope="scope">
+          <div
+            :style="{ backgroundColor: scope.row.iconColor }"
+            class="table-icon">
+            <i :class="scope.row.iconClass" />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
         v-for="(item, index) in fieldList"
         :key="index"
         :formatter="fieldFormatter"
@@ -164,6 +175,16 @@ export default {
         limit: this.pageSize
       })
         .then(res => {
+          res.data.list.forEach(item => {
+            const temps = item.icon ? item.icon.split(',') : []
+            if (temps.length > 1) {
+              item.iconClass = temps[0]
+              item.iconColor = temps[1]
+            } else {
+              item.iconClass = 'wk wk-approve'
+              item.iconColor = '#9376FF'
+            }
+          })
           this.list = res.data.list
 
           this.total = res.data.totalRow
@@ -174,6 +195,7 @@ export default {
           this.loading = false
         })
     },
+
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
@@ -345,6 +367,19 @@ export default {
     float: right;
     margin: 5px 100px 0 0;
     font-size: 14px !important;
+  }
+}
+
+.table-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  border-radius: 4px;
+  .wk {
+    color: white;
+    font-size: 12px;
   }
 }
 

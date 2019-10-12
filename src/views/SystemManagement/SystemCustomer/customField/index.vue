@@ -10,8 +10,7 @@
         :data="tableList"
         :height="tableHeight"
         highlight-current-row
-        style="width: 100%"
-        @row-click="handleRowClick">
+        style="width: 100%">
         <el-table-column
           prop="name"
           label="模块"

@@ -15,10 +15,10 @@
             v-if="showData.isSys != 1"
             class="el-icon-delete delete"
             @click="deleteClick"/></div>
-          <img
+            <!-- <img
             class="header-close"
             src="@/assets/img/task_close.png"
-            @click="hideView" >
+            @click="hideView" > -->
         </flexbox>
         <div class="detail-header-des">
           <div class="status">状态：{{ showData.status == 0 ? '停用' : '启用' }}</div>
@@ -300,14 +300,14 @@ export default {
       cursor: pointer;
     }
   }
-  .header-close {
-    display: block;
-    width: 30px;
-    height: 30px;
-    margin-left: 20px;
-    padding: 5px;
-    cursor: pointer;
-  }
+  // .header-close {
+  //   display: block;
+  //   width: 30px;
+  //   height: 30px;
+  //   margin-left: 20px;
+  //   padding: 5px;
+  //   cursor: pointer;
+  // }
 }
 
 .detail-header-des {
@@ -430,6 +430,7 @@ export default {
   top: 60px;
   bottom: 0px;
   right: 0px;
+  background-color: white;
 }
 </style>
 

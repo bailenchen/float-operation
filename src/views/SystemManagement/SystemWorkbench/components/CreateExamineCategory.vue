@@ -144,6 +144,7 @@ import {
   XhUserCell,
   XhStrucUserCell
 } from '@/components/CreateCom'
+import XhIconSelect from './XhIconSelect'
 import Nzhcn from 'nzh/cn'
 
 export default {
@@ -154,7 +155,8 @@ export default {
     XhTextarea,
     XhSelect,
     XhUserCell,
-    XhStrucUserCell
+    XhStrucUserCell,
+    XhIconSelect
   },
   filters: {
     /** 根据type 找到组件 */
@@ -167,6 +169,8 @@ export default {
         return 'XhSelect'
       } else if (formType == 'structure') {
         return 'XhStrucUserCell'
+      } else if (formType == 'icon') {
+        return 'XhIconSelect'
       }
     },
     numberToZh: function(value) {
@@ -290,6 +294,15 @@ export default {
         setting: [],
         inputTips: '',
         value: this.handle.data ? this.handle.data.title : ''
+      })
+      field.push({
+        field: 'icon',
+        formType: 'icon',
+        isNull: 1,
+        name: '审批类型图标',
+        setting: [],
+        inputTips: '',
+        value: this.handle.data ? this.handle.data.icon || 'wk wk-approve,#9376FF' : 'wk wk-approve,#9376FF'
       })
       field.push({
         field: 'dept',
