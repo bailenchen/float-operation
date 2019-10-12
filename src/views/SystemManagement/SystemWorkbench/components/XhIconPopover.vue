@@ -145,6 +145,8 @@ export default {
 }
 .icon-list {
   padding: 10px;
+  cursor: pointer;
+
   &__item {
     display: inline-block;
     width: 40px;

@@ -125,7 +125,7 @@ export default {
   },
   computed: {
     iconObj() {
-      return this.getCategoryIcon(this.data.type)
+      return this.getCategoryIcon(this.data.icon)
     },
     relateList() {
       const keys = ['contacts', 'customer', 'business', 'contract']

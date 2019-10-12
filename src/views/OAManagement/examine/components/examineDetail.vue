@@ -328,7 +328,7 @@ export default {
      * 详情logo
      */
     detailIcon() {
-      return this.getCategoryIcon(this.detail.type)
+      return this.getCategoryIcon(this.detail.icon)
     }
   },
   watch: {

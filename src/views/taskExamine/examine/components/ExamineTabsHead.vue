@@ -18,7 +18,7 @@
           v-for="(item, index) in selectList"
           :key="index"
           :command="item"> <i
-            :class="['wk', 'dropdown-icon', 'wk-' + item.icon]"
+            :class="['wk', 'dropdown-icon', item.icon]"
             :style="{ backgroundColor: item.color }" />{{ item.label }}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -74,7 +74,7 @@ export default {
         this.selectList && this.selectList.length
           ? this.selectList[0]
           : {
-            icon: 'approve',
+            icon: 'wk wk-approve',
             color: '#9376FF',
             command: 'all',
             label: '全部审批'

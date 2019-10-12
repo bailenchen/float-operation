@@ -248,13 +248,13 @@ export default {
       oaExamineCategoryList()
         .then(res => {
           this.selectList = res.data.map(item => {
-            const iconItem = this.getCategoryIcon(item.type)
+            const iconItem = this.getCategoryIcon(item.icon)
             iconItem.label = item.title
             iconItem.command = item.categoryId
             return iconItem
           })
           this.selectList.unshift({
-            icon: 'approve',
+            icon: 'wk wk-approve',
             color: '#9376FF',
             command: '',
             label: '全部审批'

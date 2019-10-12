@@ -3,39 +3,16 @@ export default {
     /**
      * 获取图标
      */
-    getCategoryIcon(type) {
-      // 系统审批
-      type = parseInt(type)
-      if (type <= 6 && type > 0) {
-        return [
-          {
-            icon: 'l-record',
-            color: '#3ABCFB'
-          },
-          {
-            icon: 'leave',
-            color: '#00CAAB'
-          },
-          {
-            icon: 'trip',
-            color: '#3ABCFB'
-          },
-          {
-            icon: 'overtime',
-            color: '#FAAD14'
-          },
-          {
-            icon: 'reimbursement',
-            color: '#3ABCFB'
-          },
-          {
-            icon: 'go-out',
-            color: '#FF6033'
-          }
-        ][type - 1]
+    getCategoryIcon(icon) {
+      const temps = icon && typeof icon == 'string' ? icon.split(',') : []
+      if (temps.length > 1) {
+        return {
+          icon: temps[0],
+          color: temps[1]
+        }
       } else {
         return {
-          icon: 'approve',
+          icon: 'wk wk-approve',
           color: '#9376FF'
         }
       }

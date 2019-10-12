@@ -16,10 +16,12 @@
           :key="index"
           class="category-item"
           @click="selectCategorys(item)">
-          <i
-            :class="item.iconClass"
-            class="wukong"/>
-          {{ item.title }}
+          <div
+            :style="{ backgroundColor: item.iconColor }"
+            class="category-icon">
+            <i :class="item.iconClass" />
+          </div>
+          <div class="category-label text-one-line">{{ item.title }}</div>
         </div>
       </flexbox>
     </div>
@@ -62,7 +64,14 @@ export default {
         .then(res => {
           this.loading = false
           this.categorys = res.data.map(item => {
-            item.iconClass = this.getCategoryIcon(item.type)
+            const temps = item.icon ? item.icon.split(',') : []
+            if (temps.length > 1) {
+              item.iconClass = temps[0]
+              item.iconColor = temps[1]
+            } else {
+              item.iconClass = 'wk wk-approve'
+              item.iconColor = '#9376FF'
+            }
             return item
           })
         })
@@ -78,36 +87,6 @@ export default {
     // 关闭操作
     closeView() {
       this.$emit('close')
-    },
-
-    /**
-     * 获取图标
-     */
-    getCategoryIcon(type) {
-      // 系统审批
-      type = parseInt(type)
-      if (type <= 6) {
-        return [
-          'wukong-examine-category-ordinary',
-          'wukong-examine-category-leave',
-          'wukong-examine-category-business',
-          'wukong-examine-category-overtime',
-          'wukong-examine-category-billing',
-          'wukong-examine-category-borrowing'
-        ][type - 1]
-      } else {
-        return [
-          'wukong-examine-category-one',
-          'wukong-examine-category-two',
-          'wukong-examine-category-three',
-          'wukong-examine-category-four',
-          'wukong-examine-category-five',
-          'wukong-examine-category-six',
-          'wukong-examine-category-seven',
-          'wukong-examine-category-eight',
-          'wukong-examine-category-nine'
-        ][type % 9]
-      }
     }
   }
 }
@@ -126,23 +105,35 @@ export default {
   height: 250px;
   overflow-y: auto;
   .category-item {
-    padding: 5px 10px;
-    border-radius: 3px;
-    border: 1px solid #e6e6e6;
-    color: #727272;
-    font-size: 12px;
-    margin: 5px 7px;
+    width: 90px;
+    height: 90px;
+    padding: 10px;
+    text-align: center;
     cursor: pointer;
-
-    .wukong {
-      color: $xr-color-primary;
-      margin-right: 2px;
-    }
   }
 
   .category-item:hover {
-    color: $xr-color-primary;
-    border-color: $xr-color-primary;
+    background-color: #ECF2FF;
   }
+}
+
+.category-icon {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 4px;
+  margin-top: 5px;
+  .wk {
+    color: white;
+    font-size: 24px;
+  }
+}
+
+.category-label {
+  color: #333;
+  font-size: 14px;
+  margin-top: 5px;
 }
 </style>
