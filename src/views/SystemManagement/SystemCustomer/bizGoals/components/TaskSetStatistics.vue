@@ -545,14 +545,9 @@ export default {
         )
       } else if (type == 'save') {
         this.loading = true
-        var list = this.list
-        if (this.tabType === 'department') {
-          list = this.list.filter(function(item, index, array) {
-            return !item.ignore
-          })
-        } else if (this.tabType === 'user') {
-          list = this.list
-        }
+        var list = this.list.filter(function(item, index, array) {
+          return !item.ignore
+        })
         crmAchievementUpdate(list)
           .then(res => {
             this.$message.success('操作成功')
