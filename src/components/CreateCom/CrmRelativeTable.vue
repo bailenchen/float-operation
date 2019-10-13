@@ -1,8 +1,8 @@
 <template>
   <div class="cr-body-content">
     <flexbox class="content-header">
-      <div v-if="!isRelationShow">场景：</div>
-      <el-select v-if="!isRelationShow" v-model="sceneId" placeholder="请选择">
+      <div v-if="!isRelationShow && showScene">场景：</div>
+      <el-select v-if="!isRelationShow && showScene" v-model="sceneId" placeholder="请选择">
         <el-option
           v-for="item in scenesList"
           :key="item.sceneId"
@@ -72,7 +72,7 @@ import { crmCustomerIndex } from '@/api/customermanagement/customer'
 import { crmContactsIndex } from '@/api/customermanagement/contacts'
 import { crmBusinessIndex } from '@/api/customermanagement/business'
 import { crmContractIndex } from '@/api/customermanagement/contract'
-import { crmProductIndex } from '@/api/customermanagement/product'
+import { crmProductSaleIndexAPI } from '@/api/customermanagement/product'
 import { crmSceneIndex } from '@/api/customermanagement/common'
 // 客户下商机和联系人
 import {
@@ -144,6 +144,10 @@ export default {
     // 展示相关效果 去除场景
     isRelationShow() {
       return this.action.type === 'condition'
+    },
+
+    showScene() {
+      return this.crmType != 'product'
     }
   },
   watch: {
@@ -160,7 +164,7 @@ export default {
         this.fieldList = [] // 表头数据
         this.currentPage = 1 // 当前页数
         this.totalPage = 1 // 总页数
-        if (!this.isRelationShow) {
+        if (!this.isRelationShow && this.showScene) {
           this.getSceneList()
         } else {
           this.getFieldList()
@@ -383,7 +387,7 @@ export default {
       } else if (this.crmType === 'contract') {
         return crmContractIndex
       } else if (this.crmType === 'product') {
-        return crmProductIndex
+        return crmProductSaleIndexAPI
       }
     },
     // 场景选择

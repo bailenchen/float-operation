@@ -24,6 +24,18 @@ export function crmProductIndex(data) {
   })
 }
 
+// 产品上架列表
+export function crmProductSaleIndexAPI(data) {
+  return request({
+    url: 'CrmProduct/querySaleProductPageList ',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 // crm 详情
 export function crmProductRead(data) {
   return request({
