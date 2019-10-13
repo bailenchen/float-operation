@@ -59,7 +59,7 @@
         <div class="result-info">
           <i class="wk wk-success result-info__icon" />
           <p class="result-info__des">数据导入完成</p>
-          <p class="result-info__detail">导入总数据<span class="result-info__detail--all">100</span>条，导入成功<span class="result-info__detail--suc">80</span>条，导入失败<span class="result-info__detail--err">{{ resultData.errSize }}</span>条</p>
+          <p class="result-info__detail">导入总数据<span class="result-info__detail--all">{{ resultData.totalSize }}</span>条，导入成功<span class="result-info__detail--suc">{{ resultData.totalSize - resultData.errSize }}</span>条，导入失败<span class="result-info__detail--err">{{ resultData.errSize }}</span>条</p>
           <el-button
             v-if="resultData && resultData.errSize > 0"
             class="result-info__btn--err"
@@ -94,6 +94,7 @@ import {
   userErrorExcelDownAPI
 } from '@/api/systemManagement/EmployeeDepManagement'
 
+// import { getExcelLines } from '@/utils'
 
 export default {
   // 批量导入员工股
@@ -158,21 +159,25 @@ export default {
   mounted() {},
   methods: {
     sureClick() {
-      if (this.stepsActive == 1 && this.stepList[0].status == 'finish') {
-        this.stepList[1].status = 'process'
-        this.stepsActive = 2
-        this.updateFile(res => {
-          this.stepList[1].status = 'finish'
-          this.stepsActive = 3
-          if (res) {
-            this.resultData = res
-            if (res.errSize > 0) {
-              this.stepList[2].status = 'error'
-            } else {
-              this.stepList[2].status = 'finish'
+      if (this.stepsActive == 1) {
+        if (this.stepList[0].status == 'finish') {
+          this.stepList[1].status = 'process'
+          this.stepsActive = 2
+          this.updateFile(res => {
+            this.stepList[1].status = 'finish'
+            this.stepsActive = 3
+            if (res) {
+              this.resultData = res
+              if (res.errSize > 0) {
+                this.stepList[2].status = 'error'
+              } else {
+                this.stepList[2].status = 'finish'
+              }
             }
-          }
-        })
+          })
+        } else {
+          this.$message.error('请选择导入文件')
+        }
       } else if (this.stepsActive == 3) {
         this.closeView()
       }
