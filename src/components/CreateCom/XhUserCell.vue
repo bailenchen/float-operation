@@ -2,12 +2,12 @@
   <el-popover
     :disabled="disabled"
     :placement="placement"
-    v-model="showSelectView"
+    v-model="showPopover"
     width="300"
     popper-class="no-padding-popover"
     trigger="click">
     <xh-user
-      v-if="!disabled&&showSelectView"
+      v-if="!disabled&&showPopover"
       ref="xhuser"
       v-bind="$attrs"
       :selected-data="dataValue"
@@ -29,6 +29,8 @@
           @click.stop="deleteuser(index)" />
       </div>
       <i v-if="dataValue.length > max" class="el-icon-more" />
+      <i
+        :class="['el-icon-arrow-up', { 'is-reverse' : showPopover}]"/>
       <div
         v-if="dataValue.length == 0"
         class="add-item">{{ placeholder }}</div>
@@ -73,8 +75,7 @@ export default {
   },
   data() {
     return {
-      showPopover: false, // 展示popover
-      showSelectView: false // 展示选择内容列表
+      showPopover: false // 展示popover
     }
   },
   computed: {
@@ -116,7 +117,6 @@ export default {
      * 聚焦动作
      */
     focusClick() {
-      this.showSelectView = true
       this.$emit('focus')
     }
   }
@@ -191,7 +191,7 @@ export default {
 .el-icon-more {
   position: absolute;
   top: 5px;
-  right: 5px;
+  right: 20px;
   padding: 6px 10px;
   font-size: 12px;
   background-color: #F3F7FF;
@@ -201,5 +201,20 @@ export default {
     background-color: $xr-color-primary;
     color: white;
   }
+}
+
+.el-icon-arrow-up {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  transition: transform .3s;
+  color: #c0c4cc;
+  font-size: 14px;
+  transition: transform .3s;
+  transform: rotate(180deg);
+  cursor: pointer;
+}
+.el-icon-arrow-up.is-reverse {
+  transform: rotate(0deg);
 }
 </style>

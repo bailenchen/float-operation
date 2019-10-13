@@ -100,7 +100,7 @@ export default {
         type: 'tree'
       })
         .then(res => {
-          this.showlist = this.addIsCheckProp(res.data)
+          this.showlist = this.handelCheck(this.addIsCheckProp(res.data))
           this.breadcrumbList.push({ label: '全部', data: this.showlist })
 
           this.loading = false
