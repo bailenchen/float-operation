@@ -18,7 +18,6 @@
       <el-date-picker
         v-model="dateSelect"
         :clearable="false"
-        :picker-options="pickerOptions"
         type="year"
         value-format="yyyy"
         placeholder="选择年"/>
@@ -59,8 +58,14 @@
         style="float: right;">
         <el-button
           type="primary"
+          @click.native="addViewShow = true">设置目标</el-button>
+
+        <el-button
+          v-if="list.length"
+          type="primary"
           @click.native="handleClick('edit')">编辑</el-button>
         <el-button
+          v-if="list.length"
           type="primary"
           @click.native="handleClick('export')">导出</el-button>
       </div>
@@ -101,7 +106,7 @@
                 || item.field === 'first'
                 || item.field === 'second'
                 || item.field === 'third'
-              || item.field === 'fourth' || !isEdit || (tabType === 'department'&&scope.$index===1)"
+              || item.field === 'fourth' || !isEdit || ( scope.$index===list.length -1 )"
               class="table-show-item">
               {{ scope.row[item.field] }}
             </div>
@@ -115,6 +120,8 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <add-goal :visible.sync="addViewShow" />
   </div>
 </template>
 
@@ -127,12 +134,15 @@ import {
 
 import moment from 'moment'
 import FileSaver from 'file-saver'
+import AddGoal from './AddGoal'
 import XLSX from 'xlsx'
 
 export default {
   /** 业绩目标设置 */
   name: 'TaskSetStatistics',
-  components: {},
+  components: {
+    AddGoal
+  },
   data() {
     return {
       pickerOptions: {
@@ -181,7 +191,10 @@ export default {
         { field: 'october', name: '10月' },
         { field: 'november', name: '11月' },
         { field: 'december', name: '12月' }
-      ]
+      ],
+
+      // 设置目标
+      addViewShow: false
     }
   },
   computed: {},
@@ -190,7 +203,7 @@ export default {
       this.tableHeight = document.documentElement.clientHeight - 290
     }
 
-    this.dateSelect = moment(new Date())
+    this.dateSelect = moment()
       .year()
       .toString()
     this.getDeptList()
@@ -218,8 +231,7 @@ export default {
           this.list = res.data.map(item => {
             return this.getShowItem(item)
           })
-          if (this.list.length >= 2) {
-            // 有子部门
+          if (this.list.length) {
             this.getSubTotalModel()
           }
           this.loading = false
@@ -239,7 +251,7 @@ export default {
     /** 获取直属下级目标总和 */
     getSubTotalModel() {
       var initModel = {
-        name: '直属下级目标总和',
+        name: '目标合计',
         january: '0.00',
         february: '0.00',
         march: '0.00',
@@ -279,7 +291,9 @@ export default {
           }
         }
       }
-      this.list.splice(1, 0, initModel)
+
+      this.list.push(initModel)
+      // this.list.splice(1, 0, initModel)
     },
     handleInputEdit(type, scope) {
       if (type === 'change') {
@@ -331,9 +345,9 @@ export default {
     },
     /** 计算下属目标综合 */
     calculateSubTotal(scope) {
-      var item = this.list[1]
+      var item = this.list[this.list.length - 1]
       var subValue = '0'
-      for (let index = 2; index < this.list.length; index++) {
+      for (let index = 0; index < this.list.length - 1; index++) {
         const element = this.list[index]
         subValue = (
           parseFloat(subValue) + parseFloat(element[scope.column.property])
@@ -482,6 +496,9 @@ export default {
           this.list = res.data.map(item => {
             return this.getShowItem(item)
           })
+          if (this.list.length) {
+            this.getSubTotalModel()
+          }
           this.loading = false
         })
         .catch(() => {
@@ -576,9 +593,9 @@ export default {
     },
     /** 通过回调控制style */
     cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (rowIndex === 1 && this.tabType === 'department') {
+      if (rowIndex === this.list.length - 1) {
         return {
-          backgroundColor: '#E5F4FE'
+          backgroundColor: '#FAF9F6'
         }
       } else if (
         columnIndex == 1 ||

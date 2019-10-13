@@ -119,6 +119,13 @@ path {
   padding: 0;
 }
 
+.no-padding-dialog {
+  .el-dialog__body {
+    padding: 0;
+  }
+}
+
+
 // 去除百度地图 图标
 .BMap_cpyCtrl {
   display: none;
