@@ -2,17 +2,31 @@
   <el-dialog
     :visible.sync="showDialog"
     :append-to-body="true"
+    :show-close="showCancel"
+    :close-on-click-modal="showCancel"
     title="批量导入"
     width="550px"
     @close="closeView">
     <div class="dialog-body">
-      <div class="sections">
+      <el-steps
+        :active="stepsActive"
+        simple>
+        <el-step
+          v-for="(item, index) in stepList"
+          :key="index"
+          :title="item.title"
+          :icon="item.icon"
+          :status="item.status" />
+      </el-steps>
+      <div
+        v-if="stepsActive == 1"
+        class="sections">
         <div>请选择需要导入的文件</div>
         <div class="content">
           <flexbox class="file-select">
             <el-input
               v-model="file.name"
-              :disabled="true"/>
+              :disabled="true" />
             <el-button
               type="primary"
               @click="selectFile">选择文件</el-button>
@@ -30,6 +44,29 @@
           <div>4、点击“确定”开始进行员工导入</div>
         </div>
       </div>
+
+      <div
+        v-loading="loading"
+        v-else-if="stepsActive == 2"
+        element-loading-text="数据导入中"
+        element-loading-spinner="el-icon-loading"
+        class="sections" />
+
+      <div
+        v-loading="loading"
+        v-else-if="stepsActive == 3"
+        class="sections">
+        <div class="result-info">
+          <i class="wk wk-success result-info__icon" />
+          <p class="result-info__des">数据导入完成</p>
+          <p class="result-info__detail">导入总数据<span class="result-info__detail--all">100</span>条，导入成功<span class="result-info__detail--suc">80</span>条，导入失败<span class="result-info__detail--err">{{ resultData.errSize }}</span>条</p>
+          <el-button
+            v-if="resultData && resultData.errSize > 0"
+            class="result-info__btn--err"
+            type="text"
+            @click="downloadErrData">下载错误数据</el-button>
+        </div>
+      </div>
       <input
         id="importInputFile"
         type="file"
@@ -39,10 +76,13 @@
     <span
       slot="footer"
       class="dialog-footer">
-      <el-button @click="closeView">取 消</el-button>
       <el-button
+        :class="{ 'is-hidden': !showCancel }"
+        @click="closeView">取 消</el-button>
+      <el-button
+        v-if="sureTitle"
         type="primary"
-        @click="sure">确 定</el-button>
+        @click="sureClick">{{ sureTitle }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -54,13 +94,11 @@ import {
   userErrorExcelDownAPI
 } from '@/api/systemManagement/EmployeeDepManagement'
 
-import { Loading } from 'element-ui'
 
 export default {
   // 批量导入员工股
   name: 'BulkImportUser',
-  components: {
-  },
+  components: {},
   props: {
     show: {
       type: Boolean,
@@ -76,48 +114,106 @@ export default {
     return {
       loading: false,
       showDialog: false,
-      file: { name: '' }
+      file: { name: '' },
+      stepsActive: 1,
+      stepList: [
+        {
+          icon: 'wk wk-upload',
+          title: '上传文件',
+          status: 'wait'
+        },
+        {
+          icon: 'wk wk-data-import',
+          title: '导入数据',
+          status: 'wait'
+        },
+        {
+          icon: 'wk wk-success',
+          title: '导入完成',
+          status: 'wait'
+        }
+      ],
+      resultData: null
     }
   },
-  computed: {},
+  computed: {
+    sureTitle() {
+      return {
+        1: '立即导入',
+        2: '',
+        3: '确定'
+      }[this.stepsActive]
+    },
+
+    showCancel() {
+      return this.stepsActive != 2
+    }
+  },
   watch: {
     show: function(val) {
       this.showDialog = val
+      this.resetData()
     }
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
-    sure() {
+    sureClick() {
+      if (this.stepsActive == 1 && this.stepList[0].status == 'finish') {
+        this.stepList[1].status = 'process'
+        this.stepsActive = 2
+        this.updateFile(res => {
+          this.stepList[1].status = 'finish'
+          this.stepsActive = 3
+          if (res) {
+            this.resultData = res
+            if (res.errSize > 0) {
+              this.stepList[2].status = 'error'
+            } else {
+              this.stepList[2].status = 'finish'
+            }
+          }
+        })
+      } else if (this.stepsActive == 3) {
+        this.closeView()
+      }
+    },
+
+    updateFile(result) {
       if (!this.file.name) {
         this.$message.error('请选择导入文件')
       } else {
-        const loading = Loading.service({ fullscreen: true })
+        this.loading = true
         userExcelImportAPI({
           file: this.file
         })
           .then(res => {
-            loading.close()
-            if (res.errSize > 0) {
-              this.getImportError(res.token)
-            } else {
-              this.$message.success('操作成功')
+            this.loading = false
+            if (result) {
+              result(res)
             }
             this.$emit('success')
-            this.closeView()
           })
           .catch(() => {
-            loading.close()
+            if (result) {
+              result(false)
+            }
+            this.loading = false
           })
       }
+    },
+
+    /**
+     * 下载错误
+     */
+    downloadErrData() {
+      this.getImportError(this.resultData.token)
     },
 
     /**
      * 导入错误下载
      */
     getImportError(token) {
-      const loading = Loading.service({ fullscreen: true })
+      this.loading = true
       userErrorExcelDownAPI({
         token
       })
@@ -129,17 +225,17 @@ export default {
           var href = window.URL.createObjectURL(blob) // 创建下载的链接
           downloadElement.href = href
           downloadElement.download =
-              decodeURI(
-                res.headers['content-disposition'].split('filename=')[1]
-              ) || '' // 下载后文件名
+            decodeURI(
+              res.headers['content-disposition'].split('filename=')[1]
+            ) || '' // 下载后文件名
           document.body.appendChild(downloadElement)
           downloadElement.click() // 点击下载
           document.body.removeChild(downloadElement) // 下载完成移除元素
           window.URL.revokeObjectURL(href) // 释放掉blob对象
-          loading.close()
+          this.loading = false
         })
         .catch(() => {
-          loading.close()
+          this.loading = false
         })
     },
 
@@ -165,6 +261,7 @@ export default {
       const file = files[0]
       this.file = file
       event.target.value = ''
+      this.stepList[0].status = 'finish'
     },
 
     /**
@@ -172,18 +269,78 @@ export default {
      */
     closeView() {
       this.$emit('close')
+    },
+
+    /**
+     * 重置数据
+     */
+    resetData() {
+      this.file = { name: '' }
+      this.stepList = [
+        {
+          icon: 'wk wk-upload',
+          title: '上传文件',
+          status: 'wait'
+        },
+        {
+          icon: 'wk wk-data-import',
+          title: '导入数据',
+          status: 'wait'
+        },
+        {
+          icon: 'wk wk-success',
+          title: '导入完成',
+          status: 'wait'
+        }
+      ]
+      this.stepsActive = 1
+      this.resultData = null
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+.el-steps {
+  margin-bottom: 15px;
+
+  /deep/ .el-step__title {
+    font-size: 14px;
+  }
+
+  /deep/ .el-step.is-simple .el-step__arrow::before,
+  /deep/ .el-step.is-simple .el-step__arrow::after {
+    height: 10px;
+    width: 2px;
+  }
+
+  /deep/ .el-step.is-simple .el-step__arrow::after {
+    transform: rotate(45deg) translateY(3px);
+  }
+  /deep/ .el-step.is-simple .el-step__arrow::before {
+    transform: rotate(-45deg) translateY(-2px);
+  }
+}
+
 .sections {
   font-size: 14px;
+  min-height: 215px;
   .download {
     cursor: pointer;
-    color: #2362FB;
+    color: #2362fb;
     margin-bottom: 15px;
+  }
+
+  /deep/ .el-loading-spinner {
+    top: 45%;
+    .el-icon-loading {
+      font-size: 40px;
+      color: #999;
+    }
+
+    .el-loading-text {
+      color: #333;
+    }
   }
 }
 
@@ -207,6 +364,51 @@ export default {
   }
   button {
     margin-left: 20px;
+  }
+}
+
+.is-hidden {
+  visibility: hidden;
+}
+
+// 结果信息
+.result-info {
+  text-align: center;
+  padding-top: 30px;
+
+  &__icon {
+    font-size: 40px;
+    color: $xr-color-primary;
+  }
+
+  &__des {
+    margin-top: 15px;
+    color: #333;
+    font-size: 14px;
+  }
+
+  &__detail {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #666;
+    &--all {
+      color: #333;
+      font-weight: 600;
+    }
+
+    &--suc {
+      color: $xr-color-primary;
+      font-weight: 600;
+    }
+
+    &--err {
+      color: #f94e4e;
+      font-weight: 600;
+    }
+  }
+
+  &__btn--err {
+    margin-top: 10px;
   }
 }
 </style>
