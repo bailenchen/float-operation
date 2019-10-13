@@ -88,10 +88,7 @@ export default {
         '#3ABCFB',
         '#FF6033'
       ]
-      const iconList = [{
-        icon: 'wk wk-approve',
-        color: '#9376FF'
-      }]
+      const iconList = []
       for (let index = 0; index < keys.length; index++) {
         const key = keys[index]
         const item = { icon: `wk wk-${key}` }

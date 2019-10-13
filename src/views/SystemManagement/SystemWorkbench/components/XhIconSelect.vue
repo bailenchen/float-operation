@@ -25,7 +25,7 @@ export default {
   props: {
     value: {
       type: String,
-      default: 'wk wk-approve,#9376FF'
+      default: ''
     },
     // 索引值 用于更新数据
     index: Number,
@@ -34,7 +34,7 @@ export default {
   },
   data() {
     return {
-      dataValue: 'wk wk-approve,#9376FF'
+      dataValue: ''
     }
   },
   computed: {
@@ -56,10 +56,7 @@ export default {
           color: temps[1]
         }
       } else {
-        return {
-          icon: 'wk wk-approve',
-          color: '#9376FF'
-        }
+        return null
       }
     }
   },

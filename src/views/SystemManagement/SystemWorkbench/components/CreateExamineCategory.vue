@@ -302,7 +302,7 @@ export default {
         name: '审批类型图标',
         setting: [],
         inputTips: '',
-        value: this.handle.data ? this.handle.data.icon || 'wk wk-approve,#9376FF' : 'wk wk-approve,#9376FF'
+        value: this.handle.data ? this.handle.data.icon || '' : ''
       })
       field.push({
         field: 'dept',
