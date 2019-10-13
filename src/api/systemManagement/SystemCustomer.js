@@ -190,9 +190,6 @@ export function crmAchievementDelete(data) {
   return request({
     url: 'achievement/deleteAchievement',
     method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
     data: data
   })
 }
