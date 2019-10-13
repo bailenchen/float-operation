@@ -12,7 +12,14 @@
         <flexbox-item class="select-item">
           <flexbox>
             <span class="select-label">考核部门</span>
+            <xh-user-cell
+              v-if="type == 'user'"
+              :radio="false"
+              class="select-condition"
+              placeholder="选择人员"
+              @value-change="userChange" />
             <xh-structure-cell
+              v-else
               :radio="false"
               class="select-condition"
               @value-change="structureChange" />
@@ -107,64 +114,44 @@
 
 <script>
 import XhStructureCell from '@/components/CreateCom/XhStructureCell'
+import XhUserCell from '@/components/CreateCom/XhUserCell'
 import moment from 'moment'
 
 export default {
   // 新建目标
   name: 'AddGoal',
   components: {
-    XhStructureCell
+    XhStructureCell,
+    XhUserCell
   },
   props: {
     visible: {
       type: Boolean,
       default: false
-    }
+    },
+    // department user
+    type: String
   },
   data() {
     return {
       loading: false,
-      showDialog: false,
 
       typeSelect: 1,
       dateSelect: '',
-      selectDep: [],
+      selectDepOrUser: [],
       totalGoal: '0',
 
-      quarterList: [
-        {
-          title: '第一季度',
-          all: 0,
-          first: 0,
-          second: 0,
-          third: 0
-        },
-        {
-          title: '第二季度',
-          all: 0,
-          first: 0,
-          second: 0,
-          third: 0
-        },
-        {
-          title: '第三季度',
-          all: 0,
-          first: 0,
-          second: 0,
-          third: 0
-        },
-        {
-          title: '第四季度',
-          all: 0,
-          first: 0,
-          second: 0,
-          third: 0
-        }
-      ]
+      quarterList: []
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    visible(value) {
+      if (value) {
+        this.resetData()
+      }
+    }
+  },
   mounted() {
     this.dateSelect = moment()
       .year()
@@ -177,15 +164,22 @@ export default {
      * 部门选择
      */
     structureChange(data) {
-      this.selectDep = data.value || []
+      this.selectDepOrUser = data.value || []
+    },
+
+    /**
+     * 员工
+     */
+    userChange(data) {
+      this.selectDepOrUser = data.value || []
     },
 
     /**
      * 确定
      */
     sureClick() {
-      if (!this.selectDep.length) {
-        this.$message.error('请选择考核部门')
+      if (!this.selectDepOrUser.length) {
+        this.$message.error(`请选择考核${this.type == 'user' ? '员工' : '部门'}`)
       } else {
 
       }
@@ -266,6 +260,47 @@ export default {
     closeClick() {
       this.$emit('update:visible', false)
       this.$emit('close')
+    },
+
+    /**
+     * 重置数据
+     */
+    resetData() {
+      this.typeSelect = 1
+      this.dateSelect = ''
+      this.selectDepOrUser = []
+      this.totalGoal = '0'
+
+      this.quarterList = [
+        {
+          title: '第一季度',
+          all: 0,
+          first: 0,
+          second: 0,
+          third: 0
+        },
+        {
+          title: '第二季度',
+          all: 0,
+          first: 0,
+          second: 0,
+          third: 0
+        },
+        {
+          title: '第三季度',
+          all: 0,
+          first: 0,
+          second: 0,
+          third: 0
+        },
+        {
+          title: '第四季度',
+          all: 0,
+          first: 0,
+          second: 0,
+          third: 0
+        }
+      ]
     }
   }
 }

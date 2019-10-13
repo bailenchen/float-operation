@@ -121,7 +121,9 @@
       </el-table>
     </div>
 
-    <add-goal :visible.sync="addViewShow" />
+    <add-goal
+      :visible.sync="addViewShow"
+      :type="tabType" />
   </div>
 </template>
 
@@ -210,6 +212,7 @@ export default {
   },
   methods: {
     tabTypeClick() {
+      this.isEdit = false
       if (this.tabType === 'department') {
         this.getAhievementList()
       } else if (this.tabType === 'user') {
