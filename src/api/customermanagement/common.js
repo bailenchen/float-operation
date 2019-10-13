@@ -339,6 +339,7 @@ export function crmDownImportErrorAPI(data) {
   return request({
     url: 'system/message/downImportError',
     method: 'post',
-    data: data
+    data: data,
+    responseType: 'blob'
   })
 }

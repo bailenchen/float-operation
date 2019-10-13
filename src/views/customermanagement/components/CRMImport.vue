@@ -308,10 +308,10 @@ export default {
     secondQueryNum() {
       crmQueryImportNumAPI({ messageId: this.messageId })
         .then(res => {
-          if (!res.data) {
+          if (res.data === null) {
             this.processData.status = 'end'
           } else {
-            this.processData.status = 'end'
+            this.processData.status = ''
             this.processData.count = res.data
           }
           console.log('res. num ---', res.data)
