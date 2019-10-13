@@ -5,7 +5,7 @@
     :show-close="showCancel"
     :close-on-click-modal="showCancel"
     title="批量导入"
-    width="550px"
+    width="750px"
     @close="closeView">
     <div class="dialog-body">
       <el-steps
@@ -78,7 +78,7 @@
       class="dialog-footer">
       <el-button
         :class="{ 'is-hidden': !showCancel }"
-        @click="closeView">取 消</el-button>
+        @click="closeView">取消</el-button>
       <el-button
         v-if="sureTitle"
         type="primary"
@@ -355,7 +355,7 @@ export default {
 
 .content-tips {
   font-size: 12px;
-  color: #a9a9a9;
+  color: #999;
   line-height: 15px;
 }
 
@@ -365,7 +365,7 @@ export default {
 
 .file-select {
   .el-input {
-    width: 300px;
+    width: 400px;
   }
   button {
     margin-left: 20px;

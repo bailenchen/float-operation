@@ -165,6 +165,38 @@ export function crmAchievementUpdate(data) {
   })
 }
 
+
+/**
+ * 新增业绩目标
+ * @param {*} data
+ */
+export function crmAchievementAdd(data) {
+  return request({
+    url: 'achievement/addAchievement',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
+
+/**
+ * 删除业绩目标
+ * @param {*} data
+ */
+export function crmAchievementDelete(data) {
+  return request({
+    url: 'achievement/deleteAchievement',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
 /**
  * 记录类型 数据
  * @param {*} data

@@ -7,7 +7,7 @@
     width="800px"
     custom-class="no-padding-dialog"
     @close="closeClick">
-    <div class="add-goal">
+    <div v-loading="loading" class="add-goal">
       <flexbox class="select-wrapper">
         <flexbox-item class="select-item">
           <flexbox>
@@ -113,6 +113,10 @@
 </template>
 
 <script>
+import {
+  crmAchievementAdd
+} from '@/api/systemManagement/SystemCustomer'
+
 import XhStructureCell from '@/components/CreateCom/XhStructureCell'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 import moment from 'moment'
@@ -153,9 +157,6 @@ export default {
     }
   },
   mounted() {
-    this.dateSelect = moment()
-      .year()
-      .toString()
   },
 
   beforeDestroy() {},
@@ -181,7 +182,38 @@ export default {
       if (!this.selectDepOrUser.length) {
         this.$message.error(`请选择考核${this.type == 'user' ? '员工' : '部门'}`)
       } else {
+        const params = {
+          type: this.type == 'user' ? 3 : 2, // 2 部门 3 员工
+          year: this.dateSelect,
+          status: this.typeSelect
+        }
 
+        for (let index = 0; index < this.quarterList.length; index++) {
+          const element = this.quarterList[index]
+          params[this.getUploadKey(index, 0)] = element.first
+          params[this.getUploadKey(index, 1)] = element.second
+          params[this.getUploadKey(index, 2)] = element.third
+        }
+
+        if (this.type == 'user') {
+          params.objIds = this.selectDepOrUser.map(item => {
+            return item.userId
+          })
+        } else {
+          params.objIds = this.selectDepOrUser.map(item => {
+            return item.id
+          })
+        }
+
+        this.loading = true
+        crmAchievementAdd(params).then(res => {
+          this.loading = false
+          this.$message.success('操作成功')
+          this.$emit('success')
+          this.closeClick()
+        }).catch(() => {
+          this.loading = false
+        })
       }
     },
 
@@ -254,6 +286,13 @@ export default {
         ['10月份', '11月份', '23月份']][index][type]
     },
 
+    getUploadKey(index, type) {
+      return [['january', 'february', 'march'],
+        ['april', 'may', 'june'],
+        ['july', 'august', 'september'],
+        ['october', 'november', 'december']][index][type]
+    },
+
     /**
      * 关闭
      */
@@ -267,7 +306,9 @@ export default {
      */
     resetData() {
       this.typeSelect = 1
-      this.dateSelect = ''
+      this.dateSelect = moment()
+        .year()
+        .toString()
       this.selectDepOrUser = []
       this.totalGoal = '0'
 

@@ -131,7 +131,8 @@ export default {
       if (command == 'out') {
         this.$emit('on-export')
       } else if (command == 'enter') {
-        this.showCRMImport = true
+        // this.showCRMImport = true
+        this.$bus.emit('import-crm-bus', this.crmType)
       }
     },
     createClick() {

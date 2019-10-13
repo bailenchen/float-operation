@@ -306,3 +306,39 @@ export function crmActivityAddAPI(data) {
     data: data
   })
 }
+
+/**
+ * 查看当前导入数量
+ * @param {*} data
+ */
+export function crmQueryImportNumAPI(data) {
+  return request({
+    url: 'system/message/queryImportNum',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 停止时候的状态
+ * @param {*} data
+ */
+export function crmQueryImportInfoAPI(data) {
+  return request({
+    url: 'system/message/queryImportInfo',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 查看错误数据接口
+ * @param {*} data
+ */
+export function crmDownImportErrorAPI(data) {
+  return request({
+    url: 'system/message/downImportError',
+    method: 'post',
+    data: data
+  })
+}

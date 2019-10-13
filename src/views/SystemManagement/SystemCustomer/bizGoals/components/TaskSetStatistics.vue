@@ -8,10 +8,10 @@
         @tab-click="tabTypeClick">
         <el-tab-pane
           label="部门目标设置"
-          name="department"/>
+          name="department" />
         <el-tab-pane
           label="员工目标设置"
-          name="user"/>
+          name="user" />
       </el-tabs>
     </div>
     <div class="handle-bar">
@@ -20,7 +20,7 @@
         :clearable="false"
         type="year"
         value-format="yyyy"
-        placeholder="选择年"/>
+        placeholder="选择年" />
       <el-select
         v-model="typeSelect"
         placeholder="请选择">
@@ -28,7 +28,7 @@
           v-for="item in [{label:'合同金额', value:1},{label:'回款金额', value:2}]"
           :key="item.value"
           :label="item.label"
-          :value="item.value"/>
+          :value="item.value" />
       </el-select>
       <el-cascader
         :options="deptList"
@@ -37,7 +37,7 @@
         v-model="structuresSelectValue"
         placeholder="选择部门"
         change-on-select
-        @change="structuresValueChange"/>
+        @change="structuresValueChange" />
       <el-select
         v-if="tabType === 'user'"
         v-model="userSelectValue"
@@ -47,7 +47,7 @@
           v-for="item in userOptions"
           :key="item.userId"
           :label="item.realname"
-          :value="item.userId"/>
+          :value="item.userId" />
       </el-select>
       <el-button
         type="primary"
@@ -101,7 +101,16 @@
           width="150">
           <template slot-scope="scope">
             <div
-              v-if="item.field === 'name'
+              v-if="item.field === 'name' && scope.$index!==list.length -1 "
+              class="table-show-item">
+              <i
+                :class="{ 'is-show': isEdit }"
+                class="wk wk-delete"
+                @click="deleteAchievement(scope.row, scope.$index)" />
+              {{ scope.row[item.field] }}
+            </div>
+            <div
+              v-else-if="item.field === 'name'
                 || item.field === 'yeartarget'
                 || item.field === 'first'
                 || item.field === 'second'
@@ -115,7 +124,7 @@
               v-model="scope.row[item.field]"
               type="number"
               @input="handleInputEdit('change', scope)"
-              @blur="handleInputEdit('blur', scope)"/>
+              @blur="handleInputEdit('blur', scope)" />
           </template>
         </el-table-column>
       </el-table>
@@ -123,7 +132,8 @@
 
     <add-goal
       :visible.sync="addViewShow"
-      :type="tabType" />
+      :type="tabType"
+      @success="tabTypeClick" />
   </div>
 </template>
 
@@ -131,7 +141,8 @@
 import { depList, usersList } from '@/api/common'
 import {
   crmAchievementIndex,
-  crmAchievementUpdate
+  crmAchievementUpdate,
+  crmAchievementDelete
 } from '@/api/systemManagement/SystemCustomer'
 
 import moment from 'moment'
@@ -276,7 +287,7 @@ export default {
       }
 
       // 从下属数据1 开始循环
-      for (let index = 1; index < this.list.length; index++) {
+      for (let index = 0; index < this.list.length; index++) {
         const element = this.list[index]
         for (
           let fieldIndex = 0;
@@ -576,7 +587,7 @@ export default {
       } else {
         cuf = new Array(s.length)
         for (i = 0; i !== s.length; ++i) {
-          cuf[i] = s.charCodeAt(i) & 0xFF
+          cuf[i] = s.charCodeAt(i) & 0xff
         }
         return cuf
       }
@@ -609,6 +620,40 @@ export default {
       } else {
         return { textAlign: 'center' }
       }
+    },
+
+    /**
+     * 删除目标
+     */
+    deleteAchievement(data, index) {
+      this.$confirm('确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.loading = true
+          crmAchievementDelete({ achievementId: data.achievementId })
+            .then(res => {
+              this.loading = false
+              this.$message.success('操作成功')
+
+              this.list.splice(index, 1)
+              this.list.pop()
+              if (this.list.length) {
+                this.getSubTotalModel()
+              }
+            })
+            .catch(() => {
+              this.loading = false
+            })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
     }
   }
 }
@@ -677,5 +722,19 @@ export default {
   height: 34px;
   line-height: 34px;
   text-align: center;
+}
+
+.wk-delete {
+  cursor: pointer;
+  opacity: 0;
+  color: #666;
+}
+
+.wk-delete.is-show {
+  opacity: 1;
+}
+
+.wk-delete:hover {
+  color: #f56c6c;
 }
 </style>

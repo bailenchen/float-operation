@@ -6,19 +6,35 @@
       :img-data="previewImgs"
       :select-index="previewIndex"
       @close-viewer="showPreviewImg=false"/>
+    <xr-import
+      v-if="showFixImport"
+      :process-status="crmImportStatus"
+      @click.native="fixImportClick"/>
+    <c-r-m-import
+      :show.sync="showCRMImport"
+      :crm-type="crmType"
+      @status="crmImportChange"
+      @close="crmImportClose"/>
   </div>
 </template>
 
 <script>
 /** 常用图片预览创建组件 */
 import VuePictureViewer from '@/components/vuePictureViewer/index'
+import XrImport from '@/components/xr-import'
+import XrImportMixins from '@/components/xr-import/XrImportMixins'
+import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
+
 
 export default {
   name: 'App',
   components: {
-    VuePictureViewer
+    VuePictureViewer,
+    XrImport,
+    CRMImport
   },
+  mixins: [XrImportMixins],
   data() {
     return {
       showPreviewImg: false,
