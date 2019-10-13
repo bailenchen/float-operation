@@ -192,7 +192,7 @@ export default {
         this.showCrmDetail = true
       } else if (type == 'reject' || type == 'pass' || type == 'withdraw') {
         // 审核操作 1 审核通过 2 审核拒绝 4 已撤回
-        this.rowID = data.examineId
+        this.rowID = data.catagoryId
         this.examineStatus = {
           pass: 1,
           reject: 2,
