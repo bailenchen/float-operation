@@ -7,8 +7,9 @@
     popper-class="no-padding-popover"
     trigger="click">
     <xh-structure
-      v-if="!disabled && showPopover"
+      v-if="!disabled"
       ref="structure"
+      :show="showPopover"
       :radio="radio"
       :selected-data="dataValue"
       @changeCheckout="checkStructure"/>
@@ -91,10 +92,10 @@ export default {
     /** 删除 */
     deletestru(item, index) {
       this.dataValue.splice(index, 1)
-      this.$refs.structure.parentRemoveCheck({
-        data: this.dataValue,
-        index: index
-      })
+      // this.$refs.structure.parentRemoveCheck({
+      //   data: this.dataValue,
+      //   index: index
+      // })
       this.$emit('value-change', {
         index: this.index,
         value: this.dataValue

@@ -9,8 +9,7 @@
         placeholder="搜索部门名称"
         size="small"
         prefix-icon="el-icon-search"
-        class="search-input"
-        @input="inputchange"/>
+        class="search-input"/>
       <div
         v-loading="loading"
         class="search-list">
@@ -26,8 +25,7 @@
           </el-breadcrumb-item>
         </el-breadcrumb>
         <flexbox
-          v-for="(item, index) in showlist"
-          v-if="item.show"
+          v-for="(item, index) in showDataList"
           :key="index"
           class="stru-list">
           <el-checkbox
@@ -57,18 +55,22 @@ export default {
   name: 'XhStructure', // 新建 structure
   components: {},
   props: {
+    show: {
+      type: Boolean,
+      default: true
+    },
     value: {
       type: Array,
       default: () => {
         return []
       }
     },
-    /** 多选框 只能选一个 */
+    // 多选框 只能选一个
     radio: {
       type: Boolean,
       default: false
     },
-    /** 已选信息 */
+    // 已选信息
     selectedData: {
       type: Array,
       default: () => {
@@ -80,28 +82,49 @@ export default {
     return {
       breadcrumbList: [], // 面包屑数据
       selectItems: [], // 选择项
-      showlist: [], // 展示数据
+      dataList: [], // 展示数据
       loading: false, // 加载动画
       searchInput: ''
     }
   },
-  computed: {},
-  watch: {},
+  computed: {
+    showDataList() {
+      return this.dataList.filter(item => {
+        return item.name.indexOf(this.searchInput) != -1
+      })
+    }
+  },
+  watch: {
+    selectedData() {
+      this.selectItems = this.selectedData
+      this.dataList = this.handelCheck(this.dataList)
+    },
+
+    show(value) {
+      if (this.dataList && this.dataList.length == 0) {
+        this.getStructureList()
+      }
+    }
+  },
   mounted() {
     this.selectItems = this.selectedData
-    // 部门列表数据
-    this.getStructureList()
+    if (this.show) {
+      this.getStructureList()
+    }
   },
   methods: {
-    // 部门列表数据
+    /**
+     * 部门列表数据
+     */
     getStructureList() {
       this.loading = true
       depList({
         type: 'tree'
       })
         .then(res => {
-          this.showlist = this.handelCheck(this.addIsCheckProp(res.data))
-          this.breadcrumbList.push({ label: '全部', data: this.showlist })
+          const allList = this.handelCheck(this.addIsCheckProp(res.data))
+          this.dataList = allList
+          this.breadcrumbList.push({ label: '全部', data: allList })
 
           this.loading = false
         })
@@ -109,18 +132,24 @@ export default {
           this.loading = false
         })
     },
-    // 面包屑点击事件
+
+    /**
+     * 面包屑点击事件
+     */
     breadcrumbBtn(item, index) {
       if (this.radio && this.selectItems.length == 1) return
       if (index + 1 <= this.breadcrumbList.length - 1) {
         this.breadcrumbList.splice(index + 1, this.breadcrumbList.length - 1)
       }
-      this.showlist = []
-      this.showlist = this.handelCheck(item.data)
+      this.dataList = []
+      this.dataList = this.handelCheck(item.data)
     },
-    // 点击checkbox选中
+
+    /**
+     * 点击checkbox选中
+     */
     checkChange(item, aindex) {
-      this.$set(this.showlist, aindex, item)
+      this.$set(this.dataList, aindex, item)
       var removeIndex = -1
       for (let index = 0; index < this.selectItems.length; index++) {
         const element = this.selectItems[index]
@@ -134,10 +163,10 @@ export default {
         this.selectItems.splice(removeIndex, 1)
       }
 
-      /** 单选逻辑 */
+      // 单选逻辑
       if (this.radio) {
         if (item.isCheck) {
-          this.showlist = this.showlist.map(function(element, index, array) {
+          this.dataList = this.dataList.map(function(element, index, array) {
             if (element.id == item.id) {
               element.disabled = false
             } else {
@@ -146,7 +175,7 @@ export default {
             return element
           })
         } else {
-          this.showlist = this.showlist.map(function(item, index, array) {
+          this.dataList = this.dataList.map(function(item, index, array) {
             item.disabled = false
             return item
           })
@@ -155,14 +184,16 @@ export default {
 
       this.$emit('changeCheckout', this.selectItems)
     },
-    /** 数据重新刷新时 循环标记展示数组 */
+
+    /**
+     * 数据重新刷新时 循环标记展示数组
+     */
     handelCheck(list) {
       var self = this
       list = list.map(function(item, index, array) {
         item.isCheck = self.selectItemsHasItem(item)
         return item
       })
-      this.inputchange()
       return list
     },
     selectItemsHasItem(item) {
@@ -179,17 +210,23 @@ export default {
       }
       return hasItem
     },
-    /**  */
-    /** 点击进入子数组 */
+
+
+    /**
+     * 点击进入子数组
+     */
     enterChildren(item) {
       // 保证单选环境下 没有选中 才可进入children
       if (item.children && !(this.radio && this.selectItems.length == 1)) {
-        this.showlist = []
-        this.showlist = this.handelCheck(this.addIsCheckProp(item.children))
-        this.breadcrumbList.push({ label: item.label, data: this.showlist })
+        this.dataList = []
+        this.dataList = this.handelCheck(this.addIsCheckProp(item.children))
+        this.breadcrumbList.push({ label: item.label, data: this.dataList })
       }
     },
-    /** 给默认数据加isCheck属性 */
+
+    /**
+     * 给默认数据加isCheck属性
+     */
     addIsCheckProp(list) {
       if (list.length > 0) {
         var item = list[0]
@@ -206,35 +243,10 @@ export default {
       }
       return list
     },
-    // 父组件 选中
-    parentRemoveCheck(data) {
-      this.selectItems = data.data
-      var temps = this.showlist
-      this.showlist = []
-      this.showlist = this.handelCheck(temps)
-      /** 单选逻辑 */
-      if (this.radio) {
-        this.showlist = this.showlist.map(function(item, index, array) {
-          item.disabled = false
-          return item
-        })
-      }
-    },
-    /** 搜索 */
-    inputchange(val) {
-      this.showlist = this.showlist.map(function(item, index, array) {
-        if (item.name.indexOf(val) != -1) {
-          item.show = true
-        } else {
-          item.show = false
-        }
-        return item
-      })
-    },
 
     clearAll() {
       this.selectItems = []
-      this.showlist = this.showlist.map(item => {
+      this.dataList = this.dataList.map(item => {
         item.isCheck = false
         return item
       })

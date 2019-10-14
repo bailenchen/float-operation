@@ -9,8 +9,7 @@
         placeholder="搜索成员"
         size="small"
         prefix-icon="el-icon-search"
-        class="search-input"
-        @input="inputchange" />
+        class="search-input"/>
       <div
         v-loading="loading"
         class="search-list">
@@ -52,6 +51,10 @@ export default {
   name: 'XhUser', // 新建 user
   components: {},
   props: {
+    show: {
+      type: Boolean,
+      default: true
+    },
     radio: {
       type: Boolean,
       default: false
@@ -90,7 +93,7 @@ export default {
   computed: {
     showList() {
       return this.list.filter(item => {
-        return !item.hidden
+        return item.realname.indexOf(this.searchInput) != -1
       })
     },
 
@@ -101,10 +104,18 @@ export default {
   watch: {
     selectedData: function(value) {
       this.checkItems(value)
+    },
+
+    show(value) {
+      if (this.list && this.list.length == 0) {
+        this.getUserList()
+      }
     }
   },
   mounted() {
-    this.getUserList()
+    if (this.show) {
+      this.getUserList()
+    }
   },
   methods: {
     /**
@@ -204,20 +215,6 @@ export default {
         return item.userId
       })
       this.refreshAllCheck(this.selectIds.length)
-    },
-
-    /**
-     * 搜索
-     */
-    inputchange(val) {
-      this.list = this.list.map(function(item, index, array) {
-        if (item.realname.indexOf(val) != -1) {
-          item.hidden = false
-        } else {
-          item.hidden = true
-        }
-        return item
-      })
     },
 
     /**

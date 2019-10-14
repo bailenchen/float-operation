@@ -7,8 +7,9 @@
     popper-class="no-padding-popover"
     trigger="click">
     <xh-user
-      v-if="!disabled&&showPopover"
+      v-if="!disabled"
       ref="xhuser"
+      :show="showPopover"
       v-bind="$attrs"
       :selected-data="dataValue"
       :radio="radio"
@@ -55,8 +56,8 @@ export default {
   mixins: [arrayMixin],
   inheritAttrs: false,
   props: {
+    // 是否单选
     radio: {
-      // 是否单选
       type: Boolean,
       default: true
     },

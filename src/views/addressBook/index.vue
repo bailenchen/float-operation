@@ -20,6 +20,7 @@
       <flexbox class="filter">
         <span class="filter__label">选择部门</span>
         <xh-structure-cell
+          radio
           class="xh-structure-cell"
           @value-change="structureChange" />
       </flexbox>
