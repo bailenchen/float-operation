@@ -522,32 +522,10 @@ export default {
     .select-input > .el-input {
       margin: 10px 0;
     }
-  }
-  .select-input /deep/ .el-tabs {
-    /deep/ .el-tabs__nav-wrap {
-      padding: 0 12px;
-    }
-    .el-tabs__nav-wrap::after {
-      height: 1px;
-    }
 
-    /deep/ .el-tabs__header {
-      margin-bottom: 12px;
-    }
-
-    /deep/ .el-tabs__item {
-      font-size: 12px;
-      color: #333;
-      padding-right: 0;
-    }
-
-    .el-tabs__content {
-      margin: 0 12px;
-      height: 220px;
-      .el-checkbox {
-        margin-left: 0;
-        margin-right: 10px;
-      }
+    .el-checkbox {
+      margin-left: 0;
+      margin-right: 10px;
     }
     .el-breadcrumb {
       margin-bottom: 15px;
@@ -565,10 +543,8 @@ export default {
         cursor: pointer;
       }
     }
-    .el-tab-pane {
-      height: 100%;
-    }
   }
+
   .checked-content {
     flex: 1;
     .checked-top {
@@ -609,6 +585,33 @@ export default {
       }
     }
   }
+}
+
+.el-tabs /deep/ .el-tabs__nav-wrap {
+  padding: 0 12px;
+}
+
+.el-tabs /deep/ .el-tabs__nav-wrap::after {
+  height: 1px;
+}
+
+.el-tabs /deep/ .el-tabs__header {
+  margin-bottom: 12px;
+}
+
+.el-tabs /deep/ .el-tabs__item {
+  font-size: 12px;
+  color: #333;
+  padding-right: 0;
+}
+
+.el-tabs /deep/ .el-tab-pane {
+  height: 100%;
+}
+
+.el-tabs /deep/ .el-tabs__content {
+  margin: 0 12px;
+  height: 220px;
 }
 
 .popover-footer {
@@ -678,7 +681,7 @@ export default {
 
 .search-input {
   /deep/ .el-input__inner {
-    background-color: #F4F4F4;
+    background-color: #f4f4f4;
     border: none;
   }
 }

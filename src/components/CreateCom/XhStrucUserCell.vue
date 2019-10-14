@@ -4,7 +4,9 @@
     :dep-checked-data="dataStrucs"
     :user-checked-data="dataUsers"
     @popoverSubmit="popoverSubmit">
-    <div slot="membersDep">
+    <div
+      v-if="!$slots.reference"
+      slot="membersDep">
       <flexbox
         wrap="wrap"
         class="structure-container">
@@ -21,6 +23,10 @@
         <div class="add-item">+添加</div>
       </flexbox>
     </div>
+    <slot
+      v-else
+      slot="reference"
+      name="reference" />
   </members-dep>
 
 </template>
