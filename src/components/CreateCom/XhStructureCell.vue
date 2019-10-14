@@ -85,6 +85,7 @@ export default {
       }
       this.dataValue = data
       this.$emit('value-change', {
+        item: this.item,
         index: this.index,
         value: data
       })
@@ -92,11 +93,8 @@ export default {
     /** 删除 */
     deletestru(item, index) {
       this.dataValue.splice(index, 1)
-      // this.$refs.structure.parentRemoveCheck({
-      //   data: this.dataValue,
-      //   index: index
-      // })
       this.$emit('value-change', {
+        item: this.item,
         index: this.index,
         value: this.dataValue
       })

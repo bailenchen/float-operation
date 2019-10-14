@@ -94,6 +94,10 @@ export default {
      * 选中
      */
     checkUsers(data) {
+      if (this.radio && data && data.length) {
+        this.showPopover = false
+      }
+
       this.dataValue = data
       this.$emit('value-change', {
         item: this.item,
