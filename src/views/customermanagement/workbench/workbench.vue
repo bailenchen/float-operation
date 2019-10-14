@@ -1,15 +1,21 @@
 <template>
   <div ref="workbench" class="crm-workbench">
     <flexbox class="head">
-      <flexbox class="user-box">
-        <div
-          v-photo="avatarData"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(avatarData.img || '')"
-          class="user-img div-photo" />
-        <span class="username">{{ filterText }}</span>
-        <span class="el-icon-caret-bottom icon" />
-      </flexbox>
-
+      <members-dep
+        :dep-checked-data="filterValue.strucs"
+        :user-checked-data="filterValue.users"
+        @popoverSubmit="userStrucSelect">
+        <flexbox slot="membersDep" class="user-box">
+          <i v-if="avatarData.showIcon" class="wk wk-multi-user user-icon" />
+          <div
+            v-photo="avatarData"
+            v-lazy:background-image="$options.filters.filterUserLazyImg(avatarData.img || '')"
+            v-else
+            class="user-img div-photo" />
+          <span class="username">{{ filterText }}</span>
+          <span class="el-icon-caret-bottom icon" />
+        </flexbox>
+      </members-dep>
       <time-type-select
         :width="190"
         @change="timeTypeChange"/>
@@ -102,6 +108,12 @@
 </template>
 
 <script>
+import {
+  crmIndexIndex,
+  crmIndexIndexListAPI,
+  crmQueryRecordConuntAPI
+} from '@/api/customermanagement/workbench'
+
 import { mapGetters } from 'vuex'
 import SaleStatistics from './components/saleStatistics'
 import DataStatistics from './components/dataStatistics'
@@ -110,12 +122,7 @@ import SalesFunnel from './components/salesFunnel'
 import PerformanceChart from './components/performanceChart'
 import timeTypeSelect from '@/components/timeTypeSelect'
 import ReportList from './components/reportList'
-
-import {
-  crmIndexIndex,
-  crmIndexIndexListAPI,
-  crmQueryRecordConuntAPI
-} from '@/api/customermanagement/workbench'
+import membersDep from '@/components/selectEmployee/membersDep'
 
 /**
  * TODO 2、员工部门筛选选择，
@@ -131,7 +138,8 @@ export default {
     SalesFunnel,
     PerformanceChart,
     timeTypeSelect,
-    ReportList
+    ReportList,
+    membersDep
   },
   data() {
     return {
@@ -188,6 +196,7 @@ export default {
       const strucs = this.filterValue.strucs || []
       if (users.length === 1 && strucs.length === 0) return users[0]
       return {
+        showIcon: true,
         realname: '',
         img: ''
       }
@@ -246,6 +255,15 @@ export default {
       this.filterValue.timeLine = data
       this.getBriefData()
     },
+
+    /**
+     * 员工部门选择
+     */
+    userStrucSelect(users, strucs) {
+      this.filterValue.users = users
+      this.filterValue.strucs = strucs
+    },
+
     /**
      * 获取请求参数
      */
@@ -371,6 +389,13 @@ export default {
         margin-right: 20px;
         display: flex;
         cursor: pointer;
+        .user-icon {
+          background: $xr-color-primary;
+          color: white;
+          padding: 5px 6px;
+          border-radius: 50%;
+        }
+
         .user-img {
           width: 28px;
           height: 28px;
