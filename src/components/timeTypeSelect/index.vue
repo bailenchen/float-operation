@@ -47,7 +47,7 @@
       class="type-select">
       <i
         slot="suffix"
-        :class="['el-input__icon', 'el-icon-' + iconClass]"/>
+        :class="['el-icon-arrow-up', { 'is-reverse' : showTypePopover}]"/>
     </el-input>
   </el-popover>
 </template>
@@ -87,9 +87,6 @@ export default {
     }
   }, // 时间类型选择
   computed: {
-    iconClass() {
-      return this.showTypePopover ? 'arrow-up' : 'arrow-down'
-    },
     typeShowValue() {
       if (this.sureCustomContent) {
         if (this.startTime || this.endTime) {
@@ -188,5 +185,20 @@ export default {
       float: right;
     }
   }
+}
+
+.el-icon-arrow-up {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  transition: transform .3s;
+  color: #c0c4cc;
+  font-size: 14px;
+  transition: transform .3s;
+  transform: rotate(180deg);
+  cursor: pointer;
+}
+.el-icon-arrow-up.is-reverse {
+  transform: rotate(0deg);
 }
 </style>

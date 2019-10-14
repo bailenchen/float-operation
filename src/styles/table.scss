@@ -109,12 +109,12 @@
 }
 
 // 右侧边线
-.el-table::after {
+.n-table--border::after {
   display: none;
 }
 
 // 底部边线
-.el-table::before {
+.n-table--border::before {
   display: none;
 }
 
