@@ -825,7 +825,7 @@ export default {
   width: 280px;
   background: #fff;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   height: 100%;
   position: absolute;
   top: 0;
@@ -848,7 +848,7 @@ export default {
 .content-box {
   background: #fff;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   margin-left: 295px;
   height: 100%;
   overflow: hidden;

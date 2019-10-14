@@ -49,7 +49,7 @@ export default {
     display: inline-block;
     font-size: 12px;
     padding: 6px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     color: white;
   }
 

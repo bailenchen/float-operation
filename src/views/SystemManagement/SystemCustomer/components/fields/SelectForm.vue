@@ -37,7 +37,7 @@ export default {
     font-size: 13px;
     .select-box {
       border: 1px solid #dcdfe6;
-      border-radius: 2px;
+      border-radius: $xr-border-radius-base;
       padding: 10px;
       width: 250px;
       color: #333;

@@ -179,7 +179,7 @@ export default {
   padding: 40px 30px 20px 30px;
   background-color: white;
   border: 1px solid #e6e6e6;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   position: relative;
 }
 

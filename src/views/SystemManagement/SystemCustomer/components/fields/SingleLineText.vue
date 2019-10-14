@@ -34,7 +34,7 @@ export default {
   height: 32px;
   padding: 0 10px;
   border: 1px solid #dcdfe6;
-  border-radius: 2px;
+  border-radius: $xr-border-radius-base;
   background: white;
   font-size: 14px;
   @include left;

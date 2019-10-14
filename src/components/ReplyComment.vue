@@ -112,7 +112,7 @@ export default {
 <style scoped lang="scss">
   .reply-comment {
     border: 1px solid #e6e6e6;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     overflow: hidden;
     .btn-group {
       background-color: white;
@@ -141,7 +141,7 @@ export default {
       font-size: 13px;
       color: #c0c4cc;
       background-color: white;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       padding: 9px 8px;
       cursor: pointer;
     }

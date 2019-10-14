@@ -266,7 +266,7 @@ export default {
     height: 40px;
     text-align: center;
     line-height: 40px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     margin-right: 20px;
     background-color: #5864ff;
     .wk {

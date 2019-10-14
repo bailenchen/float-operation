@@ -453,7 +453,7 @@ export default {
     height: 40px;
     text-align: center;
     line-height: 40px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     margin-right: 20px;
     .wk {
       color: white;
@@ -638,7 +638,7 @@ export default {
 .examine-section {
   padding: 10px 20px;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 }
 
 .d-view {

@@ -506,7 +506,7 @@ export default {
 .wrapper {
   background-color: white;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   min-width: 1000px;
   overflow: hidden;
   flex: 1;

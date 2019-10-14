@@ -203,7 +203,7 @@ export default {
   .cf-flow-item-content {
     position: relative;
     margin-top: 15px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     background-color: #f7f8fa;
     font-size: 12px;
     color: #929293;

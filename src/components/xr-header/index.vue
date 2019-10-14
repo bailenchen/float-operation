@@ -75,7 +75,7 @@ export default {
     height: 30px;
     text-align: center;
     line-height: 30px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     margin-right: 10px;
     .wk {
       color: white;

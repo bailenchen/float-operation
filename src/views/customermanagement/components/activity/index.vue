@@ -628,7 +628,7 @@ export default {
       top: 24px;
       background-color: #487dff;
       color: white;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       padding: 4px;
       font-size: 12px;
       z-index: 1;
@@ -703,6 +703,6 @@ export default {
   margin-right: 5px;
   padding: 3px;
   font-size: 12px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 }
 </style>

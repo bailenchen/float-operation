@@ -49,7 +49,7 @@ export default {
 <style lang="scss" scoped>
 .base-tabs-head {
   background-color: white;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   border: 1px solid $xr-border-line-color;
   height: 50px;
 }

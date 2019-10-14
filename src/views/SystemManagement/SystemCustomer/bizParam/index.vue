@@ -100,13 +100,13 @@ export default {
   margin-right: 10px;
   padding-top: 20px;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 
 }
 .system-view-content {
   flex: 1;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   background: #fff;
   display: flex;
   flex-direction: column;

@@ -1837,7 +1837,7 @@ $btn-b-hover-color: #eff4ff;
   font-size: 12px;
   color: $btn-color;
   background-color: $btn-b-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   display: inline-block;
   padding: 3px 10px;
   cursor: pointer;
@@ -1913,7 +1913,7 @@ $btn-b-hover-color: #eff4ff;
   font-size: 14px;
   padding: 8px;
   background-color: #f8faff;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   margin: 3px 0;
   position: relative;
 

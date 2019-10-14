@@ -34,7 +34,7 @@
         line-height: 1;
         color: $xr-color-primary;
         border: 1px solid $xr-color-primary;
-        border-radius: 4px;
+        border-radius: $xr-border-radius-base;
         padding: 8px;
         cursor: pointer;
         &:hover {

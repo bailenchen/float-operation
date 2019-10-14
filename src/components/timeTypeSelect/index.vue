@@ -154,7 +154,7 @@ export default {
         display: inline-block;
         width: 8px;
         height: 8px;
-        border-radius: 4px;
+        border-radius: $xr-border-radius-base;
         margin-right: 5px;
         background-color: transparent;
       }

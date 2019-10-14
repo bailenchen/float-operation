@@ -1355,7 +1355,7 @@ export default {
   margin-right: 10px;
   background: #fff;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 
   &__title {
     padding: 15px;
@@ -1424,7 +1424,7 @@ export default {
 .system-view-table {
   background: #fff;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   position: absolute;
   top: 0;
   left: 295px;
@@ -1556,7 +1556,7 @@ export default {
     height: 40px;
     padding: 0 15px;
     position: relative;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
 
     .wk {
       font-size: 14px;

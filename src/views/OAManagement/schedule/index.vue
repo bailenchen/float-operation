@@ -227,7 +227,7 @@ export default {
 .task-calendars {
   position: relative;
   border: 1px solid #e6e6e6;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   .hover-dialog {
     display: none;
     padding: 15px;

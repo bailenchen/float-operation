@@ -267,6 +267,6 @@ export default {
 
 .list-cell {
   margin-bottom: 20px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 }
 </style>

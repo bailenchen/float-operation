@@ -593,7 +593,7 @@ export default {
         line-height: 28px;
         font-size: 12px;
         padding: 0 5px;
-        border-radius: 4px;
+        border-radius: $xr-border-radius-base;
         color: #333;
         margin: 0 10px 10px 0;
 

@@ -172,7 +172,7 @@ export default {
   font-size: 12px;
   background-color: #F3F7FF;
   color: #666;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   &:hover {
     background-color: $xr-color-primary;
     color: white;

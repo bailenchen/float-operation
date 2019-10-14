@@ -83,7 +83,7 @@ export default {
       background-color: white;
       padding-bottom: 100px;
       border: 1px solid #e6e6e6;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       margin-right: 20px;
       .user-box {
         width: 376px;
@@ -123,7 +123,7 @@ export default {
     .right {
       flex: 1;
       border: 1px solid #e6e6e6;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       overflow: hidden;
     }
   }

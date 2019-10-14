@@ -147,7 +147,7 @@ export default {
 
 .cell {
   padding: 12px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   position: relative;
   border: 1px solid #EBEEF5;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
@@ -194,7 +194,7 @@ export default {
 
 .mark {
   display: inline-block;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   padding: 4px 8px;
 
   &-suc {

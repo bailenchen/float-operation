@@ -435,7 +435,7 @@ export default {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     z-index: 100;
     padding: 20px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     border: 1px solid #ebeef5;
     background-color: #fff;
     .header {

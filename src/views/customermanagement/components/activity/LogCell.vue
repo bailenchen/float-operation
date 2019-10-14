@@ -382,7 +382,7 @@ export default {
     color: #666666;
     height: 40px;
     line-height: 40px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     font-size: 12px;
     margin-right: 10px;
   }

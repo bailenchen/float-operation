@@ -127,7 +127,7 @@ export default {
   min-height: 34px;
   margin: 3px 0;
   position: relative;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   font-size: 12px;
   border: 1px solid #e6e6e6;
   color: #333333;
@@ -138,7 +138,7 @@ export default {
   .user-item {
     padding: 5px 15px 5px 5px;
     background-color: #F3F7FF;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     margin: 3px;
     max-width: 60px;
     position: relative;
@@ -196,7 +196,7 @@ export default {
   font-size: 12px;
   background-color: #F3F7FF;
   color: #666;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   &:hover {
     background-color: $xr-color-primary;
     color: white;

@@ -199,7 +199,7 @@ export default {
 .list-cell {
   border: 1px solid #e6e6e6;
   margin-bottom: 20px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 }
 
 .d-view {

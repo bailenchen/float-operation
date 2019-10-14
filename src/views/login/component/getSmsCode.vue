@@ -234,7 +234,7 @@ export default {
     font-size: 12px;
     color: white;
     background-color: #3e6bea;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     border: 0 none;
     padding: 0;
     margin-left: 20px;

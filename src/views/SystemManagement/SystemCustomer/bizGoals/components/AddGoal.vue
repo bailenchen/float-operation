@@ -406,7 +406,7 @@ export default {
 // 设置信息
 .set-item {
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   font-size: 12px;
 
   /deep/ .el-input__inner {

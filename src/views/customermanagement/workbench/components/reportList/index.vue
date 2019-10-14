@@ -616,7 +616,7 @@ export default {
 .status_button {
   padding: 1px 6px;
   border: 1px solid #e6e6e6;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   display: inline-block;
   font-size: 12px;
   margin: 0 auto;

@@ -306,7 +306,7 @@ export default {
       color: white;
       font-size: 12px;
       padding: 2px 8px;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       margin-right: 20px;
     }
   }
@@ -376,7 +376,7 @@ export default {
   color: #999999;
   font-size: 12px;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   background-color: #F1F1F1;
   margin-right: 10px;
 }

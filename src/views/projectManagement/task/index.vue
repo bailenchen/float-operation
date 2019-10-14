@@ -454,7 +454,7 @@ export default {
     max-height: 100%;
     padding: 10px;
     vertical-align: top;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     background: #fff;
     margin-right: 14px;
     position: relative;

@@ -333,7 +333,7 @@ export default {
 
 .menu-item-content {
   width: 100%;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   line-height: 36px;
   margin: 5px 0;
   padding-left: 10px;
@@ -368,7 +368,7 @@ export default {
     box-sizing: border-box;
     padding: 0 15px;
     height: 36px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     background-color: rgba($color: #fff, $alpha: 0.1);
     color: #999;
 

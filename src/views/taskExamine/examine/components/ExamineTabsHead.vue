@@ -114,7 +114,7 @@ export default {
   margin-right: 5px;
   padding: 3px;
   font-size: 12px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 }
 
 .xr-btn--orange {

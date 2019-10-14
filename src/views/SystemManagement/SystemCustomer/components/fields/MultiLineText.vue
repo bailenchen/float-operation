@@ -37,7 +37,7 @@ export default {
 
   padding: 10px 10px 15px 10px;
   border: 1px solid #dcdfe6;
-  border-radius: 2px;
+  border-radius: $xr-border-radius-base;
   color: #333;
   background: white;
   font-size: 14px;

@@ -379,7 +379,7 @@ export default {
   .nav-box {
     margin-bottom: 15px;
     background: #fff;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     .title {
       font-size: 16px;
       height: 50px;

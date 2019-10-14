@@ -239,7 +239,7 @@ export default {
   bottom: 0;
   z-index: 1;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   overflow-y: auto;
   .side-item {
     position: relative;
@@ -259,7 +259,7 @@ export default {
   overflow: hidden;
   background-color: white;
   border: 1px solid #e6e6e6;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 }
 
 .side-item-default {

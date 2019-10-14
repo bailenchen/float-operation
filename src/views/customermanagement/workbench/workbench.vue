@@ -366,7 +366,7 @@ export default {
         height: 36px;
         padding: 4px 7px;
         border: 1px solid #E1E1E1;
-        border-radius: 4px;
+        border-radius: $xr-border-radius-base;
         background-color: white;
         margin-right: 20px;
         display: flex;
@@ -406,7 +406,7 @@ export default {
       width: 100%;
       background-color: white;
       border: 1px solid #e6e6e6;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       .brief-title {
         padding: 15px 20px 0;
         .icon {
@@ -431,7 +431,7 @@ export default {
           width: calc(25% - 20px);
           height: 88px;
           box-shadow: 0 0 16px 0 rgba(0,0,0,0.08);
-          border-radius: 4px;
+          border-radius: $xr-border-radius-base;
           margin: 10px;
           .brief-item__body {
             flex: 1;

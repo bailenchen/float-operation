@@ -223,7 +223,7 @@ export default {
   padding-top: 20px;
   background-color: white;
   border: 1px solid $xr-border-line-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
 }
 
 .section-header {
@@ -240,7 +240,7 @@ export default {
     position: relative;
     padding: 20px 35px 12px 20px;
     border: 1px solid #ebeef5;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     margin-right: 15px;
     margin-bottom: 10px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);

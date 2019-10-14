@@ -150,7 +150,7 @@ export default {
     height: 40px;
     text-align: center;
     line-height: 40px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     .wk {
       color: white;
       font-size: 26px;

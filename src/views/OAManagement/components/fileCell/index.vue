@@ -100,7 +100,7 @@ export default {
 .cell {
   padding: 8px;
   background-color: #f8faff;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   position: relative;
   margin-bottom: 5px;
 

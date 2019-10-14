@@ -376,7 +376,7 @@ export default {
   height: 20px;
   text-align: center;
   line-height: 20px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   .wk {
     color: white;
     font-size: 12px;

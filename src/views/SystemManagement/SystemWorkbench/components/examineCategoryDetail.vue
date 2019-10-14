@@ -368,7 +368,7 @@ export default {
     .mark-circle {
       width: 8px;
       height: 8px;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       background-color: #ee7228;
       margin: 11px 20px 0 5px;
     }

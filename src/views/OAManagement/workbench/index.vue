@@ -201,7 +201,7 @@ $colorF: #fff;
     margin-right: 20px;
     height: 100%;
     border: 1px solid rgba(230, 230, 230, 1);
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     // padding: 0 20px;
     .load {
       color: #999;
@@ -233,14 +233,14 @@ $colorF: #fff;
       height: 300px;
       margin-bottom: 20px;
       border: 1px solid rgba(230, 230, 230, 1);
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
     }
     .schedule {
       background: $colorF;
       min-height: 400px;
       padding: 0 20px;
       border: 1px solid rgba(230, 230, 230, 1);
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
     }
   }
 }

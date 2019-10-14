@@ -187,7 +187,7 @@ export default {
 
 .cell {
   padding: 12px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   position: relative;
   border: 1px solid #ebeef5;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
@@ -265,7 +265,7 @@ export default {
   background-color: #fff4f4;
   font-size: 12px;
   padding: 5px;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   transform: scale(0.8);
   i {
     font-size: 12px;
@@ -277,7 +277,7 @@ export default {
   cursor: pointer;
   background-color: #fb9323;
   color: white;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   display: inline-block;
   padding: 4px 5px;
   font-size: 14px;
@@ -285,7 +285,7 @@ export default {
 
 // 无数据
 .empty-info {
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   position: relative;
   border: 1px solid #ebeef5;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);

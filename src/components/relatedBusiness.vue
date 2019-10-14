@@ -228,7 +228,7 @@ $btn-b-hover-color: #eff4ff;
   font-size: 12px;
   color: $btn-color;
   background-color: $btn-b-color;
-  border-radius: 4px;
+  border-radius: $xr-border-radius-base;
   display: inline-block;
   padding: 3px 10px;
   cursor: pointer;

@@ -325,7 +325,7 @@ export default {
     padding: 0 15px;
     .handel-button {
       width: 100%;
-      border-radius: 4px;
+      border-radius: $xr-border-radius-base;
       border-color: #2362fb;
       background-color: #2362fb;
     }

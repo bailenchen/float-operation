@@ -45,7 +45,7 @@ export default {
     padding: 0 8px;
     height: 28px;
     line-height: 28px;
-    border-radius: 4px;
+    border-radius: $xr-border-radius-base;
     background-color: #FFF6E7;
     .reminder-icon {
       color: #F9A74E;
