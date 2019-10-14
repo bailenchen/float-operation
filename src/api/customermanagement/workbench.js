@@ -35,7 +35,7 @@ export function crmIndexIndexListAPI(data) {
  */
 export function crmQueryRecordConuntAPI(data) {
   return request({
-    url: 'Crm/Instrument/queryRecordConunt',
+    url: 'Crm/Instrument/queryRecordCount',
     method: 'post',
     data: data
   })

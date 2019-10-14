@@ -26,6 +26,15 @@
           :value="item.value"/>
       </el-select>
       <el-select
+        v-model="dataSelect"
+        placeholder="请选择">
+        <el-option
+          v-for="item in [{label:'部门', value:1},{label:'员工', value:2}]"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"/>
+      </el-select>
+      <!-- <el-select
         v-model="structuresSelectValue"
         placeholder="选择部门"
         @change="structuresValueChange">
@@ -44,7 +53,7 @@
           :key="item.userId"
           :label="item.realname"
           :value="item.userId"/>
-      </el-select>
+      </el-select> -->
       <el-button
         type="primary"
         @click.native="handleClick('search')">搜索</el-button>
@@ -61,16 +70,25 @@
           border
           height="400"
           highlight-current-row>
-          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
-            sortable="custom"
             align="center"
             header-align="center"
-            show-overflow-tooltip/>
+            show-overflow-tooltip>
+            <template v-if="item.children">
+              <el-table-column
+                v-for="(child, childIndex) in item.children"
+                :key="childIndex"
+                :prop="child.field"
+                :label="child.name"
+                align="center"
+                header-align="center"
+                show-overflow-tooltip/>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
@@ -112,12 +130,15 @@ export default {
       userOptions: [],
       userSelectValue: '',
 
+      // 部门员工
+      dataSelect: 1,
+
       list: [],
       fieldList: [
-        { field: 'month', name: '时间' },
-        { field: 'receivables', name: '合同金额(元)' },
-        { field: 'achievement', name: '目标(元)' },
-        { field: 'rate', name: '完成率(%)' }
+        // { field: 'month', name: '时间' },
+        // { field: 'receivables', name: '合同金额(元)' },
+        // { field: 'achievement', name: '目标(元)' },
+        // { field: 'rate', name: '完成率(%)' }
       ],
 
       axisChart: null, // 柱状图
@@ -131,6 +152,22 @@ export default {
       .toString()
     this.getDeptList()
     this.initAxis()
+
+    const keys = ['名称', '年度目标', '第一季度', '1月', '2月', '3月', '第二季度', '4月', '5月', '6月', '第三季度', '7月', '8月', '9月', '第四季度', '10月', '11月', '12月']
+    for (let index = 0; index < keys.length; index++) {
+      const key = keys[index]
+      if (index == 0) {
+        this.fieldList.push({ field: 'name', name: key })
+      } else {
+        const children = [
+          { field: 'goal' + index, name: '目标' },
+          { field: 'done' + index, name: '完成' },
+          { field: 'rate' + index, name: '完成率' }
+        ]
+
+        this.fieldList.push({ field: '', name: key, children: children })
+      }
+    }
   },
   methods: {
     /**

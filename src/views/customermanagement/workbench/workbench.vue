@@ -34,7 +34,8 @@
           v-for="(item, index) in briefList"
           :key="index"
           :span="2"
-          class="brief-item">
+          class="brief-item"
+          @click.native="reportClick(item)">
           <flexbox class="brief-item__body">
             <div
               :style="{backgroundColor: item.color}"
@@ -86,6 +87,17 @@
         :filter-value="filterValue"
         class="left" />
     </flexbox>
+
+    <!-- 销售简报列表 -->
+    <report-list
+      v-if="showReportList"
+      :title="reportData.title"
+      :placeholder="reportData.placeholder"
+      :crm-type="reportData.crmType"
+      :request="reportData.request"
+      :params="reportData.params"
+      :field-list="fieldReportList"
+      @hide="showReportList = false"/>
   </div>
 </template>
 
@@ -97,8 +109,13 @@ import ReceivedStatistics from './components/receivedStatistics'
 import SalesFunnel from './components/salesFunnel'
 import PerformanceChart from './components/performanceChart'
 import timeTypeSelect from '@/components/timeTypeSelect'
+import ReportList from './components/reportList'
 
-import { crmIndexIndex } from '@/api/customermanagement/workbench'
+import {
+  crmIndexIndex,
+  crmIndexIndexListAPI,
+  crmQueryRecordConuntAPI
+} from '@/api/customermanagement/workbench'
 
 /**
  * TODO 2、员工部门筛选选择，
@@ -113,19 +130,20 @@ export default {
     ReceivedStatistics,
     SalesFunnel,
     PerformanceChart,
-    timeTypeSelect
+    timeTypeSelect,
+    ReportList
   },
   data() {
     return {
       briefList: [
-        { label: '新增客户(人)', field: 'customerCount', icon: 'wk-customer', num: '', rate: '', status: '', color: '#2362FB' },
-        { label: '新增联系人(人)', field: 'contactsCount', icon: 'wk-contacts', num: '', rate: '', status: '', color: '#27BA4A' },
-        { label: '新增商机(个)', field: 'businessCount', icon: 'wk-business', num: '', rate: '', status: '', color: '#FB9323' },
-        { label: '新增合同(个)', field: 'contractCount', icon: 'wk-contract', num: '', rate: '', status: '', color: '#4A5BFD' },
-        { label: '合同金额(元)', field: 'contractMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#19B5F6' },
-        { label: '商机金额(元)', field: 'businessMoney', icon: 'wk-icon-opportunities', num: '', rate: '', status: '', color: '#AD5CFF' },
-        { label: '回款金额(元)', field: 'receivablesMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#FFB940' },
-        { label: '新增跟进记录(条)', field: 'recordCount', icon: 'wk-record', num: '', rate: '', status: '', color: '#4A5BFD' }
+        { label: '新增客户(人)', title: '新增客户', type: 'customer', labelValue: 2, field: 'customerCount', icon: 'wk-customer', num: '', rate: '', status: '', color: '#2362FB' },
+        { label: '新增联系人(人)', title: '新增联系人', type: 'contacts', labelValue: 3, field: 'contactsCount', icon: 'wk-contacts', num: '', rate: '', status: '', color: '#27BA4A' },
+        { label: '新增商机(个)', title: '新增商机', type: 'business', labelValue: 5, field: 'businessCount', icon: 'wk-business', num: '', rate: '', status: '', color: '#FB9323' },
+        { label: '新增合同(个)', title: '新增合同', type: 'contract', labelValue: 6, field: 'contractCount', icon: 'wk-contract', num: '', rate: '', status: '', color: '#4A5BFD' },
+        { label: '合同金额(元)', title: '', type: '', labelValue: '', field: 'contractMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#19B5F6' },
+        { label: '商机金额(元)', title: '', type: '', labelValue: '', field: 'businessMoney', icon: 'wk-icon-opportunities', num: '', rate: '', status: '', color: '#AD5CFF' },
+        { label: '回款金额(元)', title: '', type: '', labelValue: '', field: 'receivablesMoney', icon: 'wk-receivables', num: '', rate: '', status: '', color: '#FFB940' },
+        { label: '新增跟进记录(条)', title: '新增跟进记录', type: 'record', labelValue: '', field: 'recordCount', icon: 'wk-record', num: '', rate: '', status: '', color: '#4A5BFD' }
       ],
       filterValue: {
         users: [],
@@ -133,7 +151,17 @@ export default {
         timeLine: 'year'
       },
 
-      loading: false
+      loading: false,
+
+      showReportList: false,
+      fieldReportList: null,
+      reportData: {
+        title: '',
+        placeholder: '',
+        crmType: '',
+        request: null,
+        params: null
+      }
     }
   },
   computed: {
@@ -279,6 +307,45 @@ export default {
         console.log(e)
       }
       return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)
+    },
+
+    /**
+     * 销售简报查看
+     */
+    reportClick(item) {
+      if (item.type) {
+        this.reportData.title = `销售简报-${item.title}`
+        this.reportData.placeholder = {
+          customer: '请输入客户名称/手机/电话',
+          contacts: '请输入联系人姓名/手机/电话',
+          business: '请输入商机名称',
+          business_status: '请输入商机名称',
+          contract: '请输入合同名称',
+          receivables: '请输入回款编号',
+          record: ''
+        }[item.type]
+        if (item.type == 'record') {
+          this.fieldReportList = [
+            {
+              label: '模块',
+              prop: 'crmType',
+              width: 300
+            },
+            {
+              label: '新增跟进记录数',
+              prop: 'count'
+            }
+          ]
+          this.reportData.request = crmQueryRecordConuntAPI
+        } else {
+          this.fieldReportList = null
+          this.reportData.request = crmIndexIndexListAPI
+        }
+        this.reportData.crmType = item.type
+        this.reportData.params = this.getBaseParams()
+        this.reportData.params.label = item.labelValue
+        this.showReportList = true
+      }
     }
   }
 }
@@ -360,6 +427,7 @@ export default {
         justify-content: flex-start;
         flex-wrap: wrap;
         .brief-item {
+          cursor: pointer;
           width: calc(25% - 20px);
           height: 88px;
           box-shadow: 0 0 16px 0 rgba(0,0,0,0.08);
