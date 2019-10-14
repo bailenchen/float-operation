@@ -21,6 +21,38 @@
   text-overflow: ellipsis;
 }
 
+.el-table__header {
+  tr {
+    th:first-child {
+      .cell {
+        padding-left: 20px !important;
+      }
+    }
+
+    th:last-child {
+      .cell {
+        padding-right: 20px !important;
+      }
+    }
+  }
+}
+
+.el-table__body {
+  .el-table__row {
+    td:first-child {
+      .cell {
+        padding-left: 20px !important;
+      }
+    }
+
+    td:last-child {
+      .cell {
+        padding-right: 20px !important;
+      }
+    }
+  }
+}
+
 .el-table .sort-caret {
   transform: scale(0.8);
 }
