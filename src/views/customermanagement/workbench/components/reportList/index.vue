@@ -621,22 +621,4 @@ export default {
   font-size: 12px;
   margin: 0 auto;
 }
-
-.el-table /deep/ thead th {
-  background-color: #fafdff;
-  font-weight: 400;
-  border-color: #e6e6e6;
-  color: #475059;
-}
-
-.el-table /deep/ thead .cell {
-  height: 23px;
-}
-
-.el-table /deep/ .sort-caret.ascending {
-  top: -6px;
-}
-.el-table /deep/ .caret-wrapper {
-  height: 24px;
-}
 </style>

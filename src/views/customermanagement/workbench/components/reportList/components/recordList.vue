@@ -266,6 +266,7 @@ export default {
   top: 0;
   bottom: 0;
   right: 0;
+  background-color: white;
 }
 
 .t-content {
