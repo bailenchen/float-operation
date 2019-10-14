@@ -1,8 +1,8 @@
 <template>
   <el-popover
+    v-model="showPopover"
     :disabled="disabled"
     :placement="placement"
-    v-model="showPopover"
     width="300"
     popper-class="no-padding-popover"
     trigger="click">
@@ -16,7 +16,7 @@
     <flexbox
       v-if="!$slots.reference"
       slot="reference"
-      :class="[disabled ? 'is_disabled' : 'is_valid']"
+      :class="[disabled ? 'is_disabled' : 'is_valid', { 'is_focus': showPopover }]"
       wrap="wrap"
       class="user-container"
       @click.native="focusClick">
@@ -186,6 +186,10 @@ export default {
 
 .user-container.is_valid:hover {
   border-color: #c0c4cc;
+}
+
+.user-container.is_focus {
+  border-color: $xr-focus-border !important;
 }
 
 .el-icon-more {

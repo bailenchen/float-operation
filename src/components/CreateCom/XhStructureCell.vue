@@ -14,7 +14,7 @@
       @changeCheckout="checkStructure"/>
     <div slot="reference">
       <flexbox
-        :class="[disabled ? 'is_disabled' : 'is_valid']"
+        :class="[disabled ? 'is_disabled' : 'is_valid', { 'is_focus': showPopover }]"
         wrap="wrap"
         class="structure-container"
         @click.native="focusClick">
@@ -162,6 +162,10 @@ export default {
 
 .structure-container.is_valid:hover {
   border-color: #c0c4cc;
+}
+
+.structure-container.is_focus {
+  border-color: $xr-focus-border !important;
 }
 
 .el-icon-more {
