@@ -76,7 +76,6 @@
                 :item="item"
                 :section="secitonIndex"
                 :index="index"
-                :crm-type="crmType"
                 @crm-detail="checkCRMDetail"
                 @delete="logCellDelete" />
               <i class="wk wk-message log-cell__mark" />

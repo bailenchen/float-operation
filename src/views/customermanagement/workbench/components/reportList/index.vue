@@ -322,13 +322,7 @@ export default {
       // 如果需要格式化
       if (this.fieldList && this.fieldList.length) {
         if (column.property == 'crmType') {
-          return {
-            crm_leads: '线索',
-            crm_customer: '客户',
-            crm_contacts: '联系人',
-            crm_business: '商机',
-            crm_contract: '合同'
-          }[row[column.property]]
+          return crmTypeModel.convertTypeToName(row[column.property])
         }
       }
       return row[column.property] || '--'
@@ -485,7 +479,7 @@ export default {
         }
       } else if (this.crmType === 'record') {
         if (column.property === 'count' && row.count) {
-          this.rowType = row.crmType
+          this.rowType = 'crm_' + crmTypeModel.convertTypeToKey(row.crmType)
           this.recordParams = { crmType: row.crmType, ...this.params }
           this.recordShow = true
         } else {

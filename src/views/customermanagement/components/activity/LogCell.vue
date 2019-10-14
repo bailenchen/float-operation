@@ -134,11 +134,6 @@ export default {
         return {}
       }
     },
-    // 没有值就是全部类型 有值就是当个类型
-    crmType: {
-      type: String,
-      default: ''
-    },
     // 块
     section: [String, Number],
     // 行

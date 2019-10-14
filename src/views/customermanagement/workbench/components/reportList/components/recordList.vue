@@ -1,6 +1,5 @@
 <template>
   <slide-view
-    v-loading="loading"
     :listener-ids="listenerIDs"
     :no-listener-ids="noListenerIDs"
     :no-listener-class="noListenerClass"
@@ -17,33 +16,35 @@
         src="@/assets/img/task_close.png"
         @click="hideView" >
     </flexbox>
-    <div
-      id="follow-log-content"
-      class="t-content">
-      <follow-record-cell
-        v-for="(item, index) in list"
-        :item="item"
-        :crm-type="crmType"
-        :index="index"
-        :key="index"
-        @on-handle="cellHandle">
-        <flexbox
-          class="relate-cell"
-          @click.native="checkRelationDetail(item.types, item.typesId)">
-          <i
-            :class="item.types | crmIconClass"
-            class="wukong relate-cell-head crm-type"/>
+    <div class="t-content">
+      <div
+        v-infinite-scroll="getList"
+        infinite-scroll-disabled="scrollDisabled">
+        <log-cell
+          v-for="(item, index) in list"
+          :item="item"
+          :index="index"
+          :key="index"
+          @delete="logCellDelete">
           <div
-            class="relate-cell-body"
-            style="color: #6394E5;cursor: pointer;">{{ item.typesName }}</div>
-        </flexbox>
-      </follow-record-cell>
-      <div class="load">
-        <el-button
-          :loading="loadMoreLoading"
-          type="text">{{ loadMoreLoading ? '加载更多' : '没有更多了' }}</el-button>
+            class="relate-cell"
+            @click="checkRelationDetail(item.activityType, item.activityTypeId)">
+            <i
+              :class="item.activityType | crmIconClass"
+              class="relate-cell-head"/>
+            <span
+              class="relate-cell-body">{{ item.crmTypeName }}</span>
+          </div>
+        </log-cell>
       </div>
+      <p
+        v-if="loading"
+        class="scroll-bottom-tips">加载中...</p>
+      <p
+        v-if="noMore"
+        class="scroll-bottom-tips">没有更多了</p>
     </div>
+
 
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
@@ -54,16 +55,17 @@
 </template>
 
 <script>
-import FollowRecordCell from '@/views/customermanagement/components/followLog/components/FollowRecordCell'
+import LogCell from '@/views/customermanagement/components/activity/LogCell'
 import SlideView from '@/components/SlideView'
 import { crmIndexGetRecordListAPI } from '@/api/customermanagement/workbench'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 export default {
   /** 跟进记录列表 */
   name: 'RecordList',
 
   components: {
-    FollowRecordCell,
+    LogCell,
     SlideView,
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
@@ -71,7 +73,7 @@ export default {
 
   filters: {
     crmIconClass(type) {
-      return type && type.replace('crm_', 'wukong-')
+      return `wk wk-${crmTypeModel.convertTypeToKey(type)}`
     }
   },
 
@@ -103,10 +105,9 @@ export default {
   data() {
     return {
       loading: false,
-      loadMoreLoading: true,
       // 判断是否发请求
-      isPost: false,
       page: 1,
+      noMore: false,
       list: [],
 
       showFullDetail: false, // 查看相关客户管理详情
@@ -117,22 +118,12 @@ export default {
 
   computed: {
     crmIcon() {
-      if (this.crmType === 'crm_customer') {
-        return require('@/assets/img/customer_detail.png')
-      } else if (this.crmType === 'crm_leads') {
-        return require('@/assets/img/clue_detail.png')
-      } else if (this.crmType === 'crm_business') {
-        return require('@/assets/img/business_detail.png')
-      } else if (this.crmType === 'crm_contacts') {
-        return require('@/assets/img/contacts_detail.png')
-      } else if (this.crmType === 'crm_contract') {
-        return require('@/assets/img/contract_detail.png')
-      } else if (this.crmType === 'crm_receivables') {
-        return require('@/assets/img/money_detail.png')
-      } else if (this.crmType === 'crm_product') {
-        return require('@/assets/img/product_detail.png')
-      }
-      return ''
+      const crmType = this.crmType.replace('crm_', '')
+      return require(`@/assets/img/crm/${crmType}.png`)
+    },
+
+    scrollDisabled() {
+      return this.loading || this.noMore
     }
   },
 
@@ -143,22 +134,6 @@ export default {
   },
 
   mounted() {
-    // 分批次加载
-    const dom = document.getElementById('follow-log-content')
-    dom.onscroll = () => {
-      const scrollOff = dom.scrollTop + dom.clientHeight - dom.scrollHeight
-      // 滚动条到底部的条件
-      if (Math.abs(scrollOff) < 10 && this.loadMoreLoading == true) {
-        if (!this.isPost) {
-          this.isPost = true
-          this.page++
-          this.getList()
-        } else {
-          this.loadMoreLoading = false
-        }
-      }
-    }
-    this.getList()
   },
 
   methods: {
@@ -172,20 +147,16 @@ export default {
      * 获取列表
      */
     getList() {
+      console.log('getList')
       this.loading = true
       crmIndexGetRecordListAPI({ page: this.page, limit: 15, ...this.params })
         .then(res => {
+          this.page++
           this.list = this.list.concat(res.data.list)
-          if (res.data.list.length < 15) {
-            this.loadMoreLoading = false
-          } else {
-            this.loadMoreLoading = true
-          }
-          this.isPost = false
+          this.noMore = res.data.lastPage
           this.loading = false
         })
         .catch(() => {
-          this.isPost = false
           this.loading = false
         })
     },
@@ -193,11 +164,9 @@ export default {
     /**
      * 行布局删除
      */
-    cellHandle(data) {
-      if (data.type == 'delete') {
-        this.list.splice(data.data.index, 1)
-        this.$emit('handle')
-      }
+    logCellDelete(data, index, seciton) {
+      this.list.splice(index, 1)
+      this.$emit('handle')
     },
 
     /**
@@ -205,7 +174,7 @@ export default {
      */
     checkRelationDetail(type, id) {
       this.relationID = id
-      this.relationCrmType = type.replace('crm_', '')
+      this.relationCrmType = crmTypeModel.convertTypeToKey(type)
       this.showFullDetail = true
     },
 
@@ -248,17 +217,6 @@ export default {
   }
 }
 
-.load {
-  color: #999;
-  font-size: 13px;
-  margin: 0 auto 15px;
-  text-align: center;
-  .el-button,
-  .el-button:focus {
-    color: #ccc;
-    cursor: auto;
-  }
-}
 
 .d-view {
   position: fixed;
@@ -272,38 +230,35 @@ export default {
 .t-content {
   margin: 0 30px;
   height: calc(100% - 80px);
-  overflow-y: auto;
+  overflow: auto;
+  position: relative;
 }
 
 .relate-cell {
   padding: 8px;
   background-color: #f5f7fa;
-  border-radius: 2px;
+  border-radius: 4px;
   position: relative;
+  width: auto;
+  display: inline-block;
+  margin-top: 10px;
 
   &-head {
-    display: block;
-    width: 15px;
-    height: 15px;
-    margin-right: 8px;
+    display: inline-block;
+    font-size: 14px;
+    color: $xr-color-primary;
+    margin-right: 5px;
   }
 
   &-body {
-    flex: 1;
-    color: #333;
+    cursor: pointer;
+    color: $xr-color-primary;
     font-size: 12px;
   }
 
-  &-foot {
-    display: block;
-    width: 20px;
-    padding: 0 4px;
-    margin-right: 8px;
+  &-body:hover {
+    text-decoration: underline;
   }
 }
 
-.crm-type {
-  color: rgb(99, 148, 229);
-  font-size: 14px;
-}
 </style>
