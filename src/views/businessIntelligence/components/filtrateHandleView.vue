@@ -19,7 +19,30 @@
       value-format="yyyy"
       placeholder="选择年"/>
     <!-- 展示部门筛选 -->
+
     <el-select
+      v-if="showUserStrucSelect"
+      v-model="dataSelect"
+      placeholder="请选择">
+      <el-option
+        v-for="item in [{label:'按部门', value:1},{label:'按员工', value:2}]"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"/>
+    </el-select>
+    <xh-structure-cell
+      v-if="dataSelect == 1"
+      radio
+      class="xh-structure-cell"
+      @value-change="structureChange" />
+
+    <xh-user-cell
+      v-if="dataSelect == 2 && showUserSelect"
+      radio
+      class="xh-user-cell"
+      @value-change="userChange" />
+
+    <!-- <el-select
       v-model="structuresSelectValue"
       placeholder="选择部门"
       @change="structuresValueChange">
@@ -39,7 +62,7 @@
         :key="item.id"
         :label="item.realname"
         :value="item.id"/>
-    </el-select>
+    </el-select> -->
     <!-- 展示商机状态筛选 -->
     <el-select
       v-if="showBusinessSelect"
@@ -88,12 +111,20 @@ import {
 } from '@/api/common'
 import { crmBusinessStatusList } from '@/api/customermanagement/business'
 import { productCategoryIndex } from '@/api/systemManagement/SystemCustomer'
+
+import XhStructureCell from '@/components/CreateCom/XhStructureCell'
+import XhUserCell from '@/components/CreateCom/XhUserCell'
 import timeTypeSelect from '@/components/timeTypeSelect'
+
 import moment from 'moment'
 
 export default {
   name: 'FiltrateHandleView', // 筛选条件
-  components: { timeTypeSelect },
+  components: {
+    timeTypeSelect,
+    XhStructureCell,
+    XhUserCell
+  },
   props: {
     // 模块类型
     moduleType: {
@@ -149,17 +180,23 @@ export default {
 
       /** 时间类型值 */
       timeTypeValue: {},
+
+
       /** 部门选择解析数据 */
-      structuresProps: {
-        children: 'children',
-        label: 'label',
-        value: 'id'
-      },
-      deptList: [], // 部门列表
-      structuresSelectValue: '',
+      // structuresProps: {
+      //   children: 'children',
+      //   label: 'label',
+      //   value: 'id'
+      // },
+      dataSelect: 1, // 1 是部门 2 是员工
+      // deptList: [], // 部门列表
+      structuresSelectValue: [],
       /** 用户列表 */
-      userOptions: [],
-      userSelectValue: '',
+      // userOptions: [],
+      userSelectValue: [],
+
+
+
       /** 商机状态 */
       businessOptions: [],
       businessStatusValue: '',
@@ -168,6 +205,11 @@ export default {
       productOptions: [],
       // 图标类型
       customValue: ''
+    }
+  },
+  computed: {
+    showUserStrucSelect() {
+      return this.showUserSelect
     }
   },
   watch: {},
@@ -183,15 +225,16 @@ export default {
     }
 
     this.$emit('load')
-    this.getDeptList(() => {
-      if (this.showBusinessSelect) {
-        this.getBusinessStatusList(() => {
-          this.postFiltrateValue()
-        })
-      } else {
+    // 展示员工 不展示新的员工部门筛选效果
+    // this.getDeptList(() => {
+    if (this.showBusinessSelect) {
+      this.getBusinessStatusList(() => {
         this.postFiltrateValue()
-      }
-    })
+      })
+    } else {
+      this.postFiltrateValue()
+    }
+    // })
 
     if (this.showProductSelect) {
       this.getProductCategoryIndex()
@@ -200,6 +243,20 @@ export default {
 
   beforeDestroy() {},
   methods: {
+    /**
+     * 部门选择
+     */
+    structureChange(data) {
+      this.structuresSelectValue = data.value || []
+    },
+
+    /**
+     * 员工选择
+     */
+    userChange(data) {
+      this.userSelectValue = data.value || []
+    },
+
     // 选择更改
     customSelectChange() {
       this.$emit('typeChange', this.customValue)
@@ -279,13 +336,18 @@ export default {
         .catch(() => {})
     },
     postFiltrateValue() {
-      const params = {
-        deptId: this.structuresSelectValue
+      const params = {}
+      if (this.showUserStrucSelect) {
+        if (this.dataSelect == 1) {
+          params.deptId = this.structuresSelectValue.length > 0 ? this.structuresSelectValue[0].id : ''
+        }
       }
 
       // 展示员工，返回员工参数
       if (this.showUserSelect) {
-        params.userId = this.userSelectValue
+        if (this.dataSelect == 2) {
+          params.userId = this.userSelectValue.length > 0 ? this.userSelectValue[0].userId : ''
+        }
       }
 
       // 展示商机状态 返回商机状态参数
@@ -353,6 +415,12 @@ export default {
 
   .el-cascader {
     width: 120px !important;
+    margin-right: 15px;
+  }
+
+  .xh-user-cell,
+  .xh-structure-cell {
+    width: 120px;
     margin-right: 15px;
   }
 }

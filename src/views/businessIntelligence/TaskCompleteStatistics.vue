@@ -29,11 +29,21 @@
         v-model="dataSelect"
         placeholder="请选择">
         <el-option
-          v-for="item in [{label:'部门', value:1},{label:'员工', value:2}]"
+          v-for="item in [{label:'按部门', value:1},{label:'按员工', value:2}]"
           :key="item.value"
           :label="item.label"
           :value="item.value"/>
       </el-select>
+      <xh-structure-cell
+        v-if="dataSelect == 1"
+        radio
+        class="xh-structure-cell"
+        @value-change="structureChange" />
+      <xh-user-cell
+        v-else
+        radio
+        class="xh-user-cell"
+        @value-change="userChange" />
       <!-- <el-select
         v-model="structuresSelectValue"
         placeholder="选择部门"
@@ -96,16 +106,24 @@
 </template>
 
 <script>
-import sortMixins from './mixins/sort'
-import echarts from 'echarts'
+
 import { adminStructuresSubIndex, usersList } from '@/api/common'
 import { biAchievementStatistics } from '@/api/businessIntelligence/bi'
+
+import XhStructureCell from '@/components/CreateCom/XhStructureCell'
+import XhUserCell from '@/components/CreateCom/XhUserCell'
+
 import moment from 'moment'
+import sortMixins from './mixins/sort'
+import echarts from 'echarts'
 
 export default {
   /** 业绩目标完成情况 */
   name: 'TaskCompleteStatistics',
-  components: {},
+  components: {
+    XhStructureCell,
+    XhUserCell
+  },
   mixins: [sortMixins],
   data() {
     return {
@@ -118,20 +136,23 @@ export default {
 
       dateSelect: '', // 选择的date
       typeSelect: 1, // 类型选择 1销售（目标）2回款（目标）
-      /** 部门选择解析数据 */
-      structuresProps: {
-        children: 'children',
-        label: 'label',
-        value: 'id'
-      },
-      deptList: [], // 部门列表
-      structuresSelectValue: '',
-      /** 用户列表 */
-      userOptions: [],
-      userSelectValue: '',
+      // /** 部门选择解析数据 */
+      // structuresProps: {
+      //   children: 'children',
+      //   label: 'label',
+      //   value: 'id'
+      // },
+      // deptList: [], // 部门列表
+      // structuresSelectValue: '',
+      // /** 用户列表 */
+      // userOptions: [],
+      // userSelectValue: '',
 
       // 部门员工
       dataSelect: 1,
+      // 部门员工选择值
+      deptSelectValue: [],
+      userSelectValue: [],
 
       list: [],
       fieldList: [
@@ -150,7 +171,7 @@ export default {
     this.dateSelect = moment(new Date())
       .year()
       .toString()
-    this.getDeptList()
+    // this.getDeptList()
     this.initAxis()
 
     const keys = ['名称', '年度目标', '第一季度', '1月', '2月', '3月', '第二季度', '4月', '5月', '6月', '第三季度', '7月', '8月', '9月', '第四季度', '10月', '11月', '12月']
@@ -170,6 +191,20 @@ export default {
     }
   },
   methods: {
+    /**
+     * 部门选择
+     */
+    structureChange(data) {
+      this.deptSelectValue = data.value || []
+    },
+
+    /**
+     * 员工选择
+     */
+    userChange(data) {
+      this.userSelectValue = data.value || []
+    },
+
     /**
      * 获取部门列表
      */
@@ -208,12 +243,17 @@ export default {
     /** 获取部门业绩完成信息 */
     getAhievementDatalist() {
       this.loading = true
-      biAchievementStatistics({
+      const params = {
         year: this.dateSelect,
-        type: this.typeSelect,
-        deptId: this.structuresSelectValue,
-        userId: this.userSelectValue
-      })
+        type: this.typeSelect
+      }
+
+      if (this.dataSelect == 1) {
+        params.deptId = this.structuresSelectValue
+      } else {
+        params.userId = this.userSelectValue
+      }
+      biAchievementStatistics(params)
         .then(res => {
           var receivabless = []
           var achiements = []
@@ -419,6 +459,12 @@ export default {
     margin-right: 15px;
   }
   .el-select {
+    width: 120px;
+    margin-right: 15px;
+  }
+
+  .xh-user-cell,
+  .xh-structure-cell {
     width: 120px;
     margin-right: 15px;
   }
