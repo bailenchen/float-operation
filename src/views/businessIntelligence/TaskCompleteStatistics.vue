@@ -116,6 +116,7 @@ import XhUserCell from '@/components/CreateCom/XhUserCell'
 import moment from 'moment'
 import sortMixins from './mixins/sort'
 import echarts from 'echarts'
+import { floatAdd } from '@/utils'
 
 export default {
   /** 业绩目标完成情况 */
@@ -173,17 +174,19 @@ export default {
       .toString()
     // this.getDeptList()
     this.initAxis()
+    this.getAhievementDatalist()
 
-    const keys = ['名称', '年度目标', '第一季度', '1月', '2月', '3月', '第二季度', '4月', '5月', '6月', '第三季度', '7月', '8月', '9月', '第四季度', '10月', '11月', '12月']
-    for (let index = 0; index < keys.length; index++) {
-      const key = keys[index]
+    const keysName = ['名称', '年度目标', '第一季度', '1月', '2月', '3月', '第二季度', '4月', '5月', '6月', '第三季度', '7月', '8月', '9月', '第四季度', '10月', '11月', '12月']
+    const keys = ['name', 'Year', 'Quarter1', '1', '2', '3', 'Quarter2', '4', '5', '6', 'Quarter3', '7', '8', '9', 'Quarter4', '10', '11', '12']
+    for (let index = 0; index < keysName.length; index++) {
+      const key = keysName[index]
       if (index == 0) {
-        this.fieldList.push({ field: 'name', name: key })
+        this.fieldList.push({ field: keys[index], name: key })
       } else {
         const children = [
-          { field: 'goal' + index, name: '目标' },
-          { field: 'done' + index, name: '完成' },
-          { field: 'rate' + index, name: '完成率' }
+          { field: `achievement${keys[index]}`, name: '目标' },
+          { field: `money${keys[index]}`, name: '完成' },
+          { field: `rate${keys[index]}`, name: '完成率' }
         ]
 
         this.fieldList.push({ field: '', name: key, children: children })
@@ -247,26 +250,95 @@ export default {
         year: this.dateSelect,
         type: this.typeSelect
       }
-
+      params.isUser = this.dataSelect == 1 ? 0 : 1 // isUser  0 部门 1 员工
       if (this.dataSelect == 1) {
-        params.deptId = this.structuresSelectValue
+        params.deptId = this.deptSelectValue.length > 0 ? this.deptSelectValue[0].id : ''
       } else {
-        params.userId = this.userSelectValue
+        params.userId = this.userSelectValue.length > 0 ? this.userSelectValue[0].userId : ''
       }
       biAchievementStatistics(params)
         .then(res => {
+          this.list = []
+
+          // 月份合计list
+          const sumList = []
+          for (let index = 0; index < 12; index++) {
+            sumList.push({
+              achievement: 0,
+              money: 0
+            })
+          }
+
+          for (let index = 0; index < res.data.length; index++) {
+            const element = res.data[index]
+            // 循环出表头展示字段 注入element
+            // 一条数据的开始 季度数据
+            let quarter = {
+              achievement: 0,
+              money: 0
+            }
+
+            // 年数据
+            const year = {
+              achievement: 0,
+              money: 0
+            }
+
+            for (let childIndex = 0; childIndex < element.list.length; childIndex++) {
+              const child = element.list[childIndex]
+
+              // 表展示数据
+              const keys = ['achievement', 'rate', 'money']
+              for (const key of keys) {
+                const childValue = child[key]
+                element[`${key}${childIndex + 1}`] = childValue
+
+                if (quarter.hasOwnProperty(key)) {
+                  quarter[key] = floatAdd(quarter[key], childValue)
+                  year[key] = floatAdd(year[key], childValue)
+                }
+              }
+
+              // 获取季度值
+              if (childIndex % 3 == 2) {
+                const quarterIndex = parseInt(childIndex / 3)
+                element[`achievementQuarter${quarterIndex}`] = quarter.achievement
+                element[`moneyQuarter${quarterIndex}`] = quarter.money
+                element[`rateQuarter${quarterIndex}`] = quarter.money ? (quarter.money / quarter.achievement * 100 + 0.001).toFixed(2).toString() : '0.00'
+                // 重置到新季度初始值
+                quarter = {
+                  achievement: 0,
+                  money: 0
+                }
+              }
+
+
+              // 合计数据
+              const sumItem = sumList[childIndex]
+              sumItem.achievement = floatAdd(sumItem.achievement, child.achievement)
+              sumItem.money = floatAdd(sumItem.money, child.money)
+            }
+            // 获取年
+            element['achievementYear'] = year.achievement
+            element['moneyYear'] = year.money
+            element['rateYear'] = year.money ? (year.money / year.achievement * 100 + 0.001).toFixed(2).toString() : '0.00'
+            this.list.push(element)
+          }
+
+
           var receivabless = []
           var achiements = []
           var rates = []
-          this.list = []
 
-          for (let index = 0; index < 12; index++) {
-            const element = res.data[index]
-            receivabless.push(element.receivables)
+
+
+          for (let index = 0; index < sumList.length; index++) {
+            const element = sumList[index]
+            receivabless.push(element.money)
             achiements.push(element.achievement)
-            rates.push(element.rate)
-            this.list.push(element)
+            rates.push(element.money ? (element.money / element.achievement * 100 + 0.001).toFixed(2).toString() : '0.00')
           }
+
           this.axisOption.series[0].data = receivabless
           this.axisOption.series[1].data = achiements
           this.axisOption.series[2].data = rates

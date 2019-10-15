@@ -96,7 +96,7 @@
 <script type="text/javascript">
 import { crmFileSave, crmFileDelete } from '@/api/common'
 import objMixin from '@/components/CreateCom/objMixin'
-import { guid } from '@/utils'
+import { guid, floatAdd } from '@/utils'
 
 export default {
   name: 'XhExpenses', // 差旅报销事项
@@ -247,7 +247,7 @@ export default {
       const calculateFields = ['traffic', 'stay', 'diet', 'other']
       const mainItem = this.mainList[mainIndex]
       calculateFields.forEach(field => {
-        subTotal = this.accAdd(
+        subTotal = floatAdd(
           subTotal,
           parseFloat(mainItem[field] ? mainItem[field] : 0)
         )
@@ -257,7 +257,7 @@ export default {
       var total = 0
       for (let index = 0; index < this.mainList.length; index++) {
         const element = this.mainList[index]
-        total = this.accAdd(
+        total = floatAdd(
           total,
           parseFloat(element.money ? element.money : 0)
         )
@@ -266,27 +266,7 @@ export default {
 
       this.submitValueChange(true)
     },
-    /**
-     * 两个浮点数求和
-     * @param num1
-     * @param num2
-     * @return {number}
-     */
-    accAdd(num1, num2) {
-      let r1, r2
-      try {
-        r1 = num1.toString().split('.')[1].length
-      } catch (e) {
-        r1 = 0
-      }
-      try {
-        r2 = num2.toString().split('.')[1].length
-      } catch (e) {
-        r2 = 0
-      }
-      const m = Math.pow(10, Math.max(r1, r2))
-      return Math.round(num1 * m + num2 * m) / m
-    },
+
 
     submitValueChange(update) {
       this.$emit('value-change', {

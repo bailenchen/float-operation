@@ -487,3 +487,25 @@ export function getExcelLines(file) {
     }
   }
 }
+
+/**
+ * 两个浮点数求和
+ * @param num1
+ * @param num2
+ * @return {number}
+ */
+export function floatAdd(num1, num2) {
+  let r1, r2
+  try {
+    r1 = num1.toString().split('.')[1].length
+  } catch (e) {
+    r1 = 0
+  }
+  try {
+    r2 = num2.toString().split('.')[1].length
+  } catch (e) {
+    r2 = 0
+  }
+  const m = Math.pow(10, Math.max(r1, r2))
+  return Math.round(num1 * m + num2 * m) / m
+}
