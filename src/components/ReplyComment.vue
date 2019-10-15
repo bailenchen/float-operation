@@ -9,7 +9,8 @@
         :maxlength="300"
         show-word-limit
         type="textarea"
-        placeholder="请输入回复内容" />
+        placeholder="请输入回复内容"
+        @blur="blurFun" />
       <div class="btn-group">
         <el-popover
           v-model="showEmoji"
@@ -60,12 +61,19 @@ export default {
   data() {
     return {
       commentLoading: false, // 回复loading
+      blurIndex: 0, // 回复表情插入位置
       commentsTextarea: '', // 回复内容
       showEmoji: false, // emoji选择标志
       showNoFocus: false
     }
   },
   methods: {
+    /**
+     * 输入框失去焦点
+     */
+    blurFun(eve) {
+      this.blurIndex = eve.target.selectionEnd
+    },
     /**
      * emoji 表情选择
      */
