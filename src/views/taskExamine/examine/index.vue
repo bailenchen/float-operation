@@ -71,6 +71,7 @@
 import {
   oaExamineCategoryList,
   oaExamineMyExamineIndex,
+  oaExamineMyCreateIndex,
   oaExamineDelete
 } from '@/api/oamanagement/examine'
 import ExamineTabsHead from './components/ExamineTabsHead'
@@ -220,13 +221,16 @@ export default {
         categoryId: this.selectId
       }
 
+      let request = null
       if (this.examineType == 'my') {
         params.checkStatus = this.status
+        request = oaExamineMyCreateIndex
       } else if (this.examineType == 'wait') {
         params.status = this.status
+        request = oaExamineMyExamineIndex
       }
 
-      oaExamineMyExamineIndex(params)
+      request(params)
         .then(res => {
           this.loading = false
           if (!this.noMore) {
