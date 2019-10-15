@@ -436,6 +436,7 @@ export default {
       } else {
         ext = ''
       }
+      ext = ext.toLowerCase()
       var icon = ''
       var isImage = true
       if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
@@ -476,6 +477,7 @@ export default {
       } else {
         ext = ''
       }
+      ext = ext.toLowerCase()
       if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
         return require('@/assets/img/file_img.png')
       } else if (this.arrayContain(['mp4', 'mp3', 'avi'], ext)) {
@@ -503,7 +505,8 @@ export default {
       } else {
         ext = ''
       }
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
+
+      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext.toLowerCase())) {
         return true
       }
       return false
