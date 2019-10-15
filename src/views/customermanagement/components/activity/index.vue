@@ -5,7 +5,7 @@
     infinite-scroll-disabled="scrollDisabled"
     class="main">
     <div>
-      <div class="main-handle">
+      <div v-if="!isSeas" class="main-handle">
         <el-button
           v-for="(item, index) in handle"
           :key="index"
@@ -16,25 +16,28 @@
           {{ item.label }}
         </el-button>
       </div>
-      <log-add
-        v-if="!isTaskCreate"
-        ref="logAdd"
-        :id="id"
-        :show-business="showRelate"
-        :show-contacts="showRelate"
-        :contacts="contacts"
-        :follow-types="followTypes"
-        class="log-add"
-        @send="sendLog"
-        @focus="handleType = 'log'"
-        @close="handleClick(handleType)" />
 
-      <task-quick-add
-        v-else
-        ref="taskAdd"
-        :params="taskParams"
-        class="task-quick-add"
-        @send="refreshLogList" />
+      <template v-if="!isSeas">
+        <log-add
+          v-if="!isTaskCreate"
+          ref="logAdd"
+          :id="id"
+          :show-business="showRelate"
+          :show-contacts="showRelate"
+          :contacts="contacts"
+          :follow-types="followTypes"
+          class="log-add"
+          @send="sendLog"
+          @focus="handleType = 'log'"
+          @close="handleClick(handleType)" />
+
+        <task-quick-add
+          v-else
+          ref="taskAdd"
+          :params="taskParams"
+          class="task-quick-add"
+          @send="refreshLogList" />
+      </template>
 
       <div class="log">
         <!-- 筛选 -->
@@ -76,6 +79,7 @@
                 :item="item"
                 :section="secitonIndex"
                 :index="index"
+                :can-delete="!isSeas"
                 @crm-detail="checkCRMDetail"
                 @delete="logCellDelete" />
               <i class="wk wk-message log-cell__mark" />
@@ -391,7 +395,9 @@ export default {
      * 初始化信息
      */
     initInfo() {
-      this.$refs.logAdd.resetInfo()
+      if (this.$refs.logAdd) {
+        this.$refs.logAdd.resetInfo()
+      }
       this.getLogTypeList()
       if (this.showRelate) {
         this.getContactsList()

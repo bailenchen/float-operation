@@ -73,6 +73,11 @@ export default {
       required: true,
       type: String,
       default: ''
+    },
+    // 是公海 默认是客户
+    isSeas: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -98,7 +103,7 @@ export default {
 
     // 空数据按钮文字 为空不展示
     emptyBtnName() {
-      return this.$listeners.add ? '新建联系人' : ''
+      return this.$listeners.add && !this.isSeas ? '新建联系人' : ''
     },
 
     emptyName() {

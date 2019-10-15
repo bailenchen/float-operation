@@ -15,6 +15,7 @@
         <span class="follow-info">{{ item.category }}</span>
       </div>
       <el-dropdown
+        v-if="canDelete"
         trigger="click"
         @command="handleCommand">
         <i
@@ -137,7 +138,11 @@ export default {
     // 块
     section: [String, Number],
     // 行
-    index: [String, Number]
+    index: [String, Number],
+    canDelete: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {

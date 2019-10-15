@@ -65,6 +65,7 @@
                   :contacts-id="firstContactsId"
                   :id="id"
                   :crm-type="crmType"
+                  :is-seas="isSeasDetail"
                   @add="addChieflyContacts" />
               </el-tab-pane>
             </el-tabs>
