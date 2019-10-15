@@ -43,6 +43,7 @@
           </el-select>
           <el-input
             v-else
+            :maxlength="100"
             :disabled="getInputDisable(subItem.field)"
             v-model="item[subItem.field]"/>
         </flexbox-item>
@@ -52,7 +53,7 @@
         <el-input
           v-model="item['description']"
           :rows="3"
-          :maxlength="200"
+          :maxlength="300"
           type="textarea"
           resize="none"
           show-word-limit

@@ -10,7 +10,7 @@
     <el-input
       ref="input"
       v-model="sendContent"
-      :maxlength="50"
+      :maxlength="100"
       :prefix-icon="isUnfold ? '' : 'el-icon-plus'"
       class="input"
       placeholder="添加任务"

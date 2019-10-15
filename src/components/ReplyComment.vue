@@ -6,7 +6,7 @@
       <el-input
         v-model="commentsTextarea"
         :rows="3"
-        :maxlength="500"
+        :maxlength="300"
         show-word-limit
         type="textarea"
         placeholder="请输入回复内容" />

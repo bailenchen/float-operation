@@ -3,6 +3,7 @@
     v-model="dataValue"
     :type="type"
     :disabled="disabled"
+    :maxlength="100"
     @input="valueChange"/>
 </template>
 <script type="text/javascript">

@@ -39,6 +39,7 @@
               minRows: 2,
               maxRows: 10
             }"
+            :maxlength="300"
             type="textarea"
             resize="none"
             placeholder="请输入内容" />

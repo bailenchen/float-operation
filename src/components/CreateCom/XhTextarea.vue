@@ -2,7 +2,7 @@
   <el-input
     v-model="dataValue"
     :rows="3"
-    :maxlength="200"
+    :maxlength="300"
     :disabled="disabled"
     type="textarea"
     resize="none"

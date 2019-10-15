@@ -33,6 +33,7 @@
           <el-input
             v-else
             v-model="item[subItem.field]"
+            :maxlength="100"
             @input="calculateValueChange(index, subIndex)"/>
         </flexbox-item>
         <flexbox-item
@@ -48,7 +49,7 @@
         <el-input
           v-model="item['description']"
           :rows="3"
-          :maxlength="200"
+          :maxlength="300"
           type="textarea"
           resize="none"
           show-word-limit

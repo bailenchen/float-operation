@@ -31,7 +31,9 @@
             <label class="item-label">{{ item.label }}：</label>
             <el-input
               :autosize="{ minRows: 4}"
+              :maxlength="300"
               v-model="formData[item.model]"
+              show-word-limit
               type="textarea"
               placeholder="请输入内容"
               resize="none"/>

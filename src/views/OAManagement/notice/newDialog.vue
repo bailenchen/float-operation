@@ -34,7 +34,9 @@
             <template v-else-if="item.type == 'textarea'">
               <el-input
                 :autosize="{ minRows: 6}"
+                :maxlength="2000"
                 v-model="formData[item.field]"
+                show-word-limit
                 type="textarea"
                 placeholder="请输入内容"/>
             </template>

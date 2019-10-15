@@ -80,7 +80,7 @@
             class="show-input">
             <el-input
               v-model="taskDataName"
-              :maxlength="50"
+              :maxlength="100"
               size="medium" />
             <div class="btn-box">
               <el-button
@@ -305,6 +305,8 @@
                   <el-input
                     :autosize="{ minRows: 2}"
                     v-model="addDescriptionTextarea"
+                    :maxlength="300"
+                    show-word-limit
                     type="textarea"
                     placeholder="请输入内容" />
                   <div class="btn-box">
