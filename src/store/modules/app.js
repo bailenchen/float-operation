@@ -14,7 +14,7 @@ const app = {
     lang: localStorage.lang || 'cn',
     sidebar: {
       activeIndex: '', // 目前激活的 行
-      collapse: true
+      collapse: Lockr.get('sideBarCollapse') || false
     },
     navbar: {
       activeIndex: '' // 导航目前是第几个 个人中心需要
@@ -29,6 +29,7 @@ const app = {
     },
     SET_COLLAPSE: (state, collapse) => {
       state.sidebar.collapse = collapse
+      Lockr.set('sideBarCollapse', collapse)
     },
     SET_NAVACTIVEINDEX: (state, path) => {
       state.navbar.activeIndex = path
