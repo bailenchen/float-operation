@@ -12,8 +12,9 @@ export default {
   },
 
   computed: {
+    // 1.导入框展示 2.导入状态状态为空或者是等待状态  缩小框不展示
     showFixImport() {
-      return this.crmImportStatus && this.crmImportStatus != 'wait'
+      return !this.showCRMImport && this.crmImportStatus && this.crmImportStatus != 'wait'
     }
   },
 
@@ -30,7 +31,7 @@ export default {
     },
 
     crmImportChange(status) {
-      this.crmImportStatus = status
+      this.crmImportStatus = this.showCRMImport && status == 'finish' ? '' : status
     },
 
     fixImportClick() {

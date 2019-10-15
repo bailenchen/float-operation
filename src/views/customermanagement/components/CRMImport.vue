@@ -224,7 +224,19 @@ export default {
             this.user = [this.userInfo]
           }
         }
+      } else {
+        if (this.stepsActive == 3) {
+          this.resetData()
+        }
       }
+    },
+
+    stepsActive() {
+      this.$emit('status', {
+        1: 'wait',
+        2: 'process',
+        3: 'finish'
+      }[this.stepsActive])
     }
 
     // file() {
@@ -314,7 +326,6 @@ export default {
             this.processData.status = ''
             this.processData.count = res.data
           }
-          console.log('res. num ---', res.data)
         })
         .catch(() => {
           // this.processData.status = 'err'
@@ -327,7 +338,6 @@ export default {
     thirdQueryResult() {
       crmQueryImportInfoAPI({ messageId: this.messageId })
         .then(res => {
-          console.log('res. result ---', res)
           this.loading = false
           this.stepList[1].status = 'finish'
           this.stepsActive = 3
@@ -357,9 +367,11 @@ export default {
           var downloadElement = document.createElement('a')
           var href = window.URL.createObjectURL(blob) // 创建下载的链接
           downloadElement.href = href
+          let fileName = res.headers['content-disposition'].split('filename=')[1]
+          fileName = fileName.replace(/\"/g, '')
           downloadElement.download =
             decodeURI(
-              res.headers['content-disposition'].split('filename=')[1]
+              fileName
             ) || '' // 下载后文件名
           document.body.appendChild(downloadElement)
           downloadElement.click() // 点击下载
@@ -447,18 +459,42 @@ export default {
 
     // 关闭操作
     closeView() {
-      console.log('执行了关闭', {
-        1: 'wait',
-        2: 'process',
-        3: 'finish'
-      }[this.stepsActive], this.stepsActive)
       this.$emit('update:show', false)
-      this.$emit('status', {
-        1: 'wait',
-        2: 'process',
-        3: 'finish'
-      }[this.stepsActive])
       this.$emit('close', this.stepsActive == 3 ? 'finish' : '')
+    },
+
+    /**
+     * 重置页面数据
+     */
+    resetData() {
+      this.config = 1
+      this.file = { name: '' }
+      this.user = []
+
+      this.stepsActive = 1
+      this.stepList = [
+        {
+          icon: 'wk wk-upload',
+          title: '上传文件',
+          status: 'wait'
+        },
+        {
+          icon: 'wk wk-data-import',
+          title: '导入数据',
+          status: 'wait'
+        },
+        {
+          icon: 'wk wk-success',
+          title: '导入完成',
+          status: 'wait'
+        }
+      ]
+      this.resultData = null
+      this.processData = {
+        count: 0,
+        status: ''
+      }
+      this.messageId = null
     }
   }
 }
