@@ -173,8 +173,14 @@ export default {
       this.loading = true
       biProductStatistics(params)
         .then(res => {
-          this.list = res.data
-          this.handleShowInfo()
+          if (res.data && res.data.length > 0) {
+            this.list = res.data
+            this.handleShowInfo()
+          } else {
+            this.list = []
+            this.spanList = []
+            this.newList = []
+          }
           this.loading = false
         })
         .catch(() => {
@@ -284,7 +290,6 @@ export default {
       this.spanList = spanList
       newList[newList.length - 1].productPrice = '总计'
       this.newList = newList
-      console.log('new list', this.newList)
     }
   }
 }
