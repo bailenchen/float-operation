@@ -18,7 +18,7 @@
       </div>
       <keep-alive>
         <component
-          :is="menuIndex"
+          :is="componentName"
           :types="types"
           class="system-view-content"/>
       </keep-alive>
@@ -61,6 +61,15 @@ export default {
     }
   },
 
+  computed: {
+    componentName() {
+      if (this.menuIndex == 'own' || this.menuIndex == 'lock') {
+        return 'customer-limit-set'
+      }
+      return this.menuIndex
+    }
+  },
+
   methods: {
     /**
      * 菜单选择
@@ -71,10 +80,8 @@ export default {
           own: 1,
           lock: 2
         }[i]
-        this.menuIndex = 'customer-limit-set'
-      } else {
-        this.menuIndex = i
       }
+      this.menuIndex = i
     }
   }
 }
