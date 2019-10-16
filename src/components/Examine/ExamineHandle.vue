@@ -166,7 +166,7 @@ export default {
 
           this.resetInfo()
           this.$bus.emit('examine-handle-bus')
-          this.$emit('save')
+          this.$emit('save', { type: this.status })
           this.hiddenView()
         })
         .catch(() => {

@@ -28,7 +28,8 @@
           :record-id="detailData.examineRecordId"
           :owner-user-id="detailData.ownerUserId"
           class="examine-info"
-          examine-type="crm_receivables"/>
+          examine-type="crm_receivables"
+          @on-handle="examineHandle"/>
         <div class="d-container-bd">
           <el-tabs
             v-model="tabCurrentName"
@@ -173,6 +174,13 @@ export default {
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
+    },
+
+    /**
+     * 审核操作
+     */
+    examineHandle() {
+      this.$emit('handle', { type: 'examine' })
     }
   }
 }
