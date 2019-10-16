@@ -37,40 +37,6 @@ export function parseTime(time, cFormat) {
   return time_str
 }
 
-export function formatTime(time, option) {
-  time = +time * 1000
-  const d = new Date(time)
-  const now = Date.now()
-
-  const diff = (now - d) / 1000
-
-  if (diff < 30) {
-    return '刚刚'
-  } else if (diff < 3600) {
-    // less 1 hour
-    return Math.ceil(diff / 60) + '分钟前'
-  } else if (diff < 3600 * 24) {
-    return Math.ceil(diff / 3600) + '小时前'
-  } else if (diff < 3600 * 24 * 2) {
-    return '1天前'
-  }
-  if (option) {
-    return parseTime(time, option)
-  } else {
-    return (
-      d.getMonth() +
-      1 +
-      '月' +
-      d.getDate() +
-      '日' +
-      d.getHours() +
-      '时' +
-      d.getMinutes() +
-      '分'
-    )
-  }
-}
-
 export function isExternal(path) {
   return /^(https?:|mailto:|tel:)/.test(path)
 }
@@ -303,6 +269,32 @@ export function regexIsCRMEmail(email) {
  */
 /** 时间戳转date*/
 import moment from 'moment'
+
+export function formatTime(time) {
+  const timeMoment = moment(time)
+  const nowMoment = moment()
+  const diff = nowMoment.diff(timeMoment, 'seconds')
+
+  if (diff < 30) {
+    return '刚刚'
+  } else if (diff < 3600) {
+    // less 1 hour
+    return Math.ceil(diff / 60) + '分钟前'
+  } else if (diff < 3600 * 24) {
+    return Math.ceil(diff / 3600) + '小时前'
+  } else if (diff < 3600 * 24 * 2) {
+    return '1天前'
+  }
+
+  const timeYear = timeMoment.format('YYYY')
+  const nowYear = nowMoment.format('YYYY')
+
+  if (timeYear == nowYear) {
+    return timeMoment.format('MM月DD日')
+  } else {
+    return timeMoment.format('YY年MM月DD日')
+  }
+}
 
 export function getDateFromTimestamp(time) {
   var times = 0

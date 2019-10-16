@@ -4,6 +4,8 @@ import {
   formatTimeToTimestamp
 } from '@/utils'
 
+export { formatTime } from '@/utils'
+
 /**
  * 时间戳到格式化时间
  * {{item.createTime|filterTimestampToFormatTime('MM-DD dddd')}}

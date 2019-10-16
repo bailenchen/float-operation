@@ -19,6 +19,19 @@
       </el-menu>
     </div>
 
+    <el-badge
+      :value="unreadNum"
+      :hidden="!unreadNum || unreadNum == 0"
+      :max="99">
+      <i
+        class="wk wk-bell"
+        @click="sysMessageShow = true"/>
+    </el-badge>
+
+    <system-message
+      :visible.sync="sysMessageShow"
+      :unread-num="unreadNum"/>
+
     <el-popover
       :visible-arrow="false"
       placement="bottom"
@@ -62,9 +75,13 @@
 </template>
 
 <script>
+import { adminGroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
+import { systemMessageUnreadCountAPI } from '@/api/common'
+
+import SystemMessage from './SystemMessage'
+
 import { mapGetters } from 'vuex'
 import { Loading } from 'element-ui'
-import { adminGroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
 
 export default {
   filters: {
@@ -76,7 +93,9 @@ export default {
       }
     }
   },
-  components: {},
+  components: {
+    SystemMessage
+  },
   props: {
     navIndex: {
       type: [Number, String],
@@ -85,7 +104,10 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      unreadNum: 0,
+      sysMessageShow: false
+    }
   },
   computed: {
     ...mapGetters([
@@ -109,6 +131,7 @@ export default {
       //     icon: 'workbench'
       //   })
       // }
+
       if (this.crm) {
         tempsItems.push({
           title: '客户管理',
@@ -130,12 +153,16 @@ export default {
         path: '/workLog',
         icon: ''
       })
-      tempsItems.push({
-        title: '通讯录',
-        type: 6,
-        path: '/addressBook',
-        icon: ''
-      })
+
+      if (this.oa && this.oa.book) {
+        tempsItems.push({
+          title: '通讯录',
+          type: 6,
+          path: '/addressBook',
+          icon: ''
+        })
+      }
+
       if (this.bi) {
         tempsItems.push({
           title: '商业智能',
@@ -144,6 +171,7 @@ export default {
           icon: 'statistics'
         })
       }
+
       if (this.project) {
         tempsItems.push({
           title: '项目管理',
@@ -170,6 +198,8 @@ export default {
     ) {
       this.getAuthPath()
     }
+
+    this.getSystemUnreadNum()
   },
   methods: {
     navItemsClick(path) {
@@ -223,6 +253,16 @@ export default {
               item.name
             )}`
           }
+        })
+        .catch(() => {})
+    },
+    /**
+     * 获取系统未读消息数
+     */
+    getSystemUnreadNum() {
+      systemMessageUnreadCountAPI()
+        .then(res => {
+          this.unreadNum = res.data.count
         })
         .catch(() => {})
     }
@@ -348,6 +388,20 @@ export default {
     font-weight: bold;
     color: #2362fb;
   }
+}
+
+// 系统消息
+.wk-bell {
+  color: #5B606A;
+  cursor: pointer;
+}
+
+.el-badge {
+  margin-right: 30px;
+}
+
+.wk-bell:hover {
+  color: $xr-color-primary;
 }
 </style>
 

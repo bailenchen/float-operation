@@ -141,3 +141,30 @@ export function adminIndexAuthList(data) {
     data: data
   })
 }
+
+
+/**
+ * 系统消息列表
+ * label 1 任务 2 日志 3 oa审批 4公告 5 日程 6 客户管理
+ * isRead 0 未读 1 已读
+ * @param {*} data
+ */
+export function systemMessageListAPI(data) {
+  return request({
+    url: 'system/message/queryList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 未读消息数
+ * @param {*} data
+ */
+export function systemMessageUnreadCountAPI(data) {
+  return request({
+    url: 'system/message/queryUnreadCount',
+    method: 'post',
+    data: data
+  })
+}
