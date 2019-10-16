@@ -22,8 +22,8 @@
             <el-badge
               v-for="(item, index) in menuList"
               :key="index"
-              :value="unreadNum"
-              :hidden="!unreadNum || unreadNum == 0"
+              :value="unreadNums[item.countKey]"
+              :hidden="!unreadNums[item.countKey] || unreadNums[item.countKey] == 0"
               :max="99">
               <el-button
                 :class="{'is-current': menuLabel == item.label}"
@@ -42,7 +42,8 @@
                 :data="item"
                 :data-index="index"
                 @detail="checkCRMDetail"
-                @download="downloadError" />
+                @download="downloadError"
+                @read="readMessageClick"/>
             </div>
             <p
               v-if="loading"
@@ -65,7 +66,7 @@
     <new-dialog
       v-if="announcementAddShow"
       @onSubmit="announcementSubmiteSuccess"
-      @close="announcementAddShow = false"/>
+      @close="announcementAddShow = false" />
 
     <!-- CRM详情 -->
     <c-r-m-full-screen-detail
@@ -76,7 +77,10 @@
 </template>
 
 <script>
-import { systemMessageListAPI } from '@/api/common'
+import {
+  systemMessageListAPI,
+  systemMessageReadAPI,
+  systemMessageReadAllAPI } from '@/api/common'
 import {
   crmDownImportErrorAPI
 } from '@/api/customermanagement/common'
@@ -102,7 +106,7 @@ export default {
       type: Boolean,
       default: false
     },
-    unreadNum: [Number, String]
+    unreadNums: Object
   },
   data() {
     return {
@@ -111,22 +115,28 @@ export default {
       menuLabel: 'all',
       menuList: [{
         name: '全部',
-        label: 'all'
+        label: 'all',
+        countKey: 'allCount'
       }, {
         name: '公告',
-        label: 4
+        label: 4,
+        countKey: 'announceCount'
       }, {
         name: '审批',
-        label: 3
+        label: 3,
+        countKey: 'examineCount'
       }, {
         name: '任务',
-        label: 1
+        label: 1,
+        countKey: 'taskCount'
       }, {
         name: '日志',
-        label: 2
+        label: 2,
+        countKey: 'logCount'
       }, {
         name: '客户管理',
-        label: 6
+        label: 6,
+        countKey: 'crmCount'
       }],
 
       // 公告
@@ -146,7 +156,7 @@ export default {
   },
   computed: {
     title() {
-      return this.unreadNum > 0 ? `通知（${this.unreadNum}）` : '通知'
+      return this.unreadNums.allCunt > 0 ? `通知（${this.unreadNums.allCunt}）` : '通知'
     },
 
     scrollDisabled() {
@@ -160,6 +170,7 @@ export default {
         document.body.appendChild(this.$el)
         this.$el.addEventListener('click', this.handleDocumentClick, false)
         this.$el.style.zIndex = getMaxIndex()
+        this.refreshList()
       }
     },
     showDetail(val) {
@@ -285,17 +296,37 @@ export default {
     },
 
     /**
+     * 读取消息
+     */
+    readMessageClick(messageId, index) {
+      systemMessageReadAPI({ messageId })
+        .then(res => {
+          this.list[index].isRead = 1
+          this.$emit('update-count')
+        })
+        .catch(() => {
+        })
+    },
+
+    /**
      * 全部标记完成
      */
     allMarkDoneClick() {
-
+      systemMessageReadAllAPI()
+        .then(res => {
+          this.list.forEach(item => {
+            item.isRead = 1
+          })
+          this.$emit('update-count')
+        })
+        .catch(() => {
+        })
     },
-
-
 
     hiddenView() {
       this.showDetail = false
     },
+
     handleDocumentClick(e) {
       e.stopPropagation()
       if (this.$el == e.target) {
@@ -340,7 +371,7 @@ export default {
     line-height: 50px;
     font-size: 14px;
     color: #333;
-    background-color: #F7F8FA;
+    background-color: #f7f8fa;
 
     .title {
       font-weight: 600;
@@ -360,7 +391,7 @@ export default {
     right: 0;
     bottom: -1px;
     height: 50px;
-    background-color: #F7F8FA;
+    background-color: #f7f8fa;
     text-align: center;
     line-height: 50px;
   }

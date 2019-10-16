@@ -20,8 +20,8 @@
     </div>
 
     <el-badge
-      :value="unreadNum"
-      :hidden="!unreadNum || unreadNum == 0"
+      :value="unreadNums.allCount"
+      :hidden="!unreadNums.allCount || unreadNums.allCount == 0"
       :max="99">
       <i
         class="wk wk-bell"
@@ -30,7 +30,8 @@
 
     <system-message
       :visible.sync="sysMessageShow"
-      :unread-num="unreadNum"/>
+      :unread-nums="unreadNums"
+      @update-count="getSystemUnreadNum"/>
 
     <el-popover
       :visible-arrow="false"
@@ -105,8 +106,16 @@ export default {
   },
   data() {
     return {
-      unreadNum: 0,
-      sysMessageShow: false
+      unreadNums: {
+        allCount: 0,
+        announceCount: 0,
+        crmCount: 0,
+        examineCount: 0,
+        logCount: 0,
+        taskCount: 0
+      },
+      sysMessageShow: false,
+      intervalId: null
     }
   },
   computed: {
@@ -199,6 +208,7 @@ export default {
       this.getAuthPath()
     }
 
+    // 消息数
     this.getSystemUnreadNum()
   },
   methods: {
@@ -256,15 +266,32 @@ export default {
         })
         .catch(() => {})
     },
+
     /**
      * 获取系统未读消息数
      */
     getSystemUnreadNum() {
+      if (this.intervalId) {
+        clearInterval(this.intervalId)
+        this.intervalId = null
+      }
+      this.sendSystemUnreadNum()
+      this.intervalId = setInterval(() => {
+        this.sendSystemUnreadNum()
+      }, 60000)
+    },
+
+    sendSystemUnreadNum() {
       systemMessageUnreadCountAPI()
         .then(res => {
-          this.unreadNum = res.data.count
+          this.unreadNums = res.data
         })
-        .catch(() => {})
+        .catch(() => {
+          if (this.intervalId) {
+            clearInterval(this.intervalId)
+            this.intervalId = null
+          }
+        })
     }
   }
 }
@@ -392,8 +419,9 @@ export default {
 
 // 系统消息
 .wk-bell {
-  color: #5B606A;
+  color: #9DA9C2;
   cursor: pointer;
+  font-size: 20px;
 }
 
 .el-badge {

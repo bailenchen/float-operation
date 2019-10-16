@@ -1,5 +1,6 @@
 <template>
   <flexbox
+    :class="{ 'is-unread' :data.isRead == 0 }"
     class="message-cell"
     align="stretch">
     <div class="message-cell__hd">
@@ -13,7 +14,8 @@
       <span class="click-content" @click="enterDetail">{{ centerCotent }}</span>
       <span>{{ rightContent }}</span>
     </div>
-    <div :class="{ 'is-unread' :data.isRead == 0 }" class="message-cell__ft">{{ data.createTime | formatTime }} </div>
+
+    <div class="message-cell__ft"><i class="el-icon-check" @click="messageReadClick" />{{ data.createTime | formatTime }} </div>
   </flexbox>
 </template>
 
@@ -192,10 +194,18 @@ export default {
   methods: {
     enterDetail() {
       if (this.data.type >= 14 && this.data.type <= 21) {
-        this.$emit('download', this.data.messageId)
+        this.$emit('download', this.data.messageId, this.dataIndex)
       } else {
-        this.$emit('detail', this.typeObj.type, this.data.typeId)
+        this.$emit('read', this.data.messageId, this.dataIndex)
+        this.$emit('detail', this.typeObj.type, this.data.typeId, this.dataIndex)
       }
+    },
+
+    /**
+     * 标记已读
+     */
+    messageReadClick() {
+      this.$emit('read', this.data.messageId, this.dataIndex)
     }
   }
 }
@@ -237,13 +247,17 @@ export default {
     margin-left: 35px;
     text-align: right;
     position: relative;
+
+    .el-icon-check {
+      visibility: hidden;
+    }
   }
 
-  &__ft.is-unread::before {
+  &.is-unread::before {
     content: '';
     position: absolute;
-    top: 5px;
-    right: -8px;
+    top: 20px;
+    right: 8px;
     width: 6px;
     height: 6px;
     border-radius: 3px;
@@ -253,6 +267,23 @@ export default {
   &:hover {
     background-color: #f7f8fa;
   }
+
+  &.is-unread:hover {
+    .el-icon-check {
+      visibility: visible;
+    }
+  }
+}
+
+// 标记
+.el-icon-check {
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  margin-top: -10px;
+  color: $xr-color-primary;
+  cursor: pointer;
 }
 
 .click-content {
