@@ -17,41 +17,39 @@
             @click="createNotice">新建公告</el-button>
         </div>
 
-        <div class="sm-main__bd">
-          <div class="menu">
-            <el-badge
-              v-for="(item, index) in menuList"
-              :key="index"
-              :value="unreadNums[item.countKey]"
-              :hidden="!unreadNums[item.countKey] || unreadNums[item.countKey] == 0"
-              :max="99">
-              <el-button
-                :class="{'is-current': menuLabel == item.label}"
-                type="primary"
-                @click.native="menuClick(item.label)">{{ item.name }}</el-button>
-            </el-badge>
+        <div class="menu">
+          <el-badge
+            v-for="(item, index) in menuList"
+            :key="index"
+            :value="unreadNums[item.countKey]"
+            :hidden="!unreadNums[item.countKey] || unreadNums[item.countKey] == 0"
+            :max="99">
+            <el-button
+              :class="{'is-current': menuLabel == item.label}"
+              type="primary"
+              @click.native="menuClick(item.label)">{{ item.name }}</el-button>
+          </el-badge>
+        </div>
 
+        <div class="sm-main__bd">
+          <div
+            v-infinite-scroll="getList"
+            infinite-scroll-disabled="scrollDisabled">
+            <message-cell
+              v-for="(item, index) in list"
+              :key="index"
+              :data="item"
+              :data-index="index"
+              @detail="checkCRMDetail"
+              @download="downloadError"
+              @read="readMessageClick"/>
           </div>
-          <div class="sm-content">
-            <div
-              v-infinite-scroll="getList"
-              infinite-scroll-disabled="scrollDisabled">
-              <message-cell
-                v-for="(item, index) in list"
-                :key="index"
-                :data="item"
-                :data-index="index"
-                @detail="checkCRMDetail"
-                @download="downloadError"
-                @read="readMessageClick"/>
-            </div>
-            <p
-              v-if="loading"
-              class="scroll-bottom-tips">加载中...</p>
-            <p
-              v-if="noMore"
-              class="scroll-bottom-tips">没有更多了</p>
-          </div>
+          <p
+            v-if="loading"
+            class="scroll-bottom-tips">加载中...</p>
+          <p
+            v-if="noMore"
+            class="scroll-bottom-tips">没有更多了</p>
         </div>
 
         <div class="sm-main__ft">
@@ -383,7 +381,10 @@ export default {
     }
   }
 
-  // &__bd {}
+  &__bd {
+    height: calc(100% - 110px);
+    overflow-y: auto;
+  }
 
   &__ft {
     position: absolute;
@@ -436,10 +437,6 @@ export default {
   }
 }
 
-.sm-content {
-  height: calc(100% - 60px);
-  overflow-y: auto;
-}
 
 .scroll-bottom-tips {
   margin: 15px 0 65px;
