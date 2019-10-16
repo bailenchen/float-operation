@@ -133,7 +133,7 @@ export default {
       this.loading = true
       systemMenuGetWorkMenuListAPI()
         .then(res => {
-          this.showTreeData = [res.data]
+          this.showTreeData = res.data.data ? [res.data.data] : []
           this.checkTreeByUpdateInfo()
           this.loading = false
         })
