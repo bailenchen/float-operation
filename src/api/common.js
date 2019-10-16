@@ -168,3 +168,27 @@ export function systemMessageUnreadCountAPI(data) {
     data: data
   })
 }
+
+/**
+ * 读消息
+ * @param {*} data
+ */
+export function systemMessageReadAPI(data) {
+  return request({
+    url: 'system/message/readMessage',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 读全部消息
+ * @param {*} data
+ */
+export function systemMessageReadAllAPI(data) {
+  return request({
+    url: 'system/message/readAllMessage',
+    method: 'post',
+    data: data
+  })
+}

@@ -174,12 +174,11 @@ export default {
      */
     changeCheckout(val) {
       this.refreshAllCheck(val.length)
-      const children = this.$refs.checkboxGroup.$children || []
       const selectItems = []
-      for (let index = 0; index < children.length; index++) {
-        const check = children[index].isChecked
-        if (check) {
-          selectItems.push(this.list[index])
+      for (let index = 0; index < this.list.length; index++) {
+        const item = this.list[index]
+        if (val.includes(item.userId)) {
+          selectItems.push(item)
         }
       }
       this.$emit('changeCheckout', selectItems, val)
