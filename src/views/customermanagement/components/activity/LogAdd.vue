@@ -211,8 +211,8 @@ export default {
      * 跟进类型初始值
      */
     getDefalutFollowType() {
-      if (this.followTypes && this.followTypes.lenght > 0) {
-        this.followType = this.followTypes[0]
+      if (this.followTypes && this.followTypes.length > 0) {
+        this.followType = this.followTypes[0].value
       } else {
         this.followType = ''
       }
