@@ -144,7 +144,10 @@ export default {
         21: `${this.data.realname}取消导入产品数据，已导入${this.data.title}条，失败${this.data.content}条。`,
         22: `${this.data.realname}将您添加为商机`,
         23: `${this.data.realname}将您添加为客户`,
-        24: `${this.data.realname}将您添加为合同`
+        24: `${this.data.realname}将您添加为合同`,
+        25: `${this.data.realname}提交了`,
+        26: `${this.data.realname}提交了`,
+        27: `${this.data.realname}提交了`
       }[this.data.type]
     },
 
@@ -183,7 +186,10 @@ export default {
         21: ``,
         22: `的成员`,
         23: `的成员`,
-        24: `的成员`
+        24: `的成员`,
+        25: `，请及时处理`,
+        26: `合同审批，请及时处理`,
+        27: `回款审批，请及时处理`
       }[this.data.type]
     }
   },
