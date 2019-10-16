@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :visible.sync="visible"
+    :visible="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
     title="设置目标"
@@ -15,12 +15,14 @@
             <xh-user-cell
               v-if="type == 'user'"
               :radio="false"
+              :value="selectDepOrUser"
               class="select-condition"
               placeholder="选择人员"
               @value-change="userChange" />
             <xh-structure-cell
               v-else
               :radio="false"
+              :value="selectDepOrUser"
               class="select-condition"
               @value-change="structureChange" />
           </flexbox>

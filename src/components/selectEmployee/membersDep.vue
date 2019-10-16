@@ -223,6 +223,8 @@ export default {
       if (val) {
         this.updateCheckInfoByWatch()
       }
+
+      this.$emit('show', val)
     },
     userList() {
       const selectItems = this.userList.filter(item => {
