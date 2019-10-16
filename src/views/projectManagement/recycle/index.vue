@@ -21,6 +21,7 @@
       ref="particulars"
       :id="taskID"
       :detail-index="detailIndex"
+      is-trash
       @on-handle="detailHandle"
       @close="closeBtn"/>
   </div>

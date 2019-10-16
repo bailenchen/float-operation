@@ -537,6 +537,7 @@ import {
   setCommentAPI,
   deleteCommentAPI,
   detailsTaskAPI,
+  detailsTrashTaskAPI,
   queryLogTaskAPI
 } from '@/api/task/task'
 // 项目参与人
@@ -578,6 +579,7 @@ export default {
   },
   props: {
     id: [String, Number],
+    isTrash: Boolean,
     detailIndex: Number,
     detailSection: Number,
     noListenerClass: {
@@ -762,7 +764,8 @@ export default {
      */
     getDetail() {
       this.loading = true
-      detailsTaskAPI({ taskId: this.id })
+      const request = this.isTrash ? detailsTrashTaskAPI : detailsTaskAPI
+      request({ taskId: this.id })
         .then(res => {
           const taskData = res.data
           taskData.checked = taskData.status == 5

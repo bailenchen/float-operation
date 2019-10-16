@@ -34,6 +34,16 @@ export function detailsTaskAPI(data) {
   })
 }
 
+// 回收站任务详情
+export function detailsTrashTaskAPI(data) {
+  return request({
+    url: 'task/queryTrashTaskInfo',
+    method: 'post',
+    data: data
+  })
+}
+
+
 // 任务活动
 export function queryLogTaskAPI(data) {
   return request({
