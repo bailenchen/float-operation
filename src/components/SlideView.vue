@@ -9,6 +9,7 @@
       :body-style="bodyStyle"
       class="slide-detail-card-container">
       <el-button
+        v-if="showClose"
         class="close-btn"
         type="primary"
         icon="el-icon-close"

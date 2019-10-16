@@ -18,7 +18,7 @@
             type="text"
             icon="el-icon-circle-plus"
             class="add-btn"
-            @click="newRoleBtn">创建部门</el-button>
+            @click="newRoleBtn">创建角色</el-button>
         </div>
         <!-- 角色列表 -->
         <div class="role-nav-box">
