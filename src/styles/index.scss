@@ -280,3 +280,21 @@ div[lazy=loading] {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+// 项目下的侧滑框
+.project-drawer {
+  .el-drawer__header {
+    display: none;
+  }
+
+  .el-drawer__body {
+    padding: 15px;
+  }
+}
+
+#project-container {
+  .el-dialog__wrapper,
+  .v-modal {
+    position: absolute;
+  }
+}

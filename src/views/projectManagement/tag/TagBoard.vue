@@ -19,7 +19,8 @@
         v-for="(item, index) in showList"
         :key="index"
         :label="item.name"
-        icon-color="#20C1BD"
+        :icon-color="item.color"
+        :collect="false"
         icon-class="wk wk-label"
         @click.native="enterDetail(item)" />
     </section>
@@ -55,7 +56,13 @@ export default {
       })
     }
   },
-  watch: {},
+  watch: {
+    visible(value) {
+      if (value) {
+        this.getList()
+      }
+    }
+  },
   created() {
     this.getList()
   },

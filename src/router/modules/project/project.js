@@ -26,7 +26,7 @@ const workbenchRouter = {
 
 // 项目
 const projectRouter = {
-  path: 'project-list',
+  path: 'project',
   meta: {
     icon: 'project',
     title: '项目',
@@ -83,12 +83,18 @@ const otherRouter = {
   children: [{
     name: 'tag-list',
     path: 'tag/:id',
-    component: () => import('@/views/projectManagement/tag/index')
+    component: () => import('@/views/projectManagement/tag/index'),
+    meta: {
+      menuIndex: '/project/tag'
+    }
   },
   {
     name: 'project-list',
-    path: 'list/:id',
-    component: () => import('@/views/projectManagement/project/index')
+    path: 'project/:id',
+    component: () => import('@/views/projectManagement/project/index'),
+    meta: {
+      menuIndex: '/project/project'
+    }
   }
   ]
 }

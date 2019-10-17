@@ -84,12 +84,15 @@ export default {
     navClick(index) {},
 
     siderbarSelect(key, keyPath) {
-      if (key == '/project/project-list') {
+      if (key == '/project/project') {
         this.tagBoardShow = false
         this.projectBoardShow = true
       } else if (key == '/project/tag') {
         this.projectBoardShow = false
         this.tagBoardShow = true
+      } else {
+        this.projectBoardShow = false
+        this.tagBoardShow = false
       }
     },
 

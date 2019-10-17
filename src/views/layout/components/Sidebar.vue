@@ -49,7 +49,9 @@
             :content="item.meta.title"
             effect="dark"
             placement="right">
-            <el-menu-item :index="getFullPath(item.path)">
+            <el-menu-item
+              :index="getFullPath(item.path)"
+              :class="{ 'is-select': activeIndex == getFullPath(item.path)}">
               <div class="menu-item-content">
                 <i
                   :class="['wk', `wk-${item.meta.icon}`]"
@@ -79,7 +81,9 @@
             v-for="(subitem, subindex) in getShowMenu(item.children)"
             :key="subindex"
             :to="getFullPath(subitem.path)">
-            <el-menu-item :index="getFullPath(subitem.path)">
+            <el-menu-item
+              :index="getFullPath(subitem.path)"
+              :class="{ 'is-select': activeIndex == getFullPath(item.path)}">
               <div class="menu-item-content">
                 {{ subitem.meta.title }}
               </div>
@@ -184,58 +188,8 @@ export default {
   },
   mounted() {
     this.buttonCollapse = this.collapse
-    // this.changeMenu()
   },
   methods: {
-    // changeMenu() {
-    //   this.$nextTick(() => {
-    //     this.checkMenuInfo()
-    //   })
-    // },
-
-    // checkMenuInfo() {
-    //   setTimeout(() => {
-    //     if (
-    //       (this.$refs.menu.$children && !this.$refs.menu.$children.length) ||
-    //       !this.$refs.menu.$children
-    //     ) {
-    //       this.checkMenuInfo()
-    //     } else if (this.$refs.menu.$children) {
-    //       this.changeMenuItemPadding(this.$refs.menu)
-    //     }
-    //   }, 0)
-    // },
-
-    // changeMenuItemPadding(menus) {
-    //   for (let index = 0; index < menus.$children.length; index++) {
-    //     const element = menus.$children[index]
-    //     if (element.$options.name === 'router-link') {
-    //       if (element.$children && element.$children.length) {
-    //         const menuItem = element.$children[0]
-    //         let paddingLeft = menuItem.$el.style.paddingLeft
-    //         paddingLeft = paddingLeft.replace('px', '')
-    //         if (parseFloat(paddingLeft) % 20 == 0) {
-    //           paddingLeft = parseFloat(paddingLeft) * 0.7
-    //           menuItem.$el.style.paddingLeft = paddingLeft + 'px'
-    //         }
-    //       }
-    //     } else if (element.$options.name === 'ElSubmenu') {
-    //       if (element.$el.children && element.$el.children.length) {
-    //         if (element.$refs['submenu-title']) {
-    //           let paddingLeft = element.$refs['submenu-title'].style.paddingLeft
-    //           paddingLeft = paddingLeft.replace('px', '')
-    //           if (parseFloat(paddingLeft) % 20 == 0) {
-    //             paddingLeft = parseFloat(paddingLeft) * 0.7
-    //             element.$refs['submenu-title'].style.paddingLeft =
-    //               paddingLeft + 'px'
-    //           }
-    //         }
-    //       }
-
-    //       this.changeMenuItemPadding(element)
-    //     }
-    //   }
-    // },
     toggleSideBarClick() {
       this.$store.commit('SET_COLLAPSE', !this.collapse)
     },
@@ -250,6 +204,7 @@ export default {
     },
 
     getFullPath(path) {
+      console.log('full----', `/${this.mainRouter}/${path}`)
       return `/${this.mainRouter}/${path}`
     },
 
@@ -312,12 +267,20 @@ export default {
   line-height: normal;
   padding: 0 14px;
   background-color: #001529 !important;
+  color: #BEBEC0;
 }
 
 .el-menu-item.is-active {
   .menu-item-content {
+    color: #BEBEC0;
+  }
+}
+
+// element自带的有问题 is-active 换成 is-select
+.el-menu-item.is-select {
+  .menu-item-content {
     background-color: #2362fb !important;
-    color: white;
+    color: white !important;
   }
 }
 
@@ -325,7 +288,7 @@ export default {
   .menu-item-content {
     background-color: rgba($color: #fff, $alpha: 0.1);
     color: white;
-    .wukong {
+    .wk {
       color: white !important;
     }
   }
