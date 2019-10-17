@@ -14,10 +14,13 @@
           :create-button-title="permissonProject ? '创建项目' : ''"
           create-button-icon="el-icon-plus"
           main-router="project"
-          @quicklyCreate="quicklyCreate"/>
+          @quicklyCreate="quicklyCreate"
+          @select="siderbarSelect"/>
       </el-aside>
-      <el-main id="project-main-container">
+      <el-main id="project-container">
         <app-main/>
+        <project-board :visible.sync="projectBoardShow" />
+        <tag-board :visible.sync="tagBoardShow" />
       </el-main>
     </el-container>
     <add-project
@@ -33,6 +36,8 @@ import { Navbar, Sidebar, AppMain } from './components'
 import { workIndexWorkListAPI } from '@/api/projectManagement/task'
 import { workTasklableIndexAPI } from '@/api/projectManagement/tag'
 import AddProject from '@/views/projectManagement/components/addProject'
+import ProjectBoard from '@/views/projectManagement/project/ProjectBoard'
+import TagBoard from '@/views/projectManagement/tag/TagBoard'
 
 export default {
   name: 'Layout',
@@ -40,12 +45,16 @@ export default {
     Navbar,
     Sidebar,
     AppMain,
-    AddProject
+    AddProject,
+    ProjectBoard,
+    TagBoard
   },
   data() {
     return {
       isCreate: false,
-      sidebarItems: []
+      sidebarItems: [],
+      projectBoardShow: false,
+      tagBoardShow: false
     }
   },
   computed: {
@@ -60,8 +69,8 @@ export default {
   },
   created() {
     this.sidebarItems = childrenMenu
-    this.getProjectMenu()
-    this.getTagMenu()
+    // this.getProjectMenu()
+    // this.getTagMenu()
     this.addNotification()
   },
 
@@ -73,6 +82,16 @@ export default {
   },
   methods: {
     navClick(index) {},
+
+    siderbarSelect(key, keyPath) {
+      if (key == '/project/project-list') {
+        this.tagBoardShow = false
+        this.projectBoardShow = true
+      } else if (key == '/project/tag') {
+        this.projectBoardShow = false
+        this.tagBoardShow = true
+      }
+    },
 
     quicklyCreate() {
       this.isCreate = true
@@ -231,8 +250,9 @@ export default {
   min-width: 1200px;
 }
 
-#project-main-container {
+#project-container {
   max-height: 100%;
+  position: relative;
 }
 
 .el-container {

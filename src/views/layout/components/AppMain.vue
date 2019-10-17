@@ -1,6 +1,7 @@
 <template>
-  <div style="height: 100%;">
+  <div class="app-main">
     <router-view />
+    <slot />
   </div>
 </template>
 
@@ -12,4 +13,8 @@ export default {
 </script>
 
 <style scoped>
+.app-main {
+  position: relative;
+  height: 100%;
+}
 </style>

@@ -26,12 +26,12 @@ const workbenchRouter = {
 
 // 项目
 const projectRouter = {
-  path: 'project',
+  path: 'project-list',
   meta: {
     icon: 'project',
-    title: '项目'
-  },
-  children: []
+    title: '项目',
+    disabled: true
+  }
 }
 
 // 统计分析
@@ -60,9 +60,8 @@ const tagRouter = {
   meta: {
     icon: 'label',
     title: '标签',
-    fontSize: '18px'
-  },
-  children: []
+    disabled: true
+  }
 }
 
 // 回收站
@@ -71,8 +70,7 @@ const recycleRouter = {
   component: () => import('@/views/projectManagement/recycle/index'),
   meta: {
     icon: 'bin',
-    title: '回收站',
-    fontSize: '18px'
+    title: '回收站'
   }
 }
 
@@ -83,6 +81,7 @@ const otherRouter = {
     title: '项目管理'
   },
   children: [{
+    name: 'tag-list',
     path: 'tag/:id',
     component: () => import('@/views/projectManagement/tag/index')
   },
@@ -94,5 +93,5 @@ const otherRouter = {
   ]
 }
 
-export const children = [...workbenchRouter.children, ...projectRouter.children, statisticsRouter, archiveRouter, ...tagRouter.children, recycleRouter, ...otherRouter.children]
+export const children = [...workbenchRouter.children, projectRouter, statisticsRouter, archiveRouter, tagRouter, recycleRouter, ...otherRouter.children]
 export const childrenMenu = [workbenchRouter, projectRouter, statisticsRouter, archiveRouter, tagRouter, recycleRouter]

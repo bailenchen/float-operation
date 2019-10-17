@@ -156,7 +156,7 @@ export default {
 
   mounted() {
     document
-      .getElementById('project-main-container')
+      .getElementById('project-container')
       .addEventListener('click', this.taskShowHandle, false)
   },
 
