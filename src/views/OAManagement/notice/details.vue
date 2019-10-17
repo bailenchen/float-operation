@@ -40,7 +40,7 @@
 import CreateView from '@/components/CreateView'
 import VEdit from './edit'
 // API
-import { noticeDelete, noticeAdd } from '@/api/oamanagement/notice'
+import { noticeDelete, noticeAddOrUpateAPI } from '@/api/oamanagement/notice'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -110,7 +110,7 @@ export default {
     // 编辑 -- 确定
     editSubmit() {
       this.loading = true
-      noticeAdd({
+      noticeAddOrUpateAPI({
         announcementId: this.formData.announcementId,
         title: this.formData.title,
         content: this.formData.content,

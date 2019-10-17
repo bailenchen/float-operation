@@ -202,7 +202,10 @@ export default {
       if (this.data.type >= 14 && this.data.type <= 21) {
         this.$emit('download', this.data.messageId, this.dataIndex)
       } else {
-        this.$emit('read', this.data.messageId, this.dataIndex)
+        // 未读触发读
+        if (this.data.isRead == 0) {
+          this.$emit('read', this.data.messageId, this.dataIndex)
+        }
         this.$emit('detail', this.typeObj.type, this.data.typeId, this.dataIndex)
       }
     },

@@ -11,6 +11,7 @@
         <div class="sm-main__hd">
           <span class="title">{{ title }}</span>
           <el-button
+            v-if="permissionSave"
             icon="el-icon-plus"
             class="notice-btn"
             type="text"
@@ -88,6 +89,7 @@ import NewDialog from '@/views/OAManagement/notice/newDialog'
 import MessageCell from './MessageCell'
 
 import { getMaxIndex } from '@/utils/index'
+import { mapGetters } from 'vuex'
 
 export default {
   // 导航头部系统消息
@@ -153,6 +155,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['oa']),
+    permissionSave() {
+      return this.oa && this.oa.announcement && this.oa.announcement.save
+    },
     title() {
       return this.unreadNums.allCunt > 0 ? `通知（${this.unreadNums.allCunt}）` : '通知'
     },

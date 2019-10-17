@@ -6,7 +6,7 @@
       <div
         slot="header"
         class="header">
-        <span class="text">新建公告</span>
+        <span class="text">{{ title }}</span>
         <img
           class="el-icon-close rt"
           src="@/assets/img/task_close.png"
@@ -33,7 +33,7 @@
             </template>
             <template v-else-if="item.type == 'textarea'">
               <el-input
-                :autosize="{ minRows: 6}"
+                :autosize="{ minRows: 10}"
                 :maxlength="2000"
                 v-model="formData[item.field]"
                 show-word-limit
@@ -41,33 +41,11 @@
                 placeholder="请输入内容"/>
             </template>
             <template v-else-if="item.type =='plus'">
-              <members-dep
-                :popover-display="'block'"
-                :title="'通知部门'"
-                :user-checked-data="formData[item.field].staff"
-                :dep-checked-data="formData[item.field].dep"
-                @popoverSubmit="popoverSubmit">
-                <flexbox
-                  slot="membersDep"
-                  wrap="wrap"
-                  class="user-container">
-                  <div
-                    v-for="(item, index) in formData[item.field].staff"
-                    :key="'user' + index"
-                    class="user-item"
-                    @click.stop="deleteuser(index)">{{ item.realname }}
-                    <i class="delete-icon el-icon-close"/>
-                  </div>
-                  <div
-                    v-for="(item, index) in formData[item.field].dep"
-                    :key="'dep' + index"
-                    class="user-item"
-                    @click.stop="deleteDepuser(index)">{{ item.name }}
-                    <i class="delete-icon el-icon-close"/>
-                  </div>
-                  <div class="add-item">+添加</div>
-                </flexbox>
-              </members-dep>
+              <xh-struc-user-cell
+                :users="formData[item.field].staff"
+                :strucs="formData[item.field].dep"
+                style="width: 100%;"
+                @value-change="strcUserChange"/>
             </template>
             <el-input
               v-else
@@ -88,16 +66,27 @@
 <script>
 import CreateView from '@/components/CreateView'
 
-import membersDep from '@/components/selectEmployee/membersDep'
+import { XhStrucUserCell } from '@/components/CreateCom'
 // API
-import { noticeAdd } from '@/api/oamanagement/notice'
+import { noticeAddOrUpateAPI } from '@/api/oamanagement/notice'
 import { formatTimeToTimestamp } from '@/utils/index'
 
 export default {
   components: {
     CreateView,
-    membersDep
+    XhStrucUserCell
   },
+  props: {
+    action: {
+      type: Object,
+      default: () => {
+        return {
+          type: 'save'
+        }
+      }
+    }
+  },
+
   data() {
     var validateTime = (rule, value, callback) => {
       if (
@@ -123,8 +112,8 @@ export default {
       formList: [
         { label: '公告标题', field: 'title' },
         { label: '通知部门', field: 'dep', type: 'plus' },
-        { label: '开始时间', field: 'startTime', type: 'date' },
-        { label: '结束时间', field: 'endTime', type: 'date' },
+        // { label: '开始时间', field: 'startTime', type: 'date' },
+        // { label: '结束时间', field: 'endTime', type: 'date' },
         { label: '公告正文', field: 'content', type: 'textarea' }
       ],
       formData: { dep: { staff: [], dep: [] }},
@@ -148,16 +137,30 @@ export default {
       loading: false
     }
   },
+
+  computed: {
+    title() {
+      return this.action.type == 'save' ? '新建公告' : '编辑公告'
+    }
+  },
+
+  created() {
+    if (this.action.type == 'update') {
+      this.formData.title = this.action.data.title
+      this.formData.content = this.action.data.content
+    }
+  },
+
   methods: {
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
           this.loading = true
-          noticeAdd({
+          const params = {
             title: this.formData.title,
             content: this.formData.content,
-            startTime: this.formData.startTime,
-            endTime: this.formData.endTime,
+            // startTime: this.formData.startTime,
+            // endTime: this.formData.endTime,
             deptIds: this.formData.dep.dep
               .map(item => {
                 return item.id
@@ -168,18 +171,25 @@ export default {
                 return item.userId
               })
               .join(',')
-          })
+          }
+
+          if (this.action.type == 'update') {
+            params.announcementId = this.action.id
+          }
+
+          noticeAddOrUpateAPI(params)
             .then(res => {
-              this.$message.success('新建公告成功')
-              if (this.$route.query.routerKey == 1) {
-                this.$router.push('notice')
-              } else {
-                this.$emit('onSubmit')
-              }
+              this.$message.success(`${this.title}成功`)
+              // if (this.$route.query.routerKey == 1) {
+              //   this.$router.push('notice')
+              // } else {
+              //   this.$emit('onSubmit')
+              // }
+              this.$emit('success')
               this.loading = false
             })
             .catch(() => {
-              this.$message.error('新建公告失败')
+              this.$message.error(`${this.title}失败`)
               this.loading = false
             })
         } else {
@@ -188,15 +198,15 @@ export default {
       })
     },
     close() {
-      if (this.$route.query.routerKey == 1) {
-        this.$router.go(-1)
-      } else {
-        this.$emit('close')
-      }
+      // if (this.$route.query.routerKey == 1) {
+      //   this.$router.go(-1)
+      // } else {
+      this.$emit('close')
+      // }
     },
     // 关闭按钮
-    popoverSubmit(members, dep) {
-      this.$set(this.formData, 'dep', { staff: members, dep: dep })
+    strcUserChange(data) {
+      this.$set(this.formData, 'dep', { staff: data.value.users, dep: data.value.strucs })
     },
     // 删除部门和用户
     deleteuser(index) {

@@ -8,8 +8,8 @@ export function noticeList(data) {
     data: data
   })
 }
-// 公告添加
-export function noticeAdd(data) {
+// 公告添加或编辑
+export function noticeAddOrUpateAPI(data) {
   return request({
     url: 'OaAnnouncement/saveAndUpdate',
     method: 'post',
@@ -25,6 +25,16 @@ export function noticeDelete(data) {
     data: data
   })
 }
+
+// 公告详情
+export function noticeQueryByIdAPI(data) {
+  return request({
+    url: 'OaAnnouncement/queryById',
+    method: 'post',
+    data: data
+  })
+}
+
 
 /**
  * 公告设为已读
