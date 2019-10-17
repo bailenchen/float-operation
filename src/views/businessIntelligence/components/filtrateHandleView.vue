@@ -341,6 +341,8 @@ export default {
         if (this.dataSelect == 1) {
           params.deptId = this.structuresSelectValue.length > 0 ? this.structuresSelectValue[0].id : ''
         }
+      } else {
+        params.deptId = this.structuresSelectValue.length > 0 ? this.structuresSelectValue[0].id : ''
       }
 
       // 展示员工，返回员工参数
