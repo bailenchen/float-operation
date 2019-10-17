@@ -60,7 +60,9 @@
             :value="item.value" />
         </el-select>
       </flexbox>
+    </div>
 
+    <div class="work-log">
       <div
         v-for="(item, index) in listData"
         :key="index"
@@ -74,13 +76,13 @@
           @edit="handleEdit"
           @relate-detail="enterRelateDetail" />
       </div>
-      <p
-        v-if="loading"
-        class="scroll-bottom-tips">加载中...</p>
-      <p
-        v-if="noMore"
-        class="scroll-bottom-tips">没有更多了</p>
     </div>
+    <p
+      v-if="loading"
+      class="scroll-bottom-tips">加载中...</p>
+    <p
+      v-if="noMore"
+      class="scroll-bottom-tips">没有更多了</p>
 
     <c-r-m-all-detail
       :visible.sync="showRelatedDetail"
