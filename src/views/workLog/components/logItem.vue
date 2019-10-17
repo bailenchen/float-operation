@@ -97,7 +97,7 @@
       </el-dropdown>
       <el-button
         type="primary"
-        icon="el-icon-s-comment"
+        icon="wk wk-message"
         class="replay-btn"
         @click="showReply = !showReply">{{ '回复' + (replyTotal > 0 ? `(${replyTotal})` : '') }}</el-button>
     </div>
@@ -428,6 +428,10 @@ export default {
     justify-content: flex-end;
     .replay-btn {
       margin-left: 10px;
+      /deep/ i {
+        margin-right: 5px;
+        font-size: 14px;
+      }
     }
 
     .el-button {

@@ -18,12 +18,18 @@
             </div>
           </div>
           <div class="control">
-            <i
-              class="el-icon-s-comment reply-btn"
-              @click="handleToReply(index)" />
-            <i
-              class="el-icon-delete-solid delete-btn"
-              @click="handleToDelete(item, index)" />
+            <span
+              class="reply-btn"
+              @click="handleToReply(index)">
+              <i class="wk wk-reply" />
+              <span>回复</span>
+            </span>
+            <span
+              class="delete-btn"
+              @click="handleToDelete(item, index)">
+              <i class="wk wk-s-delete"/>
+              <span>删除</span>
+            </span>
           </div>
         </div>
         <div class="content" v-html="emoji(item.content)" />
@@ -52,12 +58,14 @@
                 </div>
               </div>
               <div class="control">
-                <i
-                  class="el-icon-s-comment reply-btn"
-                  @click="handleToReply(index, childIndex)" />
-                <i
-                  class="el-icon-delete-solid delete-btn"
-                  @click="handleToDelete(child, index, childIndex)" />
+                <span class="reply-btn" @click="handleToReply(index, childIndex)">
+                  <i class="wk wk-reply" />
+                  <span>回复</span>
+                </span>
+                <span class="delete-btn" @click="handleToDelete(child, index, childIndex)">
+                  <i class="wk wk-s-delete" />
+                  <span>删除</span>
+                </span>
               </div>
             </div>
             <div class="child-content">
@@ -260,8 +268,17 @@ export default {
             margin-left: 10px;
             visibility: hidden;
             i {
-              font-size: 16px;
+              font-size: 14px;
+            }
+
+            .delete-btn,
+            .reply-btn {
+              cursor: pointer;
               color: #666;
+            }
+
+            .delete-btn {
+              margin-left: 10px;
             }
 
             .reply-btn:hover {
