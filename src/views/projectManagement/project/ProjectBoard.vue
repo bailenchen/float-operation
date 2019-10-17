@@ -25,13 +25,19 @@
         icon-class="wk wk-project"
         label="项目看板" />
 
-      <project-cell
-        v-for="(item, index) in showList"
-        :key="index"
-        :label="item.name"
-        :icon-color="item.color"
-        icon-class="wk wk-project"
-        @click.native="enterDetail(item)" />
+      <draggable
+        v-model="list"
+        :options="{ handle: '.drag-handle', forceFallback: false, disabled: searchInput.length > 0 }"
+        @end="moveItem">
+        <project-cell
+          v-for="(item, index) in showList"
+          :key="index"
+          :drag="searchInput.length == 0"
+          :label="item.name"
+          :icon-color="item.color"
+          icon-class="wk wk-project"
+          @click.native="enterDetail(item)" />
+      </draggable>
     </section>
   </el-drawer>
 </template>
@@ -41,13 +47,15 @@ import { workIndexWorkListAPI } from '@/api/projectManagement/task'
 
 import ProjectCell from '../components/ProjectCell'
 import SectionHead from '../components/SectionHead'
+import Draggable from 'vuedraggable'
 
 export default {
   // 项目看板
   name: 'ProjectBoard',
   components: {
     ProjectCell,
-    SectionHead
+    SectionHead,
+    Draggable
   },
   props: {
     visible: Boolean
@@ -101,6 +109,52 @@ export default {
       })
 
       this.handleClose()
+    },
+
+    /**
+     * 拖拽
+     */
+    moveItem(evt) {
+      if (evt) {
+        // 如果没有进行移动 不做处理
+        if (evt.oldIndex == evt.newIndex) {
+          return
+        }
+
+        // const fromTask = this.list.filter(item => {
+        //   return item.classId == fromId
+        // })[0]
+        // const fromList = fromTask.list
+
+        // const toTask = this.list.filter(item => {
+        //   return item.classId == toId
+        // })[0]
+        // const toList = toTask.list
+
+        // let params = {}
+        // if (fromId == toId) {
+        //   params = {
+        //     toList: toList.map(item => {
+        //       return item.taskId
+        //     }),
+        //     toId: toId
+        //   }
+        // } else {
+        //   params = {
+        //     fromList: fromList.map(item => {
+        //       return item.taskId
+        //     }),
+        //     fromId: fromId,
+        //     toList: toList.map(item => {
+        //       return item.taskId
+        //     }),
+        //     toId: toId
+        //   }
+        // }
+        // workTaskUpdateOrderAPI(params)
+        //   .then(res => {})
+        //   .catch(() => {})
+      }
     },
 
     /**

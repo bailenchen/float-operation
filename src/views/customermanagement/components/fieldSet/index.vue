@@ -15,7 +15,7 @@
       <div v-loading="loading" class="field-set__content">
         <draggable
           v-model="fields"
-          :options="{ dragClass: 'sortable-drag' }">
+          :options="{ dragClass: 'sortable-drag', forceFallback: false }">
           <div v-for="(item, index) in fields" :key="index" class="field-set__content--item text-one-line">
             <el-switch v-model="item.check"/>
             <span v-if="item.center">{{ item.left }}<span class="input-word">{{ item.center }}</span>{{ item.right }}</span>
