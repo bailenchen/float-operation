@@ -33,7 +33,7 @@
             </template>
             <template v-else-if="item.type == 'textarea'">
               <el-input
-                :autosize="{ minRows: 10}"
+                :autosize="{ minRows: 15}"
                 :maxlength="2000"
                 v-model="formData[item.field]"
                 show-word-limit
@@ -42,6 +42,7 @@
             </template>
             <template v-else-if="item.type =='plus'">
               <xh-struc-user-cell
+                :value="null"
                 :users="formData[item.field].staff"
                 :strucs="formData[item.field].dep"
                 style="width: 100%;"
@@ -111,7 +112,7 @@ export default {
     return {
       formList: [
         { label: '公告标题', field: 'title' },
-        { label: '通知部门', field: 'dep', type: 'plus' },
+        { label: '通知范围', field: 'dep', type: 'plus' },
         // { label: '开始时间', field: 'startTime', type: 'date' },
         // { label: '结束时间', field: 'endTime', type: 'date' },
         { label: '公告正文', field: 'content', type: 'textarea' }
@@ -146,8 +147,11 @@ export default {
 
   created() {
     if (this.action.type == 'update') {
-      this.formData.title = this.action.data.title
-      this.formData.content = this.action.data.content
+      this.formData = {
+        title: this.action.data.title,
+        content: this.action.data.content,
+        dep: { staff: this.action.data.ownerUserIds, dep: this.action.data.deptIds }
+      }
     }
   },
 
@@ -183,9 +187,9 @@ export default {
               // if (this.$route.query.routerKey == 1) {
               //   this.$router.push('notice')
               // } else {
-              //   this.$emit('onSubmit')
+              this.$emit('onSubmit')
+              this.close()
               // }
-              this.$emit('success')
               this.loading = false
             })
             .catch(() => {

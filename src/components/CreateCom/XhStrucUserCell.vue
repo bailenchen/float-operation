@@ -116,6 +116,9 @@ export default {
     if (this.value) {
       this.dataUsers = this.value.users
       this.dataStrucs = this.value.strucs
+    } else {
+      this.dataUsers = this.users || []
+      this.dataStrucs = this.strucs || []
     }
   },
   methods: {

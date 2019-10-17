@@ -32,6 +32,7 @@
         </el-dropdown>
       </flexbox>
       <div class="detail-title">{{ detail.title }}</div>
+      <div class="detail-time">{{ detail.updateTime }}</div>
       <div class="main__bd">
         {{ detail.content }}
       </div>
@@ -39,8 +40,8 @@
 
     <new-dialog
       v-if="announcementAddShow"
-      :action="{type: 'update', id: 'id', data: detail}"
-      @onSubmit="announcementSubmiteSuccess"
+      :action="{type: 'update', id: id, data: detail}"
+      @onSubmit="getDetail"
       @close="announcementAddShow = false" />
   </slide-view>
 </template>
@@ -180,7 +181,7 @@ export default {
   height: 100%;
 
   &__bd {
-    height: calc(100% - 105px);
+    height: calc(100% - 138px);
     overflow: auto;
     font-size: 14px;
     color: #333;
@@ -215,6 +216,12 @@ export default {
   font-size: 18px;
   font-weight: 600;
   margin: 30px 0 15px;
+}
+
+.detail-time {
+  font-size: 12px;
+  color: #666;
+  margin: 5px 0 15px;
 }
 
 .d-view {
