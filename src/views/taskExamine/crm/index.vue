@@ -230,7 +230,7 @@ export default {
           const crmData = this.list[this.detailIndex]
           for (let index = 0; index < res.data.list.length; index++) {
             const element = res.data.list[index]
-            if (element[`${this.crmType}Id`] == crmData[`${this.crmType}Id`]) {
+            if (element.catagoryId == crmData.catagoryId) {
               this.list.splice(index, 1, element)
               break
             }
