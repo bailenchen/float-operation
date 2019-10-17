@@ -66,7 +66,7 @@
       ref="particulars"
       :id="taskID"
       :detail-index="detailIndex"
-      :no-listener-class="['xr-cells']"
+      :no-listener-class="['task-cell']"
       @on-handle="detailHandle"
       @close="taskDetailShow = false" />
   </div>

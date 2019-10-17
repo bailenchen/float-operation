@@ -1,7 +1,7 @@
 <template>
   <div
     ref="taskRow"
-    class="list"
+    class="list task-cell"
     @click="rowFun(data)">
     <div
       ref="listLeft"
