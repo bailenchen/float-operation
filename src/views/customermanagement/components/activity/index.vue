@@ -550,7 +550,7 @@ export default {
     // 新建按钮
     .el-button {
       margin-bottom: 5px;
-      padding: 3px 4px;
+      padding: 6px;
       font-size: 12px;
       color: #666;
       background-color: #f1f5fd;
@@ -604,9 +604,9 @@ export default {
         background-color: $xr-color-primary;
         color: white;
         font-size: 12px;
-        padding: 1px 5px;
+        padding: 4px 10px;
         height: 20px;
-        border-radius: 10px;
+        border-radius: 15px;
         &__time::before {
           content: ' ';
           position: relative;
