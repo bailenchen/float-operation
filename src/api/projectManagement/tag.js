@@ -60,3 +60,17 @@ export function workTasklableGetWokListAPI(data) {
   })
 }
 
+/**
+ * 修改标签排序
+ * @param {*} data
+ */
+export function workTasklableUpdateOrderAPI(data) {
+  return request({
+    url: 'taskLabel/updateOrder',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

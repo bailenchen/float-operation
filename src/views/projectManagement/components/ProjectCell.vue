@@ -9,7 +9,7 @@
     <div class="project-cell__label text-one-line">
       {{ label }}
     </div>
-    <i v-if="collect" class="wk wk-focus-on project-cell__collect" />
+    <i v-if="collect" :class="{ 'is-collect': isCollect }" class="wk wk-focus-on project-cell__collect" @click.stop="$emit('collect')" />
   </flexbox>
 </template>
 
@@ -23,6 +23,7 @@ export default {
     iconClass: String,
     iconColor: String,
     label: String,
+    isCollect: Boolean,
     collect: {
       type: Boolean,
       default: true

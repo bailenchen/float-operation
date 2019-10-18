@@ -71,14 +71,14 @@ export default {
     this.sidebarItems = childrenMenu
     // this.getProjectMenu()
     // this.getTagMenu()
-    this.addNotification()
+    // this.addNotification()
   },
 
   beforeDestroy() {
-    this.$bus.$off('project-setting')
-    this.$bus.$off('add-project')
-    this.$bus.$off('delete-project')
-    this.$bus.$off('recover-project')
+    // this.$bus.$off('project-setting')
+    // this.$bus.$off('add-project')
+    // this.$bus.$off('delete-project')
+    // this.$bus.$off('recover-project')
   },
   methods: {
     navClick(index) {},
@@ -97,6 +97,8 @@ export default {
     },
 
     quicklyCreate() {
+      this.projectBoardShow = false
+      this.tagBoardShow = false
       this.isCreate = true
     },
 

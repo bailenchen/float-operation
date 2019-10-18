@@ -1,8 +1,9 @@
 <template>
   <div class="archive-project">
-    <div class="header">
-      归档项目统计
-    </div>
+    <xr-header
+      icon-class="wk wk-archive"
+      icon-color="#19b5f6"
+      label="归档项目统计" />
     <div
       v-loading="loading"
       class="content-body">
@@ -73,8 +74,12 @@
 import { workWorkArchiveListAPI } from '@/api/projectManagement/archive'
 import { workWorkSaveAPI } from '@/api/projectManagement/project'
 
+import XrHeader from '@/components/xr-header'
+
 export default {
-  components: {},
+  components: {
+    XrHeader
+  },
   data() {
     return {
       loading: false,
@@ -171,13 +176,6 @@ export default {
   height: 100%;
   overflow: hidden;
   position: relative;
-  .header {
-    height: 60px;
-    line-height: 60px;
-    position: relative;
-    padding: 0 20px;
-    font-size: 18px;
-  }
 
   .content-body {
     position: absolute;

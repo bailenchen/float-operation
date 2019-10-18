@@ -204,3 +204,14 @@ export function workWorkGroupListAPI(data) {
   })
 }
 
+/**
+ * 项目收藏
+ * @param {*} data
+ */
+export function workWorkCollectAPI(data) {
+  return request({
+    url: 'work/collect',
+    method: 'post',
+    data: data
+  })
+}

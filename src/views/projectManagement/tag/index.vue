@@ -1,8 +1,12 @@
 <template>
   <div class="project-tag">
-    <div class="header">
-      <span>{{ labelName }}</span>
+    <xr-header
+      :icon-color="labelColor || '#4AB8B8'"
+      class="xr-header"
+      icon-class="wk wk-label">
+      <span slot="label">{{ labelName }}</span>
       <el-popover
+        slot="label"
         v-model="labelSetShow"
         placement="bottom-start"
         width="300"
@@ -46,7 +50,7 @@
           class="img-set"
           @click="labelSetClick">
       </el-popover>
-    </div>
+    </xr-header>
     <div
       v-loading="loading"
       class="content">
@@ -97,13 +101,16 @@ import {
   workTasklableGetWokListAPI,
   workTasklableSaveAPI
 } from '@/api/projectManagement/tag'
+
 import TaskCell from '@/views/projectManagement/components/taskCell'
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
+import XrHeader from '@/components/xr-header'
 
 export default {
   components: {
     TaskDetail,
-    TaskCell
+    TaskCell,
+    XrHeader
   },
   data() {
     return {
@@ -326,23 +333,14 @@ export default {
   height: 100%;
   overflow: hidden;
   position: relative;
-  .header {
-    height: 60px;
-    line-height: 60px;
-    position: relative;
-    z-index: 100;
-    padding: 0 20px;
-    font-size: 18px;
-    span {
-      margin-right: 5px;
-    }
-    .img-set {
-      width: 15px;
-      vertical-align: middle;
-      margin-right: 5px;
-      cursor: pointer;
-    }
+  .img-set {
+    width: 15px;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-left: 15px;
+    cursor: pointer;
   }
+
   .content {
     background-color: white;
     position: absolute;

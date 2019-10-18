@@ -1,8 +1,9 @@
 <template>
   <div class="project">
-    <div class="project-header">
-      统计分析
-    </div>
+    <xr-header
+      icon-class="wk wk-results-solid"
+      icon-color="#2362FB"
+      label="统计分析" />
     <div
       v-loading="loading"
       class="project-body">
@@ -50,12 +51,14 @@ import { workWorkStatisticAPI } from '@/api/projectManagement/statistics'
 import StatisticalOverview from '@/views/projectManagement/components/statisticalOverview'
 import StatisticalTask from '@/views/projectManagement/components/statisticalTask'
 import StatisticalMember from '@/views/projectManagement/components/statisticalMember'
+import XrHeader from '@/components/xr-header'
 
 export default {
   components: {
     StatisticalOverview,
     StatisticalTask,
-    StatisticalMember
+    StatisticalMember,
+    XrHeader
   },
 
   data() {
@@ -109,14 +112,6 @@ export default {
   overflow: hidden;
   user-select: none;
   position: relative;
-  .project-header {
-    height: 60px;
-    line-height: 60px;
-    position: relative;
-    z-index: 100;
-    padding: 0 20px;
-    font-size: 18px;
-  }
 }
 
 .project-body {

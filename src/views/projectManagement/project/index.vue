@@ -397,7 +397,7 @@ export default {
 
     .set-img {
       margin-left: 15px;
-      width: 13px;
+      width: 15px;
       cursor: pointer;
     }
 

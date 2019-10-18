@@ -1,8 +1,9 @@
 <template>
   <div class="recycle">
-    <div class="recycle-header">
-      回收站
-    </div>
+    <xr-header
+      icon-class="wk wk-bin"
+      icon-color="#fd5b4a"
+      label="回收站" />
     <div
       v-loading="loading"
       class="content">
@@ -29,13 +30,16 @@
 
 <script>
 import { workTrashIndexAPI } from '@/api/projectManagement/recycle'
+
 import TaskCell from '@/views/projectManagement/components/taskCell'
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
+import XrHeader from '@/components/xr-header'
 
 export default {
   components: {
     TaskDetail,
-    TaskCell
+    TaskCell,
+    XrHeader
   },
 
   data() {
@@ -174,14 +178,6 @@ export default {
   height: 100%;
   overflow: hidden;
   position: relative;
-  .recycle-header {
-    height: 60px;
-    line-height: 60px;
-    position: relative;
-    z-index: 100;
-    padding: 0 20px;
-    font-size: 18px;
-  }
   .content {
     background-color: white;
     position: absolute;

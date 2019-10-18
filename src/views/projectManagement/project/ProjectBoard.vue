@@ -15,9 +15,15 @@
         label="加星标的看板" />
 
       <project-cell
-        icon-color="#20C1BD"
+        v-for="(item, index) in showCollectList"
+        :key="index"
+        :drag="false"
+        :label="item.name"
+        :icon-color="item.color"
+        is-collect
         icon-class="wk wk-project"
-        label="项目名称" />
+        @click.native="enterDetail(item)"
+        @collect="collectClick(item)" />
     </section>
 
     <section class="section">
@@ -35,8 +41,10 @@
           :drag="searchInput.length == 0"
           :label="item.name"
           :icon-color="item.color"
+          :is-collect="item.collect == 1"
           icon-class="wk wk-project"
-          @click.native="enterDetail(item)" />
+          @click.native="enterDetail(item)"
+          @collect="collectClick(item)" />
       </draggable>
     </section>
   </el-drawer>
@@ -44,6 +52,7 @@
 
 <script>
 import { workIndexWorkListAPI } from '@/api/projectManagement/task'
+import { workWorkCollectAPI } from '@/api/projectManagement/project'
 
 import ProjectCell from '../components/ProjectCell'
 import SectionHead from '../components/SectionHead'
@@ -69,6 +78,18 @@ export default {
   computed: {
     showList() {
       return this.list.filter(item => {
+        return item.name.indexOf(this.searchInput) != -1
+      })
+    },
+
+    collectList() {
+      return this.list.filter(item => {
+        return item.collect == 1
+      })
+    },
+
+    showCollectList() {
+      return this.collectList.filter(item => {
         return item.name.indexOf(this.searchInput) != -1
       })
     }
@@ -155,6 +176,17 @@ export default {
         //   .then(res => {})
         //   .catch(() => {})
       }
+    },
+
+    /**
+     * 收藏
+     */
+    collectClick(item) {
+      workWorkCollectAPI({ workId: item.workId })
+        .then(res => {
+          item.collect = item.collect == 0 ? 1 : 0
+        })
+        .catch(() => {})
     },
 
     /**
