@@ -4,7 +4,6 @@
       <sections
         class="b-cells"
         title="基本信息"
-        m-color="#46CDCF"
         content-height="auto">
         <flexbox
           :gutter="0"

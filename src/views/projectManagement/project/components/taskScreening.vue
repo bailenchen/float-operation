@@ -35,12 +35,19 @@
               v-if="val.type == 'user'"
               :key="val.img"
               class="div-photo"/>
-            <i
+            <span
+              v-if="val.type == 'tag'"
+              :style="{ backgroundColor: val.color }"
+              class="tag-icon">
+              <i class="wk wk-label" />
+            </span>
+            <!-- <i
               v-if="val.type == 'tag'"
               :style="{color:val.color}"
               style="margin-right:10px; vertical-align: text-top;"
               class="wukong wukong-tag"/>
-            <span>{{ val.name }}</span>
+            <span>{{ val.name }}</span> -->
+            <span :class="{ 'is-tag': val.type == 'tag'}" class="item-list-label">{{ val.name }}</span>
             <span class="el-icon-check rt"/>
           </div>
         </div>
@@ -256,15 +263,21 @@ export default {
     margin-bottom: 10px;
     padding: 9px 20px;
     .label {
+      font-weight: 600;
       font-size: 16px;
       margin-right: 10px;
     }
     .el-icon-close {
-      color: #ccc;
+      color: #909399;
       font-size: 18px;
+      font-weight: 600;
       margin-top: 11px;
       margin-right: 0;
       cursor: pointer;
+    }
+
+    .el-icon-close:hover {
+      color: $xr-color-primary;
     }
   }
   .content {
@@ -272,12 +285,14 @@ export default {
     .menu-list {
       margin-bottom: 10px;
       .item-label {
+        font-size: 14px;
+        font-weight: 600;
         position: relative;
         height: 36px;
         line-height: 36px;
-        padding: 0 20px;
+        padding: 0 30px;
         cursor: pointer;
-        color: #666;
+        color: #333;
         .item-expand {
           height: 36px;
           line-height: 36px;
@@ -286,6 +301,19 @@ export default {
           top: 0;
         }
       }
+
+      .item-label::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 18px;
+        bottom: 10px;
+        width: 4px;
+        border-radius: 2px;
+        background-color: $xr-color-primary;
+      }
+
+
       .item-list {
         height: 30px;
         line-height: 30px;
@@ -307,6 +335,33 @@ export default {
           vertical-align: middle;
         }
       }
+
+      .tag-icon {
+        display: inline-block;
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        text-align: center;
+        line-height: 24px;
+        border-radius: $xr-border-radius-base;
+        margin-right: 10px;
+
+        .wk {
+          color: white;
+          font-size: 12px;
+        }
+      }
+
+      .item-list-label {
+        font-size: 14px;
+        color: #333;
+      }
+
+      .item-list-label.is-tag {
+        font-size: 12px;
+        font-weight: 600;
+      }
+
       .item-list:hover {
         background: #f7f8fa;
         cursor: pointer;

@@ -44,7 +44,7 @@ export default {
     },
     mColor: {
       type: String,
-      default: '#FF6767'
+      default: '#2362FB'
     },
     /** 内容区域固定高度 */
     contentHeight: {
@@ -94,9 +94,10 @@ export default {
 }
 
 .section-mark {
-  border-left-width: 3px;
+  border-left-width: 4px;
   border-left-style: solid;
-  height: 10px;
+  height: 14px;
+  border-radius: 2px;
 }
 
 .section-header {
@@ -105,8 +106,9 @@ export default {
   padding: 5px 15px;
 }
 .section-title {
-  font-size: 13px;
+  font-size: 14px;
   color: #333;
+  font-weight: 600;
   margin-left: 8px;
   flex-shrink: 0;
 }

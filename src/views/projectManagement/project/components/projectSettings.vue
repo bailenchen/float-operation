@@ -4,7 +4,7 @@
       v-model="projectSetShow"
       placement="bottom-start"
       width="400"
-      popper-class="project-settings-list-top"
+      popper-class="no-padding-popover"
       trigger="click">
       <div
         v-loading="loading"
@@ -18,12 +18,12 @@
         <div class="content">
           <p class="title-checked">
             <span
-              :style="{color: tabType == 'base' ? '#2362FB': '#333333'}"
+              :class="{'is-select ': tabType == 'base'}"
               class="span-item"
               @click="tabType = 'base'">基础设置</span>
             <span
               v-if="isOpen == 0"
-              :style="{color: tabType == 'member' ? '#2362FB': '#333333'}"
+              :class="{'is-select ': tabType == 'member'}"
               class="span-item"
               @click="tabType = 'member'">成员管理</span>
           </p>
@@ -78,10 +78,10 @@
               <div
                 slot="membersDep"
                 class="img-span">
-                <img
-                  src="@/assets/img/project/project_add.png"
-                  alt="">
-                <span class="add-title">添加成员</span>
+                <el-button
+                  type="text"
+                  class="add-btn"
+                  icon="wk wk-add">添加成员</el-button>
               </div>
             </members-dep>
 
@@ -335,26 +335,46 @@ export default {
 }
 .project-settings-box {
   .project-settings-title-top {
-    border-bottom: 1px solid #e6e6e6;
+    padding: 20px;
     padding-bottom: 10px;
+    line-height: 24px;
     font-size: 16px;
+    color: #333;
+    font-weight: 600;
+
     .el-icon-close {
-      color: #ccc;
+      color: #909399;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 18px;
       margin-right: 0;
+    }
+
+    .el-icon-close:hover {
+      color: $xr-color-primary;
     }
   }
   .content {
-    padding-top: 10px;
+    padding: 30px 20px;
+    padding-top: 0;
     .title-checked {
       text-align: center;
       margin: 5px 0;
-      span {
-        padding: 0 10px;
-        font-size: 13px;
+      .span-item {
+        font-size: 14px;
+        display: inline-block;
+        padding-bottom: 3px;
+        color: #333;
         cursor: pointer;
+        border-bottom: 2px solid transparent;
       }
       .span-item + .span-item {
-        border-left: 1px solid #e6e6e6;
+        margin-left: 15px;
+      }
+
+      .span-item.is-select {
+        color: $xr-color-primary;
+        border-bottom-color: $xr-color-primary;
       }
     }
     .infrastructure {
@@ -416,15 +436,11 @@ export default {
       .img-span {
         margin-bottom: 15px;
         margin-left: 10px;
-        display: inline-block;
-        cursor: pointer;
-        img {
-          width: 16px;
+        .add-btn {
           vertical-align: middle;
-        }
-        .add-title {
-          color: #2362FB;
-          vertical-align: middle;
+          /deep/ i {
+            margin-right: 5px;
+          }
         }
       }
 
@@ -453,12 +469,18 @@ export default {
           .el-icon-close {
             cursor: pointer;
           }
+
+          .el-icon-close:hover {
+            color: $xr-color-primary;
+          }
         }
       }
     }
   }
   .footer {
-    margin-top: 10px;
+    padding: 10px;
+    background-color: #F7F8FA;
+    border-top: 1px solid #e6e6e6;
     text-align: right;
   }
 }

@@ -44,11 +44,10 @@
               @click="labelSetShow = false">取消</el-button>
           </div>
         </div>
-        <img
+        <i
           slot="reference"
-          src="@/assets/img/project/t_set.png"
-          class="img-set"
-          @click="labelSetClick">
+          class="wk wk-manage img-set"
+          @click="labelSetClick" />
       </el-popover>
     </xr-header>
     <div
@@ -334,11 +333,14 @@ export default {
   overflow: hidden;
   position: relative;
   .img-set {
-    width: 15px;
-    vertical-align: middle;
-    margin-right: 5px;
     margin-left: 15px;
+    font-size: 14px;
+    color: #ccc;
     cursor: pointer;
+  }
+
+  .img-set:hover {
+    color: $xr-color-primary;
   }
 
   .content {

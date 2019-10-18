@@ -44,27 +44,26 @@
               @click="deleteProject">删除项目</p>
             <p v-if="projectData.isOpen == 0" @click="exitProject">退出项目</p>
           </div>
-          <img
+          <i
             slot="reference"
-            src="@/assets/img/project/t_set.png"
-            class="set-img">
+            class="wk wk-manage set-img" />
         </el-popover>
 
         <!-- 人员列表 -->
-        <img
+        <i
           slot="ft"
-          class="ft-img"
-          src="@/assets/img/project/task_circle.png"
-          alt=""
-          @click="membersShow = true">
-        <!-- 筛选 -->
-        <img
+          class="wk wk-s-seas ft-img"
+          @click="membersShow = true" />
+        <span
           v-show="screeningButtonShow"
           slot="ft"
-          class="ft-img"
-          src="@/assets/img/project/project_filtrate.png"
-          alt=""
+          class="ft-btn"
           @click="screeningShow = true">
+          <i class="wk wk-screening ft-img" />
+          <span class="ft-label">任务筛选</span>
+        </span>
+
+        <!-- 筛选 -->
       </xr-header>
 
       <div class="nav">
@@ -391,14 +390,39 @@ export default {
     }
 
     .ft-img {
-      margin-right: 25px;
+      color: #999;
       cursor: pointer;
+    }
+
+    .ft-btn {
+      margin-left: 25px;
+      color: #999;
+      cursor: pointer;
+      .ft-img {
+        margin-right: 2px;
+      }
+      .ft-label {
+        font-size: 12px;
+      }
     }
 
     .set-img {
       margin-left: 15px;
-      width: 15px;
+      font-size: 14px;
+      color: #ccc;
       cursor: pointer;
+    }
+
+    .ft-btn:hover {
+      color: $xr-color-primary;
+      .ft-img  {
+        color: $xr-color-primary;
+      }
+    }
+
+    .ft-img:hover,
+    .set-img:hover {
+      color: $xr-color-primary;
     }
 
     .nav {
