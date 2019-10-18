@@ -6,7 +6,7 @@ import {
 const workbenchRouter = {
   path: '/project',
   component: Layout,
-  redirect: '/project/my-task',
+  redirect: '/project/workbench',
   name: 'project',
   meta: {
     icon: 'workbench',

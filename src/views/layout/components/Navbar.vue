@@ -185,7 +185,7 @@ export default {
         tempsItems.push({
           title: '项目管理',
           type: 2,
-          path: '/project/workbench'
+          path: '/project'
         })
       }
       return tempsItems
