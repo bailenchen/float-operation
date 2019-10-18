@@ -215,3 +215,18 @@ export function workWorkCollectAPI(data) {
     data: data
   })
 }
+
+/**
+ * 修改标签排序
+ * @param {*} data
+ */
+export function workupdateWorkOrderAPI(data) {
+  return request({
+    url: 'work/updateWorkOrder',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

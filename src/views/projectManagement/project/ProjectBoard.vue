@@ -52,7 +52,7 @@
 
 <script>
 import { workIndexWorkListAPI } from '@/api/projectManagement/task'
-import { workWorkCollectAPI } from '@/api/projectManagement/project'
+import { workWorkCollectAPI, workupdateWorkOrderAPI } from '@/api/projectManagement/project'
 
 import ProjectCell from '../components/ProjectCell'
 import SectionHead from '../components/SectionHead'
@@ -142,39 +142,13 @@ export default {
           return
         }
 
-        // const fromTask = this.list.filter(item => {
-        //   return item.classId == fromId
-        // })[0]
-        // const fromList = fromTask.list
-
-        // const toTask = this.list.filter(item => {
-        //   return item.classId == toId
-        // })[0]
-        // const toList = toTask.list
-
-        // let params = {}
-        // if (fromId == toId) {
-        //   params = {
-        //     toList: toList.map(item => {
-        //       return item.taskId
-        //     }),
-        //     toId: toId
-        //   }
-        // } else {
-        //   params = {
-        //     fromList: fromList.map(item => {
-        //       return item.taskId
-        //     }),
-        //     fromId: fromId,
-        //     toList: toList.map(item => {
-        //       return item.taskId
-        //     }),
-        //     toId: toId
-        //   }
-        // }
-        // workTaskUpdateOrderAPI(params)
-        //   .then(res => {})
-        //   .catch(() => {})
+        workupdateWorkOrderAPI({
+          workIds: this.list.map(item => {
+            return item.workId
+          })
+        })
+          .then(res => {})
+          .catch(() => {})
       }
     },
 
