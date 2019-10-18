@@ -3,67 +3,70 @@
     class="project-list"
     direction="column">
     <div class="nav-box">
-      <div class="title">
-        <flexbox class="title-left lt">
-          <i
-            :style="{color : projectColor ? projectColor : '#4AB8B8'}"
-            class="wukong wukong-subproject"/>
-          <span>{{ projectName }}</span>
-          <el-popover
-            v-model="projectHandleShow"
-            placement="bottom-start"
-            popper-class="project-settings-182"
-            width="182">
-            <div class="project-list-popover-btn-list">
-              <members-dep
-                :user-checked-data="membersList"
-                :close-dep="true"
-                @popoverSubmit="userSelectChange">
-                <p
-                  v-if="canUpdateWork && projectData.isOpen != 1"
-                  slot="membersDep"
-                  @click="projectHandleShow = false">添加项目成员</p>
-              </members-dep>
+      <xr-header
+        :icon-color="projectColor || '#4AB8B8'"
+        class="xr-header"
+        icon-class="wk wk-project">
+        <span slot="label">{{ projectName }}</span>
+        <el-popover
+          slot="label"
+          v-model="projectHandleShow"
+          placement="bottom-start"
+          popper-class="project-settings-182"
+          width="182">
+          <div class="project-list-popover-btn-list">
+            <members-dep
+              :user-checked-data="membersList"
+              :close-dep="true"
+              @popoverSubmit="userSelectChange">
+              <p
+                v-if="canUpdateWork && projectData.isOpen != 1"
+                slot="membersDep"
+                @click="projectHandleShow = false">添加项目成员</p>
+            </members-dep>
 
-              <project-settings
-                v-if="canUpdateWork"
-                :work-id="workId"
-                :title="projectName"
-                :color="projectColor"
-                :is-open="projectData.isOpen"
-                :add-members-data="membersList"
-                @close="projectHandleShow = false"
-                @submite="setSubmite"
-                @handle="projectSettingsHandle"
-                @click="projectHandleShow = false"/>
-              <p
-                v-if="canUpdateWork"
-                @click="archiveProject">归档项目</p>
-              <p
-                v-if="canUpdateWork"
-                @click="deleteProject">删除项目</p>
-              <p v-if="projectData.isOpen == 0" @click="exitProject">退出项目</p>
-            </div>
-            <img
-              slot="reference"
-              src="@/assets/img/project/t_set.png"
-              class="img-right">
-          </el-popover>
-        </flexbox>
-        <div class="title-right rt">
-          <!-- 人员列表 -->
+            <project-settings
+              v-if="canUpdateWork"
+              :work-id="workId"
+              :title="projectName"
+              :color="projectColor"
+              :is-open="projectData.isOpen"
+              :add-members-data="membersList"
+              @close="projectHandleShow = false"
+              @submite="setSubmite"
+              @handle="projectSettingsHandle"
+              @click="projectHandleShow = false"/>
+            <p
+              v-if="canUpdateWork"
+              @click="archiveProject">归档项目</p>
+            <p
+              v-if="canUpdateWork"
+              @click="deleteProject">删除项目</p>
+            <p v-if="projectData.isOpen == 0" @click="exitProject">退出项目</p>
+          </div>
           <img
-            src="@/assets/img/project/task_circle.png"
-            alt=""
-            @click="membersShow = true">
-          <!-- 筛选 -->
-          <img
-            v-show="screeningButtonShow"
-            src="@/assets/img/project/project_filtrate.png"
-            alt=""
-            @click="screeningShow = true">
-        </div>
-      </div>
+            slot="reference"
+            src="@/assets/img/project/t_set.png"
+            class="set-img">
+        </el-popover>
+
+        <!-- 人员列表 -->
+        <img
+          slot="ft"
+          class="ft-img"
+          src="@/assets/img/project/task_circle.png"
+          alt=""
+          @click="membersShow = true">
+        <!-- 筛选 -->
+        <img
+          v-show="screeningButtonShow"
+          slot="ft"
+          class="ft-img"
+          src="@/assets/img/project/project_filtrate.png"
+          alt=""
+          @click="screeningShow = true">
+      </xr-header>
+
       <div class="nav">
         <el-tabs
           v-model="activeName"
@@ -110,6 +113,14 @@
 </template>
 
 <script>
+import {
+  workWorkReadAPI,
+  workWorkDeleteAPI,
+  workWorkLeaveAPI,
+  workWorkOwnerListAPI,
+  workWorkSaveAPI
+} from '@/api/projectManagement/project'
+
 import TaskBoard from './components/taskBoard'
 import Attachment from './components/attachment'
 import TaskStatistical from './components/taskStatistical'
@@ -118,14 +129,7 @@ import ProjectSettings from './components/projectSettings'
 import TaskScreening from './components/taskScreening'
 import Members from './components/members'
 import MembersDep from '@/components/selectEmployee/membersDep'
-
-import {
-  workWorkReadAPI,
-  workWorkDeleteAPI,
-  workWorkLeaveAPI,
-  workWorkOwnerListAPI,
-  workWorkSaveAPI
-} from '@/api/projectManagement/project'
+import XrHeader from '@/components/xr-header'
 
 export default {
   components: {
@@ -136,7 +140,8 @@ export default {
     ProjectSettings,
     TaskScreening,
     Members,
-    MembersDep
+    MembersDep,
+    XrHeader
   },
 
   data() {
@@ -380,31 +385,22 @@ export default {
     margin-bottom: 15px;
     background: #fff;
     border-radius: $xr-border-radius-base;
-    .title {
-      font-size: 16px;
-      height: 50px;
-      line-height: 50px;
-      .title-left {
-        width: auto;
-        img {
-          width: 17px;
-          vertical-align: unset;
-          margin-right: 5px;
-        }
-        .img-right {
-          margin-left: 15px;
-          width: 13px;
-          cursor: pointer;
-        }
-      }
-      .title-right {
-        img {
-          margin-right: 25px;
-          cursor: pointer;
-          vertical-align: middle;
-        }
-      }
+    border: 1px solid $xr-border-color-base;
+    .xr-header {
+      padding: 10px 15px;
     }
+
+    .ft-img {
+      margin-right: 25px;
+      cursor: pointer;
+    }
+
+    .set-img {
+      margin-left: 15px;
+      width: 13px;
+      cursor: pointer;
+    }
+
     .nav {
       margin-left: 64px;
       .el-tabs /deep/ .el-tabs__header {

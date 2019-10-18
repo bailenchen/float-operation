@@ -5,7 +5,12 @@
       class="xr-header__icon">
       <i :class="iconClass" />
     </div>
-    <div class="xr-header__label">{{ label }}</div>
+
+    <div class="xr-header__label">
+      <slot v-if="$slots.label" name="label" />
+      <template v-else>{{ label }}</template>
+    </div>
+
     <el-input
       v-if="showSearch"
       :placeholder="placeholder"
@@ -54,7 +59,6 @@ export default {
   computed: {},
   watch: {},
   mounted() {
-    console.log('----', this.$attrs)
   },
 
   beforeDestroy() {},

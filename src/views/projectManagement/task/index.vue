@@ -1,8 +1,5 @@
 <template>
   <div class="my-task">
-    <!-- <div class="my-task-header">
-      我的任务
-    </div> -->
     <xr-header
       icon-class="wk wk-task"
       icon-color="#D376FF"
@@ -420,14 +417,6 @@ export default {
 .my-task {
   height: 100%;
   overflow: hidden;
-  .my-task-header {
-    height: 60px;
-    line-height: 60px;
-    position: relative;
-    z-index: 100;
-    padding: 0 20px;
-    font-size: 18px;
-  }
 }
 
 .my-task-body {
@@ -464,6 +453,7 @@ export default {
     padding: 10px;
     vertical-align: top;
     border-radius: $xr-border-radius-base;
+    border: 1px solid $xr-border-color-base;
     background: #fff;
     margin-right: 14px;
     position: relative;

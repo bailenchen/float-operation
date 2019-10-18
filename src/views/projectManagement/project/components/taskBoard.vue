@@ -780,6 +780,7 @@ export default {
     padding: 10px;
     vertical-align: top;
     border-radius: $xr-border-radius-base;
+    border: 1px solid $xr-border-color-base;
     background: #fff;
     margin-right: 14px;
     position: relative;
