@@ -68,7 +68,8 @@
         <el-submenu
           v-else
           :key="index"
-          :index="getFullPath(item.path)">
+          :index="getFullPath(item.path)"
+          :class="{ 'is-select': activeIndex == getFullPath(item.path)}">
           <template
             v-if="!item.hidden"
             slot="title">
@@ -83,7 +84,7 @@
             :to="getFullPath(subitem.path)">
             <el-menu-item
               :index="getFullPath(subitem.path)"
-              :class="{ 'is-select': activeIndex == getFullPath(item.path)}">
+              :class="{ 'is-select': activeIndex == getFullPath(subitem.path)}">
               <div class="menu-item-content">
                 {{ subitem.meta.title }}
               </div>
@@ -204,7 +205,6 @@ export default {
     },
 
     getFullPath(path) {
-      console.log('full----', `/${this.mainRouter}/${path}`)
       return `/${this.mainRouter}/${path}`
     },
 

@@ -1,27 +1,13 @@
 /** 项目管理路由 */
 
 const workbenchRouter = {
+  name: 'workbench',
   path: 'workbench',
+  component: () => import('@/views/projectManagement/task/index'),
   meta: {
     icon: 'workbench',
     title: '工作台'
-  },
-  children: [{
-    name: 'my-task',
-    path: 'my-task',
-    component: () => import('@/views/projectManagement/task/index'),
-    meta: {
-      title: '我的任务'
-    }
-  },
-  {
-    path: 'task-calendars',
-    component: () => import('@/views/projectManagement/calendars/index'),
-    meta: {
-      title: '任务日历'
-    }
   }
-  ]
 }
 
 // 项目
@@ -99,5 +85,5 @@ const otherRouter = {
   ]
 }
 
-export const children = [...workbenchRouter.children, projectRouter, statisticsRouter, archiveRouter, tagRouter, recycleRouter, ...otherRouter.children]
+export const children = [workbenchRouter, projectRouter, statisticsRouter, archiveRouter, tagRouter, recycleRouter, ...otherRouter.children]
 export const childrenMenu = [workbenchRouter, projectRouter, statisticsRouter, archiveRouter, tagRouter, recycleRouter]

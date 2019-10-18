@@ -181,7 +181,7 @@
                           v-if="j >= 2"
                           :style="{'background': k.color ? k.color: '#ccc'}"
                           class="k-name"
-                          style="border-radius: 3px; color: #FFF; padding: 3px 10px;">{{ k.labelName }}</span>
+                          style="border-radius: 4px; color: #FFF; padding: 3px 10px;">{{ k.labelName }}</span>
                       </div>
                     </div>
                     <div class="color-label-more">
@@ -819,8 +819,8 @@ export default {
         margin-bottom: 10px;
         margin-top: 1px;
         margin-left: 1px;
-        border-radius: 3px;
-        border-left: 2px solid transparent;
+        border-radius: $xr-border-radius-base;
+        border-left: 4px solid transparent;
         cursor: pointer;
         overflow: hidden;
         position: relative;
@@ -932,7 +932,7 @@ export default {
   height: 20px;
   line-height: 20px;
   padding: 0 10px;
-  border-radius: 3px;
+  border-radius: $xr-border-radius-base;
   color: #fff;
   margin-right: 6px;
   font-size: 12px;
@@ -948,7 +948,7 @@ export default {
   display: inline-block;
   font-size: inherit;
   font-weight: 700;
-  border-radius: 3px;
+  border-radius: $xr-border-radius-base;
   vertical-align: middle;
   position: relative;
   margin-bottom: 6px;

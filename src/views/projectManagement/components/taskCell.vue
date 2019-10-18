@@ -182,7 +182,7 @@ export default {
   cursor: pointer;
   border-bottom: 1px solid #e6e6e6;
   border-left: 2px solid transparent;
-  border-radius: 2px;
+  border-radius: $xr-border-radius-base;
   height: 51px;
   line-height: 51px;
   display: flex;
