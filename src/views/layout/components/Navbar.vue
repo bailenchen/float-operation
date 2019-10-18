@@ -381,7 +381,10 @@ export default {
   margin: 0 20px;
   font-size: 16px;
   font-weight: 500;
-  color: #666;
+  color: #2a304d;
+  i {
+    color: #5c6075;
+  }
 }
 
 .el-menu-item:hover {
@@ -396,6 +399,9 @@ export default {
 
 .el-menu--horizontal > .el-menu-item.is-active {
   border-width: 3px;
+  i {
+    color: $xr-color-primary;
+  }
 }
 
 // 右侧操作
