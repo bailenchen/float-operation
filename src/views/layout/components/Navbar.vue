@@ -14,7 +14,8 @@
           v-for="(item, index) in items"
           :key="index"
           :index="item.path">
-          {{ item.title }}
+          <i :style="{ fontSize: item.fontSize }" :class="item.icon" />
+          <span>{{ item.title }}</span>
         </el-menu-item>
       </el-menu>
     </div>
@@ -146,21 +147,24 @@ export default {
           title: '客户管理',
           type: 1,
           path: '/crm',
-          icon: 'customer'
+          icon: 'wk wk-customer',
+          fontSize: '17px'
         })
       }
       tempsItems.push({
         title: '任务/审批',
         type: 4,
         path: '/taskExamine',
-        icon: ''
+        icon: 'wk wk-office',
+        fontSize: '16px'
       })
 
       tempsItems.push({
         title: '日志',
         type: 3,
         path: '/workLog',
-        icon: ''
+        icon: 'wk wk-log',
+        fontSize: '17px'
       })
 
       if (this.oa && this.oa.book) {
@@ -168,7 +172,18 @@ export default {
           title: '通讯录',
           type: 6,
           path: '/addressBook',
-          icon: ''
+          icon: 'wk wk-address-book',
+          fontSize: '17px'
+        })
+      }
+
+      if (this.project) {
+        tempsItems.push({
+          title: '项目管理',
+          type: 2,
+          path: '/project',
+          icon: 'wk wk-project',
+          fontSize: '15px'
         })
       }
 
@@ -177,15 +192,8 @@ export default {
           title: '商业智能',
           type: 5,
           path: '/bi',
-          icon: 'statistics'
-        })
-      }
-
-      if (this.project) {
-        tempsItems.push({
-          title: '项目管理',
-          type: 2,
-          path: '/project'
+          icon: 'wk wk-business-intelligence',
+          fontSize: '18px'
         })
       }
       return tempsItems
@@ -373,7 +381,13 @@ export default {
   margin: 0 20px;
   font-size: 16px;
   font-weight: 500;
-  color: #333;
+  color: #666;
+}
+
+.el-menu-item:hover {
+  i {
+    color: $xr-color-primary;
+  }
 }
 
 .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
