@@ -32,7 +32,7 @@
           </el-badge>
         </div>
 
-        <div class="sm-main__bd">
+        <div ref="scollBd" class="sm-main__bd">
           <div
             v-infinite-scroll="getList"
             infinite-scroll-disabled="scrollDisabled">
@@ -51,6 +51,7 @@
           <p
             v-if="noMore"
             class="scroll-bottom-tips">没有更多了</p>
+          <div v-if="!scrollDisabled" style="height: 2000px;"/>
         </div>
 
         <div class="sm-main__ft">
@@ -235,6 +236,11 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
+      // console.log(this.$el)
+      // this.$refs.scollBd.scrollTop = 0
+      this.$nextTick(() => {
+        this.$refs.scollBd.scrollTo(0, 1)
+      })
     },
 
     /**
@@ -250,7 +256,11 @@ export default {
         .then(res => {
           this.loading = false
           if (!this.noMore) {
-            this.list = this.list.concat(res.data.list)
+            if (this.page == 1) {
+              this.list = res.data.list
+            } else {
+              this.list = this.list.concat(res.data.list)
+            }
             this.page++
           }
           this.noMore = res.data.lastPage

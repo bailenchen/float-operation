@@ -99,9 +99,17 @@ export default {
       if (this.data.label && this.data.label < 5) {
         key = ['task', 'log', 'examine', 'announcement'][this.data.label - 1]
       } else {
-        if ([10, 11, 24].includes(this.data.type)) {
+        if ([1, 2, 3].includes(this.data.type)) {
+          key = 'task'
+        } else if ([4, 5].includes(this.data.type)) {
+          key = 'log'
+        } else if ([6, 7, 25].includes(this.data.type)) {
+          key = 'examine'
+        } else if ([8].includes(this.data.type)) {
+          key = 'announcement'
+        } else if ([10, 11, 24, 26].includes(this.data.type)) {
           key = 'contract'
-        } else if ([12, 13].includes(this.data.type)) {
+        } else if ([12, 13, 27].includes(this.data.type)) {
           key = 'receivables'
         } else if ([14, 15, 23].includes(this.data.type)) {
           key = 'customer'
