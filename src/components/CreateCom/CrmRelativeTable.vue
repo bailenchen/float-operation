@@ -1,14 +1,19 @@
 <template>
   <div class="cr-body-content">
     <flexbox class="content-header">
-      <div v-if="!isRelationShow && showScene">场景：</div>
-      <el-select v-if="!isRelationShow && showScene" v-model="sceneId" placeholder="请选择">
-        <el-option
-          v-for="item in scenesList"
-          :key="item.sceneId"
-          :label="item.name"
-          :value="item.sceneId"/>
-      </el-select>
+      <template v-if="showScene">
+        <div>场景：</div>
+        <el-select
+          v-model="sceneId"
+          placeholder="请选择"
+          @change="getList">
+          <el-option
+            v-for="item in scenesList"
+            :key="item.sceneId"
+            :label="item.name"
+            :value="item.sceneId"/>
+        </el-select>
+      </template>
 
       <el-input
         v-model="searchContent"
@@ -147,7 +152,7 @@ export default {
     },
 
     showScene() {
-      return this.crmType != 'product'
+      return !this.isRelationShow && this.crmType != 'product'
     }
   },
   watch: {
@@ -456,6 +461,11 @@ export default {
   font-size: 13px;
   .el-select {
     width: 120px;
+
+    /deep/ .el-icon-circle-close {
+      visibility: hidden;
+      display: none;
+    }
   }
 
   .search-container {
