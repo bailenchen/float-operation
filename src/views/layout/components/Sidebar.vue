@@ -99,6 +99,7 @@
       <div class="sidebar-container">
         <img
           :style="{ 'right': buttonCollapse ? '3px' : '0' }"
+          :class="{ 'is-close': collapse }"
           class="collapse-button"
           src="@/assets/img/collapse_white.png"
           alt=""
@@ -386,6 +387,10 @@ export default {
   top: 0;
   padding: 18px 20px;
   cursor: pointer;
+}
+
+.collapse-button.is-close {
+  transform: rotate(180deg);
 }
 
 .wukong,
