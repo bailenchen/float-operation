@@ -189,9 +189,19 @@ export default {
      * 数据重新刷新时 循环标记展示数组
      */
     handelCheck(list) {
-      var self = this
-      list = list.map(function(item, index, array) {
-        item.isCheck = self.selectItemsHasItem(item)
+      let disabled = false
+      if (this.radio) {
+        // 如果有勾选其他为false
+        disabled = this.selectItems.length > 0
+      }
+
+      list = list.map((item, index, array) => {
+        item.isCheck = this.selectItemsHasItem(item)
+        if (this.radio && item.isCheck) {
+          item.disabled = false
+        } else {
+          item.disabled = disabled
+        }
         return item
       })
       return list
