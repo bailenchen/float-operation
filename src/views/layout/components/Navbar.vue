@@ -31,7 +31,7 @@
     <system-message
       :visible.sync="sysMessageShow"
       :unread-nums="unreadNums"
-      @update-count="getSystemUnreadNum"/>
+      @update-count="sendSystemUnreadNum"/>
 
     <el-popover
       :visible-arrow="false"
@@ -209,9 +209,14 @@ export default {
     }
 
     // 消息数
-    this.getSystemUnreadNum()
+    this.getSystemUnreadNum('visible')
+
+    this.$bus.on('document-visibility', (state) => {
+      this.getSystemUnreadNum(state)
+    })
   },
   beforeDestroy() {
+    this.$bus.off('document-visibility')
     if (this.intervalId) {
       clearInterval(this.intervalId)
       this.intervalId = null
@@ -276,15 +281,17 @@ export default {
     /**
      * 获取系统未读消息数
      */
-    getSystemUnreadNum() {
+    getSystemUnreadNum(state) {
       if (this.intervalId) {
         clearInterval(this.intervalId)
         this.intervalId = null
       }
-      this.sendSystemUnreadNum()
-      this.intervalId = setInterval(() => {
+      if (state == 'visible') {
         this.sendSystemUnreadNum()
-      }, 5000)
+        this.intervalId = setInterval(() => {
+          this.sendSystemUnreadNum()
+        }, 5000)
+      }
     },
 
     sendSystemUnreadNum() {
