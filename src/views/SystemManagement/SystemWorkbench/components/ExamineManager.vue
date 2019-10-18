@@ -11,6 +11,7 @@
       id="examine-table"
       :data="list"
       :height="tableHeight"
+      :cell-class-name="cellClassName"
       class="main-table"
       stripe
       highlight-current-row
@@ -235,6 +236,16 @@ export default {
         return '启用'
       }
       return row[column.property]
+    },
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'title') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
     },
     /**
      *  添加审批流

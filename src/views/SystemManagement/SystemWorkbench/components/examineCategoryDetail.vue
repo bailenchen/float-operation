@@ -1,7 +1,7 @@
 <template>
   <slide-view
     :listener-ids="['manager-main-container']"
-    :no-listener-ids="['examine-table']"
+    :no-listener-class="['el-table__body']"
     :append-to-body="true"
     :body-style="{padding: '10px 30px', height: '100%'}"
     class="d-view"
