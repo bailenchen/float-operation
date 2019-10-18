@@ -224,6 +224,12 @@ export default {
       setTimeout(() => {
         this.$bus.emit('window-resize')
       }, 300)
+    },
+    filterValue: {
+      handler() {
+        this.getBriefData()
+      },
+      deep: true
     }
   },
   created() {
@@ -253,7 +259,6 @@ export default {
 
     timeTypeChange(data) {
       this.filterValue.timeLine = data
-      this.getBriefData()
     },
 
     /**
