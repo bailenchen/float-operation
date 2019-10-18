@@ -211,6 +211,12 @@ export default {
     // 消息数
     this.getSystemUnreadNum()
   },
+  beforeDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId)
+      this.intervalId = null
+    }
+  },
   methods: {
     navItemsClick(path) {
       this.$store.commit('SET_NAVACTIVEINDEX', path)
@@ -278,7 +284,7 @@ export default {
       this.sendSystemUnreadNum()
       this.intervalId = setInterval(() => {
         this.sendSystemUnreadNum()
-      }, 60000)
+      }, 5000)
     },
 
     sendSystemUnreadNum() {
