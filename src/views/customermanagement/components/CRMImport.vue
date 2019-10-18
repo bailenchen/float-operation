@@ -109,11 +109,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import {
   crmQueryImportNumAPI,
   crmQueryImportInfoAPI,
-  crmDownImportErrorAPI
+  crmDownImportErrorAPI,
+  filedGetField
 } from '@/api/customermanagement/common'
 import {
   crmCustomerExcelImport,
@@ -131,7 +131,11 @@ import {
   crmProductExcelImport,
   crmProductDownloadExcelAPI
 } from '@/api/customermanagement/product'
+
 import { XhUserCell } from '@/components/CreateCom'
+
+import { mapGetters } from 'vuex'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 export default {
   name: 'CRMImport', // 文件导入
@@ -152,6 +156,7 @@ export default {
   data() {
     return {
       loading: false,
+      fieldList: [],
       config: 1, // 	1 覆盖，2跳过
       file: { name: '' },
       user: [],
@@ -210,10 +215,13 @@ export default {
     },
 
     fieldUniqueInfo() {
-      if (this.crmType == 'contacts') {
-        return '姓名/电话/手机'
-      }
-      return this.crmTypeName + '名称'
+      const uniqueList = this.fieldList.filter(item => {
+        return item.isUnique == 1
+      })
+
+      return uniqueList.map(item => {
+        return item.name
+      }).join('/')
     }
   },
   watch: {
@@ -224,10 +232,14 @@ export default {
             this.user = [this.userInfo]
           }
         }
+
+        this.getField()
       } else {
         if (this.stepsActive == 3) {
           this.resetData()
         }
+
+        this.fieldList = []
       }
     },
 
@@ -495,6 +507,22 @@ export default {
         status: ''
       }
       this.messageId = null
+    },
+
+    /**
+     * 获取验证字段
+     */
+    getField() {
+      var params = {
+        label: crmTypeModel[this.crmType]
+      }
+
+      filedGetField(params)
+        .then(res => {
+          this.fieldList = res.data
+        })
+        .catch(() => {
+        })
     }
   }
 }
