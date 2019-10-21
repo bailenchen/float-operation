@@ -1,14 +1,31 @@
 import axios from 'axios'
 import {
-  Message,
-  MessageBox
+  Message
 } from 'element-ui'
 import {
   removeAuth
 } from '@/utils/auth'
 import qs from 'qs'
+import { debounce } from 'throttle-debounce'
+/**
+ * 检查dom是否忽略
+ * @param {*} e
+ */
+const clearCacheEnterLogin = debounce(500, () => {
+  removeAuth().then(() => {
+    location.reload() // 为了重新实例化vue-router对象 避免bug
+  }).catch(() => {
+    location.reload()
+  })
+})
 
-var showLoginMessageBox = false
+const errorMessage = debounce(500, (message) => {
+  Message({
+    message: message,
+    type: 'error'
+  })
+})
+
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 // 创建axios实例
 
@@ -49,28 +66,7 @@ service.interceptors.response.use(
     } else if (res.code !== 0) {
       // 302	登录已失效
       if (res.code === 302) {
-        if (!showLoginMessageBox) {
-          showLoginMessageBox = true
-          MessageBox.confirm(
-            '你已被登出，请重新登录',
-            '确定登出', {
-              showCancelButton: false,
-              showClose: false,
-              confirmButtonText: '重新登录',
-              type: 'warning',
-              callback: action => {
-                showLoginMessageBox = false
-                if (action === 'confirm') {
-                  removeAuth().then(() => {
-                    location.reload() // 为了重新实例化vue-router对象 避免bug
-                  }).catch(() => {
-                    location.reload()
-                  })
-                }
-              }
-            }
-          )
-        }
+        clearCacheEnterLogin()
       } else {
         if (res.msg) {
           Message({
@@ -85,10 +81,9 @@ service.interceptors.response.use(
     }
   },
   error => {
-    Message({
-      message: '网络请求失败，请稍候再试',
-      type: 'error'
-    })
+    if (error.response.status) {
+      errorMessage('网络错误，请检查您的网络')
+    }
     return Promise.reject(error)
   }
 )
