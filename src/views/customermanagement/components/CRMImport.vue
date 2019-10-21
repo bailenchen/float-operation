@@ -97,6 +97,24 @@
     <span
       slot="footer"
       class="dialog-footer">
+      <el-popover
+        v-model="historyPopoverShow"
+        placement="top"
+        width="800"
+        popper-class="no-padding-popover"
+        trigger="click">
+        <c-r-m-import-history
+          :show="historyPopoverShow"
+          :crm-type="crmType"
+          @close="historyPopoverShow = false" />
+        <el-button
+          slot="reference"
+          class="history-btn"
+          type="text">查看历史导入记录</el-button>
+      </el-popover>
+
+
+
       <el-button
         :class="{ 'is-hidden': !showCancel }"
         @click="closeView">取消</el-button>
@@ -133,6 +151,7 @@ import {
 } from '@/api/customermanagement/product'
 
 import { XhUserCell } from '@/components/CreateCom'
+import CRMImportHistory from './CRMImportHistory'
 
 import { mapGetters } from 'vuex'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
@@ -140,7 +159,8 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 export default {
   name: 'CRMImport', // 文件导入
   components: {
-    XhUserCell
+    XhUserCell,
+    CRMImportHistory
   },
   props: {
     show: {
@@ -185,7 +205,9 @@ export default {
         status: ''
       },
       messageId: null,
-      intervalTimer: null
+      intervalTimer: null,
+
+      historyPopoverShow: false
     }
   },
   computed: {
@@ -205,7 +227,7 @@ export default {
     sureTitle() {
       return {
         1: '立即导入',
-        2: '',
+        2: '最小化',
         3: '确定'
       }[this.stepsActive]
     },
@@ -291,7 +313,7 @@ export default {
             this.$message.error('请选择负责人')
           }
         }
-      } else if (this.stepsActive == 3) {
+      } else {
         this.closeView()
       }
     },
@@ -618,6 +640,11 @@ export default {
 
 .is-hidden {
   visibility: hidden;
+}
+
+.history-btn {
+  float: left;
+  margin-left: 15px;
 }
 
 
