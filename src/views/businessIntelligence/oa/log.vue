@@ -62,7 +62,7 @@ export default {
       fieldList: [
         { field: 'realname', name: '员工' },
         { field: 'count', name: '填写数' },
-        { field: 'unReadCont', name: '接收人未读数' },
+        // { field: 'unReadCont', name: '接收人未读数' },
         { field: 'unCommentCount', name: '未评论数' },
         { field: 'commentCount', name: '已评论数' }
       ]
