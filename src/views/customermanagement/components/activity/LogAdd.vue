@@ -128,12 +128,15 @@
 </template>
 
 <script>
-import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
 import { crmFileSave, crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
+
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import AddImageList from '@/components/quickAdd/AddImageList'
 import AddFileList from '@/components/quickAdd/AddFileList'
 import AddRelateList from '@/components/quickAdd/AddRelateList'
+
+import moment from 'moment'
+import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
 
 export default {
   /** 跟进记录 下的 添加 有添加框的都需要*/
@@ -202,6 +205,7 @@ export default {
     }
   },
   mounted() {
+    this.nextTime = moment().format('YYYY-MM-DD HH:mm:ss')
     this.getDefalutFollowType()
   },
 
@@ -222,6 +226,7 @@ export default {
      * 重置数据
      */
     resetInfo() {
+      this.nextTime = moment().format('YYYY-MM-DD HH:mm:ss')
       this.isUnfold = false
       // 输入法
       this.content = ''
