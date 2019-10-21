@@ -66,70 +66,100 @@ export default {
      */
     handleRowClick(row, column, event) {
       if (this.crmType === 'leads') {
-        this.rowID = row.leadsId
-        this.rowType = 'leads'
-        this.showDview = true
+        if (column.property === 'leadsName') {
+          this.rowID = row.leadsId
+          this.rowType = 'leads'
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       } else if (this.crmType === 'customer') {
-        this.rowID = row.customerId
-        this.rowType = 'customer'
-        this.showDview = true
+        if (column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'customer'
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       } else if (this.crmType === 'contacts') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
-        } else {
+          this.showDview = true
+        } else if (column.property === 'name') {
           this.rowID = row.contactsId
           this.rowType = 'contacts'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       } else if (this.crmType === 'business') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
-        } else {
+          this.showDview = true
+        } else if (column.property === 'businessName') {
           this.rowID = row.businessId
           this.rowType = 'business'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       } else if (this.crmType === 'contract') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
+          this.showDview = true
         } else if (column.property === 'businessName') {
           this.rowID = row.businessId
           this.rowType = 'business'
+          this.showDview = true
         } else if (column.property === 'contactsName') {
           this.rowID = row.contactsId
           this.rowType = 'contacts'
-        } else {
+          this.showDview = true
+        } else if (column.property === 'num') {
           this.rowID = row.contractId
           this.rowType = 'contract'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       } else if (this.crmType === 'product') {
-        this.rowID = row.productId
-        this.showDview = true
+        if (column.property === 'name') {
+          this.rowID = row.productId
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       } else if (this.crmType === 'receivables') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
-        } else if (column.property === 'contractNum' || column.property === 'contractName') {
+          this.showDview = true
+        } else if (column.property === 'contractNum') {
           this.rowID = row.contractId
           this.rowType = 'contract'
-        } else {
+          this.showDview = true
+        } else if (column.property === 'number') {
           this.rowID = row.receivablesId
           this.rowType = 'receivables'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       } else if (this.crmType === 'receivables_plan') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
           this.rowType = 'customer'
+          this.showDview = true
         } else if (column.property === 'contractNum' || column.property === 'contractName') {
           this.rowID = row.contractId
           this.rowType = 'contract'
+          this.showDview = true
+        } else {
+          this.showDview = false
         }
-        this.showDview = true
       }
     },
 

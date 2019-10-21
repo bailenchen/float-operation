@@ -225,6 +225,7 @@ export default {
       if (this.crmType === 'leads') {
         if (column.property === 'leadsName') {
           this.rowID = row.leadsId
+          this.rowType = 'leads'
           this.showDview = true
         } else {
           this.showDview = false

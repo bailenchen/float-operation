@@ -433,14 +433,13 @@ export default {
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (
-        column.property === 'name' ||
+        (column.property === 'name' && this.crmType != 'contract') ||
         column.property === 'number' ||
         column.property === 'leadsName' ||
         column.property === 'customerName' ||
         column.property === 'businessName' ||
         column.property === 'contactsName' ||
-        column.property === 'contractName' ||
-        column.property === 'contractNum'
+        column.property === 'num'
       ) {
         return 'can-visit--underline'
       } else {
