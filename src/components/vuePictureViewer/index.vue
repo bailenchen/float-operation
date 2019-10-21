@@ -3,14 +3,9 @@
     id="vue-picture-viewer"
     :style="maskContainer">
     <!-- 头部 -->
-    <flexbox class="perview-header">
-      <div class="left">{{ imgIndex + 1 }} / {{ imgLength }}</div>
-      <div class="center">{{ bigImgName.slice(0,bigImgName.indexOf('.')) }}</div>
-      <img
-        class="close"
-        src="./img/pre_close.png"
-        @click="closeViewer" >
-    </flexbox>
+    <div class="perview-header">
+      <span>{{ title }}</span>
+    </div>
     <!-- 图片容器 -->
     <div
       ref="imgContainer"
@@ -49,20 +44,28 @@
       <flexbox
         v-if="bigShowType.isImage"
         class="handleContainer">
-        <img
-          src="./img/pre_max.png"
-          @click="enlarge" >
-        <img
-          src="./img/pre_min.png"
-          @click="reduce" >
-        <img
-          style="padding: 4.5px;"
-          src="./img/pre_rotate.png"
-          @click="rotate" >
-        <img
-          src="./img/pre_down.png"
-          @click="downloadImg(bigImgUrl, bigImgName)" >
+        <div
+          class="handle-box" >
+          <img
+            src="./img/pre_max.png"
+            @click="enlarge" >
+          <img
+            src="./img/pre_min.png"
+            @click="reduce" >
+          <img
+            style="padding: 4.5px;"
+            src="./img/pre_rotate.png"
+            @click="rotate" >
+          <img
+            src="./img/pre_down.png"
+            @click="downloadImg(bigImgUrl, bigImgName)" >
+        </div>
+
+        <div class="close-btn" @click="closeViewer">
+          <i class="el-icon-close" />
+        </div>
       </flexbox>
+
       <!-- 缩略图容器 -->
       <div
         v-if="imgLength > 1"
@@ -179,6 +182,13 @@ export default {
         marginTop: '',
         userSelect: 'none'
       }
+    }
+  },
+  computed: {
+    title() {
+      const fileName = this.bigImgName.slice(0, this.bigImgName.indexOf('.'))
+
+      return `${fileName} （${this.imgIndex + 1} / ${this.imgLength}）`
     }
   },
   mounted() {
@@ -532,22 +542,9 @@ export default {
   left: 0;
   z-index: 101;
   padding: 10px;
-  .left {
-    flex-shrink: 0;
-    font-size: 14px;
-  }
-  .center {
-    text-align: center;
-    flex: 1;
-    padding: 0 20px;
-  }
-  .close {
-    display: block;
-    padding: 8px;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-  }
+  text-align: center;
+  padding: 0 20px;
+  cursor: pointer;
 }
 
 .leftArrowCon {
@@ -616,24 +613,39 @@ export default {
   z-index: 100;
 }
 .handleContainer {
-  width: 210px;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.6);
-  line-height: 40px;
-  border-radius: 20px;
+  width: auto;
   position: absolute;
   left: 50%;
   bottom: 100px;
-  padding: 0 14px;
-  margin-left: -100px;
+  margin-left: -150px;
 
-  img {
-    display: block;
+  .handle-box {
+    background: rgba(0, 0, 0, 0.6);
+    height: 40px;
+    line-height: 40px;
+    border-radius: 20px;
+    padding: 0 14px;
+    margin-right: 30px;
+
+    img {
+      width: 40px;
+      height: 40px;
+      padding: 8px;
+      margin: 0 2px;
+      cursor: pointer;
+    }
+  }
+
+  .close-btn {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
     width: 40px;
     height: 40px;
-    padding: 8px;
-    margin: 0 2px;
-    cursor: pointer;
+    line-height: 40px;
+    text-align: center;
+    font-size: 20px;
+    border-radius: 20px;
   }
 }
 .handleItem {
@@ -702,7 +714,7 @@ ul li {
 
 /* 添加border */
 .borderActive {
-  box-shadow: 0px 4px 7px 0px rgb(241, 140, 112);
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
 }
 /* 修改原生的滚动条 */
 ::-webkit-scrollbar {
