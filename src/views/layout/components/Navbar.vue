@@ -211,7 +211,8 @@ export default {
         (!this.manage.configSet ||
         (this.manage.configSet && !this.manage.configSet.read)) &&
         (!this.manage.users ||
-        (this.manage.users && !this.manage.users.read))
+        (this.manage.users && !this.manage.users.read)) &&
+        this.manage.permission
     ) {
       this.getAuthPath()
     }
