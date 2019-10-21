@@ -53,6 +53,7 @@
               type="primary"
               @click="moreArchive">归档</el-button>
             <el-dropdown
+              v-if="!isRecycle"
               trigger="click"
               @command="morkDropdownClick">
               <el-button icon="el-icon-more" />

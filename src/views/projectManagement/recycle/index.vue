@@ -5,15 +5,19 @@
       icon-color="#fd5b4a"
       label="回收站" />
     <div
-      v-loading="loading"
+      v-empty="list.length === 0 && !loading"
       class="content">
-      <task-cell
-        v-for="(item, index) in list"
-        :key="index"
-        :data="item"
-        :data-index="index"
-        class="item-list"
-        @on-handle="taskCellHandle"/>
+      <div
+        v-loading="loading"
+        class="task-cells">
+        <task-cell
+          v-for="(item, index) in list"
+          :key="index"
+          :data="item"
+          :data-index="index"
+          class="item-list"
+          @on-handle="taskCellHandle"/>
+      </div>
     </div>
 
     <!-- 详情 -->
@@ -189,5 +193,9 @@ export default {
     overflow-y: auto;
     border: 1px solid #e6e6e6;
   }
+}
+
+.task-cells {
+  min-height: 300px;
 }
 </style>
