@@ -1,68 +1,69 @@
 <template>
   <div
     v-infinite-scroll="getList"
+    ref="mainScroll"
     class="main"
     infinite-scroll-disabled="scrollDisabled">
-    <div class="work-log scroll-body">
-      <flexbox class="hello-card card">
-        <div
-          v-photo="userInfo"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
-          :key="userInfo.img"
-          class="user-img div-photo"/>
+    <div>
+      <div class="work-log scroll-body">
+        <flexbox class="hello-card card">
+          <div
+            v-photo="userInfo"
+            v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
+            :key="userInfo.img"
+            class="user-img div-photo"/>
 
-        <div class="greeting">
-          <div class="hello">
-            {{ headData.timeLabel }}，{{ nickName }}
-            <span class="status">
-              <span :class="userDoneStatus.icon" class="icon wk" />
-              <span>{{ userDoneStatus.label }}</span>
-            </span>
-          </div>
-          <div class="text">
-            {{ headData.timeRemind }}
-          </div>
-        </div>
-
-        <div class="statistics">
-          <div class="title">
-            <!-- <span class="icon wk wk-task" /> -->
-            <span>本月完成日志</span>
-          </div>
-          <div class="info">
-            <span class="special">{{ headData.allNum }}</span>篇
+          <div class="greeting">
+            <div class="hello">
+              {{ headData.timeLabel }}，{{ nickName }}
+              <span class="status">
+                <span :class="userDoneStatus.icon" class="icon wk" />
+                <span>{{ userDoneStatus.label }}</span>
+              </span>
+            </div>
+            <div class="text">
+              {{ headData.timeRemind }}
+            </div>
           </div>
 
-        </div>
-      </flexbox>
+          <div class="statistics">
+            <div class="title">
+              <!-- <span class="icon wk wk-task" /> -->
+              <span>本月完成日志</span>
+            </div>
+            <div class="info">
+              <span class="special">{{ headData.allNum }}</span>篇
+            </div>
 
-      <create-log v-if="showAdd" class="add-card card" @update="addLogSuccess" />
+          </div>
+        </flexbox>
 
-      <flexbox class="filter-control card">
-        <xh-user-cell
-          v-if="showUserSelect"
-          :radio="false"
-          class="xh-user-cell"
-          placeholder="选择人员"
-          @value-change="userChange" />
-        <el-date-picker
-          v-model="filterForm.createTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="提交时间" />
-        <el-select
-          v-model="filterForm.categoryId"
-          placeholder="类型">
-          <el-option
-            v-for="(item, index) in options"
-            :key="index"
-            :label="item.label"
-            :value="item.value" />
-        </el-select>
-      </flexbox>
-    </div>
+        <create-log v-if="showAdd" class="add-card card" @update="addLogSuccess" />
 
-    <div class="work-log">
+        <flexbox class="filter-control card">
+          <xh-user-cell
+            v-if="showUserSelect"
+            :radio="false"
+            class="xh-user-cell"
+            placeholder="选择人员"
+            @value-change="userChange" />
+          <el-date-picker
+            v-model="filterForm.createTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="提交时间" />
+          <el-select
+            v-model="filterForm.categoryId"
+            placeholder="类型">
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.label"
+              :value="item.value" />
+          </el-select>
+        </flexbox>
+      </div>
+
       <div
         v-for="(item, index) in listData"
         :key="index"
@@ -276,8 +277,11 @@ export default {
      */
     refreshList() {
       this.page = 1
-      this.listData = []
       this.noMore = false
+      this.$nextTick(() => {
+        this.listData = []
+        this.$refs.mainScroll.scrollTo(0, 1)
+      })
     },
 
     /**

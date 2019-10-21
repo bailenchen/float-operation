@@ -11,95 +11,94 @@
 
 .main {
   height: 100%;
+  width: 920px;
   overflow: auto;
+  overflow-y: overlay;
 }
 
-.work-log {
-  .card {
-    width: 920px;
-    background-color: white;
-    border: 1px solid #E6E6E6;
-    border-radius: $xr-border-radius-base;
-    box-sizing: border-box;
-    margin-bottom: 16px;
+.card {
+  background-color: white;
+  border: 1px solid #E6E6E6;
+  border-radius: $xr-border-radius-base;
+  box-sizing: border-box;
+  margin-bottom: 16px;
 
-    &.hello-card {
-      padding: 15px;
-      .user-img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 25px;
-      }
+  &.hello-card {
+    padding: 15px;
+    .user-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 25px;
+    }
 
-      .greeting {
-        flex: 1;
-        .hello {
-          font-size: 16px;
-          color: #333;
-          font-weight: bold;
+    .greeting {
+      flex: 1;
+      .hello {
+        font-size: 16px;
+        color: #333;
+        font-weight: bold;
 
-          .status {
-            font-size: 12px;
-            font-weight: 400;
-            .wk {
-              font-size: 12px;
-              margin-right: 1px;
-              margin-left: 15px;
-            }
-
-            .wk-success {
-              color: #20b559;
-            }
-
-            .wk-close {
-              color: #f95a5a;
-            }
-          }
-        }
-        .text {
-          font-size: 13px;
-          margin-top: 10px;
-          color: #999;
-        }
-      }
-
-      .statistics {
-        font-size: 13px;
-        text-align: center;
-        .title {
-          color: #666;
-          .icon {
-            color: $xr-color-primary;
-          }
-        }
-        .info {
+        .status {
           font-size: 12px;
-          text-align: center;
-          margin-top: 10px;
-          .special {
-            font-size: 24px;
-            font-weight: bold;
-            color: $xr-color-primary;
-            margin-right: 5px;
+          font-weight: 400;
+          .wk {
+            font-size: 12px;
+            margin-right: 1px;
+            margin-left: 15px;
+          }
+
+          .wk-success {
+            color: #20b559;
+          }
+
+          .wk-close {
+            color: #f95a5a;
           }
         }
+      }
+      .text {
+        font-size: 13px;
+        margin-top: 10px;
+        color: #999;
       }
     }
 
-    &.filter-control {
-      padding: 8px;
-      .xh-user-cell {
-        width: 180px;
-        margin-right: 15px;
+    .statistics {
+      font-size: 13px;
+      text-align: center;
+      .title {
+        color: #666;
+        .icon {
+          color: $xr-color-primary;
+        }
       }
-      .el-date-editor {
-        margin-right: 15px;
+      .info {
+        font-size: 12px;
+        text-align: center;
+        margin-top: 10px;
+        .special {
+          font-size: 24px;
+          font-weight: bold;
+          color: $xr-color-primary;
+          margin-right: 5px;
+        }
       }
+    }
+  }
+
+  &.filter-control {
+    padding: 8px;
+    .xh-user-cell {
+      width: 180px;
+      margin-right: 15px;
+    }
+    .el-date-editor {
+      margin-right: 15px;
     }
   }
 }
 
-.scroll-bottom-tips {
-  width: 920px;
-}
+// .scroll-bottom-tips {
+//   width: 920px;
+// }
