@@ -50,6 +50,7 @@
                 :data="showDepData"
                 node-key="id"
                 highlight-current
+                default-expand-all
                 @node-click="changeDepClick">
                 <flexbox
                   slot-scope="{ node }"
@@ -1071,9 +1072,7 @@ export default {
         .then(response => {
           this.allDepData = response.data
           this.showDepData =
-            response.data && response.data.length
-              ? response.data[0].children
-              : []
+            response.data || []
           this.depLoading = false
         })
         .catch(() => {
