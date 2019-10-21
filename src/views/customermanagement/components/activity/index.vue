@@ -25,6 +25,7 @@
           :show-business="showRelate"
           :show-contacts="showRelate"
           :contacts="contacts"
+          :contacts-id="contactsId"
           :follow-types="followTypes"
           class="log-add"
           @send="sendLog"
@@ -193,6 +194,8 @@ export default {
     },
     // 模块ID
     id: [String, Number],
+    // 首要联系人ID
+    contactsId: [String, Number],
     // 没有值就是全部类型 有值就是当个类型
     crmType: {
       type: String,

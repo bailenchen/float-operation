@@ -9,7 +9,7 @@
       class="mix-content-select">
       <el-select
         v-if="showContacts"
-        v-model="contactsId"
+        v-model="selectContactsId"
         clearable
         placeholder="选择联系人">
         <el-option
@@ -159,6 +159,8 @@ export default {
       default: false
     },
     contacts: Array,
+    // 首要联系人ID
+    contactsId: [String, Number],
     // 跟进类型
     followTypes: Array,
     // 模块ID
@@ -182,7 +184,7 @@ export default {
       showBusinessPopover: false,
       business: [],
       /** 关联联系人信息 */
-      contactsId: '',
+      selectContactsId: '',
       followType: '',
       // 下次联系时间
       nextTime: '',
@@ -202,9 +204,14 @@ export default {
   watch: {
     followTypes() {
       this.getDefalutFollowType()
+    },
+
+    contactsId() {
+      this.selectContactsId = this.contactsId || ''
     }
   },
-  mounted() {
+  created() {
+    this.selectContactsId = this.contactsId || ''
     this.nextTime = moment().format('YYYY-MM-DD HH:mm:ss')
     this.getDefalutFollowType()
   },
@@ -237,7 +244,7 @@ export default {
       // 关联商机信息
       this.business = []
       // 关联联系人信息
-      this.contactsId = ''
+      this.selectContactsId = ''
       // 展示关联弹窗
       this.showRelativeType = ''
       this.batchId = guid()
@@ -407,7 +414,7 @@ export default {
         files: this.files,
         images: this.imgFiles,
         business: this.business,
-        contactsId: this.contactsId,
+        contactsId: this.selectContactsId,
         batchId: this.batchId,
         followType: this.followType,
         nextTime: this.nextTime
