@@ -61,7 +61,7 @@
             @click="downloadImg(bigImgUrl, bigImgName)" >
         </div>
 
-        <div class="close-btn" @click="closeViewer">
+        <div class="icon-btn" @click="closeViewer">
           <i class="el-icon-close" />
         </div>
       </flexbox>
@@ -94,11 +94,9 @@
       @click="handlePrev"
       @mouseenter="enterLeft"
       @mouseout="outLeft">
-      <img
-        v-show="leftArrowShow"
-        class="leftArrow"
-        src="./img/pre_left.png"
-        @click="enlarge" >
+      <div v-show="leftArrowShow" class="icon-btn leftArrow">
+        <i class="el-icon-arrow-left" />
+      </div>
     </div>
     <!-- 右边箭头 -->
     <div
@@ -106,10 +104,9 @@
       @click="handleNext"
       @mouseenter="enterRight"
       @mouseout="outRight">
-      <img
-        v-show="rightArrowShow"
-        class="rightArrow"
-        src="./img/pre_right.png" >
+      <div v-show="rightArrowShow" class="icon-btn rightArrow">
+        <i class="el-icon-arrow-right" />
+      </div>
     </div>
   </div>
 </template>
@@ -570,20 +567,16 @@ export default {
 .leftArrow {
   position: absolute;
   top: 50%;
-  left: 30px;
+  left: 25%;
   margin-top: -60px;
   transition: all 0.5s;
-  width: 50px;
-  height: 50px;
   pointer-events: none;
 }
 .rightArrow {
   position: absolute;
   top: 50%;
-  right: 30px;
+  right: 25%;
   margin-top: -60px;
-  width: 50px;
-  height: 50px;
   transition: all 0.5s;
   pointer-events: none;
 }
@@ -635,19 +628,21 @@ export default {
       cursor: pointer;
     }
   }
-
-  .close-btn {
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    font-size: 20px;
-    border-radius: 20px;
-  }
 }
+
+// 图标按钮
+.icon-btn {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 20px;
+  border-radius: 20px;
+}
+
 .handleItem {
   width: 28px;
   height: 28px;
