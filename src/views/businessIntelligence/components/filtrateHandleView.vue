@@ -345,6 +345,10 @@ export default {
         params.deptId = this.structuresSelectValue.length > 0 ? this.structuresSelectValue[0].id : ''
       }
 
+      if (this.showUserStrucSelect) {
+        params.isUser = this.dataSelect == 2 ? 1 : 0
+      }
+
       // 展示员工，返回员工参数
       if (this.showUserSelect) {
         if (this.dataSelect == 2) {
