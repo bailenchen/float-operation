@@ -14,7 +14,7 @@ export default {
     loading: function(val) {
       if (val) {
         this.tab_loading = Loading.service({
-          target: document.querySelector('.t-loading-content')
+          target: document.querySelector('.el-tabs__content')
         })
       } else {
         this.tab_loading.close()

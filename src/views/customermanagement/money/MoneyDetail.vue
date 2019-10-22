@@ -40,8 +40,7 @@
               :key="index"
               :label="item.label"
               :name="item.name"
-              lazy
-              class="t-loading-content">
+              lazy>
               <component
                 :is="item.name"
                 :detail="detailData"
