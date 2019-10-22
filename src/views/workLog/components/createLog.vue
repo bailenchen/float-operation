@@ -273,7 +273,6 @@ export default {
      * 保存日志
      */
     handleCreate() {
-      console.log('save', this.form)
       if (!this.form.content && !this.form.tomorrow && !this.form.question) {
         this.$message.error('请填写日志内容')
         return

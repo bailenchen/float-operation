@@ -196,7 +196,6 @@ export default {
       this.loading = true
       journalQueryByIdAPI({ logId: this.id })
         .then(res => {
-          console.log(res)
           this.detail = res.data
           this.loading = false
         })

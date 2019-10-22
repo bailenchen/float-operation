@@ -175,7 +175,6 @@ export default {
       if (c_comment) {
         params.pid = c_comment.userId
       }
-      console.log('reply data:', params)
       this.commentLoading = true
       setCommentAPI(params).then(res => {
         res.data.user = {

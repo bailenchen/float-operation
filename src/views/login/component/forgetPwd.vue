@@ -218,7 +218,6 @@ export default {
       // this.showChooseList = true
 
       ForgetPwdAPI(form).then(response => {
-        console.log('forget res: ', response)
         if (response.hasOwnProperty('companyList')) {
           this.list = response.companyList
           this.showNext = true
@@ -251,14 +250,12 @@ export default {
 
       const flag = this.checkForm()
       if (!flag) return
-      console.log('RegisterAPI', this.form)
       const params = Object.assign({}, this.form)
       if (params.hasOwnProperty('re_password')) {
         delete params.re_password
       }
       params.companyId = this.selectedCompany
 
-      console.log('reset', params)
       ResetPwdAPI(params)
         .then(() => {
           this.$message.success('修改成功')
@@ -282,7 +279,6 @@ export default {
         this.setError('re_password', '两次密码输入不一致')
         return false
       }
-      console.log('ok')
       return true
     },
 

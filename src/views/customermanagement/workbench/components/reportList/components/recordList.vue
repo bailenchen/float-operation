@@ -147,7 +147,6 @@ export default {
      * 获取列表
      */
     getList() {
-      console.log('getList')
       this.loading = true
       crmIndexGetRecordListAPI({ page: this.page, limit: 15, ...this.params })
         .then(res => {

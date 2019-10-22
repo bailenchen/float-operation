@@ -143,7 +143,6 @@ export default {
     getSmsCode() {
       const res = this.checkFromItem('phone', this.form.phone)
       if (!res) return
-      console.log(this.form, this.isUser)
 
       if (!this.isUser) {
         this.errorInfo = '请先进行安全验证'

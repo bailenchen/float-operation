@@ -115,7 +115,6 @@ export default {
       this.loading = true
       noticeQueryByIdAPI({ announcementId: this.id })
         .then(res => {
-          console.log(res)
           this.detail = res.data
           this.loading = false
         })

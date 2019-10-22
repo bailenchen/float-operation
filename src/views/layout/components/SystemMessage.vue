@@ -236,7 +236,6 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
-      // console.log(this.$el)
       // this.$refs.scollBd.scrollTop = 0
       this.$nextTick(() => {
         this.$refs.scollBd.scrollTo(0, 1)

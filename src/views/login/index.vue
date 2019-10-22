@@ -102,7 +102,6 @@ export default {
     handleToggleCom(com, list = []) {
       this.companyList = []
       this.activeCom = com
-      console.log('com', com)
       if (com === 'MultipleCompany') {
         this.companyList = list
       }

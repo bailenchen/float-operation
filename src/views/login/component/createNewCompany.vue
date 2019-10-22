@@ -239,7 +239,6 @@ export default {
         delete params.re_password
       }
 
-      console.log('register', params)
       RegisterAPI(params)
         .then(() => {
           this.$message.success('注册成功')
@@ -266,7 +265,6 @@ export default {
         this.setError('re_password', '两次密码输入不一致')
         return false
       }
-      console.log('ok')
       return true
     },
 

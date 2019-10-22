@@ -143,7 +143,6 @@ export default {
               element.unreceivedMoney = 0
             }
           }
-          console.log(this.list)
         })
         .catch(() => {
           this.loading = false
