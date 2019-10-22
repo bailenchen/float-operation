@@ -187,7 +187,7 @@ export default {
       let str = ''
       if (userLen > 0) str = userLen + '个员工'
       if (strucsLen > 0) str = `${str}，${strucsLen}个部门`
-      return str || ''
+      return str || '本人及下属'
     },
     // 如果只筛选一个人则头像显示当前被筛选人的头像，否则显示默认错误头像
     avatarData() {
@@ -232,7 +232,7 @@ export default {
     }
   },
   created() {
-    this.filterValue.users.push(this.userInfo)
+    // this.filterValue.users.push(this.userInfo)
   },
   mounted() {
     this.$nextTick(() => {
