@@ -156,9 +156,9 @@ export default {
       item.unit = data.单位
       item.price = data.price
       item.salesPrice = data.price
-      item.num = 0
+      item.num = 1
       item.discount = 0
-      item.subtotal = 0
+      item.subtotal = data.price
       item.productId = data.productId
       return item
     },
