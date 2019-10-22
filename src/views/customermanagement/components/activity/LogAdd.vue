@@ -244,7 +244,7 @@ export default {
       // 关联商机信息
       this.business = []
       // 关联联系人信息
-      this.selectContactsId = ''
+      this.selectContactsId = this.contactsId || ''
       // 展示关联弹窗
       this.showRelativeType = ''
       this.batchId = guid()

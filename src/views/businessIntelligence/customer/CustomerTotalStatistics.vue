@@ -136,7 +136,13 @@ export default {
       biCustomerTotalListAPI(params)
         .then(res => {
           this.loading = false
-          this.list = res.data
+          this.list = res.data || []
+          for (let index = 0; index < this.list.length; index++) {
+            const element = this.list[index]
+            if (element.unreceivedMoney < 0) {
+              element.unreceivedMoney = 0
+            }
+          }
           console.log(this.list)
         })
         .catch(() => {
