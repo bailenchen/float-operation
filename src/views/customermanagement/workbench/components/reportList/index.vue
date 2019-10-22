@@ -1,29 +1,32 @@
 <template>
-  <transition name="opacity-fade">
+  <el-dialog
+    :visible="show"
+    :append-to-body="true"
+    top="10vh"
+    width="80%"
+    custom-class="no-padding-dialog"
+    @close="hideView">
+
     <div
-      :style="{'padding': padding+' 0', 'z-index': zIndex }"
-      class="container">
+      slot="title"
+      class="header"
+      @click="showDview = false">
+      <span class="title">{{ title }}</span>
+      <el-input
+        v-if="placeholder"
+        :placeholder="placeholder"
+        v-model="inputContent"
+        class="search-input"
+        @keyup.enter.native="searchInput">
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click.native="searchInput" />
+      </el-input>
+    </div>
+
+    <div class="container">
       <div class="content">
-        <div
-          class="header"
-          @click="showDview = false">
-          <span class="title">{{ title }}</span>
-          <el-input
-            v-if="placeholder"
-            :placeholder="placeholder"
-            v-model="inputContent"
-            class="search-input"
-            @keyup.enter.native="searchInput">
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click.native="searchInput" />
-          </el-input>
-          <img
-            class="close"
-            src="@/assets/img/task_close.png"
-            @click="hideView">
-        </div>
         <div class="list-body">
           <el-table
             v-loading="loading"
@@ -46,7 +49,7 @@
               :label="item.label"
               :width="item.width"
               :formatter="fieldFormatter"
-              show-overflow-tooltip/>
+              show-overflow-tooltip />
             <el-table-column
               v-if="showPoolDayField"
               :resizable="false"
@@ -111,16 +114,17 @@
         @handle="getList"
         @hide="recordShow = false" />
     </div>
-  </transition>
+  </el-dialog>
 </template>
 <script type="text/javascript">
 import { filedGetTableField } from '@/api/customermanagement/common'
+
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
-import { getMaxIndex } from '@/utils/index'
-import { mapGetters } from 'vuex'
-import Lockr from 'lockr'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import RecordList from './components/recordList'
+
+import { mapGetters } from 'vuex'
+import Lockr from 'lockr'
 
 export default {
   name: 'ReportList', // 简报列表
@@ -129,10 +133,9 @@ export default {
     RecordList
   },
   props: {
-    /** 展示内容的上下padding */
-    padding: {
-      type: String,
-      default: '0'
+    show: {
+      type: Boolean,
+      default: false
     },
     title: String,
     placeholder: {
@@ -141,19 +144,15 @@ export default {
     },
     crmType: String,
     fieldList: Array,
-    request: {
-      type: Function,
-      required: true
-    },
+    request: Function,
     params: Object
   },
   data() {
     return {
-      zIndex: getMaxIndex(),
       inputContent: '',
 
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 115, // 表的高度
+      tableHeight: this.getTableHeight(), // 表的高度
       list: [],
       showFieldList: [],
       sortData: {}, // 字段排序
@@ -166,8 +165,6 @@ export default {
       rowID: '', // 行信息
       rowType: '', // 详情类型
       showDview: false,
-      /** 格式化规则 */
-      formatterRules: {},
 
       recordParams: {},
       recordShow: false
@@ -206,28 +203,47 @@ export default {
       return true
     }
   },
-  watch: {},
-  mounted() {
-    document.body.appendChild(this.$el)
-
-    window.onresize = () => {
-      self.tableHeight = document.documentElement.clientHeight - 115
-    }
-    if (this.fieldList) {
-      this.showFieldList = this.fieldList
-      this.getList()
-    } else {
-      this.getFieldList()
+  watch: {
+    show(value) {
+      if (value) {
+        this.initInfo()
+      }
     }
   },
+  mounted() {},
 
-  destroyed() {
-    // remove DOM node after destroy
-    if (this.$el && this.$el.parentNode) {
-      this.$el.parentNode.removeChild(this.$el)
-    }
-  },
+  destroyed() {},
   methods: {
+    /**
+     * 获取表高
+     */
+    getTableHeight() {
+      const clientHeight = document.documentElement.clientHeight
+      const paddingHieght = clientHeight * 0.2
+
+      return clientHeight - paddingHieght - 200
+    },
+
+    /**
+     * 初始化数据
+     */
+    initInfo() {
+      this.inputContent = ''
+      this.showFieldList = []
+      this.sortData = {}
+      this.currentPage = 1
+
+      window.onresize = () => {
+        this.tableHeight = this.getTableHeight()
+      }
+      if (this.fieldList) {
+        this.showFieldList = this.fieldList
+        this.getList()
+      } else {
+        this.getFieldList()
+      }
+    },
+
     /**
      * 搜索
      */
@@ -533,78 +549,49 @@ export default {
      * 隐藏视图
      */
     hideView() {
+      this.$emit('update:show', false)
       this.$emit('hide')
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.opacity-fade-enter-active,
-.opacity-fade-leave-active {
-  transition: all 0.2s;
-}
-.opacity-fade-enter,
-.opacity-fade-leave-to {
-  opacity: 0;
-}
 /** 容器布局 */
 .container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  background-color: white;
+  height: 100%;
 }
 
 .content {
   position: relative;
   height: 100%;
-
-  .header {
-    position: relative;
-    .title {
-      padding: 0 20px;
-      font-size: 18px;
-      line-height: 60px;
-    }
-
-    .search-input {
-      width: 300px;
-      margin: -18px 0 0 -150px;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-    }
-
-    .close {
-      display: block;
-      float: right;
-      width: 40px;
-      height: 40px;
-      margin-left: 20px;
-      margin-top: 10px;
-      margin-right: 10px;
-      padding: 10px;
-      cursor: pointer;
-    }
-  }
+  padding: 0 15px 15px;
 }
 
-.p-contianer {
+.header {
   position: relative;
-  background-color: white;
-  height: 44px;
+  padding: 10px 20px 10px 0;
 
-  .p-bar {
-    float: right;
-    margin: 5px 100px 0 0;
-    font-size: 14px !important;
+  .title {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+  }
+  .search-input {
+    width: 300px;
+    margin: -18px 0 0 -150px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
   }
 }
 
 .customer-lock {
   color: #f15e64;
+}
+
+.p-contianer {
+  border: 1px solid $xr-border-line-color;
+  border-top: none;
 }
 
 .status_button {

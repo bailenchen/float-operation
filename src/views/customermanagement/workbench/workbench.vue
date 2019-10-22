@@ -96,14 +96,13 @@
 
     <!-- 销售简报列表 -->
     <report-list
-      v-if="showReportList"
+      :show.sync="showReportList"
       :title="reportData.title"
       :placeholder="reportData.placeholder"
       :crm-type="reportData.crmType"
       :request="reportData.request"
       :params="reportData.params"
-      :field-list="fieldReportList"
-      @hide="showReportList = false"/>
+      :field-list="fieldReportList"/>
   </div>
 </template>
 
