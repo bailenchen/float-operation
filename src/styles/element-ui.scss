@@ -54,13 +54,18 @@
    padding-left: 8px;
  }
 
- body .el-table th.gutter {
-   display: table-cell !important;
- }
+ // 参考 https://blog.csdn.net/HZKang/article/details/90447373
+// body .el-table th.gutter {
+//   display: table-cell !important;
+// }
 
- body .el-table colgroup.gutter {
-   display: table-cell !important;
- }
+// body .el-table colgroup.gutter {
+//   display: table-cell !important;
+// }
+
+table {
+  width: 100% !important;
+}
 
  // 弹窗样式
  .el-dialog__footer {
