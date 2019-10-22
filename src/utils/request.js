@@ -69,10 +69,7 @@ service.interceptors.response.use(
         clearCacheEnterLogin()
       } else {
         if (res.msg) {
-          Message({
-            message: res.msg,
-            type: 'error'
-          })
+          errorMessage(res.msg)
         }
       }
       return Promise.reject(res)

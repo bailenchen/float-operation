@@ -373,6 +373,10 @@ export default {
 }
 
 // 菜单
+.el-menu {
+  overflow: hidden;
+}
+
 .el-menu.el-menu--horizontal {
   border-bottom: none;
 }
