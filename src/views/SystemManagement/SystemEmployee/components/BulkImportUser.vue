@@ -59,7 +59,7 @@
         <div class="result-info">
           <i class="wk wk-success result-info__icon" />
           <p class="result-info__des">数据导入完成</p>
-          <p class="result-info__detail">导入总数据<span class="result-info__detail--all">{{ resultData.totalSize }}</span>条，导入成功<span class="result-info__detail--suc">{{ resultData.totalSize - resultData.errSize }}</span>条，导入失败<span class="result-info__detail--err">{{ resultData.errSize }}</span>条</p>
+          <p class="result-info__detail">导入总数据<span class="result-info__detail--all">{{ resultData.totalSize }}</span>条，导入成功<span class="result-info__detail--suc">{{ resultData.totalSize - (resultData.errSize || 0) }}</span>条，导入失败<span class="result-info__detail--err">{{ resultData.errSize || 0 }}</span>条</p>
           <el-button
             v-if="resultData && resultData.errSize > 0"
             class="result-info__btn--err"
@@ -229,9 +229,11 @@ export default {
           var downloadElement = document.createElement('a')
           var href = window.URL.createObjectURL(blob) // 创建下载的链接
           downloadElement.href = href
+          let fileName = res.headers['content-disposition'].split('filename=')[1]
+          fileName = fileName.replace(/\"/g, '')
           downloadElement.download =
             decodeURI(
-              res.headers['content-disposition'].split('filename=')[1]
+              fileName
             ) || '' // 下载后文件名
           document.body.appendChild(downloadElement)
           downloadElement.click() // 点击下载
