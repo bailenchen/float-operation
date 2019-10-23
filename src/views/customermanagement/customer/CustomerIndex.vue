@@ -90,7 +90,7 @@
               <i :class="scope.row[item.prop] | dealIcon"/>
               <span>{{ scope.row[item.prop] | dealName }}</span>
             </template>
-            <template v-else-if="item.prop == 'poolDay'" slot-scope="scope">
+            <template v-else-if="item.prop == 'poolDay'">
               <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
               <i
                 v-else
@@ -209,7 +209,4 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/table.scss';
-.customer-lock {
-  color: #f15e64;
-}
 </style>

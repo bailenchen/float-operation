@@ -49,36 +49,26 @@
               :label="item.label"
               :width="item.width"
               :formatter="fieldFormatter"
-              show-overflow-tooltip />
-            <el-table-column
-              v-if="showPoolDayField"
-              :resizable="false"
-              prop="poolDay"
-              show-overflow-tooltip
-              label="距进入公海天数"
-              width="120">
+              show-overflow-tooltip>
               <template slot-scope="scope">
-                <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
-                <i
-                  v-else
-                  class="wukong wukong-lock customer-lock" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              v-if="showExamineStatus"
-              :resizable="false"
-              show-overflow-tooltip
-              prop="checkStatus"
-              label="状态"
-              width="100"
-              align="center"
-              fixed="right">
-              <template slot-scope="scope">
-                <div
-                  :style="getStatusStyle(scope.row.checkStatus)"
-                  class="status_button">
-                  {{ scope.row.checkStatus }}
-                </div>
+                <template v-if="item.prop == 'dealStatus'">
+                  <i :class="scope.row[item.prop] | dealIcon"/>
+                  <span>{{ scope.row[item.prop] | dealName }}</span>
+                </template>
+                <template v-else-if="item.prop == 'poolDay'" >
+                  <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
+                  <i
+                    v-else
+                    class="wukong wukong-lock customer-lock"/>
+                </template>
+                <template v-else-if="item.prop == 'checkStatus'">
+                  <span
+                    :style="{
+                      backgroundColor: getStatusColor(scope.row.checkStatus)
+                  }" class="status-mark"/>
+                  <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+                </template>
+                <template v-else>{{ scope.row[item.prop] }}</template>
               </template>
             </el-table-column>
             <el-table-column v-if="showFillColumn" />
@@ -125,6 +115,7 @@ import RecordList from './components/recordList'
 
 import { mapGetters } from 'vuex'
 import Lockr from 'lockr'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
   name: 'ReportList', // 简报列表
@@ -132,6 +123,16 @@ export default {
     CRMAllDetail,
     RecordList
   },
+  filters: {
+    dealIcon(statu) {
+      return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    },
+
+    dealName(statu) {
+      return statu == 1 ? '已成交' : '未成交'
+    }
+  },
+  mixins: [CheckStatusMixin],
   props: {
     show: {
       type: Boolean,
@@ -531,7 +532,7 @@ export default {
       if (
         (column.property === 'customerName' ||
           column.property === 'businessName' ||
-          column.property === 'name' ||
+          (this.crmType != 'contract' && column.property === 'name') ||
           column.property === 'contactsName' ||
           column.property === 'num' ||
           column.property === 'contractNum' ||
@@ -556,6 +557,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '../../../styles/table.scss';
+
 /** 容器布局 */
 .container {
   height: 100%;
@@ -585,21 +588,9 @@ export default {
   }
 }
 
-.customer-lock {
-  color: #f15e64;
-}
-
 .p-contianer {
   border: 1px solid $xr-border-line-color;
   border-top: none;
 }
 
-.status_button {
-  padding: 1px 6px;
-  border: 1px solid #e6e6e6;
-  border-radius: $xr-border-radius-base;
-  display: inline-block;
-  font-size: 12px;
-  margin: 0 auto;
-}
 </style>
