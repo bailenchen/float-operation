@@ -4,7 +4,7 @@
       :search.sync="search"
       :is-seas="true"
       title="公海管理"
-      placeholder="请输入客户名称"
+      placeholder="请输入客户名称/手机/电话"
       main-title="新建客户"
       crm-type="customer"
       @on-handle="listHeadHandle"
