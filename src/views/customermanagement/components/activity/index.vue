@@ -93,7 +93,7 @@
               <div
                 v-if="item.type == 2"
                 class="activity-cell">
-                <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}创建了{{ item.activityType | getActivityTypeName }}：</span><span
+                <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}创建了{{ getActivityTypeName(item.activityType) }}：</span><span
                   class="activity-cell__content"
                   @click="checkCRMDetail(getActivityType(item.activityType), item.activityTypeId)">{{ item.activityTypeName || '查看详情' }}</span>
               </div>
@@ -107,9 +107,9 @@
                 <span>{{ ` 阶段变为 ${item.content}` }}</span>
               </div>
               <i
-                :class="[item.type == 3 ? 'wk-business' : `wk-${getActivityIcon(item.activityType)}`]"
+                :class="getActivityIcon(item.activityType)"
                 :style="{ backgroundColor: getActivityTypeColor(item.activityType) }"
-                class="wk log-cell__mark"
+                class="log-cell__mark"
                 style="background-color: #FB9323;" />
             </div>
           </template>
@@ -147,13 +147,15 @@ import {
   crmActivityAddAPI
 } from '@/api/customermanagement/common'
 
-import { objDeepCopy } from '@/utils'
-
 import LogAdd from './LogAdd'
 import LogCell from './LogCell'
 import CRMCreateView from '@/views/customermanagement/components/CRMCreateView'
 import TaskQuickAdd from '@/views/taskExamine/task/components/TaskQuickAdd'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
+
+import { objDeepCopy } from '@/utils'
+import XrSystemIconMixin from '@/mixins/XrSystemIcon'
+import ActivityTypeMixin from './ActivityType'
 
 export default {
   name: 'Activity', // 活动
@@ -165,25 +167,7 @@ export default {
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
-  filters: {
-    getActivityTypeName(activityType) {
-      // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
-      return {
-        1: '线索',
-        2: '客户',
-        3: '联系人',
-        4: '产品',
-        5: '商机',
-        6: '合同',
-        7: '回款',
-        8: '日志',
-        9: '审批',
-        10: '日程',
-        11: '任务',
-        12: '发邮件'
-      }[activityType]
-    }
-  },
+  mixins: [XrSystemIconMixin, ActivityTypeMixin],
   props: {
     // 操作按钮
     handle: {
@@ -412,8 +396,10 @@ export default {
      */
     refreshLogList() {
       this.page = 1
-      this.list = []
       this.noMore = false
+      this.$nextTick(() => {
+        this.list = []
+      })
     },
 
     /**
@@ -483,53 +469,14 @@ export default {
       this.showFullDetail = true
     },
 
-    /**
-     * 获取CRM关键字
-     */
-    getActivityType(activityType) {
-      // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
-      return {
-        1: 'leads',
-        2: 'customer',
-        3: 'contacts',
-        4: 'product',
-        5: 'business',
-        6: 'contract',
-        7: 'receivables',
-        8: 'log',
-        9: 'examine',
-        11: 'task'
-      }[activityType]
-    },
-
     getActivityIcon(activityType) {
       // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
-      return {
-        1: 'leads',
-        2: 'customer',
-        3: 'contacts',
-        4: 'product',
-        5: 'business',
-        6: 'contract',
-        7: 'receivables',
-        8: 'log',
-        9: 'approve',
-        11: 'o-task'
-      }[activityType]
+      return this.getXrIcon(this.getActivityType(activityType))
     },
 
     getActivityTypeColor(activityType) {
       // 1 线索 2 客户 3 联系人 4 产品 5 商机 6 合同 7 回款 8 日志 9 审批 10 日程 11 任务 12 发邮件
-      return {
-        2: '#487DFF',
-        3: '#27BA4A',
-        5: '#FB9323',
-        6: '#FD5B4A',
-        7: '#FFB940',
-        8: '#5864FF',
-        9: '#9376FF',
-        11: '#D376FF'
-      }[activityType]
+      return this.getXrIconColor(this.getActivityType(activityType))
     },
 
     /**

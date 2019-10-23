@@ -25,15 +25,18 @@
           :item="item"
           :index="index"
           :key="index"
+          :can-delete="false"
           @delete="logCellDelete">
           <div
             class="relate-cell"
             @click="checkRelationDetail(item.activityType, item.activityTypeId)">
             <i
               :class="item.activityType | crmIconClass"
-              class="relate-cell-head"/>
+              class="relate-cell-icon"/>
             <span
-              class="relate-cell-body">{{ item.crmTypeName }}</span>
+              class="relate-cell-type">{{ item.activityType | crmName }}-</span>
+            <span
+              class="relate-cell-name">{{ item.crmTypeName }}</span>
           </div>
         </log-cell>
       </div>
@@ -74,6 +77,10 @@ export default {
   filters: {
     crmIconClass(type) {
       return `wk wk-${crmTypeModel.convertTypeToKey(type)}`
+    },
+
+    crmName(type) {
+      return crmTypeModel.convertTypeToName(type)
     }
   },
 
@@ -241,21 +248,22 @@ export default {
   width: auto;
   display: inline-block;
   margin-top: 10px;
+  font-size: 12px;
+  color: #333;
 
-  &-head {
+  &-icon {
     display: inline-block;
     font-size: 14px;
-    color: $xr-color-primary;
+    color: #666;
     margin-right: 5px;
   }
 
-  &-body {
+  &-name {
     cursor: pointer;
     color: $xr-color-primary;
-    font-size: 12px;
   }
 
-  &-body:hover {
+  &-name:hover {
     text-decoration: underline;
   }
 }

@@ -16,15 +16,24 @@
       </div>
       <el-dropdown
         v-if="canDelete"
+        class="more-drop"
         trigger="click"
         @command="handleCommand">
         <i
-          style="color:#CDCDCD;margin-left: 8px;"
           class="el-icon-arrow-down el-icon-more" />
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="delete">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+
+      <span
+        v-else
+        class="log-mark">
+        <i
+          :style="{ color: activityIconColor }"
+          :class="activityIcon" />
+        <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-日志' }}</span>
+      </span>
     </flexbox>
     <div class="fl-b">
       <div class="fl-b-content">{{ item.content }}</div>
@@ -121,13 +130,17 @@
 </template>
 
 <script>
-import { downloadFile } from '@/utils'
 import { crmActivityDeleteAPI } from '@/api/customermanagement/common'
+
+import { downloadFile } from '@/utils'
+import XrSystemIconMixin from '@/mixins/XrSystemIcon'
+import ActivityTypeMixin from './ActivityType'
 
 export default {
   /** 客户管理 的 客户详情 的 跟进记录cell*/
   name: 'LogCell',
   components: {},
+  mixins: [XrSystemIconMixin, ActivityTypeMixin],
   props: {
     item: {
       type: Object,
@@ -149,7 +162,15 @@ export default {
 
     }
   },
-  computed: {},
+  computed: {
+    activityIcon() {
+      return this.getXrIcon(this.getActivityType(this.item.activityType))
+    },
+
+    activityIconColor() {
+      return this.getXrIconColor(this.getActivityType(this.item.activityType))
+    }
+  },
   mounted() {},
   methods: {
     previewImg(list, index) {
@@ -226,8 +247,6 @@ export default {
   }
 
   .fl-h-b {
-    flex: 1;
-
     .fl-h-name {
       font-size: 13px;
       color: #333;
@@ -376,15 +395,38 @@ export default {
 }
 
 .follow {
+  margin-left: 25px;
   .follow-info {
     padding: 3px 8px;
     background-color: #f6f6f6;
     color: #666666;
-    height: 40px;
-    line-height: 40px;
     border-radius: $xr-border-radius-base;
     font-size: 12px;
     margin-right: 10px;
+    margin-top: 8px;
+    display: inline-block;
+  }
+}
+
+// 更多操作
+.log-mark,
+.more-drop {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.el-icon-more {
+  color:#CDCDCD;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+// 类型标示
+.log-mark {
+  &__label {
+    color: #333;
+    font-size: 12px;
   }
 }
 </style>
