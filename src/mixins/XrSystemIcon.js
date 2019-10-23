@@ -17,7 +17,8 @@ export default {
         receivables: 'wk wk-receivables',
         log: 'wk wk-log',
         examine: 'wk wk-approve',
-        task: 'wk wk-o-task'
+        task: 'wk wk-o-task',
+        record: 'wk wk-record'
       }[type]
     },
 
@@ -36,7 +37,8 @@ export default {
         receivables: '#FFB940',
         log: '#5864FF',
         approve: '#9376FF',
-        task: '#D376FF'
+        task: '#D376FF',
+        record: '#19B5F6'
       }[type]
     }
   }

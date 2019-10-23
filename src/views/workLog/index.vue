@@ -6,37 +6,46 @@
     infinite-scroll-disabled="scrollDisabled">
     <div>
       <div class="work-log scroll-body">
-        <flexbox class="hello-card card">
-          <div
-            v-photo="userInfo"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
-            :key="userInfo.img"
-            class="user-img div-photo"/>
+        <div class="card">
+          <flexbox class="hello-card">
+            <div
+              v-photo="userInfo"
+              v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
+              :key="userInfo.img"
+              class="user-img div-photo"/>
 
-          <div class="greeting">
-            <div class="hello">
-              {{ headData.timeLabel }}，{{ nickName }}
-              <span class="status">
-                <span :class="userDoneStatus.icon" class="icon wk" />
-                <span>{{ userDoneStatus.label }}</span>
-              </span>
-            </div>
-            <div class="text">
-              {{ headData.timeRemind }}
-            </div>
-          </div>
-
-          <div class="statistics">
-            <div class="title">
-              <!-- <span class="icon wk wk-task" /> -->
-              <span>本月完成日志</span>
-            </div>
-            <div class="info">
-              <span class="special">{{ headData.allNum }}</span>篇
+            <div class="greeting">
+              <div class="hello">
+                {{ headData.timeLabel }}，{{ nickName }}
+                <span class="status">
+                  <span :class="userDoneStatus.icon" class="icon wk" />
+                  <span>{{ userDoneStatus.label }}</span>
+                </span>
+              </div>
+              <div class="text">
+                {{ headData.timeRemind }}
+              </div>
             </div>
 
-          </div>
-        </flexbox>
+            <div class="statistics">
+              <div class="title">
+                <!-- <span class="icon wk wk-task" /> -->
+                <span>本月完成日志</span>
+              </div>
+              <div class="info">
+                <span class="special">{{ headData.allNum }}</span>篇
+              </div>
+
+            </div>
+          </flexbox>
+          <flexbox
+            align="stretch"
+            class="report-card">
+            <div class="report-card__label">销售简报</div>
+            <report-menu />
+          </flexbox>
+        </div>
+
 
         <create-log v-if="showAdd" class="add-card card" @update="addLogSuccess" />
 
@@ -109,6 +118,7 @@ import { journalList, journalEdit, journalQueryBulletinAPI } from '@/api/oamanag
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 
+import ReportMenu from './components/ReportMenu'
 import LogItem from './components/logItem'
 import CreateLog from './components/createLog'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
@@ -118,6 +128,7 @@ import newDialog from '@/views/OAManagement/journal/newDialog'
 export default {
   name: 'WorkLog',
   components: {
+    ReportMenu,
     LogItem,
     CreateLog,
     XhUserCell,

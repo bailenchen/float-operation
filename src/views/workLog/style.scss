@@ -18,12 +18,11 @@
 
 .card {
   background-color: white;
-  border: 1px solid #E6E6E6;
+  border: 1px solid $xr-border-line-color;
   border-radius: $xr-border-radius-base;
-  box-sizing: border-box;
   margin-bottom: 16px;
 
-  &.hello-card {
+  .hello-card {
     padding: 15px;
     .user-img {
       width: 50px;
@@ -84,6 +83,19 @@
           margin-right: 5px;
         }
       }
+    }
+  }
+
+  .report-card {
+    border-top: 1px solid $xr-border-line-color;
+    padding: 15px 15px 7px;
+
+    &__label {
+      flex-shrink: 0;
+      font-size: 14px;
+      color: #333;
+      font-weight: 600;
+      margin-right: 20px;
     }
   }
 

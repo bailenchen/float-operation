@@ -155,6 +155,13 @@
 
         </div>
 
+        <span class="control-relevance">
+          <span>关联销售简报</span>
+          <el-switch
+            v-model="form.isRelevance"/>
+          <span>是</span>
+        </span>
+
         <div class="others">
           <el-button
             size="small"
@@ -208,7 +215,9 @@ export default {
   },
   data() {
     return {
-      form: {},
+      form: {
+        isRelevance: true
+      },
       textFormKeyList: [],
       activeTab: 'day',
       showLoading: false,
@@ -310,7 +319,9 @@ export default {
      * 重置信息
      */
     resetData() {
-      this.form = {}
+      this.form = {
+        isRelevance: true
+      }
       this.batchId = guid()
       this.imgFiles = []
       this.files = []
@@ -581,6 +592,15 @@ export default {
         }
       }
     }
+
+    .control-relevance {
+      color: #666;
+      font-size: 12px;
+      .el-switch {
+        margin: 0 8px;
+      }
+    }
+
     .others {
       flex: 1;
       display: flex;
