@@ -46,19 +46,18 @@
         class="handleContainer">
         <div
           class="handle-box" >
-          <img
-            src="./img/pre_max.png"
-            @click="enlarge" >
-          <img
-            src="./img/pre_min.png"
-            @click="reduce" >
-          <img
-            style="padding: 4.5px;"
-            src="./img/pre_rotate.png"
-            @click="rotate" >
-          <img
-            src="./img/pre_down.png"
-            @click="downloadImg(bigImgUrl, bigImgName)" >
+          <i
+            class="wk wk-zoom-in"
+            @click="enlarge" />
+          <i
+            class="wk wk-zoom-on"
+            @click="reduce" />
+          <i
+            class="wk wk-rotate"
+            @click="rotate" />
+          <i
+            class="wk wk-download"
+            @click="downloadImg(bigImgUrl, bigImgName)" />
         </div>
 
         <div class="icon-btn" @click="closeViewer">
@@ -617,15 +616,17 @@ export default {
     height: 40px;
     line-height: 40px;
     border-radius: 20px;
-    padding: 0 14px;
+    padding: 0 20px;
     margin-right: 30px;
 
-    img {
-      width: 40px;
-      height: 40px;
-      padding: 8px;
-      margin: 0 2px;
+    i {
+      font-size: 20px;
+      color: #fff;
       cursor: pointer;
+    }
+
+    i + i {
+      margin-left: 15px;
     }
   }
 }
@@ -641,6 +642,10 @@ export default {
   text-align: center;
   font-size: 20px;
   border-radius: 20px;
+
+  i {
+    font-weight: 600;
+  }
 }
 
 .handleItem {
