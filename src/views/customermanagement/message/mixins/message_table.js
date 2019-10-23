@@ -164,8 +164,8 @@ export default {
     },
 
     /** 获取列表数据 */
-    getList() {
-      this.loading = true
+    getList(loading = true) {
+      this.loading = loading
       var crmIndexRequest = this.getIndexRequest()
       const params = {
         page: this.currentPage,

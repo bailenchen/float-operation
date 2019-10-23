@@ -328,8 +328,13 @@ export default {
      * 初始化表头数据
      */
     initTableHead() {
-      if (this.show && this.fieldList.length == 0) {
-        this.getFieldList()
+      if (this.show) {
+        if (this.fieldList.length == 0) {
+          this.getFieldList()
+        } else {
+          this.getList(false)
+          this.$store.dispatch('GetMessageNum')
+        }
       }
     },
 
