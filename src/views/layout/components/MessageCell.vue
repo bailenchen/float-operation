@@ -11,7 +11,7 @@
 
     <div class="message-cell__bd">
       <span>{{ leftContent }}</span>
-      <span class="click-content" @click="enterDetail">{{ centerCotent }}</span>
+      <span :class="[{ 'is-invalid': isInvalid }, 'click-content']" @click="enterDetail">{{ centerCotent }}</span>
       <span>{{ rightContent }}</span>
     </div>
 
@@ -162,10 +162,19 @@ export default {
     centerCotent() {
       // 导入提示与其他不一样
       if (this.data.type >= 14 && this.data.type <= 21) {
-        // title 是总数 content 是错误数据
-        return this.data.content ? '点击下载错误数据' : ''
+        // title 是总数 content 是错误数据 valid 错误文件是否有效 1 有效 0 失效
+        return this.data.valid === 0 ? '已失效' : this.data.content ? '点击下载错误数据' : ''
       } else {
         return `《${this.data.title}》`
+      }
+    },
+
+    isInvalid() {
+      if (this.data.type >= 14 && this.data.type <= 21) {
+        // title 是总数 content 是错误数据 valid 错误文件是否有效 1 有效 0 失效
+        return this.data.valid == 0
+      } else {
+        return false
       }
     },
 
@@ -207,6 +216,9 @@ export default {
   beforeDestroy() {},
   methods: {
     enterDetail() {
+      if (this.isInvalid) {
+        return
+      }
       if (this.data.type >= 14 && this.data.type <= 21) {
         this.$emit('download', this.data.messageId, this.dataIndex)
       } else {
@@ -310,5 +322,11 @@ export default {
   &:hover {
     text-decoration: underline;
   }
+}
+
+.is-invalid {
+  color: #999;
+  pointer-events: none;
+  cursor: initial;
 }
 </style>
