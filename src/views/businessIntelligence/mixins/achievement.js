@@ -81,7 +81,7 @@ export default {
             if (fieldList.length <= res.data.length) {
               fieldList.push({
                 field: fieldKey,
-                name: element.month
+                name: element.month.toString()
               })
             }
 
