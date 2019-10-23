@@ -27,6 +27,7 @@
             :key="index"
             :prop="item.field"
             :label="item.name"
+            min-width="130"
             sortable="custom"
             align="center"
             header-align="center"
