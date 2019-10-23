@@ -516,7 +516,7 @@ export default {
   .selected—title {
     flex-shrink: 0;
     padding-right: 20px;
-    border-right: 1px solid $--table-border-color;
+    border-right: 1px solid $xr--table-border-color;
     .selected—count {
       color: $xr-color-primary;
     }
