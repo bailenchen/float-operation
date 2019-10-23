@@ -2,12 +2,12 @@
   <div
     v-loading="loading"
     class="main-container">
-    <flexbox justify="flex-start" class="title-box">
-      <div class="icon-box">
-        <span class="wk wk-my-task icon" />
-      </div>
-      <span class="text">客户城市分布分析</span>
-    </flexbox>
+    <filtrate-handle-view
+      title="客户城市分布分析"
+      class="filtrate-bar"
+      module-type="customer"
+      @load="loading=true"
+      @change="getDataList"/>
     <flexbox class="content">
       <flexbox-item>
         <div class="axis-content">
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import base from '../mixins/base'
 import echarts from 'echarts'
 import 'echarts/map/js/china.js'
 import { biAchievementAnalysisAPI } from '@/api/businessIntelligence/customerPortrayal'
@@ -35,6 +36,7 @@ import { biAchievementAnalysisAPI } from '@/api/businessIntelligence/customerPor
 export default {
   /** 城市分布分析 */
   name: 'CustomerAddressStatistics',
+  mixins: [base],
   data() {
     return {
       loading: false,
@@ -47,12 +49,11 @@ export default {
   computed: {},
   mounted() {
     this.initAxis()
-    this.getDataList()
   },
   methods: {
-    getDataList() {
+    getDataList(params) {
       this.loading = true
-      biAchievementAnalysisAPI()
+      biAchievementAnalysisAPI(params)
         .then(res => {
           this.loading = false
 
@@ -171,27 +172,4 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../styles/detail.scss';
-
-.title-box {
-  padding: 15px 20px 5px;
-  display: flex;
-  .icon-box {
-    width: 34px;
-    height: 34px;
-    text-align: center;
-    line-height: 34px;
-    color: $xr-color-primary;
-    background-color: #dfe8ff;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  .text {
-    font-size: 17px;
-    font-weight: bold;
-  }
-}
-
-.vux-flexbox-item {
-  margin-bottom: 150px;
-}
 </style>
