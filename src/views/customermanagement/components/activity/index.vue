@@ -551,22 +551,26 @@ export default {
     &__title {
       padding: 8px 0;
       .section-title {
-        background-color: $xr-color-primary;
+        background-color: #f1f5fd;
         color: white;
         font-size: 12px;
         padding: 4px 10px;
         height: 20px;
         border-radius: 15px;
-        &__time::before {
-          content: ' ';
-          position: relative;
-          width: 6px;
-          height: 6px;
-          border-radius: 3px;
-          background-color: white;
-          margin-right: 5px;
-          bottom: 2px;
-          display: inline-block;
+        &__time {
+          color: #666;
+          font-weight: 600;
+          &::before {
+            content: ' ';
+            position: relative;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background-color: #666;
+            margin-right: 5px;
+            bottom: 2px;
+            display: inline-block;
+          }
         }
       }
     }
