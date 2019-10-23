@@ -340,7 +340,7 @@ export default {
 }
 
 .side-item-select {
-  background-color: #f6f8fa;
+  background-color: $xr--background-color-base;
 }
 
 .side-item-select::before {

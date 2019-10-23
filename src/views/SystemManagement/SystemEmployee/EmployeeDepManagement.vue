@@ -1406,7 +1406,7 @@ export default {
 
 .menu-item:hover,
 .menu-item.is-select {
-  background-color: #f6f8fa;
+  background-color: $xr--background-color-base;
 }
 
 .menu-item:hover::before,
@@ -1599,7 +1599,7 @@ export default {
 
   .node-data.is-current,
   .node-data:hover {
-    background-color: #f6f8fa;
+    background-color: $xr--background-color-base;
   }
 
   // .node-data:hover .node-label-set {

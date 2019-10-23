@@ -62,7 +62,7 @@ export default {
 
 .xr-menu-item.is-select,
 .xr-menu-item:hover {
-  background-color: #f6f8fa;
+  background-color: $xr--background-color-base;
 }
 
 .xr-menu-item::before {

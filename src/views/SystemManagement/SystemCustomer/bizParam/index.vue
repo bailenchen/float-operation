@@ -140,7 +140,7 @@ export default {
 
 .menu-item:hover,
 .menu-item.is-select {
-  background-color: #f6f8fa;
+  background-color: $xr--background-color-base;
 }
 
 .menu-item:hover::before,
