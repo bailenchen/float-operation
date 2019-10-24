@@ -25,10 +25,11 @@
           :item="item"
           :index="index"
           :key="index"
-          :can-delete="false">
+          :can-delete="false"
+          @crm-detail="checkRelationDetail">
           <div
             class="relate-cell"
-            @click="checkRelationDetail(item.activityType, item.activityTypeId)">
+            @click="checkRelationDetail(item.activityType, item.activityTypeId, true)">
             <i
               :class="item.activityType | crmIconClass"
               class="relate-cell-icon"/>
@@ -169,9 +170,9 @@ export default {
     /**
      * 查看相关客户管理详情
      */
-    checkRelationDetail(type, id) {
+    checkRelationDetail(type, id, convert = false) {
       this.relationID = id
-      this.relationCrmType = crmTypeModel.convertTypeToKey(type)
+      this.relationCrmType = convert ? crmTypeModel.convertTypeToKey(type) : type
       this.showFullDetail = true
     },
 
