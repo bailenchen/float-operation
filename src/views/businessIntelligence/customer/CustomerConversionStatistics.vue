@@ -18,20 +18,16 @@
       </div>
       <div class="table-content">
         <el-table
-          v-if="showTable"
           :data="list"
-          height="400"
+          height="150"
           stripe
-          border
-          highlight-current-row
-          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
+          border>
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
             min-width="140"
-            sortable="custom"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -43,7 +39,6 @@
 
 <script>
 import base from '../mixins/base'
-import sortMixins from '../mixins/sort'
 import echarts from 'echarts'
 import {
   biCustomerConversionInfoAPI,
@@ -53,7 +48,7 @@ import {
 export default {
   /** 客户转化率分析 */
   name: 'CustomerConversionStatistics',
-  mixins: [base, sortMixins],
+  mixins: [base],
   data() {
     return {
       loading: false,
@@ -67,16 +62,16 @@ export default {
       list: [],
       axisList: [],
       fieldList: [
-        { field: 'customerName', name: '客户名称' },
-        { field: 'contractName', name: '合同名称' },
-        { field: 'contractMoney', name: '合同金额（元）' },
-        { field: 'receivablesMoney', name: '回款金额（元）' },
-        { field: '客户行业', name: '客户行业' },
-        { field: '客户来源', name: '客户来源' },
-        { field: 'ownerUserName', name: '负责人' },
-        { field: 'createUserName', name: '创建人' },
-        { field: 'createTime', name: '创建时间' },
-        { field: 'orderDate', name: '下单时间' }
+        // { field: 'customerName', name: '客户名称' },
+        // { field: 'contractName', name: '合同名称' },
+        // { field: 'contractMoney', name: '合同金额（元）' },
+        // { field: 'receivablesMoney', name: '回款金额（元）' },
+        // { field: '客户行业', name: '客户行业' },
+        // { field: '客户来源', name: '客户来源' },
+        // { field: 'ownerUserName', name: '负责人' },
+        // { field: 'createUserName', name: '创建人' },
+        // { field: 'createTime', name: '创建时间' },
+        // { field: 'orderDate', name: '下单时间' }
       ]
     }
   },
@@ -104,7 +99,7 @@ export default {
     searchClick(params) {
       this.postParams = params
       this.getDataList()
-      this.getRecordList()
+      // this.getRecordList()
     },
     /**
      * 图表数据
@@ -117,15 +112,34 @@ export default {
           const list = res.data || []
           this.axisList = list
 
+          // 循环表头
+          const fieldList = [{
+            name: '日期',
+            field: 'name'
+          }]
+
           const pieData = []
           const axisData = []
           const legendData = []
+
+          // 转化率table展示数据
+          const listData = {
+            name: '转化率'
+          }
           for (let index = 0; index < list.length; index++) {
             const element = list[index]
             pieData.push({ name: element.type, value: element.pro })
             axisData.push(element.pro)
             legendData.push(element.type)
+            fieldList.push({
+              name: element.type,
+              field: `type${index}`
+            })
+            listData[`type${index}`] = element.pro
           }
+
+          this.fieldList = fieldList
+          this.list = [listData]
 
           this.pieOption.legend.data = legendData
           this.pieOption.series[0].data = pieData

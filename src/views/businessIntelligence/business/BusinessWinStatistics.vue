@@ -14,19 +14,16 @@
       </div>
       <div class="table-content">
         <el-table
-          v-if="showTable"
           :data="list"
-          height="400"
+          height="150"
           stripe
           border
-          highlight-current-row
-          @sort-change="({ prop, order }) => mixinSortFn(list, prop, order)">
+          highlight-current-row>
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
             :prop="item.field"
             :label="item.name"
-            sortable="custom"
             align="center"
             header-align="center"
             show-overflow-tooltip/>
@@ -38,7 +35,6 @@
 
 <script>
 import base from '../mixins/base'
-import sortMixins from '../mixins/sort'
 import echarts from 'echarts'
 import {
   biBusinessWinAPI,
@@ -48,7 +44,7 @@ import {
 export default {
   /** 赢单机会转化率趋势分析 */
   name: 'BusinessWinStatistics',
-  mixins: [base, sortMixins],
+  mixins: [base],
   data() {
     return {
       loading: false,
@@ -60,14 +56,14 @@ export default {
       postParams: {}, // 筛选参数
       axisList: [],
       fieldList: [
-        { field: 'businessName', name: '商机名称' },
-        { field: 'customerName', name: '客户名称' },
-        { field: 'typeName', name: '商机状态组' },
-        { field: 'statusName', name: '商机阶段' },
-        { field: 'money', name: '商机金额' },
-        { field: 'dealDate', name: '预计成交日期' },
-        { field: 'ownerUserName', name: '负责人' },
-        { field: 'createTime', name: '创建时间' }
+        // { field: 'businessName', name: '商机名称' },
+        // { field: 'customerName', name: '客户名称' },
+        // { field: 'typeName', name: '商机状态组' },
+        // { field: 'statusName', name: '商机阶段' },
+        // { field: 'money', name: '商机金额' },
+        // { field: 'dealDate', name: '预计成交日期' },
+        // { field: 'ownerUserName', name: '负责人' },
+        // { field: 'createTime', name: '创建时间' }
       ]
     }
   },
@@ -82,7 +78,7 @@ export default {
     searchClick(params) {
       this.postParams = params
       this.getDataList()
-      this.getRecordList()
+      // this.getRecordList()
     },
     /**
      * 图表数据
@@ -94,17 +90,38 @@ export default {
           this.loading = false
           this.axisList = res.data || []
 
+          // 循环表头
+          const fieldList = [{
+            name: '日期',
+            field: 'name'
+          }]
+
           const endCounts = []
           const numCounts = []
           const proportionCounts = []
           const xAxis = []
+
+          // 转化率table展示数据
+          const listData = {
+            name: '转化率'
+          }
           for (let index = 0; index < this.axisList.length; index++) {
             const element = this.axisList[index]
             endCounts.push(element.businessEnd)
             numCounts.push(element.businessNum)
             proportionCounts.push(element.proportion)
             xAxis.push(element.type)
+
+            fieldList.push({
+              name: element.type,
+              field: `type${index}`
+            })
+            listData[`type${index}`] = element.proportion
           }
+
+          this.fieldList = fieldList
+          this.list = [listData]
+
           this.axisOption.xAxis[0].data = xAxis
 
           this.axisOption.series[0].data = proportionCounts
