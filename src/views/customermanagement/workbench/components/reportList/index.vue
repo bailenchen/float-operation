@@ -593,4 +593,8 @@ export default {
   border-top: none;
 }
 
+.d-view {
+  top: 0;
+}
+
 </style>

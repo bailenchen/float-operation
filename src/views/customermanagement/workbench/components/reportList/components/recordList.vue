@@ -11,10 +11,10 @@
         :src="crmIcon"
         class="t-img" >
       <div class="t-name">跟进记录</div>
-      <img
+      <!-- <img
         class="t-close"
         src="@/assets/img/task_close.png"
-        @click="hideView" >
+        @click="hideView" > -->
     </flexbox>
     <div class="t-content">
       <div
