@@ -48,7 +48,6 @@
               :prop="item.prop"
               :label="item.label"
               :width="item.width"
-              :formatter="fieldFormatter"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <template v-if="item.prop == 'dealStatus'">
@@ -68,7 +67,7 @@
                   }" class="status-mark"/>
                   <span>{{ getStatusName(scope.row.checkStatus) }}</span>
                 </template>
-                <template v-else>{{ scope.row[item.prop] }}</template>
+                <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
               </template>
             </el-table-column>
             <el-table-column v-if="showFillColumn" />
@@ -237,6 +236,7 @@ export default {
       window.onresize = () => {
         this.tableHeight = this.getTableHeight()
       }
+
       if (this.fieldList) {
         this.showFieldList = this.fieldList
         this.getList()
