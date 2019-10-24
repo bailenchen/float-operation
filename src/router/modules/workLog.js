@@ -43,6 +43,14 @@ const workLogRouter = {
         title: '我收到的',
         icon: 'email'
       }
+    },
+    {
+      path: 'follow',
+      component: () => import('@/views/workLog/FollowIndex'),
+      meta: {
+        title: '跟进记录',
+        icon: 'message'
+      }
     }
   ]
 }

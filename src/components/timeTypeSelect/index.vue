@@ -56,7 +56,7 @@
 export default {
   name: 'TimeTypeSelect',
   props: {
-    defaultType: Object,
+    defaultType: String,
     // 容器宽度，默认200px
     width: {
       type: Number,
@@ -85,7 +85,7 @@ export default {
         { label: '去年', value: 'lastYear' }
       ]
     }
-  }, // 时间类型选择
+  },
   computed: {
     typeShowValue() {
       if (this.sureCustomContent) {
@@ -97,15 +97,31 @@ export default {
         return this.selectType.label
       }
     }
+  }, // 时间类型选择
+  watch: {
+    defaultType() {
+      this.selectType = this.getDefaultTypeValue(this.defaultType)
+    }
   },
   mounted() {
     if (this.defaultType) {
-      this.selectType = this.defaultType
+      this.selectType = this.getDefaultTypeValue(this.defaultType)
     } else {
       this.$emit('change', { type: 'default', value: this.selectType.value })
     }
   },
   methods: {
+    getDefaultTypeValue(type) {
+      for (let index = 0; index < this.typeOptions.length; index++) {
+        const element = this.typeOptions[index]
+        if (element.value == type) {
+          return element
+        }
+      }
+
+      return { label: '本年', value: 'year' }
+    },
+
     // 类型选择
     typeSelectClick(item) {
       this.showTypePopover = false

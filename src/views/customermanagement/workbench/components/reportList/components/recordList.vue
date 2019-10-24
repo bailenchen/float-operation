@@ -25,8 +25,7 @@
           :item="item"
           :index="index"
           :key="index"
-          :can-delete="false"
-          @delete="logCellDelete">
+          :can-delete="false">
           <div
             class="relate-cell"
             @click="checkRelationDetail(item.activityType, item.activityTypeId)">
@@ -165,14 +164,6 @@ export default {
         .catch(() => {
           this.loading = false
         })
-    },
-
-    /**
-     * 行布局删除
-     */
-    logCellDelete(data, index, seciton) {
-      this.list.splice(index, 1)
-      this.$emit('handle')
     },
 
     /**
