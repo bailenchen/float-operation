@@ -55,7 +55,7 @@
               <span>{{ getStatusName(scope.row.checkStatus) }}</span>
             </template>
             <template v-else>
-              {{ scope.row[item.prop] }}
+              {{ fieldFormatter(scope.row, scope.column) }}
             </template>
           </template>
         </el-table-column>

@@ -49,9 +49,22 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          :formatter="fieldFormatter"
           sortable="custom"
-          show-overflow-tooltip/>
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <template v-if="item.prop == 'dealStatus'">
+              <i :class="scope.row[item.prop] | dealIcon"/>
+              <span>{{ scope.row[item.prop] | dealName }}</span>
+            </template>
+            <template v-else-if="item.prop == 'poolDay'">
+              <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
+              <i
+                v-else
+                class="wukong wukong-lock customer-lock"/>
+            </template>
+            <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
+          </template>
+        </el-table-column>
         <el-table-column/>
         <el-table-column
           :resizable="false"
@@ -101,6 +114,15 @@ export default {
   components: {
     CustomerDetail,
     FieldSet
+  },
+  filters: {
+    dealIcon(statu) {
+      return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    },
+
+    dealName(statu) {
+      return statu == 1 ? '已成交' : '未成交'
+    }
   },
   mixins: [table],
   data() {

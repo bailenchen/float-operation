@@ -46,7 +46,6 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          :formatter="fieldFormatter"
           sortable="custom"
           show-overflow-tooltip>
           <template slot-scope="scope">
@@ -55,7 +54,7 @@
               <span>{{ getStatusName(scope.row.checkStatus) }}</span>
             </template>
             <template v-else>
-              {{ scope.row[item.prop] }}
+              {{ fieldFormatter(scope.row, scope.column) }}
             </template>
           </template>
         </el-table-column>

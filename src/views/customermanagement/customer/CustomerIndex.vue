@@ -82,7 +82,6 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          :formatter="fieldFormatter"
           sortable="custom"
           show-overflow-tooltip>
           <template slot-scope="scope">
@@ -96,7 +95,7 @@
                 v-else
                 class="wukong wukong-lock customer-lock"/>
             </template>
-            <template v-else>{{ scope.row[item.prop] }}</template>
+            <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
           </template>
         </el-table-column>
         <el-table-column/>
