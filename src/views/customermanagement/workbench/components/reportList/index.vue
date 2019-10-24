@@ -542,6 +542,7 @@ export default {
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (
+        this.crmType &&
         (column.property === 'customerName' ||
           column.property === 'businessName' ||
           (this.crmType != 'contract' && column.property === 'name') ||
