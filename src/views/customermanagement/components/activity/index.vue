@@ -2,6 +2,7 @@
   <div
     v-loading="loading"
     v-infinite-scroll="getLogList"
+    ref="mainScroll"
     infinite-scroll-disabled="scrollDisabled"
     class="main">
     <div>
@@ -399,6 +400,7 @@ export default {
       this.noMore = false
       this.$nextTick(() => {
         this.list = []
+        this.$refs.mainScroll.scrollTo(0, 1)
       })
     },
 
