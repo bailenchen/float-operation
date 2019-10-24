@@ -239,7 +239,7 @@ export default {
 
       if (this.fieldList) {
         this.showFieldList = this.fieldList
-        this.getList()
+        this.getListData()
       } else {
         this.getFieldList()
       }
@@ -278,6 +278,18 @@ export default {
           } else {
             this.list = res.data
           }
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
+    getListData() {
+      this.loading = true
+      this.request(this.params)
+        .then(res => {
+          this.list = res.data
           this.loading = false
         })
         .catch(() => {

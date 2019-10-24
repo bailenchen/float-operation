@@ -19,9 +19,11 @@
       <div class="table-content">
         <el-table
           :data="list"
+          :cell-class-name="cellClassName"
           height="150"
           stripe
-          border>
+          border
+          @row-click="handleRowClick">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
@@ -34,20 +36,35 @@
         </el-table>
       </div>
     </div>
+
+    <!-- 销售简报列表 -->
+    <report-list
+      :show.sync="reportListShow"
+      :title="reportData.title"
+      :placeholder="reportData.placeholder"
+      :request="reportData.request"
+      :params="reportData.params"
+      :field-list="fieldReportList"/>
   </div>
 </template>
 
 <script>
-import base from '../mixins/base'
-import echarts from 'echarts'
 import {
   biCustomerConversionInfoAPI,
   biCustomerConversionAPI
 } from '@/api/businessIntelligence/customer'
 
+import ReportList from '@/views/customermanagement/workbench/components/reportList'
+
+import base from '../mixins/base'
+import echarts from 'echarts'
+
 export default {
   /** 客户转化率分析 */
   name: 'CustomerConversionStatistics',
+  components: {
+    ReportList
+  },
   mixins: [base],
   data() {
     return {
@@ -61,18 +78,27 @@ export default {
       postParams: {}, // 筛选参数
       list: [],
       axisList: [],
-      fieldList: [
-        // { field: 'customerName', name: '客户名称' },
-        // { field: 'contractName', name: '合同名称' },
-        // { field: 'contractMoney', name: '合同金额（元）' },
-        // { field: 'receivablesMoney', name: '回款金额（元）' },
-        // { field: '客户行业', name: '客户行业' },
-        // { field: '客户来源', name: '客户来源' },
-        // { field: 'ownerUserName', name: '负责人' },
-        // { field: 'createUserName', name: '创建人' },
-        // { field: 'createTime', name: '创建时间' },
-        // { field: 'orderDate', name: '下单时间' }
-      ]
+      fieldList: [],
+
+      reportListShow: false,
+      fieldReportList: [
+        { prop: 'customerName', label: '客户名称' },
+        { prop: 'contractName', label: '合同名称' },
+        { prop: 'contractMoney', label: '合同金额（元）' },
+        { prop: 'receivablesMoney', label: '回款金额（元）' },
+        { prop: '客户行业', label: '客户行业' },
+        { prop: '客户来源', label: '客户来源' },
+        { prop: 'ownerUserName', label: '负责人' },
+        { prop: 'createUserName', label: '创建人' },
+        { prop: 'createTime', label: '创建时间' },
+        { prop: 'orderDate', label: '下单时间' }
+      ],
+      reportData: {
+        title: '',
+        placeholder: '',
+        request: null,
+        params: null
+      }
     }
   },
   computed: {},
@@ -99,7 +125,6 @@ export default {
     searchClick(params) {
       this.postParams = params
       this.getDataList()
-      // this.getRecordList()
     },
     /**
      * 图表数据
@@ -135,7 +160,7 @@ export default {
               name: element.type,
               field: `type${index}`
             })
-            listData[`type${index}`] = element.pro
+            listData[`type${index}`] = element.pro + '%'
           }
 
           this.fieldList = fieldList
@@ -153,40 +178,38 @@ export default {
           this.loading = false
         })
     },
+
     /**
-     * 获取相关列表
+     * 通过回调控制class
      */
-    getRecordList(dataIndex) {
-      this.list = []
-
-      let params = {}
-
-      if (typeof dataIndex !== 'undefined') {
-        const dataItem = this.axisList[dataIndex]
-        params.userId = this.postParams.userId
-        params.deptId = this.postParams.deptId
-        params.startTime = dataItem.startTime
-        params.endTime = dataItem.endTime
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property != 'name' && row[column.property].replace('%', '') > 0) {
+        return 'can-visit--underline'
       } else {
-        params = this.postParams
+        return ''
       }
-
-      this.loading = true
-      biCustomerConversionInfoAPI(params)
-        .then(res => {
-          this.loading = false
-          this.list = res.data
-        })
-        .catch(() => {
-          this.loading = false
-        })
     },
+
+    /**
+     * 列表点击
+     */
+    handleRowClick(row, column, event) {
+      if (column.property != 'name' && row[column.property].replace('%', '') > 0) {
+        this.reportData.title = `${column.label}详情`
+        this.reportData.request = biCustomerConversionInfoAPI
+        const params = { ...this.postParams }
+        params.type = column.label
+        this.reportData.params = params
+        this.reportListShow = true
+      }
+    },
+
     /** 柱状图 */
     initAxis() {
       this.axisChart = echarts.init(document.getElementById('axismain'))
       this.axisChart.on('click', params => {
         // seriesIndex	1：跟进客户数 2:跟进次数  dataIndex 具体的哪条数据
-        this.getRecordList(params.dataIndex)
+        // this.getRecordList(params.dataIndex)
       })
 
       this.axisOption = {

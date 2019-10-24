@@ -15,10 +15,12 @@
       <div class="table-content">
         <el-table
           :data="list"
+          :cell-class-name="cellClassName"
           height="150"
           stripe
           border
-          highlight-current-row>
+          highlight-current-row
+          @row-click="handleRowClick">
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
@@ -30,20 +32,36 @@
         </el-table>
       </div>
     </div>
+
+    <!-- 销售简报列表 -->
+    <report-list
+      :show.sync="reportListShow"
+      :title="reportData.title"
+      :placeholder="reportData.placeholder"
+      :request="reportData.request"
+      :params="reportData.params"
+      :field-list="fieldReportList"/>
   </div>
 </template>
 
 <script>
-import base from '../mixins/base'
-import echarts from 'echarts'
 import {
   biBusinessWinAPI,
   biBusinessTrendListAPI
 } from '@/api/businessIntelligence/business'
 
+import ReportList from '@/views/customermanagement/workbench/components/reportList'
+
+import base from '../mixins/base'
+import echarts from 'echarts'
+
+
 export default {
   /** 赢单机会转化率趋势分析 */
   name: 'BusinessWinStatistics',
+  components: {
+    ReportList
+  },
   mixins: [base],
   data() {
     return {
@@ -55,16 +73,25 @@ export default {
 
       postParams: {}, // 筛选参数
       axisList: [],
-      fieldList: [
-        // { field: 'businessName', name: '商机名称' },
-        // { field: 'customerName', name: '客户名称' },
-        // { field: 'typeName', name: '商机状态组' },
-        // { field: 'statusName', name: '商机阶段' },
-        // { field: 'money', name: '商机金额' },
-        // { field: 'dealDate', name: '预计成交日期' },
-        // { field: 'ownerUserName', name: '负责人' },
-        // { field: 'createTime', name: '创建时间' }
-      ]
+      fieldList: [],
+
+      reportListShow: false,
+      fieldReportList: [
+        { prop: 'businessName', label: '商机名称' },
+        { prop: 'customerName', label: '客户名称' },
+        { prop: 'typeName', label: '商机状态组' },
+        { prop: 'statusName', label: '商机阶段' },
+        { prop: 'money', label: '商机金额' },
+        { prop: 'dealDate', label: '预计成交日期' },
+        { prop: 'ownerUserName', label: '负责人' },
+        { prop: 'createTime', label: '创建时间' }
+      ],
+      reportData: {
+        title: '',
+        placeholder: '',
+        request: null,
+        params: null
+      }
     }
   },
   computed: {},
@@ -78,7 +105,6 @@ export default {
     searchClick(params) {
       this.postParams = params
       this.getDataList()
-      // this.getRecordList()
     },
     /**
      * 图表数据
@@ -116,7 +142,7 @@ export default {
               name: element.type,
               field: `type${index}`
             })
-            listData[`type${index}`] = element.proportion
+            listData[`type${index}`] = element.proportion + '%'
           }
 
           this.fieldList = fieldList
@@ -133,34 +159,32 @@ export default {
           this.loading = false
         })
     },
+
     /**
-     * 获取相关列表
+     * 通过回调控制class
      */
-    getRecordList(dataIndex) {
-      this.list = []
-
-      let params = {}
-
-      if (typeof dataIndex !== 'undefined') {
-        const dataItem = this.axisList[dataIndex]
-        params.user_id = this.postParams.user_id
-        params.structure_id = this.postParams.structure_id
-        params.startTime = dataItem.start_time
-        params.endTime = dataItem.end_time
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property != 'name' && row[column.property].replace('%', '') > 0) {
+        return 'can-visit--underline'
       } else {
-        params = this.postParams
+        return ''
       }
-
-      this.loading = true
-      biBusinessTrendListAPI(params)
-        .then(res => {
-          this.loading = false
-          this.list = res.data
-        })
-        .catch(() => {
-          this.loading = false
-        })
     },
+
+    /**
+     * 列表点击
+     */
+    handleRowClick(row, column, event) {
+      if (column.property != 'name' && row[column.property].replace('%', '') > 0) {
+        this.reportData.title = `${column.label}详情`
+        this.reportData.request = biBusinessTrendListAPI
+        const params = { ...this.postParams }
+        params.type = column.label
+        this.reportData.params = params
+        this.reportListShow = true
+      }
+    },
+
     /** 柱状图 */
     initAxis() {
       var axisChart = echarts.init(document.getElementById('axismain'))
@@ -274,7 +298,7 @@ export default {
       axisChart.setOption(option, true)
       axisChart.on('click', params => {
         // seriesIndex	1：赢单转化率 2:商机总数  dataIndex 具体的哪条数据
-        this.getRecordList(params.dataIndex)
+        // this.getRecordList(params.dataIndex)
       })
       this.axisOption = option
       this.axisChart = axisChart

@@ -96,7 +96,7 @@
 
     <!-- 销售简报列表 -->
     <report-list
-      :show.sync="showReportList"
+      :show.sync="reportListShow"
       :title="reportData.title"
       :placeholder="reportData.placeholder"
       :crm-type="reportData.crmType"
@@ -160,7 +160,7 @@ export default {
 
       loading: false,
 
-      showReportList: false,
+      reportListShow: false,
       fieldReportList: null,
       reportData: {
         title: '',
@@ -366,7 +366,7 @@ export default {
         this.reportData.crmType = item.type
         this.reportData.params = this.getBaseParams()
         this.reportData.params.label = item.labelValue
-        this.showReportList = true
+        this.reportListShow = true
       }
     }
   }
