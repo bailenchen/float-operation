@@ -47,7 +47,7 @@
 import {
   crmExamineMyExamine
 } from '@/api/customermanagement/common'
-import BaseTabsHead from '../components/BaseTabsHead'
+import BaseTabsHead from '@/components/base-tabs-head'
 import CrmCell from './components/CrmCell'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import ExamineHandle from '@/components/Examine/ExamineHandle'

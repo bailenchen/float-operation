@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  /** 任务审批基础头 */
+  // 中间为tab效果的布局
   name: 'BaseTabsHead',
   components: {},
   props: {

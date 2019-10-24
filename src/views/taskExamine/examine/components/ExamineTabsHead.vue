@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import BaseTabsHead from '../../components/BaseTabsHead'
+import BaseTabsHead from '@/components/base-tabs-head'
 
 export default {
   /** 审批头 */
