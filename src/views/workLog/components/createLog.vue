@@ -158,7 +158,7 @@
         <span class="control-relevance">
           <span>关联销售简报</span>
           <el-switch
-            v-model="form.isRelevance"/>
+            v-model="isRelevanceReport"/>
           <span>是</span>
         </span>
 
@@ -215,9 +215,9 @@ export default {
   },
   data() {
     return {
-      form: {
-        isRelevance: true
-      },
+      form: {},
+      // 关联简报
+      isRelevanceReport: true,
       textFormKeyList: [],
       activeTab: 'day',
       showLoading: false,
@@ -295,7 +295,7 @@ export default {
         }).join(',')
       }
 
-      journalAdd({
+      const params = {
         ...this.form,
         batchId: this.batchId,
         sendUserIds: this.sendUserList.map(item => {
@@ -303,7 +303,13 @@ export default {
         }).join(','),
         ...relateData,
         categoryId: this.categoryIdMap[this.activeTab]
-      })
+      }
+
+      if (this.isRelevanceReport) {
+        params.getBulletin = 1 // 1为关联销售简报
+      }
+
+      journalAdd(params)
         .then(() => {
           this.showLoading = false
           this.resetData()
@@ -319,9 +325,8 @@ export default {
      * 重置信息
      */
     resetData() {
-      this.form = {
-        isRelevance: true
-      }
+      this.form = {}
+      this.isRelevanceReport = true
       this.batchId = guid()
       this.imgFiles = []
       this.files = []
