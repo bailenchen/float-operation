@@ -194,7 +194,7 @@ export default {
      */
     isLock() {
       if (this.detail) {
-        return this.detail.isLock == 1
+        return this.detail.status == 2 // 1是正常 2 是锁定
       }
       return false
     },
@@ -276,7 +276,7 @@ export default {
     confirmHandle(type) {
       if (type === 'lock' || type === 'unlock') {
         crmCustomerLock({
-          isLock: type === 'lock' ? '1' : '0', // 1锁0不锁
+          status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
           ids: this.id
         })
           .then(res => {

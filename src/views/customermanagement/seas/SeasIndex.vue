@@ -57,7 +57,7 @@
               <span>{{ scope.row[item.prop] | dealName }}</span>
             </template>
             <template v-else-if="item.prop == 'poolDay'">
-              <div v-if="scope.row.isLock == 0">{{ scope.row.poolDay }}</div>
+              <div v-if="scope.row.status == 1">{{ scope.row.poolDay }}</div>
               <i
                 v-else
                 class="wukong wukong-lock customer-lock"/>

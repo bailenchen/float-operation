@@ -24,7 +24,7 @@
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView">
-          <p slot="name" class="customer-name">{{ detailData.customerName }}<i v-if="detailData.isLock" class="wk wk-circle-password" /></p>
+          <p slot="name" class="customer-name">{{ detailData.customerName }}<i v-if="detailData.status == 2" class="wk wk-circle-password" /></p>
         </c-r-m-detail-head>
         <flexbox
           class="d-container-bd"

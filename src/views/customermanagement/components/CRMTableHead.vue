@@ -401,7 +401,7 @@ export default {
           return item.customerId
         })
         crmCustomerLock({
-          isLock: type === 'lock' ? '1' : '0', // 1锁0不锁
+          status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
           ids: customerId.join(',')
         })
           .then(res => {
