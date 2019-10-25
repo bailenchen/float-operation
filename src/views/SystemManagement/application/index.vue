@@ -29,7 +29,7 @@
               class="item-icon" >
             <span class="item-name">{{ item.name }}</span>
             <el-dropdown
-              v-if="item.type == 1 && configSetAuth"
+              v-if="item.canEdit && configSetAuth"
               class="more-menu"
               @command="handleMoreCommand($event, item)">
               <i class="el-icon-more"/>
@@ -121,6 +121,12 @@ export default {
                   element.type == item.type && element.status == item.status
                 )
               }
+
+              if (item.type == 1) {
+                item.canEdit = item.module != 'crm'
+              } else {
+                item.canEdit = true
+              }
               return element.type == item.type
             })
           }
@@ -157,15 +163,7 @@ export default {
       if (command == 'enable') {
         result()
       } else {
-        const message = {
-          oa:
-            '停用办公后，与客户管理、项目管理中的关联项也将被停用。确定要停用吗？',
-          crm:
-            '停用客户管理后，与办公、项目管理中的关联项也将被停用。确定要停用吗？',
-          work:
-            '停用项目管理后，与办公、客户管理中的关联项也将被停用。确定要停用吗？'
-        }[item.module]
-        this.$confirm(message, '提示', {
+        this.$confirm(`停用${item.name}后，企业所有员工将无法使用此功能。确定要停用吗？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -203,6 +201,22 @@ export default {
           project: {
             disable: require('@/assets/img/system/app/project_disable.png'),
             enable: require('@/assets/img/system/app/project_enable.png')
+          },
+          log: {
+            disable: require('@/assets/img/system/app/log_disable.png'),
+            enable: require('@/assets/img/system/app/log_enable.png')
+          },
+          book: {
+            disable: require('@/assets/img/system/app/book_disable.png'),
+            enable: require('@/assets/img/system/app/book_enable.png')
+          },
+          taskExamine: {
+            disable: require('@/assets/img/system/app/taskExamine_disable.png'),
+            enable: require('@/assets/img/system/app/taskExamine_enable.png')
+          },
+          bi: {
+            disable: require('@/assets/img/system/app/bi_disable.png'),
+            enable: require('@/assets/img/system/app/bi_enable.png')
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }
