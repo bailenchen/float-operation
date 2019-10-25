@@ -163,6 +163,7 @@ export default {
           this.loading = false
         })
         .catch(() => {
+          this.noMore = true
           this.loading = false
         })
     },

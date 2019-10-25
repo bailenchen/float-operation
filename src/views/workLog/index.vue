@@ -330,6 +330,7 @@ export default {
         }
         this.noMore = res.data.lastPage
       }).catch(() => {
+        this.noMore = true
         this.loading = false
       })
     },
