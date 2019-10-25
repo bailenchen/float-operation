@@ -55,6 +55,17 @@
         :data="allData"
         @select="relatedClick" />
 
+      <div v-if="data.getBulletin" class="content">
+        <div class="content-box">
+          <div class="content-title">
+            销售简报
+          </div>
+          <div class="content-text">
+            <report-menu :list="reportList" />
+          </div>
+        </div>
+      </div>
+
       <flexbox v-if="data.sendUserList && data.sendUserList.length" class="send-list">
         <span class="send-list__label">发送给：</span>
         <span
@@ -137,6 +148,7 @@ import FileListView from '@/components/FileListView'
 import ReplyComment from '@/components/ReplyComment'
 import RelatedBusinessList from '@/components/RelatedBusinessList'
 import CommentList from './commentList'
+import ReportMenu from './ReportMenu'
 
 import { mapGetters } from 'vuex'
 
@@ -147,7 +159,8 @@ export default {
     FileListView,
     RelatedBusinessList,
     CommentList,
-    ReplyComment
+    ReplyComment,
+    ReportMenu
   },
   props: {
     data: {
@@ -164,7 +177,41 @@ export default {
       isWaiting: false,
       showReply: false,
       commentLoading: false,
-      replyListData: []
+      replyListData: [],
+
+      // 简报信息
+      reportList: [
+        {
+          type: 'customer',
+          key: 'customerCount',
+          info: '今日新增客户',
+          name: '今日新增客户 0'
+        },
+        {
+          type: 'business',
+          key: 'businessCount',
+          info: '今日新增商机',
+          name: '今日新增商机 0'
+        },
+        {
+          type: 'contract',
+          key: 'contractCount',
+          info: '今日新增合同',
+          name: '今日新增合同 0'
+        },
+        {
+          type: 'receivables',
+          key: 'receivablesMoney',
+          info: '今日新增回款',
+          name: '今日新增回款 0'
+        },
+        {
+          type: 'record',
+          key: 'recordCount',
+          info: '今日新增跟进记录',
+          name: '今日新增跟进记录 0'
+        }
+      ]
     }
   },
   computed: {
@@ -220,6 +267,13 @@ export default {
     //     }
     //   })
     // })
+
+    if (this.data.getBulletin) {
+      this.reportList = this.reportList.map(item => {
+        item.name = `${item.info} ${this.data.bulletin[item.key]}`
+        return item
+      })
+    }
   },
   beforeDestroy() {
     // this.$bus.off('load-more-work-log')

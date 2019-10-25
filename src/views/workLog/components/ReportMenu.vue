@@ -3,7 +3,8 @@
     <span
       v-for="(item, index) in list"
       :key="index"
-      class="report-menu-btn">
+      class="report-menu-btn"
+      @click="itemClick(item)">
       <i
         :class="getXrIcon(item.type)"
         :style="{ color: getXrIconColor(item.type) }"
@@ -32,7 +33,11 @@ export default {
   mounted() {},
 
   beforeDestroy() {},
-  methods: {}
+  methods: {
+    itemClick(item) {
+      this.$emit('select', item)
+    }
+  }
 }
 </script>
 
