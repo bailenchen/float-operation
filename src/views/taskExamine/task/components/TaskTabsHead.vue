@@ -6,7 +6,7 @@
     <span
       slot="left"
       class="task-title">
-      <i class="wk wk-task" />我的任务
+      <i class="wk wk-task" />{{ title }}
     </span>
   </base-tabs-head>
 </template>
@@ -20,7 +20,9 @@ export default {
   components: {
     BaseTabsHead
   },
-  props: {},
+  props: {
+    title: String
+  },
   data() {
     return {}
   },

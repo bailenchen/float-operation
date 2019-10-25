@@ -274,6 +274,7 @@ export default {
 .el-icon-more {
   color: #cdcdcd;
   transform: rotate(90deg);
+  cursor: pointer;
 }
 
 .more-menu {

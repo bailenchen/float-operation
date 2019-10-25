@@ -10,11 +10,6 @@
     <div
       v-loading="loading"
       class="body">
-      <el-button
-        v-if="systemSaveAuth"
-        class="save-button"
-        type="primary"
-        @click="save">保存</el-button>
 
       <div class="section">
         <div class="name">企业名称</div>
@@ -41,6 +36,12 @@
             @click="deleteSystemImage"/>
         </div>
       </div>
+
+      <el-button
+        v-if="systemSaveAuth"
+        class="save-button"
+        type="primary"
+        @click="save">保存</el-button>
     </div>
     <edit-image
       :fixed-number="[15, 4]"
@@ -184,9 +185,7 @@ export default {
 }
 
 .save-button {
-  position: absolute;
-  top: 8px;
-  right: 30px;
+  margin-left: 250px;
 }
 
 .section {

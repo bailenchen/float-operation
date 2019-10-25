@@ -2,6 +2,7 @@
   <div class="main">
     <task-tabs-head
       :tabs="tabs"
+      :title="title"
       @change="tabsChange" />
 
     <div class="content-wrapper">
@@ -168,6 +169,10 @@ export default {
           }
         ]
       }
+    },
+
+    title() {
+      return this.taskType == 1 ? '我的任务' : '下属的任务'
     },
 
     // 无线滚动控制
