@@ -56,11 +56,10 @@
             class="xh-user-cell"
             placeholder="选择人员"
             @value-change="userChange" />
-          <el-date-picker
-            v-model="filterForm.createTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="提交时间" />
+          <time-type-select
+            :width="190"
+            :default-type="timeSelect.value"
+            @change="timeTypeChange" />
           <el-select
             v-model="filterForm.categoryId"
             placeholder="类型">
@@ -115,15 +114,16 @@
 <script>
 import { journalList, journalEdit, journalQueryBulletinAPI } from '@/api/oamanagement/journal'
 
-import { mapGetters } from 'vuex'
-import moment from 'moment'
-
 import ReportMenu from './components/ReportMenu'
 import LogItem from './components/logItem'
 import CreateLog from './components/createLog'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import newDialog from '@/views/OAManagement/journal/newDialog'
+import timeTypeSelect from '@/components/timeTypeSelect'
+
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'WorkLog',
@@ -133,7 +133,8 @@ export default {
     CreateLog,
     XhUserCell,
     CRMAllDetail,
-    newDialog
+    newDialog,
+    timeTypeSelect
   },
   data() {
     return {
@@ -161,6 +162,11 @@ export default {
       filterForm: {
         categoryId: 0,
         createUserId: ''
+      },
+
+      timeSelect: {
+        type: 'default',
+        value: 'today'
       },
 
       // 相关详情的查看
@@ -229,6 +235,10 @@ export default {
     this.filterForm = {
       categoryId: 0,
       createUserId: ''
+    }
+    this.timeSelect = {
+      type: 'default',
+      value: 'today'
     }
     this.refreshList()
     next()
@@ -305,6 +315,15 @@ export default {
         page: this.page,
         limit: 5,
         ...this.filterForm
+      }
+
+      if (this.timeSelect.type) {
+        if (this.timeSelect.type === 'custom') {
+          params.startTime = this.timeSelect.startTime.replace(/\./g, '-')
+          params.endTime = this.timeSelect.endTime.replace(/\./g, '-')
+        } else {
+          params.type = this.timeSelect.value || ''
+        }
       }
 
       if (this.logType != 'all') {
@@ -441,6 +460,14 @@ export default {
       } else {
         this.filterForm.createUserId = ''
       }
+    },
+
+    /**
+     * 时间更改
+     */
+    timeTypeChange(data) {
+      this.timeSelect = data
+      this.refreshList()
     },
 
     /**

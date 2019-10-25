@@ -251,6 +251,9 @@ export default {
       }
     },
 
+    /**
+     * 时间更改
+     */
     timeTypeChange(data) {
       this.timeSelect = data
       this.refreshList()

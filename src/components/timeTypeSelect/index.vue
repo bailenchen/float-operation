@@ -100,7 +100,9 @@ export default {
   }, // 时间类型选择
   watch: {
     defaultType() {
-      this.selectType = this.getDefaultTypeValue(this.defaultType)
+      if (this.selectType.value != this.defaultType) {
+        this.selectType = this.getDefaultTypeValue(this.defaultType)
+      }
     }
   },
   mounted() {
