@@ -34,6 +34,7 @@
         @click.native="handleTypeClick('deal_status')">更改成交状态</el-button>
 
       <el-dropdown
+        v-if="permissionMoreTypes && permissionMoreTypes.length > 0"
         trigger="click"
         @command="handleTypeClick">
         <el-button
@@ -41,8 +42,7 @@
           class="t-more" />
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item
-            v-for="(item, index) in moreTypes"
-            v-if="whetherTypeShowByPermision(item.type)"
+            v-for="(item, index) in permissionMoreTypes"
             :key="index"
             :icon="item.icon | wkIconPre"
             :command="item.type">{{ item.name }}</el-dropdown-item>
@@ -204,6 +204,15 @@ export default {
      */
     showDealStatus() {
       return !this.isSeas && this.crmType == 'customer'
+    },
+
+    /**
+     * 权限内的更多按钮
+     */
+    permissionMoreTypes() {
+      return this.moreTypes.filter(item => {
+        return this.whetherTypeShowByPermision(item.type)
+      })
     }
   },
   watch: {
@@ -461,7 +470,6 @@ export default {
           return this.forSelectionHandleItems(handleInfos, [
             'transfer',
             'put_seas',
-            'deal_status',
             'lock',
             'unlock',
             'delete'
