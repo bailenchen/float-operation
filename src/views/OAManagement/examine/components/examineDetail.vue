@@ -376,6 +376,7 @@ export default {
         })
         .catch(() => {
           this.loading = false
+          this.hideView()
         })
     },
     //* * 点击关闭按钮隐藏视图 */

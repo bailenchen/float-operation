@@ -182,6 +182,7 @@ export default {
         })
         .catch(() => {
           this.loading = false
+          this.hideView()
         })
       this.getBaseInfo()
     },

@@ -157,6 +157,7 @@ export default {
         })
         .catch(() => {
           this.loading = false
+          this.hideView()
         })
     },
 
