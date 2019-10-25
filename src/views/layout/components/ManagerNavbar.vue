@@ -51,10 +51,11 @@ export default {
             .dispatch('LogOut')
             .then(() => {
               loading.close()
-              this.$router.push('/login')
+              location.reload()
             })
             .catch(() => {
               loading.close()
+              location.reload()
             })
         })
         .catch(() => {})
