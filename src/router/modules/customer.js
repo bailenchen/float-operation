@@ -4,7 +4,7 @@ import Layout from '@/views/layout/customerLayout'
 const customerRouter = {
   path: '/crm',
   component: Layout,
-  redirect: '/crm/workbench',
+  redirect: '',
   name: 'crm',
   hidden: true,
   meta: {

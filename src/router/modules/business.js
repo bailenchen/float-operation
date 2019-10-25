@@ -398,7 +398,7 @@ const taskCompleteRouteItem = {
 export const biRouter = {
   path: '/bi',
   component: Layout,
-  redirect: '/bi/customerTotal',
+  redirect: '',
   name: 'bi',
   hidden: true,
   meta: {

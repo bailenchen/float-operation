@@ -8,10 +8,11 @@ const workLogRouter = {
   name: 'workLog',
   hidden: true,
   meta: {
-    requiresAuth: true,
     title: '全部',
-    index: 0,
-    type: 'workLog'
+    requiresAuth: true,
+    index: 1,
+    type: 'oa',
+    subType: 'log'
   },
   children: [
     {

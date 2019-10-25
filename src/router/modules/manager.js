@@ -226,7 +226,7 @@ const handlefieldRouter = {
 export const managerRouter = {
   path: '/manager',
   component: Layout,
-  redirect: '/manager/systemconfig',
+  redirect: '',
   name: 'manager',
   hidden: true,
   meta: {

@@ -151,21 +151,26 @@ export default {
           fontSize: '17px'
         })
       }
-      tempsItems.push({
-        title: '任务/审批',
-        type: 4,
-        path: '/taskExamine',
-        icon: 'wk wk-office',
-        fontSize: '16px'
-      })
 
-      tempsItems.push({
-        title: '日志',
-        type: 3,
-        path: '/workLog',
-        icon: 'wk wk-log',
-        fontSize: '17px'
-      })
+      if (this.oa && this.oa.taskExamine) {
+        tempsItems.push({
+          title: '任务/审批',
+          type: 4,
+          path: '/taskExamine',
+          icon: 'wk wk-office',
+          fontSize: '16px'
+        })
+      }
+
+      if (this.oa && this.oa.log) {
+        tempsItems.push({
+          title: '日志',
+          type: 3,
+          path: '/workLog',
+          icon: 'wk wk-log',
+          fontSize: '17px'
+        })
+      }
 
       if (this.oa && this.oa.book) {
         tempsItems.push({

@@ -8,10 +8,11 @@ const addressBookRouter = {
   name: 'addressBook',
   hidden: true,
   meta: {
-    requiresAuth: true,
     title: '全部',
-    index: 0,
-    type: 'addressBook'
+    requiresAuth: true,
+    index: 1,
+    type: 'oa',
+    subType: 'book'
   },
   children: [
     {

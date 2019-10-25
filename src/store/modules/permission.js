@@ -69,7 +69,6 @@ const perfectRouter = function(routers, authInfo, result) {
     let redirect = ''
     for (let index = 0; index < routers.length; index++) {
       const element = routers[index]
-
       // 角色模块，加入菜单 后期菜单会刚才标准效果
       if (groupData.requiresAuth && element.name == 'manager') {
         for (let childIndex = 0; childIndex < element.children.length; childIndex++) {
@@ -96,7 +95,7 @@ const perfectRouter = function(routers, authInfo, result) {
           }
         }
       } else {
-        if (element.children && element.children.length > 0) {
+        if (!element.redirect && element.children && element.children.length > 0) {
           element.redirect = element.path + '/' + element.children[0].path
         }
       }

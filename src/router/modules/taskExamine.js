@@ -8,7 +8,10 @@ const taskExamineLayout = {
   name: 'taskExamine',
   hidden: true,
   meta: {
-    requiresAuth: true
+    requiresAuth: true,
+    index: 1,
+    type: 'oa',
+    subType: 'taskExamine'
   },
   children: [
     {
