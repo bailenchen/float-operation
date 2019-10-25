@@ -22,32 +22,10 @@ export default {
   components: {},
   mixins: [XrSystemIconMixin],
   props: {
+    list: Array
   },
   data() {
-    return {
-      list: [
-        {
-          type: 'customer',
-          name: '今日新增客户 5'
-        },
-        {
-          type: 'business',
-          name: '今日新增商机 5'
-        },
-        {
-          type: 'contract',
-          name: '今日新增合同  3'
-        },
-        {
-          type: 'receivables',
-          name: '今日新增回款  1,000,000'
-        },
-        {
-          type: 'record',
-          name: '今日新增跟进记录  8'
-        }
-      ]
-    }
+    return {}
   },
   computed: {},
   watch: {},

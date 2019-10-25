@@ -14,7 +14,7 @@
         @value-change="userChange" />
       <time-type-select
         :width="190"
-        default-type="today"
+        :default-type="timeSelect.value"
         @change="timeTypeChange" />
       <el-select
         v-model="filterForm.crmType"
@@ -133,7 +133,7 @@ export default {
 
       timeSelect: {
         type: 'default',
-        value: 'today'
+        value: 'month'
       },
 
       list: [],

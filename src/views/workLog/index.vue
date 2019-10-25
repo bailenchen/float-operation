@@ -42,7 +42,7 @@
             align="stretch"
             class="report-card">
             <div class="report-card__label">销售简报</div>
-            <report-menu />
+            <report-menu :list="reportList" />
           </flexbox>
         </div>
 
@@ -113,6 +113,7 @@
 
 <script>
 import { journalList, journalEdit, journalQueryBulletinAPI } from '@/api/oamanagement/journal'
+import { crmIndexIndex } from '@/api/customermanagement/workbench'
 
 import ReportMenu from './components/ReportMenu'
 import LogItem from './components/logItem'
@@ -147,6 +148,43 @@ export default {
         timeRemind: ''
       },
 
+      // 简报信息
+      reportList: [
+        {
+          type: 'customer',
+          key: 'customerCount',
+          info: '今日新增客户',
+          name: '今日新增客户 0'
+        },
+        {
+          type: 'business',
+          key: 'businessCount',
+          info: '今日新增商机',
+          name: '今日新增商机 0'
+        },
+        {
+          type: 'contract',
+          key: 'contractCount',
+          info: '今日新增合同',
+          name: '今日新增合同 0'
+        },
+        {
+          type: 'receivables',
+          key: 'receivablesMoney',
+          info: '今日新增回款',
+          name: '今日新增回款 0'
+        },
+        {
+          type: 'record',
+          key: 'recordCount',
+          info: '今日新增跟进记录',
+          name: '今日新增跟进记录 0'
+        }
+      ],
+
+      // 简报信息
+
+
       listData: [],
       loading: false, // loading
       noMore: false,
@@ -166,7 +204,7 @@ export default {
 
       timeSelect: {
         type: 'default',
-        value: 'today'
+        value: 'month'
       },
 
       // 相关详情的查看
@@ -228,6 +266,7 @@ export default {
     this.logType = this.$route.params.type
     this.getLogRemind()
     this.getHeadDetail()
+    this.getReportData()
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -238,7 +277,7 @@ export default {
     }
     this.timeSelect = {
       type: 'default',
-      value: 'today'
+      value: 'month'
     }
     this.refreshList()
     next()
@@ -253,6 +292,26 @@ export default {
         this.headData.allNum = res.data.allNum
       }).catch(() => {
 
+      })
+    },
+
+    /**
+     * 简报信息
+     */
+    getReportData() {
+      this.loading = true
+      crmIndexIndex({
+        type: 'today',
+        userIds: this.userInfo.userId
+      }).then(res => {
+        this.loading = false
+        const data = res.data || {}
+        this.reportList = this.reportList.map(item => {
+          item.name = `${item.info} ${data[item.key]}`
+          return item
+        })
+      }).catch(() => {
+        this.loading = false
       })
     },
 
