@@ -811,7 +811,7 @@ export default {
     getCommentList() {
       queryCommentListAPI({
         typeId: this.id,
-        type: 1
+        type: 1 // 任务1 日志2
       })
         .then(res => {
           this.replyList = res.data

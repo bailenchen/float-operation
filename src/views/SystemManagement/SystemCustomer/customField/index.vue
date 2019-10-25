@@ -43,7 +43,7 @@
             <el-button
               type="text"
               size="small"
-              @click="handleCustomField('delete', scope.row, scope.$index)">预览</el-button>
+              @click="handleCustomField('preview', scope.row, scope.$index)">预览</el-button>
           </template>
         </el-table-column>
       </el-table>

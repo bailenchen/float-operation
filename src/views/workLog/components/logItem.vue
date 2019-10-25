@@ -16,8 +16,8 @@
           </div>
           <div class="comment-status">
             <span class="icon wk wk-task" />
-            <span>{{ getCategory(data.categoryId) }}-{{ data.replyList.length === 0 ? '未点评' : '已点评' }}</span>
-            <span :class="{active: data.replyList.length !== 0}" class="dot" />
+            <span>{{ getCategory(data.categoryId) }}-{{ data.replyNum === 0 ? '未点评' : '已点评' }}</span>
+            <span :class="{active: data.replyNum !== 0}" class="dot" />
           </div>
         </div>
       </div>
@@ -99,7 +99,7 @@
         type="primary"
         icon="wk wk-message"
         class="replay-btn"
-        @click="showReply = !showReply">{{ '回复' + (replyTotal > 0 ? `(${replyTotal})` : '') }}</el-button>
+        @click="replayClick">{{ '回复' + (replyTotal > 0 ? `(${replyTotal})` : '') }}</el-button>
     </div>
     <div
       v-if="showReply"
@@ -127,7 +127,8 @@ import {
   journalSetread
 } from '@/api/oamanagement/journal'
 import {
-  setCommentAPI
+  setCommentAPI,
+  queryCommentListAPI
 } from '@/api/oamanagement/common'
 
 import PictureListView from '@/components/PictureListView'
@@ -162,7 +163,8 @@ export default {
     return {
       isWaiting: false,
       showReply: false,
-      commentLoading: false
+      commentLoading: false,
+      replyListData: []
     }
   },
   computed: {
@@ -188,14 +190,14 @@ export default {
     },
     replyTotal() {
       let num = 0
-      this.data.replyList.forEach(item => {
+      this.replyListData.forEach(item => {
         num++
         num += item.childCommentList.length || 0
       })
-      return num
+      return num || this.data.replyNum
     },
     replyList() {
-      let arr = [].concat(this.data.replyList || [])
+      let arr = [].concat(this.replyListData || [])
       arr = arr.sort((a, b) => {
         return new Date(b.createTime) - new Date(a.createTime)
       }) || []
@@ -293,10 +295,11 @@ export default {
           img: this.data.userImg
         }
         res.data.childCommentList = []
-        this.$emit('add-comment', {
-          data: res.data,
-          index: this.index
-        })
+        // this.$emit('add-comment', {
+        //   data: res.data,
+        //   index: this.index
+        // })
+        this.replyListData.unshift(res.data)
         this.commentLoading = false
         this.showReply = false
         this.$nextTick(() => {
@@ -318,6 +321,30 @@ export default {
      */
     relatedClick(type, data) {
       this.$emit('relate-detail', type, data)
+    },
+
+    /**
+     * 回复点击
+     */
+    replayClick() {
+      this.showReply = !this.showReply
+      if (this.replyListData.length == 0) {
+        this.getCommentList()
+      }
+    },
+
+    /**
+     * 获取回复列表
+     */
+    getCommentList() {
+      queryCommentListAPI({
+        typeId: this.data.logId,
+        type: 2 // 任务1 日志2
+      })
+        .then(res => {
+          this.replyListData = res.data || []
+        })
+        .catch(() => {})
     }
   }
 }
