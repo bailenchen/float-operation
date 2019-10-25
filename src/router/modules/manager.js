@@ -135,7 +135,8 @@ const authRouter = {
       icon: 'user',
       index: 1,
       type: 'manage',
-      subType: 'permission'
+      subType: 'permission',
+      menuChildren: []
     }
   }
   ]
