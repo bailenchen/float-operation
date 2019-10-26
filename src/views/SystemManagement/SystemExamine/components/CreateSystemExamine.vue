@@ -7,11 +7,10 @@
       align="stretch"
       class="crm-create-container">
       <flexbox class="crm-create-header">
-        <div style="flex:1;font-size:17px;color:#333;">{{ title }}</div>
-        <img
-          class="close"
-          src="@/assets/img/task_close.png"
-          @click="hidenView" >
+        <div style="flex:1;font-size:17px;color:#333;font-weight: bold;">{{ title }}</div>
+        <i
+          class="el-icon-close close"
+          @click="hidenView" />
       </flexbox>
       <flexbox
         class="crm-create-flex"
@@ -553,10 +552,11 @@ export default {
   flex-shrink: 0;
   .close {
     display: block;
-    width: 40px;
-    height: 40px;
+    font-size: 24px;
+    color: #909399;
     margin-right: -10px;
     padding: 10px;
+    cursor: pointer;
   }
 }
 .create-name {
