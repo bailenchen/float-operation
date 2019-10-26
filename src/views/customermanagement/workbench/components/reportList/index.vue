@@ -73,7 +73,7 @@
             <el-table-column v-if="showFillColumn" />
           </el-table>
           <div
-            v-if="showPagination"
+            v-if="paging"
             class="p-contianer">
             <el-pagination
               :current-page="currentPage"
@@ -145,7 +145,17 @@ export default {
     crmType: String,
     fieldList: Array,
     request: Function,
-    params: Object
+    params: Object,
+    // 展示分页
+    paging: {
+      type: Boolean,
+      default: true
+    },
+
+    sortable: {
+      type: [Boolean, String],
+      default: false
+    }
   },
   data() {
     return {
@@ -185,19 +195,7 @@ export default {
       }
       return false
     },
-    sortable() {
-      if (this.fieldList && this.fieldList.length) {
-        return false
-      }
-      return 'custom'
-    },
     showFillColumn() {
-      if (this.fieldList && this.fieldList.length) {
-        return false
-      }
-      return true
-    },
-    showPagination() {
       if (this.fieldList && this.fieldList.length) {
         return false
       }
@@ -232,6 +230,7 @@ export default {
       this.inputContent = ''
       this.showFieldList = []
       this.sortData = {}
+      this.list = []
       this.currentPage = 1
 
       window.onresize = () => {
@@ -240,7 +239,7 @@ export default {
 
       if (this.fieldList) {
         this.showFieldList = this.fieldList
-        this.getListData()
+        this.getList()
       } else {
         this.getFieldList()
       }
@@ -259,11 +258,19 @@ export default {
      */
     getList() {
       this.loading = true
-      var params = {
-        page: this.currentPage,
-        limit: this.pageSize,
-        search: this.inputContent,
-        type: crmTypeModel[this.crmType]
+      var params = {}
+
+      // 加入分页
+      if (this.paging) {
+        params = {
+          page: this.currentPage,
+          limit: this.pageSize
+        }
+      }
+
+      // 如果有占位符 加入搜索
+      if (this.placeholder) {
+        params.search = this.inputContent
       }
 
       if (this.sortData.order) {
@@ -273,24 +280,12 @@ export default {
 
       this.request({ ...params, ...this.params })
         .then(res => {
-          if (res.data.list) {
+          if (this.paging) {
             this.list = res.data.list
             this.total = res.data.totalRow
           } else {
             this.list = res.data
           }
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
-
-    getListData() {
-      this.loading = true
-      this.request(this.params)
-        .then(res => {
-          this.list = res.data
           this.loading = false
         })
         .catch(() => {
@@ -384,41 +379,6 @@ export default {
     },
 
     /**
-     * 0待审核、1审核中、2审核通过、3审核未通过
-     */
-    getStatusStyle(status) {
-      if (status == 0) {
-        return {
-          'border-color': '#E6A23C',
-          'background-color': '#FDF6EC',
-          color: '#E6A23C'
-        }
-      } else if (status == 1) {
-        return {
-          'border-color': '#409EFF',
-          'background-color': '#ECF5FF',
-          color: '#409EFF'
-        }
-      } else if (status == 2) {
-        return {
-          'border-color': '#67C23A',
-          'background-color': '#F0F9EB',
-          color: '#67C23A'
-        }
-      } else if (status == 3) {
-        return {
-          'border-color': '#F56C6B',
-          'background-color': '#FEF0F0',
-          color: '#F56C6B'
-        }
-      } else if (status == 4) {
-        return {
-          'background-color': '#FFFFFF'
-        }
-      }
-    },
-
-    /**
      * 查看详情
      */
     handleRowClick(row, column, event) {
@@ -477,7 +437,7 @@ export default {
           this.rowID = row.contactsId
           this.rowType = 'contacts'
           this.showDview = true
-        } else if (column.property === 'num') {
+        } else if (column.property === 'num' || column.property === 'name') {
           this.rowID = row.contractId
           this.rowType = 'contract'
           this.showDview = true
@@ -546,13 +506,13 @@ export default {
         this.crmType &&
         (column.property === 'customerName' ||
           column.property === 'businessName' ||
-          (this.crmType != 'contract' && column.property === 'name') ||
+          column.property === 'name' ||
           column.property === 'contactsName' ||
           column.property === 'num' ||
           column.property === 'contractNum' ||
           column.property === 'number' ||
-          (this.crmType === 'record' && column.property === 'count')) &&
-        row[column.property]
+          (this.crmType === 'record' && column.property === 'count' &&
+        row[column.property]))
       ) {
         return 'can-visit--underline'
       } else {

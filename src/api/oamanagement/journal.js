@@ -89,3 +89,27 @@ export function journalQueryBulletinAPI(data) {
     data
   })
 }
+
+/**
+ * 日志简报预览
+ * @param {*} data
+ */
+export function journalQueryBulletinByTypeAPI(data) {
+  return request({
+    url: 'OaLog/queryLogBulletinByType',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 日志简报跟进记录预览
+ * @param {*} data
+ */
+export function journalQueryRecordCountAPI(data) {
+  return request({
+    url: 'OaLog/queryLogRecordCount',
+    method: 'post',
+    data
+  })
+}

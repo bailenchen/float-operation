@@ -2,11 +2,12 @@
   <div class="log-item">
     <div class="main">
       <div class="user">
-        <div
-          v-photo="data.createUser"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)"
-          :key="data.createUser.img"
-          class="user-img div-photo" />
+        <xr-avatar
+          :name="data.createUser.realname"
+          :size="38"
+          :src="data.createUser.img"
+          :disabled="false"
+          class="user-img" />
         <div class="box">
           <div class="username">
             {{ data.realname }}
@@ -61,7 +62,9 @@
             销售简报
           </div>
           <div class="content-text">
-            <report-menu :list="reportList" />
+            <report-menu
+              :list="reportList"
+              @select="reportSelect" />
           </div>
         </div>
       </div>
@@ -399,6 +402,13 @@ export default {
           this.replyListData = res.data || []
         })
         .catch(() => {})
+    },
+
+    /**
+     * 简报详情
+     */
+    reportSelect(item) {
+      this.$emit('report-detail', item, this.data)
     }
   }
 }
@@ -415,9 +425,6 @@ export default {
       align-items: center;
       justify-content: flex-start;
       .user-img {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
         margin-right: 12px;
       }
       .box {

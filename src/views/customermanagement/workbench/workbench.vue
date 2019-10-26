@@ -102,7 +102,9 @@
       :crm-type="reportData.crmType"
       :request="reportData.request"
       :params="reportData.params"
-      :field-list="fieldReportList"/>
+      :field-list="fieldReportList"
+      :paging="reportData.paging"
+      :sortable="reportData.sortable"/>
   </div>
 </template>
 
@@ -113,7 +115,6 @@ import {
   crmQueryRecordConuntAPI
 } from '@/api/customermanagement/workbench'
 
-import { mapGetters } from 'vuex'
 import SaleStatistics from './components/saleStatistics'
 import DataStatistics from './components/dataStatistics'
 import ReceivedStatistics from './components/receivedStatistics'
@@ -122,6 +123,8 @@ import PerformanceChart from './components/performanceChart'
 import timeTypeSelect from '@/components/timeTypeSelect'
 import ReportList from './components/reportList'
 import membersDep from '@/components/selectEmployee/membersDep'
+
+import { mapGetters } from 'vuex'
 
 /**
  * TODO 2、员工部门筛选选择，
@@ -167,7 +170,9 @@ export default {
         placeholder: '',
         crmType: '',
         request: null,
-        params: null
+        params: null,
+        paging: true,
+        sortable: false
       }
     }
   },
@@ -346,6 +351,10 @@ export default {
           receivables: '请输入回款编号',
           record: ''
         }[item.type]
+
+
+        this.reportData.crmType = item.type
+        this.reportData.params = this.getBaseParams()
         if (item.type == 'record') {
           this.fieldReportList = [
             {
@@ -359,12 +368,15 @@ export default {
             }
           ]
           this.reportData.request = crmQueryRecordConuntAPI
+          this.reportData.paging = false
+          this.reportData.sortable = false
         } else {
           this.fieldReportList = null
           this.reportData.request = crmIndexIndexListAPI
+          this.reportData.paging = true
+          this.reportData.sortable = 'custom'
         }
-        this.reportData.crmType = item.type
-        this.reportData.params = this.getBaseParams()
+
         this.reportData.params.label = item.labelValue
         this.reportListShow = true
       }
