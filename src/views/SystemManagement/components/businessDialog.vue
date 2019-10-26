@@ -83,8 +83,8 @@
       slot="footer"
       class="dialog-footer">
       <el-button
-        type="primary"
-        @click="businessSubmit">确 定</el-button>
+        v-debounce="businessSubmit"
+        type="primary">确 定</el-button>
       <el-button @click="businessClose">取 消</el-button>
     </span>
   </el-dialog>
