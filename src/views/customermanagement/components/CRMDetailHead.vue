@@ -203,7 +203,7 @@ export default {
      * 展示成交按钮
      */
     showDealStatus() {
-      return !this.isSeas && this.crmType == 'customer'
+      return !this.isSeas && this.crmType == 'customer' && this.crm[this.crmType].dealStatus
     },
 
     /**
