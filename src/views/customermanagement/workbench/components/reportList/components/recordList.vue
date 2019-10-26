@@ -60,7 +60,7 @@
 <script>
 import LogCell from '@/views/customermanagement/components/activity/LogCell'
 import SlideView from '@/components/SlideView'
-import { crmIndexGetRecordListAPI } from '@/api/customermanagement/workbench'
+
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 export default {
@@ -86,6 +86,7 @@ export default {
 
   props: {
     crmType: String,
+    request: Function,
     params: Object,
     // 监听的dom 进行隐藏详情
     listenerIDs: {
@@ -155,7 +156,7 @@ export default {
      */
     getList() {
       this.loading = true
-      crmIndexGetRecordListAPI({ page: this.page, limit: 15, ...this.params })
+      this.request({ page: this.page, limit: 15, ...this.params })
         .then(res => {
           this.page++
           this.list = this.list.concat(res.data.list)

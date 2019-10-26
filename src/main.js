@@ -30,6 +30,8 @@ import {
 } from '@/components/flexbox'
 Vue.component('flexbox', Flexbox)
 Vue.component('flexbox-item', FlexboxItem)
+import XrAvatar from '@/components/xr-avatar'
+Vue.component('xr-avatar', XrAvatar)
 
 /** 懒加载图片 */
 import VueLazyload from 'vue-lazyload'

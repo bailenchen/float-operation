@@ -31,6 +31,7 @@
           <el-table
             v-loading="loading"
             id="crm-table"
+            ref="crmTable"
             :data="list"
             :height="tableHeight"
             :cell-class-name="cellClassName"
@@ -99,6 +100,7 @@
       <record-list
         v-if="recordShow"
         :crm-type="rowType"
+        :request="recordRequest"
         :params="recordParams"
         @handle="getList"
         @hide="recordShow = false" />
@@ -144,6 +146,7 @@ export default {
     },
     crmType: String,
     fieldList: Array,
+    recordRequest: Function,
     request: Function,
     params: Object,
     // 展示分页
@@ -209,9 +212,16 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+    this.$el.addEventListener('click', this.handleDocumentClick, false)
+  },
 
-  destroyed() {},
+  destroyed() {
+    if (this.$el) {
+      this.$el
+        .removeEventListener('click', this.handleDocumentClick, false)
+    }
+  },
   methods: {
     /**
      * 获取表高
@@ -230,6 +240,9 @@ export default {
       this.inputContent = ''
       this.showFieldList = []
       this.sortData = {}
+      this.$nextTick(() => {
+        this.$refs.crmTable.clearSort()
+      })
       this.list = []
       this.currentPage = 1
 
@@ -526,6 +539,33 @@ export default {
     hideView() {
       this.$emit('update:show', false)
       this.$emit('hide')
+    },
+
+    /**
+     * 点击列表内容之外的区域隐藏
+     */
+    handleDocumentClick(e) {
+      var hidden = true
+      var items = document.getElementsByClassName('el-table__row')
+      if (items && hidden) {
+        for (let index = 0; index < items.length; index++) {
+          const element = items[index]
+          if (element.contains(e.target)) {
+            hidden = false
+            break
+          }
+        }
+      }
+
+      if (
+        document.getElementById('slide') &&
+        document.getElementById('slide').contains(e.target)
+      ) {
+        hidden = false
+      }
+      if (hidden) {
+        this.showDview = false
+      }
     }
   }
 }

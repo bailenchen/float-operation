@@ -112,7 +112,8 @@
 import {
   crmIndexIndex,
   crmIndexIndexListAPI,
-  crmQueryRecordConuntAPI
+  crmQueryRecordConuntAPI,
+  crmIndexGetRecordListAPI
 } from '@/api/customermanagement/workbench'
 
 import SaleStatistics from './components/saleStatistics'
@@ -170,6 +171,7 @@ export default {
         placeholder: '',
         crmType: '',
         request: null,
+        recordRequest: crmIndexGetRecordListAPI,
         params: null,
         paging: true,
         sortable: false

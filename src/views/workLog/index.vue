@@ -120,6 +120,7 @@
       :crm-type="reportData.crmType"
       :request="reportData.request"
       :params="reportData.params"
+      :record-request="reportData.recordRequest"
       :field-list="fieldReportList"
       :paging="reportData.paging"
       :sortable="reportData.sortable"/>
@@ -249,6 +250,7 @@ export default {
         placeholder: '',
         crmType: '',
         request: null,
+        recordRequest: journalQueryBulletinByTypeAPI,
         params: null,
         paging: true,
         sortable: false
