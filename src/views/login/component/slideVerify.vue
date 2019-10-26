@@ -195,6 +195,7 @@ export default {
         }
       }).catch(() => {
         this.showLoading = false
+        this.reset()
       })
     },
 
