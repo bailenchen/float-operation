@@ -97,6 +97,8 @@
 </template>
 
 <script>
+import { floatAdd } from '@/utils'
+
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
@@ -127,8 +129,8 @@ export default {
           const element = this.selectionList[index]
           // 2 审核通过的合同
           if (element.checkStatus == 1) {
-            contractMoney += parseFloat(element.money)
-            receivedMoney += parseFloat(element.receivedMoney)
+            contractMoney = floatAdd(contractMoney, parseFloat(element.money))
+            receivedMoney = floatAdd(receivedMoney, parseFloat(element.receivedMoney))
           }
         }
         return {

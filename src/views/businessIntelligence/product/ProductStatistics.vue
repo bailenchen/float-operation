@@ -50,7 +50,9 @@ import { biProductStatistics } from '@/api/businessIntelligence/bi'
 import ContractDetail from '@/views/customermanagement/contract/ContractDetail'
 import CustomerDetail from '@/views/customermanagement/customer/CustomerDetail'
 import ProductDetail from '@/views/customermanagement/product/ProductDetail'
+
 import base from '../mixins/base'
+import { floatAdd } from '@/utils'
 
 export default {
   /** 产品销售情况统计 */
@@ -248,10 +250,13 @@ export default {
             var preProItem = spanList[productIndex]
             preProItem.productRowspan += 1
             spanList.push({ rowspan: 0, productRowspan: 0 }) // 产品 非第一条数据的style
-            subCount += parseFloat(element.productNum) // 产品
-            subMoney += parseFloat(element.productSubtotal)
-            allCount += parseFloat(element.productNum) // 系列
-            allMoney += parseFloat(element.productSubtotal)
+
+
+            subCount = floatAdd(subCount, parseFloat(element.productNum)) // 产品
+            subMoney = floatAdd(subMoney, parseFloat(element.productSubtotal))
+            allCount = floatAdd(allCount, parseFloat(element.productNum)) // 系列
+            allMoney = floatAdd(allMoney, parseFloat(element.productSubtotal))
+
             newList.push(element) // 真实数据
           } else {
             /** * 不相同产品 */
@@ -265,8 +270,8 @@ export default {
             productIndex = spanList.length - 1 // 一个新产品的开始=
             subCount = parseFloat(element.productNum)
             subMoney = parseFloat(element.productSubtotal) // 开始了一个新的产品  所以没有 清空数据
-            allCount += parseFloat(element.productNum) // 系列 继续 叠加
-            allMoney += parseFloat(element.productSubtotal)
+            allCount = floatAdd(allCount, parseFloat(element.productNum)) // 系列 继续 叠加
+            allMoney = floatAdd(allMoney, parseFloat(element.productSubtotal))
             newList.push(element) // 真实数据
           }
         }

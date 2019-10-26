@@ -192,3 +192,15 @@ export function systemMessageReadAllAPI(data) {
     data: data
   })
 }
+
+/**
+ * 用户信息
+ * @param {*} data
+ */
+export function systemUserInfoAPI(data) {
+  return request({
+    url: 'system/user/queryUserInfo',
+    method: 'post',
+    data: data
+  })
+}
