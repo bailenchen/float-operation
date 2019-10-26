@@ -21,12 +21,13 @@
       </el-form-item>
 
       <el-popover
-        :disabled="isUser"
+        :disabled="isUser || !canVerify"
         placement="top-start"
         width="332"
         popper-class="no-padding-popover"
         trigger="click">
         <slide-verify
+          :phone="form.phone"
           slider-text="向右滑动"
           @success="sliderSuccess"
           @fail="sliderFail"
@@ -34,7 +35,8 @@
         <div
           slot="reference"
           :class="{success: isUser}"
-          class="verify-picture">
+          class="verify-picture"
+          @click="imgVerifyClick">
           <template v-if="!isUser">
             <img
               src="~@/assets/login/verify_picture.png"
@@ -111,6 +113,7 @@ export default {
         phone: true,
         smscode: true
       },
+      canVerify: false, // 默认可以进行图片验证
       isUser: false,
 
       showSlideVerify: false,
@@ -129,6 +132,8 @@ export default {
       second: 60
     }
   },
+  computed: {
+  },
   beforeDestroy() {
     if (this.timer) {
       clearTimeout(this.timer)
@@ -136,6 +141,10 @@ export default {
     }
   },
   methods: {
+    imgVerifyClick() {
+      this.canVerify = this.checkFromItem('phone', this.form.phone)
+    },
+
     getSmsCode() {
       const res = this.checkFromItem('phone', this.form.phone)
       if (!res) return

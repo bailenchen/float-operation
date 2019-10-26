@@ -54,6 +54,7 @@ import { VerfyCodeAPI } from '@/api/login'
 export default {
   name: 'SlideVerify',
   props: {
+    phone: String,
     sliderText: {
       type: String,
       default: 'Slide filled right'
@@ -100,7 +101,7 @@ export default {
       //   'https://picsum.photos/300/150/?image=' +
       //   this.getRandomNumberByRange(0, 1084)
       // )
-      return `http://192.168.1.116:8000/captcha/${this.getRandomNumberByRange(1, 20)}`
+      return `/api/captcha/${this.getRandomNumberByRange(1, 20)}`
     },
 
     getRandomNumberByRange(start, end) {
@@ -112,12 +113,10 @@ export default {
       this.$emit('refresh')
     },
     sliderDown(event) {
-      console.log('sliderDown---')
       this.originX = event.clientX
       this.isMouseDown = true
     },
     touchStartEvent(e) {
-      console.log('touchStartEvent---')
       this.originX = e.changedTouches[0].pageX
       this.isMouseDown = true
     },
@@ -180,7 +179,7 @@ export default {
     verify() {
       this.showLoading = true
       VerfyCodeAPI({
-        tel: 1873995294,
+        tel: this.phone,
         angle: this.rotate
       }).then(res => {
         this.showLoading = false
@@ -205,6 +204,7 @@ export default {
       this.containerFail = false
       this.sliderLeft = 0
       this.sliderMaskWidth = 0
+      this.rotate = 0
 
       // generate img
       this.verifyImg = this.getRandomImg()
