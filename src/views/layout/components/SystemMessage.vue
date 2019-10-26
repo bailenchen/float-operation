@@ -123,7 +123,7 @@ export default {
         label: 4,
         countKey: 'announceCount'
       }, {
-        name: '审批',
+        name: '办公审批',
         label: 3,
         countKey: 'examineCount'
       }, {

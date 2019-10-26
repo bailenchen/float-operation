@@ -5,6 +5,9 @@ import {
 import {
   adminIndexAuthList
 } from '@/api/common'
+import {
+  resetRouter
+} from '@/router'
 
 import {
   adminUsersRead
@@ -14,6 +17,7 @@ import {
   removeAuth
 } from '@/utils/auth'
 import Lockr from 'lockr'
+// import { RSAencrypt } from '@/utils'
 
 const user = {
   state: {
@@ -73,6 +77,8 @@ const user = {
     Login({
       commit
     }, userInfo) {
+      // const username = userInfo.username.trim()
+      // const password = RSAencrypt(userInfo.password)
       return new Promise((resolve, reject) => {
         login(userInfo).then(data => {
           if (!data.hasOwnProperty('companyList')) {
@@ -130,6 +136,7 @@ const user = {
         logout().then(() => {
           /** flush 清空localStorage .rm('authKey') 按照key清除 */
           removeAuth()
+          resetRouter()
           resolve()
         }).catch(error => {
           reject(error)
