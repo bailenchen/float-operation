@@ -64,10 +64,11 @@
         slot="reference"
         class="user-container">
         <template v-if="userInfo && Object.keys(userInfo).length > 0">
-          <div
-            v-photo="userInfo"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img || '')"
-            class="user-img div-photo"/>
+          <xr-avatar
+            :name="userInfo.realname"
+            :size="32"
+            :src="userInfo.img"
+            class="user-img" />
         </template>
         <i class="el-icon-caret-bottom mark"/>
       </div>
@@ -356,13 +357,7 @@ export default {
     flex-shrink: 0;
     cursor: pointer;
     .user-img {
-      display: block;
-      width: 32px;
-      min-width: 32px;
-      min-height: 32px;
-      height: 32px;
       margin-right: 8px;
-      border-radius: 50%;
     }
     .mark {
       font-size: 15px;
