@@ -65,11 +65,12 @@
             <flexbox
               v-if="!specialRowArr.includes(scope.$index)"
               class="user-box">
-              <div
-                v-photo="scope.row"
-                v-lazy:background-image="$options.filters.filterUserLazyImg(scope.row.img || '')"
-                :key="scope.row.img || ''"
-                class="user-img div-photo" />
+              <xr-avatar
+                :name="scope.row.realname"
+                :id="scope.row.userId"
+                :size="30"
+                :src="scope.row.img"
+                class="user-img" />
               <span>{{ scope.row.realname }}</span>
             </flexbox>
           </template>

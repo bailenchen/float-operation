@@ -49,12 +49,13 @@
                       @change="checkboxChange(element, item)"/>
                   </div>
                   <div class="element-label">{{ element.name }}<span v-if="element.workName">（{{ element.workName }}）</span></div>
-                  <div
-                    v-photo="element.mainUser"
-                    v-lazy:background-image="$options.filters.filterUserLazyImg(element.mainUser.img)"
-                    v-if="element.mainUser"
-                    :key="element.mainUser.img"
-                    class="head-png div-photo"/>
+                  <xr-avatar
+                    :name="element.createUser.realname"
+                    :id="element.createUser.userId"
+                    :size="24"
+                    :src="element.createUser.img"
+                    :disabled="false"
+                    class="head-png" />
                 </flexbox>
                 <div class="img-group">
                   <div
@@ -516,9 +517,6 @@ export default {
           position: absolute;
           top: 8px;
           right: 5px;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
         }
         .element-label {
           width: 180px;

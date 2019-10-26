@@ -1,10 +1,13 @@
 <template>
   <div class="fl-c">
     <flexbox class="fl-h">
-      <div
-        v-photo="{img: item.userImg, realname: item.realname}"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(item.userImg)"
-        class="div-photo fl-h-img" />
+      <xr-avatar
+        :name="item.realname"
+        :id="item.createUserId"
+        :size="30"
+        :src="item.userImg"
+        :disabled="false"
+        class="fl-h-img" />
       <div class="fl-h-b">
         <div class="fl-h-name">{{ item.realname }}</div>
         <div class="fl-h-time">{{ item.createTime }}</div>
@@ -239,10 +242,6 @@ export default {
 /** 头部布局 名字 头像 */
 .fl-h {
   .fl-h-img {
-    display: block;
-    width: 30px;
-    height: 30px;
-    border-radius: 17px;
     margin-right: 8px;
   }
 

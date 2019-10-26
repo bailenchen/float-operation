@@ -2,7 +2,7 @@
   <el-popover
     v-model="popoverShow"
     :visible-arrow="false"
-    :disabled="disabled && !id"
+    :disabled="popoverDisabled"
     placement="bottom"
     width="250"
     popper-class="no-padding-popover"
@@ -14,6 +14,7 @@
     <el-avatar
       slot="reference"
       v-bind="$attrs"
+      :style="{ fontSize: fontSize }"
       :class="{ 'cursor-pointer': !disabled }"
       :size="size">{{ showName }}</el-avatar>
   </el-popover>
@@ -50,8 +51,23 @@ export default {
     }
   },
   computed: {
+    fontSize() {
+      if (this.size <= 30) {
+        return '12px'
+      }
+      return '14px'
+    },
+
     showName() {
       return this.name && this.name.length > 2 ? this.name.slice(-2) : this.name
+    },
+
+    popoverDisabled() {
+      if (this.disabled) {
+        return true
+      }
+
+      return !this.id
     }
   },
   watch: {

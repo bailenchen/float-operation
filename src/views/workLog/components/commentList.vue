@@ -6,11 +6,13 @@
       class="comment-list-item">
       <div class="parent-reply reply">
         <div class="user-info">
-          <div
-            v-photo="item.user"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(item.user.img)"
-            :key="item.user.img"
-            class="user-img div-photo" />
+          <xr-avatar
+            :name="item.user.realname"
+            :id="item.user.userId"
+            :size="34"
+            :src="item.user.img"
+            :disabled="false"
+            class="user-img" />
           <div class="user-info__bd">
             <div class="user">{{ item.user.realname }}</div>
             <div class="time">
@@ -44,11 +46,13 @@
           :key="childIndex">
           <div class="child-reply reply">
             <div class="user-info">
-              <div
-                v-photo="child.user"
-                v-lazy:background-image="$options.filters.filterUserLazyImg(child.user.img)"
-                :key="child.user.img"
-                class="user-img div-photo" />
+              <xr-avatar
+                :name="child.user.realname"
+                :id="child.user.userId"
+                :size="34"
+                :src="child.user.img"
+                :disabled="false"
+                class="user-img" />
               <div class="user-info__bd">
                 <div class="user">
                   {{ child.user.realname }}
@@ -236,9 +240,6 @@ export default {
   .comment-list {
     .comment-list-item {
       .user-img {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
         margin-right: 15px;
       }
       .reply {

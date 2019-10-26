@@ -2,10 +2,13 @@
   <div class="section">
     <div class="examine-cell">
       <flexbox class="person">
-        <div
-          v-photo="data.createUser"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)"
-          class="div-photo person__hd" />
+        <xr-avatar
+          :name="data.createUser.realname"
+          :id="data.createUser.userId"
+          :size="40"
+          :src="data.createUser.img"
+          :disabled="false"
+          class="person__hd" />
         <div class="person__bd">
           <div class="person__bd-name">{{ data.createUser.realname }}</div>
           <div class="person__bd-des">{{ `创建审批于 ${data.createTime}` }}</div>
@@ -262,10 +265,6 @@ export default {
 // 人 信息
 .person {
   &__hd {
-    display: block;
-    width: 30px;
-    height: 30px;
-    border-radius: 17px;
     margin-right: 8px;
   }
 

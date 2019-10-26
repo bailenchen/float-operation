@@ -12,10 +12,13 @@
       <div class="ha-week">{{ item.createTime|filterTimestampToFormatTime('MM-DD dddd') }}</div>
       <div class="ha-circle"/>
       <div class="ha-time">{{ item.createTime|filterTimestampToFormatTime('H:mm') }}</div>
-      <div
-        v-photo="item"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-        class="div-photo ha-img"/>
+      <xr-avatar
+        :name="item.realname"
+        :id="item.createUserId"
+        :size="30"
+        :src="item.img"
+        :disabled="false"
+        class="ha-img" />
       <div class="ha-name">{{ item.realname }}</div>
       <div class="ha-content">
         <p
@@ -126,9 +129,6 @@ export default {
     flex-shrink: 0;
     margin: -3px 10px 0 10px;
     display: block;
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
   }
   .ha-name {
     padding: 0 10px;
