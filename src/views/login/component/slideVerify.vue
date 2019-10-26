@@ -5,18 +5,17 @@
     class="slide-verify"
     onselectstart="return false;"
     @click.stop>
-    <canvas
-      ref="canvas"
-      :width="w"
-      :height="h" />
+    <div class="verify-info">
+      <div
+        :style="{
+          backgroundImage: 'url(' + verifyImg + ')',
+          transform: 'rotate(' + rotate +'deg)'
+      }" class="verify-img"/>
+    </div>
     <div
       class="slide-verify-refresh-icon"
       @click="refresh" />
-    <canvas
-      ref="block"
-      :width="w"
-      :height="h"
-      class="slide-verify-block" />
+
     <!-- container -->
     <div
       :class="{
@@ -45,44 +44,16 @@
 </template>
 
 <script>
-// import { SliderVerifyAPI } from '@/api/login'
+import { VerfyCodeAPI } from '@/api/login'
 /**
  * vue-monoplasty-slide-verify
  * @see https://github.com/monoplasty/vue-monoplasty-slide-verify
  */
-const PI = Math.PI
 
-function sum(x, y) {
-  return x + y
-}
-
-function square(x) {
-  return x * x
-}
 
 export default {
   name: 'SlideVerify',
   props: {
-    // block length
-    l: {
-      type: Number,
-      default: 42
-    },
-    // block radius
-    r: {
-      type: Number,
-      default: 10
-    },
-    // canvas width
-    w: {
-      type: Number,
-      default: 310
-    },
-    // canvas height
-    h: {
-      type: Number,
-      default: 155
-    },
     sliderText: {
       type: String,
       default: 'Slide filled right'
@@ -90,21 +61,25 @@ export default {
   },
   data() {
     return {
+      w: 300,
+
+      // 拖拽条状态
       containerActive: false, // container active class
       containerSuccess: false, // container success class
       containerFail: false, // container fail class
-      canvasCtx: null,
-      blockCtx: null,
-      block: null,
-      block_x: undefined, // container random position
-      block_y: undefined,
-      L: this.l + this.r * 2 + 3, // block real lenght
-      img: undefined,
+
+      verifyImg: this.getRandomImg(),
       originX: undefined,
-      originY: undefined,
+
+      // 鼠标按下
       isMouseDown: false,
-      trail: [],
+
+      // 拖拽柄距离左的距离
       sliderLeft: 0, // block right offset
+
+      rotate: 0,
+
+      // 标记拖拽进度的宽
       sliderMaskWidth: 0, // mask width
 
       showLoading: false
@@ -115,211 +90,113 @@ export default {
   },
   methods: {
     init() {
-      this.initDom()
-      this.initImg()
       this.bindEvents()
     },
-    initDom() {
-      this.block = this.$refs.block
-      this.canvasCtx = this.$refs.canvas.getContext('2d')
-      this.blockCtx = this.block.getContext('2d')
-    },
-    initImg() {
-      const img = this.createImg(() => {
-        this.drawBlock()
-        this.showLoading = false
-        this.canvasCtx.drawImage(img, 0, 0, this.w, this.h)
-        this.blockCtx.drawImage(img, 0, 0, this.w, this.h)
-        const { block_x: x, block_y: y, r, L } = this
-        const _y = y - r * 2 - 1
-        const ImageData = this.blockCtx.getImageData(x, _y, L, L)
-        this.block.width = L
-        this.blockCtx.putImageData(ImageData, 0, _y)
-      })
-      this.img = img
-    },
-    drawBlock() {
-      this.block_x = this.getRandomNumberByRange(
-        this.L + 10,
-        this.w - (this.L + 10)
-      )
-      this.block_y = this.getRandomNumberByRange(
-        10 + this.r * 2,
-        this.h - (this.L + 10)
-      )
-      this.draw(this.canvasCtx, this.block_x, this.block_y, 'fill')
-      this.draw(this.blockCtx, this.block_x, this.block_y, 'clip')
-    },
-    draw(ctx, x, y, operation) {
-      const { l, r } = this
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.arc(x + l / 2, y - r + 2, r, 0.72 * PI, 2.26 * PI)
-      ctx.lineTo(x + l, y)
-      ctx.arc(x + l + r - 2, y + l / 2, r, 1.21 * PI, 2.78 * PI)
-      ctx.lineTo(x + l, y + l)
-      ctx.lineTo(x, y + l)
-      ctx.arc(x + r - 2, y + l / 2, r + 0.4, 2.76 * PI, 1.24 * PI, true)
-      ctx.lineTo(x, y)
-      ctx.lineWidth = 2
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'
-      ctx.stroke()
-      ctx[operation]()
-      ctx.globalCompositeOperation = 'overlay'
-    },
-    createImg(onload) {
-      const img = document.createElement('img')
-      img.crossOrigin = 'Anonymous'
-      img.onload = onload
-      img.onerror = () => {
-        img.src = this.getRandomImg()
-      }
-      img.src = this.getRandomImg()
-      return img
-    },
+
     // 随机生成img src
     getRandomImg() {
-      this.showLoading = true
+      // this.showLoading = true
       // return (
       //   'https://picsum.photos/300/150/?image=' +
       //   this.getRandomNumberByRange(0, 1084)
       // )
-      return require(`@/assets/verify_img/${this.getRandomNumberByRange(1, 20)}.jpg`)
+      return `http://192.168.1.116:8000/captcha/${this.getRandomNumberByRange(1, 20)}`
     },
+
     getRandomNumberByRange(start, end) {
       return Math.round(Math.random() * (end - start) + start)
     },
+
     refresh() {
       this.reset()
       this.$emit('refresh')
     },
     sliderDown(event) {
+      console.log('sliderDown---')
       this.originX = event.clientX
-      this.originY = event.clientY
       this.isMouseDown = true
     },
     touchStartEvent(e) {
+      console.log('touchStartEvent---')
       this.originX = e.changedTouches[0].pageX
-      this.originY = e.changedTouches[0].pageY
       this.isMouseDown = true
     },
     bindEvents() {
       document.addEventListener('mousemove', e => {
         if (!this.isMouseDown) return false
         const moveX = e.clientX - this.originX
-        const moveY = e.clientY - this.originY
+
         if (moveX < 0 || moveX + 38 >= this.w) return false
         this.sliderLeft = moveX + 'px'
-        const blockLeft = ((this.w - 40 - 20) / (this.w - 40)) * moveX
-        this.block.style.left = blockLeft + 'px'
+        if (moveX > 0) {
+          const rotate = parseInt((moveX / 260) * 360)
+          this.rotate = rotate > 360 ? 360 : rotate
+        } else {
+          this.rotate = 0
+        }
+
+
         this.containerActive = true // add active
         this.sliderMaskWidth = moveX + 'px'
-        this.trail.push(moveY)
       })
       document.addEventListener('mouseup', e => {
         if (!this.isMouseDown) return false
         this.isMouseDown = false
         if (e.clientX === this.originX) return false
         this.containerActive = false // remove active
-        // const {
-        //   spliced,
-        //   TuringTest
-        // } = this.verify();
-        // if (spliced) {
-        //   if (TuringTest) {
-        //     // succ
-        //     this.containerSuccess = true;
-        //     this.$emit('success')
-        //   } else {
-        //     this.containerFail = true;
-        //     this.sliderText = 'try again'
-        //     this.reset()
-        //   }
-        // } else {
-        //   this.containerFail = true;
-        //   this.$emit('fail')
-        //   setTimeout(() => {
-        //     this.reset()
-        //   }, 1000)
-        // }
         this.verify()
       })
     },
+
     touchMoveEvent(e) {
       if (!this.isMouseDown) return false
-      const moveX = e.changedTouches[0].pageX - this.originX
-      const moveY = e.changedTouches[0].pageY - this.originY
+      const moveX = e.clientX - this.originX
+
       if (moveX < 0 || moveX + 38 >= this.w) return false
       this.sliderLeft = moveX + 'px'
-      const blockLeft = ((this.w - 40 - 20) / (this.w - 40)) * moveX
-      this.block.style.left = blockLeft + 'px'
-      this.containerActive = true
+      if (moveX > 0) {
+        const rotate = parseInt((moveX / 260) * 360)
+        this.rotate = rotate > 360 ? 360 : rotate
+      } else {
+        this.rotate = 0
+      }
+
+
+      this.containerActive = true // add active
       this.sliderMaskWidth = moveX + 'px'
-      this.trail.push(moveY)
     },
+
     touchEndEvent(e) {
       if (!this.isMouseDown) return false
       this.isMouseDown = false
-      if (e.changedTouches[0].pageX === this.originX) return false
-      this.containerActive = false
-      // const {
-      //   spliced,
-      //   TuringTest
-      // } = this.verify();
-      // if (spliced) {
-      //   if (TuringTest) {
-      //     // succ
-      //     this.containerSuccess = true;
-      //     this.$emit('success')
-      //   } else {
-      //     this.containerFail = true;
-      //     this.sliderText = 'try again'
-      //     this.reset()
-      //   }
-      // } else {
-      //   this.containerFail = true;
-      //   this.$emit('fail')
-      //   setTimeout(() => {
-      //     this.reset()
-      //   }, 1000)
-      // }
-
+      if (e.clientX === this.originX) return false
+      this.containerActive = false // remove active
       this.verify()
     },
 
+    /**
+     * 验证结果
+     */
     verify() {
-      const arr = this.trail // drag y move distance
-
-      const average = arr.reduce(sum) / arr.length // 求平均数
-      const deviations = arr.map(x => x - average) // 偏差数组
-      const stddev = Math.sqrt(deviations.map(square).reduce(sum) / arr.length) // 标准偏差
-      const left = parseInt(this.block.style.left)
-
-      const res = {
-        spliced: Math.abs(left - this.block_x) < 10,
-        TuringTest: average !== stddev // equal => not person operate
-      }
-
-      const { spliced, TuringTest } = res
-      if (spliced) {
-        if (TuringTest) {
-          // success
+      this.showLoading = true
+      VerfyCodeAPI({
+        tel: 1873995294,
+        angle: this.rotate
+      }).then(res => {
+        this.showLoading = false
+        if (res.data == 1) {
           this.containerSuccess = true
           this.$emit('success')
         } else {
           this.containerFail = true
-          this.sliderText = '再试一次'
-          this.reset()
+          this.$emit('fail')
+          setTimeout(() => {
+            this.reset()
+          }, 1000)
         }
-      } else {
-        // error
-        this.containerFail = true
-        this.$emit('fail')
-        setTimeout(() => {
-          this.reset()
-        }, 1000)
-      }
+      }).catch(() => {
+        this.showLoading = false
+      })
     },
 
     reset() {
@@ -327,15 +204,10 @@ export default {
       this.containerSuccess = false
       this.containerFail = false
       this.sliderLeft = 0
-      this.block.style.left = 0
       this.sliderMaskWidth = 0
-      // canvas
-      const { w, h } = this
-      this.canvasCtx.clearRect(0, 0, w, h)
-      this.blockCtx.clearRect(0, 0, w, h)
-      this.block.width = w
+
       // generate img
-      this.img.src = this.getRandomImg()
+      this.verifyImg = this.getRandomImg()
     }
   }
 }
@@ -346,12 +218,33 @@ export default {
   position: relative;
   background-color: white;
   width: 100%;
+  padding: 15px;
 }
 
 .slide-verify-block {
   position: absolute;
   left: 0;
   top: 0;
+}
+
+.verify-info {
+  position: relative;
+  overflow: hidden;
+  width: 150px;
+  height: 150px;
+  margin: 20px auto 25px;
+  background-size: 100% 100%;
+}
+
+.verify-img {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  border-radius: 50%;
 }
 
 .slide-verify-refresh-icon {

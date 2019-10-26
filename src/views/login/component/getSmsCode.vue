@@ -27,10 +27,6 @@
         popper-class="no-padding-popover"
         trigger="click">
         <slide-verify
-          :l="42"
-          :r="10"
-          :w="330"
-          :h="155"
           slider-text="向右滑动"
           @success="sliderSuccess"
           @fail="sliderFail"
