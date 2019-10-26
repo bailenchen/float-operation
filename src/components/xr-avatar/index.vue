@@ -2,23 +2,26 @@
   <el-popover
     v-model="popoverShow"
     :visible-arrow="false"
-    :disabled="disabled"
+    :disabled="disabled && !id"
     placement="bottom"
     width="250"
     popper-class="no-padding-popover"
-    trigger="click">
-    <xr-user-view />
+    trigger="hover">
+    <xr-user-view
+      v-loading="loading"
+      :data="userData"
+    />
     <el-avatar
       slot="reference"
       v-bind="$attrs"
       :class="{ 'cursor-pointer': !disabled }"
-      :size="size"
-      @error="errorHandler">{{ showName }}</el-avatar>
+      :size="size">{{ showName }}</el-avatar>
   </el-popover>
 
 </template>
 
 <script>
+import { systemUserInfoAPI } from '@/api/common'
 
 export default {
   // Avatar 头像
@@ -29,6 +32,7 @@ export default {
   inheritAttrs: false,
   props: {
     name: String,
+    id: [Number, String],
     size: {
       type: [Number, String],
       default: 38
@@ -37,24 +41,12 @@ export default {
       type: Boolean,
       default: true
     }
-    // size: [Number, String],
-    // shape: {
-    //   type: String,
-    //   default: 'circle'
-    // },
-    // icon: String,
-    // src: String,
-    // alt: String,
-    // srcSet: String,
-    // error: Function,
-    // fit: {
-    //   type: String,
-    //   default: 'cover'
-    // }
   },
   data() {
     return {
-      popoverShow: false
+      popoverShow: false,
+      loading: false,
+      userData: null
     }
   },
   computed: {
@@ -62,13 +54,23 @@ export default {
       return this.name && this.name.length > 2 ? this.name.slice(-2) : this.name
     }
   },
-  watch: {},
+  watch: {
+    popoverShow(val) {
+      if (!this.userData) {
+        this.getUserData()
+      }
+    }
+  },
   mounted() {},
 
   beforeDestroy() {},
   methods: {
-    errorHandler() {
-
+    getUserData() {
+      systemUserInfoAPI({
+        userId: this.id
+      }).then(res => {
+        this.userData = res.data
+      }).catch(() => {})
     }
   }
 }

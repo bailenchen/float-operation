@@ -1,39 +1,44 @@
 <template>
-  <div class="xr-mian">
-    <flexbox class="xr-mian__hd user">
-      <div class="user-info">
-        <div class="user-info__name">
-          <span>名字</span>
-          <i class="wk wk-woman" />
+  <div class="xr-user-view">
+    <div v-if="data" class="xr-mian">
+      <flexbox class="xr-mian__hd user">
+        <div class="user-info">
+          <div class="user-info__name">
+            <span>{{ data.realname }}</span>
+            <i v-if="sexIcon" :class="sexIcon" />
+          </div>
+          <div class="user-info__company">
+            {{ data.companyName }}
+          </div>
         </div>
-        <div class="user-info__company">
-          公司
-        </div>
-      </div>
 
-      <el-avatar :size="44" class="user-img"> 111</el-avatar>
-    </flexbox>
-    <div class="xr-mian__bd">
-      <flexbox class="info-cell">
-        <i class="wk wk-department" />
-        <div class="info-cell__label">部门</div>
-        <div class="info-cell__value text-one-line">销售1部销售1部销售1部</div>
+        <el-avatar
+          :src="data.img"
+          :size="44"
+          class="user-img">{{ showName }}</el-avatar>
       </flexbox>
-      <flexbox class="info-cell">
-        <i class="wk wk-tie" />
-        <div class="info-cell__label">岗位</div>
-        <div class="info-cell__value text-one-line">销售1部销售1部销售1部</div>
-      </flexbox>
-      <flexbox class="info-cell">
-        <i class="wk wk-b-mobile" />
-        <div class="info-cell__label">手机</div>
-        <div class="info-cell__value text-one-line">销售1部销售1部销售1部</div>
-      </flexbox>
-      <flexbox class="info-cell">
-        <i class="wk wk-email" />
-        <div class="info-cell__label">邮箱</div>
-        <div class="info-cell__value text-one-line">销售1部销售1部销售1部</div>
-      </flexbox>
+      <div class="xr-mian__bd">
+        <flexbox class="info-cell">
+          <i class="wk wk-department" />
+          <div class="info-cell__label">部门</div>
+          <div class="info-cell__value text-one-line">{{ data.deptName }}</div>
+        </flexbox>
+        <flexbox class="info-cell">
+          <i class="wk wk-tie" />
+          <div class="info-cell__label">岗位</div>
+          <div class="info-cell__value text-one-line">{{ data.post }}</div>
+        </flexbox>
+        <flexbox class="info-cell">
+          <i class="wk wk-b-mobile" />
+          <div class="info-cell__label">手机</div>
+          <div class="info-cell__value text-one-line">{{ data.mobile }}</div>
+        </flexbox>
+        <flexbox class="info-cell">
+          <i class="wk wk-email" />
+          <div class="info-cell__label">邮箱</div>
+          <div class="info-cell__value text-one-line">{{ data.email }}</div>
+        </flexbox>
+      </div>
     </div>
   </div>
 </template>
@@ -44,11 +49,27 @@ export default {
   // 弹窗详情
   name: 'XrUserView',
   components: {},
-  props: {},
+  props: {
+    data: Object
+  },
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    showName() {
+      return this.data.realname && this.data.realname.length > 2 ? this.data.realname.slice(-2) : this.data.realname
+    },
+
+    sexIcon() {
+      // 1 男 2 女
+      if (this.data.sex === 1) {
+        return 'wk wk-man'
+      } else if (this.data.sex === 2) {
+        return 'wk wk-woman'
+      }
+      return ''
+    }
+  },
   watch: {},
   mounted() {},
 
@@ -58,7 +79,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.xr-user-view {
+  min-height: 235px;
+}
+
 .xr-mian {
+  min-height: 235px;
   &__hd {
     padding: 20px 15px;
     background-color: #F7F8FA;
@@ -81,6 +107,14 @@ export default {
       i {
         font-size: 14px;
         margin-left: 8px;
+      }
+
+      .wk-woman {
+        color: #FF3838;
+      }
+
+      .wk-man {
+        color: #3875ff;
       }
     }
 

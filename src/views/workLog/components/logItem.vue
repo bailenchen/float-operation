@@ -4,6 +4,7 @@
       <div class="user">
         <xr-avatar
           :name="data.createUser.realname"
+          :id="data.createUser.userId"
           :size="38"
           :src="data.createUser.img"
           :disabled="false"
