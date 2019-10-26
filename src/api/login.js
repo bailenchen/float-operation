@@ -97,3 +97,15 @@ export function ResetPwdAPI(params) {
     data: params
   })
 }
+
+/**
+ * 验证
+ * @param params
+ */
+export function VerfyCodeAPI(params) {
+  return request({
+    url: 'verfyCode',
+    method: 'post',
+    data: params
+  })
+}
