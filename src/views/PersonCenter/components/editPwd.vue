@@ -5,6 +5,7 @@
       <span class="text">账号密码</span>
     </div>
     <el-form
+      v-loading="loading"
       ref="form"
       :model="form"
       :rules="rules"
@@ -29,7 +30,9 @@
           type="password" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
+        <el-button
+          type="primary"
+          @click="handleSave">保存</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -45,6 +48,7 @@ export default {
   data() {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
+      loading: false,
       form: {},
       rules: {
         oldPwd: [
