@@ -16,7 +16,11 @@
         <draggable
           v-model="fields"
           :options="{ dragClass: 'sortable-drag', forceFallback: false }">
-          <div v-for="(item, index) in fields" :key="index" class="field-set__content--item text-one-line">
+          <div
+            v-for="(item, index) in fields"
+            v-show="(poolConfig != 1 && item.fieldName !== 'poolDay') || poolConfig == 1"
+            :key="index"
+            class="field-set__content--item text-one-line">
             <el-switch v-model="item.check"/>
             <span v-if="item.center">{{ item.left }}<span class="input-word">{{ item.center }}</span>{{ item.right }}</span>
             <span v-else>{{ item.name }}</span>
@@ -65,6 +69,7 @@ export default {
     return {
       loading: false,
       show: false,
+      poolConfig: 1, // 1 公海规则打开  0 未打开
       fields: [],
       // 用于重置
       copyfields: [],
@@ -101,6 +106,7 @@ export default {
         label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType]
       })
         .then(res => {
+          this.poolConfig = res.data.poolConfig
           const showList = res.data.value.map(function(item, index) {
             item.left = ''
             item.center = ''
