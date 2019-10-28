@@ -94,16 +94,17 @@ export default {
     if (this.value && JSON.stringify(this.value) !== '{}') {
       this.initInfo(this.value)
     } else {
-      var geolocation = new BMap.Geolocation()
-      var self = this
-      geolocation.getCurrentPosition(
-        function(r) {
-          if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-            self.addMarkerLabel(r.point)
-          }
-        },
-        { enableHighAccuracy: true }
-      )
+      // 定位逻辑
+      // var geolocation = new BMap.Geolocation()
+      // var self = this
+      // geolocation.getCurrentPosition(
+      //   function(r) {
+      //     if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+      //       self.addMarkerLabel(r.point)
+      //     }
+      //   },
+      //   { enableHighAccuracy: true }
+      // )
     }
   },
   methods: {
