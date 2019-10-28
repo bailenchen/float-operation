@@ -21,7 +21,7 @@
             v-for="(item, index) in tabsData"
             :label="item.label"
             :name="item.key"
-            :key="index"/>
+            :key="index" />
         </el-tabs>
         <div class="form">
           <div
@@ -36,7 +36,7 @@
               show-word-limit
               type="textarea"
               placeholder="请输入内容"
-              resize="none"/>
+              resize="none" />
           </div>
           <!-- 图片附件 -->
           <div class="img-accessory">
@@ -55,10 +55,10 @@
                 accept="image/*"
                 list-type="picture-card">
                 <p class="add-img">
-                  <span class="el-icon-picture"/>
+                  <span class="el-icon-picture" />
                   <span>添加图片</span>
                 </p>
-                <i class="el-icon-plus"/>
+                <i class="el-icon-plus" />
               </el-upload>
             </div>
             <p class="add-accessory">
@@ -84,34 +84,52 @@
             </p>
           </div>
           <div class="sent-who">
-            <span class="label">发送给谁:</span>
-            <div
-              v-photo="k"
-              v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
-              v-for="(k, j) in formData.sentWhoList"
-              :key="j"
-              class="div-photo k-img header-circle"/>
-            <span>
-              <span
-                v-for="(item, index) in formData.depData"
-                :key="index"
-                class="item-name">{{ item.name }}</span>
+            <span class="cursor-default">发送给：</span>
+            <span
+              v-for="(item, index) in showSendUserList"
+              :key="index"
+              class="send-user">
+              <el-tooltip
+                placement="bottom"
+                effect="light"
+                popper-class="tooltip-change-border">
+                <div slot="content">
+                  <span>{{ item.realname }}</span>
+                </div>
+                <xr-avatar
+                  :name="item.realname"
+                  :size="26"
+                  :src="item.img"
+                  class="item-img" />
+              </el-tooltip>
             </span>
             <members-dep
-              :user-checked-data="formData.sentWhoList"
-              :dep-checked-data="formData.depData"
+              :close-dep="true"
               :content-block="false"
-              @popoverSubmit="popoverSubmit">
-              <img
-                slot="membersDep"
-                class="sent-img"
-                src="@/assets/img/task_add.png">
+              :user-checked-data="formData.sendUserList"
+              @popoverSubmit="sendUserChange">
+              <span slot="membersDep">
+                <el-tooltip
+                  placement="bottom"
+                  effect="light"
+                  popper-class="tooltip-change-border">
+                  <div slot="content">
+                    <span>{{ `等${formData.sendUserList.length}人` }}</span>
+                  </div>
+                  <i
+                    v-show="formData.sendUserList.length > 5"
+                    class="el-icon-more more-user-btn" />
+                </el-tooltip>
+
+                <i class="el-icon-plus add-user-btn" />
+              </span>
+
             </members-dep>
           </div>
           <related-business
             :margin-left="'0'"
             :all-data="allData"
-            @checkInfos="checkInfos"/>
+            @checkInfos="checkInfos" />
         </div>
       </div>
       <div class="btn-group">
@@ -140,12 +158,7 @@ export default {
     relatedBusiness
   },
   props: {
-    formData: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
+    formData: Object,
     dialogTitle: {
       type: String,
       default: '写日志'
@@ -208,6 +221,16 @@ export default {
       return {
         'Admin-Token': axios.defaults.headers['Admin-Token']
       }
+    },
+
+    showSendUserList() {
+      if (this.formData) {
+        if (this.formData.sendUserList && this.formData.sendUserList.length > 5) {
+          return this.formData.sendUserList.slice(0, 5)
+        }
+        return this.formData.sendUserList || []
+      }
+      return []
     }
   },
   mounted() {
@@ -459,9 +482,10 @@ export default {
         return true
       }
     },
-    popoverSubmit(members, dep) {
-      this.$set(this.formData, 'sentWhoList', members)
-      this.$set(this.formData, 'depData', dep)
+    sendUserChange(members, dep) {
+      this.formData.sendUserList = members
+      // this.$set(this.formData, 'sendUserList', members)
+      // this.$set(this.formData, 'depData', dep)
     },
     // 取消
     handleClose() {
@@ -571,46 +595,63 @@ export default {
         height: 20px;
         line-height: 20px;
         margin-bottom: 10px;
-        color: #2362FB;
+        color: #2362fb;
       }
     }
     .add-accessory {
       margin-top: 25px;
       margin-bottom: 20px;
-      color: #2362FB;
+      color: #2362fb;
     }
   }
   .sent-who {
     margin-bottom: 15px;
-    .label,
-    img,
-    .k-img {
-      vertical-align: middle;
-    }
-    .label {
-      margin-right: 15px;
+
+    .add-user-btn {
+      border: 1px dotted #666;
+      border-radius: 50%;
+      padding: 5px;
       font-size: 12px;
+      transform: scale(0.8);
+      margin-left: 7px;
     }
-    img {
-      cursor: pointer;
+    &:hover {
+      color: $xr-color-primary;
+      .add-user-btn {
+        border-color: $xr-color-primary;
+      }
     }
-    .item-name {
-      margin-right: 7px;
+
+    // 参与人
+    .send-user {
+      position: relative;
+      display: inline-block;
+
+      .item-img {
+        vertical-align: middle;
+      }
     }
-    .k-img {
-      width: 25px;
-      height: 25px;
-      border-radius: 17.5px;
-      margin-right: 7px;
+
+    .send-user + .send-user {
+      margin-left: 7px;
     }
-    .must {
-      color: #f56c6c;
+
+    .more-user-btn {
+      background-color: #f3f7ff;
+      border-radius: 50%;
+      padding: 5px;
       font-size: 12px;
-      margin-top: 5px;
+      color: #666;
+      margin-left: 7px;
+      &:hover {
+        background-color: $xr-color-primary;
+        color: white;
+      }
     }
-    .sent-img {
-      width: 24px;
-      height: 24px;
+
+    .cursor-default {
+      cursor: default;
+      color: #666;
     }
   }
 }
