@@ -7,7 +7,7 @@
     @close="hideView">
     <flexbox
       orient="vertical"
-      style="height: 100%;">
+      class="main">
       <div class="detail-body">
         <div class="dialog-top">
           <img
@@ -121,6 +121,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.main {
+  height: 100%;
+  padding: 10px 0;
+}
 .dialog-top > img {
   vertical-align: middle;
   margin-right: 10px;

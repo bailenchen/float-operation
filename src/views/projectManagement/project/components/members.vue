@@ -20,10 +20,10 @@
           <div
             slot="membersDep"
             class="img-span">
-            <img
-              src="@/assets/img/project/project_add.png"
-              alt="">
-            <span class="add-title">添加成员</span>
+            <el-button
+              type="text"
+              class="add-btn"
+              icon="wk wk-add">添加成员</el-button>
           </div>
         </members-dep>
         <div
@@ -251,15 +251,11 @@ export default {
 // 添加员工
 .img-span {
   margin-bottom: 20px;
-  cursor: pointer;
-  img {
-    width: 16px;
+  .add-btn {
     vertical-align: middle;
-  }
-  .add-title {
-    font-size: 13px;
-    color: #2362FB;
-    vertical-align: middle;
+    /deep/ i {
+      margin-right: 5px;
+    }
   }
 }
 </style>

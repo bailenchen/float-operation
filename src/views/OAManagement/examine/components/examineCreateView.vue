@@ -93,9 +93,7 @@
               multiple
               accept="*.*">
               <p>
-                <img
-                  src="@/assets/img/relevance_file.png"
-                  alt="">
+                <i class="wukong wukong-file" />
                 添加附件
               </p>
             </el-upload>
@@ -1035,6 +1033,10 @@ export default {
     margin-top: 25px;
     margin-bottom: 20px;
     color: #2362FB;
+
+    .wukong-file {
+      font-size: 13px;
+    }
   }
 }
 

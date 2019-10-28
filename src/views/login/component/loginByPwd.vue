@@ -1,5 +1,5 @@
 <template>
-  <div class="login-by-pwd">
+  <div v-loading="loading" class="login-by-pwd">
     <el-form>
       <el-form-item>
         <el-input
@@ -96,6 +96,7 @@ export default {
   data() {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
+      loading: false,
       redirect: undefined,
       form: {},
       errorInfo: null,
@@ -127,16 +128,20 @@ export default {
     handleLogin() {
       const flag = this.checkForm()
       if (!flag) return
+      this.loading = true
       this.$store
         .dispatch('Login', this.form)
         .then(res => {
           if (res.hasOwnProperty('companyList')) {
+            this.loading = false
             this.$emit('toggle', 'MultipleCompany', res.companyList)
           } else {
             this.$router.push({ path: this.redirect || '/' })
           }
         })
-        .catch(() => {})
+        .catch(() => {
+          this.loading = false
+        })
     },
 
     /**

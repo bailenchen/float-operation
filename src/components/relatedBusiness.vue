@@ -32,7 +32,8 @@
       class="alterable-p">相关信息</p>
     <div
       v-for="(items, key) in relatedListData"
-      :key="key">
+      :key="key"
+      style="margin-top: 10px;">
       <related-business-cell
         v-for="(item, itemIndex) in items"
         :data="item"
