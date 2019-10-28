@@ -56,19 +56,13 @@
             v-for="(item, index) in detail.sendUserList"
             :key="index"
             class="send-list__user">
-            <el-tooltip
-              placement="bottom"
-              effect="light"
-              popper-class="tooltip-change-border">
-              <div slot="content">
-                <span>{{ item.realname }}</span>
-              </div>
-              <div
-                v-photo="item"
-                v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-                :key="item.img"
-                class="div-photo item-img" />
-            </el-tooltip>
+            <xr-avatar
+              :name="item.realname"
+              :size="32"
+              :src="item.img"
+              :id="item.userId"
+              :disabled="false"
+              trigger="hover" />
           </span>
         </flexbox>
 
@@ -292,12 +286,6 @@ export default {
   &__user {
     position: relative;
     display: inline-block;
-
-  .item-img {
-      width: 32px;
-      height: 32px;
-      border-radius: 16px;
-    }
   }
 
   &__user + &__user {

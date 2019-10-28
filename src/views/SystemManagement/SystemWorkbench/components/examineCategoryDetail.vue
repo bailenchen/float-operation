@@ -91,10 +91,10 @@
                     v-for="(userItem, userIndex) in item.userList"
                     :key="userIndex"
                     class="examine-users-item">
-                    <div
-                      v-photo="userItem"
-                      v-lazy:background-image="$options.filters.filterUserLazyImg(userItem.img)"
-                      class="div-photo"/>
+                    <xr-avatar
+                      :name="userItem.realname"
+                      :size="40"
+                      :src="userItem.img" />
                     <div class="name">{{ userItem.realname }}</div>
                   </div>
                 </flexbox>
@@ -409,11 +409,6 @@ export default {
   text-align: center;
   .examine-users-item {
     padding: 10px 20px 10px 0;
-    .div-photo {
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
-    }
     .name {
       color: #333333;
       font-size: 12px;

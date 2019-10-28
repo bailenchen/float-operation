@@ -21,9 +21,6 @@
 
     .user-box {
       .user-img {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
         margin-right: 60px;
         &[lazy=loading] {
           margin: 0 60px 0 0;

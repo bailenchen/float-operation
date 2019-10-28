@@ -33,7 +33,7 @@
               :name="item.realname"
               :size="24"
               :src="item.img"
-              class="search-img" />
+              class="user-img" />
             <span>{{ item.realname }}</span>
           </el-checkbox>
         </el-checkbox-group>
@@ -229,7 +229,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 /* 选择员工 */
-.search-img {
+.user-img {
   margin-right: 8px;
   vertical-align: middle;
 }

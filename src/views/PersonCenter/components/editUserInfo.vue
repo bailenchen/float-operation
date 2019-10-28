@@ -14,10 +14,11 @@
       label-width="120px">
       <el-form-item label="头像">
         <flexbox class="user-box">
-          <div
-            v-photo="userInfo"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img || '')"
-            class="user-img div-photo" />
+          <xr-avatar
+            :name="userInfo.realname"
+            :size="70"
+            :src="userInfo.img"
+            class="user-img" />
           <div class="change-avatar" @click="handleChangeAvatar">
             更换头像
           </div>

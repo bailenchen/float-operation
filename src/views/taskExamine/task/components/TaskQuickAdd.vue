@@ -35,12 +35,11 @@
           <i
             v-if="!createMainUser"
             class="wk wk-persons add-info--person" />
-          <div
-            v-photo="createMainUser"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(createMainUser.img)"
+          <xr-avatar
             v-else
-            :key="createMainUser.img"
-            class="div-photo" />
+            :name="createMainUser.realname"
+            :size="24"
+            :src="createMainUser.img" />
         </div>
 
       </xh-user-cell>
@@ -278,10 +277,6 @@ export default {
 // 选择负责人
 .select-user {
   display: inline-block;
-  .div-photo {
-    width: 24px;
-    height: 24px;
-  }
 }
 
 // 关闭按钮

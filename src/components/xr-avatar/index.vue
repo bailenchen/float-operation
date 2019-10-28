@@ -1,12 +1,18 @@
 <template>
+  <el-avatar
+    v-if="popoverDisabled"
+    v-bind="$attrs"
+    :style="{ fontSize: fontSize }"
+    :class="{ 'cursor-pointer': !disabled }"
+    :size="size">{{ showName }}</el-avatar>
   <el-popover
+    v-else
     v-model="popoverShow"
     :visible-arrow="false"
-    :disabled="popoverDisabled"
+    :trigger="trigger"
     placement="bottom"
     width="250"
-    popper-class="no-padding-popover"
-    trigger="click">
+    popper-class="no-padding-popover">
     <xr-user-view
       v-loading="loading"
       :data="userData"
@@ -41,6 +47,10 @@ export default {
     disabled: {
       type: Boolean,
       default: true
+    },
+    trigger: {
+      type: String,
+      default: 'click'
     }
   },
   data() {

@@ -7,10 +7,11 @@
 
     <div class="content-wrapper">
       <flexbox class="content-wrapper__hd">
-        <div
-          v-photo="userInfo"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img)"
-          class="div-photo head-img" />
+        <xr-avatar
+          :name="userInfo.realname"
+          :size="40"
+          :src="userInfo.img"
+          class="head-img" />
         <el-progress
           :percentage="progressValue"
           :format="progressFormat" />
@@ -355,10 +356,6 @@ export default {
     padding: 15px;
 
     .head-img {
-      display: block;
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
       margin-right: 30px;
     }
 

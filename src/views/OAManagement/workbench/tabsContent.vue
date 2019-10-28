@@ -10,10 +10,11 @@
           :journal-data="[item]"/>
       </template>
       <template v-else>
-        <div
-          v-photo="item.createUser"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(item.createUser.img)"
-          class="div-photo"/>
+        <xr-avatar
+          :name="item.createUser.realname"
+          :size="35"
+          :src="item.createUser.img"
+          class="user-img" />
         <div class="img-text">
           <div class="name-time">
             <p class="name-behavior">
@@ -196,10 +197,7 @@ export default {
     font-size: 13px;
     padding: 20px 0;
     border-bottom: 1px solid #f1f1f1;
-    .div-photo {
-      width: 35px;
-      height: 35px;
-      border-radius: 17.5px;
+    .user-img {
       float: left;
     }
     .img-text {

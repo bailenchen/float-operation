@@ -95,25 +95,16 @@
         </div>
       </div>
 
-      <div class="item-own-box">
-        <el-tooltip
-          v-if="data.mainUser && data.mainUser.userId"
-          placement="bottom"
-          effect="light"
-          popper-class="tooltip-change-border">
-          <div slot="content">
-            <span>{{ data.mainUser.realname }}</span>
-          </div>
-
-          <xr-avatar
-            :name="data.mainUser.realname"
-            :id="data.mainUser.userId"
-            :size="24"
-            :src="data.mainUser.img"
-            :disabled="false"
-            class="user-img" />
-        </el-tooltip>
-      </div>
+      <xr-avatar
+        v-if="data.mainUser && data.mainUser.userId"
+        :name="data.mainUser.realname"
+        :id="data.mainUser.userId"
+        :size="24"
+        :src="data.mainUser.img"
+        :disabled="false"
+        trigger="hover"
+        class="user-img"
+        @click.stop="" />
     </div>
   </div>
 </template>
@@ -316,12 +307,9 @@ export default {
   }
   .list-right {
     flex-shrink: 0;
-    .item-own-box {
-      display: inline-block;
-      vertical-align: middle;
-      .user-img {
-        margin-left: 12px;
-      }
+    .user-img {
+      vertical-align: text-top;
+      margin-left: 12px;
     }
     .tag-box {
       display: inline-block;

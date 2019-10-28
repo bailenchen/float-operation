@@ -55,6 +55,7 @@
                     :size="24"
                     :src="element.createUser.img"
                     :disabled="false"
+                    trigger="hover"
                     class="head-png" />
                 </flexbox>
                 <div class="img-group">

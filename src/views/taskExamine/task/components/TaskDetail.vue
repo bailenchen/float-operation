@@ -139,12 +139,12 @@
                 <i
                   v-if="!taskData.mainUser"
                   class="wk wk-l-plus head-btn__icon is-null" />
-                <div
-                  v-photo="taskData.mainUser"
-                  v-lazy:background-image="$options.filters.filterUserLazyImg(taskData.mainUser.img)"
+                <xr-avatar
                   v-else
-                  :key="taskData.mainUser.img"
-                  class="div-photo" />
+                  :name="taskData.mainUser.realname"
+                  :size="32"
+                  :src="taskData.mainUser.img"
+                  class="user-img" />
                 <div class="head-btn__bd">
                   <div
                     v-if="taskData.mainUser"
@@ -228,11 +228,11 @@
                     <div slot="content">
                       <span>{{ item.realname }}</span>
                     </div>
-                    <div
-                      v-photo="item"
-                      v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-                      :key="item.img"
-                      class="div-photo item-img" />
+                    <xr-avatar
+                      :name="item.realname"
+                      :size="32"
+                      :src="item.img"
+                      class="user-img" />
                   </el-tooltip>
                   <img
                     src="@/assets/img/delete_task.png"
@@ -389,12 +389,12 @@
                         <div
                           v-if="item.stopTime"
                           class="bg-color task-bg-color">{{ item.stopTime | moment("MM-DD") }} 截止</div>
-                        <div
-                          v-photo="item.mainUser"
-                          v-lazy:background-image="$options.filters.filterUserLazyImg(item.mainUser.img)"
+                        <xr-avatar
                           v-if="item.mainUser"
-                          :key="item.mainUser.img"
-                          class="div-photo" />
+                          :name="item.mainUser.realname"
+                          :size="25"
+                          :src="item.mainUser.img"
+                          class="user-img" />
 
                       </flexbox>
                       <sub-task
@@ -495,11 +495,11 @@
                   :key="index"
                   align="stretch"
                   class="activity-cell">
-                  <div
-                    v-photo="item"
-                    v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-                    :key="item.img"
-                    class="div-photo" />
+                  <xr-avatar
+                    :name="item.realname"
+                    :size="26"
+                    :src="item.img"
+                    class="user-img" />
                   <div class="activity-cell__bd">
                     <div class="activity-info">
                       <span class="activity-info--name">{{ item.realname }}</span>
@@ -1712,9 +1712,7 @@ $btn-b-hover-color: #eff4ff;
     color: white;
   }
 
-  .div-photo {
-    width: 32px;
-    height: 32px;
+  .user-img {
     margin-right: 12px;
   }
 
@@ -1769,11 +1767,6 @@ $btn-b-hover-color: #eff4ff;
       position: relative;
       margin-right: 10px;
       display: inline-block;
-      .item-img {
-        width: 32px;
-        height: 32px;
-        border-radius: 16px;
-      }
       .el-icon-close {
         opacity: 0;
         color: #fff;
@@ -1959,11 +1952,8 @@ $btn-b-hover-color: #eff4ff;
     font-size: 12px;
     flex-shrink: 0;
   }
-  .div-photo {
+  .user-img {
     flex-shrink: 0;
-    width: 25px;
-    height: 25px;
-    border-radius: 12.5px;
     margin-left: 10px;
   }
 }
@@ -1986,10 +1976,7 @@ $btn-b-hover-color: #eff4ff;
     padding: 10px 0;
     color: #333;
 
-    .div-photo {
-      width: 26px;
-      height: 26px;
-      border-radius: 13px;
+    .user-img {
       margin-right: 10px;
     }
 

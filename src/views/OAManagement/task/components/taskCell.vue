@@ -118,10 +118,11 @@
           <div slot="content">
             <span>{{ data.mainUser.realname }}</span>
           </div>
-          <div
-            v-photo="data.mainUser"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(data.mainUser.img)"
-            class="div-photo"/>
+          <xr-avatar
+            :name="data.mainUser.realname"
+            :size="24"
+            :src="data.mainUser.img"
+            class="user-img" />
         </el-tooltip>
       </div>
     </div>
@@ -279,11 +280,8 @@ export default {
     .item-own-box {
       display: inline-block;
       vertical-align: middle;
-      .div-photo {
+      .user-img {
         vertical-align: middle;
-        width: 24px;
-        height: 24px;
-        border-radius: 12px;
         margin-left: 12px;
       }
     }

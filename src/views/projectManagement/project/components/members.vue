@@ -30,11 +30,11 @@
           v-for="(item, index) in userList"
           :key="index"
           class="item-list">
-          <div
-            v-photo="item"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-            :key="item.img"
-            class="div-photo"/>
+          <xr-avatar
+            :name="item.realname"
+            :size="24"
+            :src="item.img"
+            class="user-img" />
           <span>{{ item.realname }}
           </span>
           <i
@@ -223,7 +223,7 @@ export default {
     .item-list {
       position: relative;
       height: 36px;
-      line-height: 36px;
+      padding: 7px 5px;
       margin: 5px 0;
       .el-icon-close {
         font-size: 14px;
@@ -233,10 +233,7 @@ export default {
         right: 8px;
         opacity: 0;
       }
-      .div-photo {
-        width: 24px;
-        height: 24px;
-        border-radius: 12px;
+      .user-img {
         vertical-align: middle;
         margin-right: 5px;
       }

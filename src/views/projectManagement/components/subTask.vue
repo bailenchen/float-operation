@@ -63,11 +63,10 @@
                   <div slot="content">
                     <span @click="showUserPopover = true">{{ item.realname }}</span>
                   </div>
-                  <div
-                    v-photo="item"
-                    v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-                    :key="item.img || item.userId"
-                    class="div-photo"/>
+                  <xr-avatar
+                    :name="item.realname"
+                    :size="24"
+                    :src="item.img" />
                 </el-tooltip>
               </span>
             </template>
@@ -312,11 +311,6 @@ export default {
     }
     .select-box {
       display: inline-block;
-      .div-photo {
-        width: 24px;
-        height: 24px;
-        border-radius: 12px;
-      }
       .wukong-user {
         margin-right: 10px;
         cursor: pointer;

@@ -122,11 +122,10 @@
               <div slot="content">
                 <span>{{ item.realname }}</span>
               </div>
-              <div
-                v-photo="item"
-                v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-                :key="item.img"
-                class="div-photo item-img" />
+              <xr-avatar
+                :name="item.realname"
+                :size="32"
+                :src="item.img" />
             </el-tooltip>
           </span>
           <members-dep
@@ -626,12 +625,6 @@ export default {
 .send-user {
   position: relative;
   display: inline-block;
-
-  .item-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
-  }
 }
 
 .send-user + .send-user {

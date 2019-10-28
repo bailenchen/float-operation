@@ -58,12 +58,13 @@
           class="member">
           <div class="label">项目成员</div>
           <div>
-            <div
-              v-photo="k"
-              v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
-              v-for="(k, j) in selectUserList"
-              :key="j"
-              class="div-photo k-img header-circle"/>
+            <xr-avatar
+              v-for="(user, userIndex) in selectUserList"
+              :key="userIndex"
+              :name="user.realname"
+              :size="25"
+              :src="user.img"
+              class="user-img" />
             <members-dep
               :user-checked-data="selectUserList"
               :content-block="false"
@@ -277,10 +278,7 @@ $color3: #333;
     .item-name {
       margin-right: 7px;
     }
-    .k-img {
-      width: 25px;
-      height: 25px;
-      border-radius: 17.5px;
+    .user-img {
       margin-right: 7px;
     }
     .sent-img {

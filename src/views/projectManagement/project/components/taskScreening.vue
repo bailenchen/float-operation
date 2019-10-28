@@ -29,12 +29,12 @@
             :key="i"
             :class="['item-list', val.checked ? 'item-list-active' : '']"
             @click="rowChecked(val)">
-            <div
-              v-photo="val"
-              v-lazy:background-image="$options.filters.filterUserLazyImg(val.img)"
+            <xr-avatar
               v-if="val.type == 'user'"
-              :key="val.img"
-              class="div-photo"/>
+              :name="val.realname"
+              :size="24"
+              :src="val.img"
+              class="user-img" />
             <span
               v-if="val.type == 'tag'"
               :style="{ backgroundColor: val.color }"
@@ -315,19 +315,14 @@ export default {
 
 
       .item-list {
-        height: 30px;
-        line-height: 30px;
-        padding: 0 10px 0 35px;
+        padding: 4px 10px 4px 35px;
         margin: 5px 0;
         color: #333;
         .el-icon-check {
           margin-top: 8px;
           opacity: 0;
         }
-        .div-photo {
-          width: 24px;
-          height: 24px;
-          border-radius: 12px;
+        .user-img {
           vertical-align: middle;
           margin-right: 5px;
         }

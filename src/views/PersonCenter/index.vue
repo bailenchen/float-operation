@@ -2,10 +2,11 @@
   <flexbox align="flex-start" class="person-center">
     <div class="left">
       <flexbox class="user-box">
-        <div
-          v-photo="userInfo"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(userInfo.img || '')"
-          class="user-img div-photo" />
+        <xr-avatar
+          :name="userInfo.realname"
+          :size="50"
+          :src="userInfo.img"
+          class="user-img" />
         <span class="username">
           {{ userInfo.realname }}
         </span>
@@ -89,9 +90,6 @@ export default {
         width: 376px;
         padding: 15px 20px 20px;
         .user-img {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
           margin-right: 22px;
         }
         .username {

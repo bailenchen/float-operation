@@ -146,15 +146,8 @@ export default {
         }
         .k-list {
           margin-bottom: 10px;
-          .list-right,
-          .header-circle {
+          .list-right {
             display: inline-block;
-          }
-          .header-circle {
-            width: 42px;
-            height: 42px;
-            margin-right: 10px;
-            vertical-align: middle;
           }
           .list-right {
             vertical-align: middle;

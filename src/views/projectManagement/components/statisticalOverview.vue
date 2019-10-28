@@ -39,11 +39,11 @@
             v-for="(item, index) in showList"
             :key="index"
             class="main-user">
-            <div
-              v-photo="item"
-              v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-              :key="item.img"
-              class="div-photo main-user-head"/>
+            <xr-avatar
+              :name="item.realname"
+              :size="36"
+              :src="item.img"
+              class="main-user-head" />
             <div class="main-user-name">{{ item.realname }}</div>
           </div>
           <el-tooltip
@@ -246,19 +246,10 @@ export default {
 
 .main-user {
   display: inline-block;
-  .main-user-head {
-    width: 36px;
-    height: 36px;
-    border-radius: 18px;
-    margin-bottom: 5px;
-  }
   .main-user-name {
+    margin-top: 5px;
     font-size: 13px;
     color: #333;
-  }
-
-  .main-user-name + .main-user-name {
-    margin-top: 5px;
   }
 }
 

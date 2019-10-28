@@ -152,21 +152,9 @@ div[lazy=loading] {
   margin: 0 auto;
 }
 
-// div 头像图片样式
-.div-photo {
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  display: inline-block;
-}
-
 /** 拖拽时候的样式 */
 .draggingStyle {
   cursor: pointer;
-}
-
-// 修改头像为圆形
-.header-circle {
-  border-radius: 50%;
 }
 
 .router-view {
