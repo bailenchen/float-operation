@@ -39,7 +39,7 @@
       :status="examineStatus"
       :examine-type="`crm_${crmType}`"
       @close="showExamineHandle = false"
-      @save="refreshDataByHandle" />
+      @save="examineHandleCallBack" />
   </div>
 </template>
 
@@ -204,40 +204,49 @@ export default {
     },
 
     /**
+     * 审批操作回调
+     */
+    examineHandleCallBack(data) {
+      // 1 通过 2 拒绝 4 撤回
+      this.refreshDataByHandle()
+    },
+
+    /**
      * 根据请求刷新数据
      */
     refreshDataByHandle() {
+      this.refreshList()
       // 获取5条数据
-      let page = 1
-      if (this.detailIndex > 0) {
-        page = Math.ceil(this.detailIndex / 5)
-      }
+      // let page = 1
+      // if (this.detailIndex > 0) {
+      //   page = Math.ceil(this.detailIndex / 5)
+      // }
 
-      const params = {
-        page: page,
-        limit: 5,
-        status: this.status
-      }
+      // const params = {
+      //   page: page,
+      //   limit: 5,
+      //   status: this.status
+      // }
 
-      if (this.crmType == 'contract') {
-        params.categoryType = 1
-      } else if (this.crmType == 'receivables') {
-        params.categoryType = 2
-      }
+      // if (this.crmType == 'contract') {
+      //   params.categoryType = 1
+      // } else if (this.crmType == 'receivables') {
+      //   params.categoryType = 2
+      // }
 
-      crmExamineMyExamine(params)
-        .then(res => {
-          const crmData = this.list[this.detailIndex]
-          for (let index = 0; index < res.data.list.length; index++) {
-            const element = res.data.list[index]
-            if (element.catagoryId == crmData.catagoryId) {
-              this.list.splice(index, 1, element)
-              break
-            }
-          }
-        })
-        .catch(() => {
-        })
+      // crmExamineMyExamine(params)
+      //   .then(res => {
+      //     const crmData = this.list[this.detailIndex]
+      //     for (let index = 0; index < res.data.list.length; index++) {
+      //       const element = res.data.list[index]
+      //       if (element.catagoryId == crmData.catagoryId) {
+      //         this.list.splice(this.detailIndex, 1, element)
+      //         break
+      //       }
+      //     }
+      //   })
+      //   .catch(() => {
+      //   })
     },
 
     detailHandleCallBack(data, index) {
