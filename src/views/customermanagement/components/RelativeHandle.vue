@@ -121,6 +121,7 @@ export default {
     flex-shrink: 0;
     width: 18px;
     height: 18px;
+    z-index: 2;
     border-radius: 9px;
     background-color: white;
     border: 5px solid #a5ecd7;
@@ -142,7 +143,7 @@ export default {
   }
   .ha-line {
     position: absolute;
-    z-index: -1;
+    z-index: 1;
     width: 1px;
     top: 3px;
     bottom: -3px;
