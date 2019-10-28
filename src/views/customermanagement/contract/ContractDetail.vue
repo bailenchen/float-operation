@@ -256,6 +256,7 @@ export default {
      */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
+      this.detailData = null
       this.getDetial()
     },
 
