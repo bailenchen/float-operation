@@ -67,9 +67,9 @@ export default {
         { field: 'dealCustomerNum', name: '成交客户数', sortable: true },
         { field: 'dealCustomerRate', name: '客户成交率(%)', sortable: true },
         { field: 'contractMoney', name: '合同总金额', sortable: true },
-        { field: 'receivablesMoney', name: '回款金额', sortable: true },
-        { field: 'unreceivedMoney', name: '未回款金额', sortable: true },
-        { field: 'completedRate', name: '回款完成率(%)', sortable: true }
+        { field: 'receivablesMoney', name: '回款金额', sortable: true }
+        // { field: 'unreceivedMoney', name: '未回款金额', sortable: true },
+        // { field: 'completedRate', name: '回款完成率(%)', sortable: true }
       ]
     }
   },
@@ -138,12 +138,12 @@ export default {
         .then(res => {
           this.loading = false
           this.list = res.data || []
-          for (let index = 0; index < this.list.length; index++) {
-            const element = this.list[index]
-            if (element.unreceivedMoney < 0) {
-              element.unreceivedMoney = 0
-            }
-          }
+          // for (let index = 0; index < this.list.length; index++) {
+          //   const element = this.list[index]
+          //   if (element.unreceivedMoney < 0) {
+          //     element.unreceivedMoney = 0
+          //   }
+          // }
         })
         .catch(() => {
           this.loading = false

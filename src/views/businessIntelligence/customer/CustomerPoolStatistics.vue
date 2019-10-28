@@ -63,8 +63,7 @@ export default {
         { field: 'realname', name: '姓名' },
         { field: 'deptName', name: '部门' },
         { field: 'receiveNum', name: '公海池领取客户数' },
-        { field: 'putInNum', name: '进入公海客户数' },
-        { field: 'customerNum', name: '客户总数' }
+        { field: 'putInNum', name: '进入公海客户数' }
       ]
     }
   },
