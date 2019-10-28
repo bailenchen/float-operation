@@ -1,11 +1,11 @@
 <template>
   <div>
     <flexbox class="user-container">
-      <div
-        v-photo="filtersInfo"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(filtersInfo.img)"
-        :key="filtersInfo.img"
-        class="div-photo user-img"/>
+      <xr-avatar
+        :name="filtersInfo.realname"
+        :src="filtersInfo.img"
+        :size="40"
+        class="user-img" />
       <div>
         <flexbox class="user-info">
           <div class="user-name">{{ filtersInfo.realname }}</div>
@@ -145,10 +145,6 @@ export default {
   margin-bottom: 20px;
   position: relative;
   .user-img {
-    display: block !important;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
     margin-right: 16px;
     margin-left: 0px;
   }

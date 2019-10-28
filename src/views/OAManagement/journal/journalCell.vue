@@ -4,11 +4,11 @@
     class="list">
     <div class="list-content">
       <div class="header">
-        <div
-          v-photo="data.createUser"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)"
-          :key="data.createUser.img"
-          class="div-photo head-img header-circle"/>
+        <xr-avatar
+          :name="data.createUser.realname"
+          :size="35"
+          :src="data.createUser.img"
+          class="head-img" />
         <div class="row">
           <p class="row-title">
             <span class="name">{{ data.createUser.realname }}</span>
@@ -129,11 +129,11 @@
           v-for="(discussItem, k) in replyList"
           :key="k"
           class="discuss-list">
-          <div
-            v-photo="discussItem.user"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(discussItem.user.img)"
-            :key="discussItem.user.img"
-            class="div-photo head-img header-circle"/>
+          <xr-avatar
+            :name="discussItem.user.realname"
+            :size="25"
+            :src="discussItem.user.img"
+            class="head-img" />
           <span class="name">{{ discussItem.user.realname }}</span>
           <span class="time">{{ discussItem.createTime }}</span>
           <div class="rt">
@@ -155,11 +155,11 @@
               v-for="(childDiscussItem, k) in discussItem.childCommentList"
               :key="k"
               class="discuss-list">
-              <div
-                v-photo="childDiscussItem.user"
-                v-lazy:background-image="$options.filters.filterUserLazyImg(childDiscussItem.user.img)"
-                :key="childDiscussItem.user.img"
-                class="div-photo head-img header-circle"/>
+              <xr-avatar
+                :name="childDiscussItem.user.realname"
+                :size="25"
+                :src="childDiscussItem.user.img"
+                class="head-img" />
               <span class="name">{{ childDiscussItem.user.realname }}</span>
               <span class="time">{{ childDiscussItem.createTime }}</span>
               <div class="rt">
@@ -614,10 +614,6 @@ export default {
         }
       }
       .head-img {
-        display: inline-block;
-        width: 35px;
-        height: 35px;
-        border-radius: 17.5px;
         @include v-align;
       }
       .name,
@@ -696,12 +692,6 @@ export default {
         .time,
         .head-img {
           @include v-align;
-        }
-        .head-img {
-          width: 25px;
-          height: 25px;
-          display: inline-block;
-          border-radius: 12.5px;
         }
         .name {
           margin: 0 10px;

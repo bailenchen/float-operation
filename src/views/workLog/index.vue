@@ -485,8 +485,8 @@ export default {
       // 附件
       this.accessoryFileList = data.file
       // 员工部门赋值
-      this.formData.depData = data.sendDeptList ? data.sendDeptList : []
-      this.formData.sentWhoList = data.sendUserList ? data.sendUserList : []
+      // this.formData.depData = data.sendDeptList ? data.sendDeptList : []
+      // this.formData.sentWhoList = data.sendUserList ? data.sendUserList : []
       this.showNewDialog = true
     },
 
@@ -504,8 +504,8 @@ export default {
       }
       // 获取员工
       const staff = []
-      if (this.formData.sentWhoList) {
-        for (const h of this.formData.sentWhoList) {
+      if (this.formData.sendUserList) {
+        for (const h of this.formData.sendUserList) {
           staff.push(h.userId)
         }
       }

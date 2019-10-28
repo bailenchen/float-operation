@@ -28,10 +28,11 @@
                 <div slot="content">
                   <span>{{ k.realname }}</span>
                 </div>
-                <div
-                  v-photo="k"
-                  v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
-                  class="div-photo header-circle"/>
+                <xr-avatar
+                  :name="k.realname"
+                  :size="24"
+                  :src="k.img"
+                  class="user-img" />
               </el-tooltip>
             </span>
           </span>
@@ -213,9 +214,7 @@ export default {
           span {
             display: inline-block;
           }
-          .div-photo {
-            width: 25px;
-            height: 25px;
+          .user-img {
             margin-right: 10px;
           }
         }

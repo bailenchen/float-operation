@@ -18,7 +18,7 @@
       style="width: 100%"
       @row-click="handleRowClick">
       <el-table-column
-        width="80"
+        width="100"
         label="审批流图标">
         <template slot-scope="scope">
           <div

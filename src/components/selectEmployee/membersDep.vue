@@ -40,10 +40,11 @@
                     <el-checkbox
                       v-model="user.isCheck"
                       @change="userCheckboxChange(user, index)">
-                      <div
-                        v-photo="user"
-                        v-lazy:background-image="$options.filters.filterUserLazyImg(user.img)"
-                        class="div-photo search-img header-circle" />
+                      <xr-avatar
+                        :name="user.realname"
+                        :size="24"
+                        :src="user.img"
+                        class="search-img" />
                       <span>{{ user.realname }}</span>
                     </el-checkbox>
                   </div>
@@ -636,9 +637,6 @@ export default {
 }
 /* 选择员工 */
 .search-img {
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
   vertical-align: middle;
   margin-right: 8px;
 }

@@ -7,11 +7,11 @@
         @popoverSubmit="userStrucSelect">
         <flexbox slot="membersDep" class="user-box">
           <i v-if="avatarData.showIcon" class="wk wk-multi-user user-icon" />
-          <div
-            v-photo="avatarData"
-            v-lazy:background-image="$options.filters.filterUserLazyImg(avatarData.img || '')"
+          <xr-avatar
             v-else
-            class="user-img div-photo" />
+            :name="avatarData.realname"
+            :size="28"
+            :src="avatarData.img" />
           <span class="username">{{ filterText }}</span>
           <span class="el-icon-caret-bottom icon" />
         </flexbox>
@@ -411,12 +411,6 @@ export default {
           background: $xr-color-primary;
           color: white;
           padding: 5px 6px;
-          border-radius: 50%;
-        }
-
-        .user-img {
-          width: 28px;
-          height: 28px;
           border-radius: 50%;
         }
         .username {

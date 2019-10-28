@@ -6,10 +6,10 @@
       v-if="detail"
       class="cell"
       align="stretch">
-      <div
-        v-photo="headInfo"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(headInfo.img)"
-        class="div-photo cell-hd" />
+      <xr-avatar
+        :name="detail.name"
+        :size="40"
+        class="cell-hd" />
       <div class="cell-bd">
         <p class="cell-bd__name">
           <span>{{ detail.name }}</span>
@@ -91,14 +91,6 @@ export default {
     // 有首要联系人
     hasInfo() {
       return this.contactsId
-    },
-
-    // 联系人文字头像
-    headInfo() {
-      return {
-        img: '',
-        realname: this.detail.name
-      }
     },
 
     // 空数据按钮文字 为空不展示

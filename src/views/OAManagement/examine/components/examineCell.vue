@@ -2,10 +2,10 @@
   <div class="list">
     <div class="list-content">
       <flexbox class="header">
-        <div
-          v-photo="data.createUser"
-          v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)"
-          class="div-photo head-img"/>
+        <xr-avatar
+          :name="data.createUser.realname"
+          :size="34"
+          :src="data.createUser.img" />
         <div class="name-time">
           <span class="name">{{ data.createUser.realname }}</span>
           <span class="time">{{ data.createtime }}</span>
@@ -166,11 +166,6 @@ export default {
       margin-bottom: 15px;
       @include color9;
       font-size: 12px;
-      .head-img {
-        width: 35px;
-        height: 35px;
-        border-radius: 17.5px;
-      }
       .name-time {
         display: inline-block;
         margin-left: 13px;

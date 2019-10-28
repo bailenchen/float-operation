@@ -3,10 +3,11 @@
     :id="'notice-cell' + cellIndex"
     class="list">
     <div class="header">
-      <div
-        v-photo="data"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(data.img)"
-        class="div-photo"/>
+      <xr-avatar
+        :name="data.realname"
+        :size="35"
+        :src="data.img"
+        class="user-img" />
       <div class="name-time">
         <p class="name">{{ data.realname }}</p>
         <p class="time">{{ data.createTime | moment("YYYY-MM-DD HH:mm") }}</p>
@@ -154,10 +155,7 @@ export default {
   border-bottom: 1px solid #e6e6e6;
   .header {
     margin-bottom: 15px;
-    .div-photo {
-      width: 35px;
-      height: 35px;
-      border-radius: 17.5px;
+    .user-img {
       margin-right: 10px;
     }
     .name-time {

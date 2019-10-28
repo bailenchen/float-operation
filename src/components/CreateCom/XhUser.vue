@@ -29,10 +29,11 @@
             :key="i"
             :label="item.userId"
             class="colleagues-list">
-            <div
-              v-photo="item"
-              v-lazy:background-image="$options.filters.filterUserLazyImg(item.img)"
-              class="div-photo search-img" />
+            <xr-avatar
+              :name="item.realname"
+              :size="24"
+              :src="item.img"
+              class="search-img" />
             <span>{{ item.realname }}</span>
           </el-checkbox>
         </el-checkbox-group>
@@ -229,11 +230,8 @@ export default {
 <style lang="scss" scoped>
 /* 选择员工 */
 .search-img {
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  vertical-align: middle;
   margin-right: 8px;
+  vertical-align: middle;
 }
 .search-list {
   padding: 5px 0;

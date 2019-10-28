@@ -1,10 +1,11 @@
 <template>
   <div class="fl-c">
     <flexbox class="fl-h">
-      <div
-        v-photo="{img: item.userImg, realname: item.realname}"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(item.userImg)"
-        class="div-photo fl-h-img"/>
+      <xr-avatar
+        :name="item.realname"
+        :size="34"
+        :src="item.userImg"
+        class="fl-h-img" />
       <div class="fl-h-b">
         <div class="fl-h-name">{{ item.realname }}</div>
         <div class="fl-h-time">{{ item.createTime }}</div>

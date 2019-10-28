@@ -1,10 +1,11 @@
 <template>
   <div class="fl-c">
     <flexbox class="fl-h">
-      <div
-        v-photo="data.createUser"
-        v-lazy:background-image="$options.filters.filterUserLazyImg(data.createUser.img)"
-        class="div-photo fl-h-img"/>
+      <xr-avatar
+        :name="data.createUser.realname"
+        :size="34"
+        :src="data.createUser.img"
+        class="fl-h-img" />
       <div class="fl-h-b">
         <div class="fl-h-name">{{ data.createUser.realname }}</div>
         <div class="fl-h-time">{{ data.createTime }}</div>
@@ -46,11 +47,11 @@
                 <div slot="content">
                   <span>{{ k.realname }}</span>
                 </div>
-                <div
-                  v-photo="k"
-                  v-lazy:background-image="$options.filters.filterUserLazyImg(k.img)"
-                  :key="k.img"
-                  class="div-photo header-circle"/>
+                <xr-avatar
+                  :name="k.realname"
+                  :size="25"
+                  :src="k.img"
+                  class="user-img" />
               </el-tooltip>
             </span>
           </div>
@@ -243,9 +244,7 @@ export default {
   span {
     display: inline-block;
   }
-  .div-photo {
-    width: 25px;
-    height: 25px;
+  .user-img {
     margin-right: 10px;
   }
 }
