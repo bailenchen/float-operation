@@ -141,7 +141,8 @@
     <c-r-m-all-detail
       :visible.sync="showDview"
       :crm-type="rowType"
-      :id="rowID"/>
+      :id="rowID"
+      @handle="getList"/>
   </div>
 </template>
 

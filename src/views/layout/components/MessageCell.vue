@@ -163,7 +163,10 @@ export default {
       // 导入提示与其他不一样
       if (this.data.type >= 14 && this.data.type <= 21) {
         // title 是总数 content 是错误数据 valid 错误文件是否有效 1 有效 0 失效
-        return this.data.valid === 0 ? '已失效' : this.data.content ? '点击下载错误数据' : ''
+        if (this.data.content > 0) {
+          return this.data.valid === 0 ? '已失效' : '点击下载错误数据'
+        }
+        return ''
       } else {
         return `《${this.data.title}》`
       }
