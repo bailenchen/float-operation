@@ -14,15 +14,12 @@
         :show-types="showTypes"
         @close="crmrelativeClose"
         @changeCheckout="checkInfos"/>
-      <p
+      <span
         slot="reference"
-        class="add-file"
-        @click="showRelative = true">
-        <img
-          src="@/assets/img/relevance_business.png"
-          alt="">
-        关联业务
-      </p>
+        class="add-btn" @click="showRelative = true">
+        <i class="wk wk-l-plus" />
+        <span class="label">关联业务</span>
+      </span>
     </el-popover>
     <div class="related-business">
       <div
@@ -123,19 +120,32 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.add-file {
-  margin: 5px 0;
-  font-size: 13px;
-  color: #2362FB;
-  cursor: pointer;
-  display: inline-block;
-  img {
-    vertical-align: middle;
-    width: 15px;
-  }
-}
 
 .related-business {
   margin-top: 10px;
+}
+
+// 添加btm
+$btn-b-color: #f8faff;
+$btn-color: #333333;
+$btn-b-hover-color: #eff4ff;
+.add-btn {
+  margin-top: 8px;
+  font-size: 12px;
+  color: $btn-color;
+  background-color: $btn-b-color;
+  border-radius: $xr-border-radius-base;
+  display: inline-block;
+  padding: 3px 10px;
+  cursor: pointer;
+
+  .wk-l-plus {
+    font-size: 12px;
+  }
+}
+
+.add-btn:hover {
+  color: $xr-color-primary;
+  background-color: $btn-b-hover-color;
 }
 </style>
