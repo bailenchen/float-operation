@@ -6,7 +6,7 @@
     placement="bottom"
     width="250"
     popper-class="no-padding-popover"
-    trigger="hover">
+    trigger="click">
     <xr-user-view
       v-loading="loading"
       :data="userData"
