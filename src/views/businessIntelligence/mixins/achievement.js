@@ -55,12 +55,12 @@ export default {
           const list = [{
             name: '当月' + this.typeName + this.typeUnit
           },
-          {
-            name: '上月' + this.typeName + this.typeUnit
-          },
-          {
-            name: '去年当月' + this.typeName + this.typeUnit
-          },
+          // {
+          //   name: '上月' + this.typeName + this.typeUnit
+          // },
+          // {
+          //   name: '去年当月' + this.typeName + this.typeUnit
+          // },
           {
             name: '环比增长（%）'
           },
@@ -87,8 +87,8 @@ export default {
 
             const keys = [
               'thisMonth',
-              'lastMonth',
-              'lastYear',
+              // 'lastMonth',
+              // 'lastYear',
               'lastYearGrowth',
               'lastMonthGrowth'
             ]

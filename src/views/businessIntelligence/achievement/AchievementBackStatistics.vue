@@ -16,7 +16,7 @@
       <div class="table-content">
         <el-table
           :data="list"
-          height="300"
+          height="180"
           stripe
           border
           highlight-current-row>
