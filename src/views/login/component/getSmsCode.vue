@@ -106,6 +106,9 @@ export default {
     SlideVerify
   },
   mixins: [mixins],
+  props: {
+    smsType: String
+  },
   data() {
     return {
       form: {},
@@ -154,8 +157,21 @@ export default {
         return
       }
 
+      let typeNumber = null
+      switch (this.smsType) {
+        case 'login':
+          typeNumber = 2
+          break
+        case 'forget':
+          typeNumber = 2
+          break
+        case 'register':
+          typeNumber = 1
+          break
+      }
       SendSmsAPI({
-        telephone: this.form.phone
+        telephone: this.form.phone,
+        type: typeNumber
       })
         .then(() => {
           this.startTimer()

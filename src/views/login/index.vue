@@ -38,6 +38,7 @@
           <template v-if="activeCom !== 'MultipleCompany'">
             <component
               :is="activeCom"
+              :sms-type="smsType"
               @toggle="handleToggleCom" />
           </template>
           <template v-else>
@@ -95,7 +96,9 @@ export default {
         CreateNewCompany: '创建新企业',
         MultipleCompany: '选择企业',
         ForgetPwd: '忘记密码'
-      }
+      },
+
+      smsType: null
     }
   },
   methods: {
@@ -104,6 +107,17 @@ export default {
       this.activeCom = com
       if (com === 'MultipleCompany') {
         this.companyList = list
+      }
+      const typeMap = {
+        LoginByPwd: 'login',
+        LoginByCode: 'login',
+        CreateNewCompany: 'forget',
+        ForgetPwd: 'register'
+      }
+      if (typeMap.hasOwnProperty(com)) {
+        this.smsType = typeMap[com]
+      } else {
+        this.smsType = null
       }
     }
   }

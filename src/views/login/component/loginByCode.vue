@@ -30,6 +30,7 @@
 
 <script>
 import GetSmsCode from './getSmsCode'
+import { VerfySmsAPI } from '@/api/login'
 
 export default {
   name: 'LoginByCode',
@@ -53,19 +54,24 @@ export default {
     handleLogin() {
       const data = this.$refs.smsCode.getData()
       if (!data) return
-      this.$store
-        .dispatch('Login', {
-          username: data.form.phone,
-          smscode: data.form.smscode
-        })
-        .then(res => {
-          if (res.hasOwnProperty('companyList')) {
-            this.$emit('toggle', 'MultipleCompany', res.companyList)
-          } else {
-            this.$router.push({ path: this.redirect || '/' })
-          }
-        })
-        .catch(() => {})
+      VerfySmsAPI({
+        phone: data.form.phone,
+        smsCode: data.form.smscode
+      }).then(() => {
+        this.$store
+          .dispatch('Login', {
+            username: data.form.phone,
+            smscode: data.form.smscode
+          })
+          .then(res => {
+            if (res.hasOwnProperty('companyList')) {
+              this.$emit('toggle', 'MultipleCompany', res.companyList)
+            } else {
+              this.$router.push({ path: this.redirect || '/' })
+            }
+          })
+          .catch(() => {})
+      }).catch()
     }
   }
 }

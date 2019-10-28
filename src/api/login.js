@@ -99,6 +99,18 @@ export function ResetPwdAPI(params) {
 }
 
 /**
+ * 验证短信验证码
+ * @param params
+ */
+export function VerfySmsAPI(params) {
+  return request({
+    url: 'cloud/verifySms',
+    method: 'post',
+    data: params
+  })
+}
+
+/**
  * 验证
  * @param params
  */

@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { ForgetPwdAPI, ResetPwdAPI } from '@/api/login'
+import { ForgetPwdAPI, ResetPwdAPI, VerfySmsAPI } from '@/api/login'
 
 import GetSmsCode from './getSmsCode'
 
@@ -204,7 +204,12 @@ export default {
           ...this.form,
           ...data.form
         }
-        this.getCompany(data.form)
+        VerfySmsAPI({
+          phone: data.form.phone,
+          smsCode: data.form.smscode
+        }).then(() => {
+          this.getCompany(data.form)
+        }).catch()
       } else {
         this.showRestPwd = true
       }

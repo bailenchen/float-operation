@@ -156,7 +156,7 @@
 </template>
 
 <script>
-import { RegisterAPI } from '@/api/login'
+import { RegisterAPI, VerfySmsAPI } from '@/api/login'
 
 import GetSmsCode from './getSmsCode'
 import mixins from './mixins'
@@ -220,7 +220,12 @@ export default {
         ...this.form,
         ...data.form
       }
-      this.showNext = true
+      VerfySmsAPI({
+        phone: data.form.phone,
+        smsCode: data.form.smscode
+      }).then(() => {
+        this.showNext = true
+      }).catch()
     },
 
     /**
