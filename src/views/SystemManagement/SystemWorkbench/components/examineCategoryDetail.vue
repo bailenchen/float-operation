@@ -15,10 +15,6 @@
             v-if="showData.isSys != 1"
             class="el-icon-delete delete"
             @click="deleteClick"/></div>
-            <!-- <img
-            class="header-close"
-            src="@/assets/img/task_close.png"
-            @click="hideView" > -->
         </flexbox>
         <div class="detail-header-des">
           <div class="status">状态：{{ showData.status == 0 ? '停用' : '启用' }}</div>

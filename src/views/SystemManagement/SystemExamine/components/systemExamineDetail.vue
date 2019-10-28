@@ -1,7 +1,7 @@
 <template>
   <slide-view
     :listener-ids="['manager-main-container']"
-    :no-listener-ids="['examine-table']"
+    :no-listener-class="['el-table__body']"
     :append-to-body="true"
     :body-style="{padding: '10px 30px', height: '100%'}"
     class="d-view"
@@ -14,10 +14,6 @@
           <div class="header-name">{{ showData.name }}<i
             class="el-icon-delete delete"
             @click="deleteClick"/></div>
-          <img
-            class="header-close"
-            src="@/assets/img/task_close.png"
-            @click="hideView" >
         </flexbox>
         <div class="detail-header-des">
           <div class="status">状态：{{ showData.status == 0 ? '停用' : '启用' }}</div>

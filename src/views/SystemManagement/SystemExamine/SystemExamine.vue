@@ -16,6 +16,7 @@
         id="examine-table"
         :data="list"
         :height="tableHeight"
+        :cell-class-name="cellClassName"
         class="main-table"
         highlight-current-row
         style="width: 100%"
@@ -224,6 +225,16 @@ export default {
         return '启用'
       }
       return row[column.property]
+    },
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'name') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
     },
     /**
      *  添加审批流
