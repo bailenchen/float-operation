@@ -2,7 +2,8 @@
   <div class="register-new-company">
     <get-sms-code
       v-show="!showNext"
-      ref="smsCode" />
+      ref="smsCode"
+      sms-type="register" />
 
     <el-form v-show="showNext">
       <el-form-item>

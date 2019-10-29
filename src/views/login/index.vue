@@ -104,10 +104,6 @@ export default {
   methods: {
     handleToggleCom(com, list = []) {
       this.companyList = []
-      this.activeCom = com
-      if (com === 'MultipleCompany') {
-        this.companyList = list
-      }
       const typeMap = {
         LoginByPwd: 'login',
         LoginByCode: 'login',
@@ -118,6 +114,10 @@ export default {
         this.smsType = typeMap[com]
       } else {
         this.smsType = null
+      }
+      this.activeCom = com
+      if (com === 'MultipleCompany') {
+        this.companyList = list
       }
     }
   }

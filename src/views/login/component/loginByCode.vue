@@ -1,6 +1,6 @@
 <template>
   <div class="login-by-code">
-    <get-sms-code ref="smsCode" />
+    <get-sms-code ref="smsCode" sms-type="login" />
 
     <div class="control">
       <div

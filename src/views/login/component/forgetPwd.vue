@@ -2,7 +2,8 @@
   <div class="forget-pwd">
     <get-sms-code
       v-show="!showNext"
-      ref="smsCode" />
+      ref="smsCode"
+      sms-type="forget" />
 
     <div
       v-if="showChooseList"
