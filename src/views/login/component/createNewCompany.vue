@@ -224,8 +224,12 @@ export default {
       VerfySmsAPI({
         phone: data.form.phone,
         smsCode: data.form.smscode
-      }).then(() => {
-        this.showNext = true
+      }).then(res => {
+        if (res.data === 1) {
+          this.showNext = true
+        } else {
+          this.$message.error('短信验证码错误')
+        }
       }).catch()
     },
 

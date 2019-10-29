@@ -208,8 +208,12 @@ export default {
         VerfySmsAPI({
           phone: data.form.phone,
           smsCode: data.form.smscode
-        }).then(() => {
-          this.getCompany(data.form)
+        }).then(res => {
+          if (res.data === 1) {
+            this.getCompany(data.form)
+          } else {
+            this.$message.error('短信验证码错误')
+          }
         }).catch()
       } else {
         this.showRestPwd = true

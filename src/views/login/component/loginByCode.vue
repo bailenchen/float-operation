@@ -57,20 +57,24 @@ export default {
       VerfySmsAPI({
         phone: data.form.phone,
         smsCode: data.form.smscode
-      }).then(() => {
-        this.$store
-          .dispatch('Login', {
-            username: data.form.phone,
-            smscode: data.form.smscode
-          })
-          .then(res => {
-            if (res.hasOwnProperty('companyList')) {
-              this.$emit('toggle', 'MultipleCompany', res.companyList)
-            } else {
-              this.$router.push({ path: this.redirect || '/' })
-            }
-          })
-          .catch(() => {})
+      }).then(res => {
+        if (res.data === 1) {
+          this.$store
+            .dispatch('Login', {
+              username: data.form.phone,
+              smscode: data.form.smscode
+            })
+            .then(res => {
+              if (res.hasOwnProperty('companyList')) {
+                this.$emit('toggle', 'MultipleCompany', res.companyList)
+              } else {
+                this.$router.push({ path: this.redirect || '/' })
+              }
+            })
+            .catch(() => {})
+        } else {
+          this.$message.error('短信验证码错误')
+        }
       }).catch()
     }
   }
