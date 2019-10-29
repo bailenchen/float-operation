@@ -66,8 +66,9 @@
   background-color: #E7EDF4;
 }
 
-.el-table--enable-row-transition .el-table__body td {
-  padding: 8px 0;
+.el-table__body td {
+  padding: 0;
+  height: 40px;
   border-top-color: transparent;
   border-left-color: transparent;
   border-right-color: transparent;
