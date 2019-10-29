@@ -55,6 +55,7 @@
           <xh-user-cell
             v-if="showUserSelect"
             :radio="false"
+            :value="userSelects"
             class="xh-user-cell"
             placeholder="选择人员"
             @value-change="userChange" />
@@ -224,6 +225,7 @@ export default {
         categoryId: 0,
         createUserId: ''
       },
+      userSelects: [],
 
       timeSelect: {
         type: 'default',
@@ -312,6 +314,8 @@ export default {
       categoryId: 0,
       createUserId: ''
     }
+    this.userSelects = []
+
     this.timeSelect = {
       type: 'default',
       value: 'month'
@@ -549,6 +553,7 @@ export default {
      * 筛选条件人员选择
      */
     userChange(data) {
+      this.userSelects = data.value || []
       if (data.value.length > 0) {
         this.filterForm.createUserId = data.value.map(item => {
           return item.userId

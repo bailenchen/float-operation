@@ -142,6 +142,7 @@ export default {
     display: flex;
     img {
       width: 164px;
+      height: 50px;
     }
   }
 

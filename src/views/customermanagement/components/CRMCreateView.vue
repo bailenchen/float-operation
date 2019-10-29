@@ -119,7 +119,7 @@ import {
   regexIsCRMEmail,
   objDeepCopy
 } from '@/utils'
-
+import moment from 'moment'
 import { isArray } from '@/utils/types'
 
 import {
@@ -847,6 +847,34 @@ export default {
           item: item,
           trigger: ['blur']
         })
+      }
+
+
+      // 合同的开始时间和结束时间
+      if (this.crmType === 'contract') {
+        if (item.fieldName === 'start_time' || item.fieldName === 'end_time') {
+          var validateStartEndTime = (rule, value, callback) => {
+            const fieldIndex = rule.field.split('.')[1]
+            const field = this.crmForm.crmFields[fieldIndex].key
+            const anotherTime = field === 'start_time' ? 'end_time' : 'start_time'
+            const anotherItem = this.crmForm.crmFields.find(item => {
+              return item.key == anotherTime
+            })
+            if (value && anotherItem.value) {
+              let noPass = false
+              if (anotherTime === 'start_time') {
+                noPass = moment(value).isBefore(anotherItem.value)
+              } else if (anotherTime === 'end_time') {
+                noPass = moment(value).isAfter(anotherItem.value)
+              }
+              if (noPass) {
+                callback(new Error('开始时间必须小于结束时间'))
+              }
+            }
+            callback()
+          }
+          tempList.push({ validator: validateStartEndTime, trigger: ['blur', 'change'] })
+        }
       }
       return tempList
     },
