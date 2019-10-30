@@ -868,7 +868,7 @@ export default {
                 noPass = moment(value).isAfter(anotherItem.value)
               }
               if (noPass) {
-                callback(new Error('开始时间必须小于结束时间'))
+                callback(new Error(field === 'start_time' ? '开始时间必须小于结束时间' : '结束时间必须大于开始时间'))
               }
             }
             callback()
