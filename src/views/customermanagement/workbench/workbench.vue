@@ -101,6 +101,7 @@
       :placeholder="reportData.placeholder"
       :crm-type="reportData.crmType"
       :request="reportData.request"
+      :record-request="reportData.recordRequest"
       :params="reportData.params"
       :field-list="fieldReportList"
       :paging="reportData.paging"

@@ -113,6 +113,7 @@ export default {
   data() {
     return {
       loading: false,
+
       // 判断是否发请求
       page: 1,
       noMore: false,
@@ -236,6 +237,7 @@ export default {
 
 .relate-cell {
   padding: 8px;
+  margin-left: 40px;
   background-color: #f5f7fa;
   border-radius: 4px;
   position: relative;
