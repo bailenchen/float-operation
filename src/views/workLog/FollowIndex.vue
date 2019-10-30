@@ -60,7 +60,8 @@
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :crm-type="relationCrmType"
-      :id="relationID" />
+      :id="relationID"
+      @handle="detailHandle" />
   </div>
 </template>
 
@@ -257,6 +258,15 @@ export default {
     timeTypeChange(data) {
       this.timeSelect = data
       this.refreshList()
+    },
+
+    /**
+     * 详情操作
+     */
+    detailHandle(data) {
+      if (data.type == 'delete') {
+        this.refreshList()
+      }
     }
   }
 }
