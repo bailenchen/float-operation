@@ -96,7 +96,7 @@ import {
 } from '@/api/customermanagement/customer'
 import { crmContactsDelete } from '@/api/customermanagement/contacts'
 import { crmBusinessDelete } from '@/api/customermanagement/business'
-import { crmContractDelete } from '@/api/customermanagement/contract'
+import { crmContractDelete, crmContractCancelAPI } from '@/api/customermanagement/contract'
 import { crmReceivablesDelete } from '@/api/customermanagement/money'
 import { crmProductStatus } from '@/api/customermanagement/product'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
@@ -123,7 +123,7 @@ export default {
       type: Boolean,
       default: false
     },
-    /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 */
+    /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 合同作废需要合同状态*/
     detail: {
       type: Object,
       default: () => {
@@ -240,7 +240,8 @@ export default {
         type == 'unlock' ||
         type == 'start' ||
         type == 'disable' ||
-        type == 'get'
+                type == 'get' ||
+        type == 'cancel'
       ) {
         var message = ''
         if (type == 'transform') {
@@ -259,7 +260,13 @@ export default {
           message = '确定要下架这些产品吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
+        } else if (type == 'cancel') {
+          message = '确定要作废此合同吗?'
+          if (this.detail.receivablesDataCount) {
+            message = '合同下有相关回款,确定要作废吗?'
+          }
         }
+
         this.$confirm(message, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -372,6 +379,13 @@ export default {
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
+      } else if (type === 'cancel') {
+        crmContractCancelAPI({
+          contractId: this.id
+        }).then(res => {
+          this.$message.success('操作成功')
+          this.$emit('handle', { type })
+        }).catch(() => {})
       }
     },
     // 子组件 回调的 结果
@@ -452,6 +466,11 @@ export default {
           name: '更改成交状态',
           type: 'deal_status',
           icon: 's-status'
+        },
+        cancel: {
+          name: '合同作废',
+          type: 'cancel',
+          icon: 'invalid'
         }
       }
       if (this.crmType == 'leads') {
@@ -480,7 +499,7 @@ export default {
       } else if (this.crmType == 'business') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'contract') {
-        return this.forSelectionHandleItems(handleInfos, ['delete'])
+        return this.forSelectionHandleItems(handleInfos, ['delete', 'cancel'])
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'product') {
@@ -528,7 +547,14 @@ export default {
       } else if (type == 'deal_status') {
         // 客户状态修改
         return this.crm[this.crmType].dealStatus
+      } else if (type == 'cancel') {
+        // 合同作废
+        if (this.crm[this.crmType].discard && this.detail.checkStatus === 1) {
+          return true
+        }
+        return false
       }
+
 
       return true
     }

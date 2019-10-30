@@ -61,6 +61,8 @@ export default {
         return '#d9d9d9'
       } else if (status == 6) {
         return '#2362FB'
+      } else if (status == 8) {
+        return '#bfbfbf'
       }
     },
 
@@ -83,6 +85,8 @@ export default {
         return '未提交'
       } else if (status == 6) {
         return '创建'
+      } else if (status == 8) {
+        return '已作废'
       }
       return ''
     },
@@ -105,6 +109,8 @@ export default {
         return 'wk wk-time'
       } else if (status == 6) {
         return 'wk wk-l-plus'
+      } else if (status == 8) {
+        return 'wk wk-invalid'
       }
       return ''
     }
