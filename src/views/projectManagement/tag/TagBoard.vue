@@ -17,7 +17,7 @@
 
       <draggable
         v-model="list"
-        :options="{ handle: '.drag-handle', forceFallback: false, disabled: searchInput.length > 0 }"
+        :options="{ forceFallback: false, disabled: searchInput.length > 0 }"
         @end="moveItem">
         <project-cell
           v-for="(item, index) in showList"
