@@ -94,7 +94,7 @@ import {
   userErrorExcelDownAPI
 } from '@/api/systemManagement/EmployeeDepManagement'
 
-// import { getExcelLines } from '@/utils'
+import { downloadExcelWithResData } from '@/utils'
 
 export default {
   // 批量导入员工股
@@ -223,22 +223,7 @@ export default {
         token
       })
         .then(res => {
-          var blob = new Blob([res.data], {
-            type: 'application/vnd.ms-excel;charset=utf-8'
-          })
-          var downloadElement = document.createElement('a')
-          var href = window.URL.createObjectURL(blob) // 创建下载的链接
-          downloadElement.href = href
-          let fileName = res.headers['content-disposition'].split('filename=')[1]
-          fileName = fileName.replace(/\"/g, '')
-          downloadElement.download =
-            decodeURI(
-              fileName
-            ) || '' // 下载后文件名
-          document.body.appendChild(downloadElement)
-          downloadElement.click() // 点击下载
-          document.body.removeChild(downloadElement) // 下载完成移除元素
-          window.URL.revokeObjectURL(href) // 释放掉blob对象
+          downloadExcelWithResData(res)
           this.loading = false
         })
         .catch(() => {

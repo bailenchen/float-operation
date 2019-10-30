@@ -89,7 +89,7 @@ import SlideView from '@/components/SlideView'
 import NewDialog from '@/views/OAManagement/notice/newDialog'
 import MessageCell from './MessageCell'
 
-import { getMaxIndex } from '@/utils/index'
+import { getMaxIndex, downloadExcelWithResData } from '@/utils/index'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -287,22 +287,7 @@ export default {
     downloadError(messageId) {
       crmDownImportErrorAPI({ messageId })
         .then(res => {
-          var blob = new Blob([res.data], {
-            type: 'application/vnd.ms-excel;charset=utf-8'
-          })
-          var downloadElement = document.createElement('a')
-          var href = window.URL.createObjectURL(blob) // 创建下载的链接
-          downloadElement.href = href
-          let fileName = res.headers['content-disposition'].split('filename=')[1]
-          fileName = fileName.replace(/\"/g, '')
-          downloadElement.download =
-            decodeURI(
-              fileName
-            ) || '' // 下载后文件名
-          document.body.appendChild(downloadElement)
-          downloadElement.click() // 点击下载
-          document.body.removeChild(downloadElement) // 下载完成移除元素
-          window.URL.revokeObjectURL(href) // 释放掉blob对象
+          downloadExcelWithResData(res)
         })
         .catch(() => {
         })

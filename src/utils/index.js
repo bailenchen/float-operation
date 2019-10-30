@@ -501,3 +501,28 @@ export function floatAdd(num1, num2) {
   const m = Math.pow(10, Math.max(r1, r2))
   return Math.round(num1 * m + num2 * m) / m
 }
+
+/**
+ * 下载excel
+ */
+export function downloadExcelWithResData(res) {
+  var blob = new Blob([res.data], {
+    type: 'application/vnd.ms-excel;charset=utf-8'
+  })
+  var downloadElement = document.createElement('a')
+  var href = window.URL.createObjectURL(blob) // 创建下载的链接
+  downloadElement.href = href
+  let fileName = res.headers['content-disposition'].split('filename=')[1]
+  if (!fileName) {
+    fileName = res.headers['content-disposition'].split('UTF-8\'\'')[1]
+  }
+  fileName = fileName ? fileName.replace(/\"/g, '') : 'file.xlsx'
+  downloadElement.download =
+    decodeURI(
+      fileName
+    ) || '' // 下载后文件名
+  document.body.appendChild(downloadElement)
+  downloadElement.click() // 点击下载
+  document.body.removeChild(downloadElement) // 下载完成移除元素
+  window.URL.revokeObjectURL(href) // 释放掉blob对象
+}
