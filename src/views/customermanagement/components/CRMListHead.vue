@@ -21,6 +21,10 @@
         icon="el-icon-plus"
         type="primary"
         @click="createClick">{{ mainTitle }}</el-button>
+      <el-button
+        v-if="showDupCheck"
+        class="dup-check-btn"
+        @click="dupCheckShow = true">查重</el-button>
       <el-dropdown
         v-if="moreTypes.length > 0"
         trigger="click"
@@ -45,19 +49,23 @@
       :show="showCRMImport"
       :crm-type="crmType"
       @close="showCRMImport=false"/>
+    <!-- 查重 -->
+    <duplicate-check :visible.sync="dupCheckShow" />
   </div>
 </template>
 
 <script type="text/javascript">
 import { mapGetters } from 'vuex'
 import CRMCreateView from './CRMCreateView'
+import DuplicateCheck from './duplicate-check'
 import CRMImport from './CRMImport'
 
 export default {
   name: 'CRMListHead', // 客户管理下 重要提醒 回款计划提醒
   components: {
     CRMCreateView,
-    CRMImport
+    CRMImport,
+    DuplicateCheck
   },
   props: {
     title: {
@@ -94,7 +102,9 @@ export default {
       createCRMType: '',
       isCreate: false, // 是创建
       // 导入
-      showCRMImport: false
+      showCRMImport: false,
+      // 查重
+      dupCheckShow: false
     }
   },
   computed: {
@@ -108,6 +118,10 @@ export default {
 
     titleIcon() {
       return require(`@/assets/img/crm/${this.crmType}.png`)
+    },
+
+    showDupCheck() {
+      return ['leads', 'customer', 'contacts'].includes(this.crmType)
     }
   },
   mounted() {
@@ -212,7 +226,9 @@ export default {
     margin: 15px 20px 0 0;
     position: relative;
 
+    .dup-check-btn,
     .xr-btn--orange {
+      margin-left: 0;
       margin-right: 10px;
     }
 

@@ -158,7 +158,11 @@
                         node-key="menuId"
                         style="height: 0;"
                         empty-text=""
-                        default-expand-all/>
+                        default-expand-all>
+                        <span
+                          slot-scope="{ node }"
+                          :class="{ 'node-label': node.level == 1 || node.level == 2} ">{{ node.label }}</span>
+                      </el-tree>
                     </div>
                   </div>
                   <div
@@ -1022,6 +1026,11 @@ export default {
   font-size: 13px !important;
   height: 40px !important;
   line-height: 40px !important;
+}
+
+.node-label {
+  font-weight: bold;
+  font-size: 15px;
 }
 
 @import '../styles/table.scss';

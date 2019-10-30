@@ -126,9 +126,8 @@
           </div>
         </flexbox>
       </div>
-
-      <slot />
     </div>
+    <slot />
   </div>
 </template>
 

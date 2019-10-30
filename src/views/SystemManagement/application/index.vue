@@ -125,7 +125,7 @@ export default {
               if (item.type == 1) {
                 item.canEdit = item.module != 'crm'
               } else {
-                item.canEdit = true
+                item.canEdit = false
               }
               return element.type == item.type
             })

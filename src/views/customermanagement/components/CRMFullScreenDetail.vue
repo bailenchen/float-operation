@@ -8,6 +8,7 @@
       :crm-type="crmType"
       :id="id"
       class="d-view"
+      @handle="detailHandle"
       @hide-view="hiddenView"/>
   </div>
 </template>
@@ -128,6 +129,13 @@ export default {
       if (this.$el == e.target) {
         this.showDetail = false
       }
+    },
+
+    /**
+     * 详情操作
+     */
+    detailHandle(data) {
+      this.$emit('handle', data)
     }
   }
 }

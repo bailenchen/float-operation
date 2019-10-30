@@ -22,7 +22,9 @@
           :id="id"
           :crm-type="crmType"
           @handle="detailHeadHandle"
-          @close="hideView"/>
+          @close="hideView">
+          <p slot="name" class="contract-name">{{ detailData.name }}<span class="is-invalid">（已作废）</span></p>
+        </c-r-m-detail-head>
 
         <examine-info
           :id="id"
@@ -272,4 +274,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/crmdetail.scss';
+.contract-name {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  .is-invalid {
+    color: #ccc;
+  }
+}
 </style>

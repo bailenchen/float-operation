@@ -170,3 +170,15 @@ export function crmQueryReceivablesPlansByContractId(data) {
     data: data
   })
 }
+
+/**
+ * 作废
+ * @param {*} data
+ */
+export function crmContractCancelAPI(data) {
+  return request({
+    url: 'CrmContract/contractDiscard',
+    method: 'post',
+    data: data
+  })
+}
