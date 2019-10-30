@@ -16,6 +16,7 @@
       :placeholder="placeholder"
       v-model="search"
       class="xr-header__search"
+      @input="inputChange"
       @keyup.enter.native="searchClick">
       <el-button
         slot="append"
@@ -49,7 +50,9 @@ export default {
     placeholder: {
       type: String,
       default: '请输入内容'
-    }
+    },
+
+    content: [String, Number]
   },
   data() {
     return {
@@ -63,6 +66,10 @@ export default {
 
   beforeDestroy() {},
   methods: {
+    inputChange() {
+      this.$emit('update:content', this.search)
+    },
+
     searchClick() {
       this.$emit('search', this.search)
     }

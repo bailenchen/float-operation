@@ -1,6 +1,7 @@
 <template>
   <div class="employee-dep-management">
     <xr-header
+      :content.sync="searchInput"
       show-search
       icon-class="wk wk-s-seas"
       icon-color="#26D4DA"
