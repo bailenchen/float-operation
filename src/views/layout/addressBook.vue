@@ -6,9 +6,16 @@
         @nav-items-click="navClick"/>
     </el-header>
     <el-container>
-      <new-sidebar
-        :items="addressBookRouters"
-        class="aside-container" />
+      <el-aside
+        width="auto"
+        class="aside-container">
+
+        <new-sidebar
+          :items="addressBookRouters"
+          class="aside-container" />
+
+      </el-aside>
+
       <el-main
         id="addressBook-main-container"
         style="padding: 0;">
