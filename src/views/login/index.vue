@@ -91,8 +91,8 @@ export default {
       activeCom: 'LoginByPwd',
       companyList: [],
       titleMap: {
-        LoginByPwd: '用户登录',
-        LoginByCode: '用户登录',
+        LoginByPwd: '使用数字账户登录',
+        LoginByCode: '使用数字账户登录',
         CreateNewCompany: '创建新企业',
         MultipleCompany: '选择企业',
         ForgetPwd: '忘记密码'

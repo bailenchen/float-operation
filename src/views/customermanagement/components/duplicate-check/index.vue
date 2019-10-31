@@ -7,52 +7,57 @@
     custom-class="no-padding-dialog"
     width="800px">
     <div
+      v-loading="loading"
       :class="{ 'show-table': showTable }"
       class="duplicate-check">
-      <el-input
-        v-model="searchContent"
-        class="search-input"
-        @input="searchInput"
-        @keyup.enter.native="searchInput">
-        <el-select
-          slot="prepend"
-          v-model="typeSelect"
-          placeholder="请选择">
-          <el-option
-            label="按客户名称"
-            value="1" />
-          <el-option
-            label="按手机号"
-            value="2" />
-        </el-select>
-        <el-button
-          slot="append"
-          type="primary"
-          icon="wk wk-search"
-          @click.native="searchInput">查重</el-button>
-      </el-input>
+      <div>
+        <el-input
+          v-model="searchContent"
+          class="search-input"
+          @keyup.enter.native="getList">
+          <el-select
+            slot="prepend"
+            v-model="typeSelect"
+            placeholder="请选择">
+            <el-option
+              label="按客户名称"
+              value="name" />
+            <el-option
+              label="按手机号"
+              value="phone" />
+          </el-select>
+          <el-button
+            slot="append"
+            type="primary"
+            icon="wk wk-search"
+            @click.native="getList">查重</el-button>
+        </el-input>
+      </div>
 
       <el-table
         v-if="showTable"
         :data="tableData"
+        :cell-class-name="cellClassName"
         class="duplicate-check__content"
         border
         height="380"
-        style="width: 100%">
+        style="width: 100%"
+        @row-click="handleRowClick">
         <el-table-column
           v-for="(item, index) in fieldList"
           :key="index"
           :prop="item.prop"
           :label="item.label"
+          :width="item.width"
           show-overflow-tooltip />
         <el-table-column
-          label="操作"
-          width="80">
+          label="操作">
           <template slot-scope="scope">
             <el-button
+              v-if="scope.row.type == poolType"
               type="text"
               size="small"
-              @click="handleClick">领取</el-button>
+              @click="handleClick(scope.row)">领取</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -60,14 +65,31 @@
       <div
         v-if="showTable"
         class="duplicate-check__footer">注：查重结果最多显示10条，如不完整，请完善查重条件</div>
+
+
+      <c-r-m-full-screen-detail
+        :visible.sync="showFullDetail"
+        :crm-type="relationCrmType"
+        :id="relationID"
+        @handle="getList"/>
     </div>
   </el-dialog>
 </template>
 
 <script>
+import {
+  crmCustomerDataCheckAPI,
+  crmCustomerReceive
+} from '@/api/customermanagement/customer'
+
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
+
 export default {
   name: 'DuplicateCheck',
-  components: {},
+  components: {
+    CRMFullScreenDetail: () =>
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
+  },
   props: {
     visible: {
       type: Boolean,
@@ -76,33 +98,82 @@ export default {
   },
   data() {
     return {
-      typeSelect: '1',
+      loading: false,
+      typeSelect: 'name',
       searchContent: '',
       tableData: [],
 
-      // 客户名称、创建时间、负责人、最后跟进时间、操作
-      fieldList: [{
-        prop: 'name',
-        label: '客户名称',
-        width: 150
-      }, {
-        prop: 'createTime',
-        label: '创建时间',
-        width: 150
-      }, {
-        prop: 'ownerUserName',
-        label: '负责人',
-        width: 150
-      }, {
-        prop: 'lastTime',
-        label: '最后跟进时间',
-        width: 150
-      }]
+      showFullDetail: false, // 查看相关客户管理详情
+      relationID: '', // 相关ID参数
+      relationCrmType: '' // 相关类型
     }
   },
   computed: {
+    poolType() {
+      return crmTypeModel.pool
+    },
+
     showTable() {
       return this.tableData && this.tableData.length > 0
+    },
+
+    isCustomerFilter() {
+      return this.typeSelect == 'name'
+    },
+
+    // 客户名称、创建时间、负责人、最后跟进时间、操作
+    fieldList() {
+      if (this.isCustomerFilter) {
+        return [{
+          prop: 'name',
+          label: '客户名称',
+          width: 200
+        }, {
+          prop: 'createTime',
+          label: '创建时间',
+          width: 160
+        }, {
+          prop: 'ownerUserName',
+          label: '负责人',
+          width: 100
+        }, {
+          prop: 'lastTime',
+          label: '最后跟进时间',
+          width: 160
+        }, {
+          prop: 'module',
+          label: '模块',
+          width: 80
+        }]
+      }
+
+      return [{
+        prop: 'mobile',
+        label: '手机号',
+        width: 160
+      }, {
+        prop: 'contactsName',
+        label: '联系人',
+        width: 160
+      }, {
+        prop: 'name',
+        label: '客户名称',
+        width: 200
+      }, {
+        prop: 'ownerUserName',
+        label: '负责人',
+        width: 100
+      }, {
+        prop: 'module',
+        label: '模块',
+        width: 80
+      }]
+    }
+  },
+  watch: {
+    typeSelect() {
+      this.searchContent = ''
+      this.tableData = []
     }
   },
   mounted() {},
@@ -111,26 +182,88 @@ export default {
       this.$emit('update:visible', false)
     },
 
-    searchInput() {
-      this.tableData =
-        this.tableData.length > 0
-          ? []
-          : [
-            {
-              createTime: '2016-05-02',
-              name: '王小虎',
-              ownerUserName: '上海市普陀区金沙江路 1518 弄'
-            },
-            {
-              date: '2016-05-04',
-              createTime: '王小虎',
-              ownerUserName: '上海市普陀区金沙江路 1517 弄'
+    getList() {
+      if (!this.searchContent) {
+        return
+      }
+      const params = {}
+      params[this.typeSelect] = this.searchContent
+      this.loading = true
+      crmCustomerDataCheckAPI(params).then(res => {
+        this.loading = false
+        const list = res.data || []
+        this.tableData = list.map(item => {
+          item.module = crmTypeModel.convertTypeToName(item.type)
+          // 是手机号
+          if (!this.isCustomerFilter) {
+            item.mobile = this.searchContent
+            if (item.type == crmTypeModel.contacts) {
+              item.contactsName = item.name
+              item.contactsId = item.id
+
+              item.name = item.customerName
+              item.id = item.customerId
+              // name 字段对应的点击类型 以type为准，所以将type校准为客户
+              // 联系人详情 已 contactsId 为准
+              item.type = crmTypeModel.customer
             }
-          ]
+          }
+
+          return item
+        })
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
-    handleClick() {
+    /**
+     * 列表点击
+     */
+    handleRowClick(row, column, event) {
+      if (column.property == 'name' && row.id) {
+        this.relationID = row.id
+        const key = crmTypeModel.convertTypeToKey(row.type)
+        this.relationCrmType = key == 'pool' ? 'customer' : key
+        this.showFullDetail = true
+      } else if (column.property == 'contactsName' && row.contactsId) {
+        this.relationID = row.contactsId
+        this.relationCrmType = 'contacts'
+        this.showFullDetail = true
+      }
+    },
 
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'name' || column.property === 'contactsName') {
+        return 'can-visit--underline'
+      } else {
+        return ''
+      }
+    },
+
+    handleClick(data) {
+      this.$confirm('确定要领取该客户吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          crmCustomerReceive({
+            ids: data.id
+          })
+            .then(res => {
+              this.getList()
+            })
+            .catch(() => {})
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
     }
   }
 }

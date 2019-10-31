@@ -372,3 +372,16 @@ export function crmCustomerSetContactsAPI(data) {
     data: data
   })
 }
+
+/**
+ * 数据查重
+ * @param {*} data
+ *
+ */
+export function crmCustomerDataCheckAPI(data) {
+  return request({
+    url: 'CrmCustomer/dataCheck',
+    method: 'post',
+    data: data
+  })
+}

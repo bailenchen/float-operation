@@ -6,7 +6,7 @@
           :src="crmIcon"
           class="t-section-name__hd">
         <div class="t-section-name__bd">
-          <span>{{ typeName }}</span>
+          <div class="type-name">{{ typeName }}</div>
           <p v-if="!$slots.name">{{ name }}</p>
           <slot name="name" />
         </div>
@@ -577,12 +577,13 @@ export default {
       display: block;
       width: 40px;
       height: 40px;
-      margin-right: 5px;
+      margin-right: 15px;
     }
     &__bd {
-      span {
+      .type-name {
         color: #999;
         font-size: 12px;
+        margin-bottom: 5px;
       }
 
       p {
