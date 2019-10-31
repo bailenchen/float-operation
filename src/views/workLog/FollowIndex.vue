@@ -288,7 +288,7 @@ export default {
 .log-cell {
   border: 1px solid $xr-border-line-color;
   border-radius: $xr-border-radius-base;
-  padding-bottom: 50px;
+  padding-bottom: 50px !important;
   margin-bottom: 15px;
   position: relative;
 }
