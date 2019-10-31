@@ -64,13 +64,17 @@ export function resetRouter() {
 
 export default router
 
+// export const asyncRouterMap = [
+//   // workbenchRouter,
+//   customerRouter,
+//   biRouter,
+//   managerRouter,
+//   projectRouter,
+//   workLogRouter,
+//   taskExamineRouter,
+//   addressBookRouter
+// ]
+
 export const asyncRouterMap = [
-  // workbenchRouter,
-  customerRouter,
-  biRouter,
-  managerRouter,
-  projectRouter,
-  workLogRouter,
-  taskExamineRouter,
-  addressBookRouter
+  { type: 'addressBook', router: addressBookRouter }
 ]

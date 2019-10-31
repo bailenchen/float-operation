@@ -26,7 +26,7 @@
 
 <script>
 import path from 'path'
-import { isExternal } from './validate'
+import { isExternal } from '@/utils/validate'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
@@ -64,6 +64,7 @@ export default {
         } else {
           // Temp set(will be used if only has one showing child)
           this.onlyOneChild = item
+          console.log('this.onlyOneChild1---', this.onlyOneChild)
           return true
         }
       })
@@ -76,6 +77,7 @@ export default {
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
         this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
+        console.log('this.onlyOneChild2---', this.onlyOneChild)
         return true
       }
 
@@ -88,6 +90,7 @@ export default {
       if (isExternal(this.basePath)) {
         return this.basePath
       }
+      console.log('path.resolve(this.basePath, routePath)---', path.resolve(this.basePath, routePath), '---', routePath)
       return path.resolve(this.basePath, routePath)
     }
   }

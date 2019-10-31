@@ -16,23 +16,14 @@ function checkAuth(router, authInfo) {
     if (!metaInfo.requiresAuth) {
       return true
     } else {
-      if (metaInfo.index == 0) {
-        return !!authInfo[metaInfo.type]
-      } else if (metaInfo.index == 1) {
-        if (authInfo[metaInfo.type]) {
-          return !!authInfo[metaInfo.type][metaInfo.subType]
-        }
-        return false
-      } else {
-        var typeAuth = authInfo[metaInfo.type]
-        for (let index = 0; index < metaInfo.subType.length; index++) {
-          const field = metaInfo.subType[index]
-          typeAuth = typeAuth[field]
-          if (typeAuth && metaInfo.subType.length - 1 == index) {
-            return true
-          } else if (!typeAuth) {
-            return false
-          }
+      authInfo = { ...authInfo }
+      for (let index = 0; index < metaInfo.permissions.length; index++) {
+        const key = metaInfo.permissions[index]
+        authInfo = authInfo[key]
+        if (!authInfo) {
+          return false
+        } else if (metaInfo.permissions.length - 1 === index) {
+          return true
         }
       }
     }
@@ -141,38 +132,17 @@ function getGroupData(authInfo, result) {
 const permission = {
   state: {
     addRouters: [],
-    crmRouters: {
-      name: 'crm',
-      children: []
-    },
-    biRouters: {
-      name: 'bi',
-      children: []
-    },
-    manageRouters: {
-      name: 'manager',
-      children: []
-    },
-    oaRouters: {
-      name: 'oa',
-      children: []
-    }
+    crmRouters: [],
+    biRouters: [],
+    manageRouters: [],
+    oaRouters: [],
+
+    addressBookRouters: []
   },
   mutations: {
-    SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers
-      for (let index = 0; index < routers.length; index++) {
-        const element = routers[index]
-        if (element.name == 'oa') {
-          state.oaRouters = element
-        } else if (element.name == 'crm') {
-          state.crmRouters = element
-        } else if (element.name == 'bi') {
-          state.biRouters = element
-        } else if (element.name == 'manager') {
-          state.manageRouters = element
-        }
-      }
+    SET_ROUTERS: (state, data) => {
+      state.addRouters = data.addRouter
+      state.addressBookRouters = data.router.addressBook || []
     },
 
     /**
@@ -194,11 +164,36 @@ const permission = {
       state
     }, data) {
       return new Promise(resolve => {
-        const accessedRouters = filterAsyncRouter(asyncRouterMap, data)
-        perfectRouter(accessedRouters, data, (routers) => {
-          commit('SET_ROUTERS', routers)
-          resolve()
-        })
+        const routerObj = {}
+        let addRouter = []
+        for (let index = 0; index < asyncRouterMap.length; index++) {
+          const accessedRouters = filterAsyncRouter(asyncRouterMap[index].router, data)
+          let redirect = ''
+          for (let index = 0; index < accessedRouters.length; index++) {
+            const element = accessedRouters[index]
+            if (element.children && element.children.length > 0) {
+              element.redirect = element.path + '/' + element.children[0].path
+              if (element.showMenu && element.menuChildren.length > 0) {
+                element.redirect = element.path + '/' + element.menuChildren[0].path
+              }
+            }
+            // 获取跳转
+            if (element.redirect && !redirect) {
+              redirect = element.redirect
+            }
+          }
+          routerObj[asyncRouterMap[index].type] = accessedRouters
+          addRouter = addRouter.concat(accessedRouters)
+        }
+        commit('SET_ROUTERS', { router: routerObj, addRouter })
+        resolve()
+
+        // 之前的逻辑
+        // const accessedRouters = filterAsyncRouter(asyncRouterMap, data)
+        // perfectRouter(accessedRouters, data, (routers) => {
+        //   commit('SET_ROUTERS', routers)
+        //   resolve()
+        // })
       })
     }
   }

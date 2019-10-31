@@ -11,7 +11,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in items" :key="route.path" :item="route" :base-path="basePath || route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -20,18 +20,24 @@
 <script>
 import { mapGetters } from 'vuex'
 import SidebarItem from './SidebarItem'
-import variables from '@/styles/variables.scss'
+import variables from './variables.scss'
 
 export default {
   components: { SidebarItem },
+  props: {
+    basePath: String,
+    items: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'activeIndex',
       'collapse'
     ]),
-    routes() {
-      return this.$router.options.routes
-    },
     activeMenu() {
       const route = this.$route
       const { meta, path } = route

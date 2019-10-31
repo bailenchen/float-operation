@@ -6,30 +6,9 @@
         @nav-items-click="navClick"/>
     </el-header>
     <el-container>
-      <el-aside
-        width="auto"
-        class="aside-container">
-        <sidebar
-          :items="sidebarItems"
-          create-button-title=""
-          main-router="addressBook">
-          <div
-            slot="add"
-            class="quick-add">
-            <div class="quick-add-content">
-              <p
-                v-for="(item, index) in list"
-                :key="index"
-                @click="addSkip(item)">
-                <i
-                  :class="'wk-' + item.icon"
-                  class="wk" />
-                <span>{{ item.label }}</span>
-              </p>
-            </div>
-          </div>
-        </sidebar>
-      </el-aside>
+      <new-sidebar
+        :items="addressBookRouters"
+        class="aside-container" />
       <el-main
         id="addressBook-main-container"
         style="padding: 0;">
@@ -40,15 +19,16 @@
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain } from './components'
-import AddressBookRouter from '@/router/modules/addressBook'
+import { Navbar, AppMain } from './components'
+import NewSidebar from './components/NewSidebar'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Layout',
 
   components: {
     Navbar,
-    Sidebar,
+    NewSidebar,
     AppMain
   },
 
@@ -70,9 +50,7 @@ export default {
   },
 
   computed: {
-    sidebarItems() {
-      return AddressBookRouter.children
-    }
+    ...mapGetters(['addressBookRouters'])
   },
 
   methods: {
