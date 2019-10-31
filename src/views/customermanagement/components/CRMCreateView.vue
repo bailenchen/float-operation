@@ -352,7 +352,18 @@ export default {
                 element['relation'] = {}
                 element.value = []
               }
-              break
+            } else if (element.key === 'contacts_id') {
+              // 如果是联系人 改变联系人样式和传入客户ID
+              if (item.value.length > 0) {
+                element.disabled = false
+                var customerItem = item.value[0]
+                customerItem['moduleType'] = 'customer'
+                element['relation'] = customerItem
+              } else {
+                element.disabled = true
+                element['relation'] = {}
+                element.value = []
+              }
             }
           }
         } else if (item.data.formType == 'business') {
@@ -624,10 +635,10 @@ export default {
             contractItem['moduleType'] = 'contract'
             params['relation'] = contractItem
           }
-          // 商机合同 需要客户信息
-        } else if (item.formType == 'business' || item.formType == 'contract') {
+          // 商机合同联系人 需要客户信息
+        } else if (item.formType == 'business' || item.formType == 'contract' || item.formType == 'contacts') {
           const customerItem = this.getItemRelatveInfo(item, list, 'customer')
-          if (item.formType == 'business' && customerItem) {
+          if ((item.formType == 'business' || item.formType == 'contacts') && customerItem) {
             customerItem['moduleType'] = 'customer'
             params['relation'] = customerItem
           } else if (item.formType == 'contract' && customerItem) {
@@ -701,7 +712,7 @@ export default {
         return false
       } else if (this.action.type != 'update') {
         // 新建
-        if (this.crmType === 'contract' && item.formType === 'business') {
+        if (this.crmType === 'contract' && (item.formType === 'business' || item.formType === 'contacts')) {
           return true
           // 回款下 新建 合同 和 回款计划 默认不能操作
         } else if (this.crmType === 'receivables') {
