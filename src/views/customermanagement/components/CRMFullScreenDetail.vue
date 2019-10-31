@@ -135,6 +135,9 @@ export default {
      * 详情操作
      */
     detailHandle(data) {
+      if (data.type === 'alloc' || data.type === 'get' || data.type === 'transfer' || data.type === 'transform' || data.type === 'delete' || data.type === 'put_seas') {
+        this.showDetail = false
+      }
       this.$emit('handle', data)
     }
   }
