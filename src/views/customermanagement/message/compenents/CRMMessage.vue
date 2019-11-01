@@ -494,14 +494,7 @@ export default {
     margin-right: 10px;
   }
   .wk-help {
-    cursor: pointer;
     margin-left: 5px;
-    font-size: 12px;
-    color: #dcdfe6;
-  }
-
-  .wk-help:hover {
-    color: $xr-color-primary;
   }
 }
 .option-bar {

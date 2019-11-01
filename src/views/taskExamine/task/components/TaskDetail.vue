@@ -166,6 +166,7 @@
               <el-date-picker
                 v-model="taskData.startTime"
                 :clearable="false"
+                :picker-options="startTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
                 @change="timeChange('startTime')" />
@@ -189,6 +190,7 @@
               <el-date-picker
                 v-model="taskData.stopTime"
                 :clearable="false"
+                :picker-options="stopTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
                 @change="timeChange('stopTime')" />
@@ -561,6 +563,7 @@ import FileCell from '@/views/OAManagement/components/fileCell'
 import { mapGetters } from 'vuex'
 import CommentList from '@/views/workLog/components/commentList'
 import ReplyComment from '@/components/ReplyComment'
+import moment from 'moment'
 
 export default {
   name: 'TaskDetail',
@@ -602,6 +605,26 @@ export default {
         { id: 1, label: '低', color: '#8bb5f0' },
         { id: 0, label: '无', color: '#ccc' }
       ],
+
+      /**
+     * 限制时间选择`
+     */
+      startTimeOptions: {
+        disabledDate: (time) => {
+          if (!this.taskData || !this.taskData.stopTime) {
+            return false
+          }
+          return moment(time).isAfter(this.taskData.stopTime)
+        }
+      },
+      stopTimeOptions: {
+        disabledDate: (time) => {
+          if (!this.taskData || !this.taskData.startTime) {
+            return false
+          }
+          return moment(time).isBefore(this.taskData.startTime)
+        }
+      },
       // 是否显示子任务
       addSubtasks: true,
       // 任务名称和编辑切换
@@ -1735,6 +1758,7 @@ $btn-b-hover-color: #eff4ff;
     color: #999;
     font-size: 16px;
     opacity: 0;
+    z-index: 5;
   }
 
   &__close:hover {

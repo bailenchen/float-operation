@@ -558,6 +558,9 @@ export default {
     padding: 10px;
     cursor: pointer;
   }
+  .close:hover {
+    color: $xr-color-primary;
+  }
 }
 .create-name {
   font-size: 12px;

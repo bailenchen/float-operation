@@ -139,13 +139,27 @@
     <div class="item-check-section">
       <el-checkbox
         v-model="field.isNull"
-        :disabled="disabled">设为必填</el-checkbox>
+        :disabled="disabled"
+        @change="inNullChange">设为必填</el-checkbox>
     </div>
     <div class="item-check-section">
       <el-checkbox
         v-model="field.isUnique"
         :disabled="disabled">设为唯一</el-checkbox>
     </div>
+    <!-- <div
+      v-if="field.fieldType == 1"
+      class="item-check-section">
+      <el-checkbox
+        v-model="field.isUnique"
+        :disabled="hiddenDisabled">隐藏字段</el-checkbox>
+      <el-tooltip
+        :content="hiddenTips"
+        effect="dark"
+        placement="top">
+        <i class="wk wk-help"/>>
+      </el-tooltip>
+    </div> -->
   </div>
 </template>
 <script type="text/javascript">
@@ -240,6 +254,16 @@ export default {
         return true
       }
       return false
+    },
+    /**
+     * 控制是否可隐藏系统字段
+     */
+    hiddenDisabled() {
+      return this.field.fieldType != 1 || this.field.isNull == 1
+    },
+
+    hiddenTips() {
+      return this.field.isNull == 1 ? '该字段为必填字段不可设置为隐藏' : '该字段为非必填字段，设置为隐藏字段后新建时将不显示该字段'
     }
   },
   watch: {
@@ -322,6 +346,12 @@ export default {
           })
         }
       }
+    },
+    /**
+     * 必填勾选改变
+     */
+    inNullChange(val) {
+      // console.log('inNullChange---', val)
     }
   }
 }

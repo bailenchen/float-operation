@@ -23,7 +23,7 @@
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView">
-          <p slot="name" class="contract-name">{{ detailData.name }}<span class="is-invalid">（已作废）</span></p>
+          <p slot="name" class="contract-name">{{ detailData.name }}<span v-if="detailData.checkStatus == 8" class="is-invalid">（已作废）</span></p>
         </c-r-m-detail-head>
 
         <examine-info
@@ -265,7 +265,11 @@ export default {
     /**
      * 审核操作
      */
-    examineHandle() {
+    examineHandle(data) {
+      // 1 审核通过 2 审核拒绝 4 已撤回
+      if (data.type == 1) {
+        this.getDetial()
+      }
       this.$emit('handle', { type: 'examine' })
     }
   }

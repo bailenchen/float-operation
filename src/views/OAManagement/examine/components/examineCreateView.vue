@@ -975,6 +975,9 @@ export default {
     padding: 10px;
     cursor: pointer;
   }
+  .close:hover {
+    color: $xr-color-primary;
+  }
 }
 
 .crm-create-body {

@@ -15,7 +15,13 @@
       <span>{{ rightContent }}</span>
     </div>
 
-    <div class="message-cell__ft"><i class="el-icon-check" @click="messageReadClick" />{{ data.createTime | formatTime }} </div>
+    <div class="message-cell__ft">
+      <div>{{ data.createTime | formatTime }} </div>
+      <div class="handle">
+        <span class="check" @click="messageReadClick">标记已读</span>
+        <span class="delete" @click="messageDeleteClick">删除</span>
+      </div>
+    </div>
   </flexbox>
 </template>
 
@@ -238,6 +244,13 @@ export default {
      */
     messageReadClick() {
       this.$emit('read', this.data.messageId, this.dataIndex)
+    },
+
+    /**
+     * 消息删除
+     */
+    messageDeleteClick() {
+      this.$emit('delete', this.data.messageId, this.dataIndex)
     }
   }
 }
@@ -280,8 +293,28 @@ export default {
     text-align: right;
     position: relative;
 
-    .el-icon-check {
-      visibility: hidden;
+    .handle {
+      position: absolute;
+      top: 20px;
+      right: 0;
+      font-size: 12px;
+      color: #999;
+      .check,
+      .delete {
+        visibility: hidden;
+        cursor: pointer;
+      }
+
+      .check + .delete {
+        margin-left: 5px;
+      }
+
+      .check:hover {
+        color: $xr-color-primary;
+      }
+      .delete:hover {
+        color: #F56C6C;
+      }
     }
   }
 
@@ -298,25 +331,18 @@ export default {
 
   &:hover {
     background-color: #f7f8fa;
+    .delete {
+      visibility: visible;
+    }
   }
 
   &.is-unread:hover {
-    .el-icon-check {
+    .check {
       visibility: visible;
     }
   }
 }
 
-// 标记
-.el-icon-check {
-  font-size: 20px;
-  position: absolute;
-  top: 50%;
-  left: -20px;
-  margin-top: -10px;
-  color: $xr-color-primary;
-  cursor: pointer;
-}
 
 .click-content {
   color: $xr-color-primary;

@@ -50,6 +50,8 @@ export default {
     detailHeadHandle(data) {
       if (data.type === 'edit') {
         this.isCreate = true
+      } else if (data.type === 'cancel') {
+        this.getDetial()
       } else if (data.type === 'delete') {
         this.hideView()
       }
