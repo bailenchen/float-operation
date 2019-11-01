@@ -121,7 +121,7 @@ export default {
     },
 
     showDupCheck() {
-      return ['customer', 'contacts'].includes(this.crmType) && !this.isSeas
+      return ['leads', 'customer', 'contacts'].includes(this.crmType) && !this.isSeas
     }
   },
   mounted() {

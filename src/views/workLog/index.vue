@@ -290,7 +290,7 @@ export default {
       if (reg.test(this.userInfo.realname) || !this.userInfo.sex) {
         return this.userInfo.realname
       }
-      return this.userInfo.realname.slice(0, 1) + this.userInfo.sex === 1 ? '先生' : '女士'
+      return this.userInfo.realname.slice(0, 1) + (this.userInfo.sex === 1 ? '先生' : '女士')
     }
   },
   watch: {
