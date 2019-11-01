@@ -52,7 +52,7 @@
             <el-menu-item
               :index="getFullPath(item.path)"
               :class="{ 'is-select': activeIndex == getFullPath(item.path)}">
-              <div class="menu-item-content">
+              <div :class="{ 'is-close': collapse }" class="menu-item-content">
                 <i
                   :class="['wk', `wk-${item.meta.icon}`]"
                   :style="{ 'color': activeIndex == getFullPath(item.path) ? activeTextColor : textColor, fontSize: item.meta.fontSize || '16px'}"/>
@@ -85,7 +85,7 @@
             <el-menu-item
               :index="getFullPath(subitem.path)"
               :class="{ 'is-select': activeIndex == getFullPath(subitem.path)}">
-              <div class="menu-item-content">
+              <div :class="{ 'is-close': collapse }" class="menu-item-content">
                 {{ subitem.meta.title }}
               </div>
             </el-menu-item>
@@ -303,6 +303,16 @@ export default {
   padding-left: 10px;
   position: relative;
   cursor: pointer;
+}
+
+.menu-item-content.is-close {
+  .el-badge {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
 }
 
 .el-submenu.is-active {
