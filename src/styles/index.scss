@@ -286,3 +286,14 @@ div[lazy=loading] {
     position: absolute;
   }
 }
+
+// 帮助提示符
+.wk-help {
+  cursor: pointer;
+  font-size: 13px;
+  color: #cbcbcb;
+}
+
+.wk-help:hover {
+  color: $xr-color-primary;
+}
