@@ -110,6 +110,19 @@ const systemEmployeeRouter = {
       type: 'manage',
       subType: ['users', 'read']
     }
+  },
+  {
+    name: 'applet',
+    path: 'applet', // 员工与部门管理
+    component: () => import('@/views/SystemManagement/SystemApplet'),
+    meta: {
+      requiresAuth: true,
+      title: '小程序管理',
+      icon: 'customer',
+      index: 2,
+      type: 'manage',
+      subType: ['users', 'read']
+    }
   }
   ]
 }

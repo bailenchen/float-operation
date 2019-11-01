@@ -1,6 +1,7 @@
 <template>
   <div class="table-head-container">
     <flexbox
+      v-if="crmType !== 'applet'"
       v-show="selectionList.length == 0"
       class="th-container">
       <div v-if="!isSeas">场景：</div>
@@ -61,6 +62,7 @@
       @delete="handleDeleteField" />
 
     <transfer-handle
+      v-if="crmType !== 'applet'"
       :crm-type="crmType"
       :selection-list="selectionList"
       :dialog-visible.sync="transferDialogShow"
@@ -103,6 +105,9 @@ import {
   filterIndexfields,
   crmSceneSave
 } from '@/api/customermanagement/common'
+import {
+  crmWeixinDeleteAPI
+} from '@/api/customermanagement/applet'
 import {
   crmLeadsTransform,
   crmLeadsExcelExport,
@@ -345,6 +350,7 @@ export default {
         type == 'unlock' ||
         type == 'start' ||
         type == 'disable' ||
+        type == 'transformLead' ||
         type == 'get'
       ) {
         var message = ''
@@ -364,6 +370,8 @@ export default {
           message = '确定要下架这些产品吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
+        } else if (type === 'transformLead') {
+          message = '确定将这些小程序线索转化为线索吗?'
         }
         this.$confirm(message, '提示', {
           confirmButtonText: '确定',
@@ -462,9 +470,14 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'delete') {
-        const self = this
+        let crmTypes = ''
+        if (this.crmType === 'applet') {
+          crmTypes = 'weixinLeads'
+        } else {
+          crmTypes = this.crmType
+        }
         var ids = this.selectionList.map(function(item, index, array) {
-          return item[self.crmType + 'Id']
+          return item[crmTypes + 'Id']
         })
         const request = {
           leads: crmLeadsDelete,
@@ -472,10 +485,11 @@ export default {
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
-          receivables: crmReceivablesDelete
+          receivables: crmReceivablesDelete,
+          applet: crmWeixinDeleteAPI
         }[this.crmType]
         request({
-          [this.crmType + 'Ids']: ids.join(',')
+          [crmTypes + 'Ids']: ids.join(',')
         })
           .then(res => {
             this.$message({
@@ -504,6 +518,9 @@ export default {
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
+      } else if (type === 'transformLead') {
+        this.$message.error('暂未开通此功能')
+        return
       }
     },
     /** 获取展示items */
@@ -517,6 +534,11 @@ export default {
         transform: {
           name: '转化为客户',
           type: 'transform',
+          icon: 'transform'
+        },
+        transformLead: {
+          name: '转化为线索',
+          type: 'transformLead',
           icon: 'transform'
         },
         export: {
@@ -635,6 +657,11 @@ export default {
           'start',
           'disable'
         ])
+      } else if (this.crmType === 'applet') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'delete',
+          'transformLead'
+        ])
       }
     },
     forSelectionHandleItems(handleInfos, array) {
@@ -660,6 +687,10 @@ export default {
         }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
+        if (this.crmType === 'applet') {
+          // 有权限删除就好了
+          return true
+        }
         return this.crm[this.crmType].delete
       } else if (type == 'put_seas') {
         // 放入公海(客户)
@@ -697,6 +728,8 @@ export default {
       } else if (type == 'deal_status') {
         // 客户状态修改
         return this.crm[this.crmType].dealStatus
+      } else if (type === 'transformLead') {
+        return true
       }
 
       return true
@@ -721,6 +754,8 @@ export default {
         return '全部回款'
       } else if (this.crmType == 'product') {
         return '全部产品'
+      } else if (this.crmType === 'applet') {
+        return '全部小程序线索'
       }
     }
   }

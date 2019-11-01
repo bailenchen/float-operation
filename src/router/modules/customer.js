@@ -33,6 +33,18 @@ const customerRouter = {
     }
   },
   {
+    path: 'applet', // 线索列表
+    component: () => import('@/views/customermanagement/applet/AppletIndex'),
+    meta: {
+      requiresAuth: false,
+      title: '小程序线索',
+      icon: 'leads',
+      index: 1,
+      type: 'crm',
+      subType: 'leads'
+    }
+  },
+  {
     path: 'clue', // 线索列表
     component: () => import('@/views/customermanagement/clue/ClueIndex'),
     meta: {
