@@ -43,7 +43,8 @@
               :data-index="index"
               @detail="checkCRMDetail"
               @download="downloadError"
-              @read="readMessageClick"/>
+              @read="readMessageClick"
+              @delete="deleteMessageClick"/>
           </div>
           <p
             v-if="loading"
@@ -59,6 +60,10 @@
             icon="el-icon-check"
             type="text"
             @click="allMarkDoneClick">全部标记为已读</el-button>
+
+          <i
+            class="wk wk-s-delete"
+            @click="allDeleteClick" />
         </div>
       </div>
     </slide-view>
@@ -80,7 +85,9 @@
 import {
   systemMessageListAPI,
   systemMessageReadAPI,
-  systemMessageReadAllAPI } from '@/api/common'
+  systemMessageReadAllAPI,
+  systemMessageClearAPI,
+  systemMessageDeleteByIdAPI } from '@/api/common'
 import {
   crmDownImportErrorAPI
 } from '@/api/customermanagement/common'
@@ -166,6 +173,10 @@ export default {
 
     scrollDisabled() {
       return this.loading || this.noMore
+    },
+
+    labelValue() {
+      return this.menuLabel == 'all' ? '' : this.menuLabel
     }
   },
   watch: {
@@ -250,7 +261,7 @@ export default {
       systemMessageListAPI({
         page: this.page,
         limit: 15,
-        label: this.menuLabel == 'all' ? '' : this.menuLabel
+        label: this.labelValue
       })
         .then(res => {
           this.loading = false
@@ -306,6 +317,29 @@ export default {
         })
     },
 
+    deleteMessageClick(messageId, index) {
+      this.$confirm('确定删除这条消息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          systemMessageDeleteByIdAPI({ messageId })
+            .then(res => {
+              this.list.splice(index, 1)
+              this.$emit('update-count')
+              this.$message.success('操作成功')
+            })
+            .catch(() => {})
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    },
+
     /**
      * 全部标记完成
      */
@@ -319,6 +353,41 @@ export default {
         })
         .catch(() => {
         })
+    },
+
+    /**
+     * 全部删除
+     */
+    allDeleteClick() {
+      const menuItem = this.menuList.find(item => {
+        return item.label === this.menuLabel
+      })
+
+      if (menuItem) {
+        const name = menuItem.label == 'all' ? '' : menuItem.name
+        this.$confirm(`确定删除全部${name}消息?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            systemMessageClearAPI({
+              label: this.labelValue
+            })
+              .then(res => {
+                this.refreshList()
+                this.$emit('update-count')
+                this.$message.success('操作成功')
+              })
+              .catch(() => {})
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            })
+          })
+      }
     },
 
     hiddenView() {
@@ -395,6 +464,21 @@ export default {
     background-color: #f7f8fa;
     text-align: center;
     line-height: 50px;
+
+    .wk-s-delete {
+      position: absolute;
+      top: 0;
+      right: 20px;
+
+      cursor: pointer;
+
+      font-size: 16px;
+      color: #999;
+    }
+
+    .wk-s-delete:hover {
+      color: #F56C6C;
+    }
   }
 }
 
