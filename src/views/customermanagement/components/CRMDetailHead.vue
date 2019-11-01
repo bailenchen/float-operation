@@ -183,9 +183,18 @@ export default {
       ) {
         return false
       }
+
+      if (this.crmType === 'contract') {
+        return this.detail && this.detail.checkStatus != 8 && this.crm[this.crmType].transfer
+      }
+
       return this.crm[this.crmType].transfer
     },
     showEdit() {
+      if (this.crmType === 'contract') {
+        return this.detail && this.detail.checkStatus != 8 && this.crm[this.crmType].update
+      }
+
       return this.isSeas ? false : this.crm[this.crmType].update
     },
 
@@ -262,7 +271,7 @@ export default {
           message = '确定要领取该客户吗?'
         } else if (type == 'cancel') {
           message = '确定要作废此合同吗?'
-          if (this.detail.receivablesDataCount) {
+          if (this.detail.receivablesCount) {
             message = '合同下有相关回款,确定要作废吗?'
           }
         }

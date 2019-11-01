@@ -180,6 +180,13 @@ export default {
   methods: {
     handleClose() {
       this.$emit('update:visible', false)
+      this.resetData()
+    },
+
+    resetData() {
+      this.typeSelect = 'name'
+      this.searchContent = ''
+      this.tableData = null
     },
 
     getList() {
