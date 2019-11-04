@@ -118,7 +118,9 @@
           <el-tab-pane
             v-if="appletActive.id === 2"
             label="设置官网"
-            name="setting"/>
+            name="setting">
+            <official-website/>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -133,6 +135,7 @@
 <script>
 import { usersList } from '@/api/common'
 import RelateEmpoyee from './components/relateEmpoyee'
+import OfficialWebsite from './components/officialWebsite'
 import Reminder from '@/components/reminder'
 import XrHeader from '@/components/xr-header'
 import Poster from './components/poster'
@@ -141,6 +144,7 @@ export default {
     RelateEmpoyee,
     Reminder,
     Poster,
+    OfficialWebsite,
     XrHeader
   },
 
@@ -159,10 +163,8 @@ export default {
       selectList: [],
       search: '',
       roleId: 343,
-      pid: '',
       tableData: [{}], // 与角色关联的员工
       tableHeight: document.documentElement.clientHeight - 305, // 表的高度
-      treeHeight: document.documentElement.clientHeight - 230, // 表的3度
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
@@ -174,29 +176,12 @@ export default {
         { label: '部门', field: 'deptName', width: '115px' },
         { label: '岗位', field: 'post', width: '115px' }
       ],
-
-      // 新建角色
-      newappletVisible: false,
       applet: {}, // 操作角色的框 关联的信息
       appletList: [], // 角色列表 list属性 是信息
 
       mainMenuIndex: 'user', // 角色员工  角色权限 切换 默认左边
-      // 权限管理
-      ruleMenuIndex: 'data', // 默认模块 工作台
-      ruleMenuList: [],
-      defaultProps: {
-        children: 'childMenu',
-        label: 'menuName'
-      },
       relateEmpoyeeShow: false,
-      dropdownHandleapplet: null, // 下拉操作编辑角色
-      // 新建编辑角色title
-      appletTitle: '',
-      //   加载
       appletMenuLoading: false,
-      // 权限加载中
-      ruleLoading: false,
-      // 员工列表加载中
       userLoading: false
     }
   },
@@ -210,7 +195,6 @@ export default {
     /** 控制table的高度 */
     window.onresize = () => {
       this.tableHeight = document.documentElement.clientHeight - 305
-      this.treeHeight = document.documentElement.clientHeight - 230
     }
     this.getUserList()
   },
