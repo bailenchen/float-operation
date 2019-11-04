@@ -166,6 +166,7 @@ const permission = {
   mutations: {
     SET_ROUTERS: (state, data) => {
       state.addRouters = data.addRouter
+      state.crmRouters = data.router.crm || []
       state.workLogRouters = data.router.workLog || []
       state.taskExamineRouters = data.router.taskExamine || []
       state.addressBookRouters = data.router.addressBook || []
@@ -176,9 +177,9 @@ const permission = {
      * 客户管理待办消息数
      */
     SET_CRMROUTERSNUM: (state, num) => {
-      const messageItem = state.crmRouters.children[1]
-      messageItem.meta.num = num
-      Vue.set(state.crmRouters.children, 1, messageItem)
+      const messageItem = state.crmRouters[1]
+      messageItem.children[0].meta.num = num
+      Vue.set(state.crmRouters, 1, messageItem)
     },
 
     SET_GROUPSLIST: (state, data) => {

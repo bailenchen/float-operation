@@ -1,5 +1,5 @@
 <template>
-  <div class="menu-item-content">
+  <div :class="{ 'is-close': collapse }" class="menu-item-content">
     <i
       :class="['wk', `wk-${icon}`]"/>
     <span>{{ title }}</span>
@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Item',
@@ -23,7 +24,9 @@ export default {
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['collapse'])
+  },
   watch: {},
   mounted() {},
 

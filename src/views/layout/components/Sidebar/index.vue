@@ -76,6 +76,10 @@ export default {
         return []
       }
     },
+    addOffset: {
+      type: Number,
+      default: 70
+    },
     createButtonTitle: {
       type: String,
       default: ''

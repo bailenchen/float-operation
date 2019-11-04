@@ -6,29 +6,26 @@
         @nav-items-click="navClick"/>
     </el-header>
     <el-container>
-      <el-aside
-        width="auto"
-        class="aside-container">
-        <sidebar
-          :items="crmRouters.children"
-          :add-offset="quickAddOffset"
-          create-button-title="快速创建"
-          main-router="crm"
-          @select="handleSelect">
-          <div
-            slot="add"
-            class="quick-add">
-            <div class="quick-add-content">
-              <p
-                v-for="(item, index) in quickAddList"
-                :key="index"
-                @click="addSkip(item)">
-                <i
-                  :class="['wk', 'wk-' + item.icon]"/><span>{{ item.label }}</span></p>
-            </div>
+      <sidebar
+        :items="crmRouters"
+        :add-offset="quickAddOffset"
+        create-button-title="快速创建"
+        main-router="crm"
+        @select="handleSelect">
+        <div
+          slot="add"
+          class="quick-add">
+          <div class="quick-add-content">
+            <p
+              v-for="(item, index) in quickAddList"
+              :key="index"
+              @click="addSkip(item)">
+              <i
+                :class="['wk', 'wk-' + item.icon]"/><span>{{ item.label }}</span></p>
           </div>
-        </sidebar>
-      </el-aside>
+        </div>
+      </sidebar>
+
       <el-main
         id="crm-main-container"
         style="padding: 0;">

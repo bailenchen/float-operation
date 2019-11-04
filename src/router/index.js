@@ -7,7 +7,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 // import workbenchRouter from './modules/workbench'
-import customerRouter from './modules/customer'
+import crmRouter from './modules/customer'
 import projectRouter from './modules/project/index'
 import { managerRouter } from './modules/manager'
 import personRouter from './modules/person'
@@ -66,7 +66,7 @@ export default router
 
 // export const asyncRouterMap = [
 //   // workbenchRouter,
-//   customerRouter,
+//   crmRouter,
 //   biRouter,
 //   managerRouter,
 //   projectRouter,
@@ -76,6 +76,7 @@ export default router
 // ]
 
 export const asyncRouterMap = [
+  { type: 'crm', router: crmRouter },
   { type: 'workLog', router: workLogRouter },
   { type: 'taskExamine', router: taskExamineRouter },
   { type: 'addressBook', router: addressBookRouter },
