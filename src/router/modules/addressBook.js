@@ -19,11 +19,15 @@ export default [
     ...layout(true),
     children: [{
       path: 'index/:type',
+      meta: {
+        redirect: 'index/all' // 获取传参的重置链接
+      },
       component: () => import('@/views/addressBook/index')
     }]
   },
   {
     ...layout(false),
+    ignore: true, // 路由添加时忽略
     children: [{
       path: 'index/all',
       component: () => import('@/views/addressBook/index'),
@@ -35,6 +39,7 @@ export default [
   },
   {
     ...layout(false),
+    ignore: true,
     children: [{
       path: 'index/attention',
       component: () => import('@/views/addressBook/index'),

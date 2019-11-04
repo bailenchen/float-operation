@@ -6,15 +6,9 @@
         @nav-items-click="navClick"/>
     </el-header>
     <el-container>
-      <el-aside
-        width="auto"
-        class="aside-container">
-
-        <new-sidebar
-          :items="addressBookRouters"
-          class="aside-container" />
-
-      </el-aside>
+      <sidebar
+        :items="addressBookRouters"
+        class="sidebar-container" />
 
       <el-main
         id="addressBook-main-container"
@@ -26,8 +20,7 @@
 </template>
 
 <script>
-import { Navbar, AppMain } from './components'
-import NewSidebar from './components/NewSidebar'
+import { Navbar, AppMain, Sidebar } from './components'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -35,7 +28,7 @@ export default {
 
   components: {
     Navbar,
-    NewSidebar,
+    Sidebar,
     AppMain
   },
 

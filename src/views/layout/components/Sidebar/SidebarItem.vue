@@ -1,16 +1,31 @@
 <template>
-  <div v-if="!item.hidden" class="menu-wrapper">
+  <div
+    v-if="!item.hidden"
+    class="menu-wrapper">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
+      <app-link
+        v-if="onlyOneChild.meta"
+        :to="resolvePath(onlyOneChild.path)">
+        <el-menu-item :index="resolvePath(onlyOneChild.path)">
+          <item
+            :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
+            :title="onlyOneChild.meta.title"
+            :num="onlyOneChild.meta.num" />
         </el-menu-item>
       </app-link>
     </template>
 
-    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
+    <el-submenu
+      v-else
+      ref="subMenu"
+      :index="resolvePath(item.path)"
+      popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+        <item
+          v-if="item.meta"
+          :icon="item.meta && item.meta.icon"
+          :title="item.meta.title"
+          :num="item.meta.num" />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -18,8 +33,7 @@
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
-        class="nest-menu"
-      />
+        class="nest-menu" />
     </el-submenu>
   </div>
 </template>
@@ -41,10 +55,6 @@ export default {
       type: Object,
       required: true
     },
-    isNest: {
-      type: Boolean,
-      default: false
-    },
     basePath: {
       type: String,
       default: ''
@@ -64,7 +74,6 @@ export default {
         } else {
           // Temp set(will be used if only has one showing child)
           this.onlyOneChild = item
-          console.log('this.onlyOneChild1---', this.onlyOneChild)
           return true
         }
       })
@@ -76,8 +85,7 @@ export default {
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
-        this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
-        console.log('this.onlyOneChild2---', this.onlyOneChild)
+        this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
         return true
       }
 
@@ -90,9 +98,60 @@ export default {
       if (isExternal(this.basePath)) {
         return this.basePath
       }
-      console.log('path.resolve(this.basePath, routePath)---', path.resolve(this.basePath, routePath), '---', routePath)
       return path.resolve(this.basePath, routePath)
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.menu-wrapper {
+  /deep/ .el-submenu__title {
+    height: auto;
+    line-height: normal;
+    i:first-child {
+      padding-left: 10px;
+    }
+  }
+
+  /deep/ .el-submenu.is-active {
+    .el-submenu__title {
+      span,
+      i:first-child {
+        color: white;
+      }
+    }
+  }
+}
+
+.el-menu-item {
+  height: auto;
+  line-height: normal;
+  padding: 0 14px;
+  background-color: #001529 !important;
+  color: #bebec0;
+}
+
+.el-menu-item.is-active {
+  .menu-item-content {
+    color: #bebec0;
+  }
+}
+
+// element自带的有问题 is-active 换成 is-select
+.el-menu-item.is-active {
+  .menu-item-content {
+    background-color: #2362fb !important;
+    color: white !important;
+  }
+}
+
+.el-menu-item:hover {
+  .menu-item-content {
+    background-color: rgba($color: #fff, $alpha: 0.1);
+    color: white;
+    .wk {
+      color: white !important;
+    }
+  }
+}
+</style>

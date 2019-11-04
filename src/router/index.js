@@ -11,7 +11,7 @@ import customerRouter from './modules/customer'
 import projectRouter from './modules/project/index'
 import { managerRouter } from './modules/manager'
 import personRouter from './modules/person'
-import { biRouter } from './modules/business'
+import biRouter from './modules/business'
 
 import taskExamineRouter from './modules/taskExamine'
 import workLogRouter from './modules/workLog'
@@ -76,5 +76,6 @@ export default router
 // ]
 
 export const asyncRouterMap = [
-  { type: 'addressBook', router: addressBookRouter }
+  { type: 'addressBook', router: addressBookRouter },
+  { type: 'bi', router: biRouter }
 ]

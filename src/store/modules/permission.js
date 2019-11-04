@@ -52,6 +52,28 @@ const filterAsyncRouter = function(routers, authInfo) {
   return res
 }
 
+
+/**
+ * 忽略用于菜单展示的传参路由
+ * @param {*} routers
+ * @param {*} authInfo
+ */
+const filterIgnoreRouter = function(routers) {
+  const res = []
+  routers.forEach(router => {
+    const tmp = {
+      ...router
+    }
+    if (!tmp.ignore) {
+      if (tmp.children) {
+        tmp.children = filterIgnoreRouter(tmp.children)
+      }
+      res.push(tmp)
+    }
+  })
+  return res
+}
+
 /**
  * 路由重定向和角色路由完善
  */
@@ -143,6 +165,7 @@ const permission = {
     SET_ROUTERS: (state, data) => {
       state.addRouters = data.addRouter
       state.addressBookRouters = data.router.addressBook || []
+      state.biRouters = data.router.bi || []
     },
 
     /**
@@ -166,24 +189,45 @@ const permission = {
       return new Promise(resolve => {
         const routerObj = {}
         let addRouter = []
+        let redirect = ''
         for (let index = 0; index < asyncRouterMap.length; index++) {
-          const accessedRouters = filterAsyncRouter(asyncRouterMap[index].router, data)
-          let redirect = ''
+          const mainRouter = asyncRouterMap[index]
+
+          const accessedRouters = filterAsyncRouter(mainRouter.router, data)
           for (let index = 0; index < accessedRouters.length; index++) {
             const element = accessedRouters[index]
             if (element.children && element.children.length > 0) {
-              element.redirect = element.path + '/' + element.children[0].path
-              if (element.showMenu && element.menuChildren.length > 0) {
-                element.redirect = element.path + '/' + element.menuChildren[0].path
-              }
+              const firstChild = element.children[0]
+              const childPath = firstChild.meta ? firstChild.meta.redirect || firstChild.path : firstChild.path
+              element.redirect = element.path + '/' + childPath
             }
+
             // 获取跳转
-            if (element.redirect && !redirect) {
-              redirect = element.redirect
+            if (element.redirect) {
+              if (!redirect) {
+                redirect = element.redirect
+              }
+
+              // 为导航头 获取每个模块的 重定向 url
+              accessedRouters.push({
+                path: `/${mainRouter.type}`,
+                redirect: element.redirect,
+                hidden: true
+              })
+              break
             }
           }
-          routerObj[asyncRouterMap[index].type] = accessedRouters
-          addRouter = addRouter.concat(accessedRouters)
+          routerObj[mainRouter.type] = accessedRouters
+          console.log('accessedRouters---', accessedRouters)
+          addRouter = addRouter.concat(filterIgnoreRouter(accessedRouters))
+        }
+
+        if (redirect) {
+          addRouter.push({
+            path: '/',
+            redirect: redirect,
+            hidden: true
+          })
         }
         commit('SET_ROUTERS', { router: routerObj, addRouter })
         resolve()

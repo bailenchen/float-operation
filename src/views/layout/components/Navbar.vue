@@ -130,7 +130,8 @@ export default {
       'manage',
       'oa',
       'project',
-      'navActiveIndex'
+      'navActiveIndex',
+      'biRouters'
     ]),
     items() {
       var tempsItems = []
@@ -239,6 +240,7 @@ export default {
   },
   methods: {
     navItemsClick(path) {
+      console.log('path---', path)
       this.$store.commit('SET_NAVACTIVEINDEX', path)
       this.$emit('nav-items-click', path)
     },
