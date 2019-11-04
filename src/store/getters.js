@@ -25,8 +25,9 @@ const getters = {
   project: state => state.user.project,
   // 路由
   addRouters: state => state.permission.addRouters,
-  oaRouters: state => state.permission.oaRouters,
+  // oaRouters: state => state.permission.oaRouters,
   crmRouters: state => state.permission.crmRouters,
+  workLogRouters: state => state.permission.workLogRouters,
   biRouters: state => state.permission.biRouters,
   manageRouters: state => state.permission.manageRouters,
   addressBookRouters: state => state.permission.addressBookRouters,

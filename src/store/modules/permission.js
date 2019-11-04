@@ -155,6 +155,7 @@ const permission = {
   state: {
     addRouters: [],
     crmRouters: [],
+    workLogRouters: [],
     biRouters: [],
     manageRouters: [],
     oaRouters: [],
@@ -164,6 +165,7 @@ const permission = {
   mutations: {
     SET_ROUTERS: (state, data) => {
       state.addRouters = data.addRouter
+      state.workLogRouters = data.router.workLog || []
       state.addressBookRouters = data.router.addressBook || []
       state.biRouters = data.router.bi || []
     },
