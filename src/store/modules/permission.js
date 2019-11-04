@@ -155,6 +155,7 @@ const permission = {
   state: {
     addRouters: [],
     crmRouters: [],
+    taskExamineRouters: [],
     workLogRouters: [],
     biRouters: [],
     manageRouters: [],
@@ -166,6 +167,7 @@ const permission = {
     SET_ROUTERS: (state, data) => {
       state.addRouters = data.addRouter
       state.workLogRouters = data.router.workLog || []
+      state.taskExamineRouters = data.router.taskExamine || []
       state.addressBookRouters = data.router.addressBook || []
       state.biRouters = data.router.bi || []
     },

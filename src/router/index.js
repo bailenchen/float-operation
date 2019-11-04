@@ -77,6 +77,7 @@ export default router
 
 export const asyncRouterMap = [
   { type: 'workLog', router: workLogRouter },
+  { type: 'taskExamine', router: taskExamineRouter },
   { type: 'addressBook', router: addressBookRouter },
   { type: 'bi', router: biRouter }
 ]

@@ -1,83 +1,117 @@
 /** 任务审批路由+ */
 import Layout from '@/views/layout/taskExamineLayout'
 
-const taskExamineLayout = {
-  path: '/taskExamine',
-  component: Layout,
-  redirect: '/taskExamine/task-index/1',
-  name: 'taskExamine',
-  hidden: true,
-  meta: {
-    requiresAuth: true,
-    index: 1,
-    type: 'oa',
-    subType: 'taskExamine'
-  },
-  children: [
-    {
+const layout = function(hidden, meta = {}) {
+  return {
+    path: '/taskExamine',
+    component: Layout,
+    alwaysShow: false,
+    hidden: hidden,
+    meta: {
+      requiresAuth: true,
+      permissions: ['oa', 'taskExamine'],
+      ...meta
+    }
+  }
+}
+
+export default [
+  {
+    ...layout(true),
+    children: [{
       path: 'task-index/:type',
-      hidden: true,
+      meta: {
+        redirect: 'task-index/1' // 获取传参的重置链接
+      },
       component: () => import('@/views/taskExamine/task/index')
-    },
-    {
+    }]
+  },
+  {
+    ...layout(false),
+    ignore: true, // 路由添加时忽略
+    children: [{
       path: 'task-index/1',
-      component: () => import('@/views/taskExamine/task/index'),
       meta: {
         title: '我的任务',
         icon: 'my-task'
       }
-    },
-    {
+    }]
+  },
+  {
+    ...layout(false),
+    ignore: true,
+    children: [{
       path: 'task-index/2',
-      component: () => import('@/views/taskExamine/task/index'),
       meta: {
         title: '下属的任务',
         icon: 'o-task'
       }
-    },
-    {
+    }]
+  },
+
+  {
+    ...layout(true),
+    children: [{
       path: 'examine-index/:type',
-      hidden: true,
+      meta: {
+        redirect: 'examine-index/my' // 获取传参的重置链接
+      },
       component: () => import('@/views/taskExamine/examine/index')
-    },
-    {
+    }]
+  },
+  {
+    ...layout(false),
+    ignore: true, // 路由添加时忽略
+    children: [{
       path: 'examine-index/my',
-      component: () => import('@/views/taskExamine/examine/index'),
       meta: {
         title: '我发出的审批',
         icon: 'apply-for'
       }
-    },
-    {
+    }]
+  },
+  {
+    ...layout(false),
+    ignore: true,
+    children: [{
       path: 'examine-index/wait',
-      component: () => import('@/views/taskExamine/examine/index'),
       meta: {
         title: '待我审批（办公）',
         icon: 'approve'
       }
-    },
-    {
+    }]
+  },
+
+  {
+    ...layout(true),
+    children: [{
       path: 'crm/:type',
-      hidden: true,
+      meta: {
+        redirect: 'crm/contract' // 获取传参的重置链接
+      },
       component: () => import('@/views/taskExamine/crm/index')
-    },
-    {
+    }]
+  },
+  {
+    ...layout(false),
+    ignore: true, // 路由添加时忽略
+    children: [{
       path: 'crm/contract',
-      component: () => import('@/views/taskExamine/crm/index'),
       meta: {
         title: '待我审批（合同）',
         icon: 'contract'
       }
-    },
-    {
+    }]
+  },
+  {
+    ...layout(false),
+    ignore: true,
+    children: [{
       path: 'crm/receivables',
-      component: () => import('@/views/taskExamine/crm/index'),
       meta: {
         title: '待我审批（回款）',
         icon: 'receivables'
       }
-    }
-  ]
-}
-
-export default taskExamineLayout
+    }]
+  }
+]

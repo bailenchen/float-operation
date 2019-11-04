@@ -27,6 +27,7 @@ const getters = {
   addRouters: state => state.permission.addRouters,
   // oaRouters: state => state.permission.oaRouters,
   crmRouters: state => state.permission.crmRouters,
+  taskExamineRouters: state => state.permission.taskExamineRouters,
   workLogRouters: state => state.permission.workLogRouters,
   biRouters: state => state.permission.biRouters,
   manageRouters: state => state.permission.manageRouters,
