@@ -104,7 +104,7 @@ const perfectRouter = function(authInfo, result) {
 
           if (roleMenus && roleMenus.length > 0) {
             const roleFirstChild = element.children[0]
-            roleFirstChild.meta.redirect = element.path + '/' + roleMenus[0].path
+            roleFirstChild.meta.redirect = roleMenus[0].path
             element.children = element.children.concat(roleMenus)
           }
         }
