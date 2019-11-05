@@ -77,49 +77,72 @@ const filterIgnoreRouter = function(routers) {
 /**
  * 路由重定向和角色路由完善
  */
-const perfectRouter = function(routers, authInfo, result) {
+const perfectRouter = function(authInfo, result) {
   getGroupData(authInfo, (groupData) => {
+    const routerObj = {}
+    let addRouter = []
     let redirect = ''
-    for (let index = 0; index < routers.length; index++) {
-      const element = routers[index]
-      // 角色模块，加入菜单 后期菜单会刚才标准效果
-      if (groupData.requiresAuth && element.name == 'manager') {
-        for (let childIndex = 0; childIndex < element.children.length; childIndex++) {
-          const child = element.children[childIndex]
-          if (child.meta.subType == 'permission') {
-            child.meta.menuChildren = groupData.list.map(item => {
-              return {
-                name: 'role-auth',
-                path: `role-auth/${item.roleType}/${encodeURI(item.name)}`,
-                meta: {
-                  title: item.name
-                }
+    for (let index = 0; index < asyncRouterMap.length; index++) {
+      const mainRouter = asyncRouterMap[index]
+      const accessedRouters = filterAsyncRouter(mainRouter.router, authInfo)
+
+      for (let childIndex = 0; childIndex < accessedRouters.length; childIndex++) {
+        const element = accessedRouters[childIndex]
+
+        // 处理系统管理逻辑
+        if (groupData.requiresAuth && element.name == 'manage-role-auth') {
+          const roleMenus = groupData.list.map(item => {
+            return {
+              name: 'role-auth',
+              path: `role-auth/${item.roleType}/${encodeURI(item.name)}`,
+              ignore: true, // 不加入路由 仅菜单展示
+              meta: {
+                title: item.name
               }
-            })
+            }
+          })
+
+          if (roleMenus && roleMenus.length > 0) {
+            const roleFirstChild = element.children[0]
+            roleFirstChild.meta.redirect = element.path + '/' + roleMenus[0].path
+            element.children = element.children.concat(roleMenus)
           }
         }
+
 
         if (element.children && element.children.length > 0) {
           const firstChild = element.children[0]
-          if (firstChild.meta.subType == 'permission') {
-            element.redirect = element.path + '/' + firstChild.meta.menuChildren[0].path
-          } else {
-            element.redirect = element.path + '/' + firstChild.path
+          const childPath = firstChild.meta ? firstChild.meta.redirect || firstChild.path : firstChild.path
+          element.redirect = element.path + '/' + childPath
+        }
+
+        // 获取跳转
+        if (element.redirect) {
+          if (!redirect) {
+            redirect = element.redirect
+          }
+
+          // 为导航头 获取每个模块的 重定向 url
+          accessedRouters.push({
+            path: `/${mainRouter.type}`,
+            name: mainRouter.type,
+            redirect: element.redirect,
+            hidden: true
+          })
+
+          if (mainRouter.type != 'manage') {
+            break
+          } else if (element.name == 'manage-role-auth') {
+            break
           }
         }
-      } else {
-        if (!element.redirect && element.children && element.children.length > 0) {
-          element.redirect = element.path + '/' + element.children[0].path
-        }
       }
-      // 获取跳转
-      if (element.redirect && !redirect) {
-        redirect = element.redirect
-      }
+      routerObj[mainRouter.type] = accessedRouters
+      addRouter = addRouter.concat(filterIgnoreRouter(accessedRouters))
     }
 
     if (redirect) {
-      routers.push({
+      addRouter.push({
         path: '/',
         redirect: redirect,
         hidden: true
@@ -127,11 +150,16 @@ const perfectRouter = function(routers, authInfo, result) {
     }
 
     if (result) {
-      result(routers)
+      result({ router: routerObj, addRouter })
     }
   })
 }
 
+/**
+ * 获取角色列表
+ * @param {*} authInfo 授权信息
+ * @param {*} result 回调
+ */
 function getGroupData(authInfo, result) {
   if (authInfo && authInfo.manage && authInfo.manage.permission) {
     adminGroupsTypeListAPI().then((response) => {
@@ -157,11 +185,12 @@ const permission = {
     crmRouters: [],
     taskExamineRouters: [],
     workLogRouters: [],
+    addressBookRouters: [],
+    projectRouters: [],
     biRouters: [],
-    manageRouters: [],
-    oaRouters: [],
+    manageRouters: []
 
-    addressBookRouters: []
+
   },
   mutations: {
     SET_ROUTERS: (state, data) => {
@@ -170,7 +199,9 @@ const permission = {
       state.workLogRouters = data.router.workLog || []
       state.taskExamineRouters = data.router.taskExamine || []
       state.addressBookRouters = data.router.addressBook || []
+      state.projectRouters = data.router.project || []
       state.biRouters = data.router.bi || []
+      state.manageRouters = data.router.manage || []
     },
 
     /**
@@ -192,57 +223,11 @@ const permission = {
       state
     }, data) {
       return new Promise(resolve => {
-        const routerObj = {}
-        let addRouter = []
-        let redirect = ''
-        for (let index = 0; index < asyncRouterMap.length; index++) {
-          const mainRouter = asyncRouterMap[index]
-
-          const accessedRouters = filterAsyncRouter(mainRouter.router, data)
-          for (let index = 0; index < accessedRouters.length; index++) {
-            const element = accessedRouters[index]
-            if (element.children && element.children.length > 0) {
-              const firstChild = element.children[0]
-              const childPath = firstChild.meta ? firstChild.meta.redirect || firstChild.path : firstChild.path
-              element.redirect = element.path + '/' + childPath
-            }
-
-            // 获取跳转
-            if (element.redirect) {
-              if (!redirect) {
-                redirect = element.redirect
-              }
-
-              // 为导航头 获取每个模块的 重定向 url
-              accessedRouters.push({
-                path: `/${mainRouter.type}`,
-                redirect: element.redirect,
-                hidden: true
-              })
-              break
-            }
-          }
-          routerObj[mainRouter.type] = accessedRouters
-          console.log('accessedRouters---', accessedRouters)
-          addRouter = addRouter.concat(filterIgnoreRouter(accessedRouters))
-        }
-
-        if (redirect) {
-          addRouter.push({
-            path: '/',
-            redirect: redirect,
-            hidden: true
-          })
-        }
-        commit('SET_ROUTERS', { router: routerObj, addRouter })
-        resolve()
-
-        // 之前的逻辑
-        // const accessedRouters = filterAsyncRouter(asyncRouterMap, data)
-        // perfectRouter(accessedRouters, data, (routers) => {
-        //   commit('SET_ROUTERS', routers)
-        //   resolve()
-        // })
+        // 路由完善
+        perfectRouter(data, (routers) => {
+          commit('SET_ROUTERS', routers)
+          resolve()
+        })
       })
     }
   }

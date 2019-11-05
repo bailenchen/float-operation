@@ -37,12 +37,14 @@
         :text-color="variables.menuText"
         :active-text-color="variables.menuActiveText"
         mode="vertical"
-        class="el-menu-vertical">
+        class="el-menu-vertical"
+        @select="handleSelect">
         <sidebar-item
           v-for="(route, index) in items"
           :key="`${route.path}${index}`"
           :item="route"
-          :base-path="route.path" />
+          :base-path="route.path"
+          :active-menu="activeMenu" />
       </el-menu>
     </el-scrollbar>
 
@@ -103,7 +105,6 @@ export default {
       if (meta.activeMenu) {
         return meta.activeMenu
       }
-      console.log('activeMenu---', path, meta, route)
       return path
     },
     variables() {
@@ -132,6 +133,10 @@ export default {
     // 快速创建
     quicklyCreate() {
       this.$emit('quicklyCreate')
+    },
+
+    handleSelect(key, keyPath) {
+      this.$emit('select', key, keyPath)
     }
   }
 }

@@ -9,7 +9,7 @@ Vue.use(Router)
 // import workbenchRouter from './modules/workbench'
 import crmRouter from './modules/customer'
 import projectRouter from './modules/project/index'
-import { managerRouter } from './modules/manager'
+import managerRouter from './modules/manager'
 import personRouter from './modules/person'
 import biRouter from './modules/business'
 
@@ -64,21 +64,12 @@ export function resetRouter() {
 
 export default router
 
-// export const asyncRouterMap = [
-//   // workbenchRouter,
-//   crmRouter,
-//   biRouter,
-//   managerRouter,
-//   projectRouter,
-//   workLogRouter,
-//   taskExamineRouter,
-//   addressBookRouter
-// ]
-
 export const asyncRouterMap = [
   { type: 'crm', router: crmRouter },
-  { type: 'workLog', router: workLogRouter },
   { type: 'taskExamine', router: taskExamineRouter },
+  { type: 'workLog', router: workLogRouter },
   { type: 'addressBook', router: addressBookRouter },
-  { type: 'bi', router: biRouter }
+  { type: 'project', router: projectRouter },
+  { type: 'bi', router: biRouter },
+  { type: 'manage', router: managerRouter }
 ]

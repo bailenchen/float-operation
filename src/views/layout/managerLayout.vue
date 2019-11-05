@@ -4,14 +4,10 @@
       <manager-navbar/>
     </el-header>
     <el-container>
-      <el-aside
-        width="auto"
-        class="aside-container">
-        <sidebar
-          :items="routerItems"
-          create-button-title=""
-          main-router="manager"/>
-      </el-aside>
+      <sidebar
+        :items="manageRouters"
+        class="sidebar-container" />
+
       <el-main id="manager-main-container">
         <app-main/>
       </el-main>
@@ -22,7 +18,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { ManagerNavbar, Sidebar, AppMain } from './components'
-import { managerRouterMenu } from '@/router/modules/manager'
+// import { managerRouterMenu } from '@/router/modules/manager'
 import { adminGroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
 
 export default {
@@ -39,14 +35,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['manage'])
+    ...mapGetters(['manage', 'manageRouters'])
   },
 
   mounted() {
-    this.routerItems = this.filterAsyncRouter(managerRouterMenu, {
-      manage: this.manage
-    })
-    this.getAuthMenu()
+    // this.routerItems = this.filterAsyncRouter(managerRouterMenu, {
+    //   manage: this.manage
+    // })
+    // this.getAuthMenu()
   },
 
   methods: {

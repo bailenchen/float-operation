@@ -6,7 +6,9 @@
       <app-link
         v-if="onlyOneChild.meta"
         :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)">
+        <el-menu-item
+          :index="resolvePath(onlyOneChild.path)"
+          :class="{ 'is-select': activeMenu == resolvePath(onlyOneChild.path)}">
           <item
             :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
             :title="onlyOneChild.meta.title"
@@ -19,6 +21,7 @@
       v-else
       ref="subMenu"
       :index="resolvePath(item.path)"
+      :class="{ 'is-select': activeMenu == resolvePath(item.path)}"
       popper-append-to-body>
       <template slot="title">
         <item
@@ -33,6 +36,7 @@
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
+        :active-menu="activeMenu"
         class="nest-menu" />
     </el-submenu>
   </div>
@@ -58,7 +62,8 @@ export default {
     basePath: {
       type: String,
       default: ''
-    }
+    },
+    activeMenu: String
   },
   data() {
     // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
@@ -104,13 +109,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import './variables.scss';
+
 .menu-wrapper {
   /deep/ .el-submenu__title {
     height: auto;
     line-height: normal;
-    i:first-child {
-      padding-left: 10px;
-    }
   }
 
   /deep/ .el-submenu.is-active {
@@ -131,17 +135,18 @@ export default {
   color: #bebec0;
 }
 
-.el-menu-item.is-active {
-  .menu-item-content {
-    color: #bebec0;
-  }
+.el-menu-item:not(.is-select) {
+  color: $menuText !important;
 }
 
 // element自带的有问题 is-active 换成 is-select
-.el-menu-item.is-active {
+.el-menu-item.is-select {
   .menu-item-content {
     background-color: #2362fb !important;
     color: white !important;
+    /deep/ i {
+      color: white !important;
+    }
   }
 }
 
@@ -149,7 +154,7 @@ export default {
   .menu-item-content {
     background-color: rgba($color: #fff, $alpha: 0.1);
     color: white;
-    .wk {
+    /deep/ i {
       color: white !important;
     }
   }

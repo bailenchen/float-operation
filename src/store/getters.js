@@ -25,13 +25,14 @@ const getters = {
   project: state => state.user.project,
   // 路由
   addRouters: state => state.permission.addRouters,
-  // oaRouters: state => state.permission.oaRouters,
   crmRouters: state => state.permission.crmRouters,
   taskExamineRouters: state => state.permission.taskExamineRouters,
   workLogRouters: state => state.permission.workLogRouters,
+  addressBookRouters: state => state.permission.addressBookRouters,
+  projectRouters: state => state.permission.projectRouters,
   biRouters: state => state.permission.biRouters,
   manageRouters: state => state.permission.manageRouters,
-  addressBookRouters: state => state.permission.addressBookRouters,
+
   // 客户管理信息
   messageNum: state => state.customer.messageNum,
   messageOANum: state => state.oa.messageOANum,

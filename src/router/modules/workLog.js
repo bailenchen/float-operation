@@ -61,9 +61,9 @@ export default [
   },
   {
     ...layout(false),
-    component: () => import('@/views/workLog/FollowIndex'),
     children: [{
       path: 'follow',
+      component: () => import('@/views/workLog/FollowIndex'),
       meta: {
         title: '跟进记录',
         icon: 'message'
