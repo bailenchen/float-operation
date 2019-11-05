@@ -600,10 +600,10 @@ export default {
       priorityVisible: false,
       // 优先级列表
       priorityList: [
-        { id: 3, label: '高', color: '#ED6363' },
-        { id: 2, label: '中', color: '#FF9668' },
-        { id: 1, label: '低', color: '#8bb5f0' },
-        { id: 0, label: '无', color: '#ccc' }
+        { id: 3, label: '高', color: '#F95A5A' },
+        { id: 2, label: '中', color: '#F7AD3D' },
+        { id: 1, label: '低', color: '#67C23A' },
+        { id: 0, label: '无', color: '#D8D8D8' }
       ],
 
       /**
