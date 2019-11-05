@@ -20,7 +20,7 @@
           </span>
           <!-- 编辑 -->
           <el-dropdown
-            v-if="data.permission && (data.permission.isChecked || data.permission.isUpdate || data.permission.isDelete)"
+            v-if="showHandle && data.permission && (data.permission.isChecked || data.permission.isUpdate || data.permission.isDelete)"
             trigger="click"
             @command="handleCommand">
             <i
@@ -106,7 +106,11 @@ export default {
   },
   mixins: [CheckStatusMixin],
   props: {
-    data: Object
+    data: Object,
+    showHandle: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {}

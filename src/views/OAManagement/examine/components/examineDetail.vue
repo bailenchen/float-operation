@@ -427,6 +427,7 @@ export default {
     examineHandle(data) {
       this.$store.dispatch('GetOAMessageNum', 'examine')
       this.$emit('on-examine-handle', data, this.detailIndex)
+      this.$emit('handle', data, this.detailIndex)
     }
   }
 }
