@@ -147,7 +147,8 @@ export default {
     // 撤回操作
     handleRevoke() {
       this.loading = true
-      this.getRequest()({
+      const reqeust = this.getRequest()
+      reqeust({
         id: this.id,
         recordId: this.recordId,
         status: this.status,
@@ -165,6 +166,7 @@ export default {
           }
 
           this.resetInfo()
+
           this.$bus.emit('examine-handle-bus')
           this.$emit('save', { type: this.status })
           this.hiddenView()
@@ -194,7 +196,9 @@ export default {
           params['nextUserId'] = this.selectUsers[0].userId
         }
       }
-      this.getRequest()(params)
+
+      const request = this.getRequest()
+      request(params)
         .then(res => {
           this.loading = false
           this.$message.success('操作成功')
@@ -207,8 +211,9 @@ export default {
           }
 
           this.resetInfo()
-          this.$emit('save', { type: this.status })
+
           this.$bus.emit('examine-handle-bus')
+          this.$emit('save', { type: this.status })
           this.hiddenView()
         })
         .catch(() => {
