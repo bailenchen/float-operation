@@ -49,6 +49,7 @@ export default {
 <style lang="scss" scoped>
   .el-container {
     min-height: 0;
+    height: 100%;
   }
 
   .nav-container {

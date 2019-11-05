@@ -110,5 +110,6 @@ export default {
 
 .el-container {
   overflow: hidden;
+  height: 100%;;
 }
 </style>

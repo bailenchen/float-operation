@@ -53,6 +53,7 @@ export default {
   @import './styles/common.scss';
   .el-container {
     min-height: 0;
+    height: 100%;
   }
   .aside-container {
     position: relative;
