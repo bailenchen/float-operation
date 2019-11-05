@@ -30,7 +30,7 @@
           class="bg">
       </div>
       <div class="right">
-        <div class="main-content">
+        <div class="login-main-content">
           <div class="logo-box">
             {{ titleMap[activeCom] }}
           </div>
@@ -189,7 +189,7 @@ export default {
       width: 400px;
       height: 100%;
       margin-left: 250px;
-      .main-content {
+      .login-main-content {
         position: relative;
         width: 100%;
         height: 510px;
