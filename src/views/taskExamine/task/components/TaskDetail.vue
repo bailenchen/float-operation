@@ -734,7 +734,7 @@ export default {
      */
     labelList() {
       if (!this.taskData) {
-        return null
+        return []
       }
       return this.taskData.labelList || []
     }

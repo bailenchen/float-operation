@@ -249,6 +249,7 @@
       :id="taskID"
       :detail-index="detailIndex"
       :detail-section="detailSection"
+      :no-listener-class="['board-item']"
       @on-handle="detailHandle"
       @close="closeBtn"/>
   </div>

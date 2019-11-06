@@ -123,6 +123,7 @@ export default {
       this.list = []
 
       const params = this.postParams
+
       if (typeof dataIndex !== 'undefined') {
         const dataItem = this.axisList[dataIndex]
         params.startTime = dataItem.startTime

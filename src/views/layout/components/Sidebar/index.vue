@@ -98,7 +98,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['activeIndex', 'collapse']),
+    ...mapGetters(['collapse']),
     activeMenu() {
       const route = this.$route
       const { meta, path } = route
