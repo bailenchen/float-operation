@@ -77,6 +77,31 @@ export function crmIndexGetRecordListAPI(data) {
   })
 }
 
+// 遗忘提醒
+export function crmIndexForgottenCustomerAPI(data) {
+  return request({
+    url: 'Crm/Instrument/forgottenCustomerCount',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmIndexForgottenCustomerListAPI(data) {
+  return request({
+    url: 'Crm/Instrument/forgottenCustomerPageList ',
+    method: 'post',
+    data: data
+  })
+}
+
+// 排行榜
+export function crmIndexRankingAPI(data) {
+  return request({
+    url: 'Crm/Instrument/ranking',
+    method: 'post',
+    data: data
+  })
+}
 
 // 获取简报 跟进记录信息
 // export function crmIndexGetRecordListAPI(data) {

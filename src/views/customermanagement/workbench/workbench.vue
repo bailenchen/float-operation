@@ -92,6 +92,16 @@
       <sales-funnel
         :filter-value="filterValue"
         class="left" />
+      <forget-remind
+        :filter-value="filterValue"
+        class="right" />
+
+    </flexbox>
+
+    <flexbox class="section">
+      <ranking-statistics
+        :filter-value="filterValue"
+        class="left" />
     </flexbox>
 
     <!-- 销售简报列表 -->
@@ -122,6 +132,8 @@ import DataStatistics from './components/dataStatistics'
 import ReceivedStatistics from './components/receivedStatistics'
 import SalesFunnel from './components/salesFunnel'
 import PerformanceChart from './components/performanceChart'
+import RankingStatistics from './components/RankingStatistics'
+import ForgetRemind from './components/ForgetRemind'
 import timeTypeSelect from '@/components/timeTypeSelect'
 import ReportList from './components/reportList'
 import membersDep from '@/components/selectEmployee/membersDep'
@@ -141,6 +153,8 @@ export default {
     ReceivedStatistics,
     SalesFunnel,
     PerformanceChart,
+    RankingStatistics,
+    ForgetRemind,
     timeTypeSelect,
     ReportList,
     membersDep
