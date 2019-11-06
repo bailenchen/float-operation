@@ -122,15 +122,11 @@ export default {
     getRecordList(dataIndex) {
       this.list = []
 
-      let params = {}
+      const params = this.postParams
       if (typeof dataIndex !== 'undefined') {
         const dataItem = this.axisList[dataIndex]
-        params.userId = this.postParams.userId
-        params.deptId = this.postParams.deptId
         params.startTime = dataItem.startTime
         params.endTime = dataItem.endTime
-      } else {
-        params = this.postParams
       }
 
       this.loading = true
