@@ -296,14 +296,16 @@ export default [
   },
   {
     ...layout('/bi/target', false, {
-      permissions: ['bi', 'achievement'],
-      icon: 'target-solid',
-      title: '业绩目标完成情况'
+      permissions: ['bi', 'achievement']
     }),
     children: [
       {
         path: 'complete', // 业绩目标完成情况
-        component: () => import('@/views/businessIntelligence/TaskCompleteStatistics')
+        component: () => import('@/views/businessIntelligence/TaskCompleteStatistics'),
+        meta: {
+          icon: 'target-solid',
+          title: '业绩目标完成情况'
+        }
       }
     ]
   }
