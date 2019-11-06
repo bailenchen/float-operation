@@ -132,8 +132,14 @@ const perfectRouter = function(authInfo, result) {
 
           if (mainRouter.type != 'manage') {
             break
-          } else if (element.name == 'manage-role-auth') {
-            break
+          } else {
+            if (groupData.requiresAuth) {
+              if (element.name == 'manage-role-auth') {
+                break
+              }
+            } else {
+              break
+            }
           }
         }
       }
