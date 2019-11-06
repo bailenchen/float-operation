@@ -285,7 +285,7 @@ export function crmCustomerRecordIndex(data) {
 // 团队操作
 
 /**
- * 相关团队创建
+ * 团队成员创建
  * @param {*} data
  * types crm_leads
  * typesId 分类ID

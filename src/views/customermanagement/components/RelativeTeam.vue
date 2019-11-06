@@ -91,7 +91,7 @@ import {
 } from '@/api/customermanagement/contract'
 
 export default {
-  name: 'RelativeTeam', // 相关团队  可能再很多地方展示 放到客户管理目录下
+  name: 'RelativeTeam', // 团队成员  可能再很多地方展示 放到客户管理目录下
   components: {
     TeamsHandle
   },

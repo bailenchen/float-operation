@@ -75,8 +75,8 @@ import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity' // 活动
 import CRMBaseInfo from '../components/CRMBaseInfo' // 商机基本信息
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
-import RelativeTeam from '../components/RelativeTeam' // 相关团队
-import RelativeProduct from '../components/RelativeProduct' // 相关团队
+import RelativeTeam from '../components/RelativeTeam' // 团队成员
+import RelativeProduct from '../components/RelativeProduct' // 团队成员
 import RelativeReturnMoney from '../components/RelativeReturnMoney' // 相关回款
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import ExamineInfo from '@/components/Examine/ExamineInfo'
@@ -169,9 +169,9 @@ export default {
         tempsTabs.push({ label: '产品', name: 'RelativeProduct' })
       }
       if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: '回款信息', name: 'RelativeReturnMoney' })
+        tempsTabs.push({ label: '回款', name: 'RelativeReturnMoney' })
       }
-      tempsTabs.push({ label: '相关团队', name: 'RelativeTeam' })
+      tempsTabs.push({ label: '团队成员', name: 'RelativeTeam' })
       tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
