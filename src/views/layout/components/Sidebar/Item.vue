@@ -2,7 +2,7 @@
   <div :class="{ 'is-close': collapse }" class="menu-item-content">
     <i
       :class="['wk', `wk-${icon}`]"/>
-    <span class="label">{{ title }}</span>
+    <span class="side-bar-label">{{ title }}</span>
     <el-badge
       v-if="num && num > 0"
       :max="99"
@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'Item',
@@ -19,14 +18,13 @@ export default {
   props: {
     icon: String,
     title: String,
-    num: [String, Number]
+    num: [String, Number],
+    collapse: Boolean
   },
   data() {
     return {}
   },
-  computed: {
-    ...mapGetters(['collapse'])
-  },
+  computed: {},
   watch: {},
   mounted() {},
 
@@ -55,8 +53,8 @@ export default {
     transform: translateX(-50%);
   }
 
-  .label {
-    display: none;
+  .side-bar-label {
+    opacity: 0;
   }
 }
 
@@ -64,7 +62,8 @@ export default {
   margin-right: 8px;
 }
 
-.label {
+.side-bar-label {
+  opacity: 1;
   transition: transform .3s;
 }
 

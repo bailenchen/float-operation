@@ -3,24 +3,25 @@
     v-if="!item.hidden"
     class="menu-wrapper">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-      <app-link
-        v-if="onlyOneChild.meta"
-        :to="resolvePath(onlyOneChild.path)">
-        <el-tooltip
-          :disabled="!collapse"
-          :content="onlyOneChild.meta.title"
-          effect="dark"
-          placement="right">
+      <el-tooltip
+        :disabled="!collapse"
+        :content="onlyOneChild.meta.title"
+        effect="dark"
+        placement="right">
+        <app-link
+          v-if="onlyOneChild.meta"
+          :to="resolvePath(onlyOneChild.path)">
           <el-menu-item
             :index="resolvePath(onlyOneChild.path)"
             :class="{ 'is-select': activeMenu == resolvePath(onlyOneChild.path)}">
             <item
               :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
               :title="onlyOneChild.meta.title"
-              :num="onlyOneChild.meta.num" />
+              :num="onlyOneChild.meta.num"
+              :collapse="collapse" />
           </el-menu-item>
-        </el-tooltip>
-      </app-link>
+        </app-link>
+      </el-tooltip>
     </template>
 
     <el-submenu
