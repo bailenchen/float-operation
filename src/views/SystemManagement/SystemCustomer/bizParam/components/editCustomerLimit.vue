@@ -41,8 +41,8 @@
       class="dialog-footer">
       <el-button @click.native="close">取消</el-button>
       <el-button
-        type="primary"
-        @click="sure">确 定</el-button>
+        v-debounce="sure"
+        type="primary">确 定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -50,6 +50,7 @@
 <script>
 import { crmSettingCustomerConfigSetAPI } from '@/api/systemManagement/SystemCustomer'
 import { XhStrucUserCell } from '@/components/CreateCom'
+import { Loading } from 'element-ui'
 
 export default {
   name: 'EditCustomerLimit',
@@ -75,6 +76,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       customerDeal: 1,
       customerNum: '',
       users: [],
@@ -122,7 +124,8 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     close() {
       this.$emit('update:visible', false)
@@ -137,6 +140,9 @@ export default {
       if ((!this.users.length && !this.strucs.length) || !this.customerNum) {
         this.$message.error('请完善信息')
       } else {
+        const loading = Loading.service({
+          target: document.querySelector(`.el-dialog[aria-label="${this.title}"]`)
+        })
         const params = {
           userList: this.users.map(item => {
             return item.userId
@@ -160,8 +166,11 @@ export default {
           .then(res => {
             this.$emit('success')
             this.close()
+            loading.close()
           })
-          .catch(() => {})
+          .catch(() => {
+            loading.close()
+          })
       }
     },
 
