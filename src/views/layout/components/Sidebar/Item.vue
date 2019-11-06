@@ -2,7 +2,7 @@
   <div :class="{ 'is-close': collapse }" class="menu-item-content">
     <i
       :class="['wk', `wk-${icon}`]"/>
-    <span>{{ title }}</span>
+    <span class="label">{{ title }}</span>
     <el-badge
       v-if="num && num > 0"
       :max="99"
@@ -54,10 +54,18 @@ export default {
     right: auto;
     transform: translateX(-50%);
   }
+
+  .label {
+    display: none;
+  }
 }
 
 .wk {
   margin-right: 8px;
+}
+
+.label {
+  transition: transform .3s;
 }
 
 // 消息数

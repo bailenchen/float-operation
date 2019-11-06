@@ -43,6 +43,7 @@
           v-for="(route, index) in items"
           :key="`${route.path}${index}`"
           :item="route"
+          :collapse="collapse"
           :base-path="route.path"
           :active-menu="activeMenu" />
       </el-menu>
@@ -183,12 +184,6 @@ export default {
 }
 
 .el-menu-vertical.el-menu--collapse {
-  /deep/ .el-menu-item {
-    span {
-      display: none;
-    }
-  }
-
   /deep/ .el-submenu__icon-arrow {
     display: none;
   }

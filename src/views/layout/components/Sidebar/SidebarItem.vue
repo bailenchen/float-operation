@@ -6,14 +6,20 @@
       <app-link
         v-if="onlyOneChild.meta"
         :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item
-          :index="resolvePath(onlyOneChild.path)"
-          :class="{ 'is-select': activeMenu == resolvePath(onlyOneChild.path)}">
-          <item
-            :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
-            :title="onlyOneChild.meta.title"
-            :num="onlyOneChild.meta.num" />
-        </el-menu-item>
+        <el-tooltip
+          :disabled="!collapse"
+          :content="onlyOneChild.meta.title"
+          effect="dark"
+          placement="right">
+          <el-menu-item
+            :index="resolvePath(onlyOneChild.path)"
+            :class="{ 'is-select': activeMenu == resolvePath(onlyOneChild.path)}">
+            <item
+              :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
+              :title="onlyOneChild.meta.title"
+              :num="onlyOneChild.meta.num" />
+          </el-menu-item>
+        </el-tooltip>
       </app-link>
     </template>
 
@@ -63,7 +69,8 @@ export default {
       type: String,
       default: ''
     },
-    activeMenu: String
+    activeMenu: String,
+    collapse: Boolean
   },
   data() {
     // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
