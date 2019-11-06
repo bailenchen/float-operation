@@ -49,7 +49,7 @@
         </div>
 
 
-        <create-log v-if="showAdd" class="add-card card" @update="addLogSuccess" />
+        <create-log v-if="showAdd" ref="createLog" class="add-card card" @update="addLogSuccess" />
 
         <flexbox class="filter-control card">
           <xh-user-cell
@@ -310,6 +310,7 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     this.logType = to.params.type
+    this.$refs.createLog.showMore = false
     this.filterForm = {
       categoryId: 0,
       createUserId: ''
