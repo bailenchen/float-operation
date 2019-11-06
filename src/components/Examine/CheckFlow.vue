@@ -162,6 +162,8 @@ export default {
 }
 .flow-body {
   padding: 15px;
+  max-height: 300px;
+  overflow: auto;
 }
 /** 每行的css */
 .cf-flow-item {
