@@ -14,6 +14,7 @@
           class="handle-item-name"
           style="margin-top: 8px;">请选择：</div>
         <xh-user-cell
+          :value="usersList"
           class="handle-item-content"
           placeholder="点击选择"
           @value-change="userChage"/>
@@ -72,6 +73,9 @@ export default {
     dialogVisible: {
       handler(val) {
         this.visible = val
+        if (!val) {
+          this.usersList = []
+        }
       },
       deep: true,
       immediate: true

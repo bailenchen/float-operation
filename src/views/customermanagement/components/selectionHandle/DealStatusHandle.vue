@@ -86,6 +86,8 @@ export default {
      * 取消选择
      */
     handleCancel() {
+      // 重置状态
+      this.status = 1
       this.$emit('update:visible', false)
     },
 

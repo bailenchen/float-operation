@@ -15,6 +15,7 @@
           style="margin-top: 8px;">选择团队成员：</div>
         <xh-user-cell
           :radio="false"
+          :value="usersList"
           class="handle-item-content"
           placeholder="点击选择（多选）"
           @value-change="userChage"/>
@@ -114,6 +115,9 @@ export default {
     dialogVisible: {
       handler(val) {
         this.visible = val
+        if (!val) {
+          this.resetData()
+        }
       },
       deep: true,
       immediate: true
@@ -123,6 +127,15 @@ export default {
     this.visible = this.dialogVisible
   },
   methods: {
+    /**
+     * 重置数据
+     */
+    resetData() {
+      this.usersList = [] // 变更负责人
+      this.handleType = 1 // 操作类型
+      this.addsTypes = [] // 添加至
+    },
+
     /**
      * 取消选择
      */
