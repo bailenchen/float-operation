@@ -27,19 +27,24 @@
         :key="index"
         :prop="item.prop"
         :label="item.label"
+        :width="item.width"
         show-overflow-tooltip/>
       <el-table-column
         label="操作"
-        width="150">
+        width="150"
+        fixed="right">
         <template slot-scope="scope">
-          <flexbox justify="center">
+          <flexbox>
             <el-button
+              :disabled="scope.row.readOnly == 1"
               type="text"
               @click.native="handleFile('preview', scope)">预览</el-button>
             <el-button
+              :disabled="scope.row.readOnly == 1"
               type="text"
               @click.native="handleFile('edit', scope)">重命名</el-button>
             <el-button
+              :disabled="scope.row.readOnly == 1"
               type="text"
               @click.native="handleFile('delete', scope)">删除</el-button>
           </flexbox>
@@ -76,10 +81,20 @@
 import loading from '../mixins/loading'
 import {
   crmFileSave,
-  crmFileIndex,
   crmFileDelete,
   crmFileUpdate
 } from '@/api/common'
+
+import { crmLeadsFileListAPI } from '@/api/customermanagement/clue'
+import { crmCustomerFileListAPI } from '@/api/customermanagement/customer'
+import { crmContactsFileListAPI } from '@/api/customermanagement/contacts'
+import { crmBusinessFileListAPI } from '@/api/customermanagement/business'
+import { crmContractFileListAPI } from '@/api/customermanagement/contract'
+import { crmProductFileListAPI } from '@/api/customermanagement/product'
+
+import { fileSize } from '@/utils/index'
+
+
 
 export default {
   name: 'RelativeFiles', // 相关附件  可能再很多地方展示 放到客户管理目录下
@@ -126,10 +141,10 @@ export default {
   },
   mounted() {
     this.fieldList.push({ prop: 'name', width: '200', label: '附件名称' })
-    this.fieldList.push({ prop: 'size', width: '200', label: '附件大小' })
+    this.fieldList.push({ prop: 'size', width: '100', label: '附件大小' })
     this.fieldList.push({
       prop: 'createUserName',
-      width: '200',
+      width: '100',
       label: '上传人'
     })
     this.fieldList.push({
@@ -137,7 +152,7 @@ export default {
       width: '200',
       label: '上传时间'
     })
-
+    this.fieldList.push({ prop: 'source', width: '100', label: '来源' })
     this.getDetail()
   },
   activated: function() {},
@@ -145,12 +160,23 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
-      crmFileIndex({
-        batchId: this.detail.batchId
-      })
+      const request = {
+        leads: crmLeadsFileListAPI,
+        customer: crmCustomerFileListAPI,
+        contacts: crmContactsFileListAPI,
+        business: crmBusinessFileListAPI,
+        contract: crmContractFileListAPI,
+        product: crmProductFileListAPI
+      }[this.crmType]
+      const params = {}
+      params[`${this.crmType}Id`] = this.id
+      request(params)
         .then(res => {
           this.loading = false
-          this.list = res.data
+          this.list = res.data.map(item => {
+            item.size = fileSize(item.size)
+            return item
+          })
         })
         .catch(() => {
           this.loading = false
@@ -256,6 +282,10 @@ export default {
   opacity: 0;
   z-index: -1;
   cursor: pointer;
+}
+
+table {
+  width: auto !important;
 }
 </style>
 

@@ -182,3 +182,16 @@ export function crmContactsUnrelateBusinessAPI(data) {
     data: data
   })
 }
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmContactsFileListAPI(data) {
+  return request({
+    url: 'CrmContacts/queryFileList',
+    method: 'post',
+    data: data
+  })
+}

@@ -385,3 +385,16 @@ export function crmCustomerDataCheckAPI(data) {
     data: data
   })
 }
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmCustomerFileListAPI(data) {
+  return request({
+    url: 'CrmCustomer/queryFileList',
+    method: 'post',
+    data: data
+  })
+}

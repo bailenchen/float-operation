@@ -210,3 +210,16 @@ export function crmBusinessSetContactsAPI(data) {
     data: data
   })
 }
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmBusinessFileListAPI(data) {
+  return request({
+    url: 'CrmBusiness/queryFileList',
+    method: 'post',
+    data: data
+  })
+}

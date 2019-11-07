@@ -182,3 +182,16 @@ export function crmContractCancelAPI(data) {
     data: data
   })
 }
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmContractFileListAPI(data) {
+  return request({
+    url: 'CrmContract/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
