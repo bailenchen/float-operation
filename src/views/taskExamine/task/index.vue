@@ -198,6 +198,11 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.taskType = to.params.type
     this.showDone = true
+    this.progress = {
+      stopTask: 0,
+      // 总数量
+      allTask: 0
+    }
     this.type = '0'
     this.dueDate = ''
     this.priority = ''
