@@ -32,7 +32,7 @@
       <div class="title">{{ `${optionName}排行榜` }}</div>
       <el-table
         :data="data"
-        height="280"
+        height="233"
         style="width: 100%">
         <el-table-column
           prop="index"
@@ -202,6 +202,7 @@ export default {
 .content {
   width: 100%;
   height: 300px;
+  position: relative;
   .title {
     font-size: 14px;
     color: #333;
@@ -225,13 +226,6 @@ export default {
     .cell {
       font-weight: normal;
     }
-  }
-
-  /deep/ .el-table__append-wrapper {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
   }
 }
 
@@ -260,6 +254,11 @@ export default {
   display: table;
   table-layout: fixed;
   width: 100%;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
 
   .row {
     display: table-cell;
