@@ -218,7 +218,9 @@
           <flexbox>
             <flexbox-item class="participant">
               <div class="participant-title">参与人</div>
-              <flexbox class="participant-bd">
+              <flexbox
+                class="participant-bd"
+                wrap="wrap">
                 <span
                   v-for="(item, index) in taskData.ownerUserList"
                   :key="index"
@@ -1787,6 +1789,7 @@ $btn-b-hover-color: #eff4ff;
 
   &-bd {
     min-height: 28px;
+
     .owner-list {
       position: relative;
       margin-right: 10px;
