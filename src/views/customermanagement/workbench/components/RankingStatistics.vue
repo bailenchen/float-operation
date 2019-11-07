@@ -32,7 +32,7 @@
       <div class="title">{{ `${optionName}排行榜` }}</div>
       <el-table
         :data="data"
-        height="235"
+        height="280"
         style="width: 100%">
         <el-table-column
           prop="index"
@@ -42,7 +42,9 @@
               v-if="scope.row.sort < 4"
               :src="scope.row.sort | filterRankImage"
               class="ranking-img">
-            <template v-else>{{ scope.row.sort }}</template>
+            <template v-else>
+              <span class="user-sort">{{ scope.row.sort }}</span>
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -58,24 +60,27 @@
         </el-table-column>
         <el-table-column
           :label="`${optionName}（${optionInfo.unit}）`"
-          prop="value"/>
+          prop="value" />
       </el-table>
-      <div class="my-ranking">
-        <span class="row value">
+      <div
+        class="my-ranking">
+        <div class="row value">
           <img
             v-if="!isNaN(Number(myData.sort)) && myData.sort < 4"
             :src="myData.sort | filterRankImage"
             class="ranking-img">
-          <template v-else>{{ myData.sort }}</template>
-        </span>
-        <span class="row">
+          <template v-else>
+            <span class="user-sort">{{ myData.sort }}</span>
+          </template>
+        </div>
+        <div class="row">
           <xr-avatar
             :name="myData.realname"
             :size="30"
             class="user-img" />
           <span class="user-name">{{ myData.realname }}</span>
-        </span>
-        <span class="row value">{{ myData.value }}</span>
+        </div>
+        <div class="row value">{{ myData.value }}</div>
       </div>
     </div>
   </div>
@@ -124,11 +129,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'userInfo'
-    ]),
+    ...mapGetters(['userInfo']),
     optionInfo() {
-      if (this.optionValue == 1 || this.optionValue == 2 || this.optionValue == 7) {
+      if (
+        this.optionValue == 1 ||
+        this.optionValue == 2 ||
+        this.optionValue == 7
+      ) {
         return {
           key: 'money',
           unit: '元'
@@ -149,29 +156,31 @@ export default {
       crmIndexRankingAPI({
         ...this.getBaseParams(),
         label: this.optionValue
-      }).then(res => {
-        this.loading = false
-        const ranking = res.data.ranking || []
-        const myData = res.data.self || {}
-        this.data = ranking.map((item, index) => {
-          item.sort = index + 1
-          item.value = item[this.optionInfo.key]
-          return item
-        })
-
-        if (Object.keys(myData).length === 0) {
-          this.myData = {
-            ...this.userInfo,
-            sort: '--',
-            value: '--'
-          }
-        } else {
-          myData.value = myData[this.optionInfo.key]
-          this.myData = myData
-        }
-      }).catch(() => {
-        this.loading = false
       })
+        .then(res => {
+          this.loading = false
+          const ranking = res.data.ranking || []
+          const myData = res.data.self || {}
+          this.data = ranking.map((item, index) => {
+            item.sort = index + 1
+            item.value = item[this.optionInfo.key]
+            return item
+          })
+
+          if (Object.keys(myData).length === 0) {
+            this.myData = {
+              ...this.userInfo,
+              sort: '--',
+              value: '--'
+            }
+          } else {
+            myData.value = myData[this.optionInfo.key]
+            this.myData = myData
+          }
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
 
     /**
@@ -189,65 +198,82 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "style";
-  .content {
-    width: 100%;
-    height: 300px;
-    .title {
-      font-size: 14px;
-      color: #333;
-      text-align: center;
-      font-weight: bold;
-          margin-bottom: 8px;
-    }
-  }
-
-  .card-title-left .icon {
-    color: #4A5BFD;
-  }
-
-  .el-table {
-    /deep/ th.is-leaf {
-      padding: 8px 0;
-      background-color: white;
-    }
-
-    /deep/ th {
-      .cell {
-        font-weight: normal;
-      }
-    }
-  }
-
-  .ranking-img {
-    width: 24px;
-    vertical-align: middle;
-  }
-
-  .user-img,
-  .user-name {
-    vertical-align: middle;
-  }
-
-  .my-ranking {
+@import 'style';
+.content {
+  width: 100%;
+  height: 300px;
+  .title {
     font-size: 14px;
     color: #333;
-    background-color: #F5F5F5;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+}
 
-    .row {
-      display: inline-block;
-      width: 32%;
-      padding-left: 16px;
-      line-height: 44px;
-    }
+.card-title-left .icon {
+  color: #4a5bfd;
+}
 
-    .row:first-child {
-      padding-left: 20px;
-    }
+.el-table {
+  /deep/ th.is-leaf {
+    padding: 8px 0;
+    background-color: white;
+  }
 
-    .value {
-      color: $xr-color-primary;
-      font-weight: bold;
+  /deep/ th {
+    .cell {
+      font-weight: normal;
     }
   }
+
+  /deep/ .el-table__append-wrapper {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+.ranking-img {
+  width: 24px;
+  vertical-align: middle;
+}
+
+.user-sort {
+  padding-left: 7px;
+}
+
+.user-img,
+.user-name {
+  vertical-align: middle;
+}
+
+.user-img {
+  margin-right: 10px;
+}
+
+.my-ranking {
+  font-size: 14px;
+  color: #333;
+  background-color: #f5f5f5;
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+
+  .row {
+    display: table-cell;
+    padding-left: 10px;
+    line-height: 44px;
+  }
+
+  .row:first-child {
+    padding-left: 20px;
+  }
+
+  .value {
+    color: $xr-color-primary;
+    font-weight: bold;
+  }
+}
 </style>
