@@ -55,16 +55,28 @@
           <div v-if="!scrollDisabled" style="height: 2000px;"/>
         </div>
 
-        <div class="sm-main__ft">
-          <el-button
-            icon="el-icon-check"
-            type="text"
-            @click="allMarkDoneClick">全部标记为已读</el-button>
-
-          <i
-            class="wk wk-s-delete"
-            @click="allDeleteClick" />
-        </div>
+        <flexbox class="sm-main__ft">
+          <div class="switch-read">
+            <el-switch
+              v-model="isRead"
+              @change="refreshList"/>
+            <span class="switch-read__title">仅显示未读消息</span>
+          </div>
+          <el-dropdown
+            trigger="click"
+            @command="handleCommand">
+            <i
+              class="el-icon-more more" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                icon="el-icon-check"
+                command="read">{{ `全部${currentMenu.label == 'all' ? '' : currentMenu.name}标记为已读` }}</el-dropdown-item>
+              <el-dropdown-item
+                icon="wk wk-s-delete"
+                command="delete">{{ `删除${currentMenu.name}已读消息` }}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </flexbox>
       </div>
     </slide-view>
 
@@ -155,6 +167,7 @@ export default {
       loading: false,
       noMore: false,
       page: 1,
+      isRead: false,
 
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
@@ -177,6 +190,12 @@ export default {
 
     labelValue() {
       return this.menuLabel == 'all' ? '' : this.menuLabel
+    },
+
+    currentMenu() {
+      return this.menuList.find(item => {
+        return item.label === this.menuLabel
+      })
     }
   },
   watch: {
@@ -258,11 +277,15 @@ export default {
      */
     getList() {
       this.loading = true
-      systemMessageListAPI({
+      const params = {
         page: this.page,
         limit: 15,
         label: this.labelValue
-      })
+      }
+      if (this.isRead) {
+        params.isRead = 1
+      }
+      systemMessageListAPI(params)
         .then(res => {
           this.loading = false
           if (!this.noMore) {
@@ -340,11 +363,21 @@ export default {
         })
     },
 
+    handleCommand(action) {
+      if (action === 'delete') {
+        this.allDeleteClick()
+      } else {
+        this.allMarkDoneClick()
+      }
+    },
+
     /**
      * 全部标记完成
      */
     allMarkDoneClick() {
-      systemMessageReadAllAPI()
+      systemMessageReadAllAPI({
+        label: this.labelValue
+      })
         .then(res => {
           this.list.forEach(item => {
             item.isRead = 1
@@ -359,13 +392,9 @@ export default {
      * 全部删除
      */
     allDeleteClick() {
-      const menuItem = this.menuList.find(item => {
-        return item.label === this.menuLabel
-      })
-
-      if (menuItem) {
-        const name = menuItem.label == 'all' ? '' : menuItem.name
-        this.$confirm(`确定删除全部${name}消息?`, '提示', {
+      if (this.currentMenu) {
+        const name = this.currentMenu.label == 'all' ? '' : this.currentMenu.name
+        this.$confirm(`确定删除全部${name}已读消息?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -462,22 +491,24 @@ export default {
     bottom: -1px;
     height: 50px;
     background-color: #f7f8fa;
-    text-align: center;
-    line-height: 50px;
+    padding: 0 15px;
 
-    .wk-s-delete {
-      position: absolute;
-      top: 0;
-      right: 20px;
-
-      cursor: pointer;
-
-      font-size: 16px;
-      color: #999;
+    .switch-read {
+      flex: 1;
+      &__title {
+        font-size: 13px;
+        margin-left: 10px;
+        color: #333;
+      }
     }
 
-    .wk-s-delete:hover {
-      color: #F56C6C;
+    .more {
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .more:hover {
+      color: $xr-color-primary;
     }
   }
 }
@@ -524,5 +555,11 @@ export default {
 
 .scroll-bottom-tips {
   margin: 15px 0 65px;
+}
+
+.el-badge {
+  /deep/ .el-badge__content.is-fixed {
+    z-index: 2;
+  }
 }
 </style>
