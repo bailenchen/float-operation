@@ -104,9 +104,9 @@
           @click="barClick('business')">关联商机</el-button>
       </el-popover>
       <el-button
+        v-debounce="sendClick"
         type="primary"
-        class="send-btn"
-        @click="sendClick">发布</el-button>
+        class="send-btn">发布</el-button>
     </div>
 
     <!-- 附件 -->

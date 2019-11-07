@@ -125,9 +125,9 @@
           class="handle-button"
           @click.native="hidenView">取消</el-button>
         <el-button
+          v-debounce="saveField"
           class="handle-button"
-          type="primary"
-          @click.native="saveField()">保存</el-button>
+          type="primary">保存</el-button>
       </div>
     </flexbox>
   </create-view>
