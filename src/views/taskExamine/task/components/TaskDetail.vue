@@ -543,7 +543,8 @@ import {
   deleteCommentAPI,
   detailsTaskAPI,
   detailsTrashTaskAPI,
-  queryLogTaskAPI
+  queryLogTaskAPI,
+  taskDeleteOwnerUserAPI
 } from '@/api/task/task'
 // 项目参与人
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
@@ -1063,16 +1064,9 @@ export default {
      * 参与人删除按钮
      */
     deleteOwnerList(item, index) {
-      setTaskAPI({
+      taskDeleteOwnerUserAPI({
         taskId: this.id,
-        ownerUserId: this.taskData.ownerUserList
-          .filter(userItem => {
-            return userItem.userId != item.userId
-          })
-          .map(item => {
-            return item.userId
-          })
-          .join(',')
+        userId: item.userId
       })
         .then(res => {
           this.taskData.ownerUserList.splice(index, 1)

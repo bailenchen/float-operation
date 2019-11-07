@@ -127,3 +127,27 @@ export function commentListAPI(data) {
     data: data
   })
 }
+
+/**
+ * 删除参与人 taskId  userId
+ * @param {*} data
+ */
+export function taskDeleteOwnerUserAPI(data) {
+  return request({
+    url: 'task/deleteOwnerUser',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 删除标签 taskId  label
+ * @param {*} data
+ */
+export function taskDeleteLabelAPI(data) {
+  return request({
+    url: 'task/deleteLabel',
+    method: 'post',
+    data: data
+  })
+}
