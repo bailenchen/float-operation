@@ -113,3 +113,15 @@ export function journalQueryRecordCountAPI(data) {
     data
   })
 }
+
+/**
+ * 随机返回一条
+ * @param {*} data
+ */
+export function journalGetLogWelcomeAPI(data) {
+  return request({
+    url: 'OaLog/getLogWelcomeSpeech',
+    method: 'post',
+    data
+  })
+}

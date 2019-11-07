@@ -1,12 +1,12 @@
 /** 系统管理路由 */
 import Layout from '@/views/layout/managerLayout'
 
-const layout = function(meta = {}, path = '/manage') {
+const layout = function(meta = {}, path = '/manage', requiresAuth = true) {
   return {
     path: path,
     component: Layout,
     meta: {
-      requiresAuth: true,
+      requiresAuth: requiresAuth,
       ...meta
     }
   }
@@ -162,6 +162,20 @@ export default [
         title: '业绩目标设置',
         requiresAuth: true,
         permissions: ['manage', 'crm', 'field']
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['manage', 'work']
+    }, '/manage', false),
+    children: [{
+      name: 'system-other',
+      path: 'system-other', // 其他配置
+      component: () => import('@/views/SystemManagement/other'),
+      meta: {
+        title: '其他设置',
+        icon: 'manage'
       }
     }]
   }

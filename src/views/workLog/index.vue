@@ -22,7 +22,7 @@
                   <span>{{ userDoneStatus.label }}</span>
                 </span>
               </div>
-              <div class="text">
+              <div v-if="headData && headData.timeRemind" class="text">
                 {{ headData.timeRemind }}
               </div>
             </div>
@@ -134,7 +134,8 @@ import {
   journalEdit,
   journalQueryBulletinAPI,
   journalQueryRecordCountAPI,
-  journalQueryBulletinByTypeAPI } from '@/api/oamanagement/journal'
+  journalQueryBulletinByTypeAPI,
+  journalGetLogWelcomeAPI } from '@/api/oamanagement/journal'
 import { crmIndexIndex } from '@/api/customermanagement/workbench'
 
 import ReportMenu from './components/ReportMenu'
@@ -358,40 +359,48 @@ export default {
     },
 
     getLogRemind() {
+      this.getNetworkWelcome()
       const hour = moment().format('H')
       if (hour < 12) {
-        const num = Math.floor(Math.random() * 6)
+        // const num = Math.floor(Math.random() * 6)
         this.headData.timeLabel = '早上好'
-        this.headData.timeRemind = [
-          '给自己一个微笑，告诉自己今天会更美好',
-          '生命的意义在于和别人的不同之处',
-          '美丽的早晨，灿烂的你，美好的一天在等你',
-          '暖暖的阳光照，柔柔的轻风笑，绵绵的岁月长，真真的祝福到',
-          '美好的一天开始了，每天给自己一个希望',
-          '蓝天是宁静的，空气是清新的，阳光是明媚的'
-        ][num]
+        // this.headData.timeRemind = [
+        //   '给自己一个微笑，告诉自己今天会更美好',
+        //   '生命的意义在于和别人的不同之处',
+        //   '美丽的早晨，灿烂的你，美好的一天在等你',
+        //   '暖暖的阳光照，柔柔的轻风笑，绵绵的岁月长，真真的祝福到',
+        //   '美好的一天开始了，每天给自己一个希望',
+        //   '蓝天是宁静的，空气是清新的，阳光是明媚的'
+        // ][num]
       } else if (hour < 18) {
-        const num = Math.floor(Math.random() * 6)
+        // const num = Math.floor(Math.random() * 6)
         this.headData.timeLabel = '下午好'
-        this.headData.timeRemind = [
-          '认真对待工作，终有一天，你的每一份努力，都将绚烂成花',
-          '通过辛勤的工作获得的财富才是人生的大快事',
-          '生命之中总是有太多的感动，难忘的是你灿烂的笑容',
-          '努力工作，永远不要向命运低头，不要向生活妥协',
-          '生命，是一树花开，或安静或热烈',
-          '人生，最快乐的莫过于奋斗'
-        ][num]
+        // this.headData.timeRemind = [
+        //   '认真对待工作，终有一天，你的每一份努力，都将绚烂成花',
+        //   '通过辛勤的工作获得的财富才是人生的大快事',
+        //   '生命之中总是有太多的感动，难忘的是你灿烂的笑容',
+        //   '努力工作，永远不要向命运低头，不要向生活妥协',
+        //   '生命，是一树花开，或安静或热烈',
+        //   '人生，最快乐的莫过于奋斗'
+        // ][num]
       } else {
-        const num = Math.floor(Math.random() * 5)
+        // const num = Math.floor(Math.random() * 5)
         this.headData.timeLabel = '晚上好'
-        this.headData.timeRemind = [
-          '工作一天辛苦了，这世界不会辜负每一份努力和坚持',
-          '无须缅怀昨天，不必奢望明天，只要认真过好每个今',
-          '每一份坚持都是成功的累积，相信自己，总会遇到惊喜',
-          '不要失去希望，你永远不知道明天会带来什么',
-          '工作一天辛苦了，人生，最快乐的莫过于奋斗'
-        ][num]
+        // this.headData.timeRemind = [
+        //   '工作一天辛苦了，这世界不会辜负每一份努力和坚持',
+        //   '无须缅怀昨天，不必奢望明天，只要认真过好每个今',
+        //   '每一份坚持都是成功的累积，相信自己，总会遇到惊喜',
+        //   '不要失去希望，你永远不知道明天会带来什么',
+        //   '工作一天辛苦了，人生，最快乐的莫过于奋斗'
+        // ][num]
       }
+    },
+
+    getNetworkWelcome() {
+      journalGetLogWelcomeAPI().then(res => {
+        this.headData.timeRemind = res.data
+      }).catch(() => {
+      })
     },
 
     /**
