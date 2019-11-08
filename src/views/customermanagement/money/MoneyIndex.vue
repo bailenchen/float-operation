@@ -4,7 +4,7 @@
       :search.sync="search"
       :crm-type="crmType"
       title="回款管理"
-      placeholder="请输入回款编号"
+      placeholder="请输入客户名称/回款编号"
       main-title="新建回款"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"/>

@@ -4,7 +4,7 @@
       :search.sync="search"
       :crm-type="crmType"
       title="合同管理"
-      placeholder="请输入合同名称"
+      placeholder="请输入客户名称/合同编号/合同名称"
       main-title="新建合同"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"/>
