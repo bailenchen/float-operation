@@ -58,7 +58,7 @@
         <flexbox class="sm-main__ft">
           <div class="switch-read">
             <el-switch
-              v-model="isRead"
+              v-model="isUnRead"
               @change="refreshList"/>
             <span class="switch-read__title">仅显示未读消息</span>
           </div>
@@ -167,7 +167,7 @@ export default {
       loading: false,
       noMore: false,
       page: 1,
-      isRead: false,
+      isUnRead: false, // 仅展示未读
 
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
@@ -282,8 +282,8 @@ export default {
         limit: 15,
         label: this.labelValue
       }
-      if (this.isRead) {
-        params.isRead = 1
+      if (this.isUnRead) {
+        params.isUnRead = 0
       }
       systemMessageListAPI(params)
         .then(res => {
