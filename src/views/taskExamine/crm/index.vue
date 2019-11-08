@@ -2,6 +2,7 @@
   <div class="main">
     <base-tabs-head
       :tabs="tabs"
+      select-value="1"
       @change="tabsChange" />
 
     <div
@@ -66,6 +67,7 @@ export default {
   data() {
     return {
       crmType: '',
+      tabsSelectValue: '1',
       tabs: [
         {
           label: '全部',
@@ -85,8 +87,8 @@ export default {
       noMore: false,
       page: 1,
 
-      // 空是全部
-      status: '',
+      // 待我审批的
+      status: '1',
 
       // 控制详情展示
       detailIndex: 0,
@@ -117,7 +119,8 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     this.crmType = to.params.type
-    this.status = ''
+    this.status = '1'
+    this.tabsSelectValue = '1'
 
     this.refreshList()
     next()

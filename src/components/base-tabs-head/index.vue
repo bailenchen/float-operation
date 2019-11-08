@@ -4,7 +4,7 @@
       <slot name="left" />
     </div>
     <el-tabs
-      :value="tabsDefaultValue"
+      v-model="currentValue"
       @tab-click="handleTabsClick">
       <el-tab-pane
         v-for="(item, index) in tabs"
@@ -24,18 +24,23 @@ export default {
   name: 'BaseTabsHead',
   components: {},
   props: {
+    selectValue: [String, Number],
     tabs: Array
   },
   data() {
-    return {}
-  },
-  computed: {
-    tabsDefaultValue() {
-      return this.tabs && this.tabs.length ? this.tabs[0].name : ''
+    return {
+      currentValue: ''
     }
   },
-  watch: {},
-  mounted() {},
+  computed: {},
+  watch: {
+    selectValue() {
+      this.currentValue = this.selectValue
+    }
+  },
+  mounted() {
+    this.currentValue = this.selectValue
+  },
 
   beforeDestroy() {},
   methods: {

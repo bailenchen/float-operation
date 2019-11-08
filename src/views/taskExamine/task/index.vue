@@ -3,15 +3,20 @@
     <task-tabs-head
       :tabs="tabs"
       :title="title"
+      :select-value="tabsSelectValue"
       @change="tabsChange" />
 
     <div class="content-wrapper">
       <flexbox class="content-wrapper__hd">
         <xr-avatar
+          v-if="taskType == 1"
           :name="userInfo.realname"
           :size="40"
           :src="userInfo.img"
           class="head-img" />
+        <i
+          v-else
+          class="wk wk-multi-user user-icon head-img" />
         <el-progress
           :percentage="progressValue"
           :format="progressFormat" />
@@ -60,7 +65,7 @@
     </div>
 
     <div class="task-add">
-      <task-quick-add @send="refreshList"/>
+      <task-quick-add @send="refreshList" />
     </div>
 
     <task-detail
@@ -82,7 +87,6 @@ import TaskDetail from './components/TaskDetail'
 import TaskQuickAdd from './components/TaskQuickAdd'
 import { taskListAPI } from '@/api/task/task'
 
-
 export default {
   /** 任务列表 */
   name: 'Index',
@@ -95,6 +99,7 @@ export default {
   props: {},
   data() {
     return {
+      tabsSelectValue: '0',
       // 任务类型 区分我的任务和下属任务
       taskType: '',
       list: [],
@@ -188,7 +193,7 @@ export default {
       if (this.progress.stopTask == 0) {
         return 0
       }
-      return parseInt(this.progress.stopTask / this.progress.allTask * 100)
+      return parseInt((this.progress.stopTask / this.progress.allTask) * 100)
     }
   },
   watch: {},
@@ -285,7 +290,9 @@ export default {
         this.detailIndex = index
         this.taskDetailShow = true
       } else if (type == 'complete') {
-        this.progress.stopTask = data.checked ? ++this.progress.stopTask : --this.progress.stopTask
+        this.progress.stopTask = data.checked
+          ? ++this.progress.stopTask
+          : --this.progress.stopTask
       }
     },
 
@@ -329,8 +336,7 @@ export default {
             }
             this.progress = res
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       }
     }
   }
@@ -406,5 +412,13 @@ export default {
   z-index: 5;
   background-color: white;
   padding: 15px;
+}
+
+.user-icon {
+  background: $xr-color-primary;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 50%;
+  font-size: 20px;
 }
 </style>

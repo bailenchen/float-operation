@@ -3,6 +3,7 @@
     <examine-tabs-head
       :tabs="tabs"
       :select-list="selectList"
+      :select-value="tabsSelectValue"
       @change="tabsChange"
       @select="tabsSelect"
       @add="createClick" />
@@ -101,6 +102,7 @@ export default {
   props: {},
   data() {
     return {
+      tabsSelectValue: '',
       selectList: [],
       examineType: '',
       list: [],
@@ -188,12 +190,15 @@ export default {
   mounted() {
     this.examineType = this.$route.params.type
     this.getSelectList()
+    this.tabsSelectValue = this.examineType == 'my' ? '0' : '1'
+    this.status = this.tabsSelectValue
   },
 
   beforeRouteUpdate(to, from, next) {
     this.examineType = to.params.type
-    this.status = ''
     this.selectId = ''
+    this.tabsSelectValue = this.examineType == 'my' ? '0' : '1'
+    this.status = this.tabsSelectValue
 
     this.refreshList()
     next()

@@ -122,8 +122,9 @@ export default {
       // 未勾选展示合同总金额信息
       if (this.selectionList.length == 0) {
         if (this.moneyData) {
+          const unReceivedMoney = (this.moneyData.contractMoney - this.moneyData.receivedMoney).toFixed(2)
           // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-          this.moneyData.unReceivedMoney = (this.moneyData.contractMoney - this.moneyData.receivedMoney).toFixed(2)
+          this.moneyData.unReceivedMoney = unReceivedMoney < 0 ? 0 : unReceivedMoney
           return this.moneyData
         }
         return {}
@@ -138,10 +139,12 @@ export default {
             receivedMoney = floatAdd(receivedMoney, parseFloat(element.receivedMoney))
           }
         }
+
+        const unReceivedMoney = (contractMoney - receivedMoney).toFixed(2)
         return {
           contractMoney: contractMoney.toFixed(2),
           receivedMoney: receivedMoney.toFixed(2),
-          unReceivedMoney: (contractMoney - receivedMoney).toFixed(2)
+          unReceivedMoney: unReceivedMoney < 0 ? 0 : unReceivedMoney
         }
       }
     }
