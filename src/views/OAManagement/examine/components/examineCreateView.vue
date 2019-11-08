@@ -1000,7 +1000,7 @@ export default {
 .crm-create-box {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 10px;
+  padding: 0 10px 15px;
 }
 
 .crm-create-item {

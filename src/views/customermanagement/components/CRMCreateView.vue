@@ -484,6 +484,16 @@ export default {
               break
             }
           }
+        } else if (item.data.formType == 'receivables_plan') {
+          // 选择回款计划 填充 回款时间  和 回款金额 return_time money
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key === 'return_time') {
+              element.value = data.data.returnDate
+            } else if (element.key === 'money') {
+              element.value = data.data.money
+            }
+          }
         }
       }
 
@@ -647,11 +657,13 @@ export default {
             }
           }
 
+          // 新建 合同 回款计划  回款的时间默认填充当天
           if (this.action.type == 'save' || this.action.type == 'relative') {
             if (
               item.fieldName == 'order_date' ||
               item.fieldName == 'start_time' ||
-              item.fieldName == 'return_time'
+              item.fieldName == 'return_time' ||
+              item.fieldName == 'return_date'
             ) {
               params['value'] = moment().format('YYYY-MM-DD')
             }
@@ -1260,7 +1272,7 @@ export default {
 .crm-create-box {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 10px;
+  padding: 0 10px 15px;
 }
 
 .crm-create-item {
