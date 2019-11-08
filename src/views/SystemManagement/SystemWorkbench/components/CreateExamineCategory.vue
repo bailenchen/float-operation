@@ -579,12 +579,24 @@ export default {
   }
 }
 .create-name {
-  font-size: 12px;
-  padding: 0 10px;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  padding-left: 12px;
+  position: relative;
   margin-left: 15px;
   margin-bottom: 10px;
-  color: #333333;
-  border-left: 2px solid #46cdcf;
+}
+
+.create-name::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 14px;
+  border-radius: 2px;
+  width: 4px;
+  background-color: $xr-color-primary;
 }
 
 .crm-create-body {
