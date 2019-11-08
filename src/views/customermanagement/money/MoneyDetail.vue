@@ -67,9 +67,11 @@ import { crmReceivablesRead } from '@/api/customermanagement/money'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
+import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import ExamineInfo from '@/components/Examine/ExamineInfo'
+
 import detail from '../mixins/detail'
 
 export default {
@@ -79,6 +81,7 @@ export default {
     SlideView,
     CRMDetailHead,
     CRMBaseInfo,
+    RelativeFiles,
     RelativeHandle,
     ExamineInfo,
     CRMCreateView
@@ -125,6 +128,7 @@ export default {
       ],
       tabNames: [
         { label: '基本信息', name: 'CRMBaseInfo' },
+        { label: '附件', name: 'RelativeFiles' },
         { label: '操作记录', name: 'RelativeHandle' }
       ],
       tabCurrentName: 'CRMBaseInfo',

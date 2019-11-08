@@ -31,7 +31,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 15000 // 请求超时时间
+  timeout: 600000 // 请求超时时间
 })
 
 // request拦截器

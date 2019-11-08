@@ -91,6 +91,7 @@ import { crmContactsFileListAPI } from '@/api/customermanagement/contacts'
 import { crmBusinessFileListAPI } from '@/api/customermanagement/business'
 import { crmContractFileListAPI } from '@/api/customermanagement/contract'
 import { crmProductFileListAPI } from '@/api/customermanagement/product'
+import { crmReceivablesFileListAPI } from '@/api/customermanagement/money'
 
 import { fileSize } from '@/utils/index'
 
@@ -166,7 +167,8 @@ export default {
         contacts: crmContactsFileListAPI,
         business: crmBusinessFileListAPI,
         contract: crmContractFileListAPI,
-        product: crmProductFileListAPI
+        product: crmProductFileListAPI,
+        receivables: crmReceivablesFileListAPI
       }[this.crmType]
       const params = {}
       params[`${this.crmType}Id`] = this.id

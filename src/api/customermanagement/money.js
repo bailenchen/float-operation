@@ -102,3 +102,16 @@ export function crmReceivablesRevokeCheck(data) {
     data: data
   })
 }
+
+/**
+ * 回款列表
+ * @param {*} data
+ *
+ */
+export function crmReceivablesFileListAPI(data) {
+  return request({
+    url: 'CrmReceivables/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
