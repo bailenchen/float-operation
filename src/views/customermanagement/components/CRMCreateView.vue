@@ -811,7 +811,7 @@ export default {
           if (!value || value == '' || regexIsCRMNumber(value)) {
             callback()
           } else {
-            callback(new Error('数字的整数部分须少于12位，小数部分须少于4位'))
+            callback(new Error('数字的整数部分须少于15位，小数部分须少于4位'))
           }
         }
         tempList.push({
@@ -824,7 +824,7 @@ export default {
           if (!value || value == '' || regexIsCRMMoneyNumber(value)) {
             callback()
           } else {
-            callback(new Error('货币的整数部分须少于10位，小数部分须少于2位'))
+            callback(new Error('货币的整数部分须少于15位，小数部分须少于2位'))
           }
         }
         tempList.push({

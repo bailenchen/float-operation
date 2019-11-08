@@ -200,9 +200,9 @@ export default {
   computed: {
     defaultTips() {
       if (this.field.formType == 'floatnumber') {
-        return '货币的整数部分须少于10位，小数部分须少于2位'
+        return '货币的整数部分须少于15位，小数部分须少于2位'
       } else if (this.field.formType == 'number') {
-        return '数字的整数部分须少于12位，小数部分须少于4位'
+        return '数字的整数部分须少于15位，小数部分须少于4位'
       }
       return ''
     },
