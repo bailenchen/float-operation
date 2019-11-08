@@ -227,18 +227,18 @@ export function regexIsNumber(nubmer) {
   return true
 }
 
-/** 判断输入的是crm数字 数字的整数部分须少于12位，小数部分须少于4位*/
+/** 判断输入的是crm数字 数字的整数部分须少于15位，小数部分须少于4位*/
 export function regexIsCRMNumber(nubmer) {
-  var regex = /^([-+]?\d{1,12})(\.\d{0,4})?$/
+  var regex = /^([-+]?\d{1,15})(\.\d{0,4})?$/
   if (!regex.test(nubmer)) {
     return false
   }
   return true
 }
 
-/** 判断输入的是货币 货币的整数部分须少于10位，小数部分须少于2位*/
+/** 判断输入的是货币 货币的整数部分须少于15位，小数部分须少于2位*/
 export function regexIsCRMMoneyNumber(nubmer) {
-  var regex = /^([-+]?\d{1,10})(\.\d{0,2})?$/
+  var regex = /^([-+]?\d{1,15})(\.\d{0,2})?$/
   if (!regex.test(nubmer)) {
     return false
   }
