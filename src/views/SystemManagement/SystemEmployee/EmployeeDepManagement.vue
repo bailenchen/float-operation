@@ -10,7 +10,8 @@
       <el-button
         slot="ft"
         class="xr-btn--orange"
-        type="primary" @click="bulkImportClick">批量导入</el-button>
+        type="primary"
+        @click="bulkImportClick">批量导入</el-button>
     </xr-header>
     <div class="system-content">
       <!-- 左边导航栏 -->
@@ -120,7 +121,7 @@
             <reminder
               v-if="currentMenuData && currentMenuData.type && currentMenuData.type == 'all'"
               class="all-user-reminder"
-              content="未添加部门和角色的员工无法正常登录系统"/>
+              content="未添加部门和角色的员工无法正常登录系统" />
           </div>
           <!-- <div class="icon-search lt">
             <el-input
@@ -161,7 +162,7 @@
               v-if="currentMenuData && currentMenuData.id && strucMoreOptions.length > 0"
               trigger="click"
               @command="strucMoreHandleClick">
-              <el-button icon="el-icon-more"/>
+              <el-button icon="el-icon-more" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   v-for="(item, index) in strucMoreOptions"
@@ -371,7 +372,6 @@
       :append-to-body="true"
       :before-close="newHandleClose"
       width="60%">
-      <p class="new-dialog-title">基本信息</p>
       <el-form
         ref="dialogRef"
         :inline="true"
@@ -446,7 +446,7 @@
     <bulk-import-user
       :show="bulkImportShow"
       @close="bulkImportShow=false"
-      @success="refreshUserList"/>
+      @success="refreshUserList" />
   </div>
 </template>
 
@@ -887,7 +887,10 @@ export default {
       this.dialogTitle = '新建员工'
       this.formInline = {
         roleId: [],
-        deptId: this.currentMenuData && this.currentMenuData.id ? this.currentMenuData.id : ''
+        deptId:
+          this.currentMenuData && this.currentMenuData.id
+            ? this.currentMenuData.id
+            : ''
       }
       this.employeeCreateDialog = true
     },
@@ -931,14 +934,15 @@ export default {
       this.employeeCreateDialog = true
     },
 
-
     /**
      * 新建编辑员工的  部门信息
      */
     getDepList() {
-      depList().then(response => {
-        this.optionsList['deptId'].list = response.data
-      }).catch(() => {})
+      depList()
+        .then(response => {
+          this.optionsList['deptId'].list = response.data
+        })
+        .catch(() => {})
     },
 
     /**
@@ -946,9 +950,11 @@ export default {
      */
     getRoleList() {
       // 角色列表
-      roleList().then(res => {
-        this.groupsList = res.data
-      }).catch(() => {})
+      roleList()
+        .then(res => {
+          this.groupsList = res.data
+        })
+        .catch(() => {})
     },
 
     /**
@@ -995,9 +1001,11 @@ export default {
      */
     getStructuresListBySuperior(data) {
       this.superDepList = []
-      depList(data).then(response => {
-        this.superDepList = response.data
-      }).catch(() => {})
+      depList(data)
+        .then(response => {
+          this.superDepList = response.data
+        })
+        .catch(() => {})
     },
 
     /**
@@ -1049,11 +1057,13 @@ export default {
     // 新增或编辑确定按钮
     submitDialog() {
       if (this.depCreateLabel == '新增部门') {
-        depSave({ name: this.depCreateLabelValue, pid: this.depSelect }).then(res => {
-          this.getDepList() // 增加了新部门 刷新数据
-          this.getDepTreeList()
-          this.depCreateClose()
-        })
+        depSave({ name: this.depCreateLabelValue, pid: this.depSelect }).then(
+          res => {
+            this.getDepList() // 增加了新部门 刷新数据
+            this.getDepTreeList()
+            this.depCreateClose()
+          }
+        )
       } else {
         depEdit({
           name: this.depCreateLabelValue,
@@ -1072,8 +1082,7 @@ export default {
       depList({ type: 'tree' })
         .then(response => {
           this.allDepData = response.data
-          this.showDepData =
-            response.data || []
+          this.showDepData = response.data || []
           this.depLoading = false
         })
         .catch(() => {
@@ -1511,11 +1520,6 @@ export default {
   display: inline-block;
 }
 /* 新建和编辑 */
-.new-dialog-title {
-  padding-left: 10px;
-  margin-bottom: 3px;
-  border-left: 2px solid #46cdcf;
-}
 .new-dialog-form {
   height: 47vh;
   overflow-y: auto;
@@ -1529,8 +1533,14 @@ export default {
 .new-dialog-form /deep/ .el-form-item .el-form-item__label {
   padding: 0;
 }
-.new-dialog-form /deep/ .el-form-item .el-form-item__content {
-  width: 70%;
+.new-dialog-form {
+  /deep/ .el-form-item:nth-child(even) {
+    padding-left: 15px;
+  }
+
+  /deep/ .el-form-item:nth-child(odd) {
+    padding-right: 15px;
+  }
 }
 .nav-dialog-div {
   margin-bottom: 20px;
