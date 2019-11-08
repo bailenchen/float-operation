@@ -590,7 +590,7 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           {
             pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/,
-            message: '同时包含字母、数字'
+            message: '密码长度为8到20为，同时包含字母、数字'
           }
         ],
         username: [
@@ -606,7 +606,7 @@ export default {
           { required: true, message: '密码不能为空', trigger: 'blur' },
           {
             pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/,
-            message: '同时包含字母、数字'
+            message: '密码长度为8到20为，同时包含字母、数字'
           }
         ],
         username: [
@@ -1127,6 +1127,20 @@ export default {
               })
           }
         } else {
+          // 提示第一个error
+          if (this.$refs.dialogRef.fields) {
+            for (
+              let index = 0;
+              index < this.$refs.dialogRef.fields.length;
+              index++
+            ) {
+              const ruleField = this.$refs.dialogRef.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+          }
           return false
         }
       })
