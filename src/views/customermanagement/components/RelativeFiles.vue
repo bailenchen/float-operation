@@ -19,6 +19,7 @@
     <el-table
       :data="list"
       :height="tableHeight"
+      class="file-table"
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -27,12 +28,10 @@
         :key="index"
         :prop="item.prop"
         :label="item.label"
-        :width="item.width"
-        show-overflow-tooltip/>
+        show-overflow-tooltip />
       <el-table-column
         label="操作"
-        width="150"
-        fixed="right">
+        width="150">
         <template slot-scope="scope">
           <flexbox>
             <el-button
@@ -62,7 +61,7 @@
           label-width="100">
           <el-input
             v-model="editForm.name"
-            autocomplete="off"/>
+            autocomplete="off" />
         </el-form-item>
       </el-form>
       <div
@@ -79,11 +78,7 @@
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
-import {
-  crmFileSave,
-  crmFileDelete,
-  crmFileUpdate
-} from '@/api/common'
+import { crmFileSave, crmFileDelete, crmFileUpdate } from '@/api/common'
 
 import { crmLeadsFileListAPI } from '@/api/customermanagement/clue'
 import { crmCustomerFileListAPI } from '@/api/customermanagement/customer'
@@ -94,8 +89,6 @@ import { crmProductFileListAPI } from '@/api/customermanagement/product'
 import { crmReceivablesFileListAPI } from '@/api/customermanagement/money'
 
 import { fileSize } from '@/utils/index'
-
-
 
 export default {
   name: 'RelativeFiles', // 相关附件  可能再很多地方展示 放到客户管理目录下
@@ -284,10 +277,6 @@ export default {
   opacity: 0;
   z-index: -1;
   cursor: pointer;
-}
-
-table {
-  width: auto !important;
 }
 </style>
 

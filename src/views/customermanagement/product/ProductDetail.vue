@@ -113,17 +113,20 @@ export default {
         { title: '产品价格', value: '' },
         { title: '产品编码', value: '' }
       ],
-      tabNames: [
-        { label: '基本信息', name: 'CRMBaseInfo' },
-        { label: '附件', name: 'RelativeFiles' },
-        { label: '操作记录', name: 'RelativeHandle' }
-      ],
       tabCurrentName: 'CRMBaseInfo',
       // 编辑操作
       isCreate: false
     }
   },
-  computed: {},
+  computed: {
+    tabNames() {
+      return [
+        { label: '基本信息', name: 'CRMBaseInfo' },
+        { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
+        { label: '操作记录', name: 'RelativeHandle' }
+      ]
+    }
+  },
   mounted() {},
   methods: {
     /**

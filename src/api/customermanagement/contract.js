@@ -195,3 +195,16 @@ export function crmContractFileListAPI(data) {
     data: data
   })
 }
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmContractNumAPI(data) {
+  return request({
+    url: 'CrmContract/num',
+    method: 'post',
+    data: data
+  })
+}

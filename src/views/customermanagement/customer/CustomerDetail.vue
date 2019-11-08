@@ -205,19 +205,23 @@ export default {
         tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       }
       if (this.crm.contacts && this.crm.contacts.index) {
-        tempsTabs.push({ label: '联系人', name: 'RelativeContacts' })
+        tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
       }
-      tempsTabs.push({ label: '团队成员', name: 'RelativeTeam' })
+
+      tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
+
       if (this.crm.business && this.crm.business.index) {
-        tempsTabs.push({ label: '商机', name: 'RelativeBusiness' })
+        tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
       }
+
       if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: '合同', name: 'RelativeContract' })
+        tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
       }
       if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: '回款', name: 'RelativeReturnMoney' })
+        tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
       }
-      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+
+      tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
     },

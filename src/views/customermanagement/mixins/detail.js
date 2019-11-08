@@ -1,11 +1,23 @@
 import {
   mapGetters
 } from 'vuex'
+
+import { crmLeadsNumAPI } from '@/api/customermanagement/clue'
+import { crmCustomerNumAPI } from '@/api/customermanagement/customer'
+import { crmContactsNumAPI } from '@/api/customermanagement/contacts'
+import { crmBusinessNumAPI } from '@/api/customermanagement/business'
+import { crmContractNumAPI } from '@/api/customermanagement/contract'
+import { crmProductNumAPI } from '@/api/customermanagement/product'
+import { crmReceivablesNumAPI } from '@/api/customermanagement/money'
+
+
 export default {
   data() {
     return {
       showFirstDetail: true,
-      detailData: null
+      detailData: null,
+      // tabs Number
+      tabsNumber: {}
     }
   },
   props: {
@@ -31,14 +43,17 @@ export default {
     id: function() {
       if (this.canShowDetail) {
         this.detailData = null
+        this.tabsNumber = {}
         this.getDetial()
+        this.getTabsNum()
       }
     }
   },
 
-  mounted() {
+  created() {
     if (this.canShowDetail) {
       this.getDetial()
+      this.getTabsNum()
     }
   },
 
@@ -56,6 +71,40 @@ export default {
         this.hideView()
       }
       this.$emit('handle', data)
+    },
+
+    /**
+     * 获取tab数量
+     */
+    getTabsNum() {
+      const request = {
+        leads: crmLeadsNumAPI,
+        customer: crmCustomerNumAPI,
+        contacts: crmContactsNumAPI,
+        business: crmBusinessNumAPI,
+        contract: crmContractNumAPI,
+        product: crmProductNumAPI,
+        receivables: crmReceivablesNumAPI
+      }[this.crmType]
+
+      const params = {}
+      params[`${this.crmType}Id`] = this.id
+
+      request(params)
+        .then(res => {
+          this.tabsNumber = res.data || {}
+        })
+        .catch(() => {
+        })
+    },
+
+    /**
+     * 获取tabs名字
+     * @param {*} name
+     * @param {*} num
+     */
+    getTabName(name, num) {
+      return `${name}${num && num > 0 ? '（' + num + '）' : ''}`
     }
   },
 

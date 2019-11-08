@@ -166,13 +166,13 @@ export default {
       tempsTabs.push({ label: '活动', name: 'Activity' })
 
       if (this.crm.product && this.crm.product.index) {
-        tempsTabs.push({ label: '产品', name: 'RelativeProduct' })
+        tempsTabs.push({ label: this.getTabName('产品', this.tabsNumber.productCount), name: 'RelativeProduct' })
       }
       if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: '回款', name: 'RelativeReturnMoney' })
+        tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
       }
-      tempsTabs.push({ label: '团队成员', name: 'RelativeTeam' })
-      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
+      tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
     },

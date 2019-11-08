@@ -195,3 +195,16 @@ export function crmContactsFileListAPI(data) {
     data: data
   })
 }
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmContactsNumAPI(data) {
+  return request({
+    url: 'CrmContacts/num',
+    method: 'post',
+    data: data
+  })
+}

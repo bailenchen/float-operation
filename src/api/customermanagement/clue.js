@@ -189,3 +189,16 @@ export function crmLeadsFileListAPI(data) {
     data: data
   })
 }
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmLeadsNumAPI(data) {
+  return request({
+    url: 'CrmLeads/num',
+    method: 'post',
+    data: data
+  })
+}

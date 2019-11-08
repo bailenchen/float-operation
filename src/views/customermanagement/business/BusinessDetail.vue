@@ -282,19 +282,19 @@ export default {
       }
 
       if (this.crm.contacts && this.crm.contacts.index) {
-        tempsTabs.push({ label: '联系人', name: 'RelativeContacts' })
+        tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
       }
 
       if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: '合同', name: 'RelativeContract' })
+        tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
       }
 
       if (this.crm.product && this.crm.product.index) {
-        tempsTabs.push({ label: '产品', name: 'RelativeProduct' })
+        tempsTabs.push({ label: this.getTabName('产品', this.tabsNumber.productCount), name: 'RelativeProduct' })
       }
 
-      tempsTabs.push({ label: '团队成员', name: 'RelativeTeam' })
-      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
+      tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
     },

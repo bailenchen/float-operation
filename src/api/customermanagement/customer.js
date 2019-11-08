@@ -398,3 +398,16 @@ export function crmCustomerFileListAPI(data) {
     data: data
   })
 }
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmCustomerNumAPI(data) {
+  return request({
+    url: 'CrmCustomer/num',
+    method: 'post',
+    data: data
+  })
+}

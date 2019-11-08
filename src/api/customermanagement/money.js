@@ -115,3 +115,16 @@ export function crmReceivablesFileListAPI(data) {
     data: data
   })
 }
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmReceivablesNumAPI(data) {
+  return request({
+    url: 'CrmReceivables/num',
+    method: 'post',
+    data: data
+  })
+}

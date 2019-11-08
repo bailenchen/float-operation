@@ -22,14 +22,14 @@
           :id="id"
           :crm-type="crmType"
           @handle="detailHeadHandle"
-          @close="hideView"/>
+          @close="hideView" />
         <examine-info
           :id="id"
           :record-id="detailData.examineRecordId"
           :owner-user-id="detailData.ownerUserId"
           class="examine-info"
           examine-type="crm_receivables"
-          @on-handle="examineHandle"/>
+          @on-handle="examineHandle" />
         <div class="d-container-bd">
           <el-tabs
             v-model="tabCurrentName"
@@ -57,7 +57,7 @@
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
       :crm-type="crmType"
       @save-success="editSaveSuccess"
-      @hiden-view="isCreate=false"/>
+      @hiden-view="isCreate=false" />
   </slide-view>
 </template>
 
@@ -126,17 +126,23 @@ export default {
         { title: '回款金额', value: '' },
         { title: '负责人', value: '' }
       ],
-      tabNames: [
-        { label: '基本信息', name: 'CRMBaseInfo' },
-        { label: '附件', name: 'RelativeFiles' },
-        { label: '操作记录', name: 'RelativeHandle' }
-      ],
       tabCurrentName: 'CRMBaseInfo',
       // 编辑操作
       isCreate: false
     }
   },
-  computed: {},
+  computed: {
+    tabNames() {
+      return [
+        { label: '基本信息', name: 'CRMBaseInfo' },
+        {
+          label: this.getTabName('附件', this.tabsNumber.fileCount),
+          name: 'RelativeFiles'
+        },
+        { label: '操作记录', name: 'RelativeHandle' }
+      ]
+    }
+  },
   mounted() {},
   methods: {
     /**

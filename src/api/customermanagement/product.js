@@ -131,3 +131,16 @@ export function crmProductFileListAPI(data) {
     data: data
   })
 }
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmProductNumAPI(data) {
+  return request({
+    url: 'CrmProduct/num',
+    method: 'post',
+    data: data
+  })
+}

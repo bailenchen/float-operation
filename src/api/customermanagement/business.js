@@ -223,3 +223,16 @@ export function crmBusinessFileListAPI(data) {
     data: data
   })
 }
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmBusinessNumAPI(data) {
+  return request({
+    url: 'CrmBusiness/num',
+    method: 'post',
+    data: data
+  })
+}
