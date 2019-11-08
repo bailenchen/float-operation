@@ -84,6 +84,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
+        <span class="money-bar">回款金额：{{ moneyPageData.receivablesMoney || 0 }}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->
@@ -99,7 +100,9 @@
 <script>
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import FieldSet from '../components/fieldSet'
+
 import table from '../mixins/table'
+import { floatAdd } from '@/utils'
 
 export default {
   /** 客户管理 的 回款列表 */
@@ -111,10 +114,30 @@ export default {
   mixins: [table],
   data() {
     return {
-      crmType: 'receivables'
+      crmType: 'receivables',
+      moneyData: null // 列表金额
     }
   },
-  computed: {},
+  computed: {
+    moneyPageData() {
+      // 未勾选展示合同总金额信息
+      if (this.selectionList.length == 0) {
+        return this.moneyData || {}
+      } else {
+        let money = 0.0
+        for (let index = 0; index < this.selectionList.length; index++) {
+          const element = this.selectionList[index]
+          // 1 审核通过的x
+          if (element.checkStatus == 1) {
+            money = floatAdd(money, parseFloat(element.money))
+          }
+        }
+        return {
+          receivablesMoney: money.toFixed(2)
+        }
+      }
+    }
+  },
   mounted() {},
   methods: {
     /**

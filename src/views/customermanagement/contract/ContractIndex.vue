@@ -83,7 +83,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
-        <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 }}</span>
+        <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 }} / 未回款金额：{{ moneyPageData.unReceivedMoney || 0 }}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->
@@ -97,11 +97,11 @@
 </template>
 
 <script>
-import { floatAdd } from '@/utils'
-
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import FieldSet from '../components/fieldSet'
+
 import table from '../mixins/table'
+import { floatAdd } from '@/utils'
 
 export default {
   /** 客户管理 的 合同列表 */
@@ -120,14 +120,19 @@ export default {
   computed: {
     moneyPageData() {
       // 未勾选展示合同总金额信息
-      if (this.selectionList.length == 0 && this.moneyData) {
-        return this.moneyData
+      if (this.selectionList.length == 0) {
+        if (this.moneyData) {
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.moneyData.unReceivedMoney = (this.moneyData.contractMoney - this.moneyData.receivedMoney).toFixed(2)
+          return this.moneyData
+        }
+        return {}
       } else {
         let contractMoney = 0.0
         let receivedMoney = 0.0
         for (let index = 0; index < this.selectionList.length; index++) {
           const element = this.selectionList[index]
-          // 2 审核通过的合同
+          // 1 审核通过的合同
           if (element.checkStatus == 1) {
             contractMoney = floatAdd(contractMoney, parseFloat(element.money))
             receivedMoney = floatAdd(receivedMoney, parseFloat(element.receivedMoney))
@@ -135,7 +140,8 @@ export default {
         }
         return {
           contractMoney: contractMoney.toFixed(2),
-          receivedMoney: receivedMoney.toFixed(2)
+          receivedMoney: receivedMoney.toFixed(2),
+          unReceivedMoney: (contractMoney - receivedMoney).toFixed(2)
         }
       }
     }
@@ -169,11 +175,4 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/table.scss';
-.money-bar {
-  color: #99a9bf;
-  line-height: 44px !important;
-  position: absolute;
-  left: 20px;
-  top: 0;
-}
 </style>

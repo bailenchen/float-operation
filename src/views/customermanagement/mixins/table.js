@@ -123,8 +123,9 @@ export default {
               return element
             })
           } else {
-            if (this.crmType === 'contract') {
-              // 合同列表展示金额信息
+            if (this.crmType === 'contract' ||
+              this.crmType === 'receivables') {
+              // 合同/回款列表展示金额信息
               this.moneyData = res.data.money
             }
             this.list = res.data.list
