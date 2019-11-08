@@ -196,6 +196,7 @@ export default {
       this.isCreate = true
     },
     createSaveSuccess() {
+      this.$bus.emit('crm-tab-num-update')
       this.getDetail()
     }
   }

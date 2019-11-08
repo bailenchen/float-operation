@@ -35,7 +35,6 @@
         <template slot-scope="scope">
           <flexbox>
             <el-button
-              :disabled="scope.row.readOnly == 1"
               type="text"
               @click.native="handleFile('preview', scope)">预览</el-button>
             <el-button
@@ -89,6 +88,7 @@ import { crmProductFileListAPI } from '@/api/customermanagement/product'
 import { crmReceivablesFileListAPI } from '@/api/customermanagement/money'
 
 import { fileSize } from '@/utils/index'
+import { debounce } from 'throttle-debounce'
 
 export default {
   name: 'RelativeFiles', // 相关附件  可能再很多地方展示 放到客户管理目录下
@@ -148,6 +148,11 @@ export default {
     })
     this.fieldList.push({ prop: 'source', width: '100', label: '来源' })
     this.getDetail()
+
+    this.debouncedGetDetail = debounce(300, () => {
+      this.$bus.emit('crm-tab-num-update')
+      this.getDetail()
+    })
   },
   activated: function() {},
   deactivated: function() {},
@@ -185,16 +190,14 @@ export default {
       var files = event.target.files
       for (let index = 0; index < files.length; index++) {
         const file = files[index]
-        // if (file.type.indexOf('image') != -1) {
         var params = {}
         params.batchId = this.detail.batchId
         params.file = file
         crmFileSave(params)
           .then(res => {
-            this.getDetail()
+            this.debouncedGetDetail()
           })
           .catch(() => {})
-        // }
       }
 
       event.target.value = ''
@@ -224,6 +227,7 @@ export default {
             })
               .then(res => {
                 this.list.splice(item.$index, 1)
+                this.$bus.emit('crm-tab-num-update')
                 this.$message.success('操作成功')
               })
               .catch(() => {})

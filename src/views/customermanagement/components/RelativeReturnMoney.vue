@@ -277,6 +277,7 @@ export default {
      */
     saveSuccess() {
       if (this.createCrmType == 'receivables') {
+        this.$bus.emit('crm-tab-num-update')
         this.getList()
       } else {
         this.getPlanList()

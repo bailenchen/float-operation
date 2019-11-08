@@ -54,7 +54,17 @@ export default {
     if (this.canShowDetail) {
       this.getDetial()
       this.getTabsNum()
+
+      this.$bus.on('crm-tab-num-update', () => {
+        this.getTabsNum()
+      })
     }
+  },
+
+  beforeDestroy() {
+    this.$bus.off('crm-tab-num-update', () => {
+      this.getTabsNum()
+    })
   },
 
   methods: {

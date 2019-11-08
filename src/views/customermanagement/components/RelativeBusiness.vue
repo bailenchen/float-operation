@@ -308,6 +308,7 @@ export default {
       if (this.canRelation) {
         this.$refs.crmrelative.refreshList()
       } else {
+        this.$bus.emit('crm-tab-num-update')
         this.getDetail()
       }
     }

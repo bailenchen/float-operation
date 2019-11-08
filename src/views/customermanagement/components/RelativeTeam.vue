@@ -214,6 +214,7 @@ export default {
                       message: '操作成功'
                     })
                     this.loading = false
+                    this.$bus.emit('crm-tab-num-update')
                     this.getDetail()
                   })
                   .catch(() => {
@@ -235,6 +236,7 @@ export default {
      * 添加操作
      */
     handleCallBack(data) {
+      this.$bus.emit('crm-tab-num-update')
       this.getDetail()
     },
 
