@@ -392,6 +392,11 @@ export default {
           this.reportData.request = crmIndexIndexListAPI
           this.reportData.paging = true
           this.reportData.sortable = 'custom'
+
+          // 合同金额回款金额 通过的
+          if (item.field === 'receivablesMoney' || item.field === 'contractMoney') {
+            this.reportData.params.checkStatus = 1
+          }
         }
 
         this.reportData.params.label = item.labelValue
