@@ -227,11 +227,15 @@ export default {
 
       this.$emit('show', val)
     },
-    userList() {
-      const selectItems = this.userList.filter(item => {
-        return item.isCheck
-      })
-      this.refreshAllCheck(selectItems.length)
+    userList: {
+      handler() {
+        const selectItems = this.userList.filter(item => {
+          return item.isCheck
+        })
+        this.refreshAllCheck(selectItems.length)
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {

@@ -283,7 +283,7 @@ export default {
         label: this.labelValue
       }
       if (this.isUnRead) {
-        params.isUnRead = 0
+        params.isRead = 0
       }
       systemMessageListAPI(params)
         .then(res => {

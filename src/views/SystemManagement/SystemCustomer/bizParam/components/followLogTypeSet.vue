@@ -13,7 +13,9 @@
         v-for="(item, index) in list"
         :key="index"
         class="input-item">
-        <el-input v-model="item.value"/>
+        <el-input
+          v-model="item.value"
+          :maxlength="100"/>
         <i
           class="el-icon-remove"
           @click="deleteItem(item, index)"/>
