@@ -240,7 +240,6 @@ export default {
   },
   methods: {
     navItemsClick(path) {
-      console.log('path---', path)
       this.$store.commit('SET_NAVACTIVEINDEX', path)
       this.$emit('nav-items-click', path)
     },

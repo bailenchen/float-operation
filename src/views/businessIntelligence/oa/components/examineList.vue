@@ -140,7 +140,6 @@ export default {
 
   watch: {
     params() {
-      console.log('1111')
       this.firstLoading = true
       this.refreshList()
     }

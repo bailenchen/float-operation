@@ -142,6 +142,7 @@ export default {
   color: #333333;
   padding: 5px;
   line-height: 15px;
+  cursor: pointer;
   .user-item {
     padding: 5px;
     background-color: #e2ebf9;
