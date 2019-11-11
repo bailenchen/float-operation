@@ -103,6 +103,27 @@ export function crmIndexRankingAPI(data) {
   })
 }
 
+// 仪表盘排序
+export function crmIndexSortAPI(data) {
+  return request({
+    url: 'Crm/Instrument/queryModelSort',
+    method: 'post',
+    data: data
+  })
+}
+
+// 仪表盘设置
+export function crmIndexSetSortAPI(data) {
+  return request({
+    url: 'Crm/Instrument/setModelSort',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 // 获取简报 跟进记录信息
 // export function crmIndexGetRecordListAPI(data) {
 //   return request({

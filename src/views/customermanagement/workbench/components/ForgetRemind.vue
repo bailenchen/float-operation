@@ -4,7 +4,7 @@
     class="ranking-statistics card">
     <flexbox class="card-title">
       <div class="card-title-left">
-        <span class="icon wk wk-bell" />
+        <span class="icon wk wk-clock" />
         <span class="text">遗忘提醒</span>
       </div>
     </flexbox>
