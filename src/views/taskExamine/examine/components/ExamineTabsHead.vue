@@ -10,8 +10,8 @@
       @command="handleSelectClick">
       <span class="el-dropdown-link">
         <i
-          :class="['wk', 'dropdown-icon', 'wk-' + selectValue.icon]"
-          :style="{ backgroundColor: selectValue.color }" />{{ selectValue.label }}<i class="el-icon-arrow-down el-icon--right" />
+          :class="['wk', 'dropdown-icon', 'wk-' + currentValue.icon]"
+          :style="{ backgroundColor: currentValue.color }" />{{ currentValue.label }}<i class="el-icon-arrow-down el-icon--right" />
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item
@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      selectValue: {
+      currentValue: {
         icon: 'approve',
         color: '#9376FF',
         command: 'all',
@@ -70,7 +70,7 @@ export default {
      * 获取默认选中
      */
     getDefaultSelectValue() {
-      this.selectValue =
+      this.currentValue =
         this.selectList && this.selectList.length
           ? this.selectList[0]
           : {
@@ -82,7 +82,7 @@ export default {
     },
 
     handleSelectClick(value) {
-      this.selectValue = value
+      this.currentValue = value
       this.$emit('select', value.command)
     },
 

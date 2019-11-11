@@ -1,9 +1,10 @@
 <template>
   <div class="main">
     <examine-tabs-head
+      ref="tabsHead"
       :tabs="tabs"
       :select-list="selectList"
-      :select-value="tabsSelectValue"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange"
       @select="tabsSelect"
       @add="createClick" />
@@ -111,8 +112,6 @@ export default {
       page: 1,
       // 空是全部
       selectId: '',
-      // 空是全部
-      status: '',
 
       // 新建
       showCategorySelect: false,
@@ -191,14 +190,13 @@ export default {
     this.examineType = this.$route.params.type
     this.getSelectList()
     this.tabsSelectValue = this.examineType == 'my' ? '0' : '1'
-    this.status = this.tabsSelectValue
   },
 
   beforeRouteUpdate(to, from, next) {
     this.examineType = to.params.type
     this.selectId = ''
     this.tabsSelectValue = this.examineType == 'my' ? '0' : '1'
-    this.status = this.tabsSelectValue
+    this.$refs.tabsHead.getDefaultSelectValue()
 
     this.refreshList()
     next()
@@ -227,11 +225,12 @@ export default {
       }
 
       let request = null
+      const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
       if (this.examineType == 'my') {
-        params.checkStatus = this.status
+        params.checkStatus = status
         request = oaExamineMyCreateIndex
       } else if (this.examineType == 'wait') {
-        params.status = this.status
+        params.status = status
         request = oaExamineMyExamineIndex
       }
 
@@ -278,7 +277,6 @@ export default {
      * 中间tabs改变
      */
     tabsChange(type) {
-      this.status = type == 'all' ? '' : type
       this.refreshList()
     },
 
@@ -401,18 +399,17 @@ export default {
       // }
 
       // oaExamineMyExamineIndex(params)
-        .then(res => {
-          const examine = this.list[this.detailIndex]
-          for (let index = 0; index < res.data.list.length; index++) {
-            const element = res.data.list[index]
-            if (element.examineId == examine.examineId) {
-              this.list.splice(this.detailIndex, 1, element)
-              break
-            }
-          }
-        })
-        .catch(() => {
-        })
+      // .then(res => {
+      //   const examine = this.list[this.detailIndex]
+      //   for (let index = 0; index < res.data.list.length; index++) {
+      //     const element = res.data.list[index]
+      //     if (element.examineId == examine.examineId) {
+      //       this.list.splice(this.detailIndex, 1, element)
+      //       break
+      //     }
+      //   }
+      // })
+      // .catch(() => {})
     },
 
     detailHandleCallBack(data, index) {

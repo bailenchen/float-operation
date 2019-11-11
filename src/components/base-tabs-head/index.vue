@@ -45,6 +45,7 @@ export default {
   beforeDestroy() {},
   methods: {
     handleTabsClick(tab, event) {
+      this.$emit('update:selectValue', tab.name)
       this.$emit('change', tab.name)
     }
   }

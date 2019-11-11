@@ -2,7 +2,7 @@
   <div class="main">
     <base-tabs-head
       :tabs="tabs"
-      select-value="1"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange" />
 
     <div
@@ -67,6 +67,7 @@ export default {
   data() {
     return {
       crmType: '',
+      // 待我审批的
       tabsSelectValue: '1',
       tabs: [
         {
@@ -86,9 +87,6 @@ export default {
       loading: false,
       noMore: false,
       page: 1,
-
-      // 待我审批的
-      status: '1',
 
       // 控制详情展示
       detailIndex: 0,
@@ -119,7 +117,6 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     this.crmType = to.params.type
-    this.status = '1'
     this.tabsSelectValue = '1'
 
     this.refreshList()
@@ -145,7 +142,7 @@ export default {
       const params = {
         page: this.page,
         limit: 15,
-        status: this.status
+        status: this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
       }
 
       // 1合同 2 回款
@@ -158,10 +155,7 @@ export default {
       crmExamineMyExamine(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            this.list = this.list.concat(res.data.list)
-            this.page++
-          }
+          this.list = this.list.concat(res.data.list)
           this.noMore = res.data.lastPage
         })
         .catch(() => {
@@ -174,7 +168,6 @@ export default {
      * 中间tabs改变
      */
     tabsChange(type) {
-      this.status = type == 'all' ? '' : type
       this.refreshList()
     },
 
