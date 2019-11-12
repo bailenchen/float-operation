@@ -244,7 +244,7 @@ export default {
 
       return uniqueList.map(item => {
         return item.name
-      }).join('/')
+      }).join('/') || '无'
     }
   },
   watch: {
