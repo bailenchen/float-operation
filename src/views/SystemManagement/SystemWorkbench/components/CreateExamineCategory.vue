@@ -398,6 +398,8 @@ export default {
             // 如果是新建 提示去创建表单
             this.$confirm('您将继续完成审批表单的创建', '创建成功', {
               showCancelButton: false,
+              closeOnClickModal: false,
+              showClose: false,
               confirmButtonText: '确定',
               type: 'warning'
             })
