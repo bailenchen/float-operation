@@ -399,6 +399,8 @@ export default {
             this.$confirm('您将继续完成审批表单的创建', '创建成功', {
               showCancelButton: false,
               closeOnClickModal: false,
+              closeOnPressEscape: false,
+              showClose: false,
               confirmButtonText: '确定',
               type: 'warning',
               callback: action => {

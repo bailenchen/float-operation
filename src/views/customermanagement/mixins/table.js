@@ -37,9 +37,11 @@ import {
 import {
   crmReceivablesIndex
 } from '@/api/customermanagement/money'
+
 import Lockr from 'lockr'
 import { Loading } from 'element-ui'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   components: {
@@ -68,7 +70,9 @@ export default {
       sceneId: '', // 场景筛选ID
       sceneName: '', // 场景名字
       /** 勾选行 */
-      selectionList: [] // 勾选数据 用于全局导出
+      selectionList: [], // 勾选数据 用于全局导出
+      // 金额字段
+      moneyFields: []
     }
   },
 
@@ -171,6 +175,7 @@ export default {
         })
           .then(res => {
             const fieldList = []
+            const moneyFields = []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
 
@@ -185,12 +190,19 @@ export default {
                 width = element.width
               }
 
+              // 金额字段 需要格式化
+              if (element.formType === 'floatnumber') {
+                moneyFields.push(element.fieldName || '')
+              }
+
               fieldList.push({
                 prop: element.fieldName,
                 label: element.name,
                 width: width
               })
             }
+
+            this.moneyFields = moneyFields
             this.fieldList = fieldList
             // 获取好字段开始请求数据
             this.getList()
@@ -205,6 +217,9 @@ export default {
     },
     /** 格式化字段 */
     fieldFormatter(row, column) {
+      if (this.moneyFields.includes(column.property)) {
+        return separator(row[column.property] || 0)
+      }
       // 如果需要格式化
       return row[column.property] || '--'
     },
