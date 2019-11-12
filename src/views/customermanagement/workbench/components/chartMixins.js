@@ -66,6 +66,10 @@ export default {
         this.chartObj.resize()
       }
     })
+
+    if (this.getData) {
+      this.getData()
+    }
   },
   beforeDestroy() {
     this.$bus.off('window-resize')

@@ -262,7 +262,7 @@ export default {
     }
   },
   created() {
-    // this.filterValue.users.push(this.userInfo)
+    this.getBriefData()
     this.getModelSort()
   },
   mounted() {
