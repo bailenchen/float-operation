@@ -404,21 +404,19 @@ export default {
               callback: action => {
                 if (action === 'close') {
                   this.hidenView()
+                } else if (action === 'confirm') {
+                  this.hidenView()
+                  this.$router.push({
+                    name: 'workbenchHandlefield',
+                    params: {
+                      type: 'oa_examine',
+                      label: '10',
+                      id: res.data.categoryId
+                    }
+                  })
                 }
               }
             })
-              .then(() => {
-                this.hidenView()
-                this.$router.push({
-                  name: 'workbenchHandlefield',
-                  params: {
-                    type: 'oa_examine',
-                    label: '10',
-                    id: res.data.categoryId
-                  }
-                })
-              })
-              .catch(() => {})
           } else {
             this.$message.success('操作成功')
             this.hidenView()
