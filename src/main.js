@@ -47,6 +47,8 @@ import * as filters from './filters' // global filters
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+import vueNumeralFilterInstaller from './filters/vue-numeral-filter'
+Vue.use(vueNumeralFilterInstaller, { locale: 'chs' })
 
 // 处理时间的过滤器
 Vue.use(require('vue-moment'))

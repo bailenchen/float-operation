@@ -138,6 +138,7 @@ import SetSort from './components/SetSort'
 import membersDep from '@/components/selectEmployee/membersDep'
 
 import { mapGetters } from 'vuex'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 /**
  * TODO 2、员工部门筛选选择，
@@ -325,7 +326,13 @@ export default {
       crmIndexIndex(this.getBaseParams()).then(res => {
         this.loading = false
         this.briefList.forEach(item => {
-          item.num = res.data[item.field] || 0 // 数量
+          if (item.field == 'contractMoney' ||
+          item.field == 'businessMoney' ||
+          item.field == 'receivablesMoney') {
+            item.num = separator(res.data[item.field] || 0)
+          } else {
+            item.num = res.data[item.field] || 0 // 数量
+          }
           if (Number(res.prev[item.field]) !== 0) {
             // status状态   top 增长  bottom 下降 '' 持平
             item.status = Number(res.prev[item.field]) > 0 ? 'top' : 'bottom'
