@@ -423,9 +423,11 @@ export default {
             userId: val.userId,
             roleId: this.roleActive.roleId
           }).then(res => {
-            this.userLoading = true
+            this.userLoading = false
             this.getUserList()
             this.$message.success('删除成功')
+          }).catch(()=> {
+            this.userLoading = false
           })
         })
         .catch(() => {
