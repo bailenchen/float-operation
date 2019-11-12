@@ -18,6 +18,7 @@
       </members-dep>
       <time-type-select
         :width="190"
+        default-type="month"
         @change="timeTypeChange"/>
       <el-button
         class="sort-btn"
@@ -173,7 +174,10 @@ export default {
       filterValue: {
         users: [],
         strucs: [],
-        timeLine: 'year'
+        timeLine: {
+          type: 'default',
+          value: 'month'
+        }
       },
 
       loading: false,
@@ -229,7 +233,7 @@ export default {
     // 销售简报百分比提示语
     rateText() {
       if (this.filterValue.timeLine.type === 'custom') return ''
-      const type = this.filterValue.timeLine.value || 'year'
+      const type = this.filterValue.timeLine.value || 'month'
       return {
         today: '较昨天',
         yesterday: '较前天',
