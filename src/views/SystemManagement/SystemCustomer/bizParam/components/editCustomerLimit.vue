@@ -26,6 +26,7 @@
           style="margin-top: 8px;">{{ valueLabel }}</div>
         <el-input
           v-model="customerNum"
+          type="number"
           placeholder="请输入内容"/>
       </flexbox>
       <flexbox v-if="showDeal" class="handle-item">
