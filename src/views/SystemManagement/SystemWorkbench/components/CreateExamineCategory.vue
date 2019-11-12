@@ -399,9 +399,13 @@ export default {
             this.$confirm('您将继续完成审批表单的创建', '创建成功', {
               showCancelButton: false,
               closeOnClickModal: false,
-              showClose: false,
               confirmButtonText: '确定',
-              type: 'warning'
+              type: 'warning',
+              callback: action => {
+                if (action === 'close') {
+                  this.hidenView()
+                }
+              }
             })
               .then(() => {
                 this.hidenView()
