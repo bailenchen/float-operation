@@ -16,6 +16,7 @@
           <span>{{ data.realname }}</span>
           <div class="dialog-btn-group">
             <el-button
+              v-if="userUpdateAuth"
               type="primary"
               size="medium"
               @click="editBtn"> 编 辑 </el-button>

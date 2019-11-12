@@ -41,6 +41,7 @@
           <div class="section">
             <div class="section__title">部门
               <el-button
+                v-if="strucSaveAuth"
                 type="text"
                 icon="el-icon-circle-plus"
                 class="add-btn"
@@ -657,7 +658,7 @@ export default {
     tableUpdateAuth() {
       return this.userEnablesAuth && this.userUpdateAuth
     },
-    // 部门编辑权限
+    // 部门新建权限
     strucSaveAuth() {
       return this.manage && this.manage.users && this.manage.users.deptSave
     },
@@ -665,7 +666,7 @@ export default {
     strucUpdateAuth() {
       return this.manage && this.manage.users && this.manage.users.deptUpdate
     },
-    // 部门编辑权限
+    // 部门删除权限
     strucDeleteAuth() {
       return this.manage && this.manage.users && this.manage.users.deptDelete
     },
