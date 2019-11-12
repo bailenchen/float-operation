@@ -426,7 +426,7 @@ export default {
             this.userLoading = false
             this.getUserList()
             this.$message.success('删除成功')
-          }).catch(()=> {
+          }).catch(() => {
             this.userLoading = false
           })
         })

@@ -26,13 +26,13 @@
       <div class="content">
         <div v-if="data.content" class="content-box">
           <div class="content-title">
-            今日工作内容：
+            {{ logTitleName }}：
           </div>
           <div class="content-text">{{ data.content }}</div>
         </div>
         <div v-if="data.tomorrow" class="content-box">
           <div class="content-title">
-            明日工作的内容：
+            {{ logNextTitleName }}：
           </div>
           <div class="content-text">{{ data.tomorrow }}</div>
         </div>
@@ -246,7 +246,23 @@ export default {
         return new Date(b.createTime) - new Date(a.createTime)
       }) || []
       return arr
+    },
+    // 日志标题
+    logTitleName() {
+      return {
+        1: '今日',
+        2: '本周',
+        3: '本月'
+      }[this.data.categoryId] + '工作内容'
+    },
+    logNextTitleName() {
+      return {
+        1: '明日',
+        2: '下周',
+        3: '下月'
+      }[this.data.categoryId] + '工作内容'
     }
+
   },
   created() {
     // this.$nextTick(() => {
