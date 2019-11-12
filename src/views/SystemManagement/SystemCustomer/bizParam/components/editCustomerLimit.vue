@@ -165,6 +165,7 @@ export default {
         crmSettingCustomerConfigSetAPI(params)
           .then(res => {
             this.$emit('success')
+            this.$message.success(`${this.title}成功`)
             this.close()
             loading.close()
           })
