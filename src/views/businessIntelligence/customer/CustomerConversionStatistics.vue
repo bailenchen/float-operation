@@ -86,10 +86,7 @@ export default {
         { prop: 'contractName', label: '合同名称' },
         { prop: 'contractMoney', label: '合同金额（元）' },
         { prop: 'receivablesMoney', label: '回款金额（元）' },
-        { prop: '客户行业', label: '客户行业' },
-        { prop: '客户来源', label: '客户来源' },
         { prop: 'ownerUserName', label: '负责人' },
-        { prop: 'createUserName', label: '创建人' },
         { prop: 'createTime', label: '创建时间' },
         { prop: 'orderDate', label: '下单时间' }
       ],
