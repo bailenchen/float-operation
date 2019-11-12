@@ -404,7 +404,7 @@ export default {
               .then(() => {
                 this.hidenView()
                 this.$router.push({
-                  name: 'handlefield',
+                  name: 'workbenchHandlefield',
                   params: {
                     type: 'oa_examine',
                     label: '10',

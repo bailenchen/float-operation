@@ -275,7 +275,7 @@ export default {
     handleClick(type, scope) {
       if (type === 'edit-table') {
         this.$router.push({
-          name: 'handlefield',
+          name: 'workbenchHandlefield',
           params: {
             type: 'oa_examine',
             label: '10',

@@ -97,6 +97,14 @@ export default [
         title: '审批流（办公）',
         icon: 'approve'
       }
+    }, {
+      name: 'workbenchHandlefield',
+      path: 'workbench-custom-field/:type/:id/:label', // type customer contacts business contract money
+      component: () => import('@/views/SystemManagement/SystemCustomer/HandleField'),
+      hidden: true,
+      meta: {
+        activeMenu: '/manage/system-workbench'
+      }
     }]
   },
   {
@@ -154,12 +162,11 @@ export default [
       }
     }, {
       name: 'handlefield',
-      path: 'custom-field/handlefield/:type/:id/:label', // type customer contacts business contract money
+      path: 'custom-field/:type/:id/:label', // type customer contacts business contract money
       component: () => import('@/views/SystemManagement/SystemCustomer/HandleField'),
       hidden: true,
       meta: {
         activeMenu: '/manage/customer/custom-field',
-        title: '业绩目标设置',
         requiresAuth: true,
         permissions: ['manage', 'crm', 'field']
       }
