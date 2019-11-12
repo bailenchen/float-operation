@@ -625,6 +625,9 @@ export default {
             trigger: 'blur'
           }
         ],
+        parentId: [
+          { required: true, message: '直属上级不能为空', trigger: 'change' }
+        ],
         deptId: [
           { required: true, message: '部门不能为空', trigger: 'change' }
         ],
