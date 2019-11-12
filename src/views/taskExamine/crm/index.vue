@@ -155,8 +155,13 @@ export default {
       crmExamineMyExamine(params)
         .then(res => {
           this.loading = false
-          this.list = this.list.concat(res.data.list)
-          this.noMore = res.data.lastPage
+          const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
+          if (params.status == status) {
+            this.list = this.list.concat(res.data.list)
+            this.noMore = res.data.lastPage
+          } else {
+            this.refreshList()
+          }
         })
         .catch(() => {
           this.noMore = true

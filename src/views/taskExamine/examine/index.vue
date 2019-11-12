@@ -237,11 +237,24 @@ export default {
       request(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            this.list = this.list.concat(res.data.list)
-            this.page++
+
+          const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
+          let pass = false
+          if (this.examineType == 'my' && params.checkStatus == status) {
+            pass = true
+          } else if (this.examineType == 'wait' && params.status == status) {
+            pass = true
           }
-          this.noMore = res.data.lastPage
+
+          if (pass) {
+            if (!this.noMore) {
+              this.list = this.list.concat(res.data.list)
+              this.page++
+            }
+            this.noMore = res.data.lastPage
+          } else {
+            this.refreshList()
+          }
         })
         .catch(() => {
           this.noMore = true

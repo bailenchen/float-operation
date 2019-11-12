@@ -78,7 +78,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    if (error.response.status) {
+    if (error.response && error.response.status == 500) {
       errorMessage('网络错误，请检查您的网络')
     }
     return Promise.reject(error)

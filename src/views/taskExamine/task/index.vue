@@ -3,7 +3,7 @@
     <task-tabs-head
       :tabs="tabs"
       :title="title"
-      :select-value="tabsSelectValue"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange" />
 
     <div class="content-wrapper">
@@ -106,7 +106,6 @@ export default {
       loading: false,
       noMore: false,
       page: 1,
-      type: '0',
       dueDate: '',
       priority: '',
       showDone: true,
@@ -208,7 +207,7 @@ export default {
       // 总数量
       allTask: 0
     }
-    this.type = '0'
+    this.tabsSelectValue = '0'
     this.dueDate = ''
     this.priority = ''
 
@@ -242,7 +241,7 @@ export default {
       const params = {
         page: this.page,
         limit: 15,
-        type: this.type,
+        type: this.tabsSelectValue,
         priority: this.priority,
         dueDate: this.dueDate,
         status: this.showDone ? '' : '1'
@@ -255,17 +254,21 @@ export default {
       taskListAPI(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            for (const item of res.data.list) {
-              if (item.status == 5) {
-                item.checked = true
+          if (this.tabsSelectValue == params.type) {
+            if (!this.noMore) {
+              for (const item of res.data.list) {
+                if (item.status == 5) {
+                  item.checked = true
+                }
               }
+              this.list = this.list.concat(res.data.list)
+              this.page++
             }
-            this.list = this.list.concat(res.data.list)
-            this.page++
+            this.noMore = res.data.lastPage
+            this.progress = res
+          } else {
+            this.refreshList()
           }
-          this.noMore = res.data.lastPage
-          this.progress = res
         })
         .catch(() => {
           this.noMore = true
@@ -277,7 +280,6 @@ export default {
      * 中间tabs改变
      */
     tabsChange(type) {
-      this.type = type
       this.refreshList()
     },
 
@@ -311,7 +313,7 @@ export default {
         const params = {
           page: page,
           limit: 5,
-          type: this.type,
+          type: this.tabsSelectValue,
           priority: this.priority,
           dueDate: this.dueDate,
           status: this.showDone ? '' : '1'
