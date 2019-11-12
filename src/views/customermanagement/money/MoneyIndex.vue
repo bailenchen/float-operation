@@ -120,14 +120,13 @@ export default {
   },
   computed: {
     moneyPageData() {
-      // 未勾选展示合同总金额信息
       if (this.selectionList.length == 0) {
         return this.moneyData || {}
       } else {
         let money = 0.0
         for (let index = 0; index < this.selectionList.length; index++) {
           const element = this.selectionList[index]
-          // 1 审核通过的x
+          // 1 审核通过的
           if (element.checkStatus == 1) {
             money = floatAdd(money, parseFloat(element.money))
           }
