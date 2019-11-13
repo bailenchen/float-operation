@@ -72,6 +72,7 @@
               :label="item.label"
               :value="item.value" />
           </el-select>
+          <span class="total-count">已筛选出<span>{{ totalCount }}</span>项</span>
         </flexbox>
       </div>
 
@@ -82,6 +83,7 @@
         <log-item
           :data="item"
           :index="index"
+          :show-history-btn="showUserSelect"
           @read="handleRead(index)"
           @add-comment="handleAddComment"
           @delete="handleDelete"
@@ -215,6 +217,7 @@ export default {
       loading: false, // loading
       noMore: false,
       page: 1,
+      totalCount: 0,
 
       options: [
         { label: '全部', value: 0 },
@@ -312,6 +315,7 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     this.logType = to.params.type
+    this.totalCount = 0
     this.$refs.createLog.showMore = false
     this.filterForm = {
       categoryId: 0,
@@ -410,6 +414,7 @@ export default {
     refreshList() {
       this.page = 1
       this.noMore = false
+      this.totalCount = 0
       this.$nextTick(() => {
         this.listData = []
         this.$refs.mainScroll.scrollTo(0, 1)
@@ -458,6 +463,7 @@ export default {
           this.listData = this.listData.concat(res.data.list)
           this.page++
         }
+        this.totalCount = res.data.totalRow
         this.noMore = res.data.lastPage
       }).catch(() => {
         this.noMore = true

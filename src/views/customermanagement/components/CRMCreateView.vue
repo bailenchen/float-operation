@@ -79,7 +79,7 @@
           v-if="crmType=='customer' && action.type == 'save'"
           class="handle-button"
           type="primary"
-          @click.native="saveField(true)">保存并新建联系人</el-button>
+          @click.native="debouncedSaveField(true)">保存并新建联系人</el-button>
         <el-button
           v-if="showDraft"
           class="handle-button"
@@ -89,7 +89,7 @@
         <el-button
           class="handle-button"
           type="primary"
-          @click.native="saveField(false)">{{ sureBtnTitle }}</el-button>
+          @click.native="debouncedSaveField(false)">{{ sureBtnTitle }}</el-button>
       </div>
     </flexbox>
   </create-view>
@@ -119,8 +119,10 @@ import {
   regexIsCRMEmail,
   objDeepCopy
 } from '@/utils'
+
 import moment from 'moment'
 import { isArray } from '@/utils/types'
+import { debounce } from 'throttle-debounce'
 
 import {
   XhInput,
@@ -285,11 +287,14 @@ export default {
       this.getField()
     }
   },
-  mounted() {
+  created() {
+    this.debouncedSaveField = debounce(300, this.saveField)
     // 获取title展示名称
-    document.body.appendChild(this.$el)
     this.title = this.getTitle()
     this.getField()
+  },
+  mounted() {
+    document.body.appendChild(this.$el)
   },
   destroyed() {
     // remove DOM node after destroy
@@ -990,7 +995,7 @@ export default {
     },
     // 保存草稿
     saveDraftField() {
-      this.saveField(false, true)
+      this.debouncedSaveField(false, true)
     },
     // 保存数据
     saveField(saveAndCreate, isDraft = false) {

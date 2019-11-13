@@ -20,7 +20,7 @@
         <flexbox-item
           v-for="(item, index) in showData"
           :key="index"
-          :span="1/2"
+          :span="0.45"
           class="brief"
           @click.native="reportClick(item)">
           <div class="brief-item">

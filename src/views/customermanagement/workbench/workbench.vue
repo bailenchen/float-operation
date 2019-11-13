@@ -76,7 +76,6 @@
       <div class="left">
         <component
           v-for="(item, index) in sortLeft"
-          v-show="item.isHidden == 0"
           :key="index"
           :is="item.component"
           :filter-value="filterValue"
@@ -86,7 +85,6 @@
       <div class="right">
         <component
           v-for="(item, index) in sortRight"
-          v-show="item.isHidden == 0"
           :key="index"
           :is="item.component"
           :filter-value="filterValue"
@@ -443,11 +441,15 @@ export default {
         this.sortLeft = left.map(item => {
           item.component = components[item.modelId - 1]
           return item
+        }).filter(item => {
+          return item.isHidden == 0
         })
 
         this.sortRight = right.map(item => {
           item.component = components[item.modelId - 1]
           return item
+        }).filter(item => {
+          return item.isHidden == 0
         })
       }).catch()
     }

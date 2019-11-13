@@ -21,6 +21,7 @@
   border: 1px solid $xr-border-line-color;
   border-radius: $xr-border-radius-base;
   margin-bottom: 15px;
+  position: relative;
 
   .hello-card {
     padding: 15px;
@@ -109,6 +110,14 @@
   }
 }
 
-// .scroll-bottom-tips {
-//   width: 920px;
-// }
+.total-count {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  margin-top: -8px;
+  font-size: 12px;
+
+  span {
+    color: $xr-color-primary;
+  }
+}

@@ -16,8 +16,10 @@
           <div class="time">
             创建日志于 {{ data.createTime }} <!--{{ data.isRead === 1 ? '已读' : '未读' }}-->
           </div>
-          <div class="handle">
+          <div
+            class="handle">
             <el-button
+              v-if="showHistoryBtn"
               type="text"
               @click="checkHistoryClick">查看以往日志</el-button>
           </div>
@@ -172,6 +174,10 @@ export default {
     index: {
       type: Number,
       default: 0
+    },
+    showHistoryBtn: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
