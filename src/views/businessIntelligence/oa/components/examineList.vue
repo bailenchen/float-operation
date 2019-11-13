@@ -63,6 +63,8 @@ export default {
   },
 
   props: {
+    type: [String, Number], // 审批类型
+    name: String,
     request: Function,
     params: Object,
     // 监听的dom 进行隐藏详情
@@ -89,7 +91,7 @@ export default {
 
   data() {
     return {
-      name: '',
+
       totalCount: 0,
       sumData: '',
       // 判断是否发请求
@@ -108,26 +110,26 @@ export default {
   computed: {
     // 展示说明信息
     showDes() {
-      return this.params.categoryId > 1 && this.params.categoryId <= 6
+      return this.type > 1 && this.type <= 6
     },
     // 说明信息
     desInfo() {
-      if (this.params.categoryId == 2) {
+      if (this.type == 2) {
         return '请假总天数'
-      } else if (this.params.categoryId == 3) {
+      } else if (this.type == 3) {
         return '出差总天数'
-      } else if (this.params.categoryId == 4) {
+      } else if (this.type == 4) {
         return '加班总天数'
-      } else if (this.params.categoryId == 5) {
+      } else if (this.type == 5) {
         return '报销总金额'
-      } else if (this.params.categoryId == 6) {
+      } else if (this.type == 6) {
         return '借款总金额'
       }
       return ''
     },
     // 说明单位
     desUnit() {
-      if (this.params.categoryId > 1 && this.params.categoryId <= 4) {
+      if (this.type > 1 && this.type <= 4) {
         return '天'
       }
       return '元'
@@ -149,7 +151,6 @@ export default {
 
   methods: {
     refreshList() {
-      this.name = ''
       this.sumData = ''
       this.totalCount = 0
 
@@ -168,7 +169,6 @@ export default {
       this.loading = true
       this.request({ page: this.page, limit: 15, ...this.params })
         .then(res => {
-          this.name = res.data.categoryName
           this.sumData =
             this.desUnit == '天' ? res.data.duration : res.data.money
 
