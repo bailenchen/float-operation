@@ -429,7 +429,7 @@ export default {
 
   .xh-user-cell,
   .xh-structure-cell {
-    width: 230px;
+    width: 235px;
     margin-right: 15px;
   }
 }
