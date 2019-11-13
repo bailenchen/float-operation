@@ -87,7 +87,8 @@
           @delete="handleDelete"
           @edit="handleEdit"
           @relate-detail="enterRelateDetail"
-          @report-detail="reportSelect" />
+          @report-detail="reportSelect"
+          @check-history="checkUserHistory" />
       </div>
     </div>
     <p
@@ -568,6 +569,18 @@ export default {
         this.filterForm.createUserId = data.value.map(item => {
           return item.userId
         }).join(',')
+      } else {
+        this.filterForm.createUserId = ''
+      }
+    },
+
+    /**
+     * 查看某人历史
+     */
+    checkUserHistory(user) {
+      this.userSelects = user ? [user] : []
+      if (user) {
+        this.filterForm.createUserId = user.userId
       } else {
         this.filterForm.createUserId = ''
       }

@@ -16,6 +16,11 @@
           <div class="time">
             创建日志于 {{ data.createTime }} <!--{{ data.isRead === 1 ? '已读' : '未读' }}-->
           </div>
+          <div class="handle">
+            <el-button
+              type="text"
+              @click="checkHistoryClick">查看以往日志</el-button>
+          </div>
           <div class="comment-status">
             <span class="icon wk wk-task" />
             <span>{{ getCategory(data.categoryId) }}-{{ data.replyNum === 0 ? '未点评' : '已点评' }}</span>
@@ -419,6 +424,13 @@ export default {
      */
     reportSelect(item) {
       this.$emit('report-detail', item, this.data)
+    },
+
+    /**
+     * 查看历史
+     */
+    checkHistoryClick() {
+      this.$emit('check-history', this.data.createUser)
     }
   }
 }
@@ -447,9 +459,16 @@ export default {
           margin-right: 15px;
         }
         .time {
-          flex: 1;
           font-size: 12px;
           color: #999;
+        }
+        .handle {
+          flex: 1;
+          margin-left: 30px;
+
+          .el-button {
+            font-size: 12px;
+          }
         }
         .comment-status {
           font-size: 12px;
