@@ -3,6 +3,7 @@
     :no-listener-class="noListenerClass"
     :body-style="{padding: 0, height: '100%'}"
     class="d-view"
+    v-empty="!canShowDetail"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
     @close="hideView">
@@ -599,6 +600,7 @@ export default {
   data() {
     return {
       loading: false,
+      canShowDetail: true,
       // 紧急弹出框
       priorityVisible: false,
       // 优先级列表
@@ -819,9 +821,13 @@ export default {
           this.taskData = taskData
           this.loading = false
         })
-        .catch(() => {
+        .catch(error => {
           this.loading = false
-          this.closeBtn()
+          if (error && error.msg == '没有权限') {
+            this.canShowDetail = false
+          } else {
+            this.closeBtn()
+          }
         })
     },
 

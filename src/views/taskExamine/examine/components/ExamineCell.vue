@@ -45,7 +45,8 @@
         </flexbox>
 
         <div class="examine-stage">
-          <i :class="getStatusIcon(data.examineStatus)" :style="{ color: getStatusColor(data.examineStatus) }" /><span>{{ `${data.examineName || ''}${getStatusName(data.examineStatus)}` }}</span>
+          <i :class="getStatusIcon(data.examineStatus)" :style="{ color: getStatusColor(data.examineStatus) }" />
+          <span>{{ `${data.examineName || ''}${getStatusName(data.examineStatus)}` }}</span>
         </div>
 
         <div
