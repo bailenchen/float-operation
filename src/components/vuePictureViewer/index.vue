@@ -17,21 +17,23 @@
         :src="bigImgUrl"
         :style="bigImgStyle"
         alt="">
-      <flexbox
+      <div
         v-if="!bigShowType.isImage"
         class="file-show">
-        <div class="file-icon">
-          <img :src="bigShowType.icon" >
-        </div>
-        <div class="file-handle">
-          <!-- <el-button type="primary"
-                     @click.native="fileHandle('online')">在线预览</el-button> -->
+        <div class="title">该附件格式不支持预览，请下载后查看</div>
+        <i
+          class="el-icon-close"
+          @click="closeViewer" />
+        <div class="content">
+          <img
+            :src="bigShowType.icon"
+            class="file-icon">
           <el-button
             type="primary"
             plain
             @click.native="fileHandle('download')">下载</el-button>
         </div>
-      </flexbox>
+      </div>
       <!-- tips -->
       <transition name="fade">
         <div
@@ -44,8 +46,7 @@
       <flexbox
         v-if="bigShowType.isImage"
         class="handleContainer">
-        <div
-          class="handle-box" >
+        <div class="handle-box">
           <i
             class="wk wk-zoom-in"
             @click="enlarge" />
@@ -60,7 +61,9 @@
             @click="downloadImg(bigImgUrl, bigImgName)" />
         </div>
 
-        <div class="icon-btn" @click="closeViewer">
+        <div
+          class="icon-btn"
+          @click="closeViewer">
           <i class="el-icon-close" />
         </div>
       </flexbox>
@@ -93,7 +96,9 @@
       @click="handlePrev"
       @mouseenter="enterLeft"
       @mouseout="outLeft">
-      <div v-show="leftArrowShow" class="icon-btn leftArrow">
+      <div
+        v-show="leftArrowShow"
+        class="icon-btn leftArrow">
         <i class="el-icon-arrow-left" />
       </div>
     </div>
@@ -103,7 +108,9 @@
       @click="handleNext"
       @mouseenter="enterRight"
       @mouseout="outRight">
-      <div v-show="rightArrowShow" class="icon-btn rightArrow">
+      <div
+        v-show="rightArrowShow"
+        class="icon-btn rightArrow">
         <i class="el-icon-arrow-right" />
       </div>
     </div>
@@ -111,7 +118,7 @@
 </template>
 
 <script>
-import { getMaxIndex, downloadImage } from '@/utils'
+import { getMaxIndex, downloadImage, getFileIconWithSuffix } from '@/utils'
 
 export default {
   name: 'VuePictureViewer',
@@ -442,37 +449,9 @@ export default {
       } else {
         ext = ''
       }
-      ext = ext.toLowerCase()
-      var icon = ''
-      var isImage = true
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
-        isImage = true
-        icon = require('@/assets/img/file_img.png')
-      } else if (this.arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_word.png')
-      } else if (this.arrayContain(['rar', 'zip'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_zip.png')
-      } else if (ext === 'pdf') {
-        isImage = false
-        icon = require('@/assets/img/file_pdf.png')
-      } else if (ext === 'ppt' || ext === 'pptx') {
-        isImage = false
-        icon = require('@/assets/img/file_ppt.png')
-      } else if (this.arrayContain(['txt', 'text'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_txt.png')
-      } else {
-        isImage = false
-        icon = require('@/assets/img/file_unknown.png')
-      }
+
+      var icon = getFileIconWithSuffix(ext)
+      var isImage = ['jpg', 'png', 'gif', 'jpeg'].includes(ext.toLowerCase())
       this.bigShowType = { isImage: isImage, icon: icon }
     },
     getFileTypeIconWithSuffix(url) {
@@ -483,25 +462,7 @@ export default {
       } else {
         ext = ''
       }
-      ext = ext.toLowerCase()
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
-        return require('@/assets/img/file_img.png')
-      } else if (this.arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-        return require('@/assets/img/file_word.png')
-      } else if (this.arrayContain(['rar', 'zip'], ext)) {
-        return require('@/assets/img/file_zip.png')
-      } else if (ext === 'pdf') {
-        return require('@/assets/img/file_pdf.png')
-      } else if (ext === 'ppt' || ext === 'pptx') {
-        return require('@/assets/img/file_ppt.png')
-      } else if (this.arrayContain(['txt', 'text'], ext)) {
-        return require('@/assets/img/file_txt.png')
-      }
-      return require('@/assets/img/file_unknown.png')
+      return getFileIconWithSuffix(ext)
     },
     isShowImage(url) {
       const temps = url ? url.split('.') : []
@@ -511,11 +472,7 @@ export default {
       } else {
         ext = ''
       }
-
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext.toLowerCase())) {
-        return true
-      }
-      return false
+      return ['jpg', 'png', 'gif', 'jpeg'].includes(ext.toLowerCase())
     },
     arrayContain(array, string) {
       return array.some(item => {
@@ -714,7 +671,7 @@ ul li {
 
 /* 添加border */
 .borderActive {
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 /* 修改原生的滚动条 */
 ::-webkit-scrollbar {
@@ -743,25 +700,53 @@ ul li {
   margin-left: -225px;
   background-color: white;
   border-radius: 3px;
-  padding: 0 80px;
-  .file-icon {
-    flex: 1;
-    img {
-      display: block;
-      width: 100px;
-    }
+  padding: 15px;
+
+  .el-icon-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #909399;
+    cursor: pointer;
   }
 
-  .file-handle {
-    button {
-      display: block;
-      width: 120px;
-      margin-left: 0;
+  .el-icon-close:hover {
+    color: $xr-color-primary;
+  }
+
+  .title {
+    position: relative;
+    font-size: 13px;
+    color: #666;
+    padding-left: 6px;
+  }
+
+  .title::before {
+    content: '*';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: red;
+  }
+
+  .content {
+    text-align: center;
+    margin-top: 40px;
+
+    .file-icon {
+      width: 100px;
+      width: 85px;
+      vertical-align: middle;
+    }
+
+    .el-button {
+      vertical-align: middle;
+      width: 100px;
+      margin-left: 50px;;
       margin-right: 0;
       height: 34px;
-    }
-    button:first-child {
-      margin-bottom: 20px;
     }
   }
 }

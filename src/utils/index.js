@@ -168,54 +168,48 @@ export function objDeepCopy(source) {
 /** 获取文件类型图标 */
 export function getFileTypeIcon(file) {
   if (file.type.indexOf('image') !== -1) {
-    return require('@/assets/img/file_img.png')
-  } else if (file.type.indexOf('audio') !== -1 || file.type.indexOf('video') !== -1) {
-    return require('@/assets/img/file_video.png')
+    return getFileIconWithSuffix('png')
+  } else if (file.type.indexOf('audio') !== -1) {
+    return getFileIconWithSuffix('mp3')
+  } else if (file.type.indexOf('video') !== -1) {
+    return getFileIconWithSuffix('mp4')
   } else {
-    var index = file.name.lastIndexOf('.')
-    var ext = file.name.substr(index + 1)
-    if (arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-      return require('@/assets/img/file_excle.png')
-    } else if (arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-      return require('@/assets/img/file_word.png')
-    } else if (arrayContain(['rar', 'zip'], ext)) {
-      return require('@/assets/img/file_zip.png')
-    } else if (ext === 'pdf') {
-      return require('@/assets/img/file_pdf.png')
-    } else if (ext === 'ppt' || ext === 'pptx') {
-      return require('@/assets/img/file_ppt.png')
-    } else if (arrayContain(['txt', 'text'], ext)) {
-      return require('@/assets/img/file_txt.png')
-    }
+    const index = file.name.lastIndexOf('.')
+    const ext = file.name.substr(index + 1) || ''
+
+    return getFileIconWithSuffix(ext)
   }
-  return require('@/assets/img/file_unknown.png')
 }
 
-export function getFileTypeIconWithSuffix(ext) {
-  if (arrayContain(['jpg', 'png', 'gif'], ext)) {
-    return require('@/assets/img/file_img.png')
-  } else if (arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-    return require('@/assets/img/file_excle.png')
-  } else if (arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-    return require('@/assets/img/file_excle.png')
-  } else if (arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-    return require('@/assets/img/file_word.png')
-  } else if (arrayContain(['rar', 'zip'], ext)) {
-    return require('@/assets/img/file_zip.png')
+export function getFileIconWithSuffix(ext) {
+  ext = (ext && ext.toLowerCase()) || ''
+
+  if (['jpg', 'png', 'jpeg', 'gif'].includes(ext)) {
+    return require('@/assets/img/file/file_img.png')
+  } else if (ext === 'bmp') {
+    return require('@/assets/img/file/file_bmp.png')
+  } else if (ext === 'psd') {
+    return require('@/assets/img/file/file_psd.png')
+  } else if (ext === 'tif') {
+    return require('@/assets/img/file/file_tif.png')
+  } else if (['mp4', 'avi', 'mov', 'wmv', '3gp'].includes(ext)) {
+    return require('@/assets/img/file/file_video.png')
+  } else if (['mp3', 'wma', 'wav'].includes(ext)) {
+    return require('@/assets/img/file/file_music.png')
+  } else if (['xlsx', 'xls'].includes(ext)) {
+    return require('@/assets/img/file/file_excle.png')
+  } else if (['doc', 'docx'].includes(ext)) {
+    return require('@/assets/img/file/file_word.png')
+  } else if (['rar', 'zip', '7z', 'tar', 'iso', 'dmg'].includes(ext)) {
+    return require('@/assets/img/file/file_zip.png')
   } else if (ext === 'pdf') {
-    return require('@/assets/img/file_pdf.png')
-  } else if (ext === 'ppt' || ext === 'pptx') {
-    return require('@/assets/img/file_ppt.png')
-  } else if (arrayContain(['txt', 'text'], ext)) {
-    return require('@/assets/img/file_txt.png')
+    return require('@/assets/img/file/file_pdf.png')
+  } else if (['ppt', 'pptx'].includes(ext)) {
+    return require('@/assets/img/file/file_ppt.png')
+  } else if (['txt', 'text'].includes(ext)) {
+    return require('@/assets/img/file/file_txt.png')
   }
-  return require('@/assets/img/file_unknown.png')
-}
-
-function arrayContain(array, string) {
-  return array.some((item) => {
-    return item === string
-  })
+  return require('@/assets/img/file/file_unknown.png')
 }
 
 /** 判断输入的是number */

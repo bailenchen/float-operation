@@ -138,7 +138,9 @@ export default {
     },
 
     sure() {
-      if ((!this.users.length && !this.strucs.length) || !this.customerNum) {
+      if (this.customerNum <= 0) {
+        this.$message.error('请输入正确的客户数')
+      } else if ((!this.users.length && !this.strucs.length)) {
         this.$message.error('请完善信息')
       } else {
         const loading = Loading.service({

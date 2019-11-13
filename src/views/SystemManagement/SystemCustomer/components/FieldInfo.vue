@@ -208,9 +208,9 @@ export default {
     },
     /** 展示最大输入 */
     showMaxInput() {
-      if (this.field.formType == 'textarea') {
-        return true
-      }
+      // if (this.field.formType == 'textarea') {
+      //   return true
+      // }
       return false
     },
     /** 展示默认值块 */
