@@ -496,13 +496,15 @@ export default {
             }
           }
         } else if (item.data.formType == 'receivables_plan') {
-          // 选择回款计划 填充 回款时间  和 回款金额 return_time money
+          // 选择回款计划 填充 回款时间  和 回款金额 回款方式 return_time money
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
             if (element.key === 'return_time') {
               element.value = data.data.returnDate
             } else if (element.key === 'money') {
               element.value = data.data.money
+            } else if (element.key === 'return_type') {
+              element.value = data.data.returnType
             }
           }
         }
