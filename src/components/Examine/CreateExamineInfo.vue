@@ -157,6 +157,14 @@ export default {
           if (valid) {
             result() // 成功回调
           } else {
+            // 提示第一个error
+            for (let index = 0; index < this.$refs.form.fields.length; index++) {
+              const ruleField = this.$refs.form.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
             return false
           }
         })
@@ -187,7 +195,7 @@ export default {
 .crm-create-box {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 10px;
+  padding: 0 10px 15px;
 }
 
 .crm-create-item {

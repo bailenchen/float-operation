@@ -1,8 +1,10 @@
 <template>
   <div class="main">
     <examine-tabs-head
+      ref="tabsHead"
       :tabs="tabs"
       :select-list="selectList"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange"
       @select="tabsSelect"
       @add="createClick" />
@@ -101,6 +103,7 @@ export default {
   props: {},
   data() {
     return {
+      tabsSelectValue: '',
       selectList: [],
       examineType: '',
       list: [],
@@ -109,8 +112,6 @@ export default {
       page: 1,
       // 空是全部
       selectId: '',
-      // 空是全部
-      status: '',
 
       // 新建
       showCategorySelect: false,
@@ -188,12 +189,14 @@ export default {
   mounted() {
     this.examineType = this.$route.params.type
     this.getSelectList()
+    this.tabsSelectValue = this.examineType == 'my' ? '0' : '1'
   },
 
   beforeRouteUpdate(to, from, next) {
     this.examineType = to.params.type
-    this.status = ''
     this.selectId = ''
+    this.tabsSelectValue = this.examineType == 'my' ? '0' : '1'
+    this.$refs.tabsHead.getDefaultSelectValue()
 
     this.refreshList()
     next()
@@ -222,22 +225,36 @@ export default {
       }
 
       let request = null
+      const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
       if (this.examineType == 'my') {
-        params.checkStatus = this.status
+        params.checkStatus = status
         request = oaExamineMyCreateIndex
       } else if (this.examineType == 'wait') {
-        params.status = this.status
+        params.status = status
         request = oaExamineMyExamineIndex
       }
 
       request(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            this.list = this.list.concat(res.data.list)
-            this.page++
+
+          const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
+          let pass = false
+          if (this.examineType == 'my' && params.checkStatus == status) {
+            pass = true
+          } else if (this.examineType == 'wait' && params.status == status) {
+            pass = true
           }
-          this.noMore = res.data.lastPage
+
+          if (pass) {
+            if (!this.noMore) {
+              this.list = this.list.concat(res.data.list)
+              this.page++
+            }
+            this.noMore = res.data.lastPage
+          } else {
+            this.refreshList()
+          }
         })
         .catch(() => {
           this.noMore = true
@@ -273,7 +290,6 @@ export default {
      * 中间tabs改变
      */
     tabsChange(type) {
-      this.status = type == 'all' ? '' : type
       this.refreshList()
     },
 
@@ -396,18 +412,17 @@ export default {
       // }
 
       // oaExamineMyExamineIndex(params)
-        .then(res => {
-          const examine = this.list[this.detailIndex]
-          for (let index = 0; index < res.data.list.length; index++) {
-            const element = res.data.list[index]
-            if (element.examineId == examine.examineId) {
-              this.list.splice(this.detailIndex, 1, element)
-              break
-            }
-          }
-        })
-        .catch(() => {
-        })
+      // .then(res => {
+      //   const examine = this.list[this.detailIndex]
+      //   for (let index = 0; index < res.data.list.length; index++) {
+      //     const element = res.data.list[index]
+      //     if (element.examineId == examine.examineId) {
+      //       this.list.splice(this.detailIndex, 1, element)
+      //       break
+      //     }
+      //   }
+      // })
+      // .catch(() => {})
     },
 
     detailHandleCallBack(data, index) {

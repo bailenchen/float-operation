@@ -18,14 +18,12 @@
       </members-dep>
       <time-type-select
         :width="190"
+        default-type="month"
         @change="timeTypeChange"/>
-        <!--<flexbox justify="flex-end" class="others">
-        <el-button
-          type="primary"
-          icon="el-icon-menu">
-          管理仪表盘
-        </el-button>
-      </flexbox>-->
+      <el-button
+        class="sort-btn"
+        icon="wk wk-manage"
+        @click="setSortShow = true" />
     </flexbox>
 
     <div
@@ -72,36 +70,29 @@
       </div>
     </div>
 
-    <flexbox class="section">
-      <sale-statistics
-        :filter-value="filterValue"
-        class="left" />
-      <data-statistics
-        :filter-value="filterValue"
-        class="right" />
-    </flexbox>
-    <flexbox class="section">
-      <received-statistics
-        :filter-value="filterValue"
-        class="left" />
-      <performance-chart
-        :filter-value="filterValue"
-        class="right" />
-    </flexbox>
-    <flexbox class="section">
-      <sales-funnel
-        :filter-value="filterValue"
-        class="left" />
-      <forget-remind
-        :filter-value="filterValue"
-        class="right" />
-
-    </flexbox>
-
-    <flexbox class="section">
-      <ranking-statistics
-        :filter-value="filterValue"
-        class="left" />
+    <flexbox
+      class="section"
+      align="stretch">
+      <div class="left">
+        <component
+          v-for="(item, index) in sortLeft"
+          v-show="item.isHidden == 0"
+          :key="index"
+          :is="item.component"
+          :filter-value="filterValue"
+          class="left-content"
+        />
+      </div>
+      <div class="right">
+        <component
+          v-for="(item, index) in sortRight"
+          v-show="item.isHidden == 0"
+          :key="index"
+          :is="item.component"
+          :filter-value="filterValue"
+          class="right-content"
+        />
+      </div>
     </flexbox>
 
     <!-- 销售简报列表 -->
@@ -116,6 +107,12 @@
       :field-list="fieldReportList"
       :paging="reportData.paging"
       :sortable="reportData.sortable"/>
+
+    <!-- 排序 -->
+    <set-sort
+      v-if="setSortShow"
+      :visible.sync="setSortShow"
+      @save="getModelSort" />
   </div>
 </template>
 
@@ -124,7 +121,8 @@ import {
   crmIndexIndex,
   crmIndexIndexListAPI,
   crmQueryRecordConuntAPI,
-  crmIndexGetRecordListAPI
+  crmIndexGetRecordListAPI,
+  crmIndexSortAPI
 } from '@/api/customermanagement/workbench'
 
 import SaleStatistics from './components/saleStatistics'
@@ -136,9 +134,11 @@ import RankingStatistics from './components/RankingStatistics'
 import ForgetRemind from './components/ForgetRemind'
 import timeTypeSelect from '@/components/timeTypeSelect'
 import ReportList from './components/reportList'
+import SetSort from './components/SetSort'
 import membersDep from '@/components/selectEmployee/membersDep'
 
 import { mapGetters } from 'vuex'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 /**
  * TODO 2、员工部门筛选选择，
@@ -148,16 +148,17 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'Workbench',
   components: {
-    SaleStatistics,
-    DataStatistics,
-    ReceivedStatistics,
-    SalesFunnel,
-    PerformanceChart,
-    RankingStatistics,
-    ForgetRemind,
+    SaleStatistics, // 1 合同金额目标及完成情况
+    DataStatistics, // 2 数据汇总
+    ReceivedStatistics, // 3 回款金额目标及完成情况
+    SalesFunnel, // 5 销售漏斗
+    PerformanceChart, // 4 业绩指标完成率 (回款金额)
+    RankingStatistics, // 7 排行榜
+    ForgetRemind, // 6 遗忘提醒
     timeTypeSelect,
     ReportList,
-    membersDep
+    membersDep,
+    SetSort
   },
   data() {
     return {
@@ -174,7 +175,10 @@ export default {
       filterValue: {
         users: [],
         strucs: [],
-        timeLine: 'year'
+        timeLine: {
+          type: 'default',
+          value: 'month'
+        }
       },
 
       loading: false,
@@ -190,7 +194,12 @@ export default {
         params: null,
         paging: true,
         sortable: false
-      }
+      },
+
+      // 排序
+      sortLeft: [],
+      sortRight: [],
+      setSortShow: false
     }
   },
   computed: {
@@ -225,7 +234,7 @@ export default {
     // 销售简报百分比提示语
     rateText() {
       if (this.filterValue.timeLine.type === 'custom') return ''
-      const type = this.filterValue.timeLine.value || 'year'
+      const type = this.filterValue.timeLine.value || 'month'
       return {
         today: '较昨天',
         yesterday: '较前天',
@@ -254,7 +263,8 @@ export default {
     }
   },
   created() {
-    // this.filterValue.users.push(this.userInfo)
+    this.getBriefData()
+    this.getModelSort()
   },
   mounted() {
     this.$nextTick(() => {
@@ -316,7 +326,13 @@ export default {
       crmIndexIndex(this.getBaseParams()).then(res => {
         this.loading = false
         this.briefList.forEach(item => {
-          item.num = res.data[item.field] || 0 // 数量
+          if (item.field == 'contractMoney' ||
+          item.field == 'businessMoney' ||
+          item.field == 'receivablesMoney') {
+            item.num = separator(res.data[item.field] || 0)
+          } else {
+            item.num = res.data[item.field] || 0 // 数量
+          }
           if (Number(res.prev[item.field]) !== 0) {
             // status状态   top 增长  bottom 下降 '' 持平
             item.status = Number(res.prev[item.field]) > 0 ? 'top' : 'bottom'
@@ -392,11 +408,48 @@ export default {
           this.reportData.request = crmIndexIndexListAPI
           this.reportData.paging = true
           this.reportData.sortable = 'custom'
+
+          // 合同金额回款金额 通过的
+          if (item.field === 'receivablesMoney' || item.field === 'contractMoney') {
+            this.reportData.params.checkStatus = 1
+          }
         }
 
         this.reportData.params.label = item.labelValue
         this.reportListShow = true
       }
+    },
+
+    /**
+     * 排序
+     */
+    getModelSort() {
+      /**
+       * 1 合同金额目标及完成情况
+       * 2 数据汇总
+       * 3 回款金额目标及完成情况
+       * 4 业绩指标完成率 (回款金额)
+       * 5 销售漏斗
+       * 6 遗忘提醒
+       * 7 排行榜
+       */
+
+      crmIndexSortAPI().then(res => {
+        const left = res.data.left || []
+        const right = res.data.right || []
+
+        const components = ['SaleStatistics', 'DataStatistics', 'ReceivedStatistics', 'PerformanceChart', 'SalesFunnel', 'ForgetRemind', 'RankingStatistics']
+
+        this.sortLeft = left.map(item => {
+          item.component = components[item.modelId - 1]
+          return item
+        })
+
+        this.sortRight = right.map(item => {
+          item.component = components[item.modelId - 1]
+          return item
+        })
+      }).catch()
     }
   }
 }
@@ -412,6 +465,8 @@ export default {
 
     .head {
       margin-bottom: 10px;
+      position: relative;
+
       .user-box {
         width: unset;
         height: 36px;
@@ -442,15 +497,11 @@ export default {
       /deep/ .type-select {
         height: 36px;
       }
-      .others {
-        flex: 1;
-        .el-button {
-          font-size: 12px;
-          padding: 10px 12px;
-          /deep/ [class*="el-icon-"] + span {
-            margin-left: 0;
-          }
-        }
+
+      .sort-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
       }
     }
 
@@ -561,9 +612,20 @@ export default {
       .left {
         width: calc(60.5% - 20px);
         margin-right: 20px;
+        &-content {
+          height: 400px;
+        }
       }
       .right {
         width: 39.5%;
+        &-content {
+          height: 400px;
+        }
+      }
+
+      .left-content + .left-content,
+      .right-content + .right-content {
+        margin-top: 18px;
       }
     }
   }

@@ -18,7 +18,7 @@
       <div class="section">
         <div class="name">企业logo</div>
         <el-upload
-          v-if="systemImage == ''"
+          v-if="!systemImage"
           :show-file-list="false"
           :http-request="fileUpload"
           drag

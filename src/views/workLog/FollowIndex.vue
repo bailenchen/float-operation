@@ -3,6 +3,7 @@
     <record-tab-head
       :tabs="tabs"
       :count="count"
+      select-value="all"
       @change="tabsChange" />
 
     <flexbox class="filter-control card">

@@ -4,7 +4,7 @@
     :visible.sync="visible"
     :append-to-body="true"
     title="批量转移"
-    width="400px"
+    width="450px"
     @close="handleCancel">
     <div class="handle-box">
       <flexbox class="handle-item">
@@ -225,7 +225,7 @@ export default {
   padding-bottom: 15px;
   .handle-item-name {
     flex-shrink: 0;
-    width: 110px;
+    width: 115px;
   }
   .handle-item-content {
     flex: 1;

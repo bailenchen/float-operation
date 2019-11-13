@@ -26,7 +26,7 @@
  * 文件列表
  * @props list {Array} 文件列表
  */
-import { downloadFile } from '@/utils'
+import { downloadFile, getFileIconWithSuffix } from '@/utils'
 
 export default {
   name: 'FileListView',
@@ -51,29 +51,8 @@ export default {
       } else {
         ext = ''
       }
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
-        return require('@/assets/img/file_img.png')
-      } else if (this.arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-        return require('@/assets/img/file_word.png')
-      } else if (this.arrayContain(['rar', 'zip'], ext)) {
-        return require('@/assets/img/file_zip.png')
-      } else if (ext === 'pdf') {
-        return require('@/assets/img/file_pdf.png')
-      } else if (ext === 'ppt' || ext === 'pptx') {
-        return require('@/assets/img/file_ppt.png')
-      } else if (this.arrayContain(['txt', 'text'], ext)) {
-        return require('@/assets/img/file_txt.png')
-      }
-      return require('@/assets/img/file_unknown.png')
-    },
-    arrayContain(array, string) {
-      return array.some(item => {
-        return item === string
-      })
+
+      return getFileIconWithSuffix(ext)
     },
     downloadClick(file) {
       downloadFile({ path: file.filePath, name: file.name })

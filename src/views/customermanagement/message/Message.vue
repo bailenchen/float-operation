@@ -262,18 +262,4 @@ export default {
   border-radius: $xr-border-radius-base;
 }
 
-.side-item-default {
-  color: #333;
-  border-right: 2px solid transparent;
-}
-
-.side-item-select {
-  color: #409eff;
-  border-right: 2px solid #46cdcf;
-  background-color: #ecf5ff;
-}
-
-.block {
-  padding: 10px;
-}
 </style>

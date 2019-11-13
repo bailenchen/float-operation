@@ -16,19 +16,39 @@ function checkAuth(router, authInfo) {
     if (!metaInfo.requiresAuth) {
       return true
     } else {
-      authInfo = { ...authInfo }
-      for (let index = 0; index < metaInfo.permissions.length; index++) {
-        const key = metaInfo.permissions[index]
-        authInfo = authInfo[key]
-        if (!authInfo) {
-          return false
-        } else if (metaInfo.permissions.length - 1 === index) {
-          return true
+      if (metaInfo.permissions) {
+        authInfo = { ...authInfo }
+        return forCheckPermission(metaInfo.permissions, authInfo)
+      } else if (metaInfo.permissionList) { // 一个路由受多个权限判断
+        for (let index = 0; index < metaInfo.permissionList.length; index++) {
+          authInfo = { ...authInfo }
+          const permission = forCheckPermission(metaInfo.permissionList[index], authInfo)
+          if (permission) {
+            return true
+          }
         }
+        return false
       }
     }
   }
   return true
+}
+
+/**
+ * 循环关键字检查权限
+ * @param {*} permissions 权限关键数组
+ * @param {*} authInfo
+ */
+const forCheckPermission = function(permissions, authInfo) {
+  for (let index = 0; index < permissions.length; index++) {
+    const key = permissions[index]
+    authInfo = authInfo[key]
+    if (!authInfo) {
+      return false
+    } else if (permissions.length - 1 === index) {
+      return true
+    }
+  }
 }
 
 /**

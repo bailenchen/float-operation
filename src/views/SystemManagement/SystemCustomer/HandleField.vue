@@ -556,7 +556,7 @@ export default {
     .el-main {
       padding: 0;
       .selected {
-        border-left: 2px solid #46cdcf;
+        border-left: 2px solid $xr-color-primary;
         background: #f7f8fa;
       }
       .no-list {

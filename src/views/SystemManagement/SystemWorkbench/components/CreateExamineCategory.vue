@@ -398,21 +398,27 @@ export default {
             // 如果是新建 提示去创建表单
             this.$confirm('您将继续完成审批表单的创建', '创建成功', {
               showCancelButton: false,
+              closeOnClickModal: false,
+              closeOnPressEscape: false,
+              showClose: false,
               confirmButtonText: '确定',
-              type: 'warning'
+              type: 'warning',
+              callback: action => {
+                if (action === 'close') {
+                  this.hidenView()
+                } else if (action === 'confirm') {
+                  this.hidenView()
+                  this.$router.push({
+                    name: 'workbenchHandlefield',
+                    params: {
+                      type: 'oa_examine',
+                      label: '10',
+                      id: res.data.categoryId
+                    }
+                  })
+                }
+              }
             })
-              .then(() => {
-                this.hidenView()
-                this.$router.push({
-                  name: 'handlefield',
-                  params: {
-                    type: 'oa_examine',
-                    label: '10',
-                    id: res.data.categoryId
-                  }
-                })
-              })
-              .catch(() => {})
           } else {
             this.$message.success('操作成功')
             this.hidenView()
@@ -579,12 +585,24 @@ export default {
   }
 }
 .create-name {
-  font-size: 12px;
-  padding: 0 10px;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  padding-left: 12px;
+  position: relative;
   margin-left: 15px;
   margin-bottom: 10px;
-  color: #333333;
-  border-left: 2px solid #46cdcf;
+}
+
+.create-name::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 14px;
+  border-radius: 2px;
+  width: 4px;
+  background-color: $xr-color-primary;
 }
 
 .crm-create-body {

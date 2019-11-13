@@ -26,6 +26,7 @@
           style="margin-top: 8px;">{{ valueLabel }}</div>
         <el-input
           v-model="customerNum"
+          type="number"
           placeholder="请输入内容"/>
       </flexbox>
       <flexbox v-if="showDeal" class="handle-item">
@@ -137,7 +138,9 @@ export default {
     },
 
     sure() {
-      if ((!this.users.length && !this.strucs.length) || !this.customerNum) {
+      if (this.customerNum <= 0) {
+        this.$message.error('请输入正确的客户数')
+      } else if ((!this.users.length && !this.strucs.length)) {
         this.$message.error('请完善信息')
       } else {
         const loading = Loading.service({
@@ -165,6 +168,7 @@ export default {
         crmSettingCustomerConfigSetAPI(params)
           .then(res => {
             this.$emit('success')
+            this.$message.success(`${this.title}成功`)
             this.close()
             loading.close()
           })

@@ -25,7 +25,7 @@
 </template>
 
 <script type="text/javascript">
-import { downloadFile, getFileTypeIconWithSuffix } from '@/utils'
+import { downloadFile, getFileIconWithSuffix } from '@/utils'
 import { crmFileDelete } from '@/api/common'
 
 export default {
@@ -59,7 +59,7 @@ export default {
       } else {
         ext = ''
       }
-      return getFileTypeIconWithSuffix(ext)
+      return getFileIconWithSuffix(ext)
     }
   },
   watch: {},

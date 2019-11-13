@@ -175,4 +175,10 @@ export default {
 .table-item-time {
   color: #999;
 }
+
+.el-table {
+  /deep/ .el-table__body td {
+    height: 60px;
+  }
+}
 </style>

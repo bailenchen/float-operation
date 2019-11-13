@@ -4,7 +4,7 @@
     class="ranking-statistics card">
     <flexbox class="card-title">
       <div class="card-title-left">
-        <span class="icon wk wk-bell" />
+        <span class="icon wk wk-clock" />
         <span class="text">遗忘提醒</span>
       </div>
     </flexbox>
@@ -96,7 +96,7 @@ export default {
           hidden: false
         },
         {
-          label: '即将进入公海的客户',
+          label: '逾期未联系的客户',
           value: 0,
           key: 'putInPoolRemind',
           hidden: false
@@ -151,7 +151,7 @@ export default {
       this.reportData.placeholder = '请输入客户名称/手机/电话'
       this.reportData.crmType = 'customer'
 
-      // 即将进入公海的客户
+      // 逾期未联系的客户
       if (item.key == 'putInPoolRemind') {
         this.reportData.params = {
           isSub: 1

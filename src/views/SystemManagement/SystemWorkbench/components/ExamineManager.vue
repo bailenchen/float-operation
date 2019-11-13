@@ -275,7 +275,7 @@ export default {
     handleClick(type, scope) {
       if (type === 'edit-table') {
         this.$router.push({
-          name: 'handlefield',
+          name: 'workbenchHandlefield',
           params: {
             type: 'oa_examine',
             label: '10',
@@ -301,6 +301,9 @@ export default {
             })
               .then(res => {
                 this.list.splice(scope.$index, 1)
+                if (this.list.length == 0) {
+                  this.currentPage = this.currentPage - 1 > 0 ? this.currentPage - 1 : 1
+                }
                 this.getList()
 
                 this.$message({
