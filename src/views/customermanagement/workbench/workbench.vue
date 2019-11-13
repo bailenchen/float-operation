@@ -487,6 +487,7 @@ export default {
           margin: 10px;
           .brief-item__body {
             flex: 1;
+            overflow: hidden;
             .icon-box {
               width: 36px;
               height: 36px;
@@ -501,6 +502,7 @@ export default {
               }
             }
             .info {
+              overflow: hidden;
               .title {
                 font-size: 13px;
               }
@@ -509,6 +511,9 @@ export default {
                 font-weight: bold;
                 line-height: 1;
                 margin-top: 8px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
               }
             }
           }

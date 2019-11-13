@@ -189,7 +189,7 @@ export default {
         company_credit_number: [{ required: true, msg: '企业信用号不能为空' }],
         password: [
           { required: true, msg: '密码不能为空' },
-          { reg: pwdReg, msg: '密码必须由8-20位字母、数字组成' }
+          { reg: pwdReg, msg: '密码由8-20位字母、数字组成' }
         ]
       },
 

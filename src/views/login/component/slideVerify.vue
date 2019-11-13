@@ -5,6 +5,18 @@
     class="slide-verify"
     onselectstart="return false;"
     @click.stop>
+    <div class="close-box">
+      <span
+        class="el-icon-close" @click="$emit('close')"/>
+    </div>
+    <div class="verify-title">
+      <div class="title">
+        身份验证
+      </div>
+      <div class="desc">
+        拖动滑块，使图片角度为正
+      </div>
+    </div>
     <div class="verify-info">
       <div
         :style="{
@@ -12,9 +24,9 @@
           transform: 'rotate(' + rotate +'deg)'
       }" class="verify-img"/>
     </div>
-    <div
+    <!--<div
       class="slide-verify-refresh-icon"
-      @click="refresh" />
+      @click="refresh" />-->
 
     <!-- container -->
     <div
@@ -214,7 +226,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .slide-verify {
   position: relative;
   background-color: white;
@@ -228,12 +240,32 @@ export default {
   top: 0;
 }
 
+.close-box {
+  text-align: right;
+  .el-icon-close {
+    font-size: 18px;
+    cursor: pointer;
+  }
+}
+.verify-title {
+  text-align: center;
+  margin-top: 5px;
+  .title {
+    color: #666;
+  }
+  .desc {
+    font-size: 18px;
+    color: #333;
+    margin-top: 5px;
+  }
+}
+
 .verify-info {
   position: relative;
   overflow: hidden;
   width: 150px;
   height: 150px;
-  margin: 20px auto 25px;
+  margin: 35px auto;
   background-size: 100% 100%;
 }
 

@@ -21,6 +21,7 @@
       </el-form-item>
 
       <el-popover
+        v-model="showSlideVerify"
         :disabled="isUser || !canVerify"
         placement="top-start"
         width="332"
@@ -31,7 +32,8 @@
           slider-text="向右滑动"
           @success="sliderSuccess"
           @fail="sliderFail"
-          @refresh="sliderRefresh" />
+          @refresh="sliderRefresh"
+          @close="showSlideVerify = false" />
         <div
           slot="reference"
           :class="{success: isUser}"
