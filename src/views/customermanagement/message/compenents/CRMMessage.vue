@@ -312,6 +312,9 @@ export default {
 
   watch: {
     show() {
+      if (this.showOptions && this.options.length > 0) {
+        this.optionsType = this.options[0].value
+      }
       this.initTableHead()
     }
   },
