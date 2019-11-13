@@ -437,6 +437,17 @@ export default {
               })
               .catch(() => {})
           }
+        } else if (item.data.formType == 'product') {
+          for (
+            let index = 0;
+            index < this.crmForm.crmFields.length;
+            index++
+          ) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key === 'money') {
+              element['value'] = item.value.totalPrice || ''
+            }
+          }
         }
       } else if (this.crmType == 'receivables') {
         // 新建回款 选择客户 要将id交于 合同
