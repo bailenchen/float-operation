@@ -79,12 +79,12 @@
             :key="index"
             @click="switchImgUrl(index, $event)">
             <img
-              v-if="isShowImage(item.url)"
-              :src="item.url"
+              v-if="isShowImage(item.name)"
+              :src="item.src"
               alt="">
             <img
-              v-if="!isShowImage(item.url)"
-              :src="getFileTypeIconWithSuffix(item.url)"
+              v-else
+              :src="getFileTypeIconWithSuffix(item.name)"
               alt="">
           </li>
         </ul>
@@ -119,6 +119,7 @@
 
 <script>
 import { getMaxIndex, downloadImage, getFileIconWithSuffix } from '@/utils'
+import { downloadFileAPI } from '@/api/common'
 
 export default {
   name: 'VuePictureViewer',
@@ -146,7 +147,7 @@ export default {
       rightArrowShow: false,
       // 图片容器数据
       rotateDeg: 0,
-      bigImgUrl: '',
+      // bigImgUrl: '',
       bigShowType: { isImage: true, icon: '' }, // 不是图片的时候 展示 icon
       bigImgName: '',
       imgLength: 0,
@@ -192,9 +193,19 @@ export default {
       const fileName = this.bigImgName.slice(0, this.bigImgName.indexOf('.'))
 
       return `${fileName} （${this.imgIndex + 1} / ${this.imgLength}）`
+    },
+    bigImgUrl() {
+      return this.imgData[this.imgIndex].src
     }
   },
   mounted() {
+    for (let index = 0; index < this.imgData.length; index++) {
+      const element = this.imgData[index]
+      if (this.isShowImage(element.name)) {
+        this.getImageSrc(element.url, element.name, index)
+      }
+    }
+
     document
       .getElementById('vue-picture-viewer')
       .addEventListener('click', e => {
@@ -204,9 +215,10 @@ export default {
     this.imgLength = this.imgData.length
     this.imgIndex = this.selectIndex
     this.$nextTick(() => {
-      this.bigImgUrl = this.imgData[this.imgIndex].url
-      this.getShowTypeInfo(this.bigImgUrl)
+      // this.bigImgUrl = this.imgData[this.imgIndex].url
       this.bigImgName = this.imgData[this.imgIndex].name
+      this.getShowTypeInfo(this.bigImgName)
+
       if (this.imgLength > 1) {
         // 大于1的时候才会展示缩略图
         var item = this.$refs.thumbnailItem
@@ -230,6 +242,28 @@ export default {
     }
   },
   methods: {
+    getImageSrc(url, name, index) {
+      downloadFileAPI(url).then(res => {
+        const temps = name ? name.split('.') : []
+        let ext = ''
+        if (temps.length > 0) {
+          ext = temps[temps.length - 1]
+        } else {
+          ext = ''
+        }
+
+        const blob = new Blob([res.data], {
+          type: `image/${ext}`
+        })
+
+        var reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = (evt) => { // 读取完文件之后会回来这里
+          this.$set(this.imgData[index], 'blob', blob)
+          this.$set(this.imgData[index], 'src', evt.target.result)
+        }
+      }).catch(() => {})
+    },
     // init
     init() {
       const screenW =
@@ -342,9 +376,9 @@ export default {
         i.className = ''
       })
       this.imgIndex = num
-      this.bigImgUrl = this.imgData[num].url
-      this.getShowTypeInfo(this.bigImgUrl)
+      // this.bigImgUrl = this.imgData[num].url
       this.bigImgName = this.imgData[num].name
+      this.getShowTypeInfo(this.bigImgName)
       e.currentTarget.className = 'borderActive'
       if (this.bigShowType.isImage) {
         this.init()
@@ -362,9 +396,10 @@ export default {
         }
 
         this.imgIndex--
-        this.bigImgUrl = this.imgData[this.imgIndex].url
-        this.getShowTypeInfo(this.bigImgUrl)
+        // this.bigImgUrl = this.imgData[this.imgIndex].url
         this.bigImgName = this.imgData[this.imgIndex].name
+        this.getShowTypeInfo(this.bigImgName)
+
         var item = this.$refs.thumbnailItem
         item.forEach(function(i) {
           i.className = ''
@@ -386,9 +421,9 @@ export default {
         }
 
         this.imgIndex++
-        this.bigImgUrl = this.imgData[this.imgIndex].url
-        this.getShowTypeInfo(this.bigImgUrl)
+        // this.bigImgUrl = this.imgData[this.imgIndex].url
         this.bigImgName = this.imgData[this.imgIndex].name
+        this.getShowTypeInfo(this.bigImgName)
 
         var item = this.$refs.thumbnailItem
         item.forEach(function(i) {
@@ -441,8 +476,8 @@ export default {
       a.click()
       document.body.removeChild(a)
     },
-    getShowTypeInfo(url) {
-      const temps = url ? url.split('.') : []
+    getShowTypeInfo(name) {
+      const temps = name ? name.split('.') : []
       var ext = ''
       if (temps.length > 0) {
         ext = temps[temps.length - 1]
@@ -454,8 +489,8 @@ export default {
       var isImage = ['jpg', 'png', 'gif', 'jpeg'].includes(ext.toLowerCase())
       this.bigShowType = { isImage: isImage, icon: icon }
     },
-    getFileTypeIconWithSuffix(url) {
-      const temps = url ? url.split('.') : []
+    getFileTypeIconWithSuffix(name) {
+      const temps = name ? name.split('.') : []
       var ext = ''
       if (temps.length > 0) {
         ext = temps[temps.length - 1]
@@ -464,8 +499,8 @@ export default {
       }
       return getFileIconWithSuffix(ext)
     },
-    isShowImage(url) {
-      const temps = url ? url.split('.') : []
+    isShowImage(name) {
+      const temps = name ? name.split('.') : []
       var ext = ''
       if (temps.length > 0) {
         ext = temps[temps.length - 1]

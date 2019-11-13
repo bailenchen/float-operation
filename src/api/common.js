@@ -228,3 +228,17 @@ export function systemMessageDeleteByIdAPI(data) {
     data: data
   })
 }
+
+/**
+ *
+ * @param {*} data
+ */
+export function downloadFileAPI(url) {
+  return request({
+    url: url,
+    method: 'post',
+    data: {},
+    responseType: 'blob'
+  })
+}
+
