@@ -53,7 +53,7 @@ export default {
 
   data() {
     return {
-      leftType: 'todayCustomer',
+      leftType: '',
       leftSides: [
         {
           name: '今日需联系客户',
@@ -178,6 +178,10 @@ export default {
         } else {
           element.hidden = true
         }
+      }
+
+      if (!this.leftType && this.showLeftSides.length > 0) {
+        this.leftType = this.showLeftSides[0].infoType
       }
     },
 
