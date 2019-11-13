@@ -2,6 +2,7 @@
   <div v-loading="sendLoading" class="list-task-add">
     <el-input
       :rows="2"
+      :maxlength="100"
       v-model="sendContent"
       type="textarea"
       placeholder="请输入内容" />

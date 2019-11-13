@@ -154,7 +154,7 @@ export default {
       rules: {
         name: [
           { required: true, message: '任务名称不能为空', trigger: 'blur' },
-          { max: 50, message: '任务名称长度最多为50个字符', trigger: 'blur' }
+          { max: 100, message: '任务名称长度最多为100个字符', trigger: 'blur' }
         ],
         startTime: [{ validator: validateTime, trigger: 'blur' }],
         stopTime: [{ validator: validateTime, trigger: 'blur' }]
