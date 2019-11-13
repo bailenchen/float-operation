@@ -1,9 +1,9 @@
 <template>
   <slide-view
+    v-empty="!canShowDetail"
     :no-listener-class="noListenerClass"
     :body-style="{padding: 0, height: '100%'}"
     class="d-view"
-    v-empty="!canShowDetail"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
     @close="hideView">

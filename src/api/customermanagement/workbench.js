@@ -124,6 +124,18 @@ export function crmIndexSetSortAPI(data) {
   })
 }
 
+// 逾期未联系客户接口
+export function crmIndexUnContactCustomerAPI(data) {
+  return request({
+    url: 'Crm/Instrument/unContactCustomerPageList',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 // 获取简报 跟进记录信息
 // export function crmIndexGetRecordListAPI(data) {
 //   return request({

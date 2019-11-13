@@ -52,8 +52,7 @@
 </template>
 
 <script>
-import { crmIndexForgottenCustomerAPI, crmIndexForgottenCustomerListAPI } from '@/api/customermanagement/workbench'
-import { crmMessagRemindCustomerAPI } from '@/api/customermanagement/message'
+import { crmIndexForgottenCustomerAPI, crmIndexForgottenCustomerListAPI, crmIndexUnContactCustomerAPI } from '@/api/customermanagement/workbench'
 
 import ReportList from './reportList'
 
@@ -98,7 +97,7 @@ export default {
         {
           label: '逾期未联系的客户',
           value: 0,
-          key: 'putInPoolRemind',
+          key: 'unContactCustomerCount',
           hidden: false
         }
       ],
@@ -152,11 +151,11 @@ export default {
       this.reportData.crmType = 'customer'
 
       // 逾期未联系的客户
-      if (item.key == 'putInPoolRemind') {
+      if (item.key == 'unContactCustomerCount') {
         this.reportData.params = {
           isSub: 1
         }
-        this.reportData.request = crmMessagRemindCustomerAPI
+        this.reportData.request = crmIndexUnContactCustomerAPI
       } else {
         const day = {
           sevenDays: 7,
