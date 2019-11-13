@@ -301,7 +301,7 @@ export default {
 
                 // 获取季度值
                 if (childIndex % 3 == 2) {
-                  const quarterIndex = parseInt(childIndex / 3)
+                  const quarterIndex = parseInt(childIndex / 3) + 1
                   element[`achievementQuarter${quarterIndex}`] = quarter.achievement
                   element[`moneyQuarter${quarterIndex}`] = quarter.money
                   element[`rateQuarter${quarterIndex}`] = quarter.money ? (quarter.money / quarter.achievement * 100 + 0.001).toFixed(2).toString() : '0.00'
