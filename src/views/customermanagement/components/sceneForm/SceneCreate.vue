@@ -2,6 +2,7 @@
   <el-dialog
     :title="edit_id ? '编辑场景' : '新建场景'"
     :visible.sync="visible"
+    :close-on-click-modal="false"
     :append-to-body="true"
     width="800px"
     @close="handleCancel">

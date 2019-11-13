@@ -1,6 +1,7 @@
 <template>
   <el-dialog
     :visible.sync="visible"
+    :close-on-click-modal="false"
     title="高级筛选"
     width="900px"
     @close="handleCancel">

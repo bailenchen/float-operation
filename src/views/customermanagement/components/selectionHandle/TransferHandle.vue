@@ -3,6 +3,7 @@
     v-loading="loading"
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="批量转移"
     width="450px"
     @close="handleCancel">

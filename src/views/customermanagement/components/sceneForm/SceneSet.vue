@@ -2,6 +2,7 @@
   <el-dialog
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="场景管理"
     width="700px"
     @close="handleCancel">

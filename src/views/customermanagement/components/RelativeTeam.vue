@@ -47,6 +47,7 @@
     <el-dialog
       v-loading="loading"
       :visible.sync="editPermissionShow"
+      :close-on-click-modal="false"
       :append-to-body="true"
       title="编辑权限"
       width="400px">

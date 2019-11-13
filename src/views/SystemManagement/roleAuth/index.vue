@@ -54,6 +54,7 @@
         :title="roleTitle"
         :visible.sync="newRoleVisible"
         :before-close="newRoleClose"
+        :close-on-click-modal="false"
         width="30%">
         <label class="label-title">角色名称</label>
         <el-input

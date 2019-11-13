@@ -2,6 +2,7 @@
   <el-dialog
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     :before-close="handleClose"
     title="客户查重"
     custom-class="no-padding-dialog"

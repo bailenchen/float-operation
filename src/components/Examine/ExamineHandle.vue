@@ -3,6 +3,7 @@
     v-loading="loading"
     :title="title"
     :append-to-body="true"
+    :close-on-click-modal="false"
     :visible.sync="showDialog"
     width="400px"
     @close="hiddenView">

@@ -3,6 +3,7 @@
     :title="businessTitle"
     :visible.sync="businessDialogVisible"
     :before-close="businessClose"
+    :close-on-click-modal="false"
     width="600px">
     <div class="business-list">
       <div class="business-label">商机组名称</div>

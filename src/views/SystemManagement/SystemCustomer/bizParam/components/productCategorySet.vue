@@ -50,6 +50,7 @@
     </div>
     <el-dialog
       :visible.sync="productHandleDialog"
+      :close-on-click-modal="false"
       title="提示"
       width="400px">
       <el-form :model="productForm">

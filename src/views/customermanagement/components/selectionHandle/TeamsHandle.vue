@@ -4,6 +4,7 @@
     :title="title"
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     width="400px"
     @close="handleCancel">
     <div class="handle-box">

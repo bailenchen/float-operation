@@ -2,6 +2,7 @@
   <el-dialog
     :visible="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="仪表盘模块设置"
     custom-class="no-padding-dialog"
     width="650px"

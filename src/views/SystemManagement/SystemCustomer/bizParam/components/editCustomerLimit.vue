@@ -3,6 +3,7 @@
     :visible.sync="visible"
     :title="title"
     :append-to-body="true"
+    :close-on-click-modal="false"
     :before-close="close"
     width="550px">
     <div class="position-relative">

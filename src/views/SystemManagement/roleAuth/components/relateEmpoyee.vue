@@ -3,6 +3,7 @@
     v-loading="loading"
     :visible="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="关联员工"
     width="600px"
     @close="handleCancel">

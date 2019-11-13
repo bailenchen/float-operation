@@ -2,6 +2,7 @@
   <el-dialog
     :visible="show"
     :append-to-body="true"
+    :close-on-click-modal="false"
     top="10vh"
     width="80%"
     custom-class="no-padding-dialog"

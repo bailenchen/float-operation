@@ -2,6 +2,7 @@
   <el-dialog
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="编辑列"
     width="600px"
     @close="handleCancel">

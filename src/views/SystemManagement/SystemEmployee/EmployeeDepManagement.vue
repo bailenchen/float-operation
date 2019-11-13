@@ -248,6 +248,7 @@
     <!-- 导航新增部门 -->
     <el-dialog
       :visible.sync="depCreateDialog"
+      :close-on-click-modal="false"
       :title="depCreateTitle"
       :before-close="depCreateClose"
       width="30%">

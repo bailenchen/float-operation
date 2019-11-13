@@ -51,6 +51,7 @@
     </el-table>
     <el-dialog
       :append-to-body="true"
+      :close-on-click-modal="false"
       :visible.sync="editDialog"
       title="编辑"
       width="30%">

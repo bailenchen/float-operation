@@ -3,7 +3,7 @@
     :visible.sync="showDialog"
     :append-to-body="true"
     :show-close="showCancel"
-    :close-on-click-modal="showCancel"
+    :close-on-click-modal="false"
     title="批量导入"
     width="750px"
     @close="closeView">

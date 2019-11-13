@@ -3,6 +3,7 @@
     <el-dialog
       :title="listData.title"
       :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
       :modal="false"
       :before-close="handleClose"
       width="400px"

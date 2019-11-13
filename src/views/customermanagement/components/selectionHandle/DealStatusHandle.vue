@@ -3,6 +3,7 @@
     v-loading="loading"
     :visible="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="客户成交状态"
     width="400px"
     @close="handleCancel">
