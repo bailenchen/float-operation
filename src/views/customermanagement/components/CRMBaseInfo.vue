@@ -140,6 +140,7 @@ export default {
       color: #333;
       white-space: pre-wrap;
       word-wrap: break-word;
+      word-break: break-all;
     }
     .b-cell-foot {
       flex-shrink: 0;

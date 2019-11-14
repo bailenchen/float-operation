@@ -1,53 +1,65 @@
 <template>
   <div class="container">
-    <flexbox class="t-section">
-      <flexbox class="t-section-name">
-        <img
-          :src="crmIcon"
-          class="t-section-name__hd">
-        <div class="t-section-name__bd">
-          <div class="type-name">{{ typeName }}</div>
-          <p v-if="!$slots.name">{{ name }}</p>
-          <slot name="name" />
-        </div>
-      </flexbox>
+    <flexbox
+      class="t-section"
+      align="stretch">
+      <img
+        :src="crmIcon"
+        class="t-section__hd">
+      <div class="t-section__bd">
+        <div class="type-name">{{ typeName }}</div>
+        <el-tooltip
+          v-if="!$slots.name"
+          :disabled="!name"
+          :content="name"
+          class="item"
+          effect="dark"
+          placement="top-start">
+          <p
+            v-if="!$slots.name"
+            class="name">{{ name }}</p>
+        </el-tooltip>
+        <slot name="name" />
+      </div>
 
-      <el-button
-        v-if="showTransfer"
-        class="head-handle-button"
-        type="primary"
-        icon="wk wk-transfer"
-        @click.native="handleTypeClick('transfer')">转移</el-button>
-
-      <el-button
-        v-if="showEdit"
-        class="head-handle-button xr-btn--green"
-        icon="wk wk-circle-edit"
-        type="primary"
-        @click.native="handleTypeClick('edit')">编辑</el-button>
-
-      <el-button
-        v-if="showDealStatus"
-        class="head-handle-button"
-        type="primary"
-        icon="wk wk-success"
-        @click.native="handleTypeClick('deal_status')">更改成交状态</el-button>
-
-      <el-dropdown
-        v-if="permissionMoreTypes && permissionMoreTypes.length > 0"
-        trigger="click"
-        @command="handleTypeClick">
+      <div class="t-section__ft">
         <el-button
-          icon="el-icon-more"
-          class="t-more" />
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item
-            v-for="(item, index) in permissionMoreTypes"
-            :key="index"
-            :icon="item.icon | wkIconPre"
-            :command="item.type">{{ item.name }}</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+          v-if="showTransfer"
+          class="head-handle-button"
+          type="primary"
+          icon="wk wk-transfer"
+          @click.native="handleTypeClick('transfer')">转移</el-button>
+
+        <el-button
+          v-if="showEdit"
+          class="head-handle-button xr-btn--green"
+          icon="wk wk-circle-edit"
+          type="primary"
+          @click.native="handleTypeClick('edit')">编辑</el-button>
+
+        <el-button
+          v-if="showDealStatus"
+          class="head-handle-button"
+          type="primary"
+          icon="wk wk-success"
+          @click.native="handleTypeClick('deal_status')">更改成交状态</el-button>
+
+        <el-dropdown
+          v-if="permissionMoreTypes && permissionMoreTypes.length > 0"
+          trigger="click"
+          @command="handleTypeClick">
+          <el-button
+            icon="el-icon-more"
+            class="t-more" />
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              v-for="(item, index) in permissionMoreTypes"
+              :key="index"
+              :icon="item.icon | wkIconPre"
+              :command="item.type">{{ item.name }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </flexbox>
     <flexbox
       class="h-section"
@@ -96,7 +108,10 @@ import {
 } from '@/api/customermanagement/customer'
 import { crmContactsDelete } from '@/api/customermanagement/contacts'
 import { crmBusinessDelete } from '@/api/customermanagement/business'
-import { crmContractDelete, crmContractCancelAPI } from '@/api/customermanagement/contract'
+import {
+  crmContractDelete,
+  crmContractCancelAPI
+} from '@/api/customermanagement/contract'
 import { crmReceivablesDelete } from '@/api/customermanagement/money'
 import { crmProductStatus } from '@/api/customermanagement/product'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
@@ -185,14 +200,22 @@ export default {
       }
 
       if (this.crmType === 'contract') {
-        return this.detail && this.detail.checkStatus != 8 && this.crm[this.crmType].transfer
+        return (
+          this.detail &&
+          this.detail.checkStatus != 8 &&
+          this.crm[this.crmType].transfer
+        )
       }
 
       return this.crm[this.crmType].transfer
     },
     showEdit() {
       if (this.crmType === 'contract') {
-        return this.detail && this.detail.checkStatus != 8 && this.crm[this.crmType].update
+        return (
+          this.detail &&
+          this.detail.checkStatus != 8 &&
+          this.crm[this.crmType].update
+        )
       }
 
       return this.isSeas ? false : this.crm[this.crmType].update
@@ -212,7 +235,11 @@ export default {
      * 展示成交按钮
      */
     showDealStatus() {
-      return !this.isSeas && this.crmType == 'customer' && this.crm[this.crmType].dealStatus
+      return (
+        !this.isSeas &&
+        this.crmType == 'customer' &&
+        this.crm[this.crmType].dealStatus
+      )
     },
 
     /**
@@ -249,7 +276,7 @@ export default {
         type == 'unlock' ||
         type == 'start' ||
         type == 'disable' ||
-                type == 'get' ||
+        type == 'get' ||
         type == 'cancel'
       ) {
         var message = ''
@@ -391,10 +418,12 @@ export default {
       } else if (type === 'cancel') {
         crmContractCancelAPI({
           contractId: this.id
-        }).then(res => {
-          this.$message.success('操作成功')
-          this.$emit('handle', { type })
-        }).catch(() => {})
+        })
+          .then(res => {
+            this.$message.success('操作成功')
+            this.$emit('handle', { type })
+          })
+          .catch(() => {})
       }
     },
     // 子组件 回调的 结果
@@ -564,7 +593,6 @@ export default {
         return false
       }
 
-
       return true
     }
   }
@@ -581,26 +609,34 @@ export default {
   position: relative;
   padding: 30px 20px 5px;
   min-height: 60px;
-  &-name {
-    &__hd {
-      display: block;
-      width: 40px;
-      height: 40px;
-      margin-right: 15px;
+  &__hd {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+  }
+  &__bd {
+    .type-name {
+      color: #999;
+      font-size: 12px;
+      margin-bottom: 5px;
     }
-    &__bd {
-      .type-name {
-        color: #999;
-        font-size: 12px;
-        margin-bottom: 5px;
-      }
 
-      p {
-        color: #333;
-        font-size: 16px;
-        font-weight: 600;
-      }
+    .name {
+      color: #333;
+      font-size: 16px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
+  }
+
+  &__ft {
+    flex-shrink: 0;
+    margin-left: 20px;
   }
 
   .t-more {

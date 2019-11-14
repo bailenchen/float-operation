@@ -200,7 +200,7 @@ export default {
         id: this.id
       })
         .then(res => {
-          this.importList = res.data.concat(res.data)
+          this.importList = res.data
           this.loading = false
         })
         .catch(() => {
