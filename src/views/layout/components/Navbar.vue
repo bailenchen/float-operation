@@ -2,6 +2,7 @@
   <div class="navbar">
     <img
       v-src="logo"
+      :key="logo"
       class="logo" >
     <div class="nav-items-container">
       <el-menu
