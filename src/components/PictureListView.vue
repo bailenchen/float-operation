@@ -6,7 +6,7 @@
       class="img-list-item"
       @click="imgZoom(list, k)">
       <img
-        v-lazy="imgItem.filePath"
+        v-src="imgItem.filePath"
         :key="imgItem.filePath">
     </div>
   </div>

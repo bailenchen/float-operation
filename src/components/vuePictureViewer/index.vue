@@ -118,7 +118,11 @@
 </template>
 
 <script>
-import { getMaxIndex, getFileIconWithSuffix, downloadFileWithBuffer } from '@/utils'
+import {
+  getMaxIndex,
+  getFileIconWithSuffix,
+  downloadFileWithBuffer,
+  getImageData } from '@/utils'
 import { downloadFileAPI } from '@/api/common'
 
 export default {
@@ -248,31 +252,10 @@ export default {
   },
   methods: {
     getImageSrc(url, name, index) {
-      this.requestFileData(url).then((data) => {
+      getImageData(url).then((data) => {
         this.$set(this.imgData[index], 'blob', data.blob)
         this.$set(this.imgData[index], 'src', data.src)
       }).catch(() => {})
-    },
-
-    requestFileData(url) {
-      return new Promise((resolve, reject) => {
-        downloadFileAPI(url).then(res => {
-          const blob = new Blob([res.data], {
-            type: ''
-          })
-
-          var reader = new FileReader()
-          reader.readAsDataURL(blob)
-          reader.onload = (evt) => {
-            resolve({
-              blob: blob,
-              src: evt.target.result
-            })
-          }
-        }).catch(() => {
-          reject()
-        })
-      })
     },
 
     // init
@@ -478,8 +461,11 @@ export default {
       if (this.currentFile.src) {
         downloadFileWithBuffer(this.currentFile.blob, this.currentFile.name)
       } else {
-        this.requestFileData(this.currentFile.url).then((data) => {
-          downloadFileWithBuffer(data.blob, this.currentFile.name)
+        downloadFileAPI(this.currentFile.url).then(res => {
+          const blob = new Blob([res.data], {
+            type: ''
+          })
+          downloadFileWithBuffer(blob, this.currentFile.name)
         }).catch(() => {})
       }
     },

@@ -2,6 +2,8 @@
   <el-avatar
     v-if="popoverDisabled"
     v-bind="$attrs"
+    :src="dataSrc"
+    :key="dataSrc"
     :style="{ fontSize: fontSize }"
     :class="{ 'cursor-pointer': !disabled }"
     :size="size">{{ showName }}</el-avatar>
@@ -15,11 +17,12 @@
     popper-class="no-padding-popover">
     <xr-user-view
       v-loading="loading"
-      :data="userData"
-    />
+      :data="userData" />
     <el-avatar
       slot="reference"
       v-bind="$attrs"
+      :src="dataSrc"
+      :key="dataSrc"
       :style="{ fontSize: fontSize }"
       :class="{ 'cursor-pointer': !disabled }"
       :size="size">{{ showName }}</el-avatar>
@@ -29,6 +32,9 @@
 
 <script>
 import { systemUserInfoAPI } from '@/api/common'
+import { getImageData } from '@/utils'
+
+const dataCatch = {}
 
 export default {
   // Avatar 头像
@@ -44,6 +50,7 @@ export default {
       type: [Number, String],
       default: 38
     },
+    src: String,
     disabled: {
       type: Boolean,
       default: true
@@ -57,7 +64,8 @@ export default {
     return {
       popoverShow: false,
       loading: false,
-      userData: null
+      userData: null,
+      dataSrc: ''
     }
   },
   computed: {
@@ -85,18 +93,42 @@ export default {
       if (!this.userData) {
         this.getUserData()
       }
+    },
+    src() {
+      this.dataSrc = this.src
+      this.handleImage()
     }
   },
-  mounted() {},
+  created() {
+    this.dataSrc = this.src
+    this.handleImage()
+  },
 
   beforeDestroy() {},
   methods: {
+    handleImage() {
+      if (this.src) {
+        if (dataCatch[this.src]) {
+          this.dataSrc = dataCatch[this.src]
+        } else {
+          getImageData(this.src)
+            .then(data => {
+              this.dataSrc = data.src
+              dataCatch[this.src] = data.src
+            })
+            .catch(() => {})
+        }
+      }
+    },
+
     getUserData() {
       systemUserInfoAPI({
         userId: this.id
-      }).then(res => {
-        this.userData = res.data
-      }).catch(() => {})
+      })
+        .then(res => {
+          this.userData = res.data
+        })
+        .catch(() => {})
     }
   }
 }

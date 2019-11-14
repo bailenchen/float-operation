@@ -30,7 +30,7 @@
         <div
           v-else
           class="upload-show">
-          <img :src="systemImage">
+          <img v-src="systemImage">
           <i
             class="el-icon-remove icon-delete"
             @click="deleteSystemImage"/>

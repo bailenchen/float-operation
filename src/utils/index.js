@@ -326,61 +326,44 @@ export function formatTimeToTimestamp(format) {
 }
 
 /** image 下载 */
+import { downloadFileAPI } from '@/api/common'
+
 /**
  *
  * @param {*} data url
  * @param {*} filename 名称
  */
-export function downloadImage(data, filename) {
-  var httpindex = data.indexOf('http')
-  if (httpindex === 0) {
-    const image = new Image()
-    // 解决跨域 canvas 污染问题
-    image.setAttribute('crossOrigin', 'anonymous')
-    image.onload = function() {
-      const canvas = document.createElement('canvas')
-      canvas.width = image.width
-      canvas.height = image.height
-      const context = canvas.getContext('2d')
-      context.drawImage(image, 0, 0, image.width, image.height)
-      const dataURL = canvas.toDataURL('image/png')
-      // 生成一个 a 标签
-      const a = document.createElement('a')
-      // 创建一个点击事件
-      const event = new MouseEvent('click')
-      // 将 a 的 download 属性设置为我们想要下载的图片的名称，若 name 不存在则使用'图片'作为默认名称
-      a.download = filename || '图片'
-      // 将生成的 URL 设置为 a.href 属性
-      var blob = dataURLtoBlob(dataURL)
-      a.href = URL.createObjectURL(blob)
-      // 触发 a 的点击事件
-      a.dispatchEvent(event)
-    }
-    image.src = data
-  } else {
-    // 生成一个 a 标签
-    const a = document.createElement('a')
-    // 创建一个点击事件
-    const event = new MouseEvent('click')
-    // 将 a 的 download 属性设置为我们想要下载的图片的名称，若 name 不存在则使用'图片'作为默认名称
-    a.download = filename || '图片'
-    // 将生成的 URL 设置为 a.href 属性
-    a.href = data
-    // 触发 a 的点击事件
-    a.dispatchEvent(event)
-  }
+export function getImageData(url) {
+  return new Promise((resolve, reject) => {
+    downloadFileAPI(url).then(res => {
+      const blob = new Blob([res.data], {
+        type: ''
+      })
+
+      var reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = (evt) => {
+        resolve({
+          blob: blob,
+          src: evt.target.result
+        })
+      }
+    }).catch(() => {
+      reject()
+    })
+  })
 }
+
 /**
  * path  和 name
  */
 export function downloadFile(data) {
-  var a = document.createElement('a')
-  a.href = data.path
-  a.download = data.name ? data.name : '文件'
-  a.target = '_black'
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
+  downloadFileAPI(data.path).then(res => {
+    const blob = new Blob([res.data], {
+      type: ''
+    })
+    downloadFileWithBuffer(blob, data.name || '文件')
+  }).catch(() => {})
 }
 
 export function dataURLtoBlob(dataurl) {

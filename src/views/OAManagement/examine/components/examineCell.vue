@@ -60,7 +60,7 @@
             :key="k"
             class="img-list"
             @click="imgZoom(data.img, k)">
-            <img v-lazy="imgItem.filePath">
+            <img v-src="imgItem.filePath">
           </div>
         </div>
         <!-- 附件 -->

@@ -34,13 +34,8 @@ import XrAvatar from '@/components/xr-avatar'
 Vue.component('xr-avatar', XrAvatar)
 
 /** 懒加载图片 */
-import VueLazyload from 'vue-lazyload'
-Vue.use(VueLazyload, {
-  preLoad: 1.3,
-  error: require('@/assets/img/send_img.png'),
-  loading: require('@/assets/img/loading.gif'),
-  attempt: 1
-})
+import VueSrc from './directives/src'
+Vue.directive('src', VueSrc)
 
 import * as filters from './filters' // global filters
 // 注册全局过滤器

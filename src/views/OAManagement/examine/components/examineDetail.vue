@@ -120,7 +120,7 @@
             class="img-list"
             @click="imgZoom(imgList, k)">
             <img
-              v-lazy="imgItem.filePath"
+              v-src="imgItem.filePath"
               :key="imgItem.filePath">
           </div>
         </div>

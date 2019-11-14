@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
     <img
-      :src="logo"
+      v-src="logo"
       class="logo" >
     <div class="nav-items-container">
       <el-menu

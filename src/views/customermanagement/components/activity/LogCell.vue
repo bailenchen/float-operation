@@ -45,7 +45,7 @@
         class="fl-b-images"
         wrap="wrap">
         <div
-          v-lazy:background-image="file.filePath"
+          v-src:background-image="file.filePath"
           v-for="(file, index) in item.img"
           :key="file.filePath"
           class="fl-b-img-item"
