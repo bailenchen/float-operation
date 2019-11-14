@@ -41,6 +41,43 @@
           align="center"
           width="55"/>
         <el-table-column
+          v-if="isShow"
+          :resizable="false"
+          prop="call"
+          fixed
+          label=""
+          width="55">
+          <template
+            slot="header"
+            slot-scope="slot">
+            <i
+              class="el-icon-phone"
+              style="cursor: not-allowed; opacity: 0.5;color: #2486E4"/>
+          </template>
+          <template slot-scope="scope">
+            <el-popover
+              placement="right"
+              width="500"
+              popper-class="no-padding-popover"
+              trigger="click"
+              @show="showData(scope.row.leads_id)"
+              @hiden="showCount = -1">
+              <call-center
+                :scope="scope"
+                :show="scope.row.leads_id === showCount"
+                crm-type="leads"
+                @changeType="changeCRMType"/>
+              <el-button
+                slot="reference"
+                :style="{'opacity' :scope.$index >= 0 ? 1 : 0}"
+                type="primary"
+                icon="el-icon-phone"
+                circle
+                @click.stop="callCheckClick($event,scope,scope.$index)"/>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column
           v-for="(item, index) in fieldList"
           :key="index"
           :fixed="index==0"
@@ -81,6 +118,7 @@
     <clue-detail
       v-if="showDview"
       :id="rowID"
+      :model-data="modelData"
       class="d-view"
       @handle="handleHandle"
       @hide-view="showDview=false"/>
