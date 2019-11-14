@@ -152,7 +152,8 @@ import {
   regexIsCRMMobile,
   regexIsCRMEmail,
   guid,
-  objDeepCopy
+  objDeepCopy,
+  getImageData
 } from '@/utils'
 
 import {
@@ -385,16 +386,31 @@ export default {
         item.url = item.filePath
         return item
       })
+
+      for (let index = 0; index < this.imgFileList.length; index++) {
+        this.setImageList(this.imgFileList[index], index)
+      }
+
       this.fileList = this.action.data.file.map(function(item, index, array) {
         item.url = item.filePath
         return item
       })
+
       this.relatedBusinessInfo = {
         contacts: this.action.data.contactsList,
         customer: this.action.data.customerList,
         business: this.action.data.businessList,
         contract: this.action.data.contractList
       } // 相关信息信息
+    },
+    /**
+     * 获取图片内容
+     */
+    setImageList(item, index) {
+      getImageData(item.url).then((data) => {
+        item.url = data.src
+        this.imgFileList.splice(index, 1, item)
+      }).catch(() => {})
     },
     // 根据自定义字段获取自定义字段规则
     getcrmRulesAndModel(list) {
