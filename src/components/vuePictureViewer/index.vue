@@ -31,7 +31,7 @@
           <el-button
             type="primary"
             plain
-            @click.native="fileHandle('download')">下载</el-button>
+            @click.native="downloadFile">下载</el-button>
         </div>
       </div>
       <!-- tips -->
@@ -58,7 +58,7 @@
             @click="rotate" />
           <i
             class="wk wk-download"
-            @click="downloadImg(bigImgUrl, bigImgName)" />
+            @click="downloadFile" />
         </div>
 
         <div
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { getMaxIndex, downloadImage, getFileIconWithSuffix } from '@/utils'
+import { getMaxIndex, getFileIconWithSuffix, downloadFileWithBuffer } from '@/utils'
 import { downloadFileAPI } from '@/api/common'
 
 export default {
@@ -194,8 +194,13 @@ export default {
 
       return `${fileName} （${this.imgIndex + 1} / ${this.imgLength}）`
     },
+
+    currentFile() {
+      return this.imgData[this.imgIndex]
+    },
+
     bigImgUrl() {
-      return this.imgData[this.imgIndex].src
+      return this.currentFile.src
     }
   },
   mounted() {
@@ -243,27 +248,33 @@ export default {
   },
   methods: {
     getImageSrc(url, name, index) {
-      downloadFileAPI(url).then(res => {
-        const temps = name ? name.split('.') : []
-        let ext = ''
-        if (temps.length > 0) {
-          ext = temps[temps.length - 1]
-        } else {
-          ext = ''
-        }
-
-        const blob = new Blob([res.data], {
-          type: `image/${ext}`
-        })
-
-        var reader = new FileReader()
-        reader.readAsDataURL(blob)
-        reader.onload = (evt) => { // 读取完文件之后会回来这里
-          this.$set(this.imgData[index], 'blob', blob)
-          this.$set(this.imgData[index], 'src', evt.target.result)
-        }
+      this.requestFileData(url).then((data) => {
+        this.$set(this.imgData[index], 'blob', data.blob)
+        this.$set(this.imgData[index], 'src', data.src)
       }).catch(() => {})
     },
+
+    requestFileData(url) {
+      return new Promise((resolve, reject) => {
+        downloadFileAPI(url).then(res => {
+          const blob = new Blob([res.data], {
+            type: ''
+          })
+
+          var reader = new FileReader()
+          reader.readAsDataURL(blob)
+          reader.onload = (evt) => {
+            resolve({
+              blob: blob,
+              src: evt.target.result
+            })
+          }
+        }).catch(() => {
+          reject()
+        })
+      })
+    },
+
     // init
     init() {
       const screenW =
@@ -444,10 +455,6 @@ export default {
         _this.showTips = false
       }, 10000)
     },
-    // 下载图片
-    downloadImg(data, filename) {
-      downloadImage(data, filename)
-    },
     // 鼠标左移
     enterLeft() {
       this.leftArrowShow = true
@@ -467,14 +474,14 @@ export default {
       this.$emit('close-viewer')
     },
     /** 附件逻辑 */
-    fileHandle(type) {
-      var a = document.createElement('a')
-      a.href = this.bigImgUrl
-      a.download = this.bigImgName ? this.bigImgName : '文件'
-      a.target = '_black'
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+    downloadFile() {
+      if (this.currentFile.src) {
+        downloadFileWithBuffer(this.currentFile.blob, this.currentFile.name)
+      } else {
+        this.requestFileData(this.currentFile.url).then((data) => {
+          downloadFileWithBuffer(data.blob, this.currentFile.name)
+        }).catch(() => {})
+      }
     },
     getShowTypeInfo(name) {
       const temps = name ? name.split('.') : []
@@ -610,6 +617,7 @@ export default {
     border-radius: 20px;
     padding: 0 20px;
     margin-right: 30px;
+    user-select: none;
 
     i {
       font-size: 20px;
@@ -706,7 +714,7 @@ ul li {
 
 /* 添加border */
 .borderActive {
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
 }
 /* 修改原生的滚动条 */
 ::-webkit-scrollbar {

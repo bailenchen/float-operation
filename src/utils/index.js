@@ -500,21 +500,23 @@ export function floatAdd(num1, num2) {
  * 下载excel
  */
 export function downloadExcelWithResData(res) {
-  var blob = new Blob([res.data], {
-    type: 'application/vnd.ms-excel;charset=utf-8'
-  })
-  var downloadElement = document.createElement('a')
-  var href = window.URL.createObjectURL(blob) // 创建下载的链接
-  downloadElement.href = href
   let fileName = res.headers['content-disposition'].split('filename=')[1]
   if (!fileName) {
     fileName = res.headers['content-disposition'].split('UTF-8\'\'')[1]
   }
   fileName = fileName ? fileName.replace(/\"/g, '') : 'file.xlsx'
-  downloadElement.download =
-    decodeURI(
-      fileName
-    ) || '' // 下载后文件名
+  fileName = decodeURI(fileName) || ''
+  downloadFileWithBuffer(res.data, fileName, 'application/vnd.ms-excel;charset=utf-8')
+}
+
+export function downloadFileWithBuffer(data, name, type) {
+  var blob = new Blob([data], {
+    type: type || ''
+  })
+  var downloadElement = document.createElement('a')
+  var href = window.URL.createObjectURL(blob) // 创建下载的链接
+  downloadElement.href = href
+  downloadElement.download = name // 下载后文件名
   document.body.appendChild(downloadElement)
   downloadElement.click() // 点击下载
   document.body.removeChild(downloadElement) // 下载完成移除元素
