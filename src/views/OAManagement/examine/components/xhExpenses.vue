@@ -24,10 +24,10 @@
             {{ subItem.name }}
           </div>
           <el-date-picker
-            v-if="subItem.formType == 'date'"
+            v-if="subItem.formType == 'datetime'"
             v-model="item[subItem.field]"
-            type="date"
-            value-format="yyyy-MM-dd"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择日期"
             @change="valueChange"/>
           <el-input
@@ -123,12 +123,12 @@ export default {
         {
           field: 'startTime',
           name: '开始时间',
-          formType: 'date'
+          formType: 'datetime'
         },
         {
           field: 'endTime',
           name: '结束时间',
-          formType: 'date'
+          formType: 'datetime'
         },
         {
           field: 'traffic',

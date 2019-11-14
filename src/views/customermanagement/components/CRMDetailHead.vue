@@ -616,6 +616,7 @@ export default {
     margin-right: 15px;
   }
   &__bd {
+    flex: 1;
     .type-name {
       color: #999;
       font-size: 12px;
