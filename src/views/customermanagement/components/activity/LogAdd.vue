@@ -248,7 +248,7 @@ export default {
       // 展示关联弹窗
       this.showRelativeType = ''
       this.batchId = guid()
-      this.followType = ''
+      this.getDefalutFollowType()
     },
 
     /**

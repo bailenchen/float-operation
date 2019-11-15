@@ -141,13 +141,12 @@
 <script>
 import axios from 'axios'
 import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
-import { guid } from '@/utils'
+import { guid, getImageData } from '@/utils'
 import CreateView from '@/components/CreateView'
 // 部门员工优化版
 import membersDep from '@/components/selectEmployee/membersDep'
 // 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
-import { getImageData } from '@/utils'
 
 export default {
   components: {
