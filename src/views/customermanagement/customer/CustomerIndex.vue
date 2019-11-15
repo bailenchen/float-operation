@@ -76,6 +76,43 @@
           </template>
         </el-table-column>
         <el-table-column
+          v-if="isShow"
+          :resizable="false"
+          prop="call"
+          fixed
+          label=""
+          width="55">
+          <template
+            slot="header"
+            slot-scope="slot">
+            <i
+              class="el-icon-phone"
+              style="cursor: not-allowed; opacity: 0.5;color: #2486E4"/>
+          </template>
+          <template slot-scope="scope">
+            <el-popover
+              placement="right"
+              width="500"
+              popper-class="no-padding-popover"
+              trigger="click"
+              @show="showData(scope.row.customerId)"
+              @hiden="showCount = -1">
+              <call-center
+                :scope="scope"
+                :show="scope.row.customerId === showCount"
+                crm-type="customer"
+                @changeType="changeCRMType"/>
+              <el-button
+                slot="reference"
+                :style="{'opacity' :scope.$index >= 0 ? 1 : 0}"
+                type="primary"
+                icon="el-icon-phone"
+                circle
+                @click.stop="callCheckClick($event,scope,scope.$index)"/>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column
           v-for="(item, index) in fieldList"
           :key="index"
           :fixed="index==0"
@@ -129,6 +166,7 @@
     <c-r-m-all-detail
       :visible.sync="showDview"
       :crm-type="rowType"
+      :model-data="modelData"
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
@@ -141,13 +179,14 @@ import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
 import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
-
+import CallCenter from '@/callCenter/CallCenter'
 export default {
   /** 客户管理 的 客户列表 */
   name: 'CustomerIndex',
   components: {
     CRMAllDetail,
     BusinessCheck,
+    CallCenter,
     FieldSet
   },
   filters: {
@@ -162,13 +201,28 @@ export default {
   mixins: [table],
   data() {
     return {
-      crmType: 'customer'
+      crmType: 'customer',
+      showCount: 0,
+      modelData: {}
     }
   },
   computed: {
-    ...mapGetters(['CRMConfig'])
+    ...mapGetters(['CRMConfig']),
+    isShow() {
+      return this.$store.state.customer.isCall
+    }
   },
-  mounted() {},
+  mounted() {
+    this.$nextTick(() => {
+      const callOutData = JSON.parse(localStorage.getItem('callOutData'))
+      if (callOutData) {
+        this.modelData = {
+          modelId: callOutData.id,
+          model: callOutData.type
+        }
+      }
+    })
+  },
   methods: {
     relativeBusinessClick(data) {
       this.rowID = data.businessId
@@ -201,6 +255,40 @@ export default {
       const popoverEl = e.parentNode
       popoverEl.__vue__.showPopper = false
       this.$set(scope.row, 'show', false)
+    },
+    /**
+       * pover 显示时触发
+       */
+    showData(val) {
+      this.showCount = val
+    },
+    /**
+       * 查看详情
+       * @param val
+       */
+    changeCRMType(val) {
+      this.showDview = true
+      this.rowType = val.type
+      this.rowID = val.id
+      let callOutData = {
+        modelId: val.id,
+        model: val.type
+      }
+      callOutData = JSON.stringify(callOutData)
+      localStorage.setItem('callOutData', callOutData)
+      this.modelData = {
+        modelId: val.id,
+        model: val.type
+      }
+    },
+    /** 解决povper重复的bug */
+    callCheckClick(e, scope) {
+      this.list.forEach(item => {
+        this.$set(item, 'callShow', false)
+      })
+      this.$set(scope.row, 'callShow', !scope.row.callShow)
+      const popoverEl = e.target.parentNode
+      popoverEl.__vue__.showPopper = !scope.row.callShow
     }
   }
 }

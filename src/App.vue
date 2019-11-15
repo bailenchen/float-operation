@@ -6,6 +6,11 @@
       :img-data="previewImgs"
       :select-index="previewIndex"
       @close-viewer="showPreviewImg=false"/>
+    <incoming-windows @sendMsg="getInfo"/>
+    <call-out-windows
+      :is-show="showOutCall"
+      :model-data="modelData"
+      @close="showCall = false"/>
     <xr-import
       v-if="showFixImport"
       :process-status="crmImportStatus"
@@ -25,13 +30,16 @@ import XrImport from '@/components/xr-import'
 import XrImportMixins from '@/components/xr-import/XrImportMixins'
 import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
-
+import IncomingWindows from './callCenter/IncomingWindows'
+import CallOutWindows from './callCenter/CallOutWindows'
 
 export default {
   name: 'App',
   components: {
     VuePictureViewer,
     XrImport,
+    IncomingWindows,
+    CallOutWindows,
     CRMImport
   },
   mixins: [XrImportMixins],
@@ -39,11 +47,16 @@ export default {
     return {
       showPreviewImg: false,
       previewIndex: 0,
+      showCall: false,
+      modelData: {},
       previewImgs: []
     }
   },
   computed: {
-    ...mapGetters(['activeIndex'])
+    ...mapGetters(['activeIndex']),
+    showOutCall() {
+      return this.$store.state.customer.showCallOut
+    }
   },
   watch: {
     $route(to, from) {
@@ -89,6 +102,10 @@ export default {
         self.previewImgs = data.data
         self.showPreviewImg = true
       })
+    },
+    /** 获取呼出信息 */
+    getInfo(data) {
+      this.modelData = data
     }
   }
 }

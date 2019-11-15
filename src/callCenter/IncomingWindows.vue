@@ -14,7 +14,7 @@
       :crm-type="crmType"
       @save-success="createSaveSuccess"
       @hiden-view="hiddenView"/>
-    <div v-if="showCall" :style="{zIndex:zIndex}" class="timePieces">
+    <div v-if="showCall && notify" :style="{zIndex:zIndex}" class="timePieces">
       <div v-if="!showRing && !showHang" style="display: flex" class="timePiece">
         <p class="timePieceP1">通话中 :</p>
         <p class="timePieceP2">{{ callinTime }}</p>
@@ -91,13 +91,17 @@ export default {
             } else {
               this.$store.commit('GET_IS_CALL', false)
             }
-          }).catch(() => {})
+          }).catch(() => {
+            this.$store.commit('GET_IS_CALL', true)
+            this.callCenterConnect()
+          })
         }
       },
       immediate: true
     }
   },
   mounted() {
+    this.addBus()
   },
   methods: {
     addBus() {
@@ -161,7 +165,7 @@ export default {
             } else {
               this.realname = res.data.ownerUserName
             }
-            this.modelId = res.data[this.model + 'id']
+            this.modelId = res.data[this.model + 'Id']
             if (this.model === 'contacts') {
               this.customerName = res.data.name // 客户名称
               this.incomingName = '联系人'
@@ -469,7 +473,7 @@ export default {
           let httpUrl = process.env.BASE_API
           console.log(httpUrl, 'http')
           if (httpUrl === '/api/') {
-            httpUrl = 'http://192.168.1.8:8080/'
+            httpUrl = 'http://192.168.1.14:8081/'
           }
           const url = `${httpUrl}call/upload?id=${res.data.id}`
           callCenter.OnUploadFile(url, data.session_id)

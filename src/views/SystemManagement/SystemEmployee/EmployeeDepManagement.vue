@@ -200,6 +200,19 @@
               type="selection"
               width="55" />
             <el-table-column
+              prop="call"
+              align="right"
+              width="36">
+              <template
+                slot="header"
+                slot-scope="slot">
+                <i class="el-icon-phone"/>
+              </template>
+              <template slot-scope="scope">
+                <i v-if="scope.row.hisTable === 1" class="el-icon-phone" style="color: rgb(70,205,207)"/>
+              </template>
+            </el-table-column>
+            <el-table-column
               prop="realname"
               width="100"
               show-overflow-tooltip
@@ -459,6 +472,7 @@ import {
   depSave,
   usersAdd,
   usersEdit,
+  crmCallAuthorize,
   roleList,
   adminUsersUpdatePwd,
   adminUsersUsernameEditAPI,
@@ -506,7 +520,7 @@ export default {
           type: 'disable'
         }
       ],
-
+      isStartCall: true, // 需要控制权限调整这里
       // 右边导航
       depCreateTitle: '新建',
       depCreateDialog: false, // 控制部门新增 编辑 数据
@@ -693,6 +707,7 @@ export default {
 
     selectionInfo: function() {
       let temps = []
+      let call = []
       if (this.userEnablesAuth) {
         temps = [
           {
@@ -706,6 +721,21 @@ export default {
             icon: 'wk wk-activation'
           }
         ]
+      }
+       if (this.isStartCall) {
+        call = [
+          {
+            name: '启用呼叫中心',
+            type: 'setCall',
+            icon: 'wk wk-activation'
+          },
+          {
+            name: '停用呼叫中心',
+            type: 'stopCall',
+            icon: 'wk wk-remove'
+          }
+        ]
+        temps = temps.concat(call)
       }
       if (this.userUpdateAuth) {
         if (this.selectionList.length === 1) {
@@ -736,7 +766,6 @@ export default {
           ])
         }
       }
-
       return temps
     },
     /** 添加列表 */
@@ -1240,6 +1269,42 @@ export default {
         detail['userId'] = this.dialogData.userId
         this.formInline = detail
         this.employeeCreateDialog = true
+      } else if (type === 'setCall' || type === 'stopCall') {
+        var callSet = type === 'setCall' ? '启用呼叫中心' : '禁用呼叫中心'
+        this.$confirm('这些员工账号将被' + callSet + ', 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.loading = true
+          let userIds = []
+          if (ids) {
+            userIds = ids.split(',')
+              .map(function(item, index, array) {
+                return parseInt(item)
+              })
+          } else {
+            userIds = []
+          }
+          crmCallAuthorize({
+            userIds,
+            state: type === 'setCall' ? 1 : 0
+          })
+            .then(res => {
+              this.loading = false
+              this.$message.success('修改成功')
+              this.usersListFun()
+            })
+            .catch(() => {
+              this.loading = false
+            })
+        })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            })
+          })
       }
     },
     // 重置密码 -- 关闭按钮

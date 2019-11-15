@@ -1,13 +1,13 @@
 <template>
   <div class="time" style="display: flex" >
     <div v-if="showTime" class="time" style="display: flex">
-      <div v-if="!showRing" style="display: flex" class="timePiece">
-        <p class="timePieceP1">通话中 :</p>
-        <p class="timePieceP2">{{ callinTime }}</p>
+      <div v-if="!showRing" style="display: flex" class="time_piece">
+        <p class="time_piece--p1">通话中 :</p>
+        <p class="time_piece--p2">{{ callinTime }}</p>
       </div>
-      <div v-else-if="showRing" style="display: flex" class="timePiece1">
-        <p class="timePieceP1">振铃中 :</p>
-        <p class="timePieceP2">{{ callinTime }}</p>
+      <div v-else-if="showRing" style="display: flex" class="time_piece1">
+        <p class="time_piece--p1">振铃中 :</p>
+        <p class="time_piece--p2">{{ callinTime }}</p>
       </div>
       <el-button v-if="isHandle" type="danger" style="padding: 5px 15px" class="handle" @click="handUp">挂断</el-button>
     </div>
@@ -30,7 +30,7 @@ export default {
       phones: '',
       webSocketData: {},
       timer: null,
-      timepiece: {}
+      timePiece: {}
     }
   },
   computed: {
@@ -51,7 +51,7 @@ export default {
     phone(val) {
     },
     timerStatus(val) {
-      this.startTimePiece(val)
+      this.starttimePiece(val)
     }
   },
   mounted() {
@@ -69,38 +69,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .timer{
+  .time{
     width: 200px;
-    margin-left: 10px;
+    height: 30px;
     font-size: 13px;
   }
-  .timePiece{
+  .time_piece{
     width: 115px;
     padding: 5px;
     margin: 0 7px;
     background-color: #3e84e9;
     border-radius: 3px;
     color: white;
-    .timePieceP1{
+    .time_piece--p1{
       width: 60px;
       line-height: 16px;
     }
-    .timePieceP2{
+    .time_piece--p2{
       line-height: 16px;
     }
   }
-  .timePiece1{
+  .time_piece1{
     width: 115px;
     padding: 5px;
     margin: 0 7px;
     background-color: #E6A23C;
     border-radius: 3px;
     color: white;
-    .timePieceP1{
+    .time_piece--p1{
       width: 60px;
       line-height: 16px;
     }
-    .timePieceP2{
+    .time_piece--p2{
       line-height: 16px;
     }
   }

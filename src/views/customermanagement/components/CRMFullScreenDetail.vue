@@ -53,6 +53,13 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    /** 呼出信息 */
+    modelData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {

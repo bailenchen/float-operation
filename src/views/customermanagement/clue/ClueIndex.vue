@@ -60,11 +60,11 @@
               width="500"
               popper-class="no-padding-popover"
               trigger="click"
-              @show="showData(scope.row.leads_id)"
+              @show="showData(scope.row.leadsId)"
               @hiden="showCount = -1">
               <call-center
                 :scope="scope"
-                :show="scope.row.leads_id === showCount"
+                :show="scope.row.leadsId === showCount"
                 crm-type="leads"
                 @changeType="changeCRMType"/>
               <el-button
@@ -129,21 +129,28 @@
 import ClueDetail from './ClueDetail'
 import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
-
+import CallCenter from '@/callCenter/CallCenter'
 export default {
   /** 客户管理 的 线索列表 */
   name: 'ClueIndex',
   components: {
     ClueDetail,
+    CallCenter,
     FieldSet
   },
   mixins: [table],
   data() {
     return {
-      crmType: 'leads'
+      crmType: 'leads',
+      showCount: 0,
+      modelData: {}
     }
   },
-  computed: {},
+  computed: {
+    isShow() {
+      return this.$store.state.customer.isCall
+    }
+  },
   mounted() {},
   methods: {
     /**
@@ -155,6 +162,40 @@ export default {
       } else {
         return ''
       }
+    },
+    /**
+       * pover 显示时触发
+       */
+    showData(val) {
+      this.showCount = val
+    },
+    /**
+       * 查看详情
+       * @param val
+       */
+    changeCRMType(val) {
+      this.showDview = true
+      this.rowType = val.type
+      this.rowID = val.id
+      let callOutData = {
+        modelId: val.id,
+        model: val.type
+      }
+      callOutData = JSON.stringify(callOutData)
+      localStorage.setItem('callOutData', callOutData)
+      this.modelData = {
+        modelId: val.id,
+        model: val.type
+      }
+    },
+    /** 解决povper重复的bug */
+    callCheckClick(e, scope) {
+      this.list.forEach(item => {
+        this.$set(item, 'callShow', false)
+      })
+      this.$set(scope.row, 'callShow', !scope.row.callShow)
+      const popoverEl = e.target.parentNode
+      popoverEl.__vue__.showPopper = !scope.row.callShow
     }
   }
 }
