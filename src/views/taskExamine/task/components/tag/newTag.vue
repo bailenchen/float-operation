@@ -28,9 +28,9 @@
     </div>
     <div class="footer">
       <el-button
+        v-debounce="tagCreateSubmit"
         type="primary"
-        size="medium"
-        @click="tagCreateSubmit">保存</el-button>
+        size="medium">保存</el-button>
       <el-button
         size="medium"
         @click="tagCancel">取消</el-button>
