@@ -366,6 +366,22 @@ export function downloadFile(data) {
   }).catch(() => {})
 }
 
+/**
+ * path  和 name
+ */
+export function conversionFileToUrl(path) {
+  return new Promise((resolve, reject) => {
+    downloadFileAPI(path).then(res => {
+      const blob = new Blob([res.data], {
+        type: 'audio/ogg'
+      })
+      resolve(URL.createObjectURL(blob))
+    }).catch(() => {
+      reject()
+    })
+  })
+}
+
 export function dataURLtoBlob(dataurl) {
   // eslint-disable-next-line one-var
   var arr = dataurl.split(','),

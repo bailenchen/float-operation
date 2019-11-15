@@ -3,7 +3,7 @@
     <!-- 此处的ref属性，可以很方便的在vue组件中通过 this.$refs.audio获取该dom元素 -->
     <audio
       ref="audio"
-      :src="item.filePath"
+      :src="audioUrl"
       controls="controls"
       style="display:none;"
       @pause="onPause"
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { conversionFileToUrl } from '@/utils'
 // 将整数转换成 时：分：秒的格式
 function realFormatSecond(second) {
   var secondType = typeof second
@@ -81,8 +82,11 @@ export default {
         maxTime: 0,
         minTime: 0,
         step: 0.1
-      }
+      },
+      audioUrl: ''
     }
+  },
+  computed: {
   },
   watch: {
     item() {
@@ -92,8 +96,16 @@ export default {
     }
   },
   mounted() {
+    this.filePath()
   },
   methods: {
+    /** 获取文件路径 */
+    filePath() {
+      this.audioUrl = ''
+      conversionFileToUrl(this.item.filePath).then(res => {
+        this.audioUrl = res
+      })
+    },
     // 控制音频的播放与暂停
     startPlayOrPause() {
       console.log(this.audio.playing)
@@ -101,7 +113,6 @@ export default {
     },
     // 播放音频
     play() {
-      console.log('你的播放开启了')
       this.$refs.audio.play()
     },
     // 暂停音频
@@ -110,7 +121,6 @@ export default {
     },
     // 当音频播放
     onPlay() {
-      console.log('检测到你播放中')
       this.audio.playing = true
     },
     // 当音频暂停
@@ -123,14 +133,12 @@ export default {
     // 当加载语音流元数据完成后，会触发该事件的回调函数
     // 语音元数据主要是语音的长度之类的数据
     onLoadedmetadata(res) {
-      console.log('loadedmetadata')
       // console.log(res)
       this.audio.maxTime = Math.ceil(res.target.duration)
     },
     // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
     // 当音频当前时间改变后，进度条也要改变
     onTimeupdate(res) {
-      console.log('timeupdate')
       // console.log(res)
       this.audio.currentTime = res.target.currentTime
       this.sliderTime = Math.ceil(this.audio.currentTime / this.audio.maxTime * 100)

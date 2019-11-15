@@ -37,7 +37,7 @@
         </el-table-column>
         <el-table-column prop="down" label="操作" width="80px">
           <template slot-scope="scope">
-            <el-button class="el-button--primary" type="text" @click="download(scope.row.callRecordId)">下载</el-button>
+            <el-button class="el-button--primary" type="text" @click="download(scope.row.callRecordId, scope.row.fileName)">下载</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -80,6 +80,7 @@ import CustomerDetail from '@/views/customermanagement/customer/CustomerDetail'
 import ClueDetail from '@/views/customermanagement/clue/ClueDetail'
 import base from '../mixins/base'
 import Audios from '../components/audios'
+import { downloadFile } from '@/utils'
 export default {
   /** 产品销售情况统计 */
   name: 'CallDetailsStatistics',
@@ -287,23 +288,17 @@ export default {
     /*
       音频下载
        */
-    download(id) {
+    download(id, fileName) {
+      const data = {}
       crmCallDownload({ id: id }).then(res => {
-        var downloadElement = document.createElement('a')
-        console.log(res.data, res.data.url, 'res==')
         if (res.data && res.data.url) {
-          var href = res.data.url // 创建下载的链接
-          var name = res.data.url.lastIndexOf('/')
+          data.path = res.data.url // 创建下载的链接
+          data.name = fileName
+          downloadFile(data)
         } else {
           this.$message.error('没有录音文件')
           return
         }
-        downloadElement.href = href
-        downloadElement.download = name || ''
-        document.body.appendChild(downloadElement)
-        downloadElement.click() // 点击下载
-        document.body.removeChild(downloadElement) // 下载完成移除元素
-        window.URL.revokeObjectURL(href) // 释放掉blob对象
       }).catch(() => {})
     },
     /*
