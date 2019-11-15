@@ -245,6 +245,7 @@ export default {
   margin-top: 12px;
   height: 56vh;
   overflow: auto;
+  user-select: none;
 
   .left {
     width: calc(60.5% - 12px);

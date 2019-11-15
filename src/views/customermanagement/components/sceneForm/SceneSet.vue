@@ -543,6 +543,8 @@ export default {
 }
 
 .scene-list {
+  user-select: none;
+
   .scene-list-box {
     flex: 1;
     border: 1px solid $xr-border-line-color;
@@ -604,6 +606,7 @@ export default {
 
   .list-item {
     padding: 5px 0;
+    background-color: white;
     cursor: pointer;
     .list-item-check {
       margin-right: 8px;
