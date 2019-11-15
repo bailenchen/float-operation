@@ -141,12 +141,13 @@
 <script>
 import axios from 'axios'
 import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
-import { guid } from '@/utils'
+import { guid, getImageData } from '@/utils'
 import CreateView from '@/components/CreateView'
 // 部门员工优化版
 import membersDep from '@/components/selectEmployee/membersDep'
 // 相关信息 - 选中列表
 import relatedBusiness from '@/components/relatedBusiness'
+
 export default {
   components: {
     CreateView,
@@ -297,6 +298,12 @@ export default {
       item.url = item.filePath
       return item
     })
+
+    for (let index = 0; index < this.imageFileList.length; index++) {
+      this.setImageList(this.imageFileList[index], index)
+    }
+
+
     this.fileList = this.accessoryFileList.map(function(item, index, array) {
       item.url = item.filePath
       return item
@@ -309,6 +316,16 @@ export default {
     }
   },
   methods: {
+    /**
+     * 获取图片内容
+     */
+    setImageList(item, index) {
+      getImageData(item.url).then((data) => {
+        item.url = data.src
+        this.imageFileList.splice(index, 1, item)
+      }).catch(() => {})
+    },
+
     close() {
       if (this.$route.query.routerKey == 1) {
         this.$router.go(-1)

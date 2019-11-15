@@ -142,8 +142,11 @@
         :disabled="disabled"
         @change="inNullChange">设为必填</el-checkbox>
     </div>
-    <div class="item-check-section">
+    <div
+      v-if="canUnique"
+      class="item-check-section">
       <el-checkbox
+
         v-model="field.isUnique"
         :disabled="disabled">设为唯一</el-checkbox>
     </div>
@@ -192,7 +195,12 @@ export default {
     },
     // 是否开启转移  转移对应数据
     canTransform: Boolean,
-    transformData: Object
+    transformData: Object,
+    // 是否能设置唯一
+    canUnique: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {}

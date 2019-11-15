@@ -894,7 +894,12 @@ export default {
             }
             filedValidates(validatesParams)
               .then(res => {
-                callback()
+                // status 1 通过 0
+                if (res.status == 1) {
+                  callback()
+                } else {
+                  callback(new Error(res.msg ? res.msg : '验证出错'))
+                }
               })
               .catch(error => {
                 callback(new Error(error.msg ? error.msg : '验证出错'))
