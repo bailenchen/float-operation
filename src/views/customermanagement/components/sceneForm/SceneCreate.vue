@@ -150,8 +150,8 @@
       class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
       <el-button
-        type="primary"
-        @click="handleConfirm">确 定</el-button>
+        v-debounce="handleConfirm"
+        type="primary">确 定</el-button>
     </div>
   </el-dialog>
 </template>

@@ -271,6 +271,7 @@ div[lazy=loading] {
 
 // 项目下的侧滑框
 .project-drawer {
+  user-select: none;
   .el-drawer__header {
     display: none;
   }

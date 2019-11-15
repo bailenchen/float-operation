@@ -673,22 +673,28 @@ export default {
     },
     // 保存数据
     saveField() {
+      this.loading = true
+
       this.$refs.crmForm.validate(valid => {
         if (valid) {
           if (this.showExamine) {
             /** 验证审批数据 */
-            this.$refs.examineInfo.validateField(() => {
-              const params = {
-                oaExamine: { categoryId: this.categoryId },
-                oaExamineRelation: {},
-                field: [],
-                oaExamineTravelList: []
+            this.$refs.examineInfo.validateField((result) => {
+              if (result) {
+                const params = {
+                  oaExamine: { categoryId: this.categoryId },
+                  oaExamineRelation: {},
+                  field: [],
+                  oaExamineTravelList: []
+                }
+                this.getSubmiteParams(this.crmForm.crmFields, params)
+                if (this.examineInfo.examineType === 2) {
+                  params['checkUserId'] = this.examineInfo.value[0].userId
+                }
+                this.submiteParams(params)
+              } else {
+                this.loading = false
               }
-              this.getSubmiteParams(this.crmForm.crmFields, params)
-              if (this.examineInfo.examineType === 2) {
-                params['checkUserId'] = this.examineInfo.value[0].userId
-              }
-              this.submiteParams(params)
             })
           } else {
             const params = {
@@ -701,6 +707,7 @@ export default {
             this.submiteParams(params)
           }
         } else {
+          this.loading = false
           // 提示第一个error
           if (this.$refs.crmForm.fields) {
             for (let index = 0; index < this.$refs.crmForm.fields.length; index++) {
@@ -729,7 +736,6 @@ export default {
 
       params.oaExamine['batchId'] = this.batchId
 
-      this.loading = true
       if (this.action.type == 'update') {
         params.oaExamine.examineId = this.action.id
       }

@@ -365,7 +365,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .field-info-section {
-  padding: 0 20px;
+  padding: 0 20px 20px;
 }
 
 .item-section {
