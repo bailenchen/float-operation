@@ -722,7 +722,7 @@ export default {
           }
         ]
       }
-       if (this.isStartCall) {
+      if (this.isStartCall) {
         call = [
           {
             name: '启用呼叫中心',

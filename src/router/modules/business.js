@@ -200,6 +200,28 @@ export default [
     ]
   },
   {
+    ...layout('/bi/call', true, {
+      permissions: ['bi', 'call'],
+      icon: 'left-trophy',
+      title: '呼叫中心'
+    }),
+    children: [
+      {
+        path: 'callDetail', // 通话详情
+        component: () => import('@/views/businessIntelligence/callCenter/callTalkCount'),
+        meta: {
+          title: '员工通话记录统计分析'
+        }
+      }, {
+        path: 'callCount', // 通话记录
+        component: () => import('@/views/businessIntelligence/callCenter/callDetailsStatistics'),
+        meta: {
+          title: '员工通话记录'
+        }
+      }
+    ]
+  },
+  {
     ...layout('/bi/ranking', true, {
       permissions: ['bi', 'ranking'],
       icon: 'left-trophy',
@@ -310,3 +332,35 @@ export default [
     ]
   }
 ]
+const callCenter = {
+  requiresAuth: false,
+  index: 1,
+  type: 'bi',
+  subType: 'call'
+}
+export const callCenterRouter = {
+  path: 'callCenter',
+  meta: {
+    icon: 'marketing',
+    title: '呼叫中心',
+    ...callCenter
+  },
+  hidden: false,
+  children: [
+    {
+      path: 'callDetail', // 通话详情
+      component: () => import('@/views/businessIntelligence/callCenter/callTalkCount'),
+      meta: {
+        title: '员工通话记录统计分析',
+        ...callCenter
+      }
+    }, {
+      path: 'callCount', // 通话记录
+      component: () => import('@/views/businessIntelligence/callCenter/callDetailsStatistics'),
+      meta: {
+        title: '员工通话记录',
+        ...callCenter
+      }
+    }
+  ]
+}
