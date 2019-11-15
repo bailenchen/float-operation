@@ -5,7 +5,7 @@
       :key="fileIndex"
       class="file-item">
       <img
-        :src="getFileTypeIcon(file.filePath)"
+        :src="getFileTypeIcon(file.name)"
         alt=""
         class="pic-icon">
       <span class="file-name">
@@ -74,8 +74,8 @@ export default {
       justify-content: flex-start;
 
       .pic-icon {
-        width: 14px;
-        margin-right: 16px;
+        width: 12px;
+        margin-right: 8px;
       }
       .file-name {
         margin-right: 14px;
