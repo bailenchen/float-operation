@@ -24,7 +24,8 @@
         <div :style="'left:'+sliderTime+'%'" class="slider-thumb"/>
       </div>
       <div style="width: 100px;" class="slider-time">
-        <div v-if="!audio.currentTime">{{ audio.maxTime | formatSecond }}</div>
+        <div v-if="defaultTime">{{ defaultTime }}</div>
+        <div v-else-if="!audio.currentTime">{{ audio.maxTime | formatSecond }}</div>
         <div v-else>{{ audio.currentTime | formatSecond }}</div>
       </div>
     </div>
@@ -83,6 +84,7 @@ export default {
         minTime: 0,
         step: 0.1
       },
+      defaultTime: '',
       audioUrl: ''
     }
   },
@@ -96,7 +98,7 @@ export default {
     }
   },
   mounted() {
-    this.filePath()
+    this.defaultTime = realFormatSecond(this.item.talkTime)
   },
   methods: {
     /** 获取文件路径 */
@@ -104,6 +106,10 @@ export default {
       this.audioUrl = ''
       conversionFileToUrl(this.item.filePath).then(res => {
         this.audioUrl = res
+        this.defaultTime = ''
+        this.$nextTick(() => {
+          this.$refs.audio.play()
+        })
       })
     },
     // 控制音频的播放与暂停
@@ -113,7 +119,7 @@ export default {
     },
     // 播放音频
     play() {
-      this.$refs.audio.play()
+      this.filePath()
     },
     // 暂停音频
     pause() {
