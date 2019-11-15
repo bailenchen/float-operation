@@ -3,9 +3,9 @@
     class="img-cont">
     <flexbox wrap="wrap">
       <div
+        v-src:background-image="item.url"
         v-for="(item, index) in data"
         :key="index"
-        :style="{ 'background-image': `url('${item.url}')` }"
         class="img-item"
         @mouseover="mouseImgOver(item, index)"
         @mouseleave="mouseImgLeave(item, index)">

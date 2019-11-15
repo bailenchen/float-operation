@@ -62,9 +62,9 @@
           @click="addFiles(index)">上传发票图片</el-button>
         <flexbox wrap="wrap">
           <div
+            v-src:background-image="imgItem.url"
             v-for="(imgItem, imgIndex) in item['imgList']"
             :key="imgIndex"
-            :style="{ 'background-image': `url('${imgItem.url}')` }"
             class="img-item"
             @mouseover="mouseImgOver(imgItem, imgIndex, item['imgList'])"
             @mouseleave="mouseImgLeave(imgItem, imgIndex, item['imgList'])">
