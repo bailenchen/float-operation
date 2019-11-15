@@ -1004,6 +1004,7 @@ export default {
     },
     // 保存数据
     saveField(saveAndCreate, isDraft = false) {
+      this.loading = true
       this.saveAndCreate = saveAndCreate
       this.$refs.crmForm.validate(valid => {
         if (valid) {
@@ -1022,12 +1023,16 @@ export default {
               params.entity.checkStatus = 5
               this.submiteParams(params)
             } else {
-              this.$refs.examineInfo.validateField(() => {
-                var params = this.getSubmiteParams(this.crmForm.crmFields)
-                if (this.examineInfo.examineType === 2) {
-                  params['checkUserId'] = this.examineInfo.value[0].userId
+              this.$refs.examineInfo.validateField((result) => {
+                if (result) {
+                  var params = this.getSubmiteParams(this.crmForm.crmFields)
+                  if (this.examineInfo.examineType === 2) {
+                    params['checkUserId'] = this.examineInfo.value[0].userId
+                  }
+                  this.submiteParams(params)
+                } else {
+                  this.loading = false
                 }
-                this.submiteParams(params)
               })
             }
           } else {
@@ -1035,6 +1040,7 @@ export default {
             this.submiteParams(params)
           }
         } else {
+          this.loading = false
           // 提示第一个error
           if (this.$refs.crmForm.fields) {
             for (
@@ -1055,7 +1061,6 @@ export default {
     },
     /** 上传 */
     submiteParams(params) {
-      this.loading = true
       var crmRequest = this.getSubmiteRequest()
       if (this.action.type == 'update') {
         const key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType
