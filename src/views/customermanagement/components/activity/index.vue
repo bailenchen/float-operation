@@ -485,6 +485,9 @@ export default {
      */
     logCellDelete(data, index, seciton) {
       this.list[seciton].list.splice(index, 1)
+      if (this.list[seciton].list.length == 0) {
+        this.list.splice(seciton, 1)
+      }
       this.scrollKey = Date.now()
     }
   }
