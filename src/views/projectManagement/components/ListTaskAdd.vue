@@ -130,6 +130,7 @@ export default {
         setTaskAPI(params)
           .then(res => {
             this.sendLoading = false
+            this.$message.success('新建成功')
             this.resetSendData()
             this.$emit('send')
           })
