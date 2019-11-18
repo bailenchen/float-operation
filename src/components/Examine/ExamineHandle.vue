@@ -193,8 +193,14 @@ export default {
         remarks: this.content
       }
       if (this.status == 1 && this.detail.examineType == 2) {
-        if (this.handleType != 1) {
-          params['nextUserId'] = this.selectUsers[0].userId
+        if (this.handleType == 2) {
+          if (this.selectUsers && this.selectUsers.length == 0) {
+            this.$message.error('请先选择下一审批人')
+            this.loading = false
+            return
+          } else {
+            params['nextUserId'] = this.selectUsers[0].userId
+          }
         }
       }
 
