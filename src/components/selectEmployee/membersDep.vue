@@ -351,7 +351,7 @@ export default {
     // 部门勾选
     depCheckboxChange(item, aindex) {
       if (this.radio && item.isCheck) {
-        this.checkedUserDepList = [item]
+        this.checkedUserDepList = [{ ...item }]
         this.popoverSubmit()
       }
       // this.$set(this.depShowList, aindex, item)
@@ -388,7 +388,7 @@ export default {
     // 员工勾选
     userCheckboxChange(item, aindex) {
       if (this.radio && item.isCheck) {
-        this.checkedUserDepList = [item]
+        this.checkedUserDepList = [{ ...item }]
         this.popoverSubmit()
       }
       // this.$set(this.userList, aindex, item)
