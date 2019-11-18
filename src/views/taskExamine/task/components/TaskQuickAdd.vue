@@ -173,7 +173,7 @@ export default {
   .add-info {
     padding: 0 8px;
     .el-date-editor {
-      width: 100px;
+      width: 110px;
       font-size: 12px;
       margin-right: 8px;
       /deep/ .el-input__prefix {
@@ -182,6 +182,10 @@ export default {
           width: 24px;
           line-height: 24px;
         }
+      }
+
+      /deep/ .el-input__suffix {
+        top: -4px;
       }
 
       /deep/ .el-input__inner {
