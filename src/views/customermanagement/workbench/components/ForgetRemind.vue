@@ -55,12 +55,14 @@
 import { crmIndexForgottenCustomerAPI, crmIndexForgottenCustomerListAPI, crmIndexUnContactCustomerAPI } from '@/api/customermanagement/workbench'
 
 import ReportList from './reportList'
+import chartMixins from './chartMixins'
 
 export default {
   name: 'RankingStatistics',
   components: {
     ReportList
   },
+  mixins: [chartMixins],
   data() {
     return {
       data: [
@@ -122,13 +124,10 @@ export default {
       })
     }
   },
-  created() {
-    this.getData()
-  },
   methods: {
     getData() {
       this.loading = true
-      crmIndexForgottenCustomerAPI()
+      crmIndexForgottenCustomerAPI(this.getBaseParams())
         .then(res => {
           this.loading = false
           this.data = this.data.map(item => {

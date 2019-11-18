@@ -4,6 +4,7 @@
       <members-dep
         :dep-checked-data="filterValue.strucs"
         :user-checked-data="filterValue.users"
+        radio
         @popoverSubmit="userStrucSelect">
         <flexbox slot="membersDep" class="user-box">
           <i v-if="avatarData.showIcon" class="wk wk-multi-user user-icon" />
@@ -12,7 +13,7 @@
             :name="avatarData.realname"
             :size="28"
             :src="avatarData.img" />
-          <span class="username">{{ filterText }}</span>
+          <span class="username">{{ avatarData.realname }}</span>
           <span class="el-icon-caret-bottom icon" />
         </flexbox>
       </members-dep>
@@ -205,29 +206,20 @@ export default {
       'userInfo',
       'collapse'
     ]),
-    // 筛选员工/部门展示文本
-    filterText() {
-      const users = this.filterValue.users || []
-      const strucs = this.filterValue.strucs || []
-      const userLen = users.length
-      const strucsLen = strucs.length
-      if (userLen === 1 && strucsLen === 0) return users[0].realname
-      if (strucsLen === 1 && userLen === 0) return strucs[0].name
-      let str = ''
-      if (userLen > 0) str = userLen + '个员工'
-      if (strucsLen > 0) str = `${str}，${strucsLen}个部门`
-      return str || '本人及下属'
-    },
     // 如果只筛选一个人则头像显示当前被筛选人的头像，否则显示默认错误头像
     avatarData() {
       const users = this.filterValue.users || []
-      const strucs = this.filterValue.strucs || []
-      if (users.length === 1 && strucs.length === 0) return users[0]
-      return {
-        showIcon: true,
-        realname: '',
-        img: ''
+      if (users.length) {
+        return users[0]
       }
+      const strucs = this.filterValue.strucs || []
+      if (strucs.length) {
+        return {
+          realname: strucs[0].name,
+          img: ''
+        }
+      }
+      return this.userInfo
     },
     // 销售简报百分比提示语
     rateText() {
@@ -294,18 +286,29 @@ export default {
      * 员工部门选择
      */
     userStrucSelect(users, strucs) {
-      this.filterValue.users = users
-      this.filterValue.strucs = strucs
+      if (!users.length && !strucs.length) {
+        this.filterValue.users = [this.userInfo]
+        this.filterValue.strucs = []
+      } else {
+        this.filterValue.users = users
+        this.filterValue.strucs = strucs
+      }
     },
 
     /**
      * 获取请求参数
      */
     getBaseParams() {
-      const params = {
-        userIds: this.filterValue.users.map(item => item.userId).join(',') || '',
-        deptIds: this.filterValue.strucs.map(item => item.id).join(',') || ''
+      const params = {}
+
+      if (this.filterValue.strucs.length) {
+        params.isUser = 0
+        params.deptId = this.filterValue.strucs[0].id
+      } else {
+        params.isUser = 1
+        params.userId = this.filterValue.users.length ? this.filterValue.users[0].userId : this.userInfo.userId
       }
+
       if (this.filterValue.timeLine.type) {
         if (this.filterValue.timeLine.type === 'custom') {
           params.startTime = this.filterValue.timeLine.startTime.replace(/\./g, '-')

@@ -1,3 +1,5 @@
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
     filterValue: {
@@ -22,31 +24,9 @@ export default {
     }
   },
   computed: {
-    // 筛选时间类型展示文本
-    // timeLine() {
-    //   const t = this.filterValue.timeLine
-    //   if (t.type) {
-    //     if (t.type === 'custom') {
-    //       return `${t.startTime}至${t.endTime}`
-    //     } else {
-    //       return this.timeLineMap[t.value]
-    //     }
-    //   }
-    //   return ''
-    // },
-    // 筛选员工/部门展示文本
-    // filterText() {
-    //   const users = this.filterValue.users || []
-    //   const strucs = this.filterValue.strucs || []
-    //   const userLen = users.length
-    //   const strucsLen = strucs.length
-    //   if (userLen === 1 && strucsLen === 0) return users[0].realname
-    //   if (strucsLen === 1 && userLen === 0) return strucs[0].name
-    //   let str = ''
-    //   if (userLen > 0) str = userLen + '个员工'
-    //   if (strucsLen > 0) str = `${str}，${strucsLen}个部门`
-    //   return str || ''
-    // }
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   watch: {
     // 根据筛选条件获取统计数据
@@ -79,10 +59,16 @@ export default {
      * 获取请求参数
      */
     getBaseParams() {
-      const params = {
-        userIds: this.filterValue.users.map(item => item.userId).join(',') || '',
-        deptIds: this.filterValue.strucs.map(item => item.id).join(',') || ''
+      const params = {}
+
+      if (this.filterValue.strucs.length) {
+        params.isUser = 0
+        params.deptId = this.filterValue.strucs[0].id
+      } else {
+        params.isUser = 1
+        params.userId = this.filterValue.users.length ? this.filterValue.users[0].userId : this.userInfo.userId
       }
+
       if (this.filterValue.timeLine.type) {
         if (this.filterValue.timeLine.type === 'custom') {
           params.startTime = this.filterValue.timeLine.startTime.replace(/\./g, '-')
