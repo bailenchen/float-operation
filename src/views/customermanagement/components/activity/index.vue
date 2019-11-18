@@ -1,8 +1,8 @@
 <template>
   <div
-    v-loading="loading"
     v-infinite-scroll="getLogList"
     ref="mainScroll"
+    :key="scrollKey"
     infinite-scroll-disabled="scrollDisabled"
     class="main">
     <div>
@@ -231,7 +231,8 @@ export default {
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
-      relationCrmType: '' // 相关类型
+      relationCrmType: '', // 相关类型
+      scrollKey: Date.now()
     }
   },
   computed: {
@@ -398,10 +399,8 @@ export default {
     refreshLogList() {
       this.page = 1
       this.noMore = false
-      this.$nextTick(() => {
-        this.list = []
-        this.$refs.mainScroll.scrollTo(0, 1)
-      })
+      this.list = []
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -416,7 +415,7 @@ export default {
      * 活动日志
      */
     getLogList() {
-      // this.loading = true
+      this.loading = true
       const params = {
         page: this.page,
         crmType: crmTypeModel[this.crmType], // 9是公海
@@ -426,7 +425,7 @@ export default {
 
       crmActivityListAPI(params)
         .then(res => {
-          // this.loading = false
+          this.loading = false
           if (!this.noMore) {
             this.page++
 
@@ -445,7 +444,7 @@ export default {
         })
         .catch(() => {
           this.noMore = true
-          // this.loading = false
+          this.loading = false
         })
     },
 
@@ -486,6 +485,7 @@ export default {
      */
     logCellDelete(data, index, seciton) {
       this.list[seciton].list.splice(index, 1)
+      this.scrollKey = Date.now()
     }
   }
 }
