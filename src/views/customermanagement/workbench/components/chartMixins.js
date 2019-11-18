@@ -1,5 +1,3 @@
-import { mapGetters } from 'vuex'
-
 export default {
   props: {
     filterValue: {
@@ -22,11 +20,6 @@ export default {
         lastYear: '去年'
       }
     }
-  },
-  computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
   },
   watch: {
     // 根据筛选条件获取统计数据
@@ -66,7 +59,7 @@ export default {
         params.deptId = this.filterValue.strucs[0].id
       } else {
         params.isUser = 1
-        params.userId = this.filterValue.users.length ? this.filterValue.users[0].userId : this.userInfo.userId
+        params.userId = this.filterValue.users.length ? this.filterValue.users[0].userId : ''
       }
 
       if (this.filterValue.timeLine.type) {

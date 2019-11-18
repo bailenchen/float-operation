@@ -219,7 +219,10 @@ export default {
           img: ''
         }
       }
-      return this.userInfo
+      return {
+        showIcon: true,
+        realname: '本人及下属'
+      }
     },
     // 销售简报百分比提示语
     rateText() {
@@ -306,7 +309,7 @@ export default {
         params.deptId = this.filterValue.strucs[0].id
       } else {
         params.isUser = 1
-        params.userId = this.filterValue.users.length ? this.filterValue.users[0].userId : this.userInfo.userId
+        params.userId = this.filterValue.users.length ? this.filterValue.users[0].userId : ''
       }
 
       if (this.filterValue.timeLine.type) {
