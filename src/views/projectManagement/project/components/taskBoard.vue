@@ -50,6 +50,7 @@
                         <el-input
                           :value="item.className"
                           v-model="renameInput"
+                          :maxlength="50"
                           size="mini"/>
                         <div class="btn-box">
                           <el-button
@@ -227,6 +228,7 @@
           class="input-btn">
           <el-input
             v-model="taskListName"
+            :maxlength="50"
             size="small"
             placeholder="列表名"/>
           <div class="button-box">

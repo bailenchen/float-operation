@@ -26,7 +26,7 @@
       </div>
     </flexbox>
     <div class="card-desc">
-      对回款金额进行的排行统计
+      {{ `对${optionName}进行的排行统计` }}
     </div>
     <div class="content">
       <div class="title">{{ `${optionName}排行榜` }}</div>
