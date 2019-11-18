@@ -40,6 +40,7 @@
             :rows="4"
             v-model="description"
             :maxlength="300"
+            show-word-limit
             type="textarea"
             placeholder="请输入内容"/>
         </div>
