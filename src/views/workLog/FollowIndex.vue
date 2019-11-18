@@ -9,7 +9,7 @@
     <flexbox class="filter-control card">
       <xh-user-cell
         v-if="userSelectShow"
-        :radio="false"
+        radio
         class="xh-user-cell"
         placeholder="选择人员"
         @value-change="userChange" />
@@ -129,7 +129,8 @@ export default {
       // 默认全部  subUser  0 我的  1 我下属的
       filterForm: {
         crmType: '',
-        userIds: '',
+        isUser: 1,
+        userId: '',
         subUser: ''
       },
 
@@ -242,15 +243,7 @@ export default {
      * 筛选条件人员选择
      */
     userChange(data) {
-      if (data.value.length > 0) {
-        this.filterForm.userIds = data.value
-          .map(item => {
-            return item.userId
-          })
-          .join(',')
-      } else {
-        this.filterForm.userIds = ''
-      }
+      this.filterForm.userId = data.value.length > 0 ? data.value[0].userId : ''
     },
 
     /**
