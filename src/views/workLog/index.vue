@@ -350,7 +350,8 @@ export default {
       this.loading = true
       crmIndexIndex({
         type: 'today',
-        userIds: this.userInfo.userId
+        isUser: 1,
+        userId: this.userInfo.userId
       }).then(res => {
         this.loading = false
         const data = res.data || {}

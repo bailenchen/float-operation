@@ -180,6 +180,7 @@ export default {
       workWorkSaveAPI(params)
         .then(res => {
           this.loading = false
+          this.$message.success('新建成功')
           this.$emit('save-success')
           this.$bus.$emit('add-project', this.name, res.work.workId)
           this.close()
