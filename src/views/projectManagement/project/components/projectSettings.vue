@@ -36,6 +36,7 @@
               <div class="color-dynamic">
                 <el-input
                   v-model="setTitle"
+                  :maxlength="50"
                   size="mini"/>
                 <span
                   :style="{background: setColor}"

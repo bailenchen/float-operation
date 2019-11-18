@@ -16,6 +16,7 @@
           <div class="label color-label">项目名称</div>
           <el-input
             v-model="name"
+            :maxlength="50"
             placeholder="请输入内容">
             <i
               slot="prefix"
@@ -38,6 +39,7 @@
           <el-input
             :rows="4"
             v-model="description"
+            :maxlength="300"
             type="textarea"
             placeholder="请输入内容"/>
         </div>
