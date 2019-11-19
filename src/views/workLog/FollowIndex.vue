@@ -195,6 +195,7 @@ export default {
       let params = {
         page: this.page,
         limit: 15,
+        isUser: 1,
         status: this.status
       }
 
