@@ -119,10 +119,10 @@ export default {
           }
           this.axisOption.xAxis[0].data = xAxis
           this.axisOption.series[0].data = monthData
-          this.axisOption.series[1].data = lastMonthData
-          this.axisOption.series[2].data = lastYeatMonthData
-          this.axisOption.series[3].data = chainRatioData
-          this.axisOption.series[4].data = yearOnYearData
+          // this.axisOption.series[1].data = lastMonthData
+          // this.axisOption.series[2].data = lastYeatMonthData
+          this.axisOption.series[1].data = chainRatioData
+          this.axisOption.series[2].data = yearOnYearData
           this.axisChart.setOption(this.axisOption, true)
         })
         .catch(() => {
@@ -153,8 +153,8 @@ export default {
         legend: {
           data: [
             '当月' + this.typeName,
-            '上月' + this.typeName,
-            '去年当月' + this.typeName,
+            // '上月' + this.typeName,
+            // '去年当月' + this.typeName,
             '环比增长',
             '同比增长'
           ],
@@ -260,42 +260,42 @@ export default {
           },
           data: []
         },
-        {
-          name: '上月' + this.typeName,
-          type: 'bar',
-          yAxisIndex: 0,
-          barWidth: 10,
-          markPoint: {
-            data: [{
-              type: 'max',
-              name: '最大值'
-            },
-            {
-              type: 'min',
-              name: '最小值'
-            }
-            ]
-          },
-          data: []
-        },
-        {
-          name: '去年当月' + this.typeName,
-          type: 'bar',
-          yAxisIndex: 0,
-          barWidth: 10,
-          markPoint: {
-            data: [{
-              type: 'max',
-              name: '最大值'
-            },
-            {
-              type: 'min',
-              name: '最小值'
-            }
-            ]
-          },
-          data: []
-        },
+        // {
+        //   name: '上月' + this.typeName,
+        //   type: 'bar',
+        //   yAxisIndex: 0,
+        //   barWidth: 10,
+        //   markPoint: {
+        //     data: [{
+        //       type: 'max',
+        //       name: '最大值'
+        //     },
+        //     {
+        //       type: 'min',
+        //       name: '最小值'
+        //     }
+        //     ]
+        //   },
+        //   data: []
+        // },
+        // {
+        //   name: '去年当月' + this.typeName,
+        //   type: 'bar',
+        //   yAxisIndex: 0,
+        //   barWidth: 10,
+        //   markPoint: {
+        //     data: [{
+        //       type: 'max',
+        //       name: '最大值'
+        //     },
+        //     {
+        //       type: 'min',
+        //       name: '最小值'
+        //     }
+        //     ]
+        //   },
+        //   data: []
+        // },
         {
           name: '环比增长',
           type: 'line',
