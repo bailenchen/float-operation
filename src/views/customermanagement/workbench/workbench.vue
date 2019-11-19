@@ -393,14 +393,6 @@ export default {
         this.reportData.crmType = item.type
         this.reportData.params = this.getBaseParams()
 
-        // 合同金额 回款金额 加入 moneyType 1合同 2回款
-        if (item.field == 'contractMoney' || item.field == 'receivablesMoney') {
-          this.reportData.params.moneyType = {
-            contractMoney: 1,
-            receivablesMoney: 2
-          }[item.field]
-        }
-
         if (item.type == 'record') {
           this.fieldReportList = [
             {
@@ -425,6 +417,12 @@ export default {
           // 合同金额回款金额 通过的
           if (item.field === 'receivablesMoney' || item.field === 'contractMoney') {
             this.reportData.params.checkStatus = 1
+
+            // 合同金额 回款金额 加入 moneyType 1合同 2回款
+            this.reportData.params.moneyType = {
+              contractMoney: 1,
+              receivablesMoney: 2
+            }[item.field]
           }
         }
 
