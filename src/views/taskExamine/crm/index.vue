@@ -7,7 +7,7 @@
 
     <div
       v-infinite-scroll="getList"
-      :key="`index${tabsSelectValue}`"
+      :key="`${Date.now()}${tabsSelectValue}`"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <crm-cell

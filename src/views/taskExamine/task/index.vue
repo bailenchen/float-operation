@@ -47,6 +47,7 @@
       <div class="cell-section">
         <div
           v-infinite-scroll="getList"
+          :key="`${Date.now()}${tabsSelectValue}`"
           infinite-scroll-disabled="scrollDisabled">
           <task-cell
             v-for="(item, index) in list"
