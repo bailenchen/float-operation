@@ -152,6 +152,7 @@ export default {
       // 逾期未联系的客户
       if (item.key == 'unContactCustomerCount') {
         this.reportData.params = {
+          ...this.getBaseParams(),
           isSub: 1
         }
         this.reportData.request = crmIndexUnContactCustomerAPI
@@ -164,6 +165,7 @@ export default {
           sixMonth: 180
         }[item.key]
         this.reportData.params = {
+          ...this.getBaseParams(),
           day: day
         }
         this.reportData.request = crmIndexForgottenCustomerListAPI
