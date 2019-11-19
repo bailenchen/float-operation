@@ -3,7 +3,7 @@
     <record-tab-head
       :tabs="tabs"
       :count="count"
-      select-value="all"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange" />
 
     <flexbox class="filter-control card">
@@ -30,6 +30,7 @@
 
     <div
       v-infinite-scroll="getList"
+      :key="`index${tabsSelectValue}`"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <log-cell
@@ -99,6 +100,7 @@ export default {
   props: {},
   data() {
     return {
+      tabsSelectValue: 'all',
       tabs: [
         {
           label: '全部',
@@ -195,8 +197,7 @@ export default {
       let params = {
         page: this.page,
         limit: 15,
-        isUser: 1,
-        status: this.status
+        isUser: 1
       }
 
       if (this.timeSelect.type) {
@@ -218,12 +219,17 @@ export default {
       crmIndexGetRecordListAPI(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            this.list = this.list.concat(res.data.list)
-            this.page++
+
+          if (this.filterForm.subUser != params.subUser) {
+            this.refreshList()
+          } else {
+            if (!this.noMore) {
+              this.list = this.list.concat(res.data.list)
+              this.page++
+            }
+            this.count = res.data.totalRow || 0
+            this.noMore = res.data.lastPage
           }
-          this.count = res.data.totalRow || 0
-          this.noMore = res.data.lastPage
         })
         .catch(() => {
           this.noMore = true
@@ -277,7 +283,6 @@ export default {
 .cell-section {
   height: calc(100% - 140px);
   overflow: auto;
-  overflow: overlay;
 }
 
 .log-cell {
