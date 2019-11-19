@@ -113,8 +113,8 @@ export default {
             monthData.push(element.thisMonth)
             lastMonthData.push(element.lastMonth)
             lastYeatMonthData.push(element.lastYear)
-            chainRatioData.push(element.lastYearGrowth)
-            yearOnYearData.push(element.lastMonthGrowth)
+            chainRatioData.push(element.lastMonthGrowth)
+            yearOnYearData.push(element.lastYearGrowth)
             xAxis.push(element.month)
           }
           this.axisOption.xAxis[0].data = xAxis
