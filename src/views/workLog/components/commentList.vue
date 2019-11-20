@@ -101,7 +101,6 @@ import {
 } from '@/api/oamanagement/common'
 import { mapGetters } from 'vuex'
 import xss from 'xss'
-import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'CommentList',
@@ -219,9 +218,7 @@ export default {
             if (childIndex >= 0) {
               this.list[index].childCommentList.splice(childIndex, 1)
             } else {
-              const copyList = objDeepCopy(this.list)
-              copyList.splice(index, 1)
-              this.list = copyList
+              this.$emit('delete', index)
             }
           })
         })
@@ -241,6 +238,7 @@ export default {
     .comment-list-item {
       .user-img {
         margin-right: 15px;
+        border-radius: 50%;
       }
       .reply {
         font-size: 13px;

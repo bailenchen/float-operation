@@ -131,6 +131,7 @@
         :id="data.logId"
         :list="replyList"
         type="2"
+        @delete="deleteComment"
         @close-other-reply="$refs.f_reply.toggleFocus(true)" />
     </div>
   </div>
@@ -387,6 +388,10 @@ export default {
       }).catch(() => {
         this.commentLoading = false
       })
+    },
+
+    deleteComment(index) {
+      this.replyListData.splice(index, 1)
     },
 
     closeOtherReply(flag) {
