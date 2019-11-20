@@ -135,7 +135,6 @@ import AddImageList from '@/components/quickAdd/AddImageList'
 import AddFileList from '@/components/quickAdd/AddFileList'
 import AddRelateList from '@/components/quickAdd/AddRelateList'
 
-import moment from 'moment'
 import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
 
 export default {
@@ -212,7 +211,6 @@ export default {
   },
   created() {
     this.selectContactsId = this.contactsId || ''
-    this.nextTime = moment().format('YYYY-MM-DD HH:mm:ss')
     this.getDefalutFollowType()
   },
 
@@ -233,7 +231,7 @@ export default {
      * 重置数据
      */
     resetInfo() {
-      this.nextTime = moment().format('YYYY-MM-DD HH:mm:ss')
+      this.nextTime = ''
       this.isUnfold = false
       // 输入法
       this.content = ''
