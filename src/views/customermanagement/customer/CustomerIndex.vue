@@ -56,6 +56,7 @@
           <template slot-scope="scope">
             <el-popover
               :disabled="scope.row.businessCount == 0"
+              v-model="scope.row.show"
               :offset="250"
               placement="right"
               popper-class="no-padding-popover"
