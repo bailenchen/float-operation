@@ -60,7 +60,7 @@
           v-if="openType == 0"
           class="member">
           <div class="label">项目成员</div>
-          <div>
+          <flexbox>
             <xr-avatar
               v-for="(user, userIndex) in selectUserList"
               :key="userIndex"
@@ -73,12 +73,11 @@
               :content-block="false"
               :close-dep="true"
               @popoverSubmit="userSelectChange">
-              <img
+              <i
                 slot="membersDep"
-                class="sent-img"
-                src="@/assets/img/task_add.png">
+                class="el-icon-plus add-user-btn" />
             </members-dep>
-          </div>
+          </flexbox>
         </div>
         <div class="footer">
           <el-button
@@ -285,9 +284,16 @@ $color3: #333;
     .user-img {
       margin-right: 7px;
     }
-    .sent-img {
-      width: 25px;
-      height: 25px;
+    .add-user-btn {
+      cursor: pointer;
+      border: 1px dotted #666;
+      border-radius: 50%;
+      padding: 6px 5.5px 5px;
+      font-size: 12px;
+      transform: scale(0.8);
+    }
+    .add-user-btn:hover {
+      border-color: $xr-color-primary;
     }
   }
   .footer {

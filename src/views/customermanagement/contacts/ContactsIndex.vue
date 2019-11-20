@@ -127,7 +127,6 @@
 
 <script>
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 import CallCenter from '@/callCenter/CallCenter'
 export default {
@@ -135,8 +134,7 @@ export default {
   name: 'ContactsIndex',
   components: {
     CRMAllDetail,
-    CallCenter,
-    FieldSet
+    CallCenter
   },
   mixins: [table],
   data() {

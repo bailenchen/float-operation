@@ -19,10 +19,9 @@
           trigger="click">
           <!-- 表情 -->
           <emoji @select="selectEmoji" />
-          <img
+          <i
             slot="reference"
-            src="@/assets/img/smiling_face.png"
-            class="smiling-img">
+            class="wk wk-expression smiling-img" />
         </el-popover>
         <div class="btn-box">
           <el-button
@@ -135,10 +134,14 @@ export default {
         align-items: center;
         justify-content: flex-end;
       }
+
+      .smiling-img {
+        cursor: pointer;
+        font-size: 17px;
+        color: #666;
+      }
     }
-    .btn-group /deep/ img {
-      cursor: pointer;
-    }
+
     .el-textarea /deep/ .el-textarea__inner {
       resize: none;
       border: 0;

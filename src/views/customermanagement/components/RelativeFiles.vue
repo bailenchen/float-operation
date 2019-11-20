@@ -88,7 +88,7 @@ import { crmContractFileListAPI } from '@/api/customermanagement/contract'
 import { crmProductFileListAPI } from '@/api/customermanagement/product'
 import { crmReceivablesFileListAPI } from '@/api/customermanagement/money'
 
-import { fileSize } from '@/utils/index'
+import { fileSize } from '@/utils'
 import { debounce } from 'throttle-debounce'
 
 export default {

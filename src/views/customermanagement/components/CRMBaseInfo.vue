@@ -55,7 +55,7 @@
             </flexbox>
 
             <flexbox
-              v-else-if="item.formType === 'customer' || item.formType === 'business' || item.formType === 'contract' || item.formType === 'contacts'"
+              v-else-if="isModule(item)"
               align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
@@ -219,6 +219,17 @@ export default {
       return ''
     },
 
+    isModule(item) {
+      return [
+        'customer',
+        'business',
+        'contract',
+        'contacts',
+        'category',
+        'statusName',
+        'typeName'].includes(item.formType)
+    },
+
     getShowBlock(type) {
       return ['map_address', 'file'].includes(type)
     },
@@ -228,7 +239,10 @@ export default {
         customer: 'customerName',
         business: 'businessName',
         contract: 'contractNum',
-        contacts: 'contactsName'
+        contacts: 'contactsName',
+        category: 'categoryName',
+        statusName: 'statusName',
+        typeName: 'typeName'
       }[item.formType]
       return item.value ? item.value[field] : ''
     }

@@ -584,7 +584,7 @@ export default {
       .add-user-btn {
         border: 1px dotted #666;
         border-radius: 50%;
-        padding: 5px;
+        padding: 6px 5.5px 5px;
         font-size: 12px;
         transform: scale(0.8);
         margin-left: 7px;

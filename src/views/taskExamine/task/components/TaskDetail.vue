@@ -483,6 +483,7 @@
                   :id="taskData.taskId"
                   :list="replyList"
                   type="1"
+                  @delete="deleteComment"
                   @close-other-reply="$refs.f_reply.toggleFocus(true)" />
                 <reply-comment
                   ref="f_reply"
@@ -1205,6 +1206,10 @@ export default {
             this.commentsLoading = false
           })
       }
+    },
+
+    deleteComment(index) {
+      this.replyList.splice(index, 1)
     },
 
     // 删除评论

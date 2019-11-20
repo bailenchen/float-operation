@@ -56,6 +56,7 @@
           <template slot-scope="scope">
             <el-popover
               :disabled="scope.row.businessCount == 0"
+              v-model="scope.row.show"
               :offset="250"
               placement="right"
               popper-class="no-padding-popover"
@@ -177,7 +178,6 @@
 import { mapGetters } from 'vuex'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 import CallCenter from '@/callCenter/CallCenter'
 export default {
@@ -186,8 +186,7 @@ export default {
   components: {
     CRMAllDetail,
     BusinessCheck,
-    CallCenter,
-    FieldSet
+    CallCenter
   },
   filters: {
     dealIcon(statu) {

@@ -105,15 +105,13 @@
 
 <script>
 import CustomerDetail from '../customer/CustomerDetail'
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 公海列表 */
   name: 'SeacIndex',
   components: {
-    CustomerDetail,
-    FieldSet
+    CustomerDetail
   },
   filters: {
     dealIcon(statu) {

@@ -127,7 +127,6 @@
 
 <script>
 import ClueDetail from './ClueDetail'
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 import CallCenter from '@/callCenter/CallCenter'
 export default {
@@ -135,8 +134,7 @@ export default {
   name: 'ClueIndex',
   components: {
     ClueDetail,
-    CallCenter,
-    FieldSet
+    CallCenter
   },
   mixins: [table],
   data() {

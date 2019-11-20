@@ -12,6 +12,7 @@
     <div
       v-infinite-scroll="getList"
       :key="`${Date.now()}${tabsSelectValue}`"
+      infinite-scroll-distance="100"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <examine-cell

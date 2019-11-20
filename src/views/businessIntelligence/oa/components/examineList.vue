@@ -7,7 +7,6 @@
     class="d-view"
     @close="hideView">
     <div
-      v-if="!firstLoading"
       class="examine-list-main">
       <div
         class="t-section">
@@ -19,8 +18,9 @@
       </div>
       <div
         v-infinite-scroll="getList"
-        ref="scollBd"
+        :key="scrollKey"
         class="t-content"
+        infinite-scroll-distance="100"
         infinite-scroll-disabled="scrollDisabled">
 
         <examine-cell
@@ -100,10 +100,10 @@ export default {
       page: 1,
       list: [],
       // 相关详情的查看
-      firstLoading: false,
       relatedID: '',
       relatedCRMType: '',
-      showRelatedDetail: false
+      showRelatedDetail: false,
+      scrollKey: Date.now()
     }
   },
 
@@ -142,7 +142,6 @@ export default {
 
   watch: {
     params() {
-      this.firstLoading = true
       this.refreshList()
     }
   },
@@ -157,9 +156,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
-      this.$nextTick(() => {
-        this.firstLoading = false
-      })
+      this.scrollKey = Date.now()
     },
 
     /**

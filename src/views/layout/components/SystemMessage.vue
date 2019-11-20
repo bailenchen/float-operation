@@ -32,9 +32,12 @@
           </el-badge>
         </div>
 
-        <div ref="scollBd" class="sm-main__bd">
+        <div
+          class="sm-main__bd">
           <div
             v-infinite-scroll="getList"
+            :key="scrollKey"
+            infinite-scroll-distance="100"
             infinite-scroll-disabled="scrollDisabled">
             <message-cell
               v-for="(item, index) in list"
@@ -52,7 +55,6 @@
           <p
             v-if="noMore"
             class="scroll-bottom-tips">没有更多了</p>
-          <div v-if="!scrollDisabled" style="height: 2000px;"/>
         </div>
 
         <flexbox class="sm-main__ft">
@@ -166,6 +168,7 @@ export default {
       list: [],
       loading: false,
       noMore: false,
+      scrollKey: Date.now(),
       page: 1,
       isUnRead: false, // 仅展示未读
 
@@ -266,10 +269,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
-      // this.$refs.scollBd.scrollTop = 0
-      this.$nextTick(() => {
-        this.$refs.scollBd.scrollTo(0, 1)
-      })
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -288,15 +288,19 @@ export default {
       systemMessageListAPI(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            if (this.page == 1) {
-              this.list = res.data.list
-            } else {
-              this.list = this.list.concat(res.data.list)
+          if (this.labelValue == params.label) {
+            if (!this.noMore) {
+              if (this.page == 1) {
+                this.list = res.data.list
+              } else {
+                this.list = this.list.concat(res.data.list)
+              }
+              this.page++
             }
-            this.page++
+            this.noMore = res.data.lastPage
+          } else {
+            this.refreshList()
           }
-          this.noMore = res.data.lastPage
         })
         .catch(() => {
           this.noMore = true

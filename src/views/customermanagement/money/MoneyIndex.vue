@@ -99,7 +99,6 @@
 
 <script>
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
-import FieldSet from '../components/fieldSet'
 
 import table from '../mixins/table'
 import { floatAdd } from '@/utils'
@@ -108,8 +107,7 @@ export default {
   /** 客户管理 的 回款列表 */
   name: 'MoneyIndex',
   components: {
-    CRMAllDetail,
-    FieldSet
+    CRMAllDetail
   },
   mixins: [table],
   data() {
