@@ -216,10 +216,6 @@ export default {
           })
           .join('、')
 
-        if (strName) {
-          strName += '、'
-        }
-
         const users = row['userIds'] || []
         const userName = users
           .map(item => {
@@ -227,6 +223,9 @@ export default {
           })
           .join('、')
 
+        if (strName && userName) {
+          strName += '、'
+        }
         const name = strName + userName
         return name || '全公司'
       } else if (column.property === 'status') {

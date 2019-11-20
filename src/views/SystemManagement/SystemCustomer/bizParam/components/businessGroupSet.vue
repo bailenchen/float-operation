@@ -158,15 +158,13 @@ export default {
       // 如果需要格式化
       if (column.property == 'deptName') {
         // 格式部门
-        var info = row.deptIds
-        var name = ''
-        if (info) {
-          for (let index = 0; index < info.length; index++) {
-            name =
-              name + info[index].name + (index === info.length - 1 ? '' : '、')
-          }
-        }
-        return name || '全公司'
+        const structures = row.deptIds || []
+        const strName = structures
+          .map(item => {
+            return item.name
+          })
+          .join('、')
+        return strName || '全公司'
       }
       return row[column.property]
     },

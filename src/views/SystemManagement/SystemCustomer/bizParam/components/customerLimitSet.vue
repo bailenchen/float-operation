@@ -105,7 +105,7 @@ export default {
 
     fieldList() {
       const temps = [
-        { label: '适用范围', field: 'range' },
+        { label: '适用范围', field: 'userIds' },
         {
           label: {
             1: '拥有客户数上限',
@@ -192,8 +192,34 @@ export default {
      */
     fieldFormatter(row, column) {
       if (column.property == 'customerDeal') {
-        return row.customerDeal == 1 ? '是' : '否'
-      } // 0 不占用 1 占用
+        return row.customerDeal == 1 ? '是' : '否' // 0 不占用 1 占用
+      } else if (column.property === 'userIds') {
+        const structures = row['deptIds'] || []
+        let strName = structures
+          .map(item => {
+            return item.name
+          })
+          .join('、')
+
+        const users = row['userIds'] || []
+        const userName = users
+          .map(item => {
+            return item.realname
+          })
+          .join('、')
+
+        if (strName && userName) {
+          strName += '、'
+        }
+        const name = strName + userName
+        return name || '全公司'
+        // 1 启用 0 禁用 2 删除
+      } else if (column.property === 'status') {
+        if (row[column.property] === 0) {
+          return '停用'
+        }
+        return '启用'
+      }
       return row[column.property]
     },
 
