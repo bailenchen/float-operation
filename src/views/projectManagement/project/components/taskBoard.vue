@@ -77,11 +77,9 @@
                     v-if="canDeleteTaskClass"
                     @click="delectTaskListClick(item, index)">删除列表</p>
                 </div>
-                <img
-                  ref="imgPopoverSlot"
+                <i
                   slot="reference"
-                  class="img-gd"
-                  src="@/assets/img/project/task_ellipsis.png">
+                  class="el-icon-more img-gd"/>
               </el-popover>
             </div>
             <el-progress
@@ -811,7 +809,7 @@ export default {
       }
       .img-gd {
         float: right;
-        width: 15px;
+        color: #666;
         cursor: pointer;
       }
     }
