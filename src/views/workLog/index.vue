@@ -3,6 +3,7 @@
     v-infinite-scroll="getList"
     :key="scrollKey"
     class="main"
+    infinite-scroll-distance="100"
     infinite-scroll-disabled="scrollDisabled">
     <div>
       <div class="work-log scroll-body">

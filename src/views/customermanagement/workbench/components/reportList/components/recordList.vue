@@ -19,7 +19,9 @@
     <div class="t-content">
       <div
         v-infinite-scroll="getList"
-        infinite-scroll-disabled="scrollDisabled">
+        :key="scrollKey"
+        infinite-scroll-disabled="scrollDisabled"
+        infinite-scroll-distance="100">
         <log-cell
           v-for="(item, index) in list"
           :item="item"
@@ -118,6 +120,7 @@ export default {
       page: 1,
       noMore: false,
       list: [],
+      scrollKey: Date.now(),
 
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
@@ -149,7 +152,8 @@ export default {
     refreshList() {
       this.page = 1
       this.list = []
-      this.getList()
+      this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**

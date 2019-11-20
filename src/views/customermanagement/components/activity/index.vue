@@ -2,7 +2,7 @@
   <div
     v-infinite-scroll="getLogList"
     :key="scrollKey"
-    infinite-scroll-distance="50"
+    infinite-scroll-distance="100"
     infinite-scroll-disabled="scrollDisabled"
     class="main">
     <div>
