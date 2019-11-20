@@ -90,7 +90,10 @@ export function crmIndexForgottenCustomerListAPI(data) {
   return request({
     url: 'Crm/Instrument/forgottenCustomerPageList ',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 

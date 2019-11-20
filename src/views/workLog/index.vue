@@ -1,7 +1,7 @@
 <template>
   <div
     v-infinite-scroll="getList"
-    ref="mainScroll"
+    :key="scrollKey"
     class="main"
     infinite-scroll-disabled="scrollDisabled">
     <div>
@@ -218,6 +218,7 @@ export default {
       noMore: false,
       page: 1,
       totalCount: 0,
+      scrollKey: Date.now(),
 
       options: [
         { label: '全部', value: 0 },
@@ -301,6 +302,7 @@ export default {
   watch: {
     filterForm: {
       handler() {
+        this.scrollKey = Date.now()
         this.refreshList()
       },
       deep: true
@@ -414,12 +416,9 @@ export default {
      */
     refreshList() {
       this.page = 1
+      this.listData = []
       this.noMore = false
       this.totalCount = 0
-      this.$nextTick(() => {
-        this.listData = []
-        this.$refs.mainScroll.scrollTo(0, 1)
-      })
     },
 
     /**
@@ -597,6 +596,7 @@ export default {
      * 时间更改
      */
     timeTypeChange(data) {
+      this.scrollKey = Date.now()
       this.timeSelect = data
       this.refreshList()
     },

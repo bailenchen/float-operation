@@ -11,6 +11,7 @@
 
     <div
       v-infinite-scroll="getList"
+      :key="`${Date.now()}${tabsSelectValue}`"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <examine-cell
@@ -447,6 +448,5 @@ export default {
 .cell-section {
   height: calc(100% - 70px);
   overflow: auto;
-  overflow: overlay;
 }
 </style>

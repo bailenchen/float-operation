@@ -7,6 +7,7 @@
 
     <div
       v-infinite-scroll="getList"
+      :key="`${Date.now()}${tabsSelectValue}`"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <crm-cell
@@ -157,7 +158,10 @@ export default {
           this.loading = false
           const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
           if (params.status == status) {
-            this.list = this.list.concat(res.data.list)
+            if (!this.noMore) {
+              this.list = this.list.concat(res.data.list)
+              this.page++
+            }
             this.noMore = res.data.lastPage
           } else {
             this.refreshList()
@@ -272,6 +276,5 @@ export default {
 .cell-section {
   height: calc(100% - 70px);
   overflow: auto;
-  overflow: overlay;
 }
 </style>
