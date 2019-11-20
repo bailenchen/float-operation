@@ -68,12 +68,18 @@ export default {
         item.formType === 'customer' ||
         item.formType === 'business' ||
         item.formType === 'contract' ||
-        item.formType === 'contacts') {
+        item.formType === 'contacts' ||
+        item.formType === 'category' ||
+        item.formType === 'statusName' ||
+        item.formType === 'typeName') {
         const field = {
           customer: 'customerName',
           business: 'businessName',
           contract: 'contractNum',
-          contacts: 'contactsName'
+          contacts: 'contactsName',
+          category: 'categoryName',
+          statusName: 'statusName',
+          typeName: 'typeName'
         }[item.formType]
         return item.value ? item.value[field] : ''
       }
