@@ -8,6 +8,7 @@
     <div class="business-list">
       <div class="business-label">商机组名称</div>
       <el-input
+        :maxlength="20"
         v-model="name"
         style="width: 60%;"/>
     </div>
@@ -42,15 +43,17 @@
             <span>{{ '阶段' + (index+1) }}</span>
             <span>
               <el-input
+                :maxlength="20"
                 v-model="item.name"
                 size="mini"/>
             </span>
             <span class="icon-span">
               <el-input
                 v-model="item.rate"
+                :max="100"
                 size="mini"
                 type="number"
-                @change="changeInput"/> %
+                @input="changeInput(item)"/> %
               <span class="icon-box">
                 <span
                   class="el-icon-circle-plus"
@@ -197,20 +200,17 @@ export default {
     // 删除
     removeIcon(val) {
       this.settingList.splice(val, 1)
-      this.changeInput()
     },
     // 赢单率
-    changeInput(val, index) {
-      // this.winSingle = 0
-      // for (let item of this.settingList) {
-      //     if (item.rate) {
-      //         this.winSingle += parseInt(item.rate)
-      //     }
-      // }
-      // if (this.winSingle < 0) {
-      //     this.loseSingle = this.winSingle
-      //     this.winSingle = 0
-      // }
+    changeInput(item) {
+      if (item.rate && !/^\d+\.?\d{0,2}$/.test(item.rate)) {
+        item.rate =
+          item.rate.substring(0, item.rate.length - 1) || 0
+      }
+
+      if (item.rate > 100) {
+        item.rate = 100
+      }
     }
   }
 }

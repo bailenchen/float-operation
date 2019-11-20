@@ -58,6 +58,7 @@
           label="类别名称"
           label-width="80">
           <el-input
+            :maxlength="20"
             v-model="productForm.name"
             autocomplete="off"/>
         </el-form-item>
