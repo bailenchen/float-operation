@@ -202,13 +202,13 @@ export default {
         })
           .then(res => {
             this.getProductCategoryIndex()
+            this.$message.success('新增成功')
             this.loading = false
           })
           .catch(() => {
             this.loading = false
           })
-      }
-      if (this.productForm.type == 'create-child') {
+      } else if (this.productForm.type == 'create-child') {
         this.loading = true
         productCategorySave({
           pid: this.productForm.pid,
@@ -216,6 +216,7 @@ export default {
         })
           .then(res => {
             this.getProductCategoryIndex()
+            this.$message.success('新建成功')
             this.loading = false
           })
           .catch(() => {
@@ -229,6 +230,7 @@ export default {
         })
           .then(res => {
             this.getProductCategoryIndex()
+            this.$message.success('新建成功')
             this.loading = false
           })
           .catch(() => {
@@ -243,6 +245,7 @@ export default {
         })
           .then(res => {
             this.getProductCategoryIndex()
+            this.$message.success('编辑成功')
             this.loading = false
           })
           .catch(() => {
