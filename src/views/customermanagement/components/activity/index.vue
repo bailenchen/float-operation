@@ -1,8 +1,8 @@
 <template>
   <div
     v-infinite-scroll="getLogList"
-    ref="mainScroll"
     :key="scrollKey"
+    infinite-scroll-distance="50"
     infinite-scroll-disabled="scrollDisabled"
     class="main">
     <div>

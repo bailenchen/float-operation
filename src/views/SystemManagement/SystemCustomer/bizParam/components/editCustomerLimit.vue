@@ -78,7 +78,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       customerDeal: 1,
       customerNum: '',
       users: [],

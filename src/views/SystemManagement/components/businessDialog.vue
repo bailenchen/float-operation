@@ -93,6 +93,12 @@
 
 <script>
 import { depList } from '@/api/common'
+import {
+  businessGroupAdd,
+  businessGroupUpdate
+} from '@/api/systemManagement/SystemCustomer'
+
+import { Loading } from 'element-ui'
 
 export default {
   props: {
@@ -155,14 +161,32 @@ export default {
           }
         }
         if (pass) {
-          this.$emit(
-            'businessSubmit',
-            this.name,
-            this.businessDep,
-            this.settingList,
-            this.businessTitle,
-            this.infoData.typeId
-          )
+          const loading = Loading.service({
+            target: document.querySelector(`.el-dialog[aria-label="${this.businessTitle}"]`)
+          })
+          let request = null
+          const params = {
+            crmBusinessType: {
+              name: this.name,
+              typeId: this.infoData.typeId || null
+            },
+            deptIds: this.businessDep,
+            crmBusinessStatus: this.settingList
+          }
+          if (this.businessTitle == '添加商机组') {
+            request = businessGroupAdd
+          } else {
+            request = businessGroupUpdate
+          }
+          request(params)
+            .then(res => {
+              this.$message.success('操作成功')
+              this.$emit('businessSubmit')
+              loading.close()
+            })
+            .catch(() => {
+              loading.close()
+            })
         }
       }
     },

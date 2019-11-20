@@ -64,8 +64,6 @@
 import BusinessDialog from '@/views/SystemManagement/components/businessDialog'
 import {
   businessGroupList,
-  businessGroupAdd,
-  businessGroupUpdate,
   businessGroupRead,
   businessGroupDelete
 } from '@/api/systemManagement/SystemCustomer'
@@ -234,30 +232,11 @@ export default {
     },
 
     /**
-     * 商机组添加 -- 确定按钮
+     * 商机组添加成功
      */
-    businessSubmit(name, dep, list, title, typeId) {
-      var businessHandleRequest = null
-      var params = {
-        crmBusinessType: {
-          name: name,
-          typeId: typeId || null
-        },
-        deptIds: dep,
-        crmBusinessStatus: list
-      }
-      if (title == '添加商机组') {
-        businessHandleRequest = businessGroupAdd
-      } else {
-        businessHandleRequest = businessGroupUpdate
-      }
-      businessHandleRequest(params)
-        .then(res => {
-          this.$message.success('操作成功')
-          this.getBusinessGroupList()
-          this.businessClose()
-        })
-        .catch(() => {})
+    businessSubmit() {
+      this.getBusinessGroupList()
+      this.businessClose()
     }
   }
 }
