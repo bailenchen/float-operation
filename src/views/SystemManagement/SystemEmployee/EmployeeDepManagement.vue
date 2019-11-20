@@ -59,16 +59,6 @@
                   slot-scope="{ node }"
                   :class="{ 'is-current': node.isCurrent}"
                   class="node-data">
-                  <!-- <img
-                v-if="node.expanded"
-                class="node-img"
-                src="@/assets/img/fold.png"
-                @click="handleExpand('close',node, data)">
-              <img
-                v-if="!node.expanded"
-                class="node-img"
-                src="@/assets/img/unfold.png"
-                @click="handleExpand('open',node, data)"> -->
                   <i
                     v-if="node.level == 1"
                     class="wk wk-department" />
@@ -81,29 +71,6 @@
                     v-if="node.childNodes && node.childNodes.length"
                     :class="{ 'is-close': !node.expanded }"
                     class="wk wk-up-unfold" />
-                    <!-- <div class="node-label-set">
-                <el-button
-                  v-if="strucSaveAuth"
-                  type="text"
-                  size="mini"
-                  @click.stop="() => appendStruc(data)">
-                  <i class="el-icon-plus"/>
-                </el-button>
-                <el-button
-                  v-if="strucUpdateAuth"
-                  type="text"
-                  size="mini"
-                  @click.stop="() => editStruc(node, data)">
-                  <i class="el-icon-edit"/>
-                </el-button>
-                <el-button
-                  v-if="strucDeleteAuth"
-                  type="text"
-                  size="mini"
-                  @click.stop="() => deleteStruc(node, data)">
-                  <i class="el-icon-close"/>
-                </el-button>
-              </div> -->
                 </flexbox>
               </el-tree>
             </div>
@@ -124,30 +91,6 @@
               class="all-user-reminder"
               content="未添加部门和角色的员工无法正常登录系统" />
           </div>
-          <!-- <div class="icon-search lt">
-            <el-input
-              v-model="searchInput"
-              placeholder="请输入员工名称"
-              @keyup.enter.native="searchClick" />
-            <i
-              class="el-icon-search"
-              @click="searchClick" />
-          </div>
-          <div class="status">
-            <span>状态</span>
-            <el-select
-              v-model="selectModel"
-              :clearable="true"
-              placeholder="请选择"
-              @change="statusChange">
-              <el-option
-                v-for="item in statusOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value" />
-            </el-select>
-          </div> -->
-
           <div>
             <el-button
               v-if="userSaveAuth"
@@ -269,6 +212,7 @@
         <label>{{ depCreateLabel }}：</label>
         <el-input
           v-model="depCreateLabelValue"
+          :maxlength="20"
           placeholder="请输入内容" />
       </div>
       <div
@@ -686,7 +630,7 @@ export default {
     },
     // 部门删除权限
     strucDeleteAuth() {
-      return this.manage && this.manage.users && this.manage.users.deptDelete
+      return this.currentMenuData && this.currentMenuData.pid !== 0 && this.manage && this.manage.users && this.manage.users.deptDelete
     },
 
     /**
@@ -695,11 +639,11 @@ export default {
     strucMoreOptions() {
       const moreList = []
       if (this.strucUpdateAuth) {
-        moreList.push({ type: 'edit', name: '编辑', icon: 'edit' })
+        moreList.push({ type: 'edit', name: '编辑部门', icon: 'edit' })
       }
 
       if (this.strucDeleteAuth) {
-        moreList.push({ type: 'delete', name: '删除', icon: 'delete' })
+        moreList.push({ type: 'delete', name: '删除部门', icon: 'delete' })
       }
 
       return moreList
@@ -1059,7 +1003,8 @@ export default {
      * 删除部门
      */
     deleteStruc(data) {
-      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+      console.log(data)
+      this.$confirm(`此操作将删除${data.name}部门，是否继续？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -1629,8 +1574,11 @@ export default {
 .nav-dialog-div {
   margin-bottom: 20px;
 }
-.nav-dialog-div /deep/ .el-input {
-  width: auto;
+.nav-dialog-div {
+  .el-input,
+  .el-select {
+    width: calc(100% - 80px);
+  }
 }
 /** 树形结构 */
 .el-tree /deep/ .el-tree-node__expand-icon {

@@ -325,7 +325,7 @@ export default {
         isNull: 0,
         name: '流程说明',
         setting: [],
-        inputTips: '请填写相关注意事项，方便员工在申请时查阅，限制输入2000字',
+        inputTips: '请填写相关注意事项，方便员工在申请时查阅，限制输入300字',
         value: this.handle.data ? this.handle.data.remarks : ''
       })
 

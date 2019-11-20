@@ -3,7 +3,7 @@
     v-loading="loading"
     class="chiefly-contacts">
     <flexbox
-      v-if="detail"
+      v-if="detail && canShowContacts"
       class="cell"
       align="stretch">
       <xr-avatar
@@ -39,7 +39,7 @@
     </flexbox>
 
     <import-info-empty
-      v-else-if="!contactsId"
+      v-else-if="!contactsId && canShowContacts"
       :title="emptyName"
       :btn-name="emptyBtnName"
       class="empty-info"
@@ -54,10 +54,13 @@
 
 <script>
 import { crmContactsRead } from '@/api/customermanagement/contacts'
-import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { filedGetInformation } from '@/api/customermanagement/common'
 import ImportInfo from './ImportInfo'
 import ImportInfoEmpty from './ImportInfoEmpty'
+
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
+import { mapGetters } from 'vuex'
+
 
 export default {
   // 首要联系人
@@ -88,6 +91,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['crm']),
+    // 联系人权限
+    canShowContacts() {
+      return this.crm && this.crm.contacts && this.crm.contacts.read
+    },
+
     // 有首要联系人
     hasInfo() {
       return this.contactsId
@@ -120,8 +129,10 @@ export default {
       this.getDetial()
     }
   },
-  mounted() {
-    this.getDetial()
+  created() {
+    if (this.canShowContacts) {
+      this.getDetial()
+    }
     this.getBaseInfo()
   },
 

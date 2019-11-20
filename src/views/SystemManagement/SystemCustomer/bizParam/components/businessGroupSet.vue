@@ -64,8 +64,6 @@
 import BusinessDialog from '@/views/SystemManagement/components/businessDialog'
 import {
   businessGroupList,
-  businessGroupAdd,
-  businessGroupUpdate,
   businessGroupRead,
   businessGroupDelete
 } from '@/api/systemManagement/SystemCustomer'
@@ -158,15 +156,13 @@ export default {
       // 如果需要格式化
       if (column.property == 'deptName') {
         // 格式部门
-        var info = row.deptIds
-        var name = ''
-        if (info) {
-          for (let index = 0; index < info.length; index++) {
-            name =
-              name + info[index].name + (index === info.length - 1 ? '' : '、')
-          }
-        }
-        return name || '全公司'
+        const structures = row.deptIds || []
+        const strName = structures
+          .map(item => {
+            return item.name
+          })
+          .join('、')
+        return strName || '全公司'
       }
       return row[column.property]
     },
@@ -236,30 +232,11 @@ export default {
     },
 
     /**
-     * 商机组添加 -- 确定按钮
+     * 商机组添加成功
      */
-    businessSubmit(name, dep, list, title, typeId) {
-      var businessHandleRequest = null
-      var params = {
-        crmBusinessType: {
-          name: name,
-          typeId: typeId || null
-        },
-        deptIds: dep,
-        crmBusinessStatus: list
-      }
-      if (title == '添加商机组') {
-        businessHandleRequest = businessGroupAdd
-      } else {
-        businessHandleRequest = businessGroupUpdate
-      }
-      businessHandleRequest(params)
-        .then(res => {
-          this.$message.success('操作成功')
-          this.getBusinessGroupList()
-          this.businessClose()
-        })
-        .catch(() => {})
+    businessSubmit() {
+      this.getBusinessGroupList()
+      this.businessClose()
     }
   }
 }
