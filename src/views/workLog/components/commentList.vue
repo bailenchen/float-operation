@@ -238,7 +238,7 @@ export default {
     .comment-list-item {
       .user-img {
         margin-right: 15px;
-        border-radius: 50%;
+        border-radius: 50% !important;
       }
       .reply {
         font-size: 13px;
@@ -263,7 +263,7 @@ export default {
             }
           }
           .control {
-            margin-left: 10px;
+            // margin-left: 10px;
             visibility: hidden;
             i {
               font-size: 14px;
