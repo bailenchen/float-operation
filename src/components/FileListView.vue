@@ -8,15 +8,11 @@
         :src="getFileTypeIcon(file.name)"
         alt=""
         class="pic-icon">
-      <span class="file-name">
-        {{ file.name }}
-      </span>
-      <span class="file-size">
-        ( {{ file.size }} )
-      </span>
-      <span class="down" @click="downloadClick(file)">
-        下载
-      </span>
+      <div class="file-name">{{ file.name }}</div>
+      <div class="file-size">( {{ file.size | fontSizeValue }} )</div>
+      <div class="down" @click="downloadClick(file)">
+        <span>下载</span>
+      </div>
     </div>
   </div>
 </template>
@@ -28,8 +24,15 @@
  */
 import { downloadFile, getFileIconWithSuffix } from '@/utils'
 
+import { fileSize } from '@/utils/index'
+
 export default {
   name: 'FileListView',
+  filters: {
+    fontSizeValue(size) {
+      return fileSize(size)
+    }
+  },
   props: {
     list: {
       type: Array,
@@ -88,7 +91,9 @@ export default {
         color: #2362FB;
         cursor: pointer;
         &:hover {
-          text-decoration: underline;
+          span {
+            text-decoration: underline;
+          }
         }
       }
     }
