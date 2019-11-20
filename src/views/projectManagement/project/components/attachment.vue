@@ -78,8 +78,9 @@
 
 <script>
 import { crmFileDelete, crmFileUpdate } from '@/api/common'
-
 import { workWorkFileListAPI } from '@/api/projectManagement/project'
+
+import { fileSize } from '@/utils'
 
 export default {
 
@@ -170,7 +171,10 @@ export default {
         work_id: this.workId
       })
         .then(res => {
-          this.list = res.data.list
+          this.list = res.data.list.map(item => {
+            item.size = fileSize(item.size)
+            return item
+          })
           this.loading = false
         })
         .catch(() => {

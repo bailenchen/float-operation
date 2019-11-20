@@ -25,7 +25,7 @@
         :key="index"
         class="f-item">
         <i class="wukong wukong-file f-img" />
-        <div class="f-name">{{ item.name.length > 25 ? (item.name.substring(0, 25) + '...'): item.name+'('+item.size+')' }}</div>
+        <div class="f-name">{{ item | fileName }}</div>
         <div
           class="close-button"
           @click="deleteFile(item, index)">×</div>
@@ -41,6 +41,12 @@ import { fileSize } from '@/utils/index'
 export default {
   name: 'XhFiles', // 新建 file  以数组的形式上传
   components: {},
+  filters: {
+    fileName(file) {
+      const name = file.name && file.name.length > 10 ? (file.name.substring(0, 10) + '...') : file.name
+      return name + '(' + fileSize(file.size) + ')'
+    }
+  },
   mixins: [arrayMixin],
   props: {},
   data() {

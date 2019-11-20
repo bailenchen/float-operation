@@ -68,7 +68,7 @@
             {{ file.name }}
           </div>
           <div class="cell-ft">
-            <span class="des">（{{ file.size }}）</span>
+            <span class="des">（{{ file.size | getFileSize }}）</span>
             <a @click="downloadFile(file)">下载</a>
           </div>
         </flexbox>
@@ -134,7 +134,7 @@
 <script>
 import { crmActivityDeleteAPI } from '@/api/customermanagement/common'
 
-import { downloadFile } from '@/utils'
+import { downloadFile, fileSize } from '@/utils'
 import XrSystemIconMixin from '@/mixins/XrSystemIcon'
 import ActivityTypeMixin from './ActivityType'
 
@@ -142,6 +142,11 @@ export default {
   /** 客户管理 的 客户详情 的 跟进记录cell*/
   name: 'LogCell',
   components: {},
+  filters: {
+    getFileSize(size) {
+      return fileSize(size)
+    }
+  },
   mixins: [XrSystemIconMixin, ActivityTypeMixin],
   props: {
     item: {

@@ -10,7 +10,7 @@
       <span>{{ data.name.length > 20 ? data.name.substring(0, 20) + '...' : data.name }}</span>
     </div>
     <div class="size">
-      ({{ data.size }})
+      ({{ data.size | getFileSize }})
     </div>
     <div class="cell-foot">
       <span
@@ -25,11 +25,16 @@
 </template>
 
 <script type="text/javascript">
-import { downloadFile, getFileIconWithSuffix } from '@/utils'
+import { downloadFile, getFileIconWithSuffix, fileSize } from '@/utils'
 import { crmFileDelete } from '@/api/common'
 
 export default {
   name: 'FileCell',
+  filters: {
+    getFileSize(size) {
+      return fileSize(size)
+    }
+  },
   props: {
     cellIndex: Number,
     data: Object,

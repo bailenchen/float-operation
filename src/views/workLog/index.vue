@@ -303,7 +303,6 @@ export default {
   watch: {
     filterForm: {
       handler() {
-        this.scrollKey = Date.now()
         this.refreshList()
       },
       deep: true
@@ -420,6 +419,7 @@ export default {
       this.listData = []
       this.noMore = false
       this.totalCount = 0
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -597,7 +597,6 @@ export default {
      * 时间更改
      */
     timeTypeChange(data) {
-      this.scrollKey = Date.now()
       this.timeSelect = data
       this.refreshList()
     },
