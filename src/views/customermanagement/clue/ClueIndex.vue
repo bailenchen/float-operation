@@ -89,15 +89,13 @@
 
 <script>
 import ClueDetail from './ClueDetail'
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 线索列表 */
   name: 'ClueIndex',
   components: {
-    ClueDetail,
-    FieldSet
+    ClueDetail
   },
   mixins: [table],
   data() {

@@ -88,15 +88,13 @@
 
 <script>
 import ProductDetail from './ProductDetail'
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 产品列表 */
   name: 'ProductIndex',
   components: {
-    ProductDetail,
-    FieldSet
+    ProductDetail
   },
   mixins: [table],
   data() {

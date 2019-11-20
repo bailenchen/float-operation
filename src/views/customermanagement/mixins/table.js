@@ -5,7 +5,7 @@ import {
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CRMListHead from '../components/CRMListHead'
 import CRMTableHead from '../components/CRMTableHead'
-import FieldsSet from '../components/fieldsManager/FieldsSet'
+import FieldSet from '../components/fieldSet'
 import {
   filedGetTableField,
   crmFieldColumnWidth
@@ -47,7 +47,7 @@ export default {
   components: {
     CRMListHead,
     CRMTableHead,
-    FieldsSet
+    FieldSet
   },
   data() {
     return {

@@ -140,7 +140,6 @@
 import { mapGetters } from 'vuex'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
@@ -148,8 +147,7 @@ export default {
   name: 'CustomerIndex',
   components: {
     CRMAllDetail,
-    BusinessCheck,
-    FieldSet
+    BusinessCheck
   },
   filters: {
     dealIcon(statu) {
