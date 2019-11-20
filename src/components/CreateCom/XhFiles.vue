@@ -6,10 +6,10 @@
       :class="[disabled ? 'is_disabled' : 'is_valid']"
       class="f-header"
       @click.native="selectImage">
-      <img
+      <i
         v-if="!disabled"
-        class="f-logo"
-        src="@/assets/img/relevance_file.png" >
+        class="wukong wukong-file f-logo" />
+
       <div class="f-name">附件</div>
       <input
         :id="'xhImageInput' + index||'0'"
@@ -24,9 +24,7 @@
         v-for="(item, index) in dataValue"
         :key="index"
         class="f-item">
-        <img
-          class="f-img"
-          src="@/assets/img/relevance_file.png" >
+        <i class="wukong wukong-file f-img" />
         <div class="f-name">{{ item.name.length > 25 ? (item.name.substring(0, 25) + '...'): item.name+'('+item.size+')' }}</div>
         <div
           class="close-button"
@@ -158,9 +156,9 @@ export default {
   padding: 5px 0 5px;
   .f-logo {
     position: block;
-    width: 15px;
-    height: 15px;
     margin-right: 8px;
+    font-size: 12px;
+    color: $xr-color-primary;
   }
   .f-name {
     color: #2362FB;
@@ -177,10 +175,9 @@ export default {
     height: 25px;
     .f-img {
       position: block;
-      width: 15px;
-      height: 15px;
-      padding: 0 1px;
       margin-right: 8px;
+      font-size: 12px;
+      color: $xr-color-primary;
     }
     .f-name {
       color: #666;
