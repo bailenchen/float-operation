@@ -2,16 +2,16 @@ const getters = {
   userInfo: state => state.user.userInfo,
   lang: state => state.app.lang,
   logo: state => {
-    if (state.app.logo) {
-      return state.app.logo
-    }
+    // if (state.app.logo) {
+    //   return state.app.logo
+    // }
     return require('@/assets/img/logo.png')
   },
   name: state => {
     if (state.app.name) {
       return state.app.name
     }
-    return '悟空软件'
+    return '悟空CRM'
   },
   collapse: state => state.app.sidebar.collapse,
   activeIndex: state => state.app.sidebar.activeIndex,
