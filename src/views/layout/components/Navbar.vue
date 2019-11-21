@@ -212,19 +212,6 @@ export default {
       this.$store.commit('SET_NAVACTIVEINDEX', this.navIndex)
     }
 
-    // if (
-    //   this.manage &&
-    //   (!this.manage.system ||
-    //     (this.manage.system && !this.manage.system.read)) &&
-    //     (!this.manage.configSet ||
-    //     (this.manage.configSet && !this.manage.configSet.read)) &&
-    //     (!this.manage.users ||
-    //     (this.manage.users && !this.manage.users.read)) &&
-    //     this.manage.permission
-    // ) {
-    //   this.getAuthPath()
-    // }
-
     // 消息数
     this.getSystemUnreadNum('visible')
 
@@ -282,18 +269,6 @@ export default {
       this.$store.commit('SET_LANG', item.lang)
       this.langName = item.name
     },
-    // getAuthPath() {
-    //   adminGroupsTypeListAPI()
-    //     .then(res => {
-    //       if (res.data && res.data.length) {
-    //         const item = res.data[0]
-    //         this.authRedirect = `/manager/role-auth/${item.roleType}/${encodeURI(
-    //           item.name
-    //         )}`
-    //       }
-    //     })
-    //     .catch(() => {})
-    // },
 
     /**
      * 获取系统未读消息数
@@ -307,7 +282,7 @@ export default {
         this.sendSystemUnreadNum()
         this.intervalId = setInterval(() => {
           this.sendSystemUnreadNum()
-        }, 5000)
+        }, 10000)
       }
     },
 
