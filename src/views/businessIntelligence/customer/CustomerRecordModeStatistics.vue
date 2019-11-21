@@ -56,7 +56,6 @@ export default {
       showType: 'pie',
 
       axisOption: null,
-      axisChart: null,
 
       pieOption: null,
 
@@ -81,9 +80,9 @@ export default {
     refreshChartInfo() {
       if (this.showType != 'pie') {
         this.axisOption.series[0].type = this.showType
-        this.axisChart.setOption(this.axisOption, true)
+        this.chartObj.setOption(this.axisOption, true)
       } else {
-        this.axisChart.setOption(this.pieOption, true)
+        this.chartObj.setOption(this.pieOption, true)
       }
     },
     getDataList(params) {
@@ -116,7 +115,7 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
+      this.chartObj = echarts.init(document.getElementById('axismain'))
 
       this.axisOption = {
         color: ['#6ca2ff'],

@@ -8,7 +8,6 @@ export default {
   data() {
     return {
       axisOption: null,
-      axisChart: null,
 
       loading: false,
 
@@ -123,7 +122,7 @@ export default {
           // this.axisOption.series[2].data = lastYeatMonthData
           this.axisOption.series[1].data = chainRatioData
           this.axisOption.series[2].data = yearOnYearData
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -131,7 +130,7 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
+      this.chartObj = echarts.init(document.getElementById('axismain'))
       this.axisOption = {
         color: [
           '#6CA2FF',
@@ -344,7 +343,7 @@ export default {
         }
         ]
       }
-      this.axisChart.setOption(this.axisOption, true)
+      this.chartObj.setOption(this.axisOption, true)
     }
   },
 

@@ -87,7 +87,7 @@ export default {
           }
           this.axisOption.yAxis[0].data = yAxis
           this.axisOption.series[0].data = showData
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -95,8 +95,8 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
-      this.axisChart.setOption(this.axisOption, true)
+      this.chartObj = echarts.init(document.getElementById('axismain'))
+      this.chartObj.setOption(this.axisOption, true)
     }
   }
 }

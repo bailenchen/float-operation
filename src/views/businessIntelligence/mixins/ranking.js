@@ -75,7 +75,6 @@ export default {
           data: []
         }]
       },
-      axisChart: null,
 
       list: [],
       fieldList: []
