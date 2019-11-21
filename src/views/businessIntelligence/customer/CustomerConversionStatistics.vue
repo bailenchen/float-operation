@@ -73,7 +73,6 @@ export default {
 
       axisOption: null,
       pieOption: null,
-      axisChart: null,
 
       postParams: {}, // 筛选参数
       list: [],
@@ -111,9 +110,9 @@ export default {
     refreshChartInfo() {
       if (this.showType != 'pie') {
         this.axisOption.series[0].type = this.showType
-        this.axisChart.setOption(this.axisOption, true)
+        this.chartObj.setOption(this.axisOption, true)
       } else {
-        this.axisChart.setOption(this.pieOption, true)
+        this.chartObj.setOption(this.pieOption, true)
       }
     },
     /**
@@ -203,8 +202,8 @@ export default {
 
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
-      this.axisChart.on('click', params => {
+      this.chartObj = echarts.init(document.getElementById('axismain'))
+      this.chartObj.on('click', params => {
         // seriesIndex	1：跟进客户数 2:跟进次数  dataIndex 具体的哪条数据
         // this.getRecordList(params.dataIndex)
       })

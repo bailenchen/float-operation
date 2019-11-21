@@ -56,7 +56,6 @@ export default {
       loading: false,
 
       axisOption: null,
-      axisChart: null,
 
       postParams: {}, // 筛选参数
       list: [],
@@ -110,7 +109,7 @@ export default {
           this.axisOption.series[0].data = dealData
           this.axisOption.series[1].data = numData
 
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -148,8 +147,8 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
-      this.axisChart.on('click', params => {
+      this.chartObj = echarts.init(document.getElementById('axismain'))
+      this.chartObj.on('click', params => {
         // seriesIndex	1：跟进客户数 2:跟进次数  dataIndex 具体的哪条数据
         this.getRecordList(params.dataIndex)
       })

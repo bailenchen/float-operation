@@ -29,8 +29,7 @@ export default {
   data() {
     return {
       loading: false,
-      axisOption: null,
-      axisChart: null
+      axisOption: null
     }
   },
   computed: {},
@@ -53,7 +52,7 @@ export default {
           }
           this.axisOption.legend.data = legendData
           this.axisOption.series[0].data = numCounts
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -61,7 +60,7 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      var axisChart = echarts.init(document.getElementById('axismain'))
+      var chartObj = echarts.init(document.getElementById('axismain'))
 
       var option = {
         title: {
@@ -90,9 +89,9 @@ export default {
         ]
       }
 
-      axisChart.setOption(option, true)
+      chartObj.setOption(option, true)
       this.axisOption = option
-      this.axisChart = axisChart
+      this.chartObj = chartObj
     }
   }
 }

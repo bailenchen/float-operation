@@ -42,8 +42,8 @@ export default {
       loading: false,
       allOption: null,
       dealOption: null,
-      allChart: null,
-      dealChart: null
+      chartObj: null,
+      chartOtherObj: null
     }
   },
   computed: {},
@@ -78,8 +78,8 @@ export default {
 
           this.allOption.series[0].data = allData
           this.dealOption.series[0].data = dealData
-          this.allChart.setOption(this.allOption, true)
-          this.dealChart.setOption(this.dealOption, true)
+          this.chartObj.setOption(this.allOption, true)
+          this.chartOtherObj.setOption(this.dealOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -87,12 +87,12 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.allChart = echarts.init(document.getElementById('allChart'))
-      this.dealChart = echarts.init(document.getElementById('dealChart'))
+      this.chartObj = echarts.init(document.getElementById('allChart'))
+      this.chartOtherObj = echarts.init(document.getElementById('dealChart'))
       this.allOption = this.getChartOptione('全部客户')
       this.dealOption = this.getChartOptione('成交客户')
-      this.allChart.setOption(this.allOption, true)
-      this.dealChart.setOption(this.dealOption, true)
+      this.chartObj.setOption(this.allOption, true)
+      this.chartOtherObj.setOption(this.dealOption, true)
     },
     getChartOptione(title) {
       return {
