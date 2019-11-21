@@ -69,7 +69,6 @@ export default {
     return {
       loading: false,
       axisOption: null,
-      axisChart: null,
 
       postParams: {},
       list: [],
@@ -148,7 +147,7 @@ export default {
           this.axisOption.xAxis[0].data = xAxis
           this.axisOption.series[0].data = cycleData
           this.axisOption.series[1].data = dealData
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -167,7 +166,7 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      const axisChart = echarts.init(
+      const chartObj = echarts.init(
         document.getElementById('axismain' + this.type)
       )
 
@@ -271,9 +270,9 @@ export default {
         ]
       }
 
-      axisChart.setOption(option, true)
+      chartObj.setOption(option, true)
       this.axisOption = option
-      this.axisChart = axisChart
+      this.chartObj = chartObj
     },
     getFieldList() {
       return {

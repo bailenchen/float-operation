@@ -26,7 +26,7 @@
         </el-input>
       </el-form-item>
 
-      <el-form-item>
+      <!--<el-form-item>
         <el-input
           ref="company_credit_number"
           v-model.trim="form.company_credit_number"
@@ -44,7 +44,7 @@
             class="form-icon wk wk-credit"
             style="font-size: 16px" />
         </el-input>
-      </el-form-item>
+      </el-form-item>-->
 
       <el-form-item>
         <el-popover
@@ -176,7 +176,7 @@ export default {
       },
       validateRes: {
         company_name: true,
-        company_credit_number: true,
+        // company_credit_number: true,
         password: true,
         re_password: true
       },
@@ -186,7 +186,7 @@ export default {
 
       rules: {
         company_name: [{ required: true, msg: '企业名称不能为空' }],
-        company_credit_number: [{ required: true, msg: '企业信用号不能为空' }],
+        // company_credit_number: [{ required: true, msg: '企业信用号不能为空' }],
         password: [
           { required: true, msg: '密码不能为空' },
           { reg: pwdReg, msg: '密码由8-20位字母、数字组成' }
@@ -266,7 +266,8 @@ export default {
      */
     checkForm() {
       this.clearError()
-      const arr = ['company_name', 'company_credit_number', 'password']
+      // const arr = ['company_name', 'company_credit_number', 'password']
+      const arr = ['company_name', 'password']
       for (let i = 0; i < arr.length; i++) {
         const res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
         if (!res) return false
@@ -281,7 +282,7 @@ export default {
     clearError() {
       this.validateRes = {
         company_name: true,
-        company_credit_number: true,
+        // company_credit_number: true,
         password: true,
         re_password: true
       }

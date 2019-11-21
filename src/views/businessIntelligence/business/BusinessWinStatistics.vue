@@ -67,7 +67,6 @@ export default {
     return {
       loading: false,
       axisOption: null,
-      axisChart: null,
 
       list: [],
 
@@ -153,7 +152,7 @@ export default {
           this.axisOption.series[0].data = proportionCounts
           this.axisOption.series[1].data = numCounts
           this.axisOption.series[2].data = endCounts
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -187,7 +186,7 @@ export default {
 
     /** 柱状图 */
     initAxis() {
-      var axisChart = echarts.init(document.getElementById('axismain'))
+      var chartObj = echarts.init(document.getElementById('axismain'))
 
       var option = {
         color: ['#6ca2ff', '#6ac9d7', '#ff7474'],
@@ -295,13 +294,13 @@ export default {
         ]
       }
 
-      axisChart.setOption(option, true)
-      axisChart.on('click', params => {
+      chartObj.setOption(option, true)
+      chartObj.on('click', params => {
         // seriesIndex	1：赢单转化率 2:商机总数  dataIndex 具体的哪条数据
         // this.getRecordList(params.dataIndex)
       })
       this.axisOption = option
-      this.axisChart = axisChart
+      this.chartObj = chartObj
     }
   }
 }

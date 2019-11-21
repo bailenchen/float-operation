@@ -722,7 +722,7 @@ export default {
         contract: [
           {
             label: '合同名称',
-            prop: 'contractName'
+            prop: 'name'
           },
           {
             label: '合同状态',

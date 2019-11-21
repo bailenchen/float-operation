@@ -49,7 +49,6 @@ export default {
     return {
       loading: false,
       axisOption: null,
-      axisChart: null,
 
       list: [],
       type: '', // 类型 source：客户来源；industry：客户行业；level：客户级别
@@ -146,7 +145,7 @@ export default {
           this.axisOption.series[0].data = allData
           this.axisOption.series[1].data = dealData
 
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
 
           // 列表展示
           this.fieldList = fieldList
@@ -158,9 +157,9 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
+      this.chartObj = echarts.init(document.getElementById('axismain'))
       this.axisOption = this.getChartOptione()
-      this.axisChart.setOption(this.axisOption, true)
+      this.chartObj.setOption(this.axisOption, true)
     },
     getChartOptione() {
       return {

@@ -67,7 +67,6 @@ export default {
     return {
       loading: false,
       axisOption: null,
-      axisChart: null,
 
       list: [],
 
@@ -137,7 +136,7 @@ export default {
             xAxis.push(element.type)
 
             fieldList.push({
-              name: element.type,
+              name: `${element.type}`,
               field: `type${index}`
             })
             listData[`type${index}`] = element.businessNum
@@ -149,7 +148,7 @@ export default {
           this.axisOption.xAxis[0].data = xAxis
           this.axisOption.series[0].data = moneyCounts
           this.axisOption.series[1].data = numCounts
-          this.axisChart.setOption(this.axisOption, true)
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -183,7 +182,7 @@ export default {
 
     /** 柱状图 */
     initAxis() {
-      var axisChart = echarts.init(document.getElementById('axismain'))
+      var chartObj = echarts.init(document.getElementById('axismain'))
 
       var option = {
         color: ['#6ca2ff', '#ff7474'],
@@ -283,13 +282,13 @@ export default {
         ]
       }
 
-      axisChart.setOption(option, true)
-      axisChart.on('click', params => {
+      chartObj.setOption(option, true)
+      chartObj.on('click', params => {
         // seriesIndex	1：新增商机金额 2:新增商机数量  dataIndex 具体的哪条数据
         // this.getRecordList(params.dataIndex)
       })
       this.axisOption = option
-      this.axisChart = axisChart
+      this.chartObj = chartObj
     }
   }
 }

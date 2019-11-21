@@ -117,6 +117,7 @@ import moment from 'moment'
 import sortMixins from './mixins/sort'
 import echarts from 'echarts'
 import { floatAdd } from '@/utils'
+import { debounce } from 'throttle-debounce'
 
 export default {
   /** 业绩目标完成情况 */
@@ -169,6 +170,12 @@ export default {
   },
   computed: {},
   mounted() {
+    this.debouncedResize = debounce(300, this.resizeFn)
+
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.debouncedResize)
+    })
+
     this.dateSelect = moment(new Date())
       .year()
       .toString()
@@ -193,7 +200,21 @@ export default {
       }
     }
   },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.debouncedResize)
+  },
+
   methods: {
+    /**
+     * 窗口尺寸发生改变实时调整 EChart 尺寸
+     */
+    resizeFn() {
+      if (this.axisChart) {
+        this.axisChart.resize()
+      }
+    },
+
     /**
      * 部门选择
      */

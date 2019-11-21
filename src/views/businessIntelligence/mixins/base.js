@@ -1,7 +1,12 @@
 import filtrateHandleView from '../components/filtrateHandleView'
+
+import { debounce } from 'throttle-debounce'
+
 export default {
   data() {
     return {
+      chartObj: null,
+      chartOtherObj: null,
       chartColors: [
         '#6CA2FF',
         '#6AC9D7',
@@ -39,14 +44,38 @@ export default {
 
   watch: {},
 
-  mounted() {},
+  mounted() {
+    this.debouncedResize = debounce(300, this.resizeFn)
+
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.debouncedResize)
+    })
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.debouncedResize)
+  },
 
   methods: {
+    /**
+     * 窗口尺寸发生改变实时调整 EChart 尺寸
+     */
+    resizeFn() {
+      if (this.chartObj) {
+        this.chartObj.resize()
+      }
+
+      if (this.chartOtherObj) {
+        this.chartOtherObj.resize()
+      }
+    },
+
     // 页面展示条数
     handleSizeChange(val) {
       this.pageData.limit = val
       this.getList(this.pageData)
     },
+
     // 分页切换
     handleCurrentChange(val) {
       this.pageData.page = val

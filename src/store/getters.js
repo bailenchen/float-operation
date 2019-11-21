@@ -11,7 +11,7 @@ const getters = {
     if (state.app.name) {
       return state.app.name
     }
-    return '数字管家'
+    return '悟空软件'
   },
   collapse: state => state.app.sidebar.collapse,
   activeIndex: state => state.app.sidebar.activeIndex,
