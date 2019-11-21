@@ -17,7 +17,7 @@
     <div class="container">
       <div class="left">
         <h1 class="title">
-          数字管家
+          悟空软件
         </h1>
         <div class="text">
           客户关系管理的前沿创新
@@ -91,8 +91,8 @@ export default {
       activeCom: 'LoginByPwd',
       companyList: [],
       titleMap: {
-        LoginByPwd: '使用数字账户登录',
-        LoginByCode: '使用数字账户登录',
+        LoginByPwd: '使用悟空软件登录',
+        LoginByCode: '使用悟空软件登录',
         CreateNewCompany: '创建新企业',
         MultipleCompany: '选择企业',
         ForgetPwd: '忘记密码'
@@ -142,7 +142,6 @@ export default {
     display: flex;
     img {
       width: 164px;
-      height: 50px;
     }
   }
 
