@@ -17,7 +17,7 @@
     <div class="container">
       <div class="left">
         <h1 class="title">
-          悟空软件
+          悟空CRM
         </h1>
         <div class="text">
           客户关系管理的前沿创新
@@ -91,8 +91,8 @@ export default {
       activeCom: 'LoginByPwd',
       companyList: [],
       titleMap: {
-        LoginByPwd: '使用悟空软件登录',
-        LoginByCode: '使用悟空软件登录',
+        LoginByPwd: '登录',
+        LoginByCode: '登录',
         CreateNewCompany: '创建新企业',
         MultipleCompany: '选择企业',
         ForgetPwd: '忘记密码'
@@ -142,6 +142,7 @@ export default {
     display: flex;
     img {
       width: 164px;
+      height: 50px;
     }
   }
 

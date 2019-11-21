@@ -51,7 +51,9 @@
               <div class="title">
                 {{ item.label }}
               </div>
-              <div class="number">
+              <div
+                v-fit-text="{ fontSize: 24 }"
+                class="number">
                 {{ item.num }}
               </div>
             </div>
@@ -138,6 +140,7 @@ import membersDep from '@/components/selectEmployee/membersDep'
 
 import { mapGetters } from 'vuex'
 import { separator } from '@/filters/vue-numeral-filter/filters'
+import FitText from '@/directives/fitText'
 
 /**
  * TODO 2、员工部门筛选选择，
@@ -146,6 +149,9 @@ import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'Workbench',
+  directives: {
+    FitText
+  },
   components: {
     SaleStatistics, // 1 合同金额目标及完成情况
     DataStatistics, // 2 数据汇总
@@ -562,6 +568,8 @@ export default {
               border-radius: 50%;
               margin-right: 10px;
               margin-left: 15px;
+              flex-shrink: 0;
+
               .icon {
                 color: white;
                 font-size: 19px;
@@ -577,8 +585,8 @@ export default {
                 font-weight: bold;
                 line-height: 1;
                 margin-top: 8px;
-                white-space: nowrap;
-                text-overflow: ellipsis;
+                // white-space: nowrap;
+                // text-overflow: ellipsis;
                 overflow: hidden;
               }
             }
