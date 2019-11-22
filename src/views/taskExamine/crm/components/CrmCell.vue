@@ -3,6 +3,7 @@
     <div class="examine-cell">
       <flexbox class="person">
         <xr-avatar
+          v-if="data.createUser"
           :name="data.createUser.realname"
           :id="data.createUser.userId"
           :size="40"
