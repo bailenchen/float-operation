@@ -11,7 +11,7 @@
       <flexbox class="select-wrapper">
         <flexbox-item class="select-item">
           <flexbox>
-            <span class="select-label">考核部门</span>
+            <span class="select-label">{{ rangeLabel }}</span>
             <xh-user-cell
               v-if="type == 'user'"
               :radio="false"
@@ -150,7 +150,11 @@ export default {
       quarterList: []
     }
   },
-  computed: {},
+  computed: {
+    rangeLabel() {
+      return this.type === 'user' ? '考核人员' : '考核部门'
+    }
+  },
   watch: {
     visible(value) {
       if (value) {
