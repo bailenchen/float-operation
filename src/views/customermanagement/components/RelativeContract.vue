@@ -32,7 +32,8 @@
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :id="contractId"
-      crm-type="contract"/>
+      crm-type="contract"
+      @handle="detailHandle"/>
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
@@ -198,6 +199,16 @@ export default {
     createSaveSuccess() {
       this.$bus.emit('crm-tab-num-update')
       this.getDetail()
+    },
+
+    /**
+     * 详情操作
+     */
+    detailHandle(data) {
+      if (data.type === 'delete') {
+        this.$bus.emit('crm-tab-num-update')
+        this.getDetail()
+      }
     }
   }
 }

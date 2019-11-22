@@ -9,18 +9,15 @@ const changeFontSize = function() {
   el.style.fontSize = size + 'px'
   let scrollWidth = el.scrollWidth
 
-  console.log('1111')
   while (el.scrollWidth > el.clientWidth) {
     scrollWidth = el.scrollWidth
     size = size - 0.2
     el.style.fontSize = size + 'px'
     if (scrollWidth <= el.clientWidth) {
       el.style.overflowX = 'visible'
-      console.log('2222')
       break
     } else if (size <= 12) {
       el.style.overflowX = 'hidden'
-      console.log('333')
       break
     }
   }
