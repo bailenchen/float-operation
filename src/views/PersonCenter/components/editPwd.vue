@@ -46,18 +46,18 @@ import { removeAuth } from '@/utils/auth'
 export default {
   name: 'EditPwd',
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
     return {
       loading: false,
       form: {},
       rules: {
         oldPwd: [
           { required: true, message: '请输入原密码', trigger: 'blur' },
-          { pattern: pwdReg, message: '密码必须由8-20位字母、数字组成', trigger: 'blur' }
+          { pattern: pwdReg, message: '密码必须由6-20位字母、数字组成', trigger: 'blur' }
         ],
         newPwd: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { pattern: pwdReg, message: '密码必须由8-20位字母、数字组成', trigger: 'blur' }
+          { pattern: pwdReg, message: '密码必须由6-20位字母、数字组成', trigger: 'blur' }
         ],
         confirmPwd: [
           { required: true, message: '请再次输入密码', trigger: 'blur' },
