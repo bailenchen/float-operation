@@ -357,7 +357,12 @@ export default {
               const element = sumList[index]
               receivabless.push(element.money)
               achiements.push(element.achievement)
-              rates.push(element.money ? (element.money / element.achievement * 100 + 0.001).toFixed(2).toString() : '0.00')
+
+              if (element.achievement) {
+                rates.push(element.money ? (element.money / element.achievement * 100 + 0.001).toFixed(2).toString() : '0.00')
+              } else {
+                rates.push('--')
+              }
             }
 
             this.axisOption.series[0].data = receivabless
@@ -415,8 +420,8 @@ export default {
           itemWidth: 14
         },
         grid: {
-          top: '5px',
-          left: '20px',
+          top: '30px',
+          left: '30px',
           right: '20px',
           bottom: '40px',
           containLabel: true,

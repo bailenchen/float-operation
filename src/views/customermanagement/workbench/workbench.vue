@@ -585,6 +585,7 @@ export default {
                 font-weight: bold;
                 line-height: 1;
                 margin-top: 8px;
+                margin-right: 5px;
                 // white-space: nowrap;
                 // text-overflow: ellipsis;
                 overflow: hidden;
