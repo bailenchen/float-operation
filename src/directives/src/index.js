@@ -7,9 +7,7 @@ const loadData = (el, binding) => {
   setSrc(el, binding, loadingImg)
 
 
-  if (binding.value.indexOf('data:image') == 0) {
-    setSrc(el, binding, binding.value)
-  } else {
+  if (binding.value && binding.value.indexOf('/file/downFile') == 0) {
     if (dataCache[binding.value]) {
       setSrc(el, binding, dataCache[binding.value])
     } else {
@@ -18,6 +16,8 @@ const loadData = (el, binding) => {
         dataCache[binding.value] = data.src
       }).catch(() => {})
     }
+  } else {
+    setSrc(el, binding, binding.value)
   }
 }
 
