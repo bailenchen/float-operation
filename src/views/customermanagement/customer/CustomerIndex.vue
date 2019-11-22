@@ -56,7 +56,6 @@
           <template slot-scope="scope">
             <el-popover
               :disabled="scope.row.businessCount == 0"
-              v-model="scope.row.show"
               :offset="250"
               placement="right"
               popper-class="no-padding-popover"
@@ -192,8 +191,9 @@ export default {
       if (scope.row.businessCount == 0) {
         return
       }
-      this.$set(scope.row, 'show', !scope.row.show)
+
       const popoverEl = e.target.parentNode
+      this.$set(scope.row, 'show', !scope.row.show)
       popoverEl.__vue__.showPopper = !scope.row.show
     },
     businessClose(e, scope) {
