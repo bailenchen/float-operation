@@ -3,6 +3,7 @@
     <div class="list-content">
       <flexbox class="header">
         <xr-avatar
+          v-if="data.createUser"
           :name="data.createUser.realname"
           :size="34"
           :src="data.createUser.img" />

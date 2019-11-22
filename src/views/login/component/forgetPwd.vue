@@ -146,7 +146,7 @@ export default {
   },
   mixins: [mixins],
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
     return {
       form: {},
       validateRes: {
@@ -173,7 +173,7 @@ export default {
         smscode: [{ required: true, msg: '短信验证码不能为空' }],
         password: [
           { required: true, msg: '密码不能为空' },
-          { reg: pwdReg, msg: '密码必须由8-20位字母、数字组成' }
+          { reg: pwdReg, msg: '密码必须由6-20位字母、数字组成' }
         ]
       },
 

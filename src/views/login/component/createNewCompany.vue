@@ -169,7 +169,7 @@ export default {
   },
   mixins: [mixins],
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
     return {
       form: {
         password: null
@@ -189,7 +189,7 @@ export default {
         // company_credit_number: [{ required: true, msg: '企业信用号不能为空' }],
         password: [
           { required: true, msg: '密码不能为空' },
-          { reg: pwdReg, msg: '密码由8-20位字母、数字组成' }
+          { reg: pwdReg, msg: '密码由6-20位字母、数字组成' }
         ]
       },
 

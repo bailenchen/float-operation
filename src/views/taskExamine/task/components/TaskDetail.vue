@@ -142,9 +142,9 @@
                   class="wk wk-l-plus head-btn__icon is-null" />
                 <xr-avatar
                   v-else
-                  :name="taskData.mainUser.realname"
+                  :name="taskData.mainUser ? taskData.mainUser.realname : ''"
                   :size="32"
-                  :src="taskData.mainUser.img"
+                  :src="taskData.mainUser ? taskData.mainUser.img : ''"
                   class="user-img" />
                 <div class="head-btn__bd">
                   <div
