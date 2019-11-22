@@ -83,7 +83,7 @@ export default {
      * 负责人
      */
     createMainUser() {
-      return this.mainUser.length ? this.mainUser[0] : null
+      return this.mainUser && this.mainUser.length ? this.mainUser[0] : null
     }
   },
   watch: {},

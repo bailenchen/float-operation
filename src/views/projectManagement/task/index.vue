@@ -50,6 +50,7 @@
                   </div>
                   <div class="element-label">{{ element.name }}<span v-if="element.workName">（{{ element.workName }}）</span></div>
                   <xr-avatar
+                    v-if="element.createUser"
                     :name="element.createUser.realname"
                     :id="element.createUser.userId"
                     :size="24"
