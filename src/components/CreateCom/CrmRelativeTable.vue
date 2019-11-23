@@ -24,6 +24,7 @@
           @click.native="searchInput"/>
       </el-input>
       <el-button
+        v-if="canSave"
         class="xr-btn--orange"
         icon="el-icon-plus"
         type="primary"
@@ -71,6 +72,8 @@
   </div>
 </template>
 <script type="text/javascript">
+import { mapGetters } from 'vuex'
+
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { crmLeadsIndex } from '@/api/customermanagement/clue'
 import { crmCustomerIndex } from '@/api/customermanagement/customer'
@@ -146,6 +149,11 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['crm']),
+    canSave() {
+      return this.crm && this.crm[this.crmType].save
+    },
+
     // 展示相关效果 去除场景
     isRelationShow() {
       return this.action.type === 'condition'
