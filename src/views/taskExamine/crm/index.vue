@@ -7,7 +7,7 @@
 
     <div
       v-infinite-scroll="getList"
-      :key="`${Date.now()}${tabsSelectValue}`"
+      :key="`${scrollKey}${tabsSelectValue}`"
       infinite-scroll-distance="100"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
@@ -88,6 +88,7 @@ export default {
       list: [],
       loading: false,
       noMore: false,
+      scrollKey: Date.now(),
       page: 1,
 
       // 控制详情展示
@@ -134,6 +135,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**
