@@ -63,7 +63,7 @@
                 class="item" />
             </div>
             <div class="desc">
-              <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
+              <span class="text">密码由6-20位字母、数字、特殊字符组成</span>
               <span
                 v-if="rankIndex >= 3"
                 class="icon wk wk-success" />
@@ -294,7 +294,7 @@ export default {
      */
     calcRank() {
       const pwd = this.form.password
-      if (pwd.length < 8) {
+      if (pwd.length < 6) {
         this.rankIndex = 0
         return
       }
