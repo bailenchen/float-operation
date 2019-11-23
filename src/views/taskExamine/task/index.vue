@@ -6,7 +6,10 @@
       :select-value.sync="tabsSelectValue"
       @change="tabsChange" />
 
-    <div class="content-wrapper">
+    <div
+      class="content-wrapper"
+      direction="column"
+      align="stretch">
       <flexbox class="content-wrapper__hd">
         <xr-avatar
           v-if="taskType == 1"
@@ -44,10 +47,11 @@
           v-model="showDone"
           @change="refreshList" />
       </flexbox>
+
       <div class="cell-section">
         <div
           v-infinite-scroll="getList"
-          :key="`${Date.now()}${tabsSelectValue}`"
+          :key="`${scrollKey}${tabsSelectValue}`"
           infinite-scroll-distance="100"
           infinite-scroll-disabled="scrollDisabled">
           <task-cell
@@ -64,11 +68,14 @@
           v-if="noMore"
           class="scroll-bottom-tips">没有更多了</p>
       </div>
+
+      <div class="task-add">
+        <task-quick-add @send="refreshList" />
+      </div>
+
     </div>
 
-    <div class="task-add">
-      <task-quick-add @send="refreshList" />
-    </div>
+
 
     <task-detail
       v-if="taskDetailShow"
@@ -107,6 +114,7 @@ export default {
       list: [],
       loading: false,
       noMore: false,
+      scrollKey: Date.now(),
       page: 1,
       dueDate: '',
       priority: '',
@@ -233,6 +241,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -361,13 +370,19 @@ export default {
 .content-wrapper {
   height: calc(100% - 70px);
   overflow: hidden;
+  position: relative;
   margin-top: 15px;
+  padding: 70px 0 76px;
   background-color: white;
   border-radius: $xr-border-radius-base;
   border: 1px solid $xr-border-line-color;
-  padding-bottom: 70px;
 
   &__hd {
+    position: absolute;
+    left: 1px;
+    top: 0;
+    right: 1px;
+    z-index: 5;
     padding: 15px;
 
     .head-img {
@@ -403,15 +418,12 @@ export default {
   overflow: auto;
 }
 
-.scroll-bottom-tips {
-  margin-bottom: 80px;
-}
 
 // 快捷添加
 .task-add {
   position: absolute;
   left: 1px;
-  bottom: 7px;
+  bottom: 0;
   right: 1px;
   z-index: 5;
   background-color: white;

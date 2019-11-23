@@ -30,7 +30,7 @@
 
     <div
       v-infinite-scroll="getList"
-      :key="`${Date.now()}${tabsSelectValue}`"
+      :key="`${scrollKey}${tabsSelectValue}`"
       infinite-scroll-distance="100"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
@@ -146,6 +146,7 @@ export default {
       loading: false,
       noMore: false,
       page: 1,
+      scrollKey: Date.now(),
 
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
@@ -188,6 +189,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**

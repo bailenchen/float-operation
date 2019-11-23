@@ -99,7 +99,7 @@ export default {
       total: 0,
 
       fieldList: [],
-      tableHeight: document.documentElement.clientHeight - 240,
+      tableHeight: document.documentElement.clientHeight - 250,
       /** 重命名 弹窗 */
       editDialog: false,
       /** 编辑信息 */
@@ -126,7 +126,7 @@ export default {
 
   created() {
     window.onresize = () => {
-      this.tableHeight = document.documentElement.clientHeight - 240
+      this.tableHeight = document.documentElement.clientHeight - 250
     }
 
     this.fieldList.push({ prop: 'name', width: '200', label: '附件名称' })
@@ -175,6 +175,7 @@ export default {
             item.size = fileSize(item.size)
             return item
           })
+          this.total = res.data.totalRow
           this.loading = false
         })
         .catch(() => {
