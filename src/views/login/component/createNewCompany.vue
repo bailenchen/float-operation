@@ -11,6 +11,7 @@
           ref="company_name"
           v-model.trim="form.company_name"
           :class="{error: !validateRes.company_name}"
+          :maxlength="20"
           placeholder="请输入企业名称(必填)"
           type="text"
           @focus="focusKey = 'company_name'"
