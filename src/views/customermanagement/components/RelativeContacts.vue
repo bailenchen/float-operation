@@ -87,7 +87,8 @@
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :id="detailId"
-      crm-type="contacts" />
+      crm-type="contacts"
+      @handle="detailHandle" />
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
@@ -342,6 +343,16 @@ export default {
         .catch(data => {
           this.loading = false
         })
+    },
+
+    /**
+     * 详情操作
+     */
+    detailHandle(data) {
+      if (data.type === 'delete') {
+        this.$bus.emit('crm-tab-num-update')
+        this.getDetail()
+      }
     }
   }
 }

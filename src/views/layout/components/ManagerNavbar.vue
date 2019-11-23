@@ -3,7 +3,8 @@
     <img
       v-src="logo"
       :key="logo"
-      class="logo" >
+      class="logo"
+      @click="enterCustoemBoard" >
     <div class="nav-title">
       系统设置
     </div>
@@ -29,7 +30,7 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters(['logo'])
+    ...mapGetters(['logo', 'crm'])
   },
   mounted() {},
   methods: {
@@ -60,6 +61,15 @@ export default {
             })
         })
         .catch(() => {})
+    },
+
+    /**
+     * 有客户权限点击logo 进入仪表盘
+     */
+    enterCustoemBoard() {
+      if (this.crm) {
+        this.$router.push('/crm/workbench')
+      }
     }
   }
 }
@@ -79,6 +89,7 @@ export default {
     display: block;
     flex-shrink: 0;
     margin-right: 60px;
+    cursor: pointer;
   }
   .nav-title {
     flex: 1;
