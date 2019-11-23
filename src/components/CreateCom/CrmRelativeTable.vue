@@ -1,5 +1,9 @@
 <template>
-  <div class="cr-body-content">
+  <div
+    v-empty="!canShowDetail"
+    class="cr-body-content"
+    xs-empty-icon="nopermission"
+    xs-empty-text="暂无权限">
     <flexbox class="content-header">
       <template v-if="showScene">
         <div>场景：</div>
@@ -150,8 +154,14 @@ export default {
   },
   computed: {
     ...mapGetters(['crm']),
+
     canSave() {
       return this.crm && this.crm[this.crmType].save
+    },
+
+    // 能否查看详情
+    canShowDetail() {
+      return this.crm && this.crm[this.crmType] && this.crm[this.crmType].index
     },
 
     // 展示相关效果 去除场景
@@ -214,6 +224,9 @@ export default {
     },
 
     getSceneList() {
+      if (!this.canShowDetail) {
+        return
+      }
       this.loading = true
       crmSceneIndex({
         type: crmTypeModel[this.crmType]
@@ -239,6 +252,10 @@ export default {
     },
     /** 获取字段 */
     getFieldList() {
+      if (!this.canShowDetail) {
+        return
+      }
+
       if (this.fieldList.length == 0) {
         this.fieldList = this.getDefaultField()
       }
