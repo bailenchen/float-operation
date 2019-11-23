@@ -40,13 +40,13 @@
             <div class="box">
               <span class="text">密码强度</span>
               <i
-                v-for="i in 4"
+                v-for="i in 3"
                 :key="i"
                 :class="{active: i <= rankIndex}"
                 class="item" />
             </div>
             <div class="desc">
-              <span class="text">密码由6-20位字母、数字、特殊字符组成</span>
+              <span class="text">密码由6-20位字母、数字组成</span>
               <span
                 v-if="rankIndex >= 3"
                 class="icon wk wk-success" />
