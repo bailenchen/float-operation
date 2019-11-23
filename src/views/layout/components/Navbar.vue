@@ -3,7 +3,8 @@
     <img
       v-src="logo"
       :key="logo"
-      class="logo" >
+      class="logo"
+      @click="enterCustoemBoard" >
     <div class="nav-items-container">
       <el-menu
         :default-active="navActiveIndex"
@@ -297,6 +298,15 @@ export default {
             this.intervalId = null
           }
         })
+    },
+
+    /**
+     * 有客户权限点击logo 进入仪表盘
+     */
+    enterCustoemBoard() {
+      if (this.crm) {
+        this.$router.push('/crm/workbench')
+      }
     }
   }
 }
@@ -317,6 +327,7 @@ export default {
     display: block;
     flex-shrink: 0;
     margin-right: 15px;
+    cursor: pointer;
   }
   .nav-items-container {
     flex: 1;
