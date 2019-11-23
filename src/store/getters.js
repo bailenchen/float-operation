@@ -2,9 +2,9 @@ const getters = {
   userInfo: state => state.user.userInfo,
   lang: state => state.app.lang,
   logo: state => {
-    // if (state.app.logo) {
-    //   return state.app.logo
-    // }
+    if (state.app.logo) {
+      return state.app.logo
+    }
     return require('@/assets/img/logo.png')
   },
   name: state => {

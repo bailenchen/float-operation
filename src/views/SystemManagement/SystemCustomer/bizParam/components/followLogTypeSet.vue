@@ -97,6 +97,7 @@ export default {
       crmSettingRecordEditAPI({ value: value })
         .then(res => {
           this.loading = false
+          this.getDetail()
           this.$message.success('操作成功')
         })
         .catch(() => {

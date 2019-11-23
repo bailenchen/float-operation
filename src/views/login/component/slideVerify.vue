@@ -161,7 +161,7 @@ export default {
 
     touchMoveEvent(e) {
       if (!this.isMouseDown) return false
-      const moveX = e.clientX - this.originX
+      const moveX = e.pageX - this.originX
 
       if (moveX < 0 || moveX + 38 >= this.w) return false
       this.sliderLeft = moveX + 'px'
@@ -180,7 +180,7 @@ export default {
     touchEndEvent(e) {
       if (!this.isMouseDown) return false
       this.isMouseDown = false
-      if (e.clientX === this.originX) return false
+      if (e.pageX === this.originX) return false
       this.containerActive = false // remove active
       this.verify()
     },
