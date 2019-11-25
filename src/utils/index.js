@@ -505,3 +505,28 @@ export function downloadFileWithBuffer(data, name, type) {
   document.body.removeChild(downloadElement) // 下载完成移除元素
   window.URL.revokeObjectURL(href) // 释放掉blob对象
 }
+
+/**
+ * 获取百度地图
+ */
+export function getBaiduMap() {
+  if (!global.BMap) {
+    global.BMap = {}
+    global.BMap._preloader = new Promise((resolve, reject) => {
+      global._initBaiduMap = function() {
+        resolve(global.BMap)
+        global.document.body.removeChild($script)
+        global.BMap._preloader = null
+        global._initBaiduMap = null
+      }
+      const $script = document.createElement('script')
+      global.document.body.appendChild($script)
+      $script.src = `https://api.map.baidu.com/api?v=3.0&ak=mK88Pr44OK97tFxyPIX6UOlRDdwhD0ZL&callback=_initBaiduMap`
+    })
+    return global.BMap._preloader
+  } else if (!global.BMap._preloader) {
+    return Promise.resolve(global.BMap)
+  } else {
+    return global.BMap._preloader
+  }
+}

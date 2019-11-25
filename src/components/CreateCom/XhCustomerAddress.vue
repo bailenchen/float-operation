@@ -36,6 +36,7 @@
 </template>
 <script type="text/javascript">
 import VDistpicker from 'v-distpicker'
+import { getBaiduMap } from '@/utils'
 
 export default {
   name: 'XhCustomerAddress', // 新建 客户位置
@@ -83,29 +84,32 @@ export default {
     }
   },
   mounted() {
-    var map = new BMap.Map('choicemap', { enableMapClick: false })
-    map.centerAndZoom(new BMap.Point(116.404, 39.915), 14)
-    // map.disableDragging() //禁止拖拽
-    // map.disableDoubleClickZoom()
-    // map.disableScrollWheelZoom()
-    // map.disableContinuousZoom()
-    map.enableScrollWheelZoom()
-    this.map = map
-    if (this.value && JSON.stringify(this.value) !== '{}') {
-      this.initInfo(this.value)
-    } else {
-      // 定位逻辑
-      // var geolocation = new BMap.Geolocation()
-      // var self = this
-      // geolocation.getCurrentPosition(
-      //   function(r) {
-      //     if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-      //       self.addMarkerLabel(r.point)
-      //     }
-      //   },
-      //   { enableHighAccuracy: true }
-      // )
-    }
+    getBaiduMap()
+      .then(() => {
+        var map = new BMap.Map('choicemap', { enableMapClick: false })
+        map.centerAndZoom(new BMap.Point(116.404, 39.915), 14)
+        // map.disableDragging() //禁止拖拽
+        // map.disableDoubleClickZoom()
+        // map.disableScrollWheelZoom()
+        // map.disableContinuousZoom()
+        map.enableScrollWheelZoom()
+        this.map = map
+        if (this.value && JSON.stringify(this.value) !== '{}') {
+          this.initInfo(this.value)
+        } else {
+          // 定位逻辑
+          // var geolocation = new BMap.Geolocation()
+          // var self = this
+          // geolocation.getCurrentPosition(
+          //   function(r) {
+          //     if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+          //       self.addMarkerLabel(r.point)
+          //     }
+          //   },
+          //   { enableHighAccuracy: true }
+          // )
+        }
+      })
   },
   methods: {
     initInfo(val) {
