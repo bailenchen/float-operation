@@ -173,9 +173,7 @@ export default [
     }]
   },
   {
-    ...layout({
-      permissions: ['manage', 'work']
-    }, '/manage', false),
+    ...layout({}, '/manage', false),
     children: [{
       name: 'system-other',
       path: 'system-other', // 其他配置

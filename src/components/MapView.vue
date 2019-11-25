@@ -8,7 +8,7 @@
 </template>
 
 <script type="text/javascript">
-import { getMaxIndex } from '@/utils/index'
+import { getMaxIndex, getBaiduMap } from '@/utils'
 
 export default {
   name: 'MapView', // 地图详情
@@ -23,11 +23,11 @@ export default {
       default: ''
     },
     lat: {
-      type: Number,
+      type: [String, Number],
       default: 0
     },
     lng: {
-      type: Number,
+      type: [String, Number],
       default: 0
     }
   },
@@ -39,17 +39,20 @@ export default {
     this.$el.style.zIndex = getMaxIndex()
     document.body.appendChild(this.$el)
 
-    var map = new BMap.Map('choicemap', { enableMapClick: false })
-    var point = new BMap.Point(this.lng, this.lat)
-    map.centerAndZoom(point, 18)
-    map.enableScrollWheelZoom()
+    getBaiduMap()
+      .then(() => {
+        var map = new BMap.Map('choicemap', { enableMapClick: false })
+        var point = new BMap.Point(parseFloat(this.lng), parseFloat(this.lat))
+        map.centerAndZoom(point, 18)
+        map.enableScrollWheelZoom()
 
-    var marker = new BMap.Marker(point) // 创建标注
-    map.addOverlay(marker) // 将标注添加到地图中
-    var infoWindow = new BMap.InfoWindow(this.title) // 创建信息窗口对象
-    marker.addEventListener('click', function() {
-      map.openInfoWindow(infoWindow, point) // 开启信息窗口
-    })
+        var marker = new BMap.Marker(point) // 创建标注
+        map.addOverlay(marker) // 将标注添加到地图中
+        var infoWindow = new BMap.InfoWindow(this.title) // 创建信息窗口对象
+        marker.addEventListener('click', function() {
+          map.openInfoWindow(infoWindow, point) // 开启信息窗口
+        })
+      })
   },
   destroyed() {
     // remove DOM node after destroy
