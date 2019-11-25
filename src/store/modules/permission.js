@@ -110,7 +110,8 @@ const perfectRouter = function(authInfo, result) {
         const element = accessedRouters[childIndex]
 
         // 处理系统管理逻辑
-        if (groupData.requiresAuth && element.name == 'manage-role-auth') {
+        if (mainRouter.type == 'manage' && groupData.requiresAuth) {
+          const authItem = getAuthItem(accessedRouters)
           const roleMenus = groupData.list.map(item => {
             return {
               name: 'role-auth',
@@ -123,9 +124,9 @@ const perfectRouter = function(authInfo, result) {
           })
 
           if (roleMenus && roleMenus.length > 0) {
-            const roleFirstChild = element.children[0]
+            const roleFirstChild = authItem.children[0]
             roleFirstChild.meta.redirect = roleMenus[0].path
-            element.children = element.children.concat(roleMenus)
+            authItem.children = authItem.children.concat(roleMenus)
           }
         }
 
@@ -150,17 +151,7 @@ const perfectRouter = function(authInfo, result) {
             hidden: true
           })
 
-          if (mainRouter.type != 'manage') {
-            break
-          } else {
-            if (groupData.requiresAuth) {
-              if (element.name == 'manage-role-auth') {
-                break
-              }
-            } else {
-              break
-            }
-          }
+          break
         }
       }
       routerObj[mainRouter.type] = accessedRouters
@@ -178,6 +169,15 @@ const perfectRouter = function(authInfo, result) {
     if (result) {
       result({ router: routerObj, addRouter })
     }
+  })
+}
+
+/**
+ *
+ */
+function getAuthItem(array) {
+  return array.find(item => {
+    return item.name == 'manage-role-auth'
   })
 }
 
