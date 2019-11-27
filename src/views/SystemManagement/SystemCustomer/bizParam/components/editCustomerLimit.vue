@@ -3,6 +3,7 @@
     :visible.sync="visible"
     :title="title"
     :append-to-body="true"
+    :close-on-click-modal="false"
     :before-close="close"
     width="550px">
     <div class="position-relative">
@@ -26,6 +27,7 @@
           style="margin-top: 8px;">{{ valueLabel }}</div>
         <el-input
           v-model="customerNum"
+          type="number"
           placeholder="请输入内容"/>
       </flexbox>
       <flexbox v-if="showDeal" class="handle-item">
@@ -41,8 +43,8 @@
       class="dialog-footer">
       <el-button @click.native="close">取消</el-button>
       <el-button
-        type="primary"
-        @click="sure">确 定</el-button>
+        v-debounce="sure"
+        type="primary">确 定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -50,6 +52,7 @@
 <script>
 import { crmSettingCustomerConfigSetAPI } from '@/api/systemManagement/SystemCustomer'
 import { XhStrucUserCell } from '@/components/CreateCom'
+import { Loading } from 'element-ui'
 
 export default {
   name: 'EditCustomerLimit',
@@ -122,7 +125,8 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     close() {
       this.$emit('update:visible', false)
@@ -134,9 +138,14 @@ export default {
     },
 
     sure() {
-      if ((!this.users.length && !this.strucs.length) || !this.customerNum) {
+      if (this.customerNum <= 0) {
+        this.$message.error('请输入正确的客户数')
+      } else if ((!this.users.length && !this.strucs.length)) {
         this.$message.error('请完善信息')
       } else {
+        const loading = Loading.service({
+          target: document.querySelector(`.el-dialog[aria-label="${this.title}"]`)
+        })
         const params = {
           userList: this.users.map(item => {
             return item.userId
@@ -159,9 +168,13 @@ export default {
         crmSettingCustomerConfigSetAPI(params)
           .then(res => {
             this.$emit('success')
+            this.$message.success(`${this.title}成功`)
             this.close()
+            loading.close()
           })
-          .catch(() => {})
+          .catch(() => {
+            loading.close()
+          })
       }
     },
 

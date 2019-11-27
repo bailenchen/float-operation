@@ -67,6 +67,17 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+
+    // 输入的值
+    valueChange(val) {
+      this.$emit('value-change', {
+        index: this.index,
+        value: val,
+        data: this.option.find(item => {
+          return item.planId == val
+        })
+      })
     }
   }
 }

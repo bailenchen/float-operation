@@ -88,10 +88,8 @@
                   v-for="(file, index) in item.value"
                   :key="index"
                   class="f-item">
-                  <img
-                    class="f-img"
-                    src="@/assets/img/relevance_file.png">
-                  <div class="f-name">{{ file.name.length > 15 ? (file.name.substring(0, 15) + '...'): file.name+'('+file.size+')' }}</div>
+                  <i class="wukong wukong-file f-img" />
+                  <div class="f-name">{{ file | fileName }}</div>
                   <el-button
                     type="text"
                     @click.native="handleFile('preview', item.value, index)">预览</el-button>
@@ -120,7 +118,7 @@
             class="img-list"
             @click="imgZoom(imgList, k)">
             <img
-              v-lazy="imgItem.filePath"
+              v-src="imgItem.filePath"
               :key="imgItem.filePath">
           </div>
         </div>
@@ -238,7 +236,7 @@ import SlideView from '@/components/SlideView'
 import ExamineInfo from '@/components/Examine/ExamineInfo'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import FileCell from '@/views/OAManagement/components/fileCell'
-import { downloadFile } from '@/utils'
+import { downloadFile, fileSize } from '@/utils'
 import ExamineMixin from '@/views/taskExamine/examine/components/ExamineMixin'
 
 export default {
@@ -251,6 +249,12 @@ export default {
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue'),
     FileCell
+  },
+  filters: {
+    fileName(file) {
+      const name = file.name && file.name.length > 10 ? (file.name.substring(0, 10) + '...') : file.name
+      return name + '(' + fileSize(file.size) + ')'
+    }
   },
   mixins: [ExamineMixin],
   props: {
@@ -427,6 +431,7 @@ export default {
     examineHandle(data) {
       this.$store.dispatch('GetOAMessageNum', 'examine')
       this.$emit('on-examine-handle', data, this.detailIndex)
+      this.$emit('handle', data, this.detailIndex)
     }
   }
 }
@@ -524,10 +529,9 @@ export default {
   height: 25px;
   .f-img {
     position: block;
-    width: 15px;
-    height: 15px;
-    padding: 0 1px;
+    font-size: 12px;
     margin-right: 8px;
+    color: $xr-color-primary;
   }
   .f-name {
     color: #666;

@@ -1,6 +1,7 @@
 <template>
   <el-dialog
     :visible.sync="visible"
+    :close-on-click-modal="false"
     title="高级筛选"
     width="900px"
     @close="handleCancel">
@@ -235,7 +236,7 @@ export default {
               fieldName: '',
               name: '',
               formType: '',
-              condition: 'is',
+              condition: 'contains',
               value: '',
               typeOption: [],
               statusOption: [],
@@ -422,6 +423,19 @@ export default {
         } else {
           formItem.value = ''
         }
+
+        // 条件校准
+        if (
+          formItem.formType == 'select' ||
+        formItem.formType == 'checkbox' ||
+        formItem.formType == 'user' ||
+        formItem.formType == 'checkStatus' ||
+        formItem.formType == 'dealStatus'
+        ) {
+          formItem.condition = 'is'
+        } else {
+          formItem.condition = 'contains'
+        }
       }
 
       const arr = this.form.filter(item => {
@@ -547,7 +561,7 @@ export default {
     handleAdd() {
       this.form.push({
         fieldName: '',
-        condition: 'is',
+        condition: 'contains',
         value: '',
         formType: '',
         setting: [],

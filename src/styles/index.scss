@@ -271,12 +271,14 @@ div[lazy=loading] {
 
 // 项目下的侧滑框
 .project-drawer {
+  user-select: none;
   .el-drawer__header {
     display: none;
   }
 
   .el-drawer__body {
     padding: 15px;
+    overflow: auto;
   }
 }
 
@@ -285,4 +287,15 @@ div[lazy=loading] {
   .v-modal {
     position: absolute;
   }
+}
+
+// 帮助提示符
+.wk-help {
+  cursor: pointer;
+  font-size: 13px;
+  color: #cbcbcb;
+}
+
+.wk-help:hover {
+  color: $xr-color-primary;
 }

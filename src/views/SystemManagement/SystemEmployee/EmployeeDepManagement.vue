@@ -2,6 +2,7 @@
   <div class="employee-dep-management">
     <xr-header
       :content.sync="searchInput"
+      placeholder="请输入员工名称/手机号"
       show-search
       icon-class="wk wk-s-seas"
       icon-color="#26D4DA"
@@ -10,7 +11,8 @@
       <el-button
         slot="ft"
         class="xr-btn--orange"
-        type="primary" @click="bulkImportClick">批量导入</el-button>
+        type="primary"
+        @click="bulkImportClick">批量导入</el-button>
     </xr-header>
     <div class="system-content">
       <!-- 左边导航栏 -->
@@ -40,6 +42,7 @@
           <div class="section">
             <div class="section__title">部门
               <el-button
+                v-if="strucSaveAuth"
                 type="text"
                 icon="el-icon-circle-plus"
                 class="add-btn"
@@ -57,16 +60,6 @@
                   slot-scope="{ node }"
                   :class="{ 'is-current': node.isCurrent}"
                   class="node-data">
-                  <!-- <img
-                v-if="node.expanded"
-                class="node-img"
-                src="@/assets/img/fold.png"
-                @click="handleExpand('close',node, data)">
-              <img
-                v-if="!node.expanded"
-                class="node-img"
-                src="@/assets/img/unfold.png"
-                @click="handleExpand('open',node, data)"> -->
                   <i
                     v-if="node.level == 1"
                     class="wk wk-department" />
@@ -79,29 +72,6 @@
                     v-if="node.childNodes && node.childNodes.length"
                     :class="{ 'is-close': !node.expanded }"
                     class="wk wk-up-unfold" />
-                    <!-- <div class="node-label-set">
-                <el-button
-                  v-if="strucSaveAuth"
-                  type="text"
-                  size="mini"
-                  @click.stop="() => appendStruc(data)">
-                  <i class="el-icon-plus"/>
-                </el-button>
-                <el-button
-                  v-if="strucUpdateAuth"
-                  type="text"
-                  size="mini"
-                  @click.stop="() => editStruc(node, data)">
-                  <i class="el-icon-edit"/>
-                </el-button>
-                <el-button
-                  v-if="strucDeleteAuth"
-                  type="text"
-                  size="mini"
-                  @click.stop="() => deleteStruc(node, data)">
-                  <i class="el-icon-close"/>
-                </el-button>
-              </div> -->
                 </flexbox>
               </el-tree>
             </div>
@@ -120,32 +90,8 @@
             <reminder
               v-if="currentMenuData && currentMenuData.type && currentMenuData.type == 'all'"
               class="all-user-reminder"
-              content="未添加部门和角色的员工无法正常登录系统"/>
+              content="未添加部门和角色的员工无法正常登录系统" />
           </div>
-          <!-- <div class="icon-search lt">
-            <el-input
-              v-model="searchInput"
-              placeholder="请输入员工名称"
-              @keyup.enter.native="searchClick" />
-            <i
-              class="el-icon-search"
-              @click="searchClick" />
-          </div>
-          <div class="status">
-            <span>状态</span>
-            <el-select
-              v-model="selectModel"
-              :clearable="true"
-              placeholder="请选择"
-              @change="statusChange">
-              <el-option
-                v-for="item in statusOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value" />
-            </el-select>
-          </div> -->
-
           <div>
             <el-button
               v-if="userSaveAuth"
@@ -161,7 +107,7 @@
               v-if="currentMenuData && currentMenuData.id && strucMoreOptions.length > 0"
               trigger="click"
               @command="strucMoreHandleClick">
-              <el-button icon="el-icon-more"/>
+              <el-button icon="el-icon-more" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
                   v-for="(item, index) in strucMoreOptions"
@@ -246,6 +192,7 @@
     <!-- 导航新增部门 -->
     <el-dialog
       :visible.sync="depCreateDialog"
+      :close-on-click-modal="false"
       :title="depCreateTitle"
       :before-close="depCreateClose"
       width="30%">
@@ -253,6 +200,7 @@
         <label>{{ depCreateLabel }}：</label>
         <el-input
           v-model="depCreateLabelValue"
+          :maxlength="20"
           placeholder="请输入内容" />
       </div>
       <div
@@ -371,7 +319,6 @@
       :append-to-body="true"
       :before-close="newHandleClose"
       width="60%">
-      <p class="new-dialog-title">基本信息</p>
       <el-form
         ref="dialogRef"
         :inline="true"
@@ -446,7 +393,7 @@
     <bulk-import-user
       :show="bulkImportShow"
       @close="bulkImportShow=false"
-      @success="refreshUserList"/>
+      @success="refreshUserList" />
   </div>
 </template>
 
@@ -590,7 +537,7 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           {
             pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/,
-            message: '同时包含字母、数字'
+            message: '密码由8-20位字母、数字组成'
           }
         ],
         username: [
@@ -606,7 +553,7 @@ export default {
           { required: true, message: '密码不能为空', trigger: 'blur' },
           {
             pattern: /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/,
-            message: '同时包含字母、数字'
+            message: '密码由8-20位字母、数字组成'
           }
         ],
         username: [
@@ -623,6 +570,9 @@ export default {
             message: '请输入正确的邮箱格式',
             trigger: 'blur'
           }
+        ],
+        parentId: [
+          { required: true, message: '直属上级不能为空', trigger: 'change' }
         ],
         deptId: [
           { required: true, message: '部门不能为空', trigger: 'change' }
@@ -657,7 +607,7 @@ export default {
     tableUpdateAuth() {
       return this.userEnablesAuth && this.userUpdateAuth
     },
-    // 部门编辑权限
+    // 部门新建权限
     strucSaveAuth() {
       return this.manage && this.manage.users && this.manage.users.deptSave
     },
@@ -665,9 +615,9 @@ export default {
     strucUpdateAuth() {
       return this.manage && this.manage.users && this.manage.users.deptUpdate
     },
-    // 部门编辑权限
+    // 部门删除权限
     strucDeleteAuth() {
-      return this.manage && this.manage.users && this.manage.users.deptDelete
+      return this.currentMenuData && this.currentMenuData.pid !== 0 && this.manage && this.manage.users && this.manage.users.deptDelete
     },
 
     /**
@@ -676,11 +626,11 @@ export default {
     strucMoreOptions() {
       const moreList = []
       if (this.strucUpdateAuth) {
-        moreList.push({ type: 'edit', name: '编辑', icon: 'edit' })
+        moreList.push({ type: 'edit', name: '编辑部门', icon: 'edit' })
       }
 
       if (this.strucDeleteAuth) {
-        moreList.push({ type: 'delete', name: '删除', icon: 'delete' })
+        moreList.push({ type: 'delete', name: '删除部门', icon: 'delete' })
       }
 
       return moreList
@@ -887,7 +837,10 @@ export default {
       this.dialogTitle = '新建员工'
       this.formInline = {
         roleId: [],
-        deptId: this.currentMenuData && this.currentMenuData.id ? this.currentMenuData.id : ''
+        deptId:
+          this.currentMenuData && this.currentMenuData.id
+            ? this.currentMenuData.id
+            : ''
       }
       this.employeeCreateDialog = true
     },
@@ -931,14 +884,15 @@ export default {
       this.employeeCreateDialog = true
     },
 
-
     /**
      * 新建编辑员工的  部门信息
      */
     getDepList() {
-      depList().then(response => {
-        this.optionsList['deptId'].list = response.data
-      }).catch(() => {})
+      depList()
+        .then(response => {
+          this.optionsList['deptId'].list = response.data
+        })
+        .catch(() => {})
     },
 
     /**
@@ -946,9 +900,11 @@ export default {
      */
     getRoleList() {
       // 角色列表
-      roleList().then(res => {
-        this.groupsList = res.data
-      }).catch(() => {})
+      roleList()
+        .then(res => {
+          this.groupsList = res.data
+        })
+        .catch(() => {})
     },
 
     /**
@@ -995,9 +951,11 @@ export default {
      */
     getStructuresListBySuperior(data) {
       this.superDepList = []
-      depList(data).then(response => {
-        this.superDepList = response.data
-      }).catch(() => {})
+      depList(data)
+        .then(response => {
+          this.superDepList = response.data
+        })
+        .catch(() => {})
     },
 
     /**
@@ -1017,7 +975,8 @@ export default {
      * 删除部门
      */
     deleteStruc(data) {
-      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+      console.log(data)
+      this.$confirm(`此操作将删除${data.name}部门，是否继续？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -1049,11 +1008,13 @@ export default {
     // 新增或编辑确定按钮
     submitDialog() {
       if (this.depCreateLabel == '新增部门') {
-        depSave({ name: this.depCreateLabelValue, pid: this.depSelect }).then(res => {
-          this.getDepList() // 增加了新部门 刷新数据
-          this.getDepTreeList()
-          this.depCreateClose()
-        })
+        depSave({ name: this.depCreateLabelValue, pid: this.depSelect }).then(
+          res => {
+            this.getDepList() // 增加了新部门 刷新数据
+            this.getDepTreeList()
+            this.depCreateClose()
+          }
+        )
       } else {
         depEdit({
           name: this.depCreateLabelValue,
@@ -1072,8 +1033,7 @@ export default {
       depList({ type: 'tree' })
         .then(response => {
           this.allDepData = response.data
-          this.showDepData =
-            response.data || []
+          this.showDepData = response.data || []
           this.depLoading = false
         })
         .catch(() => {
@@ -1118,6 +1078,20 @@ export default {
               })
           }
         } else {
+          // 提示第一个error
+          if (this.$refs.dialogRef.fields) {
+            for (
+              let index = 0;
+              index < this.$refs.dialogRef.fields.length;
+              index++
+            ) {
+              const ruleField = this.$refs.dialogRef.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+          }
           return false
         }
       })
@@ -1511,11 +1485,6 @@ export default {
   display: inline-block;
 }
 /* 新建和编辑 */
-.new-dialog-title {
-  padding-left: 10px;
-  margin-bottom: 3px;
-  border-left: 2px solid #46cdcf;
-}
 .new-dialog-form {
   height: 47vh;
   overflow-y: auto;
@@ -1529,14 +1498,23 @@ export default {
 .new-dialog-form /deep/ .el-form-item .el-form-item__label {
   padding: 0;
 }
-.new-dialog-form /deep/ .el-form-item .el-form-item__content {
-  width: 70%;
+.new-dialog-form {
+  /deep/ .el-form-item:nth-child(even) {
+    padding-left: 15px;
+  }
+
+  /deep/ .el-form-item:nth-child(odd) {
+    padding-right: 15px;
+  }
 }
 .nav-dialog-div {
   margin-bottom: 20px;
 }
-.nav-dialog-div /deep/ .el-input {
-  width: auto;
+.nav-dialog-div {
+  .el-input,
+  .el-select {
+    width: calc(100% - 80px);
+  }
 }
 /** 树形结构 */
 .el-tree /deep/ .el-tree-node__expand-icon {

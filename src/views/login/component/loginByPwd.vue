@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="login-by-pwd">
+  <div class="login-by-pwd">
     <el-form>
       <el-form-item>
         <el-input
@@ -88,6 +88,8 @@
 </template>
 
 <script>
+import { Loading } from 'element-ui'
+
 import mixins from './mixins'
 
 export default {
@@ -96,7 +98,6 @@ export default {
   data() {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
-      loading: false,
       redirect: undefined,
       form: {},
       errorInfo: null,
@@ -108,7 +109,7 @@ export default {
         username: [{ required: true, msg: '用户名不能为空' }],
         password: [
           { required: true, msg: '密码不能为空' },
-          { reg: pwdReg, msg: '密码必须由8-20位字母、数字组成' }
+          { reg: pwdReg, msg: '密码由8-20位字母、数字组成' }
         ]
       }
     }
@@ -128,19 +129,21 @@ export default {
     handleLogin() {
       const flag = this.checkForm()
       if (!flag) return
-      this.loading = true
+      const loading = Loading.service({
+        target: document.querySelector('.login-main-content')
+      })
       this.$store
         .dispatch('Login', this.form)
         .then(res => {
           if (res.hasOwnProperty('companyList')) {
-            this.loading = false
+            loading.close()
             this.$emit('toggle', 'MultipleCompany', res.companyList)
           } else {
             this.$router.push({ path: this.redirect || '/' })
           }
         })
         .catch(() => {
-          this.loading = false
+          loading.close()
         })
     },
 

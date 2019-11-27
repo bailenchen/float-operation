@@ -125,9 +125,9 @@
           class="handle-button"
           @click.native="hidenView">取消</el-button>
         <el-button
+          v-debounce="saveField"
           class="handle-button"
-          type="primary"
-          @click.native="saveField()">保存</el-button>
+          type="primary">保存</el-button>
       </div>
     </flexbox>
   </create-view>
@@ -152,7 +152,8 @@ import {
   regexIsCRMMobile,
   regexIsCRMEmail,
   guid,
-  objDeepCopy
+  objDeepCopy,
+  getImageData
 } from '@/utils'
 
 import {
@@ -385,16 +386,31 @@ export default {
         item.url = item.filePath
         return item
       })
+
+      for (let index = 0; index < this.imgFileList.length; index++) {
+        this.setImageList(this.imgFileList[index], index)
+      }
+
       this.fileList = this.action.data.file.map(function(item, index, array) {
         item.url = item.filePath
         return item
       })
+
       this.relatedBusinessInfo = {
         contacts: this.action.data.contactsList,
         customer: this.action.data.customerList,
         business: this.action.data.businessList,
         contract: this.action.data.contractList
       } // 相关信息信息
+    },
+    /**
+     * 获取图片内容
+     */
+    setImageList(item, index) {
+      getImageData(item.url).then((data) => {
+        item.url = data.src
+        this.imgFileList.splice(index, 1, item)
+      }).catch(() => {})
     },
     // 根据自定义字段获取自定义字段规则
     getcrmRulesAndModel(list) {
@@ -657,22 +673,28 @@ export default {
     },
     // 保存数据
     saveField() {
+      this.loading = true
+
       this.$refs.crmForm.validate(valid => {
         if (valid) {
           if (this.showExamine) {
             /** 验证审批数据 */
-            this.$refs.examineInfo.validateField(() => {
-              const params = {
-                oaExamine: { categoryId: this.categoryId },
-                oaExamineRelation: {},
-                field: [],
-                oaExamineTravelList: []
+            this.$refs.examineInfo.validateField((result) => {
+              if (result) {
+                const params = {
+                  oaExamine: { categoryId: this.categoryId },
+                  oaExamineRelation: {},
+                  field: [],
+                  oaExamineTravelList: []
+                }
+                this.getSubmiteParams(this.crmForm.crmFields, params)
+                if (this.examineInfo.examineType === 2) {
+                  params['checkUserId'] = this.examineInfo.value[0].userId
+                }
+                this.submiteParams(params)
+              } else {
+                this.loading = false
               }
-              this.getSubmiteParams(this.crmForm.crmFields, params)
-              if (this.examineInfo.examineType === 2) {
-                params['checkUserId'] = this.examineInfo.value[0].userId
-              }
-              this.submiteParams(params)
             })
           } else {
             const params = {
@@ -685,6 +707,17 @@ export default {
             this.submiteParams(params)
           }
         } else {
+          this.loading = false
+          // 提示第一个error
+          if (this.$refs.crmForm.fields) {
+            for (let index = 0; index < this.$refs.crmForm.fields.length; index++) {
+              const ruleField = this.$refs.crmForm.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+          }
           return false
         }
       })
@@ -703,7 +736,6 @@ export default {
 
       params.oaExamine['batchId'] = this.batchId
 
-      this.loading = true
       if (this.action.type == 'update') {
         params.oaExamine.examineId = this.action.id
       }
@@ -975,6 +1007,9 @@ export default {
     padding: 10px;
     cursor: pointer;
   }
+  .close:hover {
+    color: $xr-color-primary;
+  }
 }
 
 .crm-create-body {
@@ -987,7 +1022,7 @@ export default {
 .crm-create-box {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 10px;
+  padding: 0 10px 15px;
 }
 
 .crm-create-item {

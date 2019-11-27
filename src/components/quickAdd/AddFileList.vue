@@ -12,7 +12,7 @@
         <img
           :src="item.icon"
           class="f-img">
-        <div class="f-name">{{ item.name+'('+item.size+')' }}</div>
+        <div class="f-name">{{ item.name }}<span class="f-size">{{ `（${item.size}）` }}</span></div>
         <div
           class="close-button"
           @click="deleteItem(item, index)">×</div>
@@ -74,15 +74,16 @@ export default {
     .f-item {
       padding: 3px 0;
       height: 25px;
+      font-size: 12px;
+      color: #333;
+
       .f-img {
         position: block;
-        width: 15px;
-        height: 15px;
+        width: 12px;
         margin-right: 8px;
       }
-      .f-name {
-        color: #666;
-        font-size: 12px;
+      .f-size {
+        color: #999;
       }
     }
   }

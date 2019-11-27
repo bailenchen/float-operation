@@ -5,7 +5,7 @@ import {
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CRMListHead from '../components/CRMListHead'
 import CRMTableHead from '../components/CRMTableHead'
-import FieldsSet from '../components/fieldsManager/FieldsSet'
+import FieldSet from '../components/fieldSet'
 import {
   filedGetTableField,
   crmFieldColumnWidth
@@ -40,15 +40,17 @@ import {
 import {
   crmReceivablesIndex
 } from '@/api/customermanagement/money'
+
 import Lockr from 'lockr'
 import { Loading } from 'element-ui'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   components: {
     CRMListHead,
     CRMTableHead,
-    FieldsSet
+    FieldSet
   },
   data() {
     return {
@@ -71,7 +73,9 @@ export default {
       sceneId: '', // 场景筛选ID
       sceneName: '', // 场景名字
       /** 勾选行 */
-      selectionList: [] // 勾选数据 用于全局导出
+      selectionList: [], // 勾选数据 用于全局导出
+      // 金额字段
+      moneyFields: []
     }
   },
 
@@ -128,8 +132,10 @@ export default {
               return element
             })
           } else {
-            if (this.crmType === 'contract') {
-              // 合同列表展示金额信息
+            if (this.crmType === 'contract' ||
+              this.crmType === 'receivables' ||
+              this.crmType === 'business') {
+              // 合同/回款列表展示金额信息
               this.moneyData = res.data.money
             }
             this.list = res.data.list
@@ -188,6 +194,7 @@ export default {
         })
           .then(res => {
             const fieldList = []
+            const moneyFields = []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
 
@@ -202,12 +209,19 @@ export default {
                 width = element.width
               }
 
+              // 金额字段 需要格式化
+              if (element.formType === 'floatnumber') {
+                moneyFields.push(element.fieldName || '')
+              }
+
               fieldList.push({
                 prop: element.fieldName,
                 label: element.name,
                 width: width
               })
             }
+
+            this.moneyFields = moneyFields
             this.fieldList = fieldList
             // 获取好字段开始请求数据
             this.getList()
@@ -222,6 +236,9 @@ export default {
     },
     /** 格式化字段 */
     fieldFormatter(row, column, cellValue) {
+      if (this.moneyFields.includes(column.property)) {
+        return separator(row[column.property] || 0)
+      }
       // 如果需要格式化
       if (column.property === 'isTransform') {
         return ['否', '是'][cellValue] || '--'

@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import { Loading } from 'element-ui'
+
 import { ChooseLoginAPI } from '@/api/login'
 
 export default {
@@ -63,6 +65,9 @@ export default {
   },
   methods: {
     handlerSelect() {
+      const loading = Loading.service({
+        target: document.querySelector('.login-main-content')
+      })
       const item = this.list[this.selectedIndex]
       ChooseLoginAPI({
         companyId: item.companyId
@@ -72,7 +77,9 @@ export default {
           this.$router.push({ path: this.redirect || '/' })
           // if (res) this.$router.push('/')
         })
-        .catch()
+        .catch(() => {
+          loading.close()
+        })
     }
   }
 }

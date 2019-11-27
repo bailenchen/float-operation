@@ -39,6 +39,7 @@
     </div>
     <el-dialog
       :append-to-body="true"
+      :close-on-click-modal="false"
       :visible.sync="editDialog"
       title="编辑"
       width="30%">
@@ -77,8 +78,9 @@
 
 <script>
 import { crmFileDelete, crmFileUpdate } from '@/api/common'
-
 import { workWorkFileListAPI } from '@/api/projectManagement/project'
+
+import { fileSize } from '@/utils'
 
 export default {
 
@@ -97,7 +99,7 @@ export default {
       total: 0,
 
       fieldList: [],
-      tableHeight: document.documentElement.clientHeight - 240,
+      tableHeight: document.documentElement.clientHeight - 250,
       /** 重命名 弹窗 */
       editDialog: false,
       /** 编辑信息 */
@@ -124,7 +126,7 @@ export default {
 
   created() {
     window.onresize = () => {
-      this.tableHeight = document.documentElement.clientHeight - 240
+      this.tableHeight = document.documentElement.clientHeight - 250
     }
 
     this.fieldList.push({ prop: 'name', width: '200', label: '附件名称' })
@@ -169,7 +171,11 @@ export default {
         work_id: this.workId
       })
         .then(res => {
-          this.list = res.data.list
+          this.list = res.data.list.map(item => {
+            item.size = fileSize(item.size)
+            return item
+          })
+          this.total = res.data.totalRow
           this.loading = false
         })
         .catch(() => {

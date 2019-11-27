@@ -33,6 +33,7 @@
     <xh-structure-cell
       v-if="dataSelect == 1"
       radio
+      placeholder="选择部门（默认为本部门及下属部门）"
       class="xh-structure-cell"
       @value-change="structureChange" />
 
@@ -40,6 +41,8 @@
       v-if="dataSelect == 2 && showUserSelect"
       radio
       class="xh-user-cell"
+      placeholder="选择员工（默认为本人及下属）
+"
       @value-change="userChange" />
 
     <!-- <el-select
@@ -426,7 +429,7 @@ export default {
 
   .xh-user-cell,
   .xh-structure-cell {
-    width: 120px;
+    width: 235px;
     margin-right: 15px;
   }
 }

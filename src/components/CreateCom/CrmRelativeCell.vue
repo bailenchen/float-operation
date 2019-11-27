@@ -11,6 +11,7 @@
       ref="crmrelative"
       :crm-type="item.data.formType"
       :action="relationAction"
+      :selected-data="selectedData"
       @close="showPopover=false"
       @changeCheckout="checkInfos"/>
     <flexbox
@@ -37,7 +38,7 @@ import CrmRelative from './CrmRelative'
 import arrayMixin from './arrayMixin'
 
 export default {
-  name: 'CrmRelativeCell', // 相关模块CRMCell
+  name: 'CrmRelativeCell', // 相关模块CRMCell 单类型 自定义字段用
   components: {
     CrmRelative
   },
@@ -63,6 +64,11 @@ export default {
     // 如果有相关ID  展示相关效果 例如客户下的商机和合同
     isRelationShow() {
       return this.item && this.item.data && this.item.data.relation_id
+    },
+    selectedData() {
+      const crmObj = {}
+      crmObj[this.item.data.formType] = this.dataValue
+      return crmObj
     }
   },
   watch: {
@@ -136,6 +142,7 @@ export default {
   color: #333333;
   padding: 5px;
   line-height: 15px;
+  cursor: pointer;
   .user-item {
     padding: 5px;
     background-color: #e2ebf9;

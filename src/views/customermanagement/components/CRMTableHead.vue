@@ -222,7 +222,7 @@ export default {
     // 获取高级筛选字段数据
     getFilterFieldInfo() {
       filterIndexfields({
-        label: crmTypeModel[this.crmType]
+        label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType]
       })
         .then(res => {
           this.fieldList = res.data

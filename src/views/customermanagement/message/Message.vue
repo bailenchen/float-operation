@@ -6,7 +6,9 @@
       <span class="title">待办事项</span>
     </flexbox>
     <div class="message-body">
-      <div class="message-content">
+      <div
+        v-loading="loading"
+        class="message-content">
         <div class="message-body-side">
           <xr-menu-item
             v-for="(item, index) in showLeftSides"
@@ -53,7 +55,8 @@ export default {
 
   data() {
     return {
-      leftType: 'todayCustomer',
+      loading: false,
+      leftType: '',
       leftSides: [
         {
           name: '今日需联系客户',
@@ -63,7 +66,7 @@ export default {
           infoType: 'todayCustomer',
           num: 0,
           tips: '下次跟进时间为今日的客户',
-          hidden: false
+          hidden: true
         },
         {
           name: '分配给我的线索',
@@ -73,7 +76,7 @@ export default {
           infoType: 'followLeads',
           num: 0,
           tips: '转移之后未跟进的线索',
-          hidden: false
+          hidden: true
         },
         {
           name: '分配给我的客户',
@@ -83,7 +86,7 @@ export default {
           infoType: 'followCustomer',
           num: 0,
           tips: '转移、领取、分配之后未跟进的客户，默认显示自己负责的客户',
-          hidden: false
+          hidden: true
         },
         {
           name: '待进入公海的客户',
@@ -93,7 +96,7 @@ export default {
           infoType: 'putInPoolRemind',
           num: 0,
           tips: '',
-          hidden: false
+          hidden: true
         },
         {
           name: '待审核合同',
@@ -103,7 +106,7 @@ export default {
           infoType: 'checkContract',
           num: 0,
           tips: '',
-          hidden: false
+          hidden: true
         },
         {
           name: '待审核回款',
@@ -113,7 +116,7 @@ export default {
           infoType: 'checkReceivables',
           num: 0,
           tips: '',
-          hidden: false
+          hidden: true
         },
         {
           name: '待回款提醒',
@@ -123,7 +126,7 @@ export default {
           infoType: 'remindReceivablesPlan',
           num: 0,
           tips: '',
-          hidden: false
+          hidden: true
         },
         {
           name: '即将到期的合同',
@@ -133,7 +136,7 @@ export default {
           infoType: 'endContract',
           num: 0,
           tips: '根据“合同到期时间”及设置的“提前提醒天数”提醒',
-          hidden: false
+          hidden: true
         }
       ]
     }
@@ -157,7 +160,16 @@ export default {
   },
 
   mounted() {
-    this.refreshNum()
+    this.loading = true
+    this.$store
+      .dispatch('GetMessageNum')
+      .then(res => {
+        this.loading = false
+        this.refreshNum()
+      })
+      .catch(() => {
+        this.loading = false
+      })
     /** 控制table的高度 */
     window.onresize = () => {
       var offsetHei = document.documentElement.clientHeight
@@ -178,6 +190,10 @@ export default {
         } else {
           element.hidden = true
         }
+      }
+
+      if (!this.leftType && this.showLeftSides.length > 0) {
+        this.leftType = this.showLeftSides[0].infoType
       }
     },
 
@@ -262,18 +278,4 @@ export default {
   border-radius: $xr-border-radius-base;
 }
 
-.side-item-default {
-  color: #333;
-  border-right: 2px solid transparent;
-}
-
-.side-item-select {
-  color: #409eff;
-  border-right: 2px solid #46cdcf;
-  background-color: #ecf5ff;
-}
-
-.block {
-  padding: 10px;
-}
 </style>

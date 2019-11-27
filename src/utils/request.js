@@ -31,7 +31,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 15000 // 请求超时时间
+  timeout: 600000 // 请求超时时间
 })
 
 // request拦截器
@@ -78,7 +78,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    if (error.response.status) {
+    if (error.response && error.response.status == 500) {
       errorMessage('网络错误，请检查您的网络')
     }
     return Promise.reject(error)

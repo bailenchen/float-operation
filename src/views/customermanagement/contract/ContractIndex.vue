@@ -4,7 +4,7 @@
       :search.sync="search"
       :crm-type="crmType"
       title="合同管理"
-      placeholder="请输入合同名称"
+      placeholder="请输入客户名称/合同编号/合同名称"
       main-title="新建合同"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"/>
@@ -83,7 +83,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
-        <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 }}</span>
+        <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 }} / 未回款金额：{{ moneyPageData.unReceivedMoney || 0 }}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->
@@ -97,18 +97,16 @@
 </template>
 
 <script>
-import { floatAdd } from '@/utils'
-
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
-import FieldSet from '../components/fieldSet'
+
 import table from '../mixins/table'
+import { floatAdd } from '@/utils'
 
 export default {
   /** 客户管理 的 合同列表 */
   name: 'ContractIndex',
   components: {
-    CRMAllDetail,
-    FieldSet
+    CRMAllDetail
   },
   mixins: [table],
   data() {
@@ -120,22 +118,31 @@ export default {
   computed: {
     moneyPageData() {
       // 未勾选展示合同总金额信息
-      if (this.selectionList.length == 0 && this.moneyData) {
-        return this.moneyData
+      if (this.selectionList.length == 0) {
+        if (this.moneyData) {
+          const unReceivedMoney = (this.moneyData.contractMoney - this.moneyData.receivedMoney).toFixed(2)
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.moneyData.unReceivedMoney = unReceivedMoney < 0 ? 0 : unReceivedMoney
+          return this.moneyData
+        }
+        return {}
       } else {
         let contractMoney = 0.0
         let receivedMoney = 0.0
         for (let index = 0; index < this.selectionList.length; index++) {
           const element = this.selectionList[index]
-          // 2 审核通过的合同
+          // 1 审核通过的合同
           if (element.checkStatus == 1) {
             contractMoney = floatAdd(contractMoney, parseFloat(element.money))
             receivedMoney = floatAdd(receivedMoney, parseFloat(element.receivedMoney))
           }
         }
+
+        const unReceivedMoney = (contractMoney - receivedMoney).toFixed(2)
         return {
           contractMoney: contractMoney.toFixed(2),
-          receivedMoney: receivedMoney.toFixed(2)
+          receivedMoney: receivedMoney.toFixed(2),
+          unReceivedMoney: unReceivedMoney < 0 ? 0 : unReceivedMoney
         }
       }
     }
@@ -169,11 +176,4 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/table.scss';
-.money-bar {
-  color: #99a9bf;
-  line-height: 44px !important;
-  position: absolute;
-  left: 20px;
-  top: 0;
-}
 </style>

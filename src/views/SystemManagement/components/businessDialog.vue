@@ -3,10 +3,12 @@
     :title="businessTitle"
     :visible.sync="businessDialogVisible"
     :before-close="businessClose"
+    :close-on-click-modal="false"
     width="600px">
     <div class="business-list">
       <div class="business-label">商机组名称</div>
       <el-input
+        :maxlength="20"
         v-model="name"
         style="width: 60%;"/>
     </div>
@@ -41,15 +43,17 @@
             <span>{{ '阶段' + (index+1) }}</span>
             <span>
               <el-input
+                :maxlength="20"
                 v-model="item.name"
                 size="mini"/>
             </span>
             <span class="icon-span">
               <el-input
                 v-model="item.rate"
+                :max="100"
                 size="mini"
                 type="number"
-                @change="changeInput"/> %
+                @input="changeInput(item)"/> %
               <span class="icon-box">
                 <span
                   class="el-icon-circle-plus"
@@ -92,6 +96,12 @@
 
 <script>
 import { depList } from '@/api/common'
+import {
+  businessGroupAdd,
+  businessGroupUpdate
+} from '@/api/systemManagement/SystemCustomer'
+
+import { Loading } from 'element-ui'
 
 export default {
   props: {
@@ -154,14 +164,32 @@ export default {
           }
         }
         if (pass) {
-          this.$emit(
-            'businessSubmit',
-            this.name,
-            this.businessDep,
-            this.settingList,
-            this.businessTitle,
-            this.infoData.typeId
-          )
+          const loading = Loading.service({
+            target: document.querySelector(`.el-dialog[aria-label="${this.businessTitle}"]`)
+          })
+          let request = null
+          const params = {
+            crmBusinessType: {
+              name: this.name,
+              typeId: this.infoData.typeId || null
+            },
+            deptIds: this.businessDep,
+            crmBusinessStatus: this.settingList
+          }
+          if (this.businessTitle == '添加商机组') {
+            request = businessGroupAdd
+          } else {
+            request = businessGroupUpdate
+          }
+          request(params)
+            .then(res => {
+              this.$message.success('操作成功')
+              this.$emit('businessSubmit')
+              loading.close()
+            })
+            .catch(() => {
+              loading.close()
+            })
         }
       }
     },
@@ -172,20 +200,17 @@ export default {
     // 删除
     removeIcon(val) {
       this.settingList.splice(val, 1)
-      this.changeInput()
     },
     // 赢单率
-    changeInput(val, index) {
-      // this.winSingle = 0
-      // for (let item of this.settingList) {
-      //     if (item.rate) {
-      //         this.winSingle += parseInt(item.rate)
-      //     }
-      // }
-      // if (this.winSingle < 0) {
-      //     this.loseSingle = this.winSingle
-      //     this.winSingle = 0
-      // }
+    changeInput(item) {
+      if (item.rate && !/^\d+\.?\d{0,2}$/.test(item.rate)) {
+        item.rate =
+          item.rate.substring(0, item.rate.length - 1) || 0
+      }
+
+      if (item.rate > 100) {
+        item.rate = 100
+      }
     }
   }
 }

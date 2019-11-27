@@ -204,10 +204,6 @@ export default {
           })
           .join('、')
 
-        if (strName) {
-          strName += '、'
-        }
-
         const users = row['userIds'] || []
         const userName = users
           .map(item => {
@@ -215,6 +211,9 @@ export default {
           })
           .join('、')
 
+        if (strName && userName) {
+          strName += '、'
+        }
         const name = strName + userName
         return name || '全公司'
         // 1 启用 0 禁用 2 删除
@@ -280,6 +279,9 @@ export default {
             })
               .then(res => {
                 this.list.splice(scope.$index, 1)
+                if (this.list.length == 0) {
+                  this.currentPage = this.currentPage - 1 > 0 ? this.currentPage - 1 : 1
+                }
                 this.getList()
                 this.$message({
                   type: 'success',

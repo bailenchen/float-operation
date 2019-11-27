@@ -23,7 +23,7 @@
           <div class="sections__title">一、请按照数据模板的格式准备要导入的数据。<span
             class="download"
             @click="download">点击下载《{{ crmTypeName }}导入模板》</span></div>
-          <div class="sections__tips">导入文件请勿超过10MB（约100,000条数据）</div>
+          <div class="sections__tips">导入文件请勿超过2MB（约10,000条数据）</div>
         </div>
         <div class="sections">
           <div class="sections__title">二、请选择数据重复时的处理方式（查重规则：【{{ fieldUniqueInfo }}】）</div>
@@ -244,7 +244,7 @@ export default {
 
       return uniqueList.map(item => {
         return item.name
-      }).join('/')
+      }).join('/') || '无'
     }
   },
   watch: {

@@ -209,7 +209,6 @@ export default {
   position: absolute;
   top: 10px;
   right: 5px;
-  transition: transform .3s;
   color: #c0c4cc;
   font-size: 14px;
   transition: transform .3s;

@@ -3,6 +3,7 @@
     <div class="main">
       <div class="user">
         <xr-avatar
+          v-if="data.createUser"
           :name="data.createUser.realname"
           :id="data.createUser.userId"
           :size="38"
@@ -16,6 +17,13 @@
           <div class="time">
             创建日志于 {{ data.createTime }} <!--{{ data.isRead === 1 ? '已读' : '未读' }}-->
           </div>
+          <div
+            class="handle">
+            <el-button
+              v-if="showHistoryBtn"
+              type="text"
+              @click="checkHistoryClick">查看以往日志</el-button>
+          </div>
           <div class="comment-status">
             <span class="icon wk wk-task" />
             <span>{{ getCategory(data.categoryId) }}-{{ data.replyNum === 0 ? '未点评' : '已点评' }}</span>
@@ -26,13 +34,13 @@
       <div class="content">
         <div v-if="data.content" class="content-box">
           <div class="content-title">
-            今日工作内容：
+            {{ logTitleName }}：
           </div>
           <div class="content-text">{{ data.content }}</div>
         </div>
         <div v-if="data.tomorrow" class="content-box">
           <div class="content-title">
-            明日工作的内容：
+            {{ logNextTitleName }}：
           </div>
           <div class="content-text">{{ data.tomorrow }}</div>
         </div>
@@ -123,6 +131,7 @@
         :id="data.logId"
         :list="replyList"
         type="2"
+        @delete="deleteComment"
         @close-other-reply="$refs.f_reply.toggleFocus(true)" />
     </div>
   </div>
@@ -167,6 +176,10 @@ export default {
     index: {
       type: Number,
       default: 0
+    },
+    showHistoryBtn: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -246,7 +259,23 @@ export default {
         return new Date(b.createTime) - new Date(a.createTime)
       }) || []
       return arr
+    },
+    // 日志标题
+    logTitleName() {
+      return {
+        1: '今日',
+        2: '本周',
+        3: '本月'
+      }[this.data.categoryId] + '工作内容'
+    },
+    logNextTitleName() {
+      return {
+        1: '明日',
+        2: '下周',
+        3: '下月'
+      }[this.data.categoryId] + '工作内容'
     }
+
   },
   created() {
     // this.$nextTick(() => {
@@ -361,6 +390,10 @@ export default {
       })
     },
 
+    deleteComment(index) {
+      this.replyListData.splice(index, 1)
+    },
+
     closeOtherReply(flag) {
       if (!flag && this.$refs.comment_list) {
         this.$refs.comment_list.closeReply()
@@ -403,6 +436,13 @@ export default {
      */
     reportSelect(item) {
       this.$emit('report-detail', item, this.data)
+    },
+
+    /**
+     * 查看历史
+     */
+    checkHistoryClick() {
+      this.$emit('check-history', this.data.createUser)
     }
   }
 }
@@ -431,9 +471,16 @@ export default {
           margin-right: 15px;
         }
         .time {
-          flex: 1;
           font-size: 12px;
           color: #999;
+        }
+        .handle {
+          flex: 1;
+          margin-left: 30px;
+
+          .el-button {
+            font-size: 12px;
+          }
         }
         .comment-status {
           font-size: 12px;

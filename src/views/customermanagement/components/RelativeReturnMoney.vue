@@ -66,7 +66,8 @@
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :crm-type="showFullCrmType"
-      :id="showFullId"/>
+      :id="showFullId"
+      @handle="detailHandle"/>
     <c-r-m-create-view
       v-if="isCreate"
       :crm-type="createCrmType"
@@ -277,6 +278,7 @@ export default {
      */
     saveSuccess() {
       if (this.createCrmType == 'receivables') {
+        this.$bus.emit('crm-tab-num-update')
         this.getList()
       } else {
         this.getPlanList()
@@ -335,6 +337,16 @@ export default {
         return 'can-visit--underline'
       } else {
         return ''
+      }
+    },
+
+    /**
+     * 详情操作
+     */
+    detailHandle(data) {
+      if (data.type === 'delete') {
+        this.$bus.emit('crm-tab-num-update')
+        this.getList()
       }
     }
   }

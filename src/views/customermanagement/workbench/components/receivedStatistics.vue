@@ -106,7 +106,8 @@ export default {
           }
         ]
       },
-      chartObj: null
+      chartObj: null,
+      sendRequest: false
     }
   },
   mounted() {
@@ -116,8 +117,12 @@ export default {
     initChart() {
       this.chartObj = echarts.init(document.getElementById('received-statistics'))
       this.chartObj.setOption(this.chartOption, true)
+      if (!this.sendRequest) {
+        this.getData()
+      }
     },
     getData() {
+      this.sendRequest = true
       this.loading = true
       crmIndexSaletrend({
         label: 2,

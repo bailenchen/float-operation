@@ -2,6 +2,7 @@
   <div v-loading="sendLoading" class="list-task-add">
     <el-input
       :rows="2"
+      :maxlength="100"
       v-model="sendContent"
       type="textarea"
       placeholder="请输入内容" />
@@ -129,6 +130,7 @@ export default {
         setTaskAPI(params)
           .then(res => {
             this.sendLoading = false
+            this.$message.success('新建成功')
             this.resetSendData()
             this.$emit('send')
           })
@@ -168,7 +170,7 @@ export default {
   padding: 0 8px;
   margin: 8px 0;
   .el-date-editor {
-    width: 100px;
+    width: 110px;
     font-size: 12px;
     margin-right: 8px;
     /deep/ .el-input__prefix {
@@ -177,6 +179,10 @@ export default {
         width: 24px;
         line-height: 24px;
       }
+    }
+
+    /deep/ .el-input__suffix {
+      top: -4px;
     }
 
     /deep/ .el-input__inner {

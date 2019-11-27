@@ -23,7 +23,7 @@
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView">
-          <p slot="name" class="contract-name">{{ detailData.name }}<span class="is-invalid">（已作废）</span></p>
+          <p slot="name" class="contract-name">{{ detailData.name }}<span v-if="detailData.checkStatus == 8" class="is-invalid">（已作废）</span></p>
         </c-r-m-detail-head>
 
         <examine-info
@@ -75,8 +75,8 @@ import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity' // 活动
 import CRMBaseInfo from '../components/CRMBaseInfo' // 商机基本信息
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
-import RelativeTeam from '../components/RelativeTeam' // 相关团队
-import RelativeProduct from '../components/RelativeProduct' // 相关团队
+import RelativeTeam from '../components/RelativeTeam' // 团队成员
+import RelativeProduct from '../components/RelativeProduct' // 团队成员
 import RelativeReturnMoney from '../components/RelativeReturnMoney' // 相关回款
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import ExamineInfo from '@/components/Examine/ExamineInfo'
@@ -166,13 +166,13 @@ export default {
       tempsTabs.push({ label: '活动', name: 'Activity' })
 
       if (this.crm.product && this.crm.product.index) {
-        tempsTabs.push({ label: '产品', name: 'RelativeProduct' })
+        tempsTabs.push({ label: this.getTabName('产品', this.tabsNumber.productCount), name: 'RelativeProduct' })
       }
       if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: '回款信息', name: 'RelativeReturnMoney' })
+        tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
       }
-      tempsTabs.push({ label: '相关团队', name: 'RelativeTeam' })
-      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
+      tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
     },
@@ -265,7 +265,11 @@ export default {
     /**
      * 审核操作
      */
-    examineHandle() {
+    examineHandle(data) {
+      // 1 审核通过 2 审核拒绝 4 已撤回
+      if (data.type == 1) {
+        this.getDetial()
+      }
       this.$emit('handle', { type: 'examine' })
     }
   }

@@ -89,15 +89,13 @@
 
 <script>
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
-import FieldSet from '../components/fieldSet'
 import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 联系人列表 */
   name: 'ContactsIndex',
   components: {
-    CRMAllDetail,
-    FieldSet
+    CRMAllDetail
   },
   mixins: [table],
   data() {

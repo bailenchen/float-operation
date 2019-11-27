@@ -3,13 +3,15 @@
     v-loading="loading"
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="批量转移"
-    width="400px"
+    width="450px"
     @close="handleCancel">
     <div class="handle-box">
       <flexbox class="handle-item">
         <div class="handle-item-name">变更负责人为：</div>
         <xh-user-cell
+          :value="usersList"
           class="handle-item-content"
           placeholder="点击选择"
           @value-change="userChage"/>
@@ -113,6 +115,9 @@ export default {
     dialogVisible: {
       handler(val) {
         this.visible = val
+        if (!val) {
+          this.resetData()
+        }
       },
       deep: true,
       immediate: true
@@ -122,6 +127,16 @@ export default {
     this.visible = this.dialogVisible
   },
   methods: {
+    /**
+     * 重置信息
+     */
+    resetData() {
+      this.usersList = []
+      this.removeType = 1 // 移动类型
+      this.handleType = 1 // 操作类型
+      this.addsTypes = [] // 添加至
+    },
+
     /**
      * 取消选择
      */
@@ -211,7 +226,7 @@ export default {
   padding-bottom: 15px;
   .handle-item-name {
     flex-shrink: 0;
-    width: 110px;
+    width: 115px;
   }
   .handle-item-content {
     flex: 1;

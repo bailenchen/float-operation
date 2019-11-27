@@ -1,5 +1,6 @@
 <template>
   <slide-view
+    v-empty="!canShowDetail"
     :no-listener-class="noListenerClass"
     :body-style="{padding: 0, height: '100%'}"
     class="d-view"
@@ -141,9 +142,9 @@
                   class="wk wk-l-plus head-btn__icon is-null" />
                 <xr-avatar
                   v-else
-                  :name="taskData.mainUser.realname"
+                  :name="taskData.mainUser ? taskData.mainUser.realname : ''"
                   :size="32"
-                  :src="taskData.mainUser.img"
+                  :src="taskData.mainUser ? taskData.mainUser.img : ''"
                   class="user-img" />
                 <div class="head-btn__bd">
                   <div
@@ -166,6 +167,7 @@
               <el-date-picker
                 v-model="taskData.startTime"
                 :clearable="false"
+                :picker-options="startTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
                 @change="timeChange('startTime')" />
@@ -189,6 +191,7 @@
               <el-date-picker
                 v-model="taskData.stopTime"
                 :clearable="false"
+                :picker-options="stopTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
                 @change="timeChange('stopTime')" />
@@ -216,7 +219,9 @@
           <flexbox>
             <flexbox-item class="participant">
               <div class="participant-title">参与人</div>
-              <flexbox class="participant-bd">
+              <flexbox
+                class="participant-bd"
+                wrap="wrap">
                 <span
                   v-for="(item, index) in taskData.ownerUserList"
                   :key="index"
@@ -478,6 +483,7 @@
                   :id="taskData.taskId"
                   :list="replyList"
                   type="1"
+                  @delete="deleteComment"
                   @close-other-reply="$refs.f_reply.toggleFocus(true)" />
                 <reply-comment
                   ref="f_reply"
@@ -539,7 +545,8 @@ import {
   deleteCommentAPI,
   detailsTaskAPI,
   detailsTrashTaskAPI,
-  queryLogTaskAPI
+  queryLogTaskAPI,
+  taskDeleteOwnerUserAPI
 } from '@/api/task/task'
 // 项目参与人
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
@@ -561,6 +568,7 @@ import FileCell from '@/views/OAManagement/components/fileCell'
 import { mapGetters } from 'vuex'
 import CommentList from '@/views/workLog/components/commentList'
 import ReplyComment from '@/components/ReplyComment'
+import moment from 'moment'
 
 export default {
   name: 'TaskDetail',
@@ -593,15 +601,36 @@ export default {
   data() {
     return {
       loading: false,
+      canShowDetail: true,
       // 紧急弹出框
       priorityVisible: false,
       // 优先级列表
       priorityList: [
-        { id: 3, label: '高', color: '#ED6363' },
-        { id: 2, label: '中', color: '#FF9668' },
-        { id: 1, label: '低', color: '#8bb5f0' },
-        { id: 0, label: '无', color: '#ccc' }
+        { id: 3, label: '高', color: '#F95A5A' },
+        { id: 2, label: '中', color: '#F7AD3D' },
+        { id: 1, label: '低', color: '#67C23A' },
+        { id: 0, label: '无', color: '#D8D8D8' }
       ],
+
+      /**
+     * 限制时间选择`
+     */
+      startTimeOptions: {
+        disabledDate: (time) => {
+          if (!this.taskData || !this.taskData.stopTime) {
+            return false
+          }
+          return moment(time).isAfter(this.taskData.stopTime)
+        }
+      },
+      stopTimeOptions: {
+        disabledDate: (time) => {
+          if (!this.taskData || !this.taskData.startTime) {
+            return false
+          }
+          return moment(time).isBefore(this.taskData.startTime)
+        }
+      },
       // 是否显示子任务
       addSubtasks: true,
       // 任务名称和编辑切换
@@ -711,7 +740,7 @@ export default {
      */
     labelList() {
       if (!this.taskData) {
-        return null
+        return []
       }
       return this.taskData.labelList || []
     }
@@ -793,9 +822,13 @@ export default {
           this.taskData = taskData
           this.loading = false
         })
-        .catch(() => {
+        .catch(error => {
           this.loading = false
-          this.closeBtn()
+          if (error && error.msg == '没有权限') {
+            this.canShowDetail = false
+          } else {
+            this.closeBtn()
+          }
         })
     },
 
@@ -1038,16 +1071,9 @@ export default {
      * 参与人删除按钮
      */
     deleteOwnerList(item, index) {
-      setTaskAPI({
+      taskDeleteOwnerUserAPI({
         taskId: this.id,
-        ownerUserId: this.taskData.ownerUserList
-          .filter(userItem => {
-            return userItem.userId != item.userId
-          })
-          .map(item => {
-            return item.userId
-          })
-          .join(',')
+        userId: item.userId
       })
         .then(res => {
           this.taskData.ownerUserList.splice(index, 1)
@@ -1180,6 +1206,10 @@ export default {
             this.commentsLoading = false
           })
       }
+    },
+
+    deleteComment(index) {
+      this.replyList.splice(index, 1)
     },
 
     // 删除评论
@@ -1735,6 +1765,7 @@ $btn-b-hover-color: #eff4ff;
     color: #999;
     font-size: 16px;
     opacity: 0;
+    z-index: 5;
   }
 
   &__close:hover {
@@ -1763,6 +1794,7 @@ $btn-b-hover-color: #eff4ff;
 
   &-bd {
     min-height: 28px;
+
     .owner-list {
       position: relative;
       margin-right: 10px;

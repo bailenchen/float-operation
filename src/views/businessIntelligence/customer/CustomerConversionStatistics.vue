@@ -73,7 +73,6 @@ export default {
 
       axisOption: null,
       pieOption: null,
-      axisChart: null,
 
       postParams: {}, // 筛选参数
       list: [],
@@ -86,10 +85,7 @@ export default {
         { prop: 'contractName', label: '合同名称' },
         { prop: 'contractMoney', label: '合同金额（元）' },
         { prop: 'receivablesMoney', label: '回款金额（元）' },
-        { prop: '客户行业', label: '客户行业' },
-        { prop: '客户来源', label: '客户来源' },
         { prop: 'ownerUserName', label: '负责人' },
-        { prop: 'createUserName', label: '创建人' },
         { prop: 'createTime', label: '创建时间' },
         { prop: 'orderDate', label: '下单时间' }
       ],
@@ -114,9 +110,9 @@ export default {
     refreshChartInfo() {
       if (this.showType != 'pie') {
         this.axisOption.series[0].type = this.showType
-        this.axisChart.setOption(this.axisOption, true)
+        this.chartObj.setOption(this.axisOption, true)
       } else {
-        this.axisChart.setOption(this.pieOption, true)
+        this.chartObj.setOption(this.pieOption, true)
       }
     },
     /**
@@ -206,8 +202,8 @@ export default {
 
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
-      this.axisChart.on('click', params => {
+      this.chartObj = echarts.init(document.getElementById('axismain'))
+      this.chartObj.on('click', params => {
         // seriesIndex	1：跟进客户数 2:跟进次数  dataIndex 具体的哪条数据
         // this.getRecordList(params.dataIndex)
       })

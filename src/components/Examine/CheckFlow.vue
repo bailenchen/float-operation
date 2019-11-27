@@ -4,12 +4,12 @@
     v-empty="list"
     xs-empty-icon="none"
     xs-empty-text="暂无记录">
-    <flexbox class="flow-head">
+    <flexbox
+      class="flow-head">
       <div class="flow-head-name">审批流程</div>
-      <img
-        class="flow-head-close"
-        src="@/assets/img/task_close.png"
-        @click="close" >
+      <i
+        class="el-icon-close flow-head-close"
+        @click="close" />
     </flexbox>
     <div class="flow-body">
       <flexbox
@@ -141,27 +141,27 @@ export default {
 <style lang="scss" scoped>
 /** 头部的css */
 .flow-head {
-  padding: 8px 15px;
+  padding: 8px 0;
   border-bottom: 1px solid #e6e6e6;
   .flow-head-name {
     font-size: 14px;
     color: #333;
     flex: 1;
   }
-  .flow-head-name {
-    display: block;
-    width: 30px;
-    height: 30px;
-  }
   .flow-head-close {
     cursor: pointer;
-    width: 30px;
-    height: 30px;
-    padding: 8px;
+    font-size: 24px;
+    color: #909399;
+  }
+
+  .flow-head-close:hover {
+    color: $xr-color-primary;
   }
 }
 .flow-body {
   padding: 15px;
+  max-height: 300px;
+  overflow: auto;
 }
 /** 每行的css */
 .cf-flow-item {

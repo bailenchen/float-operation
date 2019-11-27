@@ -23,7 +23,7 @@
           v-for="(item, index) in particularsTagList"
           :key="index"
           class="tag-list"
-          @click="tagBtn(item, particularsTagList)">
+          @click="tagBtn(item, particularsTagList, index)">
           <i
             :style="{ 'color': item.color}"
             class="wukong wukong-black-label"/>
@@ -94,7 +94,8 @@ import {
   setTaskAPI,
   createTagAPI,
   deleteTagAPI,
-  editTagAPI
+  editTagAPI,
+  taskDeleteLabelAPI
 } from '@/api/task/task'
 
 export default {
@@ -165,7 +166,7 @@ export default {
       this.tagContent = 2
     },
     // 标签点击变色
-    tagBtn(value, values) {
+    tagBtn(value, values, index) {
       // 标签点击关联页面
       const labelIds = values.filter(item => {
         if (value.check) {
@@ -175,21 +176,11 @@ export default {
         }
       })
       if (value.check) {
-        setTaskAPI({
+        taskDeleteLabelAPI({
           taskId: this.taskData.taskId,
-          labelId: labelIds
-            .map(item => {
-              return item.labelId
-            })
-            .join(',')
+          labelId: value.labelId
         }).then(res => {
-          const list = this.taskData.labelList
-          for (const item in list) {
-            if (value.labelId == list[item].labelId) {
-              list.splice(item, 1)
-              break
-            }
-          }
+          this.taskData.labelList.splice(index, 1)
           value.check = false
         })
       } else {

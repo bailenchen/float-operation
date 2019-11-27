@@ -1,7 +1,7 @@
 <template>
   <slide-view
     :listener-ids="['manager-main-container']"
-    :no-listener-ids="['depTable']"
+    :no-listener-class="['el-table__body']"
     :body-style="{padding: '10px 30px', height: '100%'}"
     class="d-view"
     @close="hideView">
@@ -10,12 +10,16 @@
       class="main">
       <div class="detail-body">
         <div class="dialog-top">
-          <img
+          <xr-avatar
+            :name="data.realname"
+            :size="36"
             :src="data.img"
-            alt="">
+            :key="data.realname"
+            class="user-img" />
           <span>{{ data.realname }}</span>
           <div class="dialog-btn-group">
             <el-button
+              v-if="userUpdateAuth"
               type="primary"
               size="medium"
               @click="editBtn"> 编 辑 </el-button>
@@ -125,11 +129,13 @@ export default {
   height: 100%;
   padding: 10px 0;
 }
-.dialog-top > img {
-  vertical-align: middle;
-  margin-right: 10px;
-  height: 36px;
+.dialog-top {
+  .user-img {
+    vertical-align: middle;
+    margin-right: 10px;
+  }
 }
+
 .dialog-btn-group {
   float: right;
 }

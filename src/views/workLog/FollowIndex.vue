@@ -3,12 +3,13 @@
     <record-tab-head
       :tabs="tabs"
       :count="count"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange" />
 
     <flexbox class="filter-control card">
       <xh-user-cell
         v-if="userSelectShow"
-        :radio="false"
+        radio
         class="xh-user-cell"
         placeholder="选择人员"
         @value-change="userChange" />
@@ -29,6 +30,8 @@
 
     <div
       v-infinite-scroll="getList"
+      :key="`${scrollKey}${tabsSelectValue}`"
+      infinite-scroll-distance="100"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <log-cell
@@ -98,6 +101,7 @@ export default {
   props: {},
   data() {
     return {
+      tabsSelectValue: 'all',
       tabs: [
         {
           label: '全部',
@@ -128,7 +132,8 @@ export default {
       // 默认全部  subUser  0 我的  1 我下属的
       filterForm: {
         crmType: '',
-        userIds: '',
+        isUser: 1,
+        userId: '',
         subUser: ''
       },
 
@@ -141,6 +146,7 @@ export default {
       loading: false,
       noMore: false,
       page: 1,
+      scrollKey: Date.now(),
 
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
@@ -183,6 +189,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -193,7 +200,7 @@ export default {
       let params = {
         page: this.page,
         limit: 15,
-        status: this.status
+        isUser: 1
       }
 
       if (this.timeSelect.type) {
@@ -215,12 +222,17 @@ export default {
       crmIndexGetRecordListAPI(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            this.list = this.list.concat(res.data.list)
-            this.page++
+
+          if (this.filterForm.subUser != params.subUser) {
+            this.refreshList()
+          } else {
+            if (!this.noMore) {
+              this.list = this.list.concat(res.data.list)
+              this.page++
+            }
+            this.count = res.data.totalRow || 0
+            this.noMore = res.data.lastPage
           }
-          this.count = res.data.totalRow || 0
-          this.noMore = res.data.lastPage
         })
         .catch(() => {
           this.noMore = true
@@ -241,15 +253,7 @@ export default {
      * 筛选条件人员选择
      */
     userChange(data) {
-      if (data.value.length > 0) {
-        this.filterForm.userIds = data.value
-          .map(item => {
-            return item.userId
-          })
-          .join(',')
-      } else {
-        this.filterForm.userIds = ''
-      }
+      this.filterForm.userId = data.value.length > 0 ? data.value[0].userId : ''
     },
 
     /**
@@ -282,13 +286,12 @@ export default {
 .cell-section {
   height: calc(100% - 140px);
   overflow: auto;
-  overflow: overlay;
 }
 
 .log-cell {
   border: 1px solid $xr-border-line-color;
   border-radius: $xr-border-radius-base;
-  padding-bottom: 50px;
+  padding-bottom: 50px !important;
   margin-bottom: 15px;
   position: relative;
 }

@@ -176,3 +176,29 @@ export function crmLeadsSetFollowAPI(data) {
     data: data
   })
 }
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmLeadsFileListAPI(data) {
+  return request({
+    url: 'CrmLeads/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmLeadsNumAPI(data) {
+  return request({
+    url: 'CrmLeads/num',
+    method: 'post',
+    data: data
+  })
+}

@@ -3,6 +3,7 @@
     v-loading="loading"
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     title="批量分配"
     width="400px"
     @close="handleCancel">
@@ -14,6 +15,7 @@
           class="handle-item-name"
           style="margin-top: 8px;">请选择：</div>
         <xh-user-cell
+          :value="usersList"
           class="handle-item-content"
           placeholder="点击选择"
           @value-change="userChage"/>
@@ -72,6 +74,9 @@ export default {
     dialogVisible: {
       handler(val) {
         this.visible = val
+        if (!val) {
+          this.usersList = []
+        }
       },
       deep: true,
       immediate: true

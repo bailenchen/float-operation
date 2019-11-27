@@ -216,10 +216,6 @@ export default {
           })
           .join('、')
 
-        if (strName) {
-          strName += '、'
-        }
-
         const users = row['userIds'] || []
         const userName = users
           .map(item => {
@@ -227,6 +223,9 @@ export default {
           })
           .join('、')
 
+        if (strName && userName) {
+          strName += '、'
+        }
         const name = strName + userName
         return name || '全公司'
       } else if (column.property === 'status') {
@@ -275,7 +274,7 @@ export default {
     handleClick(type, scope) {
       if (type === 'edit-table') {
         this.$router.push({
-          name: 'handlefield',
+          name: 'workbenchHandlefield',
           params: {
             type: 'oa_examine',
             label: '10',
@@ -301,6 +300,9 @@ export default {
             })
               .then(res => {
                 this.list.splice(scope.$index, 1)
+                if (this.list.length == 0) {
+                  this.currentPage = this.currentPage - 1 > 0 ? this.currentPage - 1 : 1
+                }
                 this.getList()
 
                 this.$message({

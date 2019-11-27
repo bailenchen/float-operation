@@ -285,7 +285,7 @@ export function crmCustomerRecordIndex(data) {
 // 团队操作
 
 /**
- * 相关团队创建
+ * 团队成员创建
  * @param {*} data
  * types crm_leads
  * typesId 分类ID
@@ -381,6 +381,32 @@ export function crmCustomerSetContactsAPI(data) {
 export function crmCustomerDataCheckAPI(data) {
   return request({
     url: 'CrmCustomer/dataCheck',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmCustomerFileListAPI(data) {
+  return request({
+    url: 'CrmCustomer/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmCustomerNumAPI(data) {
+  return request({
+    url: 'CrmCustomer/num',
     method: 'post',
     data: data
   })

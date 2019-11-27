@@ -117,6 +117,7 @@ import moment from 'moment'
 import sortMixins from './mixins/sort'
 import echarts from 'echarts'
 import { floatAdd } from '@/utils'
+import { debounce } from 'throttle-debounce'
 
 export default {
   /** 业绩目标完成情况 */
@@ -169,6 +170,12 @@ export default {
   },
   computed: {},
   mounted() {
+    this.debouncedResize = debounce(300, this.resizeFn)
+
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.debouncedResize)
+    })
+
     this.dateSelect = moment(new Date())
       .year()
       .toString()
@@ -193,7 +200,21 @@ export default {
       }
     }
   },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.debouncedResize)
+  },
+
   methods: {
+    /**
+     * 窗口尺寸发生改变实时调整 EChart 尺寸
+     */
+    resizeFn() {
+      if (this.axisChart) {
+        this.axisChart.resize()
+      }
+    },
+
     /**
      * 部门选择
      */
@@ -301,7 +322,7 @@ export default {
 
                 // 获取季度值
                 if (childIndex % 3 == 2) {
-                  const quarterIndex = parseInt(childIndex / 3)
+                  const quarterIndex = parseInt(childIndex / 3) + 1
                   element[`achievementQuarter${quarterIndex}`] = quarter.achievement
                   element[`moneyQuarter${quarterIndex}`] = quarter.money
                   element[`rateQuarter${quarterIndex}`] = quarter.money ? (quarter.money / quarter.achievement * 100 + 0.001).toFixed(2).toString() : '0.00'
@@ -336,7 +357,12 @@ export default {
               const element = sumList[index]
               receivabless.push(element.money)
               achiements.push(element.achievement)
-              rates.push(element.money ? (element.money / element.achievement * 100 + 0.001).toFixed(2).toString() : '0.00')
+
+              if (element.achievement) {
+                rates.push(element.money ? (element.money / element.achievement * 100 + 0.001).toFixed(2).toString() : '0.00')
+              } else {
+                rates.push('--')
+              }
             }
 
             this.axisOption.series[0].data = receivabless
@@ -394,8 +420,8 @@ export default {
           itemWidth: 14
         },
         grid: {
-          top: '5px',
-          left: '20px',
+          top: '30px',
+          left: '30px',
           right: '20px',
           bottom: '40px',
           containLabel: true,

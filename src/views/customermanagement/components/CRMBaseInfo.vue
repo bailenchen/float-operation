@@ -7,14 +7,89 @@
         content-height="auto">
         <flexbox
           :gutter="0"
+          align="stretch"
           wrap="wrap"
           style="padding: 10px 8px 0;">
           <flexbox-item
             v-for="(item, index) in list"
-            :span="0.5"
+            :span="getShowBlock(item.formType) ? 12 : 0.5"
             :key="index"
-            class="b-cell">
+            :class="{'b-cell': item.formType !== 'map_address'}">
             <flexbox
+              v-if="item.formType === 'map_address'"
+              :gutter="0"
+              wrap="wrap">
+              <flexbox-item
+                :span="0.5"
+                class="b-cell"
+                @click.native="checkMapView(item)">
+                <flexbox
+                  class="b-cell-b"
+                  align="stretch">
+                  <div class="b-cell-name">定位</div>
+                  <div
+                    class="b-cell-value"
+                    style="color: #3E84E9;cursor: pointer;">{{ item.value.location }}</div>
+                </flexbox>
+              </flexbox-item>
+              <flexbox-item
+                :span="0.5"
+                class="b-cell">
+                <flexbox
+                  class="b-cell-b"
+                  align="stretch">
+                  <div class="b-cell-name">区域</div>
+                  <div class="b-cell-value">{{ item.value.address }}</div>
+                </flexbox>
+              </flexbox-item>
+              <flexbox-item
+                :span="0.5"
+                class="b-cell">
+                <flexbox
+                  class="b-cell-b"
+                  align="stretch">
+                  <div class="b-cell-name">详细地址</div>
+                  <div class="b-cell-value">{{ item.value.detailAddress }}</div>
+                </flexbox>
+              </flexbox-item>
+            </flexbox>
+
+            <flexbox
+              v-else-if="isModule(item)"
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div class="b-cell-value">{{ getModuleName(item) }}
+              </div>
+            </flexbox>
+
+            <flexbox
+              v-else-if="item.formType === 'checkbox' || item.formType === 'structure' || item.formType === 'user'"
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div class="b-cell-value">
+                <flexbox
+                  :gutter="0"
+                  wrap="wrap"
+                  style="padding: 0px 10px 10px 0px;">
+                  <div>{{ item.value | arrayValue(getArrayKey(item.formType)) }}</div>
+                </flexbox>
+              </div>
+            </flexbox>
+
+            <flexbox
+              v-else-if="item.formType === 'file'"
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div class="b-cell-value">
+                <file-list-view :list="item.value || []" />
+              </div>
+            </flexbox>
+
+            <flexbox
+              v-else
               align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
@@ -29,7 +104,7 @@
       :title="mapViewInfo.title"
       :lat="mapViewInfo.lat"
       :lng="mapViewInfo.lng"
-      @hidden="showMapView=false"/>
+      @hidden="showMapView=false" />
   </div>
 </template>
 
@@ -39,17 +114,30 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import Sections from '../components/Sections'
 import { filedGetInformation } from '@/api/customermanagement/common'
 import MapView from '@/components/MapView' // 地图详情
+import FileListView from '@/components/FileListView'
 
 export default {
   // 客户管理 的 基本信息
   name: 'CRMBaseInfo',
   components: {
     Sections,
-    MapView
+    MapView,
+    FileListView
   },
   filters: {
-    addressShow: function(list) {
-      return list ? list.join(' ') : ''
+    arrayValue(array, field) {
+      if (
+        !array ||
+        Object.prototype.toString.call(array) !== '[object Array]'
+      ) {
+        return ''
+      }
+
+      return array
+        .map(item => {
+          return field ? item[field] : item
+        })
+        .join('，')
     }
   },
   mixins: [loading],
@@ -105,6 +193,58 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+
+    /**
+     * 查看地图详情
+     */
+    checkMapView(item) {
+      if (item.value && item.value !== '') {
+        this.mapViewInfo = {
+          title: item.value.location,
+          lat: item.value.lat,
+          lng: item.value.lng
+        }
+        this.showMapView = true
+      }
+    },
+
+    getArrayKey(type) {
+      if (type === 'structure') {
+        return 'name'
+      } else if (type === 'user') {
+        return 'realname'
+      }
+
+      return ''
+    },
+
+    isModule(item) {
+      return [
+        'customer',
+        'business',
+        'contract',
+        'contacts',
+        'category',
+        'statusName',
+        'typeName'].includes(item.formType)
+    },
+
+    getShowBlock(type) {
+      return ['map_address', 'file'].includes(type)
+    },
+
+    getModuleName(item) {
+      const field = {
+        customer: 'customerName',
+        business: 'businessName',
+        contract: 'contractNum',
+        contacts: 'contactsName',
+        category: 'categoryName',
+        statusName: 'statusName',
+        typeName: 'typeName'
+      }[item.formType]
+      return item.value ? item.value[field] : ''
     }
   }
 }
@@ -125,29 +265,31 @@ export default {
 
 .b-cell {
   padding: 0 10px;
-  .b-cell-b {
-    width: auto;
-    padding: 8px;
-    .b-cell-name {
-      width: 100px;
-      margin-right: 10px;
-      font-size: 13px;
-      flex-shrink: 0;
-      color: #777;
-    }
-    .b-cell-value {
-      font-size: 13px;
-      color: #333;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-    .b-cell-foot {
-      flex-shrink: 0;
-      display: block;
-      width: 15px;
-      height: 15px;
-      margin-left: 8px;
-    }
+}
+
+.b-cell-b {
+  width: auto;
+  padding: 8px;
+  .b-cell-name {
+    width: 100px;
+    margin-right: 10px;
+    font-size: 13px;
+    flex-shrink: 0;
+    color: #777;
+  }
+  .b-cell-value {
+    font-size: 13px;
+    color: #333;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+  .b-cell-foot {
+    flex-shrink: 0;
+    display: block;
+    width: 15px;
+    height: 15px;
+    margin-left: 8px;
   }
 }
 
@@ -167,4 +309,5 @@ export default {
     margin-right: 10px;
   }
 }
+
 </style>

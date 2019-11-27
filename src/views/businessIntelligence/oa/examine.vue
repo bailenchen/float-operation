@@ -44,6 +44,8 @@
     <!-- 列表详情 -->
     <examine-list
       v-if="showList"
+      :type="showType"
+      :name="showTypeName"
       :request="indexRequest"
       :params="indexParams"
       @hide="showList = false"/>
@@ -78,7 +80,10 @@ export default {
       fieldList: [],
 
       // 列表详情
+      typeList: [],
       indexParams: {},
+      showType: '', // 标示类型
+      showTypeName: '', // 类型名称
       showList: false
     }
   },
@@ -106,6 +111,7 @@ export default {
       this.loading = true
       biExamineStatisticsAPI(params)
         .then(res => {
+          this.typeList = res.data.categoryList || []
           this.fieldList = this.getFieldList(res.data.categoryList || [])
           this.list = res.data.userList || []
           this.loading = false
@@ -168,6 +174,7 @@ export default {
         const propertys = column.property.split('_')
         const categoryId = propertys.length > 1 ? propertys[1] : ''
 
+
         const params = {
           userId: row.userId,
           categoryId: categoryId
@@ -179,6 +186,12 @@ export default {
           params.startTime = this.postParams.startTime
           params.endTime = this.postParams.endTime
         }
+
+        const typeObj = this.typeList.find(item => {
+          return item.categoryId == categoryId
+        })
+        this.showType = typeObj.type
+        this.showTypeName = typeObj.title
         this.indexParams = params
         this.showList = true
       }

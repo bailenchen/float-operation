@@ -3,6 +3,7 @@
     <div class="list-content">
       <flexbox class="header">
         <xr-avatar
+          v-if="data.createUser"
           :name="data.createUser.realname"
           :size="34"
           :src="data.createUser.img" />
@@ -20,7 +21,7 @@
           </span>
           <!-- 编辑 -->
           <el-dropdown
-            v-if="data.permission && (data.permission.isChecked || data.permission.isUpdate || data.permission.isDelete)"
+            v-if="showHandle && data.permission && (data.permission.isChecked || data.permission.isUpdate || data.permission.isDelete)"
             trigger="click"
             @command="handleCommand">
             <i
@@ -60,7 +61,7 @@
             :key="k"
             class="img-list"
             @click="imgZoom(data.img, k)">
-            <img v-lazy="imgItem.filePath">
+            <img v-src="imgItem.filePath">
           </div>
         </div>
         <!-- 附件 -->
@@ -106,7 +107,11 @@ export default {
   },
   mixins: [CheckStatusMixin],
   props: {
-    data: Object
+    data: Object,
+    showHandle: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {}

@@ -2,6 +2,7 @@
   <el-dialog
     :visible.sync="visible"
     :append-to-body="true"
+    :close-on-click-modal="false"
     :before-close="handleClose"
     title="客户查重"
     custom-class="no-padding-dialog"
@@ -23,7 +24,7 @@
               label="按客户名称"
               value="name" />
             <el-option
-              label="按手机号"
+              label="按手机号/电话"
               value="phone" />
           </el-select>
           <el-button
@@ -101,7 +102,7 @@ export default {
       loading: false,
       typeSelect: 'name',
       searchContent: '',
-      tableData: [],
+      tableData: null,
 
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
@@ -114,7 +115,7 @@ export default {
     },
 
     showTable() {
-      return this.tableData && this.tableData.length > 0
+      return this.tableData
     },
 
     isCustomerFilter() {
@@ -149,7 +150,7 @@ export default {
 
       return [{
         prop: 'mobile',
-        label: '手机号',
+        label: '手机号/电话',
         width: 160
       }, {
         prop: 'contactsName',
@@ -173,13 +174,20 @@ export default {
   watch: {
     typeSelect() {
       this.searchContent = ''
-      this.tableData = []
+      this.tableData = null
     }
   },
   mounted() {},
   methods: {
     handleClose() {
       this.$emit('update:visible', false)
+      this.resetData()
+    },
+
+    resetData() {
+      this.typeSelect = 'name'
+      this.searchContent = ''
+      this.tableData = null
     },
 
     getList() {

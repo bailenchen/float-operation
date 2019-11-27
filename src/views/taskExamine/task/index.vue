@@ -3,15 +3,23 @@
     <task-tabs-head
       :tabs="tabs"
       :title="title"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange" />
 
-    <div class="content-wrapper">
+    <div
+      class="content-wrapper"
+      direction="column"
+      align="stretch">
       <flexbox class="content-wrapper__hd">
         <xr-avatar
+          v-if="taskType == 1"
           :name="userInfo.realname"
           :size="40"
           :src="userInfo.img"
           class="head-img" />
+        <i
+          v-else
+          class="wk wk-multi-user user-icon head-img" />
         <el-progress
           :percentage="progressValue"
           :format="progressFormat" />
@@ -39,9 +47,12 @@
           v-model="showDone"
           @change="refreshList" />
       </flexbox>
+
       <div class="cell-section">
         <div
           v-infinite-scroll="getList"
+          :key="`${scrollKey}${tabsSelectValue}`"
+          infinite-scroll-distance="100"
           infinite-scroll-disabled="scrollDisabled">
           <task-cell
             v-for="(item, index) in list"
@@ -57,11 +68,14 @@
           v-if="noMore"
           class="scroll-bottom-tips">没有更多了</p>
       </div>
+
+      <div class="task-add">
+        <task-quick-add @send="refreshList" />
+      </div>
+
     </div>
 
-    <div class="task-add">
-      <task-quick-add @send="refreshList"/>
-    </div>
+
 
     <task-detail
       v-if="taskDetailShow"
@@ -82,7 +96,6 @@ import TaskDetail from './components/TaskDetail'
 import TaskQuickAdd from './components/TaskQuickAdd'
 import { taskListAPI } from '@/api/task/task'
 
-
 export default {
   /** 任务列表 */
   name: 'Index',
@@ -95,13 +108,14 @@ export default {
   props: {},
   data() {
     return {
+      tabsSelectValue: '0',
       // 任务类型 区分我的任务和下属任务
       taskType: '',
       list: [],
       loading: false,
       noMore: false,
+      scrollKey: Date.now(),
       page: 1,
-      type: '0',
       dueDate: '',
       priority: '',
       showDone: true,
@@ -188,7 +202,7 @@ export default {
       if (this.progress.stopTask == 0) {
         return 0
       }
-      return parseInt(this.progress.stopTask / this.progress.allTask * 100)
+      return parseInt((this.progress.stopTask / this.progress.allTask) * 100)
     }
   },
   watch: {},
@@ -198,7 +212,12 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.taskType = to.params.type
     this.showDone = true
-    this.type = '0'
+    this.progress = {
+      stopTask: 0,
+      // 总数量
+      allTask: 0
+    }
+    this.tabsSelectValue = '0'
     this.dueDate = ''
     this.priority = ''
 
@@ -222,6 +241,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -232,7 +252,7 @@ export default {
       const params = {
         page: this.page,
         limit: 15,
-        type: this.type,
+        type: this.tabsSelectValue,
         priority: this.priority,
         dueDate: this.dueDate,
         status: this.showDone ? '' : '1'
@@ -245,17 +265,21 @@ export default {
       taskListAPI(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            for (const item of res.data.list) {
-              if (item.status == 5) {
-                item.checked = true
+          if (this.tabsSelectValue == params.type) {
+            if (!this.noMore) {
+              for (const item of res.data.list) {
+                if (item.status == 5) {
+                  item.checked = true
+                }
               }
+              this.list = this.list.concat(res.data.list)
+              this.page++
             }
-            this.list = this.list.concat(res.data.list)
-            this.page++
+            this.noMore = res.data.lastPage
+            this.progress = res
+          } else {
+            this.refreshList()
           }
-          this.noMore = res.data.lastPage
-          this.progress = res
         })
         .catch(() => {
           this.noMore = true
@@ -267,7 +291,6 @@ export default {
      * 中间tabs改变
      */
     tabsChange(type) {
-      this.type = type
       this.refreshList()
     },
 
@@ -280,7 +303,9 @@ export default {
         this.detailIndex = index
         this.taskDetailShow = true
       } else if (type == 'complete') {
-        this.progress.stopTask = data.checked ? ++this.progress.stopTask : --this.progress.stopTask
+        this.progress.stopTask = data.checked
+          ? ++this.progress.stopTask
+          : --this.progress.stopTask
       }
     },
 
@@ -299,7 +324,7 @@ export default {
         const params = {
           page: page,
           limit: 5,
-          type: this.type,
+          type: this.tabsSelectValue,
           priority: this.priority,
           dueDate: this.dueDate,
           status: this.showDone ? '' : '1'
@@ -324,8 +349,7 @@ export default {
             }
             this.progress = res
           })
-          .catch(() => {
-          })
+          .catch(() => {})
       }
     }
   }
@@ -346,13 +370,19 @@ export default {
 .content-wrapper {
   height: calc(100% - 70px);
   overflow: hidden;
+  position: relative;
   margin-top: 15px;
+  padding: 70px 0 76px;
   background-color: white;
   border-radius: $xr-border-radius-base;
   border: 1px solid $xr-border-line-color;
-  padding-bottom: 70px;
 
   &__hd {
+    position: absolute;
+    left: 1px;
+    top: 0;
+    right: 1px;
+    z-index: 5;
     padding: 15px;
 
     .head-img {
@@ -388,18 +418,23 @@ export default {
   overflow: auto;
 }
 
-.scroll-bottom-tips {
-  margin-bottom: 80px;
-}
 
 // 快捷添加
 .task-add {
   position: absolute;
   left: 1px;
-  bottom: 7px;
+  bottom: 0;
   right: 1px;
   z-index: 5;
   background-color: white;
   padding: 15px;
+}
+
+.user-icon {
+  background: $xr-color-primary;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 50%;
+  font-size: 20px;
 }
 </style>

@@ -2,10 +2,13 @@
   <div class="main">
     <base-tabs-head
       :tabs="tabs"
+      :select-value.sync="tabsSelectValue"
       @change="tabsChange" />
 
     <div
       v-infinite-scroll="getList"
+      :key="`${scrollKey}${tabsSelectValue}`"
+      infinite-scroll-distance="100"
       infinite-scroll-disabled="scrollDisabled"
       class="cell-section">
       <crm-cell
@@ -66,6 +69,8 @@ export default {
   data() {
     return {
       crmType: '',
+      // 待我审批的
+      tabsSelectValue: '1',
       tabs: [
         {
           label: '全部',
@@ -83,10 +88,8 @@ export default {
       list: [],
       loading: false,
       noMore: false,
+      scrollKey: Date.now(),
       page: 1,
-
-      // 空是全部
-      status: '',
 
       // 控制详情展示
       detailIndex: 0,
@@ -117,7 +120,7 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     this.crmType = to.params.type
-    this.status = ''
+    this.tabsSelectValue = '1'
 
     this.refreshList()
     next()
@@ -132,6 +135,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -142,7 +146,7 @@ export default {
       const params = {
         page: this.page,
         limit: 15,
-        status: this.status
+        status: this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
       }
 
       // 1合同 2 回款
@@ -155,11 +159,16 @@ export default {
       crmExamineMyExamine(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            this.list = this.list.concat(res.data.list)
-            this.page++
+          const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
+          if (params.status == status) {
+            if (!this.noMore) {
+              this.list = this.list.concat(res.data.list)
+              this.page++
+            }
+            this.noMore = res.data.lastPage
+          } else {
+            this.refreshList()
           }
-          this.noMore = res.data.lastPage
         })
         .catch(() => {
           this.noMore = true
@@ -171,7 +180,6 @@ export default {
      * 中间tabs改变
      */
     tabsChange(type) {
-      this.status = type == 'all' ? '' : type
       this.refreshList()
     },
 
@@ -271,6 +279,5 @@ export default {
 .cell-section {
   height: calc(100% - 70px);
   overflow: auto;
-  overflow: overlay;
 }
 </style>

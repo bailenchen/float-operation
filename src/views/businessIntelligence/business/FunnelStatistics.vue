@@ -60,7 +60,6 @@ export default {
         { field: 'count', name: '商机数', sortable: 'custom' }
       ],
 
-      funnelChart: null, // 漏斗图
       funnelOption: null
     }
   },
@@ -91,7 +90,7 @@ export default {
 
           this.funnelOption.series[0].data = data
           this.funnelOption.series[0].max = sumMoney < 1 ? 1 : sumMoney
-          this.funnelChart.setOption(this.funnelOption, true)
+          this.chartObj.setOption(this.funnelOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -99,7 +98,7 @@ export default {
     },
     /** 销售漏斗 */
     initAxis() {
-      var funnelChart = echarts.init(document.getElementById('axismain'))
+      var chartObj = echarts.init(document.getElementById('axismain'))
       var option = {
         tooltip: {
           trigger: 'item',
@@ -154,9 +153,9 @@ export default {
         ]
       }
 
-      funnelChart.setOption(option, true)
+      chartObj.setOption(option, true)
       this.funnelOption = option
-      this.funnelChart = funnelChart
+      this.chartObj = chartObj
     }
   }
 }

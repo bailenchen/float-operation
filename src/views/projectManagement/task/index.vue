@@ -50,10 +50,11 @@
                   </div>
                   <div class="element-label">{{ element.name }}<span v-if="element.workName">（{{ element.workName }}）</span></div>
                   <xr-avatar
-                    :name="element.createUser.realname"
-                    :id="element.createUser.userId"
+                    v-if="element.mainUser"
+                    :name="element.mainUser.realname"
+                    :id="element.mainUser.userId"
                     :size="24"
-                    :src="element.createUser.img"
+                    :src="element.mainUser.img"
                     :disabled="false"
                     trigger="hover"
                     class="head-png" />
@@ -153,6 +154,7 @@
       :id="taskID"
       :detail-index="detailIndex"
       :detail-section="detailSection"
+      :no-listener-class="['board-item']"
       @on-handle="detailHandle"
       @close="closeBtn"/>
   </div>
@@ -207,10 +209,6 @@ export default {
       event.preventDefault()
       event.stopPropagation()
     }
-
-    document
-      .getElementById('project-container')
-      .addEventListener('click', this.taskShowHandle, false)
   },
 
   methods: {
@@ -389,27 +387,6 @@ export default {
      */
     closeBtn() {
       this.taskDetailShow = false
-    },
-
-    /**
-     * 点击空白处关闭详情
-     */
-    taskShowHandle(e) {
-      if (
-        this.$refs.particulars &&
-        !this.$refs.particulars.$el.contains(e.target)
-      ) {
-        let hidden = true
-        const items = document.getElementsByClassName('board-item')
-        for (let index = 0; index < items.length; index++) {
-          const element = items[index]
-          if (element.contains(e.target)) {
-            hidden = false
-            break
-          }
-        }
-        this.taskDetailShow = !hidden
-      }
     }
   }
 }

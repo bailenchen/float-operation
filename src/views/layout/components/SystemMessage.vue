@@ -32,9 +32,12 @@
           </el-badge>
         </div>
 
-        <div ref="scollBd" class="sm-main__bd">
+        <div
+          class="sm-main__bd">
           <div
             v-infinite-scroll="getList"
+            :key="scrollKey"
+            infinite-scroll-distance="100"
             infinite-scroll-disabled="scrollDisabled">
             <message-cell
               v-for="(item, index) in list"
@@ -43,7 +46,8 @@
               :data-index="index"
               @detail="checkCRMDetail"
               @download="downloadError"
-              @read="readMessageClick"/>
+              @read="readMessageClick"
+              @delete="deleteMessageClick"/>
           </div>
           <p
             v-if="loading"
@@ -51,15 +55,30 @@
           <p
             v-if="noMore"
             class="scroll-bottom-tips">没有更多了</p>
-          <div v-if="!scrollDisabled" style="height: 2000px;"/>
         </div>
 
-        <div class="sm-main__ft">
-          <el-button
-            icon="el-icon-check"
-            type="text"
-            @click="allMarkDoneClick">全部标记为已读</el-button>
-        </div>
+        <flexbox class="sm-main__ft">
+          <div class="switch-read">
+            <el-switch
+              v-model="isUnRead"
+              @change="refreshList"/>
+            <span class="switch-read__title">仅显示未读消息</span>
+          </div>
+          <el-dropdown
+            trigger="click"
+            @command="handleCommand">
+            <i
+              class="el-icon-more more" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                icon="el-icon-check"
+                command="read">{{ `全部${currentMenu.label == 'all' ? '' : currentMenu.name}标记为已读` }}</el-dropdown-item>
+              <el-dropdown-item
+                icon="wk wk-s-delete"
+                command="delete">{{ `删除${currentMenu.name}已读消息` }}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </flexbox>
       </div>
     </slide-view>
 
@@ -80,7 +99,9 @@
 import {
   systemMessageListAPI,
   systemMessageReadAPI,
-  systemMessageReadAllAPI } from '@/api/common'
+  systemMessageReadAllAPI,
+  systemMessageClearAPI,
+  systemMessageDeleteByIdAPI } from '@/api/common'
 import {
   crmDownImportErrorAPI
 } from '@/api/customermanagement/common'
@@ -147,7 +168,9 @@ export default {
       list: [],
       loading: false,
       noMore: false,
+      scrollKey: Date.now(),
       page: 1,
+      isUnRead: false, // 仅展示未读
 
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
@@ -166,6 +189,16 @@ export default {
 
     scrollDisabled() {
       return this.loading || this.noMore
+    },
+
+    labelValue() {
+      return this.menuLabel == 'all' ? '' : this.menuLabel
+    },
+
+    currentMenu() {
+      return this.menuList.find(item => {
+        return item.label === this.menuLabel
+      })
     }
   },
   watch: {
@@ -236,10 +269,7 @@ export default {
       this.page = 1
       this.list = []
       this.noMore = false
-      // this.$refs.scollBd.scrollTop = 0
-      this.$nextTick(() => {
-        this.$refs.scollBd.scrollTo(0, 1)
-      })
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -247,22 +277,30 @@ export default {
      */
     getList() {
       this.loading = true
-      systemMessageListAPI({
+      const params = {
         page: this.page,
         limit: 15,
-        label: this.menuLabel == 'all' ? '' : this.menuLabel
-      })
+        label: this.labelValue
+      }
+      if (this.isUnRead) {
+        params.isRead = 0
+      }
+      systemMessageListAPI(params)
         .then(res => {
           this.loading = false
-          if (!this.noMore) {
-            if (this.page == 1) {
-              this.list = res.data.list
-            } else {
-              this.list = this.list.concat(res.data.list)
+          if (this.labelValue == params.label) {
+            if (!this.noMore) {
+              if (this.page == 1) {
+                this.list = res.data.list
+              } else {
+                this.list = this.list.concat(res.data.list)
+              }
+              this.page++
             }
-            this.page++
+            this.noMore = res.data.lastPage
+          } else {
+            this.refreshList()
           }
-          this.noMore = res.data.lastPage
         })
         .catch(() => {
           this.noMore = true
@@ -306,11 +344,44 @@ export default {
         })
     },
 
+    deleteMessageClick(messageId, index) {
+      this.$confirm('确定删除这条消息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          systemMessageDeleteByIdAPI({ messageId })
+            .then(res => {
+              this.list.splice(index, 1)
+              this.$emit('update-count')
+              this.$message.success('操作成功')
+            })
+            .catch(() => {})
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    },
+
+    handleCommand(action) {
+      if (action === 'delete') {
+        this.allDeleteClick()
+      } else {
+        this.allMarkDoneClick()
+      }
+    },
+
     /**
      * 全部标记完成
      */
     allMarkDoneClick() {
-      systemMessageReadAllAPI()
+      systemMessageReadAllAPI({
+        label: this.labelValue
+      })
         .then(res => {
           this.list.forEach(item => {
             item.isRead = 1
@@ -319,6 +390,37 @@ export default {
         })
         .catch(() => {
         })
+    },
+
+    /**
+     * 全部删除
+     */
+    allDeleteClick() {
+      if (this.currentMenu) {
+        const name = this.currentMenu.label == 'all' ? '' : this.currentMenu.name
+        this.$confirm(`确定删除全部${name}已读消息?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            systemMessageClearAPI({
+              label: this.labelValue
+            })
+              .then(res => {
+                this.refreshList()
+                this.$emit('update-count')
+                this.$message.success('操作成功')
+              })
+              .catch(() => {})
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            })
+          })
+      }
     },
 
     hiddenView() {
@@ -393,8 +495,25 @@ export default {
     bottom: -1px;
     height: 50px;
     background-color: #f7f8fa;
-    text-align: center;
-    line-height: 50px;
+    padding: 0 15px;
+
+    .switch-read {
+      flex: 1;
+      &__title {
+        font-size: 13px;
+        margin-left: 10px;
+        color: #333;
+      }
+    }
+
+    .more {
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .more:hover {
+      color: $xr-color-primary;
+    }
   }
 }
 
@@ -440,5 +559,11 @@ export default {
 
 .scroll-bottom-tips {
   margin: 15px 0 65px;
+}
+
+.el-badge {
+  /deep/ .el-badge__content.is-fixed {
+    z-index: 2;
+  }
 }
 </style>

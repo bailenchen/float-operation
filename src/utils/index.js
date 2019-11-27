@@ -168,54 +168,48 @@ export function objDeepCopy(source) {
 /** 获取文件类型图标 */
 export function getFileTypeIcon(file) {
   if (file.type.indexOf('image') !== -1) {
-    return require('@/assets/img/file_img.png')
-  } else if (file.type.indexOf('audio') !== -1 || file.type.indexOf('video') !== -1) {
-    return require('@/assets/img/file_video.png')
+    return getFileIconWithSuffix('png')
+  } else if (file.type.indexOf('audio') !== -1) {
+    return getFileIconWithSuffix('mp3')
+  } else if (file.type.indexOf('video') !== -1) {
+    return getFileIconWithSuffix('mp4')
   } else {
-    var index = file.name.lastIndexOf('.')
-    var ext = file.name.substr(index + 1)
-    if (arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-      return require('@/assets/img/file_excle.png')
-    } else if (arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-      return require('@/assets/img/file_word.png')
-    } else if (arrayContain(['rar', 'zip'], ext)) {
-      return require('@/assets/img/file_zip.png')
-    } else if (ext === 'pdf') {
-      return require('@/assets/img/file_pdf.png')
-    } else if (ext === 'ppt' || ext === 'pptx') {
-      return require('@/assets/img/file_ppt.png')
-    } else if (arrayContain(['txt', 'text'], ext)) {
-      return require('@/assets/img/file_txt.png')
-    }
+    const index = file.name.lastIndexOf('.')
+    const ext = file.name.substr(index + 1) || ''
+
+    return getFileIconWithSuffix(ext)
   }
-  return require('@/assets/img/file_unknown.png')
 }
 
-export function getFileTypeIconWithSuffix(ext) {
-  if (arrayContain(['jpg', 'png', 'gif'], ext)) {
-    return require('@/assets/img/file_img.png')
-  } else if (arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-    return require('@/assets/img/file_excle.png')
-  } else if (arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-    return require('@/assets/img/file_excle.png')
-  } else if (arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-    return require('@/assets/img/file_word.png')
-  } else if (arrayContain(['rar', 'zip'], ext)) {
-    return require('@/assets/img/file_zip.png')
+export function getFileIconWithSuffix(ext) {
+  ext = (ext && ext.toLowerCase()) || ''
+
+  if (['jpg', 'png', 'jpeg', 'gif'].includes(ext)) {
+    return require('@/assets/img/file/file_img.png')
+  } else if (ext === 'bmp') {
+    return require('@/assets/img/file/file_bmp.png')
+  } else if (ext === 'psd') {
+    return require('@/assets/img/file/file_psd.png')
+  } else if (ext === 'tif') {
+    return require('@/assets/img/file/file_tif.png')
+  } else if (['mp4', 'avi', 'mov', 'wmv', '3gp'].includes(ext)) {
+    return require('@/assets/img/file/file_video.png')
+  } else if (['mp3', 'wma', 'wav'].includes(ext)) {
+    return require('@/assets/img/file/file_music.png')
+  } else if (['xlsx', 'xls'].includes(ext)) {
+    return require('@/assets/img/file/file_excle.png')
+  } else if (['doc', 'docx'].includes(ext)) {
+    return require('@/assets/img/file/file_word.png')
+  } else if (['rar', 'zip', '7z', 'tar', 'iso', 'dmg'].includes(ext)) {
+    return require('@/assets/img/file/file_zip.png')
   } else if (ext === 'pdf') {
-    return require('@/assets/img/file_pdf.png')
-  } else if (ext === 'ppt' || ext === 'pptx') {
-    return require('@/assets/img/file_ppt.png')
-  } else if (arrayContain(['txt', 'text'], ext)) {
-    return require('@/assets/img/file_txt.png')
+    return require('@/assets/img/file/file_pdf.png')
+  } else if (['ppt', 'pptx'].includes(ext)) {
+    return require('@/assets/img/file/file_ppt.png')
+  } else if (['txt', 'text'].includes(ext)) {
+    return require('@/assets/img/file/file_txt.png')
   }
-  return require('@/assets/img/file_unknown.png')
-}
-
-function arrayContain(array, string) {
-  return array.some((item) => {
-    return item === string
-  })
+  return require('@/assets/img/file/file_unknown.png')
 }
 
 /** 判断输入的是number */
@@ -227,18 +221,18 @@ export function regexIsNumber(nubmer) {
   return true
 }
 
-/** 判断输入的是crm数字 数字的整数部分须少于12位，小数部分须少于4位*/
+/** 判断输入的是crm数字 数字的整数部分须少于15位，小数部分须少于4位*/
 export function regexIsCRMNumber(nubmer) {
-  var regex = /^([-+]?\d{1,12})(\.\d{0,4})?$/
+  var regex = /^([-+]?\d{1,15})(\.\d{0,4})?$/
   if (!regex.test(nubmer)) {
     return false
   }
   return true
 }
 
-/** 判断输入的是货币 货币的整数部分须少于10位，小数部分须少于2位*/
+/** 判断输入的是货币 货币的整数部分须少于15位，小数部分须少于2位*/
 export function regexIsCRMMoneyNumber(nubmer) {
-  var regex = /^([-+]?\d{1,10})(\.\d{0,2})?$/
+  var regex = /^([-+]?\d{1,15})(\.\d{0,2})?$/
   if (!regex.test(nubmer)) {
     return false
   }
@@ -332,61 +326,44 @@ export function formatTimeToTimestamp(format) {
 }
 
 /** image 下载 */
+import { downloadFileAPI } from '@/api/common'
+
 /**
  *
  * @param {*} data url
  * @param {*} filename 名称
  */
-export function downloadImage(data, filename) {
-  var httpindex = data.indexOf('http')
-  if (httpindex === 0) {
-    const image = new Image()
-    // 解决跨域 canvas 污染问题
-    image.setAttribute('crossOrigin', 'anonymous')
-    image.onload = function() {
-      const canvas = document.createElement('canvas')
-      canvas.width = image.width
-      canvas.height = image.height
-      const context = canvas.getContext('2d')
-      context.drawImage(image, 0, 0, image.width, image.height)
-      const dataURL = canvas.toDataURL('image/png')
-      // 生成一个 a 标签
-      const a = document.createElement('a')
-      // 创建一个点击事件
-      const event = new MouseEvent('click')
-      // 将 a 的 download 属性设置为我们想要下载的图片的名称，若 name 不存在则使用'图片'作为默认名称
-      a.download = filename || '图片'
-      // 将生成的 URL 设置为 a.href 属性
-      var blob = dataURLtoBlob(dataURL)
-      a.href = URL.createObjectURL(blob)
-      // 触发 a 的点击事件
-      a.dispatchEvent(event)
-    }
-    image.src = data
-  } else {
-    // 生成一个 a 标签
-    const a = document.createElement('a')
-    // 创建一个点击事件
-    const event = new MouseEvent('click')
-    // 将 a 的 download 属性设置为我们想要下载的图片的名称，若 name 不存在则使用'图片'作为默认名称
-    a.download = filename || '图片'
-    // 将生成的 URL 设置为 a.href 属性
-    a.href = data
-    // 触发 a 的点击事件
-    a.dispatchEvent(event)
-  }
+export function getImageData(url) {
+  return new Promise((resolve, reject) => {
+    downloadFileAPI(url).then(res => {
+      const blob = new Blob([res.data], {
+        type: ''
+      })
+
+      var reader = new FileReader()
+      reader.readAsDataURL(blob)
+      reader.onload = (evt) => {
+        resolve({
+          blob: blob,
+          src: evt.target.result
+        })
+      }
+    }).catch(() => {
+      reject()
+    })
+  })
 }
+
 /**
  * path  和 name
  */
 export function downloadFile(data) {
-  var a = document.createElement('a')
-  a.href = data.path
-  a.download = data.name ? data.name : '文件'
-  a.target = '_black'
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
+  downloadFileAPI(data.path).then(res => {
+    const blob = new Blob([res.data], {
+      type: ''
+    })
+    downloadFileWithBuffer(blob, data.name || '文件')
+  }).catch(() => {})
 }
 
 export function dataURLtoBlob(dataurl) {
@@ -506,23 +483,50 @@ export function floatAdd(num1, num2) {
  * 下载excel
  */
 export function downloadExcelWithResData(res) {
-  var blob = new Blob([res.data], {
-    type: 'application/vnd.ms-excel;charset=utf-8'
-  })
-  var downloadElement = document.createElement('a')
-  var href = window.URL.createObjectURL(blob) // 创建下载的链接
-  downloadElement.href = href
   let fileName = res.headers['content-disposition'].split('filename=')[1]
   if (!fileName) {
     fileName = res.headers['content-disposition'].split('UTF-8\'\'')[1]
   }
   fileName = fileName ? fileName.replace(/\"/g, '') : 'file.xlsx'
-  downloadElement.download =
-    decodeURI(
-      fileName
-    ) || '' // 下载后文件名
+  fileName = decodeURI(fileName) || ''
+  downloadFileWithBuffer(res.data, fileName, 'application/vnd.ms-excel;charset=utf-8')
+}
+
+export function downloadFileWithBuffer(data, name, type) {
+  var blob = new Blob([data], {
+    type: type || ''
+  })
+  var downloadElement = document.createElement('a')
+  var href = window.URL.createObjectURL(blob) // 创建下载的链接
+  downloadElement.href = href
+  downloadElement.download = name // 下载后文件名
   document.body.appendChild(downloadElement)
   downloadElement.click() // 点击下载
   document.body.removeChild(downloadElement) // 下载完成移除元素
   window.URL.revokeObjectURL(href) // 释放掉blob对象
+}
+
+/**
+ * 获取百度地图
+ */
+export function getBaiduMap() {
+  if (!global.BMap) {
+    global.BMap = {}
+    global.BMap._preloader = new Promise((resolve, reject) => {
+      global._initBaiduMap = function() {
+        resolve(global.BMap)
+        global.document.body.removeChild($script)
+        global.BMap._preloader = null
+        global._initBaiduMap = null
+      }
+      const $script = document.createElement('script')
+      global.document.body.appendChild($script)
+      $script.src = `https://api.map.baidu.com/api?v=3.0&ak=mK88Pr44OK97tFxyPIX6UOlRDdwhD0ZL&callback=_initBaiduMap`
+    })
+    return global.BMap._preloader
+  } else if (!global.BMap._preloader) {
+    return Promise.resolve(global.BMap)
+  } else {
+    return global.BMap._preloader
+  }
 }

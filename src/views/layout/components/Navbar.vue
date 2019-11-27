@@ -1,8 +1,10 @@
 <template>
   <div class="navbar">
     <img
-      :src="logo"
-      class="logo" >
+      v-src="logo"
+      :key="logo"
+      class="logo"
+      @click="enterCustoemBoard" >
     <div class="nav-items-container">
       <el-menu
         :default-active="navActiveIndex"
@@ -50,7 +52,7 @@
         <div
           :style="{'margin-bottom': manage ? '15px' : '0'}"
           class="handel-item hr-top"
-          style="pointer-events: none;"><i class="wukong wukong-versions"/>版本 V10.0.191029</div>
+          style="pointer-events: none;"><i class="wukong wukong-versions"/>版本 V10.0.191125</div>
         <div
           v-if="manage"
           class="handel-box">
@@ -78,7 +80,7 @@
 </template>
 
 <script>
-import { adminGroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
+// import { adminGroupsTypeListAPI } from '@/api/systemManagement/RoleAuthorization'
 import { systemMessageUnreadCountAPI } from '@/api/common'
 
 import SystemMessage from './SystemMessage'
@@ -102,8 +104,8 @@ export default {
   props: {
     navIndex: {
       type: [Number, String],
-      default: 0,
-      authRedirect: ''
+      default: 0
+      // authRedirect: ''
     }
   },
   data() {
@@ -130,7 +132,8 @@ export default {
       'manage',
       'oa',
       'project',
-      'navActiveIndex'
+      'navActiveIndex',
+      'biRouters'
     ]),
     items() {
       var tempsItems = []
@@ -210,19 +213,6 @@ export default {
       this.$store.commit('SET_NAVACTIVEINDEX', this.navIndex)
     }
 
-    if (
-      this.manage &&
-      (!this.manage.system ||
-        (this.manage.system && !this.manage.system.read)) &&
-        (!this.manage.configSet ||
-        (this.manage.configSet && !this.manage.configSet.read)) &&
-        (!this.manage.users ||
-        (this.manage.users && !this.manage.users.read)) &&
-        this.manage.permission
-    ) {
-      this.getAuthPath()
-    }
-
     // 消息数
     this.getSystemUnreadNum('visible')
 
@@ -244,7 +234,7 @@ export default {
     },
     enterSystemSet() {
       this.$router.push({
-        path: this.authRedirect || '/manager'
+        name: 'manage'
       })
     },
     handleClick(type) {
@@ -280,18 +270,6 @@ export default {
       this.$store.commit('SET_LANG', item.lang)
       this.langName = item.name
     },
-    getAuthPath() {
-      adminGroupsTypeListAPI()
-        .then(res => {
-          if (res.data && res.data.length) {
-            const item = res.data[0]
-            this.authRedirect = `/manager/role-auth/${item.roleType}/${encodeURI(
-              item.name
-            )}`
-          }
-        })
-        .catch(() => {})
-    },
 
     /**
      * 获取系统未读消息数
@@ -305,7 +283,7 @@ export default {
         this.sendSystemUnreadNum()
         this.intervalId = setInterval(() => {
           this.sendSystemUnreadNum()
-        }, 5000)
+        }, 10000)
       }
     },
 
@@ -320,6 +298,15 @@ export default {
             this.intervalId = null
           }
         })
+    },
+
+    /**
+     * 有客户权限点击logo 进入仪表盘
+     */
+    enterCustoemBoard() {
+      if (this.crm) {
+        this.$router.push('/crm/workbench')
+      }
     }
   }
 }
@@ -340,6 +327,7 @@ export default {
     display: block;
     flex-shrink: 0;
     margin-right: 15px;
+    cursor: pointer;
   }
   .nav-items-container {
     flex: 1;

@@ -16,28 +16,39 @@ function checkAuth(router, authInfo) {
     if (!metaInfo.requiresAuth) {
       return true
     } else {
-      if (metaInfo.index == 0) {
-        return !!authInfo[metaInfo.type]
-      } else if (metaInfo.index == 1) {
-        if (authInfo[metaInfo.type]) {
-          return !!authInfo[metaInfo.type][metaInfo.subType]
-        }
-        return false
-      } else {
-        var typeAuth = authInfo[metaInfo.type]
-        for (let index = 0; index < metaInfo.subType.length; index++) {
-          const field = metaInfo.subType[index]
-          typeAuth = typeAuth[field]
-          if (typeAuth && metaInfo.subType.length - 1 == index) {
+      if (metaInfo.permissions) {
+        authInfo = { ...authInfo }
+        return forCheckPermission(metaInfo.permissions, authInfo)
+      } else if (metaInfo.permissionList) { // 一个路由受多个权限判断
+        for (let index = 0; index < metaInfo.permissionList.length; index++) {
+          authInfo = { ...authInfo }
+          const permission = forCheckPermission(metaInfo.permissionList[index], authInfo)
+          if (permission) {
             return true
-          } else if (!typeAuth) {
-            return false
           }
         }
+        return false
       }
     }
   }
   return true
+}
+
+/**
+ * 循环关键字检查权限
+ * @param {*} permissions 权限关键数组
+ * @param {*} authInfo
+ */
+const forCheckPermission = function(permissions, authInfo) {
+  for (let index = 0; index < permissions.length; index++) {
+    const key = permissions[index]
+    authInfo = authInfo[key]
+    if (!authInfo) {
+      return false
+    } else if (permissions.length - 1 === index) {
+      return true
+    }
+  }
 }
 
 /**
@@ -61,52 +72,94 @@ const filterAsyncRouter = function(routers, authInfo) {
   return res
 }
 
+
+/**
+ * 忽略用于菜单展示的传参路由
+ * @param {*} routers
+ * @param {*} authInfo
+ */
+const filterIgnoreRouter = function(routers) {
+  const res = []
+  routers.forEach(router => {
+    const tmp = {
+      ...router
+    }
+    if (!tmp.ignore) {
+      if (tmp.children) {
+        tmp.children = filterIgnoreRouter(tmp.children)
+      }
+      res.push(tmp)
+    }
+  })
+  return res
+}
+
 /**
  * 路由重定向和角色路由完善
  */
-const perfectRouter = function(routers, authInfo, result) {
+const perfectRouter = function(authInfo, result) {
   getGroupData(authInfo, (groupData) => {
+    const routerObj = {}
+    let addRouter = []
     let redirect = ''
-    for (let index = 0; index < routers.length; index++) {
-      const element = routers[index]
-      // 角色模块，加入菜单 后期菜单会刚才标准效果
-      if (groupData.requiresAuth && element.name == 'manager') {
-        for (let childIndex = 0; childIndex < element.children.length; childIndex++) {
-          const child = element.children[childIndex]
-          if (child.meta.subType == 'permission') {
-            child.meta.menuChildren = groupData.list.map(item => {
-              return {
-                name: 'role-auth',
-                path: `role-auth/${item.roleType}/${encodeURI(item.name)}`,
-                meta: {
-                  title: item.name
-                }
+    for (let index = 0; index < asyncRouterMap.length; index++) {
+      const mainRouter = asyncRouterMap[index]
+      const accessedRouters = filterAsyncRouter(mainRouter.router, authInfo)
+
+      for (let childIndex = 0; childIndex < accessedRouters.length; childIndex++) {
+        const element = accessedRouters[childIndex]
+
+        // 处理系统管理逻辑
+        if (mainRouter.type == 'manage' && groupData.requiresAuth) {
+          const authItem = getAuthItem(accessedRouters)
+          const roleMenus = groupData.list.map(item => {
+            return {
+              name: 'role-auth',
+              path: `role-auth/${item.roleType}/${encodeURI(item.name)}`,
+              ignore: true, // 不加入路由 仅菜单展示
+              meta: {
+                title: item.name
               }
-            })
+            }
+          })
+
+          if (roleMenus && roleMenus.length > 0) {
+            const roleFirstChild = authItem.children[0]
+            roleFirstChild.meta.redirect = roleMenus[0].path
+            authItem.children = authItem.children.concat(roleMenus)
           }
         }
+
 
         if (element.children && element.children.length > 0) {
           const firstChild = element.children[0]
-          if (firstChild.meta.subType == 'permission') {
-            element.redirect = element.path + '/' + firstChild.meta.menuChildren[0].path
-          } else {
-            element.redirect = element.path + '/' + firstChild.path
+          const childPath = firstChild.meta ? firstChild.meta.redirect || firstChild.path : firstChild.path
+          element.redirect = element.path + '/' + childPath
+        }
+
+        // 获取跳转
+        if (element.redirect) {
+          if (!redirect) {
+            redirect = element.redirect
           }
-        }
-      } else {
-        if (!element.redirect && element.children && element.children.length > 0) {
-          element.redirect = element.path + '/' + element.children[0].path
+
+          // 为导航头 获取每个模块的 重定向 url
+          accessedRouters.push({
+            path: `/${mainRouter.type}`,
+            name: mainRouter.type,
+            redirect: element.redirect,
+            hidden: true
+          })
+
+          break
         }
       }
-      // 获取跳转
-      if (element.redirect && !redirect) {
-        redirect = element.redirect
-      }
+      routerObj[mainRouter.type] = accessedRouters
+      addRouter = addRouter.concat(filterIgnoreRouter(accessedRouters))
     }
 
     if (redirect) {
-      routers.push({
+      addRouter.push({
         path: '/',
         redirect: redirect,
         hidden: true
@@ -114,11 +167,25 @@ const perfectRouter = function(routers, authInfo, result) {
     }
 
     if (result) {
-      result(routers)
+      result({ router: routerObj, addRouter })
     }
   })
 }
 
+/**
+ *
+ */
+function getAuthItem(array) {
+  return array.find(item => {
+    return item.name == 'manage-role-auth'
+  })
+}
+
+/**
+ * 获取角色列表
+ * @param {*} authInfo 授权信息
+ * @param {*} result 回调
+ */
 function getGroupData(authInfo, result) {
   if (authInfo && authInfo.manage && authInfo.manage.permission) {
     adminGroupsTypeListAPI().then((response) => {
@@ -141,47 +208,35 @@ function getGroupData(authInfo, result) {
 const permission = {
   state: {
     addRouters: [],
-    crmRouters: {
-      name: 'crm',
-      children: []
-    },
-    biRouters: {
-      name: 'bi',
-      children: []
-    },
-    manageRouters: {
-      name: 'manager',
-      children: []
-    },
-    oaRouters: {
-      name: 'oa',
-      children: []
-    }
+    crmRouters: [],
+    taskExamineRouters: [],
+    workLogRouters: [],
+    addressBookRouters: [],
+    projectRouters: [],
+    biRouters: [],
+    manageRouters: []
+
+
   },
   mutations: {
-    SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers
-      for (let index = 0; index < routers.length; index++) {
-        const element = routers[index]
-        if (element.name == 'oa') {
-          state.oaRouters = element
-        } else if (element.name == 'crm') {
-          state.crmRouters = element
-        } else if (element.name == 'bi') {
-          state.biRouters = element
-        } else if (element.name == 'manager') {
-          state.manageRouters = element
-        }
-      }
+    SET_ROUTERS: (state, data) => {
+      state.addRouters = data.addRouter
+      state.crmRouters = data.router.crm || []
+      state.workLogRouters = data.router.workLog || []
+      state.taskExamineRouters = data.router.taskExamine || []
+      state.addressBookRouters = data.router.addressBook || []
+      state.projectRouters = data.router.project || []
+      state.biRouters = data.router.bi || []
+      state.manageRouters = data.router.manage || []
     },
 
     /**
      * 客户管理待办消息数
      */
     SET_CRMROUTERSNUM: (state, num) => {
-      const messageItem = state.crmRouters.children[1]
-      messageItem.meta.num = num
-      Vue.set(state.crmRouters.children, 1, messageItem)
+      const messageItem = state.crmRouters[1]
+      messageItem.children[0].meta.num = num
+      Vue.set(state.crmRouters, 1, messageItem)
     },
 
     SET_GROUPSLIST: (state, data) => {
@@ -194,8 +249,8 @@ const permission = {
       state
     }, data) {
       return new Promise(resolve => {
-        const accessedRouters = filterAsyncRouter(asyncRouterMap, data)
-        perfectRouter(accessedRouters, data, (routers) => {
+        // 路由完善
+        perfectRouter(data, (routers) => {
           commit('SET_ROUTERS', routers)
           resolve()
         })

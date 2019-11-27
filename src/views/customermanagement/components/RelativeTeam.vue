@@ -47,6 +47,7 @@
     <el-dialog
       v-loading="loading"
       :visible.sync="editPermissionShow"
+      :close-on-click-modal="false"
       :append-to-body="true"
       title="编辑权限"
       width="400px">
@@ -91,7 +92,7 @@ import {
 } from '@/api/customermanagement/contract'
 
 export default {
-  name: 'RelativeTeam', // 相关团队  可能再很多地方展示 放到客户管理目录下
+  name: 'RelativeTeam', // 团队成员  可能再很多地方展示 放到客户管理目录下
   components: {
     TeamsHandle
   },
@@ -214,6 +215,7 @@ export default {
                       message: '操作成功'
                     })
                     this.loading = false
+                    this.$bus.emit('crm-tab-num-update')
                     this.getDetail()
                   })
                   .catch(() => {
@@ -235,6 +237,7 @@ export default {
      * 添加操作
      */
     handleCallBack(data) {
+      this.$bus.emit('crm-tab-num-update')
       this.getDetail()
     },
 

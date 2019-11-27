@@ -77,6 +77,67 @@ export function crmIndexGetRecordListAPI(data) {
   })
 }
 
+// 遗忘提醒
+export function crmIndexForgottenCustomerAPI(data) {
+  return request({
+    url: 'Crm/Instrument/forgottenCustomerCount',
+    method: 'post',
+    data: data
+  })
+}
+
+export function crmIndexForgottenCustomerListAPI(data) {
+  return request({
+    url: 'Crm/Instrument/forgottenCustomerPageList ',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+// 排行榜
+export function crmIndexRankingAPI(data) {
+  return request({
+    url: 'Crm/Instrument/ranking',
+    method: 'post',
+    data: data
+  })
+}
+
+// 仪表盘排序
+export function crmIndexSortAPI(data) {
+  return request({
+    url: 'Crm/Instrument/queryModelSort',
+    method: 'post',
+    data: data
+  })
+}
+
+// 仪表盘设置
+export function crmIndexSetSortAPI(data) {
+  return request({
+    url: 'Crm/Instrument/setModelSort',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+// 逾期未联系客户接口
+export function crmIndexUnContactCustomerAPI(data) {
+  return request({
+    url: 'Crm/Instrument/unContactCustomerPageList',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 
 // 获取简报 跟进记录信息
 // export function crmIndexGetRecordListAPI(data) {

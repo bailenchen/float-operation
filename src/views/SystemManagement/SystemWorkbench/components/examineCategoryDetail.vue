@@ -133,20 +133,24 @@ export default {
   },
   filters: {
     formatedScopeInfo(data) {
-      var name = ''
-      var structures = data['deptIds']
-        ? data['deptIds']
-        : []
-      for (let index = 0; index < structures.length; index++) {
-        const element = structures[index]
-        name = name + element.name + '、'
+      const structures = data['deptIds'] || []
+      let strName = structures
+        .map(item => {
+          return item.name
+        })
+        .join('、')
+
+      const users = data['userIds'] || []
+      const userName = users
+        .map(item => {
+          return item.realname
+        })
+        .join('、')
+
+      if (strName && userName) {
+        strName += '、'
       }
-      var users = data['userIds'] ? data['userIds'] : []
-      for (let index = 0; index < users.length; index++) {
-        const element = users[index]
-        name =
-          name + element.realname + (index === users.length - 1 ? '' : '、')
-      }
+      const name = strName + userName
       return name || '全公司'
     },
     // 标题

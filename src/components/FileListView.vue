@@ -5,18 +5,14 @@
       :key="fileIndex"
       class="file-item">
       <img
-        :src="getFileTypeIcon(file.filePath)"
+        :src="getFileTypeIcon(file.name)"
         alt=""
         class="pic-icon">
-      <span class="file-name">
-        {{ file.name }}
-      </span>
-      <span class="file-size">
-        ( {{ file.size }} )
-      </span>
-      <span class="down" @click="downloadClick(file)">
-        下载
-      </span>
+      <div class="file-name">{{ file.name }}</div>
+      <div class="file-size">( {{ file.size | fontSizeValue }} )</div>
+      <div class="down" @click="downloadClick(file)">
+        <span>下载</span>
+      </div>
     </div>
   </div>
 </template>
@@ -26,10 +22,17 @@
  * 文件列表
  * @props list {Array} 文件列表
  */
-import { downloadFile } from '@/utils'
+import { downloadFile, getFileIconWithSuffix } from '@/utils'
+
+import { fileSize } from '@/utils/index'
 
 export default {
   name: 'FileListView',
+  filters: {
+    fontSizeValue(size) {
+      return fileSize(size)
+    }
+  },
   props: {
     list: {
       type: Array,
@@ -51,29 +54,8 @@ export default {
       } else {
         ext = ''
       }
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
-        return require('@/assets/img/file_img.png')
-      } else if (this.arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-        return require('@/assets/img/file_word.png')
-      } else if (this.arrayContain(['rar', 'zip'], ext)) {
-        return require('@/assets/img/file_zip.png')
-      } else if (ext === 'pdf') {
-        return require('@/assets/img/file_pdf.png')
-      } else if (ext === 'ppt' || ext === 'pptx') {
-        return require('@/assets/img/file_ppt.png')
-      } else if (this.arrayContain(['txt', 'text'], ext)) {
-        return require('@/assets/img/file_txt.png')
-      }
-      return require('@/assets/img/file_unknown.png')
-    },
-    arrayContain(array, string) {
-      return array.some(item => {
-        return item === string
-      })
+
+      return getFileIconWithSuffix(ext)
     },
     downloadClick(file) {
       downloadFile({ path: file.filePath, name: file.name })
@@ -95,8 +77,8 @@ export default {
       justify-content: flex-start;
 
       .pic-icon {
-        width: 14px;
-        margin-right: 16px;
+        width: 12px;
+        margin-right: 8px;
       }
       .file-name {
         margin-right: 14px;
@@ -109,7 +91,9 @@ export default {
         color: #2362FB;
         cursor: pointer;
         &:hover {
-          text-decoration: underline;
+          span {
+            text-decoration: underline;
+          }
         }
       }
     }

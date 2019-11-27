@@ -173,9 +173,9 @@ export default {
         tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       }
       if (this.crm.business && this.crm.business.index) {
-        tempsTabs.push({ label: '商机', name: 'RelativeBusiness' })
+        tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
       }
-      tempsTabs.push({ label: '附件', name: 'RelativeFiles' })
+      tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
     },

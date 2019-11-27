@@ -34,7 +34,7 @@
         :class="['el-icon-arrow-up', { 'is-reverse' : showPopover}]"/>
       <div
         v-if="dataValue.length == 0"
-        class="add-item">{{ placeholder }}</div>
+        class="add-item text-one-line">{{ placeholder }}</div>
     </flexbox>
     <slot
       v-else
@@ -151,6 +151,7 @@ export default {
   }
   .add-item {
     padding: 5px;
+    padding-right: 20px;
     color: #ddd;
     cursor: pointer;
   }

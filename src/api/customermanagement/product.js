@@ -118,3 +118,29 @@ export function crmProductDownloadExcelAPI(data) {
     responseType: 'blob'
   })
 }
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmProductFileListAPI(data) {
+  return request({
+    url: 'CrmProduct/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmProductNumAPI(data) {
+  return request({
+    url: 'CrmProduct/num',
+    method: 'post',
+    data: data
+  })
+}

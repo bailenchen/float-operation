@@ -4,6 +4,7 @@
       <members-dep
         :dep-checked-data="filterValue.strucs"
         :user-checked-data="filterValue.users"
+        radio
         @popoverSubmit="userStrucSelect">
         <flexbox slot="membersDep" class="user-box">
           <i v-if="avatarData.showIcon" class="wk wk-multi-user user-icon" />
@@ -12,20 +13,18 @@
             :name="avatarData.realname"
             :size="28"
             :src="avatarData.img" />
-          <span class="username">{{ filterText }}</span>
+          <span class="username">{{ avatarData.realname }}</span>
           <span class="el-icon-caret-bottom icon" />
         </flexbox>
       </members-dep>
       <time-type-select
         :width="190"
+        default-type="month"
         @change="timeTypeChange"/>
-        <!--<flexbox justify="flex-end" class="others">
-        <el-button
-          type="primary"
-          icon="el-icon-menu">
-          管理仪表盘
-        </el-button>
-      </flexbox>-->
+      <el-button
+        class="sort-btn"
+        icon="wk wk-manage"
+        @click="setSortShow = true" />
     </flexbox>
 
     <div
@@ -52,7 +51,9 @@
               <div class="title">
                 {{ item.label }}
               </div>
-              <div class="number">
+              <div
+                v-fit-text="{ fontSize: 24 }"
+                class="number">
                 {{ item.num }}
               </div>
             </div>
@@ -72,26 +73,27 @@
       </div>
     </div>
 
-    <flexbox class="section">
-      <sale-statistics
-        :filter-value="filterValue"
-        class="left" />
-      <data-statistics
-        :filter-value="filterValue"
-        class="right" />
-    </flexbox>
-    <flexbox class="section">
-      <received-statistics
-        :filter-value="filterValue"
-        class="left" />
-      <performance-chart
-        :filter-value="filterValue"
-        class="right" />
-    </flexbox>
-    <flexbox class="section">
-      <sales-funnel
-        :filter-value="filterValue"
-        class="left" />
+    <flexbox
+      class="section"
+      align="stretch">
+      <div class="left">
+        <component
+          v-for="(item, index) in sortLeft"
+          :key="index"
+          :is="item.component"
+          :filter-value="filterValue"
+          class="left-content"
+        />
+      </div>
+      <div class="right">
+        <component
+          v-for="(item, index) in sortRight"
+          :key="index"
+          :is="item.component"
+          :filter-value="filterValue"
+          class="right-content"
+        />
+      </div>
     </flexbox>
 
     <!-- 销售简报列表 -->
@@ -106,6 +108,12 @@
       :field-list="fieldReportList"
       :paging="reportData.paging"
       :sortable="reportData.sortable"/>
+
+    <!-- 排序 -->
+    <set-sort
+      v-if="setSortShow"
+      :visible.sync="setSortShow"
+      @save="getModelSort" />
   </div>
 </template>
 
@@ -114,7 +122,8 @@ import {
   crmIndexIndex,
   crmIndexIndexListAPI,
   crmQueryRecordConuntAPI,
-  crmIndexGetRecordListAPI
+  crmIndexGetRecordListAPI,
+  crmIndexSortAPI
 } from '@/api/customermanagement/workbench'
 
 import SaleStatistics from './components/saleStatistics'
@@ -122,11 +131,16 @@ import DataStatistics from './components/dataStatistics'
 import ReceivedStatistics from './components/receivedStatistics'
 import SalesFunnel from './components/salesFunnel'
 import PerformanceChart from './components/performanceChart'
+import RankingStatistics from './components/RankingStatistics'
+import ForgetRemind from './components/ForgetRemind'
 import timeTypeSelect from '@/components/timeTypeSelect'
 import ReportList from './components/reportList'
+import SetSort from './components/SetSort'
 import membersDep from '@/components/selectEmployee/membersDep'
 
 import { mapGetters } from 'vuex'
+import { separator } from '@/filters/vue-numeral-filter/filters'
+import FitText from '@/directives/fitText'
 
 /**
  * TODO 2、员工部门筛选选择，
@@ -135,15 +149,21 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Workbench',
+  directives: {
+    FitText
+  },
   components: {
-    SaleStatistics,
-    DataStatistics,
-    ReceivedStatistics,
-    SalesFunnel,
-    PerformanceChart,
+    SaleStatistics, // 1 合同金额目标及完成情况
+    DataStatistics, // 2 数据汇总
+    ReceivedStatistics, // 3 回款金额目标及完成情况
+    SalesFunnel, // 5 销售漏斗
+    PerformanceChart, // 4 业绩指标完成率 (回款金额)
+    RankingStatistics, // 7 排行榜
+    ForgetRemind, // 6 遗忘提醒
     timeTypeSelect,
     ReportList,
-    membersDep
+    membersDep,
+    SetSort
   },
   data() {
     return {
@@ -160,7 +180,10 @@ export default {
       filterValue: {
         users: [],
         strucs: [],
-        timeLine: 'year'
+        timeLine: {
+          type: 'default',
+          value: 'month'
+        }
       },
 
       loading: false,
@@ -176,7 +199,12 @@ export default {
         params: null,
         paging: true,
         sortable: false
-      }
+      },
+
+      // 排序
+      sortLeft: [],
+      sortRight: [],
+      setSortShow: false
     }
   },
   computed: {
@@ -184,34 +212,28 @@ export default {
       'userInfo',
       'collapse'
     ]),
-    // 筛选员工/部门展示文本
-    filterText() {
-      const users = this.filterValue.users || []
-      const strucs = this.filterValue.strucs || []
-      const userLen = users.length
-      const strucsLen = strucs.length
-      if (userLen === 1 && strucsLen === 0) return users[0].realname
-      if (strucsLen === 1 && userLen === 0) return strucs[0].name
-      let str = ''
-      if (userLen > 0) str = userLen + '个员工'
-      if (strucsLen > 0) str = `${str}，${strucsLen}个部门`
-      return str || '本人及下属'
-    },
     // 如果只筛选一个人则头像显示当前被筛选人的头像，否则显示默认错误头像
     avatarData() {
       const users = this.filterValue.users || []
+      if (users.length) {
+        return users[0]
+      }
       const strucs = this.filterValue.strucs || []
-      if (users.length === 1 && strucs.length === 0) return users[0]
+      if (strucs.length) {
+        return {
+          realname: strucs[0].name,
+          img: ''
+        }
+      }
       return {
         showIcon: true,
-        realname: '',
-        img: ''
+        realname: '本人及下属'
       }
     },
     // 销售简报百分比提示语
     rateText() {
       if (this.filterValue.timeLine.type === 'custom') return ''
-      const type = this.filterValue.timeLine.value || 'year'
+      const type = this.filterValue.timeLine.value || 'month'
       return {
         today: '较昨天',
         yesterday: '较前天',
@@ -240,7 +262,8 @@ export default {
     }
   },
   created() {
-    // this.filterValue.users.push(this.userInfo)
+    this.getBriefData()
+    this.getModelSort()
   },
   mounted() {
     this.$nextTick(() => {
@@ -272,18 +295,29 @@ export default {
      * 员工部门选择
      */
     userStrucSelect(users, strucs) {
-      this.filterValue.users = users
-      this.filterValue.strucs = strucs
+      if (!users.length && !strucs.length) {
+        this.filterValue.users = [this.userInfo]
+        this.filterValue.strucs = []
+      } else {
+        this.filterValue.users = users
+        this.filterValue.strucs = strucs
+      }
     },
 
     /**
      * 获取请求参数
      */
     getBaseParams() {
-      const params = {
-        userIds: this.filterValue.users.map(item => item.userId).join(',') || '',
-        deptIds: this.filterValue.strucs.map(item => item.id).join(',') || ''
+      const params = {}
+
+      if (this.filterValue.strucs.length) {
+        params.isUser = 0
+        params.deptId = this.filterValue.strucs[0].id
+      } else {
+        params.isUser = 1
+        params.userId = this.filterValue.users.length ? this.filterValue.users[0].userId : ''
       }
+
       if (this.filterValue.timeLine.type) {
         if (this.filterValue.timeLine.type === 'custom') {
           params.startTime = this.filterValue.timeLine.startTime.replace(/\./g, '-')
@@ -302,7 +336,13 @@ export default {
       crmIndexIndex(this.getBaseParams()).then(res => {
         this.loading = false
         this.briefList.forEach(item => {
-          item.num = res.data[item.field] || 0 // 数量
+          if (item.field == 'contractMoney' ||
+          item.field == 'businessMoney' ||
+          item.field == 'receivablesMoney') {
+            item.num = separator(res.data[item.field] || 0)
+          } else {
+            item.num = res.data[item.field] || 0 // 数量
+          }
           if (Number(res.prev[item.field]) !== 0) {
             // status状态   top 增长  bottom 下降 '' 持平
             item.status = Number(res.prev[item.field]) > 0 ? 'top' : 'bottom'
@@ -358,6 +398,7 @@ export default {
 
         this.reportData.crmType = item.type
         this.reportData.params = this.getBaseParams()
+
         if (item.type == 'record') {
           this.fieldReportList = [
             {
@@ -378,11 +419,58 @@ export default {
           this.reportData.request = crmIndexIndexListAPI
           this.reportData.paging = true
           this.reportData.sortable = 'custom'
+
+          // 合同金额回款金额 通过的
+          if (item.field === 'receivablesMoney' || item.field === 'contractMoney') {
+            this.reportData.params.checkStatus = 1
+
+            // 合同金额 回款金额 加入 moneyType 1合同 2回款
+            this.reportData.params.moneyType = {
+              contractMoney: 1,
+              receivablesMoney: 2
+            }[item.field]
+          }
         }
 
         this.reportData.params.label = item.labelValue
         this.reportListShow = true
       }
+    },
+
+    /**
+     * 排序
+     */
+    getModelSort() {
+      /**
+       * 1 合同金额目标及完成情况
+       * 2 数据汇总
+       * 3 回款金额目标及完成情况
+       * 4 业绩指标完成率 (回款金额)
+       * 5 销售漏斗
+       * 6 遗忘提醒
+       * 7 排行榜
+       */
+
+      crmIndexSortAPI().then(res => {
+        const left = res.data.left || []
+        const right = res.data.right || []
+
+        const components = ['SaleStatistics', 'DataStatistics', 'ReceivedStatistics', 'PerformanceChart', 'SalesFunnel', 'ForgetRemind', 'RankingStatistics']
+
+        this.sortLeft = left.map(item => {
+          item.component = components[item.modelId - 1]
+          return item
+        }).filter(item => {
+          return item.isHidden == 0
+        })
+
+        this.sortRight = right.map(item => {
+          item.component = components[item.modelId - 1]
+          return item
+        }).filter(item => {
+          return item.isHidden == 0
+        })
+      }).catch()
     }
   }
 }
@@ -398,6 +486,8 @@ export default {
 
     .head {
       margin-bottom: 10px;
+      position: relative;
+
       .user-box {
         width: unset;
         height: 36px;
@@ -428,15 +518,11 @@ export default {
       /deep/ .type-select {
         height: 36px;
       }
-      .others {
-        flex: 1;
-        .el-button {
-          font-size: 12px;
-          padding: 10px 12px;
-          /deep/ [class*="el-icon-"] + span {
-            margin-left: 0;
-          }
-        }
+
+      .sort-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
       }
     }
 
@@ -473,6 +559,7 @@ export default {
           margin: 10px;
           .brief-item__body {
             flex: 1;
+            overflow: hidden;
             .icon-box {
               width: 36px;
               height: 36px;
@@ -481,12 +568,15 @@ export default {
               border-radius: 50%;
               margin-right: 10px;
               margin-left: 15px;
+              flex-shrink: 0;
+
               .icon {
                 color: white;
                 font-size: 19px;
               }
             }
             .info {
+              overflow: hidden;
               .title {
                 font-size: 13px;
               }
@@ -495,6 +585,10 @@ export default {
                 font-weight: bold;
                 line-height: 1;
                 margin-top: 8px;
+                margin-right: 5px;
+                // white-space: nowrap;
+                // text-overflow: ellipsis;
+                overflow: hidden;
               }
             }
           }
@@ -542,9 +636,20 @@ export default {
       .left {
         width: calc(60.5% - 20px);
         margin-right: 20px;
+        &-content {
+          height: 400px;
+        }
       }
       .right {
         width: 39.5%;
+        &-content {
+          height: 400px;
+        }
+      }
+
+      .left-content + .left-content,
+      .right-content + .right-content {
+        margin-top: 18px;
       }
     }
   }

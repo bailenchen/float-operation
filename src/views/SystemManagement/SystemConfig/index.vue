@@ -13,12 +13,14 @@
 
       <div class="section">
         <div class="name">企业名称</div>
-        <el-input v-model="systemName"/>
+        <el-input
+          v-model="systemName"
+          :maxlength="50"/>
       </div>
       <div class="section">
         <div class="name">企业logo</div>
         <el-upload
-          v-if="systemImage == ''"
+          v-if="!systemImage"
           :show-file-list="false"
           :http-request="fileUpload"
           drag
@@ -30,7 +32,7 @@
         <div
           v-else
           class="upload-show">
-          <img :src="systemImage">
+          <img v-src="systemImage">
           <i
             class="el-icon-remove icon-delete"
             @click="deleteSystemImage"/>

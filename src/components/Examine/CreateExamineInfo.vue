@@ -155,13 +155,21 @@ export default {
         // 授权审批人 需要验证关联人
         this.$refs.form.validate(valid => {
           if (valid) {
-            result() // 成功回调
+            result(true) // 成功回调
           } else {
-            return false
+            // 提示第一个error
+            for (let index = 0; index < this.$refs.form.fields.length; index++) {
+              const ruleField = this.$refs.form.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+            result(false)
           }
         })
       } else {
-        result() // 成功回调
+        result(true) // 成功回调
       }
     },
     // 字段的值更新
@@ -187,7 +195,7 @@ export default {
 .crm-create-box {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 10px;
+  padding: 0 10px 15px;
 }
 
 .crm-create-item {

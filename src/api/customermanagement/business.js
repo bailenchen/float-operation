@@ -127,7 +127,7 @@ export function crmBusinessQueryContract(data) {
 // 团队操作
 
 /**
- * 相关团队创建
+ * 团队成员创建
  * @param {*} data
  */
 export function crmBusinessSettingTeamSave(data) {
@@ -206,6 +206,32 @@ export function crmBusinessQueryContactsAPI(data) {
 export function crmBusinessSetContactsAPI(data) {
   return request({
     url: 'CrmBusiness/setContacts',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmBusinessFileListAPI(data) {
+  return request({
+    url: 'CrmBusiness/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmBusinessNumAPI(data) {
+  return request({
+    url: 'CrmBusiness/num',
     method: 'post',
     data: data
   })

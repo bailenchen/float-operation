@@ -2,6 +2,7 @@
   <el-dialog
     :title="edit_id ? '编辑场景' : '新建场景'"
     :visible.sync="visible"
+    :close-on-click-modal="false"
     :append-to-body="true"
     width="800px"
     @close="handleCancel">
@@ -149,8 +150,8 @@
       class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
       <el-button
-        type="primary"
-        @click="handleConfirm">确 定</el-button>
+        v-debounce="handleConfirm"
+        type="primary">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -297,7 +298,7 @@ export default {
         fieldName: '',
         name: '',
         formType: '',
-        condition: 'is',
+        condition: 'contains',
         value: '',
         typeOption: [],
         statusOption: [],
@@ -411,6 +412,19 @@ export default {
           formItem.formType === 'user'
         ) {
           formItem.value = []
+        }
+
+        // 条件校准
+        if (
+          formItem.formType == 'select' ||
+        formItem.formType == 'checkbox' ||
+        formItem.formType == 'user' ||
+        formItem.formType == 'checkStatus' ||
+        formItem.formType == 'dealStatus'
+        ) {
+          formItem.condition = 'is'
+        } else {
+          formItem.condition = 'contains'
         }
       }
 

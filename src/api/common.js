@@ -204,3 +204,41 @@ export function systemUserInfoAPI(data) {
     data: data
   })
 }
+
+/**
+ * 系统消息按类别删除
+ * @param {*} data
+ */
+export function systemMessageClearAPI(data) {
+  return request({
+    url: 'system/message/clear',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 系统消息删除
+ * @param {*} data
+ */
+export function systemMessageDeleteByIdAPI(data) {
+  return request({
+    url: 'system/message/deleteById',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ *
+ * @param {*} data
+ */
+export function downloadFileAPI(url) {
+  return request({
+    url: url,
+    method: 'post',
+    data: {},
+    responseType: 'blob'
+  })
+}
+

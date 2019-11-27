@@ -54,6 +54,7 @@
         :title="roleTitle"
         :visible.sync="newRoleVisible"
         :before-close="newRoleClose"
+        :close-on-click-modal="false"
         width="30%">
         <label class="label-title">角色名称</label>
         <el-input
@@ -423,9 +424,11 @@ export default {
             userId: val.userId,
             roleId: this.roleActive.roleId
           }).then(res => {
-            this.userLoading = true
+            this.userLoading = false
             this.getUserList()
             this.$message.success('删除成功')
+          }).catch(() => {
+            this.userLoading = false
           })
         })
         .catch(() => {

@@ -8,7 +8,6 @@ export default {
   data() {
     return {
       axisOption: null,
-      axisChart: null,
 
       loading: false,
 
@@ -113,17 +112,17 @@ export default {
             monthData.push(element.thisMonth)
             lastMonthData.push(element.lastMonth)
             lastYeatMonthData.push(element.lastYear)
-            chainRatioData.push(element.lastYearGrowth)
-            yearOnYearData.push(element.lastMonthGrowth)
+            chainRatioData.push(element.lastMonthGrowth)
+            yearOnYearData.push(element.lastYearGrowth)
             xAxis.push(element.month)
           }
           this.axisOption.xAxis[0].data = xAxis
           this.axisOption.series[0].data = monthData
-          this.axisOption.series[1].data = lastMonthData
-          this.axisOption.series[2].data = lastYeatMonthData
-          this.axisOption.series[3].data = chainRatioData
-          this.axisOption.series[4].data = yearOnYearData
-          this.axisChart.setOption(this.axisOption, true)
+          // this.axisOption.series[1].data = lastMonthData
+          // this.axisOption.series[2].data = lastYeatMonthData
+          this.axisOption.series[1].data = chainRatioData
+          this.axisOption.series[2].data = yearOnYearData
+          this.chartObj.setOption(this.axisOption, true)
         })
         .catch(() => {
           this.loading = false
@@ -131,7 +130,7 @@ export default {
     },
     /** 柱状图 */
     initAxis() {
-      this.axisChart = echarts.init(document.getElementById('axismain'))
+      this.chartObj = echarts.init(document.getElementById('axismain'))
       this.axisOption = {
         color: [
           '#6CA2FF',
@@ -153,8 +152,8 @@ export default {
         legend: {
           data: [
             '当月' + this.typeName,
-            '上月' + this.typeName,
-            '去年当月' + this.typeName,
+            // '上月' + this.typeName,
+            // '去年当月' + this.typeName,
             '环比增长',
             '同比增长'
           ],
@@ -260,42 +259,42 @@ export default {
           },
           data: []
         },
-        {
-          name: '上月' + this.typeName,
-          type: 'bar',
-          yAxisIndex: 0,
-          barWidth: 10,
-          markPoint: {
-            data: [{
-              type: 'max',
-              name: '最大值'
-            },
-            {
-              type: 'min',
-              name: '最小值'
-            }
-            ]
-          },
-          data: []
-        },
-        {
-          name: '去年当月' + this.typeName,
-          type: 'bar',
-          yAxisIndex: 0,
-          barWidth: 10,
-          markPoint: {
-            data: [{
-              type: 'max',
-              name: '最大值'
-            },
-            {
-              type: 'min',
-              name: '最小值'
-            }
-            ]
-          },
-          data: []
-        },
+        // {
+        //   name: '上月' + this.typeName,
+        //   type: 'bar',
+        //   yAxisIndex: 0,
+        //   barWidth: 10,
+        //   markPoint: {
+        //     data: [{
+        //       type: 'max',
+        //       name: '最大值'
+        //     },
+        //     {
+        //       type: 'min',
+        //       name: '最小值'
+        //     }
+        //     ]
+        //   },
+        //   data: []
+        // },
+        // {
+        //   name: '去年当月' + this.typeName,
+        //   type: 'bar',
+        //   yAxisIndex: 0,
+        //   barWidth: 10,
+        //   markPoint: {
+        //     data: [{
+        //       type: 'max',
+        //       name: '最大值'
+        //     },
+        //     {
+        //       type: 'min',
+        //       name: '最小值'
+        //     }
+        //     ]
+        //   },
+        //   data: []
+        // },
         {
           name: '环比增长',
           type: 'line',
@@ -344,7 +343,7 @@ export default {
         }
         ]
       }
-      this.axisChart.setOption(this.axisOption, true)
+      this.chartObj.setOption(this.axisOption, true)
     }
   },
 

@@ -4,7 +4,7 @@
     class="performance-chart card">
     <flexbox class="card-title">
       <div class="card-title-left">
-        <span class="icon wk wk-funnel" />
+        <span class="icon wk wk-performance" />
         <span class="text">
           业绩指标完成率 ({{ optionName }})
         </span>

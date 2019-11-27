@@ -137,12 +137,6 @@ export default {
         { title: '负责人', value: '' },
         { title: '创建时间', value: '' }
       ],
-      tabNames: [
-        { label: '活动', name: 'Activity' },
-        { label: '基本信息', name: 'CRMBaseInfo' },
-        { label: '附件', name: 'RelativeFiles' },
-        { label: '操作记录', name: 'RelativeHandle' }
-      ],
       tabCurrentName: 'Activity',
       // 编辑操作
       isCreate: false,
@@ -158,7 +152,16 @@ export default {
       importList: []
     }
   },
-  computed: {},
+  computed: {
+    tabNames() {
+      return [
+        { label: '活动', name: 'Activity' },
+        { label: '基本信息', name: 'CRMBaseInfo' },
+        { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
+        { label: '操作记录', name: 'RelativeHandle' }
+      ]
+    }
+  },
   mounted() {},
   methods: {
     /**
@@ -197,7 +200,7 @@ export default {
         id: this.id
       })
         .then(res => {
-          this.importList = res.data.concat(res.data)
+          this.importList = res.data
           this.loading = false
         })
         .catch(() => {

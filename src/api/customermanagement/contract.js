@@ -124,7 +124,7 @@ export function crmContractRecordIndex(data) {
 // 团队操作
 
 /**
- * 相关团队创建
+ * 团队成员创建
  * @param {*} data
  */
 export function crmContractSettingTeamSave(data) {
@@ -178,6 +178,32 @@ export function crmQueryReceivablesPlansByContractId(data) {
 export function crmContractCancelAPI(data) {
   return request({
     url: 'CrmContract/contractDiscard',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmContractFileListAPI(data) {
+  return request({
+    url: 'CrmContract/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * tab数量
+ * @param {*} data
+ *
+ */
+export function crmContractNumAPI(data) {
+  return request({
+    url: 'CrmContract/num',
     method: 'post',
     data: data
   })

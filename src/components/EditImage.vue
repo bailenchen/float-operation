@@ -4,6 +4,7 @@
     :title="title"
     :width="width"
     :append-to-body="true"
+    :close-on-click-modal="false"
     :visible.sync="showDialog"
     @close="hiddenView">
     <flexbox class="content">

@@ -50,6 +50,7 @@
                         <el-input
                           :value="item.className"
                           v-model="renameInput"
+                          :maxlength="10"
                           size="mini"/>
                         <div class="btn-box">
                           <el-button
@@ -76,11 +77,9 @@
                     v-if="canDeleteTaskClass"
                     @click="delectTaskListClick(item, index)">删除列表</p>
                 </div>
-                <img
-                  ref="imgPopoverSlot"
+                <i
                   slot="reference"
-                  class="img-gd"
-                  src="@/assets/img/project/task_ellipsis.png">
+                  class="el-icon-more img-gd"/>
               </el-popover>
             </div>
             <el-progress
@@ -107,6 +106,7 @@
               :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
               @click="showDetailView(element, index , i)">
               <xr-avatar
+                v-if="element.createUser"
                 :name="element.createUser.realname"
                 :id="element.createUser.userId"
                 :size="24"
@@ -227,6 +227,7 @@
           class="input-btn">
           <el-input
             v-model="taskListName"
+            :maxlength="10"
             size="small"
             placeholder="列表名"/>
           <div class="button-box">
@@ -249,6 +250,7 @@
       :id="taskID"
       :detail-index="detailIndex"
       :detail-section="detailSection"
+      :no-listener-class="['board-item']"
       @on-handle="detailHandle"
       @close="closeBtn"/>
   </div>
@@ -579,6 +581,7 @@ export default {
       })
         .then(res => {
           val.className = this.renameInput
+          this.$message.success('编辑成功')
         })
         .catch(() => {})
       val.renameShow = false
@@ -593,6 +596,7 @@ export default {
         workId: this.workId
       })
         .then(res => {
+          this.$message.success('新建成功')
           this.taskListName = ''
           this.getList()
         })
@@ -805,7 +809,7 @@ export default {
       }
       .img-gd {
         float: right;
-        width: 15px;
+        color: #666;
         cursor: pointer;
       }
     }

@@ -17,21 +17,23 @@
         :src="bigImgUrl"
         :style="bigImgStyle"
         alt="">
-      <flexbox
+      <div
         v-if="!bigShowType.isImage"
         class="file-show">
-        <div class="file-icon">
-          <img :src="bigShowType.icon" >
-        </div>
-        <div class="file-handle">
-          <!-- <el-button type="primary"
-                     @click.native="fileHandle('online')">在线预览</el-button> -->
+        <div class="title">该附件格式不支持预览，请下载后查看</div>
+        <i
+          class="el-icon-close"
+          @click="closeViewer" />
+        <div class="content">
+          <img
+            :src="bigShowType.icon"
+            class="file-icon">
           <el-button
             type="primary"
             plain
-            @click.native="fileHandle('download')">下载</el-button>
+            @click.native="downloadFile">下载</el-button>
         </div>
-      </flexbox>
+      </div>
       <!-- tips -->
       <transition name="fade">
         <div
@@ -44,8 +46,7 @@
       <flexbox
         v-if="bigShowType.isImage"
         class="handleContainer">
-        <div
-          class="handle-box" >
+        <div class="handle-box">
           <i
             class="wk wk-zoom-in"
             @click="enlarge" />
@@ -57,10 +58,12 @@
             @click="rotate" />
           <i
             class="wk wk-download"
-            @click="downloadImg(bigImgUrl, bigImgName)" />
+            @click="downloadFile" />
         </div>
 
-        <div class="icon-btn" @click="closeViewer">
+        <div
+          class="icon-btn"
+          @click="closeViewer">
           <i class="el-icon-close" />
         </div>
       </flexbox>
@@ -76,12 +79,12 @@
             :key="index"
             @click="switchImgUrl(index, $event)">
             <img
-              v-if="isShowImage(item.url)"
-              :src="item.url"
+              v-if="isShowImage(item.name)"
+              :src="item.src"
               alt="">
             <img
-              v-if="!isShowImage(item.url)"
-              :src="getFileTypeIconWithSuffix(item.url)"
+              v-else
+              :src="getFileTypeIconWithSuffix(item.name)"
               alt="">
           </li>
         </ul>
@@ -93,7 +96,9 @@
       @click="handlePrev"
       @mouseenter="enterLeft"
       @mouseout="outLeft">
-      <div v-show="leftArrowShow" class="icon-btn leftArrow">
+      <div
+        v-show="leftArrowShow"
+        class="icon-btn leftArrow">
         <i class="el-icon-arrow-left" />
       </div>
     </div>
@@ -103,7 +108,9 @@
       @click="handleNext"
       @mouseenter="enterRight"
       @mouseout="outRight">
-      <div v-show="rightArrowShow" class="icon-btn rightArrow">
+      <div
+        v-show="rightArrowShow"
+        class="icon-btn rightArrow">
         <i class="el-icon-arrow-right" />
       </div>
     </div>
@@ -111,7 +118,12 @@
 </template>
 
 <script>
-import { getMaxIndex, downloadImage } from '@/utils'
+import {
+  getMaxIndex,
+  getFileIconWithSuffix,
+  downloadFileWithBuffer,
+  getImageData } from '@/utils'
+import { downloadFileAPI } from '@/api/common'
 
 export default {
   name: 'VuePictureViewer',
@@ -139,7 +151,7 @@ export default {
       rightArrowShow: false,
       // 图片容器数据
       rotateDeg: 0,
-      bigImgUrl: '',
+      // bigImgUrl: '',
       bigShowType: { isImage: true, icon: '' }, // 不是图片的时候 展示 icon
       bigImgName: '',
       imgLength: 0,
@@ -185,9 +197,24 @@ export default {
       const fileName = this.bigImgName.slice(0, this.bigImgName.indexOf('.'))
 
       return `${fileName} （${this.imgIndex + 1} / ${this.imgLength}）`
+    },
+
+    currentFile() {
+      return this.imgData[this.imgIndex]
+    },
+
+    bigImgUrl() {
+      return this.currentFile.src
     }
   },
   mounted() {
+    for (let index = 0; index < this.imgData.length; index++) {
+      const element = this.imgData[index]
+      if (this.isShowImage(element.name)) {
+        this.getImageSrc(element.url, element.name, index)
+      }
+    }
+
     document
       .getElementById('vue-picture-viewer')
       .addEventListener('click', e => {
@@ -197,9 +224,10 @@ export default {
     this.imgLength = this.imgData.length
     this.imgIndex = this.selectIndex
     this.$nextTick(() => {
-      this.bigImgUrl = this.imgData[this.imgIndex].url
-      this.getShowTypeInfo(this.bigImgUrl)
+      // this.bigImgUrl = this.imgData[this.imgIndex].url
       this.bigImgName = this.imgData[this.imgIndex].name
+      this.getShowTypeInfo(this.bigImgName)
+
       if (this.imgLength > 1) {
         // 大于1的时候才会展示缩略图
         var item = this.$refs.thumbnailItem
@@ -223,6 +251,13 @@ export default {
     }
   },
   methods: {
+    getImageSrc(url, name, index) {
+      getImageData(url).then((data) => {
+        this.$set(this.imgData[index], 'blob', data.blob)
+        this.$set(this.imgData[index], 'src', data.src)
+      }).catch(() => {})
+    },
+
     // init
     init() {
       const screenW =
@@ -335,9 +370,9 @@ export default {
         i.className = ''
       })
       this.imgIndex = num
-      this.bigImgUrl = this.imgData[num].url
-      this.getShowTypeInfo(this.bigImgUrl)
+      // this.bigImgUrl = this.imgData[num].url
       this.bigImgName = this.imgData[num].name
+      this.getShowTypeInfo(this.bigImgName)
       e.currentTarget.className = 'borderActive'
       if (this.bigShowType.isImage) {
         this.init()
@@ -355,9 +390,10 @@ export default {
         }
 
         this.imgIndex--
-        this.bigImgUrl = this.imgData[this.imgIndex].url
-        this.getShowTypeInfo(this.bigImgUrl)
+        // this.bigImgUrl = this.imgData[this.imgIndex].url
         this.bigImgName = this.imgData[this.imgIndex].name
+        this.getShowTypeInfo(this.bigImgName)
+
         var item = this.$refs.thumbnailItem
         item.forEach(function(i) {
           i.className = ''
@@ -379,9 +415,9 @@ export default {
         }
 
         this.imgIndex++
-        this.bigImgUrl = this.imgData[this.imgIndex].url
-        this.getShowTypeInfo(this.bigImgUrl)
+        // this.bigImgUrl = this.imgData[this.imgIndex].url
         this.bigImgName = this.imgData[this.imgIndex].name
+        this.getShowTypeInfo(this.bigImgName)
 
         var item = this.$refs.thumbnailItem
         item.forEach(function(i) {
@@ -402,10 +438,6 @@ export default {
         _this.showTips = false
       }, 10000)
     },
-    // 下载图片
-    downloadImg(data, filename) {
-      downloadImage(data, filename)
-    },
     // 鼠标左移
     enterLeft() {
       this.leftArrowShow = true
@@ -425,86 +457,20 @@ export default {
       this.$emit('close-viewer')
     },
     /** 附件逻辑 */
-    fileHandle(type) {
-      var a = document.createElement('a')
-      a.href = this.bigImgUrl
-      a.download = this.bigImgName ? this.bigImgName : '文件'
-      a.target = '_black'
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-    },
-    getShowTypeInfo(url) {
-      const temps = url ? url.split('.') : []
-      var ext = ''
-      if (temps.length > 0) {
-        ext = temps[temps.length - 1]
+    downloadFile() {
+      if (this.currentFile.src) {
+        downloadFileWithBuffer(this.currentFile.blob, this.currentFile.name)
       } else {
-        ext = ''
+        downloadFileAPI(this.currentFile.url).then(res => {
+          const blob = new Blob([res.data], {
+            type: ''
+          })
+          downloadFileWithBuffer(blob, this.currentFile.name)
+        }).catch(() => {})
       }
-      ext = ext.toLowerCase()
-      var icon = ''
-      var isImage = true
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
-        isImage = true
-        icon = require('@/assets/img/file_img.png')
-      } else if (this.arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_word.png')
-      } else if (this.arrayContain(['rar', 'zip'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_zip.png')
-      } else if (ext === 'pdf') {
-        isImage = false
-        icon = require('@/assets/img/file_pdf.png')
-      } else if (ext === 'ppt' || ext === 'pptx') {
-        isImage = false
-        icon = require('@/assets/img/file_ppt.png')
-      } else if (this.arrayContain(['txt', 'text'], ext)) {
-        isImage = false
-        icon = require('@/assets/img/file_txt.png')
-      } else {
-        isImage = false
-        icon = require('@/assets/img/file_unknown.png')
-      }
-      this.bigShowType = { isImage: isImage, icon: icon }
     },
-    getFileTypeIconWithSuffix(url) {
-      const temps = url ? url.split('.') : []
-      var ext = ''
-      if (temps.length > 0) {
-        ext = temps[temps.length - 1]
-      } else {
-        ext = ''
-      }
-      ext = ext.toLowerCase()
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext)) {
-        return require('@/assets/img/file_img.png')
-      } else if (this.arrayContain(['mp4', 'mp3', 'avi'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['xlsx', 'xls', 'XLSX', 'XLS'], ext)) {
-        return require('@/assets/img/file_excle.png')
-      } else if (this.arrayContain(['doc', 'docx', 'DOC', 'DOCX'], ext)) {
-        return require('@/assets/img/file_word.png')
-      } else if (this.arrayContain(['rar', 'zip'], ext)) {
-        return require('@/assets/img/file_zip.png')
-      } else if (ext === 'pdf') {
-        return require('@/assets/img/file_pdf.png')
-      } else if (ext === 'ppt' || ext === 'pptx') {
-        return require('@/assets/img/file_ppt.png')
-      } else if (this.arrayContain(['txt', 'text'], ext)) {
-        return require('@/assets/img/file_txt.png')
-      }
-      return require('@/assets/img/file_unknown.png')
-    },
-    isShowImage(url) {
-      const temps = url ? url.split('.') : []
+    getShowTypeInfo(name) {
+      const temps = name ? name.split('.') : []
       var ext = ''
       if (temps.length > 0) {
         ext = temps[temps.length - 1]
@@ -512,10 +478,29 @@ export default {
         ext = ''
       }
 
-      if (this.arrayContain(['jpg', 'png', 'gif', 'jpeg'], ext.toLowerCase())) {
-        return true
+      var icon = getFileIconWithSuffix(ext)
+      var isImage = ['jpg', 'png', 'gif', 'jpeg'].includes(ext.toLowerCase())
+      this.bigShowType = { isImage: isImage, icon: icon }
+    },
+    getFileTypeIconWithSuffix(name) {
+      const temps = name ? name.split('.') : []
+      var ext = ''
+      if (temps.length > 0) {
+        ext = temps[temps.length - 1]
+      } else {
+        ext = ''
       }
-      return false
+      return getFileIconWithSuffix(ext)
+    },
+    isShowImage(name) {
+      const temps = name ? name.split('.') : []
+      var ext = ''
+      if (temps.length > 0) {
+        ext = temps[temps.length - 1]
+      } else {
+        ext = ''
+      }
+      return ['jpg', 'png', 'gif', 'jpeg'].includes(ext.toLowerCase())
     },
     arrayContain(array, string) {
       return array.some(item => {
@@ -618,6 +603,7 @@ export default {
     border-radius: 20px;
     padding: 0 20px;
     margin-right: 30px;
+    user-select: none;
 
     i {
       font-size: 20px;
@@ -714,7 +700,7 @@ ul li {
 
 /* 添加border */
 .borderActive {
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
 }
 /* 修改原生的滚动条 */
 ::-webkit-scrollbar {
@@ -743,25 +729,53 @@ ul li {
   margin-left: -225px;
   background-color: white;
   border-radius: 3px;
-  padding: 0 80px;
-  .file-icon {
-    flex: 1;
-    img {
-      display: block;
-      width: 100px;
-    }
+  padding: 15px;
+
+  .el-icon-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #909399;
+    cursor: pointer;
   }
 
-  .file-handle {
-    button {
-      display: block;
-      width: 120px;
-      margin-left: 0;
+  .el-icon-close:hover {
+    color: $xr-color-primary;
+  }
+
+  .title {
+    position: relative;
+    font-size: 13px;
+    color: #666;
+    padding-left: 6px;
+  }
+
+  .title::before {
+    content: '*';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: red;
+  }
+
+  .content {
+    text-align: center;
+    margin-top: 40px;
+
+    .file-icon {
+      width: 100px;
+      width: 85px;
+      vertical-align: middle;
+    }
+
+    .el-button {
+      vertical-align: middle;
+      width: 100px;
+      margin-left: 50px;;
       margin-right: 0;
       height: 34px;
-    }
-    button:first-child {
-      margin-bottom: 20px;
     }
   }
 }

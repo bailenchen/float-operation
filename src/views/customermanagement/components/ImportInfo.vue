@@ -3,14 +3,14 @@
     class="content">
     <div class="content-title">基本信息</div>
     <p
-      v-for="(item , index) in list"
+      v-for="(item , index) in showList"
       :key="index"
       class="detail-cell">
       <span class="detail-cell__label">
         {{ item.name }}
       </span><br>
       <span class="detail-cell__value">
-        {{ item.value }}
+        {{ getValueContent(item) }}
       </span>
     </p>
   </div>
@@ -28,13 +28,64 @@ export default {
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    showList() {
+      return this.list.filter(item => {
+        return item.formType !== 'file'
+      })
+    }
+  },
   watch: {},
   mounted() {},
 
   beforeDestroy() {},
   methods: {
+    getValueContent(item) {
+      if (item.formType === 'map_address') {
+        return item.value ? item.value.detailAddress : ''
+      } else if (
+        item.formType === 'structure' ||
+        item.formType === 'user' ||
+        item.formType === 'checkbox') {
+        if (
+          !item.value ||
+        Object.prototype.toString.call(item.value) !== '[object Array]'
+        ) {
+          return ''
+        }
 
+        const field = {
+          structure: 'name',
+          user: 'realname',
+          checkbox: ''
+        }[item.formType]
+        return item.value
+          .map(item => {
+            return field ? item[field] : item
+          })
+          .join('，')
+      } else if (
+        item.formType === 'customer' ||
+        item.formType === 'business' ||
+        item.formType === 'contract' ||
+        item.formType === 'contacts' ||
+        item.formType === 'category' ||
+        item.formType === 'statusName' ||
+        item.formType === 'typeName') {
+        const field = {
+          customer: 'customerName',
+          business: 'businessName',
+          contract: 'contractNum',
+          contacts: 'contactsName',
+          category: 'categoryName',
+          statusName: 'statusName',
+          typeName: 'typeName'
+        }[item.formType]
+        return item.value ? item.value[field] : ''
+      }
+
+      return item.value
+    }
   }
 }
 </script>

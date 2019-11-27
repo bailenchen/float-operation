@@ -7,11 +7,9 @@
         slot="header"
         class="header">
         <span class="text">{{ title }}</span>
-        <img
+        <i
           class="el-icon-close rt"
-          src="@/assets/img/task_close.png"
-          alt=""
-          @click="close">
+          @click="close" />
       </div>
       <div class="content">
         <el-form
@@ -229,18 +227,25 @@ export default {
   flex-direction: column;
   height: 100%;
   .header {
-    line-height: 40px;
     height: 40px;
-    padding: 0 0 0 10px;
-    .text {
-      font-size: 17px;
-    }
+    line-height: 40px;
+    padding: 0 10px;
     .el-icon-close {
-      margin-right: 0;
-      width: 40px;
-      line-height: 40px;
+      display: block;
+      font-size: 24px;
+      color: #909399;
+      margin-right: -10px;
       padding: 10px;
       cursor: pointer;
+    }
+
+    .el-icon-close:hover {
+      color: $xr-color-primary;
+    }
+
+    .text {
+      font-size: 17px;
+      font-weight: bold;
     }
   }
   .content {

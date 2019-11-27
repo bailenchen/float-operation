@@ -325,7 +325,7 @@ export default {
         isNull: 0,
         name: '流程说明',
         setting: [],
-        inputTips: '请填写相关注意事项，方便员工在申请时查阅，限制输入2000字',
+        inputTips: '请填写相关注意事项，方便员工在申请时查阅，限制输入300字',
         value: this.handle.data ? this.handle.data.remarks : ''
       })
 
@@ -558,14 +558,29 @@ export default {
     padding: 10px;
     cursor: pointer;
   }
+  .close:hover {
+    color: $xr-color-primary;
+  }
 }
 .create-name {
-  font-size: 12px;
-  padding: 0 10px;
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  padding-left: 12px;
+  position: relative;
   margin-left: 15px;
   margin-bottom: 10px;
-  color: #333333;
-  border-left: 2px solid #46cdcf;
+}
+
+.create-name::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 14px;
+  border-radius: 2px;
+  width: 4px;
+  background-color: $xr-color-primary;
 }
 
 .crm-create-body {

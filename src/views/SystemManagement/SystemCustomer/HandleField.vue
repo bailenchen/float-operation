@@ -74,7 +74,8 @@
           v-if="form"
           :field="form"
           :can-transform="canTransform"
-          :transform-data="transformData"/>
+          :transform-data="transformData"
+          :can-unique="canUnique"/>
       </el-aside>
     </el-container>
     <!-- 表单预览 -->
@@ -178,6 +179,9 @@ export default {
     // 能转移
     canTransform() {
       return this.$route.params.type == 'crm_leads'
+    },
+    canUnique() {
+      return this.$route.params.type != 'oa_examine' // 办公审批不允许设置唯一
     }
   },
   watch: {
@@ -556,7 +560,7 @@ export default {
     .el-main {
       padding: 0;
       .selected {
-        border-left: 2px solid #46cdcf;
+        border-left: 2px solid $xr-color-primary;
         background: #f7f8fa;
       }
       .no-list {

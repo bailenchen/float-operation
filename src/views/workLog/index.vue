@@ -1,8 +1,9 @@
 <template>
   <div
     v-infinite-scroll="getList"
-    ref="mainScroll"
+    :key="scrollKey"
     class="main"
+    infinite-scroll-distance="100"
     infinite-scroll-disabled="scrollDisabled">
     <div>
       <div class="work-log scroll-body">
@@ -22,7 +23,7 @@
                   <span>{{ userDoneStatus.label }}</span>
                 </span>
               </div>
-              <div class="text">
+              <div v-if="headData && headData.timeRemind" class="text">
                 {{ headData.timeRemind }}
               </div>
             </div>
@@ -49,7 +50,7 @@
         </div>
 
 
-        <create-log v-if="showAdd" class="add-card card" @update="addLogSuccess" />
+        <create-log v-if="showAdd" ref="createLog" class="add-card card" @update="addLogSuccess" />
 
         <flexbox class="filter-control card">
           <xh-user-cell
@@ -72,6 +73,7 @@
               :label="item.label"
               :value="item.value" />
           </el-select>
+          <span class="total-count">已筛选出<span>{{ totalCount }}</span>项</span>
         </flexbox>
       </div>
 
@@ -82,12 +84,14 @@
         <log-item
           :data="item"
           :index="index"
+          :show-history-btn="showUserSelect"
           @read="handleRead(index)"
           @add-comment="handleAddComment"
           @delete="handleDelete"
           @edit="handleEdit"
           @relate-detail="enterRelateDetail"
-          @report-detail="reportSelect" />
+          @report-detail="reportSelect"
+          @check-history="checkUserHistory" />
       </div>
     </div>
     <p
@@ -134,7 +138,8 @@ import {
   journalEdit,
   journalQueryBulletinAPI,
   journalQueryRecordCountAPI,
-  journalQueryBulletinByTypeAPI } from '@/api/oamanagement/journal'
+  journalQueryBulletinByTypeAPI,
+  journalGetLogWelcomeAPI } from '@/api/oamanagement/journal'
 import { crmIndexIndex } from '@/api/customermanagement/workbench'
 
 import ReportMenu from './components/ReportMenu'
@@ -213,6 +218,8 @@ export default {
       loading: false, // loading
       noMore: false,
       page: 1,
+      totalCount: 0,
+      scrollKey: Date.now(),
 
       options: [
         { label: '全部', value: 0 },
@@ -290,7 +297,7 @@ export default {
       if (reg.test(this.userInfo.realname) || !this.userInfo.sex) {
         return this.userInfo.realname
       }
-      return this.userInfo.realname.slice(0, 1) + this.userInfo.sex === 1 ? '先生' : '女士'
+      return this.userInfo.realname.slice(0, 1) + (this.userInfo.sex === 1 ? '先生' : '女士')
     }
   },
   watch: {
@@ -310,6 +317,8 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     this.logType = to.params.type
+    this.totalCount = 0
+    this.$refs.createLog.showMore = false
     this.filterForm = {
       categoryId: 0,
       createUserId: ''
@@ -343,7 +352,8 @@ export default {
       this.loading = true
       crmIndexIndex({
         type: 'today',
-        userIds: this.userInfo.userId
+        isUser: 1,
+        userId: this.userInfo.userId
       }).then(res => {
         this.loading = false
         const data = res.data || {}
@@ -357,40 +367,48 @@ export default {
     },
 
     getLogRemind() {
+      this.getNetworkWelcome()
       const hour = moment().format('H')
       if (hour < 12) {
-        const num = Math.floor(Math.random() * 6)
+        // const num = Math.floor(Math.random() * 6)
         this.headData.timeLabel = '早上好'
-        this.headData.timeRemind = [
-          '给自己一个微笑，告诉自己今天会更美好',
-          '生命的意义在于和别人的不同之处',
-          '美丽的早晨，灿烂的你，美好的一天在等你',
-          '暖暖的阳光照，柔柔的轻风笑，绵绵的岁月长，真真的祝福到',
-          '美好的一天开始了，每天给自己一个希望',
-          '蓝天是宁静的，空气是清新的，阳光是明媚的'
-        ][num]
+        // this.headData.timeRemind = [
+        //   '给自己一个微笑，告诉自己今天会更美好',
+        //   '生命的意义在于和别人的不同之处',
+        //   '美丽的早晨，灿烂的你，美好的一天在等你',
+        //   '暖暖的阳光照，柔柔的轻风笑，绵绵的岁月长，真真的祝福到',
+        //   '美好的一天开始了，每天给自己一个希望',
+        //   '蓝天是宁静的，空气是清新的，阳光是明媚的'
+        // ][num]
       } else if (hour < 18) {
-        const num = Math.floor(Math.random() * 6)
+        // const num = Math.floor(Math.random() * 6)
         this.headData.timeLabel = '下午好'
-        this.headData.timeRemind = [
-          '认真对待工作，终有一天，你的每一份努力，都将绚烂成花',
-          '通过辛勤的工作获得的财富才是人生的大快事',
-          '生命之中总是有太多的感动，难忘的是你灿烂的笑容',
-          '努力工作，永远不要向命运低头，不要向生活妥协',
-          '生命，是一树花开，或安静或热烈',
-          '人生，最快乐的莫过于奋斗'
-        ][num]
+        // this.headData.timeRemind = [
+        //   '认真对待工作，终有一天，你的每一份努力，都将绚烂成花',
+        //   '通过辛勤的工作获得的财富才是人生的大快事',
+        //   '生命之中总是有太多的感动，难忘的是你灿烂的笑容',
+        //   '努力工作，永远不要向命运低头，不要向生活妥协',
+        //   '生命，是一树花开，或安静或热烈',
+        //   '人生，最快乐的莫过于奋斗'
+        // ][num]
       } else {
-        const num = Math.floor(Math.random() * 5)
+        // const num = Math.floor(Math.random() * 5)
         this.headData.timeLabel = '晚上好'
-        this.headData.timeRemind = [
-          '工作一天辛苦了，这世界不会辜负每一份努力和坚持',
-          '无须缅怀昨天，不必奢望明天，只要认真过好每个今',
-          '每一份坚持都是成功的累积，相信自己，总会遇到惊喜',
-          '不要失去希望，你永远不知道明天会带来什么',
-          '工作一天辛苦了，人生，最快乐的莫过于奋斗'
-        ][num]
+        // this.headData.timeRemind = [
+        //   '工作一天辛苦了，这世界不会辜负每一份努力和坚持',
+        //   '无须缅怀昨天，不必奢望明天，只要认真过好每个今',
+        //   '每一份坚持都是成功的累积，相信自己，总会遇到惊喜',
+        //   '不要失去希望，你永远不知道明天会带来什么',
+        //   '工作一天辛苦了，人生，最快乐的莫过于奋斗'
+        // ][num]
       }
+    },
+
+    getNetworkWelcome() {
+      journalGetLogWelcomeAPI().then(res => {
+        this.headData.timeRemind = res.data
+      }).catch(() => {
+      })
     },
 
     /**
@@ -398,11 +416,10 @@ export default {
      */
     refreshList() {
       this.page = 1
+      this.listData = []
       this.noMore = false
-      this.$nextTick(() => {
-        this.listData = []
-        this.$refs.mainScroll.scrollTo(0, 1)
-      })
+      this.totalCount = 0
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -447,6 +464,7 @@ export default {
           this.listData = this.listData.concat(res.data.list)
           this.page++
         }
+        this.totalCount = res.data.totalRow
         this.noMore = res.data.lastPage
       }).catch(() => {
         this.noMore = true
@@ -558,6 +576,18 @@ export default {
         this.filterForm.createUserId = data.value.map(item => {
           return item.userId
         }).join(',')
+      } else {
+        this.filterForm.createUserId = ''
+      }
+    },
+
+    /**
+     * 查看某人历史
+     */
+    checkUserHistory(user) {
+      this.userSelects = user ? [user] : []
+      if (user) {
+        this.filterForm.createUserId = user.userId
       } else {
         this.filterForm.createUserId = ''
       }
@@ -692,7 +722,7 @@ export default {
         contract: [
           {
             label: '合同名称',
-            prop: 'num'
+            prop: 'name'
           },
           {
             label: '合同状态',

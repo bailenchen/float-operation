@@ -58,16 +58,12 @@
         class="selection-bar">
         <div class="selected—title">已选中<span class="selected—count">{{ selectionList.length }}</span>项</div>
         <flexbox class="selection-items-box">
-          <flexbox
+          <el-button
             v-for="(item, index) in selectionButtonList"
+            :icon="item.icon"
             :key="index"
-            class="selection-item"
-            @click.native="selectionBarClick(item.type)">
-            <img
-              :src="item.icon"
-              class="selection-item-icon" >
-            <div class="selection-item-name">{{ item.name }}</div>
-          </flexbox>
+            type="primary"
+            @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
         </flexbox>
       </flexbox>
     </div>
@@ -222,7 +218,7 @@ export default {
         {
           name: '已跟进',
           type: 'follow',
-          icon: require('@/assets/img/selection_alloc.png')
+          icon: 'wk wk-edit'
         }
       ], // 操作按钮列表
       /** 控制详情展示 */
@@ -312,6 +308,9 @@ export default {
 
   watch: {
     show() {
+      if (this.showOptions && this.options.length > 0) {
+        this.optionsType = this.options[0].value
+      }
       this.initTableHead()
     }
   },
@@ -494,14 +493,7 @@ export default {
     margin-right: 10px;
   }
   .wk-help {
-    cursor: pointer;
     margin-left: 5px;
-    font-size: 12px;
-    color: #dcdfe6;
-  }
-
-  .wk-help:hover {
-    color: $xr-color-primary;
   }
 }
 .option-bar {
@@ -511,13 +503,13 @@ export default {
 /** 勾选操作 */
 .selection-bar {
   font-size: 12px;
-  height: 34px;
+  height: 35px;
   color: #777;
 
   .selected—title {
     flex-shrink: 0;
     padding-right: 20px;
-    border-right: 1px solid $xr--table-border-color;
+    color: #333;
     .selected—count {
       color: $xr-color-primary;
     }
@@ -525,22 +517,31 @@ export default {
 }
 
 .selection-items-box {
-  .selection-item {
-    width: auto;
-    padding: 15px;
-    .selection-item-icon {
-      display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 15px;
+
+  .el-button {
+    color: #666;
+    background-color: $xr--background-color-base;
+    border-color: $xr--background-color-base;
+    font-size: 12px;
+    height: 28px;
+    border-radius: 14px;
+    /deep/ i {
+      font-size: 12px;
       margin-right: 5px;
-      width: 15px;
-      height: 15px;
     }
-    .selection-item-name {
-      cursor: pointer;
-      color: #777;
-    }
-    .selection-item-name:hover {
-      color: $xr-color-primary;
-    }
+  }
+
+  .el-button--primary:hover {
+    background: $xr-color-primary;
+    border-color: $xr-color-primary;
+    color: #ffffff;
+  }
+
+  .el-button + .el-button {
+    margin-left: 15px;
   }
 }
 

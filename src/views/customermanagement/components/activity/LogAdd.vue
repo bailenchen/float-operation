@@ -104,9 +104,9 @@
           @click="barClick('business')">关联商机</el-button>
       </el-popover>
       <el-button
+        v-debounce="sendClick"
         type="primary"
-        class="send-btn"
-        @click="sendClick">发布</el-button>
+        class="send-btn">发布</el-button>
     </div>
 
     <!-- 附件 -->
@@ -135,7 +135,6 @@ import AddImageList from '@/components/quickAdd/AddImageList'
 import AddFileList from '@/components/quickAdd/AddFileList'
 import AddRelateList from '@/components/quickAdd/AddRelateList'
 
-import moment from 'moment'
 import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
 
 export default {
@@ -212,7 +211,6 @@ export default {
   },
   created() {
     this.selectContactsId = this.contactsId || ''
-    this.nextTime = moment().format('YYYY-MM-DD HH:mm:ss')
     this.getDefalutFollowType()
   },
 
@@ -233,7 +231,7 @@ export default {
      * 重置数据
      */
     resetInfo() {
-      this.nextTime = moment().format('YYYY-MM-DD HH:mm:ss')
+      this.nextTime = ''
       this.isUnfold = false
       // 输入法
       this.content = ''
@@ -248,7 +246,7 @@ export default {
       // 展示关联弹窗
       this.showRelativeType = ''
       this.batchId = guid()
-      this.followType = ''
+      this.getDefalutFollowType()
     },
 
     /**

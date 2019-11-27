@@ -1,6 +1,7 @@
 <template>
   <el-dialog
     :visible.sync="showDialog"
+    :close-on-click-modal="false"
     title="审批类型"
     width="500px"
     @close="closeView">

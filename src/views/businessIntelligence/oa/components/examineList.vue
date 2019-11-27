@@ -1,6 +1,5 @@
 <template>
   <slide-view
-    v-loading="loading"
     :listener-ids="listenerIDs"
     :no-listener-ids="noListenerIDs"
     :no-listener-class="noListenerClass"
@@ -8,38 +7,49 @@
     class="d-view"
     @close="hideView">
     <div
-      v-if="!loading"
-      class="t-section">
-      <span class="t-name">{{ name }}</span>&nbsp;
-      <span class="t-des">({{ name }}申请：<span class="t-value">{{ totalCount }}次</span></span>
-      <span
-        v-if="showDes"
-        class="t-des">&nbsp;&nbsp;&nbsp;&nbsp;{{ desInfo }}：<span class="t-value">{{ sumData + desUnit }}</span></span><span class="t-des">) </span>
-      <img
-        class="t-close"
-        src="@/assets/img/task_close.png"
-        @click="hideView" >
+      class="examine-list-main">
+      <div
+        class="t-section">
+        <span class="t-name">{{ name }}</span>&nbsp;
+        <span class="t-des">({{ name }}申请：<span class="t-value">{{ totalCount }}次</span></span>
+        <span
+          v-if="showDes"
+          class="t-des">&nbsp;&nbsp;&nbsp;&nbsp;{{ desInfo }}：<span class="t-value">{{ sumData + desUnit }}</span></span><span class="t-des">) </span>
+      </div>
+      <div
+        v-infinite-scroll="getList"
+        :key="scrollKey"
+        class="t-content"
+        infinite-scroll-distance="100"
+        infinite-scroll-disabled="scrollDisabled">
+
+        <examine-cell
+          v-for="(item, index) in list"
+          :key="index"
+          :data="item"
+          :show-handle="false"
+          @on-handle="examineCellHandle"/>
+        <p
+          v-if="loading"
+          class="scroll-bottom-tips">加载中...</p>
+        <p
+          v-if="noMore"
+          class="scroll-bottom-tips">没有更多了</p>
+      </div>
     </div>
 
-    <examine-section
-      id="oa-log-statistics"
-      :list="list"
-      class="t-content"
-      @handle="refreshList">
-      <p
-        slot="load"
-        class="load">
-        <el-button
-          :loading="loadMoreLoading"
-          type="text">{{ loadMoreLoading ? '加载更多' : '没有更多了' }}</el-button>
-      </p>
-    </examine-section>
+    <!-- CRM详情 -->
+    <c-r-m-full-screen-detail
+      :visible.sync="showRelatedDetail"
+      :crm-type="relatedCRMType"
+      :id="relatedID"
+      @handle="refreshList" />
   </slide-view>
 </template>
 
 <script>
 import SlideView from '@/components/SlideView'
-import ExamineSection from '@/views/OAManagement/examine/components/examineSection'
+import ExamineCell from '@/views/OAManagement/examine/components/ExamineCell'
 
 export default {
   /** 审批统计 列表 */
@@ -47,10 +57,14 @@ export default {
 
   components: {
     SlideView,
-    ExamineSection
+    ExamineCell,
+    CRMFullScreenDetail: () =>
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
 
   props: {
+    type: [String, Number], // 审批类型
+    name: String,
     request: Function,
     params: Object,
     // 监听的dom 进行隐藏详情
@@ -77,44 +91,52 @@ export default {
 
   data() {
     return {
-      loading: false,
-      loadMoreLoading: true,
-      name: '',
+
       totalCount: 0,
       sumData: '',
       // 判断是否发请求
-      isPost: false,
+      loading: false,
+      noMore: false,
       page: 1,
-      list: []
+      list: [],
+      // 相关详情的查看
+      relatedID: '',
+      relatedCRMType: '',
+      showRelatedDetail: false,
+      scrollKey: Date.now()
     }
   },
 
   computed: {
     // 展示说明信息
     showDes() {
-      return this.params.categoryId > 1 && this.params.categoryId <= 6
+      return this.type > 1 && this.type <= 6
     },
     // 说明信息
     desInfo() {
-      if (this.params.categoryId == 2) {
+      if (this.type == 2) {
         return '请假总天数'
-      } else if (this.params.categoryId == 3) {
+      } else if (this.type == 3) {
         return '出差总天数'
-      } else if (this.params.categoryId == 4) {
+      } else if (this.type == 4) {
         return '加班总天数'
-      } else if (this.params.categoryId == 5) {
+      } else if (this.type == 5) {
         return '报销总金额'
-      } else if (this.params.categoryId == 6) {
+      } else if (this.type == 6) {
         return '借款总金额'
       }
       return ''
     },
     // 说明单位
     desUnit() {
-      if (this.params.categoryId > 1 && this.params.categoryId <= 4) {
+      if (this.type > 1 && this.type <= 4) {
         return '天'
       }
       return '元'
+    },
+    // 无线滚动控制
+    scrollDisabled() {
+      return this.loading || this.noMore
     }
   },
 
@@ -124,33 +146,17 @@ export default {
     }
   },
 
-  mounted() {
-    // 分批次加载
-    const dom = document.getElementById('oa-log-statistics')
-    dom.onscroll = () => {
-      const scrollOff = dom.scrollTop + dom.clientHeight - dom.scrollHeight
-      // 滚动条到底部的条件
-      if (Math.abs(scrollOff) < 10 && this.loadMoreLoading == true) {
-        if (!this.isPost) {
-          this.isPost = true
-          this.page++
-          this.getList()
-        } else {
-          this.loadMoreLoading = false
-        }
-      }
-    }
-    this.getList()
-  },
+  mounted() {},
 
   methods: {
     refreshList() {
-      this.page = 1
-      this.list = []
-      this.name = ''
       this.sumData = ''
       this.totalCount = 0
-      this.getList()
+
+      this.page = 1
+      this.list = []
+      this.noMore = false
+      this.scrollKey = Date.now()
     },
 
     /**
@@ -160,23 +166,39 @@ export default {
       this.loading = true
       this.request({ page: this.page, limit: 15, ...this.params })
         .then(res => {
-          this.name = res.data.categoryName
-          this.sumData = this.desUnit == '天' ? res.data.duration : res.data.money
-          this.list = this.list.concat(res.data.list)
+          this.sumData =
+            this.desUnit == '天' ? res.data.duration : res.data.money
+
+          if (!this.noMore) {
+            this.list = this.list.concat(res.data.list)
+            this.page++
+          }
+
           this.totalCount = res.data.totalRow
 
-          if (res.data.lastPage === true) {
-            this.loadMoreLoading = false
-          } else {
-            this.loadMoreLoading = true
-          }
-          this.isPost = false
           this.loading = false
+          this.noMore = !(res.data.list && res.data.list.length == 15)
         })
         .catch(() => {
-          this.isPost = false
+          this.noMore = true
           this.loading = false
         })
+    },
+
+    /**
+     * 操作
+     */
+    examineCellHandle(data) {
+      // 编辑
+      if (data.type == 'view') {
+        this.relatedID = data.data.item.examineId
+        this.relatedCRMType = 'examine'
+        this.showRelatedDetail = true
+      } else if (data.type == 'related-detail') {
+        this.relatedID = data.data.item[data.data.type + 'Id']
+        this.relatedCRMType = data.data.type
+        this.showRelatedDetail = true
+      }
     },
 
     /**
@@ -190,6 +212,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.examine-list-main {
+  height: 100%;
+  position: relative;
+}
+
 .t-section {
   position: relative;
   padding: 10px 17px;
@@ -206,36 +234,15 @@ export default {
       color: #f3a633;
     }
   }
-
-  .t-close {
-    display: block;
-    float: right;
-    width: 40px;
-    height: 40px;
-    margin-left: 20px;
-    padding: 10px;
-    cursor: pointer;
-  }
-}
-
-.load {
-  color: #999;
-  font-size: 13px;
-  margin: 0 auto 15px;
-  text-align: center;
-  .el-button,
-  .el-button:focus {
-    color: #ccc;
-    cursor: auto;
-  }
 }
 
 .d-view {
   position: fixed;
-  width: 950px;
+  width: 926px;
   top: 60px;
   bottom: 0px;
   right: 0px;
+  background-color: white;
 }
 
 .t-content {

@@ -55,7 +55,7 @@ export default {
   .drag-handle {
     visibility: hidden;
     width: 16px;
-    color: #ccc;
+    color: #333;
     position: absolute;
     left: 5px;
   }

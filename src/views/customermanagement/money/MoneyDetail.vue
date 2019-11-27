@@ -22,14 +22,14 @@
           :id="id"
           :crm-type="crmType"
           @handle="detailHeadHandle"
-          @close="hideView"/>
+          @close="hideView" />
         <examine-info
           :id="id"
           :record-id="detailData.examineRecordId"
           :owner-user-id="detailData.ownerUserId"
           class="examine-info"
           examine-type="crm_receivables"
-          @on-handle="examineHandle"/>
+          @on-handle="examineHandle" />
         <div class="d-container-bd">
           <el-tabs
             v-model="tabCurrentName"
@@ -57,7 +57,7 @@
       :action="{type: 'update', id: id, batchId: detailData.batchId}"
       :crm-type="crmType"
       @save-success="editSaveSuccess"
-      @hiden-view="isCreate=false"/>
+      @hiden-view="isCreate=false" />
   </slide-view>
 </template>
 
@@ -67,9 +67,11 @@ import { crmReceivablesRead } from '@/api/customermanagement/money'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
+import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import ExamineInfo from '@/components/Examine/ExamineInfo'
+
 import detail from '../mixins/detail'
 
 export default {
@@ -79,6 +81,7 @@ export default {
     SlideView,
     CRMDetailHead,
     CRMBaseInfo,
+    RelativeFiles,
     RelativeHandle,
     ExamineInfo,
     CRMCreateView
@@ -123,16 +126,23 @@ export default {
         { title: '回款金额', value: '' },
         { title: '负责人', value: '' }
       ],
-      tabNames: [
-        { label: '基本信息', name: 'CRMBaseInfo' },
-        { label: '操作记录', name: 'RelativeHandle' }
-      ],
       tabCurrentName: 'CRMBaseInfo',
       // 编辑操作
       isCreate: false
     }
   },
-  computed: {},
+  computed: {
+    tabNames() {
+      return [
+        { label: '基本信息', name: 'CRMBaseInfo' },
+        {
+          label: this.getTabName('附件', this.tabsNumber.fileCount),
+          name: 'RelativeFiles'
+        },
+        { label: '操作记录', name: 'RelativeHandle' }
+      ]
+    }
+  },
   mounted() {},
   methods: {
     /**

@@ -139,13 +139,30 @@
     <div class="item-check-section">
       <el-checkbox
         v-model="field.isNull"
-        :disabled="disabled">设为必填</el-checkbox>
+        :disabled="disabled"
+        @change="inNullChange">设为必填</el-checkbox>
     </div>
-    <div class="item-check-section">
+    <div
+      v-if="canUnique"
+      class="item-check-section">
       <el-checkbox
+
         v-model="field.isUnique"
         :disabled="disabled">设为唯一</el-checkbox>
     </div>
+    <!-- <div
+      v-if="field.fieldType == 1"
+      class="item-check-section">
+      <el-checkbox
+        v-model="field.isUnique"
+        :disabled="hiddenDisabled">隐藏字段</el-checkbox>
+      <el-tooltip
+        :content="hiddenTips"
+        effect="dark"
+        placement="top">
+        <i class="wk wk-help"/>>
+      </el-tooltip>
+    </div> -->
   </div>
 </template>
 <script type="text/javascript">
@@ -178,7 +195,12 @@ export default {
     },
     // 是否开启转移  转移对应数据
     canTransform: Boolean,
-    transformData: Object
+    transformData: Object,
+    // 是否能设置唯一
+    canUnique: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {}
@@ -186,17 +208,17 @@ export default {
   computed: {
     defaultTips() {
       if (this.field.formType == 'floatnumber') {
-        return '货币的整数部分须少于10位，小数部分须少于2位'
+        return '货币的整数部分须少于15位，小数部分须少于2位'
       } else if (this.field.formType == 'number') {
-        return '数字的整数部分须少于12位，小数部分须少于4位'
+        return '数字的整数部分须少于15位，小数部分须少于4位'
       }
       return ''
     },
     /** 展示最大输入 */
     showMaxInput() {
-      if (this.field.formType == 'textarea') {
-        return true
-      }
+      // if (this.field.formType == 'textarea') {
+      //   return true
+      // }
       return false
     },
     /** 展示默认值块 */
@@ -240,6 +262,16 @@ export default {
         return true
       }
       return false
+    },
+    /**
+     * 控制是否可隐藏系统字段
+     */
+    hiddenDisabled() {
+      return this.field.fieldType != 1 || this.field.isNull == 1
+    },
+
+    hiddenTips() {
+      return this.field.isNull == 1 ? '该字段为必填字段不可设置为隐藏' : '该字段为非必填字段，设置为隐藏字段后新建时将不显示该字段'
     }
   },
   watch: {
@@ -322,13 +354,18 @@ export default {
           })
         }
       }
+    },
+    /**
+     * 必填勾选改变
+     */
+    inNullChange(val) {
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .field-info-section {
-  padding: 0 20px;
+  padding: 0 20px 20px;
 }
 
 .item-section {

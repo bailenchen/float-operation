@@ -28,6 +28,7 @@
               <div class="search-list">
                 <el-checkbox
                   :indeterminate="isIndeterminate"
+                  :disabled="radio"
                   v-model="checkAll"
                   class="all-check"
                   @change="handleCheckAllChange">全选</el-checkbox>
@@ -95,7 +96,9 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-        <div class="checked-content">
+        <div
+          v-if="!radio"
+          class="checked-content">
           <div class="checked-top">
             <span class="select-info">已选择<span class="select-info--num">{{ userSelectCount + depSelectCount }}</span>项</span>
             <el-button
@@ -119,6 +122,7 @@
       <div class="popover-footer">
         <el-button @click="popoverVisible = false">取 消</el-button>
         <el-button
+          v-if="!radio"
           type="primary"
           @click="popoverSubmit">确 定</el-button>
       </div>
@@ -136,10 +140,9 @@
 import { usersList, depList } from '@/api/common'
 export default {
   props: {
-    // 弹出框宽度
-    popoverWidth: {
-      type: String,
-      default: '600'
+    radio: {
+      type: Boolean,
+      default: false
     },
     // 显示位置
     placement: {
@@ -211,27 +214,34 @@ export default {
       return this.checkedUserDepList.filter(item => {
         return item.type == 'dep'
       }).length
+    },
+    popoverWidth() {
+      return this.radio ? '300' : '600'
     }
   },
   watch: {
-    userCheckedData: function() {
+    userCheckedData() {
       this.updateCheckInfoByWatch()
     },
-    depCheckedData: function() {
+    depCheckedData() {
       this.updateCheckInfoByWatch()
     },
-    popoverVisible: function(val) {
+    popoverVisible(val) {
       if (val) {
         this.updateCheckInfoByWatch()
       }
 
       this.$emit('show', val)
     },
-    userList() {
-      const selectItems = this.userList.filter(item => {
-        return item.isCheck
-      })
-      this.refreshAllCheck(selectItems.length)
+    userList: {
+      handler() {
+        const selectItems = this.userList.filter(item => {
+          return item.isCheck
+        })
+        this.refreshAllCheck(selectItems.length)
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
@@ -340,8 +350,14 @@ export default {
     },
     // 部门勾选
     depCheckboxChange(item, aindex) {
-      this.$set(this.depShowList, aindex, item)
-      this.updateCheckedUserDepListByCheck(item, 'dep')
+      if (this.radio && item.isCheck) {
+        this.checkedUserDepList = [{ ...item }]
+        this.popoverSubmit()
+      }
+      // this.$set(this.depShowList, aindex, item)
+      if (!this.radio) {
+        this.updateCheckedUserDepListByCheck(item, 'dep')
+      }
     },
     /**
      * 员工操作
@@ -371,8 +387,14 @@ export default {
     },
     // 员工勾选
     userCheckboxChange(item, aindex) {
-      this.$set(this.userList, aindex, item)
-      this.updateCheckedUserDepListByCheck(item, 'user')
+      if (this.radio && item.isCheck) {
+        this.checkedUserDepList = [{ ...item }]
+        this.popoverSubmit()
+      }
+      // this.$set(this.userList, aindex, item)
+      if (!this.radio) {
+        this.updateCheckedUserDepListByCheck(item, 'user')
+      }
     },
 
     /**
