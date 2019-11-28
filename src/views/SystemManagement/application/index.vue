@@ -41,7 +41,7 @@
               v-else-if="item.module == 'call'"
               type="text"
               class="detail-button"
-              @click="showCallDetail = true">了解详情<i class="el-icon-arrow-right el-icon--right"/></el-button>
+              @click="checkCallDetail(item)">了解详情<i class="el-icon-arrow-right el-icon--right"/></el-button>
             <span
               v-else-if="item.type == 2"
               class="more-mark">即将发布</span>
@@ -50,7 +50,9 @@
       </div>
     </div>
 
-    <call-detail :visible.sync="showCallDetail"/>
+    <call-detail
+      :visible.sync="showCallDetail"
+      :call-switch="callSwitch"/>
   </flexbox>
 </template>
 
@@ -102,7 +104,8 @@ export default {
         }
       ],
       // 展示详情
-      showCallDetail: false
+      showCallDetail: false,
+      callSwitch: false
     }
   },
   computed: {
@@ -230,6 +233,11 @@ export default {
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }
+    },
+
+    checkCallDetail(item) {
+      this.showCallDetail = true
+      this.callSwitch = item.status == 1 ? true : false
     }
   }
 }

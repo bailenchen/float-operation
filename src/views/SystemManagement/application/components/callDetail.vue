@@ -25,9 +25,9 @@
       </el-table>
       <div class="switch">
         <el-switch
-          v-model="callSwitch"
+          :value="callSwitch"
           disabled/>
-        未启用
+        启用
       </div>
     </div>
     <span
@@ -46,6 +46,10 @@ export default {
   components: {},
   props: {
     visible: {
+      type: Boolean,
+      default: false
+    },
+    callSwitch: {
       type: Boolean,
       default: false
     }
@@ -69,8 +73,7 @@ export default {
           name: '通话记录',
           des: '自动生成通话记录，可以随时查看通话时长、通话时间等信息。'
         }
-      ],
-      callSwitch: false
+      ]
     }
   },
   computed: {},
