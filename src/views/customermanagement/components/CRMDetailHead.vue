@@ -114,6 +114,10 @@ import {
 } from '@/api/customermanagement/contract'
 import { crmReceivablesDelete } from '@/api/customermanagement/money'
 import { crmProductStatus } from '@/api/customermanagement/product'
+import {
+  crmMarketingIsEnableAPI,
+  crmMarketingDeleteAPI
+} from '@/api/customermanagement/marketing'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
@@ -163,6 +167,10 @@ export default {
   computed: {
     ...mapGetters(['crm', 'CRMConfig']),
     crmIcon() {
+      console.warn('推广 测试完成后删除')
+      if (this.crmType == 'marketing') {
+        return require(`@/assets/img/crm/product.png`)
+      }
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
     typeName() {
@@ -276,6 +284,8 @@ export default {
         type == 'unlock' ||
         type == 'start' ||
         type == 'disable' ||
+        type == 'state_start' ||
+        type == 'state_disable' ||
         type == 'get' ||
         type == 'cancel'
       ) {
@@ -294,6 +304,10 @@ export default {
           message = '确定要上架这些产品吗?'
         } else if (type == 'disable') {
           message = '确定要下架这些产品吗?'
+        } else if (type == 'state_start') {
+          message = '确定要启用这些推广吗?'
+        } else if (type == 'state_disable') {
+          message = '确定要停用这些推广吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
         } else if (type == 'cancel') {
@@ -379,6 +393,19 @@ export default {
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
+      } else if (type === 'state_start' || type === 'state_disable') {
+        crmMarketingIsEnableAPI({
+          id: [this.id],
+          state: type === 'state_start' ? 1 : 2
+        })
+          .then(res => {
+            this.$message({
+              type: 'success',
+              message: res.data
+            })
+            this.$emit('handle', { type: type })
+          })
+          .catch(() => {})
       } else if (type === 'delete') {
         const request = {
           leads: crmLeadsDelete,
@@ -386,7 +413,8 @@ export default {
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
-          receivables: crmReceivablesDelete
+          receivables: crmReceivablesDelete,
+          marketing: crmMarketingDeleteAPI
         }[this.crmType]
         request({
           [this.crmType + 'Ids']: this.id
@@ -500,6 +528,17 @@ export default {
           type: 'disable',
           icon: 'sold-out'
         },
+        state_start: {
+          name: '启用',
+          type: 'state_start',
+          icon: 'shelves'
+        },
+        state_disable: {
+          name: '停用',
+          type: 'state_disable',
+          icon: 'sold-out'
+
+        },
         deal_status: {
           name: '更改成交状态',
           type: 'deal_status',
@@ -542,7 +581,14 @@ export default {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'product') {
         return this.forSelectionHandleItems(handleInfos, ['start', 'disable'])
+      } else if (this.crmType == 'marketing') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'state_start',
+          'state_disable',
+          'delete'
+        ])
       }
+      return []
     },
     forSelectionHandleItems(handleInfos, array) {
       var tempsHandles = []

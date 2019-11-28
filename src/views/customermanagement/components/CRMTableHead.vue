@@ -3,9 +3,9 @@
     <flexbox
       v-show="selectionList.length == 0"
       class="th-container">
-      <div v-if="!isSeas">场景：</div>
+      <div v-if="showSceneView">场景：</div>
       <el-popover
-        v-if="!isSeas"
+        v-if="showSceneView"
         v-model="showScene"
         trigger="click"
         popper-class="no-padding-popover"
@@ -28,18 +28,21 @@
           @hidden-scene="showScene=false" />
       </el-popover>
       <el-button
-        :style="{ 'margin-left': isSeas ? 0 : '20px'}"
+        v-if="showFilterView"
+        :style="{ 'margin-left': !showSceneView ? 0 : '20px'}"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
         @click="showFilterClick">高级筛选</el-button>
       <filter-form
+        v-if="showFilterView"
         :field-list="fieldList"
         :dialog-visible.sync="showFilter"
         :obj="filterObj"
         :crm-type="crmType"
         :is-seas="isSeas"
         @filter="handleFilter" />
+      <slot name="custom"/>
     </flexbox>
     <flexbox
       v-if="selectionList.length > 0"
@@ -127,6 +130,11 @@ import {
   crmProductStatus,
   crmProductExcelExport
 } from '@/api/customermanagement/product'
+import {
+  crmMarketingIsEnableAPI,
+  crmMarketingDeleteAPI
+} from '@/api/customermanagement/marketing'
+
 
 import filterForm from './filterForm'
 import filterContent from './filterForm/filterContent'
@@ -201,6 +209,23 @@ export default {
     },
     sceneName() {
       return this.sceneData.name || this.getDefaultSceneName()
+    },
+    // 展示场景
+    showSceneView() {
+      if (this.isSeas || ['marketing'].includes(this.crmType)) {
+        return false
+      } else {
+        return true
+      }
+    },
+
+    // 展示筛选
+    showFilterView() {
+      if (['marketing'].includes(this.crmType)) {
+        return false
+      } else {
+        return true
+      }
     }
   },
   watch: {},
@@ -345,6 +370,8 @@ export default {
         type == 'unlock' ||
         type == 'start' ||
         type == 'disable' ||
+        type == 'state_start' ||
+        type == 'state_disable' ||
         type == 'get'
       ) {
         var message = ''
@@ -362,6 +389,10 @@ export default {
           message = '确定要上架这些产品吗?'
         } else if (type == 'disable') {
           message = '确定要下架这些产品吗?'
+        } else if (type == 'state_start') {
+          message = '确定要启用这些推广吗?'
+        } else if (type == 'state_disable') {
+          message = '确定要停用这些推广吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
         }
@@ -461,6 +492,22 @@ export default {
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
+      } else if (type === 'state_start' || type === 'state_disable') {
+        var marketing_id = this.selectionList.map(function(item, index, array) {
+          return item.marketing_id
+        })
+        crmMarketingIsEnableAPI({
+          id: marketing_id,
+          state: type === 'state_start' ? 1 : 2
+        })
+          .then(res => {
+            this.$message({
+              type: 'success',
+              message: res.data
+            })
+            this.$emit('handle', { type: type })
+          })
+          .catch(() => {})
       } else if (type === 'delete') {
         const self = this
         var ids = this.selectionList.map(function(item, index, array) {
@@ -472,7 +519,8 @@ export default {
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
-          receivables: crmReceivablesDelete
+          receivables: crmReceivablesDelete,
+          marketing: crmMarketingDeleteAPI
         }[this.crmType]
         request({
           [this.crmType + 'Ids']: ids.join(',')
@@ -574,6 +622,16 @@ export default {
           type: 'disable',
           icon: 'sold-out'
         },
+        state_start: {
+          name: '启用',
+          type: 'state_start',
+          icon: 'shelves'
+        },
+        state_disable: {
+          name: '停用',
+          type: 'state_disable',
+          icon: 'sold-out'
+        },
         deal_status: {
           name: '更改成交状态',
           type: 'deal_status',
@@ -634,6 +692,18 @@ export default {
           'export',
           'start',
           'disable'
+        ])
+      } else if (this.crmType == 'product') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'export',
+          'start',
+          'disable'
+        ])
+      } else if (this.crmType == 'marketing') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'state_start',
+          'state_disable',
+          'delete'
         ])
       }
     },

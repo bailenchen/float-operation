@@ -37,6 +37,10 @@ import {
 import {
   crmReceivablesIndex
 } from '@/api/customermanagement/money'
+import {
+  crmMarketingIndexAPI
+} from '@/api/customermanagement/marketing'
+
 
 import Lockr from 'lockr'
 import { Loading } from 'element-ui'
@@ -90,6 +94,14 @@ export default {
     // document.getElementById('crm-table').addEventListener('click', e => {
     //   e.stopPropagation()
     // })
+
+    console.warn('table.js 推广页面 加入的默认请求')
+    if (this.crmType === 'marketing') {
+      this.getList()
+      return
+    }
+
+
     if (this.isSeas && this.crm.pool.index) {
       this.getFieldList()
     } else if (this.crm[this.crmType].index) {
@@ -164,6 +176,8 @@ export default {
         return crmProductIndex
       } else if (this.crmType === 'receivables') {
         return crmReceivablesIndex
+      } else if (this.crmType === 'marketing') {
+        return crmMarketingIndexAPI
       }
     },
     /** 获取字段 */
@@ -325,7 +339,12 @@ export default {
         } else {
           this.showDview = false
         }
+      } else if (this.crmType == 'marketing') {
+        this.rowID = row.marketing_id
+        this.rowType = 'marketing'
+        this.showDview = true
       }
+
       if (this.showDview) {
         this.$store.commit('SET_COLLAPSE', this.showDview)
       }

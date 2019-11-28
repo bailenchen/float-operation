@@ -154,7 +154,9 @@ export default {
     crmType: {
       type: String,
       default: ''
-    }
+    },
+    // 固定字段的数据
+    filedList: Array
   },
   data() {
     return {
@@ -168,11 +170,21 @@ export default {
   computed: {},
   watch: {
     id: function(val) {
-      this.getBaseInfo()
+      if (!this.filedList) {
+        this.getBaseInfo()
+      }
+    },
+    filedList() {
+      this.list = this.filedList
     }
+
   },
   mounted() {
-    this.getBaseInfo()
+    if (this.filedList) {
+      this.list = this.filedList
+    } else {
+      this.getBaseInfo()
+    }
   },
   activated: function() {},
   deactivated: function() {},

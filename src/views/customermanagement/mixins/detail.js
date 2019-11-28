@@ -79,6 +79,8 @@ export default {
         this.getDetial()
       } else if (data.type === 'delete') {
         this.hideView()
+      } else if (data.type === 'state_start' || data.type === 'state_disable') {
+        this.getDetial()
       }
       this.$emit('handle', data)
     },

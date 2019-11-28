@@ -143,5 +143,18 @@ export default [
         icon: 'product'
       }
     }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'product']
+    }),
+    children: [{
+      path: 'marketing', // 推广列表
+      component: () => import('@/views/customermanagement/marketing/index'),
+      meta: {
+        title: '推广',
+        icon: 'product'
+      }
+    }]
   }
 ]
