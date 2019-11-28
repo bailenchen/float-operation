@@ -4,7 +4,7 @@
       :search.sync="search"
       :crm-type="crmType"
       title="小程序线索管理"
-      placeholder="请输入微信号/微信名称"
+      placeholder="请输入手机号/微信名称"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos"/>
@@ -50,18 +50,6 @@
           sortable="custom"
           show-overflow-tooltip/>
         <el-table-column/>
-        <el-table-column
-          :resizable="false"
-          fixed="right"
-          width="40">
-          <template
-            slot="header"
-            slot-scope="slot">
-            <field-set
-              :crm-type="crmType"
-              @change="setSave"/>
-          </template>
-        </el-table-column>
       </el-table>
       <div class="p-contianer">
         <el-pagination
@@ -107,16 +95,6 @@ export default {
   computed: {},
   mounted() {},
   methods: {
-    /**
-     * 通过回调控制class
-     */
-    cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'weixinName') {
-        return 'can-visit--underline'
-      } else {
-        return ''
-      }
-    }
   }
 }
 </script>

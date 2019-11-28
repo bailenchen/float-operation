@@ -6,18 +6,21 @@
     </div>
     <div class="QRCode">
       <p class="QR-text">扫描二维码查看属于自己的个人名片</p>
-      <el-image class="QR-img"/>
+      <el-image :src="eWurl" class="QR-img"/>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import {
+  wechatQueryAPI } from '@/api/SystemManagement/poster'
 export default {
   name: 'EditCard',
   data() {
     return {
-      loading: false
+      loading: false,
+      eWurl: ''
     }
   },
   computed: {
@@ -25,7 +28,16 @@ export default {
       'userInfo'
     ])
   },
+  mounted() {
+    this.getRD()
+  },
   methods: {
+    /** 查询二维码 */
+    getRD() {
+      wechatQueryAPI().then(res => {
+        this.eWurl = res.data.weixinImg
+      }).catch(() => {})
+    }
   }
 }
 </script>

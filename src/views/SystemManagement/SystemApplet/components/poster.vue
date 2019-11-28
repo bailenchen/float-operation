@@ -1,5 +1,5 @@
 <template>
-  <div class="poster-box">
+  <div v-loading="loading" class="poster-box">
     <div class="poster-content">
       <h4 class="poster-title">名片海报</h4>
       <p class="poster-text">员工分享个人名片，商户可统一设置个人名片海报</p>
@@ -20,9 +20,11 @@
     </div>
     <div class="poster-content">
       <h4 class="poster-title">预览海报</h4>
-      <div class="poster-image">
-        <el-image class="poster-image-main"/>
-        <p class="poster-image-text">暂无数据</p>
+      <div class="poster-image haibao">
+        <el-image :src="imageUrl" class="poster-image-main"/>
+        <el-image :src="EWurl" class="poster-ew"/>
+        <p class="poster-image-text">{{ info.companyName }}</p>
+        <p class="poster-image-text">{{ info.realname }}</p>
       </div>
     </div>
   </div>
@@ -30,29 +32,74 @@
 
 <script type="text/javascript">
 'use strict'
-import { crmFileSave } from '@/api/common'
-import { officialImgSaveAPI } from '@/api/SystemManagement/poster'
+import {
+  wechatQueryAPI,
+  officialImgSaveAPI,
+  visitingCardQueryByUserIdAPI,
+  officialImgQueryListByTypeAPI } from '@/api/SystemManagement/poster'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      imageUrl: ''
+      imageUrl: '',
+      info: {},
+      loading: false,
+      EWurl: ''
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  mounted() {
+    this.getFileList()
+  },
   methods: {
+    /** 查看图片列表 */
+    getFileList() {
+      this.loading = true
+      officialImgQueryListByTypeAPI({ type: 2 }).then(res => {
+        this.imageUrl = res.data[0].filePath
+        this.loading = false
+        this.getInfo()
+      }).catch(() => {})
+    },
+    getInfo() {
+      this.loading = true
+      visitingCardQueryByUserIdAPI({ userId: this.userInfo.userId }).then(res => {
+        if (res.data) {
+          this.info = res.data
+        } else {
+          this.info = {
+            companyName: '未知',
+            realname: '未知'
+          }
+        }
+        this.loading = false
+        this.getRD()
+      }).catch(() => {})
+    },
+    getRD() {
+      wechatQueryAPI().then(res => {
+        this.EWurl = res.data.weixinImg
+        this.loading = false
+      }).catch(() => {})
+    },
     /** 上传成功的回调 */
     handleAvatarSuccess(file) {
       console.log(file, '==file==')
     },
     /** 上传到服务器 */
     upLoad(file) {
-      crmFileSave({ file: file.file }).then(res => {
-        this.imageUrl = res.url
-        const params = {
-          path: res.url,
-          type: '1'
-        }
-        officialImgSaveAPI(params).then(res => {})
-      })
+      const params = {
+        file: file.file,
+        type: '2'
+      }
+      this.loading = true
+      officialImgSaveAPI(params).then(res => {
+        this.loading = false
+        this.imageUrl = res.data.filePath
+        this.getInfo()
+      }).catch(() => {})
     }
   }
 }
@@ -66,6 +113,7 @@ export default {
       margin-right: 277px;
        .poster-title {
         color: #333;
+        margin-bottom: 20px;
         font-size: 15px;
         height: 24px;
         line-height: 24px;
@@ -79,22 +127,29 @@ export default {
            font-size: 13px;
            margin: 20px 0 ;
        }
+       .haibao {
+              position: relative;
+              border: 1px solid #e4e4e4;
+           }
        .poster-image {
            .poster-image-main {
-               margin: 20px 0;
+               margin: 0 !important;
                width: 194px;
                height: 243px;
            }
            .image-title {
                padding-left: 10px;
-            margin: 20px 0 ;
-            color: #333;
+               margin: 20px 0 ;
+               color: #333;
                font-size: 14px;
         }
         .poster-image-text {
             width: 194px;
-            height: 50px;
-            text-align: center;
+            height: 20px;
+            font-size: 13px;
+            color: #d9d9d9;
+            text-align: left;
+            padding-left: 10px;
         }
         .image-text {
             width: 202px;
@@ -106,6 +161,14 @@ export default {
         }
        }
    }
+}
+.poster-ew {
+  width: 50px;
+  border-radius: 50px;
+  background-color: #fff;
+  position: absolute;
+  left: 130px;
+  bottom: 20px;
 }
  .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;

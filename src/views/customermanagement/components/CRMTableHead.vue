@@ -106,7 +106,8 @@ import {
   crmSceneSave
 } from '@/api/customermanagement/common'
 import {
-  crmWeixinDeleteAPI
+  crmWeixinDeleteAPI,
+  crmWeixinChangeLeadsAPI
 } from '@/api/customermanagement/applet'
 import {
   crmLeadsTransform,
@@ -519,7 +520,14 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'transformLead') {
-        this.$message.error('暂未开通此功能')
+        var ids = this.selectionList.map(function(item, index, array) {
+          return item.weixinLeadsId
+        })
+        crmWeixinChangeLeadsAPI({
+          'weixinLeadsIds': ids.join(',')
+        }).then(res => {
+          this.$message.success('转化为线索成功')
+        }).catch(() => {})
         return
       }
     },

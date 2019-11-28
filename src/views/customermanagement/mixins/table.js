@@ -180,7 +180,7 @@ export default {
           { prop: 'weixinName', label: '微信名称', width: '115px' },
           { prop: 'weixinImg', label: '头像', width: '115px' },
           { prop: 'mobile', label: '手机号', width: '115px' },
-          { prop: 'weixinNumber', label: '微信号', width: '115px' },
+          { prop: 'weixinNumber', label: '手机号', width: '115px' },
           { prop: 'ownerUserName', label: '负责人', width: '115px' },
           { prop: 'isTransform', label: '是否转化' }
         ]

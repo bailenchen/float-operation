@@ -1,5 +1,5 @@
 <template>
-  <div class="poster-box">
+  <div v-loading="loading" class="poster-box">
     <div class="poster-content">
       <h4 class="poster-title">官网设置</h4>
       <p class="poster-text">可在这里统一更新编辑官网，支持多张上传</p>
@@ -13,15 +13,20 @@
           action=""
           list-type="picture">
           <el-button size="small" type="primary">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip">图片建议上传：750*1334</div>
+          <div slot="tip" class="el-upload__tip">图片建议上传：750*1108</div>
         </el-upload>
       </div>
     </div>
     <div class="poster-content">
       <h4 class="poster-title">预览官网</h4>
-      <div class="poster-image">
-        <el-image class="poster-image-main"/>
-        <p class="poster-image-text">暂无数据</p>
+      <div class="poster-image phone">
+        <el-image :src="require('@/assets/img/weixin_ding2.png')"/>
+        <div class="poster-image-box">
+          <div class="poster-box-scroll">
+            <el-image v-for="item in fileList" :key="item.url" :src="item.url" class="poster-image-main"/>
+          </div>
+        </div>
+        <el-image :src="require('@/assets/img/weixin_di1.png')"/>
       </div>
     </div>
   </div>
@@ -29,35 +34,71 @@
 
 <script type="text/javascript">
 'use strict'
-import { crmFileSave } from '@/api/common'
+import { officialImgSaveAPI,
+  officialImgDeleteAPI,
+  officialImgQueryListByTypeAPI } from '@/api/SystemManagement/poster'
 export default {
   data() {
     return {
       imageUrl: '',
-      fileList: []
+      fileList: [],
+      loading: false
     }
   },
+  mounted() {
+    this.getFileList()
+  },
   methods: {
-    /** 上传成功的回调 */
-    handleAvatarSuccess(file) {
-      console.log(file, '==file==')
+    /** 查看图片列表 */
+    getFileList() {
+      this.loading = true
+      officialImgQueryListByTypeAPI({ type: 1 }).then(res => {
+        res.data.forEach(item => {
+          this.fileList.push(
+            { name: item.name, url: item.filePath, officialImgId: item.officialImgId }
+          )
+          this.loading = false
+        })
+      }).catch(() => {})
     },
     /** 上传到服务器 */
     upLoad(file) {
-      crmFileSave({ file: file.file }).then(res => {
-        this.imageUrl = res.url
+      const params = {
+        file: file.file,
+        type: '1'
+      }
+      this.loading = true
+      officialImgSaveAPI(params).then(res => {
+        this.loading = false
         this.fileList.push(
-          { name: res.name, url: res.url }
+          { name: res.data.name, url: res.data.filePath, officialImgId: res.data.officialImgId }
         )
-      })
+      }).catch(() => {})
     },
     /** 删除图片 */
-    handleRemove() {}
+    handleRemove(file, fileList) {
+      let imgId = ''
+      this.loading = true
+      this.fileList.forEach(item => {
+        if (item.url === file.url) {
+          imgId = item.officialImgId
+        }
+      })
+      this.fileList = this.fileList.filter(item => {
+        return item.url !== file.url
+      })
+      officialImgDeleteAPI({
+        officialImgId: imgId
+      }).then(res => {
+        this.$message.success('删除成功')
+        this.loading = false
+      }).catch(() => {})
+    }
   }
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .poster-box {
     display: flex;
     .poster-content {
@@ -78,25 +119,45 @@ export default {
            font-size: 13px;
            margin: 20px 0 ;
        }
+       .phone {
+         border-bottom: 8px solid #333;
+         border-top: 5px solid #333;
+         border-left: 3px solid #333;
+         border-right: 3px solid #333;
+         border-radius: 6px;
+         margin-top:  10px;
+         width: 262.5px;
+         height: 492.5px;
+         .poster-image-box {
+           overflow-x: hidden;
+           .poster-box-scroll {
+              overflow-y: auto;
+               overflow-x: hidden;
+               width: 264px;
+               height: 400px;
+           }
+         }
+       }
        .poster-image {
            .poster-image-main {
-               margin: 20px 0;
-               width: 194px;
-               height: 243px;
+               display: block;
+               margin: 0 !important;
+               width: 262px !important;
+               height: 400px !important;
            }
            .image-title {
                padding-left: 10px;
-            margin: 20px 0 ;
-            color: #333;
+               margin: 20px 0 ;
+               color: #333;
                font-size: 14px;
         }
         .poster-image-text {
-            width: 194px;
+            width: 242px;
             height: 50px;
             text-align: center;
         }
         .image-text {
-            width: 202px;
+            width: 262px;
             height: 18px;
             color: rgba(153, 153, 153, 1);
             font-size: 12px;
@@ -119,14 +180,14 @@ export default {
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 194px;
-    height: 243px;
-    line-height: 243px;
+    width: 187.5px;
+    height: 263px;
+    line-height: 263px;
     text-align: center;
   }
   .avatar {
-    width: 194px;
-    height: 243px;
+    width: 187.5px;
+    height: 263px;
     display: block;
   }
 </style>

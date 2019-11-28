@@ -40,6 +40,16 @@
             <div
               v-loading="userLoading"
               class="content-table">
+              <el-input
+                v-model="search"
+                placeholder="请输入手机号/员工姓名"
+                class="search"
+                @keyup.enter.native="searchClick">
+                <el-button
+                  slot="append"
+                  type="primary"
+                  @click.native="searchClick">搜索</el-button>
+              </el-input>
               <flexbox class="content-table-header">
                 <div class="content-table-header-reminder">
                   <reminder
@@ -58,16 +68,6 @@
                         @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
                     </flexbox>
                   </flexbox>
-                  <el-input
-                    v-model="search"
-                    placeholder="请输入内容"
-                    class="search"
-                    @keyup.enter.native="searchClick">
-                    <el-button
-                      slot="append"
-                      type="primary"
-                      @click.native="searchClick">搜索</el-button>
-                  </el-input>
                 </div>
                 <el-button
                   size="medium"
@@ -91,7 +91,8 @@
                   <template slot-scope="scope">
                     <!-- <span class="el-icon-edit content-table-span"
                       @click="editBtn(scope.row)"></span> -->
-                    <el-button type="text" class="el-button--primity">设为用户默认访问名片</el-button>
+                    <el-button v-if="scope.row.card == 0" type="text" class="el-button--primity" @click="setCard(scope.row)">设为用户默认访问名片</el-button>
+                    <el-button v-else type="text" class="el-button--warning button-delete" @click="cancelCard(scope.row)">移除用户默认访问名片</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -121,6 +122,12 @@
             name="setting">
             <official-website/>
           </el-tab-pane>
+          <el-tab-pane
+            v-if="appletActive.id === 3"
+            label="查看授权"
+            name="auth">
+            <iframe :src="authUrl" style="width: 1080px;height: 600px; margin: 20px;" frameborder="0"/>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -139,6 +146,7 @@ import OfficialWebsite from './components/officialWebsite'
 import Reminder from '@/components/reminder'
 import XrHeader from '@/components/xr-header'
 import Poster from './components/poster'
+import { visitingCardSetSaveCard, visitingCardDeleteByUserId, wechatPreauthcode } from '@/api/SystemManagement/poster'
 export default {
   components: {
     RelateEmpoyee,
@@ -152,15 +160,17 @@ export default {
     return {
       leftList: [
         { id: 1, name: '名片', icon: 'wk wk-contacts' },
-        { id: 2, name: '官网', icon: 'wk wk-my-task' }
+        { id: 2, name: '官网', icon: 'wk wk-my-task' },
+        { id: 3, name: '授权', icon: 'wk wk-my-task' }
       ],
       appletActive: { id: 1, name: '名片', icon: 'wk wk-contacts' },
       handleList: [
-        { name: '导出', type: 'export', icon: 'export' },
+        // { name: '导出', type: 'export', icon: 'export' },
         { name: '删除', type: 'delete', icon: 'delete' }
       ],
       showReminder: true,
       selectList: [],
+      authUrl: '',
       search: '',
       roleId: 343,
       tableData: [{}], // 与角色关联的员工
@@ -189,7 +199,17 @@ export default {
   computed: {
   },
 
-  watch: {},
+  watch: {
+    appletActive: {
+      handler(val) {
+        if (val.id === 3) {
+          this.getAuth()
+        }
+      },
+      deep: true,
+      immediate: true
+    }
+  },
 
   mounted() {
     /** 控制table的高度 */
@@ -206,7 +226,15 @@ export default {
         this.mainMenuIndex = 'setting'
       } else if (val.id === 1) {
         this.mainMenuIndex = 'user'
+      } else if (val.id === 3) {
+        this.mainMenuIndex = 'auth'
       }
+    },
+    /** 获取授权 */
+    getAuth() {
+      wechatPreauthcode().then(res => {
+        this.authUrl = res.data
+      }).catch(() => {})
     },
     /** 关联员工 */
     addEmployees() {
@@ -231,7 +259,9 @@ export default {
     /** 表头操作 */
     selectionBarClick(type) {},
     /** 搜索操作 */
-    searchClick() {},
+    searchClick() {
+      this.getUserList()
+    },
     /**
      * 关联员工确定
      */
@@ -244,7 +274,12 @@ export default {
      */
     getUserList() {
       this.userLoading = true
+      const params = {}
+      if (this.search) {
+        params.search = this.search
+      }
       usersList({
+        ...params,
         page: this.currentPage,
         limit: this.pageSize,
         roleId: 343,
@@ -280,6 +315,22 @@ export default {
     refreshUserList() {
       this.currentPage = 1
       this.getUserList()
+    },
+    /** 设为用户默认展示图片 */
+    setCard(row) {
+      visitingCardSetSaveCard(
+        { userId: row.userId }
+      ).then(res => {
+        this.$message.success('操作成功')
+        this.getUserList()
+      })
+    },
+    /** 移出默认 */
+    cancelCard(row) {
+      visitingCardDeleteByUserId({ userId: row.userId }).then(res => {
+        this.$message.success('移除成功')
+        this.getUserList()
+      }).catch(() => {})
     }
   }
 }
@@ -343,6 +394,7 @@ export default {
   position: relative;
 }
 .content-table {
+  position: relative;
   overflow: hidden;
 }
 .content-table > .el-button {
@@ -569,6 +621,11 @@ export default {
     color: #FFFFFF !important;
     background-color: #2362FB !important;
     border-color: #2362FB !important;
+}
+.el-button--warning {
+  /deep/ span {
+    color: red;
+  }
 }
 @import '../styles/table.scss';
 </style>
