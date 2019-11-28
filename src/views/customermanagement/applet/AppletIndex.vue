@@ -18,13 +18,13 @@
         :crm-type="crmType"
         @filter="handleFilter"
         @handle="handleHandle"
+        @handleApplet="handleApplet"
         @scene="handleScene"/>
       <el-table
         v-loading="loading"
         id="crm-table"
         :data="list"
         :height="tableHeight"
-        :cell-class-name="cellClassName"
         class="n-table--border"
         stripe
         border
@@ -46,9 +46,16 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          :formatter="fieldFormatter"
           sortable="custom"
-          show-overflow-tooltip/>
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <template v-if="item.prop == 'weixinImg'">
+              <el-image :src="scope.row.weixinImg" class="image"/>
+            </template>
+            <template v-else>
+              {{ scope.row[item.prop] }}
+            </template>
+        </template></el-table-column>
         <el-table-column/>
       </el-table>
       <div class="p-contianer">
@@ -100,5 +107,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.image {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
 @import '../styles/table.scss';
 </style>

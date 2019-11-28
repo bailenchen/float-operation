@@ -120,7 +120,7 @@
             v-if="appletActive.id === 2"
             label="设置官网"
             name="setting">
-            <official-website/>
+            <official-website :show="appletActive.id === 2"/>
           </el-tab-pane>
           <el-tab-pane
             v-if="appletActive.id === 3"

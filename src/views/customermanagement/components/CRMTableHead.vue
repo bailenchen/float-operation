@@ -43,6 +43,19 @@
         @filter="handleFilter" />
     </flexbox>
     <flexbox
+      v-if="crmType === 'applet'"
+      v-show="selectionList.length == 0"
+      class="th-container">
+      <div v-if="!isSeas">场景：</div>
+      <el-select v-model="appletValue" placeholder="请选择" @change="selectApplet">
+        <el-option
+          v-for="item in appletOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"/>
+      </el-select>
+    </flexbox>
+    <flexbox
       v-if="selectionList.length > 0"
       class="selection-bar">
       <div class="selected—title">已选中 <span class="selected—count">{{ selectionList.length }}</span> 项</div>
@@ -107,6 +120,7 @@ import {
 } from '@/api/customermanagement/common'
 import {
   crmWeixinDeleteAPI,
+  CrmWeixinLeadsExportLeadsAPI,
   crmWeixinChangeLeadsAPI
 } from '@/api/customermanagement/applet'
 import {
@@ -185,7 +199,12 @@ export default {
       showFilter: false, // 控制筛选框
       fieldList: [],
       filterObj: { form: [] }, // 筛选确定数据
-
+      appletValue: 0,
+      appletOptions: [
+        { label: '全部线索', value: 0 },
+        { label: '我负责的线索', value: 1 },
+        { label: '下属负责的线索', value: 2 }
+      ],
       sceneData: { id: '', bydata: '', name: '' },
       showSceneSet: false, // 展示场景设置
       showSceneCreate: false, // 展示场景添加
@@ -318,10 +337,17 @@ export default {
             })
             .join(',')
         } else if (this.crmType == 'product') {
-          request = crmProductExcelExport
+          request = CrmWeixinLeadsExportLeadsAPI
           params.ids = this.selectionList
             .map(function(item, index, array) {
               return item.productId
+            })
+            .join(',')
+        } else if (this.crmType === 'applet') {
+          request = crmProductExcelExport
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.weixinLeadsId
             })
             .join(',')
         }
@@ -667,6 +693,7 @@ export default {
         ])
       } else if (this.crmType === 'applet') {
         return this.forSelectionHandleItems(handleInfos, [
+          'export',
           'delete',
           'transformLead'
         ])
@@ -693,7 +720,11 @@ export default {
         if (this.isSeas) {
           return this.crm.pool.excelexport
         }
-        return this.crm[this.crmType].excelexport
+        if (this.crm[this.crmType]) {
+          return this.crm[this.crmType].excelexport
+        } else {
+          return true
+        }
       } else if (type == 'delete') {
         if (this.crmType === 'applet') {
           // 有权限删除就好了
@@ -765,6 +796,10 @@ export default {
       } else if (this.crmType === 'applet') {
         return '全部小程序线索'
       }
+    },
+    /** 选择小程序场景 */
+    selectApplet(val) {
+      this.$emit('handleApplet', val)
     }
   }
 }

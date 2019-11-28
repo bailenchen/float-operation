@@ -17,7 +17,8 @@ import {
   crmCustomerPoolExcelAllExport
 } from '@/api/customermanagement/customer'
 import {
-  crmAppletIndexAPI
+  crmAppletIndexAPI,
+  CrmWeixinLeadsExportLeadsAPI
 } from '@/api/customermanagement/applet'
 import {
   crmLeadsIndex,
@@ -70,6 +71,7 @@ export default {
       showDview: false,
       /** 高级筛选 */
       filterObj: {}, // 筛选确定数据
+      appletType: 0, // 小程序筛选字段
       sceneId: '', // 场景筛选ID
       sceneName: '', // 场景名字
       /** 勾选行 */
@@ -117,7 +119,9 @@ export default {
         params.sortField = this.sortData.prop
         params.order = this.sortData.order == 'ascending' ? 2 : 1
       }
-
+      if (this.crmType === 'applet') {
+        params.type = this.appletType
+      }
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
@@ -180,7 +184,6 @@ export default {
           { prop: 'weixinName', label: '微信名称', width: '115px' },
           { prop: 'weixinImg', label: '头像', width: '115px' },
           { prop: 'mobile', label: '手机号', width: '115px' },
-          { prop: 'weixinNumber', label: '手机号', width: '115px' },
           { prop: 'ownerUserName', label: '负责人', width: '115px' },
           { prop: 'isTransform', label: '是否转化' }
         ]
@@ -361,6 +364,9 @@ export default {
       var params = {
         search: this.search
       }
+      if (this.crmType == 'applet') {
+        params.type = this.appletType
+      }
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
@@ -376,7 +382,8 @@ export default {
           customer: crmCustomerExcelAllExport,
           leads: crmLeadsExcelAllExport,
           contacts: crmContactsExcelAllExport,
-          product: crmProductExcelAllExport
+          product: crmProductExcelAllExport,
+          applet: CrmWeixinLeadsExportLeadsAPI
         }[this.crmType]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
@@ -494,6 +501,11 @@ export default {
       var offsetHei = document.documentElement.clientHeight
       var removeHeight = Object.keys(this.filterObj).length > 0 ? 310 : 240
       this.tableHeight = offsetHei - removeHeight
+    },
+    /** 小程序场景 */
+    handleApplet(val) {
+      this.appletType = val
+      this.getList()
     }
   },
 

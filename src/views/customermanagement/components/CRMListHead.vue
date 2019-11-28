@@ -130,10 +130,6 @@ export default {
   mounted() {
     // 线索和客户判断更多操作
     if (!this.isSeas) {
-      if (this.crmType === 'applet') {
-        this.moreTypes = []
-        return
-      }
       if (this.crm[this.crmType].excelimport) {
         this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
       }

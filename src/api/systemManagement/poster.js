@@ -103,3 +103,15 @@ export function wechatPreauthcode(data) {
     data: data
   })
 }
+// crm 图片排序
+
+export function officialImgSortImgAPI(data) {
+  return request({
+    url: 'officialImg/sortImg',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

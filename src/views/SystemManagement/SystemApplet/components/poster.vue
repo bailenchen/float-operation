@@ -129,13 +129,14 @@ export default {
        }
        .haibao {
               position: relative;
+              height: 400px;
               border: 1px solid #e4e4e4;
            }
        .poster-image {
            .poster-image-main {
                margin: 0 !important;
-               width: 194px;
-               height: 243px;
+               width:  300px;
+               height: 325px;
            }
            .image-title {
                padding-left: 10px;
@@ -144,12 +145,12 @@ export default {
                font-size: 14px;
         }
         .poster-image-text {
-            width: 194px;
+            width: 300px;
             height: 20px;
+            padding: 10px;
             font-size: 13px;
             color: #d9d9d9;
             text-align: left;
-            padding-left: 10px;
         }
         .image-text {
             width: 202px;
@@ -163,12 +164,12 @@ export default {
    }
 }
 .poster-ew {
-  width: 50px;
-  border-radius: 50px;
-  background-color: #fff;
-  position: absolute;
-  left: 130px;
-  bottom: 20px;
+    width: 60px;
+    border-radius: 60px;
+    background-color: #fff;
+    position: absolute;
+    left: 210px;
+    bottom: 52px;
 }
  .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
@@ -183,14 +184,14 @@ export default {
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 194px;
-    height: 243px;
-    line-height: 243px;
+    width: 300px;
+    height: 325px;
+    line-height: 325px;
     text-align: center;
   }
   .avatar {
-    width: 194px;
-    height: 243px;
+    width: 300px;
+    height:  325px;
     display: block;
   }
 </style>

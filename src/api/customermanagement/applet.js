@@ -23,7 +23,7 @@ export function crmWeixinDeleteAPI(data) {
     data: data
   })
 }
-// crm 转化为线索
+// crm 转化为线索 CrmWeixinLeads/exportLeads
 
 export function crmWeixinChangeLeadsAPI(data) {
   return request({
@@ -36,3 +36,15 @@ export function crmWeixinChangeLeadsAPI(data) {
   })
 }
 
+// crm 导出勾选
+
+export function CrmWeixinLeadsExportLeadsAPI(data) {
+  return request({
+    url: 'CrmWeixinLeads/exportLeads',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
