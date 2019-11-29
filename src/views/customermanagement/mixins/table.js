@@ -340,7 +340,7 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType == 'marketing') {
-        this.rowID = row.marketing_id
+        this.rowID = row.marketingId
         this.rowType = 'marketing'
         this.showDview = true
       }

@@ -59,7 +59,7 @@
         </create-sections>
         <create-sections title="字段信息">
           <field-manager
-            :crm-type="fieldCRMType"
+            :crm-type="fieldcrmType"
             :data="fieldData"
             class="field-container"
             description="以下为客户模块所有字段，左侧显示的字段为客户扫码后需填写的字段。您可以自定义配置客户需要填写的字段信息。"
@@ -85,8 +85,7 @@ import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import FieldManager from './fieldManager'
 import {
-  crmMarketingSaveAPI,
-  crmMarketingUpdateAPI
+  crmMarketingSaveAPI
 } from '@/api/customermanagement/marketing'
 import { formatTimeToTimestamp, timestampToFormatTime } from '@/utils'
 
@@ -159,27 +158,27 @@ export default {
       loading: false,
       fieldList: [], // 字段
       dataRules: {
-        name: {
+        marketingName: {
           required: true,
           message: '不能为空',
           trigger: 'change'
         },
-        object: {
+        crmType: {
           required: true,
           message: '不能为空',
           trigger: 'change'
         },
-        relation_user_id: {
+        relationUserId: {
           required: true,
           message: '不能为空',
           trigger: 'change'
         },
-        end_time: {
+        endTime: {
           required: true,
           message: '不能为空',
           trigger: 'change'
         },
-        owner_user_id: {
+        ownerUserId: {
           required: true,
           message: '不能为空',
           trigger: 'change'
@@ -191,11 +190,12 @@ export default {
         }
       }, // 字段规则
       dataForm: {
-        name: '',
-        object: 1,
-        relation_user_id: [],
-        end_time: '',
-        owner_user_id: [],
+        marketingName: '',
+        crmType: 1,
+        relationUserId: [],
+        endTime: '',
+        ownerUserId: [],
+        fieldDataId: '',
         remark: ''
       },
       // 只能填写一次
@@ -207,8 +207,8 @@ export default {
   },
 
   computed: {
-    fieldCRMType() {
-      return { 1: 'customer', 2: 'leads' }[this.dataForm.object]
+    fieldcrmType() {
+      return { 2: 'customer', 1: 'leads' }[this.dataForm.crmType]
     }
   },
 
@@ -242,20 +242,20 @@ export default {
      */
     getFieldConfigIndex() {
       const params = {
-        object: this.dataForm.object
+        label: this.dataForm.crmType
       }
       if (this.action.type == 'update') {
-        params.id = this.action.id
+        params.marketingId = this.action.id
       }
       crmMarketingFieldInfoAPI(params)
         .then(res => {
           if (
             this.action.type == 'update' &&
-            this.dataForm.object == this.action.detail.object
+            this.dataForm.crmType == this.action.detail.crmType
           ) {
             const left = []
             const right = []
-            const showFields = this.action.detail.field_data || []
+            const showFields = this.action.detail.fieldData || []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
               element.show = true
@@ -293,7 +293,6 @@ export default {
               right: []
             }
           }
-
           this.showFieldList = this.fieldData.left
         })
         .catch(() => {})
@@ -306,7 +305,7 @@ export default {
       const detailData = this.action.type == 'update' ? this.action.detail : null
       return [
         {
-          field: 'name',
+          field: 'marketingName',
           name: '推广名称',
           form_type: 'text',
           input_tips: '',
@@ -315,43 +314,43 @@ export default {
           width: ''
         },
         {
-          field: 'object',
+          field: 'crmType',
           name: '关联对象',
           form_type: 'select',
           input_tips: '',
-          setting: [{ name: '客户', value: 1 }, { name: '线索', value: 2 }],
-          value: detailData ? detailData.object : 1,
+          setting: [{ name: '客户', value: 2 }, { name: '线索', value: 1 }],
+          value: detailData ? detailData.crmType : 1,
           width: ''
         },
         {
-          field: 'relation_user_id',
+          field: 'relationUserId',
           name: '关联人员',
           form_type: 'user',
           radio: false,
           input_tips: '',
           setting: [],
-          value: detailData ? detailData.relation_user_id_info : [],
+          value: detailData ? detailData.relationUserIdInfo : [],
           width: ''
         },
         {
-          field: 'end_time',
+          field: 'endTime',
           name: '截止日期',
           form_type: 'datetime',
           input_tips: '',
           setting: [],
           value: detailData
-            ? timestampToFormatTime(detailData.end_time, 'YYYY-MM-DD HH:mm:ss')
+            ? timestampToFormatTime(detailData.endTime, 'YYYY-MM-DD HH:mm:ss')
             : '',
           width: ''
         },
         {
-          field: 'owner_user_id',
+          field: 'ownerUserId',
           name: '管理员',
           form_type: 'user',
           radio: false,
           input_tips: '',
           setting: [],
-          value: detailData ? detailData.owner_user_id_info : [],
+          value: detailData ? detailData.ownerUserIdInfo : [],
           width: ''
         },
         {
@@ -373,7 +372,7 @@ export default {
       this.dataForm[item.field] = data.value
       if (item.form_type == 'user') {
         this.$refs.dataForm.validateField(item.field)
-      } else if (item.field == 'object') {
+      } else if (item.field == 'crmType') {
         this.getFieldConfigIndex()
       }
     },
@@ -391,9 +390,19 @@ export default {
         if (valid) {
           const params = this.getSubmiteParams()
           params.second = this.onlyOne ? 1 : 2
-          params.field_data = this.showFieldList.map(item => {
-            return item.field
-          })
+          params.fieldDataId = this.showFieldList.map(item => {
+            return item.fieldId
+          }).join(',')
+          params.relationUserId = this.dataForm.relationUserId.map(item => {
+            return item.userId
+          }).join(',')
+          params.ownerUserId = this.dataForm.ownerUserId.map(item => {
+            return item.userId
+          }).join(',')
+          params.relationUserId = ',' + params.relationUserId + ','
+          params.fieldDataId = ',' + params.fieldDataId + ','
+          params.ownerUserId = ',' + params.ownerUserId + ','
+          params.endTime = timestampToFormatTime(params.endTime, 'YYYY-MM-DD HH:mm:ss')
           this.submiteParams(params)
         } else {
           return false
@@ -404,15 +413,10 @@ export default {
     /** 上传 */
     submiteParams(params) {
       this.loading = true
-      const request =
-        this.action.type == 'update'
-          ? crmMarketingUpdateAPI
-          : crmMarketingSaveAPI
-
       if (this.action.type == 'update') {
-        params.id = this.action.id
+        params.marketingId = this.action.id
       }
-      request(params)
+      crmMarketingSaveAPI(params)
         .then(res => {
           this.loading = false
           this.hidenView()

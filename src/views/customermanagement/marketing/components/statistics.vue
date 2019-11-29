@@ -157,7 +157,7 @@ export default {
     getFieldList() {
       this.loading = true
       crmMarketingCensusFieldAPI({
-        id: this.id
+        marketingId: this.id
       })
         .then(res => {
           for (let index = 0; index < res.data.length; index++) {
@@ -184,8 +184,8 @@ export default {
                 }
               }
             } else if (
-              element.field === 'create_user_id' ||
-              element.field === 'owner_user_id'
+              element.field === 'createUserId' ||
+              element.field === 'ownerUserId'
             ) {
               this.formatterRules[element.field] = {
                 type: 'crm',
@@ -293,7 +293,7 @@ export default {
       crmMarketingCensusAPI({
         page: this.currentPage,
         limit: this.pageSize,
-        id: this.id,
+        marketingId: this.id,
         type: this.type
       })
         .then(res => {
@@ -357,7 +357,7 @@ export default {
       // } else {
       this.loading = true
       crmMarketingSynchroFieldAPI({
-        id: this.id
+        marketingId: this.id
       })
         .then(res => {
           this.loading = false
@@ -409,8 +409,8 @@ export default {
         params = {}
       }
       params.id = this.id
-      params.r_ids = this.selectionList.map(item => {
-        return item.r_id
+      params.rIds = this.selectionList.map(item => {
+        return item.rId
       })
       crmMarketingSynchroAPI(params)
         .then(res => {
@@ -433,8 +433,8 @@ export default {
 
       // 勾选导出
       if (this.selectionList.length) {
-        params.r_ids = this.selectionList.map(item => {
-          return item.r_id
+        params.rIds = this.selectionList.map(item => {
+          return item.rId
         })
       }
       crmMarketingExcelExportAPI(params)

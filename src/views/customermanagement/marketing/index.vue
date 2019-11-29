@@ -21,12 +21,12 @@
         @handle="handleHandle">
         <div slot="custom">
           关联对象：<el-select
-            v-model="scene_id"
+            v-model="sceneId"
             class="type-select"
             placeholder="请选择"
             @change="refreshList">
             <el-option
-              v-for="(item, index) in [{ name: '全部', value: '' }, { name: '客户', value: 1 }, { name: '线索', value: 2 }]"
+              v-for="(item, index) in [{ name: '全部', value: '' }, { name: '客户', value: 2 }, { name: '线索', value: 1 }]"
               :key="index"
               :label="item.name"
               :value="item.value"/>
@@ -87,10 +87,8 @@
 </template>
 
 <script>
-import moment from 'moment'
 import Create from './components/create'
 import Detail from './detail'
-import { getDateFromTimestamp } from '@/utils'
 import table from '../mixins/table'
 
 export default {
@@ -107,7 +105,7 @@ export default {
   data() {
     return {
       crmType: 'marketing',
-      scene_id: '', // 类型
+      sceneId: '', // 类型
       isCreate: false // 是创建
     }
   },
@@ -117,32 +115,32 @@ export default {
   created() {
     this.fieldList = [
       {
-        prop: 'name',
-        label: '客户名称',
+        prop: 'marketingName',
+        label: '推广名称',
         width: '150'
       },
       {
-        prop: 'object',
+        prop: 'crmType',
         label: '关联对象',
         width: '80'
       },
       {
-        prop: 'create_user_id_info',
+        prop: 'createUserName',
         label: '创建人',
         width: '150'
       },
       {
-        prop: 'end_time',
+        prop: 'endTime',
         label: '截止时间',
         width: '180'
       },
       {
-        prop: 'update_time',
+        prop: 'updateTime',
         label: '更新时间',
         width: '180'
       },
       {
-        prop: 'create_time',
+        prop: 'createTime',
         label: '创建时间',
         width: '180'
       },
@@ -152,51 +150,6 @@ export default {
         width: '80'
       }
     ]
-
-    // 格式方式
-    function fieldFormatter(time) {
-      if (time == 0 || !time) {
-        return ''
-      }
-      return moment(getDateFromTimestamp(time)).format('YYYY-MM-DD HH:mm:ss')
-    }
-    this.formatterRules['end_time'] = {
-      formatter: fieldFormatter
-    }
-    this.formatterRules['update_time'] = {
-      formatter: fieldFormatter
-    }
-    this.formatterRules['create_time'] = {
-      formatter: fieldFormatter
-    }
-
-    this.formatterRules['create_user_id_info'] = {
-      formatter: create_user_id => {
-        return create_user_id.realname || ''
-      }
-    }
-
-    this.formatterRules['object'] = {
-      formatter: object => {
-        if (object == 1) {
-          return '客户'
-        } else if (object == 2) {
-          return '线索'
-        }
-        return ''
-      }
-    }
-
-    this.formatterRules['state'] = {
-      formatter: state => {
-        if (state == 1) {
-          return '启用'
-        } else if (state == 2) {
-          return '停用'
-        }
-        return ''
-      }
-    }
   },
 
   methods: {
@@ -218,10 +171,28 @@ export default {
 
     /** 通过回调控制style */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'name') {
+      if (column.property === 'marketingName') {
         return 'can-visit--underline'
       } else {
         return ''
+      }
+    },
+    /** 格式化 */
+    fieldFormatter(row, column, cellValue) {
+      if (column.property === 'status') {
+        if (cellValue == 1) {
+          return '启用'
+        } else if (cellValue == 0) {
+          return '停用'
+        }
+      } else if (column.property === 'crmType') {
+        if (cellValue == 1) {
+          return '线索'
+        } else if (cellValue == 2) {
+          return '客户'
+        }
+      } else {
+        return cellValue
       }
     }
   }

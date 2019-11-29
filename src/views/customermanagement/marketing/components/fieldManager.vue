@@ -152,8 +152,12 @@ export default {
   },
 
   watch: {
-    data() {
-      this.refreshFieldData()
+    data: {
+      handler(val) {
+        this.refreshFieldData()
+      },
+      deep: true,
+      immediate: true
     }
   },
 
@@ -180,6 +184,7 @@ export default {
      * 搜索操作
      */
     inputLeftChange(val) {
+      console.log(val)
       this.checkedLeftData = this.checkedLeftData.map(function(item, index) {
         if (item.name.indexOf(val) != -1) {
           item.show = true

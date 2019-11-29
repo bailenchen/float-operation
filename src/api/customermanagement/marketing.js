@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function crmMarketingIndexAPI(data) {
   return request({
-    url: 'crm/marketing/index',
+    url: 'CrmMarketing/queryPageList',
     method: 'post',
     data: data
   })
@@ -18,7 +18,7 @@ export function crmMarketingIndexAPI(data) {
  */
 export function crmMarketingFieldInfoAPI(data) {
   return request({
-    url: 'crm/marketing/fieldInfo',
+    url: 'field/queryField',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function crmMarketingFieldInfoAPI(data) {
  */
 export function crmMarketingSaveAPI(data) {
   return request({
-    url: 'crm/marketing/save',
+    url: 'CrmMarketing/addOrUpdate',
     method: 'post',
     data: data
   })
@@ -42,7 +42,7 @@ export function crmMarketingSaveAPI(data) {
  */
 export function crmMarketingUpdateAPI(data) {
   return request({
-    url: 'crm/marketing/update',
+    url: 'CrmMarketing/queryUpdateField',
     method: 'post',
     data: data
   })
@@ -54,7 +54,7 @@ export function crmMarketingUpdateAPI(data) {
  */
 export function crmMarketingDeleteAPI(data) {
   return request({
-    url: 'crm/marketing/delete',
+    url: 'CrmMarketing/deleteByIds',
     method: 'post',
     data: data
   })
@@ -66,7 +66,7 @@ export function crmMarketingDeleteAPI(data) {
  */
 export function crmMarketingReadAPI(data) {
   return request({
-    url: 'crm/marketing/read',
+    url: 'CrmMarketing/queryById',
     method: 'post',
     data: data
   })
@@ -90,7 +90,7 @@ export function crmMarketingOverviewAPI(data) {
  */
 export function crmMarketingCensusAPI(data) {
   return request({
-    url: 'crm/marketing/census',
+    url: 'CrmMarketing/census',
     method: 'post',
     data: data
   })
@@ -102,7 +102,7 @@ export function crmMarketingCensusAPI(data) {
  */
 export function crmMarketingIsEnableAPI(data) {
   return request({
-    url: 'crm/marketing/isEnable',
+    url: 'CrmMarketing/updateStatus',
     method: 'post',
     data: data
   })
@@ -114,7 +114,7 @@ export function crmMarketingIsEnableAPI(data) {
  */
 export function crmMarketingSynchroFieldAPI(data) {
   return request({
-    url: 'crm/marketing/synchroField',
+    url: 'CrmMarketing/queryField',
     method: 'post',
     data: data
   })
@@ -126,7 +126,7 @@ export function crmMarketingSynchroFieldAPI(data) {
  */
 export function crmMarketingSynchroAPI(data) {
   return request({
-    url: 'crm/marketing/synchro',
+    url: 'CrmMarketing/syncData',
     method: 'post',
     data: data
   })
@@ -138,7 +138,7 @@ export function crmMarketingSynchroAPI(data) {
  */
 export function crmMarketingCensusFieldAPI(data) {
   return request({
-    url: 'crm/marketing/censusField',
+    url: 'CrmMarketing/census',
     method: 'post',
     data: data
   })
@@ -150,7 +150,19 @@ export function crmMarketingCensusFieldAPI(data) {
  */
 export function crmMarketingExcelExportAPI(data) {
   return request({
-    url: 'crm/marketing/excelExport',
+    url: 'CrmMarketing/allExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+/**
+ * 详情
+ * @param {*} data
+ */
+export function CrmMarketingInformationAPI(data) {
+  return request({
+    url: 'CrmMarketing/information',
     method: 'post',
     data: data,
     responseType: 'blob'

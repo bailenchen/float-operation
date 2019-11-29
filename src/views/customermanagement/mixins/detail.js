@@ -35,6 +35,9 @@ export default {
       if (this.detailData && this.detailData.dataAuth === 0) {
         return false
       }
+      if (this.crmType === 'marketing') {
+        return true
+      }
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].read
     }
   },

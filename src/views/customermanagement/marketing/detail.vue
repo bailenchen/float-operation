@@ -6,7 +6,7 @@
     :no-listener-class="noListenerClass"
     :body-style="{padding: 0, height: '100%'}"
     class="d-view"
-    @side-close="hideView">
+    @close="hideView">
     <flexbox
       v-loading="loading"
       v-if="canShowDetail"
@@ -25,6 +25,8 @@
       <div class="tabs">
         <el-tabs
           v-model="tabCurrentName"
+          type="border-card"
+          class="d-container-bd--left"
           @tab-click="handleClick">
           <el-tab-pane
             v-for="(item, index) in tabnames"
@@ -111,7 +113,7 @@ export default {
   data() {
     return {
       loading: false, // 展示加载loading
-      crmType: 'customer',
+      crmType: 'marketing',
       detailData: {}, // read 详情
       baseDetailList: [], // 基本详情list
       headDetails: [
@@ -152,25 +154,18 @@ export default {
     getDetial() {
       this.loading = true
       crmMarketingReadAPI({
-        id: this.id
+        marketingId: this.id
       })
         .then(res => {
           this.loading = false
           this.detailData = res.data
-
           this.getBaseList(res.data)
 
           // 负责人
-          this.headDetails[0].value = res.data.object == 1 ? '客户' : '线索'
-          this.headDetails[1].value = res.data.state == 1 ? '启用' : '停用'
-          this.headDetails[2].value = res.data.owner_user_id_info
-            .map(item => {
-              return item.realname
-            })
-            .join('，')
-          this.headDetails[3].value = res.data.end_time
-            ? timestampToFormatTime(res.data.end_time, 'YYYY-MM-DD HH:mm:ss')
-            : ''
+          this.headDetails[0].value = res.data.crmType == 1 ? '线索' : '客户'
+          this.headDetails[1].value = res.data.status == 1 ? '启用' : '停用'
+          this.headDetails[2].value = res.data.ownerUserName
+          this.headDetails[3].value = res.data.endTime
         })
         .catch(() => {
           this.loading = false
@@ -185,30 +180,22 @@ export default {
         {
           name: '推广名称',
           form_type: 'text',
-          value: data.name
+          value: data.marketingName
         },
         {
           name: '关联对象',
           form_type: 'text',
-          value: data.object == 1 ? '客户' : '线索'
+          value: data.crmType == 1 ? '客户' : '线索'
         },
         {
           name: '关联人员',
           form_type: 'text',
-          value: data.relation_user_id_info
-            .map(item => {
-              return item.realname
-            })
-            .join('，')
+          value: data.relationUserName
         },
         {
           name: '管理员',
           form_type: 'text',
-          value: data.owner_user_id_info
-            .map(item => {
-              return item.realname
-            })
-            .join('，')
+          value: data.ownerUserName
         },
         {
           name: '备注',
@@ -218,27 +205,27 @@ export default {
         {
           name: '状态',
           form_type: 'text',
-          value: data.state == 1 ? '启用' : '停用'
+          value: data.status == 1 ? '启用' : '停用'
         },
         {
           name: '创建人',
           form_type: 'text',
-          value: data.create_user_id_info.realname
+          value: data.createUserName
         },
         {
           name: '截止时间',
           form_type: 'text',
-          value: timestampToFormatTime(data.end_time, 'YYYY-MM-DD HH:mm:ss')
+          value: timestampToFormatTime(data.endTime, 'YYYY-MM-DD HH:mm:ss')
         },
         {
           name: '创建时间',
           form_type: 'text',
-          value: data.create_time
+          value: data.createTime
         },
         {
           name: '更新时间',
           form_type: 'text',
-          value: data.update_time
+          value: data.updateTime
         }
       ]
     },
@@ -266,7 +253,11 @@ export default {
   position: fixed;
   width: 950px;
   top: 0px;
+  background-color: #FFF !important;
   bottom: 0px;
   right: 0px;
+}
+/deep/.el-tabs--border-card {
+  border: #FFF 1px solid !important;
 }
 </style>

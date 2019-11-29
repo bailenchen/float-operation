@@ -117,7 +117,7 @@ export default {
       })
         .then(res => {
           this.name = res.data.name
-          this.submitCount = res.data.sub_count
+          this.submitCount = res.data.subCount
           this.browseCount = res.data.browse
           this.path = res.data.path
           this.loading = false

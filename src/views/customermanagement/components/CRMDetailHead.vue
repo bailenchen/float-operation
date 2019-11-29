@@ -182,7 +182,8 @@ export default {
           product: '产品',
           business: '商机',
           contract: '合同',
-          receivables: '回款'
+          receivables: '回款',
+          marketing: '推广'
         }[this.crmType] || ''
       )
     },
@@ -193,6 +194,8 @@ export default {
         return this.detail.customerName
       } else if (this.crmType === 'business') {
         return this.detail.businessName
+      } else if (this.crmType === 'marketing') {
+        return this.detail.marketingName
       }
       return this.detail.name
     },
@@ -202,6 +205,7 @@ export default {
         this.crmType === 'receivables' ||
         this.crmType === 'product' ||
         this.crmType === 'customer' ||
+         this.crmType === 'marketing' ||
         this.isSeas
       ) {
         return false
@@ -224,6 +228,8 @@ export default {
           this.detail.checkStatus != 8 &&
           this.crm[this.crmType].update
         )
+      } else if (this.crmType === 'marketing') {
+        return true
       }
 
       return this.isSeas ? false : this.crm[this.crmType].update
@@ -395,7 +401,7 @@ export default {
           .catch(() => {})
       } else if (type === 'state_start' || type === 'state_disable') {
         crmMarketingIsEnableAPI({
-          id: [this.id],
+          marketingId: ',' + this.id + ',',
           state: type === 'state_start' ? 1 : 2
         })
           .then(res => {
