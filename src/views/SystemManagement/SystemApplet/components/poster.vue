@@ -164,11 +164,10 @@ export default {
    }
 }
 .poster-ew {
-    width: 60px;
-    border-radius: 60px;
+    width: 80px;
     background-color: #fff;
     position: absolute;
-    left: 210px;
+    left: 200px;
     bottom: 52px;
 }
  .avatar-uploader .el-upload {
