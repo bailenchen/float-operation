@@ -144,3 +144,61 @@ export function crmProductNumAPI(data) {
     data: data
   })
 }
+/**
+ * 详情图添加
+ * @param {*} data
+ *
+ */
+export function CrmProductDetailImgSave(data) {
+  var param = new FormData()
+  Object.keys(data).forEach(key => {
+    param.append(key, data[key])
+  })
+  return request({
+    url: 'CrmProductDetailImg/save',
+    method: 'post',
+    data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+/**
+ * 查询官网图片 CrmProductDetailImg/queryListByType
+ * @param {*} data
+ *
+ */
+export function CrmProductDetailImgQueryListByType(data) {
+  return request({
+    url: 'CrmProductDetailImg/queryListByType',
+    method: 'post',
+    data: data
+  })
+}
+/**
+ * 删除产品图片
+ * @param {*} data
+ *
+ */
+export function CrmProductDetailImgDelete(data) {
+  return request({
+    url: 'CrmProductDetailImg/delete',
+    method: 'post',
+    data: data
+  })
+}
+/**
+ * 产品简介添加
+ * @param {*} data
+ *
+ */
+export function CrmProductDetailImgSaveImg(data) {
+  return request({
+    url: 'CrmProductDetailImg/saveImg',
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data: data
+  })
+}

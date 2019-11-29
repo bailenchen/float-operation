@@ -65,13 +65,14 @@ import RelativeHandle from '../components/RelativeHandle' // 相关操作
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
-
+import DetailImg from './components/detailImg'
 export default {
   // 客户管理 的 产品详情
   name: 'ProductDetail',
   components: {
     SlideView,
     CRMDetailHead,
+    DetailImg,
     CRMBaseInfo,
     RelativeFiles,
     RelativeHandle,
@@ -123,7 +124,8 @@ export default {
       return [
         { label: '基本信息', name: 'CRMBaseInfo' },
         { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
-        { label: '操作记录', name: 'RelativeHandle' }
+        { label: '操作记录', name: 'RelativeHandle' },
+        { label: '产品图片详情', name: 'DetailImg' }
       ]
     }
   },
