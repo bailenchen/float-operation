@@ -48,7 +48,7 @@
           </template>
         </div>
 
-        <!-- <div class="app-down">
+        <div class="app-down">
           <span class="text">
             APP下载
           </span>
@@ -63,7 +63,7 @@
               扫描二维码<br>下载客户端
             </span>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
