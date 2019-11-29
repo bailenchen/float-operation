@@ -624,6 +624,18 @@ export default {
                     totalPrice: res.data.money,
                     discountRate: res.data.discountRate
                   }
+
+                  // 金额赋值 金额必须在产品前面
+                  for (
+                    let moneyIndex = 0;
+                    moneyIndex < this.crmForm.crmFields.length;
+                    moneyIndex++
+                  ) {
+                    const moneyElement = this.crmForm.crmFields[moneyIndex]
+                    if (moneyElement.key === 'money') {
+                      moneyElement['value'] = res.data.money
+                    }
+                  }
                 })
                 .catch(() => {})
             }
