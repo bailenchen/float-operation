@@ -237,7 +237,7 @@ export default {
 
     checkCallDetail(item) {
       this.showCallDetail = true
-      this.callSwitch = item.status == 1 ? true : false
+      this.callSwitch = item.status == 1
     }
   }
 }
