@@ -79,7 +79,7 @@ export default {
       }).catch(() => {})
     },
     getRD() {
-      wechatQueryAPI().then(res => {
+      wechatQueryAPI({ type: 2 }).then(res => {
         this.EWurl = res.data.weixinImg
         this.loading = false
       }).catch(() => {})

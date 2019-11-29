@@ -34,8 +34,8 @@ export default {
   methods: {
     /** 查询二维码 */
     getRD() {
-      wechatQueryAPI().then(res => {
-        this.eWurl = res.data.weixinImg
+      wechatQueryAPI({ type: 1 }).then(res => {
+        this.eWurl = res.data
       }).catch(() => {})
     }
   }

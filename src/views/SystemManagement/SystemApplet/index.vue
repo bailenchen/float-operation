@@ -1,5 +1,16 @@
 <template>
   <div class="applet-authorization">
+    <el-input
+      v-if="appletActive.id === 1 && mainMenuIndex == 'user'"
+      v-model="search"
+      placeholder="请输入手机号/员工姓名"
+      class="search"
+      @keyup.enter.native="searchClick">
+      <el-button
+        slot="append"
+        type="primary"
+        @click.native="searchClick">搜索</el-button>
+    </el-input>
     <xr-header
       ref="xrHeader"
       :show-search="false"
@@ -40,16 +51,6 @@
             <div
               v-loading="userLoading"
               class="content-table">
-              <el-input
-                v-model="search"
-                placeholder="请输入手机号/员工姓名"
-                class="search"
-                @keyup.enter.native="searchClick">
-                <el-button
-                  slot="append"
-                  type="primary"
-                  @click.native="searchClick">搜索</el-button>
-              </el-input>
               <flexbox class="content-table-header">
                 <div class="content-table-header-reminder">
                   <reminder
@@ -126,7 +127,7 @@
             v-if="appletActive.id === 3"
             label="查看授权"
             name="auth">
-            <iframe :src="authUrl" style="width: 1080px;height: 600px; margin: 20px;" frameborder="0"/>
+            <iframe :src="authUrl" style="width: calc(100% - 20px);height: 600px; margin: 20px;" frameborder="0"/>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -614,7 +615,7 @@ export default {
 .search {
     width: 300px;
     position: absolute;
-    top: 0px;
+    top: 15px;
     left: 50%;
 }
 /deep/.el-input-group__append {
