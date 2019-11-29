@@ -38,7 +38,7 @@
           label="排序"
           align="center"
           prop="startEn"
-          width="80">
+          width="90">
           <template slot-scope="scope">
             <span v-if="specialRowArr.includes(scope.$index)">
               {{ scope.row.initial || '' }}
