@@ -81,12 +81,12 @@
 </template>
 <script type="text/javascript">
 import { filedGetField } from '@/api/customermanagement/common'
+import { crmMarketingSaveAPI } from '@/api/customermanagement/marketing'
+
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import FieldManager from './fieldManager'
-import {
-  crmMarketingSaveAPI
-} from '@/api/customermanagement/marketing'
+import marketing from './marketing'
 
 import {
   XhInput,
@@ -135,6 +135,8 @@ export default {
       }
     }
   },
+
+  mixins: [marketing],
 
   props: {
     /**
@@ -218,7 +220,10 @@ export default {
 
     this.fieldList = this.getFieldList()
     if (this.action.type == 'update') {
-      this.dataForm = this.action.detail
+      for (let index = 0; index < this.fieldList.length; index++) {
+        const element = this.fieldList[index]
+        this.dataForm[element.field] = element.value
+      }
 
       this.onlyOne = this.action.detail.second == 1
 
@@ -293,13 +298,6 @@ export default {
           this.showFieldList = this.fieldData.left
         })
         .catch(() => {})
-    },
-
-    /**
-     * 字段是否展示
-     */
-    isShowField(formType) {
-      return formType != 'user' && formType != 'structure' && formType != 'file' && formType != 'map_address'
     },
 
     /**

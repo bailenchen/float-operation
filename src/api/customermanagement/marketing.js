@@ -109,18 +109,6 @@ export function crmMarketingSynchroAPI(data) {
 }
 
 /**
- * 列表字段
- * @param {*} data
- */
-export function crmMarketingCensusFieldAPI(data) {
-  return request({
-    url: 'CrmMarketing/census',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
  * 导出
  * @param {*} data
  */

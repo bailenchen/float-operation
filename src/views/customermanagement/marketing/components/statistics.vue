@@ -43,14 +43,9 @@
           <el-table-column
             :formatter="fieldFormatter"
             show-overflow-tooltip
-            prop="state"
-            width="120">
-            <template
-              slot="header"
-              slot-scope="scope">
-              <div class="table-head-name">同步状态</div>
-            </template>
-          </el-table-column>
+            label="同步状态"
+            prop="status"
+            width="120"/>
           <el-table-column
             v-for="(item, index) in fieldList"
             :key="index"
@@ -58,13 +53,7 @@
             :label="item.label"
             :width="item.width"
             :formatter="fieldFormatter"
-            show-overflow-tooltip>
-            <template
-              slot="header"
-              slot-scope="scope">
-              <div class="table-head-name">{{ scope.column.label }}</div>
-            </template>
-          </el-table-column>
+            show-overflow-tooltip/>
           <el-table-column/>
         </el-table>
         <div class="p-contianer">
@@ -91,16 +80,16 @@
 <script>
 import {
   crmMarketingCensusAPI,
-  crmMarketingCensusFieldAPI,
   crmMarketingSynchroFieldAPI,
   crmMarketingExcelExportAPI,
   crmMarketingSynchroAPI
 } from '@/api/customermanagement/marketing'
+import { filedGetTableField } from '@/api/customermanagement/common'
 import loading from '../../mixins/loading'
 import Sections from '../../components/Sections'
 import Sync from './sync'
-import moment from 'moment'
-import { formatTimeToTimestamp, getDateFromTimestamp } from '@/utils'
+
+import marketing from './marketing'
 
 export default {
   /** 推广管理 的 统计*/
@@ -109,10 +98,12 @@ export default {
     Sections,
     Sync
   },
-  mixins: [loading],
+  mixins: [loading, marketing],
   props: {
     /** 模块ID */
     id: [String, Number],
+    /** 详情 */
+    detail: Object,
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
@@ -129,7 +120,7 @@ export default {
       /** 格式化规则 */
       formatterRules: {},
 
-      tableHeight: document.documentElement.clientHeight - 385,
+      tableHeight: document.documentElement.clientHeight - 425,
 
       currentPage: 1,
       pageSize: 15,
@@ -143,7 +134,7 @@ export default {
   },
   computed: {},
   watch: {
-    id: function(val) {
+    detail() {
       this.getFieldList()
     }
   },
@@ -155,99 +146,40 @@ export default {
   methods: {
     /** 获取字段 */
     getFieldList() {
+      if (!this.detail) {
+        return
+      }
       this.loading = true
-      crmMarketingCensusFieldAPI({
-        marketingId: this.id
+      filedGetTableField({
+        label: this.detail.crmType
       })
         .then(res => {
+          const showFieldsStr = this.detail.fieldDataId || ''
+
+          const showFields = showFieldsStr.split(',').map(item => {
+            return parseInt(item)
+          })
+
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
-            /** 获取需要格式化的字段 和格式化的规则 */
-            if (element.form_type === 'date') {
-              this.formatterRules[element.field] = {
-                formatter: (time) => {
-                  if (time == '0000-00-00') {
-                    time = ''
-                  }
-                  return time
+            if (this.isShowField(element.formType) && showFields.includes(element.fieldId)) {
+              var width = 0
+              if (!element.width) {
+                if (element.name && element.name.length <= 6) {
+                  width = element.name.length * 15 + 45
+                } else {
+                  width = 140
                 }
-              }
-            } else if (element.form_type === 'datetime') {
-              this.formatterRules[element.field] = {
-                formatter: (time) => {
-                  if (time == 0 || !time) {
-                    return ''
-                  }
-                  return moment(getDateFromTimestamp(time)).format(
-                    'YYYY-MM-DD HH:mm:ss'
-                  )
-                }
-              }
-            } else if (
-              element.field === 'createUserId' ||
-              element.field === 'ownerUserId'
-            ) {
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: (info) => {
-                  return info ? info.realname : ''
-                }
-              }
-            } else if (element.form_type === 'user') {
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: (info) => {
-                  if (info) {
-                    var content = ''
-                    for (let index = 0; index < info.length; index++) {
-                      const element = info[index]
-                      content =
-                      content +
-                      element.realname +
-                      (index === info.length - 1 ? '' : ',')
-                    }
-                    return content
-                  }
-                  return ''
-                }
-              }
-            } else if (element.form_type === 'structure') {
-              this.formatterRules[element.field] = {
-                type: 'crm',
-                formatter: (info) => {
-                  if (info) {
-                    var content = ''
-                    for (let index = 0; index < info.length; index++) {
-                      const element = info[index]
-                      content =
-                      content +
-                      element.name +
-                      (index === info.length - 1 ? '' : ',')
-                    }
-                    return content
-                  }
-                  return ''
-                }
-              }
-              /** 联系人 客户 商机 合同*/
-            }
-
-            var width = 0
-            if (!element.width) {
-              if (element.name && element.name.length <= 6) {
-                width = element.name.length * 15 + 45
               } else {
-                width = 140
+                width = element.width
               }
-            } else {
-              width = element.width
-            }
 
-            this.fieldList.push({
-              prop: element.field,
-              label: element.name,
-              width: width
-            })
+              this.fieldList.push({
+                prop: element.fieldName,
+                label: element.name,
+                width: width
+              })
+            }
           }
 
           // 获取好字段开始请求数据
@@ -273,13 +205,13 @@ export default {
           return aRules.formatter(row[column.property]) || '--'
         }
       } else {
-        if (column.property == 'state') {
-          const state = row[column.property]
-          if (state == 0) {
+        if (column.property == 'status') {
+          const status = row[column.property]
+          if (status == 0) {
             return '未同步'
-          } else if (state == 1) {
+          } else if (status == 1) {
             return '同步成功'
-          } else if (state == 2) {
+          } else if (status == 2) {
             return '同步失败'
           }
         }
@@ -298,7 +230,7 @@ export default {
       })
         .then(res => {
           this.list = res.data.list
-          this.total = res.data.dataCount
+          this.total = res.data.totalRow
 
           this.loading = false
         })
@@ -334,13 +266,13 @@ export default {
 
     /** 通过回调控制style */
     cellStyle({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'state') {
-        const state = row[column.property]
-        if (state == 0) {
+      if (column.property === 'status') {
+        const status = row[column.property]
+        if (status == 0) {
           return { color: '#999' }
-        } else if (state == 1) {
+        } else if (status == 1) {
           return { color: '#33D555' }
-        } else if (state == 2) {
+        } else if (status == 2) {
           return { color: '#F84F4F' }
         }
       } else {
@@ -387,11 +319,7 @@ export default {
           submite = false
           break
         } else {
-          if (element.form_type == 'datetime') {
-            params[element.field] = formatTimeToTimestamp(element.value)
-          } else {
-            params[element.field] = element.value
-          }
+          params[element.fieldName] = element.value
         }
       }
 

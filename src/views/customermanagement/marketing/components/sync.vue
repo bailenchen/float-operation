@@ -11,30 +11,30 @@
       class="field-content">
       <template v-for="(item, index) in handleFieldList">
         <flexbox
-          v-if="item.form_type != 'file'"
+          v-if="item.formType != 'file'"
           :key="index"
           align="stretch"
           class="cell">
           <div class="cell-header">{{ item.name }}</div>
           <el-input
             v-if="
-              item.form_type == 'text' ||
-                item.form_type == 'number' ||
-                item.form_type == 'floatnumber' ||
-                item.form_type == 'mobile' ||
-            item.form_type == 'email'"
+              item.formType == 'text' ||
+                item.formType == 'number' ||
+                item.formType == 'floatnumber' ||
+                item.formType == 'mobile' ||
+            item.formType == 'email'"
             v-model="item.value"
             class="cell-body"
             placeholder="请输入内容"/>
           <el-input
-            v-else-if="item.form_type == 'textarea'"
+            v-else-if="item.formType == 'textarea'"
             :rows="2"
             v-model="item.value"
             type="textarea"
             resize="none"
             placeholder="请输入内容"/>
           <el-select
-            v-else-if="item.form_type == 'select'"
+            v-else-if="item.formType == 'select'"
             v-model="item.value"
             style="width: 100%;"
             placeholder="请选择">
@@ -45,7 +45,7 @@
               :value="settingItem"/>
           </el-select>
           <el-select
-            v-else-if="item.form_type == 'checkbox'"
+            v-else-if="item.formType == 'checkbox'"
             v-model="item.value"
             style="width: 100%;"
             multiple
@@ -57,14 +57,14 @@
               :value="settingItem"/>
           </el-select>
           <el-date-picker
-            v-else-if="item.form_type == 'date'"
+            v-else-if="item.formType == 'date'"
             v-model="item.value"
             style="width: 100%;"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"/>
           <el-date-picker
-            v-else-if="item.form_type == 'datetime'"
+            v-else-if="item.formType == 'datetime'"
             v-model="item.value"
             style="width: 100%;"
             type="datetime"
@@ -86,6 +86,7 @@
 
 <script type="text/javascript">
 import { objDeepCopy } from '@/utils'
+
 export default {
   name: 'Sync', // 同步到客户
   components: {},

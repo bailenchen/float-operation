@@ -106,6 +106,7 @@
 
 <script type="text/javascript">
 import draggable from 'vuedraggable'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'FieldsManager',
@@ -176,15 +177,14 @@ export default {
      * 刷洗字段信息
      */
     refreshFieldData() {
-      this.checkedLeftData = this.data ? this.data.left : []
-      this.checkedRightData = this.data ? this.data.right : []
+      this.checkedLeftData = this.data ? objDeepCopy(this.data.left || []) : []
+      this.checkedRightData = this.data ? objDeepCopy(this.data.right || []) : []
     },
 
     /**
      * 搜索操作
      */
     inputLeftChange(val) {
-      console.log(val)
       this.checkedLeftData = this.checkedLeftData.map(function(item, index) {
         if (item.name.indexOf(val) != -1) {
           item.show = true
@@ -257,11 +257,7 @@ export default {
     },
 
     leftCheckItemChange() {
-      this.leftCheckItems = this.checkedLeftData.filter(function(
-        item,
-        index,
-        array
-      ) {
+      this.leftCheckItems = this.checkedLeftData.filter(function(item) {
         return item.check == true
       })
       if (this.leftCheckItems.length > 0) {
@@ -321,18 +317,8 @@ export default {
       var self = this
       // 从右往左
       if (type == 'left') {
-        this.checkedRightData = this.checkedRightData.filter(function(
-          item,
-          index,
-          array
-        ) {
-          var remove = false
-          self.rightCheckItems.forEach(function(element, index) {
-            if (item.field == element.field) {
-              remove = true
-            }
-          })
-          return !remove
+        this.checkedRightData = this.checkedRightData.filter(function(item) {
+          return !item.check
         })
 
         this.rightCheckItems.forEach(function(element, index) {
@@ -348,18 +334,8 @@ export default {
         this.leftCheckItemChange()
         this.rightCheckItemChange()
       } else {
-        this.checkedLeftData = this.checkedLeftData.filter(function(
-          item,
-          index,
-          array
-        ) {
-          var remove = false
-          self.leftCheckItems.forEach(function(element, index) {
-            if (item.field == element.field) {
-              remove = true
-            }
-          })
-          return !remove
+        this.checkedLeftData = this.checkedLeftData.filter(function(item) {
+          return !item.check
         })
 
         this.leftCheckItems.forEach(function(element, index) {

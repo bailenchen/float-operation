@@ -65,6 +65,7 @@ import Sections from '../../components/Sections'
 import { downloadFile } from '@/utils'
 import Clipboard from 'clipboard'
 import QRCode from 'qrcodejs2'
+import { marketingUrl } from '@/config'
 
 export default {
   /** 推广管理 的 概览*/
@@ -74,7 +75,7 @@ export default {
   },
   mixins: [loading],
   props: {
-    /** 模块ID */
+    /** 详情 */
     detail: Object,
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
@@ -113,7 +114,7 @@ export default {
       this.name = this.detail.marketingName
       this.submitCount = this.detail.subCount
       this.browseCount = this.detail.browse
-      this.path = `?marketingId=${this.detail.enMarketingId}&currentUserId=${this.detail.currentUserId}`
+      this.path = `${marketingUrl}?marketingId=${this.detail.enMarketingId}&currentUserId=${this.detail.currentUserId}`
       this.loading = false
 
       if (this.qrcode) {
