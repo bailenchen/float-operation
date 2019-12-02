@@ -36,16 +36,16 @@
                     <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
                       {{ item.name }}
                       <span style="color:#999;">
-                        {{ item.input_tips ? '（'+item.input_tips+'）':'' }}
+                        {{ item.inputTips ? '（'+item.inputTips+'）':'' }}
                       </span>
                     </div>
                   </div>
                   <!-- 员工 和部门 为多选（radio=false）  relation 相关合同商机使用-->
                   <component
-                    :is="item.form_type | typeToComponentName"
+                    :is="item.formType | typeToComponentName"
                     :value="item.value"
                     :index="index"
-                    :item="{data: item}"
+                    :item="{ data: item }"
                     :radio="false"
                     :disabled="item.disabled"
                     @value-change="fieldValueChange"/>
@@ -80,14 +80,13 @@
   </create-view>
 </template>
 <script type="text/javascript">
-import { crmMarketingFieldInfoAPI } from '@/api/customermanagement/marketing'
+import { filedGetField } from '@/api/customermanagement/common'
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import FieldManager from './fieldManager'
 import {
   crmMarketingSaveAPI
 } from '@/api/customermanagement/marketing'
-import { formatTimeToTimestamp, timestampToFormatTime } from '@/utils'
 
 import {
   XhInput,
@@ -114,24 +113,24 @@ export default {
 
   filters: {
     /** 根据type 找到组件 */
-    typeToComponentName(form_type) {
+    typeToComponentName(formType) {
       if (
-        form_type == 'text' ||
-        form_type == 'number' ||
-        form_type == 'floatnumber' ||
-        form_type == 'mobile' ||
-        form_type == 'email'
+        formType == 'text' ||
+        formType == 'number' ||
+        formType == 'floatnumber' ||
+        formType == 'mobile' ||
+        formType == 'email'
       ) {
         return 'XhInput'
-      } else if (form_type == 'textarea') {
+      } else if (formType == 'textarea') {
         return 'XhTextarea'
-      } else if (form_type == 'select') {
+      } else if (formType == 'select') {
         return 'XhSelect'
-      } else if (form_type == 'date') {
+      } else if (formType == 'date') {
         return 'XhDate'
-      } else if (form_type == 'datetime') {
+      } else if (formType == 'datetime') {
         return 'XhDateTime'
-      } else if (form_type == 'user') {
+      } else if (formType == 'user') {
         return 'XhUserCell'
       }
     }
@@ -191,7 +190,7 @@ export default {
       }, // 字段规则
       dataForm: {
         marketingName: '',
-        crmType: 1,
+        crmType: 2, // 2 客户 1 线索
         relationUserId: [],
         endTime: '',
         ownerUserId: [],
@@ -199,7 +198,7 @@ export default {
         remark: ''
       },
       // 只能填写一次
-      onlyOne: false,
+      onlyOne: false, // 0 不限制 1 只能填写一次
       // 展示的数组
       fieldData: null,
       showFieldList: []
@@ -247,36 +246,29 @@ export default {
       if (this.action.type == 'update') {
         params.marketingId = this.action.id
       }
-      crmMarketingFieldInfoAPI(params)
+      filedGetField(params)
         .then(res => {
           if (
             this.action.type == 'update' &&
             this.dataForm.crmType == this.action.detail.crmType
           ) {
+            const showFieldsStr = this.action.detail.fieldDataId || ''
+
+            const showFields = showFieldsStr.split(',').map(item => {
+              return parseInt(item)
+            })
             const left = []
             const right = []
-            const showFields = this.action.detail.fieldData || []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
-              element.show = true
-              element.check = false
-              let has = false
-              for (
-                let showIndex = 0;
-                showIndex < showFields.length;
-                showIndex++
-              ) {
-                const field = showFields[showIndex]
-                if (element.field == field) {
-                  has = true
-                  break
+              if (this.isShowField(element.formType)) {
+                element.show = true
+                element.check = false
+                if (showFields.includes(element.fieldId)) {
+                  left.push(element)
+                } else {
+                  right.push(element)
                 }
-              }
-
-              if (has) {
-                left.push(element)
-              } else {
-                right.push(element)
               }
             }
             this.fieldData = {
@@ -284,18 +276,30 @@ export default {
               right: right
             }
           } else {
+            const left = []
+            for (let index = 0; index < res.data.length; index++) {
+              const element = res.data[index]
+              if (this.isShowField(element.formType)) {
+                element.show = true
+                element.check = false
+                left.push(element)
+              }
+            }
             this.fieldData = {
-              left: res.data.map(function(item, index) {
-                item.check = false
-                item.show = true
-                return item
-              }),
+              left: left,
               right: []
             }
           }
           this.showFieldList = this.fieldData.left
         })
         .catch(() => {})
+    },
+
+    /**
+     * 字段是否展示
+     */
+    isShowField(formType) {
+      return formType != 'user' && formType != 'structure' && formType != 'file' && formType != 'map_address'
     },
 
     /**
@@ -307,57 +311,55 @@ export default {
         {
           field: 'marketingName',
           name: '推广名称',
-          form_type: 'text',
-          input_tips: '',
+          formType: 'text',
+          inputTips: '',
           setting: [],
-          value: detailData ? detailData.name : '',
+          value: detailData ? detailData.marketingName : '',
           width: ''
         },
         {
           field: 'crmType',
           name: '关联对象',
-          form_type: 'select',
-          input_tips: '',
+          formType: 'select',
+          inputTips: '',
           setting: [{ name: '客户', value: 2 }, { name: '线索', value: 1 }],
-          value: detailData ? detailData.crmType : 1,
+          value: detailData ? detailData.crmType : 2,
           width: ''
         },
         {
           field: 'relationUserId',
           name: '关联人员',
-          form_type: 'user',
+          formType: 'user',
           radio: false,
-          input_tips: '',
+          inputTips: '',
           setting: [],
-          value: detailData ? detailData.relationUserIdInfo : [],
+          value: detailData ? detailData.relationUserInfo || [] : [],
           width: ''
         },
         {
           field: 'endTime',
           name: '截止日期',
-          form_type: 'datetime',
-          input_tips: '',
+          formType: 'datetime',
+          inputTips: '',
           setting: [],
-          value: detailData
-            ? timestampToFormatTime(detailData.endTime, 'YYYY-MM-DD HH:mm:ss')
-            : '',
+          value: detailData ? detailData.endTime : '',
           width: ''
         },
         {
           field: 'ownerUserId',
           name: '管理员',
-          form_type: 'user',
+          formType: 'user',
           radio: false,
-          input_tips: '',
+          inputTips: '',
           setting: [],
-          value: detailData ? detailData.ownerUserIdInfo : [],
+          value: detailData ? detailData.ownerUserInfo || [] : [],
           width: ''
         },
         {
           field: 'remark',
           name: '备注',
-          form_type: 'textarea',
-          input_tips: '',
+          formType: 'textarea',
+          inputTips: '',
           setting: [],
           value: detailData ? detailData.remark : '',
           width: ''
@@ -370,7 +372,7 @@ export default {
       const item = this.fieldList[data.index]
       item.value = data.value
       this.dataForm[item.field] = data.value
-      if (item.form_type == 'user') {
+      if (item.formType == 'user') {
         this.$refs.dataForm.validateField(item.field)
       } else if (item.field == 'crmType') {
         this.getFieldConfigIndex()
@@ -389,7 +391,7 @@ export default {
       this.$refs.dataForm.validate(valid => {
         if (valid) {
           const params = this.getSubmiteParams()
-          params.second = this.onlyOne ? 1 : 2
+          params.second = this.onlyOne ? 1 : 0 // 0 不限制 1 只能填写一次
           params.fieldDataId = this.showFieldList.map(item => {
             return item.fieldId
           }).join(',')
@@ -402,7 +404,7 @@ export default {
           params.relationUserId = ',' + params.relationUserId + ','
           params.fieldDataId = ',' + params.fieldDataId + ','
           params.ownerUserId = ',' + params.ownerUserId + ','
-          params.endTime = timestampToFormatTime(params.endTime, 'YYYY-MM-DD HH:mm:ss')
+          params.endTime = params.endTime
           this.submiteParams(params)
         } else {
           return false
@@ -420,7 +422,7 @@ export default {
         .then(res => {
           this.loading = false
           this.hidenView()
-          this.$message.success(res.data)
+          this.$message.success(this.action.type == 'update' ? '编辑成功' : '创建成功')
           // 回到保存成功
           this.$emit('save-success')
         })
@@ -435,24 +437,17 @@ export default {
       for (let index = 0; index < this.fieldList.length; index++) {
         const element = this.fieldList[index]
         const value = this.getRealParams(element)
-        if (!(element.form_type == 'date' && !value)) {
-          params[element.field] = value
-        }
+        params[element.field] = value
       }
       return params
     },
 
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
-      if (element.form_type == 'user') {
+      if (element.formType == 'user') {
         return element.value.map(function(item, index, array) {
           return item.id
         })
-      } else if (element.form_type == 'datetime') {
-        // datetime 时间戳 date 格式化时间
-        return element.value
-          ? formatTimeToTimestamp(element.value)
-          : element.value
       }
 
       return element.value

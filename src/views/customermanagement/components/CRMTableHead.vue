@@ -493,17 +493,17 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'state_start' || type === 'state_disable') {
-        var marketing_id = this.selectionList.map(function(item, index, array) {
-          return item.marketing_id
+        var marketingId = this.selectionList.map(function(item, index, array) {
+          return item.marketingId
         })
         crmMarketingIsEnableAPI({
-          id: marketing_id,
-          state: type === 'state_start' ? 1 : 2
+          marketingIds: marketingId.join(','),
+          status: type === 'state_start' ? 1 : 0
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })

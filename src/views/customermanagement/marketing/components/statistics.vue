@@ -463,7 +463,7 @@ export default {
 <style lang="scss" scoped>
 .b-cont {
   position: relative;
-  padding: 0 50px 20px 20px;
+  padding: 15px;
 }
 
 .header {

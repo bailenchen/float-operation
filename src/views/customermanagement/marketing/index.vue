@@ -21,7 +21,7 @@
         @handle="handleHandle">
         <div slot="custom">
           关联对象：<el-select
-            v-model="sceneId"
+            v-model="marketingCrmType"
             class="type-select"
             placeholder="请选择"
             @change="refreshList">
@@ -105,7 +105,7 @@ export default {
   data() {
     return {
       crmType: 'marketing',
-      sceneId: '', // 类型
+      marketingCrmType: '', // 类型
       isCreate: false // 是创建
     }
   },
@@ -145,7 +145,7 @@ export default {
         width: '180'
       },
       {
-        prop: 'state',
+        prop: 'status',
         label: '状态',
         width: '80'
       }
@@ -158,7 +158,6 @@ export default {
      */
     createClick() {
       this.isCreate = true
-      console.log('createClick')
     },
 
     /**
@@ -202,15 +201,6 @@ export default {
 <style lang="scss" scoped>
 @import '../styles/table.scss';
 .type-select {
-  width: 65px;
-  /deep/ .el-input__inner {
-    border-color: white;
-  }
-
-  /deep/ .is-focus {
-    .el-input__inner {
-      border-color: white !important;
-    }
-  }
+  width: 180px;
 }
 </style>

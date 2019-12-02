@@ -401,13 +401,13 @@ export default {
           .catch(() => {})
       } else if (type === 'state_start' || type === 'state_disable') {
         crmMarketingIsEnableAPI({
-          marketingId: ',' + this.id + ',',
-          state: type === 'state_start' ? 1 : 2
+          marketingIds: this.id,
+          status: type === 'state_start' ? 1 : 0
         })
           .then(res => {
             this.$message({
               type: 'success',
-              message: res.data
+              message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })

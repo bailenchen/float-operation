@@ -5,50 +5,49 @@
     :no-listener-ids="noListenerIDs"
     :no-listener-class="noListenerClass"
     :body-style="{padding: 0, height: '100%'}"
+    xs-empty-icon="nopermission"
+    xs-empty-text="暂无权限"
     class="d-view"
     @close="hideView">
-    <flexbox
+    <div
       v-loading="loading"
-      v-if="canShowDetail"
-      xs-empty-icon="nopermission"
-      xs-empty-text="暂无权限"
-      direction="column"
-      align="stretch"
-      class="d-container">
-      <c-r-m-detail-head
-        :detail="detailData"
-        :head-details="headDetails"
-        :id="id"
-        crm-type="marketing"
-        @handle="detailHeadHandle"
-        @close="hideView"/>
-      <div class="tabs">
-        <el-tabs
-          v-model="tabCurrentName"
-          type="border-card"
-          class="d-container-bd--left"
-          @tab-click="handleClick">
-          <el-tab-pane
-            v-for="(item, index) in tabnames"
-            :key="index"
-            :label="item.label"
-            :name="item.name"/>
-        </el-tabs>
-      </div>
-      <div
-        id="follow-log-content"
-        class="t-loading-content">
-        <keep-alive>
-          <component
-            :is="tabName"
-            :detail="detailData"
-            :id="id"
-            :filed-list="baseDetailList"
-            :is-seas="isSeas"
-            crm-type="marketing"/>
-        </keep-alive>
-      </div>
-    </flexbox>
+      class="detail-main">
+      <flexbox
+        v-if="canShowDetail && detailData"
+        direction="column"
+        align="stretch"
+        class="d-container">
+        <c-r-m-detail-head
+          :detail="detailData"
+          :head-details="headDetails"
+          :id="id"
+          crm-type="marketing"
+          @handle="detailHeadHandle"
+          @close="hideView"/>
+        <flexbox class="d-container-bd" align="stretch">
+          <el-tabs
+            v-model="tabCurrentName"
+            type="border-card"
+            class="d-container-bd--left"
+            @tab-click="handleClick">
+            <el-tab-pane
+              v-for="(item, index) in tabNames"
+              :key="index"
+              :label="item.label"
+              :name="item.name"
+              lazy>
+              <component
+                :is="item.name"
+                :detail="detailData"
+                :id="id"
+                :filed-list="baseDetailList"
+                :is-seas="isSeas"
+                crm-type="marketing"/>
+            </el-tab-pane>
+          </el-tabs>
+        </flexbox>
+      </flexbox>
+    </div>
     <create
       v-if="isCreate"
       :action="{type: 'update', id: id, detail: detailData}"
@@ -59,7 +58,6 @@
 
 <script>
 import { crmMarketingReadAPI } from '@/api/customermanagement/marketing'
-import { timestampToFormatTime } from '@/utils'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
@@ -122,28 +120,17 @@ export default {
         { title: '负责人', value: '' },
         { title: '截止时间', value: '' }
       ],
-      tabCurrentName: 'overview',
+      tabCurrentName: 'Overview',
       isCreate: false // 编辑操作
     }
   },
 
   computed: {
-    tabName() {
-      if (this.tabCurrentName == 'basicinfo') {
-        return 'c-r-m-base-info'
-      } else if (this.tabCurrentName == 'overview') {
-        return 'overview'
-      } else if (this.tabCurrentName == 'statistics') {
-        return 'statistics'
-      }
-      return ''
-    },
-
-    tabnames() {
+    tabNames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '预览', name: 'overview' })
-      tempsTabs.push({ label: '基本信息', name: 'basicinfo' })
-      tempsTabs.push({ label: '统计分析', name: 'statistics' })
+      tempsTabs.push({ label: '预览', name: 'Overview' })
+      tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
+      tempsTabs.push({ label: '统计分析', name: 'Statistics' })
       return tempsTabs
     }
   },
@@ -179,52 +166,56 @@ export default {
       this.baseDetailList = [
         {
           name: '推广名称',
-          form_type: 'text',
+          formType: 'text',
           value: data.marketingName
         },
         {
           name: '关联对象',
-          form_type: 'text',
-          value: data.crmType == 1 ? '客户' : '线索'
+          formType: 'text',
+          value: data.crmType == 2 ? '客户' : '线索'
         },
         {
           name: '关联人员',
-          form_type: 'text',
-          value: data.relationUserName
+          formType: 'text',
+          value: data.relationUserInfo ? data.relationUserInfo.map(item => {
+            return item.realname
+          }).join('，') : ''
         },
         {
           name: '管理员',
-          form_type: 'text',
-          value: data.ownerUserName
+          formType: 'text',
+          value: data.ownerUserInfo ? data.ownerUserInfo.map(item => {
+            return item.realname
+          }).join('，') : ''
         },
         {
           name: '备注',
-          form_type: 'text',
+          formType: 'text',
           value: data.remark
         },
         {
           name: '状态',
-          form_type: 'text',
+          formType: 'text',
           value: data.status == 1 ? '启用' : '停用'
         },
         {
           name: '创建人',
-          form_type: 'text',
-          value: data.createUserName
+          formType: 'text',
+          value: data.createUserInfo ? data.createUserInfo.realname : ''
         },
         {
           name: '截止时间',
-          form_type: 'text',
-          value: timestampToFormatTime(data.endTime, 'YYYY-MM-DD HH:mm:ss')
+          formType: 'text',
+          value: data.endTime
         },
         {
           name: '创建时间',
-          form_type: 'text',
+          formType: 'text',
           value: data.createTime
         },
         {
           name: '更新时间',
-          form_type: 'text',
+          formType: 'text',
           value: data.updateTime
         }
       ]
@@ -248,16 +239,5 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/crmdetail.scss';
-
-.d-view {
-  position: fixed;
-  width: 950px;
-  top: 0px;
-  background-color: #FFF !important;
-  bottom: 0px;
-  right: 0px;
-}
-/deep/.el-tabs--border-card {
-  border: #FFF 1px solid !important;
-}
+@import '../styles/detailview.scss';
 </style>

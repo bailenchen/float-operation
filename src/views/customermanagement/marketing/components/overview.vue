@@ -3,7 +3,6 @@
     <sections
       class="b-cells"
       title="推广信息"
-      m-color="#46CDCF"
       content-height="auto">
       <flexbox class="info-card-container">
         <flexbox
@@ -29,7 +28,6 @@
     <sections
       class="b-cells"
       title="发布信息"
-      m-color="#46CDCF"
       content-height="auto">
       <div class="publish-container">
         <div class="publish-info">
@@ -62,7 +60,6 @@
 </template>
 
 <script>
-import { crmMarketingOverviewAPI } from '@/api/customermanagement/marketing'
 import loading from '../../mixins/loading'
 import Sections from '../../components/Sections'
 import { downloadFile } from '@/utils'
@@ -78,7 +75,7 @@ export default {
   mixins: [loading],
   props: {
     /** 模块ID */
-    id: [String, Number],
+    detail: Object,
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
@@ -99,46 +96,39 @@ export default {
   },
   computed: {},
   watch: {
-    id: function(val) {
+    detail: function() {
       this.getDetail()
     }
   },
   mounted() {
-    this.getDetail()
+    if (this.detail) {
+      this.getDetail()
+    }
   },
   activated: function() {},
   deactivated: function() {},
   methods: {
     // 获取基础信息
     getDetail() {
-      this.loading = true
-      crmMarketingOverviewAPI({
-        id: this.id
-      })
-        .then(res => {
-          this.name = res.data.name
-          this.submitCount = res.data.subCount
-          this.browseCount = res.data.browse
-          this.path = res.data.path
-          this.loading = false
+      this.name = this.detail.marketingName
+      this.submitCount = this.detail.subCount
+      this.browseCount = this.detail.browse
+      this.path = `?marketingId=${this.detail.enMarketingId}&currentUserId=${this.detail.currentUserId}`
+      this.loading = false
 
-          if (this.qrcode) {
-            this.qrcode.clear()
-            this.qrcode.makeCode(this.path)
-          } else {
-            this.qrcode = new QRCode(document.getElementById('canvas'), {
-              text: this.path,
-              width: 100,
-              height: 100,
-              colorDark: '#000000',
-              colorLight: '#ffffff',
-              correctLevel: QRCode.CorrectLevel.H
-            })
-          }
+      if (this.qrcode) {
+        this.qrcode.clear()
+        this.qrcode.makeCode(this.path)
+      } else {
+        this.qrcode = new QRCode(document.getElementById('canvas'), {
+          text: this.path,
+          width: 100,
+          height: 100,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
         })
-        .catch(() => {
-          this.loading = false
-        })
+      }
     },
 
     handleClick(type) {
@@ -167,7 +157,7 @@ export default {
 <style lang="scss" scoped>
 .b-cont {
   position: relative;
-  padding: 0 50px 20px 20px;
+  padding: 15px;
 }
 
 // 推广信息

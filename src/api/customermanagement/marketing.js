@@ -13,18 +13,6 @@ export function crmMarketingIndexAPI(data) {
 }
 
 /**
- * 推广字段
- * @param {*} data
- */
-export function crmMarketingFieldInfoAPI(data) {
-  return request({
-    url: 'field/queryField',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
  * 推广创建
  * @param {*} data
  */
@@ -67,18 +55,6 @@ export function crmMarketingDeleteAPI(data) {
 export function crmMarketingReadAPI(data) {
   return request({
     url: 'CrmMarketing/queryById',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 推广概览
- * @param {*} data
- */
-export function crmMarketingOverviewAPI(data) {
-  return request({
-    url: 'crm/marketing/overview',
     method: 'post',
     data: data
   })

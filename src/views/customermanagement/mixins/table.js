@@ -128,6 +128,12 @@ export default {
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
+
+      // 推广关联对象
+      if (this.marketingCrmType) {
+        params.crmType = this.marketingCrmType
+      }
+
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
@@ -340,9 +346,13 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType == 'marketing') {
-        this.rowID = row.marketingId
-        this.rowType = 'marketing'
-        this.showDview = true
+        if (column.property === 'marketingName') {
+          this.rowID = row.marketingId
+          this.rowType = 'marketing'
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       }
 
       if (this.showDview) {
@@ -421,9 +431,7 @@ export default {
         this.showDview = false
       }
 
-      if (data.type !== 'edit') {
-        this.getList()
-      }
+      this.getList()
     },
     /** 自定义字段管理 */
     setSave() {

@@ -35,10 +35,16 @@ export default {
       if (this.detailData && this.detailData.dataAuth === 0) {
         return false
       }
+
+      console.warn('测试信息')
       if (this.crmType === 'marketing') {
         return true
       }
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].read
+    },
+
+    showTabsNumber() {
+      return this.crmType !== 'marketing'
     }
   },
 
@@ -92,6 +98,9 @@ export default {
      * 获取tab数量
      */
     getTabsNum() {
+      if (!this.showTabsNumber) {
+        return
+      }
       const request = {
         leads: crmLeadsNumAPI,
         customer: crmCustomerNumAPI,
