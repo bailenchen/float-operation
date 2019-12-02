@@ -43,6 +43,7 @@
         ref="textarea"
         v-model="content"
         :autosize="autosize"
+        :maxlength="300"
         type="textarea"
         clearable
         resize="none"
