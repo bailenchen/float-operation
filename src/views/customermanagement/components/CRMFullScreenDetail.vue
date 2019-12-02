@@ -6,6 +6,7 @@
       v-if="id&&showDetail"
       :is="tabName"
       :crm-type="crmType"
+      :model-data="modelData"
       :id="id"
       class="d-view"
       @handle="detailHandle"

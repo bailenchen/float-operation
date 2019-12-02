@@ -431,7 +431,9 @@ import BulkImportUser from './components/BulkImportUser'
 import EmployeeDetail from './components/employeeDetail'
 import XrHeader from '@/components/xr-header'
 import Reminder from '@/components/reminder'
-
+import {
+  adminConfigsetIndex
+} from '@/api/systemManagement/applicationManagement'
 export default {
   /** 系统管理 的 员工部门管理 */
   name: 'EmployeeDepManagement',
@@ -756,6 +758,7 @@ export default {
     this.currentMenuData = this.employeeMenu[0]
     this.getDepTreeList()
     this.getUserList()
+    this.getCallAuth()
   },
   methods: {
     /**
@@ -1367,6 +1370,20 @@ export default {
         return { 1: '男', 2: '女' }[row.sex]
       }
       return row[column.property]
+    },
+    /** 查看有无呼叫中心的权限 */
+    getCallAuth() {
+      let list = []
+      adminConfigsetIndex().then(res => {
+        list = res.data.map(item => {
+          return item.module
+        })
+        if (list.includes('call')) {
+          this.isStartCall = true
+        } else {
+          this.isStartCall = false
+        }
+      }).catch(() => {})
     }
   }
 }
