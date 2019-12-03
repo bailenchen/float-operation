@@ -121,8 +121,8 @@ export default {
       } else {
         this.qrcode = new QRCode(document.getElementById('canvas'), {
           text: this.path,
-          width: 100,
-          height: 100,
+          width: 500,
+          height: 500,
           colorDark: '#000000',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.M
@@ -136,8 +136,8 @@ export default {
         var img = document.getElementById('canvas').getElementsByTagName('img')[0]
         // 构建画布
         var canvas = document.createElement('canvas')
-        canvas.width = img.width
-        canvas.height = img.height
+        canvas.width = 500
+        canvas.height = 500
         canvas.getContext('2d').drawImage(img, 0, 0)
         // 构造url
         const url = canvas.toDataURL('image/png')
@@ -246,5 +246,9 @@ export default {
 #canvas {
   width: 100px;
   height: 100px;
+
+  /deep/ img {
+    width: 100px;
+  }
 }
 </style>
