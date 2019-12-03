@@ -15,7 +15,7 @@
         </el-select>
       </div>
       <div class="header-handle">
-        <span class="header-handle-tips">提示：不勾选数据提交更新，默认提交列表全部数据。</span>
+        <span class="header-handle-tips">提示：若不勾选任何数据，系统默认同步全部数据；且只能同步自己负责的数据。</span>
         <div class="header-handle-button">
           <el-button
             type="primary"
@@ -167,6 +167,12 @@ export default {
               })
             }
           }
+
+          this.fieldList.push({
+            prop: 'ownerUserName',
+            label: '负责人',
+            width: 140
+          })
 
           // 获取好字段开始请求数据
           this.getList()
