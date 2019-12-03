@@ -11,8 +11,8 @@ export function crmAppletIndexAPI(data) {
     }
   })
 }
-// crm 批量删除小程序信息 changeLeads
 
+// crm 批量删除小程序信息 changeLeads
 export function crmWeixinDeleteAPI(data) {
   return request({
     url: 'CrmWeixinLeads/deleteByIds',
@@ -23,8 +23,8 @@ export function crmWeixinDeleteAPI(data) {
     data: data
   })
 }
-// crm 转化为线索 CrmWeixinLeads/exportLeads
 
+// crm 转化为线索 CrmWeixinLeads/exportLeads
 export function crmWeixinChangeLeadsAPI(data) {
   return request({
     url: 'CrmWeixinLeads/changeLeads',
@@ -37,7 +37,6 @@ export function crmWeixinChangeLeadsAPI(data) {
 }
 
 // crm 导出勾选
-
 export function CrmWeixinLeadsExportLeadsAPI(data) {
   return request({
     url: 'CrmWeixinLeads/exportLeads',

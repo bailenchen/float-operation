@@ -16,8 +16,8 @@ export function officialImgSaveAPI(data) {
     }
   })
 }
-// crm 官网图片删除
 
+// crm 官网图片删除
 export function officialImgDeleteAPI(data) {
   return request({
     url: 'officialImg/delete',
@@ -25,8 +25,8 @@ export function officialImgDeleteAPI(data) {
     data: data
   })
 }
-// crm 产品图片删除
 
+// crm 产品图片删除
 export function CrmProductDetailImgDeleteAPI(data) {
   return request({
     url: 'CrmProductDetailImg/delete',
@@ -37,8 +37,8 @@ export function CrmProductDetailImgDeleteAPI(data) {
     data: data
   })
 }
-// crm 查看产品图片 CrmProductDetailImg/queryListByType
 
+// crm 查看产品图片 CrmProductDetailImg/queryListByType
 export function CrmProductDetailImgQueryListByTypeAPI(data) {
   return request({
     url: 'CrmProductDetailImg/queryListByType',
@@ -46,8 +46,8 @@ export function CrmProductDetailImgQueryListByTypeAPI(data) {
     data: data
   })
 }
-// crm 查看官网图片 visitingCard/queryByUserId
 
+// crm 查看官网图片 visitingCard/queryByUserId
 export function officialImgQueryListByTypeAPI(data) {
   return request({
     url: 'officialImg/queryListByType',
@@ -55,8 +55,8 @@ export function officialImgQueryListByTypeAPI(data) {
     data: data
   })
 }
-// crm 查询个人信息 /wechat/query
 
+// crm 查询个人信息 /wechat/query
 export function visitingCardQueryByUserIdAPI(data) {
   return request({
     url: 'visitingCard/queryByUserId',
@@ -64,8 +64,8 @@ export function visitingCardQueryByUserIdAPI(data) {
     data: data
   })
 }
-// crm 微信二维码 visitingCard/setSaveCard
 
+// crm 微信二维码 visitingCard/setSaveCard
 export function wechatQueryAPI(data) {
   return request({
     url: 'wechat/query',
@@ -73,8 +73,8 @@ export function wechatQueryAPI(data) {
     data: data
   })
 }
-// crm 设为默认展示名片
 
+// crm 设为默认展示名片
 export function visitingCardSetSaveCard(data) {
   return request({
     url: 'visitingCard/setSaveCard',
@@ -85,8 +85,8 @@ export function visitingCardSetSaveCard(data) {
     data: data
   })
 }
-// crm 移出默认展示图片 wechat/preauthcode
 
+// crm 移出默认展示图片 wechat/preauthcode
 export function visitingCardDeleteByUserId(data) {
   return request({
     url: 'visitingCard/deleteByUserId',
@@ -94,8 +94,8 @@ export function visitingCardDeleteByUserId(data) {
     data: data
   })
 }
-// crm 获取授权 wechat/preauthcode
 
+// crm 获取授权 wechat/preauthcode
 export function wechatPreauthcode(data) {
   return request({
     url: 'wechat/preauthcode',
@@ -103,8 +103,8 @@ export function wechatPreauthcode(data) {
     data: data
   })
 }
-// crm 图片排序
 
+// crm 图片排序
 export function officialImgSortImgAPI(data) {
   return request({
     url: 'officialImg/sortImg',

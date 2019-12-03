@@ -144,6 +144,7 @@ export function crmProductNumAPI(data) {
     data: data
   })
 }
+
 /**
  * 详情图添加
  * @param {*} data
@@ -163,6 +164,7 @@ export function CrmProductDetailImgSave(data) {
     }
   })
 }
+
 /**
  * 查询官网图片 CrmProductDetailImg/queryListByType
  * @param {*} data
@@ -175,6 +177,7 @@ export function CrmProductDetailImgQueryListByType(data) {
     data: data
   })
 }
+
 /**
  * 删除产品图片
  * @param {*} data
@@ -187,6 +190,7 @@ export function CrmProductDetailImgDelete(data) {
     data: data
   })
 }
+
 /**
  * 产品简介添加
  * @param {*} data
