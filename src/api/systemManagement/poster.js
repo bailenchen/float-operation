@@ -115,3 +115,12 @@ export function officialImgSortImgAPI(data) {
     data: data
   })
 }
+
+// 查看时候授权小程序
+export function visitingCardCheckAuthAPI(data) {
+  return request({
+    url: 'visitingCard/checkAuth',
+    method: 'post',
+    data: data
+  })
+}

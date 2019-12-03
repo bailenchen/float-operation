@@ -55,14 +55,14 @@ export default [
   },
   {
     ...layout({
-      permissions: ['crm', 'leads']
+      permissions: ['crm', 'applet']
     }),
     children: [{
       path: 'applet', // 名片列表
       component: () => import('@/views/customermanagement/applet/AppletIndex'),
       meta: {
         title: '小程序线索',
-        icon: 'leads'
+        icon: 'mp'
       }
     }]
   },

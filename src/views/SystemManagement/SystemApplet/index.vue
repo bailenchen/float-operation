@@ -1,153 +1,169 @@
 <template>
-  <div class="applet-authorization">
-    <el-input
-      v-if="appletActive.id === 1 && mainMenuIndex == 'user'"
-      v-model="search"
-      placeholder="请输入手机号/员工姓名"
-      class="search"
-      @keyup.enter.native="searchClick">
-      <el-button
-        slot="append"
-        type="primary"
-        @click.native="searchClick">搜索</el-button>
-    </el-input>
-    <xr-header
-      ref="xrHeader"
-      :show-search="false"
-      label="小程序管理"
-      icon-class="wk wk-contacts"
-      icon-color="#19B5F6"/>
-    <div class="applet-box">
-      <!-- 左边导航 -->
-      <div
-        v-loading="appletMenuLoading"
-        class="nav">
-        <div class="nav__hd">
-          小程序
-        </div>
-        <!-- 左侧列表 -->
-        <div class="applet-nav-box">
-          <div
-            v-for="(item, index) in leftList"
-            :key="index"
-            :class="{'is-select' : item.id == appletActive.id}"
-            class="menu-item"
-            @click="appletaMenuSelect(item)">
-            <i :class="item.icon"/>
-            <span class="appleta-name">
-              {{ item.name }}
-            </span>
+  <div v-loading="loading" class="applet-authorization">
+    <template v-if="hasAuth">
+      <el-input
+        v-if="appletActive.id === 1 && mainMenuIndex == 'user'"
+        v-model="search"
+        placeholder="请输入手机号/员工姓名"
+        class="search"
+        @keyup.enter.native="searchClick">
+        <el-button
+          slot="append"
+          type="primary"
+          @click.native="searchClick">搜索</el-button>
+      </el-input>
+      <xr-header
+        ref="xrHeader"
+        :show-search="false"
+        label="小程序管理"
+        icon-class="wk wk-contacts"
+        icon-color="#19B5F6"/>
+      <div class="applet-box">
+        <!-- 左边导航 -->
+        <div
+          v-loading="appletMenuLoading"
+          class="nav">
+          <div class="nav__hd">
+            小程序
+          </div>
+          <!-- 左侧列表 -->
+          <div class="applet-nav-box">
+            <div
+              v-for="(item, index) in leftList"
+              :key="index"
+              :class="{'is-select' : item.id == appletActive.id}"
+              class="menu-item"
+              @click="appletaMenuSelect(item)">
+              <i :class="item.icon"/>
+              <span class="appleta-name">
+                {{ item.name }}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- 右边内容 -->
-      <div class="content-box">
-        <el-tabs v-model="mainMenuIndex">
-          <el-tab-pane
-            v-if="appletActive.id === 1"
-            label="员工信息"
-            name="user">
-            <div
-              v-loading="userLoading"
-              class="content-table">
-              <flexbox class="content-table-header">
-                <div class="content-table-header-reminder">
-                  <reminder
-                    v-if="showReminder"
-                    :content="getReminderContent()"/>
-                  <flexbox
-                    v-else
-                    class="selection-bar">
-                    <div class="selected—title">已选中 <span class="selected—count">{{ selectList.length }}</span> 项</div>
-                    <flexbox class="selection-items-box">
-                      <el-button
-                        v-for="(item, index) in handleList"
-                        :icon="item.icon | wkIconPre"
-                        :key="index"
-                        type="primary"
-                        @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
+        <!-- 右边内容 -->
+        <div class="content-box">
+          <el-tabs v-model="mainMenuIndex">
+            <el-tab-pane
+              v-if="appletActive.id === 1"
+              label="员工信息"
+              name="user">
+              <div
+                v-loading="userLoading"
+                class="content-table">
+                <flexbox class="content-table-header">
+                  <div class="content-table-header-reminder">
+                    <reminder
+                      v-if="showReminder"
+                      :content="getReminderContent()"/>
+                    <flexbox
+                      v-else
+                      class="selection-bar">
+                      <div class="selected—title">已选中 <span class="selected—count">{{ selectList.length }}</span> 项</div>
+                      <flexbox class="selection-items-box">
+                        <el-button
+                          v-for="(item, index) in handleList"
+                          :icon="item.icon | wkIconPre"
+                          :key="index"
+                          type="primary"
+                          @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
+                      </flexbox>
                     </flexbox>
-                  </flexbox>
-                </div>
-                <el-button
-                  size="medium"
-                  type="primary"
-                  @click="addEmployees"> 关联员工 </el-button>
-              </flexbox>
-              <el-table
-                :data="tableData"
-                :height="tableHeight"
-                style="width: 100%"
-                @selection-change="handleRowSelect">
-                <el-table-column type="selection" width="55"/>
-                <el-table-column
-                  v-for="(item, index) in tableList"
-                  :prop="item.field"
-                  :width="item.width"
-                  :label="item.label"
-                  :key="index"
-                  show-overflow-tooltip/>
-                <el-table-column label="操作">
-                  <template slot-scope="scope">
-                    <!-- <span class="el-icon-edit content-table-span"
+                  </div>
+                  <el-button
+                    size="medium"
+                    type="primary"
+                    @click="addEmployees"> 关联员工 </el-button>
+                </flexbox>
+                <el-table
+                  :data="tableData"
+                  :height="tableHeight"
+                  style="width: 100%"
+                  @selection-change="handleRowSelect">
+                  <el-table-column type="selection" width="55"/>
+                  <el-table-column
+                    v-for="(item, index) in tableList"
+                    :prop="item.field"
+                    :width="item.width"
+                    :label="item.label"
+                    :key="index"
+                    show-overflow-tooltip/>
+                  <el-table-column label="操作">
+                    <template slot-scope="scope">
+                      <!-- <span class="el-icon-edit content-table-span"
                       @click="editBtn(scope.row)"></span> -->
-                    <el-button v-if="scope.row.card == 0" type="text" class="el-button--primity" @click="setCard(scope.row)">设为用户默认访问名片</el-button>
-                    <el-button v-else type="text" class="el-button--warning button-delete" @click="cancelCard(scope.row)">移除用户默认访问名片</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <div class="p-contianer">
-                <el-pagination
-                  :current-page="currentPage"
-                  :page-sizes="pageSizes"
-                  :page-size.sync="pageSize"
-                  :total="total"
-                  class="p-bar"
-                  background
-                  layout="prev, pager, next, sizes, total, jumper"
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"/>
+                      <el-button v-if="scope.row.card == 0" type="text" class="el-button--primity" @click="setCard(scope.row)">设为用户默认访问名片</el-button>
+                      <el-button v-else type="text" class="el-button--warning button-delete" @click="cancelCard(scope.row)">移除用户默认访问名片</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div class="p-contianer">
+                  <el-pagination
+                    :current-page="currentPage"
+                    :page-sizes="pageSizes"
+                    :page-size.sync="pageSize"
+                    :total="total"
+                    class="p-bar"
+                    background
+                    layout="prev, pager, next, sizes, total, jumper"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"/>
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane
-            v-if="appletActive.id === 1"
-            label="名片海报"
-            name="poster">
-            <poster/>
-          </el-tab-pane>
-          <el-tab-pane
-            v-if="appletActive.id === 2"
-            label="设置官网"
-            name="setting">
-            <official-website :show="appletActive.id === 2"/>
-          </el-tab-pane>
-          <el-tab-pane
-            v-if="appletActive.id === 3"
-            label="查看授权"
-            name="auth">
-            <iframe :src="authUrl" style="width: calc(100% - 20px);height: 600px; margin: 20px;" frameborder="0"/>
-          </el-tab-pane>
-        </el-tabs>
+            </el-tab-pane>
+            <el-tab-pane
+              v-if="appletActive.id === 1"
+              label="名片海报"
+              name="poster">
+              <poster/>
+            </el-tab-pane>
+            <el-tab-pane
+              v-if="appletActive.id === 2"
+              label="设置官网"
+              name="setting">
+              <official-website :show="appletActive.id === 2"/>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
       </div>
-    </div>
-    <!-- 关联员工 -->
-    <relate-empoyee
-      :visible.sync="relateEmpoyeeShow"
-      :role-id="roleId"
-      @save="employeesSave"/>
+      <!-- 关联员工 -->
+      <relate-empoyee
+        :visible.sync="relateEmpoyeeShow"
+        :role-id="roleId"
+        @save="employeesSave"/>
+    </template>
+    <template v-else>
+      <div class="auth-content">
+        <iframe
+          ref="authIframe"
+          :src="authUrl"
+          frameborder="0"
+          @load="iframeLoad"/>
+        <div class="auth-bar">
+          <el-button
+            type="primary"
+            @click="getAuth">已授权</el-button>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
 import { usersList } from '@/api/common'
+import {
+  visitingCardSetSaveCard,
+  visitingCardDeleteByUserId,
+  wechatPreauthcode,
+  visitingCardCheckAuthAPI } from '@/api/SystemManagement/poster'
+
 import RelateEmpoyee from './components/relateEmpoyee'
 import OfficialWebsite from './components/officialWebsite'
 import Reminder from '@/components/reminder'
 import XrHeader from '@/components/xr-header'
 import Poster from './components/poster'
-import { visitingCardSetSaveCard, visitingCardDeleteByUserId, wechatPreauthcode } from '@/api/SystemManagement/poster'
+
 export default {
   components: {
     RelateEmpoyee,
@@ -159,10 +175,11 @@ export default {
 
   data() {
     return {
+      hasAuth: false,
+      loading: false,
       leftList: [
         { id: 1, name: '名片', icon: 'wk wk-contacts' },
-        { id: 2, name: '官网', icon: 'wk wk-my-task' },
-        { id: 3, name: '授权', icon: 'wk wk-my-task' }
+        { id: 2, name: '官网', icon: 'wk wk-my-task' }
       ],
       appletActive: { id: 1, name: '名片', icon: 'wk wk-contacts' },
       handleList: [
@@ -202,11 +219,7 @@ export default {
 
   watch: {
     appletActive: {
-      handler(val) {
-        if (val.id === 3) {
-          this.getAuth()
-        }
-      },
+      handler(val) {},
       deep: true,
       immediate: true
     }
@@ -217,37 +230,82 @@ export default {
     window.onresize = () => {
       this.tableHeight = document.documentElement.clientHeight - 305
     }
-    this.getUserList()
+    this.getAuth()
   },
   methods: {
-    /** 展示class */
+    /**
+     * 获取是否授权
+     */
+    getAuth() {
+      this.loading = true
+      visitingCardCheckAuthAPI().then(res => {
+        this.hasAuth = res.auth
+        if (this.hasAuth) {
+          this.loading = false
+          this.getUserList()
+        } else {
+          this.$message.error('请先扫码授权')
+          this.getAuthUrl()
+        }
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    /**
+     * iframe加载
+     */
+    iframeLoad(data) {
+      if (this.$refs.authIframe.src) {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 展示class
+     */
     appletaMenuSelect(val) {
       this.appletActive = val
       if (val.id === 2) {
         this.mainMenuIndex = 'setting'
       } else if (val.id === 1) {
         this.mainMenuIndex = 'user'
-      } else if (val.id === 3) {
-        this.mainMenuIndex = 'auth'
       }
     },
-    /** 获取授权 */
-    getAuth() {
-      wechatPreauthcode().then(res => {
-        this.authUrl = res.data
-      }).catch(() => {})
+
+    /**
+     * 获取授权
+     */
+    getAuthUrl() {
+      if (!this.authUrl) {
+        this.loading = true
+        wechatPreauthcode().then(res => {
+          this.authUrl = res.data
+        }).catch(() => {
+          this.loading = false
+        })
+      } else {
+        this.loading = false
+      }
     },
-    /** 关联员工 */
+
+    /**
+     * 关联员工
+     */
     addEmployees() {
       this.relateEmpoyeeShow = true
     },
+
     /**
      * 角色说明文字
      */
     getReminderContent() {
       return '关联的员工，可在个人中心查看属于自己的名片小程序码'
     },
-    /** 表头勾选 */
+
+    /**
+     * 表头勾选
+     */
     handleRowSelect(val) {
       if (val.length > 0) {
         this.showReminder = false
@@ -257,12 +315,19 @@ export default {
         this.selectList = []
       }
     },
-    /** 表头操作 */
+
+    /**
+     * 表头操作
+     */
     selectionBarClick(type) {},
-    /** 搜索操作 */
+
+    /**
+     * 搜索操作
+     */
     searchClick() {
       this.getUserList()
     },
+
     /**
      * 关联员工确定
      */
@@ -270,6 +335,7 @@ export default {
       this.relateEmpoyeeShow = false
       this.getUserList()
     },
+
     /**
      * 员工列表
      */
@@ -295,6 +361,7 @@ export default {
           this.userLoading = false
         })
     },
+
     /**
      * 更改每页展示数量
      */
@@ -310,6 +377,7 @@ export default {
       this.currentPage = val
       this.getUserList()
     },
+
     /**
      * 刷新员工列表
      */
@@ -317,7 +385,10 @@ export default {
       this.currentPage = 1
       this.getUserList()
     },
-    /** 设为用户默认展示图片 */
+
+    /**
+     * 设为用户默认展示图片
+     */
     setCard(row) {
       visitingCardSetSaveCard(
         { userId: row.userId }
@@ -326,7 +397,10 @@ export default {
         this.getUserList()
       })
     },
-    /** 移出默认 */
+
+    /**
+     * 移出默认
+     */
     cancelCard(row) {
       visitingCardDeleteByUserId({ userId: row.userId }).then(res => {
         this.$message.success('移除成功')
@@ -626,6 +700,19 @@ export default {
 .el-button--warning {
   /deep/ span {
     color: red;
+  }
+}
+
+.auth-content {
+  height: 100%;
+  iframe {
+    width: calc(100% - 20px);
+    height: calc(100% - 80px);
+    margin: 20px;
+  }
+
+  .auth-bar {
+    text-align: center;
   }
 }
 @import '../styles/table.scss';

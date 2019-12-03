@@ -57,7 +57,7 @@ export default [
   },
   {
     ...layout({
-      permissions: ['manage', 'users', 'read']
+      permissions: ['manage', 'card', 'update']
     }),
     children: [{
       name: 'applet',
@@ -65,7 +65,7 @@ export default [
       component: () => import('@/views/SystemManagement/SystemApplet'),
       meta: {
         title: '小程序管理',
-        icon: 's-seas'
+        icon: 'mp'
       }
     }]
   },
