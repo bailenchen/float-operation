@@ -167,10 +167,6 @@ export default {
   computed: {
     ...mapGetters(['crm', 'CRMConfig']),
     crmIcon() {
-      console.warn('推广 测试完成后删除')
-      if (this.crmType == 'marketing') {
-        return require(`@/assets/img/crm/product.png`)
-      }
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
     typeName() {
@@ -223,13 +219,12 @@ export default {
     },
     showEdit() {
       if (this.crmType === 'contract') {
+        //  8 已作废
         return (
           this.detail &&
           this.detail.checkStatus != 8 &&
           this.crm[this.crmType].update
         )
-      } else if (this.crmType === 'marketing') {
-        return true
       }
 
       return this.isSeas ? false : this.crm[this.crmType].update
@@ -297,23 +292,23 @@ export default {
       ) {
         var message = ''
         if (type == 'transform') {
-          message = '确定将这些线索转换为客户吗?'
+          message = '确定将该线索转换为客户吗?'
         } else if (type == 'put_seas') {
           message = '确定转移到公海吗?'
         } else if (type == 'delete') {
-          message = '确定要删除这些数据吗?'
+          message = '确定删除?'
         } else if (type == 'lock') {
-          message = '确定要锁定这些客户吗？锁定后将不会掉入公海。'
+          message = '确定要锁定该客户吗？锁定后将不会掉入公海。'
         } else if (type == 'unlock') {
-          message = '确定要解锁这些客户吗？'
+          message = '确定要解锁该客户吗？'
         } else if (type == 'start') {
-          message = '确定要上架这些产品吗?'
+          message = '确定要上架该产品吗?'
         } else if (type == 'disable') {
-          message = '确定要下架这些产品吗?'
+          message = '确定要下架该产品吗?'
         } else if (type == 'state_start') {
-          message = '确定要启用这些推广吗?'
+          message = '确定要启用该推广吗?'
         } else if (type == 'state_disable') {
-          message = '确定要停用这些推广吗?'
+          message = '确定要停用该推广吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
         } else if (type == 'cancel') {
@@ -643,6 +638,9 @@ export default {
           return true
         }
         return false
+      } else if (type == 'state_start' || type == 'state_disable') {
+        // 推广停用/启用
+        return this.crm[this.crmType].updateStatus
       }
 
       return true

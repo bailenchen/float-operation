@@ -82,7 +82,8 @@
       v-if="showDview"
       :crm-type="rowType"
       :id="rowID"
-      @hide-view="showDview = false"/>
+      @hide-view="showDview = false"
+      @handle="handleHandle"/>
   </div>
 </template>
 

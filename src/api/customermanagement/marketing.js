@@ -18,7 +18,7 @@ export function crmMarketingIndexAPI(data) {
  */
 export function crmMarketingSaveAPI(data) {
   return request({
-    url: 'CrmMarketing/addOrUpdate',
+    url: 'CrmMarketing/add',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function crmMarketingSaveAPI(data) {
  */
 export function crmMarketingUpdateAPI(data) {
   return request({
-    url: 'CrmMarketing/queryUpdateField',
+    url: 'CrmMarketing/update',
     method: 'post',
     data: data
   })
@@ -114,7 +114,7 @@ export function crmMarketingSynchroAPI(data) {
  */
 export function crmMarketingExcelExportAPI(data) {
   return request({
-    url: 'CrmMarketing/allExportExcel',
+    url: 'CrmMarketing/customerExportExcel',
     method: 'post',
     data: data,
     responseType: 'blob'

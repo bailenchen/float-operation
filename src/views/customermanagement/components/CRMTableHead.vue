@@ -380,7 +380,7 @@ export default {
         } else if (type == 'put_seas') {
           message = '确定转移到公海吗?'
         } else if (type == 'delete') {
-          message = '确定要删除这些数据吗?'
+          message = '确定删除?'
         } else if (type == 'lock') {
           message = '确定要锁定这些客户吗？锁定后将不会掉入公海。'
         } else if (type == 'unlock') {
@@ -767,6 +767,9 @@ export default {
       } else if (type == 'deal_status') {
         // 客户状态修改
         return this.crm[this.crmType].dealStatus
+      } else if (type == 'state_start' || type == 'state_disable') {
+        // 推广停用/启用
+        return this.crm[this.crmType].updateStatus
       }
 
       return true

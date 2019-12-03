@@ -146,14 +146,14 @@ export default [
   },
   {
     ...layout({
-      permissions: ['crm', 'product']
+      permissions: ['crm', 'marketing']
     }),
     children: [{
       path: 'marketing', // 推广列表
       component: () => import('@/views/customermanagement/marketing/index'),
       meta: {
         title: '推广',
-        icon: 'product'
+        icon: 'airplane'
       }
     }]
   }

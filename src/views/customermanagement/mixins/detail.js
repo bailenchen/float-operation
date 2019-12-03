@@ -36,7 +36,7 @@ export default {
         return false
       }
 
-      console.warn('测试信息')
+      // 推广有列表权限就可以看详情
       if (this.crmType === 'marketing') {
         return true
       }

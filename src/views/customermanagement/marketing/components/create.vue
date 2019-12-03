@@ -81,7 +81,7 @@
 </template>
 <script type="text/javascript">
 import { filedGetField } from '@/api/customermanagement/common'
-import { crmMarketingSaveAPI } from '@/api/customermanagement/marketing'
+import { crmMarketingSaveAPI, crmMarketingUpdateAPI } from '@/api/customermanagement/marketing'
 
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
@@ -413,10 +413,13 @@ export default {
     /** 上传 */
     submiteParams(params) {
       this.loading = true
+      let request = crmMarketingSaveAPI
       if (this.action.type == 'update') {
+        request = crmMarketingUpdateAPI
         params.marketingId = this.action.id
       }
-      crmMarketingSaveAPI(params)
+
+      request(params)
         .then(res => {
           this.loading = false
           this.hidenView()

@@ -3,7 +3,7 @@
     <div class="header">
       <div class="header-select">
         状态<el-select
-          v-model="type"
+          v-model="status"
           class="type-select"
           placeholder="请选择"
           @change="refreshList">
@@ -69,25 +69,18 @@
         </div>
       </div>
     </div>
-    <sync
-      :dialog-visible.sync="showSyncView"
-      :field-list="syncFieldList"
-      :id="id"
-      @sure="syncSureClick"/>
   </div>
 </template>
 
 <script>
 import {
   crmMarketingCensusAPI,
-  crmMarketingSynchroFieldAPI,
   crmMarketingExcelExportAPI,
   crmMarketingSynchroAPI
 } from '@/api/customermanagement/marketing'
 import { filedGetTableField } from '@/api/customermanagement/common'
 import loading from '../../mixins/loading'
 import Sections from '../../components/Sections'
-import Sync from './sync'
 
 import marketing from './marketing'
 
@@ -95,8 +88,7 @@ export default {
   /** 推广管理 的 统计*/
   name: 'Statistics',
   components: {
-    Sections,
-    Sync
+    Sections
   },
   mixins: [loading, marketing],
   props: {
@@ -113,23 +105,17 @@ export default {
   data() {
     return {
       // 筛选类型
-      type: 'all',
+      status: 'all',
       fieldList: [],
       list: [],
       selectionList: [],
-      /** 格式化规则 */
-      formatterRules: {},
 
       tableHeight: document.documentElement.clientHeight - 425,
 
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
-      total: 0,
-
-      // 同步控制
-      showSyncView: false,
-      syncFieldList: []
+      total: 0
     }
   },
   computed: {},
@@ -193,27 +179,14 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      var aRules = this.formatterRules[column.property]
-      if (aRules) {
-        if (aRules.type === 'crm') {
-          if (column.property) {
-            return aRules.formatter(row[column.property + '_info']) || '--'
-          } else {
-            return ''
-          }
-        } else {
-          return aRules.formatter(row[column.property]) || '--'
-        }
-      } else {
-        if (column.property == 'status') {
-          const status = row[column.property]
-          if (status == 0) {
-            return '未同步'
-          } else if (status == 1) {
-            return '同步成功'
-          } else if (status == 2) {
-            return '同步失败'
-          }
+      if (column.property == 'status') {
+        const status = row[column.property]
+        if (status == 0) {
+          return '未同步'
+        } else if (status == 1) {
+          return '同步成功'
+        } else if (status == 2) {
+          return '同步失败'
         }
       }
       return row[column.property] || '--'
@@ -226,7 +199,7 @@ export default {
         page: this.currentPage,
         limit: this.pageSize,
         marketingId: this.id,
-        type: this.type
+        status: this.status == 'all' ? '' : this.status
       })
         .then(res => {
           this.list = res.data.list
@@ -284,69 +257,20 @@ export default {
      * 同步 和 导出操作
      */
     syncDataClick() {
-      // if (this.selectionList.length == 0) {
-      //   this.$message.error('请先勾选数据')
-      // } else {
+      if (this.total === 0) {
+        this.$message.error('您没有可同步的数据')
+        return
+      }
       this.loading = true
-      crmMarketingSynchroFieldAPI({
-        marketingId: this.id
-      })
-        .then(res => {
-          this.loading = false
-          if (res.data.length > 0) {
-            this.syncFieldList = res.data
-            this.showSyncView = true
-          } else {
-            this.submiteSyncData()
-          }
-        })
-        .catch(() => {
-          this.loading = false
-        })
-      // }
-    },
-
-    /**
-     * 同步确定
-     */
-    syncSureClick(list) {
       const params = {}
-      let submite = true
-      for (let index = 0; index < list.length; index++) {
-        const element = list[index]
-        if (!element.value || element.value == '' || element.value == []) {
-          this.$message.error('请完善' + element.name)
-          submite = false
-          break
-        } else {
-          params[element.fieldName] = element.value
-        }
-      }
-
-      if (submite) {
-        this.submiteSyncData(params)
-      }
-    },
-
-    /**
-     * 同步请求
-     */
-    submiteSyncData(params) {
-      this.loading = true
-      if (!params) {
-        params = {}
-      }
-      params.id = this.id
+      params.marketingId = this.id
       params.rIds = this.selectionList.map(item => {
         return item.rId
       })
       crmMarketingSynchroAPI(params)
         .then(res => {
           this.loading = false
-          this.$message.success(res.data)
-          if (this.showSyncView) {
-            this.showSyncView = false
-          }
+          this.$message.success('同步成功')
         })
         .catch(() => {
           this.loading = false
@@ -355,8 +279,8 @@ export default {
 
     exportDataClick() {
       var params = {
-        id: this.id,
-        type: this.type
+        marketingId: this.id,
+        status: this.status == 'all' ? '' : this.status
       }
 
       // 勾选导出

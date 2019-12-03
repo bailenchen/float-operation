@@ -116,20 +116,10 @@ export default {
         return false
       }
 
-      console.warn('CRMListHead 增加了默认新建逻辑')
-      if (this.crmType == 'marketing') {
-        return true
-      }
-
       return this.crm[this.crmType].save
     },
 
     titleIcon() {
-      console.warn('推广 测试完成后删除')
-      if (this.crmType == 'marketing') {
-        return require(`@/assets/img/crm/product.png`)
-      }
-
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
 

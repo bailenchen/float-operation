@@ -95,14 +95,11 @@ export default {
     //   e.stopPropagation()
     // })
 
-    console.warn('table.js 推广页面 加入的默认请求')
     if (this.crmType === 'marketing') {
-      this.getList()
-      return
-    }
-
-
-    if (this.isSeas && this.crm.pool.index) {
+      if (this.crm[this.crmType].index) {
+        this.getList()
+      }
+    } else if (this.isSeas && this.crm.pool.index) {
       this.getFieldList()
     } else if (this.crm[this.crmType].index) {
       this.loading = true
