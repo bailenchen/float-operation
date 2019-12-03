@@ -104,12 +104,18 @@ export default {
   },
   watch: {
     selectedData: function(value) {
-      this.checkItems(value)
+      if (this.show) {
+        this.checkItems(value)
+      }
     },
 
     show(value) {
-      if (this.list && this.list.length == 0) {
-        this.getUserList()
+      if (value) {
+        if (this.list && this.list.length == 0) {
+          this.getUserList()
+        } else {
+          this.checkItems(this.selectedData)
+        }
       }
     }
   },
