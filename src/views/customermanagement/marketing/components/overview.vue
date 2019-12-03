@@ -126,7 +126,7 @@ export default {
           height: 100,
           colorDark: '#000000',
           colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.H
+          correctLevel: QRCode.CorrectLevel.M
         })
       }
     },
