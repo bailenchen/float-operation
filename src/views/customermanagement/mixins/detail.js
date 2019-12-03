@@ -36,10 +36,6 @@ export default {
         return false
       }
 
-      // 推广有列表权限就可以看详情
-      if (this.crmType === 'marketing') {
-        return true
-      }
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].read
     },
 
