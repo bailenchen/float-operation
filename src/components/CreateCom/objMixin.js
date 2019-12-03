@@ -27,7 +27,7 @@ export default {
     }
   },
 
-  mounted() {
+  created() {
     /** 如果有值以传入值为主 如果无值 已默认值为主 */
     this.dataValue = this.value
   },

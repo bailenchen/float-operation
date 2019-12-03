@@ -16,6 +16,11 @@ import store from './store'
 import cache from '@/utils/cache'
 cache.loadingCache()
 
+// 配置信息
+import config from '@/config'
+window.WKConfig = config
+Vue.prototype.WKConfig = config
+
 import '@/permission' // permission control
 import 'vue2-animate/dist/vue2-animate.min.css'
 
