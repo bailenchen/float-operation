@@ -62,7 +62,6 @@
 <script>
 import loading from '../../mixins/loading'
 import Sections from '../../components/Sections'
-import { downloadFile } from '@/utils'
 import Clipboard from 'clipboard'
 import QRCode from 'qrcodejs2'
 
@@ -133,10 +132,22 @@ export default {
 
     handleClick(type) {
       if (type == 'download') {
-        var img = document
-          .getElementById('canvas')
-          .getElementsByTagName('img')[0]
-        downloadFile({ name: this.name + '.png', path: img.src })
+        // 获取base64的图片节点
+        var img = document.getElementById('canvas').getElementsByTagName('img')[0]
+        // 构建画布
+        var canvas = document.createElement('canvas')
+        canvas.width = img.width
+        canvas.height = img.height
+        canvas.getContext('2d').drawImage(img, 0, 0)
+        // 构造url
+        const url = canvas.toDataURL('image/png')
+        // 构造a标签并模拟点击
+        var downloadLink = document.createElement('a')
+        downloadLink.setAttribute('href', url)
+        downloadLink.setAttribute('download', '二维码.png')
+        document.body.appendChild(downloadLink)
+        downloadLink.click() // 点击下载
+        document.body.removeChild(downloadLink)
       } else if (type == 'copy') {
         const clipboard = new Clipboard('.copyBtn')
 
