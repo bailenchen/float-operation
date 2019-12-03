@@ -37,6 +37,11 @@
                 <el-dropdown-item :command="item.status ? 'disable' : 'enable'">{{ item.status ? '停用' : '启用' }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
+            <el-button
+              v-else-if="item.module == 'call'"
+              type="text"
+              class="detail-button"
+              @click="checkCallDetail(item)">了解详情<i class="el-icon-arrow-right el-icon--right"/></el-button>
             <span
               v-else-if="item.type == 2"
               class="more-mark">即将发布</span>
@@ -45,7 +50,9 @@
       </div>
     </div>
 
-    <call-detail :visible.sync="showCallDetail"/>
+    <call-detail
+      :visible.sync="showCallDetail"
+      :call-switch="callSwitch"/>
   </flexbox>
 </template>
 
@@ -86,13 +93,19 @@ export default {
           sublist: []
         },
         {
+          name: '增值应用',
+          type: 3,
+          sublist: []
+        },
+        {
           name: '敬请期待',
           type: 2,
           sublist: []
         }
       ],
       // 展示详情
-      showCallDetail: false
+      showCallDetail: false,
+      callSwitch: false
     }
   },
   computed: {
@@ -220,6 +233,11 @@ export default {
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }
+    },
+
+    checkCallDetail(item) {
+      this.showCallDetail = true
+      this.callSwitch = item.status == 1
     }
   }
 }
