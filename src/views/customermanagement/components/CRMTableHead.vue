@@ -625,12 +625,12 @@ export default {
         state_start: {
           name: '启用',
           type: 'state_start',
-          icon: 'shelves'
+          icon: 'activation'
         },
         state_disable: {
           name: '停用',
           type: 'state_disable',
-          icon: 'sold-out'
+          icon: 'remove'
         },
         deal_status: {
           name: '更改成交状态',
