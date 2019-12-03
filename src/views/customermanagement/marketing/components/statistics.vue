@@ -271,7 +271,7 @@ export default {
         .then(res => {
           this.loading = false
           this.$message.success('同步成功')
-          this.getFieldList()
+          this.refreshList()
         })
         .catch(() => {
           this.loading = false
