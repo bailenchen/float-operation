@@ -470,12 +470,7 @@ export default {
       crmCallSaveAPI(temp).then(res => {
         // 上传录音
         if (data.answer_time) {
-          let httpUrl = process.env.BASE_API
-          console.log(httpUrl, 'http')
-          if (httpUrl === '/api/') {
-            httpUrl = 'http://192.168.1.14:8081/'
-          }
-          const url = `${httpUrl}call/upload?id=${res.data.id}`
+          const url = `${WKConfig.getLocationOrigin()}/api/call/upload?id=${res.data.id}`
           callCenter.OnUploadFile(url, data.session_id)
         } else {
           const params = {}
