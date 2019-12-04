@@ -66,6 +66,7 @@ import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 import DetailImg from './components/detailImg'
+
 export default {
   // 客户管理 的 产品详情
   name: 'ProductDetail',

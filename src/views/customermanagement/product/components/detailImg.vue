@@ -87,9 +87,9 @@
               v-model="productRemark"
               :rows="5"
               :maxlength="1000"
+              show-word-limit
               type="textarea"
               @blur="saveIntroduce"/>
-            <div class="input-remark">{{ productRemark.length }} / 1000</div>
           </div>
         </div>
       </div>
@@ -101,10 +101,10 @@
 <script type="text/javascript">
 import Sections from '../../components/Sections'
 import {
-  CrmProductDetailImgSave,
-  CrmProductDetailImgQueryListByType,
-  CrmProductDetailImgDelete,
-  CrmProductDetailImgSaveImg
+  crmProductDetailImgSave,
+  crmProductDetailImgQueryListByType,
+  crmProductDetailImgDelete,
+  crmProductDetailImgSaveImg
 } from '@/api/customermanagement/product'
 
 export default {
@@ -137,12 +137,8 @@ export default {
     }
   },
   watch: {
-    id: {
-      handler(val) {
-        this.getImglist()
-      },
-      deep: true,
-      immediate: true
+    id: function(val) {
+      this.getImglist()
     }
   },
   mounted() {
@@ -151,7 +147,7 @@ export default {
   methods: {
     getImglist() {
       this.loading = true
-      CrmProductDetailImgQueryListByType(
+      crmProductDetailImgQueryListByType(
         { productId: this.id }
       ).then(res => {
         res.data.forEach(item => {
@@ -183,7 +179,7 @@ export default {
         productId: this.id
       }
       this.loading = true
-      CrmProductDetailImgSave(params).then(res => {
+      crmProductDetailImgSave(params).then(res => {
         if (this.type === 1) {
           this.primaryObj = res.data
           this.primaryUrl = res.data.filePath
@@ -208,7 +204,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        CrmProductDetailImgDelete(params).then(res => {
+        crmProductDetailImgDelete(params).then(res => {
           this.$message.success('删除成功')
           if (index == 1) {
             this.primaryUrl = ''
@@ -244,7 +240,7 @@ export default {
     },
     /** 保存简介 */
     saveIntroduce() {
-      CrmProductDetailImgSaveImg({
+      crmProductDetailImgSaveImg({
         productId: this.id,
         remarks: this.productRemark }
       ).then(res => {
@@ -335,13 +331,6 @@ export default {
     margin: 20px;
     width: 400px;
     position: relative;
-    .input-remark {
-      position:absolute;
-      color: #C1C1C1;
-      font-size: 12px;
-      bottom: 10px;
-      right: 10px;
-    }
   }
   .cross-two {
     height: 157px;

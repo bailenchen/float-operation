@@ -150,7 +150,7 @@ export function crmProductNumAPI(data) {
  * @param {*} data
  *
  */
-export function CrmProductDetailImgSave(data) {
+export function crmProductDetailImgSave(data) {
   var param = new FormData()
   Object.keys(data).forEach(key => {
     param.append(key, data[key])
@@ -170,7 +170,7 @@ export function CrmProductDetailImgSave(data) {
  * @param {*} data
  *
  */
-export function CrmProductDetailImgQueryListByType(data) {
+export function crmProductDetailImgQueryListByType(data) {
   return request({
     url: 'CrmProductDetailImg/queryListByType',
     method: 'post',
@@ -183,7 +183,7 @@ export function CrmProductDetailImgQueryListByType(data) {
  * @param {*} data
  *
  */
-export function CrmProductDetailImgDelete(data) {
+export function crmProductDetailImgDelete(data) {
   return request({
     url: 'CrmProductDetailImg/delete',
     method: 'post',
@@ -196,7 +196,7 @@ export function CrmProductDetailImgDelete(data) {
  * @param {*} data
  *
  */
-export function CrmProductDetailImgSaveImg(data) {
+export function crmProductDetailImgSaveImg(data) {
   return request({
     url: 'CrmProductDetailImg/saveImg',
     method: 'post',
