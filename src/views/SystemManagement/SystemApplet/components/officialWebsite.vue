@@ -14,7 +14,6 @@
             accept="image/*"
             type="file"
             class="file-input"
-            multiple
             @change="upLoad">
           <el-button
             type="text"
@@ -44,7 +43,7 @@
                   type="text"
                   icon="el-icon-close"
                   class="draggable-close"
-                  @click="handleRemove(item)"/>
+                  @click="handleRemove(item, index)"/>
               </div>
             </draggable>
           </div>
@@ -123,9 +122,11 @@ export default {
           this.fileList.push(
             { name: item.name, url: item.filePath, officialImgId: item.officialImgId }
           )
-          this.loading = false
         })
-      }).catch(() => {})
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     },
     /** 上传到服务器 */
     upLoad(event) {
@@ -139,27 +140,43 @@ export default {
         this.fileList.push(
           { name: res.data.name, url: res.data.filePath, officialImgId: res.data.officialImgId }
         )
-      }).catch(() => {})
+      }).catch(() => {
+        this.loading = false
+      })
     },
-    /** 删除图片 */
-    handleRemove(item) {
+
+
+    /**
+     * 删除图片
+     */
+    handleRemove(item, index) {
       this.loading = true
       officialImgDeleteAPI({
         officialImgId: item.officialImgId
       }).then(res => {
+        this.loading = false
         this.$message.success('删除成功')
-        this.getFileList()
-      }).catch(() => {})
+        this.fileList.splice(index, 1)
+      }).catch(() => {
+        this.loading = false
+      })
     },
-    /** 预览图片 */
+
+    /**
+     * 预览图片
+     */
     piewImg(item) {
       this.imgList = []
       this.imgList.push(item.url)
     },
+
     upLoadImg() {
       this.$refs.imgInput.click()
     },
-    /** 图片排序 */
+
+    /**
+     * 图片排序
+     */
     sortSave() {
       const list = []
       this.fileList.forEach((item, index) => {

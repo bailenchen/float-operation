@@ -79,6 +79,7 @@
                     :width="item.width"
                     :label="item.label"
                     :key="index"
+                    :formatter="tableFormatter"
                     show-overflow-tooltip/>
                   <el-table-column label="操作">
                     <template slot-scope="scope">
@@ -185,7 +186,7 @@ export default {
       selectList: [],
       authUrl: '',
       search: '',
-      tableData: [{}], // 与角色关联的员工
+      tableData: [], // 与角色关联的员工
       tableHeight: document.documentElement.clientHeight - 305, // 表的高度
       currentPage: 1,
       pageSize: 15,
@@ -427,6 +428,16 @@ export default {
       }).catch(() => {
         this.userLoading = false
       })
+    },
+
+    /**
+     * 列表信息格式化
+     */
+    tableFormatter(row, column) {
+      if (column.property == 'sex') {
+        return { 1: '男', 2: '女' }[row.sex]
+      }
+      return row[column.property]
     }
   }
 }

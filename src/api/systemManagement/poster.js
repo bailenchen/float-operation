@@ -47,7 +47,7 @@ export function CrmProductDetailImgQueryListByTypeAPI(data) {
   })
 }
 
-// crm 查看官网图片 visitingCard/queryByUserId
+// crm 查看官网图片 visitingCard/queryByUserId 1 是官网 2 是海报
 export function officialImgQueryListByTypeAPI(data) {
   return request({
     url: 'officialImg/queryListByType',
@@ -154,6 +154,9 @@ export function systemUserMiNiListAPI(data) {
   return request({
     url: 'system/user/queryUserMiNiList',
     method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     data: data
   })
 }
