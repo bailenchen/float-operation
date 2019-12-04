@@ -1,7 +1,9 @@
 <template>
-  <div v-loading="loading" class="poster-box">
-    <div class="poster-content">
-      <h4 class="poster-title">官网设置</h4>
+  <flexbox
+    v-loading="loading"
+    align="stretch"
+    class="poster-box">
+    <create-sections title="官网设置" class="poster-content">
       <p class="poster-text">可在这里统一更新编辑官网，最多只能上传十张图片</p>
       <div class="poster-image">
         <p class="image-title">官网详情图</p>
@@ -48,9 +50,8 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="poster-content">
-      <h4 class="poster-title">预览官网</h4>
+    </create-sections>
+    <create-sections title="预览官网" class="poster-content">
       <div class="poster-image phone">
         <el-image :src="require('@/assets/img/weixin_ding2.png')"/>
         <div class="poster-image-box">
@@ -62,20 +63,22 @@
         </div>
         <el-image :src="require('@/assets/img/weixin_di2.png')"/>
       </div>
-    </div>
-  </div>
+    </create-sections>
+  </flexbox>
 </template>
 
 <script type="text/javascript">
-'use strict'
 import { officialImgSaveAPI,
   officialImgDeleteAPI,
   officialImgSortImgAPI,
-  officialImgQueryListByTypeAPI } from '@/api/SystemManagement/poster'
+  officialImgQueryListByTypeAPI } from '@/api/systemManagement/poster'
 import draggable from 'vuedraggable'
+import CreateSections from '@/components/CreateSections'
+
 export default {
   components: {
-    draggable
+    draggable,
+    CreateSections
   },
   props: {
     show: {
@@ -171,97 +174,92 @@ export default {
 
 <style lang="scss" scoped>
 .poster-box {
-    display: flex;
     .poster-content {
-      margin-left: 20px;
-      margin-right: 277px;
-       .poster-title {
-        color: #333;
-        font-size: 15px;
-        height: 24px;
-        line-height: 24px;
-        border-left: 2px solid #2362FB;
-        font-weight: 600;
-        padding-left: 10px;
-       }
-       .poster-text {
-           padding-left: 10px;
-           color: #333;
-           font-size: 13px;
-           margin: 20px 0 ;
-       }
-       .phone {
-         border-bottom: 8px solid #333;
-         border-top: 5px solid #333;
-         border-left: 3px solid #333;
-         border-right: 3px solid #333;
-         border-radius: 6px;
-         margin-top:  10px;
-         width: 262.5px;
-         height: 492.5px;
-         .poster-image-box {
-           overflow-x: hidden;
-           .poster-box-scroll {
-              overflow-y: auto;
-               overflow-x: hidden;
-               width: 264px;
-               height: 400px;
-           }
-         }
-       }
-       .poster-image {
-           .poster-image-main {
-               display: block;
-               margin: 0 !important;
-               width: 262px !important;
-               height: 400px !important;
-           }
-           .image-title {
-               padding-left: 10px;
-               margin: 20px 0 ;
-               color: #333;
-               font-size: 14px;
+        padding-left: 20px;
+        flex: 1;
+        .poster-text {
+            padding-left: 10px;
+            color: #333;
+            font-size: 13px;
+            margin: 20px 0;
         }
-        .poster-image-text {
-            width: 242px;
-            height: 50px;
-            text-align: center;
+        .phone {
+            border-bottom: 8px solid #333;
+            border-top: 5px solid #333;
+            border-left: 3px solid #333;
+            border-right: 3px solid #333;
+            border-radius: 6px;
+            margin-top: 10px;
+            width: 262.5px;
+            height: 492.5px;
+            .poster-image-box {
+                overflow-x: hidden;
+                .poster-box-scroll {
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    width: 264px;
+                    height: 400px;
+                }
+            }
         }
-        .image-text {
-            width: 262px;
-            height: 18px;
-            color: rgba(153, 153, 153, 1);
-            font-size: 12px;
-            text-align: left;
-            margin-top: 5px;
+        .poster-image {
+            .poster-image-main {
+                display: block;
+                margin: 0 !important;
+                width: 262px !important;
+                height: 400px !important;
+            }
+            .image-title {
+                padding-left: 10px;
+                margin: 20px 0;
+                color: #333;
+                font-size: 14px;
+            }
+            .poster-image-text {
+                width: 242px;
+                height: 50px;
+                text-align: center;
+            }
+            .image-text {
+                width: 262px;
+                height: 18px;
+                color: rgba(153, 153, 153, 1);
+                font-size: 12px;
+                text-align: left;
+                margin-top: 5px;
+            }
         }
-       }
-   }
+    }
 }
- .avatar-uploader .el-upload {
+
+.avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
+}
+
+.avatar-uploader .el-upload:hover {
     border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
+}
+
+.avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
     width: 187.5px;
     height: 263px;
     line-height: 263px;
     text-align: center;
-  }
-  .avatar {
+}
+
+.avatar {
     width: 187.5px;
     height: 263px;
     display: block;
-  }
-  .content-cross {
+}
+
+.content-cross {
     width: 400px;
     height: 92px;
     display: flex;
@@ -272,12 +270,13 @@ export default {
     text-align: center;
     border: 1px #c0ccda dashed;
     .cross {
-      color: #606266;
-      font-size: 20px;
-      margin-left: 190px;
+        color: #606266;
+        font-size: 20px;
+        margin-left: 190px;
     }
-  }
-  .content {
+}
+
+.content {
     width: 400px;
     height: 92px;
     display: flex;
@@ -285,41 +284,49 @@ export default {
     margin-top: 10px;
     position: relative;
     border: 1px #c0ccda solid;
-  }
-  .draggable-image {
+}
+
+.draggable-image {
     width: 100px;
     padding: 10px;
     height: 100%;
-  }
-  .draggable-box {
+}
+
+.draggable-box {
     width: 400px;
-  }
-  .draggable-scroll {
+}
+
+.draggable-scroll {
     width: 420px;
     height: 420px;
-    overflow-y:auto;
-  }
-  .draggable-scroll--height {
-     height: 500px;
-  }
-  .draggable-scroll--box {
+    overflow-y: auto;
+}
+
+.draggable-scroll--height {
+    height: 500px;
+}
+
+.draggable-scroll--box {
     width: 400px;
     overflow: hidden;
-  }
-  .draggable-text {
+}
+
+.draggable-text {
     display: inline-block;
     height: 90px;
     line-height: 90px;
     padding-left: 4px;
-    color:#606266;
+    color: #606266;
     font-size: 14px;
-  }
-  .draggable-close {
+}
+
+.draggable-close {
     position: absolute;
     left: 370px;
     color: #606266;
-  }
-  .file-input {
-  display: none;
+}
+
+.file-input {
+    display: none;
 }
 </style>

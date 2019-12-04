@@ -14,7 +14,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import {
-  wechatQueryAPI } from '@/api/SystemManagement/poster'
+  wechatQueryAPI } from '@/api/systemManagement/poster'
 export default {
   name: 'EditCard',
   data() {

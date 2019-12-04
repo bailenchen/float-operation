@@ -75,7 +75,7 @@ export function wechatQueryAPI(data) {
 }
 
 // crm 设为默认展示名片
-export function visitingCardSetSaveCard(data) {
+export function visitingCardSetSaveCardAPI(data) {
   return request({
     url: 'visitingCard/setSaveCard',
     method: 'post',
@@ -86,8 +86,32 @@ export function visitingCardSetSaveCard(data) {
   })
 }
 
+// crm 设为关联人员
+export function visitingCardRelevanceAPI(data) {
+  return request({
+    url: 'visitingCard/relevance',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data
+  })
+}
+
+// crm 接触关联
+export function visitingCardRelieveAPI(data) {
+  return request({
+    url: 'visitingCard/relieve',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data
+  })
+}
+
 // crm 移出默认展示图片 wechat/preauthcode
-export function visitingCardDeleteByUserId(data) {
+export function visitingCardDeleteByUserIdAPI(data) {
   return request({
     url: 'visitingCard/deleteByUserId',
     method: 'post',
@@ -96,7 +120,7 @@ export function visitingCardDeleteByUserId(data) {
 }
 
 // crm 获取授权 wechat/preauthcode
-export function wechatPreauthcode(data) {
+export function wechatPreauthcodeAPI(data) {
   return request({
     url: 'wechat/preauthcode',
     method: 'post',
@@ -124,3 +148,13 @@ export function visitingCardCheckAuthAPI(data) {
     data: data
   })
 }
+
+// 关联员工列表
+export function systemUserMiNiListAPI(data) {
+  return request({
+    url: 'system/user/queryUserMiNiList',
+    method: 'post',
+    data: data
+  })
+}
+

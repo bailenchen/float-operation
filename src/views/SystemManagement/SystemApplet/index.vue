@@ -1,23 +1,14 @@
 <template>
   <div v-loading="loading" class="applet-authorization">
     <template v-if="hasAuth">
-      <el-input
-        v-if="appletActive.id === 1 && mainMenuIndex == 'user'"
-        v-model="search"
-        placeholder="请输入手机号/员工姓名"
-        class="search"
-        @keyup.enter.native="searchClick">
-        <el-button
-          slot="append"
-          type="primary"
-          @click.native="searchClick">搜索</el-button>
-      </el-input>
       <xr-header
         ref="xrHeader"
-        :show-search="false"
+        :show-search="showSearch"
+        placeholder="请输入手机号/员工姓名"
         label="小程序管理"
         icon-class="wk wk-contacts"
-        icon-color="#19B5F6"/>
+        icon-color="#19B5F6"
+        @search="searchClick"/>
       <div class="applet-box">
         <!-- 左边导航 -->
         <div
@@ -31,7 +22,7 @@
             <div
               v-for="(item, index) in leftList"
               :key="index"
-              :class="{'is-select' : item.id == appletActive.id}"
+              :class="{'is-select' : item.type == menuActive}"
               class="menu-item"
               @click="appletaMenuSelect(item)">
               <i :class="item.icon"/>
@@ -43,12 +34,12 @@
         </div>
 
         <!-- 右边内容 -->
-        <div class="content-box">
-          <el-tabs v-model="mainMenuIndex">
+        <div v-if="menuActive === 'card'" class="content-box">
+          <el-tabs v-model="menuChildIndex">
             <el-tab-pane
-              v-if="appletActive.id === 1"
               label="员工信息"
-              name="user">
+              name="user"
+              lazy>
               <div
                 v-loading="userLoading"
                 class="content-table">
@@ -91,10 +82,8 @@
                     show-overflow-tooltip/>
                   <el-table-column label="操作">
                     <template slot-scope="scope">
-                      <!-- <span class="el-icon-edit content-table-span"
-                      @click="editBtn(scope.row)"></span> -->
-                      <el-button v-if="scope.row.card == 0" type="text" class="el-button--primity" @click="setCard(scope.row)">设为用户默认访问名片</el-button>
-                      <el-button v-else type="text" class="el-button--warning button-delete" @click="cancelCard(scope.row)">移除用户默认访问名片</el-button>
+                      <el-button v-if="scope.row.card == 0" type="text" class="el-button--primity button-handle" @click="setCard(scope.row)">设为用户默认访问名片</el-button>
+                      <el-button v-else type="text" class="el-button--warning button-handle" @click="cancelCard(scope.row)">移除用户默认访问名片</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -113,24 +102,29 @@
               </div>
             </el-tab-pane>
             <el-tab-pane
-              v-if="appletActive.id === 1"
               label="名片海报"
-              name="poster">
+              name="poster"
+              lazy>
               <poster/>
-            </el-tab-pane>
-            <el-tab-pane
-              v-if="appletActive.id === 2"
-              label="设置官网"
-              name="setting">
-              <official-website :show="appletActive.id === 2"/>
             </el-tab-pane>
           </el-tabs>
         </div>
+
+        <div v-else-if="menuActive === 'web'" class="content-box">
+          <el-tabs v-model="menuChildIndex">
+            <el-tab-pane
+              label="设置官网"
+              name="setting"
+              lazy>
+              <official-website :show="menuActive === 'web'"/>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+
       </div>
       <!-- 关联员工 -->
       <relate-empoyee
         :visible.sync="relateEmpoyeeShow"
-        :role-id="roleId"
         @save="employeesSave"/>
     </template>
     <template v-else>
@@ -151,12 +145,13 @@
 </template>
 
 <script>
-import { usersList } from '@/api/common'
 import {
-  visitingCardSetSaveCard,
-  visitingCardDeleteByUserId,
-  wechatPreauthcode,
-  visitingCardCheckAuthAPI } from '@/api/SystemManagement/poster'
+  visitingCardSetSaveCardAPI,
+  visitingCardDeleteByUserIdAPI,
+  wechatPreauthcodeAPI,
+  visitingCardCheckAuthAPI,
+  visitingCardRelieveAPI,
+  systemUserMiNiListAPI } from '@/api/systemManagement/poster'
 
 import RelateEmpoyee from './components/relateEmpoyee'
 import OfficialWebsite from './components/officialWebsite'
@@ -178,10 +173,10 @@ export default {
       hasAuth: false,
       loading: false,
       leftList: [
-        { id: 1, name: '名片', icon: 'wk wk-contacts' },
-        { id: 2, name: '官网', icon: 'wk wk-my-task' }
+        { type: 'card', name: '名片', icon: 'wk wk-contacts' },
+        { type: 'web', name: '官网', icon: 'wk wk-my-task' }
       ],
-      appletActive: { id: 1, name: '名片', icon: 'wk wk-contacts' },
+      menuActive: 'card',
       handleList: [
         // { name: '导出', type: 'export', icon: 'export' },
         { name: '删除', type: 'delete', icon: 'delete' }
@@ -190,7 +185,6 @@ export default {
       selectList: [],
       authUrl: '',
       search: '',
-      roleId: 343,
       tableData: [{}], // 与角色关联的员工
       tableHeight: document.documentElement.clientHeight - 305, // 表的高度
       currentPage: 1,
@@ -207,7 +201,7 @@ export default {
       applet: {}, // 操作角色的框 关联的信息
       appletList: [], // 角色列表 list属性 是信息
 
-      mainMenuIndex: 'user', // 角色员工  角色权限 切换 默认左边
+      menuChildIndex: 'user', // 角色员工  角色权限 切换 默认左边
       relateEmpoyeeShow: false,
       appletMenuLoading: false,
       userLoading: false
@@ -215,14 +209,13 @@ export default {
   },
 
   computed: {
+    showSearch() {
+      return this.menuActive === 'card' && this.menuChildIndex == 'user'
+    }
   },
 
   watch: {
-    appletActive: {
-      handler(val) {},
-      deep: true,
-      immediate: true
-    }
+
   },
 
   mounted() {
@@ -265,12 +258,8 @@ export default {
      * 展示class
      */
     appletaMenuSelect(val) {
-      this.appletActive = val
-      if (val.id === 2) {
-        this.mainMenuIndex = 'setting'
-      } else if (val.id === 1) {
-        this.mainMenuIndex = 'user'
-      }
+      this.menuActive = val.type
+      this.menuChildIndex = this.menuActive == 'web' ? 'setting' : 'user'
     },
 
     /**
@@ -279,7 +268,7 @@ export default {
     getAuthUrl() {
       if (!this.authUrl) {
         this.loading = true
-        wechatPreauthcode().then(res => {
+        wechatPreauthcodeAPI().then(res => {
           this.authUrl = res.data
         }).catch(() => {
           this.loading = false
@@ -319,13 +308,38 @@ export default {
     /**
      * 表头操作
      */
-    selectionBarClick(type) {},
+    selectionBarClick(type) {
+      this.$confirm('确定删除选中的关联员工？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.userLoading = true
+          visitingCardRelieveAPI(this.selectList.map(item => {
+            return item.userId
+          })).then(res => {
+            this.$message.success('删除成功')
+            this.userLoading = false
+            this.getUserList()
+          }).catch(() => {
+            this.userLoading = false
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    },
 
     /**
      * 搜索操作
      */
-    searchClick() {
-      this.getUserList()
+    searchClick(search) {
+      this.search = search
+      this.refreshUserList()
     },
 
     /**
@@ -333,7 +347,7 @@ export default {
      */
     employeesSave(val) {
       this.relateEmpoyeeShow = false
-      this.getUserList()
+      this.refreshUserList()
     },
 
     /**
@@ -345,11 +359,10 @@ export default {
       if (this.search) {
         params.search = this.search
       }
-      usersList({
+      systemUserMiNiListAPI({
         ...params,
         page: this.currentPage,
         limit: this.pageSize,
-        roleId: 343,
         realname: this.searchInput
       })
         .then(res => {
@@ -390,11 +403,15 @@ export default {
      * 设为用户默认展示图片
      */
     setCard(row) {
-      visitingCardSetSaveCard(
-        { userId: row.userId }
-      ).then(res => {
+      this.userLoading = true
+      visitingCardSetSaveCardAPI({
+        userId: row.userId
+      }).then(res => {
+        this.userLoading = false
         this.$message.success('操作成功')
-        this.getUserList()
+        row.card = 1
+      }).catch(() => {
+        this.userLoading = false
       })
     },
 
@@ -402,10 +419,14 @@ export default {
      * 移出默认
      */
     cancelCard(row) {
-      visitingCardDeleteByUserId({ userId: row.userId }).then(res => {
+      this.userLoading = true
+      visitingCardDeleteByUserIdAPI({ userId: row.userId }).then(res => {
+        this.userLoading = false
         this.$message.success('移除成功')
-        this.getUserList()
-      }).catch(() => {})
+        row.card = 0
+      }).catch(() => {
+        this.userLoading = false
+      })
     }
   }
 }
@@ -714,6 +735,11 @@ export default {
   .auth-bar {
     text-align: center;
   }
+}
+
+// 操作按钮
+.button-handle {
+  font-size: 13px;
 }
 @import '../styles/table.scss';
 </style>

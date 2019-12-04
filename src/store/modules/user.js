@@ -56,6 +56,10 @@ const user = {
     },
     SET_AUTH: (state, data) => {
       Lockr.set('Admin-Token', data['Admin-Token'])
+      // 开启了小程序
+      if (data && data.hasOwnProperty('cardAuth')) {
+        data.user.cardAuth = data.cardAuth
+      }
       Lockr.set('loginUserInfo', data.user)
 
       Lockr.set('authList', data.auth)
@@ -120,6 +124,10 @@ const user = {
     }) {
       return new Promise((resolve, reject) => {
         adminUsersRead().then(response => {
+          // 开启了小程序
+          if (response && response.hasOwnProperty('cardAuth')) {
+            response.data.cardAuth = response.cardAuth
+          }
           commit('SET_USERINFO', response.data)
           resolve(response)
         }).catch(error => {

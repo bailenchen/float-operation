@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { usersEdit as usersEditAPI } from '@/api/systemManagement/RoleAuthorization'
+import { visitingCardRelevanceAPI } from '@/api/systemManagement/poster'
 import { XhUserCell } from '@/components/CreateCom'
 
 export default {
@@ -47,8 +47,7 @@ export default {
       type: Boolean,
       required: true,
       default: false
-    },
-    roleId: [Number, String]
+    }
   },
   data() {
     return {
@@ -87,12 +86,9 @@ export default {
       if (this.selectUsers.length == 0) {
         this.$message.error('请选择员工')
       } else {
-        usersEditAPI({
-          userIds: this.selectUsers.map(function(data) {
-            return data.userId
-          }).join(','),
-          roleIds: this.roleId
-        })
+        visitingCardRelevanceAPI(this.selectUsers.map(function(data) {
+          return data.userId
+        }))
           .then(res => {
             this.$message.success('操作成功')
             this.$emit('save')

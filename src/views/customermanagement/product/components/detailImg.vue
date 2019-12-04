@@ -99,7 +99,6 @@
 </template>
 
 <script type="text/javascript">
-'use strict'
 import Sections from '../../components/Sections'
 import {
   CrmProductDetailImgSave,
@@ -107,6 +106,7 @@ import {
   CrmProductDetailImgDelete,
   CrmProductDetailImgSaveImg
 } from '@/api/customermanagement/product'
+
 export default {
   components: {
     Sections

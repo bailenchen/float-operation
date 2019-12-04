@@ -1,7 +1,9 @@
 <template>
-  <div v-loading="loading" class="poster-box">
-    <div class="poster-content">
-      <h4 class="poster-title">名片海报</h4>
+  <flexbox
+    v-loading="loading"
+    align="stretch"
+    class="poster-box">
+    <create-sections title="名片海报" class="poster-content">
       <p class="poster-text">员工分享个人名片，商户可统一设置个人名片海报</p>
       <div class="poster-image">
         <p class="image-title">海报背景</p>
@@ -15,56 +17,130 @@
           <img v-if="imageUrl" :src="imageUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"/>
         </el-upload>
-        <p class="image-text">建议上传图片：600（宽）*650（高）</p>
+        <p class="image-des">建议上传图片：600（宽）*650（高）</p>
       </div>
-    </div>
-    <div class="poster-content">
-      <h4 class="poster-title">预览海报</h4>
-      <div class="poster-image haibao">
-        <el-image :src="imageUrl" class="poster-image-main"/>
-        <el-image :src="EWurl" class="poster-ew"/>
-        <p class="poster-image-text">{{ info.companyName }}</p>
-        <p class="poster-image-text">{{ info.realname }}</p>
+    </create-sections>
+    <create-sections title="预览海报" class="poster-content">
+      <div class="preview-image">
+        <canvas id="myCanvas" width="600" height="764" style="width:300px; height:382px"/>
       </div>
-    </div>
-  </div>
+      <div class="preview-handle">
+        <el-button type="primary" @click="downloadPoster">海报下载</el-button>
+      </div>
+    </create-sections>
+  </flexbox>
 </template>
 
 <script type="text/javascript">
-'use strict'
 import {
   wechatQueryAPI,
   officialImgSaveAPI,
   visitingCardQueryByUserIdAPI,
-  officialImgQueryListByTypeAPI } from '@/api/SystemManagement/poster'
+  officialImgQueryListByTypeAPI } from '@/api/systemManagement/poster'
 import { mapGetters } from 'vuex'
+import CreateSections from '@/components/CreateSections'
+
 export default {
+  components: {
+    CreateSections
+  },
   data() {
     return {
-      imageUrl: '',
-      info: {},
       loading: false,
-      EWurl: ''
+      imageUrl: '', // 海报
+      imageUrlImg: null, // 海报img data
+      EWurl: '', // 二维码
+      EWurlImg: null, // 二维码 img data
+      info: {
+        companyName: '',
+        realname: ''
+      }
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
+  watch: {
+    imageUrl() {
+      this.imageUrlImg = null
+      var img = new Image() // 创建img元素
+      img.onload = () => {
+        this.imageUrlImg = img
+        this.drawPoster()
+      }
+      img.setAttribute('crossOrigin', 'Anonymous')
+      img.src = this.imageUrl // 设置图片源地址
+    },
+    EWurl() {
+      var img = new Image() // 创建img元素
+      img.onload = () => {
+        this.EWurlImg = img
+        this.drawPoster()
+      }
+      img.setAttribute('crossOrigin', 'Anonymous')
+      img.src = this.EWurl // 设置图片源地址
+    },
+    info() {
+      this.drawPoster()
+    }
+  },
   mounted() {
     this.getFileList()
+    this.getCompanyInfo()
+    this.getRD()
   },
   methods: {
-    /** 查看图片列表 */
+    /**
+     * 展示预览海报
+     */
+    drawPoster() {
+      if (this.imageUrlImg && this.EWurlImg) {
+        this.$nextTick(() => {
+          var canvas = document.getElementById('myCanvas')
+          var ctx = canvas.getContext('2d')
+          ctx.clearRect(0, 0, 600, 764)
+          // 设置画布背景色
+          ctx.fillStyle = '#fff'
+          ctx.fillRect(0, 0, 600, 764)
+
+          // 绘制背景图片
+          ctx.drawImage(this.imageUrlImg, 0, 0, 600, 650)
+
+          // 绘制文本
+          ctx.scale(1, 1)
+          ctx.font = '32px sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillStyle = '#000'
+
+          ctx.fillText(this.info.realname, 42, 700)
+
+          ctx.font = '24px sans-serif'
+          ctx.fillStyle = '#999'
+          ctx.fillText(this.info.companyName, 42, 735)
+
+          ctx.drawImage(this.EWurlImg, 405, 578, 150, 150)
+        })
+      }
+    },
+
+
+    /**
+     * 查看图片列表
+     */
     getFileList() {
       this.loading = true
       officialImgQueryListByTypeAPI({ type: 2 }).then(res => {
         this.imageUrl = res.data[0].filePath
         this.loading = false
-        this.getInfo()
-      }).catch(() => {})
+      }).catch(() => {
+        this.loading = false
+      })
     },
-    getInfo() {
-      this.loading = true
+
+    /**
+     * 公司信息
+     */
+    getCompanyInfo() {
       visitingCardQueryByUserIdAPI({ userId: this.userInfo.userId }).then(res => {
         if (res.data) {
           this.info = res.data
@@ -74,21 +150,29 @@ export default {
             realname: '未知'
           }
         }
-        this.loading = false
-        this.getRD()
       }).catch(() => {})
     },
+
+    /**
+     * 获取二维码
+     */
     getRD() {
       wechatQueryAPI({ type: 2 }).then(res => {
         this.EWurl = res.data.weixinImg
-        this.loading = false
-      }).catch(() => {})
+      }).catch(() => {
+      })
     },
-    /** 上传成功的回调 */
+
+    /**
+     * 上传成功的回调
+     */
     handleAvatarSuccess(file) {
       console.log(file, '==file==')
     },
-    /** 上传到服务器 */
+
+    /**
+     * 上传到服务器
+     */
     upLoad(file) {
       const params = {
         file: file.file,
@@ -98,8 +182,19 @@ export default {
       officialImgSaveAPI(params).then(res => {
         this.loading = false
         this.imageUrl = res.data.filePath
-        this.getInfo()
-      }).catch(() => {})
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    /**
+     * 海报下载
+     */
+    downloadPoster() {
+      var link = document.createElement('a')
+      link.download = '海报.png'
+      link.href = document.getElementById('myCanvas').toDataURL('image/png')
+      link.click()
     }
   }
 }
@@ -107,90 +202,81 @@ export default {
 
 <style lang="scss" scope>
 .poster-box {
-    display: flex;
     .poster-content {
-      margin-left: 20px;
-      margin-right: 277px;
-       .poster-title {
+        padding-left: 20px;
+        flex: 1;
         color: #333;
-        margin-bottom: 20px;
-        font-size: 15px;
-        height: 24px;
-        line-height: 24px;
-        border-left: 2px solid #2362FB;
-        font-weight: 600;
-        padding-left: 10px;
-       }
-       .poster-text {
-           padding-left: 10px;
-           color: #333;
-           font-size: 13px;
-           margin: 20px 0 ;
-       }
-       .haibao {
-              position: relative;
-              height: 400px;
-              border: 1px solid #e4e4e4;
-           }
-       .poster-image {
-           .poster-image-main {
-               margin: 0 !important;
-               width:  300px;
-               height: 325px;
-           }
-           .image-title {
-               padding-left: 10px;
-               margin: 20px 0 ;
-               color: #333;
-               font-size: 14px;
-        }
-        .poster-image-text {
-            width: 300px;
-            height: 20px;
-            padding: 10px;
-            font-size: 13px;
-            color: #d9d9d9;
-            text-align: left;
-        }
-        .image-text {
-            width: 202px;
-            height: 18px;
-            color: rgba(153, 153, 153, 1);
+
+        .poster-text {
+            padding-left: 10px;
             font-size: 12px;
-            text-align: left;
-            margin-top: 5px;
+            margin: 20px 0;
         }
-       }
-   }
+        .haibao {
+            position: relative;
+            height: 400px;
+            border: 1px solid #e4e4e4;
+        }
+        .poster-image {
+            padding-left: 10px;
+            .poster-image-main {
+                margin: 0 !important;
+                width: 300px;
+                height: 325px;
+            }
+            .image-title {
+                margin-bottom: 15px;
+                font-size: 14px;
+            }
+            .image-des {
+                color: #999;
+                font-size: 12px;
+                text-align: left;
+                margin-top: 5px;
+            }
+        }
+    }
 }
-.poster-ew {
-    width: 80px;
-    background-color: #fff;
-    position: absolute;
-    left: 200px;
-    bottom: 52px;
+
+.preview-image {
+  margin: 20px 0 0 10px;
+  #myCanvas {
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    border-radius: 4px;
+  }
 }
- .avatar-uploader .el-upload {
+
+.preview-handle {
+  width: 310px;
+  padding-left: 10px;
+  padding-top: 10px;
+  text-align: right;
+}
+
+.avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
+}
+
+.avatar-uploader .el-upload:hover {
     border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
+}
+
+.avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
     width: 300px;
     height: 325px;
     line-height: 325px;
     text-align: center;
-  }
-  .avatar {
+}
+
+.avatar {
     width: 300px;
-    height:  325px;
+    height: 325px;
     display: block;
-  }
+}
 </style>
