@@ -204,21 +204,17 @@ export default {
 .poster-box {
     .poster-content {
         padding-left: 20px;
+        margin-top: 0;
         flex: 1;
         color: #333;
 
         .poster-text {
-            padding-left: 10px;
+            padding-left: 15px;
             font-size: 12px;
             margin: 20px 0;
         }
-        .haibao {
-            position: relative;
-            height: 400px;
-            border: 1px solid #e4e4e4;
-        }
         .poster-image {
-            padding-left: 10px;
+            padding-left: 15px;
             .poster-image-main {
                 margin: 0 !important;
                 width: 300px;
@@ -239,7 +235,7 @@ export default {
 }
 
 .preview-image {
-  margin: 20px 0 0 10px;
+  margin: 20px 0 0 15px;
   #myCanvas {
     box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     border-radius: 4px;

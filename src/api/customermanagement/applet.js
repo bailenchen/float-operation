@@ -41,6 +41,7 @@ export function CrmWeixinLeadsExportLeadsAPI(data) {
   return request({
     url: 'CrmWeixinLeads/exportLeads',
     method: 'post',
+    responseType: 'blob',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     },

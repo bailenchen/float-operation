@@ -128,7 +128,7 @@
         :visible.sync="relateEmpoyeeShow"
         @save="employeesSave"/>
     </template>
-    <template v-else>
+    <template v-else-if="hasAuth != null">
       <div class="auth-content">
         <iframe
           ref="authIframe"
@@ -171,7 +171,7 @@ export default {
 
   data() {
     return {
-      hasAuth: false,
+      hasAuth: null,
       loading: false,
       leftList: [
         { type: 'card', name: '名片', icon: 'wk wk-contacts' },
@@ -179,7 +179,6 @@ export default {
       ],
       menuActive: 'card',
       handleList: [
-        // { name: '导出', type: 'export', icon: 'export' },
         { name: '删除', type: 'delete', icon: 'delete' }
       ],
       showReminder: true,
@@ -450,14 +449,7 @@ export default {
   box-sizing: border-box;
   overflow: hidden;
 }
-.title {
-  font-size: 18px;
-  height: 40px;
-  padding: 0 20px;
-  line-height: 40px;
-  margin: 10px 0;
-  color: #333;
-}
+
 .applet-box {
   height: calc(100% - 60px);
   overflow: hidden;
@@ -547,34 +539,7 @@ export default {
   overflow: hidden;
   position: relative;
 }
-.jurisdiction-content-checkbox {
-  border-right: 1px dashed $xr-border-line-color;
-  height: calc(100% - 47px);
-  overflow-y: scroll;
-  padding: 20px;
-}
-.jurisdiction-content-checkbox
-  .el-tree
-  /deep/
-  .el-tree-node
-  > .el-tree-node__content {
-  margin-bottom: 20px;
-  width: 150px;
-}
-.jurisdiction-content-checkbox /deep/ .el-tree .el-tree-node {
-  white-space: inherit;
-  margin-bottom: 5px;
-}
-.jurisdiction-content-checkbox
-  /deep/
-  .el-tree
-  > .el-tree-node
-  > .el-tree-node__children
-  > .is-expanded
-  > .el-tree-node__children
-  > .is-expanded {
-  display: inline-block;
-}
+
 .applet-authorization /deep/ .el-tree-node__expand-icon {
   display: none;
 }
@@ -586,10 +551,6 @@ export default {
   margin: 20px 0;
 }
 /* 新建角色 */
-.input-applet {
-  padding: 10px 0 20px;
-  width: 100%;
-}
 .applet-nav-box {
   line-height: 30px;
   overflow-y: auto;
@@ -634,14 +595,6 @@ export default {
   display: block;
   float: right;
 }
-.jurisdiction-edit {
-  text-align: right;
-  padding: 10px 30px;
-  position: absolute;
-  top: 0;
-  right: 20px;
-  z-index: 3;
-}
 
 /** 分页布局 */
 .p-contianer {
@@ -655,10 +608,6 @@ export default {
   }
 }
 
-// .el-tabs /deep/ .el-tabs__nav-wrap::after {
-//   display: none !important;
-// }
-
 .el-tabs /deep/ .el-tabs__header {
   padding: 0 17px;
   margin: 0 0 15px !important;
@@ -670,10 +619,17 @@ export default {
   line-height: 40px !important;
 }
 
-.node-label {
-  font-weight: bold;
-  font-size: 15px;
+.el-tabs {
+    height: 100%;
+    /deep/ .el-tabs__content {
+        height: calc(100% - 55px);
+    }
+
+    /deep/ .el-tab-pane {
+      height: 100%;
+    }
 }
+
 /** 勾选操作 */
 .selection-bar {
   font-size: 12px;
@@ -718,17 +674,7 @@ export default {
     margin-left: 15px;
   }
 }
-.search {
-    width: 300px;
-    position: absolute;
-    top: 15px;
-    left: 50%;
-}
-/deep/.el-input-group__append {
-    color: #FFFFFF !important;
-    background-color: #2362FB !important;
-    border-color: #2362FB !important;
-}
+
 .el-button--warning {
   /deep/ span {
     color: red;

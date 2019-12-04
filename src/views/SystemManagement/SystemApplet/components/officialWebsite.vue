@@ -3,49 +3,51 @@
     v-loading="loading"
     align="stretch"
     class="poster-box">
-    <create-sections title="官网设置" class="poster-content">
-      <p class="poster-text">可在这里统一更新编辑官网，最多只能上传十张图片</p>
-      <div class="poster-image">
-        <p class="image-title">官网详情图</p>
-        <div slot="tip" class="el-upload__tip">图片建议上传：750*1108</div>
-        <div v-if="fileList.length < 10" class="content-cross" @click="upLoadImg">
-          <input
-            ref="imgInput"
-            accept="image/*"
-            type="file"
-            class="file-input"
-            @change="upLoad">
-          <el-button
-            type="text"
-            icon="el-icon-plus"
-            class="cross"/>
-        </div>
-        <div class="draggable-scroll--box">
-          <div :class="fileList.length < 10 ? '' : 'draggable-scroll--height'" class="draggable-scroll">
-            <draggable
-              v-model="fileList"
-              :group="{ name: 'sort'}"
-              :options="{ forceFallback: false }"
-              class="draggable-box">
-              <div
-                v-for="(item, index) in fileList"
-                :key="index"
-                class="content"
-                @mousemove="imgId = item.officialImgId">
-                <el-image
-                  :src="item.url"
-                  :preview-src-list="imgList"
-                  class="draggable-image"
-                  @click.native="piewImg(item)"/>
-                <span class="draggable-text">{{ item.name }}</span>
-                <el-button
-                  v-if="imgId == item.officialImgId"
-                  type="text"
-                  icon="el-icon-close"
-                  class="draggable-close"
-                  @click="handleRemove(item, index)"/>
-              </div>
-            </draggable>
+    <create-sections title="官网设置">
+      <div class="poster-content">
+        <p class="poster-text">可在这里统一更新编辑官网，最多只能上传十张图片</p>
+        <div class="poster-image">
+          <p class="image-title">官网详情图</p>
+          <div slot="tip" class="el-upload__tip">图片建议上传：750*1108</div>
+          <div v-if="fileList.length < 10" class="content-cross" @click="upLoadImg">
+            <input
+              ref="imgInput"
+              accept="image/*"
+              type="file"
+              class="file-input"
+              @change="upLoad">
+            <el-button
+              type="text"
+              icon="el-icon-plus"
+              class="cross"/>
+          </div>
+          <div class="draggable-scroll--box">
+            <div :class="fileList.length < 10 ? '' : 'draggable-scroll--height'" class="draggable-scroll">
+              <draggable
+                v-model="fileList"
+                :group="{ name: 'sort'}"
+                :options="{ forceFallback: false }"
+                class="draggable-box">
+                <div
+                  v-for="(item, index) in fileList"
+                  :key="index"
+                  class="content"
+                  @mousemove="imgId = item.officialImgId">
+                  <el-image
+                    :src="item.url"
+                    :preview-src-list="imgList"
+                    class="draggable-image"
+                    @click.native="piewImg(item)"/>
+                  <span class="draggable-text">{{ item.name }}</span>
+                  <el-button
+                    v-if="imgId == item.officialImgId"
+                    type="text"
+                    icon="el-icon-close"
+                    class="draggable-close"
+                    @click="handleRemove(item, index)"/>
+                </div>
+              </draggable>
+            </div>
           </div>
         </div>
       </div>
@@ -191,60 +193,71 @@ export default {
 
 <style lang="scss" scoped>
 .poster-box {
-    .poster-content {
-        padding-left: 20px;
-        flex: 1;
-        .poster-text {
-            padding-left: 10px;
-            color: #333;
-            font-size: 13px;
-            margin: 20px 0;
-        }
-        .phone {
-            border-bottom: 8px solid #333;
-            border-top: 5px solid #333;
-            border-left: 3px solid #333;
-            border-right: 3px solid #333;
-            border-radius: 6px;
-            margin-top: 10px;
-            width: 262.5px;
-            height: 492.5px;
-            .poster-image-box {
+    height: 100%;
+}
+
+.create-sections {
+  flex: 1;
+  /deep/ .create-sections-content {
+    height: calc(100% - 26px);
+    overflow: auto;
+  }
+}
+
+.poster-content {
+    padding-left: 0;
+    margin-top: 0;
+    color: #333;
+    .poster-text {
+        padding-left: 15px;
+        font-size: 12px;
+        margin: 20px 0;
+    }
+    .phone {
+        border-bottom: 8px solid #333;
+        border-top: 5px solid #333;
+        border-left: 3px solid #333;
+        border-right: 3px solid #333;
+        border-radius: 6px;
+        margin-top: 20px;
+        margin-left: 15px;
+        padding-left: 0;
+        width: 262.5px;
+        height: 492.5px;
+        .poster-image-box {
+            overflow-x: hidden;
+            .poster-box-scroll {
+                overflow-y: auto;
                 overflow-x: hidden;
-                .poster-box-scroll {
-                    overflow-y: auto;
-                    overflow-x: hidden;
-                    width: 264px;
-                    height: 400px;
-                }
+                width: 264px;
+                height: 400px;
             }
         }
-        .poster-image {
-            .poster-image-main {
-                display: block;
-                margin: 0 !important;
-                width: 262px !important;
-                height: 400px !important;
-            }
-            .image-title {
-                padding-left: 10px;
-                margin: 20px 0;
-                color: #333;
-                font-size: 14px;
-            }
-            .poster-image-text {
-                width: 242px;
-                height: 50px;
-                text-align: center;
-            }
-            .image-text {
-                width: 262px;
-                height: 18px;
-                color: rgba(153, 153, 153, 1);
-                font-size: 12px;
-                text-align: left;
-                margin-top: 5px;
-            }
+    }
+    .poster-image {
+        .poster-image-main {
+            display: block;
+            margin: 0 !important;
+            width: 262px !important;
+            height: 400px !important;
+        }
+        .image-title {
+            margin: 20px 0 15px 0;
+            color: #333;
+            font-size: 14px;
+        }
+        .poster-image-text {
+            width: 242px;
+            height: 50px;
+            text-align: center;
+        }
+        .image-text {
+            width: 262px;
+            height: 18px;
+            color: rgba(153, 153, 153, 1);
+            font-size: 12px;
+            text-align: left;
+            margin-top: 5px;
         }
     }
 }
