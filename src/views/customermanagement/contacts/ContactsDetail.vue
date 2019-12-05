@@ -18,6 +18,7 @@
         class="d-container">
         <c-r-m-detail-head
           :detail="detailData"
+          :model-data="modelData"
           :head-details="headDetails"
           :id="id"
           :crm-type="crmType"
@@ -125,6 +126,13 @@ export default {
       type: Array,
       default: () => {
         return ['el-table__body']
+      }
+    },
+    /** 呼出信息 */
+    modelData: {
+      type: Object,
+      default: () => {
+        return {}
       }
     }
   },
