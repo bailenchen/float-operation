@@ -490,7 +490,7 @@ export default {
             this.$message.error('请选择筛选条件的值！')
             return
           }
-        } else if (!o.value && o.value !== 0) {
+        } else if (!o.value && o.value != 0) {
           this.$message.error('请输入筛选条件的值！')
           return
         }
