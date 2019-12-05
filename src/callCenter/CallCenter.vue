@@ -3,7 +3,7 @@
     <h2 style="padding: 10px 20px; font-weight: 400">选择呼出号码</h2>
     <div v-if="list.length" class="scoll">
       <p v-for="(item, index) in list" :key="index" style="padding: 10px 20px">
-        <el-button class="el-button--primary" @click="callDailout(item.modelId,item.model,item.phoneNumber)">呼出
+        <el-button class="el-button--primary" @click="callDailout(item.modelId, item.model, item.phoneNumber)">呼出
         </el-button>
         <span>{{ item.phoneNumber }} ( {{ item.name }} )</span>
       </p>

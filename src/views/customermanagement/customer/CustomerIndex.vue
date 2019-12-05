@@ -76,7 +76,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="isShow"
+          v-if="Show"
           :resizable="false"
           prop="call"
           fixed
@@ -206,7 +206,7 @@ export default {
   },
   computed: {
     ...mapGetters(['CRMConfig']),
-    isShow() {
+    Show() {
       return this.$store.state.customer.isCall
     }
   },
@@ -266,19 +266,22 @@ export default {
        * @param val
        */
     changeCRMType(val) {
-      this.showDview = true
       this.rowType = val.type
       this.rowID = val.id
+
+      this.modelData = {
+        modelId: val.id,
+        model: val.type
+      }
+
+      this.showDview = true
+
       let callOutData = {
         modelId: val.id,
         model: val.type
       }
       callOutData = JSON.stringify(callOutData)
       localStorage.setItem('callOutData', callOutData)
-      this.modelData = {
-        modelId: val.id,
-        model: val.type
-      }
     },
     /** 解决povper重复的bug */
     callCheckClick(e, scope) {
