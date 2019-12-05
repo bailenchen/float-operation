@@ -337,14 +337,14 @@ export default {
             })
             .join(',')
         } else if (this.crmType == 'product') {
-          request = CrmWeixinLeadsExportLeadsAPI
+          request = crmProductExcelExport
           params.ids = this.selectionList
             .map(function(item, index, array) {
               return item.productId
             })
             .join(',')
         } else if (this.crmType === 'applet') {
-          request = crmProductExcelExport
+          request = CrmWeixinLeadsExportLeadsAPI
           params.ids = this.selectionList
             .map(function(item, index, array) {
               return item.weixinLeadsId
