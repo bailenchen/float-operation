@@ -34,6 +34,7 @@
       </div>
       <span class="mark"><i class="wk wk-s-contacts" />首要联系人</span>
       <i
+        v-if="detail.mobile"
         class="wk wk-phone"
         @click="callPhone" />
     </flexbox>
@@ -48,7 +49,14 @@
     <import-info
       v-if="list.length"
       :list="list" />
-
+    <c-r-m-full-screen-detail
+      :visible.sync="showFullDetail"
+      :id="contactsId"
+      :model-data="{
+        model: 'contacts',
+        modelId: contactsId
+      }"
+      crm-type="contacts"/>
   </div>
 </template>
 
@@ -60,6 +68,7 @@ import ImportInfoEmpty from './ImportInfoEmpty'
 
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { mapGetters } from 'vuex'
+import callCenter from '@/callCenter/callWebSokets'
 
 
 export default {
@@ -67,7 +76,8 @@ export default {
   name: 'ChieflyContacts',
   components: {
     ImportInfo,
-    ImportInfoEmpty
+    ImportInfoEmpty,
+    CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue')
   },
   props: {
     id: [Number, String],
@@ -87,11 +97,17 @@ export default {
     return {
       loading: false,
       detail: null,
-      list: []
+      list: [],
+      showFullDetail: false
     }
   },
   computed: {
     ...mapGetters(['crm']),
+
+    callAuth() {
+      return this.$store.state.customer.isCall
+    },
+
     // 联系人权限
     canShowContacts() {
       return this.crm && this.crm.contacts && this.crm.contacts.read
@@ -161,7 +177,18 @@ export default {
      * 打电话
      */
     callPhone() {
-      this.$message.error('请先开通呼叫中心')
+      if (this.callAuth) {
+        const stringData = JSON.stringify({
+          type: 'contacts',
+          id: this.contactsId
+        })
+        localStorage.setItem('callOutData', stringData) // 呼出信息保存,确保刷新页面时信息不丢失
+        this.$store.commit('SHOW_CALL_OUT', false) // 呼出关闭上一次的呼出弹窗
+        callCenter.OnDailout(this.detail.mobile)
+        this.showFullDetail = true
+      } else {
+        this.$message.error('请先开通呼叫中心')
+      }
     },
 
     /**
