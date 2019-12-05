@@ -316,6 +316,7 @@ export default {
     this.title = to.params.title
     this.roleActive = null
     this.roleList = []
+    this.mainMenuIndex = 'user'
     this.currentPage = 1
     this.total = 0
     this.tableData = []
