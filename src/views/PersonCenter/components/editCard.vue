@@ -107,6 +107,7 @@ export default {
       this.loading = true
       visitingCardSaveAPI(this.form).then(() => {
         this.loading = false
+        this.$message.success('保存成功')
       }).catch(() => {
         this.loading = false
       })
