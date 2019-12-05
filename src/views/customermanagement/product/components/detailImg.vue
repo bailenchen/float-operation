@@ -14,7 +14,6 @@
                 accept="image/*"
                 type="file"
                 class="file-input"
-                multiple
                 @change="upLoad">
               <el-button
                 type="text"
@@ -129,8 +128,6 @@ export default {
       detailObj: {},
       primaryUrl: '',
       detaiUrl: '',
-      fileList: [],
-      imgList: [],
       type: 1,
       imgId: -1,
       loading: false
@@ -138,28 +135,27 @@ export default {
   },
   watch: {
     id: function(val) {
-      this.getImglist()
+      this.getImgData()
     }
   },
   mounted() {
-    this.getImglist()
+    this.getImgData()
   },
   methods: {
-    getImglist() {
+    getImgData() {
       this.loading = true
-      crmProductDetailImgQueryListByType(
-        { productId: this.id }
-      ).then(res => {
-        res.data.forEach(item => {
-          if (item.type == 1) {
-            this.primaryUrl = item.filePath
-            this.primaryObj = item
-          } else {
-            this.detaiUrl = item.filePath
-            this.detailObj = item
-            this.productRemark = item.remarks
-          }
-        })
+      crmProductDetailImgQueryListByType({
+        productId: this.id
+      }).then(res => {
+        const data = res.data
+        this.primaryObj = data.mainImg || {}
+        this.primaryUrl = this.primaryObj.filePath
+
+        this.detailObj = data.detailImg || {}
+        this.detaiUrl = this.detailObj.filePath
+        this.productRemark = data.remarks
+        this.loading = false
+      }).catch(() => {
         this.loading = false
       })
     },
@@ -172,7 +168,6 @@ export default {
       }
     },
     upLoad(event) {
-      console.log(event.target.files[0], 'event==')
       const params = {
         file: event.target.files[0],
         type: this.type,
@@ -189,7 +184,9 @@ export default {
         }
         this.loading = false
         this.$message.success('上传图片成功')
-      }).catch(() => {})
+      }).catch(() => {
+        this.loading = false
+      })
     },
     /** 删除图片 */
     deleteImg(index) {
@@ -240,11 +237,15 @@ export default {
     },
     /** 保存简介 */
     saveIntroduce() {
+      this.loading = true
       crmProductDetailImgSaveImg({
         productId: this.id,
         remarks: this.productRemark }
       ).then(res => {
-      }).catch(res => {})
+        this.loading = false
+      }).catch(res => {
+        this.loading = false
+      })
     }
   }
 }

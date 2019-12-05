@@ -203,7 +203,6 @@ export default {
 <style lang="scss" scope>
 .poster-box {
     .poster-content {
-        padding-left: 20px;
         margin-top: 0;
         flex: 1;
         color: #333;

@@ -2,11 +2,11 @@
   <flexbox
     v-loading="loading"
     align="stretch"
-    class="poster-box">
+    class="web-box">
     <create-sections title="官网设置">
-      <div class="poster-content">
-        <p class="poster-text">可在这里统一更新编辑官网，最多只能上传十张图片</p>
-        <div class="poster-image">
+      <div class="web-content">
+        <p class="web-text">可在这里统一更新编辑官网，最多只能上传十张图片</p>
+        <div class="web-image">
           <p class="image-title">官网详情图</p>
           <div slot="tip" class="el-upload__tip">图片建议上传：750*1108</div>
           <div v-if="fileList.length < 10" class="content-cross" @click="upLoadImg">
@@ -28,7 +28,7 @@
                 :group="{ name: 'sort'}"
                 :options="{ forceFallback: false }"
                 class="draggable-box">
-                <div
+                <flexbox
                   v-for="(item, index) in fileList"
                   :key="index"
                   class="content"
@@ -45,21 +45,21 @@
                     icon="el-icon-close"
                     class="draggable-close"
                     @click="handleRemove(item, index)"/>
-                </div>
+                </flexbox>
               </draggable>
             </div>
           </div>
         </div>
       </div>
     </create-sections>
-    <create-sections title="预览官网" class="poster-content">
-      <div class="poster-image phone">
+    <create-sections title="预览官网" class="web-content">
+      <div class="web-image phone">
         <el-image :src="require('@/assets/img/weixin_ding2.png')"/>
-        <div class="poster-image-box">
-          <div class="poster-box-scroll">
+        <div class="web-image-box">
+          <div class="web-box-scroll">
             <el-image
               v-for="item in fileList"
-              :key="item.url" :src="item.url" class="poster-image-main"/>
+              :key="item.url" :src="item.url" class="web-image-main"/>
           </div>
         </div>
         <el-image :src="require('@/assets/img/weixin_di2.png')"/>
@@ -192,7 +192,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.poster-box {
+.web-box {
     height: 100%;
 }
 
@@ -204,11 +204,11 @@ export default {
   }
 }
 
-.poster-content {
+.web-content {
     padding-left: 0;
     margin-top: 0;
     color: #333;
-    .poster-text {
+    .web-text {
         padding-left: 15px;
         font-size: 12px;
         margin: 20px 0;
@@ -220,13 +220,12 @@ export default {
         border-right: 3px solid #333;
         border-radius: 6px;
         margin-top: 20px;
-        margin-left: 15px;
         padding-left: 0;
         width: 262.5px;
         height: 492.5px;
-        .poster-image-box {
+        .web-image-box {
             overflow-x: hidden;
-            .poster-box-scroll {
+            .web-box-scroll {
                 overflow-y: auto;
                 overflow-x: hidden;
                 width: 264px;
@@ -234,8 +233,9 @@ export default {
             }
         }
     }
-    .poster-image {
-        .poster-image-main {
+    .web-image {
+        margin-left: 15px;
+        .web-image-main {
             display: block;
             margin: 0 !important;
             width: 262px !important;
@@ -246,7 +246,7 @@ export default {
             color: #333;
             font-size: 14px;
         }
-        .poster-image-text {
+        .web-image-text {
             width: 242px;
             height: 50px;
             text-align: center;
@@ -307,9 +307,9 @@ export default {
 }
 
 .content {
+    overflow: hidden;
     width: 400px;
     height: 92px;
-    display: flex;
     border-radius: 6px;
     margin-top: 10px;
     position: relative;
@@ -317,9 +317,10 @@ export default {
 }
 
 .draggable-image {
+    flex-shrink: 0;
     width: 100px;
     padding: 10px;
-    height: 100%;
+    height: 90px;
 }
 
 .draggable-box {

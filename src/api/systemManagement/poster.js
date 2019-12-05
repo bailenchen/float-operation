@@ -161,3 +161,23 @@ export function systemUserMiNiListAPI(data) {
   })
 }
 
+// 获取名片信息
+export function visitingCardQueryPcAPI(data) {
+  return request({
+    url: 'visitingCard/queryPcByUserId',
+    method: 'post',
+    data: data
+  })
+}
+
+// 保存名片信息
+export function visitingCardSaveAPI(data) {
+  return request({
+    url: 'visitingCard/savePc',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

@@ -9,7 +9,7 @@
       @on-search="crmSearch"
       @on-export="exportInfos"/>
     <div
-      v-empty="false"
+      v-empty="!crm.business.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -42,7 +42,6 @@
         <el-table-column
           v-for="(item, index) in fieldList"
           :key="index"
-          :fixed="index==0"
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
@@ -52,15 +51,18 @@
             <template v-if="item.prop == 'weixinImg'">
               <el-image :src="scope.row.weixinImg" class="image"/>
             </template>
+            <template v-else-if="item.prop == 'isTransform'">
+              {{ scope.row[item.prop] == 1 ? '是' : '否' }}
+            </template>
             <template v-else>
               {{ scope.row[item.prop] }}
             </template>
-        </template></el-table-column>
+          </template>
+        </el-table-column>
         <el-table-column/>
       </el-table>
       <div class="p-contianer">
         <el-pagination
-          :pager-count="5"
           :current-page="currentPage"
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
@@ -109,8 +111,9 @@ export default {
 <style lang="scss" scoped>
 .image {
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  margin-top: 2px;
+  width: 35px;
+  height: 35px;
 }
 @import '../styles/table.scss';
 </style>
