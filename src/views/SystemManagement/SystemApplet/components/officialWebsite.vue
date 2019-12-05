@@ -32,7 +32,7 @@
                   v-for="(item, index) in fileList"
                   :key="index"
                   class="content"
-                  @mousemove="imgId = item.officialImgId">
+                  @mousemove.native="imgId = item.officialImgId">
                   <el-image
                     :src="item.url"
                     :preview-src-list="imgList"
@@ -69,10 +69,12 @@
 </template>
 
 <script type="text/javascript">
-import { officialImgSaveAPI,
+import {
+  officialImgSaveAPI,
   officialImgDeleteAPI,
   officialImgSortImgAPI,
-  officialImgQueryListByTypeAPI } from '@/api/systemManagement/poster'
+  officialImgQueryListByTypeAPI
+} from '@/api/systemManagement/poster'
 import draggable from 'vuedraggable'
 import CreateSections from '@/components/CreateSections'
 
@@ -308,6 +310,7 @@ export default {
 
 .content {
     overflow: hidden;
+    cursor: move;
     width: 400px;
     height: 92px;
     border-radius: 6px;
@@ -353,7 +356,8 @@ export default {
 
 .draggable-close {
     position: absolute;
-    left: 370px;
+    right: 15px;
+    top: 0;
     color: #606266;
 }
 
