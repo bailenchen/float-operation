@@ -122,7 +122,7 @@ export default {
     getDealStatus(type) {
       if (type == 0) {
         return '未成交'
-      } else if (type == 0) {
+      } else if (type == 1) {
         return '已成交'
       }
       return ''
