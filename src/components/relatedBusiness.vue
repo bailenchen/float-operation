@@ -106,7 +106,7 @@ export default {
       type: Boolean,
       default: false
     },
-    taskID: Number,
+    taskId: Number,
     alterable: {
       type: Boolean,
       default: true
@@ -176,7 +176,7 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          const params = { taskId: this.taskID }
+          const params = { taskId: this.taskId }
           const tempRelatedListData = objDeepCopy(this.relatedListData)
           tempRelatedListData[field].splice(index, 1)
           for (let index = 0; index < this.showTypes.length; index++) {
