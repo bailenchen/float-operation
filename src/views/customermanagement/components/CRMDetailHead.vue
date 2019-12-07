@@ -541,7 +541,7 @@ export default {
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'product') {
-        return this.forSelectionHandleItems(handleInfos, ['start', 'disable'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'start', 'disable'])
       }
     },
     forSelectionHandleItems(handleInfos, array) {

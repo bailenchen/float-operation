@@ -245,3 +245,29 @@ export function crmBusinessNumAPI(data) {
     data: data
   })
 }
+
+/**
+ * 商机导出
+ * @param {*} data
+ */
+export function crmBusinessExcelExportAPI(data) {
+  return request({
+    url: 'CrmBusiness/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    timeout: 60000
+  })
+}
+
+export function crmBusinessExcelAllExportAPI(data) {
+  return request({
+    url: 'CrmBusiness/allExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

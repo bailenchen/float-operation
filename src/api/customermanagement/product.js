@@ -144,3 +144,15 @@ export function crmProductNumAPI(data) {
     data: data
   })
 }
+
+/**
+ * 产品转移
+ * @param {*} data
+ */
+export function crmProductTransfer(data) {
+  return request({
+    url: 'CrmProduct/transfer',
+    method: 'post',
+    data: data
+  })
+}

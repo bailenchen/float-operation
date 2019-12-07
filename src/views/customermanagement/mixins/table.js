@@ -25,10 +25,12 @@ import {
   crmContactsExcelAllExport
 } from '@/api/customermanagement/contacts'
 import {
-  crmBusinessIndex
+  crmBusinessIndex,
+  crmBusinessExcelAllExportAPI
 } from '@/api/customermanagement/business'
 import {
-  crmContractIndex
+  crmContractIndex,
+  crmContractExcelAllExportAPI
 } from '@/api/customermanagement/contract'
 import {
   crmProductIndex,
@@ -354,6 +356,8 @@ export default {
           customer: crmCustomerExcelAllExport,
           leads: crmLeadsExcelAllExport,
           contacts: crmContactsExcelAllExport,
+          business: crmBusinessExcelAllExportAPI,
+          contract: crmContractExcelAllExportAPI,
           product: crmProductExcelAllExport
         }[this.crmType]
       }
