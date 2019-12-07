@@ -330,6 +330,7 @@ export default {
       value: 'month'
     }
     this.refreshList()
+    this.scrollKey = Date.now()
     next()
   },
   methods: {
@@ -419,7 +420,6 @@ export default {
       this.listData = []
       this.noMore = false
       this.totalCount = 0
-      this.scrollKey = Date.now()
     },
 
     /**
