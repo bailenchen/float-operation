@@ -59,6 +59,7 @@
         <label class="label-title">角色名称</label>
         <el-input
           v-model="role.title"
+          :maxlength="100"
           class="input-role"/>
         <span
           slot="footer"
