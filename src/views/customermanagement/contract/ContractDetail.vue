@@ -161,7 +161,7 @@ export default {
     tabNames() {
       var tempsTabs = []
       if (this.crm.contract && this.crm.contract.read) {
-        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
       }
 
       tempsTabs.push({ label: '活动', name: 'Activity' })

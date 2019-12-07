@@ -170,7 +170,7 @@ export default {
       var tempsTabs = []
       tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.contacts && this.crm.contacts.read) {
-        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
       }
       if (this.crm.business && this.crm.business.index) {
         tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
