@@ -51,7 +51,8 @@
                 :type-list="logTyps"
                 :id="id"
                 :handle="activityHandle"
-                :crm-type="crmType" />
+                :crm-type="crmType"
+                @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
         </div>

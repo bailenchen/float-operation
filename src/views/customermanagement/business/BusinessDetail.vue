@@ -110,7 +110,8 @@
                 :id="id"
                 :handle="activityHandle"
                 :crm-type="crmType"
-                :contacts-id.sync="firstContactsId" />
+                :contacts-id.sync="firstContactsId"
+                @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
           <transition name="slide-fade">

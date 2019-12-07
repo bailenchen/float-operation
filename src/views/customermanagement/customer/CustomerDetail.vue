@@ -47,7 +47,8 @@
                 :handle="activityHandle"
                 :is-seas="isSeasDetail"
                 :crm-type="crmType"
-                :contacts-id.sync="firstContactsId" />
+                :contacts-id.sync="firstContactsId"
+                @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
           <transition name="slide-fade">
@@ -384,7 +385,7 @@ export default {
           batchId: this.detailData.batchId
         }
         this.isCreate = true
-      } else if (data.type === 'delete') {
+      } else if (data.type === 'delete' || data.type === 'exit-team') {
         this.hideView()
       }
       this.$emit('handle', data)

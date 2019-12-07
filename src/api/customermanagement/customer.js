@@ -322,6 +322,15 @@ export function crmCustomerUpdateMembers(data) {
   })
 }
 
+// 退出团队
+export function crmCustomerExitTeam(data) {
+  return request({
+    url: 'CrmCustomer/exitTeam',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 查重
  * @param {*} data

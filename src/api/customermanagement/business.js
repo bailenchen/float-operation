@@ -162,6 +162,15 @@ export function crmBusinessUpdateMembers(data) {
   })
 }
 
+// 退出团队
+export function crmBusinessExitTeam(data) {
+  return request({
+    url: 'CrmBusiness/exitTeam',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 商机关联联系人
  * @param {*} data

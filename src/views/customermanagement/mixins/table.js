@@ -398,13 +398,10 @@ export default {
     },
     /** 勾选操作 */
     handleHandle(data) {
-      if (data.type === 'alloc' || data.type === 'get' || data.type === 'transfer' || data.type === 'transform' || data.type === 'delete' || data.type === 'put_seas') {
+      if (['alloc', 'get', 'transfer', 'transform', 'delete', 'put_seas', 'exit-team'].includes(data.type)) {
         this.showDview = false
       }
-
-      if (data.type !== 'edit') {
-        this.getList()
-      }
+      this.getList()
     },
     /** 自定义字段管理 */
     setSave() {

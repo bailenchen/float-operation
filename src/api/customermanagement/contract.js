@@ -159,6 +159,15 @@ export function crmContractUpdateMembers(data) {
   })
 }
 
+// 退出团队
+export function crmContractExitTeam(data) {
+  return request({
+    url: 'CrmContract/exitTeam',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 新建回款查询回款计划
  * @param {*} data
