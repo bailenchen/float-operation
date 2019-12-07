@@ -73,6 +73,12 @@
               :label="item.label"
               :value="item.value" />
           </el-select>
+          <el-input
+            v-model="search"
+            placeholder="请输入工作内容"
+            prefix-icon="el-icon-search"
+            @blur="refreshList"
+            @keyup.enter.native="refreshList"/>
           <span class="total-count">已筛选出<span>{{ totalCount }}</span>项</span>
         </flexbox>
       </div>
@@ -238,6 +244,7 @@ export default {
         type: 'default',
         value: 'month'
       },
+      search: '',
 
       // 相关详情的查看
       relatedID: '',
@@ -431,6 +438,7 @@ export default {
       const params = {
         page: this.page,
         limit: 5,
+        search: this.search,
         ...this.filterForm
       }
 
