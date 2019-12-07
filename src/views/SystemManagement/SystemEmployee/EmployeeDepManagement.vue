@@ -1453,38 +1453,7 @@ export default {
 .employee-dep-management /deep/ .el-dialog__wrapper {
   margin-top: 60px !important;
 }
-// .employee-dep-management /deep/ .position-flxed-animation {
-//   left: 70%;
-//   height: 100%;
-//   color: red;
-//   margin: 0 !important;
-// }
-.dialog-top > img {
-  vertical-align: middle;
-  margin-right: 10px;
-  height: 36px;
-}
-.dialog-btn-group {
-  float: right;
-}
-.dialog-remark {
-  font-size: 14px;
-  color: #999;
-  margin-top: 10px;
-}
-.dialog-content {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid $xr-border-line-color;
-}
-.dialog-content > div {
-  padding: 10px 0;
-}
-.dialog-content > div > label {
-  color: #777;
-  width: 30%;
-  display: inline-block;
-}
+
 /* 新建和编辑 */
 .new-dialog-form {
   height: 47vh;
