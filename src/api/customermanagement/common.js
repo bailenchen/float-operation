@@ -343,3 +343,30 @@ export function crmDownImportErrorAPI(data) {
     responseType: 'blob'
   })
 }
+
+/**
+ * 查询跟进记录常用语
+ * @param {*} data
+ */
+export function sysConfigQueryPhraseAPI(data) {
+  return request({
+    url: 'sysConfig/queryActivityPhrase',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 设置跟进记录常用语
+ * @param {*} data
+ */
+export function sysConfigSetPhraseAPI(data) {
+  return request({
+    url: 'sysConfig/setActivityPhrase',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
