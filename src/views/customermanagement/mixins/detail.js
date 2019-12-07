@@ -80,6 +80,11 @@ export default {
       } else if (data.type === 'delete' || data.type === 'exit-team') {
         this.hideView()
       }
+
+      if (data.type === 'edit') {
+        this.getDetial()
+      }
+
       this.$emit('handle', data)
     },
 

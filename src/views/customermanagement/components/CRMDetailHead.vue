@@ -88,6 +88,7 @@
       :dialog-visible.sync="allocDialogShow"
       @handle="handleCallBack" />
     <deal-status-handle
+      :value="detail.dealStatus"
       :crm-type="crmType"
       :selection-list="[detail]"
       :visible.sync="dealStatusShow"

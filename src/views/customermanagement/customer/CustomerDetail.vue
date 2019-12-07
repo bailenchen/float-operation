@@ -388,6 +388,11 @@ export default {
       } else if (data.type === 'delete' || data.type === 'exit-team') {
         this.hideView()
       }
+
+      if (data.type === 'edit' || data.type === 'deal_status') {
+        this.getDetial()
+      }
+
       this.$emit('handle', data)
     }
   }
