@@ -1,122 +1,118 @@
 <template>
-  <div class="system-customer">
+  <div class="main">
     <xr-header
       icon-class="wk wk-s-seas"
       icon-color="#487DFF"
       label="客户公海规则设置" />
-    <div
-      v-loading="loading"
-      class="customer-content">
-      <!-- 客户保护规则设置 -->
-      <div class="system-view-table">
-        <div class="content-title">
-          <span>客户公海规则设置</span>
-          <el-button
-            type="primary"
-            class="rt"
-            size="medium"
-            @click="customerSettingSave">保存</el-button>
-        </div>
-        <div class="customer-setting">
-          <label class="label">客户公海规则设置<el-tooltip
-            effect="dark"
-            content="客户自动进入公海的天数设置"
-            placement="top">
-            <i class="wukong wukong-help_tips"/>>
-          </el-tooltip></label>
-          <div class="customer-radio">
-            <el-radio-group v-model="customerData.type">
-              <el-radio :label="0">不启用</el-radio>
-              <el-radio :label="1">启用</el-radio>
-            </el-radio-group>
-            <br >
-            <el-input-number
-              v-model="customerData.followupDay"
-              :min="0"
-              controls-position="right"
-              size="small"/>
-            <span>&nbsp;天不跟进或&nbsp;</span>
-            <el-input-number
-              v-model="customerData.dealDay"
-              :min="0"
-              controls-position="right"
-              size="small"/>
-            <span>&nbsp;天未成交</span>
-          </div>
-        </div>
-
-        <div class="customer-setting">
-          <label class="label">提前提醒设置<el-tooltip
-            effect="dark"
-            content="提醒时间不能大于公海回收时间"
-            placement="top">
-            <i class="wukong wukong-help_tips"/>>
-          </el-tooltip></label>
-          <div class="customer-radio">
-            <el-radio-group v-model="customerData.putInPoolRemindConfig">
-              <el-radio :label="0">不提醒</el-radio>
-              <el-radio :label="1">提醒</el-radio>
-            </el-radio-group>
-            <br >
-            <span>提前</span>
-            <el-input-number
-              v-model="customerData.putInPoolRemindDays"
-              :min="0"
-              controls-position="right"
-              size="small"/>
-            <span>&nbsp;天提醒</span>
-          </div>
-        </div>
+    <div class="main-body">
+      <div class="main-table-header">
+        <reminder
+          :content="`提示：1、系统在每天的24:00~6:00统一将符合规则的客户退回到公海池<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2、当一个客户满足多个公海客户规则时会同时掉入多个公海<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3、若修改了“自动划入规则”，新的规则将于 次日生效 ，在此之前客户公海成员的数据还是会遵循原规则进行划入`"
+          class="xr-reminder"/>
+        <el-button
+          class="main-table-header-button xr-btn--orange"
+          icon="el-icon-plus"
+          type="primary"
+          @click="addJurisdiction">新建公海</el-button>
       </div>
+      <el-table
+        v-loading="loading"
+        id="examine-table"
+        :data="list"
+        :height="tableHeight"
+        class="main-table"
+        highlight-current-row
+        style="width: 100%"
+        @row-click="handleRowClick">
+        <el-table-column
+          show-overflow-tooltip
+          prop="roleName"
+          width="150"
+          label="公海名称"/>
+        <el-table-column
+          show-overflow-tooltip
+          prop="remark"
+          label="公海管理员"/>
+        <el-table-column
+          show-overflow-tooltip
+          prop="remark"
+          label="公海成员"/>
+        <el-table-column
+          show-overflow-tooltip
+          prop="remark"
+          label="客户数量"/>
+        <el-table-column
+          fixed="right"
+          label="操作"
+          width="150">
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              size="small"
+              @click="handleClick('disabled', scope)">停用</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleClick('edit', scope)">编辑</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleClick('delete', scope)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
 
 <script>
-import { crmSettingConfig } from '@/api/systemManagement/SystemCustomer'
+import {
+  systemRoleQueryProjectRoleListAPI,
+  systemRoleDeleteWorkRoleAPI
+} from '@/api/systemManagement/project'
 
+import Reminder from '@/components/reminder'
 import XrHeader from '@/components/xr-header'
 
 export default {
-  name: 'Customer', // 客户设置
-
+  /** 系统管理 的 客户规则公海设置 */
+  name: 'SystemPool',
   components: {
+    Reminder,
     XrHeader
   },
-
+  mixins: [],
   data() {
     return {
-      loading: false, // 展示加载中效果
-      // 客户掉报规则设置
-      customerData: {
-        type: 0,
-        followupDay: 0,
-        dealDay: 0,
-        putInPoolRemindConfig: 0,
-        putInPoolRemindDays: 0
-      }
+      loading: false, // 加载动画
+      tableHeight: document.documentElement.clientHeight - 239, // 表的高度
+      list: [],
+      createAction: {
+        type: 'save'
+      },
+      jurisdictionCreateShow: false
     }
   },
+  computed: {},
+  mounted() {
+    var self = this
+    /** 控制table的高度 */
+    window.onresize = function() {
+      self.tableHeight = document.documentElement.clientHeight - 239
+    }
 
-  created() {
-    this.customerSettingData()
+    this.getList()
   },
-
   methods: {
     /**
-     * 客户保护规则
+     * 获取列表数据
      */
-    customerSettingData() {
+    getList() {
       this.loading = true
-      this.$store
-        .dispatch('CRMSettingConfig')
+      systemRoleQueryProjectRoleListAPI()
         .then(res => {
+          this.list = res.data
           this.loading = false
-          this.customerData.type = res.data.customerConfig
-          this.customerData.followupDay = res.data.followupDay
-          this.customerData.dealDay = res.data.dealDay
-          this.customerData.putInPoolRemindConfig = res.data.putInPoolRemindConfig
-          this.customerData.putInPoolRemindDays = res.data.putInPoolRemindDays
         })
         .catch(() => {
           this.loading = false
@@ -124,83 +120,94 @@ export default {
     },
 
     /**
-     * 设置保存
+     *  添加权限
      */
-    customerSettingSave() {
-      this.loading = true
-      crmSettingConfig(this.customerData)
-        .then(res => {
-          this.loading = false
-          this.$message.success('操作成功')
+    addJurisdiction() {
+      this.createAction = {
+        type: 'save'
+      }
+      this.jurisdictionCreateShow = true
+    },
+
+    /** 列表操作 */
+    /**
+     * 当某一行被点击时会触发该事件
+     */
+    handleRowClick(row, column, event) {},
+
+    /**
+     * 编辑删除
+     */
+    handleClick(type, scope) {
+      if (type === 'edit') {
+        this.createAction = {
+          type: 'update',
+          data: scope.row
+        }
+        this.jurisdictionCreateShow = true
+      } else if (type === 'delete') {
+        // 启用停用
+        this.$confirm('您确定要删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-        .catch(() => {
-          this.loading = false
-        })
+          .then(() => {
+            systemRoleDeleteWorkRoleAPI({
+              roleId: scope.row.roleId
+            })
+              .then(res => {
+                this.list.splice(scope.$index, 1)
+                this.$message({
+                  type: 'success',
+                  message: '操作成功'
+                })
+              })
+              .catch(() => {})
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      }
     }
   }
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-.system-customer {
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+<style lang="scss" scoped>
+.main {
+  height:100%;
 
   /deep/ .xr-header {
     padding: 15px 30px;
   }
 }
-.customer-content {
-  flex: 1;
+
+.main-body {
+  background-color: white;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
+}
+
+.main-table-header {
+  background-color: white;
   position: relative;
-  display: flex;
   overflow: hidden;
+  .main-table-header-button {
+    float: right;
+    margin-right: 20px;
+    margin-top: 10px;
+  }
 }
 
-.system-view-table {
-  flex: 1;
-  border: 1px solid #e6e6e6;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  overflow-x: auto;
+.xr-reminder {
+  width: auto;
+  float: left;
+  margin: 10px 20px;
 }
 
-.content-title {
-  padding: 10px;
-  border-bottom: 1px solid #e6e6e6;
-}
-.content-title > span {
-  display: inline-block;
-  height: 36px;
-  line-height: 36px;
-  margin-left: 20px;
-}
-.customer-setting {
-  padding: 30px;
-}
-.customer-radio {
-  display: inline-block;
-  vertical-align: top;
-}
-.customer-setting > label {
-  padding-right: 30px;
-  width: 170px;
-  display: inline-block;
-}
-.customer-radio > .el-radio-group {
-  margin-bottom: 30px;
-}
-// 提示标志
-.wukong-help_tips {
-  color: #999;
-  font-size: 12px;
-  margin-left: 5px;
-}
-
-.wukong-help_tips:hover {
-  color: $xr-color-primary;
-}
+@import '../../styles/table.scss';
 </style>

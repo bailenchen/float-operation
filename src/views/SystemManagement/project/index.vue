@@ -12,6 +12,7 @@
         <el-button
           class="main-table-header-button xr-btn--orange"
           type="primary"
+          icon="el-icon-plus"
           @click="addJurisdiction">新建权限</el-button>
       </div>
       <el-table
