@@ -146,9 +146,14 @@
       v-if="canUnique"
       class="item-check-section">
       <el-checkbox
-
         v-model="field.isUnique"
         :disabled="disabled">设为唯一</el-checkbox>
+    </div>
+    <div
+      class="item-check-section">
+      <el-checkbox
+        v-model="field.isHidden"
+        :disabled="disabled">隐藏字段</el-checkbox>
     </div>
     <!-- <div
       v-if="field.fieldType == 1"
@@ -184,6 +189,7 @@ export default {
           formType: '', // 字段类型
           isUnique: false, // 是否唯一
           isNull: false, // 是否必填
+          isHidden: false, // 是否隐藏字段
           inputTips: '', // 输入提示
           maxLength: '', // textarea 多行文本有最大数量
           defaultValue: '', // 默认值
