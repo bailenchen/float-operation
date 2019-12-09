@@ -88,6 +88,7 @@
                 </div>
                 <el-button
                   size="medium"
+                  class="xr-btn--orange"
                   type="primary"
                   @click="addEmployees"> 关联员工 </el-button>
               </flexbox>
