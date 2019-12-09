@@ -32,11 +32,13 @@
         v-if="field.formType == 'select'"
         v-model="field.defaultValue"
         :disabled="disabled">
-        <draggable :list="field.showSetting">
+        <draggable
+          :list="field.showSetting"
+          :options="{group: 'list',forceFallback:false, fallbackClass:'draggingStyle',filter: '.el-input__inner', preventOnFilter: false}" >
           <div
             v-for="(item, index) in field.showSetting"
             :key="index"
-            class="radio">
+            class="radio cursor-move">
             <el-radio
               :label="item.value"
               @click.native.prevent="radioChange(item.value)">
@@ -59,11 +61,13 @@
         v-if="field.formType == 'checkbox'"
         v-model="field.defaultValue"
         :disabled="disabled">
-        <draggable :list="field.showSetting">
+        <draggable
+          :list="field.showSetting"
+          :options="{group: 'list',forceFallback:false, fallbackClass:'draggingStyle',filter: '.el-input__inner', preventOnFilter: false}" >
           <div
             v-for="(item, index) in field.showSetting"
             :key="index"
-            class="checkbox">
+            class="checkbox cursor-move">
             <el-checkbox :label="item.value"/>
             <el-input
               v-model="item.value"
@@ -414,6 +418,7 @@ export default {
     width: 180px;
   }
   .handle {
+    cursor: pointer;
     color: #ccc;
     font-size: 20px;
   }
@@ -434,8 +439,13 @@ export default {
     width: 180px;
   }
   .handle {
+    cursor: pointer;
     color: #ccc;
     font-size: 20px;
   }
+}
+
+.cursor-move {
+  cursor: move;
 }
 </style>
