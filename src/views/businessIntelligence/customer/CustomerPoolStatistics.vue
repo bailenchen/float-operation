@@ -16,7 +16,9 @@
         <el-table
           v-if="showTable"
           :data="list"
+          :summary-method="getSummaries"
           height="400"
+          show-summary
           stripe
           border
           highlight-current-row
@@ -39,6 +41,7 @@
 <script>
 import base from '../mixins/base'
 import sortMixins from '../mixins/sort'
+import summaryMixins from '../mixins/summary'
 import echarts from 'echarts'
 import {
   biCustomerPoolAPI,
@@ -48,7 +51,7 @@ import {
 export default {
   /** 公海客户分析 */
   name: 'CustomerPoolStatistics',
-  mixins: [base, sortMixins],
+  mixins: [base, sortMixins, summaryMixins],
   data() {
     return {
       loading: false,
@@ -125,7 +128,9 @@ export default {
       biCustomerPoolListAPI(params)
         .then(res => {
           this.loading = false
-          this.list = res.data
+          const data = res.data || {}
+          this.list = data.list || []
+          this.getSummariesData(data.total)
         })
         .catch(() => {
           this.loading = false
