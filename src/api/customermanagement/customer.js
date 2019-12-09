@@ -36,12 +36,21 @@ export function crmCustomerDelete(data) {
 // crm 公海列表
 export function crmCustomerPool(data) {
   return request({
-    url: 'CrmCustomer/queryPoolPageList',
+    url: 'CrmCustomerPool/queryPageList',
     method: 'post',
     data: data,
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
+  })
+}
+
+// 删除
+export function crmCustomerPoolDeleteAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/deleteByIds',
+    method: 'post',
+    data: data
   })
 }
 
@@ -159,7 +168,7 @@ export function crmCustomerDownloadExcelAPI(data) {
  */
 export function crmCustomerPoolExcelExportAPI(data) {
   return request({
-    url: 'CrmCustomer/poolBatchExportExcel',
+    url: 'CrmCustomerPool/batchExportExcel',
     method: 'post',
     data: data,
     responseType: 'blob',
@@ -169,7 +178,7 @@ export function crmCustomerPoolExcelExportAPI(data) {
 
 export function crmCustomerPoolExcelAllExport(data) {
   return request({
-    url: 'CrmCustomer/poolAllExportExcel',
+    url: 'CrmCustomerPool/allExportExcel',
     method: 'post',
     data: data,
     responseType: 'blob',

@@ -105,6 +105,7 @@ import {
   crmCustomerLock,
   crmCustomerPutInPool,
   crmCustomerDelete,
+  crmCustomerPoolDeleteAPI,
   crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import { crmContactsDelete } from '@/api/customermanagement/contacts'
@@ -114,7 +115,10 @@ import {
   crmContractCancelAPI
 } from '@/api/customermanagement/contract'
 import { crmReceivablesDelete } from '@/api/customermanagement/money'
-import { crmProductStatus } from '@/api/customermanagement/product'
+import {
+  crmProductStatus,
+  crmProductDeleteAPI
+} from '@/api/customermanagement/product'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
@@ -383,11 +387,12 @@ export default {
       } else if (type === 'delete') {
         const request = {
           leads: crmLeadsDelete,
-          customer: crmCustomerDelete,
+          customer: this.isSeas ? crmCustomerPoolDeleteAPI : crmCustomerDelete,
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
-          receivables: crmReceivablesDelete
+          receivables: crmReceivablesDelete,
+          product: crmProductDeleteAPI
         }[this.crmType]
         request({
           [this.crmType + 'Ids']: this.id
@@ -542,7 +547,7 @@ export default {
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'product') {
-        return this.forSelectionHandleItems(handleInfos, ['transfer', 'start', 'disable'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete', 'start', 'disable'])
       }
     },
     forSelectionHandleItems(handleInfos, array) {
@@ -564,6 +569,9 @@ export default {
         }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
+        if (this.isSeas) {
+          return this.crm.pool.delete
+        }
         return this.crm[this.crmType].delete
       } else if (type == 'put_seas') {
         // 放入公海(客户)

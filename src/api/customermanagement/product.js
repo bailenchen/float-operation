@@ -156,3 +156,15 @@ export function crmProductTransfer(data) {
     data: data
   })
 }
+
+/**
+ * 产品删除
+ * @param {*} data
+ */
+export function crmProductDeleteAPI(data) {
+  return request({
+    url: 'CrmProduct/deleteByIds',
+    method: 'post',
+    data: data
+  })
+}

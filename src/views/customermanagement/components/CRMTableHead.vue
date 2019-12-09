@@ -114,6 +114,7 @@ import {
   crmCustomerExcelExport,
   crmCustomerPoolExcelExportAPI,
   crmCustomerDelete,
+  crmCustomerPoolDeleteAPI,
   crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import {
@@ -134,7 +135,8 @@ import {
 } from '@/api/customermanagement/money'
 import {
   crmProductStatus,
-  crmProductExcelExport
+  crmProductExcelExport,
+  crmProductDeleteAPI
 } from '@/api/customermanagement/product'
 
 import filterForm from './filterForm'
@@ -465,11 +467,12 @@ export default {
         })
         const request = {
           leads: crmLeadsDelete,
-          customer: crmCustomerDelete,
+          customer: this.isSeas ? crmCustomerPoolDeleteAPI : crmCustomerDelete,
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
-          receivables: crmReceivablesDelete
+          receivables: crmReceivablesDelete,
+          product: crmProductDeleteAPI
         }[this.crmType]
         request({
           [this.crmType + 'Ids']: ids.join(',')
@@ -589,7 +592,8 @@ export default {
           return this.forSelectionHandleItems(handleInfos, [
             'alloc',
             'get',
-            'export'
+            'export',
+            'delete'
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
@@ -632,6 +636,7 @@ export default {
         return this.forSelectionHandleItems(handleInfos, [
           'transfer',
           'export',
+          'delete',
           'start',
           'disable'
         ])
@@ -660,6 +665,9 @@ export default {
         }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
+        if (this.isSeas) {
+          return this.crm.pool.delete
+        }
         return this.crm[this.crmType].delete
       } else if (type == 'put_seas') {
         // 放入公海(客户)
