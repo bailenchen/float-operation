@@ -7,7 +7,8 @@
       placeholder="请输入客户名称/回款编号"
       main-title="新建回款"
       @on-handle="listHeadHandle"
-      @on-search="crmSearch"/>
+      @on-search="crmSearch"
+      @on-export="exportInfos"/>
     <div
       v-empty="!crm.receivables.index"
       xs-empty-icon="nopermission"

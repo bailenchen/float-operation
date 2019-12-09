@@ -37,7 +37,8 @@ import {
   crmProductExcelAllExport
 } from '@/api/customermanagement/product'
 import {
-  crmReceivablesIndex
+  crmReceivablesIndex,
+  crmReceivablesExcelAllExportAPI
 } from '@/api/customermanagement/money'
 
 import Lockr from 'lockr'
@@ -358,6 +359,7 @@ export default {
           contacts: crmContactsExcelAllExport,
           business: crmBusinessExcelAllExportAPI,
           contract: crmContractExcelAllExportAPI,
+          receivables: crmReceivablesExcelAllExportAPI,
           product: crmProductExcelAllExport
         }[this.crmType]
       }

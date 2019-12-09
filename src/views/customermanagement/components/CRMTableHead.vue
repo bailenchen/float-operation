@@ -128,7 +128,10 @@ import {
   crmContractDelete,
   crmContractExcelExportAPI
 } from '@/api/customermanagement/contract'
-import { crmReceivablesDelete } from '@/api/customermanagement/money'
+import {
+  crmReceivablesDelete,
+  crmReceivablesExcelExportAPI
+} from '@/api/customermanagement/money'
 import {
   crmProductStatus,
   crmProductExcelExport
@@ -303,6 +306,7 @@ export default {
             contacts: crmContactsExcelExport,
             business: crmBusinessExcelExportAPI,
             contract: crmContractExcelExportAPI,
+            receivables: crmReceivablesExcelExportAPI,
             product: crmProductExcelExport
           }[this.crmType]
           params.ids = this.selectionList
@@ -623,7 +627,7 @@ export default {
           'delete_user'
         ])
       } else if (this.crmType == 'receivables') {
-        return this.forSelectionHandleItems(handleInfos, ['delete'])
+        return this.forSelectionHandleItems(handleInfos, ['export', 'delete'])
       } else if (this.crmType == 'product') {
         return this.forSelectionHandleItems(handleInfos, [
           'transfer',
