@@ -13,7 +13,7 @@
           class="main-table-header-button xr-btn--orange"
           icon="el-icon-plus"
           type="primary"
-          @click="addJurisdiction">新建公海</el-button>
+          @click="addClick">新建公海</el-button>
       </div>
       <el-table
         v-loading="loading"
@@ -44,12 +44,16 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="150">
+          width="200">
           <template slot-scope="scope">
             <el-button
               type="text"
               size="small"
               @click="handleClick('disabled', scope)">停用</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleClick('transfer', scope)">转移</el-button>
             <el-button
               type="text"
               size="small"
@@ -62,6 +66,11 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <pool-add
+      v-if="createShow"
+      :action="createAction"
+      @hiden-view="createShow=false" />
   </div>
 </template>
 
@@ -73,13 +82,15 @@ import {
 
 import Reminder from '@/components/reminder'
 import XrHeader from '@/components/xr-header'
+import PoolAdd from './components/PoolAdd'
 
 export default {
   /** 系统管理 的 客户规则公海设置 */
   name: 'SystemPool',
   components: {
     Reminder,
-    XrHeader
+    XrHeader,
+    PoolAdd
   },
   mixins: [],
   data() {
@@ -90,7 +101,7 @@ export default {
       createAction: {
         type: 'save'
       },
-      jurisdictionCreateShow: false
+      createShow: false
     }
   },
   computed: {},
@@ -122,11 +133,11 @@ export default {
     /**
      *  添加权限
      */
-    addJurisdiction() {
+    addClick() {
       this.createAction = {
         type: 'save'
       }
-      this.jurisdictionCreateShow = true
+      this.createShow = true
     },
 
     /** 列表操作 */
@@ -144,7 +155,7 @@ export default {
           type: 'update',
           data: scope.row
         }
-        this.jurisdictionCreateShow = true
+        this.createShow = true
       } else if (type === 'delete') {
         // 启用停用
         this.$confirm('您确定要删除吗?', '提示', {
