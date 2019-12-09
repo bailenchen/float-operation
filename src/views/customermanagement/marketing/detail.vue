@@ -65,6 +65,7 @@ import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
 import Overview from './components/overview'
 import Statistics from './components/statistics'
 import Create from './components/create'
+import DetailImg from './components/detailImg'
 
 import detail from '../mixins/detail'
 
@@ -78,7 +79,8 @@ export default {
     CRMBaseInfo,
     Overview,
     Statistics,
-    Create
+    Create,
+    DetailImg
   },
 
   mixins: [detail],
@@ -131,6 +133,7 @@ export default {
       tempsTabs.push({ label: '预览', name: 'Overview' })
       tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       tempsTabs.push({ label: '统计分析', name: 'Statistics' })
+      tempsTabs.push({ label: '活动图片', name: 'DetailImg' })
       return tempsTabs
     }
   },
