@@ -449,6 +449,8 @@ export default {
           params.relationUserId = ',' + params.relationUserId + ','
           params.fieldDataId = ',' + params.fieldDataId + ','
           params.ownerUserId = ',' + params.ownerUserId + ','
+          params.browse = params.browse ? params.browse : 0
+          params.submitNum = params.submitNum ? params.submitNum : 0
           params.endTime = params.endTime
           params.startTime = params.startTime
           this.submiteParams(params)
