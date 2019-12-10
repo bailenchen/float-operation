@@ -149,7 +149,7 @@ export function crmProductNumAPI(data) {
  * @param {*} datas
  *
  */
-export function CrmProductDetailImgSave(data) {
+export function crmProductDetailImgSave(data) {
   return request({
     url: 'CrmProductDetailImg/save',
     method: 'post',
@@ -164,37 +164,10 @@ export function CrmProductDetailImgSave(data) {
  * @param {*} data
  *
  */
-export function CrmProductDetailImgQueryListByType(data) {
+export function crmProductDetailImgQueryListByType(data) {
   return request({
     url: 'CrmProductDetailImg/queryListByType',
     method: 'post',
-    data: data
-  })
-}
-/**
- * 删除产品图片
- * @param {*} data
- *
- */
-export function CrmProductDetailImgDelete(data) {
-  return request({
-    url: 'CrmProductDetailImg/delete',
-    method: 'post',
-    data: data
-  })
-}
-/**
- * 产品简介添加
- * @param {*} data
- *
- */
-export function CrmProductDetailImgSaveImg(data) {
-  return request({
-    url: 'CrmProductDetailImg/saveImg',
-    method: 'post',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
     data: data
   })
 }

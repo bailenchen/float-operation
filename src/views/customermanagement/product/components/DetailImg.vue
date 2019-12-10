@@ -108,8 +108,8 @@
 'use strict'
 import Sections from '../../components/Sections'
 import {
-  CrmProductDetailImgQueryListByType,
-  CrmProductDetailImgSave
+  crmProductDetailImgQueryListByType,
+  crmProductDetailImgSave
 } from '@/api/customermanagement/product'
 import { crmFileSave, crmFileDelete } from '@/api/common'
 export default {
@@ -152,7 +152,7 @@ export default {
   methods: {
     getImglist() {
       this.loading = true
-      CrmProductDetailImgQueryListByType(
+      crmProductDetailImgQueryListByType(
         { productId: this.id }
       ).then(res => {
         this.detailObj = res.data.detailFile
@@ -251,7 +251,7 @@ export default {
       }
       params.productId = this.id
       params.remarks = this.productRemark
-      CrmProductDetailImgSave(params).then(res => {
+      crmProductDetailImgSave(params).then(res => {
         this.$message.success('操作成功')
         this.loading = false
       }).catch(res => {
