@@ -146,18 +146,14 @@ export function crmProductNumAPI(data) {
 }
 /**
  * 详情图添加
- * @param {*} data
+ * @param {*} datas
  *
  */
 export function CrmProductDetailImgSave(data) {
-  var param = new FormData()
-  Object.keys(data).forEach(key => {
-    param.append(key, data[key])
-  })
   return request({
     url: 'CrmProductDetailImg/save',
     method: 'post',
-    data: param,
+    data: data,
     headers: {
       'Content-Type': 'multipart/form-data'
     }

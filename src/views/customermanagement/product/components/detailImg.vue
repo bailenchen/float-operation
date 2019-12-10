@@ -22,10 +22,11 @@
                 class="cross"/>
             </div>
             <div v-else class="detail-upload" @mouseleave="enterId = 0">
-              <el-image
-                :src="primaryUrl"
+              <img
+                v-src="primaryUrl"
+                :key="primaryUrl"
                 class="content-cross"
-                @mouseenter.native="enterId = 1"/>
+                @mouseenter="enterId = 1">
               <div
                 v-if="enterId === 1"
                 class="img-model"
@@ -59,10 +60,15 @@
                 class="cross"/>
             </div>
             <div v-else class="detail-upload" @mouseleave="enterId = 0">
-              <el-image
+              <img
+                v-src="detaiUrl"
+                :key="detaiUrl"
+                class="content-cross cross-two"
+                @mouseenter="enterId = 2">
+              <!-- <el-image
                 :src="detaiUrl"
                 class="content-cross cross-two"
-                @mouseenter.native="enterId = 2"/>
+                @mouseenter.native="enterId = 2"/> -->
               <div
                 v-if="enterId === 2"
                 class="img-model cross-two--model"
@@ -102,11 +108,10 @@
 'use strict'
 import Sections from '../../components/Sections'
 import {
-  CrmProductDetailImgSave,
   CrmProductDetailImgQueryListByType,
-  CrmProductDetailImgDelete,
-  CrmProductDetailImgSaveImg
+  CrmProductDetailImgSave
 } from '@/api/customermanagement/product'
+import { crmFileSave, crmFileDelete } from '@/api/common'
 export default {
   components: {
     Sections
@@ -141,8 +146,7 @@ export default {
       handler(val) {
         this.getImglist()
       },
-      deep: true,
-      immediate: true
+      deep: true
     }
   },
   mounted() {
@@ -154,16 +158,13 @@ export default {
       CrmProductDetailImgQueryListByType(
         { productId: this.id }
       ).then(res => {
-        res.data.forEach(item => {
-          if (item.type == 1) {
-            this.primaryUrl = item.filePath
-            this.primaryObj = item
-          } else {
-            this.detaiUrl = item.filePath
-            this.detailObj = item
-            this.productRemark = item.remarks
-          }
-        })
+        this.detailObj = res.data.detailFile
+        this.detaiUrl = res.data.detailFile.filePath
+        this.primaryObj = res.data.mainFile
+        this.primaryUrl = res.data.mainFile.filePath
+        this.productRemark = res.data.remarks
+        this.loading = false
+      }).catch(() => {
         this.loading = false
       })
     },
@@ -176,39 +177,39 @@ export default {
       }
     },
     upLoad(event) {
-      console.log(event.target.files[0], 'event==')
       const params = {
         file: event.target.files[0],
         type: this.type,
         productId: this.id
       }
       this.loading = true
-      CrmProductDetailImgSave(params).then(res => {
+      crmFileSave(params).then(res => {
         if (this.type === 1) {
-          this.primaryObj = res.data
-          this.primaryUrl = res.data.filePath
+          this.primaryObj = res
+          this.primaryUrl = res.url
         } else {
-          this.detaiObj = res.data
-          this.detaiUrl = res.data.filePath
+          this.detailObj = res
+          this.detaiUrl = res.url
         }
+        this.saveIntroduce()
+      }).catch(() => {
         this.loading = false
-        this.$message.success('上传图片成功')
-      }).catch(() => {})
+      })
     },
     /** 删除图片 */
     deleteImg(index) {
       const params = {}
       if (index == 1) {
-        params.imgId = this.primaryObj.imgId
+        params.id = this.primaryObj.fileId
       } else {
-        params.imgId = this.detailObj.imgId
+        params.id = this.detailObj.fileId
       }
       this.$confirm('此操作将永久删除该图片, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        CrmProductDetailImgDelete(params).then(res => {
+        crmFileDelete(params).then(res => {
           this.$message.success('删除成功')
           if (index == 1) {
             this.primaryUrl = ''
@@ -229,9 +230,9 @@ export default {
     player(path, type) {
       let name = ''
       if (type === 1) {
-        name = 'primary.jpg'
+        name = '产品主图.jpg'
       } else {
-        name = 'detail.jpg'
+        name = '详情图片.jpg'
       }
       this.$bus.emit('preview-image-bus', {
         index: 0,
@@ -242,13 +243,23 @@ export default {
         }]
       })
     },
-    /** 保存简介 */
+    /** 保存详情 */
     saveIntroduce() {
-      CrmProductDetailImgSaveImg({
-        productId: this.id,
-        remarks: this.productRemark }
-      ).then(res => {
-      }).catch(res => {})
+      const params = {}
+      if (this.detailObj.fileId) {
+        params.detailFileId = this.detailObj.fileId
+      }
+      if (this.primaryObj.fileId) {
+        params.mainFileId = this.primaryObj.fileId
+      }
+      params.productId = this.id
+      params.remarks = this.productRemark
+      CrmProductDetailImgSave(params).then(res => {
+        this.$message.success('操作成功')
+        this.loading = false
+      }).catch(res => {
+        this.loading = false
+      })
     }
   }
 }
