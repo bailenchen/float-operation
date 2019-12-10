@@ -192,6 +192,11 @@ export default {
           }).join('，') : ''
         },
         {
+          name: '活动地址',
+          formType: 'text',
+          value: data.address
+        },
+        {
           name: '备注',
           formType: 'text',
           value: data.remark
@@ -205,6 +210,11 @@ export default {
           name: '创建人',
           formType: 'text',
           value: data.createUserInfo ? data.createUserInfo.realname : ''
+        },
+        {
+          name: '开始时间',
+          formType: 'text',
+          value: data.startTime
         },
         {
           name: '截止时间',

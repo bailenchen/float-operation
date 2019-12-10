@@ -179,6 +179,11 @@ export default {
           message: '不能为空',
           trigger: 'change'
         },
+        startTime: {
+          required: true,
+          message: '不能为空',
+          trigger: 'change'
+        },
         ownerUserId: {
           required: true,
           message: '不能为空',
@@ -199,6 +204,8 @@ export default {
         fieldDataId: '',
         browse: '',
         submitNum: '',
+        startTime: '',
+        address: '',
         remark: ''
       },
       // 只能填写一次
@@ -337,6 +344,15 @@ export default {
           width: ''
         },
         {
+          field: 'startTime',
+          name: '开始日期',
+          formType: 'datetime',
+          inputTips: '',
+          setting: [],
+          value: detailData ? detailData.startTime : '',
+          width: ''
+        },
+        {
           field: 'endTime',
           name: '截止日期',
           formType: 'datetime',
@@ -373,6 +389,15 @@ export default {
           inputTips: '',
           setting: [],
           value: detailData ? detailData.submitNum || '' : '',
+          width: ''
+        },
+        {
+          field: 'address',
+          name: '活动地址',
+          formType: 'text',
+          inputTips: '',
+          setting: [],
+          value: detailData ? detailData.address : '',
           width: ''
         },
         {
@@ -425,6 +450,7 @@ export default {
           params.fieldDataId = ',' + params.fieldDataId + ','
           params.ownerUserId = ',' + params.ownerUserId + ','
           params.endTime = params.endTime
+          params.startTime = params.startTime
           this.submiteParams(params)
         } else {
           return false
