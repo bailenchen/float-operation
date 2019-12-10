@@ -94,7 +94,7 @@
               :rows="5"
               :maxlength="1000"
               type="textarea"
-              @blur="saveIntroduce"/>
+              @blur="saveProduct"/>
             <div class="input-remark">{{ productRemark.length }} / 1000</div>
           </div>
         </div>
@@ -108,8 +108,8 @@
 'use strict'
 import Sections from '../../components/Sections'
 import {
-  CrmProductDetailImgQueryListByType,
-  CrmProductDetailImgSave
+  crmProductDetailImgQueryListByType,
+  crmProductDetailImgSave
 } from '@/api/customermanagement/product'
 import { crmFileSave, crmFileDelete } from '@/api/common'
 export default {
@@ -152,7 +152,7 @@ export default {
   methods: {
     getImglist() {
       this.loading = true
-      CrmProductDetailImgQueryListByType(
+      crmProductDetailImgQueryListByType(
         { productId: this.id }
       ).then(res => {
         this.detailObj = res.data.detailFile
@@ -182,13 +182,26 @@ export default {
       this.loading = true
       crmFileSave(params).then(res => {
         if (this.type === 1) {
-          this.primaryObj = res
-          this.primaryUrl = res.url
-        } else {
-          this.detailObj = res
-          this.detaiUrl = res.url
+          const data = this.getParams(res)
+          this.saveIntroduce(data).then(response => {
+            this.primaryObj = res
+            this.primaryUrl = res.url
+            this.loading = false
+            this.$message.success('产品主图上传成功')
+          }).catch(() => {
+            this.loading = false
+          })
+        } else if (this.type === 2) {
+          const data = this.getParams(res)
+          this.saveIntroduce(data).then(response => {
+            this.detailObj = res
+            this.detaiUrl = res.url
+            this.loading = false
+            this.$message.success('详情图片上传成功')
+          }).catch(() => {
+            this.loading = false
+          })
         }
-        this.saveIntroduce()
       }).catch(() => {
         this.loading = false
       })
@@ -241,7 +254,30 @@ export default {
       })
     },
     /** 保存详情 */
-    saveIntroduce() {
+    saveIntroduce(params) {
+      return new Promise((resolve, reject) => {
+        crmProductDetailImgSave(params).then(res => {
+          resolve()
+        }).catch(() => {
+          reject()
+        })
+      })
+    },
+    /** 获取参数 */
+    getParams(res) {
+      const params = {}
+      if (this.type === 1) {
+        params.mainFileId = res.fileId
+      } else if (this.type === 2) {
+        params.detailFileId = res.fileId
+      }
+      params.productId = this.id
+      params.remarks = this.productRemark
+      return params
+    },
+    /** 保存产品简介 */
+    saveProduct() {
+      this.loading = true
       const params = {}
       if (this.detailObj.fileId) {
         params.detailFileId = this.detailObj.fileId
@@ -249,12 +285,11 @@ export default {
       if (this.primaryObj.fileId) {
         params.mainFileId = this.primaryObj.fileId
       }
-      params.productId = this.id
       params.remarks = this.productRemark
-      CrmProductDetailImgSave(params).then(res => {
-        this.$message.success('操作成功')
+      crmProductDetailImgSave(params).then(res => {
         this.loading = false
-      }).catch(res => {
+        this.$message.success('产品简介保存成功')
+      }).catch(() => {
         this.loading = false
       })
     }
