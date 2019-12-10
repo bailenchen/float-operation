@@ -54,6 +54,19 @@ export function crmCustomerPoolDeleteAPI(data) {
   })
 }
 
+// 设置公海
+export function crmCustomerPoolSetAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/setCustomerPool',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+
 // crm 详情
 export function crmCustomerRead(data) {
   return request({
@@ -185,6 +198,14 @@ export function crmCustomerPoolExcelAllExport(data) {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
+  })
+}
+
+export function crmCustomerPoolQueryPoolFieldtAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/queryPoolField',
+    method: 'post',
+    data: data
   })
 }
 
