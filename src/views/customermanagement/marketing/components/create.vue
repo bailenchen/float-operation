@@ -197,6 +197,8 @@ export default {
         endTime: '',
         ownerUserId: [],
         fieldDataId: '',
+        browse: '',
+        submitNum: '',
         remark: ''
       },
       // 只能填写一次
@@ -351,6 +353,26 @@ export default {
           inputTips: '',
           setting: [],
           value: detailData ? detailData.ownerUserInfo || [] : [],
+          width: ''
+        },
+        {
+          field: 'browse',
+          name: '浏览数',
+          formType: 'number',
+          radio: false,
+          inputTips: '',
+          setting: [],
+          value: detailData ? detailData.browse || '' : '',
+          width: ''
+        },
+        {
+          field: 'submitNum',
+          name: '提交数',
+          formType: 'number',
+          radio: false,
+          inputTips: '',
+          setting: [],
+          value: detailData ? detailData.submitNum || '' : '',
           width: ''
         },
         {

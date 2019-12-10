@@ -110,7 +110,7 @@ export default {
     // 获取基础信息
     getDetail() {
       this.name = this.detail.marketingName
-      this.submitCount = this.detail.subCount
+      this.submitCount = this.detail.submitNum
       this.browseCount = this.detail.browse
       this.path = `${WKConfig.marketingUrl}?marketingId=${this.detail.enMarketingId}&currentUserId=${this.detail.currentUserId}`
       this.loading = false
