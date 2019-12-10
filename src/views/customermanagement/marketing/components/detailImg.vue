@@ -141,7 +141,7 @@ export default {
 
         this.detailObj = data.detailFileList && data.detailFileList.length > 0 ? data.detailFileList[0] : {}
         this.detaiUrl = this.detailObj.filePath
-        this.remark = data.remark
+        this.remark = data.synopsis
       },
       immediate: true
     }
@@ -249,7 +249,7 @@ export default {
     /** 保存简介 */
     saveIntroduce() {
       this.loading = true
-      this.updateDetailData({ remark: this.remark }).then(() => {
+      this.updateDetailData({ synopsis: this.remark }).then(() => {
         this.$message.success('编辑成功')
         this.loading = false
       }).catch(() => {
