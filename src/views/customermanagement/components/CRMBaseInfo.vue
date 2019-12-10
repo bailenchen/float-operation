@@ -115,7 +115,7 @@ import Sections from '../components/Sections'
 import { filedGetInformation } from '@/api/customermanagement/common'
 import MapView from '@/components/MapView' // 地图详情
 import FileListView from '@/components/FileListView'
-import { CrmMarketingInformationAPI } from '@/api/customermanagement/marketing'
+import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 export default {
   // 客户管理 的 基本信息
   name: 'CRMBaseInfo',
@@ -195,7 +195,7 @@ export default {
     getBaseInfo() {
       this.loading = true
       if (this.crmType === 'marketing') {
-        CrmMarketingInformationAPI().then(res => {
+        crmMarketingInformationAPI().then(res => {
           this.list = res.data
           this.loading = false
         }).catch(() => {

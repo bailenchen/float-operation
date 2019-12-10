@@ -124,7 +124,7 @@ export function crmMarketingExcelExportAPI(data) {
  * 详情
  * @param {*} data
  */
-export function CrmMarketingInformationAPI(data) {
+export function crmMarketingInformationAPI(data) {
   return request({
     url: 'CrmMarketing/information',
     method: 'post',
