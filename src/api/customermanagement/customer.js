@@ -131,6 +131,18 @@ export function crmCustomerPoolSetNameListAPI(data) {
   })
 }
 
+/**
+ * 客户管理用到的公海列表
+ * @param {*} data
+ */
+export function crmCustomerPoolNameListAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/queryPoolNameListByAuth',
+    method: 'post',
+    data: data
+  })
+}
+
 // crm 详情
 export function crmCustomerRead(data) {
   return request({

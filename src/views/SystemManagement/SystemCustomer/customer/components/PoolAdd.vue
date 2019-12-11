@@ -205,7 +205,6 @@ import {
   XhStrucUserCell
 } from '@/components/CreateCom'
 import RecycleRule from './RecycleRule'
-import { resolve, reject } from 'q'
 
 export default {
   // 公海规则添加

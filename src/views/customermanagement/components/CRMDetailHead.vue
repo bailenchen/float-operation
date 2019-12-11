@@ -93,6 +93,10 @@
       :selection-list="[detail]"
       :visible.sync="dealStatusShow"
       @handle="handleCallBack" />
+    <put-pool-handle
+      :visible.sync="putPoolShow"
+      :selection-list="[detail]"
+      @handle="handleCallBack" />
   </div>
 </template>
 <script type="text/javascript">
@@ -103,7 +107,6 @@ import {
 } from '@/api/customermanagement/clue'
 import {
   crmCustomerLock,
-  crmCustomerPutInPool,
   crmCustomerDelete,
   crmCustomerPoolDeleteAPI,
   crmCustomerReceive
@@ -122,13 +125,15 @@ import {
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
+import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 
 export default {
   name: 'CRMDetailHead',
   components: {
     TransferHandle,
     AllocHandle,
-    DealStatusHandle
+    DealStatusHandle,
+    PutPoolHandle
   },
   props: {
     /** 模块ID */
@@ -162,7 +167,8 @@ export default {
       moreTypes: [], // 更多操作
       transferDialogShow: false, // 转移操作
       allocDialogShow: false, // 公海分配操作提示框
-      dealStatusShow: false // 成交状态修改框
+      dealStatusShow: false, // 成交状态修改框
+      putPoolShow: false // 客户放入公海
     }
   },
   computed: {
@@ -275,7 +281,6 @@ export default {
         this.transferDialogShow = true
       } else if (
         type == 'transform' ||
-        type == 'put_seas' ||
         type == 'delete' ||
         type == 'lock' ||
         type == 'unlock' ||
@@ -287,8 +292,6 @@ export default {
         var message = ''
         if (type == 'transform') {
           message = '确定将这些线索转换为客户吗?'
-        } else if (type == 'put_seas') {
-          message = '确定转移到公海吗?'
         } else if (type == 'delete') {
           message = '确定要删除这些数据吗?'
         } else if (type == 'lock') {
@@ -328,24 +331,15 @@ export default {
       } else if (type == 'deal_status') {
         // 客户成交状态操作
         this.dealStatusShow = true
+      } else if (type == 'put_seas') {
+        // 客户放入公海
+        this.putPoolShow = true
       }
     },
     confirmHandle(type) {
       if (type === 'lock' || type === 'unlock') {
         crmCustomerLock({
           status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
-          ids: this.id
-        })
-          .then(res => {
-            this.$message({
-              type: 'success',
-              message: '操作成功'
-            })
-            this.$emit('handle', { type: type })
-          })
-          .catch(() => {})
-      } else if (type === 'put_seas') {
-        crmCustomerPutInPool({
           ids: this.id
         })
           .then(res => {

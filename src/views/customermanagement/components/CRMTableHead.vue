@@ -92,7 +92,12 @@
       :crm-type="crmType"
       :dialog-visible.sync="showSceneCreate"
       :obj="sceneFilterObj"
-      @saveSuccess="updateSceneList" />
+      @save-success="updateSceneList" />
+
+    <put-pool-handle
+      :visible.sync="putPoolShow"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
   </div>
 </template>
 
@@ -110,7 +115,6 @@ import {
 } from '@/api/customermanagement/clue'
 import {
   crmCustomerLock,
-  crmCustomerPutInPool,
   crmCustomerExcelExport,
   crmCustomerPoolExcelExportAPI,
   crmCustomerDelete,
@@ -149,6 +153,7 @@ import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import TeamsHandle from './selectionHandle/TeamsHandle' // 操作团队成员
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
+import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 
 export default {
   name: 'CRMTableHead', // 客户管理下 重要提醒 回款计划提醒
@@ -161,7 +166,8 @@ export default {
     AllocHandle,
     SceneCreate,
     SceneSet,
-    DealStatusHandle
+    DealStatusHandle,
+    PutPoolHandle
   },
   props: {
     title: {
@@ -202,7 +208,8 @@ export default {
       teamsDialogShow: false, // 团队操作提示框
       teamsTitle: '', // 团队操作标题名
       allocDialogShow: false, // 公海分配操作提示框
-      dealStatusShow: false // 成交状态修改框
+      dealStatusShow: false, // 成交状态修改框
+      putPoolShow: false // 客户放入公海
     }
   },
   computed: {
@@ -338,7 +345,6 @@ export default {
           .catch(() => {})
       } else if (
         type == 'transform' ||
-        type == 'put_seas' ||
         type == 'delete' ||
         type == 'lock' ||
         type == 'unlock' ||
@@ -349,8 +355,6 @@ export default {
         var message = ''
         if (type == 'transform') {
           message = '确定将这些线索转换为客户吗?'
-        } else if (type == 'put_seas') {
-          message = '确定转移到公海吗?'
         } else if (type == 'delete') {
           message = '确定要删除这些数据吗?'
         } else if (type == 'lock') {
@@ -392,6 +396,9 @@ export default {
       } else if (type == 'deal_status') {
         // 客户成交状态操作
         this.dealStatusShow = true
+      } else if (type == 'put_seas') {
+        // 客户放入公海
+        this.putPoolShow = true
       }
     },
     confirmHandle(type) {
@@ -401,21 +408,6 @@ export default {
         })
         crmCustomerLock({
           status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
-          ids: customerId.join(',')
-        })
-          .then(res => {
-            this.$message({
-              type: 'success',
-              message: '操作成功'
-            })
-            this.$emit('handle', { type: type })
-          })
-          .catch(() => {})
-      } else if (type === 'put_seas') {
-        var customerId = this.selectionList.map(function(item, index, array) {
-          return item.customerId
-        })
-        crmCustomerPutInPool({
           ids: customerId.join(',')
         })
           .then(res => {
