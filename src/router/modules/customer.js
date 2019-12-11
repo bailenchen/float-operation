@@ -67,17 +67,28 @@ export default [
     }]
   },
   {
-    ...layout({
-      permissions: ['crm', 'contacts']
-    }),
-    children: [{
-      path: 'contacts', // 联系人列表
-      component: () => import('@/views/customermanagement/contacts/ContactsIndex'),
-      meta: {
-        title: '联系人',
-        icon: 'contacts'
-      }
-    }]
+    path: 'map', // 附近的客户
+    component: () => import('@/views/customermanagement/map/MapIndex'),
+    meta: {
+      requiresAuth: false,
+      title: '附近的客户',
+      icon: 'customer',
+      index: 1,
+      type: 'crm',
+      subType: 'map'
+    }
+  },
+  {
+    path: 'contacts', // 联系人列表
+    component: () => import('@/views/customermanagement/contacts/ContactsIndex'),
+    meta: {
+      requiresAuth: true,
+      title: '联系人',
+      icon: 'contacts',
+      index: 1,
+      type: 'crm',
+      subType: 'contacts'
+    }
   },
   {
     ...layout({
