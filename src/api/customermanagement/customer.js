@@ -66,6 +66,70 @@ export function crmCustomerPoolSetAPI(data) {
   })
 }
 
+// 公海设置列表
+export function crmCustomerPoolSetListAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/queryPoolSettingList',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+// 公海设置删除
+export function crmCustomerPoolSetDeleteAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/deleteCustomerPool',
+    method: 'post',
+    data: data
+  })
+}
+
+// 公海设置详情
+export function crmCustomerPoolSetDetailAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/queryPoolById',
+    method: 'post',
+    data: data
+  })
+}
+
+// 公海启停
+export function crmCustomerPoolSetChangeStatusAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/changeStatus',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 公海客户转移
+ * prePoolId 转出公海id
+ * postPoolId 转入公海id
+ * @param {*} data
+ */
+export function crmCustomerPoolSetTransferAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/transfer',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 转移数据源
+ * @param {*} data
+ */
+export function crmCustomerPoolSetNameListAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/queryPoolNameList',
+    method: 'post',
+    data: data
+  })
+}
 
 // crm 详情
 export function crmCustomerRead(data) {

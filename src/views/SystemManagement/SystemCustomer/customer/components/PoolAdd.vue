@@ -103,8 +103,8 @@
             <div class="row-label">领取频率规则</div>
             <div class="row-content">
               <el-radio-group v-model="baseFrom.receiveSetting">
-                <el-radio :label="0">不启用</el-radio>
-                <el-radio :label="1">启用</el-radio>
+                <el-radio :label="0">不限制</el-radio>
+                <el-radio :label="1">限制</el-radio>
               </el-radio-group>
               <div v-if="baseFrom.receiveSetting === 1" class="xr-input">
                 <span>每天最多领取</span>
@@ -328,7 +328,10 @@ export default {
     saveClick() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.uploadPoolSet(this.getRequestParams())
+          const params = this.getRequestParams()
+          if (params) {
+            this.uploadPoolSet(params)
+          }
         } else {
           this.$message.error('请完善公海名称')
           return false
@@ -342,8 +345,10 @@ export default {
     uploadPoolSet(params) {
       this.loading = true
       crmCustomerPoolSetAPI(params).then(res => {
+        this.$emit('save')
         this.$message.success(this.action.type == 'update' ? '编辑成功' : '新建成功')
         this.loading = false
+        this.hidenView()
       }).catch(() => {
         this.loading = false
       })
@@ -397,11 +402,11 @@ export default {
       }
 
       // 收回规则 1 自动收回
-      // const rule = []
       if (this.baseFrom.putInRule == 1) {
         const ruleVerify = this.recycleRuleData.filter(item => {
           return item.type
         })
+
         if (!ruleVerify.length) {
           this.$message.error('请勾选自动回收规则')
           return
@@ -411,30 +416,14 @@ export default {
         for (let index = 0; index < this.recycleRuleData.length; index++) {
           const ruleItem = this.recycleRuleData[index]
           if (ruleItem.type) {
-          // const level = []
             for (let levelIndex = 0; levelIndex < ruleItem.level.length; levelIndex++) {
               const levelItem = ruleItem.level[levelIndex]
-              if (!levelItem.limit_day) {
+              if (!levelItem.limitDay) {
                 this.$message.error('请完善收回规则公海客户数')
                 return
               }
-
-            // const levelObj = {}
-            // levelObj.level = levelItem.level
-            // levelObj.limit_day = levelItem.limit_day
-
-            // level.push(levelObj)
             }
             rule.push(ruleItem)
-          // const ruleObj = {}
-          // ruleObj.type = ruleItem.type
-          // ruleObj.typeName = ruleItem.typeName
-          // ruleObj.dealHandle = ruleItem.dealHandle
-          // ruleObj.businessHandle = ruleItem.businessHandle
-          // ruleObj.customerLevelSetting = ruleItem.customerLevelSetting
-          // ruleObj.level = level
-
-          // rule.push(ruleObj)
           }
         }
 
@@ -447,7 +436,6 @@ export default {
       // 公海字段
       params.field = this.customerPoolFields
 
-      console.log('通过---', params)
       return params
     },
 

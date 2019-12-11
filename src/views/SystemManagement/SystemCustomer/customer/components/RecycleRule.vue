@@ -35,11 +35,11 @@
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limit_day"
+            prop="limitDay"
             label="未跟进天数">
             <template slot-scope="scope">
               <span>每天最多领取</span>
-              <el-input v-model="scope.row.limit_day" type="number" class="value-input" />
+              <el-input v-model="scope.row.limitDay" type="number" class="value-input" />
               <span>公海客户</span>
             </template>
           </el-table-column>
@@ -57,11 +57,11 @@
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limit_day"
+            prop="limitDay"
             label="未跟进天数">
             <template slot-scope="scope">
               <span>每天最多领取</span>
-              <el-input v-model="scope.row.limit_day" type="number" class="value-input" />
+              <el-input v-model="scope.row.limitDay" type="number" class="value-input" />
               <span>公海客户</span>
             </template>
           </el-table-column>
@@ -87,7 +87,7 @@ export default {
         "dealHandle":0, // 已成交客户是否进入公海 0不进入 1进入
         "businessHandle":1, // 有商机客户是否进入公海 0不进入 1进入
         "level":1, // 客户级别 1全部 2 A（重要客户）3 B（普通客户）4 C（非优先  客户）
-        "limit_day":30 // 公海规则限制天数
+        "limitDay":30 // 公海规则限制天数
          */
         return {
           type: '',
@@ -105,20 +105,20 @@ export default {
       allCustomerData: [{
         name: '所有客户',
         level: 1, // 客户级别 1全部 2 A（重要客户）3 B（普通客户）4 C（非优先客户）
-        limit_day: ''
+        limitDay: ''
       }],
       levelCustomerData: [{
         name: 'A（重要客户）',
         level: 2,
-        limit_day: ''
+        limitDay: ''
       }, {
         name: 'B（普通客户）',
         level: 3,
-        limit_day: ''
+        limitDay: ''
       }, {
         name: 'C（非优先客户）',
         level: 4,
-        limit_day: ''
+        limitDay: ''
       }]
     }
   },
