@@ -275,6 +275,7 @@ export default {
       if (type === 'edit') {
         this.createAction = {
           type: 'update',
+          id: scope.row.poolId,
           data: scope.row
         }
         this.createShow = true

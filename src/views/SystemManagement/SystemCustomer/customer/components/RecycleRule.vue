@@ -2,7 +2,7 @@
   <div class="recycle-rule">
     <el-checkbox
       v-model="data.type"
-      :true-label="trueLabel">{{ data.typeName }}</el-checkbox>
+      :true-label="trueLabel">{{ typeName }}</el-checkbox>
     <div
       v-if="data.type == trueLabel"
       class="recycle-rule__content">
@@ -38,9 +38,9 @@
             prop="limitDay"
             label="未跟进天数">
             <template slot-scope="scope">
-              <span>每天最多领取</span>
+              <span>超过</span>
               <el-input v-model="scope.row.limitDay" type="number" class="value-input" />
-              <span>公海客户</span>
+              <span>天未跟进，进入公海</span>
             </template>
           </el-table-column>
         </el-table>
@@ -79,6 +79,7 @@ export default {
   components: {},
   props: {
     trueLabel: [String, Number],
+    isEdit: Boolean,
     data: {
       type: Object,
       default: () => {
@@ -91,10 +92,9 @@ export default {
          */
         return {
           type: '',
-          typeName: '',
           dealHandle: 1,
           businessHandle: 1,
-          customerLevelSetting: 1,
+          customerLevelSetting: null,
           level: []
         }
       }
@@ -123,6 +123,14 @@ export default {
     }
   },
   computed: {
+    typeName() {
+      return {
+        1: '超过N天“无新建跟进（跟进记录）”的客户，由系统定时退回公海客户池',
+        2: '超过N天“无新建商机”的客户，由系统定时退回公海客户池',
+        3: '超过N天“未成交”的客户，由系统定时退回公海客户池'
+      }[parseInt(this.trueLabel)]
+    },
+
     dealHandleShow() {
       return this.trueLabel == 1 || this.trueLabel == 2
     },
@@ -132,21 +140,45 @@ export default {
   },
   watch: {
     'data.customerLevelSetting': {
-      handler(val) {
+      handler(val, oldVal) {
         if (val == 1) {
-          this.data.level = this.allCustomerData
+          if (this.isEdit && oldVal == null) {
+            this.data.level = this.getEditData(this.allCustomerData, this.data.level)
+          } else {
+            this.data.level = this.allCustomerData
+          }
         } else {
-          this.data.level = this.levelCustomerData
+          if (this.isEdit && oldVal == null) {
+            this.data.level = this.getEditData(this.levelCustomerData, this.data.level)
+          } else {
+            this.data.level = this.levelCustomerData
+          }
         }
       },
       deep: true,
       immediate: true
     }
   },
-  mounted() {},
+  mounted() {
+  },
 
   beforeDestroy() {},
-  methods: {}
+  methods: {
+    getEditData(list, editList) {
+      for (let index = 0; index < list.length; index++) {
+        const item = list[index]
+
+        for (let editIndex = 0; editIndex < editList.length; editIndex++) {
+          const editItem = editList[editIndex]
+          if (editItem.level == item.level) {
+            item.limitDay = editItem.limitDay
+          }
+        }
+      }
+
+      return list
+    }
+  }
 }
 </script>
 

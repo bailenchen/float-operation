@@ -14,7 +14,9 @@
       </flexbox>
 
       <div class="pool-add-content">
-        <create-sections title="基本信息">
+        <create-sections
+          v-if="baseFrom"
+          title="基本信息">
           <flexbox
             style="margin-top: 8px;"
             direction="column"
@@ -79,7 +81,9 @@
             </el-form>
           </flexbox>
         </create-sections>
-        <create-sections title="规则设置">
+        <create-sections
+          v-if="recycleRuleData"
+          title="规则设置">
           <flexbox
             class="row"
             align="stretch">
@@ -91,7 +95,7 @@
               </el-radio-group>
               <div v-if="baseFrom.preOwnerSetting === 1" class="xr-input">
                 <span>前负责人</span>
-                <el-input v-model="baseFrom.preOwnerSetting_day" type="number" />
+                <el-input v-model="baseFrom.preOwnerSettingDay" type="number" />
                 <span>天内不允许领取该客户</span>
               </div>
             </div>
@@ -145,6 +149,7 @@
               :key="index"
               :data="item"
               :true-label="index + 1"
+              :is-edit="isEdit"
             />
           </template>
 
@@ -188,7 +193,8 @@
 <script>
 import {
   crmCustomerPoolQueryPoolFieldtAPI,
-  crmCustomerPoolSetAPI
+  crmCustomerPoolSetAPI,
+  crmCustomerPoolSetDetailAPI
 } from '@/api/customermanagement/customer'
 
 import CreateView from '@/components/CreateView'
@@ -199,6 +205,7 @@ import {
   XhStrucUserCell
 } from '@/components/CreateCom'
 import RecycleRule from './RecycleRule'
+import { resolve, reject } from 'q'
 
 export default {
   // 公海规则添加
@@ -229,54 +236,16 @@ export default {
   data() {
     return {
       loading: false,
-      baseFrom: {
-        poolName: '',
-        adminUsers: [],
-        memberUsers: {
-          users: [],
-          strucs: []
-        },
-        preOwnerSetting: 0, // 前负责人领取规则 0不限制 1限制
-        preOwnerSetting_day: '',
-        receiveSetting: 0, // 0 不启用 1 启用
-        receiveNum: '', // 领取频率规则
-        remindDay: '', // 提醒规则天数
-        putInRule: 1 // 收回规则 0不自动收回 1自动收回
-      },
+      baseFrom: null,
       baseRules: {
         poolName: [
           { required: true, message: '请输入公海名称 ', trigger: 'blur' }
         ]
       },
-      recycleRuleData: [
-        {
-          type: '',
-          typeName: '超过N天“无新建跟进（跟进记录）”的客户，由系统定时退回公海客户池',
-          dealHandle: 1,
-          businessHandle: 1,
-          customerLevelSetting: 1,
-          level: []
-        },
-        {
-          type: '',
-          typeName: '超过N天“无新建商机”的客户，由系统定时退回公海客户池',
-          dealHandle: 1,
-          businessHandle: 1,
-          customerLevelSetting: 1,
-          level: []
-        },
-        {
-          type: '',
-          typeName: '超过N天“未成交”的客户，由系统定时退回公海客户池',
-          dealHandle: 1,
-          businessHandle: 1,
-          customerLevelSetting: 1,
-          level: []
-        }
-      ],
+      recycleRuleData: null,
       customerPoolFields: [],
       requestFields: {
-        preOwnerSetting_day: '请完善前负责人领取规则',
+        preOwnerSettingDay: '请完善前负责人领取规则',
         receiveNum: '请完善领取频率规则',
         remindDay: '请完善提醒规则'
       }
@@ -284,20 +253,116 @@ export default {
   },
   computed: {
     title() {
-      if (this.action.type == 'update') {
+      if (this.isEdit) {
         return '编辑公海'
       }
 
       return '新建公海'
+    },
+
+    isEdit() {
+      return this.action && this.action.type == 'update'
     }
   },
   watch: {},
   created() {
-    this.getCustomerPoolFields()
+    if (this.isEdit) {
+      this.getDetail()
+    } else {
+      this.getCreateInfo()
+    }
   },
 
   beforeDestroy() {},
   methods: {
+    /**
+     * 编辑操作
+     */
+    getDetail() {
+      this.loading = true
+      crmCustomerPoolSetDetailAPI({
+        poolId: this.action.id
+      }).then(res => {
+        this.getEditInfo(res.data)
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    getEditInfo(data) {
+      this.baseFrom = {
+        poolName: data.poolName,
+        adminUsers: data.adminUser,
+        memberUsers: {
+          users: data.memberUser,
+          strucs: data.memberDept
+        },
+        preOwnerSetting: data.preOwnerSetting, // 前负责人领取规则 0不限制 1限制
+        preOwnerSettingDay: data.preOwnerSettingDay,
+        receiveSetting: data.receiveSetting, // 0 不启用 1 启用
+        receiveNum: data.receiveNum, // 领取频率规则
+        remindDay: data.remindDay, // 提醒规则天数
+        putInRule: data.putInRule // 收回规则 0不自动收回 1自动收回
+      }
+
+      this.recycleRuleData = data.rule
+      this.getCustomerPoolFields(data.field.filter(item => {
+        return item.isHidden === 1
+      })).then(editFields => {
+        this.customerPoolFields = editFields
+      })
+    },
+
+    /**
+     * 新建操作
+     */
+    getCreateInfo() {
+      this.baseFrom = {
+        poolName: '',
+        adminUsers: [],
+        memberUsers: {
+          users: [],
+          strucs: []
+        },
+        preOwnerSetting: 0, // 前负责人领取规则 0不限制 1限制
+        preOwnerSettingDay: '',
+        receiveSetting: 0, // 0 不启用 1 启用
+        receiveNum: '', // 领取频率规则
+        remindDay: '', // 提醒规则天数
+        putInRule: 1 // 收回规则 0不自动收回 1自动收回
+      }
+
+      this.recycleRuleData = [
+        {
+          type: '',
+          dealHandle: 1,
+          businessHandle: 1,
+          customerLevelSetting: 1,
+          level: []
+        },
+        {
+          type: '',
+          dealHandle: 1,
+          businessHandle: 1,
+          customerLevelSetting: 1,
+          level: []
+        },
+        {
+          type: '',
+          dealHandle: 1,
+          businessHandle: 1,
+          customerLevelSetting: 1,
+          level: []
+        }
+      ]
+
+      this.getCustomerPoolFields().then(createFields => {
+        this.customerPoolFields = createFields
+      })
+    },
+
+
     /**
      * 员工选择
      */
@@ -312,14 +377,48 @@ export default {
     /**
      * 获取公海默认字段
      */
-    getCustomerPoolFields() {
-      crmCustomerPoolQueryPoolFieldtAPI().then(res => {
-        const list = res.data || []
-        this.customerPoolFields = list.map(item => {
-          item.isHidden = 0
-          return item
+    getCustomerPoolFields(hiddenFields) {
+      return new Promise((resolve, reject) => {
+        crmCustomerPoolQueryPoolFieldtAPI().then(res => {
+          const list = res.data || []
+          const baseField = list.map(item => {
+            item.isHidden = 0
+            return item
+          })
+          if (hiddenFields) {
+            resolve(this.getEditFields(baseField, hiddenFields))
+          } else {
+            resolve(baseField)
+          }
+        }).catch(() => {
+          reject()
         })
-      }).catch(() => {})
+      })
+    },
+
+    /**
+     * 获取编辑展示字段
+     */
+    getEditFields(list, hiddenFields) {
+      for (let index = 0; index < list.length; index++) {
+        const item = list[index]
+
+        for (let editIndex = 0; editIndex < hiddenFields.length; editIndex++) {
+          const editItem = hiddenFields[editIndex]
+          // fieldId 存在 匹配fieldId 不存在 匹配 fieldName
+          if (item.fieldId) {
+            if (item.fieldId === editItem.fieldId) {
+              item.isHidden = 1
+            }
+          } else {
+            if (item.fieldName === editItem.fieldName) {
+              item.isHidden = 1
+            }
+          }
+        }
+      }
+
+      return list
     },
 
     /**
@@ -343,10 +442,13 @@ export default {
      * 提交请求
      */
     uploadPoolSet(params) {
+      if (this.isEdit) {
+        params.poolId = this.action.id
+      }
       this.loading = true
       crmCustomerPoolSetAPI(params).then(res => {
         this.$emit('save')
-        this.$message.success(this.action.type == 'update' ? '编辑成功' : '新建成功')
+        this.$message.success(this.isEdit ? '编辑成功' : '新建成功')
         this.loading = false
         this.hidenView()
       }).catch(() => {
@@ -358,7 +460,7 @@ export default {
      * 必填字段验证
      */
     requestFieldsVerify(key) {
-      if (key == 'preOwnerSetting_day' && this.baseFrom.preOwnerSetting == 1 && !this.baseFrom[key]) {
+      if (key == 'preOwnerSettingDay' && this.baseFrom.preOwnerSetting == 1 && !this.baseFrom[key]) {
         return false
       } else if (key == 'receiveNum' && this.baseFrom.receiveSetting == 1 && !this.baseFrom[key]) {
         return false

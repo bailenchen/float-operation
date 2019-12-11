@@ -92,7 +92,7 @@
             align="stretch"
             class="rule-item">
             <div class="label">公海字段</div>
-            <div class="value">{{ detail.field | fieldNameFilter }}</div>
+            <div class="value field-value">{{ detail.field | fieldNameFilter }}</div>
           </flexbox>
         </div>
       </create-sections>
@@ -120,7 +120,7 @@ export default {
   filters: {
     fieldNameFilter(list) {
       return list.map(item => {
-        return item.name
+        return item.isHidden === 0 && item.name
       }).join('，')
     }
   },
@@ -262,8 +262,8 @@ export default {
       word-break: break-all;
     }
 
-    .rule-value {
-      line-height: 1 !important;
+    .field-value {
+      line-height: 1.5;
     }
   }
 }
