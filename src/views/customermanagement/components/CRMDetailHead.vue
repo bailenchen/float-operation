@@ -577,8 +577,8 @@ export default {
         // 放入公海(客户)
         return this.crm[this.crmType].putinpool
       } else if (type == 'lock' || type == 'unlock') {
-        // 锁定解锁(客户) customerConfig 公海规则打开的前提下展示锁定解锁
-        return this.crm[this.crmType].lock && this.CRMConfig.customerConfig == 1
+        // 锁定解锁(客户)
+        return this.crm[this.crmType].lock
       } else if (type == 'add_user' || type == 'delete_user') {
         // 添加 移除团队成员
         return this.crm[this.crmType].teamsave

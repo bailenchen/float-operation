@@ -186,13 +186,6 @@ export default {
   },
   computed: {
     ...mapGetters(['crm', 'CRMConfig']),
-    showPoolDayField() {
-      // customerConfig 公海规则打开的前提下展示公海天数
-      if (this.crmType == 'customer' && this.CRMConfig.customerConfig == 1) {
-        return true
-      }
-      return false
-    },
     showExamineStatus() {
       if (this.crmType == 'contract' && this.crmType == 'receivables') {
         return true
