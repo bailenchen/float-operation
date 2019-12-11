@@ -1,7 +1,6 @@
 <template>
   <slide-view
     v-loading="loading"
-    :listener-ids="['workbench-main-container']"
     :no-listener-class="noListenerClass"
     class="d-view"
     @close="hideView">
@@ -20,6 +19,10 @@
           <div class="header-title">公海名称</div>
           <div class="header-name">{{ detail.poolName }}</div>
         </div>
+
+        <span class="customer-num">
+          客户数量：<span class="customer-num__value">{{ detail.customerNum || 0 }}个</span>
+        </span>
       </flexbox>
       <flexbox
         align="stretch"
@@ -56,21 +59,40 @@
       </flexbox>
       <create-sections title="规则设置">
         <div class="rule">
-          <flexbox class="rule-item">
+          <flexbox
+            align="stretch"
+            class="rule-item">
             <div class="label">前负责人领取规则</div>
             <div class="value">{{ detail.preOwnerSetting == 1 ? `前负责人${detail.preOwnerSettingDay}天内不允许领取该客户` : '不限制' }}</div>
           </flexbox>
-          <flexbox class="rule-item">
+          <flexbox
+            align="stretch"
+            class="rule-item">
             <div class="label">领取频率规则</div>
-            <div class="value">{{ detail.preOwnerSetting == 1 ? `每天最多领取${detail.receiveNum || '空'}公海客户` : '不限制' }}</div>
+            <div class="value">{{ detail.preOwnerSetting == 1 ? `每天最多领取${detail.receiveNum}个公海客户` : '不限制' }}</div>
           </flexbox>
-          <flexbox class="rule-item">
+          <flexbox
+            align="stretch"
+            class="rule-item">
             <div class="label">提醒规则</div>
             <div class="value">{{ `提前${detail.remindDay}天提醒负责人` }}</div>
           </flexbox>
-          <flexbox class="rule-item">
-            <div class="label">提醒规则</div>
-            <div class="value"/>
+          <flexbox
+            align="stretch"
+            class="rule-item">
+            <div class="label">收回规则</div>
+            <div class="value rule-value">
+              <detail-recycle-rule
+                v-for="(item, index) in detail.rule"
+                :key="index"
+                :data="item"/>
+            </div>
+          </flexbox>
+          <flexbox
+            align="stretch"
+            class="rule-item">
+            <div class="label">公海字段</div>
+            <div class="value">{{ detail.field | fieldNameFilter }}</div>
           </flexbox>
         </div>
       </create-sections>
@@ -85,13 +107,22 @@ import {
 
 import SlideView from '@/components/SlideView'
 import CreateSections from '@/components/CreateSections'
+import DetailRecycleRule from './DetailRecycleRule'
 
 export default {
   /** 公海设置详情 */
   name: 'PoolDetail',
   components: {
     SlideView,
-    CreateSections
+    CreateSections,
+    DetailRecycleRule
+  },
+  filters: {
+    fieldNameFilter(list) {
+      return list.map(item => {
+        return item.name
+      }).join('，')
+    }
   },
   mixins: [],
   props: {
@@ -100,7 +131,7 @@ export default {
     noListenerClass: {
       type: Array,
       default: () => {
-        return ['list-box']
+        return ['el-table__body']
       }
     }
   },
@@ -152,6 +183,8 @@ export default {
 }
 
 .detail-header {
+  position: relative;
+
   .header-icon {
     width: 40px;
     height: 40px;
@@ -174,6 +207,17 @@ export default {
     font-size: 16px;
     color: #333333;
     font-weight: 600;
+  }
+
+  .customer-num {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #999;
+    font-size: 14px;
+    &__value {
+      color: #333;
+    }
   }
 }
 // 人员
@@ -203,7 +247,7 @@ export default {
   color: #333;
 
   &-item {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     .label {
       flex-shrink: 0;
       width: 120px;
@@ -217,7 +261,15 @@ export default {
       word-wrap: break-word;
       word-break: break-all;
     }
+
+    .rule-value {
+      line-height: 1 !important;
+    }
   }
+}
+
+.detail-recycle-rule + .detail-recycle-rule {
+  margin-top: 20px;
 }
 
 // 头像样式

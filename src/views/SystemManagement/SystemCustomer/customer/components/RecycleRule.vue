@@ -60,9 +60,9 @@
             prop="limitDay"
             label="未跟进天数">
             <template slot-scope="scope">
-              <span>每天最多领取</span>
+              <span>超过</span>
               <el-input v-model="scope.row.limitDay" type="number" class="value-input" />
-              <span>公海客户</span>
+              <span>天未跟进，进入公海</span>
             </template>
           </el-table-column>
         </el-table>

@@ -109,7 +109,7 @@
               <div v-if="baseFrom.receiveSetting === 1" class="xr-input">
                 <span>每天最多领取</span>
                 <el-input v-model="baseFrom.receiveNum" type="number" />
-                <span>公海客户</span>
+                <span>个公海客户</span>
               </div>
             </div>
           </flexbox>

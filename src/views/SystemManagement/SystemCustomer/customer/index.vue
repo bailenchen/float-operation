@@ -7,7 +7,7 @@
     <div class="main-body">
       <div class="main-table-header">
         <reminder
-          :content="`提示：1、系统在每天的24:00~6:00统一将符合规则的客户退回到公海池<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2、当一个客户满足多个公海客户规则时会同时掉入多个公海<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3、若修改了“自动划入规则”，新的规则将于 次日生效 ，在此之前客户公海成员的数据还是会遵循原规则进行划入`"
+          :content="`提示：1、系统在每天的24:00~6:00统一将符合规则的客户退回到公海池<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2、当一个客户满足多个公海客户规则时会同时掉入多个公海<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3、若修改了“自动收回规则”，新的规则将于“次日生效”，在此之前客户公海成员的数据还是会遵循原规则进行划入`"
           class="xr-reminder"/>
         <el-button
           class="main-table-header-button xr-btn--orange"
