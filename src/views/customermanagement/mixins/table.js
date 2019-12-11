@@ -8,6 +8,7 @@ import CRMTableHead from '../components/CRMTableHead'
 import FieldSet from '../components/fieldSet'
 import {
   filedGetTableField,
+  filedGetPoolTableField,
   crmFieldColumnWidth
 } from '@/api/customermanagement/common'
 import {
@@ -119,6 +120,11 @@ export default {
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
+
+      // 公海切换
+      if (this.poolId) {
+        params.poolId = this.poolId
+      }
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
@@ -173,9 +179,18 @@ export default {
     getFieldList(force) {
       if (this.fieldList.length == 0 || force) {
         this.loading = true
-        filedGetTableField({
-          label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType] // 9 是公海
-        })
+
+        const params = {}
+        if (this.isSeas) {
+          if (this.poolId) {
+            params.poolId = this.poolId
+          }
+        } else {
+          params.label = crmTypeModel[this.crmType]
+        }
+
+        const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
+        request(params)
           .then(res => {
             const fieldList = []
             const moneyFields = []

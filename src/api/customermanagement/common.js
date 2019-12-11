@@ -37,6 +37,18 @@ export function filedGetTableField(data) {
   })
 }
 
+/**
+ * 公海表头
+ * @param {*} data
+ */
+export function filedGetPoolTableField(data) {
+  return request({
+    url: 'field/queryPoolListHead',
+    method: 'post',
+    data: data
+  })
+}
+
 // crm 自定义字段验重
 export function filedValidates(data) {
   return request({

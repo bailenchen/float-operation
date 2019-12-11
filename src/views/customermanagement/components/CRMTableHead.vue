@@ -3,6 +3,7 @@
     <flexbox
       v-show="selectionList.length == 0"
       class="th-container">
+      <slot name="custom"/>
       <div v-if="!isSeas">场景：</div>
       <el-popover
         v-if="!isSeas"
@@ -28,7 +29,6 @@
           @hidden-scene="showScene=false" />
       </el-popover>
       <el-button
-        :style="{ 'margin-left': isSeas ? 0 : '20px'}"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
@@ -741,6 +741,7 @@ export default {
   }
 
   .filter-button {
+    margin-left: 20px;
     /deep/ i {
       font-size: 14px;
       margin-right: 5px;
