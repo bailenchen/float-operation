@@ -166,7 +166,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['crm', 'CRMConfig']),
+    ...mapGetters(['crm']),
     crmIcon() {
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },

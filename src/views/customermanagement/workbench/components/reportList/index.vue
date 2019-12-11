@@ -185,7 +185,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['crm', 'CRMConfig']),
+    ...mapGetters(['crm']),
     showExamineStatus() {
       if (this.crmType == 'contract' && this.crmType == 'receivables') {
         return true

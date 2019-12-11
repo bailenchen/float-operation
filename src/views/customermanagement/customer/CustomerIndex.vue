@@ -136,7 +136,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
 import table from '../mixins/table'
@@ -163,9 +162,7 @@ export default {
       crmType: 'customer'
     }
   },
-  computed: {
-    ...mapGetters(['CRMConfig'])
-  },
+  computed: {},
   mounted() {},
   methods: {
     relativeBusinessClick(data) {

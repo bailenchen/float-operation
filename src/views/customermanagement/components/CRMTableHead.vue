@@ -206,7 +206,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['crm', 'CRMConfig']),
+    ...mapGetters(['crm']),
     iconClass() {
       return this.showScene ? 'arrow-up' : 'arrow-down'
     },
