@@ -112,7 +112,7 @@ export default {
       this.name = this.detail.marketingName
       this.submitCount = this.detail.submitNum
       this.browseCount = this.detail.browse
-      this.path = `${WKConfig.marketingUrl}?marketingId=${this.detail.enMarketingId}&currentUserId=${this.detail.currentUserId}`
+      this.path = `${WKConfig.getLocationOrigin()}/marketing/?marketingId=${this.detail.enMarketingId}&currentUserId=${this.detail.currentUserId}`
       this.loading = false
 
       if (this.qrcode) {
