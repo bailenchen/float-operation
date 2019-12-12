@@ -39,7 +39,7 @@
             label="未跟进天数">
             <template slot-scope="scope">
               <span>超过</span>
-              <el-input v-model="scope.row.limitDay" type="number" class="value-input" />
+              <el-input v-model="scope.row.limitDay" class="value-input" @keyup.native="inputLimit(scope.row)" />
               <span>天未跟进，进入公海</span>
             </template>
           </el-table-column>
@@ -61,7 +61,7 @@
             label="未跟进天数">
             <template slot-scope="scope">
               <span>超过</span>
-              <el-input v-model="scope.row.limitDay" type="number" class="value-input" />
+              <el-input v-model="scope.row.limitDay" class="value-input" @keyup.native="inputLimit(scope.row)" />
               <span>天未跟进，进入公海</span>
             </template>
           </el-table-column>
@@ -177,6 +177,13 @@ export default {
       }
 
       return list
+    },
+
+    /**
+     * 阻挡输入
+     */
+    inputLimit(data) {
+      data.limitDay = data.limitDay.replace(/[^0-9]/g, '')
     }
   }
 }

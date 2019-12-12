@@ -95,7 +95,7 @@
               </el-radio-group>
               <div v-if="baseFrom.preOwnerSetting === 1" class="xr-input">
                 <span>前负责人</span>
-                <el-input v-model="baseFrom.preOwnerSettingDay" type="number" />
+                <el-input v-model="baseFrom.preOwnerSettingDay" @keyup.native="inputLimit('preOwnerSettingDay')" />
                 <span>天内不允许领取该客户</span>
               </div>
             </div>
@@ -112,7 +112,7 @@
               </el-radio-group>
               <div v-if="baseFrom.receiveSetting === 1" class="xr-input">
                 <span>每天最多领取</span>
-                <el-input v-model="baseFrom.receiveNum" type="number" />
+                <el-input v-model="baseFrom.receiveNum" @keyup.native="inputLimit('receiveNum')" />
                 <span>个公海客户</span>
               </div>
             </div>
@@ -125,7 +125,7 @@
             <div class="row-content">
               <div class="xr-input">
                 <span>提前</span>
-                <el-input v-model="baseFrom.remindDay" type="number" />
+                <el-input v-model="baseFrom.remindDay" @keyup.native="inputLimit('remindDay')" />
                 <span>天提醒负责人</span>
               </div>
             </div>
@@ -244,9 +244,9 @@ export default {
       recycleRuleData: null,
       customerPoolFields: [],
       requestFields: {
-        preOwnerSettingDay: '请完善前负责人领取规则',
-        receiveNum: '请完善领取频率规则',
-        remindDay: '请完善提醒规则'
+        preOwnerSettingDay: '前负责人限制领取天数需大于0',
+        receiveNum: '领取频率限制个数需大于0',
+        remindDay: '提醒规则天数需大于0'
       }
     }
   },
@@ -459,11 +459,11 @@ export default {
      * 必填字段验证
      */
     requestFieldsVerify(key) {
-      if (key == 'preOwnerSettingDay' && this.baseFrom.preOwnerSetting == 1 && !this.baseFrom[key]) {
+      if (key == 'preOwnerSettingDay' && this.baseFrom.preOwnerSetting == 1 && (!this.baseFrom[key] || this.baseFrom[key] <= 0)) {
         return false
-      } else if (key == 'receiveNum' && this.baseFrom.receiveSetting == 1 && !this.baseFrom[key]) {
+      } else if (key == 'receiveNum' && this.baseFrom.receiveSetting == 1 && (!this.baseFrom[key] || this.baseFrom[key] <= 0)) {
         return false
-      } else if (key == 'remindDay' && !this.baseFrom[key]) {
+      } else if (key == 'remindDay' && (!this.baseFrom[key] || this.baseFrom[key] <= 0)) {
         return false
       }
 
@@ -519,8 +519,8 @@ export default {
           if (ruleItem.type) {
             for (let levelIndex = 0; levelIndex < ruleItem.level.length; levelIndex++) {
               const levelItem = ruleItem.level[levelIndex]
-              if (!levelItem.limitDay) {
-                this.$message.error('请完善收回规则公海客户数')
+              if (!levelItem.limitDay || levelItem.limitDay <= 0) {
+                this.$message.error('收回规则超过天数需大于0')
                 return
               }
             }
@@ -545,6 +545,13 @@ export default {
      */
     hidenView() {
       this.$emit('hiden-view')
+    },
+
+    /**
+     * 阻挡输入
+     */
+    inputLimit(key) {
+      this.baseFrom[key] = this.baseFrom[key].replace(/[^0-9]/g, '')
     }
   }
 }
