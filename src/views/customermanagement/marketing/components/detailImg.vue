@@ -39,6 +39,16 @@
               </div>
             </div>
             <div class="detail-tip">图片建议上传：290(宽) * 220(高) (应用于小图式)</div>
+            <div class="detail-select--text">选择默认活动图片</div>
+            <flexbox>
+              <img
+                v-for="(src, index) in srcList"
+                :key="index"
+                :src="src"
+                :class="index === 0 ? 'content-cross-list--one' : ''"
+                class="content-cross-list"
+                alt="加载失败" @click="selectImg(src)">
+            </flexbox>
           </div>
         </div>
       </div>
@@ -103,7 +113,11 @@
 import Sections from '../../components/Sections'
 import { crmMarketingUpdateAPI } from '@/api/customermanagement/marketing'
 import { crmFileSave, crmFileDelete } from '@/api/common'
-
+import {
+  urltoImage,
+  imagetoCanvas,
+  dataURLtoBlob,
+  canvasToDataURL } from '@/utils'
 export default {
   components: {
     Sections
@@ -130,6 +144,14 @@ export default {
       detaiUrl: '',
       type: 1,
       imgId: -1,
+      srcList: [
+        require('@/assets/activity/activity_one.jpg'),
+        require('@/assets/activity/activity_two.jpg'),
+        require('@/assets/activity/activity_three.jpg'),
+        require('@/assets/activity/activity_four.jpg'),
+        require('@/assets/activity/activity_five.jpg'),
+        require('@/assets/activity/activity_six.jpg')
+      ],
       loading: false
     }
   },
@@ -156,6 +178,21 @@ export default {
       } else {
         this.$refs.detailImgInput.click()
       }
+    },
+    // 处理选择的图片
+    selectImg(url) {
+      this.type = 1
+      var imgObj = urltoImage(url)
+      var canvasObj = imagetoCanvas(imgObj)
+      var name = url.split('.').slice(-1)
+      var dataUrl = canvasToDataURL(canvasObj, `image/${name}`)
+      var Blob = dataURLtoBlob(dataUrl)
+      var even = {
+        target: {
+          files: [Blob]
+        }
+      }
+      this.upLoad(even)
     },
     upLoad(event) {
       this.loading = true
@@ -279,6 +316,8 @@ export default {
      font-weight: 500;
      margin-left: 20px;
      margin-top: 20px;
+     word-break: keep-all;
+     white-space: nowrap;
      font-size: 13px;
      .label-start {
        color: red;
@@ -297,6 +336,11 @@ export default {
      color: #C1C1C1;
      font-size: 12px;
      margin-left: 20px;
+   }
+   .detail-select--text {
+     color: #333;
+     font-size: 12px;
+     margin: 10px 0 10px 20px;
    }
    .img-model {
       position: absolute;
@@ -320,6 +364,17 @@ export default {
        padding-left: calc(50% - 30px);
        cursor: pointer;
     }
+   }
+   .content-cross-list {
+      width: 110.5px;
+      height: 66;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px #c0ccda dashed;
+   }
+   .content-cross-list--one {
+     margin-left: 20px;
    }
    .content-cross {
     width: 195px;
