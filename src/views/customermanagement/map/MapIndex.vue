@@ -1,9 +1,14 @@
 <template>
   <div class="map-box">
     <div class="map-title">
-      <span class="map-title--text">附近的客户</span>
+      <flexbox class="map-title-content">
+        <img
+          :src="titleIcon"
+          class="title-icon">
+        附近的客户
+      </flexbox>
     </div>
-    <div :style="{height: mapHeight + 'px'}" class="map-content" >
+    <div class="map-content" >
       <flexbox align="stretch" class="map-content--title">
         <el-select v-model="searchSelect" placeholder="请选择">
           <el-option
@@ -18,10 +23,14 @@
         <span class="place-text"> 米的客户</span>
       </flexbox>
       <flexbox align="stretch">
-        <flexbox-item :span="3" class="map-content--left">
-          <div>1</div>
-        </flexbox-item>
-        <flexbox-item style="margin-right: 50px;">
+        <div class="map-content--left">
+          <div>
+            <ul>
+              <li class="">1</li>
+            </ul>
+          </div>
+        </div>
+        <flexbox-item :style="{height: mapHeight + 'px'}" class="map-primity">
           <!-- <el-autocomplete
         v-model="searchInput"
         :fetch-suggestions="querySearchAsync"
@@ -45,7 +54,26 @@
 </template>
 <script type="text/javascript">
 import VDistpicker from 'v-distpicker'
-
+function myFun(result) {
+  var map = new BMap.Map('choicemap', { enableMapClick: false })
+  map.centerAndZoom(new BMap.Point(116.404, 39.915), 14)
+  var cityName = result.name
+  console.log(result, 'result==')
+  map.setCenter(cityName)
+  alert('当前定位城市:' + cityName)
+}
+function add_oval(centre, x, y) {
+  var assemble = []
+  var angle
+  var dot
+  var tangent = x / y
+  for (let i = 0; i < 36; i++) {
+    angle = (2 * Math.PI / 36) * i
+    dot = new BMap.Point(centre.lng + Math.sin(angle) * y * tangent, centre.lat + Math.cos(angle) * y)
+    assemble.push(dot)
+  }
+  return assemble
+}
 export default {
   name: 'MapIndex', // 新建 客户位置
   components: {
@@ -70,8 +98,9 @@ export default {
       searchInput: 1,
       // 选中的搜索
       searchSelect: '',
+      point: '',
       place: '',
-      mapHeight: document.documentElement.clientHeight - 300, // 地图的高度
+      mapHeight: document.documentElement.clientHeight - 240, // 地图的高度
       options: [
         {
           value: 1,
@@ -92,7 +121,11 @@ export default {
       canExecute: true
     }
   },
-  computed: {},
+  computed: {
+    titleIcon() {
+      return require(`@/assets/img/crm/customer.png`)
+    }
+  },
   watch: {
     pointAddress: function(newValue) {
       this.valueChange()
@@ -102,28 +135,15 @@ export default {
     }
   },
   mounted() {
-    var map = new BMap.Map('choicemap', { enableMapClick: false })
-    map.centerAndZoom(new BMap.Point(116.404, 39.915), 14)
+    var map = new BMap.Map('choicemap', { enableMapClick: true })
+    var point = new BMap.Point(116.404, 39.915)
+    map.centerAndZoom(point, 14)
+    this.map = map
+    this.point = point
     // map.disableDragging() //禁止拖拽
     // map.disableDoubleClickZoom()
     // map.disableScrollWheelZoom()
     // map.disableContinuousZoom()
-    map.enableScrollWheelZoom()
-    this.map = map
-    if (this.value && JSON.stringify(this.value) !== '{}') {
-      this.initInfo(this.value)
-    } else {
-      var geolocation = new BMap.Geolocation()
-      var self = this
-      geolocation.getCurrentPosition(
-        function(r) {
-          if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-            self.addMarkerLabel(r.point)
-          }
-        },
-        { enableHighAccuracy: true }
-      )
-    }
   },
   methods: {
     initInfo(val) {
@@ -181,19 +201,6 @@ export default {
       this.map.centerAndZoom(point, 14)
       this.map.addOverlay(new BMap.Marker(point))
     },
-    /** 区域选择 */
-    selectProvince(value) {
-      this.addressSelect.province = value.value
-      this.valueChange()
-    },
-    selectCity(value) {
-      this.addressSelect.city = value.value
-      this.valueChange()
-    },
-    selectArea(value) {
-      this.addressSelect.area = value.value
-      this.valueChange()
-    },
     /** 地图选择区域 */
     mapSelectArea(data) {
       if (this.canExecute) {
@@ -228,32 +235,29 @@ export default {
         }, 500)
       }
     },
-    // 值更新的回调
-    valueChange() {
-      this.$emit('value-change', {
-        index: this.index,
-        value: {
-          address: [
-            this.addressSelect.province,
-            this.addressSelect.city,
-            this.addressSelect.area
-          ],
-          location: this.searchInput,
-          detailAddress: this.detailAddress,
-          lat: this.pointAddress ? this.pointAddress.lat : '',
-          lng: this.pointAddress ? this.pointAddress.lng : ''
-        }
-      })
+    // 获取定位
+    getMyFun() {
+      var myCity = new BMap.LocalCity()
+      myCity.get(myFun)
+      var oval = new BMap.Polygon(add_oval(this.point, 0.1, 0.1), { strokeColor: 'blue', strokeWeight: 6, strokeOpacity: 0.5 })
+      this.map.addOverlay(oval)
     }
   }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-.map {
-  height:425px;
-  width: 675px;
-  overflow: hidden;
-  margin-top: 5px;
+.map-box {
+  height: calc(100% - 95px);
+}
+.map-primity {
+  height: 100%;
+  margin-right: 25px;
+  .map {
+     height:100%;
+     width: 100%;
+     overflow: hidden;
+     margin-top: 5px;
+}
 }
 .map-content--title {
   line-height: 35px;
@@ -274,21 +278,33 @@ export default {
   }
 }
 .map-content--left {
-  width: 150px;
+  flex-shrink: 0;
+  width: 300px;
   height: 100%;
 }
 .map-content {
   width: 100%;
-  margin: 10.5px 10px;
+  height: 100%;
+  margin: 10.5px 0px;
   background-color: #fff;
 }
 .map-title {
-  line-height: 60px;
-}
-.map-title--text {
-  color: #333;
-  font-size: 18px;
-  padding: 0 20px;
+  height: 60px;
+  position: relative;
+  z-index: 100;
+  .map-title-content {
+    float: left;
+    width: auto;
+    padding-left: 28px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 15px;
+    .title-icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+  }
+  }
 }
 .area-title {
   font-size: 12px;
