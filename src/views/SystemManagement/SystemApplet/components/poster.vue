@@ -1,34 +1,45 @@
 <template>
-  <flexbox
-    v-loading="loading"
-    align="stretch"
-    class="poster-box">
-    <create-sections title="名片海报" class="poster-content">
-      <p class="poster-text">员工分享个人名片，商户可统一设置个人名片海报</p>
-      <div class="poster-image">
-        <p class="image-title">海报背景</p>
-        <el-upload
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :http-request="upLoad"
-          action=""
-          accept="image/*"
-          class="avatar-uploader">
-          <img v-if="imageUrl" :src="imageUrl" class="avatar">
-          <i v-else class="el-icon-plus avatar-uploader-icon"/>
-        </el-upload>
-        <p class="image-des">建议上传图片：600（宽）*650（高）</p>
-      </div>
-    </create-sections>
-    <create-sections title="预览海报" class="poster-content">
-      <div class="preview-image">
-        <canvas id="myCanvas" width="600" height="764" style="width:300px; height:382px"/>
-      </div>
-      <div class="preview-handle">
-        <el-button type="primary" @click="downloadPoster">海报下载</el-button>
-      </div>
-    </create-sections>
-  </flexbox>
+  <div v-loading="loading" class="poster">
+    <flexbox
+      align="stretch"
+      class="poster-box">
+      <create-sections title="名片海报" class="poster-content">
+        <p class="poster-text">员工分享个人名片，商户可统一设置个人名片海报</p>
+        <div class="poster-image">
+          <p class="image-title">海报背景</p>
+          <el-upload
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :http-request="upLoad"
+            action=""
+            accept="image/*"
+            class="avatar-uploader">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
+          <p class="image-des">建议上传图片：600（宽）*650（高）</p>
+          <div class="post-select--text">选择默认活动图片</div>
+          <div class="post-list--box">
+            <img
+              v-for="(src, index) in srcList"
+              :key="index"
+              :src="src"
+              class="content-cross-list"
+              alt="加载失败" @click="selectImg(src)">
+          </div>
+        </div>
+      </create-sections>
+      <create-sections title="预览海报" class="poster-content">
+        <div class="preview-image">
+          <canvas id="myCanvas" width="600" height="764" style="width:300px; height:382px"/>
+        </div>
+        <div class="preview-handle">
+          <el-button type="primary" @click="downloadPoster">海报下载</el-button>
+        </div>
+      </create-sections>
+    </flexbox>
+  </div>
+
 </template>
 
 <script type="text/javascript">
@@ -54,7 +65,15 @@ export default {
       info: {
         companyName: '',
         realname: ''
-      }
+      },
+      srcList: [
+        require('@/assets/post/post-one.jpg'),
+        require('@/assets/post/post-two.jpg'),
+        require('@/assets/post/post-three.jpg'),
+        require('@/assets/post/post-four.jpg'),
+        require('@/assets/post/post-five.jpg'),
+        require('@/assets/post/post-six.jpg')
+      ]
     }
   },
   computed: {
@@ -141,6 +160,7 @@ export default {
      * 公司信息
      */
     getCompanyInfo() {
+      this.loading = true
       visitingCardQueryByUserIdAPI({ userId: this.userInfo.userId }).then(res => {
         if (res.data) {
           this.info = res.data
@@ -150,16 +170,22 @@ export default {
             realname: '未知'
           }
         }
-      }).catch(() => {})
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
      * 获取二维码
      */
     getRD() {
+      this.loading = true
       wechatQueryAPI({ type: 2 }).then(res => {
         this.EWurl = res.data.weixinImg
+        this.loading = false
       }).catch(() => {
+        this.loading = false
       })
     },
 
@@ -195,13 +221,38 @@ export default {
       link.download = '海报.png'
       link.href = document.getElementById('myCanvas').toDataURL('image/png')
       link.click()
+    },
+    /** 图片地址转blob */
+    imgtoblob(url, fn = () => {}) {
+      const xhr = new XMLHttpRequest()
+      xhr.open('get', url, true)
+      xhr.responseType = 'blob'
+      xhr.onload = function() {
+        fn(this.status == 200 ? this.response : false)
+      }
+      xhr.send()
+    },
+    /** 选择图片 */
+    selectImg(url) {
+      var type = url.split('.').slice(-1)
+      var name = url.split('/').slice(-1)
+      this.imgtoblob(url, (data) => {
+        const files = new File([data], name, { type: `image/${type}` })
+        this.upLoad({ file: files })
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scope>
+.poster {
+  height: 100%;
+}
 .poster-box {
+  overflow: auto;
+  width: 100%;
+  height: 100%;
     .poster-content {
         margin-top: 0;
         flex: 1;
@@ -232,7 +283,18 @@ export default {
         }
     }
 }
-
+.post-list--box {
+  flex-shrink: 0;
+  width: 500px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.content-cross-list {
+  width: 150px;
+  height: 116.25px;
+  margin: 10px 10px 10px 0px;
+  border-radius: 6px;
+}
 .preview-image {
   margin: 20px 0 0 15px;
   #myCanvas {
@@ -273,5 +335,10 @@ export default {
     width: 300px;
     height: 325px;
     display: block;
+}
+.post-select--text {
+     color: #333;
+     font-size: 12px;
+     margin: 20px 0 10px 0px;
 }
 </style>

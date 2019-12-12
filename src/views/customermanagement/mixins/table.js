@@ -185,6 +185,7 @@ export default {
           { prop: 'weixinImg', label: '头像', width: '115px' },
           { prop: 'mobile', label: '手机号', width: '115px' },
           { prop: 'ownerUserName', label: '负责人', width: '115px' },
+          { prop: 'createTime', label: '创建时间', width: '115px' },
           { prop: 'isTransform', label: '是否转化' }
         ]
         this.getList()
