@@ -13,6 +13,7 @@
       <label class="label-title">权限名称</label>
       <el-input
         v-model="roleName"
+        :maxlength="100"
         placeholder="请输入权限名称"/>
     </div>
     <div class="label-input">
@@ -20,6 +21,7 @@
       <el-input
         v-model="remark"
         :rows="2"
+        :maxlength="300"
         type="textarea"
         placeholder="请输入权限描述"/>
     </div>

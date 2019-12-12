@@ -376,6 +376,7 @@
           <el-input
             v-else
             v-model="formInline[item.field]"
+            :maxlength="100"
             :disabled="dialogTitle == '编辑员工' && item.field == 'username'" />
         </el-form-item>
       </el-form>
