@@ -184,12 +184,14 @@ export default {
       this.type = 1
       var imgObj = urltoImage(url)
       var canvasObj = imagetoCanvas(imgObj)
-      var name = url.split('.').slice(-1)
-      var dataUrl = canvasToDataURL(canvasObj, `image/${name}`)
+      var type = url.split('.').slice(-1)
+      var name = url.split('/').slice(-1)
+      var dataUrl = canvasToDataURL(canvasObj, `image/${type}`)
       var Blob = dataURLtoBlob(dataUrl)
+      const file = new File([Blob], name, { type: `image/${type}` })
       var even = {
         target: {
-          files: [Blob]
+          files: [file]
         }
       }
       this.upLoad(even)
