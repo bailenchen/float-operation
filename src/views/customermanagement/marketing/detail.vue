@@ -178,16 +178,9 @@ export default {
           value: data.crmType == 2 ? '客户' : '线索'
         },
         {
-          name: '关联人员',
+          name: '参与人员',
           formType: 'text',
           value: data.relationUserInfo ? data.relationUserInfo.map(item => {
-            return item.realname
-          }).join('，') : ''
-        },
-        {
-          name: '管理员',
-          formType: 'text',
-          value: data.ownerUserInfo ? data.ownerUserInfo.map(item => {
             return item.realname
           }).join('，') : ''
         },
@@ -197,9 +190,9 @@ export default {
           value: data.address
         },
         {
-          name: '备注',
+          name: '活动简介',
           formType: 'text',
-          value: data.remark
+          value: data.synopsis
         },
         {
           name: '状态',

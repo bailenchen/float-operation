@@ -220,25 +220,25 @@ export default {
         })
           .then(res => {
             const baseList = []
-          const systemList = []
-          res.data.forEach(item => {
-            if (item.sysInformation == 1) {
-              systemList.push(item)
-            } else {
-              baseList.push(item)
-            }
-          })
+            const systemList = []
+            res.data.forEach(item => {
+              if (item.sysInformation == 1) {
+                systemList.push(item)
+              } else {
+                baseList.push(item)
+              }
+            })
 
-          this.list = [
-            {
-              name: '基本信息',
-              list: baseList
-            },
-            {
-              name: '系统信息',
-              list: systemList
-            }
-          ]
+            this.list = [
+              {
+                name: '基本信息',
+                list: baseList
+              },
+              {
+                name: '系统信息',
+                list: systemList
+              }
+            ]
             this.loading = false
           })
           .catch(() => {

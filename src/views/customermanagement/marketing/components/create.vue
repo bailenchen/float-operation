@@ -57,6 +57,11 @@
             v-model="onlyOne"
             class="only-check">每个用户只能填写一次</el-checkbox>
         </create-sections>
+        <create-sections title="活动图片">
+          <detail-img
+            :detail="imageData"
+            @change="detailImgChange" />
+        </create-sections>
         <create-sections title="字段信息">
           <field-manager
             :crm-type="fieldcrmType"
@@ -87,6 +92,7 @@ import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import FieldManager from './fieldManager'
 import marketing from './marketing'
+import DetailImg from './detailImg'
 
 import {
   XhInput,
@@ -108,7 +114,8 @@ export default {
     XhDate,
     XhDateTime,
     XhUserCell,
-    FieldManager
+    FieldManager,
+    DetailImg
   },
 
   filters: {
@@ -210,6 +217,11 @@ export default {
       },
       // 只能填写一次
       onlyOne: false, // 0 不限制 1 只能填写一次
+      // 图片信息
+      imageData: {
+        mainFile: null,
+        detailFile: null
+      },
       // 展示的数组
       fieldData: null,
       showFieldList: []
@@ -235,6 +247,11 @@ export default {
       }
 
       this.onlyOne = this.action.detail.second == 1
+
+      this.imageData = {
+        mainFile: this.action.detail.mainFile,
+        detailFile: this.action.detail.detailFileList && this.action.detail.detailFileList.length > 0 ? this.action.detail.detailFileList[0] : null
+      }
 
       this.getFieldConfigIndex()
     } else {
@@ -335,7 +352,7 @@ export default {
         },
         {
           field: 'relationUserId',
-          name: '关联人员',
+          name: '参与人员',
           formType: 'user',
           radio: false,
           inputTips: '',
@@ -362,20 +379,9 @@ export default {
           width: ''
         },
         {
-          field: 'ownerUserId',
-          name: '管理员',
-          formType: 'user',
-          radio: false,
-          inputTips: '',
-          setting: [],
-          value: detailData ? detailData.ownerUserInfo || [] : [],
-          width: ''
-        },
-        {
           field: 'browse',
           name: '浏览数',
           formType: 'number',
-          radio: false,
           inputTips: '',
           setting: [],
           value: detailData ? detailData.browse || '' : '',
@@ -385,7 +391,6 @@ export default {
           field: 'submitNum',
           name: '提交数',
           formType: 'number',
-          radio: false,
           inputTips: '',
           setting: [],
           value: detailData ? detailData.submitNum || '' : '',
@@ -401,12 +406,12 @@ export default {
           width: ''
         },
         {
-          field: 'remark',
-          name: '备注',
+          field: 'synopsis',
+          name: '活动简介',
           formType: 'textarea',
           inputTips: '',
           setting: [],
-          value: detailData ? detailData.remark : '',
+          value: detailData ? detailData.synopsis : '',
           width: ''
         }
       ]
@@ -422,6 +427,13 @@ export default {
       } else if (item.field == 'crmType') {
         this.getFieldConfigIndex()
       }
+    },
+
+    /**
+     * 修改图片
+     */
+    detailImgChange(data) {
+
     },
 
     /**

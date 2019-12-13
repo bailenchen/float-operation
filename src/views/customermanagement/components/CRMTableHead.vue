@@ -43,7 +43,7 @@
         :crm-type="crmType"
         :is-seas="isSeas"
         @filter="handleFilter" />
-      <slot name="custom"/>
+      <slot/>
     </flexbox>
     <flexbox
       v-if="selectionList.length > 0"

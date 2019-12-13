@@ -19,7 +19,7 @@
         :crm-type="crmType"
         @filter="handleFilter"
         @handle="handleHandle">
-        <div slot="custom">
+        <div>
           关联对象：<el-select
             v-model="marketingCrmType"
             class="type-select"
