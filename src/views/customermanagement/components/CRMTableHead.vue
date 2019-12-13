@@ -390,9 +390,9 @@ export default {
         } else if (type == 'disable') {
           message = '确定要下架这些产品吗?'
         } else if (type == 'state_start') {
-          message = '确定要启用这些推广吗?'
+          message = '确定要启用这些活动吗?'
         } else if (type == 'state_disable') {
-          message = '确定要停用这些推广吗?'
+          message = '确定要停用这些活动吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
         }
@@ -768,7 +768,7 @@ export default {
         // 客户状态修改
         return this.crm[this.crmType].dealStatus
       } else if (type == 'state_start' || type == 'state_disable') {
-        // 推广停用/启用
+        // 活动停用/启用
         return this.crm[this.crmType].updateStatus
       }
 

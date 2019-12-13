@@ -2,7 +2,7 @@
   <div class="b-cont">
     <sections
       class="b-cells"
-      title="推广信息"
+      title="活动信息"
       content-height="auto">
       <flexbox class="info-card-container">
         <flexbox
@@ -66,7 +66,7 @@ import Clipboard from 'clipboard'
 import QRCode from 'qrcodejs2'
 
 export default {
-  /** 推广管理 的 概览*/
+  /** 活动管理 的 概览*/
   name: 'Overview',
   components: {
     Sections
@@ -171,7 +171,7 @@ export default {
   padding: 15px;
 }
 
-// 推广信息
+// 活动信息
 .info-card-container {
   padding: 0 20px;
   margin: 10px 0;

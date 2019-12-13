@@ -179,7 +179,7 @@ export default {
           business: '商机',
           contract: '合同',
           receivables: '回款',
-          marketing: '推广'
+          marketing: '活动'
         }[this.crmType] || ''
       )
     },
@@ -306,9 +306,9 @@ export default {
         } else if (type == 'disable') {
           message = '确定要下架该产品吗?'
         } else if (type == 'state_start') {
-          message = '确定要启用该推广吗?'
+          message = '确定要启用该活动吗?'
         } else if (type == 'state_disable') {
-          message = '确定要停用该推广吗?'
+          message = '确定要停用该活动吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
         } else if (type == 'cancel') {
@@ -639,7 +639,7 @@ export default {
         }
         return false
       } else if (type == 'state_start' || type == 'state_disable') {
-        // 推广停用/启用
+        // 活动停用/启用
         return this.crm[this.crmType].updateStatus
       }
 

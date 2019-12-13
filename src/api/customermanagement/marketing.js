@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 /**
- * 推广列表
+ * 活动列表
  * @param {*} data
  */
 export function crmMarketingIndexAPI(data) {
@@ -13,7 +13,7 @@ export function crmMarketingIndexAPI(data) {
 }
 
 /**
- * 推广创建
+ * 活动创建
  * @param {*} data
  */
 export function crmMarketingSaveAPI(data) {
@@ -25,7 +25,7 @@ export function crmMarketingSaveAPI(data) {
 }
 
 /**
- * 推广编辑
+ * 活动编辑
  * @param {*} data
  */
 export function crmMarketingUpdateAPI(data) {
@@ -37,7 +37,7 @@ export function crmMarketingUpdateAPI(data) {
 }
 
 /**
- * 推广删除
+ * 活动删除
  * @param {*} data
  */
 export function crmMarketingDeleteAPI(data) {
@@ -49,7 +49,7 @@ export function crmMarketingDeleteAPI(data) {
 }
 
 /**
- * 推广详情
+ * 活动详情
  * @param {*} data
  */
 export function crmMarketingReadAPI(data) {
@@ -61,7 +61,7 @@ export function crmMarketingReadAPI(data) {
 }
 
 /**
- * 推广统计
+ * 活动统计
  * @param {*} data
  */
 export function crmMarketingCensusAPI(data) {
@@ -73,7 +73,7 @@ export function crmMarketingCensusAPI(data) {
 }
 
 /**
- * 推广启用/禁用
+ * 活动启用/禁用
  * @param {*} data
  */
 export function crmMarketingIsEnableAPI(data) {

@@ -4,9 +4,9 @@
       :create-fun="createClick"
       :search.sync="search"
       :crm-type="crmType"
-      title="推广管理"
-      placeholder="请输入推广名称"
-      main-title="新建推广"
+      title="市场活动管理"
+      placeholder="请输入活动名称"
+      main-title="新建活动"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"/>
     <div
@@ -93,7 +93,7 @@ import Detail from './detail'
 import table from '../mixins/table'
 
 export default {
-  /** 客户管理 的 推广列表 */
+  /** 客户管理 的 活动列表 */
   name: 'Index',
 
   components: {
@@ -117,7 +117,7 @@ export default {
     this.fieldList = [
       {
         prop: 'marketingName',
-        label: '推广名称',
+        label: '活动名称',
         width: '150'
       },
       {

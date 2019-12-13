@@ -70,7 +70,7 @@ import DetailImg from './components/detailImg'
 import detail from '../mixins/detail'
 
 export default {
-  /** 客户管理 的 推广详情 */
+  /** 客户管理 的 活动详情 */
   name: 'Detail',
 
   components: {
@@ -168,7 +168,7 @@ export default {
     getBaseList(data) {
       this.baseDetailList = [
         {
-          name: '推广名称',
+          name: '活动名称',
           formType: 'text',
           value: data.marketingName
         },

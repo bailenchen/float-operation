@@ -149,10 +149,10 @@ export default [
       permissions: ['crm', 'marketing']
     }),
     children: [{
-      path: 'marketing', // 推广列表
+      path: 'marketing', // 活动列表
       component: () => import('@/views/customermanagement/marketing/index'),
       meta: {
-        title: '推广',
+        title: '市场活动',
         icon: 'airplane'
       }
     }]

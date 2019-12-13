@@ -126,7 +126,7 @@ export default {
         params.sceneId = this.sceneId
       }
 
-      // 推广关联对象
+      // 活动关联对象
       if (this.marketingCrmType) {
         params.crmType = this.marketingCrmType
       }

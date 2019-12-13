@@ -85,7 +85,7 @@ import Sections from '../../components/Sections'
 import marketing from './marketing'
 
 export default {
-  /** 推广管理 的 统计*/
+  /** 活动管理 的 统计*/
   name: 'Statistics',
   components: {
     Sections

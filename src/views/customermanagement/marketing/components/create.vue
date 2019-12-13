@@ -317,7 +317,7 @@ export default {
       return [
         {
           field: 'marketingName',
-          name: '推广名称',
+          name: '活动名称',
           formType: 'text',
           inputTips: '',
           setting: [],
@@ -510,7 +510,7 @@ export default {
 
     // 根据类型获取标题展示名称
     getTitle() {
-      return this.action.type == 'update' ? '编辑推广' : '新建推广'
+      return this.action.type == 'update' ? '编辑活动' : '新建活动'
     },
 
     // 获取左边padding
