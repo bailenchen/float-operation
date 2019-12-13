@@ -545,6 +545,26 @@ export function imagetoCanvas(image) {
   ctx.drawImage(image, 0, 0, cvs.width, cvs.height)
   return cvs
 }
+
 export function canvasToDataURL(canvas, format, quality) {
   return canvas.toDataURL(format || 'image/jpeg', quality || 1.0)
+}
+
+/**
+ * file Path to blob
+ */
+export function filePathToBlob(filePath) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('get', filePath, true)
+    xhr.responseType = 'blob'
+    xhr.onload = function() {
+      if (this.status == 200) {
+        resolve(this.response)
+      } else {
+        reject()
+      }
+    }
+    xhr.send()
+  })
 }

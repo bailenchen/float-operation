@@ -20,7 +20,9 @@
         <el-table
           v-if="showTable"
           :data="list"
+          :summary-method="getSummaries"
           height="400"
+          show-summary
           stripe
           border
           highlight-current-row
@@ -42,6 +44,7 @@
 <script type="text/javascript">
 import base from '../../mixins/base'
 import sortMixins from '../../mixins/sort'
+import summaryMixins from '../../mixins/summary'
 import echarts from 'echarts'
 import {
   biCustomerUserCycleAPI,
@@ -53,7 +56,7 @@ import {
 export default {
   name: 'CycleView',
   components: {},
-  mixins: [base, sortMixins],
+  mixins: [base, sortMixins, summaryMixins],
   props: {
     type: {
       required: true,
@@ -70,7 +73,7 @@ export default {
       loading: false,
       axisOption: null,
 
-      postParams: {},
+      postParams: null,
       list: [],
       fieldList: [],
       initView: false // 默认没有初始化
@@ -96,9 +99,11 @@ export default {
     show: function(value) {
       if (value && !this.initView) {
         this.initView = true
+        if (this.postParams) {
+          this.getDataList(this.postParams)
+        }
         this.$nextTick(() => {
           this.initAxis()
-          this.getDataList(this.postParams)
         })
       }
     }
@@ -125,10 +130,12 @@ export default {
       request(params)
         .then(res => {
           this.loading = false
+          const data = res.data || {}
           if (this.type != 'customer') {
-            this.list = res.data
+            this.list = data.list || []
+            this.getSummariesData(data.total)
           }
-          const axisList = res.data
+          const axisList = data.list || []
           const cycleData = []
           const dealData = []
           const xAxis = []
@@ -156,8 +163,9 @@ export default {
         employeeCycleInfo(params)
           .then(res => {
             this.loading = false
-
-            this.list = res.data
+            const data = res.data || {}
+            this.list = data.list || []
+            this.getSummariesData(data.total)
           })
           .catch(() => {
             this.loading = false

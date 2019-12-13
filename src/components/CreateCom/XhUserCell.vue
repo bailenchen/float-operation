@@ -145,7 +145,7 @@ export default {
     background-color: #F3F7FF;
     border-radius: $xr-border-radius-base;
     margin: 3px;
-    max-width: 60px;
+    max-width: 80px;
     position: relative;
     cursor: pointer;
   }

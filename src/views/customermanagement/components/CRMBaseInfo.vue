@@ -2,8 +2,10 @@
   <div class="b-cont">
     <div>
       <sections
+        v-for="(mainItem, mainIndex) in list"
+        :key="mainIndex"
+        :title="mainItem.name"
         class="b-cells"
-        title="基本信息"
         content-height="auto">
         <flexbox
           :gutter="0"
@@ -11,7 +13,7 @@
           wrap="wrap"
           style="padding: 10px 8px 0;">
           <flexbox-item
-            v-for="(item, index) in list"
+            v-for="(item, index) in mainItem.list"
             :span="getShowBlock(item.formType) ? 12 : 0.5"
             :key="index"
             :class="{'b-cell': item.formType !== 'map_address'}">
@@ -89,6 +91,14 @@
             </flexbox>
 
             <flexbox
+              v-else-if="item.formType === 'check_status'"
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div class="b-cell-value">{{ getStatusName(item.value) }}</div>
+            </flexbox>
+
+            <flexbox
               v-else
               align="stretch"
               class="b-cell-b">
@@ -116,6 +126,8 @@ import { filedGetInformation } from '@/api/customermanagement/common'
 import MapView from '@/components/MapView' // 地图详情
 import FileListView from '@/components/FileListView'
 import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
+
 export default {
   // 客户管理 的 基本信息
   name: 'CRMBaseInfo',
@@ -140,7 +152,7 @@ export default {
         .join('，')
     }
   },
-  mixins: [loading],
+  mixins: [loading, CheckStatusMixin],
   props: {
     // 模块ID
     id: [String, Number],
@@ -207,7 +219,26 @@ export default {
           id: this.id
         })
           .then(res => {
-            this.list = res.data
+            const baseList = []
+          const systemList = []
+          res.data.forEach(item => {
+            if (item.sysInformation == 1) {
+              systemList.push(item)
+            } else {
+              baseList.push(item)
+            }
+          })
+
+          this.list = [
+            {
+              name: '基本信息',
+              list: baseList
+            },
+            {
+              name: '系统信息',
+              list: systemList
+            }
+          ]
             this.loading = false
           })
           .catch(() => {

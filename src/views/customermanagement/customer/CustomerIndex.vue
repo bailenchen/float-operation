@@ -89,11 +89,10 @@
               <i :class="scope.row[item.prop] | dealIcon"/>
               <span>{{ scope.row[item.prop] | dealName }}</span>
             </template>
-            <template v-else-if="item.prop == 'poolDay'">
-              <div v-if="scope.row.status == 1">{{ scope.row.poolDay }}</div>
+            <template v-else-if="item.prop == 'status'">
               <i
-                v-else
-                class="wukong wukong-lock customer-lock"/>
+                v-if="scope.row.status == 2"
+                class="wk wk-circle-password customer-lock"/>
             </template>
             <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
           </template>
@@ -136,7 +135,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
 import table from '../mixins/table'
@@ -163,9 +161,7 @@ export default {
       crmType: 'customer'
     }
   },
-  computed: {
-    ...mapGetters(['CRMConfig'])
-  },
+  computed: {},
   mounted() {},
   methods: {
     relativeBusinessClick(data) {

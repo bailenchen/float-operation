@@ -34,6 +34,7 @@
         type="datetime"
         placeholder="选择下次联系时间"
         value-format="yyyy-MM-dd HH:mm:ss" />
+      <common-words @select="commonWordsSelect" />
     </div>
     <div :class="['i-cont', { 'unfold': !isUnfold }]">
       <i
@@ -131,10 +132,12 @@
 <script>
 import { crmFileSave, crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
 
+
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import AddImageList from '@/components/quickAdd/AddImageList'
 import AddFileList from '@/components/quickAdd/AddFileList'
 import AddRelateList from '@/components/quickAdd/AddRelateList'
+import CommonWords from '@/components/common-words'
 
 import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
 
@@ -145,7 +148,8 @@ export default {
     CrmRelative,
     AddImageList,
     AddFileList,
-    AddRelateList
+    AddRelateList,
+    CommonWords
   },
   props: {
     // 展示相关商机关联
@@ -248,6 +252,28 @@ export default {
       this.showRelativeType = ''
       this.batchId = guid()
       this.getDefalutFollowType()
+    },
+
+    /**
+     * 常用语选择
+     */
+    commonWordsSelect(data) {
+      if (this.content) {
+        this.$confirm('您选中的常用语将覆盖当前填写内容?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          customClass: 'is-particulars'
+        })
+          .then(() => {
+            this.content = data
+          })
+          .catch(() => {
+            this.$message.info('已取消操作')
+          })
+      } else {
+        this.content = data
+      }
     },
 
     /**
@@ -441,12 +467,13 @@ export default {
 
   &-select {
     .el-select {
-      width: 150px;
+      width: 110px;
       margin-right: 8px;
     }
 
     .el-date-editor {
       width: 200px;
+      margin-right: 8px;
     }
   }
 

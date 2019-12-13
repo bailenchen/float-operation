@@ -16,7 +16,9 @@
         <el-table
           v-if="showTable"
           :data="list"
+          :summary-method="getSummaries"
           height="400"
+          show-summary
           stripe
           border
           highlight-current-row
@@ -39,6 +41,7 @@
 <script>
 import base from '../mixins/base'
 import sortMixins from '../mixins/sort'
+import summaryMixins from '../mixins/summary'
 import echarts from 'echarts'
 import {
   biCustomerRecordTimesAPI,
@@ -48,7 +51,7 @@ import {
 export default {
   /** 客户跟进次数分析 */
   name: 'CustomerRecordStatistics',
-  mixins: [base, sortMixins],
+  mixins: [base, sortMixins, summaryMixins],
   data() {
     return {
       loading: false,
@@ -124,7 +127,9 @@ export default {
       biCustomerRecordListAPI(params)
         .then(res => {
           this.loading = false
-          this.list = res.data
+          const data = res.data || {}
+          this.list = data.list || []
+          this.getSummariesData(data.total)
         })
         .catch(() => {
           this.loading = false

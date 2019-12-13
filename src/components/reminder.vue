@@ -6,9 +6,8 @@
       <i class="wk wk-warning reminder-icon"/>
       <div
         :style="{'font-size': fontSize + 'px'}"
-        class="reminder-content">
-        {{ content }}
-      </div>
+        class="reminder-content"
+        v-html="content"/>
     </flexbox>
   </flexbox>
 </template>
@@ -43,7 +42,6 @@ export default {
   .reminder-body {
     width: auto;
     padding: 0 8px;
-    height: 28px;
     line-height: 28px;
     border-radius: $xr-border-radius-base;
     background-color: #FFF6E7;
@@ -55,6 +53,7 @@ export default {
 
     .reminder-content {
       color: #666666;
+      word-wrap:break-word;
     }
   }
 }

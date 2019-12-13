@@ -10,8 +10,9 @@
           class="project-reminder"
           content="为不同场景下的项目成员所需的权限设置匹配的项目、任务列表、任务的操作权限"/>
         <el-button
-          class="main-table-header-button"
+          class="main-table-header-button xr-btn--orange"
           type="primary"
+          icon="el-icon-plus"
           @click="addJurisdiction">新建权限</el-button>
       </div>
       <el-table

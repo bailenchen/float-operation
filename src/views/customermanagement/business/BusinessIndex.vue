@@ -7,7 +7,8 @@
       placeholder="请输入商机名称"
       main-title="新建商机"
       @on-handle="listHeadHandle"
-      @on-search="crmSearch"/>
+      @on-search="crmSearch"
+      @on-export="exportInfos"/>
     <div
       v-empty="!crm.business.index"
       xs-empty-icon="nopermission"

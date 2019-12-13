@@ -37,9 +37,9 @@
             style="padding: 8px 22px;border-radius:2px;"
             @click="handlePreview">预览</el-button>
           <el-button
+            v-debounce="handleSave"
             type="primary"
-            style="padding: 8px 22px;border-radius:2px;"
-            @click="handleSave">保存</el-button>
+            style="padding: 8px 22px;border-radius:2px;">保存</el-button>
           <el-button
             style="padding: 8px 22px;border-radius:2px;"
             @click="handleCancel">返回</el-button>
@@ -243,6 +243,7 @@ export default {
             }
             element.isNull = element.isNull == 1
             element.isUnique = element.isUnique == 1
+            element.isHidden = element.isHidden == 1 // 隐藏字段
           }
           this.fieldArr = res.data
           if (res.data.length > 0) {
@@ -301,6 +302,7 @@ export default {
 
         item.isNull = item.isNull == true ? 1 : 0
         item.isUnique = item.isUnique == true ? 1 : 0
+        item.isHidden = item.isHidden == true ? 1 : 0
         if (!item.name) {
           save = false
           this.$message({
@@ -325,6 +327,7 @@ export default {
       }
 
       if (save) {
+        this.loading = true
         var params = {}
         params.data = tempFieldArr
         params.label = this.$route.params.label
@@ -347,9 +350,11 @@ export default {
               type: 'success',
               message: '操作成功'
             })
+            this.loading = false
             this.getCustomInfo()
           })
           .catch(() => {
+            this.loading = false
             this.getCustomInfo()
           })
       }
