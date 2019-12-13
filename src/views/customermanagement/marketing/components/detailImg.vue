@@ -158,10 +158,10 @@ export default {
      * 处理选择的图片
      */
     selectImg(url) {
-      filePathToBlob(url).then(data => {
+      filePathToBlob(url).then(blob => {
         var type = url.split('.').slice(-1) || 'png'
         var name = url.split('/').slice(-1)
-        const file = new File([Blob], name, { type: `image/${type}` })
+        const file = new File([blob], name, { type: `image/${type}` })
         var even = {
           target: {
             files: [file]
@@ -232,9 +232,9 @@ export default {
     player(path, type) {
       let name = ''
       if (type === 1) {
-        name = 'primary.jpg'
+        name = '活动主图.jpg'
       } else {
-        name = 'detail.jpg'
+        name = '详情图片.jpg'
       }
       this.$bus.emit('preview-image-bus', {
         index: 0,

@@ -33,7 +33,7 @@
                   <div
                     slot="label"
                     style="display: inline-block;">
-                    <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
+                    <div class="form-label">
                       {{ item.name }}
                       <span style="color:#999;">
                         {{ item.inputTips ? '（'+item.inputTips+'）':'' }}
@@ -216,7 +216,7 @@ export default {
         remark: ''
       },
       // 只能填写一次
-      onlyOne: false, // 0 不限制 1 只能填写一次
+      onlyOne: true, // 0 不限制 1 只能填写一次
       // 图片信息
       imageData: {
         mainFile: null,
@@ -527,12 +527,12 @@ export default {
 
     // 获取左边padding
     getPaddingLeft(item, index) {
-      return index % 2 == 0 ? '0' : '25px'
+      return index % 2 == 0 ? '0' : '40px'
     },
 
     // 获取左边padding
     getPaddingRight(item, index) {
-      return index % 2 == 0 ? '25px' : '0'
+      return index % 2 == 0 ? '40px' : '0'
     }
   }
 }
@@ -618,6 +618,13 @@ export default {
   position: absolute;
   left: 0;
   top: 5px;
+}
+
+.form-label {
+  margin: 5px 0;
+  font-size: 13px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .handle-bar {
