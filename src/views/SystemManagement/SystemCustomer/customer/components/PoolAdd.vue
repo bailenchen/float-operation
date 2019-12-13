@@ -659,7 +659,7 @@ export default {
   font-size: 13px;
   color: #333;
   &-label {
-    width: 100px;
+    width: 120px;
     margin-top: 10px;
     flex-shrink: 0;
   }
@@ -682,7 +682,7 @@ export default {
 }
 
 .recycle-rule {
-  padding-left: 135px;
+  padding-left: 155px;
   margin-top: 20px;
 }
 
