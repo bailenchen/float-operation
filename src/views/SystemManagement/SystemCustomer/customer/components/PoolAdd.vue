@@ -305,7 +305,7 @@ export default {
         putInRule: data.putInRule // 收回规则 0不自动收回 1自动收回
       }
 
-      this.recycleRuleData = data.rule
+      this.recycleRuleData = this.getEditRule(data.rule)
       this.getCustomerPoolFields(data.field.filter(item => {
         return item.isHidden === 1
       })).then(editFields => {
@@ -313,26 +313,8 @@ export default {
       })
     },
 
-    /**
-     * 新建操作
-     */
-    getCreateInfo() {
-      this.baseFrom = {
-        poolName: '',
-        adminUsers: [],
-        memberUsers: {
-          users: [],
-          strucs: []
-        },
-        preOwnerSetting: 0, // 前负责人领取规则 0不限制 1限制
-        preOwnerSettingDay: '',
-        receiveSetting: 0, // 0 不启用 1 启用
-        receiveNum: '', // 领取频率规则
-        remindDay: '', // 提醒规则天数
-        putInRule: 1 // 收回规则 0不自动收回 1自动收回
-      }
-
-      this.recycleRuleData = [
+    getEditRule(detailRule) {
+      const baseRule = [
         {
           type: '',
           dealHandle: 1,
@@ -356,22 +338,42 @@ export default {
         }
       ]
 
+      if (detailRule) {
+        for (let index = 0; index < detailRule.length; index++) {
+          const element = detailRule[index]
+          baseRule.splice(element.type - 1, 1, element)
+        }
+      }
+
+      return baseRule
+    },
+
+    /**
+     * 新建操作
+     */
+    getCreateInfo() {
+      this.baseFrom = {
+        poolName: '',
+        adminUsers: [],
+        memberUsers: {
+          users: [],
+          strucs: []
+        },
+        preOwnerSetting: 0, // 前负责人领取规则 0不限制 1限制
+        preOwnerSettingDay: '',
+        receiveSetting: 0, // 0 不启用 1 启用
+        receiveNum: '', // 领取频率规则
+        remindDay: '', // 提醒规则天数
+        putInRule: 1 // 收回规则 0不自动收回 1自动收回
+      }
+
+      this.recycleRuleData = this.getEditRule()
+
       this.getCustomerPoolFields().then(createFields => {
         this.customerPoolFields = createFields
       })
     },
 
-
-    /**
-     * 员工选择
-     */
-    userChange(data) {
-      this.baseFrom.adminUsers = data.value
-    },
-
-    strcUserChange(data) {
-      this.baseFrom.memberUsers = data.value
-    },
 
     /**
      * 获取公海默认字段
@@ -418,6 +420,18 @@ export default {
       }
 
       return list
+    },
+
+
+    /**
+     * 员工选择
+     */
+    userChange(data) {
+      this.baseFrom.adminUsers = data.value
+    },
+
+    strcUserChange(data) {
+      this.baseFrom.memberUsers = data.value
     },
 
     /**
