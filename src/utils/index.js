@@ -530,3 +530,22 @@ export function getBaiduMap() {
     return global.BMap._preloader
   }
 }
+
+/**
+ * file Path to blob
+ */
+export function filePathToBlob(filePath) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('get', filePath, true)
+    xhr.responseType = 'blob'
+    xhr.onload = function() {
+      if (this.status == 200) {
+        resolve(this.response)
+      } else {
+        reject()
+      }
+    }
+    xhr.send()
+  })
+}
