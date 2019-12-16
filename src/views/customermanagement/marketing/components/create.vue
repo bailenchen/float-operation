@@ -192,11 +192,6 @@ export default {
           message: '不能为空',
           trigger: 'change'
         },
-        ownerUserId: {
-          required: true,
-          message: '不能为空',
-          trigger: 'change'
-        },
         remark: {
           required: true,
           message: '不能为空',
@@ -208,7 +203,6 @@ export default {
         crmType: 2, // 2 客户 1 线索
         relationUserId: [],
         endTime: '',
-        ownerUserId: [],
         fieldDataId: '',
         browse: '',
         submitNum: '',
@@ -220,8 +214,8 @@ export default {
       onlyOne: true, // 0 不限制 1 只能填写一次
       // 图片信息
       imageData: {
-        mainFile: null,
-        detailFile: null
+        mainFile: [],
+        detailFile: []
       },
       // 展示的数组
       fieldData: null,
@@ -249,11 +243,9 @@ export default {
 
       this.onlyOne = this.action.detail.second == 1
 
-      const mainFile = this.action.detail.mainFile
-      const detailFile = this.action.detail.detailFileList && this.action.detail.detailFileList.length > 0 ? this.action.detail.detailFileList[0] : null
       this.imageData = {
-        mainFile: mainFile ? { ...mainFile } : null,
-        detailFile: detailFile ? { ...detailFile } : null
+        mainFile: this.action.detail.mainFileList || [],
+        detailFile: this.action.detail.detailFileList || []
       }
 
       this.getFieldConfigIndex()
@@ -436,14 +428,18 @@ export default {
      * 修改图片
      */
     detailImgChange(type, data) {
-      this.imageData[type] = data
+      if (type === 'mainFile') {
+        this.imageData.mainFileList = data
+      } else if (type === 'detailFile') {
+        this.imageData.detailFileList = data
+      }
     },
 
-    deleteImg(type) {
+    deleteImg(type, data) {
       if (type === 'mainFile') {
-        this.action.detail.mainFile = null
+        this.action.detail.mainFileList = data
       } else if (type === 'detailFile') {
-        this.action.detail.detailFileList = null
+        this.action.detail.detailFileList = data
       }
     },
 
@@ -466,20 +462,20 @@ export default {
           params.relationUserId = this.dataForm.relationUserId.map(item => {
             return item.userId
           }).join(',')
-          params.ownerUserId = this.dataForm.ownerUserId.map(item => {
-            return item.userId
-          }).join(',')
           params.relationUserId = ',' + params.relationUserId + ','
           params.fieldDataId = ',' + params.fieldDataId + ','
-          params.ownerUserId = ',' + params.ownerUserId + ','
           params.browse = params.browse ? params.browse : 0
           params.submitNum = params.submitNum ? params.submitNum : 0
           params.endTime = params.endTime
           params.startTime = params.startTime
 
           // 活动图片
-          params.mainFileId = this.imageData.mainFile ? this.imageData.mainFile.fileId : ''
-          params.detailFileIds = this.imageData.detailFile ? this.imageData.detailFile.fileId : ''
+          params.mainFileIds = this.imageData.mainFile ? this.imageData.mainFile.map(item => {
+            return item.fileId
+          }).join(',') : ''
+          params.detailFileIds = this.imageData.detailFile ? this.imageData.detailFile.map(item => {
+            return item.fileId
+          }).join(',') : ''
           this.submiteParams(params)
         } else {
           return false

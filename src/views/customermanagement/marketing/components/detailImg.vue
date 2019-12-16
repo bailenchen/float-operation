@@ -3,37 +3,38 @@
     <div class="detail-box">
       <div class="detail-item">
         <label class="detail-label"><span class="label-start">*</span> 活动主图</label>
-        <div class="detail-upload">
-          <div v-if="!primaryUrl" class="content-cross" @click="upLoadImg(1)">
-            <input
-              ref="primaryImgInput"
-              accept="image/*"
-              type="file"
-              class="file-input"
-              @change="upLoad">
-            <el-button
-              type="text"
-              icon="el-icon-plus"
-              class="cross"/>
-          </div>
-          <div v-else class="detail-upload" @mouseleave="enterId = 0">
-            <img
-              v-src="primaryUrl"
-              :key="primaryUrl"
-              class="content-cross"
-              @mouseenter="enterId = 1">
-            <div
-              v-if="enterId === 1"
-              class="img-model"
-              @mouseleave="enterId = 0">
-              <i
-                class="el-icon-zoom-in set-img-zoom"
-                @click.stop="player(primaryUrl, 1)"/>
-              <i
-                class="el-icon-delete set-img-delete"
-                @click.stop="deleteImg(1)"/>
+
+        <div class="detail">
+          <flexbox class="detail-images">
+            <div v-for="(item, index) in primaryList" :key="index" class="show-img">
+              <img
+                v-src="item.filePath"
+                :key="item.filePath">
+              <div
+                class="img-model">
+                <i
+                  class="el-icon-zoom-in set-img-zoom"
+                  @click.stop="previewImage(primaryList, index)"/>
+                <i
+                  class="el-icon-delete set-img-delete"
+                  @click.stop="deleteImg('main', index)"/>
+              </div>
             </div>
-          </div>
+            <div class="content-cross" @click="upLoadImg('main')">
+              <input
+                ref="primaryImgInput"
+                accept="image/*"
+                type="file"
+                multiple
+                class="file-input"
+                @change="upLoad">
+              <el-button
+                type="text"
+                icon="el-icon-plus"
+                class="cross"/>
+            </div>
+          </flexbox>
+
           <div class="detail-tip">图片建议上传：290(宽) * 220(高) (应用于小图式)</div>
           <div class="detail-select--text">选择默认活动图片</div>
           <flexbox>
@@ -41,7 +42,6 @@
               v-for="(src, index) in srcList"
               :key="index"
               :src="src"
-              :class="index === 0 ? 'content-cross-list--one' : ''"
               class="content-cross-list"
               alt="加载失败" @click="selectImg(src)">
           </flexbox>
@@ -51,37 +51,37 @@
     <div class="detail-box">
       <div class="detail-item">
         <label class="detail-label"><span class="label-start">*</span> 详情图片</label>
-        <div class="detail-upload">
-          <div v-if="!detaiUrl" class="content-cross cross-two" @click="upLoadImg(2)">
-            <input
-              ref="detailImgInput"
-              accept="image/*"
-              type="file"
-              class="file-input"
-              @change="upLoad">
-            <el-button
-              type="text"
-              icon="el-icon-plus"
-              class="cross"/>
-          </div>
-          <div v-else class="detail-upload" @mouseleave="enterId = 0">
-            <img
-              v-src="detaiUrl"
-              :key="detaiUrl"
-              class="content-cross cross-two"
-              @mouseenter="enterId = 2">
-            <div
-              v-if="enterId === 2"
-              class="img-model cross-two--model"
-              @mouseleave="enterId = 0">
-              <i
-                class="el-icon-zoom-in set-img-zoom"
-                @click.stop="player(detaiUrl, 2)"/>
-              <i
-                class="el-icon-delete set-img-delete"
-                @click.stop="deleteImg(2)"/>
+        <div class="detail">
+          <flexbox class="detail-images">
+            <div v-for="(item, index) in detailList" :key="index" class="show-img">
+              <img
+                v-src="item.filePath"
+                :key="item.filePath"
+                class="cross-two">
+              <div
+                class="img-model cross-two--model">
+                <i
+                  class="el-icon-zoom-in set-img-zoom"
+                  @click.stop="previewImage(detailList, index)"/>
+                <i
+                  class="el-icon-delete set-img-delete"
+                  @click.stop="deleteImg('detail', index)"/>
+              </div>
             </div>
-          </div>
+            <div class="content-cross cross-two" @click="upLoadImg('detail')">
+              <input
+                ref="detailImgInput"
+                accept="image/*"
+                type="file"
+                multiple
+                class="file-input"
+                @change="upLoad">
+              <el-button
+                type="text"
+                icon="el-icon-plus"
+                class="cross"/>
+            </div>
+          </flexbox>
           <div class="detail-tip">图片建议上传：750(宽) * 600(高) (应用于大图式)</div>
         </div>
       </div>
@@ -107,13 +107,9 @@ export default {
   },
   data() {
     return {
-      enterId: -1,
-      primaryObj: null,
-      detailObj: null,
-      primaryUrl: '',
-      detaiUrl: '',
-      type: 1,
-      imgId: -1,
+      primaryList: [],
+      detailList: [],
+      type: 'main',
       srcList: [
         require('@/assets/activity/activity_one.jpg'),
         require('@/assets/activity/activity_two.jpg'),
@@ -129,11 +125,8 @@ export default {
     detail: {
       handler(data) {
         if (data) {
-          this.primaryObj = data.mainFile
-          this.primaryUrl = this.primaryObj ? this.primaryObj.filePath : ''
-
-          this.detailObj = data.detailFile
-          this.detaiUrl = this.detailObj ? this.detailObj.filePath : ''
+          this.primaryList = data.mainFile || []
+          this.detailList = data.detailFile || []
         }
       },
       immediate: true
@@ -142,9 +135,9 @@ export default {
   mounted() {
   },
   methods: {
-    upLoadImg(index) {
-      this.type = index
-      if (index === 1) {
+    upLoadImg(type) {
+      this.type = type
+      if (type === 'main') {
         this.$refs.primaryImgInput.click()
       } else {
         this.$refs.detailImgInput.click()
@@ -172,54 +165,58 @@ export default {
      * 上传
      */
     upLoad(event) {
-      this.loading = true
-      crmFileSave({ file: event.target.files[0] }).then(res => {
-        res.filePath = res.url
-        if (this.type === 1) {
-          this.primaryObj = res
-          this.primaryUrl = res.url
+      var files = event.target.files
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index]
+        this.loading = true
+        crmFileSave({ file: file }).then(res => {
+          res.filePath = res.url
+          if (this.type === 'main') {
+            this.primaryList.push(res)
+            this.loading = false
+            this.$emit('change', 'mainFile', this.primaryList)
+          } else {
+            this.detailList.push(res)
+            this.loading = false
+            this.$emit('change', 'detailFile', this.detailList)
+          }
+        }).catch(() => {
           this.loading = false
-          this.$emit('change', 'mainFile', this.primaryObj)
-        } else {
-          this.detaiObj = res
-          this.detaiUrl = res.url
-          this.loading = false
-          this.$emit('change', 'detailFile', this.detaiObj)
-        }
-      }).catch(() => {
-        this.loading = false
-      })
+        })
+      }
     },
 
     /**
      * 删除图片
      */
-    deleteImg(index) {
+    deleteImg(type, index) {
       const params = {}
-      if (index == 1) {
-        params.id = this.primaryObj.fileId
+      if (type == 'main') {
+        params.id = this.primaryList[index].fileId
       } else {
-        params.id = this.detailObj.fileId
+        params.id = this.detailList[index].fileId
       }
       this.$confirm('此操作将永久删除该图片, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.loading = true
         crmFileDelete(params).then(res => {
           this.$message.success('删除成功')
-          if (index == 1) {
-            this.primaryUrl = ''
-            this.primaryObj = null
-            this.$emit('change', 'mainFile', null)
-            this.$emit('delete', 'mainFile')
+          if (type == 'main') {
+            this.primaryList.splice(index, 1)
+            this.$emit('change', 'mainFile', this.primaryList)
+            this.$emit('delete', 'mainFile', this.primaryList)
           } else {
-            this.detaiUrl = ''
-            this.detailObj = null
-            this.$emit('change', 'detailFile', null)
-            this.$emit('delete', 'detailFile')
+            this.detailList.splice(index, 1)
+            this.$emit('change', 'detailFile', this.detailList)
+            this.$emit('delete', 'detailFile', this.detailList)
           }
-        }).catch(() => {})
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -231,20 +228,13 @@ export default {
     /**
      * 预览图片
      */
-    player(path, type) {
-      let name = ''
-      if (type === 1) {
-        name = '活动主图.jpg'
-      } else {
-        name = '详情图片.jpg'
-      }
+    previewImage(list, index) {
       this.$bus.emit('preview-image-bus', {
-        index: 0,
-        data: [{
-          url: path,
-          src: path,
-          name: name
-        }]
+        index: index,
+        data: list.map(item => {
+          item.url = item.filePath
+          return item
+        })
       })
     }
   }
@@ -276,24 +266,41 @@ export default {
     }
     .detail-upload {
         position: relative;
-        .close {
-            color: #C1C1C1;
-            position: absolute;
-            top: 0px;
-            right: 70px;
-        }
     }
     .detail-tip {
         color: #C1C1C1;
         font-size: 12px;
-        margin-left: 20px;
     }
     .detail-select--text {
         color: #333;
         font-size: 12px;
-        margin: 10px 0 10px 20px;
+        margin: 10px 0;
     }
-    .img-model {
+
+    // 详情
+    .detail {
+      padding: 0 20px;
+    }
+
+    // 图片详情
+    .detail-images {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .show-img {
+      position: relative;
+      margin-right: 20px;
+      flex-shrink: 0;
+      cursor: pointer;
+
+      img {
+        width: 195px;
+        height: 110px;
+        border-radius: $xr-border-radius-base;
+      }
+      .img-model {
+        visibility: hidden;
         position: absolute;
         z-index: 10;
         line-height: 108px;
@@ -302,8 +309,8 @@ export default {
         width: 193px;
         height: 108px;
         border-radius: 6px;
-        top: 1px;
-        left: 21px;
+        top: 0;
+        left: 0;
         .set-img-delete {
             font-size: 20px;
             color: white;
@@ -315,34 +322,43 @@ export default {
             padding-left: calc(50% - 30px);
             cursor: pointer;
         }
+      }
     }
+
+    .show-img:hover {
+      .img-model {
+        visibility: visible;
+      }
+    }
+
     .content-cross-list {
         width: 110.5px;
         height: 66;
-        margin: 10px;
+        margin: 10px 10px 10px 0;
         cursor: pointer;
         border-radius: 6px;
         border: 1px #c0ccda dashed;
     }
-    .content-cross-list--one {
-        margin-left: 20px;
-    }
+
     .content-cross {
+        flex-shrink: 0;
         width: 195px;
         height: 110px;
-        margin: 20px;
         display: flex;
         cursor: pointer;
         border-radius: 6px;
         position: relative;
         text-align: center;
         border: 1px #c0ccda dashed;
+        margin-bottom: 5px;
+
         .cross {
             color: #606266;
             font-size: 20px;
             margin-left: calc(50% - 10px);
         }
     }
+
     .cross-two {
         height: 157px;
     }
