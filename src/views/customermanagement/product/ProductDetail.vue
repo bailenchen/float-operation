@@ -42,24 +42,32 @@
                 :crm-type="crmType">
                 <sections
                   class="b-cells"
-                  title="产品图片"
+                  title="图片信息"
                   content-height="auto">
                   <div class="image">
-                    <div v-if="primaryUrl" class="image-info">
-                      <div class="image-info__label">产品主图</div>
-                      <img
-                        v-src="primaryUrl"
-                        :key="primaryUrl"
-                        class="main-img">
+                    <div v-if="mainFileList.length > 0" class="image-info">
+                      <div class="image-info__label">产品图片</div>
+                      <div class="image-info__list">
+                        <img
+                          v-src="item.filePath"
+                          v-for="(item, index) in mainFileList"
+                          :key="index"
+                          class="main-img"
+                          @click="previewImage(mainFileList, index)">
+                      </div>
                     </div>
-                    <div v-if="detaiUrl" class="image-info">
-                      <div class="image-info__label">详情图片</div>
-                      <img
-                        v-src="detaiUrl"
-                        :key="detaiUrl"
-                        class="detial-img">
+                    <div v-if="detailFileList.length > 0" class="image-info">
+                      <div class="image-info__label">产品详情图片</div>
+                      <div class="image-info__list">
+                        <img
+                          v-src="item.filePath"
+                          v-for="(item, index) in detailFileList"
+                          :key="index"
+                          class="detial-img"
+                          @click="previewImage(detailFileList, index)">
+                      </div>
                     </div>
-                    <div v-if="!detaiUrl && !primaryUrl" class="no-img">暂无图片</div>
+                    <div v-if="detailFileList.length == 0 && mainFileList.length == 0" class="no-img">暂无图片</div>
                   </div>
                 </sections>
               </c-r-m-base-info>
@@ -77,7 +85,7 @@
 
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId, editDetail: detailData}"
       :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -158,24 +166,23 @@ export default {
       return [
         { label: '详细资料', name: 'CRMBaseInfo' },
         { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
-        { label: '操作记录', name: 'RelativeHandle' },
-        { label: '产品图片详情', name: 'DetailImg' }
+        { label: '操作记录', name: 'RelativeHandle' }
       ]
     },
-    primaryUrl() {
-      if (this.detail && this.detail.mainFile) {
-        return this.detail.mainFile.filePath
+    mainFileList() {
+      if (this.detailData && this.detailData.mainFileList) {
+        return this.detailData.mainFileList
       }
 
-      return ''
+      return []
     },
 
-    detaiUrl() {
-      if (this.detail && this.detail.detailFileList && this.detail.detailFileList.length > 0) {
-        return this.detail.detailFileList[0].filePath
+    detailFileList() {
+      if (this.detailData && this.detailData.detailFileList && this.detailData.detailFileList.length > 0) {
+        return this.detailData.detailFileList
       }
 
-      return ''
+      return []
     }
   },
   mounted() {},
@@ -216,6 +223,19 @@ export default {
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
+    },
+
+    /**
+     * 预览图片
+     */
+    previewImage(list, index) {
+      this.$bus.emit('preview-image-bus', {
+        index: index,
+        data: list.map(item => {
+          item.url = item.filePath
+          return item
+        })
+      })
     }
   }
 }
@@ -231,19 +251,29 @@ export default {
       font-size: 13px;
     }
 
-    img {
-      margin-top: 15px;
-      border-radius: $xr-border-radius-base;
-    }
+    &__list {
+      overflow-x: auto;
+      white-space: nowrap;
 
-    .main-img {
-      width: 290px;
-      height: 220px;
-    }
+      img {
+        margin-top: 15px;
+        border-radius: $xr-border-radius-base;
+        cursor: pointer;
+      }
 
-    .detial-img {
-      width: 375px;
-      height: 300px;
+      img + img {
+        margin-left: 20px;
+      }
+
+      .main-img {
+        width: 100px;
+        height: 76px;
+      }
+
+      .detial-img {
+        width: 100px;
+        height: 80px;
+      }
     }
   }
 
