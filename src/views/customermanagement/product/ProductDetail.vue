@@ -34,7 +34,37 @@
               :label="item.label"
               :name="item.name"
               lazy>
+              <c-r-m-base-info
+                v-if="item.name === 'CRMBaseInfo'"
+                :is="item.name"
+                :detail="detailData"
+                :id="id"
+                :crm-type="crmType">
+                <sections
+                  class="b-cells"
+                  title="产品图片"
+                  content-height="auto">
+                  <div class="image">
+                    <div v-if="primaryUrl" class="image-info">
+                      <div class="image-info__label">产品主图</div>
+                      <img
+                        v-src="primaryUrl"
+                        :key="primaryUrl"
+                        class="main-img">
+                    </div>
+                    <div v-if="detaiUrl" class="image-info">
+                      <div class="image-info__label">详情图片</div>
+                      <img
+                        v-src="detaiUrl"
+                        :key="detaiUrl"
+                        class="detial-img">
+                    </div>
+                    <div v-if="!detaiUrl && !primaryUrl" class="no-img">暂无图片</div>
+                  </div>
+                </sections>
+              </c-r-m-base-info>
               <component
+                v-else
                 :is="item.name"
                 :detail="detailData"
                 :id="id"
@@ -64,8 +94,11 @@ import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
-import detail from '../mixins/detail'
 import DetailImg from './components/DetailImg'
+import Sections from '../components/Sections'
+
+import detail from '../mixins/detail'
+
 export default {
   // 客户管理 的 产品详情
   name: 'ProductDetail',
@@ -76,7 +109,8 @@ export default {
     CRMBaseInfo,
     RelativeFiles,
     RelativeHandle,
-    CRMCreateView
+    CRMCreateView,
+    Sections
   },
   mixins: [detail],
   props: {
@@ -127,6 +161,21 @@ export default {
         { label: '操作记录', name: 'RelativeHandle' },
         { label: '产品图片详情', name: 'DetailImg' }
       ]
+    },
+    primaryUrl() {
+      if (this.detail && this.detail.mainFile) {
+        return this.detail.mainFile.filePath
+      }
+
+      return ''
+    },
+
+    detaiUrl() {
+      if (this.detail && this.detail.detailFileList && this.detail.detailFileList.length > 0) {
+        return this.detail.detailFileList[0].filePath
+      }
+
+      return ''
     }
   },
   mounted() {},
@@ -173,5 +222,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.image {
+  color: #333;
+  &-info {
+    margin: 10px 25px 0;
+
+    &__label {
+      font-size: 13px;
+    }
+
+    img {
+      margin-top: 15px;
+      border-radius: $xr-border-radius-base;
+    }
+
+    .main-img {
+      width: 290px;
+      height: 220px;
+    }
+
+    .detial-img {
+      width: 375px;
+      height: 300px;
+    }
+  }
+
+  .no-img {
+    color: #666;
+    margin: 50px 0;
+    text-align: center;
+  }
+}
 @import '../styles/crmdetail.scss';
 </style>
