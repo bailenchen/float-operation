@@ -178,7 +178,7 @@ export default {
     },
 
     detailFileList() {
-      if (this.detailData && this.detailData.detailFileList && this.detailData.detailFileList.length > 0) {
+      if (this.detailData && this.detailData.detailFileList) {
         return this.detailData.detailFileList
       }
 
