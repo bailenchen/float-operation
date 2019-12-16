@@ -56,37 +56,6 @@
       </div>
 
     </sections>
-    <sections
-      class="b-cells"
-      title="活动图片"
-      content-height="auto">
-      <div class="image">
-        <div v-if="mainFileList.length > 0" class="image-info">
-          <div class="image-info__label">活动主图</div>
-          <div class="image-info__list">
-            <img
-              v-src="item.filePath"
-              v-for="(item, index) in mainFileList"
-              :key="index"
-              class="main-img"
-              @click="previewImage(mainFileList, index)">
-          </div>
-        </div>
-        <div v-if="detailFileList.length > 0" class="image-info">
-          <div class="image-info__label">详情图片</div>
-          <div class="image-info__list">
-            <img
-              v-src="item.filePath"
-              v-for="(item, index) in detailFileList"
-              :key="index"
-              class="detial-img"
-              @click="previewImage(detailFileList, index)">
-          </div>
-        </div>
-        <div v-if="detailFileList.length == 0 && mainFileList.length == 0" class="no-img">暂无图片</div>
-      </div>
-
-    </sections>
   </div>
 </template>
 
@@ -124,23 +93,7 @@ export default {
       qrcode: null
     }
   },
-  computed: {
-    mainFileList() {
-      if (this.detail && this.detail.mainFileList) {
-        return this.detail.mainFileList
-      }
-
-      return []
-    },
-
-    detailFileList() {
-      if (this.detail && this.detail.detailFileList && this.detail.detailFileList.length > 0) {
-        return this.detail.detailFileList
-      }
-
-      return []
-    }
-  },
+  computed: {},
   watch: {
     detail: function() {
       this.getDetail()
@@ -207,19 +160,6 @@ export default {
           this.$message.success('复制失败')
         })
       }
-    },
-
-    /**
-     * 预览图片
-     */
-    previewImage(list, index) {
-      this.$bus.emit('preview-image-bus', {
-        index: index,
-        data: list.map(item => {
-          item.url = item.filePath
-          return item
-        })
-      })
     }
   }
 }
@@ -313,47 +253,6 @@ export default {
 
   /deep/ img {
     width: 100px;
-  }
-}
-
-.image {
-  color: #333;
-  &-info {
-    margin: 10px 25px 0;
-
-    &__label {
-      font-size: 13px;
-    }
-
-    &__list {
-      overflow-x: auto;
-
-      img {
-        margin-top: 15px;
-        border-radius: $xr-border-radius-base;
-        cursor: pointer;
-      }
-
-      img + img {
-        margin-left: 20px;
-      }
-
-      .main-img {
-        width: 195px;
-        height: 110px;
-      }
-
-      .detial-img {
-        width: 195px;
-        height: 157px;
-      }
-    }
-  }
-
-  .no-img {
-    color: #666;
-    margin: 50px 0;
-    text-align: center;
   }
 }
 </style>

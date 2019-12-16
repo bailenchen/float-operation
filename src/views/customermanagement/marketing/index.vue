@@ -128,11 +128,31 @@ export default {
       {
         prop: 'createUserName',
         label: '创建人',
+        width: '100'
+      },
+      {
+        prop: 'marketingType',
+        label: '活动类型',
         width: '150'
+      },
+      {
+        prop: 'startTime',
+        label: '截止时间',
+        width: '180'
       },
       {
         prop: 'endTime',
         label: '截止时间',
+        width: '180'
+      },
+      {
+        prop: 'marketingMoney',
+        label: '活动预算',
+        width: '100'
+      },
+      {
+        prop: 'address',
+        label: '活动地址',
         width: '180'
       },
       {

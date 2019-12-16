@@ -36,12 +36,49 @@
               :label="item.label"
               :name="item.name"
               lazy>
+              <c-r-m-base-info
+                v-if="item.name === 'CRMBaseInfo'"
+                :detail="detailData"
+                :id="id"
+                :filed-list="baseDetailList"
+                crm-type="marketing">
+                <sections
+                  class="b-cells"
+                  title="图片信息"
+                  content-height="auto">
+                  <div class="image">
+                    <div v-if="mainFileList.length > 0" class="image-info">
+                      <div class="image-info__label">活动图片</div>
+                      <div class="image-info__list">
+                        <img
+                          v-src="item.filePath"
+                          v-for="(item, index) in mainFileList"
+                          :key="index"
+                          class="main-img"
+                          @click="previewImage(mainFileList, index)">
+                      </div>
+                    </div>
+                    <div v-if="detailFileList.length > 0" class="image-info">
+                      <div class="image-info__label">活动详情图片</div>
+                      <div class="image-info__list">
+                        <img
+                          v-src="item.filePath"
+                          v-for="(item, index) in detailFileList"
+                          :key="index"
+                          class="detial-img"
+                          @click="previewImage(detailFileList, index)">
+                      </div>
+                    </div>
+                    <div v-if="detailFileList.length == 0 && mainFileList.length == 0" class="no-img">暂无图片</div>
+                  </div>
+                </sections>
+              </c-r-m-base-info>
               <component
+                v-else
                 :is="item.name"
                 :detail="detailData"
                 :id="id"
                 :filed-list="baseDetailList"
-                :is-seas="isSeas"
                 crm-type="marketing"/>
             </el-tab-pane>
           </el-tabs>
@@ -65,7 +102,7 @@ import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
 import Overview from './components/overview'
 import Statistics from './components/statistics'
 import Create from './components/create'
-import DetailImg from './components/detailImg'
+import Sections from '../components/Sections'
 
 import detail from '../mixins/detail'
 
@@ -80,7 +117,7 @@ export default {
     Overview,
     Statistics,
     Create,
-    DetailImg
+    Sections
   },
 
   mixins: [detail],
@@ -133,8 +170,22 @@ export default {
       tempsTabs.push({ label: '预览', name: 'Overview' })
       tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
       tempsTabs.push({ label: '统计分析', name: 'Statistics' })
-      tempsTabs.push({ label: '活动图片', name: 'DetailImg' })
       return tempsTabs
+    },
+    mainFileList() {
+      if (this.detailData && this.detailData.mainFileList) {
+        return this.detailData.mainFileList
+      }
+
+      return []
+    },
+
+    detailFileList() {
+      if (this.detailData && this.detailData.detailFileList) {
+        return this.detailData.detailFileList
+      }
+
+      return []
     }
   },
 
@@ -168,61 +219,87 @@ export default {
     getBaseList(data) {
       this.baseDetailList = [
         {
-          name: '活动名称',
-          formType: 'text',
-          value: data.marketingName
-        },
-        {
-          name: '关联对象',
-          formType: 'text',
-          value: data.crmType == 2 ? '客户' : '线索'
-        },
-        {
-          name: '参与人员',
-          formType: 'text',
-          value: data.relationUserInfo ? data.relationUserInfo.map(item => {
-            return item.realname
-          }).join('，') : ''
-        },
-        {
-          name: '活动地址',
-          formType: 'text',
-          value: data.address
-        },
-        {
-          name: '活动简介',
-          formType: 'text',
-          value: data.synopsis
-        },
-        {
-          name: '状态',
-          formType: 'text',
-          value: data.status == 1 ? '启用' : '停用'
-        },
-        {
-          name: '创建人',
-          formType: 'text',
-          value: data.createUserInfo ? data.createUserInfo.realname : ''
-        },
-        {
-          name: '开始时间',
-          formType: 'text',
-          value: data.startTime
-        },
-        {
-          name: '截止时间',
-          formType: 'text',
-          value: data.endTime
-        },
-        {
-          name: '创建时间',
-          formType: 'text',
-          value: data.createTime
-        },
-        {
-          name: '更新时间',
-          formType: 'text',
-          value: data.updateTime
+          name: '基本信息',
+          list: [
+            {
+              name: '活动名称',
+              formType: 'text',
+              value: data.marketingName
+            },
+            {
+              name: '关联对象',
+              formType: 'text',
+              value: data.crmType == 2 ? '客户' : '线索'
+            },
+            {
+              name: '参与人员',
+              formType: 'text',
+              value: data.relationUserInfo ? data.relationUserInfo.map(item => {
+                return item.realname
+              }).join('，') : ''
+            },
+            {
+              name: '活动类型',
+              formType: 'text',
+              value: data.marketingType
+            },
+            {
+              name: '开始时间',
+              formType: 'text',
+              value: data.startTime
+            },
+            {
+              name: '截止时间',
+              formType: 'text',
+              value: data.endTime
+            },
+            {
+              name: '浏览数',
+              formType: 'text',
+              value: data.browse
+            },
+            {
+              name: '提交数',
+              formType: 'text',
+              value: data.submitNum
+            },
+            {
+              name: '活动预算',
+              formType: 'text',
+              value: data.marketingMoney
+            },
+            {
+              name: '活动地址',
+              formType: 'text',
+              value: data.address
+            },
+            {
+              name: '活动简介',
+              formType: 'text',
+              value: data.synopsis
+            },
+            {
+              name: '状态',
+              formType: 'text',
+              value: data.status == 1 ? '启用' : '停用'
+            },
+            {
+              name: '创建人',
+              formType: 'text',
+              value: data.createUserInfo ? data.createUserInfo.realname : ''
+            },
+
+            {
+              name: '创建时间',
+              formType: 'text',
+              value: data.createTime
+            },
+            {
+              name: '更新时间',
+              formType: 'text',
+              value: data.updateTime
+            }
+          ]
         }
       ]
     },
@@ -238,12 +315,67 @@ export default {
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
+    },
+
+    /**
+     * 预览图片
+     */
+    previewImage(list, index) {
+      this.$bus.emit('preview-image-bus', {
+        index: index,
+        data: list.map(item => {
+          item.url = item.filePath
+          return item
+        })
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.image {
+  color: #333;
+  &-info {
+    margin: 10px 25px 0;
+
+    &__label {
+      font-size: 13px;
+    }
+
+    &__list {
+      overflow-x: auto;
+      white-space: nowrap;
+
+      img {
+        margin-top: 15px;
+        border-radius: $xr-border-radius-base;
+        cursor: pointer;
+      }
+
+      img + img {
+        margin-left: 20px;
+      }
+
+      .main-img {
+        width: 100px;
+        height: 76px;
+      }
+
+      .detial-img {
+        width: 100px;
+        height: 80px;
+      }
+    }
+  }
+
+  .no-img {
+    color: #666;
+    margin: 50px 0;
+    text-align: center;
+  }
+}
+
 @import '../styles/crmdetail.scss';
 @import '../styles/detailview.scss';
 </style>

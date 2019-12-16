@@ -55,21 +55,29 @@
           </flexbox>
           <el-checkbox
             v-model="onlyOne"
-            class="only-check">每个用户只能填写一次</el-checkbox>
+            class="only-check">每个用户只能填写一次<span style="color:#999;">（您可以将市场活动通过表单的形式分享给用户，用户可以查看并提交表单）</span></el-checkbox>
         </create-sections>
-        <create-sections title="活动图片">
+        <create-sections title="图片信息">
           <detail-img
             :detail="imageData"
             @change="detailImgChange"
             @delete="deleteImg" />
         </create-sections>
         <create-sections title="字段信息">
-          <field-manager
-            :crm-type="fieldcrmType"
-            :data="fieldData"
-            class="field-container"
-            description="以下为客户模块所有字段，左侧显示的字段为客户扫码后需填写的字段。您可以自定义配置客户需要填写的字段信息。"
-            @change="fieldManagerChange"/>
+          <div class="field-set">
+            <div class="field-set__name">
+              您可以通过勾选自定义配置分享后表单的字段信息
+            </div>
+            <flexbox
+              wrap="wrap">
+              <el-checkbox
+                v-for="(item, index) in fieldData"
+                :key="index"
+                v-model="item.isHidden"
+                :true-label="0"
+                :false-label="1">{{ item.name }}</el-checkbox>
+            </flexbox>
+          </div>
         </create-sections>
       </div>
 
@@ -91,7 +99,6 @@ import { crmMarketingSaveAPI, crmMarketingUpdateAPI } from '@/api/customermanage
 
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
-import FieldManager from './fieldManager'
 import marketing from './marketing'
 import DetailImg from './detailImg'
 
@@ -115,7 +122,6 @@ export default {
     XhDate,
     XhDateTime,
     XhUserCell,
-    FieldManager,
     DetailImg
   },
 
@@ -202,9 +208,11 @@ export default {
         marketingName: '',
         crmType: 2, // 2 客户 1 线索
         relationUserId: [],
+        marketingType: '',
         endTime: '',
         fieldDataId: '',
         browse: '',
+        marketingMoney: '',
         submitNum: '',
         startTime: '',
         address: '',
@@ -218,8 +226,8 @@ export default {
         detailFile: []
       },
       // 展示的数组
-      fieldData: null,
-      showFieldList: []
+      fieldData: []
+      // showFieldList: []
     }
   },
 
@@ -283,40 +291,30 @@ export default {
             const showFields = showFieldsStr.split(',').map(item => {
               return parseInt(item)
             })
-            const left = []
-            const right = []
+            const fieldList = []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
               if (this.isShowField(element.formType)) {
-                element.show = true
-                element.check = false
                 if (showFields.includes(element.fieldId)) {
-                  left.push(element)
+                  element.isHidden = 0
                 } else {
-                  right.push(element)
+                  element.isHidden = 1
                 }
+                fieldList.push(element)
               }
             }
-            this.fieldData = {
-              left: left,
-              right: right
-            }
+            this.fieldData = fieldList
           } else {
-            const left = []
+            const fieldList = []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
               if (this.isShowField(element.formType)) {
-                element.show = true
-                element.check = false
-                left.push(element)
+                element.isHidden = 0
+                fieldList.push(element)
               }
             }
-            this.fieldData = {
-              left: left,
-              right: []
-            }
+            this.fieldData = fieldList
           }
-          this.showFieldList = this.fieldData.left
         })
         .catch(() => {})
     },
@@ -340,7 +338,7 @@ export default {
           field: 'crmType',
           name: '关联对象',
           formType: 'select',
-          inputTips: '',
+          inputTips: '用户提交的表单信息可以同步到关联模块',
           setting: [{ name: '客户', value: 2 }, { name: '线索', value: 1 }],
           value: detailData ? detailData.crmType : 2,
           width: ''
@@ -350,14 +348,23 @@ export default {
           name: '参与人员',
           formType: 'user',
           radio: false,
-          inputTips: '',
+          inputTips: '参与人员将获得自己专属的表单二维码',
           setting: [],
           value: detailData ? detailData.relationUserInfo || [] : [],
           width: ''
         },
         {
+          field: 'marketingType',
+          name: '活动类型',
+          formType: 'select',
+          inputTips: '',
+          setting: ['广告', '研讨会/会议', '电子邮件', '营销', '公共关系', '合作伙伴'],
+          value: detailData ? detailData.marketingType : '',
+          width: ''
+        },
+        {
           field: 'startTime',
-          name: '开始日期',
+          name: '开始时间',
           formType: 'datetime',
           inputTips: '',
           setting: [],
@@ -366,7 +373,7 @@ export default {
         },
         {
           field: 'endTime',
-          name: '截止日期',
+          name: '截止时间',
           formType: 'datetime',
           inputTips: '',
           setting: [],
@@ -389,6 +396,15 @@ export default {
           inputTips: '',
           setting: [],
           value: detailData ? detailData.submitNum || '' : '',
+          width: ''
+        },
+        {
+          field: 'marketingMoney',
+          name: '活动预算',
+          formType: 'floatnumber',
+          inputTips: '',
+          setting: [],
+          value: detailData ? detailData.marketingMoney : '',
           width: ''
         },
         {
@@ -443,27 +459,24 @@ export default {
       }
     },
 
-    /**
-     * 字段信息调整
-     */
-    fieldManagerChange(data) {
-      this.showFieldList = data.left
-    },
-
     // 保存数据
     saveField() {
       this.$refs.dataForm.validate(valid => {
         if (valid) {
           const params = this.getSubmiteParams()
           params.second = this.onlyOne ? 1 : 0 // 0 不限制 1 只能填写一次
-          params.fieldDataId = this.showFieldList.map(item => {
-            return item.fieldId
-          }).join(',')
+
+          let fieldDataId = ''
+          this.fieldData.forEach((item, index) => {
+            if (item.isHidden == 0) {
+              fieldDataId += `,${item.fieldId}`
+            }
+          })
+          params.fieldDataId = fieldDataId ? fieldDataId + ',' : ''
           params.relationUserId = this.dataForm.relationUserId.map(item => {
             return item.userId
           }).join(',')
           params.relationUserId = ',' + params.relationUserId + ','
-          params.fieldDataId = ',' + params.fieldDataId + ','
           params.browse = params.browse ? params.browse : 0
           params.submitNum = params.submitNum ? params.submitNum : 0
           params.endTime = params.endTime
@@ -656,5 +669,25 @@ export default {
 .field-container {
   padding: 10px 10px 40px;
   width: 90%;
+}
+
+// 字段设置
+.field-set {
+  margin: 10px 20px 40px;
+  font-size: 13px;
+  padding: 15px;
+  border: 1px solid $xr-border-color-base;
+  border-radius: $xr-border-radius-base;
+
+  &__name {
+    margin-bottom: 10px;
+    color: #999;
+  }
+
+  .el-checkbox {
+    flex: 0 0 30%;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
 }
 </style>

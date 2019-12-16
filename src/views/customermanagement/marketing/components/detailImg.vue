@@ -2,7 +2,7 @@
   <div v-loading="loading" class="b-cont">
     <div class="detail-box">
       <div class="detail-item">
-        <label class="detail-label"><span class="label-start">*</span> 活动主图</label>
+        <label class="detail-label"> 活动图片</label>
 
         <div class="detail">
           <flexbox class="detail-images">
@@ -20,7 +20,7 @@
                   @click.stop="deleteImg('main', index)"/>
               </div>
             </div>
-            <div class="content-cross" @click="upLoadImg('main')">
+            <div v-if="primaryList.length < 9" class="content-cross" @click="upLoadImg('main')">
               <input
                 ref="primaryImgInput"
                 accept="image/*"
@@ -35,7 +35,7 @@
             </div>
           </flexbox>
 
-          <div class="detail-tip">图片建议上传：290(宽) * 220(高) (应用于小图式)</div>
+          <div class="detail-tip">图片建议上传：290（宽） * 220（高）（最多只能上传<span>{{ 9 - primaryList.length }}</span>张图片）</div>
           <div class="detail-select--text">选择默认活动图片</div>
           <flexbox>
             <img
@@ -50,7 +50,7 @@
     </div>
     <div class="detail-box">
       <div class="detail-item">
-        <label class="detail-label"><span class="label-start">*</span> 详情图片</label>
+        <label class="detail-label"> 活动详情图片</label>
         <div class="detail">
           <flexbox class="detail-images">
             <div v-for="(item, index) in detailList" :key="index" class="show-img">
@@ -59,7 +59,7 @@
                 :key="item.filePath"
                 class="cross-two">
               <div
-                class="img-model cross-two--model">
+                class="img-model">
                 <i
                   class="el-icon-zoom-in set-img-zoom"
                   @click.stop="previewImage(detailList, index)"/>
@@ -68,7 +68,7 @@
                   @click.stop="deleteImg('detail', index)"/>
               </div>
             </div>
-            <div class="content-cross cross-two" @click="upLoadImg('detail')">
+            <div v-if="detailList.length < 9" class="content-cross cross-two" @click="upLoadImg('detail')">
               <input
                 ref="detailImgInput"
                 accept="image/*"
@@ -82,7 +82,7 @@
                 class="cross"/>
             </div>
           </flexbox>
-          <div class="detail-tip">图片建议上传：750(宽) * 600(高) (应用于大图式)</div>
+          <div class="detail-tip">图片建议上传：750（宽） * 600（高）（最多只能上传<span>{{ 9 - detailList.length }}</span>张图片）</div>
         </div>
       </div>
     </div>
@@ -166,6 +166,14 @@ export default {
      */
     upLoad(event) {
       var files = event.target.files
+      if (this.type === 'main' && files.length + this.primaryList.length > 9) {
+        files = files.slice(0, 9 - this.primaryList.length)
+        this.$message.error('最多只能上传9张图片')
+      } else if (files.length + this.detailList.length > 9) {
+        files = files.slice(0, 9 - this.detailList.length)
+        this.$message.error('最多只能上传9张图片')
+      }
+
       for (let index = 0; index < files.length; index++) {
         const file = files[index]
         this.loading = true
@@ -260,15 +268,12 @@ export default {
         word-break: keep-all;
         white-space: nowrap;
         font-size: 13px;
-        .label-start {
-            color: red;
-        }
     }
     .detail-upload {
         position: relative;
     }
     .detail-tip {
-        color: #C1C1C1;
+        color: #999;
         font-size: 12px;
     }
     .detail-select--text {
@@ -295,22 +300,23 @@ export default {
       cursor: pointer;
 
       img {
-        width: 195px;
-        height: 110px;
+        width: 100px;
+        height: 76px;
         border-radius: $xr-border-radius-base;
       }
       .img-model {
         visibility: hidden;
         position: absolute;
         z-index: 10;
-        line-height: 108px;
+        line-height: 88px;
         background-color: #2d3037;
         opacity: 0.8;
-        width: 193px;
-        height: 108px;
         border-radius: 6px;
         top: 0;
         left: 0;
+        bottom: 0;
+        right: 0;
+
         .set-img-delete {
             font-size: 20px;
             color: white;
@@ -332,8 +338,8 @@ export default {
     }
 
     .content-cross-list {
-        width: 110.5px;
-        height: 66;
+        width: 100px;
+        height: 76px;
         margin: 10px 10px 10px 0;
         cursor: pointer;
         border-radius: 6px;
@@ -342,8 +348,8 @@ export default {
 
     .content-cross {
         flex-shrink: 0;
-        width: 195px;
-        height: 110px;
+        width: 100px;
+        height: 76px;
         display: flex;
         cursor: pointer;
         border-radius: 6px;
@@ -360,12 +366,9 @@ export default {
     }
 
     .cross-two {
-        height: 157px;
+        height: 80px;
     }
-    .cross-two--model {
-        height: 155px;
-        line-height: 155px;
-    }
+
     /deep/.el-icon-zoom-in {
         margin-right: 10px;
     }

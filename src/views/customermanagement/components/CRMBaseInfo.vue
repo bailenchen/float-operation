@@ -108,6 +108,7 @@
           </flexbox-item>
         </flexbox>
       </sections>
+      <slot />
     </div>
     <map-view
       v-if="showMapView"
