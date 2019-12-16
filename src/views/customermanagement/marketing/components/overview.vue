@@ -56,6 +56,29 @@
       </div>
 
     </sections>
+    <sections
+      class="b-cells"
+      title="活动图片"
+      content-height="auto">
+      <div class="image">
+        <div v-if="primaryUrl" class="image-info">
+          <div class="image-info__label">活动主图</div>
+          <img
+            v-src="primaryUrl"
+            :key="primaryUrl"
+            class="main-img">
+        </div>
+        <div v-if="detaiUrl" class="image-info">
+          <div class="image-info__label">详情图片</div>
+          <img
+            v-src="detaiUrl"
+            :key="detaiUrl"
+            class="detial-img">
+        </div>
+        <div v-if="!detaiUrl && !primaryUrl" class="no-img">暂无图片</div>
+      </div>
+
+    </sections>
   </div>
 </template>
 
@@ -93,7 +116,23 @@ export default {
       qrcode: null
     }
   },
-  computed: {},
+  computed: {
+    primaryUrl() {
+      if (this.detail && this.detail.mainFile) {
+        return this.detail.mainFile.filePath
+      }
+
+      return ''
+    },
+
+    detaiUrl() {
+      if (this.detail && this.detail.detailFileList && this.detail.detailFileList.length > 0) {
+        return this.detail.detailFileList[0].filePath
+      }
+
+      return ''
+    }
+  },
   watch: {
     detail: function() {
       this.getDetail()
@@ -169,6 +208,8 @@ export default {
 .b-cont {
   position: relative;
   padding: 15px;
+  height: 100%;
+  overflow-y: auto;
 }
 
 // 活动信息
@@ -206,9 +247,11 @@ export default {
 // 发布信息
 .publish-container {
   background-color: #f6f9fc;
-  padding: 15px 20px;
+  padding: 15px 30px;
   position: relative;
   margin: 0 20px;
+  margin-top: 10px;
+
   .publish-info {
     display: inline-block;
     margin-right: 60px;
@@ -249,6 +292,38 @@ export default {
 
   /deep/ img {
     width: 100px;
+  }
+}
+
+.image {
+  color: #333;
+  &-info {
+    margin: 10px 25px 0;
+
+    &__label {
+      font-size: 13px;
+    }
+
+    img {
+      margin-top: 15px;
+      border-radius: $xr-border-radius-base;
+    }
+
+    .main-img {
+      width: 290px;
+      height: 220px;
+    }
+
+    .detial-img {
+      width: 375px;
+      height: 300px;
+    }
+  }
+
+  .no-img {
+    color: #666;
+    margin: 50px 0;
+    text-align: center;
   }
 }
 </style>

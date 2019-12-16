@@ -107,7 +107,6 @@ export default {
   },
   data() {
     return {
-      remark: '',
       enterId: -1,
       primaryObj: null,
       detailObj: null,
@@ -135,8 +134,6 @@ export default {
 
           this.detailObj = data.detailFile
           this.detaiUrl = this.detailObj ? this.detailObj.filePath : ''
-
-          this.remark = data.synopsis
         }
       },
       immediate: true
@@ -171,20 +168,23 @@ export default {
       })
     },
 
+    /**
+     * 上传
+     */
     upLoad(event) {
       this.loading = true
       crmFileSave({ file: event.target.files[0] }).then(res => {
+        res.filePath = res.url
         if (this.type === 1) {
           this.primaryObj = res
           this.primaryUrl = res.url
           this.loading = false
-          this.$emit('change', { mainFile: this.primaryObj, detailFile: this.detaiObj })
+          this.$emit('change', 'mainFile', this.primaryObj)
         } else {
           this.detaiObj = res
           this.detaiUrl = res.url
           this.loading = false
-          this.$emit('change', 'detaiImg', res)
-          this.$emit('change', { mainFile: this.primaryObj, detailFile: this.detaiObj })
+          this.$emit('change', 'detailFile', this.detaiObj)
         }
       }).catch(() => {
         this.loading = false
@@ -211,11 +211,13 @@ export default {
           if (index == 1) {
             this.primaryUrl = ''
             this.primaryObj = null
-            this.$emit('change', { mainFile: this.primaryObj, detailFile: this.detaiObj })
+            this.$emit('change', 'mainFile', null)
+            this.$emit('delete', 'mainFile')
           } else {
             this.detaiUrl = ''
             this.detailObj = null
-            this.$emit('change', { mainFile: this.primaryObj, detailFile: this.detaiObj })
+            this.$emit('change', 'detailFile', null)
+            this.$emit('delete', 'detailFile')
           }
         }).catch(() => {})
       }).catch(() => {

@@ -60,7 +60,8 @@
         <create-sections title="活动图片">
           <detail-img
             :detail="imageData"
-            @change="detailImgChange" />
+            @change="detailImgChange"
+            @delete="deleteImg" />
         </create-sections>
         <create-sections title="字段信息">
           <field-manager
@@ -248,9 +249,11 @@ export default {
 
       this.onlyOne = this.action.detail.second == 1
 
+      const mainFile = this.action.detail.mainFile
+      const detailFile = this.action.detail.detailFileList && this.action.detail.detailFileList.length > 0 ? this.action.detail.detailFileList[0] : null
       this.imageData = {
-        mainFile: this.action.detail.mainFile,
-        detailFile: this.action.detail.detailFileList && this.action.detail.detailFileList.length > 0 ? this.action.detail.detailFileList[0] : null
+        mainFile: mainFile ? { ...mainFile } : null,
+        detailFile: detailFile ? { ...detailFile } : null
       }
 
       this.getFieldConfigIndex()
@@ -432,8 +435,16 @@ export default {
     /**
      * 修改图片
      */
-    detailImgChange(data) {
+    detailImgChange(type, data) {
+      this.imageData[type] = data
+    },
 
+    deleteImg(type) {
+      if (type === 'mainFile') {
+        this.action.detail.mainFile = null
+      } else if (type === 'detailFile') {
+        this.action.detail.detailFileList = null
+      }
     },
 
     /**
@@ -465,6 +476,10 @@ export default {
           params.submitNum = params.submitNum ? params.submitNum : 0
           params.endTime = params.endTime
           params.startTime = params.startTime
+
+          // 活动图片
+          params.mainFileId = this.imageData.mainFile ? this.imageData.mainFile.fileId : ''
+          params.detailFileIds = this.imageData.detailFile ? this.imageData.detailFile.fileId : ''
           this.submiteParams(params)
         } else {
           return false
