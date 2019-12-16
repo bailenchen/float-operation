@@ -33,7 +33,7 @@
                   <div
                     slot="label"
                     style="display: inline-block;">
-                    <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
+                    <div class="form-label">
                       {{ item.data.name }}
                       <span style="color:#999;">
                         {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
@@ -623,6 +623,18 @@ export default {
                     product: res.data.list,
                     totalPrice: res.data.money,
                     discountRate: res.data.discountRate
+                  }
+
+                  // 金额赋值 金额必须在产品前面
+                  for (
+                    let moneyIndex = 0;
+                    moneyIndex < this.crmForm.crmFields.length;
+                    moneyIndex++
+                  ) {
+                    const moneyElement = this.crmForm.crmFields[moneyIndex]
+                    if (moneyElement.key === 'money') {
+                      moneyElement['value'] = res.data.money
+                    }
                   }
                 })
                 .catch(() => {})
@@ -1246,7 +1258,7 @@ export default {
       if (item.showblock && item.showblock == true) {
         return '0'
       }
-      return item.styleIndex % 2 == 0 ? '0' : '25px'
+      return item.styleIndex % 2 == 0 ? '0' : '40px'
     },
     // 获取左边padding
     getPaddingRight(item, index) {
@@ -1254,7 +1266,7 @@ export default {
         return '0'
       }
 
-      return item.styleIndex % 2 == 0 ? '25px' : '0'
+      return item.styleIndex % 2 == 0 ? '40px' : '0'
     }
   }
 }
@@ -1337,6 +1349,13 @@ export default {
   position: absolute;
   left: 0;
   top: 5px;
+}
+
+.form-label {
+  margin: 5px 0;
+  font-size: 13px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .handle-bar {

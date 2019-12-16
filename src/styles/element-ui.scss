@@ -95,7 +95,6 @@ table {
 
  .el-message-box {
    padding: 0 !important;
-   ;
  }
 
  .el-message-box__btns {
@@ -106,4 +105,11 @@ table {
 
  .el-message-box__content {
    padding-bottom: 20px !important;
+ }
+
+ .el-checkbox .el-checkbox__label,
+ .el-checkbox__input.is-checked + .el-checkbox__label,
+ .el-radio__input.is-checked + .el-radio__label,
+ .el-radio .el-radio__label {
+  color: #333 !important;
  }

@@ -162,6 +162,15 @@ export function crmBusinessUpdateMembers(data) {
   })
 }
 
+// 退出团队
+export function crmBusinessExitTeam(data) {
+  return request({
+    url: 'CrmBusiness/exitTeam',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 商机关联联系人
  * @param {*} data
@@ -234,5 +243,31 @@ export function crmBusinessNumAPI(data) {
     url: 'CrmBusiness/num',
     method: 'post',
     data: data
+  })
+}
+
+/**
+ * 商机导出
+ * @param {*} data
+ */
+export function crmBusinessExcelExportAPI(data) {
+  return request({
+    url: 'CrmBusiness/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    timeout: 60000
+  })
+}
+
+export function crmBusinessExcelAllExportAPI(data) {
+  return request({
+    url: 'CrmBusiness/allExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }

@@ -171,3 +171,27 @@ export function crmProductDetailImgQueryListByType(data) {
     data: data
   })
 }
+
+/**
+ * 产品转移
+ * @param {*} data
+ */
+export function crmProductTransfer(data) {
+  return request({
+    url: 'CrmProduct/transfer',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 产品删除
+ * @param {*} data
+ */
+export function crmProductDeleteAPI(data) {
+  return request({
+    url: 'CrmProduct/deleteByIds',
+    method: 'post',
+    data: data
+  })
+}

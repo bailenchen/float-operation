@@ -13,7 +13,8 @@ module.exports = {
   globals: {
     "BMap": "readonly",
     "BMAP_STATUS_SUCCESS": "readonly",
-    "fullcalendar": "readonly"
+    "fullcalendar": "readonly",
+    "WKConfig": "readonly"
   },
 
   // add your custom rules here

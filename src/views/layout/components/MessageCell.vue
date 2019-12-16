@@ -113,11 +113,11 @@ export default {
           key = 'examine'
         } else if ([8].includes(this.data.type)) {
           key = 'announcement'
-        } else if ([10, 11, 24, 26].includes(this.data.type)) {
+        } else if ([10, 11, 24, 26, 30].includes(this.data.type)) {
           key = 'contract'
         } else if ([12, 13, 27].includes(this.data.type)) {
           key = 'receivables'
-        } else if ([14, 15, 23].includes(this.data.type)) {
+        } else if ([14, 15, 23, 29].includes(this.data.type)) {
           key = 'customer'
         } else if ([16, 17].includes(this.data.type)) {
           key = 'contacts'
@@ -125,7 +125,7 @@ export default {
           key = 'leads'
         } else if ([20, 21].includes(this.data.type)) {
           key = 'product'
-        } else if ([22].includes(this.data.type)) {
+        } else if ([22, 28].includes(this.data.type)) {
           key = 'business'
         }
       }
@@ -161,7 +161,10 @@ export default {
         24: `${this.data.realname}将您添加为合同`,
         25: `${this.data.realname}提交了`,
         26: `${this.data.realname}提交了`,
-        27: `${this.data.realname}提交了`
+        27: `${this.data.realname}提交了`,
+        28: `${this.data.realname}退出了您商机`,
+        29: `${this.data.realname}退出了您客户`,
+        30: `${this.data.realname}退出了您合同`
       }[this.data.type]
     },
 
@@ -215,7 +218,10 @@ export default {
         24: `的成员`,
         25: `，请及时处理`,
         26: `合同审批，请及时处理`,
-        27: `回款审批，请及时处理`
+        27: `回款审批，请及时处理`,
+        28: `的团队`,
+        29: `的团队`,
+        30: `的团队`
       }[this.data.type]
     }
   },

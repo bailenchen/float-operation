@@ -77,9 +77,14 @@ export default {
         this.isCreate = true
       } else if (data.type === 'cancel') {
         this.getDetial()
-      } else if (data.type === 'delete') {
+      } else if (data.type === 'delete' || data.type === 'exit-team') {
         this.hideView()
       }
+
+      if (data.type === 'edit') {
+        this.getDetial()
+      }
+
       this.$emit('handle', data)
     },
 

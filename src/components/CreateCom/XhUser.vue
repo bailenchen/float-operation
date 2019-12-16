@@ -104,12 +104,18 @@ export default {
   },
   watch: {
     selectedData: function(value) {
-      this.checkItems(value)
+      if (this.show) {
+        this.checkItems(value)
+      }
     },
 
     show(value) {
-      if (this.list && this.list.length == 0) {
-        this.getUserList()
+      if (value) {
+        if (this.list && this.list.length == 0) {
+          this.getUserList()
+        } else {
+          this.checkItems(this.selectedData)
+        }
       }
     }
   },
@@ -279,6 +285,10 @@ export default {
 }
 
 // check样式
+.el-checkbox-group {
+  overflow-x: hidden;
+}
+
 .el-checkbox {
   /deep/ .el-checkbox__label {
     color: #333;

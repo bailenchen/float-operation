@@ -5,6 +5,7 @@ class Field {
     this.formType = obj.formType || '' // 字段类型  1
     this.isUnique = obj.isUnique || false // 是否唯一
     this.isNull = obj.isNull || false // 是否必填
+    this.isHidden = obj.isHidden || false // 是否隐藏字段
     this.inputTips = obj.inputTips || '' // 输入提示
     if (this.formType === 'textarea') {
       this.maxLength = obj.maxLength || 1000 // textarea 多行文本有最大数量

@@ -443,39 +443,31 @@ export default {
       event.target.value = ''
 
       // 阶段一状态
-      if (this.crmType == 'customer') {
-        this.stepList[0].status = 'finish'
-      } else if (this.crmType != 'customer' &&
-            (this.user && this.user.length > 0)) {
-        this.stepList[0].status = 'finish'
-      }
+      this.getFirstStepStatus()
     },
     // 用户选择
     userSelect(data) {
       if (data.value && data.value.length > 0) {
         this.user = data.value
-        // 阶段一状态
-        if (this.file.name && this.file.type) {
-          this.stepList[0].status = 'finish'
-        }
       } else {
         this.user = []
-        // 阶段一状态
-        this.stepList[0].status = 'wait'
       }
+
+      // 阶段一状态
+      this.getFirstStepStatus()
     },
 
-    // getFirstStepStatus() {
-    //   debugger
-    //   if (this.file.name && this.file.type &&
-    //   (this.crmType != 'customer' &&
-    //         (this.user && this.user.length > 0) ||
-    //         this.crmType == 'customer')) {
-    //     this.stepList[0].status = 'finish'
-    //   } else {
-    //     this.stepList[0].status = 'wait'
-    //   }
-    // },
+    getFirstStepStatus() {
+      // 阶段一状态
+      const hasFile = this.file && this.file.size
+      const hasUser = this.user && this.user.length > 0
+
+      if (this.crmType === 'customer') {
+        this.stepList[0].status = hasFile ? 'finish' : 'wait'
+      } else {
+        this.stepList[0].status = hasFile && hasUser ? 'finish' : 'wait'
+      }
+    },
 
     // 关闭操作
     closeView() {

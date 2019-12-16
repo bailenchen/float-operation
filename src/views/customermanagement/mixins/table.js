@@ -8,6 +8,7 @@ import CRMTableHead from '../components/CRMTableHead'
 import FieldSet from '../components/fieldSet'
 import {
   filedGetTableField,
+  filedGetPoolTableField,
   crmFieldColumnWidth
 } from '@/api/customermanagement/common'
 import {
@@ -25,17 +26,20 @@ import {
   crmContactsExcelAllExport
 } from '@/api/customermanagement/contacts'
 import {
-  crmBusinessIndex
+  crmBusinessIndex,
+  crmBusinessExcelAllExportAPI
 } from '@/api/customermanagement/business'
 import {
-  crmContractIndex
+  crmContractIndex,
+  crmContractExcelAllExportAPI
 } from '@/api/customermanagement/contract'
 import {
   crmProductIndex,
   crmProductExcelAllExport
 } from '@/api/customermanagement/product'
 import {
-  crmReceivablesIndex
+  crmReceivablesIndex,
+  crmReceivablesExcelAllExportAPI
 } from '@/api/customermanagement/money'
 
 import Lockr from 'lockr'
@@ -116,6 +120,11 @@ export default {
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
+
+      // 公海切换
+      if (this.poolId) {
+        params.poolId = this.poolId
+      }
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
@@ -170,9 +179,18 @@ export default {
     getFieldList(force) {
       if (this.fieldList.length == 0 || force) {
         this.loading = true
-        filedGetTableField({
-          label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType] // 9 是公海
-        })
+
+        const params = {}
+        if (this.isSeas) {
+          if (this.poolId) {
+            params.poolId = this.poolId
+          }
+        } else {
+          params.label = crmTypeModel[this.crmType]
+        }
+
+        const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
+        request(params)
           .then(res => {
             const fieldList = []
             const moneyFields = []
@@ -354,6 +372,9 @@ export default {
           customer: crmCustomerExcelAllExport,
           leads: crmLeadsExcelAllExport,
           contacts: crmContactsExcelAllExport,
+          business: crmBusinessExcelAllExportAPI,
+          contract: crmContractExcelAllExportAPI,
+          receivables: crmReceivablesExcelAllExportAPI,
           product: crmProductExcelAllExport
         }[this.crmType]
       }
@@ -398,13 +419,10 @@ export default {
     },
     /** 勾选操作 */
     handleHandle(data) {
-      if (data.type === 'alloc' || data.type === 'get' || data.type === 'transfer' || data.type === 'transform' || data.type === 'delete' || data.type === 'put_seas') {
+      if (['alloc', 'get', 'transfer', 'transform', 'delete', 'put_seas', 'exit-team'].includes(data.type)) {
         this.showDview = false
       }
-
-      if (data.type !== 'edit') {
-        this.getList()
-      }
+      this.getList()
     },
     /** 自定义字段管理 */
     setSave() {

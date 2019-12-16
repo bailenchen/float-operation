@@ -37,6 +37,11 @@
                 <el-dropdown-item :command="item.status ? 'disable' : 'enable'">{{ item.status ? '停用' : '启用' }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
+            <el-button
+              v-else-if="item.module == 'call'"
+              type="text"
+              class="detail-button"
+              @click="checkCallDetail(item)">了解详情<i class="el-icon-arrow-right el-icon--right"/></el-button>
             <span
               v-else-if="item.type == 2"
               class="more-mark">即将发布</span>
@@ -45,7 +50,9 @@
       </div>
     </div>
 
-    <call-detail :visible.sync="showCallDetail"/>
+    <call-detail
+      :visible.sync="showCallDetail"
+      :call-switch="callSwitch"/>
   </flexbox>
 </template>
 
@@ -86,13 +93,19 @@ export default {
           sublist: []
         },
         {
+          name: '增值应用',
+          type: 3,
+          sublist: []
+        },
+        {
           name: '敬请期待',
           type: 2,
           sublist: []
         }
       ],
       // 展示详情
-      showCallDetail: false
+      showCallDetail: false,
+      callSwitch: false
     }
   },
   computed: {
@@ -147,8 +160,16 @@ export default {
           status: command == 'disable' ? 0 : 1
         })
           .then(res => {
-            this.loading = false
-            window.location.reload()
+            this.$message.success('设置成功')
+            this.$store
+              .dispatch('LogOut')
+              .then(() => {
+                this.loading = false
+                location.reload()
+              })
+              .catch(() => {
+                this.loading = false
+              })
           })
           .catch(() => {
             this.loading = false
@@ -163,7 +184,7 @@ export default {
       if (command == 'enable') {
         result()
       } else {
-        this.$confirm(`停用${item.name}后，企业所有员工将无法使用此功能。确定要停用吗？`, '提示', {
+        this.$confirm(`停用${item.name}后，企业所有员工将无法使用此功能，重新登录后生效。确定要停用吗？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -220,6 +241,11 @@ export default {
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }
+    },
+
+    checkCallDetail(item) {
+      this.showCallDetail = true
+      this.callSwitch = item.status == 1
     }
   }
 }

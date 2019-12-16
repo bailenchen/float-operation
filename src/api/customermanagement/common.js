@@ -37,6 +37,18 @@ export function filedGetTableField(data) {
   })
 }
 
+/**
+ * 公海表头
+ * @param {*} data
+ */
+export function filedGetPoolTableField(data) {
+  return request({
+    url: 'field/queryPoolListHead',
+    method: 'post',
+    data: data
+  })
+}
+
 // crm 自定义字段验重
 export function filedValidates(data) {
   return request({
@@ -341,5 +353,32 @@ export function crmDownImportErrorAPI(data) {
     method: 'post',
     data: data,
     responseType: 'blob'
+  })
+}
+
+/**
+ * 查询跟进记录常用语
+ * @param {*} data
+ */
+export function sysConfigQueryPhraseAPI(data) {
+  return request({
+    url: 'sysConfig/queryActivityPhrase',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 设置跟进记录常用语
+ * @param {*} data
+ */
+export function sysConfigSetPhraseAPI(data) {
+  return request({
+    url: 'sysConfig/setActivityPhrase',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }

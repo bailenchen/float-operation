@@ -110,7 +110,8 @@
                 :id="id"
                 :handle="activityHandle"
                 :crm-type="crmType"
-                :contacts-id.sync="firstContactsId" />
+                :contacts-id.sync="firstContactsId"
+                @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
           <transition name="slide-fade">
@@ -278,7 +279,7 @@ export default {
       var tempsTabs = []
       tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.business && this.crm.business.read) {
-        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
       }
 
       if (this.crm.contacts && this.crm.contacts.index) {

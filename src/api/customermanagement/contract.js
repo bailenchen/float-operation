@@ -159,6 +159,15 @@ export function crmContractUpdateMembers(data) {
   })
 }
 
+// 退出团队
+export function crmContractExitTeam(data) {
+  return request({
+    url: 'CrmContract/exitTeam',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 新建回款查询回款计划
  * @param {*} data
@@ -206,5 +215,31 @@ export function crmContractNumAPI(data) {
     url: 'CrmContract/num',
     method: 'post',
     data: data
+  })
+}
+
+/**
+ * 合同导出
+ * @param {*} data
+ */
+export function crmContractExcelExportAPI(data) {
+  return request({
+    url: 'CrmContract/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    timeout: 60000
+  })
+}
+
+export function crmContractExcelAllExportAPI(data) {
+  return request({
+    url: 'CrmContract/allExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }

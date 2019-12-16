@@ -31,8 +31,8 @@
       class="dialog-footer">
       <el-button @click.native="handleCancel">取消</el-button>
       <el-button
-        type="primary"
-        @click.native="handleConfirm">保存</el-button>
+        v-debounce="handleConfirm"
+        type="primary">保存</el-button>
     </span>
   </el-dialog>
 </template>
@@ -46,6 +46,7 @@ export default {
   components: {},
   mixins: [],
   props: {
+    value: Number,
     visible: {
       type: Boolean,
       required: true,
@@ -80,7 +81,16 @@ export default {
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    value: {
+      handler(val) {
+        if (typeof val != 'undefined') {
+          this.status = val == 0 ? 1 : 0
+        }
+      },
+      immediate: true
+    }
+  },
   mounted() {},
   methods: {
     /**
