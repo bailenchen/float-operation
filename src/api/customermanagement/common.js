@@ -146,6 +146,15 @@ export function crmFieldConfigIndex(data) {
   })
 }
 
+// 列表字段排序数据
+export function crmPoolFieldConfigIndex(data) {
+  return request({
+    url: 'field/queryPoolFieldConfig',
+    method: 'post',
+    data: data
+  })
+}
+
 // 列表排序编辑
 export function crmFieldConfig(data) {
   return request({
@@ -155,10 +164,28 @@ export function crmFieldConfig(data) {
   })
 }
 
+// 列表排序编辑
+export function crmPoolFieldConfig(data) {
+  return request({
+    url: 'field/poolFieldConfig',
+    method: 'post',
+    data: data
+  })
+}
+
 // 列表宽度设置
 export function crmFieldColumnWidth(data) {
   return request({
     url: 'field/setFelidStyle',
+    method: 'post',
+    data: data
+  })
+}
+
+// 列表宽度设置
+export function crmPoolFieldColumnWidth(data) {
+  return request({
+    url: 'field/setPoolFieldStyle',
     method: 'post',
     data: data
   })

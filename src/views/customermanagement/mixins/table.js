@@ -9,7 +9,8 @@ import FieldSet from '../components/fieldSet'
 import {
   filedGetTableField,
   filedGetPoolTableField,
-  crmFieldColumnWidth
+  crmFieldColumnWidth,
+  crmPoolFieldColumnWidth
 } from '@/api/customermanagement/common'
 import {
   crmCustomerIndex,
@@ -454,12 +455,24 @@ export default {
     // 当拖动表头改变了列的宽度的时候会触发该事件
     handleHeaderDragend(newWidth, oldWidth, column, event) {
       if (column.property) {
-        const crmType = this.isSeas ? this.crmType + '_pool' : this.crmType
-        crmFieldColumnWidth({
-          types: 'crm_' + crmType,
+        let request = null
+        const params = {
           field: column.property,
           width: newWidth
-        })
+        }
+
+        if (this.isSeas) {
+          if (!this.poolId) {
+            return
+          }
+          request = crmPoolFieldColumnWidth
+          params.poolId = this.poolId
+        } else {
+          request = crmFieldColumnWidth
+          params.types = `crm_${this.crmType}`
+        }
+
+        request(params)
           .then(res => {
           })
           .catch(() => { })
