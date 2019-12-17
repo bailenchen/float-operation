@@ -1,13 +1,12 @@
 <template>
   <div class="table-head-container">
     <flexbox
-      v-if="crmType !== 'applet'"
       v-show="selectionList.length == 0"
       class="th-container">
       <slot name="custom"/>
-      <div v-if="!isSeas">场景：</div>
+      <div v-if="showSceneView">场景：</div>
       <el-popover
-        v-if="!isSeas"
+        v-if="showSceneView"
         v-model="showScene"
         trigger="click"
         popper-class="no-padding-popover"
@@ -30,30 +29,21 @@
           @hidden-scene="showScene=false" />
       </el-popover>
       <el-button
+        v-if="showFilterView"
+        :style="{ 'margin-left': !showSceneView ? 0 : '20px'}"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
         @click="showFilterClick">高级筛选</el-button>
       <filter-form
+        v-if="showFilterView"
         :field-list="fieldList"
         :dialog-visible.sync="showFilter"
         :obj="filterObj"
         :crm-type="crmType"
         :is-seas="isSeas"
         @filter="handleFilter" />
-    </flexbox>
-    <flexbox
-      v-if="crmType === 'applet'"
-      v-show="selectionList.length == 0"
-      class="th-container">
-      <div v-if="!isSeas">场景：</div>
-      <el-select v-model="appletValue" placeholder="请选择" @change="selectApplet">
-        <el-option
-          v-for="item in appletOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"/>
-      </el-select>
+      <slot />
     </flexbox>
     <flexbox
       v-if="selectionList.length > 0"
@@ -216,12 +206,6 @@ export default {
       showFilter: false, // 控制筛选框
       fieldList: [],
       filterObj: { form: [] }, // 筛选确定数据
-      appletValue: 0,
-      appletOptions: [
-        { label: '全部线索', value: 0 },
-        { label: '我负责的线索', value: 1 },
-        { label: '下属负责的线索', value: 2 }
-      ],
       sceneData: { id: '', bydata: '', name: '' },
       showSceneSet: false, // 展示场景设置
       showSceneCreate: false, // 展示场景添加
@@ -244,6 +228,23 @@ export default {
     },
     sceneName() {
       return this.sceneData.name || this.getDefaultSceneName()
+    },
+    // 展示场景
+    showSceneView() {
+      if (this.isSeas || ['marketing', 'applet'].includes(this.crmType)) {
+        return false
+      } else {
+        return true
+      }
+    },
+
+    // 展示筛选
+    showFilterView() {
+      if (['marketing', 'applet'].includes(this.crmType)) {
+        return false
+      } else {
+        return true
+      }
     }
   },
   watch: {},
@@ -333,6 +334,13 @@ export default {
               return item.customerId
             })
             .join(',')
+        } else if (this.crmType === 'applet') {
+          request = CrmWeixinLeadsExportLeadsAPI
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.weixinLeadsId
+            })
+            .join(',')
         } else {
           request = {
             customer: crmCustomerExcelExport,
@@ -346,13 +354,6 @@ export default {
           params.ids = this.selectionList
             .map((item) => {
               return item[`${this.crmType}Id`]
-            })
-            .join(',')
-        } else if (this.crmType === 'applet') {
-          request = CrmWeixinLeadsExportLeadsAPI
-          params.ids = this.selectionList
-            .map(function(item, index, array) {
-              return item.weixinLeadsId
             })
             .join(',')
         }
@@ -504,11 +505,8 @@ export default {
           business: crmBusinessDelete,
           contract: crmContractDelete,
           receivables: crmReceivablesDelete,
-<<<<<<< HEAD
-          applet: crmWeixinDeleteAPI
-=======
+          applet: crmWeixinDeleteAPI,
           product: crmProductDeleteAPI
->>>>>>> dev(产品详情)
         }[this.crmType]
         request({
           [crmTypes + 'Ids']: ids.join(',')
@@ -726,11 +724,6 @@ export default {
           return true
         }
       } else if (type == 'delete') {
-        if (this.crmType === 'applet') {
-          // 有权限删除就好了
-          console.warn('检查')
-          return true
-        }
         if (this.isSeas) {
           return this.crm.pool.delete
         }
@@ -800,10 +793,6 @@ export default {
       } else if (this.crmType === 'applet') {
         return '全部小程序线索'
       }
-    },
-    /** 选择小程序场景 */
-    selectApplet(val) {
-      this.$emit('handleApplet', val)
     }
   }
 }

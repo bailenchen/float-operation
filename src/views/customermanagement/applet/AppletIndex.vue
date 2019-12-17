@@ -18,8 +18,18 @@
         :crm-type="crmType"
         @filter="handleFilter"
         @handle="handleHandle"
-        @handleApplet="handleApplet"
-        @scene="handleScene"/>
+        @scene="handleScene">
+        <template slot="custom">
+          <div>场景：</div>
+          <el-select v-model="appletType" placeholder="请选择" @change="selectApplet">
+            <el-option
+              v-for="item in appletOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </template>
+      </c-r-m-table-head>
       <el-table
         v-loading="loading"
         id="crm-table"
@@ -98,12 +108,26 @@ export default {
   mixins: [table],
   data() {
     return {
-      crmType: 'applet'
+      crmType: 'applet',
+      appletType: 0, // 小程序筛选字段
+      appletOptions: [
+        { label: '全部线索', value: 0 },
+        { label: '我负责的线索', value: 1 },
+        { label: '下属负责的线索', value: 2 }
+      ]
     }
   },
   computed: {},
   mounted() {},
   methods: {
+    /**
+     * 小程序场景
+     */
+    selectApplet(val) {
+      this.appletType = val
+      this.currentPage = 1
+      this.getList()
+    }
   }
 }
 </script>

@@ -75,7 +75,6 @@ export default {
       showDview: false,
       /** 高级筛选 */
       filterObj: {}, // 筛选确定数据
-      appletType: 0, // 小程序筛选字段
       sceneId: '', // 场景筛选ID
       sceneName: '', // 场景名字
       /** 勾选行 */
@@ -520,11 +519,6 @@ export default {
       var offsetHei = document.documentElement.clientHeight
       var removeHeight = Object.keys(this.filterObj).length > 0 ? 310 : 240
       this.tableHeight = offsetHei - removeHeight
-    },
-    /** 小程序场景 */
-    handleApplet(val) {
-      this.appletType = val
-      this.getList()
     }
   },
 
