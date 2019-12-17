@@ -118,6 +118,8 @@
 </template>
 <script type="text/javascript">
 import { crmCrmCustomerNearbyCustomerAPI } from '@/api/customermanagement/map'
+import { getBaiduMap } from '@/utils'
+
 export default {
   name: 'MapIndex', // 新建 客户位置
   components: {
@@ -222,12 +224,17 @@ export default {
   watch: {
   },
   mounted() {
-    var map = new BMap.Map('choicemap', { enableMapClick: true })
-    var point = new BMap.Point(116.404, 39.915)
-    map.centerAndZoom(point, 14)
-    this.map = map
-    this.point = point
-    this.getMyPosition()
+    getBaiduMap()
+      .then(() => {
+        var map = new BMap.Map('choicemap')
+        var point = new BMap.Point(116.404, 39.915)
+        map.centerAndZoom(point, 14)
+        map.enableScrollWheelZoom(true)
+        this.map = map
+        this.point = point
+        this.getMyPosition()
+      })
+
     // map.disableDragging() //禁止拖拽
     // map.disableDoubleClickZoom()
     // map.disableScrollWheelZoom()
@@ -343,8 +350,9 @@ export default {
           return div
         }
         Marker.draw = () => {
+          console.log('2322')
           var pixel = this.map.pointToOverlayPixel(points)
-          this.div.style.left = pixel.x - 30 + 'px'
+          this.div.style.left = pixel.x - parseInt(this.arrow.style.left) + 'px'
           this.div.style.top = pixel.y - 30 + 'px'
         }
         this.markerArr.push(new BMap.Point(item.lng, item.lat))
