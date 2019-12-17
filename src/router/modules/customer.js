@@ -68,10 +68,23 @@ export default [
   },
   {
     ...layout({
+      permissions: ['crm', 'nearbyCustomer']
+    }),
+    children: [{
+      path: 'map', // 附近的客户
+      component: () => import('@/views/customermanagement/map/MapIndex'),
+      meta: {
+        title: '附近的客户',
+        icon: 'nearby'
+      }
+    }]
+  },
+  {
+    ...layout({
       permissions: ['crm', 'contacts']
     }),
     children: [{
-      path: 'contacts', // 联系人列表
+      path: 'contacts', // 附近的客户
       component: () => import('@/views/customermanagement/contacts/ContactsIndex'),
       meta: {
         title: '联系人',
