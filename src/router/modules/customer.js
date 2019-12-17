@@ -156,5 +156,18 @@ export default [
         icon: 'product'
       }
     }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'marketing']
+    }),
+    children: [{
+      path: 'marketing', // 活动列表
+      component: () => import('@/views/customermanagement/marketing/index'),
+      meta: {
+        title: '市场活动',
+        icon: 'airplane'
+      }
+    }]
   }
 ]

@@ -90,7 +90,9 @@ export default {
       type: Boolean,
       default: false
     },
-    search: String
+    search: String,
+    // 自定义方法
+    createFun: Function
   },
   data() {
     return {
@@ -113,9 +115,7 @@ export default {
       if (this.isSeas) {
         return false
       }
-      if (this.crmType === 'applet') {
-        return false
-      }
+
       return this.crm[this.crmType].save
     },
 
@@ -130,10 +130,10 @@ export default {
   mounted() {
     // 线索和客户判断更多操作
     if (!this.isSeas) {
-      if (this.crm[this.crmType].excelimport) {
+      if (this.crm[this.crmType] && this.crm[this.crmType].excelimport) {
         this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
       }
-      if (this.crm[this.crmType].excelexport) {
+      if (this.crm[this.crmType] && this.crm[this.crmType].excelexport) {
         this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
       }
     } else {
@@ -153,9 +153,13 @@ export default {
       }
     },
     createClick() {
-      this.createCRMType = this.crmType
-      this.createActionInfo = { type: 'save' }
-      this.isCreate = !this.isCreate
+      if (this.createFun) {
+        this.createFun()
+      } else {
+        this.createCRMType = this.crmType
+        this.createActionInfo = { type: 'save' }
+        this.isCreate = !this.isCreate
+      }
     },
     inputChange() {
       this.$emit('update:search', this.inputContent)
