@@ -4,7 +4,7 @@
     v-bind="$attrs"
     :src="dataSrc"
     :key="dataSrc"
-    :style="{ fontSize: fontSize }"
+    :style="{ fontSize: fontSize, background: background }"
     :class="{ 'cursor-pointer': !disabled }"
     :size="size">{{ showName }}</el-avatar>
   <el-popover
@@ -23,7 +23,7 @@
       v-bind="$attrs"
       :src="dataSrc"
       :key="dataSrc"
-      :style="{ fontSize: fontSize }"
+      :style="{ fontSize: fontSize, background: background }"
       :class="{ 'cursor-pointer': !disabled }"
       :size="size">{{ showName }}</el-avatar>
   </el-popover>
@@ -33,6 +33,7 @@
 <script>
 import { systemUserInfoAPI } from '@/api/common'
 import { getImageData } from '@/utils'
+import XRTheme from '@/styles/xr-theme.scss'
 
 const dataCatch = {}
 
@@ -58,6 +59,10 @@ export default {
     trigger: {
       type: String,
       default: 'click'
+    },
+    background: {
+      type: String,
+      default: XRTheme.xrColorPrimary
     }
   },
   data() {

@@ -9,14 +9,14 @@
       orient="vertical"
       class="main">
       <div class="detail-body">
-        <div class="dialog-top">
+        <flexbox class="dialog-top">
           <xr-avatar
             :name="data.realname"
             :size="36"
             :src="data.img"
             :key="data.realname"
             class="user-img" />
-          <span>{{ data.realname }}</span>
+          <div class="user-name">{{ data.realname }}</div>
           <div class="dialog-btn-group">
             <el-button
               v-if="userUpdateAuth"
@@ -40,10 +40,10 @@
               </el-dropdown-menu>
             </el-dropdown>
           </div>
-          <div class="dialog-remark">
-            <p>账号状态：{{ {'0':'禁用','1':'激活','2':'未激活' }[data.status] }}</p>
-            <p>创建时间：{{ data.createTime }}</p>
-          </div>
+        </flexbox>
+        <div class="dialog-remark">
+          <p>账号状态：{{ {'0':'禁用','1':'激活','2':'未激活' }[data.status] }}</p>
+          <p>创建时间：{{ data.createTime }}</p>
         </div>
         <div class="dialog-content">
           <flexbox
@@ -128,19 +128,31 @@ export default {
 .main {
   height: 100%;
   padding: 10px 0;
+  font-size: 14px;
 }
 .dialog-top {
   .user-img {
-    vertical-align: middle;
     margin-right: 10px;
+  }
+
+  .user-name {
+    flex: 1;
+    margin-right: 8px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
   }
 }
 
 .dialog-btn-group {
-  float: right;
+  flex-shrink: 0;
 }
 .dialog-remark {
-  font-size: 14px;
   color: #999;
   margin-top: 10px;
   p + p {
@@ -152,6 +164,7 @@ export default {
   padding-top: 20px;
   border-top: 1px solid #e6e6e6;
   .content-items {
+    overflow: hidden;
     padding: 10px 0;
     .content-items-name {
       width: 132px;
@@ -160,6 +173,9 @@ export default {
     }
     .content-items-value {
       flex: 1;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      word-break: break-all;
     }
   }
 }

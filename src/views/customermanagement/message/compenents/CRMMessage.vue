@@ -143,7 +143,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { filterIndexfields } from '@/api/customermanagement/common'
 import { crmLeadsSetFollowAPI } from '@/api/customermanagement/clue'
@@ -228,8 +227,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['CRMConfig']),
-
     // 展示勾选框
     showSelection() {
       if (this.infoType == 'followLeads' || this.infoType == 'followCustomer') {

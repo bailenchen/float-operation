@@ -21,7 +21,21 @@
         crm-type="customer"
         @filter="handleFilter"
         @handle="handleHandle"
-        @scene="handleScene"/>
+        @scene="handleScene">
+        <template slot="custom">
+          <div>公海：</div>
+          <el-select
+            v-model="poolId"
+            placeholder="请选择"
+            @change="poolChange">
+            <el-option
+              v-for="item in poolList"
+              :key="item.poolId"
+              :label="item.poolName"
+              :value="item.poolId"/>
+          </el-select>
+        </template>
+      </c-r-m-table-head>
       <el-table
         v-loading="loading"
         id="crm-table"
@@ -56,11 +70,10 @@
               <i :class="scope.row[item.prop] | dealIcon"/>
               <span>{{ scope.row[item.prop] | dealName }}</span>
             </template>
-            <template v-else-if="item.prop == 'poolDay'">
-              <div v-if="scope.row.status == 1">{{ scope.row.poolDay }}</div>
+            <template v-else-if="item.prop == 'status'">
               <i
-                v-else
-                class="wukong wukong-lock customer-lock"/>
+                v-if="scope.row.status == 2"
+                class="wk wk-circle-password customer-lock"/>
             </template>
             <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
           </template>
@@ -76,6 +89,7 @@
             <field-set
               :is-seas="isSeas"
               :crm-type="crmType"
+              :pool-id="poolId"
               @change="setSave"/>
           </template>
         </el-table-column>
@@ -104,6 +118,8 @@
 </template>
 
 <script>
+import { crmCustomerPoolNameListAPI } from '@/api/customermanagement/customer'
+
 import CustomerDetail from '../customer/CustomerDetail'
 import table from '../mixins/table'
 
@@ -126,12 +142,37 @@ export default {
   data() {
     return {
       crmType: 'customer',
-      isSeas: true // 是公海
+      isSeas: true, // 是公海
+      poolId: '',
+      poolList: []
     }
   },
   computed: {},
-  mounted() {},
+  created() {
+    this.getPoolList()
+  },
   methods: {
+    /**
+     * 公海数据
+     */
+    getPoolList() {
+      crmCustomerPoolNameListAPI()
+        .then(res => {
+          this.poolList = res.data || []
+          this.poolId = this.poolList.length > 0 ? this.poolList[0].poolId : ''
+        })
+        .catch(() => {
+        })
+    },
+
+    /**
+     * 选择公海
+     */
+    poolChange() {
+      this.currentPage = 1
+      this.getFieldList(true)
+    },
+
     /**
      * 通过回调控制class
      */

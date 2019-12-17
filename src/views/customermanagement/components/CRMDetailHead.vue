@@ -88,9 +88,14 @@
       :dialog-visible.sync="allocDialogShow"
       @handle="handleCallBack" />
     <deal-status-handle
+      :value="detail.dealStatus"
       :crm-type="crmType"
       :selection-list="[detail]"
       :visible.sync="dealStatusShow"
+      @handle="handleCallBack" />
+    <put-pool-handle
+      :visible.sync="putPoolShow"
+      :selection-list="[detail]"
       @handle="handleCallBack" />
   </div>
 </template>
@@ -102,8 +107,8 @@ import {
 } from '@/api/customermanagement/clue'
 import {
   crmCustomerLock,
-  crmCustomerPutInPool,
   crmCustomerDelete,
+  crmCustomerPoolDeleteAPI,
   crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import { crmContactsDelete } from '@/api/customermanagement/contacts'
@@ -113,18 +118,24 @@ import {
   crmContractCancelAPI
 } from '@/api/customermanagement/contract'
 import { crmReceivablesDelete } from '@/api/customermanagement/money'
-import { crmProductStatus } from '@/api/customermanagement/product'
+import {
+  crmProductStatus,
+  crmProductDeleteAPI
+} from '@/api/customermanagement/product'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
 import TimePiece from '../../../callCenter/TimePiece'
+import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
+
 export default {
   name: 'CRMDetailHead',
   components: {
     TransferHandle,
     AllocHandle,
     TimePiece,
-    DealStatusHandle
+    DealStatusHandle,
+    PutPoolHandle
   },
   props: {
     /** 模块ID */
@@ -165,11 +176,12 @@ export default {
       moreTypes: [], // 更多操作
       transferDialogShow: false, // 转移操作
       allocDialogShow: false, // 公海分配操作提示框
-      dealStatusShow: false // 成交状态修改框
+      dealStatusShow: false, // 成交状态修改框
+      putPoolShow: false // 客户放入公海
     }
   },
   computed: {
-    ...mapGetters(['crm', 'CRMConfig']),
+    ...mapGetters(['crm']),
     crmIcon() {
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
@@ -293,7 +305,6 @@ export default {
         this.transferDialogShow = true
       } else if (
         type == 'transform' ||
-        type == 'put_seas' ||
         type == 'delete' ||
         type == 'lock' ||
         type == 'unlock' ||
@@ -305,8 +316,6 @@ export default {
         var message = ''
         if (type == 'transform') {
           message = '确定将这些线索转换为客户吗?'
-        } else if (type == 'put_seas') {
-          message = '确定转移到公海吗?'
         } else if (type == 'delete') {
           message = '确定要删除这些数据吗?'
         } else if (type == 'lock') {
@@ -346,24 +355,15 @@ export default {
       } else if (type == 'deal_status') {
         // 客户成交状态操作
         this.dealStatusShow = true
+      } else if (type == 'put_seas') {
+        // 客户放入公海
+        this.putPoolShow = true
       }
     },
     confirmHandle(type) {
       if (type === 'lock' || type === 'unlock') {
         crmCustomerLock({
           status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
-          ids: this.id
-        })
-          .then(res => {
-            this.$message({
-              type: 'success',
-              message: '操作成功'
-            })
-            this.$emit('handle', { type: type })
-          })
-          .catch(() => {})
-      } else if (type === 'put_seas') {
-        crmCustomerPutInPool({
           ids: this.id
         })
           .then(res => {
@@ -405,11 +405,12 @@ export default {
       } else if (type === 'delete') {
         const request = {
           leads: crmLeadsDelete,
-          customer: crmCustomerDelete,
+          customer: this.isSeas ? crmCustomerPoolDeleteAPI : crmCustomerDelete,
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
-          receivables: crmReceivablesDelete
+          receivables: crmReceivablesDelete,
+          product: crmProductDeleteAPI
         }[this.crmType]
         request({
           [this.crmType + 'Ids']: this.id
@@ -564,7 +565,7 @@ export default {
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'product') {
-        return this.forSelectionHandleItems(handleInfos, ['start', 'disable'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete', 'start', 'disable'])
       }
     },
     forSelectionHandleItems(handleInfos, array) {
@@ -586,13 +587,16 @@ export default {
         }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
+        if (this.isSeas) {
+          return this.crm.pool.delete
+        }
         return this.crm[this.crmType].delete
       } else if (type == 'put_seas') {
         // 放入公海(客户)
         return this.crm[this.crmType].putinpool
       } else if (type == 'lock' || type == 'unlock') {
-        // 锁定解锁(客户) customerConfig 公海规则打开的前提下展示锁定解锁
-        return this.crm[this.crmType].lock && this.CRMConfig.customerConfig == 1
+        // 锁定解锁(客户)
+        return this.crm[this.crmType].lock
       } else if (type == 'add_user' || type == 'delete_user') {
         // 添加 移除团队成员
         return this.crm[this.crmType].teamsave

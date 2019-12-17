@@ -46,6 +46,7 @@ export default {
   components: {},
   mixins: [],
   props: {
+    value: Number,
     visible: {
       type: Boolean,
       required: true,
@@ -80,7 +81,16 @@ export default {
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    value: {
+      handler(val) {
+        if (typeof val != 'undefined') {
+          this.status = val == 0 ? 1 : 0
+        }
+      },
+      immediate: true
+    }
+  },
   mounted() {},
   methods: {
     /**

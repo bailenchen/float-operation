@@ -39,7 +39,7 @@ export default {
     /** 展示内容的宽 */
     width: {
       type: String,
-      default: '700px'
+      default: '900px'
     },
     /** 展示内容的上下padding */
     padding: {
@@ -79,5 +79,8 @@ export default {
 .crm-create-card-container {
   margin: 0 auto;
   height: 100%;
+  /deep/ .el-card__body {
+    padding: 20px 30px;
+  }
 }
 </style>

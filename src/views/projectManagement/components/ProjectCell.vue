@@ -56,6 +56,7 @@ export default {
     visibility: hidden;
     width: 16px;
     color: #333;
+    cursor: move;
     position: absolute;
     left: 5px;
   }

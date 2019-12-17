@@ -21,6 +21,7 @@
           v-if="showTable"
           :data="list"
           height="400"
+          show-summary
           stripe
           border
           highlight-current-row

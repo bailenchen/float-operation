@@ -3,6 +3,7 @@
     <flexbox
       v-show="selectionList.length == 0"
       class="th-container">
+      <slot name="custom"/>
       <div v-if="!isSeas">场景：</div>
       <el-popover
         v-if="!isSeas"
@@ -28,7 +29,6 @@
           @hidden-scene="showScene=false" />
       </el-popover>
       <el-button
-        :style="{ 'margin-left': isSeas ? 0 : '20px'}"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
@@ -92,7 +92,12 @@
       :crm-type="crmType"
       :dialog-visible.sync="showSceneCreate"
       :obj="sceneFilterObj"
-      @saveSuccess="updateSceneList" />
+      @save-success="updateSceneList" />
+
+    <put-pool-handle
+      :visible.sync="putPoolShow"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
   </div>
 </template>
 
@@ -110,22 +115,32 @@ import {
 } from '@/api/customermanagement/clue'
 import {
   crmCustomerLock,
-  crmCustomerPutInPool,
   crmCustomerExcelExport,
   crmCustomerPoolExcelExportAPI,
   crmCustomerDelete,
+  crmCustomerPoolDeleteAPI,
   crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import {
   crmContactsDelete,
   crmContactsExcelExport
 } from '@/api/customermanagement/contacts'
-import { crmBusinessDelete } from '@/api/customermanagement/business'
-import { crmContractDelete } from '@/api/customermanagement/contract'
-import { crmReceivablesDelete } from '@/api/customermanagement/money'
+import {
+  crmBusinessDelete,
+  crmBusinessExcelExportAPI
+} from '@/api/customermanagement/business'
+import {
+  crmContractDelete,
+  crmContractExcelExportAPI
+} from '@/api/customermanagement/contract'
+import {
+  crmReceivablesDelete,
+  crmReceivablesExcelExportAPI
+} from '@/api/customermanagement/money'
 import {
   crmProductStatus,
-  crmProductExcelExport
+  crmProductExcelExport,
+  crmProductDeleteAPI
 } from '@/api/customermanagement/product'
 
 import filterForm from './filterForm'
@@ -138,6 +153,7 @@ import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import TeamsHandle from './selectionHandle/TeamsHandle' // 操作团队成员
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
+import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 
 export default {
   name: 'CRMTableHead', // 客户管理下 重要提醒 回款计划提醒
@@ -150,7 +166,8 @@ export default {
     AllocHandle,
     SceneCreate,
     SceneSet,
-    DealStatusHandle
+    DealStatusHandle,
+    PutPoolHandle
   },
   props: {
     title: {
@@ -191,11 +208,12 @@ export default {
       teamsDialogShow: false, // 团队操作提示框
       teamsTitle: '', // 团队操作标题名
       allocDialogShow: false, // 公海分配操作提示框
-      dealStatusShow: false // 成交状态修改框
+      dealStatusShow: false, // 成交状态修改框
+      putPoolShow: false // 客户放入公海
     }
   },
   computed: {
-    ...mapGetters(['crm', 'CRMConfig']),
+    ...mapGetters(['crm']),
     iconClass() {
       return this.showScene ? 'arrow-up' : 'arrow-down'
     },
@@ -290,35 +308,23 @@ export default {
               return item.customerId
             })
             .join(',')
-        } else if (this.crmType == 'customer') {
-          request = crmCustomerExcelExport
+        } else {
+          request = {
+            customer: crmCustomerExcelExport,
+            leads: crmLeadsExcelExport,
+            contacts: crmContactsExcelExport,
+            business: crmBusinessExcelExportAPI,
+            contract: crmContractExcelExportAPI,
+            receivables: crmReceivablesExcelExportAPI,
+            product: crmProductExcelExport
+          }[this.crmType]
           params.ids = this.selectionList
-            .map(function(item, index, array) {
-              return item.customerId
-            })
-            .join(',')
-        } else if (this.crmType == 'leads') {
-          request = crmLeadsExcelExport
-          params.ids = this.selectionList
-            .map(function(item, index, array) {
-              return item.leadsId
-            })
-            .join(',')
-        } else if (this.crmType == 'contacts') {
-          request = crmContactsExcelExport
-          params.ids = this.selectionList
-            .map(function(item, index, array) {
-              return item.contactsId
-            })
-            .join(',')
-        } else if (this.crmType == 'product') {
-          request = crmProductExcelExport
-          params.ids = this.selectionList
-            .map(function(item, index, array) {
-              return item.productId
+            .map((item) => {
+              return item[`${this.crmType}Id`]
             })
             .join(',')
         }
+
         request(params)
           .then(res => {
             var blob = new Blob([res.data], {
@@ -339,7 +345,6 @@ export default {
           .catch(() => {})
       } else if (
         type == 'transform' ||
-        type == 'put_seas' ||
         type == 'delete' ||
         type == 'lock' ||
         type == 'unlock' ||
@@ -350,8 +355,6 @@ export default {
         var message = ''
         if (type == 'transform') {
           message = '确定将这些线索转换为客户吗?'
-        } else if (type == 'put_seas') {
-          message = '确定转移到公海吗?'
         } else if (type == 'delete') {
           message = '确定要删除这些数据吗?'
         } else if (type == 'lock') {
@@ -393,6 +396,9 @@ export default {
       } else if (type == 'deal_status') {
         // 客户成交状态操作
         this.dealStatusShow = true
+      } else if (type == 'put_seas') {
+        // 客户放入公海
+        this.putPoolShow = true
       }
     },
     confirmHandle(type) {
@@ -402,21 +408,6 @@ export default {
         })
         crmCustomerLock({
           status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
-          ids: customerId.join(',')
-        })
-          .then(res => {
-            this.$message({
-              type: 'success',
-              message: '操作成功'
-            })
-            this.$emit('handle', { type: type })
-          })
-          .catch(() => {})
-      } else if (type === 'put_seas') {
-        var customerId = this.selectionList.map(function(item, index, array) {
-          return item.customerId
-        })
-        crmCustomerPutInPool({
           ids: customerId.join(',')
         })
           .then(res => {
@@ -468,11 +459,12 @@ export default {
         })
         const request = {
           leads: crmLeadsDelete,
-          customer: crmCustomerDelete,
+          customer: this.isSeas ? crmCustomerPoolDeleteAPI : crmCustomerDelete,
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
-          receivables: crmReceivablesDelete
+          receivables: crmReceivablesDelete,
+          product: crmProductDeleteAPI
         }[this.crmType]
         request({
           [this.crmType + 'Ids']: ids.join(',')
@@ -592,7 +584,8 @@ export default {
           return this.forSelectionHandleItems(handleInfos, [
             'alloc',
             'get',
-            'export'
+            'export',
+            'delete'
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
@@ -616,6 +609,7 @@ export default {
       } else if (this.crmType == 'business') {
         return this.forSelectionHandleItems(handleInfos, [
           'transfer',
+          'export',
           'delete',
           'add_user',
           'delete_user'
@@ -623,15 +617,18 @@ export default {
       } else if (this.crmType == 'contract') {
         return this.forSelectionHandleItems(handleInfos, [
           'transfer',
+          'export',
           'delete',
           'add_user',
           'delete_user'
         ])
       } else if (this.crmType == 'receivables') {
-        return this.forSelectionHandleItems(handleInfos, ['delete'])
+        return this.forSelectionHandleItems(handleInfos, ['export', 'delete'])
       } else if (this.crmType == 'product') {
         return this.forSelectionHandleItems(handleInfos, [
+          'transfer',
           'export',
+          'delete',
           'start',
           'disable'
         ])
@@ -660,13 +657,16 @@ export default {
         }
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
+        if (this.isSeas) {
+          return this.crm.pool.delete
+        }
         return this.crm[this.crmType].delete
       } else if (type == 'put_seas') {
         // 放入公海(客户)
         return this.crm[this.crmType].putinpool
       } else if (type == 'lock' || type == 'unlock') {
-        // 锁定解锁(客户) customerConfig 公海规则打开的前提下展示锁定解锁
-        return this.crm[this.crmType].lock && this.CRMConfig.customerConfig == 1
+        // 锁定解锁(客户)
+        return this.crm[this.crmType].lock
       } else if (type == 'add_user' || type == 'delete_user') {
         // 添加 移除团队成员
         return this.crm[this.crmType].teamsave
@@ -741,6 +741,7 @@ export default {
   }
 
   .filter-button {
+    margin-left: 20px;
     /deep/ i {
       font-size: 14px;
       margin-right: 5px;

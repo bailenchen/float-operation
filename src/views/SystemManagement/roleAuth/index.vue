@@ -59,6 +59,7 @@
         <label class="label-title">角色名称</label>
         <el-input
           v-model="role.title"
+          :maxlength="100"
           class="input-role"/>
         <span
           slot="footer"
@@ -87,6 +88,7 @@
                 </div>
                 <el-button
                   size="medium"
+                  class="xr-btn--orange"
                   type="primary"
                   @click="addEmployees"> 关联员工 </el-button>
               </flexbox>

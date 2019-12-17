@@ -128,3 +128,29 @@ export function crmReceivablesNumAPI(data) {
     data: data
   })
 }
+
+/**
+ * 导出
+ * @param {*} data
+ */
+export function crmReceivablesExcelExportAPI(data) {
+  return request({
+    url: 'CrmReceivables/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    timeout: 60000
+  })
+}
+
+export function crmReceivablesExcelAllExportAPI(data) {
+  return request({
+    url: 'CrmReceivables/allExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

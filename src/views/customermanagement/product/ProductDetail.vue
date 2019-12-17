@@ -121,7 +121,7 @@ export default {
   computed: {
     tabNames() {
       return [
-        { label: '基本信息', name: 'CRMBaseInfo' },
+        { label: '详细资料', name: 'CRMBaseInfo' },
         { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
         { label: '操作记录', name: 'RelativeHandle' }
       ]

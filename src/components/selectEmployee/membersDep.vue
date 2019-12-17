@@ -109,12 +109,12 @@
             <flexbox
               justify="stretch"
               wrap="wrap">
-              <span
+              <div
                 v-for="(item, index) in checkedUserDepList"
                 :key="index"
-                class="select-item">{{ item.realname || item.name }}<i
-                  class="el-icon-close"
-                  @click="selectDelete(item, index)" /></span>
+                class="select-item text-one-line">{{ item.realname || item.name }}<i
+                  class="el-icon-close delete-icon"
+                  @click="selectDelete(item, index)" /></div>
             </flexbox>
           </div>
         </div>
@@ -543,6 +543,7 @@ export default {
   display: flex;
   .select-input {
     flex: 1;
+    overflow: hidden;
     border-right: 1px solid $xr-border-line-color;
     .select-input > .el-input {
       margin: 10px 0;
@@ -587,13 +588,14 @@ export default {
       height: 220px;
       overflow: auto;
       .select-item {
+        position: relative;
         flex-shrink: 0;
-        display: inline-block;
         background-color: #f3f7ff;
         height: 28px;
         line-height: 28px;
+        max-width: 80px;
         font-size: 12px;
-        padding: 0 5px;
+        padding: 0 15px 0 5px;
         border-radius: $xr-border-radius-base;
         color: #333;
         margin: 0 10px 10px 0;
@@ -672,7 +674,8 @@ export default {
 
 .checkout-boxs {
   height: 150px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .colleagues-list {
@@ -705,6 +708,18 @@ export default {
   /deep/ .el-input__inner {
     background-color: #f4f4f4;
     border: none;
+  }
+}
+
+.delete-icon {
+  color: #999;
+  cursor: pointer;
+  position: absolute;
+  top: 8px;
+  right: 2px;
+
+  &:hover {
+    color: $xr-color-primary;
   }
 }
 </style>
