@@ -68,7 +68,7 @@ export default [
   },
   {
     ...layout({
-      permissions: ['crm', 'nearbyCustomer']
+      permissions: ['crm', 'customer', 'nearbyCustomer']
     }),
     children: [{
       path: 'map', // 附近的客户
