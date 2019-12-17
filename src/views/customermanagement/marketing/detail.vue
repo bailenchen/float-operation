@@ -7,6 +7,7 @@
     :body-style="{padding: 0, height: '100%'}"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    class="d-view"
     @close="hideView">
     <div
       v-loading="loading"
@@ -20,14 +21,15 @@
           :detail="detailData"
           :head-details="headDetails"
           :id="id"
-          :crm-type="crmType"
+          crm-type="marketing"
           @handle="detailHeadHandle"
           @close="hideView"/>
         <flexbox class="d-container-bd" align="stretch">
           <el-tabs
             v-model="tabCurrentName"
             type="border-card"
-            class="d-container-bd--left">
+            class="d-container-bd--left"
+            @tab-click="handleClick">
             <el-tab-pane
               v-for="(item, index) in tabNames"
               :key="index"
@@ -36,17 +38,17 @@
               lazy>
               <c-r-m-base-info
                 v-if="item.name === 'CRMBaseInfo'"
-                :is="item.name"
                 :detail="detailData"
                 :id="id"
-                :crm-type="crmType">
+                :filed-list="baseDetailList"
+                crm-type="marketing">
                 <sections
                   class="b-cells"
                   title="图片信息"
                   content-height="auto">
                   <div class="image">
                     <div v-if="mainFileList.length > 0" class="image-info">
-                      <div class="image-info__label">产品图片</div>
+                      <div class="image-info__label">活动图片</div>
                       <div class="image-info__list">
                         <img
                           v-src="item.filePath"
@@ -57,7 +59,7 @@
                       </div>
                     </div>
                     <div v-if="detailFileList.length > 0" class="image-info">
-                      <div class="image-info__label">产品详情图片</div>
+                      <div class="image-info__label">活动详情图片</div>
                       <div class="image-info__list">
                         <img
                           v-src="item.filePath"
@@ -76,51 +78,50 @@
                 :is="item.name"
                 :detail="detailData"
                 :id="id"
-                :crm-type="crmType" />
+                :filed-list="baseDetailList"
+                crm-type="marketing"/>
             </el-tab-pane>
           </el-tabs>
         </flexbox>
       </flexbox>
     </div>
-
-    <c-r-m-create-view
+    <create
       v-if="isCreate"
-      :action="{type: 'update', id: id, batchId: detailData.batchId, editDetail: detailData}"
-      :crm-type="crmType"
+      :action="{type: 'update', id: id, detail: detailData}"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
   </slide-view>
 </template>
 
 <script>
-import { crmProductRead } from '@/api/customermanagement/product'
+import { crmMarketingReadAPI } from '@/api/customermanagement/marketing'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import CRMBaseInfo from '../components/CRMBaseInfo' // 产品基本信息
-import RelativeFiles from '../components/RelativeFiles' // 相关附件
-import RelativeHandle from '../components/RelativeHandle' // 相关操作
-
-import CRMCreateView from '../components/CRMCreateView' // 新建页面
-import DetailImg from './components/DetailImg'
+import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
+import Overview from './components/overview'
+import Statistics from './components/statistics'
+import Create from './components/create'
 import Sections from '../components/Sections'
 
 import detail from '../mixins/detail'
 
 export default {
-  // 客户管理 的 产品详情
-  name: 'ProductDetail',
+  /** 客户管理 的 活动详情 */
+  name: 'Detail',
+
   components: {
     SlideView,
     CRMDetailHead,
-    DetailImg,
     CRMBaseInfo,
-    RelativeFiles,
-    RelativeHandle,
-    CRMCreateView,
+    Overview,
+    Statistics,
+    Create,
     Sections
   },
+
   mixins: [detail],
+
   props: {
     // 详情信息id
     id: [String, Number],
@@ -145,29 +146,31 @@ export default {
       }
     }
   },
+
   data() {
     return {
-      // 展示加载loading
-      loading: false,
-      crmType: 'product',
+      loading: false, // 展示加载loading
+      crmType: 'marketing',
+      detailData: {}, // read 详情
+      baseDetailList: [], // 基本详情list
       headDetails: [
-        { title: '产品类别', value: '' },
-        { title: '产品单位', value: '' },
-        { title: '产品价格', value: '' },
-        { title: '产品编码', value: '' }
+        { title: '关联对象', value: '' },
+        { title: '状态', value: '' },
+        { title: '负责人', value: '' },
+        { title: '截止时间', value: '' }
       ],
-      tabCurrentName: 'CRMBaseInfo',
-      // 编辑操作
-      isCreate: false
+      tabCurrentName: 'Overview',
+      isCreate: false // 编辑操作
     }
   },
+
   computed: {
     tabNames() {
-      return [
-        { label: '详细资料', name: 'CRMBaseInfo' },
-        { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
-        { label: '操作记录', name: 'RelativeHandle' }
-      ]
+      var tempsTabs = []
+      tempsTabs.push({ label: '预览', name: 'Overview' })
+      tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
+      tempsTabs.push({ label: '统计分析', name: 'Statistics' })
+      return tempsTabs
     },
     mainFileList() {
       if (this.detailData && this.detailData.mainFileList) {
@@ -185,41 +188,130 @@ export default {
       return []
     }
   },
+
   mounted() {},
+
   methods: {
-    /**
-     * 详情
-     */
     getDetial() {
       this.loading = true
-      crmProductRead({
-        productId: this.id
+      crmMarketingReadAPI({
+        marketingId: this.id
       })
         .then(res => {
           this.loading = false
           this.detailData = res.data
+          this.getBaseList(res.data)
 
-          this.headDetails[0].value = res.data.categoryName
-          this.headDetails[1].value = res.data.单位
-          this.headDetails[2].value = res.data.price
-          this.headDetails[3].value = res.data.num
+          // 负责人
+          this.headDetails[0].value = res.data.crmType == 1 ? '线索' : '客户'
+          this.headDetails[1].value = res.data.status == 1 ? '启用' : '停用'
+          this.headDetails[2].value = res.data.ownerUserName
+          this.headDetails[3].value = res.data.endTime
         })
         .catch(() => {
           this.loading = false
-          this.hideView()
         })
     },
 
     /**
-     * 关闭
+     * 获取基本信息数据
      */
+    getBaseList(data) {
+      this.baseDetailList = [
+        {
+          name: '基本信息',
+          list: [
+            {
+              name: '活动名称',
+              formType: 'text',
+              value: data.marketingName
+            },
+            {
+              name: '关联对象',
+              formType: 'text',
+              value: data.crmType == 2 ? '客户' : '线索'
+            },
+            {
+              name: '参与人员',
+              formType: 'text',
+              value: data.relationUserInfo ? data.relationUserInfo.map(item => {
+                return item.realname
+              }).join('，') : ''
+            },
+            {
+              name: '活动类型',
+              formType: 'text',
+              value: data.marketingType
+            },
+            {
+              name: '开始时间',
+              formType: 'text',
+              value: data.startTime
+            },
+            {
+              name: '截止时间',
+              formType: 'text',
+              value: data.endTime
+            },
+            {
+              name: '浏览数',
+              formType: 'text',
+              value: data.browse
+            },
+            {
+              name: '提交数',
+              formType: 'text',
+              value: data.submitNum
+            },
+            {
+              name: '活动预算',
+              formType: 'text',
+              value: data.marketingMoney
+            },
+            {
+              name: '活动地址',
+              formType: 'text',
+              value: data.address
+            },
+            {
+              name: '活动简介',
+              formType: 'text',
+              value: data.synopsis
+            },
+            {
+              name: '状态',
+              formType: 'text',
+              value: data.status == 1 ? '启用' : '停用'
+            },
+            {
+              name: '创建人',
+              formType: 'text',
+              value: data.createUserInfo ? data.createUserInfo.realname : ''
+            },
+
+            {
+              name: '创建时间',
+              formType: 'text',
+              value: data.createTime
+            },
+            {
+              name: '更新时间',
+              formType: 'text',
+              value: data.updateTime
+            }
+          ]
+        }
+      ]
+    },
+
+    //* * 点击关闭按钮隐藏视图 */
     hideView() {
       this.$emit('hide-view')
     },
 
-    /**
-     * 编辑成功
-     */
+    //* * tab标签点击 */
+    handleClick(tab, event) {},
+
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
@@ -283,5 +375,7 @@ export default {
     text-align: center;
   }
 }
+
 @import '../styles/crmdetail.scss';
+@import '../styles/detailview.scss';
 </style>

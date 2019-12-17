@@ -68,10 +68,23 @@ export default [
   },
   {
     ...layout({
+      permissions: ['crm', 'customer', 'nearbyCustomer']
+    }),
+    children: [{
+      path: 'map', // 附近的客户
+      component: () => import('@/views/customermanagement/map/MapIndex'),
+      meta: {
+        title: '附近的客户',
+        icon: 'nearby'
+      }
+    }]
+  },
+  {
+    ...layout({
       permissions: ['crm', 'contacts']
     }),
     children: [{
-      path: 'contacts', // 联系人列表
+      path: 'contacts', // 附近的客户
       component: () => import('@/views/customermanagement/contacts/ContactsIndex'),
       meta: {
         title: '联系人',
@@ -141,6 +154,19 @@ export default [
       meta: {
         title: '产品',
         icon: 'product'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'marketing']
+    }),
+    children: [{
+      path: 'marketing', // 活动列表
+      component: () => import('@/views/customermanagement/marketing/index'),
+      meta: {
+        title: '市场活动',
+        icon: 'airplane'
       }
     }]
   }

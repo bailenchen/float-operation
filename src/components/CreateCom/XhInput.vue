@@ -19,8 +19,10 @@ export default {
   },
   computed: {
     type() {
-      if (this.item && this.item.form_type == 'password') {
-        return this.item.form_type
+      if (this.item && this.item.data && this.item.data.formType == 'password') {
+        return this.item.data.formType
+      } else if (this.item && this.item.data && (this.item.data.formType == 'floatnumber' || this.item.data.formType == 'number')) {
+        return 'number'
       } else {
         return 'text'
       }

@@ -546,6 +546,25 @@ export function getBaiduMap() {
     return global.BMap._preloader
   }
 }
+/** 将url转化为img对象 */
+export function urltoImage(url, fn) {
+  var img = new Image()
+  img.src = url
+  return img
+}
+/** img对象转化为canvas对象 */
+export function imagetoCanvas(image) {
+  var cvs = document.createElement('canvas')
+  var ctx = cvs.getContext('2d')
+  cvs.width = image.width
+  cvs.height = image.height
+  ctx.drawImage(image, 0, 0, cvs.width, cvs.height)
+  return cvs
+}
+
+export function canvasToDataURL(canvas, format, quality) {
+  return canvas.toDataURL(format || 'image/jpeg', quality || 1.0)
+}
 
 /**
  * file Path to blob

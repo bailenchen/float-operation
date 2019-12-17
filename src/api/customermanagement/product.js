@@ -144,6 +144,33 @@ export function crmProductNumAPI(data) {
     data: data
   })
 }
+/**
+ * 详情图添加
+ * @param {*} datas
+ *
+ */
+export function crmProductDetailImgSave(data) {
+  return request({
+    url: 'CrmProductDetailImg/save',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+/**
+ * 查询官网图片 CrmProductDetailImg/queryListByType
+ * @param {*} data
+ *
+ */
+export function crmProductDetailImgQueryListByType(data) {
+  return request({
+    url: 'CrmProductDetailImg/queryListByType',
+    method: 'post',
+    data: data
+  })
+}
 
 /**
  * 产品转移

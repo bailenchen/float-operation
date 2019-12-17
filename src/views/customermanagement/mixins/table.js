@@ -42,6 +42,10 @@ import {
   crmReceivablesIndex,
   crmReceivablesExcelAllExportAPI
 } from '@/api/customermanagement/money'
+import {
+  crmMarketingIndexAPI
+} from '@/api/customermanagement/marketing'
+
 
 import Lockr from 'lockr'
 import { Loading } from 'element-ui'
@@ -105,7 +109,12 @@ export default {
     // document.getElementById('crm-table').addEventListener('click', e => {
     //   e.stopPropagation()
     // })
-    if (this.isSeas && this.crm.pool.index) {
+
+    if (this.crmType === 'marketing') {
+      if (this.crm[this.crmType].index) {
+        this.getList()
+      }
+    } else if (this.isSeas && this.crm.pool.index) {
       this.getFieldList()
     } else if (this.crm[this.crmType].index) {
       this.loading = true
@@ -132,10 +141,16 @@ export default {
         params.sceneId = this.sceneId
       }
 
+      // 活动关联对象
+      if (this.marketingCrmType) {
+        params.crmType = this.marketingCrmType
+      }
+
       // 公海切换
       if (this.poolId) {
         params.poolId = this.poolId
       }
+
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
@@ -184,6 +199,8 @@ export default {
         return crmProductIndex
       } else if (this.crmType === 'receivables') {
         return crmReceivablesIndex
+      } else if (this.crmType === 'marketing') {
+        return crmMarketingIndexAPI
       }
     },
     /** 获取字段 */
@@ -354,7 +371,16 @@ export default {
         } else {
           this.showDview = false
         }
+      } else if (this.crmType == 'marketing') {
+        if (column.property === 'marketingName') {
+          this.rowID = row.marketingId
+          this.rowType = 'marketing'
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       }
+
       if (this.showDview) {
         this.$store.commit('SET_COLLAPSE', this.showDview)
       }
@@ -433,6 +459,7 @@ export default {
       if (['alloc', 'get', 'transfer', 'transform', 'delete', 'put_seas', 'exit-team'].includes(data.type)) {
         this.showDview = false
       }
+
       this.getList()
     },
     /** 自定义字段管理 */
