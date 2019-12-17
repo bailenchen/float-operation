@@ -108,7 +108,7 @@
           </flexbox-item>
         </flexbox>
       </sections>
-      <slot/>
+      <slot />
     </div>
     <map-view
       v-if="showMapView"
@@ -126,6 +126,7 @@ import Sections from '../components/Sections'
 import { filedGetInformation } from '@/api/customermanagement/common'
 import MapView from '@/components/MapView' // 地图详情
 import FileListView from '@/components/FileListView'
+import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
@@ -166,7 +167,9 @@ export default {
     crmType: {
       type: String,
       default: ''
-    }
+    },
+    // 固定字段的数据
+    filedList: Array
   },
   data() {
     return {
@@ -180,11 +183,21 @@ export default {
   computed: {},
   watch: {
     id: function(val) {
-      this.getBaseInfo()
+      if (!this.filedList) {
+        this.getBaseInfo()
+      }
+    },
+    filedList() {
+      this.list = this.filedList
     }
+
   },
   mounted() {
-    this.getBaseInfo()
+    if (this.filedList) {
+      this.list = this.filedList
+    } else {
+      this.getBaseInfo()
+    }
   },
   activated: function() {},
   deactivated: function() {},
@@ -194,36 +207,45 @@ export default {
      */
     getBaseInfo() {
       this.loading = true
-      filedGetInformation({
-        types: crmTypeModel[this.crmType],
-        id: this.id
-      })
-        .then(res => {
-          const baseList = []
-          const systemList = []
-          res.data.forEach(item => {
-            if (item.sysInformation == 1) {
-              systemList.push(item)
-            } else {
-              baseList.push(item)
-            }
-          })
+      if (this.crmType === 'marketing') {
+        crmMarketingInformationAPI().then(res => {
+          this.list = res.data
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      } else {
+        filedGetInformation({
+          types: crmTypeModel[this.crmType],
+          id: this.id
+        })
+          .then(res => {
+            const baseList = []
+            const systemList = []
+            res.data.forEach(item => {
+              if (item.sysInformation == 1) {
+                systemList.push(item)
+              } else {
+                baseList.push(item)
+              }
+            })
 
-          this.list = [
-            {
-              name: '基本信息',
-              list: baseList
-            },
-            {
-              name: '系统信息',
-              list: systemList
-            }
-          ]
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
+            this.list = [
+              {
+                name: '基本信息',
+                list: baseList
+              },
+              {
+                name: '系统信息',
+                list: systemList
+              }
+            ]
+            this.loading = false
+          })
+          .catch(() => {
+            this.loading = false
+          })
+      }
     },
 
     /**
