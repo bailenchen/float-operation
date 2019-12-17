@@ -33,6 +33,7 @@
 </template>
 <script type="text/javascript">
 import VDistpicker from 'v-distpicker'
+import { getBaiduMap } from '@/utils'
 
 export default {
   name: 'ChangeAddress',
@@ -71,12 +72,15 @@ export default {
       this.dialogVisible = val
       if (val) {
         this.$nextTick(() => {
-          var map = new BMap.Map('chosemap', { enableMapClick: true })
-          var point = this.value
-          map.centerAndZoom(point, 14)
-          map.enableScrollWheelZoom()
-          this.map = map
-          this.addMarkerLabel(point)
+          getBaiduMap()
+            .then(() => {
+              var map = new BMap.Map('chosemap', { enableMapClick: true })
+              var point = this.value
+              map.centerAndZoom(point, 14)
+              map.enableScrollWheelZoom()
+              this.map = map
+              this.addMarkerLabel(point)
+            })
         })
       }
     }
