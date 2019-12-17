@@ -17,7 +17,9 @@
         <el-table
           v-if="showTable"
           :data="list"
+          :summary-method="getSummaries"
           height="400"
+          show-summary
           stripe
           border
           highlight-current-row
@@ -41,6 +43,7 @@
 <script>
 import base from '../mixins/base'
 import sortMixins from '../mixins/sort'
+import summaryMixins from '../mixins/summary'
 import echarts from 'echarts'
 import {
   biCustomerTotalListAPI,
@@ -50,7 +53,7 @@ import {
 export default {
   /** 客户总量分析 */
   name: 'CustomerTotalStatistics',
-  mixins: [base, sortMixins],
+  mixins: [base, sortMixins, summaryMixins],
   data() {
     return {
       loading: false,
@@ -58,6 +61,7 @@ export default {
       axisOption: null,
 
       postParams: {}, // 筛选参数
+
       list: [],
       axisList: [],
       fieldList: [
@@ -67,8 +71,6 @@ export default {
         { field: 'dealCustomerRate', name: '客户成交率(%)', sortable: true },
         { field: 'contractMoney', name: '合同总金额', sortable: true },
         { field: 'receivablesMoney', name: '回款金额', sortable: true }
-        // { field: 'unreceivedMoney', name: '未回款金额', sortable: true },
-        // { field: 'completedRate', name: '回款完成率(%)', sortable: true }
       ]
     }
   },
@@ -133,18 +135,15 @@ export default {
       biCustomerTotalListAPI(params)
         .then(res => {
           this.loading = false
-          this.list = res.data || []
-          // for (let index = 0; index < this.list.length; index++) {
-          //   const element = this.list[index]
-          //   if (element.unreceivedMoney < 0) {
-          //     element.unreceivedMoney = 0
-          //   }
-          // }
+          const data = res.data || {}
+          this.list = data.list || []
+          this.getSummariesData(data.total)
         })
         .catch(() => {
           this.loading = false
         })
     },
+
     /** 柱状图 */
     initAxis() {
       this.chartObj = echarts.init(document.getElementById('axismain'))

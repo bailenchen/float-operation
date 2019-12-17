@@ -2,9 +2,10 @@
   <div>
     <div class="se-table-header">
       <el-button
-        class="se-table-header-button"
+        class="se-table-header-button xr-btn--orange"
         type="primary"
-        @click="addExamine">添加审批流程</el-button>
+        icon="el-icon-plus"
+        @click="addExamine">新建审批流程</el-button>
     </div>
     <el-table
       v-loading="loading"

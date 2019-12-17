@@ -39,16 +39,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-container {
+	min-height: 0;
+	height: 100%;
+}
+
 .aside-container {
-  position: relative;
-  background-color: #2d3037;
-  box-sizing: border-box;
+	position: relative;
+	background-color: #2d3037;
+	box-sizing: border-box;
 }
 
 .nav-container {
-  padding: 0;
-  box-shadow: 0px 1px 2px #dbdbdb;
-  z-index: 100;
-  min-width: 1200px;
+	padding: 0;
+	box-shadow: 0px 1px 2px #dbdbdb;
+	z-index: 100;
+	min-width: 1200px;
 }
 </style>

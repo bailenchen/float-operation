@@ -7,7 +7,8 @@
       placeholder="请输入客户名称/合同编号/合同名称"
       main-title="新建合同"
       @on-handle="listHeadHandle"
-      @on-search="crmSearch"/>
+      @on-search="crmSearch"
+      @on-export="exportInfos"/>
     <div
       v-empty="!crm.contract.index"
       xs-empty-icon="nopermission"

@@ -285,6 +285,10 @@ export default {
 }
 
 // check样式
+.el-checkbox-group {
+  overflow-x: hidden;
+}
+
 .el-checkbox {
   /deep/ .el-checkbox__label {
     color: #333;

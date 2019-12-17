@@ -47,7 +47,8 @@
                 :handle="activityHandle"
                 :is-seas="isSeasDetail"
                 :crm-type="crmType"
-                :contacts-id.sync="firstContactsId" />
+                :contacts-id.sync="firstContactsId"
+                @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
           <transition name="slide-fade">
@@ -202,7 +203,7 @@ export default {
       var tempsTabs = []
       tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.customer && this.crm.customer.read) {
-        tempsTabs.push({ label: '基本信息', name: 'CRMBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
       }
       if (this.crm.contacts && this.crm.contacts.index) {
         tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
@@ -384,9 +385,14 @@ export default {
           batchId: this.detailData.batchId
         }
         this.isCreate = true
-      } else if (data.type === 'delete') {
+      } else if (data.type === 'delete' || data.type === 'exit-team') {
         this.hideView()
       }
+
+      if (data.type === 'edit' || data.type === 'deal_status') {
+        this.getDetial()
+      }
+
       this.$emit('handle', data)
     }
   }

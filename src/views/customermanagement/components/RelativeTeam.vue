@@ -7,6 +7,10 @@
       <el-button
         class="rc-head-item"
         type="primary"
+        @click.native="handleClick('exit')">退出团队</el-button>
+      <el-button
+        class="rc-head-item"
+        type="primary"
         @click.native="handleClick('remove')">移除</el-button>
       <el-button
         class="rc-head-item"
@@ -78,17 +82,20 @@ import TeamsHandle from './selectionHandle/TeamsHandle' // 操作团队成员
 import {
   crmCustomerTeamMembers,
   crmCustomerUpdateMembers,
-  crmCustomerSettingTeamDelete
+  crmCustomerSettingTeamDelete,
+  crmCustomerExitTeam
 } from '@/api/customermanagement/customer'
 import {
   crmBusinessTeamMembers,
   crmBusinessUpdateMembers,
-  crmBusinessSettingTeamDelete
+  crmBusinessSettingTeamDelete,
+  crmBusinessExitTeam
 } from '@/api/customermanagement/business'
 import {
   crmContractTeamMembers,
   crmContractUpdateMembers,
-  crmContractSettingTeamDelete
+  crmContractSettingTeamDelete,
+  crmContractExitTeam
 } from '@/api/customermanagement/contract'
 
 export default {
@@ -175,6 +182,41 @@ export default {
     handleClick(type) {
       if (type == 'add') {
         this.teamsDialogShow = true
+      } else if (type == 'exit') {
+        this.$confirm('确定退出团队?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            const request = {
+              customer: crmCustomerExitTeam,
+              business: crmBusinessExitTeam,
+              contract: crmContractExitTeam
+            }[this.crmType]
+
+            this.loading = true
+            const params = {}
+            params[`${this.crmType}Id`] = this.id
+            request(params)
+              .then(res => {
+                this.$message({
+                  type: 'success',
+                  message: '操作成功'
+                })
+                this.$emit('on-handle', { type: 'exit-team' })
+                this.loading = false
+              })
+              .catch(() => {
+                this.loading = false
+              })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
       } else {
         if (this.selectionList.length == 0) {
           this.$message.error('请勾选需要操作的团队成员')

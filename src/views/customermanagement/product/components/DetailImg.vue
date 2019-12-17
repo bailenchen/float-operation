@@ -1,57 +1,70 @@
 <template>
   <div v-loading="loading" class="b-cont">
-    <sections
-      class="b-cells"
-      title="产品信息"
-      content-height="auto">
-      <div class="detail-box">
-        <div class="detail-item">
-          <label class="detail-label"><span class="label-start">*</span> 产品主图</label>
-          <div class="detail-upload">
-            <div v-if="!primaryUrl" class="content-cross" @click="upLoadImg(1)">
+    <div class="detail-box">
+      <div class="detail-item">
+        <label class="detail-label"> 产品图片</label>
+
+        <div class="detail">
+          <flexbox class="detail-images">
+            <div v-for="(item, index) in primaryList" :key="index" class="show-img">
+              <img
+                v-src="item.filePath"
+                :key="item.filePath">
+              <div
+                class="img-model">
+                <i
+                  class="el-icon-zoom-in set-img-zoom"
+                  @click.stop="previewImage(primaryList, index)"/>
+                <i
+                  class="el-icon-delete set-img-delete"
+                  @click.stop="deleteImg('main', index)"/>
+              </div>
+            </div>
+            <div v-if="primaryList.length < 9" class="content-cross" @click="upLoadImg('main')">
               <input
                 ref="primaryImgInput"
                 accept="image/*"
                 type="file"
-                class="file-input"
                 multiple
+                class="file-input"
                 @change="upLoad">
               <el-button
                 type="text"
                 icon="el-icon-plus"
                 class="cross"/>
             </div>
-            <div v-else class="detail-upload" @mouseleave="enterId = 0">
-              <img
-                v-src="primaryUrl"
-                :key="primaryUrl"
-                class="content-cross"
-                @mouseenter="enterId = 1">
-              <div
-                v-if="enterId === 1"
-                class="img-model"
-                @mouseleave="enterId = 0">
-                <i
-                  class="el-icon-zoom-in set-img-zoom"
-                  @click.stop="player(primaryUrl, 1)"/>
-                <i
-                  class="el-icon-delete set-img-delete"
-                  @click.stop="deleteImg(1)"/>
-              </div>
-            </div>
-            <div class="detail-tip">图片建议上传：290(宽) * 220(高) (应用于小图式)</div>
-          </div>
+          </flexbox>
+
+          <div class="detail-tip">图片建议上传：290（宽） * 220(高) （最多只能上传<span>{{ 9 - primaryList.length }}</span>张图片）</div>
         </div>
       </div>
-      <div class="detail-box">
-        <div class="detail-item">
-          <label class="detail-label"><span class="label-start">*</span> 详情图片</label>
-          <div class="detail-upload">
-            <div v-if="!detaiUrl" class="content-cross cross-two" @click="upLoadImg(2)">
+    </div>
+    <div class="detail-box">
+      <div class="detail-item">
+        <label class="detail-label"> 产品详情图片</label>
+        <div class="detail">
+          <flexbox class="detail-images">
+            <div v-for="(item, index) in detailList" :key="index" class="show-img">
+              <img
+                v-src="item.filePath"
+                :key="item.filePath"
+                class="cross-two">
+              <div
+                class="img-model">
+                <i
+                  class="el-icon-zoom-in set-img-zoom"
+                  @click.stop="previewImage(detailList, index)"/>
+                <i
+                  class="el-icon-delete set-img-delete"
+                  @click.stop="deleteImg('detail', index)"/>
+              </div>
+            </div>
+            <div v-if="detailList.length < 9" class="content-cross cross-two" @click="upLoadImg('detail')">
               <input
                 ref="detailImgInput"
                 accept="image/*"
                 type="file"
+                multiple
                 class="file-input"
                 @change="upLoad">
               <el-button
@@ -59,176 +72,142 @@
                 icon="el-icon-plus"
                 class="cross"/>
             </div>
-            <div v-else class="detail-upload" @mouseleave="enterId = 0">
-              <img
-                v-src="detaiUrl"
-                :key="detaiUrl"
-                class="content-cross cross-two"
-                @mouseenter="enterId = 2">
-              <!-- <el-image
-                :src="detaiUrl"
-                class="content-cross cross-two"
-                @mouseenter.native="enterId = 2"/> -->
-              <div
-                v-if="enterId === 2"
-                class="img-model cross-two--model"
-                @mouseleave="enterId = 0">
-                <i
-                  class="el-icon-zoom-in set-img-zoom"
-                  @click.stop="player(detaiUrl, 2)"/>
-                <i
-                  class="el-icon-delete set-img-delete"
-                  @click.stop="deleteImg(2)"/>
-              </div>
-            </div>
-            <div class="detail-tip">图片建议上传：750(宽) * 600(高) (应用于大图式)</div>
-          </div>
+          </flexbox>
+          <div class="detail-tip">图片建议上传：750(宽) * 600(高)（最多只能上传<span>{{ 9 - primaryList.length }}</span>张图片）</div>
         </div>
       </div>
-      <div class="detail-box">
-        <div class="detail-item">
-          <label class="detail-label"><span class="label-start">*</span> 产品简介</label>
-          <div class="detail-input">
-            <el-input
-              v-model="productRemark"
-              :rows="5"
-              :maxlength="1000"
-              type="textarea"
-              @blur="saveProduct"/>
-            <div class="input-remark">{{ productRemark.length }} / 1000</div>
-          </div>
-        </div>
-      </div>
-    </sections>
+    </div>
   </div>
 
 </template>
 
 <script type="text/javascript">
-'use strict'
-import Sections from '../../components/Sections'
-import {
-  crmProductDetailImgQueryListByType,
-  crmProductDetailImgSave
-} from '@/api/customermanagement/product'
 import { crmFileSave, crmFileDelete } from '@/api/common'
+import { filePathToBlob } from '@/utils'
+
 export default {
-  components: {
-    Sections
-  },
+  name: 'DetailImg',
+  components: {},
   props: {
-    id: {
-      type: [String, Number],
-      default: 0
-    },
-    show: {
-      type: Boolean,
-      default: true
+    detail: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
     return {
-      productRemark: '',
-      enterId: -1,
-      primaryObj: {},
-      detailObj: {},
-      primaryUrl: '',
-      detaiUrl: '',
-      fileList: [],
-      imgList: [],
-      type: 1,
-      imgId: -1,
+      primaryList: [],
+      detailList: [],
+      type: 'main',
       loading: false
     }
   },
   watch: {
-    id() {
-      this.getImglist()
+    detail: {
+      handler(data) {
+        if (data) {
+          this.primaryList = data.mainFile || []
+          this.detailList = data.detailFile || []
+        }
+      },
+      immediate: true
     }
   },
   mounted() {
-    this.getImglist()
   },
   methods: {
-    getImglist() {
-      this.loading = true
-      crmProductDetailImgQueryListByType(
-        { productId: this.id }
-      ).then(res => {
-        this.detailObj = res.data.detailFile
-        this.detaiUrl = res.data.detailFile.filePath
-        this.primaryObj = res.data.mainFile
-        this.primaryUrl = res.data.mainFile.filePath
-        this.productRemark = res.data.remarks
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
-    },
-    upLoadImg(index) {
-      this.type = index
-      if (index === 1) {
+    upLoadImg(type) {
+      this.type = type
+      if (type === 'main') {
         this.$refs.primaryImgInput.click()
       } else {
         this.$refs.detailImgInput.click()
       }
     },
-    upLoad(event) {
-      const params = {
-        file: event.target.files[0],
-        type: this.type,
-        productId: this.id
-      }
-      this.loading = true
-      crmFileSave(params).then(res => {
-        if (this.type === 1) {
-          const data = this.getParams(res)
-          this.saveIntroduce(data).then(response => {
-            this.primaryObj = res
-            this.primaryUrl = res.url
-            this.loading = false
-            this.$message.success('产品主图上传成功')
-          }).catch(() => {
-            this.loading = false
-          })
-        } else if (this.type === 2) {
-          const data = this.getParams(res)
-          this.saveIntroduce(data).then(response => {
-            this.detailObj = res
-            this.detaiUrl = res.url
-            this.loading = false
-            this.$message.success('详情图片上传成功')
-          }).catch(() => {
-            this.loading = false
-          })
+
+    /**
+     * 处理选择的图片
+     */
+    selectImg(url) {
+      filePathToBlob(url).then(blob => {
+        var type = url.split('.').slice(-1) || 'png'
+        var name = url.split('/').slice(-1)
+        const file = new File([blob], name, { type: `image/${type}` })
+        var even = {
+          target: {
+            files: [file]
+          }
         }
-      }).catch(() => {
-        this.loading = false
+        this.upLoad(even)
       })
     },
-    /** 删除图片 */
-    deleteImg(index) {
+
+    /**
+     * 上传
+     */
+    upLoad(event) {
+      var files = Array.from(event.target.files)
+      if (this.type === 'main' && files.length + this.primaryList.length > 9) {
+        files = files.slice(0, 9 - this.primaryList.length)
+        this.$message.error('最多只能上传9张图片')
+      } else if (files.length + this.detailList.length > 9) {
+        files = files.slice(0, 9 - this.detailList.length)
+        this.$message.error('最多只能上传9张图片')
+      }
+
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index]
+        this.loading = true
+        crmFileSave({ file: file }).then(res => {
+          res.filePath = res.url
+          if (this.type === 'main') {
+            this.primaryList.push(res)
+            this.loading = false
+            this.$emit('change', 'mainFile', this.primaryList)
+          } else {
+            this.detailList.push(res)
+            this.loading = false
+            this.$emit('change', 'detailFile', this.detailList)
+          }
+        }).catch(() => {
+          this.loading = false
+        })
+      }
+    },
+
+    /**
+     * 删除图片
+     */
+    deleteImg(type, index) {
       const params = {}
-      if (index == 1) {
-        params.id = this.primaryObj.fileId
+      if (type == 'main') {
+        params.id = this.primaryList[index].fileId
       } else {
-        params.id = this.detailObj.fileId
+        params.id = this.detailList[index].fileId
       }
       this.$confirm('此操作将永久删除该图片, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.loading = true
         crmFileDelete(params).then(res => {
           this.$message.success('删除成功')
-          if (index == 1) {
-            this.primaryUrl = ''
-            this.primaryObj = {}
+          if (type == 'main') {
+            this.primaryList.splice(index, 1)
+            this.$emit('change', 'mainFile', this.primaryList)
+            this.$emit('delete', 'mainFile', this.primaryList)
           } else {
-            this.detaiUrl = ''
-            this.detailObj = {}
+            this.detailList.splice(index, 1)
+            this.$emit('change', 'detailFile', this.detailList)
+            this.$emit('delete', 'detailFile', this.detailList)
           }
-        }).catch(() => {})
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -236,61 +215,17 @@ export default {
         })
       })
     },
-    /** 预览图片 */
-    player(path, type) {
-      let name = ''
-      if (type === 1) {
-        name = '产品主图.jpg'
-      } else {
-        name = '详情图片.jpg'
-      }
+
+    /**
+     * 预览图片
+     */
+    previewImage(list, index) {
       this.$bus.emit('preview-image-bus', {
-        index: 0,
-        data: [{
-          url: path,
-          src: path,
-          name: name
-        }]
-      })
-    },
-    /** 保存详情 */
-    saveIntroduce(params) {
-      return new Promise((resolve, reject) => {
-        crmProductDetailImgSave(params).then(res => {
-          resolve()
-        }).catch(() => {
-          reject()
+        index: index,
+        data: list.map(item => {
+          item.url = item.filePath
+          return item
         })
-      })
-    },
-    /** 获取参数 */
-    getParams(res) {
-      const params = {}
-      if (this.type === 1) {
-        params.mainFileId = res.fileId
-      } else if (this.type === 2) {
-        params.detailFileId = res.fileId
-      }
-      params.productId = this.id
-      params.remarks = this.productRemark
-      return params
-    },
-    /** 保存产品简介 */
-    saveProduct() {
-      this.loading = true
-      const params = {}
-      if (this.detailObj.fileId) {
-        params.detailFileId = this.detailObj.fileId
-      }
-      if (this.primaryObj.fileId) {
-        params.mainFileId = this.primaryObj.fileId
-      }
-      params.remarks = this.productRemark
-      crmProductDetailImgSave(params).then(res => {
-        this.loading = false
-        this.$message.success('产品简介保存成功')
-      }).catch(() => {
-        this.loading = false
       })
     }
   }
@@ -299,102 +234,110 @@ export default {
 
 <style lang="scss" scoped>
 .b-cont {
-  position: relative;
-  padding: 15px;
-  height: 100%;
-  overflow-y: auto;
-  overflow-y: overlay;
+    position: relative;
 }
- .detail-box {
-   .file-input {
-     display: none;
-   }
-   .detail-item {
-     display: flex;
-   }
-   .detail-label {
-     font-weight: 500;
-     margin-left: 20px;
-     margin-top: 20px;
-     font-size: 13px;
-     .label-start {
-       color: red;
-     }
-   }
-   .detail-upload {
-     position: relative;
-     .close {
-       color: #C1C1C1;
-       position:absolute;
-       top: 0px;
-       right: 70px;
-     }
-   }
-   .detail-tip {
-     color: #C1C1C1;
-     font-size: 12px;
-     margin-left: 20px;
-   }
-   .img-model {
-      position: absolute;
-      z-index: 10;
-      line-height: 108px;
-      background-color: #2d3037;
-      opacity: 0.8;
-      width: 193px;
-      height: 108px;
-      border-radius: 6px;
-      top: 1px;
-      left: 21px;
-      .set-img-delete{
-          font-size: 20px;
-          color: white;
-          cursor: pointer;
+
+.detail-box {
+    .file-input {
+        display: none;
     }
-    .set-img-zoom {
-       font-size: 20px;
-       color: white;
-       padding-left: calc(50% - 30px);
-       cursor: pointer;
+    .detail-item {
+        margin-top: 8px;
     }
-   }
-   .content-cross {
-    width: 195px;
-    height: 110px;
-    margin: 20px;
-    display: flex;
-    cursor: pointer;
-    border-radius: 6px;
-    position: relative;
-    text-align: center;
-    border: 1px #c0ccda dashed;
-    .cross {
-      color: #606266;
-      font-size: 20px;
-      margin-left: calc(50% - 10px);
+    .detail-label {
+        font-weight: 500;
+        margin-left: 20px;
+        margin-top: 20px;
+        word-break: keep-all;
+        white-space: nowrap;
+        font-size: 13px;
     }
-  }
-  .detail-input {
-    margin: 20px;
-    width: 400px;
-    position: relative;
-    .input-remark {
-      position:absolute;
-      color: #C1C1C1;
-      font-size: 12px;
-      bottom: 10px;
-      right: 10px;
+    .detail-tip {
+        color: #C1C1C1;
+        font-size: 12px;
+        margin-bottom: 20px;
     }
-  }
-  .cross-two {
-    height: 157px;
-  }
-   .cross-two--model {
-    height: 155px;
-    line-height: 155px;
-  }
-  /deep/.el-icon-zoom-in {
-    margin-right: 10px;
-  }
- }
+
+    // 详情
+    .detail {
+      padding: 0 20px;
+    }
+
+    // 图片详情
+    .detail-images {
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    .show-img {
+      position: relative;
+      margin-right: 20px;
+      flex-shrink: 0;
+      cursor: pointer;
+
+      img {
+        width: 100px;
+        height: 76px;
+        border-radius: $xr-border-radius-base;
+      }
+      .img-model {
+        visibility: hidden;
+        position: absolute;
+        z-index: 10;
+        line-height: 88px;
+        background-color: #2d3037;
+        opacity: 0.8;
+        border-radius: 6px;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+
+        .set-img-delete {
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+        }
+        .set-img-zoom {
+            font-size: 20px;
+            color: white;
+            padding-left: calc(50% - 30px);
+            cursor: pointer;
+        }
+      }
+    }
+
+    .show-img:hover {
+      .img-model {
+        visibility: visible;
+      }
+    }
+
+
+    .content-cross {
+        flex-shrink: 0;
+        width: 100px;
+        height: 76px;
+        display: flex;
+        cursor: pointer;
+        border-radius: 6px;
+        position: relative;
+        text-align: center;
+        border: 1px #c0ccda dashed;
+        margin-bottom: 5px;
+
+        .cross {
+            color: #606266;
+            font-size: 20px;
+            margin-left: calc(50% - 10px);
+        }
+    }
+
+    .cross-two {
+        height: 80px !important;
+    }
+    /deep/.el-icon-zoom-in {
+        margin-right: 10px;
+    }
+}
 </style>

@@ -32,11 +32,13 @@
         v-if="field.formType == 'select'"
         v-model="field.defaultValue"
         :disabled="disabled">
-        <draggable :list="field.showSetting">
+        <draggable
+          :list="field.showSetting"
+          :options="{group: 'list',forceFallback:false, fallbackClass:'draggingStyle',filter: '.el-input__inner', preventOnFilter: false}" >
           <div
             v-for="(item, index) in field.showSetting"
             :key="index"
-            class="radio">
+            class="radio cursor-move">
             <el-radio
               :label="item.value"
               @click.native.prevent="radioChange(item.value)">
@@ -59,11 +61,13 @@
         v-if="field.formType == 'checkbox'"
         v-model="field.defaultValue"
         :disabled="disabled">
-        <draggable :list="field.showSetting">
+        <draggable
+          :list="field.showSetting"
+          :options="{group: 'list',forceFallback:false, fallbackClass:'draggingStyle',filter: '.el-input__inner', preventOnFilter: false}" >
           <div
             v-for="(item, index) in field.showSetting"
             :key="index"
-            class="checkbox">
+            class="checkbox cursor-move">
             <el-checkbox :label="item.value"/>
             <el-input
               v-model="item.value"
@@ -146,9 +150,14 @@
       v-if="canUnique"
       class="item-check-section">
       <el-checkbox
-
         v-model="field.isUnique"
         :disabled="disabled">设为唯一</el-checkbox>
+    </div>
+    <div
+      class="item-check-section">
+      <el-checkbox
+        v-model="field.isHidden"
+        :disabled="disabled">隐藏字段</el-checkbox>
     </div>
     <!-- <div
       v-if="field.fieldType == 1"
@@ -184,6 +193,7 @@ export default {
           formType: '', // 字段类型
           isUnique: false, // 是否唯一
           isNull: false, // 是否必填
+          isHidden: false, // 是否隐藏字段
           inputTips: '', // 输入提示
           maxLength: '', // textarea 多行文本有最大数量
           defaultValue: '', // 默认值
@@ -408,6 +418,7 @@ export default {
     width: 180px;
   }
   .handle {
+    cursor: pointer;
     color: #ccc;
     font-size: 20px;
   }
@@ -428,8 +439,13 @@ export default {
     width: 180px;
   }
   .handle {
+    cursor: pointer;
     color: #ccc;
     font-size: 20px;
   }
+}
+
+.cursor-move {
+  cursor: move;
 }
 </style>

@@ -33,7 +33,7 @@
                   <div
                     slot="label"
                     style="display: inline-block;">
-                    <div style="margin:5px 0;font-size:12px;word-wrap:break-word;word-break:break-all;">
+                    <div class="form-label">
                       {{ item.data.name }}
                       <span style="color:#999;">
                         {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
@@ -68,6 +68,12 @@
             :types="'crm_' + crmType"
             :types-id="action.id"
             @value-change="examineValueChange" />
+        </create-sections>
+        <create-sections v-if="showImageHandle" title="图片信息">
+          <detail-img
+            :detail="imageData"
+            @change="detailImgChange"
+            @delete="deleteImg" />
         </create-sections>
       </div>
 
@@ -141,6 +147,7 @@ import {
   XhCustomerAddress,
   XhReceivablesPlan // 回款计划期数
 } from '@/components/CreateCom'
+import DetailImg from '../product/components/DetailImg'
 
 export default {
   name: 'CrmCreateView', // 所有新建效果的view
@@ -162,7 +169,8 @@ export default {
     XhProduct,
     XhBusinessStatus,
     XhCustomerAddress,
-    XhReceivablesPlan
+    XhReceivablesPlan,
+    DetailImg
   },
   filters: {
     /** 根据type 找到组件 */
@@ -229,6 +237,7 @@ export default {
         return {
           type: 'save',
           id: '',
+          editDetail: null,
           data: {} // 编辑所需信息
         }
       }
@@ -247,7 +256,12 @@ export default {
         crmFields: []
       },
       // 审批信息
-      examineInfo: {}
+      examineInfo: {},
+      // 图片信息
+      imageData: {
+        mainFile: [],
+        detailFile: []
+      }
     }
   },
   computed: {
@@ -274,6 +288,10 @@ export default {
     // 编辑ID
     editId() {
       return this.action.type == 'update' ? this.action.id : ''
+    },
+    // 图片操作
+    showImageHandle() {
+      return this.crmType === 'product'
     }
   },
   watch: {
@@ -285,6 +303,15 @@ export default {
       }
       this.examineInfo = {}
       this.getField()
+    },
+
+    'action.editDetail': function(data) {
+      if (data && this.showImageHandle) {
+        this.imageData = {
+          mainFile: data.mainFileList || [],
+          detailFile: data.detailFileList || []
+        }
+      }
     }
   },
   created() {
@@ -307,6 +334,25 @@ export default {
     examineValueChange(data) {
       this.examineInfo = data
     },
+    /**
+     * 修改图片
+     */
+    detailImgChange(type, data) {
+      if (type === 'mainFile') {
+        this.imageData.mainFileList = data
+      } else if (type === 'detailFile') {
+        this.imageData.detailFileList = data
+      }
+    },
+
+    deleteImg(type, data) {
+      if (type === 'mainFile') {
+        this.action.editDetail.mainFileList = data
+      } else if (type === 'detailFile') {
+        this.action.editDetail.detailFileList = data
+      }
+    },
+
     // 字段的值更新
     fieldValueChange(data) {
       var item = this.crmForm.crmFields[data.index]
@@ -1160,6 +1206,16 @@ export default {
           params.field.push(element.data)
         }
       }
+
+      if (this.showImageHandle) {
+        // 图片信息
+        params.entity.mainFileIds = this.imageData.mainFile ? this.imageData.mainFile.map(item => {
+          return item.fileId
+        }).join(',') : ''
+        params.entity.detailFileIds = this.imageData.detailFile ? this.imageData.detailFile.map(item => {
+          return item.fileId
+        }).join(',') : ''
+      }
       return params
     },
     getProductParams(params, element) {
@@ -1258,7 +1314,7 @@ export default {
       if (item.showblock && item.showblock == true) {
         return '0'
       }
-      return item.styleIndex % 2 == 0 ? '0' : '25px'
+      return item.styleIndex % 2 == 0 ? '0' : '40px'
     },
     // 获取左边padding
     getPaddingRight(item, index) {
@@ -1266,7 +1322,7 @@ export default {
         return '0'
       }
 
-      return item.styleIndex % 2 == 0 ? '25px' : '0'
+      return item.styleIndex % 2 == 0 ? '40px' : '0'
     }
   }
 }
@@ -1349,6 +1405,13 @@ export default {
   position: absolute;
   left: 0;
   top: 5px;
+}
+
+.form-label {
+  margin: 5px 0;
+  font-size: 13px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .handle-bar {

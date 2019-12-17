@@ -58,6 +58,7 @@
         style="float: right;">
         <el-button
           type="primary"
+          class="xr-btn--orange"
           @click.native="addViewShow = true">设置目标</el-button>
 
         <el-button

@@ -106,11 +106,11 @@
               :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
               @click="showDetailView(element, index , i)">
               <xr-avatar
-                v-if="element.createUser"
-                :name="element.createUser.realname"
-                :id="element.createUser.userId"
+                v-if="element.mainUser"
+                :name="element.mainUser.realname"
+                :id="element.mainUser.userId"
                 :size="24"
-                :src="element.createUser.img"
+                :src="element.mainUser.img"
                 :disabled="false"
                 class="head-png" />
               <flexbox align="stretch">

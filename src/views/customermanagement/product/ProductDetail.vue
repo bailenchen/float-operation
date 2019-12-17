@@ -34,7 +34,45 @@
               :label="item.label"
               :name="item.name"
               lazy>
+              <c-r-m-base-info
+                v-if="item.name === 'CRMBaseInfo'"
+                :is="item.name"
+                :detail="detailData"
+                :id="id"
+                :crm-type="crmType">
+                <sections
+                  class="b-cells"
+                  title="图片信息"
+                  content-height="auto">
+                  <div class="image">
+                    <div v-if="mainFileList.length > 0" class="image-info">
+                      <div class="image-info__label">产品图片</div>
+                      <div class="image-info__list">
+                        <img
+                          v-src="item.filePath"
+                          v-for="(item, index) in mainFileList"
+                          :key="index"
+                          class="main-img"
+                          @click="previewImage(mainFileList, index)">
+                      </div>
+                    </div>
+                    <div v-if="detailFileList.length > 0" class="image-info">
+                      <div class="image-info__label">产品详情图片</div>
+                      <div class="image-info__list">
+                        <img
+                          v-src="item.filePath"
+                          v-for="(item, index) in detailFileList"
+                          :key="index"
+                          class="detial-img"
+                          @click="previewImage(detailFileList, index)">
+                      </div>
+                    </div>
+                    <div v-if="detailFileList.length == 0 && mainFileList.length == 0" class="no-img">暂无图片</div>
+                  </div>
+                </sections>
+              </c-r-m-base-info>
               <component
+                v-else
                 :is="item.name"
                 :detail="detailData"
                 :id="id"
@@ -47,7 +85,7 @@
 
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId, editDetail: detailData}"
       :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -64,8 +102,10 @@ import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
-import detail from '../mixins/detail'
 import DetailImg from './components/DetailImg'
+import Sections from '../components/Sections'
+
+import detail from '../mixins/detail'
 
 export default {
   // 客户管理 的 产品详情
@@ -77,7 +117,8 @@ export default {
     CRMBaseInfo,
     RelativeFiles,
     RelativeHandle,
-    CRMCreateView
+    CRMCreateView,
+    Sections
   },
   mixins: [detail],
   props: {
@@ -123,11 +164,25 @@ export default {
   computed: {
     tabNames() {
       return [
-        { label: '基本信息', name: 'CRMBaseInfo' },
+        { label: '详细资料', name: 'CRMBaseInfo' },
         { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
-        { label: '操作记录', name: 'RelativeHandle' },
-        { label: '产品图片详情', name: 'DetailImg' }
+        { label: '操作记录', name: 'RelativeHandle' }
       ]
+    },
+    mainFileList() {
+      if (this.detailData && this.detailData.mainFileList) {
+        return this.detailData.mainFileList
+      }
+
+      return []
+    },
+
+    detailFileList() {
+      if (this.detailData && this.detailData.detailFileList) {
+        return this.detailData.detailFileList
+      }
+
+      return []
     }
   },
   mounted() {},
@@ -168,11 +223,65 @@ export default {
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
       this.getDetial()
+    },
+
+    /**
+     * 预览图片
+     */
+    previewImage(list, index) {
+      this.$bus.emit('preview-image-bus', {
+        index: index,
+        data: list.map(item => {
+          item.url = item.filePath
+          return item
+        })
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.image {
+  color: #333;
+  &-info {
+    margin: 10px 25px 0;
+
+    &__label {
+      font-size: 13px;
+    }
+
+    &__list {
+      overflow-x: auto;
+      white-space: nowrap;
+
+      img {
+        margin-top: 15px;
+        border-radius: $xr-border-radius-base;
+        cursor: pointer;
+      }
+
+      img + img {
+        margin-left: 20px;
+      }
+
+      .main-img {
+        width: 100px;
+        height: 76px;
+      }
+
+      .detial-img {
+        width: 100px;
+        height: 80px;
+      }
+    }
+  }
+
+  .no-img {
+    color: #666;
+    margin: 50px 0;
+    text-align: center;
+  }
+}
 @import '../styles/crmdetail.scss';
 </style>
