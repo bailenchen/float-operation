@@ -470,6 +470,8 @@ export default {
     */
     handleSelect(data) {
       this.point = new BMap.Point(data.lng, data.lat)
+      this.mapData.lat = data.lat
+      this.mapData.lng = data.lng
       this.getMapInfo()
     }
   }

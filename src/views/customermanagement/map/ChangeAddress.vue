@@ -79,9 +79,6 @@ export default {
           this.addMarkerLabel(point)
         })
       }
-    },
-    detailAddress: function(newValue) {
-      this.valueChange()
     }
   },
   mounted() {
