@@ -45,7 +45,9 @@
 <script>
 import {
   crmFieldConfigIndex,
-  crmFieldConfig
+  crmPoolFieldConfigIndex,
+  crmFieldConfig,
+  crmPoolFieldConfig
 } from '@/api/customermanagement/common'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { objDeepCopy } from '@/utils'
@@ -63,7 +65,9 @@ export default {
     isSeas: {
       type: Boolean,
       default: false
-    }
+    },
+
+    poolId: [String, Number]
   },
   data() {
     return {
@@ -91,6 +95,10 @@ export default {
       if (val) {
         this.getList()
       }
+    },
+
+    poolId() {
+      this.fields = []
     }
   },
   mounted() {},
@@ -102,9 +110,17 @@ export default {
      */
     getList() {
       this.loading = this.fields.length == 0
-      crmFieldConfigIndex({
-        label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType]
-      })
+      let request = null
+      const params = {}
+      if (this.isSeas) {
+        request = crmPoolFieldConfigIndex
+        params.poolId = this.poolId
+      } else {
+        request = crmFieldConfigIndex
+        params.label = crmTypeModel[this.crmType]
+      }
+
+      request(params)
         .then(res => {
           this.poolConfig = res.data.poolConfig
           const showList = res.data.value.map(function(item, index) {
@@ -165,8 +181,8 @@ export default {
           return !item.check
         })
         this.loading = true
-        crmFieldConfig({
-          label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType],
+        let request = null
+        const params = {
           noHideIds: noHideIds
             .map(item => {
               return item.id
@@ -176,8 +192,16 @@ export default {
             .map(item => {
               return item.id
             })
-            .join(',')
-        })
+            .join(',') }
+        if (this.isSeas) {
+          request = crmPoolFieldConfig
+          params.poolId = this.poolId
+        } else {
+          request = crmFieldConfig
+          params.label = crmTypeModel[this.crmType]
+        }
+
+        request(params)
           .then(res => {
             this.$message.success('操作成功')
             this.show = false
