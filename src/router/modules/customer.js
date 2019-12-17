@@ -68,14 +68,14 @@ export default [
   },
   {
     ...layout({
-      permissions: ['crm', 'customer']
+      permissions: ['crm', 'nearbyCustomer']
     }),
     children: [{
       path: 'map', // 附近的客户
       component: () => import('@/views/customermanagement/map/MapIndex'),
       meta: {
         title: '附近的客户',
-        icon: 'customer'
+        icon: 'nearby'
       }
     }]
   },

@@ -12,20 +12,55 @@
       <flexbox align="stretch" class="map-content--title">
         <flexbox-item :span="9">
           <div class="title--position">
-            <img :src="funImg" alt="">
+            <span class="wk wk-position"/>
             <el-tooltip :content="address" class="item" effect="dark" placement="top-start">
               <span class="title--address">{{ address }}</span>
             </el-tooltip>
           </div>
           <el-button type="text" class="el-button--text" @click="showAddress = true">重新选择地址</el-button>
           <span class="place-text">附近</span>
-          <el-select v-model="mapData.radius" style="width: 100px" placeholder="请选择" @change="getMapInfo">
-            <el-option
-              v-for="item in memterOptions"
-              :key="item"
-              :label="item"
-              :value="item"/>
-          </el-select>
+          <el-popover
+            v-model="showTypePopover"
+            :width="width"
+            placement="bottom"
+            popper-class="no-padding-popover"
+            trigger="click">
+            <div class="type-popper">
+              <div class="type-content">
+                <div
+                  v-for="(item, index) in memterOptions"
+                  :key="index"
+                  :class="{ 'selected' : selectType.value == item.value && !showCustomContent}"
+                  class="type-content-item"
+                  @click="customSelect(item)">
+                  <div class="mark"/>{{ item.label }}
+                </div>
+                <div
+                  :class="{ 'selected' : showCustomContent}"
+                  class="type-content-item"
+                  @click="showCustomContent = true">
+                  <div class="mark"/>自定义
+                </div>
+              </div>
+              <div
+                v-if="showCustomContent"
+                class="type-content-custom">
+                <el-input v-model="mapData.radius"/>
+                <el-button @click="customSelect(null)">确定</el-button>
+              </div>
+            </div>
+            <el-input
+              slot="reference"
+              v-model="mapData.radius"
+              :readonly="true"
+              :style="{width: width + 'px'}"
+              placeholder="请选择"
+              class="type-select">
+              <i
+                slot="suffix"
+                :class="['el-icon-arrow-up', { 'is-reverse' : showTypePopover}]"/>
+            </el-input>
+          </el-popover>
           <span class="place-text"> 米的客户</span>
         </flexbox-item>
 
@@ -50,7 +85,7 @@
                 :style="{backgroundColor: item.customerId === count ? '#f7f7f7' : ''}"
                 class="map-info--box"
                 @click="selectAddress(item)">
-                <img :src="funImg" alt="">
+                <span class="wk wk-location"/>
                 <div class="map-box--content">
                   <div class="map-info--name">
                     <el-tooltip :content="item.customerName" class="item" effect="dark" placement="top-start">
@@ -105,16 +140,38 @@ export default {
       map: null,
       /** 搜索地图输入框 */
       searchInput: 1,
+      width: 100,
+      showTypePopover: false,
+      showCustomContent: false,
+      selectType: {},
       count: -1,
       // 选中的搜索
       searchSelect: '',
       showAddress: false,
       address: '',
+      showCustom: false,
       mapList: [],
       markerArr: [],
       loading: true,
       circle: null,
-      memterOptions: ['1000', '2000', '3000', '4000', '5000', '6000', '7000', '8000', '9000'],
+      memterOptions: [
+        {
+          label: '1千米',
+          value: '1000'
+        },
+        {
+          label: '3千米',
+          value: '3000'
+        },
+        {
+          label: '5千米',
+          value: '5000'
+        },
+        {
+          label: '10千米',
+          value: '10000'
+        }
+      ],
       // 定位图标
       funImg: require('@/assets/img/position.png'),
       customerImg: require('@/assets/img/customer_active.png'),
@@ -128,7 +185,7 @@ export default {
       div: '',
       span: '',
       arrow: '',
-      mapHeight: document.documentElement.clientHeight - 265, // 地图的高度
+      mapHeight: document.documentElement.clientHeight - 210, // 地图的高度
       options: [
         {
           value: '',
@@ -217,9 +274,13 @@ export default {
         Marker.initialize = (map) => {
           var div = this.div = document.createElement('div')
           var span = this.span = document.createElement('span')
+          var img = document.createElement('img')
+          img.src = require('@/assets/img/map_blue.png')
+          img.className = 'map-marker_img'
           div.className = 'map-marker--custom ' + `marker--${item.customerId}`
           span.className = 'map-custom--text'
           div.appendChild(span)
+          div.appendChild(img)
           div.style.position = 'absolute'
           div.style.zIndex = BMap.Overlay.getZIndex(this.point.lat)
           const BMaps = BMap
@@ -244,12 +305,14 @@ export default {
             this.style.backgroundColor = '#E6A23C'
             this.style.zIndex = '10000'
             this.style.whiteSpace = 'normal'
+            img.src = require('@/assets/img/map_yellow.png')
             arrow.style.backgroundPosition = '0px -20px'
           }
 
           div.onmouseout = function() {
             this.style.backgroundColor = '#2362FB'
             this.style.whiteSpace = 'nowrap'
+            img.src = require('@/assets/img/map_blue.png')
             this.style.zIndex = BMaps.Overlay.getZIndex(points.lat)
             arrow.style.backgroundPosition = '0px 0px'
           }
@@ -309,9 +372,22 @@ export default {
       this.point = new BMap.Point(result.center.lng, result.center.lat)
       this.mapData.lng = result.center.lng
       this.mapData.lat = result.center.lat
-      console.log(result, '==eres')
       this.address = result.name
       this.getMapInfo()
+    },
+    /**
+     * 自定义选择
+     */
+    customSelect(item) {
+      if (item) {
+        this.mapData.radius = item.value
+        this.selectType = item
+        this.showCustomContent = false
+      } else {
+        this.showCustomContent = true
+      }
+      this.getMapInfo()
+      this.showTypePopover = false
     },
     /**
      * 获取地图信息
@@ -411,7 +487,7 @@ export default {
   border-top: 1px solid #e6e6e6;
   border-bottom: 1px solid #e6e6e6;
   border-radius: 2px;
-  padding-bottom: 55px;
+  padding-bottom: 5px;
 }
 .map-primity {
   height: 100%;
@@ -427,12 +503,15 @@ export default {
   border-bottom: 1px solid #e6e6e6;
   font-size: 13px;
   line-height: 50px;
-  padding: 0 15px;
+  padding: 0 10px;
   width: 100%;
   .title--position {
     display: inline-block;
-    img {
-      vertical-align: text-top;
+    /deep/.wk-position {
+      color: #2362FB;
+      display: inline-block;
+      vertical-align: top;
+      font-size: 20px;
     }
   }
   .title--address {
@@ -530,11 +609,11 @@ export default {
     padding-bottom: 10px;
     border-bottom: 1px solid #e4e4e4;
   }
-  img {
-     width: 12px;
-     height: 12px;
-     margin-top: 3px;
-     margin-right: 12px;
+  .wk-location {
+    color: red;
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 20px;
       }
 /deep/.map-info--name {
       width: 100%;
@@ -545,6 +624,7 @@ export default {
       color: #2362FB;
       .info-name {
          width: 260px;
+         margin-top: 4px;
          overflow: hidden;
          white-space: nowrap;
          text-overflow: ellipsis;
@@ -598,10 +678,10 @@ export default {
   }
   /deep/.map-marker--custom {
     background-color: #2362FB;
-    width: 200px;
-    height: 38px;
+    width: 180px;
+    height: 30px;
     border-radius: 6px;
-    line-height: 38px;
+    line-height: 30px;
     font-size: 12px;
     padding-bottom: 10px;
     text-align: center;
@@ -609,11 +689,16 @@ export default {
     position: relative;
     .map-custom--text {
       display: inline-block;
-      width: 200px;
+      width: 100%;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+    .map-marker_img {
+       position: absolute;
+       top: 30px;
+       left: 81px;
+       }
     .map-custom--pover {
       position: absolute;
       bottom: -23px;
@@ -622,4 +707,82 @@ export default {
       opacity: 0.8;
     }
   }
+  .optionCustom {
+    width: 100%;
+    .el-button--text {
+       color: #666;
+    }
+  }
+   /deep/.el-select-dropdown__item {
+      background-color: #fff !important;
+    }
+  .optionCustom:hover {
+    .el-button--text {
+       color: #2362FB;
+    }
+    background-color: #F5F7FA;
+  }
+  .type-popper {
+  .type-content {
+    max-height: 250px;
+    overflow-y: auto;
+    .type-content-item {
+      height: 34px;
+      line-height: 34px;
+      padding: 0 20px;
+      color: #606266;
+      position: relative;
+      cursor: pointer;
+      /deep/.el-input {
+        margin-bottom: 5px;
+      }
+      .mark {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: $xr-border-radius-base;
+        margin-right: 5px;
+        background-color: transparent;
+      }
+    }
+
+    .selected {
+      color: #409eff;
+      font-weight: 700;
+      .mark {
+        background-color: #409eff;
+      }
+    }
+    .type-content-item:hover {
+      background-color: #f5f7fa;
+    }
+  }
+
+  .type-content-custom {
+    padding: 5px 20px 10px;
+    position: relative;
+    overflow: hidden;
+    .el-date-editor {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    button {
+      float: right;
+    }
+  }
+}
+.el-icon-arrow-up {
+  position: absolute;
+  top: 18px;
+  right: 5px;
+  color: #c0c4cc;
+  font-size: 14px;
+  transition: transform .3s;
+  transform: rotate(180deg);
+  cursor: pointer;
+}
+.el-icon-arrow-up.is-reverse {
+  transform: rotate(0deg);
+}
 </style>
