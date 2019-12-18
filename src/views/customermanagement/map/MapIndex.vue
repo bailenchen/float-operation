@@ -81,7 +81,7 @@
           xs-empty-icon="none"
           class="map-content--left">
           <div id="map-scroll">
-            <ul :style="{height: mapHeight + 'px'}">
+            <ul ref="nearbyList" :style="{height: mapHeight + 'px'}">
               <li
                 v-for="(item, index) in mapList"
                 :key="index"
@@ -179,9 +179,6 @@ export default {
         radius: '1000',
         type: ''
       },
-      div: '',
-      span: '',
-      arrow: '',
       mapHeight: document.documentElement.clientHeight - 210, // 地图的高度
       typeOptions: [
         {
@@ -280,19 +277,15 @@ export default {
        * @param height 信息窗口高度
        */
     selectAddress(item) {
-      var div = document.getElementsByClassName(`marker--${item.customerId}`)[0]
-      var divList = document.getElementsByClassName('map-marker--custom')
-      for (let i = 0; i < divList.length; i++) {
-        divList[i].style.backgroundColor = '#2362FB'
-        divList[i].style.zIndex = BMap.Overlay.getZIndex(divList[i].lat)
+      var allOverlay = this.map.getOverlays()
+      for (let i = 0; i < allOverlay.length; i++) {
+        const overlay = allOverlay[i]
+        if (overlay._type === 'ComplexCustomOverlay' && overlay._customerId === item.customerId) {
+          this.map.centerAndZoom(overlay._point, 14)
+          this.currentId = item.customerId // 用id做标识来改变li的背景色
+          break
+        }
       }
-      div.style.backgroundColor = '#E6A23C'
-      div.style.zIndex = '1000'
-      this.address = item.detailAddress
-      console.log(item.detailAddress)
-      this.currentId = item.customerId // 用id做标识来改变li的背景色
-      this.centerPoint = new BMap.Point(item.lng, item.lat)
-      this.setCircle()
     },
 
     /**
@@ -324,88 +317,91 @@ export default {
      */
     addMarkerLabel() {
       this.markerArr = []
-      let points = this.centerPoint
-      this.mapList.forEach(item => {
-        const Marker = new BMap.Overlay()
-        Marker.initialize = (map) => {
-          var div = this.div = document.createElement('div')
-          var span = this.span = document.createElement('span')
-          var img = document.createElement('img')
+      function ComplexCustomOverlay(point, name, customerId) {
+        this._type = 'ComplexCustomOverlay'
+        this._point = point
+        this._name = name
+        this._customerId = customerId
+      }
+      ComplexCustomOverlay.prototype = new BMap.Overlay()
+      ComplexCustomOverlay.prototype.initialize = function(map) {
+        this._map = map
+
+        var div = this._div = document.createElement('div')
+        var span = this._span = document.createElement('span')
+        var img = document.createElement('img')
+
+        img.src = require('@/assets/img/map_blue.png')
+        img.className = 'map-marker_img'
+        div.className = 'map-marker--custom ' + `marker--${this._customerId}`
+        span.className = 'map-custom--text'
+        div.appendChild(span)
+        div.appendChild(img)
+        div.style.position = 'absolute'
+        div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat)
+
+        div.style.color = 'white'
+        div.style.padding = '2px'
+        div.style.whiteSpace = 'nowrap'
+        div.style.MozUserSelect = 'none'
+        div.style.fontSize = '12px'
+        span.innerHTML = this._name
+        div.appendChild(span)
+
+        var arrow = this._arrow = document.createElement('div')
+        arrow.style.position = 'absolute'
+        arrow.style.width = '11px'
+        arrow.style.height = '10px'
+        arrow.style.top = '22px'
+        arrow.style.left = '10px'
+        arrow.style.overflow = 'hidden'
+        div.appendChild(arrow)
+        div.onmouseover = function() {
+          this.style.backgroundColor = '#E6A23C'
+          this.style.whiteSpace = 'normal'
+          img.src = require('@/assets/img/map_yellow.png')
+          arrow.style.backgroundPosition = '0px -20px'
+        }
+
+        div.onmouseout = function() {
+          this.style.backgroundColor = '#2362FB'
+          this.style.whiteSpace = 'nowrap'
           img.src = require('@/assets/img/map_blue.png')
-          img.className = 'map-marker_img'
-          div.className = 'map-marker--custom ' + `marker--${item.customerId}`
-          span.className = 'map-custom--text'
-          div.appendChild(span)
-          div.appendChild(img)
-          div.style.position = 'absolute'
-          div.style.zIndex = BMap.Overlay.getZIndex(this.centerPoint.lat)
-          const BMaps = BMap
-          div.style.color = 'white'
-          div.style.padding = '2px'
-          div.style.whiteSpace = 'nowrap'
-          div.style.MozUserSelect = 'none'
-          div.style.fontSize = '12px'
-          span.innerHTML = item.customerName
-          div.appendChild(span)
-          var that = this
-          points = new BMap.Point(item.lng, item.lat)
-          var arrow = this.arrow = document.createElement('div')
-          arrow.style.position = 'absolute'
-          arrow.style.width = '11px'
-          arrow.style.height = '10px'
-          arrow.style.top = '22px'
-          arrow.style.left = '10px'
-          arrow.style.overflow = 'hidden'
-          div.appendChild(arrow)
-          div.onmouseover = function() {
-            this.style.backgroundColor = '#E6A23C'
-            this.style.zIndex = '10000'
-            this.style.whiteSpace = 'normal'
-            img.src = require('@/assets/img/map_yellow.png')
-            arrow.style.backgroundPosition = '0px -20px'
-          }
+          arrow.style.backgroundPosition = '0px 0px'
+        }
 
-          div.onmouseout = function() {
-            this.style.backgroundColor = '#2362FB'
-            this.style.whiteSpace = 'nowrap'
-            img.src = require('@/assets/img/map_blue.png')
-            this.style.zIndex = BMaps.Overlay.getZIndex(points.lat)
-            arrow.style.backgroundPosition = '0px 0px'
-          }
-          var child = item
-          var scorllDiv = document.getElementsByClassName('map-content--left')[0]
-          var mapScroll = document.getElementById('map-scroll')
-
-          var ul = document.getElementsByTagName('ul')[0]
-          mapScroll.onscroll = function(e) {
-            console.log(e)
-          }
-          div.onclick = function(e) {
-            for (let i = 0; i < that.mapList.length; i++) {
-              if (child.customerId === that.mapList[i].customerId) {
-                that.mapList.splice(i, 1)
-                break
-              }
+        div.onclick = () => {
+          let item = null
+          console.log(this)
+          for (let i = 0; i < self.mapList.length; i++) {
+            if (this._customerId === self.mapList[i].customerId) {
+              self.currentId = this._customerId
+              item = self.mapList.splice(i, 1)
+              break
             }
-            that.mapList.unshift(child)
-            that.address = child.detailAddress
-            console.log(scorllDiv.scrollTop, '==')
-            scorllDiv.scrollTop = 0
-            mapScroll.scrollTop = 0
-            ul.scrollTop = 0
-            that.selectAddress(child)
           }
-          this.map.getPanes().labelPane.appendChild(div)
-          return div
+
+          if (item) {
+            self.mapList.unshift(item[0])
+            self.$refs.nearbyList.scrollTop = 0
+          }
         }
-        Marker.draw = () => {
-          console.log('2322')
-          var pixel = this.map.pointToOverlayPixel(points)
-          this.div.style.left = pixel.x - parseInt(this.arrow.style.left) + 'px'
-          this.div.style.top = pixel.y - 30 + 'px'
-        }
-        this.markerArr.push(new BMap.Point(item.lng, item.lat))
-        this.map.addOverlay(Marker)
+        self.map.getPanes().labelPane.appendChild(div)
+        return div
+      }
+
+      ComplexCustomOverlay.prototype.draw = function() {
+        var map = this._map
+        var pixel = map.pointToOverlayPixel(this._point)
+        this._div.style.left = pixel.x - parseInt(this._arrow.style.left) + 'px'
+        this._div.style.top = pixel.y - 30 + 'px'
+      }
+      const self = this
+      this.mapList.forEach(item => {
+        const itemPoint = new BMap.Point(item.lng, item.lat)
+        const Marker = new ComplexCustomOverlay(itemPoint, item.customerName, item.customerId)
+        self.markerArr.push(itemPoint)
+        self.map.addOverlay(Marker)
       })
     },
 
