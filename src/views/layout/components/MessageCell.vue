@@ -113,11 +113,11 @@ export default {
           key = 'examine'
         } else if ([8].includes(this.data.type)) {
           key = 'announcement'
-        } else if ([10, 11, 24, 26, 30].includes(this.data.type)) {
+        } else if ([10, 11, 24, 26, 30, 33].includes(this.data.type)) {
           key = 'contract'
         } else if ([12, 13, 27].includes(this.data.type)) {
           key = 'receivables'
-        } else if ([14, 15, 23, 29].includes(this.data.type)) {
+        } else if ([14, 15, 23, 29, 32].includes(this.data.type)) {
           key = 'customer'
         } else if ([16, 17].includes(this.data.type)) {
           key = 'contacts'
@@ -125,7 +125,7 @@ export default {
           key = 'leads'
         } else if ([20, 21].includes(this.data.type)) {
           key = 'product'
-        } else if ([22, 28].includes(this.data.type)) {
+        } else if ([22, 28, 31].includes(this.data.type)) {
           key = 'business'
         }
       }
@@ -164,7 +164,10 @@ export default {
         27: `${this.data.realname}提交了`,
         28: `${this.data.realname}退出了您商机`,
         29: `${this.data.realname}退出了您客户`,
-        30: `${this.data.realname}退出了您合同`
+        30: `${this.data.realname}退出了您合同`,
+        31: `${this.data.realname}将您移出了商机`,
+        32: `${this.data.realname}将您移出了客户`,
+        33: `${this.data.realname}将您移出了合同`
       }[this.data.type]
     },
 
@@ -221,7 +224,10 @@ export default {
         27: `回款审批，请及时处理`,
         28: `的团队`,
         29: `的团队`,
-        30: `的团队`
+        30: `的团队`,
+        31: `的团队`,
+        32: `的团队`,
+        33: `的团队`
       }[this.data.type]
     }
   },
