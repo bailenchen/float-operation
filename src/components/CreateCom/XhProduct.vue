@@ -24,7 +24,7 @@
     </div>
     <el-table
       :data="productList"
-      style="width: 620px;">
+      style="width: 100%;">
       <el-table-column
         prop="name"
         label="产品名称"/>
@@ -42,6 +42,7 @@
           <el-input
             v-model="scope.row.salesPrice"
             placeholder="请输入"
+            type="number"
             @input="salesPriceChange(scope)"/>
         </template>
       </el-table-column>
@@ -49,6 +50,7 @@
         <template slot-scope="scope">
           <el-input
             v-model="scope.row.num"
+            type="number"
             placeholder="请输入"
             @input="numChange(scope)"/>
         </template>
@@ -58,6 +60,7 @@
           <el-input
             v-model="scope.row.discount"
             placeholder="请输入"
+            type="number"
             @input="discountChange(scope)"/>
         </template>
       </el-table-column>
@@ -76,6 +79,7 @@
         v-model="discountRate"
         style="width: 80px"
         placeholder="请输入"
+        type="number"
         @input="rateChange"/>
       <div class="total-info">已选中产品：
         <span class="info-yellow">{{ productList.length }}</span>&nbsp;种&nbsp;&nbsp;总金额：
@@ -83,6 +87,7 @@
           v-model="totalPrice"
           style="width: 80px"
           placeholder="请输入"
+          type="number"
           @input="totalPriceChange"
           @blur="totalPrice || (totalPrice = 0)"/>&nbsp;元
       </div>
@@ -279,6 +284,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .handel-header {
+  overflow: hidden;
   button {
     float: right;
     margin-bottom: 10px;

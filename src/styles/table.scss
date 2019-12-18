@@ -89,6 +89,10 @@
   }
 }
 
+.el-table__fixed::before,
+.el-table__fixed-right::before {
+  display: none;
+}
 
 .n-table--border {
   border-width: 0;
@@ -109,6 +113,7 @@
   position: relative;
   background-color: white;
   height: 44px;
+  border-top: 1px solid $xr-border-line-color  ;
 
   .p-bar {
     float: right;

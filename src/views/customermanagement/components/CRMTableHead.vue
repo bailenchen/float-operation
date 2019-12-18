@@ -30,7 +30,6 @@
       </el-popover>
       <el-button
         v-if="showFilterView"
-        :style="{ 'margin-left': !showSceneView ? 0 : '20px'}"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
@@ -65,7 +64,6 @@
       @delete="handleDeleteField" />
 
     <transfer-handle
-      v-if="crmType !== 'applet'"
       :crm-type="crmType"
       :selection-list="selectionList"
       :dialog-visible.sync="transferDialogShow"
