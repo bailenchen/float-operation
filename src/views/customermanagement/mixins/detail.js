@@ -35,7 +35,12 @@ export default {
       if (this.detailData && this.detailData.dataAuth === 0) {
         return false
       }
+
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].read
+    },
+
+    showTabsNumber() {
+      return this.crmType !== 'marketing'
     }
   },
 
@@ -79,6 +84,8 @@ export default {
         this.getDetial()
       } else if (data.type === 'delete' || data.type === 'exit-team') {
         this.hideView()
+      } else if (data.type === 'state_start' || data.type === 'state_disable') {
+        this.getDetial()
       }
 
       if (data.type === 'edit') {
@@ -92,6 +99,9 @@ export default {
      * 获取tab数量
      */
     getTabsNum() {
+      if (!this.showTabsNumber) {
+        return
+      }
       const request = {
         leads: crmLeadsNumAPI,
         customer: crmCustomerNumAPI,
