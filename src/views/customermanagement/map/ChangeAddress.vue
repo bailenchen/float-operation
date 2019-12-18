@@ -3,7 +3,7 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     title="选择位置"
-    width="30%"
+    width="500px"
     @close="close">
     <flexbox align="stretch">
       <flexbox-item>
@@ -59,11 +59,7 @@ export default {
       searchInput: '',
       dialogVisible: false,
       searchCopyInput: '', // 避免修改
-      /** 完整地址输入框 */
-      detailAddress: '',
-      pointAddress: null, // 经纬度点
-      /** 防止联动情况  */
-      canExecute: true
+      pointAddress: null // 经纬度点
     }
   },
   computed: {},
@@ -116,10 +112,8 @@ export default {
       this.searchInput = item.address + item.title
       this.searchCopyInput = this.searchInput // 只能通过这种方式修改
 
-      this.detailAddress = this.searchInput
       this.addMarkerLabel(item.point)
-      this.pointAddress = item.point
-      this.mapSelectArea(item)
+      this.pointAddress = item
     },
     /** Input 失去焦点  searchInput 只能通过选择更改*/
     inputBlur() {
@@ -135,28 +129,6 @@ export default {
       this.map.clearOverlays()
       this.map.centerAndZoom(point, 14)
       this.map.addOverlay(new BMap.Marker(point))
-    },
-    /** 地图选择区域 */
-    mapSelectArea(data) {
-      if (this.canExecute) {
-        this.canExecute = false
-        var myGeo = new BMap.Geocoder()
-        // 根据坐标得到地址描述
-        var self = this
-        myGeo.getLocation(
-          new BMap.Point(data.point.lng, data.point.lat),
-          function(result) {
-            if (result) {
-              // 获取经纬度点
-              self.pointAddress = result.point
-            }
-          }
-        )
-
-        setTimeout(() => {
-          self.canExecute = true
-        }, 500)
-      }
     },
     /** 关闭 */
     close() {
