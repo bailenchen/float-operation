@@ -472,6 +472,9 @@ export default {
     // 关闭操作
     closeView() {
       this.$emit('update:show', false)
+      if (this.stepsActive == 3) {
+        this.$bus.emit('import-crm-done-bus', this.crmType)
+      }
       this.$emit('close', this.stepsActive == 3 ? 'finish' : '')
     },
 

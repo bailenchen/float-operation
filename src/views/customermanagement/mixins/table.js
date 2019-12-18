@@ -168,9 +168,13 @@ export default {
             this.list = res.data.list
           }
 
-          this.total = res.data.totalRow
-
-          this.loading = false
+          if (res.data.totalRow && Math.ceil(res.data.totalRow / this.pageSize) < this.currentPage && this.currentPage > 1) {
+            this.currentPage = this.currentPage - 1
+            this.getList()
+          } else {
+            this.total = res.data.totalRow
+            this.loading = false
+          }
         })
         .catch(() => {
           this.loading = false
@@ -487,7 +491,7 @@ export default {
     /** */
     /** 页面头部操作 */
     listHeadHandle(data) {
-      if (data.type === 'save-success') {
+      if (data.type === 'save-success' || data.type === 'import-crm') {
         // 重新请求第一页数据
         this.currentPage = 1
         this.getList()

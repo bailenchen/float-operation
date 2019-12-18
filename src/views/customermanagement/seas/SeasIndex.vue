@@ -18,6 +18,7 @@
       <c-r-m-table-head
         ref="crmTableHead"
         :is-seas="isSeas"
+        :pool-id="poolId"
         crm-type="customer"
         @filter="handleFilter"
         @handle="handleHandle"

@@ -45,10 +45,6 @@
       :action="createActionInfo"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
-    <c-r-m-import
-      :show="showCRMImport"
-      :crm-type="crmType"
-      @close="showCRMImport=false"/>
     <!-- 查重 -->
     <duplicate-check :visible.sync="dupCheckShow" />
   </div>
@@ -58,13 +54,11 @@
 import { mapGetters } from 'vuex'
 import CRMCreateView from './CRMCreateView'
 import DuplicateCheck from './duplicate-check'
-import CRMImport from './CRMImport'
 
 export default {
   name: 'CRMListHead', // 客户管理下 重要提醒 回款计划提醒
   components: {
     CRMCreateView,
-    CRMImport,
     DuplicateCheck
   },
   props: {
@@ -103,8 +97,6 @@ export default {
       createActionInfo: { type: 'save' },
       createCRMType: '',
       isCreate: false, // 是创建
-      // 导入
-      showCRMImport: false,
       // 查重
       dupCheckShow: false
     }
@@ -142,13 +134,22 @@ export default {
         this.moreTypes.push({ type: 'out', name: '导出' })
       }
     }
+
+    // 监听导入
+    this.$bus.on('import-crm-done-bus', (type) => {
+      if (this.crmType == type) {
+        this.$emit('on-handle', { type: 'import-crm' })
+      }
+    })
+  },
+  beforeDestroy() {
+    this.$bus.off('import-crm-done-bus')
   },
   methods: {
     handleTypeDrop(command) {
       if (command == 'out') {
         this.$emit('on-export')
       } else if (command == 'enter') {
-        // this.showCRMImport = true
         this.$bus.emit('import-crm-bus', this.crmType)
       }
     },

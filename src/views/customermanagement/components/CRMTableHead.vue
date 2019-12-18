@@ -196,7 +196,8 @@ export default {
     isSeas: {
       type: Boolean,
       default: false
-    }
+    },
+    poolId: [String, Number]
   },
   data() {
     return {
@@ -551,7 +552,8 @@ export default {
           return item.customerId
         })
         crmCustomerReceive({
-          ids: customerId.join(',')
+          ids: customerId.join(','),
+          poolId: this.poolId
         })
           .then(res => {
             this.$message({

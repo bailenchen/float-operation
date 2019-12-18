@@ -560,7 +560,6 @@ export default {
         if (this.isSeas) {
           return this.forSelectionHandleItems(handleInfos, [
             'alloc',
-            'get',
             'delete'
           ])
         } else {
