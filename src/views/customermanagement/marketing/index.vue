@@ -137,7 +137,7 @@ export default {
       },
       {
         prop: 'startTime',
-        label: '截止时间',
+        label: '开始时间',
         width: '180'
       },
       {
