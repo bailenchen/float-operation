@@ -89,6 +89,7 @@
             <field-set
               :is-seas="isSeas"
               :crm-type="crmType"
+              :pool-id="poolId"
               @change="setSave"/>
           </template>
         </el-table-column>
@@ -168,7 +169,6 @@ export default {
      * 选择公海
      */
     poolChange() {
-      console.log('1111')
       this.currentPage = 1
       this.getFieldList(true)
     },
