@@ -109,6 +109,7 @@ import { mapGetters } from 'vuex'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   filterIndexfields,
+  filterIndexPoolfields,
   crmSceneSave
 } from '@/api/customermanagement/common'
 import {
@@ -264,9 +265,16 @@ export default {
     },
     // 获取高级筛选字段数据
     getFilterFieldInfo() {
-      filterIndexfields({
-        label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType]
-      })
+      const params = {}
+      if (this.isSeas) {
+        params.poolId = this.poolId
+      } else {
+        params.label = crmTypeModel[this.crmType]
+      }
+
+      const request = this.isSeas ? filterIndexPoolfields : filterIndexfields
+
+      request(params)
         .then(res => {
           this.fieldList = res.data
           this.showFilter = true

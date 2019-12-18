@@ -68,9 +68,11 @@
       <div
         v-loading="loading"
         v-else-if="stepsActive == 2"
-        element-loading-text="数据导入中"
+        :element-loading-text="importLoadingText"
         element-loading-spinner="el-icon-loading"
-        class="step-section" />
+        class="step-section">
+        <div class="step-section__tips">当前数据正在导入，您可以点击【最小化】隐藏该页面，数据导入不受影响。</div>
+      </div>
 
       <div
         v-loading="loading"
@@ -223,6 +225,14 @@ export default {
           product: '产品'
         }[this.crmType] || ''
       )
+    },
+
+    importLoadingText() {
+      if (this.processData.count) {
+        return `数据导入中（当前已导入${this.processData.count}条）`
+      }
+
+      return '数据导入中'
     },
 
     sureTitle() {
@@ -555,6 +565,7 @@ export default {
 
 .step-section {
   min-height: 300px;
+  position: relative;
 
   /deep/ .el-loading-spinner {
     top: 45%;
@@ -565,7 +576,19 @@ export default {
 
     .el-loading-text {
       color: #333;
+      margin: 8px 0;
     }
+  }
+
+  &__tips {
+    color: #999;
+    font-size: 12px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    text-align: center;
+    z-index: 3000;
   }
 }
 

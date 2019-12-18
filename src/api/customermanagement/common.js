@@ -67,6 +67,15 @@ export function filterIndexfields(data) {
   })
 }
 
+// crm 自定义字段(高级筛选)
+export function filterIndexPoolfields(data) {
+  return request({
+    url: 'scene/queryPoolField',
+    method: 'post',
+    data: data
+  })
+}
+
 // 商机状态组列表 systemCustomer.js 也包含该接口
 export function businessGroupList(data) {
   return request({
