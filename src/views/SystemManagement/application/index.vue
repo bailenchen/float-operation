@@ -161,15 +161,8 @@ export default {
         })
           .then(res => {
             this.$message.success('设置成功')
-            this.$store
-              .dispatch('LogOut')
-              .then(() => {
-                this.loading = false
-                location.reload()
-              })
-              .catch(() => {
-                this.loading = false
-              })
+            this.loading = false
+            window.location.reload()
           })
           .catch(() => {
             this.loading = false
@@ -184,7 +177,7 @@ export default {
       if (command == 'enable') {
         result()
       } else {
-        this.$confirm(`停用${item.name}后，企业所有员工将无法使用此功能，重新登录后生效。确定要停用吗？`, '提示', {
+        this.$confirm(`停用${item.name}后，企业所有员工将无法使用此功能。确定要停用吗？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
