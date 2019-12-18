@@ -19,6 +19,10 @@ import {
   crmCustomerPoolExcelAllExport
 } from '@/api/customermanagement/customer'
 import {
+  crmAppletIndexAPI,
+  CrmWeixinLeadsExportLeadsAPI
+} from '@/api/customermanagement/applet'
+import {
   crmLeadsIndex,
   crmLeadsExcelAllExport
 } from '@/api/customermanagement/clue'
@@ -99,8 +103,9 @@ export default {
     // document.getElementById('crm-table').addEventListener('click', e => {
     //   e.stopPropagation()
     // })
-
-    if (this.crmType === 'marketing') {
+    if (this.crmType === 'applet') {
+      this.getFieldList()
+    } else if (this.crmType === 'marketing') {
       if (this.crm[this.crmType].index) {
         this.getList()
       }
@@ -126,7 +131,9 @@ export default {
         params.sortField = this.sortData.prop
         params.order = this.sortData.order == 'ascending' ? 2 : 1
       }
-
+      if (this.crmType === 'applet') {
+        params.type = this.appletType
+      }
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
@@ -173,6 +180,8 @@ export default {
     getIndexRequest() {
       if (this.crmType === 'leads') {
         return crmLeadsIndex
+      } else if (this.crmType === 'applet') {
+        return crmAppletIndexAPI
       } else if (this.crmType === 'customer') {
         if (this.isSeas) {
           return crmCustomerPool
@@ -195,6 +204,18 @@ export default {
     },
     /** 获取字段 */
     getFieldList(force) {
+      if (this.crmType === 'applet') {
+        this.fieldList = [
+          { prop: 'weixinName', label: '微信名称', width: '115px' },
+          { prop: 'weixinImg', label: '头像', width: '115px' },
+          { prop: 'mobile', label: '手机号', width: '115px' },
+          { prop: 'ownerUserName', label: '负责人', width: '115px' },
+          { prop: 'createTime', label: '创建时间', width: '115px' },
+          { prop: 'isTransform', label: '是否转化' }
+        ]
+        this.getList()
+        return
+      }
       if (this.fieldList.length == 0 || force) {
         this.loading = true
 
@@ -252,11 +273,14 @@ export default {
       }
     },
     /** 格式化字段 */
-    fieldFormatter(row, column) {
+    fieldFormatter(row, column, cellValue) {
       if (this.moneyFields.includes(column.property)) {
         return separator(row[column.property] || 0)
       }
       // 如果需要格式化
+      if (column.property === 'isTransform') {
+        return ['否', '是'][cellValue] || '--'
+      }
       return row[column.property] || '--'
     },
     /** */
@@ -384,6 +408,9 @@ export default {
       var params = {
         search: this.search
       }
+      if (this.crmType == 'applet') {
+        params.type = this.appletType
+      }
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
@@ -399,6 +426,7 @@ export default {
           customer: crmCustomerExcelAllExport,
           leads: crmLeadsExcelAllExport,
           contacts: crmContactsExcelAllExport,
+          applet: CrmWeixinLeadsExportLeadsAPI,
           business: crmBusinessExcelAllExportAPI,
           contract: crmContractExcelAllExportAPI,
           receivables: crmReceivablesExcelAllExportAPI,
