@@ -278,12 +278,19 @@ export default {
        */
     selectAddress(item) {
       var allOverlay = this.map.getOverlays()
+      this.currentId = item.customerId // 用id做标识来改变li的背景色
       for (let i = 0; i < allOverlay.length; i++) {
         const overlay = allOverlay[i]
-        if (overlay._type === 'ComplexCustomOverlay' && overlay._customerId === item.customerId) {
-          this.map.centerAndZoom(overlay._point, 14)
-          this.currentId = item.customerId // 用id做标识来改变li的背景色
-          break
+        console.log(overlay)
+        if (overlay._type === 'ComplexCustomOverlay') {
+          if (overlay._customerId === item.customerId) {
+            // 确保缩放等级不变
+            this.map.centerAndZoom(overlay._point, this.map.getZoom())
+            overlay._changeOverStyle()
+          } else {
+            console.log('wozpul1')
+            overlay._changeOutStyle()
+          }
         }
       }
     },
@@ -328,16 +335,13 @@ export default {
       // 地图发生变化的时候会触发方法
       ComplexCustomOverlay.prototype.initialize = function(map) {
         this._map = map
-
         var div = this._div = document.createElement('div')
         var span = this._span = document.createElement('span')
-
         div.className = 'map-marker--custom ' + `marker--${this._customerId}`
         span.className = 'map-custom--text'
         div.appendChild(span)
         div.style.position = 'absolute'
-        div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat)
-
+        div.style.zIndex = this._zIndex = BMap.Overlay.getZIndex(this._point.lat)
         div.style.color = 'white'
         div.style.padding = '2px'
         div.style.whiteSpace = 'nowrap'
@@ -357,32 +361,42 @@ export default {
         arrow.style.opacity = '0.95'
         arrow.style.overflow = 'hidden'
         div.appendChild(arrow)
+
+        this._changeOverStyle = function() {
+          this._div.style.backgroundColor = '#E6A23C'
+          this._div.style.whiteSpace = 'normal'
+          this._div.style.zIndex = '1'
+          this._arrow.style.backgroundPosition = '0px -20px'
+        }
+        this._changeOutStyle = function() {
+          if (self.currentId !== this._customerId) {
+            this._div.style.backgroundColor = '#2362FB'
+            this._div.style.whiteSpace = 'nowrap'
+            this._div.style.zIndex = this._zIndex
+            this._arrow.style.backgroundPosition = '0px 0px'
+          }
+        }
+
+        const that = this
         div.onmouseover = function() {
-          this.style.backgroundColor = '#E6A23C'
-          this.style.whiteSpace = 'normal'
-          arrow.style.backgroundPosition = '0px -20px'
+          that._changeOverStyle()
         }
 
         div.onmouseout = function() {
-          this.style.backgroundColor = '#2362FB'
-          this.style.whiteSpace = 'nowrap'
-          arrow.style.backgroundPosition = '0px 0px'
+          that._changeOutStyle()
         }
 
         div.onclick = () => {
           let item = null
-          console.log(this)
           for (let i = 0; i < self.mapList.length; i++) {
+            // 将被选中的放在第一位
             if (this._customerId === self.mapList[i].customerId) {
-              self.currentId = this._customerId
               item = self.mapList.splice(i, 1)
+              self.mapList.unshift(item[0])
+              self.$refs.nearbyList.scrollTop = 0
+              self.selectAddress(item[0])
               break
             }
-          }
-
-          if (item) {
-            self.mapList.unshift(item[0])
-            self.$refs.nearbyList.scrollTop = 0
           }
         }
         self.map.getPanes().labelPane.appendChild(div)
@@ -490,8 +504,8 @@ export default {
   .title--right {
     flex-shrink: 0;
     position: absolute;
-    right: 18px;
-    width: 260px;
+    right: 25px;
+    width: 262px;
     .title-label {
       font-size: 13px;
     }
@@ -578,7 +592,7 @@ export default {
       position: relative;
       color: #2362FB;
       .map-customer-name {
-         width: 260px;
+         width: auto;
          margin-top: 4px;
          overflow: hidden;
          white-space: nowrap;
