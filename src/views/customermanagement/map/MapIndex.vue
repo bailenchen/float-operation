@@ -10,7 +10,7 @@
     </div>
     <div v-loading="loading" class="map-content">
       <flexbox align="stretch" class="map-content--title">
-        <flexbox-item :span="9">
+        <flexbox-item>
           <div class="title--position">
             <span class="wk wk-position"/>
             <el-tooltip :content="address" class="item" effect="dark" placement="top-start">
@@ -503,9 +503,9 @@ export default {
   }
   .title--right {
     flex-shrink: 0;
-    position: absolute;
     right: 25px;
     width: 262px;
+    margin-right: 9px;
     .title-label {
       font-size: 13px;
     }

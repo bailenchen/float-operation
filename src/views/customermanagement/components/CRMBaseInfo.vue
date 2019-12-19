@@ -70,14 +70,7 @@
               align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
-              <div class="b-cell-value">
-                <flexbox
-                  :gutter="0"
-                  wrap="wrap"
-                  style="padding: 0px 10px 10px 0px;">
-                  <div>{{ item.value | arrayValue(getArrayKey(item.formType)) }}</div>
-                </flexbox>
-              </div>
+              <div class="b-cell-value">{{ item.value | arrayValue(getArrayKey(item.formType)) }}</div>
             </flexbox>
 
             <flexbox
@@ -333,6 +326,7 @@ export default {
   .b-cell-value {
     font-size: 13px;
     color: #333;
+    line-height: 1.2;
     white-space: pre-wrap;
     word-wrap: break-word;
     word-break: break-all;

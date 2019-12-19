@@ -186,6 +186,7 @@ export default {
 
 .detail-header {
   position: relative;
+  flex-shrink: 0;
 
   .header-icon {
     width: 40px;
@@ -225,6 +226,7 @@ export default {
 // 人员
 .member {
   padding: 20px 20px 0;
+  flex-shrink: 0;
 
   &-item {
     .label {
