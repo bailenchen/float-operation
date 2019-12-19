@@ -130,12 +130,16 @@ export default {
       request(params)
         .then(res => {
           this.loading = false
-          const data = res.data || {}
+          let axisList = []
           if (this.type != 'customer') {
+            const data = res.data || {}
+            axisList = data.list || []
             this.list = data.list || []
             this.getSummariesData(data.total)
+          } else {
+            axisList = res.data || []
           }
-          const axisList = data.list || []
+
           const cycleData = []
           const dealData = []
           const xAxis = []
