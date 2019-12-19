@@ -55,8 +55,7 @@ export default {
   data() {
     return {
       map: null,
-      /** 搜索地图输入框 */
-      searchInput: '',
+      searchInput: '', // 搜索
       dialogVisible: false,
       searchCopyInput: '', // 避免修改
       pointAddress: null // 经纬度点
@@ -107,7 +106,9 @@ export default {
         cb([])
       }
     },
-    /** 搜索结果选择 */
+    /**
+     * 搜索结果选择
+     **/
     handleSelect(item) {
       this.searchInput = item.address + item.title
       this.searchCopyInput = this.searchInput // 只能通过这种方式修改
@@ -115,7 +116,9 @@ export default {
       this.addMarkerLabel(item.point)
       this.pointAddress = item
     },
-    /** Input 失去焦点  searchInput 只能通过选择更改*/
+    /**
+     * Input 失去焦点  searchInput 只能通过选择更改
+     **/
     inputBlur() {
       if (this.searchCopyInput !== this.searchInput) {
         this.searchInput = this.searchCopyInput
@@ -124,17 +127,23 @@ export default {
     inputFocus() {
       this.searchCopyInput = this.searchInput
     },
-    // 创建标注
+    /**
+     * 创建标注
+     */
     addMarkerLabel(point) {
       this.map.clearOverlays()
       this.map.centerAndZoom(point, 14)
       this.map.addOverlay(new BMap.Marker(point))
     },
-    /** 关闭 */
+    /**
+     * 关闭
+     */
     close() {
       this.$emit('close')
     },
-    /** 确定选择 */
+    /**
+     * 确定选择
+     */
     selectSure() {
       this.$emit('select', this.pointAddress)
       this.close()

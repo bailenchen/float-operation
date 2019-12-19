@@ -317,6 +317,7 @@ export default {
      */
     addMarkerLabel() {
       this.markerArr = []
+      // 标注类
       function ComplexCustomOverlay(point, name, customerId) {
         this._type = 'ComplexCustomOverlay'
         this._point = point
@@ -324,19 +325,16 @@ export default {
         this._customerId = customerId
       }
       ComplexCustomOverlay.prototype = new BMap.Overlay()
+      // 地图发生变化的时候会触发方法
       ComplexCustomOverlay.prototype.initialize = function(map) {
         this._map = map
 
         var div = this._div = document.createElement('div')
         var span = this._span = document.createElement('span')
-        var img = document.createElement('img')
 
-        img.src = require('@/assets/img/map_blue.png')
-        img.className = 'map-marker_img'
         div.className = 'map-marker--custom ' + `marker--${this._customerId}`
         span.className = 'map-custom--text'
         div.appendChild(span)
-        div.appendChild(img)
         div.style.position = 'absolute'
         div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat)
 
@@ -349,24 +347,25 @@ export default {
         div.appendChild(span)
 
         var arrow = this._arrow = document.createElement('div')
+        arrow.style.background = `url(${require('@/assets/img/nearby_bg.png')}) no-repeat`
         arrow.style.position = 'absolute'
-        arrow.style.width = '11px'
-        arrow.style.height = '10px'
-        arrow.style.top = '22px'
-        arrow.style.left = '10px'
+        arrow.style.width = '20px'
+        arrow.style.height = '15px'
+        arrow.style.transform = 'scale(0.5)'
+        arrow.style.top = '24px'
+        arrow.style.left = '75px'
+        arrow.style.opacity = '0.95'
         arrow.style.overflow = 'hidden'
         div.appendChild(arrow)
         div.onmouseover = function() {
           this.style.backgroundColor = '#E6A23C'
           this.style.whiteSpace = 'normal'
-          img.src = require('@/assets/img/map_yellow.png')
           arrow.style.backgroundPosition = '0px -20px'
         }
 
         div.onmouseout = function() {
           this.style.backgroundColor = '#2362FB'
           this.style.whiteSpace = 'nowrap'
-          img.src = require('@/assets/img/map_blue.png')
           arrow.style.backgroundPosition = '0px 0px'
         }
 
@@ -393,7 +392,8 @@ export default {
       ComplexCustomOverlay.prototype.draw = function() {
         var map = this._map
         var pixel = map.pointToOverlayPixel(this._point)
-        this._div.style.left = pixel.x - parseInt(this._arrow.style.left) + 'px'
+        // 需要动态给标注设置偏移量
+        this._div.style.left = pixel.x - parseInt(this._arrow.style.left) - 10 + 'px'
         this._div.style.top = pixel.y - 30 + 'px'
       }
       const self = this
@@ -649,11 +649,6 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-    .map-marker_img {
-       position: absolute;
-       top: 30px;
-       left: 81px;
-       }
     .map-custom--pover {
       position: absolute;
       bottom: -23px;
