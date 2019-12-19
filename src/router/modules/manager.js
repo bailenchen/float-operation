@@ -61,10 +61,10 @@ export default [
     }),
     children: [{
       name: 'applet',
-      path: 'applet', // 小程序管理
+      path: 'applet', // 名片小程序管理
       component: () => import('@/views/SystemManagement/SystemApplet'),
       meta: {
-        title: '小程序管理',
+        title: '名片小程序管理',
         icon: 'mp'
       }
     }]

@@ -103,11 +103,10 @@
             <i :class="scope.row[item.prop] | dealIcon"/>
             <span>{{ scope.row[item.prop] | dealName }}</span>
           </template>
-          <template v-else-if="item.prop == 'poolDay'" slot-scope="scope">
-            <div v-if="scope.row.status == 1">{{ scope.row.poolDay }}</div>
+          <template v-else-if="item.prop == 'status' && crmType === 'customer'">
             <i
-              v-else
-              class="wukong wukong-lock customer-lock"/>
+              v-if="scope.row.status == 2"
+              class="wk wk-circle-password customer-lock"/>
           </template>
           <template v-else-if="item.prop == 'checkStatus'">
             <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>

@@ -111,6 +111,7 @@
     <customer-detail
       v-if="showDview"
       :id="rowID"
+      :pool-id="poolId"
       :is-seas="isSeas"
       class="d-view"
       @handle="handleHandle"

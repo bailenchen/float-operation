@@ -61,7 +61,7 @@ export default [
       path: 'applet', // 名片列表
       component: () => import('@/views/customermanagement/applet/AppletIndex'),
       meta: {
-        title: '小程序线索',
+        title: '名片线索',
         icon: 'mp'
       }
     }]

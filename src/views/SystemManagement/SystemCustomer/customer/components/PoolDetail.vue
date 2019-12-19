@@ -119,8 +119,10 @@ export default {
   },
   filters: {
     fieldNameFilter(list) {
-      return list.map(item => {
-        return item.isHidden === 0 && item.name
+      return list.filter(item => {
+        return item.isHidden === 0
+      }).map(item => {
+        return item.name
       }).join('，')
     }
   },

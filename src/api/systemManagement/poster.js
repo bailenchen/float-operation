@@ -181,3 +181,15 @@ export function visitingCardSaveAPI(data) {
     data: data
   })
 }
+
+// 设置员工关联的产品
+export function crmProductUserSaveAPI(data) {
+  return request({
+    url: 'CrmProductUser/save',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

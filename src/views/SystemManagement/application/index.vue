@@ -231,6 +231,10 @@ export default {
           bi: {
             disable: require('@/assets/img/system/app/bi_disable.png'),
             enable: require('@/assets/img/system/app/bi_enable.png')
+          },
+          applet: {
+            disable: require('@/assets/img/system/app/mp_enable.png'),
+            enable: require('@/assets/img/system/app/mp_enable.png')
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }

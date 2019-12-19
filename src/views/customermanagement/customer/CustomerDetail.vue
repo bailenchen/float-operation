@@ -21,6 +21,7 @@
           :detail="detailData"
           :head-details="headDetails"
           :id="id"
+          :pool-id="poolId"
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView">
@@ -128,6 +129,7 @@ export default {
   props: {
     // 详情信息id
     id: [String, Number],
+    poolId: [String, Number],
     // 监听的dom 进行隐藏详情
     listenerIDs: {
       type: Array,
