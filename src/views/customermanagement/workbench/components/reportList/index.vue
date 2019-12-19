@@ -477,7 +477,7 @@ export default {
       } else if (this.crmType === 'record') {
         if (column.property === 'count' && row.count) {
           this.rowType = 'crm_' + crmTypeModel.convertTypeToKey(row.crmType)
-          this.recordParams = { crmType: row.crmType, ...this.params }
+          this.recordParams = { crmType: row.crmType, queryType: 0, ...this.params }
           this.recordShow = true
         } else {
           this.recordShow = false
