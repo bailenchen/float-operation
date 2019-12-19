@@ -425,6 +425,7 @@ export default {
       // 公海的请求
       if (this.isSeas) {
         request = crmCustomerPoolExcelAllExport
+        params.poolId = this.poolId
       } else {
         request = {
           customer: crmCustomerExcelAllExport,

@@ -543,9 +543,13 @@ export default {
           marketing: crmMarketingDeleteAPI,
           product: crmProductDeleteAPI
         }[this.crmType]
-        request({
+        const params = {
           [crmTypes + 'Ids']: ids.join(',')
-        })
+        }
+        if (this.isSeas) {
+          params.poolId = this.poolId
+        }
+        request(params)
           .then(res => {
             this.$message({
               type: 'success',
