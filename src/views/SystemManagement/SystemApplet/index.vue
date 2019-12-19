@@ -81,10 +81,30 @@
                     :key="index"
                     :formatter="tableFormatter"
                     show-overflow-tooltip/>
-                  <el-table-column label="操作">
+                  <el-table-column
+                    min-width="300px"
+                    label="操作">
                     <template slot-scope="scope">
                       <el-button v-if="scope.row.card == 0" type="text" class="el-button--primity button-handle" @click="setCard(scope.row)">设为用户默认访问名片</el-button>
                       <el-button v-else type="text" class="el-button--warning button-handle" @click="cancelCard(scope.row)">移除用户默认访问名片</el-button>
+
+                      <el-popover
+                        v-model="showProductPopover"
+                        placement="bottom"
+                        width="700"
+                        style="padding: 0 !important;"
+                        trigger="click">
+                        <crm-relative
+                          v-if="showProductPopover"
+                          ref="crmrelative"
+                          :radio="false"
+                          :show="showProductPopover"
+                          :selected-data="{ product: scope.row.crmProductList ||[] }"
+                          crm-type="product"
+                          @close="showProductPopover=false"
+                          @changeCheckout="selectProductInfos($event, scope.row)"/>
+                        <el-button slot="reference" type="text">管理关联产品</el-button>
+                      </el-popover>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -152,13 +172,15 @@ import {
   wechatPreauthcodeAPI,
   visitingCardCheckAuthAPI,
   visitingCardRelieveAPI,
-  systemUserMiNiListAPI } from '@/api/systemManagement/poster'
+  systemUserMiNiListAPI,
+  crmProductUserSaveAPI } from '@/api/systemManagement/poster'
 
 import RelateEmpoyee from './components/relateEmpoyee'
 import OfficialWebsite from './components/officialWebsite'
 import Reminder from '@/components/reminder'
 import XrHeader from '@/components/xr-header'
 import Poster from './components/poster'
+import CrmRelative from '@/components/CreateCom/CrmRelative'
 
 export default {
   components: {
@@ -166,7 +188,8 @@ export default {
     Reminder,
     Poster,
     OfficialWebsite,
-    XrHeader
+    XrHeader,
+    CrmRelative
   },
 
   data() {
@@ -194,9 +217,10 @@ export default {
       tableList: [
         { label: '员工姓名', field: 'realname', width: '115px' },
         { label: '手机号', field: 'mobile', width: '115px' },
-        { label: '性别', field: 'sex', width: '115px' },
+        { label: '性别', field: 'sex', width: '80px' },
         { label: '部门', field: 'deptName', width: '115px' },
-        { label: '岗位', field: 'post', width: '115px' }
+        { label: '岗位', field: 'post', width: '115px' },
+        { label: '已关联产品', field: 'crmProductList', width: '115px' }
       ],
       applet: {}, // 操作角色的框 关联的信息
       appletList: [], // 角色列表 list属性 是信息
@@ -204,7 +228,10 @@ export default {
       menuChildIndex: 'user', // 角色员工  角色权限 切换 默认左边
       relateEmpoyeeShow: false,
       appletMenuLoading: false,
-      userLoading: false
+      userLoading: false,
+
+      // 产品提示框
+      showProductPopover: false
     }
   },
 
@@ -435,8 +462,34 @@ export default {
     tableFormatter(row, column) {
       if (column.property == 'sex') {
         return { 1: '男', 2: '女' }[row.sex]
+      } else if (column.property == 'crmProductList') {
+        const productList = row.crmProductList || []
+        return productList.map(item => {
+          return item.name
+        }).join('，')
       }
       return row[column.property]
+    },
+
+    /**
+     * 产品关联
+     */
+    selectProductInfos(productData, data) {
+      const params = {
+        userId: data.userId
+      }
+
+      const productList = productData.data || []
+      params.productIds = productList.map(item => {
+        return item.productId
+      }).join(',')
+      this.userLoading = true
+      crmProductUserSaveAPI(params).then(res => {
+        this.userLoading = false
+        this.getUserList()
+      }).catch(() => {
+        this.userLoading = false
+      })
     }
   }
 }
