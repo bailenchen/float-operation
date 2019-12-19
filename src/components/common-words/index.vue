@@ -12,18 +12,13 @@
         v-empty="list && list.length == 0"
         xs-empty-icon="none"
         class="word">
-        <el-tooltip
+        <div
           v-for="(item, index) in list"
           :key="index"
-          :content="item"
-          effect="dark"
-          placement="top-start">
-          <div
-            class="word-item"
-            @click="selectScene(item, index)">
-            {{ item }}
-          </div>
-        </el-tooltip>
+          class="word-item"
+          @click="selectScene(item, index)">
+          {{ item }}
+        </div>
       </div>
       <div class="handle-interval">
         <flexbox

@@ -3,7 +3,7 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      title="小程序线索管理"
+      title="名片线索管理"
       placeholder="请输入手机号/微信名称"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"

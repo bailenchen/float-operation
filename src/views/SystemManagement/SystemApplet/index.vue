@@ -5,7 +5,7 @@
         ref="xrHeader"
         :show-search="showSearch"
         placeholder="请输入手机号/员工姓名"
-        label="小程序管理"
+        label="名片小程序管理"
         icon-class="wk wk-contacts"
         icon-color="#19B5F6"
         @search="searchClick"/>

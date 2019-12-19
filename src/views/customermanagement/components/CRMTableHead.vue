@@ -420,7 +420,7 @@ export default {
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
         } else if (type === 'transformLead') {
-          message = '确定将这些小程序线索转化为线索吗?'
+          message = '确定将这些名片线索转化为线索吗?'
         }
         this.$confirm(message, '提示', {
           confirmButtonText: '确定',
@@ -856,7 +856,7 @@ export default {
       } else if (this.crmType == 'product') {
         return '全部产品'
       } else if (this.crmType === 'applet') {
-        return '全部小程序线索'
+        return '全部名片线索'
       }
     }
   }

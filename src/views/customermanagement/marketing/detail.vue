@@ -156,7 +156,7 @@ export default {
       headDetails: [
         { title: '关联对象', value: '' },
         { title: '状态', value: '' },
-        { title: '负责人', value: '' },
+        { title: '创建人', value: '' },
         { title: '截止时间', value: '' }
       ],
       tabCurrentName: 'Overview',
@@ -205,7 +205,7 @@ export default {
           // 负责人
           this.headDetails[0].value = res.data.crmType == 1 ? '线索' : '客户'
           this.headDetails[1].value = res.data.status == 1 ? '启用' : '停用'
-          this.headDetails[2].value = res.data.ownerUserName
+          this.headDetails[2].value = res.data.createUserInfo ? res.data.createUserInfo.realname : ''
           this.headDetails[3].value = res.data.endTime
         })
         .catch(() => {
