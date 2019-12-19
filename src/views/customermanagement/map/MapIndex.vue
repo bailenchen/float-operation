@@ -363,7 +363,7 @@ export default {
         div.appendChild(arrow)
 
         this._changeOverStyle = function() {
-          this._div.style.backgroundColor = '#E6A23C'
+          this._div.style.backgroundColor = '#fba019'
           this._div.style.whiteSpace = 'normal'
           this._div.style.zIndex = '1'
           this._arrow.style.backgroundPosition = '0px -20px'
