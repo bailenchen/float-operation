@@ -27,6 +27,7 @@
       style="width: 100%;">
       <el-table-column
         prop="name"
+        show-overflow-tooltip
         label="产品名称"/>
       <el-table-column
         prop="categoryName"
