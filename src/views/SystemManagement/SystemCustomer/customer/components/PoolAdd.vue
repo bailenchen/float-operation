@@ -47,7 +47,7 @@
                   style="display: inline-block;">
                   <div class="xr-form-label">
                     公海管理员<el-tooltip
-                      content="客户公海管理员可对客户公海客户进行领取、分配、导出等操作"
+                      content="客户公海管理员可对客户公海客户进行领取、分配、删除、导出等操作"
                       effect="dark"
                       placement="top">
                       <i class="wk wk-help"/>>
