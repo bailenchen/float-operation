@@ -54,6 +54,7 @@ export default {
       type: String,
       default: ''
     },
+    poolId: [String, Number],
     /** 转移数据 */
     selectionList: {
       type: Array,
@@ -107,7 +108,8 @@ export default {
           return item[self.crmType + 'Id']
         })
         var params = {
-          userId: this.usersList[0].userId
+          userId: this.usersList[0].userId,
+          poolId: this.poolId
         }
         params.ids = actionIds.join(',')
         this.loading = true

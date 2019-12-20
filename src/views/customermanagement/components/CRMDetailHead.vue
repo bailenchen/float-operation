@@ -84,6 +84,7 @@
       @handle="handleCallBack" />
     <alloc-handle
       :crm-type="crmType"
+      :pool-id="poolId"
       :selection-list="[detail]"
       :dialog-visible.sync="allocDialogShow"
       @handle="handleCallBack" />
