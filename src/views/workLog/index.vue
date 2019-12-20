@@ -325,7 +325,9 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.logType = to.params.type
     this.totalCount = 0
-    this.$refs.createLog.showMore = false
+    if (this.$refs.createLog) {
+      this.$refs.createLog.showMore = false
+    }
     this.filterForm = {
       categoryId: 0,
       createUserId: ''
