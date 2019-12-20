@@ -91,6 +91,43 @@
         align="center"
         width="55"/>
       <el-table-column
+        v-if="showCall"
+        :resizable="false"
+        prop="call"
+        fixed
+        label=""
+        width="55">
+        <template
+          slot="header"
+          slot-scope="slot">
+          <i
+            class="el-icon-phone"
+            style="cursor: not-allowed; opacity: 0.5;color: #2486E4"/>
+        </template>
+        <template slot-scope="scope">
+          <el-popover
+            placement="right"
+            width="500"
+            popper-class="no-padding-popover"
+            trigger="click"
+            @show="showData(scope.row)"
+            @hiden="showCount = -1">
+            <call-center
+              :scope="scope"
+              :show="showCallCenter(scope.row)"
+              crm-type="customer"
+              @changeType="changeCRMType"/>
+            <el-button
+              slot="reference"
+              :style="{'opacity' :scope.$index >= 0 ? 1 : 0}"
+              type="primary"
+              icon="el-icon-phone"
+              circle
+              @click.stop="callCheckClick($event,scope,scope.$index)"/>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column
         v-for="(item, index) in fieldList"
         :key="index"
         :prop="item.prop"
@@ -136,6 +173,7 @@
     <c-r-m-all-detail
       :visible.sync="showDview"
       :crm-type="rowType"
+      :model-data="modelData"
       :id="rowID"
       @handle="getList"/>
   </div>
@@ -150,6 +188,7 @@ import message_table from '../mixins/message_table'
 import filterForm from '@/views/customermanagement/components/filterForm'
 import filterContent from '@/views/customermanagement/components/filterForm/filterContent'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
+import CallCenter from '@/callCenter/CallCenter'
 
 export default {
   /** 客户管理 的待审核系统 */
@@ -158,7 +197,8 @@ export default {
   components: {
     filterForm,
     filterContent,
-    CRMAllDetail
+    CRMAllDetail,
+    CallCenter
   },
 
   filters: {
@@ -222,7 +262,9 @@ export default {
       /** 控制详情展示 */
       rowID: '', // 行信息
       rowType: '', // 详情类型
-      showDview: false
+      showDview: false,
+      showCount: -1, // 储存客户id作为展示的标识
+      modelData: {} // 储存电话信息作为详情展示通话的依据
     }
   },
   computed: {
@@ -299,7 +341,19 @@ export default {
       }
 
       return []
+    },
+    // 权限
+    showCall() {
+      if (
+        this.infoType == 'todayCustomer' ||
+        this.infoType == 'followLeads' ||
+        this.infoType == 'putInPoolRemind' ||
+        this.infoType == 'followCustomer') {
+        return this.$store.state.customer.isCall
+      }
+      return false
     }
+
   },
 
   watch: {
@@ -446,6 +500,70 @@ export default {
       } else {
         return ''
       }
+    },
+    /**
+       * pover 显示时触发
+       */
+    showData(val) {
+      if (
+        this.infoType == 'todayCustomer' ||
+        this.infoType == 'followCustomer' ||
+        this.infoType == 'putInPoolRemind') {
+        this.showCount = val.customerId
+      } else if (this.infoType == 'followLeads') {
+        this.showCount = val.leadsId
+      }
+    },
+    /**
+       * 查看详情
+       * @param val
+       */
+    changeCRMType(val) {
+      this.rowType = val.type
+      this.rowID = val.id
+
+      this.modelData = {
+        modelId: val.id,
+        model: val.type
+      }
+
+      this.showDview = true
+
+      let callOutData = {
+        modelId: val.id,
+        model: val.type
+      }
+      callOutData = JSON.stringify(callOutData)
+      localStorage.setItem('callOutData', callOutData)
+    },
+    /**
+     * 解决povper重复的bug
+    */
+    callCheckClick(e, scope) {
+      this.list.forEach(item => {
+        this.$set(item, 'callShow', false)
+      })
+      this.$set(scope.row, 'callShow', !scope.row.callShow)
+      const popoverEl = e.target.parentNode
+      popoverEl.__vue__.showPopper = !scope.row.callShow
+    },
+    /**
+     * 展示呼出页面
+     */
+    showCallCenter(row) {
+      if (
+        this.infoType == 'todayCustomer' ||
+        this.infoType == 'followCustomer' ||
+        this.infoType == 'putInPoolRemind') {
+        if (row.customerId === this.showCount) {
+          return true
+        }
+      } else if (this.infoType == 'followLeads') {
+        if (row.leadsId === this.showCount) {
+          return true
+        }
+      }
+      return false
     }
   }
 }

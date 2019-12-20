@@ -55,7 +55,10 @@ export default {
   computed: {
     ...mapGetters(['activeIndex']),
     showOutCall() {
-      return this.$store.state.customer.showCallOut
+      if (this.$store.state.customer.isCall) {
+        return this.$store.state.customer.showCallOut
+      }
+      return false
     }
   },
   watch: {
