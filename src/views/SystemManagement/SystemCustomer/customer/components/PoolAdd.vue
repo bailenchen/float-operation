@@ -311,9 +311,7 @@ export default {
       }
 
       this.recycleRuleData = this.getEditRule(data.rule)
-      this.getCustomerPoolFields(data.field.filter(item => {
-        return item.isHidden === 1
-      })).then(editFields => {
+      this.getCustomerPoolFields(data.field || []).then(editFields => {
         this.customerPoolFields = editFields
       })
     },
@@ -384,16 +382,16 @@ export default {
     /**
      * 获取公海默认字段
      */
-    getCustomerPoolFields(hiddenFields) {
+    getCustomerPoolFields(allFields) {
       return new Promise((resolve, reject) => {
         crmCustomerPoolQueryPoolFieldtAPI().then(res => {
           const list = res.data || []
           const baseField = list.map(item => {
-            item.isHidden = 0
+            item.isHidden = 1
             return item
           })
-          if (hiddenFields) {
-            resolve(this.getEditFields(baseField, hiddenFields))
+          if (allFields) {
+            resolve(this.getEditFields(baseField, allFields))
           } else {
             resolve(baseField)
           }
@@ -406,20 +404,22 @@ export default {
     /**
      * 获取编辑展示字段
      */
-    getEditFields(list, hiddenFields) {
+    getEditFields(list, allFields) {
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
 
-        for (let editIndex = 0; editIndex < hiddenFields.length; editIndex++) {
-          const editItem = hiddenFields[editIndex]
+        for (let editIndex = 0; editIndex < allFields.length; editIndex++) {
+          const editItem = allFields[editIndex]
           // fieldId 存在 匹配fieldId 不存在 匹配 fieldName
           if (item.fieldId) {
             if (item.fieldId === editItem.fieldId) {
-              item.isHidden = 1
+              item.settingId = editItem.settingId
+              item.isHidden = editItem.isHidden
             }
           } else {
             if (item.fieldName === editItem.fieldName) {
-              item.isHidden = 1
+              item.settingId = editItem.settingId
+              item.isHidden = editItem.isHidden
             }
           }
         }
