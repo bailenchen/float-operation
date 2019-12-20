@@ -200,7 +200,8 @@ export default {
       let params = {
         page: this.page,
         limit: 15,
-        isUser: 1
+        isUser: 1,
+        queryType: 0
       }
 
       if (this.timeSelect.type) {

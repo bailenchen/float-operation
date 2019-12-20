@@ -30,6 +30,7 @@
         v-if="selectedIndex === 0"
         @change="getDetail" />
       <edit-pwd v-if="selectedIndex === 1" />
+      <edit-card v-if="selectedIndex === 2 && userInfo.cardAuth" />
     </div>
   </flexbox>
 </template>
@@ -38,26 +39,36 @@
 import { mapGetters } from 'vuex'
 import EditUserInfo from './components/editUserInfo'
 import EditPwd from './components/editPwd'
-
+import EditCard from './components/editCard'
 export default {
   name: 'PersonCenter',
   components: {
     EditUserInfo,
-    EditPwd
+    EditPwd,
+    EditCard
   },
   data() {
     return {
-      navList: [
-        { label: '个人信息', icon: 'wk-user' },
-        { label: '账号密码', icon: 'wk-circle-password' }
-      ],
-      selectedIndex: 0
+      selectedIndex: 0 // 0 个人信息 1 账号密码 2 名片信息
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
-    ])
+    ]),
+    navList() {
+      const navs = [
+        { label: '个人信息', icon: 'wk-user' },
+        { label: '账号密码', icon: 'wk-circle-password' }
+      ]
+
+      // 有小程序名片权限
+      if (this.userInfo.cardAuth) {
+        navs.push({ label: '名片信息', icon: 'wk-contacts' })
+      }
+
+      return navs
+    }
   },
   created() {
     this.getDetail()

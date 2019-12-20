@@ -9,7 +9,7 @@
     <div class="set">
       <draggable
         v-model="setList"
-        :options="{group: 'list',forceFallback:false, fallbackClass:'draggingStyle'}">
+        :options="{ group: 'list',forceFallback:false, fallbackClass:'draggingStyle',filter: '.el-input__inner', preventOnFilter: false }">
         <flexbox
           v-for="(item, index) in setList"
           :key="index"

@@ -30,7 +30,6 @@
       </el-popover>
       <el-button
         v-if="showFilterView"
-        :style="{ 'margin-left': !showSceneView ? 0 : '20px'}"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
@@ -43,7 +42,7 @@
         :crm-type="crmType"
         :is-seas="isSeas"
         @filter="handleFilter" />
-      <slot/>
+      <slot />
     </flexbox>
     <flexbox
       v-if="selectionList.length > 0"
@@ -77,6 +76,7 @@
       @handle="handleCallBack" />
     <alloc-handle
       :crm-type="crmType"
+      :pool-id="poolId"
       :selection-list="selectionList"
       :dialog-visible.sync="allocDialogShow"
       @handle="handleCallBack" />
@@ -110,8 +110,14 @@ import { mapGetters } from 'vuex'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   filterIndexfields,
+  filterIndexPoolfields,
   crmSceneSave
 } from '@/api/customermanagement/common'
+import {
+  crmWeixinDeleteAPI,
+  CrmWeixinLeadsExportLeadsAPI,
+  crmWeixinChangeLeadsAPI
+} from '@/api/customermanagement/applet'
 import {
   crmLeadsTransform,
   crmLeadsExcelExport,
@@ -192,7 +198,8 @@ export default {
     isSeas: {
       type: Boolean,
       default: false
-    }
+    },
+    poolId: [String, Number]
   },
   data() {
     return {
@@ -205,7 +212,6 @@ export default {
       showFilter: false, // 控制筛选框
       fieldList: [],
       filterObj: { form: [] }, // 筛选确定数据
-
       sceneData: { id: '', bydata: '', name: '' },
       showSceneSet: false, // 展示场景设置
       showSceneCreate: false, // 展示场景添加
@@ -231,7 +237,7 @@ export default {
     },
     // 展示场景
     showSceneView() {
-      if (this.isSeas || ['marketing'].includes(this.crmType)) {
+      if (this.isSeas || ['marketing', 'applet'].includes(this.crmType)) {
         return false
       } else {
         return true
@@ -240,7 +246,7 @@ export default {
 
     // 展示筛选
     showFilterView() {
-      if (['marketing'].includes(this.crmType)) {
+      if (['marketing', 'applet'].includes(this.crmType)) {
         return false
       } else {
         return true
@@ -260,9 +266,16 @@ export default {
     },
     // 获取高级筛选字段数据
     getFilterFieldInfo() {
-      filterIndexfields({
-        label: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType]
-      })
+      const params = {}
+      if (this.isSeas) {
+        params.poolId = this.poolId
+      } else {
+        params.label = crmTypeModel[this.crmType]
+      }
+
+      const request = this.isSeas ? filterIndexPoolfields : filterIndexfields
+
+      request(params)
         .then(res => {
           this.fieldList = res.data
           this.showFilter = true
@@ -334,6 +347,13 @@ export default {
               return item.customerId
             })
             .join(',')
+        } else if (this.crmType === 'applet') {
+          request = CrmWeixinLeadsExportLeadsAPI
+          params.ids = this.selectionList
+            .map(function(item, index, array) {
+              return item.weixinLeadsId
+            })
+            .join(',')
         } else {
           request = {
             customer: crmCustomerExcelExport,
@@ -376,6 +396,7 @@ export default {
         type == 'unlock' ||
         type == 'start' ||
         type == 'disable' ||
+        type == 'transformLead' ||
         type == 'state_start' ||
         type == 'state_disable' ||
         type == 'get'
@@ -399,6 +420,8 @@ export default {
           message = '确定要停用这些活动吗?'
         } else if (type == 'get') {
           message = '确定要领取该客户吗?'
+        } else if (type === 'transformLead') {
+          message = '确定将这些名片线索转化为线索吗?'
         }
         this.$confirm(message, '提示', {
           confirmButtonText: '确定',
@@ -501,9 +524,14 @@ export default {
           })
           .catch(() => {})
       } else if (type === 'delete') {
-        const self = this
+        let crmTypes = ''
+        if (this.crmType === 'applet') {
+          crmTypes = 'weixinLeads'
+        } else {
+          crmTypes = this.crmType
+        }
         var ids = this.selectionList.map(function(item, index, array) {
-          return item[self.crmType + 'Id']
+          return item[crmTypes + 'Id']
         })
         const request = {
           leads: crmLeadsDelete,
@@ -512,12 +540,17 @@ export default {
           business: crmBusinessDelete,
           contract: crmContractDelete,
           receivables: crmReceivablesDelete,
+          applet: crmWeixinDeleteAPI,
           marketing: crmMarketingDeleteAPI,
           product: crmProductDeleteAPI
         }[this.crmType]
-        request({
-          [this.crmType + 'Ids']: ids.join(',')
-        })
+        const params = {
+          [crmTypes + 'Ids']: ids.join(',')
+        }
+        if (this.isSeas) {
+          params.poolId = this.poolId
+        }
+        request(params)
           .then(res => {
             this.$message({
               type: 'success',
@@ -532,7 +565,8 @@ export default {
           return item.customerId
         })
         crmCustomerReceive({
-          ids: customerId.join(',')
+          ids: customerId.join(','),
+          poolId: this.poolId
         })
           .then(res => {
             this.$message({
@@ -545,6 +579,16 @@ export default {
             this.$emit('handle', { type: type })
           })
           .catch(() => {})
+      } else if (type === 'transformLead') {
+        var ids = this.selectionList.map(function(item, index, array) {
+          return item.weixinLeadsId
+        })
+        crmWeixinChangeLeadsAPI({
+          'weixinLeadsIds': ids.join(',')
+        }).then(res => {
+          this.$message.success('转化为线索成功')
+        }).catch(() => {})
+        return
       }
     },
     /** 获取展示items */
@@ -558,6 +602,11 @@ export default {
         transform: {
           name: '转化为客户',
           type: 'transform',
+          icon: 'transform'
+        },
+        transformLead: {
+          name: '转化为线索',
+          type: 'transformLead',
           icon: 'transform'
         },
         export: {
@@ -691,6 +740,12 @@ export default {
           'start',
           'disable'
         ])
+      } else if (this.crmType === 'applet') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'export',
+          'delete',
+          'transformLead'
+        ])
       } else if (this.crmType == 'product') {
         return this.forSelectionHandleItems(handleInfos, [
           'export',
@@ -726,7 +781,11 @@ export default {
         if (this.isSeas) {
           return this.crm.pool.excelexport
         }
-        return this.crm[this.crmType].excelexport
+        if (this.crm[this.crmType]) {
+          return this.crm[this.crmType].excelexport
+        } else {
+          return true
+        }
       } else if (type == 'delete') {
         if (this.isSeas) {
           return this.crm.pool.delete
@@ -768,6 +827,8 @@ export default {
       } else if (type == 'deal_status') {
         // 客户状态修改
         return this.crm[this.crmType].dealStatus
+      } else if (type === 'transformLead') {
+        return true
       } else if (type == 'state_start' || type == 'state_disable') {
         // 活动停用/启用
         return this.crm[this.crmType].updateStatus
@@ -795,6 +856,8 @@ export default {
         return '全部回款'
       } else if (this.crmType == 'product') {
         return '全部产品'
+      } else if (this.crmType === 'applet') {
+        return '全部名片线索'
       }
     }
   }

@@ -47,7 +47,7 @@
                   style="display: inline-block;">
                   <div class="xr-form-label">
                     公海管理员<el-tooltip
-                      content="客户公海管理员可对客户公海客户进行领取、分配、导出等操作"
+                      content="客户公海管理员可对客户公海客户进行领取、分配、删除、导出等操作"
                       effect="dark"
                       placement="top">
                       <i class="wk wk-help"/>>
@@ -123,7 +123,11 @@
             align="stretch">
             <div class="row-label">提醒规则</div>
             <div class="row-content">
-              <div class="xr-input">
+              <el-radio-group v-model="baseFrom.remindSetting">
+                <el-radio :label="0">不提醒</el-radio>
+                <el-radio :label="1">提醒</el-radio>
+              </el-radio-group>
+              <div v-if="baseFrom.remindSetting === 1" class="xr-input">
                 <span>提前</span>
                 <el-input v-model="baseFrom.remindDay" @keyup.native="inputLimit('remindDay')" />
                 <span>天提醒负责人</span>
@@ -300,15 +304,14 @@ export default {
         preOwnerSetting: data.preOwnerSetting, // 前负责人领取规则 0不限制 1限制
         preOwnerSettingDay: data.preOwnerSettingDay,
         receiveSetting: data.receiveSetting, // 0 不启用 1 启用
+        remindSetting: data.receiveSetting, // 0 不提醒 1 提醒
         receiveNum: data.receiveNum, // 领取频率规则
         remindDay: data.remindDay, // 提醒规则天数
         putInRule: data.putInRule // 收回规则 0不自动收回 1自动收回
       }
 
       this.recycleRuleData = this.getEditRule(data.rule)
-      this.getCustomerPoolFields(data.field.filter(item => {
-        return item.isHidden === 1
-      })).then(editFields => {
+      this.getCustomerPoolFields(data.field || []).then(editFields => {
         this.customerPoolFields = editFields
       })
     },
@@ -363,6 +366,7 @@ export default {
         preOwnerSettingDay: '',
         receiveSetting: 0, // 0 不启用 1 启用
         receiveNum: '', // 领取频率规则
+        remindSetting: 0, // 0 不提醒 1 提醒
         remindDay: '', // 提醒规则天数
         putInRule: 1 // 收回规则 0不自动收回 1自动收回
       }
@@ -378,16 +382,16 @@ export default {
     /**
      * 获取公海默认字段
      */
-    getCustomerPoolFields(hiddenFields) {
+    getCustomerPoolFields(allFields) {
       return new Promise((resolve, reject) => {
         crmCustomerPoolQueryPoolFieldtAPI().then(res => {
           const list = res.data || []
           const baseField = list.map(item => {
-            item.isHidden = 0
+            item.isHidden = 1
             return item
           })
-          if (hiddenFields) {
-            resolve(this.getEditFields(baseField, hiddenFields))
+          if (allFields) {
+            resolve(this.getEditFields(baseField, allFields))
           } else {
             resolve(baseField)
           }
@@ -400,20 +404,22 @@ export default {
     /**
      * 获取编辑展示字段
      */
-    getEditFields(list, hiddenFields) {
+    getEditFields(list, allFields) {
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
 
-        for (let editIndex = 0; editIndex < hiddenFields.length; editIndex++) {
-          const editItem = hiddenFields[editIndex]
+        for (let editIndex = 0; editIndex < allFields.length; editIndex++) {
+          const editItem = allFields[editIndex]
           // fieldId 存在 匹配fieldId 不存在 匹配 fieldName
           if (item.fieldId) {
             if (item.fieldId === editItem.fieldId) {
-              item.isHidden = 1
+              item.settingId = editItem.settingId
+              item.isHidden = editItem.isHidden
             }
           } else {
             if (item.fieldName === editItem.fieldName) {
-              item.isHidden = 1
+              item.settingId = editItem.settingId
+              item.isHidden = editItem.isHidden
             }
           }
         }
@@ -477,7 +483,7 @@ export default {
         return false
       } else if (key == 'receiveNum' && this.baseFrom.receiveSetting == 1 && (!this.baseFrom[key] || this.baseFrom[key] <= 0)) {
         return false
-      } else if (key == 'remindDay' && (!this.baseFrom[key] || this.baseFrom[key] <= 0)) {
+      } else if (key == 'remindDay' && this.baseFrom.remindSetting == 1 && (!this.baseFrom[key] || this.baseFrom[key] <= 0)) {
         return false
       }
 
@@ -529,16 +535,25 @@ export default {
 
         const rule = []
         for (let index = 0; index < this.recycleRuleData.length; index++) {
-          const ruleItem = this.recycleRuleData[index]
+          let ruleItem = this.recycleRuleData[index]
+          ruleItem = { ...ruleItem }
           if (ruleItem.type) {
+            let rulePass = false // 只要有一个填写 就通过
+            const newLevel = []
             for (let levelIndex = 0; levelIndex < ruleItem.level.length; levelIndex++) {
               const levelItem = ruleItem.level[levelIndex]
-              if (!levelItem.limitDay || levelItem.limitDay <= 0) {
-                this.$message.error('收回规则超过天数需大于0')
-                return
+              if (levelItem.limitDay && levelItem.limitDay > 0) {
+                rulePass = true
+                newLevel.push(levelItem)
               }
             }
+            ruleItem.level = newLevel
             rule.push(ruleItem)
+
+            if (!rulePass) {
+              this.$message.error('收回规则超过天数需大于0')
+              return
+            }
           }
         }
 
@@ -547,7 +562,14 @@ export default {
         params.rule = []
       }
 
+      const showFields = this.customerPoolFields.filter(item => {
+        return item.isHidden == 0
+      })
 
+      if (showFields.length < 2) {
+        this.$message.error('公海字段至少要显示两个')
+        return
+      }
       // 公海字段
       params.field = this.customerPoolFields
 

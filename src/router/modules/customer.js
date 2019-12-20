@@ -55,6 +55,19 @@ export default [
   },
   {
     ...layout({
+      permissions: ['crm', 'applet']
+    }),
+    children: [{
+      path: 'applet', // 名片列表
+      component: () => import('@/views/customermanagement/applet/AppletIndex'),
+      meta: {
+        title: '名片线索',
+        icon: 'mp'
+      }
+    }]
+  },
+  {
+    ...layout({
       permissions: ['crm', 'customer']
     }),
     children: [{

@@ -1,5 +1,5 @@
 <template>
-  <div class="section">
+  <div class="section create-sections">
     <div
       v-if="title && title.length > 0"
       class="section-header">
@@ -9,7 +9,7 @@
       <div class="section-title">{{ title }}</div>
       <slot name="header"/>
     </div>
-    <div class="content">
+    <div class="content create-sections-content">
       <slot/>
     </div>
   </div>

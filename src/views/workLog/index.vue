@@ -325,7 +325,9 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.logType = to.params.type
     this.totalCount = 0
-    this.$refs.createLog.showMore = false
+    if (this.$refs.createLog) {
+      this.$refs.createLog.showMore = false
+    }
     this.filterForm = {
       categoryId: 0,
       createUserId: ''
@@ -337,7 +339,6 @@ export default {
       value: 'month'
     }
     this.refreshList()
-    this.scrollKey = Date.now()
     next()
   },
   methods: {
@@ -427,6 +428,7 @@ export default {
       this.listData = []
       this.noMore = false
       this.totalCount = 0
+      this.scrollKey = Date.now()
     },
 
     /**

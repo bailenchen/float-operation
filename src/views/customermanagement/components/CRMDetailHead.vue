@@ -84,6 +84,7 @@
       @handle="handleCallBack" />
     <alloc-handle
       :crm-type="crmType"
+      :pool-id="poolId"
       :selection-list="[detail]"
       :dialog-visible.sync="allocDialogShow"
       @handle="handleCallBack" />
@@ -144,6 +145,7 @@ export default {
   props: {
     /** 模块ID */
     id: [String, Number],
+    poolId: [String, Number],
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
@@ -441,9 +443,13 @@ export default {
           marketing: crmMarketingDeleteAPI,
           product: crmProductDeleteAPI
         }[this.crmType]
-        request({
+        const params = {
           [this.crmType + 'Ids']: this.id
-        })
+        }
+        if (this.isSeas) {
+          params.poolId = this.poolId
+        }
+        request(params)
           .then(res => {
             this.$message({
               type: 'success',
@@ -635,7 +641,7 @@ export default {
         return this.crm[this.crmType].excelexport
       } else if (type == 'delete') {
         if (this.isSeas) {
-          return this.crm.pool.delete
+          return this.crm.pool.delete && this.poolId
         }
         return this.crm[this.crmType].delete
       } else if (type == 'put_seas') {
@@ -652,7 +658,7 @@ export default {
         return this.crm.pool.distribute
       } else if (type == 'get') {
         // 领取(公海)
-        return this.crm.pool.receive
+        return this.crm.pool.receive && this.poolId
       } else if (type == 'start' || type == 'disable') {
         // 上架 下架(产品)
         return this.crm[this.crmType].status

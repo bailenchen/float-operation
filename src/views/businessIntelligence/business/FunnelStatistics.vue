@@ -17,6 +17,7 @@
         <el-table
           v-if="showTable"
           :data="list"
+          :summary-method="getSummaries"
           height="400"
           show-summary
           stripe
@@ -97,6 +98,38 @@ export default {
           this.loading = false
         })
     },
+
+    /**
+     * 合计
+     */
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          if (index == 1) {
+            sums[index] = sums[index].toFixed(2)
+          }
+        } else {
+          sums[index] = 'N/A'
+        }
+      })
+      return sums
+    },
+
     /** 销售漏斗 */
     initAxis() {
       var chartObj = echarts.init(document.getElementById('axismain'))

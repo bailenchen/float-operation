@@ -3,25 +3,25 @@
     <div class="map-title">
       <flexbox class="map-title-content">
         <img
-          :src="titleIcon"
+          src="@/assets/img/crm/customer.png"
           class="title-icon">
         附近的客户
       </flexbox>
     </div>
     <div v-loading="loading" class="map-content">
       <flexbox align="stretch" class="map-content--title">
-        <flexbox-item :span="9">
+        <flexbox-item>
           <div class="title--position">
             <span class="wk wk-position"/>
             <el-tooltip :content="address" class="item" effect="dark" placement="top-start">
               <span class="title--address">{{ address }}</span>
             </el-tooltip>
           </div>
-          <el-button type="text" class="el-button--text" @click="showAddress = true">重新选择地址</el-button>
-          <span class="place-text">附近</span>
+          <el-button type="text" class="el-button--text" @click="changeAddressShow = true">重新选择地址</el-button>
+          <span class="place-text">附近&nbsp;</span>
           <el-popover
             v-model="showTypePopover"
-            :width="width"
+            :width="radiusSelectWidth"
             placement="bottom"
             popper-class="no-padding-popover"
             trigger="click">
@@ -32,7 +32,7 @@
                   :key="index"
                   :class="{ 'selected' : selectType.value == item.value && !showCustomContent}"
                   class="type-content-item"
-                  @click="customSelect(item)">
+                  @click="radiusChange(item)">
                   <div class="mark"/>{{ item.label }}
                 </div>
                 <div
@@ -46,14 +46,14 @@
                 v-if="showCustomContent"
                 class="type-content-custom">
                 <el-input v-model="mapData.radius"/>
-                <el-button @click="customSelect(null)">确定</el-button>
+                <el-button type="primary" @click="radiusChange(null)">确定</el-button>
               </div>
             </div>
             <el-input
               slot="reference"
               v-model="mapData.radius"
               :readonly="true"
-              :style="{width: width + 'px'}"
+              :style="{width: radiusSelectWidth + 'px'}"
               placeholder="请选择"
               class="type-select">
               <i
@@ -61,14 +61,14 @@
                 :class="['el-icon-arrow-up', { 'is-reverse' : showTypePopover}]"/>
             </el-input>
           </el-popover>
-          <span class="place-text"> 米的客户</span>
+          <span class="place-text">&nbsp;米的客户</span>
         </flexbox-item>
 
         <div class="title--right">
-          <label class="title-label">客户类型: </label>
+          <label class="title-label">客户类型： </label>
           <el-select v-model="mapData.type" placeholder="请选择" @change="getMapInfo">
             <el-option
-              v-for="item in options"
+              v-for="item in typeOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"/>
@@ -76,22 +76,25 @@
         </div>
       </flexbox>
       <flexbox align="stretch" class="box-content">
-        <div class="map-content--left">
+        <div
+          v-empty="mapList"
+          xs-empty-icon="none"
+          class="map-content--left">
           <div id="map-scroll">
-            <ul :style="{height: mapHeight + 'px'}">
+            <ul ref="nearbyList" :style="{height: mapHeight + 'px'}">
               <li
                 v-for="(item, index) in mapList"
                 :key="index"
-                :style="{backgroundColor: item.customerId === count ? '#f7f7f7' : ''}"
+                :style="{backgroundColor: item.customerId === currentId ? '#f7f7f7' : ''}"
                 class="map-info--box"
                 @click="selectAddress(item)">
                 <span class="wk wk-location"/>
                 <div class="map-box--content">
                   <div class="map-info--name">
                     <el-tooltip :content="item.customerName" class="item" effect="dark" placement="top-start">
-                      <div class="info-name">{{ item.customerName }}</div>
+                      <div class="map-customer-name" @click.stop="checkCustomerDetail(item.customerId)">{{ item.customerName }}</div>
                     </el-tooltip>
-                    <!-- <div :title="item.customerName" class="info-name">{{ item.customerName }}</div> -->
+                    <!-- <div :title="item.customerName" class="map-customer-name">{{ item.customerName }}</div> -->
                   </div>
                   <div class="map-info--content">负责人: {{ item.ownerUserName }}</div>
                   <div :title="item.detailAddress" class="map-info--content">{{ item.detailAddress }}</div>
@@ -109,49 +112,44 @@
       </flexbox>
     </div>
     <change-address
-      :show="showAddress"
-      :value="point"
+      :show="changeAddressShow"
+      :value="centerPoint"
       @select="handleSelect"
-      @close="showAddress = false"/>
+      @close="changeAddressShow = false"/>
+    <customer-detail
+      v-if="showDview"
+      :id="rowID"
+      :no-listener-class="['map-customer-name']"
+      class="d-view"
+      @hide-view="showDview=false"/>
   </div>
 
 </template>
 <script type="text/javascript">
 import { crmCrmCustomerNearbyCustomerAPI } from '@/api/customermanagement/map'
+
+import CustomerDetail from '../customer/CustomerDetail'
+
 import { getBaiduMap } from '@/utils'
 
 export default {
   name: 'MapIndex', // 新建 客户位置
   components: {
-    ChangeAddress: () => import('./ChangeAddress')
+    ChangeAddress: () => import('./ChangeAddress'),
+    CustomerDetail
   },
-  props: {
-    value: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    /** 索引值 用于更新数据 */
-    index: Number,
-    /** 包含数据源 */
-    item: Object
-  },
+  props: {},
   data() {
     return {
       map: null,
-      /** 搜索地图输入框 */
-      searchInput: 1,
-      width: 100,
+      radiusSelectWidth: 100,
       showTypePopover: false,
       showCustomContent: false,
       selectType: {},
-      count: -1,
+      currentId: -1,
       // 选中的搜索
-      searchSelect: '',
-      showAddress: false,
+      changeAddressShow: false,
       address: '',
-      showCustom: false,
       mapList: [],
       markerArr: [],
       loading: true,
@@ -175,20 +173,14 @@ export default {
         }
       ],
       // 定位图标
-      funImg: require('@/assets/img/position.png'),
-      customerImg: require('@/assets/img/customer_active.png'),
-      point: {},
+      centerPoint: {},
       // 储存搜索的数据
       mapData: {
         radius: '1000',
         type: ''
       },
-      place: '1000',
-      div: '',
-      span: '',
-      arrow: '',
       mapHeight: document.documentElement.clientHeight - 210, // 地图的高度
-      options: [
+      typeOptions: [
         {
           value: '',
           label: '全部'
@@ -202,27 +194,14 @@ export default {
           label: '公海'
         }
       ],
-      searchCopyInput: '', // 避免修改
-      /** 完整地址输入框 */
-      detailAddress: '',
-      pointAddress: null, // 经纬度点
-      /** 区域选择 */
-      addressSelect: {
-        province: '',
-        city: '',
-        area: ''
-      },
-      /** 防止联动情况  */
-      canExecute: true
+
+      // 详情查看
+      showDview: false,
+      rowID: null
     }
   },
-  computed: {
-    titleIcon() {
-      return require(`@/assets/img/crm/customer.png`)
-    }
-  },
-  watch: {
-  },
+  computed: {},
+  watch: {},
   mounted() {
     getBaiduMap()
       .then(() => {
@@ -231,162 +210,32 @@ export default {
         map.centerAndZoom(point, 14)
         map.enableScrollWheelZoom(true)
         this.map = map
-        this.point = point
+        this.centerPoint = point
         this.getMyPosition()
       })
-
-    // map.disableDragging() //禁止拖拽
-    // map.disableDoubleClickZoom()
-    // map.disableScrollWheelZoom()
-    // map.disableContinuousZoom()
   },
   methods: {
-    querySearchAsync(queryString, cb) {
-      if (queryString) {
-        var options = {
-          onSearchComplete: function(results) {
-            if (local.getStatus() == BMAP_STATUS_SUCCESS) {
-              var address = []
-              for (var i = 0; i < results.getCurrentNumPois(); i++) {
-                address.push(results.getPoi(i))
-              }
-              cb(address)
-            } else {
-              cb([])
-            }
-          },
-          pageCapacity: 20
-        }
-        var local = new BMap.LocalSearch(this.map, options)
-        local.search(queryString)
-      } else {
-        cb([])
-      }
-    },
-    /** Input 失去焦点  searchInput 只能通过选择更改*/
-    inputBlur() {
-      if (this.searchCopyInput !== this.searchInput) {
-        this.searchInput = this.searchCopyInput
-      }
-    },
-    inputFocus() {
-      this.searchCopyInput = this.searchInput
-    },
-    // 创建标注 addMarkerLabel
-    addMarkerLabel() {
-      this.markerArr = []
-      let points = this.point
-      this.mapList.forEach(item => {
-        const Marker = new BMap.Overlay()
-        Marker.initialize = (map) => {
-          var div = this.div = document.createElement('div')
-          var span = this.span = document.createElement('span')
-          var img = document.createElement('img')
-          img.src = require('@/assets/img/map_blue.png')
-          img.className = 'map-marker_img'
-          div.className = 'map-marker--custom ' + `marker--${item.customerId}`
-          span.className = 'map-custom--text'
-          div.appendChild(span)
-          div.appendChild(img)
-          div.style.position = 'absolute'
-          div.style.zIndex = BMap.Overlay.getZIndex(this.point.lat)
-          const BMaps = BMap
-          div.style.color = 'white'
-          div.style.padding = '2px'
-          div.style.whiteSpace = 'nowrap'
-          div.style.MozUserSelect = 'none'
-          div.style.fontSize = '12px'
-          span.innerHTML = item.customerName
-          div.appendChild(span)
-          var that = this
-          points = new BMap.Point(item.lng, item.lat)
-          var arrow = this.arrow = document.createElement('div')
-          arrow.style.position = 'absolute'
-          arrow.style.width = '11px'
-          arrow.style.height = '10px'
-          arrow.style.top = '22px'
-          arrow.style.left = '10px'
-          arrow.style.overflow = 'hidden'
-          div.appendChild(arrow)
-          div.onmouseover = function() {
-            this.style.backgroundColor = '#E6A23C'
-            this.style.zIndex = '10000'
-            this.style.whiteSpace = 'normal'
-            img.src = require('@/assets/img/map_yellow.png')
-            arrow.style.backgroundPosition = '0px -20px'
-          }
-
-          div.onmouseout = function() {
-            this.style.backgroundColor = '#2362FB'
-            this.style.whiteSpace = 'nowrap'
-            img.src = require('@/assets/img/map_blue.png')
-            this.style.zIndex = BMaps.Overlay.getZIndex(points.lat)
-            arrow.style.backgroundPosition = '0px 0px'
-          }
-          var child = item
-          var scorllDiv = document.getElementsByClassName('map-content--left')[0]
-          var mapScroll = document.getElementById('map-scroll')
-
-          var ul = document.getElementsByTagName('ul')[0]
-          mapScroll.onscroll = function(e) {
-            console.log(e)
-          }
-          div.onclick = function(e) {
-            for (let i = 0; i < that.mapList.length; i++) {
-              if (child.customerId === that.mapList[i].customerId) {
-                that.mapList.splice(i, 1)
-                break
-              }
-            }
-            that.mapList.unshift(child)
-            that.address = child.detailAddress
-            console.log(scorllDiv.scrollTop, '==')
-            scorllDiv.scrollTop = 0
-            mapScroll.scrollTop = 0
-            ul.scrollTop = 0
-            that.selectAddress(child)
-          }
-          this.map.getPanes().labelPane.appendChild(div)
-          return div
-        }
-        Marker.draw = () => {
-          console.log('2322')
-          var pixel = this.map.pointToOverlayPixel(points)
-          this.div.style.left = pixel.x - parseInt(this.arrow.style.left) + 'px'
-          this.div.style.top = pixel.y - 30 + 'px'
-        }
-        this.markerArr.push(new BMap.Point(item.lng, item.lat))
-        this.map.addOverlay(Marker)
-      })
-    },
-    // 获取定位
+    /**
+     * 获取当前位置
+     */
     getMyPosition() {
       var myCity = new BMap.LocalCity()
       myCity.get(this.getFirstPosition)
     },
+
     /**
      * 定位函数
     */
     getFirstPosition(result) {
-      // Circle.setCenter(result.center.lng, result.center.lat)
-      // Circle.setRadius(1000)
-      // Circle.setStrokeColor()
-      // Circle.setFillColor('#2362FB')
-      // Circle.setStrokeOpacity(0.8)
-      // Circle.setStrokeWeight(2)
-      // Circle.setStrokeStyle('solid')
-      // Circle.disableMassClear()
-      // alert('当前定位城市:' + cityName)
-      this.point = new BMap.Point(result.center.lng, result.center.lat)
-      this.mapData.lng = result.center.lng
-      this.mapData.lat = result.center.lat
+      this.centerPoint = result.center
       this.address = result.name
       this.getMapInfo()
     },
+
     /**
-     * 自定义选择
+     * 修改半径范围
      */
-    customSelect(item) {
+    radiusChange(item) {
       if (item) {
         this.mapData.radius = item.value
         this.selectType = item
@@ -397,6 +246,7 @@ export default {
       this.getMapInfo()
       this.showTypePopover = false
     },
+
     /**
      * 获取地图信息
      *  lng 经度
@@ -408,7 +258,10 @@ export default {
     getMapInfo() {
       this.loading = true
       this.map.clearOverlays()
-      crmCrmCustomerNearbyCustomerAPI(this.mapData).then(res => {
+      const params = { ...this.mapData }
+      params.lat = this.centerPoint.lat
+      params.lng = this.centerPoint.lng
+      crmCrmCustomerNearbyCustomerAPI(params).then(res => {
         this.mapList = res.data
         this.addMarkerLabel()
         this.setCircle()
@@ -424,20 +277,24 @@ export default {
        * @param height 信息窗口高度
        */
     selectAddress(item) {
-      var div = document.getElementsByClassName(`marker--${item.customerId}`)[0]
-      var divList = document.getElementsByClassName('map-marker--custom')
-      for (let i = 0; i < divList.length; i++) {
-        divList[i].style.backgroundColor = '#2362FB'
-        divList[i].style.zIndex = BMap.Overlay.getZIndex(divList[i].lat)
+      var allOverlay = this.map.getOverlays()
+      this.currentId = item.customerId // 用id做标识来改变li的背景色
+      for (let i = 0; i < allOverlay.length; i++) {
+        const overlay = allOverlay[i]
+        console.log(overlay)
+        if (overlay._type === 'ComplexCustomOverlay') {
+          if (overlay._customerId === item.customerId) {
+            // 确保缩放等级不变
+            this.map.centerAndZoom(overlay._point, this.map.getZoom())
+            overlay._changeOverStyle()
+          } else {
+            console.log('wozpul1')
+            overlay._changeOutStyle()
+          }
+        }
       }
-      div.style.backgroundColor = '#E6A23C'
-      div.style.zIndex = '1000'
-      this.address = item.detailAddress
-      console.log(item.detailAddress)
-      this.count = item.customerId // 用id做标识来改变li的背景色
-      this.point = new BMap.Point(item.lng, item.lat)
-      this.setCircle()
     },
+
     /**
      * 添加圆形覆盖物
     */
@@ -445,7 +302,7 @@ export default {
       if (this.circle) {
         this.removeOverlay(this.circle)
       }
-      const Circle = new BMap.Circle(this.point, this.mapData.radius, {
+      const Circle = new BMap.Circle(this.centerPoint, this.mapData.radius, {
         strokeColor: '#2362FB',
         fillColor: '#2362FB',
         strokeWeight: 2,
@@ -453,14 +310,115 @@ export default {
         strokeOpacity: 0.5,
         strokeStyle: 'solid'
       })
-      Circle.setCenter(this.point)
+      Circle.setCenter(this.centerPoint)
       this.circle = Circle
       this.circle.type = 'circle'
       this.map.addOverlay(Circle)
-      this.map.setCenter(this.point)
-      this.map.panTo(this.point)
+      this.map.setCenter(this.centerPoint)
+      this.map.panTo(this.centerPoint)
       this.map.setViewport(this.markerArr)
     },
+
+    /**
+     * 创建标注
+     */
+    addMarkerLabel() {
+      this.markerArr = []
+      // 标注类
+      function ComplexCustomOverlay(point, name, customerId) {
+        this._type = 'ComplexCustomOverlay'
+        this._point = point
+        this._name = name
+        this._customerId = customerId
+      }
+      ComplexCustomOverlay.prototype = new BMap.Overlay()
+      // 地图发生变化的时候会触发方法
+      ComplexCustomOverlay.prototype.initialize = function(map) {
+        this._map = map
+        var div = this._div = document.createElement('div')
+        var span = this._span = document.createElement('span')
+        div.className = 'map-marker--custom ' + `marker--${this._customerId}`
+        span.className = 'map-custom--text'
+        div.appendChild(span)
+        div.style.position = 'absolute'
+        div.style.zIndex = this._zIndex = BMap.Overlay.getZIndex(this._point.lat)
+        div.style.color = 'white'
+        div.style.padding = '2px'
+        div.style.whiteSpace = 'nowrap'
+        div.style.MozUserSelect = 'none'
+        div.style.fontSize = '12px'
+        span.innerHTML = this._name
+        div.appendChild(span)
+
+        var arrow = this._arrow = document.createElement('div')
+        arrow.style.background = `url(${require('@/assets/img/nearby_bg.png')}) no-repeat`
+        arrow.style.position = 'absolute'
+        arrow.style.width = '20px'
+        arrow.style.height = '15px'
+        arrow.style.transform = 'scale(0.5)'
+        arrow.style.top = '24px'
+        arrow.style.left = '75px'
+        arrow.style.opacity = '0.95'
+        arrow.style.overflow = 'hidden'
+        div.appendChild(arrow)
+
+        this._changeOverStyle = function() {
+          this._div.style.backgroundColor = '#fba019'
+          this._div.style.whiteSpace = 'normal'
+          this._div.style.zIndex = '1'
+          this._arrow.style.backgroundPosition = '0px -20px'
+        }
+        this._changeOutStyle = function() {
+          if (self.currentId !== this._customerId) {
+            this._div.style.backgroundColor = '#2362FB'
+            this._div.style.whiteSpace = 'nowrap'
+            this._div.style.zIndex = this._zIndex
+            this._arrow.style.backgroundPosition = '0px 0px'
+          }
+        }
+
+        const that = this
+        div.onmouseover = function() {
+          that._changeOverStyle()
+        }
+
+        div.onmouseout = function() {
+          that._changeOutStyle()
+        }
+
+        div.onclick = () => {
+          let item = null
+          for (let i = 0; i < self.mapList.length; i++) {
+            // 将被选中的放在第一位
+            if (this._customerId === self.mapList[i].customerId) {
+              item = self.mapList.splice(i, 1)
+              self.mapList.unshift(item[0])
+              self.$refs.nearbyList.scrollTop = 0
+              self.selectAddress(item[0])
+              break
+            }
+          }
+        }
+        self.map.getPanes().labelPane.appendChild(div)
+        return div
+      }
+
+      ComplexCustomOverlay.prototype.draw = function() {
+        var map = this._map
+        var pixel = map.pointToOverlayPixel(this._point)
+        // 需要动态给标注设置偏移量
+        this._div.style.left = pixel.x - parseInt(this._arrow.style.left) - 10 + 'px'
+        this._div.style.top = pixel.y - 30 + 'px'
+      }
+      const self = this
+      this.mapList.forEach(item => {
+        const itemPoint = new BMap.Point(item.lng, item.lat)
+        const Marker = new ComplexCustomOverlay(itemPoint, item.customerName, item.customerId)
+        self.markerArr.push(itemPoint)
+        self.map.addOverlay(Marker)
+      })
+    },
+
     /**
      * 删除指定的覆盖物
     */
@@ -473,14 +431,22 @@ export default {
         }
       }
     },
+
     /**
      * 回调选中
     */
     handleSelect(data) {
-      this.point = new BMap.Point(data.lng, data.lat)
-      this.mapData.lat = data.lat
-      this.mapData.lng = data.lng
+      this.centerPoint = data.point
+      this.address = data.address + data.title
       this.getMapInfo()
+    },
+
+    /**
+     * 查看客户详情
+     */
+    checkCustomerDetail(customerId) {
+      this.rowID = customerId
+      this.showDview = true
     }
   }
 }
@@ -537,9 +503,9 @@ export default {
   }
   .title--right {
     flex-shrink: 0;
-    position: absolute;
-    right: 18px;
-    width: 260px;
+    right: 25px;
+    width: 262px;
+    margin-right: 9px;
     .title-label {
       font-size: 13px;
     }
@@ -565,14 +531,7 @@ export default {
     overflow-y: auto;
   }
 }
-/deep/.el-card {
-  height: 100%;
-  margin: 10.5px 20px;
-  background-color: #fff;
-  /deep/.el-card__body {
-    padding: 0px;
-  }
-}
+
 .map-title {
   height: 60px;
   position: relative;
@@ -632,8 +591,8 @@ export default {
       padding-bottom: 10px;
       position: relative;
       color: #2362FB;
-      .info-name {
-         width: 260px;
+      .map-customer-name {
+         width: auto;
          margin-top: 4px;
          overflow: hidden;
          white-space: nowrap;
@@ -704,11 +663,6 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-    .map-marker_img {
-       position: absolute;
-       top: 30px;
-       left: 81px;
-       }
     .map-custom--pover {
       position: absolute;
       bottom: -23px;
@@ -778,6 +732,7 @@ export default {
     }
 
     button {
+      margin-top: 5px;
       float: right;
     }
   }
@@ -794,5 +749,14 @@ export default {
 }
 .el-icon-arrow-up.is-reverse {
   transform: rotate(0deg);
+}
+
+.d-view {
+  position: fixed;
+  min-width: 926px;
+  width: 75%;
+  top: 60px;
+  bottom: 0px;
+  right: 0px;
 }
 </style>

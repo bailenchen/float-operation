@@ -75,7 +75,7 @@
             align="stretch"
             class="rule-item">
             <div class="label">提醒规则</div>
-            <div class="value">{{ `提前${detail.remindDay}天提醒负责人` }}</div>
+            <div class="value">{{ detail.receiveSetting == 1 ? `提前${detail.remindDay}天提醒负责人` : '不提醒' }}</div>
           </flexbox>
           <flexbox
             align="stretch"
@@ -119,8 +119,10 @@ export default {
   },
   filters: {
     fieldNameFilter(list) {
-      return list.map(item => {
-        return item.isHidden === 0 && item.name
+      return list.filter(item => {
+        return item.isHidden === 0
+      }).map(item => {
+        return item.name
       }).join('，')
     }
   },
@@ -184,6 +186,7 @@ export default {
 
 .detail-header {
   position: relative;
+  flex-shrink: 0;
 
   .header-icon {
     width: 40px;
@@ -223,6 +226,7 @@ export default {
 // 人员
 .member {
   padding: 20px 20px 0;
+  flex-shrink: 0;
 
   &-item {
     .label {

@@ -57,6 +57,20 @@ export default [
   },
   {
     ...layout({
+      permissions: ['manage', 'card', 'update']
+    }),
+    children: [{
+      name: 'applet',
+      path: 'applet', // 名片小程序管理
+      component: () => import('@/views/SystemManagement/SystemApplet'),
+      meta: {
+        title: '名片小程序管理',
+        icon: 'mp'
+      }
+    }]
+  },
+  {
+    ...layout({
       permissions: ['manage', 'permission'],
       title: '角色权限管理',
       icon: 'user'

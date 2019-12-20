@@ -109,6 +109,10 @@ li {
   margin-left: 30px;
 }
 
+input:invalid {
+  box-shadow: none;
+}
+
 // 控制svg颜色
 path {
   fill: inherit !important
