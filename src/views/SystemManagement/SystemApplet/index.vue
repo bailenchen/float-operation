@@ -149,7 +149,12 @@
         @save="employeesSave"/>
     </template>
     <template v-else-if="hasAuth != null">
-      <div class="auth-content">
+      <explain v-if="showExplain" @showAuth="showAuth"/>
+      <div v-else class="auth-content">
+        <div class="auth-title">
+          <el-button type="text" icon="el-icon-arrow-left" @click="backTop">返回上一级</el-button>
+          <span>/公众平台账号授权</span>
+        </div>
         <iframe
           ref="authIframe"
           :src="authUrl"
@@ -159,6 +164,7 @@
           <el-button
             type="primary"
             @click="getAuth">已授权</el-button>
+          <p class="auth-text">确认扫码成功以后，点击已授权即可</p>
         </div>
       </div>
     </template>
@@ -174,7 +180,7 @@ import {
   visitingCardRelieveAPI,
   systemUserMiNiListAPI,
   crmProductUserSaveAPI } from '@/api/systemManagement/poster'
-
+import Explain from './components/Explain' // 说明
 import RelateEmpoyee from './components/relateEmpoyee'
 import OfficialWebsite from './components/officialWebsite'
 import Reminder from '@/components/reminder'
@@ -188,6 +194,7 @@ export default {
     Reminder,
     Poster,
     OfficialWebsite,
+    Explain,
     XrHeader,
     CrmRelative
   },
@@ -204,6 +211,7 @@ export default {
       handleList: [
         { name: '删除', type: 'delete', icon: 'delete' }
       ],
+      showExplain: true,
       showReminder: true,
       selectList: [],
       authUrl: '',
@@ -253,10 +261,19 @@ export default {
     this.getAuth()
   },
   methods: {
+    /** 返回上一级 */
+    backTop() {
+      this.showExplain = true
+    },
+    /** 去授权 */
+    showAuth() {
+      this.showExplain = false
+      this.getAuth()
+    },
     /**
      * 获取是否授权
      */
-    getAuth() {
+    getAuth(boolean) {
       this.loading = true
       visitingCardCheckAuthAPI().then(res => {
         this.hasAuth = res.auth
@@ -297,6 +314,7 @@ export default {
         this.loading = true
         wechatPreauthcodeAPI().then(res => {
           this.authUrl = res.data
+          this.loading = false
         }).catch(() => {
           this.loading = false
         })
@@ -736,14 +754,33 @@ export default {
 
 .auth-content {
   height: 100%;
+  .auth-title {
+    color: #333;
+    font-size: 14px;
+    line-height: 60px;
+    /deep/.el-button--text {
+      font-size: 14px;
+      span {
+        margin-left: 0px;
+      }
+    }
+  }
   iframe {
     width: calc(100% - 20px);
-    height: calc(100% - 80px);
+    height: calc(100% - 200px);
     margin: 20px;
   }
 
   .auth-bar {
     text-align: center;
+    /deep/.el-button {
+      width: 340px;
+    }
+    .auth-text {
+      color: #999;
+      font-size: 14px;
+      margin-top: 10px;
+    }
   }
 }
 
