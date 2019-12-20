@@ -85,6 +85,7 @@ export default {
     img {
       vertical-align: middle;
       margin-left: 14px;
+      height: 40px;
     }
   }
   .accredit-content {
@@ -107,6 +108,10 @@ export default {
         }
         .step-img {
           padding-bottom: 50px;
+
+          img {
+            height: 40px;
+          }
         }
         .step-img--top {
           padding-bottom: 44px;

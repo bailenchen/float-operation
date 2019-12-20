@@ -254,18 +254,22 @@ export default {
   },
 
   mounted() {
-    /** 控制table的高度 */
+    // 控制table的高度
     window.onresize = () => {
       this.tableHeight = document.documentElement.clientHeight - 305
     }
-    this.getAuth()
+    // this.getAuth()
   },
   methods: {
-    /** 返回上一级 */
+    /**
+     * 返回上一级
+     */
     backTop() {
       this.showExplain = true
     },
-    /** 去授权 */
+    /**
+     * 去授权
+     */
     showAuth() {
       this.showExplain = false
       this.getAuth()
