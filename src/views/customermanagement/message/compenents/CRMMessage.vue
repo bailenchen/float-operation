@@ -115,7 +115,7 @@
             <call-center
               :scope="scope"
               :show="showCallCenter(scope.row)"
-              crm-type="customer"
+              :crm-type="rowType"
               @changeType="changeCRMType"/>
             <el-button
               slot="reference"
@@ -510,8 +510,10 @@ export default {
         this.infoType == 'followCustomer' ||
         this.infoType == 'putInPoolRemind') {
         this.showCount = val.customerId
+        this.rowType = 'customer'
       } else if (this.infoType == 'followLeads') {
         this.showCount = val.leadsId
+        this.rowType = 'leads'
       }
     },
     /**
