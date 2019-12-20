@@ -387,7 +387,7 @@ export default {
         crmCustomerPoolQueryPoolFieldtAPI().then(res => {
           const list = res.data || []
           const baseField = list.map(item => {
-            item.isHidden = 1
+            item.isHidden = item.isHidden = allFields ? 1 : 0
             return item
           })
           if (allFields) {
