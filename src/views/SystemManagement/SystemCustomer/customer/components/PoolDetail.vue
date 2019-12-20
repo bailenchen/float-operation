@@ -75,7 +75,7 @@
             align="stretch"
             class="rule-item">
             <div class="label">提醒规则</div>
-            <div class="value">{{ `提前${detail.remindDay}天提醒负责人` }}</div>
+            <div class="value">{{ detail.receiveSetting == 1 ? `提前${detail.remindDay}天提醒负责人` : '不提醒' }}</div>
           </flexbox>
           <flexbox
             align="stretch"
