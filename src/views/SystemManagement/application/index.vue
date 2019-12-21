@@ -51,8 +51,10 @@
     </div>
 
     <call-detail
-      :visible.sync="showCallDetail"
+      :visible.sync="callDetailShow"
       :call-switch="callSwitch"/>
+    <card-detail
+      :visible.sync="cardDetailShow"/>
   </flexbox>
 </template>
 
@@ -65,6 +67,7 @@ import {
 import { mapGetters } from 'vuex'
 
 import CallDetail from './components/callDetail'
+import CardDetail from './components/CardDetail'
 import XrHeader from '@/components/xr-header'
 
 
@@ -73,6 +76,7 @@ export default {
   name: 'SystemModule',
   components: {
     CallDetail,
+    CardDetail,
     XrHeader
   },
   mixins: [],
@@ -104,8 +108,10 @@ export default {
         }
       ],
       // 展示详情
-      showCallDetail: false,
-      callSwitch: false
+      callDetailShow: false,
+      callSwitch: false,
+      // 名片详情
+      cardDetailShow: false
     }
   },
   computed: {
@@ -241,8 +247,12 @@ export default {
     },
 
     checkCallDetail(item) {
-      this.showCallDetail = true
-      this.callSwitch = item.status == 1
+      if (item.module === 'call') {
+        this.callDetailShow = true
+        this.callSwitch = item.status == 1
+      } else if (item.module === 'applet') {
+        this.cardDetailShow = true
+      }
     }
   }
 }

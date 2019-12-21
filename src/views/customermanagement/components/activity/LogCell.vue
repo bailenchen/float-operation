@@ -114,7 +114,7 @@
         </flexbox>
       </div>
 
-      <div v-if="item.nextTime">
+      <div v-if="item.nextTime" class="cell-top">
         <flexbox
           align="stretch"
           class="cell">
@@ -126,22 +126,48 @@
           </div>
         </flexbox>
       </div>
+
+      <div v-if="item.address" class="cell-top">
+        <flexbox
+          align="stretch"
+          class="cell">
+          <div class="cell-hd is-address">
+            <i class="wk wk-location" />
+          </div>
+          <div
+            class="cell-bd text-one-line can-visit--underline"
+            @click="checkMapView(item)"
+          >{{ item.address }}</div>
+        </flexbox>
+      </div>
     </div>
+
+    <map-view
+      v-if="showMapView"
+      :title="mapViewInfo.title"
+      :lat="mapViewInfo.lat"
+      :lng="mapViewInfo.lng"
+      @hidden="showMapView=false" />
     <slot />
   </div>
 </template>
 
 <script>
-import { crmActivityDeleteAPI } from '@/api/customermanagement/common'
+import { crmActivityDeleteAPI, crmActivityOutworkSignDeleteAPI } from '@/api/customermanagement/common'
+
+import MapView from '@/components/MapView' // 地图详情
 
 import { downloadFile, fileSize } from '@/utils'
 import XrSystemIconMixin from '@/mixins/XrSystemIcon'
 import ActivityTypeMixin from './ActivityType'
 
+
 export default {
   /** 客户管理 的 客户详情 的 跟进记录cell*/
   name: 'LogCell',
-  components: {},
+  components: {
+    MapView
+  },
   filters: {
     getFileSize(size) {
       return fileSize(size)
@@ -166,7 +192,10 @@ export default {
   },
   data() {
     return {
-
+      // 控制展示地图详情
+      showMapView: false,
+      // 地图详情信息
+      mapViewInfo: {}
     }
   },
   computed: {
@@ -202,7 +231,8 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          crmActivityDeleteAPI({
+          const request = this.item.type == 4 ? crmActivityOutworkSignDeleteAPI : crmActivityDeleteAPI
+          request({
             activityId: this.item.activityId
           })
             .then(res => {
@@ -221,11 +251,26 @@ export default {
           })
         })
     },
+
     /**
      * 查看相关客户管理详情
      */
     checkRelationDetail(type, id) {
       this.$emit('crm-detail', type, id)
+    },
+
+    /**
+     * 查看地图详情
+     */
+    checkMapView(item) {
+      if (item.address) {
+        this.mapViewInfo = {
+          title: item.address,
+          lat: item.lat,
+          lng: item.lng
+        }
+        this.showMapView = true
+      }
     }
   }
 }
@@ -341,6 +386,10 @@ export default {
 }
 
 /** 关联附件 联系人 客户 行布局 */
+.cell-top {
+  margin-top: 8px;
+}
+
 .cell {
   padding: 5px 0;
   font-size: 12px;
@@ -353,6 +402,14 @@ export default {
       color: #666;
     }
   }
+
+  &-hd.is-address {
+    margin-top: -3px;
+    i {
+      font-size: 17px !important;
+    }
+  }
+
 
   &-hd.first-show {
     opacity: 0;

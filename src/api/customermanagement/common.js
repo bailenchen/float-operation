@@ -344,6 +344,18 @@ export function crmActivityDeleteAPI(data) {
 }
 
 /**
+ * 删除外勤签到
+ * @param {*} data
+ */
+export function crmActivityOutworkSignDeleteAPI(data) {
+  return request({
+    url: 'CrmActivity/deleteOutworkSign',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
  * 添加跟进记录
  * @param {*} data
  */

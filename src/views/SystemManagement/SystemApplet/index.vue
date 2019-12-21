@@ -258,7 +258,7 @@ export default {
     window.onresize = () => {
       this.tableHeight = document.documentElement.clientHeight - 305
     }
-    // this.getAuth()
+    this.getAuth()
   },
   methods: {
     /**
