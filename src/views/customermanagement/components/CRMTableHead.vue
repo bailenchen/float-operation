@@ -342,6 +342,7 @@ export default {
         var request = null
         if (this.isSeas) {
           request = crmCustomerPoolExcelExportAPI
+          params.poolId = this.poolId
           params.ids = this.selectionList
             .map(function(item, index, array) {
               return item.customerId
