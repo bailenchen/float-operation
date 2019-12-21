@@ -114,7 +114,7 @@
         </flexbox>
       </div>
 
-      <div v-if="item.nextTime">
+      <div v-if="item.nextTime" class="cell-top">
         <flexbox
           align="stretch"
           class="cell">
@@ -127,7 +127,7 @@
         </flexbox>
       </div>
 
-      <div v-if="item.address">
+      <div v-if="item.address" class="cell-top">
         <flexbox
           align="stretch"
           class="cell">
@@ -386,6 +386,10 @@ export default {
 }
 
 /** 关联附件 联系人 客户 行布局 */
+.cell-top {
+  margin-top: 8px;
+}
+
 .cell {
   padding: 5px 0;
   font-size: 12px;
