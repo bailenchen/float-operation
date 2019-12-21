@@ -99,7 +99,7 @@
                   @click="checkCRMDetail(getActivityType(item.activityType), item.activityTypeId)">{{ item.activityTypeName || '查看详情' }}</span>
               </div>
               <div
-                v-if="item.type == 3"
+                v-else-if="item.type == 3"
                 class="activity-cell">
                 <span class="activity-cell__label">{{ item.createTime }} {{ item.realname }}将商机：</span>
                 <span
@@ -107,6 +107,14 @@
                   @click="checkCRMDetail('business', item.activityTypeId)">{{ item.activityTypeName }}</span>
                 <span>{{ ` 阶段变为 ${item.content}` }}</span>
               </div>
+              <log-cell
+                v-else-if="item.type == 4"
+                :item="item"
+                :section="secitonIndex"
+                :index="index"
+                can-delete
+                @crm-detail="checkCRMDetail"
+                @delete="logCellDelete" />
               <i
                 :class="getActivityIcon(item.activityType)"
                 :style="{ backgroundColor: getActivityTypeColor(item.activityType) }"
