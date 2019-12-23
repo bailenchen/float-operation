@@ -92,7 +92,7 @@
                 <div class="map-box--content">
                   <div class="map-info--name">
                     <el-tooltip :content="item.customerName" class="item" effect="dark" placement="top-start">
-                      <div class="map-customer-name" @click.stop="checkCustomerDetail(item.customerId)">{{ item.customerName }}</div>
+                      <div class="map-customer-name can-visit--underline" @click.stop="checkCustomerDetail(item.customerId)">{{ item.customerName }}</div>
                     </el-tooltip>
                     <!-- <div :title="item.customerName" class="map-customer-name">{{ item.customerName }}</div> -->
                   </div>
@@ -590,7 +590,6 @@ export default {
       font-size: 14px;
       padding-bottom: 10px;
       position: relative;
-      color: #2362FB;
       .map-customer-name {
          width: auto;
          margin-top: 4px;
