@@ -110,6 +110,11 @@
     .el-select {
       width: 100px;
     }
+
+    .el-select + .el-select {
+      margin-left: 15px;
+    }
+
     .el-input {
       margin-left: 15px;
       width: 200px;

@@ -19,9 +19,18 @@
         @change="timeTypeChange" />
       <el-select
         v-model="filterForm.crmType"
-        placeholder="类型">
+        placeholder="选择">
         <el-option
           v-for="(item, index) in options"
+          :key="index"
+          :label="item.label"
+          :value="item.value" />
+      </el-select>
+      <el-select
+        v-model="filterForm.queryType"
+        placeholder="选择">
+        <el-option
+          v-for="(item, index) in [{ label: '全部', value: 0 }, { label: '跟进记录', value: 1 }, { label: '外勤签到', value: 4 }]"
           :key="index"
           :label="item.label"
           :value="item.value" />
@@ -134,7 +143,8 @@ export default {
         crmType: '',
         isUser: 1,
         userId: '',
-        subUser: ''
+        subUser: '',
+        queryType: 0 // 0 全部 1 跟进记录 4 外勤签到
       },
 
       timeSelect: {
@@ -218,6 +228,7 @@ export default {
       } else {
         params.crmType = this.filterForm.crmType
         params.subUser = this.filterForm.subUser
+        params.queryType = this.filterForm.queryType
       }
 
       crmIndexGetRecordListAPI(params)
