@@ -3,6 +3,7 @@ export default {
     return {
       showCRMImport: false,
       crmType: '',
+      isSeas: false,
       crmImportStatus: ''
     }
   },
@@ -20,11 +21,12 @@ export default {
 
   methods: {
     addImportBus() {
-      this.$bus.on('import-crm-bus', (crmType) => {
+      this.$bus.on('import-crm-bus', (crmType, isSeas) => {
         if (this.crmType != crmType && this.showFixImport) {
           this.$message.error('请先处理当前导入的数据')
         } else {
           this.crmType = crmType
+          this.isSeas = isSeas
           this.showCRMImport = true
         }
       })

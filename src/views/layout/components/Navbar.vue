@@ -283,7 +283,7 @@ export default {
         this.sendSystemUnreadNum()
         this.intervalId = setInterval(() => {
           this.sendSystemUnreadNum()
-        }, 10000)
+        }, 600000)
       }
     },
 
