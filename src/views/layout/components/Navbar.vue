@@ -205,6 +205,14 @@ export default {
           fontSize: '18px'
         })
       }
+
+      tempsItems.push({
+        title: '邮箱',
+        type: 7,
+        path: '/email/set',
+        icon: 'wk wk-business-intelligence',
+        fontSize: '18px'
+      })
       return tempsItems
     }
   },
