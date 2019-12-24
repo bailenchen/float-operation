@@ -49,9 +49,9 @@
           :key="index"
           :prop="item.prop"
           :label="item.label"
-          :width="item.width"
+          :min-width="item.width"
           show-overflow-tooltip />
-        <el-table-column
+          <!-- <el-table-column
           label="操作">
           <template slot-scope="scope">
             <el-button
@@ -60,7 +60,7 @@
               size="small"
               @click="handleClick(scope.row)">领取</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
 
       <div
