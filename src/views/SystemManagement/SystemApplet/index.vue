@@ -89,19 +89,18 @@
                       <el-button v-else type="text" class="el-button--warning button-handle" @click="cancelCard(scope.row)">移除用户默认访问名片</el-button>
 
                       <el-popover
-                        v-model="showProductPopover"
+                        v-model="scope.row.showPopover"
                         placement="bottom"
                         width="700"
                         style="padding: 0 !important;"
                         trigger="click">
                         <crm-relative
-                          v-if="showProductPopover"
-                          ref="crmrelative"
+                          v-if="scope.row.showPopover"
                           :radio="false"
-                          :show="showProductPopover"
+                          :show="scope.row.showPopover"
                           :selected-data="{ product: scope.row.crmProductList ||[] }"
                           crm-type="product"
-                          @close="showProductPopover=false"
+                          @close="scope.row.showPopover=false"
                           @changeCheckout="selectProductInfos($event, scope.row)"/>
                         <el-button slot="reference" type="text">管理关联产品</el-button>
                       </el-popover>
@@ -236,10 +235,7 @@ export default {
       menuChildIndex: 'user', // 角色员工  角色权限 切换 默认左边
       relateEmpoyeeShow: false,
       appletMenuLoading: false,
-      userLoading: false,
-
-      // 产品提示框
-      showProductPopover: false
+      userLoading: false
     }
   },
 
