@@ -53,13 +53,28 @@
             </flexbox>
           </div>
         </div>
-        <div class="sections">
+        <div v-if="!isSeas" class="sections">
           <div class="sections__title">四、请选择负责人（{{ crmType == 'customer' ? '如不选择，导入的客户将进入公海' : '必选' }}）</div>
           <div class="content">
             <div class="user-cell">
               <xh-user-cell
                 :value="user"
                 @value-change="userSelect"/>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="sections">
+          <div class="sections__title">四、请选择公海</div>
+          <div class="content">
+            <div class="user-cell">
+              <el-select v-model="poolId" placeholder="请选择">
+                <el-option
+                  v-for="item in poolList"
+                  :key="item.poolId"
+                  :label="item.poolName"
+                  :value="item.poolId"/>
+              </el-select>
             </div>
           </div>
         </div>
@@ -137,7 +152,9 @@ import {
 } from '@/api/customermanagement/common'
 import {
   crmCustomerExcelImport,
-  crmCustomerDownloadExcelAPI
+  crmCustomerDownloadExcelAPI,
+  crmCustomerPoolNameListAPI,
+  crmCustomerPoolExcelImport
 } from '@/api/customermanagement/customer'
 import {
   crmLeadsExcelImport,
@@ -174,6 +191,11 @@ export default {
     crmType: {
       type: String,
       default: ''
+    },
+    // 公海
+    isSeas: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -183,6 +205,10 @@ export default {
       config: 1, // 	1 覆盖，2跳过
       file: { name: '' },
       user: [],
+
+      // 公海数据
+      poolId: '',
+      poolList: [],
 
       stepsActive: 1,
       stepList: [
@@ -265,7 +291,9 @@ export default {
             this.user = [this.userInfo]
           }
         }
-
+        if (this.isSeas) {
+          this.getPoolList()
+        }
         this.getField()
       } else {
         if (this.stepsActive == 3) {
@@ -293,8 +321,7 @@ export default {
     // }
 
   },
-  mounted() {
-  },
+  created() {},
   methods: {
     sureClick() {
       if (this.stepsActive == 1) {
@@ -338,8 +365,11 @@ export default {
       params.repeatHandling = this.config
       params.file = this.file
       params.ownerUserId = this.user.length > 0 ? this.user[0].userId : ''
+      if (this.isSeas) {
+        params.poolId = this.poolId
+      }
       var request = {
-        customer: crmCustomerExcelImport,
+        customer: this.isSeas ? crmCustomerPoolExcelImport : crmCustomerExcelImport,
         leads: crmLeadsExcelImport,
         contacts: crmContactsExcelImport,
         product: crmProductExcelImport
@@ -477,6 +507,19 @@ export default {
       } else {
         this.stepList[0].status = hasFile && hasUser ? 'finish' : 'wait'
       }
+    },
+
+    /**
+     * 公海数据
+     */
+    getPoolList() {
+      crmCustomerPoolNameListAPI()
+        .then(res => {
+          this.poolList = res.data || []
+          this.poolId = this.poolList.length > 0 ? this.poolList[0].poolId : ''
+        })
+        .catch(() => {
+        })
     },
 
     // 关闭操作

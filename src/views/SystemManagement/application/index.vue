@@ -38,7 +38,7 @@
               </el-dropdown-menu>
             </el-dropdown>
             <el-button
-              v-else-if="item.module == 'call'"
+              v-else-if="item.module == 'call' || item.module == 'applet'"
               type="text"
               class="detail-button"
               @click="checkCallDetail(item)">了解详情<i class="el-icon-arrow-right el-icon--right"/></el-button>

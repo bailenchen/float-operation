@@ -237,6 +237,26 @@ export function crmCustomerExcelImport(data) {
 }
 
 /**
+ * 公海客户导入
+ * @param {*} data
+ * customer_id 客户ID
+ */
+export function crmCustomerPoolExcelImport(data) {
+  var param = new FormData()
+  Object.keys(data).forEach(key => {
+    param.append(key, data[key])
+  })
+  return request({
+    url: 'CrmCustomerPool/uploadExcel',
+    method: 'post',
+    data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+/**
  * 客户导入模板下载
  * @param {*} data
  *

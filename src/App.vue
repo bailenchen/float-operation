@@ -18,6 +18,7 @@
     <c-r-m-import
       :show.sync="showCRMImport"
       :crm-type="crmType"
+      :is-seas="isSeas"
       @status="crmImportChange"
       @close="crmImportClose"/>
   </div>
