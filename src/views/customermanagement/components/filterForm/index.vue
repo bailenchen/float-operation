@@ -106,6 +106,7 @@
                 v-else-if="formItem.formType === 'user'"
                 :item="formItem"
                 :info-params="{m	:'crm',c: crmType,a: 'index' }"
+                :value="formItem.value"
                 @value-change="arrayValueChange"/>
               <xh-prouct-cate
                 v-else-if="formItem.formType === 'category'"
