@@ -152,6 +152,7 @@
               v-for="(item, index) in recycleRuleData"
               :key="index"
               :data="item"
+              :level-customer="levelCustomerName"
               :true-label="index + 1"
               :is-edit="isEdit"
             />
@@ -198,7 +199,8 @@
 import {
   crmCustomerPoolQueryPoolFieldtAPI,
   crmCustomerPoolSetAPI,
-  crmCustomerPoolSetDetailAPI
+  crmCustomerPoolSetDetailAPI,
+  crmCustomerPoolQueryLevelAPI
 } from '@/api/customermanagement/customer'
 
 import CreateView from '@/components/CreateView'
@@ -246,6 +248,7 @@ export default {
         ]
       },
       recycleRuleData: null,
+      levelCustomerName: [], // 客户级别数据源
       customerPoolFields: [],
       requestFields: {
         preOwnerSettingDay: '前负责人限制领取天数需大于0',
@@ -274,10 +277,18 @@ export default {
     } else {
       this.getCreateInfo()
     }
+
+    this.getLevelCustomerData()
   },
 
   beforeDestroy() {},
   methods: {
+    getLevelCustomerData() {
+      crmCustomerPoolQueryLevelAPI().then(res => {
+        this.levelCustomerName = res.data || []
+      }).catch(() => {})
+    },
+
     /**
      * 编辑操作
      */

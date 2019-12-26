@@ -143,6 +143,18 @@ export function crmCustomerPoolNameListAPI(data) {
   })
 }
 
+/**
+ * 获取客户级别选项接口
+ * @param {*} data
+ */
+export function crmCustomerPoolQueryLevelAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/queryCustomerLevel',
+    method: 'post',
+    data: data
+  })
+}
+
 // crm 详情
 export function crmCustomerRead(data) {
   return request({
