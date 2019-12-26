@@ -99,6 +99,19 @@
         </el-table-column>
         <el-table-column/>
         <el-table-column
+          prop="name"
+          label="关注"
+          align="center"
+          fixed="right"
+          width="60">
+          <template slot-scope="scope">
+            <i
+              :class="{active: scope.row.star != 0}"
+              class="wk wk-focus-on focus-icon"
+              @click="toggleStar(scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column
           :resizable="false"
           fixed="right"
           width="40">
@@ -135,9 +148,11 @@
 </template>
 
 <script>
+import { crmCustomerStarAPI } from '@/api/customermanagement/customer'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
 import table from '../mixins/table'
+
 
 export default {
   /** 客户管理 的 客户列表 */
@@ -196,11 +211,37 @@ export default {
       const popoverEl = e.parentNode
       popoverEl.__vue__.showPopper = false
       this.$set(scope.row, 'show', false)
+    },
+
+    /**
+     * 切换关注状态
+     * @param index
+     * @param status
+     */
+    toggleStar(data) {
+      this.loading = true
+      crmCustomerStarAPI({
+        customerId: data.customerId
+      }).then(() => {
+        this.loading = false
+        this.$message.success(data.star > 0 ? '取消关注成功' : '关注成功')
+        data.star = data.star > 0 ? 0 : 1
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.focus-icon {
+  font-size: 14px;
+  color: #D9D9D9;
+  cursor: pointer;
+  &.active {
+    color: #FAC23D;
+  }
+}
 @import '../styles/table.scss';
 </style>

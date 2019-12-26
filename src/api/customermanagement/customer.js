@@ -546,3 +546,16 @@ export function crmCustomerNumAPI(data) {
     data: data
   })
 }
+
+/**
+ * 客户标星
+ * @param {*} data
+ *
+ */
+export function crmCustomerStarAPI(data) {
+  return request({
+    url: 'CrmCustomer/star',
+    method: 'post',
+    data: data
+  })
+}
