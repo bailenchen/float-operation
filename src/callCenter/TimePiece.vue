@@ -11,7 +11,7 @@
       </div>
       <el-button v-if="isHandle" type="danger" style="padding: 5px 15px" class="handle" @click="handUp">挂断</el-button>
     </div>
-    <el-tag v-else type="danger" effect="dark" class="e-tab">已挂断</el-tag>
+    <el-tag v-else type="danger" effect="dark" class="e-tab">空闲中</el-tag>
   </div>
 </template>
 

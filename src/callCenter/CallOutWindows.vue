@@ -5,8 +5,8 @@
     @click="showDviews"
     @mouseup="mouseleave1($event)"
     @mousedown="mousedown1($event)">
-    <img :src="closeImg" class="close" @click.stop="close">
-    <img :src="timeUrl" class="time-piece">
+    <!-- <img :src="closeImg" class="close" @click.stop="close">
+    <img :src="timeUrl" class="time-piece"> -->
     <time-piece :is-handle="false"/>
     <c-r-m-full-screen-detail
       :visible.sync="showDview"
@@ -134,24 +134,18 @@ export default {
 
 <style scoped>
   #call{
-    width: 130px;
-    height: 130px;
+    width: 108px;
+    height: 32px;
     position: fixed;
     cursor: pointer;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    background-color: white;
-    right: 10px;
-    top: 130px;
+    right: 190px;
+    top: 15px;
     text-align: center;
-    z-index: 1000000;
+    z-index: 2000;
   }
   .close {
     position: absolute;
     top: 10px;
     right: 10px;
-  }
-  .time-piece{
-    margin-top: 20px;
-    margin-bottom: 20px;
   }
 </style>
