@@ -84,6 +84,7 @@ import ExamineInfo from '@/components/Examine/ExamineInfo'
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   // 客户管理 的 合同详情
@@ -236,9 +237,9 @@ export default {
 
           this.headDetails[0].value = res.data.num
           this.headDetails[1].value = res.data.customerName
-          this.headDetails[2].value = res.data.money
+          this.headDetails[2].value = separator(res.data.money || 0)
           this.headDetails[3].value = res.data.orderDate
-          this.headDetails[4].value = res.data.receivablesMoney
+          this.headDetails[4].value = separator(res.data.receivablesMoney || 0)
           this.headDetails[5].value = res.data.ownerUserName
         })
         .catch(() => {

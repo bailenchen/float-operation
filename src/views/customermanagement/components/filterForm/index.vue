@@ -74,6 +74,17 @@
                   :value="item"/>
               </el-select>
               <el-select
+                v-if="formItem.formType === 'checkbox'"
+                v-model="formItem.value"
+                multiple
+                placeholder="请选择筛选条件">
+                <el-option
+                  v-for="item in formItem.setting"
+                  :key="item"
+                  :label="item"
+                  :value="item"/>
+              </el-select>
+              <el-select
                 v-else-if="formItem.formType === 'checkStatus' || formItem.formType === 'dealStatus'"
                 v-model="formItem.value"
                 placeholder="请选择筛选条件">
@@ -106,10 +117,12 @@
                 v-else-if="formItem.formType === 'user'"
                 :item="formItem"
                 :info-params="{m	:'crm',c: crmType,a: 'index' }"
+                :value="formItem.value"
                 @value-change="arrayValueChange"/>
               <xh-prouct-cate
                 v-else-if="formItem.formType === 'category'"
                 :item="formItem"
+                :value="formItem.value"
                 @value-change="arrayValueChange"/>
               <v-distpicker
                 v-else-if="formItem.formType === 'map_address'"
@@ -420,6 +433,11 @@ export default {
           formItem.formType === 'category'
         ) {
           formItem.value = []
+        } else if (
+          formItem.formType === 'checkbox'
+        ) {
+          formItem.setting = obj.setting || []
+          formItem.value = []
         } else {
           formItem.value = ''
         }
@@ -484,7 +502,8 @@ export default {
           o.formType == 'date' ||
           o.formType == 'datetime' ||
           o.formType == 'user' ||
-          o.formType == 'category'
+          o.formType == 'category' ||
+          o.formType == 'checkbox'
         ) {
           if (!o.value || o.value.length === 0) {
             this.$message.error('请选择筛选条件的值！')
@@ -515,6 +534,13 @@ export default {
           obj[o.fieldName] = {
             condition: o.condition,
             value: o.value[0].userId,
+            formType: o.formType,
+            name: o.fieldName
+          }
+        } else if (o.formType == 'checkbox') {
+          obj[o.fieldName] = {
+            condition: o.condition,
+            value: o.value.join(','),
             formType: o.formType,
             name: o.fieldName
           }

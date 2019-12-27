@@ -155,7 +155,7 @@
       :name="filterName"
       :edit_id="filterEditId"
       :is-default="filterDefault"
-      @saveSuccess="getSceneList"/>
+      @save-success="getSceneList"/>
   </el-dialog>
 </template>
 

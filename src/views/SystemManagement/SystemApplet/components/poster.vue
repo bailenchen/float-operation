@@ -193,7 +193,6 @@ export default {
      * 上传成功的回调
      */
     handleAvatarSuccess(file) {
-      console.log(file, '==file==')
     },
 
     /**

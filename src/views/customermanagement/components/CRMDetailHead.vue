@@ -461,7 +461,8 @@ export default {
       } else if (type === 'get') {
         // 领取
         crmCustomerReceive({
-          ids: this.id
+          ids: this.id,
+          poolId: this.poolId
         })
           .then(res => {
             this.$message({

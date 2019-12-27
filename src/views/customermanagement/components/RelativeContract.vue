@@ -49,6 +49,7 @@ import CRMCreateView from './CRMCreateView'
 import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'RelativeContract', // 相关联系人  可能再很多地方展示 放到客户管理目录下
@@ -126,6 +127,7 @@ export default {
       this.fieldList.push({ prop: 'endTime', width: '200', label: '结束日期' })
       this.fieldList.push({ prop: 'checkStatus', width: '200', label: '状态' })
     },
+
     getDetail() {
       this.loading = true
       const request = {
@@ -158,6 +160,8 @@ export default {
       // 如果需要格式化
       if (column.property === 'checkStatus') {
         return this.getStatusName(row.checkStatus)
+      } else if (column.property == 'money') {
+        return separator(row[column.property] || 0)
       }
       return row[column.property]
     },

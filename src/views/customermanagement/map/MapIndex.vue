@@ -281,14 +281,12 @@ export default {
       this.currentId = item.customerId // 用id做标识来改变li的背景色
       for (let i = 0; i < allOverlay.length; i++) {
         const overlay = allOverlay[i]
-        console.log(overlay)
         if (overlay._type === 'ComplexCustomOverlay') {
           if (overlay._customerId === item.customerId) {
             // 确保缩放等级不变
             this.map.centerAndZoom(overlay._point, this.map.getZoom())
             overlay._changeOverStyle()
           } else {
-            console.log('wozpul1')
             overlay._changeOutStyle()
           }
         }

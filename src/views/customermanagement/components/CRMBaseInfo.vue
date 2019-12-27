@@ -122,6 +122,8 @@ import FileListView from '@/components/FileListView'
 import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
+import { separator } from '@/filters/vue-numeral-filter/filters'
+
 export default {
   // 客户管理 的 基本信息
   name: 'CRMBaseInfo',
@@ -216,6 +218,9 @@ export default {
             const baseList = []
             const systemList = []
             res.data.forEach(item => {
+              if (item.formType === 'floatnumber') {
+                item.value = separator(item.value)
+              }
               if (item.sysInformation == 1) {
                 systemList.push(item)
               } else {
