@@ -477,7 +477,6 @@ export default {
     calConditionOptions(formType, item) {
       if (
         formType == 'select' ||
-        formType == 'checkbox' ||
         formType == 'user' ||
         formType == 'checkStatus' ||
         formType == 'dealStatus'
@@ -485,6 +484,13 @@ export default {
         return [
           { value: 'is', label: '等于', disabled: false },
           { value: 'isNot', label: '不等于', disabled: false }
+        ]
+      } else if (
+        formType == 'checkbox'
+      ) {
+        return [
+          { value: 'is', label: '等于', disabled: false },
+          { value: 'contains', label: '包含', disabled: false }
         ]
       } else if (
         formType == 'module' ||
