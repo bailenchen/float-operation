@@ -87,7 +87,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
-        <span class="money-bar">商机金额：{{ moneyPageData.businessSumMoney || 0 }}</span>
+        <span class="money-bar">商机金额：{{ moneyPageData.businessSumMoney || 0 | separator }}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->
