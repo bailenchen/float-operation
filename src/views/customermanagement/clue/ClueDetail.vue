@@ -25,10 +25,12 @@
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
-            <i
-              :class="{active: detailData.star != 0}"
-              class="wk wk-focus-on focus-icon"
-              @click="toggleStar()" />
+            <el-tooltip :content="detailData.star == 0 ? '添加关注' : '取消关注'" effect="dark" placement="top">
+              <i
+                :class="{active: detailData.star != 0}"
+                class="wk wk-focus-on focus-icon"
+                @click="toggleStar()" />
+            </el-tooltip>
           </template>
         </c-r-m-detail-head>
         <flexbox class="d-container-bd" align="stretch">
