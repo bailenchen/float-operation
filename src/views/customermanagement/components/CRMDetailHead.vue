@@ -8,14 +8,13 @@
         class="t-section__hd">
       <div class="t-section__bd">
         <div class="type-name">{{ typeName }}</div>
-        <el-tooltip
+        <p class="name"><el-tooltip
           :disabled="!name"
           :content="name"
-          class="item"
           effect="dark"
           placement="top-start">
-          <p class="name">{{ name }}<slot name="name" /></p>
-        </el-tooltip>
+          <span>{{ name }}</span>
+        </el-tooltip><slot name="name" /></p>
       </div>
 
       <div class="t-section__ft">
