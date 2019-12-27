@@ -22,7 +22,14 @@
           :id="id"
           :crm-type="crmType"
           @handle="detailHeadHandle"
-          @close="hideView"/>
+          @close="hideView">
+          <template slot="name">
+            <i
+              :class="{active: detailData.star != 0}"
+              class="wk wk-focus-on focus-icon"
+              @click="toggleStar()" />
+          </template>
+        </c-r-m-detail-head>
         <div
           v-if="status.length > 0"
           class="busi-state-main">

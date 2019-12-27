@@ -54,7 +54,7 @@
           </div>
         </div>
         <div v-if="!isSeas" class="sections">
-          <div class="sections__title">四、请选择负责人必选</div>
+          <div class="sections__title">四、请选择负责人（负责人为必填字段，若不填写，则会导致导入失败）</div>
           <div class="content">
             <div class="user-cell">
               <xh-user-cell

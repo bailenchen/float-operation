@@ -202,3 +202,16 @@ export function crmLeadsNumAPI(data) {
     data: data
   })
 }
+
+/**
+ * 标星
+ * @param {*} data
+ *
+ */
+export function crmLeadsStarAPI(data) {
+  return request({
+    url: 'CrmLeads/star',
+    method: 'post',
+    data: data
+  })
+}

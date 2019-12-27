@@ -52,6 +52,18 @@
           show-overflow-tooltip/>
         <el-table-column/>
         <el-table-column
+          label="关注"
+          align="center"
+          fixed="right"
+          width="60">
+          <template slot-scope="scope">
+            <i
+              :class="{active: scope.row.star != 0}"
+              class="wk wk-focus-on focus-icon"
+              @click="toggleStar(scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column
           :resizable="false"
           fixed="right"
           width="40">
@@ -75,7 +87,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
-        <span class="money-bar">商机金额：{{ moneyPageData.businessSumMoney || 0 }}</span>
+        <span class="money-bar">商机金额：{{ moneyPageData.businessSumMoney || 0 | separator }}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->

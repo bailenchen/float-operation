@@ -699,9 +699,9 @@ export default {
         } else {
           return this.forSelectionHandleItems(handleInfos, [
             'transfer',
-            'export',
-            'deal_status',
             'put_seas',
+            'deal_status',
+            'export',
             'delete',
             'lock',
             'unlock',
