@@ -54,7 +54,7 @@
           </div>
         </div>
         <div v-if="!isSeas" class="sections">
-          <div class="sections__title">四、请选择负责人（{{ crmType == 'customer' ? '如不选择，导入的客户将进入公海' : '必选' }}）</div>
+          <div class="sections__title">四、请选择负责人必选</div>
           <div class="content">
             <div class="user-cell">
               <xh-user-cell
@@ -345,7 +345,7 @@ export default {
           if (!this.file.name) {
             this.$message.error('请选择导入文件')
           } else if (
-            this.crmType != 'customer' &&
+            !this.isSeas &&
             (!this.user || this.user.length == 0)
           ) {
             this.$message.error('请选择负责人')
@@ -502,7 +502,7 @@ export default {
       const hasFile = this.file && this.file.size
       const hasUser = this.user && this.user.length > 0
 
-      if (this.crmType === 'customer') {
+      if (this.isSeas) {
         this.stepList[0].status = hasFile ? 'finish' : 'wait'
       } else {
         this.stepList[0].status = hasFile && hasUser ? 'finish' : 'wait'

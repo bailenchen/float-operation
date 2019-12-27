@@ -143,6 +143,18 @@ export function crmCustomerPoolNameListAPI(data) {
   })
 }
 
+/**
+ * 获取客户级别选项接口
+ * @param {*} data
+ */
+export function crmCustomerPoolQueryLevelAPI(data) {
+  return request({
+    url: 'CrmCustomerPool/queryCustomerLevel',
+    method: 'post',
+    data: data
+  })
+}
+
 // crm 详情
 export function crmCustomerRead(data) {
   return request({
@@ -559,6 +571,20 @@ export function crmCallCheckAuth(data) {
     data: data
   })
 }
+
+/**
+ * 客户标星
+ * @param {*} data
+ *
+ */
+export function crmCustomerStarAPI(data) {
+  return request({
+    url: 'CrmCustomer/star',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 呼叫中心客服的权限
  * @param {*} data

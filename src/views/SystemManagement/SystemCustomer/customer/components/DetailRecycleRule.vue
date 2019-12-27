@@ -16,7 +16,6 @@
           border
           style="width: 100%">
           <el-table-column
-            :formatter="fieldFormatter"
             prop="level"
             label="客户"
             width="180"/>
@@ -65,19 +64,7 @@ export default {
   mounted() {},
 
   beforeDestroy() {},
-  methods: {
-    /**
-     * 格式化字段
-     */
-    fieldFormatter(row, column) {
-      return {
-        1: '所有客户',
-        2: 'A（重要客户）',
-        3: 'B（普通客户）',
-        4: 'C（非优先客户）'
-      }[row.level]
-    }
-  }
+  methods: {}
 }
 </script>
 

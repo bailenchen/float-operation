@@ -94,6 +94,7 @@ import {
 /** 注意  需要删除接口 */
 import { objDeepCopy } from '@/utils'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'RelativeReturnMoney', // 相关回款  可能再很多地方展示 放到客户管理目录下
@@ -325,6 +326,8 @@ export default {
       // 如果需要格式化
       if (column.property === 'checkStatus') {
         return this.getStatusName(row.checkStatus)
+      } else if (column.property == 'contractMoney' || column.property == 'receivablesMoney') {
+        return separator(row[column.property] || 0)
       }
       return row[column.property]
     },
