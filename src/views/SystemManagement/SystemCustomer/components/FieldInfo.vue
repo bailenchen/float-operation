@@ -26,7 +26,7 @@
       v-if="showSelect"
       class="item-section">
       <div class="name">
-        选项设置
+        选项设置<span v-if="field.fieldName == '客户级别'" class="field-tips">（若公海规则启用了“根据客户级别设置”，调整选项后，请同步调整公海规则，否则公海规则将失效）</span>
       </div>
       <el-radio-group
         v-if="field.formType == 'select'"
@@ -447,5 +447,10 @@ export default {
 
 .cursor-move {
   cursor: move;
+}
+
+.field-tips {
+  color: #999;
+  line-height: 1.5;
 }
 </style>
