@@ -315,7 +315,7 @@ export default {
         preOwnerSetting: data.preOwnerSetting, // 前负责人领取规则 0不限制 1限制
         preOwnerSettingDay: data.preOwnerSettingDay,
         receiveSetting: data.receiveSetting, // 0 不启用 1 启用
-        remindSetting: data.receiveSetting, // 0 不提醒 1 提醒
+        remindSetting: data.remindSetting, // 0 不提醒 1 提醒
         receiveNum: data.receiveNum, // 领取频率规则
         remindDay: data.remindDay, // 提醒规则天数
         putInRule: data.putInRule // 收回规则 0不自动收回 1自动收回

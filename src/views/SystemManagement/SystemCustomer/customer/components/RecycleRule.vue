@@ -35,12 +35,12 @@
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limitDay"
-            label="未跟进天数">
+            :label="limitDayName"
+            prop="limitDay">
             <template slot-scope="scope">
               <span>超过</span>
               <el-input v-model="scope.row.limitDay" class="value-input" @keyup.native="inputLimit(scope.row)" />
-              <span>天未跟进，进入公海</span>
+              <span>天{{ limitDayUnit }}，进入公海</span>
             </template>
           </el-table-column>
         </el-table>
@@ -57,12 +57,12 @@
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limitDay"
-            label="未跟进天数">
+            :label="limitDayName"
+            prop="limitDay">
             <template slot-scope="scope">
               <span>超过</span>
               <el-input v-model="scope.row.limitDay" class="value-input" @keyup.native="inputLimit(scope.row)" />
-              <span>天未跟进，进入公海</span>
+              <span>天{{ limitDayUnit }}，进入公海</span>
             </template>
           </el-table-column>
         </el-table>
@@ -122,6 +122,22 @@ export default {
         1: '超过N天“无新建跟进（跟进记录）”的客户，由系统定时退回公海客户池',
         2: '超过N天“无新建商机”的客户，由系统定时退回公海客户池',
         3: '超过N天“未成交”的客户，由系统定时退回公海客户池'
+      }[parseInt(this.trueLabel)]
+    },
+
+    limitDayName() {
+      return {
+        1: '未跟进天数',
+        2: '未新建天数',
+        3: '未成交天数'
+      }[parseInt(this.trueLabel)]
+    },
+
+    limitDayUnit() {
+      return {
+        1: '未跟进',
+        2: '未新建商机',
+        3: '未成交'
       }[parseInt(this.trueLabel)]
     },
 
