@@ -52,6 +52,18 @@
           show-overflow-tooltip/>
         <el-table-column/>
         <el-table-column
+          label="关注"
+          align="center"
+          fixed="right"
+          width="60">
+          <template slot-scope="scope">
+            <i
+              :class="{active: scope.row.star != 0}"
+              class="wk wk-focus-on focus-icon"
+              @click="toggleStar(scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column
           :resizable="false"
           fixed="right"
           width="40">

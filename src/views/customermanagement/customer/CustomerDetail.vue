@@ -25,10 +25,14 @@
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView">
-          <p slot="name" class="customer-name">{{ detailData.customerName }}<i v-if="detailData.status == 2" class="wk wk-circle-password" /><i
-            :class="{active: detailData.star != 0}"
-            class="wk wk-focus-on focus-icon"
-            @click="toggleStar()" /></p>
+          <template slot="name">
+            <i v-if="detailData.status == 2" class="wk wk-circle-password" />
+            <i
+              v-if="!isSeasDetail"
+              :class="{active: detailData.star != 0}"
+              class="wk wk-focus-on focus-icon"
+              @click="toggleStar()" />
+          </template>
         </c-r-m-detail-head>
         <flexbox
           class="d-container-bd"
@@ -93,7 +97,6 @@
 
 <script>
 import { crmCustomerRead } from '@/api/customermanagement/customer'
-import { crmCustomerStarAPI } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
@@ -400,25 +403,6 @@ export default {
       }
 
       this.$emit('handle', data)
-    },
-
-    /**
-     * 切换关注状态
-     * @param index
-     * @param status
-     */
-    toggleStar(data) {
-      this.loading = true
-      crmCustomerStarAPI({
-        customerId: this.id
-      }).then(() => {
-        this.loading = false
-        this.$message.success(this.detailData.star > 0 ? '取消关注成功' : '关注成功')
-        this.detailData.star = this.detailData.star > 0 ? 0 : 1
-        this.$emit('handle', { type: 'star' })
-      }).catch(() => {
-        this.loading = false
-      })
     }
   }
 }
@@ -434,29 +418,14 @@ export default {
   opacity: 0;
 }
 
-.customer-name {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-  .wk-circle-password  {
-    background-color: #f56c6c;
-    color: white;
-    margin-left: 5px;
-    border-radius: 3px;
-    font-size: 12px;
-    padding: 2px;
-    transform: scale(0.6);
-  }
-}
-
-.focus-icon {
+.wk-circle-password  {
+  background-color: #f56c6c;
+  color: white;
   margin-left: 5px;
-  font-size: 14px;
-  color: #D9D9D9;
-  cursor: pointer;
-  &.active {
-    color: #FAC23D;
-  }
+  border-radius: 3px;
+  font-size: 12px;
+  padding: 2px;
+  transform: scale(0.6);
 }
 @import '../styles/crmdetail.scss';
 </style>

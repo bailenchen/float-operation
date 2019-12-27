@@ -9,17 +9,13 @@
       <div class="t-section__bd">
         <div class="type-name">{{ typeName }}</div>
         <el-tooltip
-          v-if="!$slots.name"
           :disabled="!name"
           :content="name"
           class="item"
           effect="dark"
           placement="top-start">
-          <p
-            v-if="!$slots.name"
-            class="name">{{ name }}</p>
+          <p class="name">{{ name }}<slot name="name" /></p>
         </el-tooltip>
-        <slot name="name" />
       </div>
 
       <div class="t-section__ft">

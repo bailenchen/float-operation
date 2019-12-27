@@ -23,7 +23,9 @@
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView">
-          <p slot="name" class="contract-name">{{ detailData.name }}<span v-if="detailData.checkStatus == 8" class="is-invalid">（已作废）</span></p>
+          <template slot="name">
+            <span v-if="detailData.checkStatus == 8" class="is-invalid">（已作废）</span>
+          </template>
         </c-r-m-detail-head>
 
         <examine-info
@@ -280,12 +282,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/crmdetail.scss';
-.contract-name {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-  .is-invalid {
-    color: #ccc;
-  }
+.is-invalid {
+  color: #ccc;
 }
 </style>

@@ -47,3 +47,13 @@
   left: 20px;
   top: 0;
 }
+
+// 关注
+.focus-icon {
+  font-size: 14px;
+  color: #D9D9D9;
+  cursor: pointer;
+  &.active {
+    color: #FAC23D;
+  }
+}
