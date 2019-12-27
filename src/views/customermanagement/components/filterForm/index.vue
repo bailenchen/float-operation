@@ -74,7 +74,7 @@
                   :value="item"/>
               </el-select>
               <el-select
-                v-if="formItem.formType === 'checkbox'"
+                v-else-if="formItem.formType === 'checkbox'"
                 v-model="formItem.value"
                 multiple
                 placeholder="请选择筛选条件">
