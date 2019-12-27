@@ -164,8 +164,12 @@ export default {
             obj.level = item
             return obj
           })
-          if (this.isEdit && this.levelCustomerData && this.levelCustomerData.length) {
-            this.data.level = this.getEditData(this.levelCustomerData, this.data.level)
+
+          // 类型是2
+          if (this.data.customerLevelSetting == 2) {
+            if (this.isEdit && this.levelCustomerData && this.levelCustomerData.length) {
+              this.data.level = this.getEditData(this.levelCustomerData, this.data.level)
+            }
           }
         }
       },
