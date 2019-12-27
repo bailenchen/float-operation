@@ -16,7 +16,8 @@
               <el-select
                 v-model="formItem.fieldName"
                 placeholder="请选择要筛选的字段名"
-                @change="fieldChange(formItem)">
+                @change="fieldChange(formItem)"
+                @focus="fieldFocus">
                 <el-option
                   v-for="item in fieldList"
                   :key="item.fieldName"
@@ -74,7 +75,7 @@
                   :value="item"/>
               </el-select>
               <el-select
-                v-if="formItem.formType === 'checkbox'"
+                v-else-if="formItem.formType === 'checkbox'"
                 v-model="formItem.value"
                 multiple
                 placeholder="请选择筛选条件">
@@ -396,6 +397,13 @@ export default {
         ]
       }
     },
+    /**
+     * 聚焦
+     */
+    fieldFocus() {
+      this.$el.click()
+    },
+
     /**
      * 当前选择的字段名改变，判断是否有重复
      * @param formItem

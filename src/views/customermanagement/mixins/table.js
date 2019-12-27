@@ -16,7 +16,8 @@ import {
   crmCustomerIndex,
   crmCustomerPool,
   crmCustomerExcelAllExport,
-  crmCustomerPoolExcelAllExport
+  crmCustomerPoolExcelAllExport,
+  crmCustomerStarAPI
 } from '@/api/customermanagement/customer'
 import {
   crmAppletIndexAPI,
@@ -24,15 +25,18 @@ import {
 } from '@/api/customermanagement/applet'
 import {
   crmLeadsIndex,
-  crmLeadsExcelAllExport
+  crmLeadsExcelAllExport,
+  crmLeadsStarAPI
 } from '@/api/customermanagement/clue'
 import {
   crmContactsIndex,
-  crmContactsExcelAllExport
+  crmContactsExcelAllExport,
+  crmContactsStarAPI
 } from '@/api/customermanagement/contacts'
 import {
   crmBusinessIndex,
-  crmBusinessExcelAllExportAPI
+  crmBusinessExcelAllExportAPI,
+  crmBusinessStarAPI
 } from '@/api/customermanagement/business'
 import {
   crmContractIndex,
@@ -564,6 +568,33 @@ export default {
       return {
         backgroundColor: this.getStatusColor(status)
       }
+    },
+
+    /**
+     * 切换关注状态
+     * @param index
+     * @param status
+     */
+    toggleStar(data) {
+      this.loading = true
+
+      const request = {
+        leads: crmLeadsStarAPI,
+        customer: crmCustomerStarAPI,
+        contacts: crmContactsStarAPI,
+        business: crmBusinessStarAPI
+      }[this.crmType]
+
+      const params = {}
+      params[`${this.crmType}Id`] = data[`${this.crmType}Id`]
+
+      request(params).then(() => {
+        this.loading = false
+        this.$message.success(data.star > 0 ? '取消关注成功' : '关注成功')
+        data.star = data.star > 0 ? 0 : 1
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**

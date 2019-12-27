@@ -208,3 +208,16 @@ export function crmContactsNumAPI(data) {
     data: data
   })
 }
+
+/**
+ * 标星
+ * @param {*} data
+ *
+ */
+export function crmContactsStarAPI(data) {
+  return request({
+    url: 'CrmContacts/star',
+    method: 'post',
+    data: data
+  })
+}

@@ -2,10 +2,10 @@ import {
   mapGetters
 } from 'vuex'
 
-import { crmLeadsNumAPI } from '@/api/customermanagement/clue'
-import { crmCustomerNumAPI } from '@/api/customermanagement/customer'
-import { crmContactsNumAPI } from '@/api/customermanagement/contacts'
-import { crmBusinessNumAPI } from '@/api/customermanagement/business'
+import { crmLeadsNumAPI, crmLeadsStarAPI } from '@/api/customermanagement/clue'
+import { crmCustomerNumAPI, crmCustomerStarAPI } from '@/api/customermanagement/customer'
+import { crmContactsNumAPI, crmContactsStarAPI } from '@/api/customermanagement/contacts'
+import { crmBusinessNumAPI, crmBusinessStarAPI } from '@/api/customermanagement/business'
 import { crmContractNumAPI } from '@/api/customermanagement/contract'
 import { crmProductNumAPI } from '@/api/customermanagement/product'
 import { crmReceivablesNumAPI } from '@/api/customermanagement/money'
@@ -130,6 +130,34 @@ export default {
      */
     getTabName(name, num) {
       return `${name}${num && num > 0 ? '（' + num + '）' : ''}`
+    },
+
+    /**
+     * 切换关注状态
+     * @param index
+     * @param status
+     */
+    toggleStar() {
+      this.loading = true
+
+      const request = {
+        leads: crmLeadsStarAPI,
+        customer: crmCustomerStarAPI,
+        contacts: crmContactsStarAPI,
+        business: crmBusinessStarAPI
+      }[this.crmType]
+
+      const params = {}
+      params[`${this.crmType}Id`] = this.detailData[`${this.crmType}Id`]
+
+      request(params).then(() => {
+        this.loading = false
+        this.$message.success(this.detailData.star > 0 ? '取消关注成功' : '关注成功')
+        this.detailData.star = this.detailData.star > 0 ? 0 : 1
+        this.$emit('handle', { type: 'star' })
+      }).catch(() => {
+        this.loading = false
+      })
     }
   },
 

@@ -271,3 +271,16 @@ export function crmBusinessExcelAllExportAPI(data) {
     }
   })
 }
+
+/**
+ * 标星
+ * @param {*} data
+ *
+ */
+export function crmBusinessStarAPI(data) {
+  return request({
+    url: 'CrmBusiness/star',
+    method: 'post',
+    data: data
+  })
+}
