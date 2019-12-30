@@ -334,7 +334,7 @@
               <div class="sms-box">
                 <el-input
                   ref="smscode"
-                  v-model.trim="resetUserNameForm.code"
+                  v-model.trim="resetUserNameForm.smscode"
                   placeholder="请输入短信验证码" />
                 <el-button
                   :disabled="codeTime !== codeSecond"
@@ -1317,7 +1317,7 @@ export default {
           if (this.selectionList.length > 0) {
             val.id = this.selectionList[0].userId
             if (this.isManageReset) {
-              if (!this.resetUserNameForm.code) {
+              if (!this.resetUserNameForm.smscode) {
                 this.$message.error('请输入验证码')
                 return
               }
