@@ -23,7 +23,7 @@
             prop="limitDay"
             label="未跟进天数">
             <template slot-scope="scope">
-              <span>{{ `超过${scope.row.limitDay}天未跟进，进入公海` }}</span>
+              <span>{{ `超过${scope.row.limitDay}天${getLimitDayUnit(data.type)}，进入公海` }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -64,7 +64,15 @@ export default {
   mounted() {},
 
   beforeDestroy() {},
-  methods: {}
+  methods: {
+    getLimitDayUnit(type) {
+      return {
+        1: '未跟进',
+        2: '未新建商机',
+        3: '未成交'
+      }[type]
+    }
+  }
 }
 </script>
 
