@@ -87,6 +87,22 @@ export function adminUsersUsernameEditAPI(data) {
   })
 }
 
+/**
+ * 编辑登录名
+ * @param {*} data
+ * username
+ * password
+ * id
+ * 可修改管理员
+ */
+export function adminUsersManagerUsernameEditAPI(data) {
+  return request({
+    url: 'system/user/usernameEditByManager',
+    method: 'post',
+    data: data
+  })
+}
+
 // 用户状态修改
 export function usersEditStatus(data) {
   return request({

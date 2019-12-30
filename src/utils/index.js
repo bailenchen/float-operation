@@ -248,6 +248,9 @@ export function regexIsCRMMobile(mobile) {
   return true
 }
 
+// 中国手机号
+export const chinaMobileRegex = /^1\d{10}$/
+
 /** 判断输入的是邮箱*/
 export function regexIsCRMEmail(email) {
   var regex = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
