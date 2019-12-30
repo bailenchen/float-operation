@@ -99,7 +99,7 @@
 
 <script>
 import { SendSmsAPI } from '@/api/login'
-import SlideVerify from './slideVerify'
+import SlideVerify from '@/components/SlideVerify'
 import mixins from './mixins'
 
 export default {
