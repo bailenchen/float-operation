@@ -90,7 +90,9 @@ export default {
       // 路径
       path: '',
       // 二维码
-      qrcode: null
+      qrcode: null,
+      // 复制
+      clipboard: null
     }
   },
   computed: {},
@@ -149,16 +151,17 @@ export default {
         downloadLink.click() // 点击下载
         document.body.removeChild(downloadLink)
       } else if (type == 'copy') {
-        const clipboard = new Clipboard('.copyBtn')
+        if (!this.clipboard) {
+          this.clipboard = new Clipboard('.copyBtn')
+          this.clipboard.on('success', e => {
+            this.$message.success('复制成功')
+            e.clearSelection()
+          })
 
-        clipboard.on('success', e => {
-          this.$message.success('复制成功')
-          e.clearSelection()
-        })
-
-        clipboard.on('error', e => {
-          this.$message.success('复制失败')
-        })
+          this.clipboard.on('error', e => {
+            this.$message.success('复制失败')
+          })
+        }
       }
     }
   }
