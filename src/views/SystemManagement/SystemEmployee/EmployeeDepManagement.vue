@@ -1449,7 +1449,7 @@ export default {
 
       SendSmsAPI({
         telephone: this.resetUserNameForm.username,
-        type: 3
+        type: 1 // 注册
       })
         .then(() => {
           this.startTimer()
