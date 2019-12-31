@@ -20,8 +20,8 @@
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limitDay"
-            label="未跟进天数">
+            :label="limitDayName"
+            prop="limitDay">
             <template slot-scope="scope">
               <span>{{ `超过${scope.row.limitDay}天${getLimitDayUnit(data.type)}，进入公海` }}</span>
             </template>
@@ -50,6 +50,14 @@ export default {
         1: '超过N天“无新建跟进（跟进记录）”的客户，由系统定时退回公海客户池',
         2: '超过N天“无新建商机”的客户，由系统定时退回公海客户池',
         3: '超过N天“未成交”的客户，由系统定时退回公海客户池'
+      }[parseInt(this.data.type)]
+    },
+
+    limitDayName() {
+      return {
+        1: '未跟进天数',
+        2: '未新建天数',
+        3: '未成交天数'
       }[parseInt(this.data.type)]
     },
 
