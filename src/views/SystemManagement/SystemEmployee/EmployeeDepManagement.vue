@@ -1406,7 +1406,7 @@ export default {
               adminUsersUsernameEditAPI(val)
                 .then(res => {
                   if (res.status === 3) {
-                    this.$message.error('请先获取验证码')
+                    this.$message.error('当前为系统注册账号（手机号），重置需要获取新手机号验证码')
                     this.isManageReset = true
                   } else {
                     this.$message.success('重置成功')

@@ -81,7 +81,8 @@
             align="stretch"
             class="rule-item">
             <div class="label">收回规则</div>
-            <div class="value rule-value">
+            <div v-if="detail.receiveSetting == 0" class="value">不自动回收</div>
+            <div v-else class="value rule-value">
               <detail-recycle-rule
                 v-for="(item, index) in detail.rule"
                 :key="index"
