@@ -124,7 +124,7 @@ export default {
           return item[key + 'Id']
         })
       }
-      this.$emit('checkInfos', this.relevanceAll)
+      this.$emit('checkInfos', this.relevanceAll, val.data)
     },
     // 任务页面取消关联
     delRelevance(field, index, item) {
