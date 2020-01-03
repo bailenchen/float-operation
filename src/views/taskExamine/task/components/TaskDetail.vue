@@ -338,11 +338,11 @@
               <div class="section__bd">
                 <related-business
                   :margin-left="'0'"
-                  :is-task="true"
                   :all-data="allData"
-                  :task-id="taskData.taskId"
+                  show-foot
                   @checkRelatedDetail="checkRelatedDetail"
-                  @checkInfos="checkInfos" />
+                  @checkInfos="checkInfos"
+                  @unbind="unbindRelatedInfo" />
               </div>
             </div>
 
@@ -569,6 +569,7 @@ import { mapGetters } from 'vuex'
 import CommentList from '@/views/workLog/components/commentList'
 import ReplyComment from '@/components/ReplyComment'
 import moment from 'moment'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'TaskDetail',
@@ -1273,6 +1274,42 @@ export default {
           })
         })
         .catch(() => {})
+    },
+
+    /**
+     * 解绑详情信息
+     */
+    unbindRelatedInfo(field, item, index) {
+      this.$confirm('确认取消关联?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'is-particulars'
+      })
+        .then(() => {
+          const params = { taskId: this.taskData.taskId }
+          const tempRelatedListData = objDeepCopy(this.allData)
+          tempRelatedListData[field].splice(index, 1)
+          const showTypes = ['customer', 'contacts', 'business', 'contract']
+          for (let index = 0; index < showTypes.length; index++) {
+            const typeItem = showTypes[index]
+            const typeArray = tempRelatedListData[typeItem] || []
+            params[typeItem + 'Ids'] = typeArray
+              .map(aItem => {
+                return aItem[typeItem + 'Id']
+              })
+              .join(',')
+          }
+          editTaskRelationAPI(params)
+            .then(res => {
+              this.allData = tempRelatedListData
+              this.$message.success('关联取消成功')
+            })
+            .catch(() => {})
+        })
+        .catch(() => {
+          this.$message.info('已取消操作')
+        })
     },
 
     /**

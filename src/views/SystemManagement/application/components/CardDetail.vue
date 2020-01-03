@@ -79,7 +79,7 @@ export default {
   color: #999;
   text-align: center;
   img {
-    width: 100px;
+    width: 120px;
     margin: 10px 0;
   }
 }
