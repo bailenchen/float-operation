@@ -12,7 +12,7 @@
 
       <el-main
         id="workLog-main-container"
-        style="padding:15px;">
+        style="padding:0;">
         <app-main/>
       </el-main>
     </el-container>

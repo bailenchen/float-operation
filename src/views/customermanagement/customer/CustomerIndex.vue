@@ -102,9 +102,7 @@
           :resizable="false"
           fixed="right"
           width="40">
-          <template
-            slot="header"
-            slot-scope="slot">
+          <template>
             <field-set
               :crm-type="crmType"
               @change="setSave"/>
