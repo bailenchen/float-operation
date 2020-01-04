@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[disabled ? 'is_disabled' : 'is_valid']"
-    class="xh-files-cont">
+    class="xh-files-cont xh-form-border">
     <flexbox
       :class="[disabled ? 'is_disabled' : 'is_valid']"
       class="f-header"

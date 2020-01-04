@@ -19,7 +19,7 @@
       slot="reference"
       :class="[disabled ? 'is_disabled' : 'is_valid', { 'is_focus': showPopover }]"
       wrap="wrap"
-      class="user-container"
+      class="user-container xh-form-border"
       @click.native="focusClick">
       <div
         v-for="(item, index) in showDataValue"
