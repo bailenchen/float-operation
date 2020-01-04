@@ -20,6 +20,7 @@
       <flexbox class="filter">
         <span class="filter__label">选择部门</span>
         <xh-structure-cell
+          :value="initStrucValue"
           radio
           class="xh-structure-cell"
           @value-change="structureChange" />
@@ -114,6 +115,7 @@ export default {
   data() {
     return {
       bookType: '', // all 全部 attention 关注的
+      initStrucValue: [], // 切换我的 和 我关注的 重置选择的值
 
       listData: [],
       tableMap: [
@@ -145,6 +147,7 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.bookType = to.params.type
     this.params = this.getDefaultParams(this.bookType)
+    this.initStrucValue = []
     this.listData = []
     this.getList()
     next()
@@ -270,6 +273,7 @@ export default {
      * 部门修改
      */
     structureChange(data) {
+      this.initStrucValue = data.value
       this.params.page = 1
       this.params.deptId = data.value.length ? data.value[0].id : ''
       this.getList()
