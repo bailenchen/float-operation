@@ -62,7 +62,19 @@ service.interceptors.response.use(
      */
     const res = response.data
     if (response.status === 200 && response.config.responseType === 'blob') { // 文件类型特殊处理
-      return response
+      if (response.headers['content-disposition']) {
+        return response
+      } else {
+        const resultBlob = new Blob([response.data], { type: 'application/json' })
+        const fr = new FileReader()
+        fr.onload = function() {
+          const result = JSON.parse(this.result)
+          if (result.code == 500 && result.msg) {
+            errorMessage(result.msg)
+          }
+        }
+        fr.readAsText(resultBlob)
+      }
     } else if (res.code !== 0) {
       // 302	登录已失效
       if (res.code === 302) {
