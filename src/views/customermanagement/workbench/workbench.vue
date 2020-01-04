@@ -58,17 +58,17 @@
               </div>
             </div>
           </flexbox>
-          <flexbox v-if="rateText !== ''" direction="column" class="brief-item__others">
+          <div v-if="rateText !== ''" class="brief-item__others">
             <div class="text">
               {{ rateText }}
             </div>
-            <div :class="item.status" class="rate">
+            <div :class="item.status" class="rate text-one-line">
               <span class="rate__num">{{ item.rate }}%</span>
               <span
                 :class="`el-icon-${item.status}`"
                 class="rate__icon" />
             </div>
-          </flexbox>
+          </div>
         </flexbox>
       </div>
     </div>
@@ -139,7 +139,7 @@ import SetSort from './components/SetSort'
 import membersDep from '@/components/selectEmployee/membersDep'
 
 import { mapGetters } from 'vuex'
-import { separator } from '@/filters/vue-numeral-filter/filters'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 import FitText from '@/directives/fitText'
 
 /**
@@ -339,12 +339,12 @@ export default {
           if (item.field == 'contractMoney' ||
           item.field == 'businessMoney' ||
           item.field == 'receivablesMoney') {
-            item.num = separator(res.data[item.field] || 0)
+            item.num = separatorInt(Math.floor(res.data[item.field] || 0))
           } else {
             item.num = res.data[item.field] || 0 // 数量
           }
           if (Number(res.prev[item.field]) !== 0) {
-            // status状态   top 增长  bottom 下降 '' 持平
+            // status状态   top 增长  bottom 下降 '' 持平 上升调整为 红色 下降调整为绿色
             item.status = Number(res.prev[item.field]) > 0 ? 'top' : 'bottom'
           } else {
             item.status = ''
@@ -595,6 +595,10 @@ export default {
           .brief-item__others {
             position: relative;
             width: 100px;
+            text-align: center;
+            padding: 0 3px;
+            overflow: hidden;
+
             &:before {
               position: absolute;
               top: 7.5%;
@@ -613,14 +617,15 @@ export default {
               font-size: 14px;
               color: #2BBF24;
               margin-top: 8px;
+
               .rate__icon {
                 font-size: 12px;
               }
               &.bottom {
-                color: #F24B4B;
+                color: #2BBF24;
               }
               &.top {
-                color: #2BBF24;
+                color: #F24B4B;
               }
             }
           }

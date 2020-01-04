@@ -14,6 +14,8 @@ const percentage = value => numeral(value).format('0.[00]%')
 
 const separator = value => numeral(value).format('0,0.00')
 
+const separatorInt = value => numeral(value).format('0,0')
+
 const currency = value => numeral(value).format('$0,0.00')
 
 export {
@@ -24,5 +26,6 @@ export {
   ordinal,
   percentage,
   separator,
+  separatorInt,
   currency
 }
