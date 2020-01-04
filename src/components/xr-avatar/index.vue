@@ -6,7 +6,8 @@
     :key="dataSrc"
     :style="{ fontSize: fontSize, background: background }"
     :class="{ 'cursor-pointer': !disabled }"
-    :size="size">{{ showName }}</el-avatar>
+    :size="size"
+    fit="fill">{{ showName }}</el-avatar>
   <el-popover
     v-else
     v-model="popoverShow"
@@ -25,7 +26,8 @@
       :key="dataSrc"
       :style="{ fontSize: fontSize, background: background }"
       :class="{ 'cursor-pointer': !disabled }"
-      :size="size">{{ showName }}</el-avatar>
+      :size="size"
+      fit="fill">{{ showName }}</el-avatar>
   </el-popover>
 
 </template>
@@ -142,5 +144,11 @@ export default {
 <style lang="scss" scoped>
 .cursor-pointer {
   cursor: pointer;
+}
+
+.el-avatar {
+  /deep/ img {
+    width: 100%;
+  }
 }
 </style>
