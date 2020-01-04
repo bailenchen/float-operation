@@ -340,9 +340,9 @@ export default {
           value: '选' + (this.field.showSetting.length + 1)
         })
       } else if (type == 'remove') {
-        const removeIndex = this.field.default_value.indexOf(item.value)
+        const removeIndex = this.field.defaultValue.indexOf(item.value)
         if (removeIndex != -1) {
-          this.field.default_value.splice(removeIndex, 1)
+          this.field.defaultValue.splice(removeIndex, 1)
         }
         this.field.showSetting.splice(index, 1)
       }
