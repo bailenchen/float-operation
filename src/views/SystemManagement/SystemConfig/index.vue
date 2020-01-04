@@ -10,32 +10,92 @@
     <div
       v-loading="loading"
       class="body">
-
+      <!-- 平台信息 -->
       <div class="section">
-        <div class="name">企业名称</div>
-        <el-input
-          v-model="systemName"
-          :maxlength="50"/>
+        <div class="section-title">企业平台信息</div>
+        <flexbox class="progress-info">
+          <flexbox-item class="progress-info-item">
+            <p class="info-title">账号使用情况</p>
+            <radial-progress-bar
+              :diameter="126"
+              :completed-steps="50"
+              :total-steps="100"
+              :stroke-width="10"
+              inner-stroke-color="#E8F2FA"
+              start-color="#2362FB"
+              stop-color="#2362FB"
+              class="progress">
+              <p class="progress-title">可用账号</p>
+              <p class="progress-value">{{ 50 }}<span>%</span></p>
+            </radial-progress-bar>
+            <p class="info-value">购买用户数：20个</p>
+            <p class="info-value">已授权用户数：10个</p>
+          </flexbox-item>
+          <flexbox-item class="progress-info-item">
+            <p class="info-title">租期到期时间</p>
+            <radial-progress-bar
+              :diameter="126"
+              :completed-steps="50"
+              :total-steps="100"
+              :stroke-width="10"
+              inner-stroke-color="#E8F2FA"
+              start-color="#29C14D"
+              stop-color="#29C14D"
+              class="progress">
+              <p class="progress-title">剩余天数</p>
+              <p class="progress-value">{{ 50 }}<span>%</span></p>
+            </radial-progress-bar>
+            <p class="info-value">开始时间：2018-01-01</p>
+            <p class="info-value">结束时间：2099-12-31</p>
+          </flexbox-item>
+          <flexbox-item class="progress-info-item">
+            <p class="info-title">空间使用情况</p>
+            <radial-progress-bar
+              :diameter="126"
+              :completed-steps="50"
+              :total-steps="100"
+              :stroke-width="10"
+              inner-stroke-color="#E8F2FA"
+              start-color="#FF9B25"
+              stop-color="#FF9B25"
+              class="progress">
+              <p class="progress-title">已使用</p>
+              <p class="progress-value">{{ 50 }}<span>%</span></p>
+            </radial-progress-bar>
+            <p class="info-value">已使用：150MB</p>
+          </flexbox-item>
+        </flexbox>
       </div>
+
+      <!-- 基本信息 -->
       <div class="section">
-        <div class="name">企业logo</div>
-        <el-upload
-          v-if="!systemImage"
-          :show-file-list="false"
-          :http-request="fileUpload"
-          drag
-          class="upload"
-          action="http"
-          accept="image/png, image/jpeg, image/gif, image/jpg">
-          <i class="el-icon-plus uploader-icon"/>
-        </el-upload>
-        <div
-          v-else
-          class="upload-show">
-          <img v-src="systemImage">
-          <i
-            class="el-icon-remove icon-delete"
-            @click="deleteSystemImage"/>
+        <div class="section-title">企业基本信息设置</div>
+        <div class="section-content">
+          <div class="name">企业名称</div>
+          <el-input
+            v-model="systemName"
+            :maxlength="50"/>
+        </div>
+        <div class="section-content">
+          <div class="name">企业logo</div>
+          <el-upload
+            v-if="!systemImage"
+            :show-file-list="false"
+            :http-request="fileUpload"
+            drag
+            class="upload"
+            action="http"
+            accept="image/png, image/jpeg, image/gif, image/jpg">
+            <i class="el-icon-plus uploader-icon"/>
+          </el-upload>
+          <div
+            v-else
+            class="upload-show">
+            <img v-src="systemImage">
+            <i
+              class="el-icon-remove icon-delete"
+              @click="deleteSystemImage"/>
+          </div>
         </div>
       </div>
 
@@ -64,15 +124,18 @@
 <script>
 import { adminSystemSave } from '@/api/systemManagement/SystemConfig'
 
+import RadialProgressBar from 'vue-radial-progress'
 import EditImage from '@/components/EditImage'
 import XrHeader from '@/components/xr-header'
+
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'SystemConfig',
   components: {
     EditImage,
-    XrHeader
+    XrHeader,
+    RadialProgressBar
   },
   data() {
     return {
@@ -186,16 +249,69 @@ export default {
   position: relative;
 }
 
+// 进度信息
+.progress-info {
+  &-item {
+    text-align: center;
+    min-width: 150px;
+    flex-shrink: 0;
+    font-size: 14px;
+
+    .info-title {
+      color: #333;
+    }
+
+    .info-value {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .info-value + .info-value {
+      margin-top: 8px;
+    }
+
+    .progress {
+      margin: 20px 0 30px;
+      font-size: 12px;
+      color: #333;
+
+      &-value {
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    }
+
+    .radial-progress-container {
+      display: inline-block;
+    }
+  }
+}
 .save-button {
   margin-left: 250px;
 }
 
-.section {
+.section + .section {
+  margin-top: 50px;
+}
+
+.section:first-child {
+  padding-bottom: 40px;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.section-title {
+  color: #333;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.section-content {
   margin-bottom: 30px;
   .name {
-    color: #777777;
-    font-size: 12px;
-    margin-bottom: 8px;
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 10px;
   }
 
   .el-input {

@@ -79,7 +79,12 @@
             prefix-icon="el-icon-search"
             @blur="refreshList"
             @keyup.enter.native="refreshList"/>
-          <span class="total-count">已筛选出<span>{{ totalCount }}</span>项</span>
+          <div class="filter-right">
+            <span class="total-count">已筛选出<span>{{ totalCount }}</span>项</span>
+            <el-button
+              class="export-btn"
+              @click="exportShow = true">导出</el-button>
+          </div>
         </flexbox>
       </div>
 
@@ -270,7 +275,10 @@ export default {
         params: null,
         paging: true,
         sortable: false
-      }
+      },
+
+      // 导出展示
+      exportShow: false
     }
   },
   computed: {
