@@ -349,14 +349,14 @@ export default {
     },
     /** * 输入默认值触发 */
     inputBlur(e) {
-      if (this.field.formType == 'mobile') {
+      if (this.field.formType == 'mobile' && this.field.defaultValue) {
         if (!regexIsCRMMobile(this.field.defaultValue)) {
           this.$message({
             message: '输入的手机格式有误',
             type: 'error'
           })
         }
-      } else if (this.field.formType == 'email') {
+      } else if (this.field.formType == 'email' && this.field.defaultValue) {
         if (!regexIsCRMEmail(this.field.defaultValue)) {
           this.$message({
             message: '输入的邮箱格式有误',
