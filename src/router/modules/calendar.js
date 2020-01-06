@@ -21,7 +21,7 @@ export default [
       path: 'index', // 列表
       component: () => import('@/views/calendar/index'),
       meta: {
-        title: '列表',
+        title: '我的日历',
         icon: 'board'
       }
     }]
