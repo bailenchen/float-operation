@@ -77,6 +77,11 @@ export default {
         this.initInfo()
       },
       immediate: true
+    },
+    visible(value) {
+      if (value) {
+        this.initInfo()
+      }
     }
   },
   created() {},

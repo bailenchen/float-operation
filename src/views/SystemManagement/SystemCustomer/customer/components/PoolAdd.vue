@@ -40,7 +40,7 @@
                 <el-input v-model="baseFrom.poolName" :maxlength="100" />
               </el-form-item>
               <el-form-item
-                prop="name1"
+                prop="adminUsers"
                 class="pool-add-item pool-add-item__right">
                 <div
                   slot="label"
@@ -60,7 +60,7 @@
                   @value-change="userChange" />
               </el-form-item>
               <el-form-item
-                prop="name2"
+                prop="memberUsers"
                 class="pool-add-item pool-add-item__left">
                 <div
                   slot="label"
@@ -239,12 +239,26 @@ export default {
     }
   },
   data() {
+    const validateMemberUsers = (rule, value, callback) => {
+      if (value && ((value.users && value.users.length) || (value.strucs && value.strucs.length))) {
+        callback()
+      } else {
+        callback(new Error('请选择公海成员'))
+      }
+    }
+
     return {
       loading: false,
       baseFrom: null,
       baseRules: {
         poolName: [
-          { required: true, message: '请输入公海名称 ', trigger: 'blur' }
+          { required: true, message: '请输入公海名称', trigger: 'blur' }
+        ],
+        adminUsers: [
+          { required: true, message: '请选择公海管理员', trigger: ['blur', 'change'] }
+        ],
+        memberUsers: [
+          { required: true, validator: validateMemberUsers, trigger: ['blur', 'change'] }
         ]
       },
       recycleRuleData: null,
@@ -445,10 +459,12 @@ export default {
      */
     userChange(data) {
       this.baseFrom.adminUsers = data.value
+      this.$refs.ruleForm.validateField('adminUsers')
     },
 
     strcUserChange(data) {
       this.baseFrom.memberUsers = data.value
+      this.$refs.ruleForm.validateField('memberUsers')
     },
 
     /**
@@ -462,7 +478,20 @@ export default {
             this.uploadPoolSet(params)
           }
         } else {
-          this.$message.error('请完善公海名称')
+          // 提示第一个error
+          if (this.$refs.ruleForm.fields) {
+            for (
+              let index = 0;
+              index < this.$refs.ruleForm.fields.length;
+              index++
+            ) {
+              const ruleField = this.$refs.ruleForm.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+          }
           return false
         }
       })

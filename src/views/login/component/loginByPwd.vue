@@ -1,6 +1,6 @@
 <template>
   <div class="login-by-pwd">
-    <el-form>
+    <el-form class="login-from">
       <el-form-item>
         <el-input
           ref="username"

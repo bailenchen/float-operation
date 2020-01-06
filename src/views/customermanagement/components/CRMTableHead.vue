@@ -169,6 +169,7 @@ import TeamsHandle from './selectionHandle/TeamsHandle' // 操作团队成员
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
+import { Loading } from 'element-ui'
 
 export default {
   name: 'CRMTableHead', // 客户管理下 重要提醒 回款计划提醒
@@ -203,6 +204,8 @@ export default {
   },
   data() {
     return {
+      loading: false, // loading
+      loadingObj: null, // loading 对象
       sceneTypes: [
         { type: 'enter', name: '我负责的' },
         { type: 'out', name: '我' }
@@ -253,7 +256,17 @@ export default {
       }
     }
   },
-  watch: {},
+  watch: {
+    loading(val) {
+      if (val) {
+        this.loadingObj = Loading.service({
+          target: document.querySelector('#crm-main-container')
+        })
+      } else {
+        this.loadingObj && this.loadingObj.close()
+      }
+    }
+  },
   mounted() {},
   methods: {
     /** 发布 时候的类型选择 */
@@ -459,6 +472,7 @@ export default {
     },
     confirmHandle(type) {
       if (type === 'lock' || type === 'unlock') {
+        this.loading = true
         var customerId = this.selectionList.map(function(item, index, array) {
           return item.customerId
         })
@@ -467,14 +481,18 @@ export default {
           ids: customerId.join(',')
         })
           .then(res => {
+            this.loading = false
             this.$message({
               type: 'success',
               message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
-          .catch(() => {})
+          .catch(() => {
+            this.loading = false
+          })
       } else if (type === 'transform') {
+        this.loading = true
         var leadsId = this.selectionList.map(function(item, index, array) {
           return item.leadsId
         })
@@ -482,6 +500,7 @@ export default {
           leadsIds: leadsId.join(',')
         })
           .then(res => {
+            this.loading = false
             this.$message({
               type: 'success',
               message: '转化成功'
@@ -491,39 +510,49 @@ export default {
 
             this.$emit('handle', { type: type })
           })
-          .catch(() => {})
+          .catch(() => {
+            this.loading = false
+          })
       } else if (type === 'start' || type === 'disable') {
         var productId = this.selectionList.map(function(item, index, array) {
           return item.productId
         })
+        this.loading = true
         crmProductStatus({
           ids: productId.join(','),
           status: type === 'start' ? '1' : '0'
         })
           .then(res => {
+            this.loading = false
             this.$message({
               type: 'success',
               message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
-          .catch(() => {})
+          .catch(() => {
+            this.loading = false
+          })
       } else if (type === 'state_start' || type === 'state_disable') {
         var marketingId = this.selectionList.map(function(item, index, array) {
           return item.marketingId
         })
+        this.loading = true
         crmMarketingIsEnableAPI({
           marketingIds: marketingId.join(','),
           status: type === 'state_start' ? 1 : 0
         })
           .then(res => {
+            this.loading = false
             this.$message({
               type: 'success',
               message: '操作成功'
             })
             this.$emit('handle', { type: type })
           })
-          .catch(() => {})
+          .catch(() => {
+            this.loading = false
+          })
       } else if (type === 'delete') {
         let crmTypes = ''
         if (this.crmType === 'applet') {
@@ -551,25 +580,31 @@ export default {
         if (this.isSeas) {
           params.poolId = this.poolId
         }
+        this.loading = true
         request(params)
           .then(res => {
+            this.loading = false
             this.$message({
               type: 'success',
               message: '删除成功'
             })
             this.$emit('handle', { type: type })
           })
-          .catch(() => {})
+          .catch(() => {
+            this.loading = false
+          })
       } else if (type === 'get') {
         // 领取
         var customerId = this.selectionList.map(function(item, index, array) {
           return item.customerId
         })
+        this.loading = true
         crmCustomerReceive({
           ids: customerId.join(','),
           poolId: this.poolId
         })
           .then(res => {
+            this.loading = false
             this.$message({
               type: 'success',
               message: '操作成功'
@@ -579,16 +614,23 @@ export default {
 
             this.$emit('handle', { type: type })
           })
-          .catch(() => {})
+          .catch(() => {
+            this.loading = false
+          })
       } else if (type === 'transformLead') {
         var ids = this.selectionList.map(function(item, index, array) {
           return item.weixinLeadsId
         })
+        this.loading = true
         crmWeixinChangeLeadsAPI({
           'weixinLeadsIds': ids.join(',')
         }).then(res => {
+          this.loading = false
           this.$message.success('转化为线索成功')
-        }).catch(() => {})
+          this.$emit('handle', { type: type })
+        }).catch(() => {
+          this.loading = false
+        })
         return
       }
     },

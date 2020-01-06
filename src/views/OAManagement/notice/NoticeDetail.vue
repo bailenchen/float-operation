@@ -33,9 +33,7 @@
       </flexbox>
       <div class="detail-title">{{ detail.title }}</div>
       <div class="detail-time">{{ detail.updateTime }}</div>
-      <div class="main__bd">
-        {{ detail.content }}
-      </div>
+      <div class="main__bd">{{ detail.content }}</div>
     </div>
 
     <new-dialog
@@ -186,6 +184,9 @@ export default {
     font-size: 14px;
     color: #333;
     line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
   }
 }
 
