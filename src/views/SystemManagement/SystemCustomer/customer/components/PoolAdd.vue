@@ -478,7 +478,20 @@ export default {
             this.uploadPoolSet(params)
           }
         } else {
-          this.$message.error('请完善公海名称')
+          // 提示第一个error
+          if (this.$refs.ruleForm.fields) {
+            for (
+              let index = 0;
+              index < this.$refs.ruleForm.fields.length;
+              index++
+            ) {
+              const ruleField = this.$refs.ruleForm.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+          }
           return false
         }
       })
