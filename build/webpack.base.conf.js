@@ -6,6 +6,8 @@ const {
   VueLoaderPlugin
 } = require('vue-loader')
 const vueLoaderConfig = require('./vue-loader.conf')
+// el-bigdata-table babel-loader 配置
+const fs = require('fs')
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -21,6 +23,10 @@ const createLintingRule = () => ({
     emitWarning: !config.dev.showEslintErrorsInOverlay
   }
 })
+
+// el-bigdata-table babel-loader 配置
+let bigTableDirName = fs.readdirSync(resolve('node_modules')).filter(dirName => /el-bigdata-table/.test(dirName))
+const bigTableDirs = bigTableDirName.map(dir => resolve(`node_modules/${dir}/src`))
 
 module.exports = {
   context: path.resolve(__dirname, '../'),
@@ -57,7 +63,8 @@ module.exports = {
           resolve('test'),
           resolve('node_modules/webpack-dev-server/client'),
           resolve('node_modules/element-ui/src'),
-          resolve('node_modules/element-ui/packages')
+          resolve('node_modules/element-ui/packages'),
+          ...bigTableDirs
         ]
       },
       {

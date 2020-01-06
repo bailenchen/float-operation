@@ -23,10 +23,12 @@
       <el-table
         v-loading="loading"
         id="crm-table"
+        :row-height="40"
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
         class="n-table--border"
+        use-virtual
         stripe
         border
         highlight-current-row
