@@ -6,6 +6,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 import ElementUI from 'element-ui'
 Vue.use(ElementUI)
 import 'element-ui/lib/theme-chalk/index.css'
+import 'el-bigdata-table'
 
 import '@/styles/index.scss' // global css
 

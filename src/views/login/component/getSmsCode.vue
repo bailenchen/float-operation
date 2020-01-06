@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form>
+    <el-form class="login-from">
       <el-form-item>
         <el-input
           ref="telephone"

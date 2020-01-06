@@ -1,5 +1,6 @@
 class Field {
   constructor(obj) {
+    this.fieldType = 0 // 新增字段默认加入0 1是系统字段 2 客户行业 级别 来源 等 3 特殊
     this.fieldId = obj.fieldId || '' //  字段id  1
     this.name = obj.name || '' //  标识名  1
     this.formType = obj.formType || '' // 字段类型  1
