@@ -179,6 +179,10 @@ export default {
             this.total = res.data.totalRow
             this.loading = false
           }
+
+          this.$nextTick(() => {
+            document.querySelector('.el-table__body-wrapper').scrollTop = 1
+          })
         })
         .catch(() => {
           this.loading = false
