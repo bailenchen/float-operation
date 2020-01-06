@@ -132,7 +132,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   #call{
     width: 108px;
     height: 32px;
@@ -142,6 +142,9 @@ export default {
     top: 15px;
     text-align: center;
     z-index: 2000;
+    .time{
+      width: 108px;
+    }
   }
   .close {
     position: absolute;

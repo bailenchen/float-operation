@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 240, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 235, // 表的高度
       list: [],
       fieldList: [],
       sortData: {}, // 字段排序
@@ -189,6 +189,10 @@ export default {
             this.total = res.data.totalRow
             this.loading = false
           }
+
+          this.$nextTick(() => {
+            document.querySelector('.el-table__body-wrapper').scrollTop = 1
+          })
         })
         .catch(() => {
           this.loading = false
@@ -479,7 +483,7 @@ export default {
     handleFilter(data) {
       this.filterObj = data
       var offsetHei = document.documentElement.clientHeight
-      var removeHeight = Object.keys(this.filterObj).length > 0 ? 310 : 240
+      var removeHeight = Object.keys(this.filterObj).length > 0 ? 295 : 235
       this.tableHeight = offsetHei - removeHeight
       this.currentPage = 1
       this.getList()
@@ -602,7 +606,7 @@ export default {
      */
     updateTableHeight() {
       var offsetHei = document.documentElement.clientHeight
-      var removeHeight = Object.keys(this.filterObj).length > 0 ? 310 : 240
+      var removeHeight = Object.keys(this.filterObj).length > 0 ? 285 : 235
       this.tableHeight = offsetHei - removeHeight
     }
   },

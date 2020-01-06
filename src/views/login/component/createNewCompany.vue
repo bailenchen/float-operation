@@ -5,7 +5,7 @@
       ref="smsCode"
       sms-type="register" />
 
-    <el-form v-show="showNext">
+    <el-form v-show="showNext" class="login-from">
       <el-form-item>
         <el-input
           ref="company_name"

@@ -47,6 +47,7 @@
 </template>
 <script type="text/javascript">
 import { usersList } from '@/api/common'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'XhUser', // 新建 user
@@ -202,7 +203,7 @@ export default {
         : []
       this.isIndeterminate = false
       const selectItems = val ? this.list : []
-      this.$emit('changeCheckout', selectItems, this.selectIds)
+      this.$emit('changeCheckout', objDeepCopy(selectItems), this.selectIds)
     },
 
     /**

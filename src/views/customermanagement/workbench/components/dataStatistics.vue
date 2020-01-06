@@ -15,7 +15,7 @@
     <div class="card-desc">
       对于数据收集统计的汇总
     </div>
-    <div class="content">
+    <div v-if="data" class="content">
       <div class="list-item">
         <div class="title">
           客户汇总
@@ -37,7 +37,7 @@
           商机汇总
         </div>
         <div class="info">
-          新增<span class="bold">{{ data.allBusiness }}</span>个商机，商机总金额<span class="bold">{{ data.businessMoney }}</span>元，赢单商机<span class="bold">{{ data.endBusiness }}</span>个
+          新增<span class="bold">{{ data.allBusiness | separatorIntFilter }}</span>个商机，商机总金额<span class="bold">{{ data.businessMoney | separatorIntFilter }}</span>元，赢单商机<span class="bold">{{ data.endBusiness }}</span>个
         </div>
       </div>
       <div class="list-item">
@@ -45,7 +45,7 @@
           合同汇总
         </div>
         <div class="info">
-          合同签订<span class="bold">{{ data.allContract }}</span>份，合同金额<span class="bold">{{ data.contractMoney }}</span>元
+          合同签订<span class="bold">{{ data.allContract }}</span>份，合同金额<span class="bold">{{ data.contractMoney | separatorIntFilter }}</span>元
         </div>
       </div>
       <div class="list-item">
@@ -53,7 +53,7 @@
           回款金额
         </div>
         <div class="info">
-          回款金额<span class="bold">{{ data.receivablesMoney }}</span>元，预计回款金额<span class="bold">{{ data.planMoney }}</span>元
+          回款金额<span class="bold">{{ data.receivablesMoney | separatorIntFilter }}</span>元，预计回款金额<span class="bold">{{ data.planMoney | separatorIntFilter }}</span>元
         </div>
       </div>
     </div>
@@ -63,13 +63,19 @@
 <script>
 import chartMixins from './chartMixins'
 import { QueryDataInfo } from '@/api/customermanagement/workbench'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'DataStatistics',
+  filters: {
+    separatorIntFilter(value) {
+      return separatorInt(Math.floor(value || 0))
+    }
+  },
   mixins: [chartMixins],
   data() {
     return {
-      data: {},
+      data: null,
       loading: false
     }
   },

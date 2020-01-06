@@ -1,15 +1,32 @@
+import { crmQueryImportNumAPI } from '@/api/customermanagement/common'
+
+import Lockr from 'lockr'
+
 export default {
   data() {
     return {
       showCRMImport: false,
       crmType: '',
       isSeas: false,
-      crmImportStatus: ''
+      crmImportStatus: '',
+      cacheShow: false, // 缓存展示
+      cacheDone: false // 缓存导入是否完成
     }
   },
 
-  mounted() {
+  created() {
     this.addImportBus()
+
+    // 处理上次缓存
+    const beforeImportInfo = Lockr.get('crmImportInfo')
+    if (beforeImportInfo && beforeImportInfo.messageId) {
+      this.crmType = beforeImportInfo.crmType
+      this.isSeas = beforeImportInfo.isSeas
+      this.secondQueryNum(beforeImportInfo.messageId)
+      this.cacheShow = true
+    } else {
+      this.cacheShow = false
+    }
   },
 
   computed: {
@@ -18,6 +35,8 @@ export default {
       return !this.showCRMImport && this.crmImportStatus && this.crmImportStatus != 'wait'
     }
   },
+
+  watch: {},
 
   methods: {
     addImportBus() {
@@ -44,6 +63,26 @@ export default {
       if (status == 'finish') {
         this.crmImportStatus = ''
       }
+    },
+
+    /**
+     * 第二步查询数量
+     */
+    secondQueryNum(messageId) {
+      crmQueryImportNumAPI({ messageId: messageId })
+        .then(res => {
+          if (res.data === null) { // 结束 否则 进行中
+            this.crmImportStatus = 'finish'
+            this.cacheDone = true
+          } else {
+            this.cacheDone = false
+            this.crmImportStatus = 'process'
+          }
+          this.showCRMImport = false
+        })
+        .catch(() => {
+          Lockr.rm('crmImportInfo')
+        })
     }
   }
 

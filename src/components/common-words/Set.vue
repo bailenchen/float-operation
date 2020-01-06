@@ -80,9 +80,7 @@ export default {
     },
     visible(value) {
       if (value) {
-        if (this.setList && this.setList.length > 0) {
-          this.initInfo()
-        }
+        this.initInfo()
       }
     }
   },
