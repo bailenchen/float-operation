@@ -11,14 +11,14 @@
       v-loading="loading"
       class="body">
       <!-- 平台信息 -->
-      <div class="section">
+      <div v-if="systemInfo" class="section">
         <div class="section-title">企业平台信息</div>
         <flexbox class="progress-info">
           <flexbox-item class="progress-info-item">
             <p class="info-title">账号使用情况</p>
             <radial-progress-bar
               :diameter="126"
-              :completed-steps="50"
+              :completed-steps="100"
               :total-steps="100"
               :stroke-width="10"
               inner-stroke-color="#E8F2FA"
@@ -26,16 +26,15 @@
               stop-color="#2362FB"
               class="progress">
               <p class="progress-title">可用账号</p>
-              <p class="progress-value">{{ 50 }}<span>%</span></p>
+              <p class="progress-value">{{ systemInfo.usingNum }}<span>个</span></p>
             </radial-progress-bar>
-            <p class="info-value">购买用户数：20个</p>
-            <p class="info-value">已授权用户数：10个</p>
+            <p class="info-value">可用账号：{{ systemInfo.usingNum }}个</p>
           </flexbox-item>
           <flexbox-item class="progress-info-item">
             <p class="info-title">租期到期时间</p>
             <radial-progress-bar
               :diameter="126"
-              :completed-steps="50"
+              :completed-steps="systemInfo.dayProgress"
               :total-steps="100"
               :stroke-width="10"
               inner-stroke-color="#E8F2FA"
@@ -43,10 +42,10 @@
               stop-color="#29C14D"
               class="progress">
               <p class="progress-title">剩余天数</p>
-              <p class="progress-value">{{ 50 }}<span>%</span></p>
+              <p class="progress-value">{{ systemInfo.surplusDays }}<span>天</span></p>
             </radial-progress-bar>
-            <p class="info-value">开始时间：2018-01-01</p>
-            <p class="info-value">结束时间：2099-12-31</p>
+            <p class="info-value">开始时间：{{ systemInfo.startTime }}</p>
+            <p class="info-value">结束时间：{{ systemInfo.endTime }}</p>
           </flexbox-item>
           <flexbox-item class="progress-info-item">
             <p class="info-title">空间使用情况</p>
@@ -60,9 +59,9 @@
               stop-color="#FF9B25"
               class="progress">
               <p class="progress-title">已使用</p>
-              <p class="progress-value">{{ 50 }}<span>%</span></p>
+              <p class="progress-value">{{ systemInfo.size }}</p>
             </radial-progress-bar>
-            <p class="info-value">已使用：150MB</p>
+            <p class="info-value">已使用：{{ systemInfo.size }}</p>
           </flexbox-item>
         </flexbox>
       </div>
@@ -122,13 +121,15 @@
 </template>
 
 <script>
-import { adminSystemSave } from '@/api/systemManagement/SystemConfig'
+import { adminSystemSave, adminSystemConfigIndex } from '@/api/systemManagement/SystemConfig'
 
 import RadialProgressBar from 'vue-radial-progress'
 import EditImage from '@/components/EditImage'
 import XrHeader from '@/components/xr-header'
 
 import { mapGetters } from 'vuex'
+import { fileSize } from '@/utils/index'
+import moment from 'moment'
 
 export default {
   name: 'SystemConfig',
@@ -145,7 +146,8 @@ export default {
       editFile: null,
       systemName: '',
       systemImage: '',
-      editedImage: null // 编辑后的图片
+      editedImage: null, // 编辑后的图片
+      systemInfo: null // 系统信息
     }
   },
   computed: {
@@ -155,8 +157,9 @@ export default {
     }
   },
 
-  mounted() {
+  created() {
     this.getDetail()
+    this.getSystemInfo()
   },
   methods: {
     /** 附件上传 */
@@ -194,6 +197,33 @@ export default {
           this.loading = false
         })
     },
+
+    /**
+     * 获取系统使用信息
+     */
+    getSystemInfo() {
+      this.loading = true
+      adminSystemConfigIndex().then(res => {
+        const data = res.data || {}
+        const startMoment = moment(data.startTime)
+        const endMoment = moment(data.endTime)
+
+        data.startTime = startMoment.format('YYYY-MM-DD')
+        data.endTime = endMoment.format('YYYY-MM-DD')
+        data.surplusDays = endMoment.diff(moment(), 'days')
+        const totalDays = endMoment.diff(startMoment, 'days')
+        data.dayProgress = data.surplusDays > 0 ? Math.floor((data.surplusDays / totalDays) * 100) : 0
+
+        data.size = fileSize(data.size)
+
+        console.log('data---', data)
+        this.systemInfo = data
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
     submiteImage(data) {
       this.editedImage = data
       this.systemImage = data.image
