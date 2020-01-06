@@ -75,12 +75,13 @@ export default {
             this.crmImportStatus = 'finish'
             this.cacheDone = true
           } else {
+            this.cacheDone = false
             this.crmImportStatus = 'process'
           }
           this.showCRMImport = false
         })
         .catch(() => {
-          // this.processData.status = 'err'
+          Lockr.rm('crmImportInfo')
         })
     }
   }
