@@ -372,7 +372,7 @@ export default {
         res.data.user = {
           userId: this.userInfo.userId,
           realname: this.userInfo.realname,
-          img: this.data.userImg
+          img: this.userInfo.img
         }
         res.data.childCommentList = []
         // this.$emit('add-comment', {
