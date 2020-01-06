@@ -149,6 +149,7 @@ export default {
 .el-avatar {
   /deep/ img {
     width: 100%;
+    background: white !important;
   }
 }
 </style>
