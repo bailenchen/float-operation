@@ -7,6 +7,7 @@
         v-if="createButtonTitle != ''"
         :offset="addOffset"
         :visible-arrow="false"
+        :disabled="!$slots.add"
         placement="right"
         popper-class="no-padding-popover"
         trigger="hover">
