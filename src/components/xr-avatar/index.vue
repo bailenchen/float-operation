@@ -2,8 +2,8 @@
   <el-avatar
     v-if="popoverDisabled"
     v-bind="$attrs"
-    :src="dataSrc"
-    :key="dataSrc"
+    :src="dataCatchInfo[src]"
+    :key="src"
     :style="{ fontSize: fontSize, background: background }"
     :class="{ 'cursor-pointer': !disabled }"
     :size="size"
@@ -22,8 +22,8 @@
     <el-avatar
       slot="reference"
       v-bind="$attrs"
-      :src="dataSrc"
-      :key="dataSrc"
+      :src="dataCatchInfo[src]"
+      :key="src"
       :style="{ fontSize: fontSize, background: background }"
       :class="{ 'cursor-pointer': !disabled }"
       :size="size"
@@ -71,8 +71,7 @@ export default {
     return {
       popoverShow: false,
       loading: false,
-      userData: null,
-      dataSrc: ''
+      userData: null
     }
   },
   computed: {
@@ -93,6 +92,10 @@ export default {
       }
 
       return !this.id
+    },
+
+    dataCatchInfo() {
+      return dataCatch
     }
   },
   watch: {
@@ -101,29 +104,28 @@ export default {
         this.getUserData()
       }
     },
-    src() {
-      this.dataSrc = this.src
-      this.handleImage()
+    src: {
+      handler() {
+        this.handleImage()
+      },
+      immediate: true
     }
   },
-  created() {
-    this.dataSrc = this.src
-    this.handleImage()
-  },
+  created() {},
 
   beforeDestroy() {},
   methods: {
     handleImage() {
       if (this.src) {
-        if (dataCatch[this.src]) {
-          this.dataSrc = dataCatch[this.src]
-        } else {
+        if (!dataCatch.hasOwnProperty(this.src)) {
+          dataCatch[this.src] = ''
           getImageData(this.src)
             .then(data => {
-              this.dataSrc = data.src
               dataCatch[this.src] = data.src
             })
-            .catch(() => {})
+            .catch(() => {
+              delete dataCatch[this.src]
+            })
         }
       }
     },
