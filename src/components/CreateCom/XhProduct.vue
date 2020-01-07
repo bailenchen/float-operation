@@ -117,7 +117,7 @@ export default {
       showSelectView: false, // 内容
       productList: [],
       totalPrice: 0,
-      discountRate: 0,
+      discountRate: '',
       selectedData: { product: [] }
     }
   },
@@ -140,7 +140,7 @@ export default {
     refreshProductList() {
       this.productList = this.dataValue.product || []
       this.totalPrice = this.dataValue.totalPrice || 0
-      this.discountRate = this.dataValue.discountRate || 0
+      this.discountRate = this.dataValue.discountRate || ''
     },
     /** 选中 */
     selectInfos(data) {
