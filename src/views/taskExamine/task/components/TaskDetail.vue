@@ -73,10 +73,11 @@
           <el-checkbox
             v-model="taskData.checked"
             @change="completeMainTask" />
-          <div
-            v-if="!nameVinput"
-            :class="['task-name', { 'is-checked': taskData.checked }]"
-            @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="dark" placement="top">
+            <div
+              :class="['task-name', { 'is-checked': taskData.checked }]"
+              @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          </el-tooltip>
           <div
             v-else
             class="show-input">
@@ -1707,6 +1708,12 @@ $btn-b-hover-color: #eff4ff;
   font-size: 22px;
   color: #333;
   cursor: pointer;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 28px;
 }
 
 .task-name.is-checked {
