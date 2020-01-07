@@ -51,7 +51,7 @@
             <p class="info-title">空间使用情况</p>
             <radial-progress-bar
               :diameter="126"
-              :completed-steps="50"
+              :completed-steps="systemInfo.sizeProgress"
               :total-steps="100"
               :stroke-width="10"
               inner-stroke-color="#E8F2FA"
@@ -61,6 +61,7 @@
               <p class="progress-title">已使用</p>
               <p class="progress-value">{{ systemInfo.size }}</p>
             </radial-progress-bar>
+            <p class="info-value">总存储空间：{{ systemInfo.allSize }}</p>
             <p class="info-value">已使用：{{ systemInfo.size }}</p>
           </flexbox-item>
         </flexbox>
@@ -208,15 +209,16 @@ export default {
         const startMoment = moment(data.startTime)
         const endMoment = moment(data.endTime)
 
-        data.startTime = startMoment.format('YYYY-MM-DD')
-        data.endTime = endMoment.format('YYYY-MM-DD')
+        // data.startTime = startMoment.format('YYYY-MM-DD')
+        // data.endTime = endMoment.format('YYYY-MM-DD')
         data.surplusDays = endMoment.diff(moment(), 'days')
         const totalDays = endMoment.diff(startMoment, 'days')
         data.dayProgress = data.surplusDays > 0 ? Math.floor((data.surplusDays / totalDays) * 100) : 0
 
+        data.sizeProgress = data.size > 0 ? (data.size / data.allSize) * 100 : 100
         data.size = fileSize(data.size)
+        data.allSize = fileSize(data.allSize)
 
-        console.log('data---', data)
         this.systemInfo = data
         this.loading = false
       }).catch(() => {

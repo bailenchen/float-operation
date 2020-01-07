@@ -125,20 +125,18 @@ export function createBlob(result) {
 }
 
 /** 获取file大小的名称 */
-export function fileSize(size) {
-  var size_int = size
-  if (typeof size === 'string' && size.constructor == String) {
-    size_int = parseInt(size)
+export function fileSize(value) {
+  if (value == null || value == '') {
+    return '0 Bytes'
   }
-  var formatSize
-  if (parseInt(size_int / 1024 / 1024) > 0) {
-    formatSize = (size_int / 1024 / 1024).toFixed(2) + 'MB'
-  } else if (parseInt(size_int / 1024) > 0) {
-    formatSize = (size_int / 1024).toFixed(2) + 'kB'
-  } else {
-    formatSize = size_int + 'Byte'
-  }
-  return formatSize
+  var unitArr = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var index = 0
+  var srcsize = parseFloat(value)
+  index = Math.floor(Math.log(srcsize) / Math.log(1024))
+  var size = srcsize / Math.pow(1024, index)
+  //  保留的小数位数
+  size = size.toFixed(2)
+  return size + unitArr[index]
 }
 
 /** 获取最大 z-index 的值 */
