@@ -14,16 +14,16 @@
           @click="tagShow = false"/>
       </div>
       <el-input
-        v-model="tagInputChange"
+        v-model="tagSearch"
         placeholder="搜索标签"
         prefix-icon="el-icon-search"
         size="small"/>
       <div class="tag-content">
         <div
-          v-for="(item, index) in particularsTagList"
+          v-for="(item, index) in showTagList"
           :key="index"
           class="tag-list"
-          @click="tagBtn(item, particularsTagList, index)">
+          @click="tagSelectClick(item, index)">
           <i
             :style="{ 'color': item.color}"
             class="wukong wukong-black-label"/>
@@ -48,9 +48,9 @@
         </p>
       </div>
     </div>
-    <!-- 新建标签页 -->
+    <!-- 新建标签页 -新建 - 编辑 -->
     <new-tag
-      v-else-if="tagContent == 1"
+      v-else-if="tagContent == 1 || tagContent == 3"
       :new-tag-title="newTagTitle"
       :new-tag-input="newTagInput"
       :bg-color-props="bgColorProps"
@@ -62,22 +62,11 @@
     <!-- 标签管理 -->
     <editTag
       v-else-if="tagContent == 2"
-      :edit-tag-list="editTagList"
+      :edit-tag-list="tagList"
       @back="back"
       @close="tagClose"
-      @editBtn="editBtn"
+      @editBtn="editTagClick"
       @deleteBtn="deleteBtn"/>
-    <!-- 标签管理 - 编辑 -->
-    <new-tag
-      v-else-if="tagContent == 3"
-      :new-tag-title="newTagTitle"
-      :new-tag-input="newTagInput"
-      :bg-color-props="bgColorProps"
-      @changeColor="changeColor"
-      @close="tagClose"
-      @tagCreateSubmit="tagCreateSubmit"
-      @tagCancel="tagCancel"
-      @back="back"/>
     <span
       slot="reference"
       @click="referenceFun">
@@ -119,11 +108,9 @@ export default {
       // 显示tag页面
       tagContent: 0,
       // 标签筛选框
-      tagInputChange: '',
+      tagSearch: '',
       // 标签数据
-      editTagList: [],
-      particularsTagList: [],
-      particularsTagListCopy: [],
+      tagList: [],
       // 新增、编辑标签标题
       newTagTitle: '',
       // 创建-编辑标签的输入框
@@ -131,59 +118,83 @@ export default {
       // 标签颜色
       bgColorProps: '',
       // 标签编辑ID
-      editTagId: '',
-      popoverWidth: '220'
+      editTagId: ''
     }
   },
-  watch: {
-    // 搜索标签
-    tagInputChange: function(newVal) {
-      this.particularsTagList = this.particularsTagListCopy.filter(item => {
-        return item.name.indexOf(newVal) > -1
-      })
+  computed: {
+    showTagList() {
+      const showList = []
+      for (let index = 0; index < this.tagList.length; index++) {
+        const element = this.tagList[index]
+        if (element.name.indexOf(this.tagSearch) > -1) {
+          showList.push(element)
+        }
+      }
+      return showList
+    },
+
+    // 窗口宽度
+    popoverWidth() {
+      // 1 新建编辑 2 管理 0 列表
+      if (this.tagContent == 1) {
+        return 330
+      } else if (this.tagContent == 2) {
+        return 400
+      }
+
+      return 220
     }
   },
+  watch: {},
   mounted() {},
   methods: {
-    // 创建新标签
+    /**
+     * 创建新标签
+     */
     createTagAPIFun() {
       this.newTagTitle = '创建新标签'
       this.newTagInput = ''
       this.tagContent = 1
-      this.popoverWidth = '330'
     },
-    // 标签管理 -- 编辑
-    editBtn(val) {
+
+    /**
+     * 标签管理 -- 编辑
+     */
+    editTagClick(val) {
       this.editTagId = val.labelId
       this.newTagTitle = '编辑标签'
-      this.tagContent = 3
+      this.tagContent = 1
       this.bgColorProps = val.color
       this.newTagInput = val.name
     },
-    // 标签管理弹出框
+
+    /**
+     * 标签管理弹出框
+     */
     managementTag() {
-      this.popoverWidth = '400'
       this.tagContent = 2
     },
-    // 标签点击变色
-    tagBtn(value, values, index) {
+
+    /**
+     * 选择标签
+     */
+    tagSelectClick(value, index) {
       // 标签点击关联页面
-      const labelIds = values.filter(item => {
-        if (value.check) {
-          return item.check && item.labelId != value.labelId
-        } else {
-          return item.check || item.labelId == value.labelId
-        }
-      })
       if (value.check) {
         taskDeleteLabelAPI({
           taskId: this.taskData.taskId,
           labelId: value.labelId
         }).then(res => {
-          this.taskData.labelList.splice(index, 1)
           value.check = false
+          this.updateDetailList(value, 'delete')
+        }).catch(() => {
+          value.check = true
         })
       } else {
+        value.check = true
+        const labelIds = this.tagList.filter(item => {
+          return item.check
+        })
         setTaskAPI({
           taskId: this.taskData.taskId,
           labelId: labelIds
@@ -195,39 +206,58 @@ export default {
           value.check = true
           value.labelName = value.name
           this.taskData.labelList.push(value)
+        }).catch(() => {
+          value.check = false
         })
       }
-      // value.check = value.check ? false : true
-      for (const item in values) {
-        if (values[item].labelId == value.labelId) {
-          document.getElementsByClassName('tag-list')[item].style.background =
-            '#F7F8FA'
+    },
+
+    /**
+     * 更新/删除任务详情数据
+     */
+    updateDetailList(value, type) {
+      let changeIndex = -1
+      for (let index = 0; index < this.taskData.labelList.length; index++) {
+        const element = this.taskData.labelList[index]
+        if (element.labelId == value.labelId) {
+          changeIndex = index
+          break
+        }
+      }
+      if (changeIndex >= 0) {
+        if (type == 'delete') {
+          this.taskData.labelList.splice(changeIndex, 1)
         } else {
-          document.getElementsByClassName('tag-list')[item].style.background =
-            '#FFF'
+          this.taskData.labelList.splice(changeIndex, 1, value)
         }
       }
     },
+
     // 标签点击变色
     changeColor(val) {
       this.bgColorProps = val
     },
-    // 标签管理 -- 关闭按钮
+
+    /**
+     * 标签管理 -- 关闭按钮
+     */
     tagClose() {
       this.tagShow = false
     },
-    // 创建新标签 -- 提交
+
+    /**
+     * 创建新标签 -- 提交
+     */
     tagCreateSubmit(val, color) {
-      const _this = this
       if (this.newTagTitle == '创建新标签') {
         createTagAPI({
           name: val,
           color: color
         }).then(res => {
-          // 关闭标签页
-          this.tagClose()
           // 刷新标签列表
-          this.tagListFun()
+          this.getTagList()
+          // 关闭标签页
+          this.back()
           this.$message.success('创建成功')
         })
       } else {
@@ -236,17 +266,22 @@ export default {
           labelId: this.editTagId,
           color: color
         }).then(res => {
-          for (const item of _this.editTagList) {
-            if (item.labelId == _this.editTagId) {
+          for (const item of this.tagList) {
+            if (item.labelId == this.editTagId) {
               item.name = val
               item.color = color
+              item.labelName = item.name
+              this.updateDetailList(item, 'update')
             }
           }
           this.tagContent = 2
         })
       }
     },
-    // 创建新标签 -- 取消
+
+    /**
+     * 创建新标签 -- 取消
+     */
     tagCancel() {
       if (this.newTagTitle == '创建新标签') {
         // 关闭标签页
@@ -256,19 +291,21 @@ export default {
         this.tagContent = 2
       }
     },
-    // 标签管理 ——— 返回上一页
+
+    /**
+     * 标签管理 ——— 返回上一页
+     */
     back() {
-      if (this.newTagTitle == '创建新标签') {
-        this.tagContent = 0
-        this.popoverWidth = '220'
-      } else if (this.newTagTitle == '编辑标签' && this.tagContent == 3) {
-        this.tagContent = 2
+      if (this.tagContent == 1) {
+        this.tagContent = this.newTagTitle == '创建新标签' ? 0 : 2
       } else if (this.tagContent == 2) {
         this.tagContent = 0
-        this.popoverWidth = '220'
       }
     },
-    // 标签管理 ——— 删除按钮
+
+    /**
+     * 标签管理 ——— 删除按钮
+     */
     deleteBtn(val) {
       this.$confirm('确定删除?', '提示', {
         confirmButtonText: '确定',
@@ -277,20 +314,23 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          this.tagShow = true
-          this.managementTag()
           deleteTagAPI({
             labelId: val.labelId
           }).then(res => {
-            for (const i in this.editTagList) {
-              if (this.editTagList[i].labelId == val.labelId) {
-                this.editTagList.splice(i, 1)
+            for (const i in this.tagList) {
+              if (this.tagList[i].labelId == val.labelId) {
+                this.tagList.splice(i, 1)
+                break
               }
             }
             this.$message({
               type: 'success',
               message: '删除成功!'
             })
+            this.tagShow = true
+          }).catch(() => {
+            // 防止窗口关闭
+            this.tagShow = true
           })
         })
         .catch(() => {
@@ -298,36 +338,35 @@ export default {
             type: 'info',
             message: '已取消删除'
           })
+          // 防止窗口关闭
           this.tagShow = true
-          this.managementTag()
         })
     },
-    tagListFun() {
+
+    /**
+     * 获取列表数据
+     */
+    getTagList() {
       // 标签列表
       tagList().then(res => {
-        for (const item of res.data) {
-          if (this.taskData.labelList) {
-            for (const i of this.taskData.labelList) {
-              if (i.labelId == item.labelId) {
-                item.check = true
-                break
-              } else {
-                item.check = false
-              }
-            }
-          }
+        const dataList = res.data || []
+        const selectLabels = this.taskData.labelList || []
+        const selectIds = selectLabels.map(item => item.labelId)
+        for (const item of dataList) {
+          item.check = selectIds.includes(item.labelId)
         }
         // 标签管理数据
-        this.editTagList = res.data
-        this.particularsTagList = res.data
-        // 用作搜索功能
-        this.particularsTagListCopy = res.data
-      })
+        this.tagList = dataList
+      }).catch(() => {})
     },
+
+    /**
+     * 初始化刷新
+     */
     referenceFun() {
       this.tagContent = 0
-      if (this.editTagList && !this.editTagList.length) {
-        this.tagListFun()
+      if (this.tagList && !this.tagList.length) {
+        this.getTagList()
       }
     }
   }

@@ -11,7 +11,7 @@
     </div>
     <div class="search">
       <el-input
-        v-model="inputModel"
+        v-model="searchInput"
         :maxlength="10"
         size="mini"
         placeholder="输入标签名，最多十个字符"/>
@@ -46,17 +46,17 @@ export default {
   },
   data() {
     return {
-      inputModel: '',
-      list: this.editTagList
+      searchInput: ''
     }
   },
-  watch: {
-    inputModel: function(newVal) {
-      this.list = this.editTagList.filter(item => {
-        return item.name.indexOf(newVal) > -1
+  computed: {
+    list() {
+      return this.editTagList.filter(item => {
+        return item.name.indexOf(this.searchInput) > -1
       })
     }
   },
+  watch: {},
   methods: {
     back() {
       this.$emit('back')
