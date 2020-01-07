@@ -73,7 +73,7 @@
           <el-checkbox
             v-model="taskData.checked"
             @change="completeMainTask" />
-          <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="dark" placement="top">
+          <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="light" placement="top">
             <div
               :class="['task-name', { 'is-checked': taskData.checked }]"
               @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>

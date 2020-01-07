@@ -41,6 +41,7 @@
       <el-table-column label="售价">
         <template slot-scope="scope">
           <el-input
+            v-wk-number
             v-model="scope.row.salesPrice"
             placeholder="请输入"
             type="number"
@@ -50,6 +51,7 @@
       <el-table-column label="数量">
         <template slot-scope="scope">
           <el-input
+            v-wk-number
             v-model="scope.row.num"
             type="number"
             placeholder="请输入"
@@ -59,6 +61,7 @@
       <el-table-column label="折扣（%）">
         <template slot-scope="scope">
           <el-input
+            v-wk-number
             v-model="scope.row.discount"
             placeholder="请输入"
             type="number"
@@ -77,6 +80,7 @@
     <flexbox class="handle-footer">
       <div class="discount-title">整单折扣（%）：</div>
       <el-input
+        v-wk-number
         v-model="discountRate"
         style="width: 80px"
         placeholder="请输入"
@@ -85,8 +89,9 @@
       <div class="total-info">已选中产品：
         <span class="info-yellow">{{ productList.length }}</span>&nbsp;种&nbsp;&nbsp;总金额：
         <el-input
+          v-wk-number
           v-model="totalPrice"
-          style="width: 80px"
+          style="width: 120px"
           placeholder="请输入"
           type="number"
           @input="totalPriceChange"
@@ -170,7 +175,6 @@ export default {
     },
     // 单价
     salesPriceChange(data) {
-      this.verifyNumberValue(data, 'salesPrice')
       const item = data.row
 
       let discount = ((item.price - item.salesPrice || 0) / item.price) * 100.0
@@ -183,14 +187,12 @@ export default {
     },
     // 数量
     numChange(data) {
-      this.verifyNumberValue(data, 'num')
       const item = data.row
       this.calculateSubTotal(item)
       this.calculateToal()
     },
     // 折扣
     discountChange(data) {
-      this.verifyNumberValue(data, 'discount')
       const item = data.row
       let salesPrice =
         (item.price * (100.0 - parseFloat(item.discount || 0))) / 100.0
@@ -226,26 +228,12 @@ export default {
     },
     // 总折扣
     rateChange() {
-      if (/^\d+\.?\d{0,2}$/.test(this.discountRate)) {
-        this.discountRate = this.discountRate
-      } else {
-        this.discountRate = this.discountRate.substring(
-          0,
-          this.discountRate.length - 1
-        )
-      }
       this.calculateToal()
     },
     /**
      * 总价更改 折扣更改
      */
     totalPriceChange() {
-      if (/^\d+\.?\d{0,2}$/.test(this.totalPrice)) {
-        this.totalPrice = this.totalPrice || 0
-      } else {
-        this.totalPrice =
-          this.totalPrice.substring(0, this.totalPrice.length - 1) || 0
-      }
       const totalPrice = this.getProductTotal()
       if (totalPrice) {
         this.discountRate = (
@@ -266,19 +254,6 @@ export default {
         totalPrice: this.totalPrice,
         discountRate: this.discountRate
       })
-    },
-    /**
-     * 验证数据数值是否符合
-     */
-    verifyNumberValue(data, field) {
-      if (/^\d+\.?\d{0,2}$/.test(data.row[field])) {
-        data.row[field] = data.row[field]
-      } else {
-        data.row[field] = data.row[field].substring(
-          0,
-          data.row[field].length - 1
-        )
-      }
     }
   }
 }
