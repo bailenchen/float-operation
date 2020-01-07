@@ -48,15 +48,14 @@
                       </div>
                       <div class="content">
                         <el-input
-                          :value="item.className"
-                          v-model="renameInput"
+                          v-model="editTaskListName"
                           :maxlength="10"
                           size="mini"/>
                         <div class="btn-box">
                           <el-button
                             size="mini"
                             type="primary"
-                            @click="renameSubmit(item)">保存</el-button>
+                            @click="renameTaskListSubmit(item)">保存</el-button>
                           <el-button
                             size="mini"
                             @click="item.renameShow = false">取消</el-button>
@@ -301,7 +300,7 @@ export default {
       // 新建列表
       taskListName: '',
       // 重命名
-      renameInput: '',
+      editTaskListName: '',
       // 主数据
       taskList: [],
       // 详情对应的任务对象数据 -- 用于更新数据
@@ -567,20 +566,20 @@ export default {
      * 重命名
      */
     renameTaskListClick(val) {
-      this.renameInput = val.className
+      this.editTaskListName = val.className
       val.taskHandleShow = false
     },
 
     /**
      * 重命名 -- 提交
      */
-    renameSubmit(val) {
+    renameTaskListSubmit(val) {
       workTaskClassSetAPI({
-        name: this.renameInput,
+        name: this.editTaskListName,
         classId: val.classId
       })
         .then(res => {
-          val.className = this.renameInput
+          val.className = this.editTaskListName
           this.$message.success('编辑成功')
         })
         .catch(() => {})
