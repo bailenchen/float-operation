@@ -28,9 +28,12 @@
           background-color: #fff;
           color: #333;
           border-color: #E1E1E1;
+          box-shadow: none;
+          border-width: 1px;
         }
         .fc-button:active{
           box-shadow: none;
+          border-width: 1px;
         }
         .fc-button-active{
           background-color: #2362FB;

@@ -9,6 +9,7 @@
       <div class="left-scroll">
         <schedule
           v-loading="scheduleLoading"
+          ref="schedule"
           :calendar-arr="calendarArr"
           @choseDay="gotoPast"
           @changeMonth="changeMonth"/>
@@ -68,6 +69,7 @@
         class="calendar-main"
         week-number-calculation="ISO"
         default-view="dayGridMonth"
+        @changeMonth="changeMonths"
         @eventClick="eventClick"
         @datesRender="datesRender"
         @dateClick="handleDateClick"
@@ -77,6 +79,11 @@
       :show-create="showCreate"
       @handleSure="handleSure"
       @close="showCreate = false"/>
+    <!-- 今日需..的详情 -->
+    <today-list-detail
+      :show-today-detail="showTodayDetail"
+      :today-detail-data="todayDetailData"
+      @close="showTodayDetail = false"/>
   </flexbox>
 </template>
 
@@ -88,6 +95,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import timelinePlugin from '@fullcalendar/timeline'
 import listPlugin from '@fullcalendar/list'
 import Schedule from './schedule'
+import TodayListDetail from './components/TodayListDetail'
 import moment from 'moment'
 import CreateEvent from './components/CreateEvent'
 // must manually include stylesheets for each plugin
@@ -99,7 +107,8 @@ export default {
   components: {
     FullCalendar, // make the <FullCalendar> tag available
     Schedule,
-    CreateEvent
+    CreateEvent,
+    TodayListDetail
   },
   data: function() {
     return {
@@ -117,6 +126,15 @@ export default {
       calendarWeekends: true,
       // 默认选中当天
       calendarEvents: [
+        {
+          title: '今日需联系会员',
+          start: '2019-1-7 10:00:00',
+          color: '#2362FB',
+          id: 1,
+          groupId: 0, // 代办类型
+          name: '张三',
+          createTime: '2019-12-30'
+        }
       ],
       // 按钮文字
       buttonText: {
@@ -132,14 +150,18 @@ export default {
       firstDay: 1, // 把每周设置为从周一开始
       scheduleLoading: false,
       calendarArr: [],
+      // 首次选中不进行跳转日列表操作
+      isFirstToDay: true,
+      // 视图当前所展示的时间： 保证月，年切换时，视图更新引起的报错
+      currentTime: '',
       checkSysList: [
-        '今日续联系客户',
+        '今日需联系客户',
         '今日到期的任务',
         '今日到期的合同',
         '今日回款的合同'
       ],
       sysCheck: [
-        { label: '今日续联系客户' },
+        { label: '今日需联系客户' },
         { label: '今日到期的任务' },
         { label: '今日到期的合同' },
         { label: '今日回款的合同' }
@@ -171,7 +193,10 @@ export default {
         { label: '自定义11', class: 'color_11' }
       ],
       showCreate: false,
-      choseTitle: ''
+      choseTitle: '',
+      showTodayDetail: false,
+      todayDetailData: {},
+      selectDiv: null
     }
   },
   mounted() {
@@ -179,6 +204,30 @@ export default {
       this.contentHeight = document.documentElement.clientHeight - 80
     }
     this.handleDateClick({ dayEl: document.getElementsByClassName('fc-today')[0] })
+    setTimeout(() => {
+      this.handleSure({
+        color: '#53D397',
+        endTime: '2020-02-07 00:00:00',
+        id: 1,
+        startTime: '2020-02-07 00:00:00',
+        title: '大萨达',
+        groupId: 1, // 代办类型
+        name: '张三',
+        createTime: '2019-12-30'
+      }, '#53D397')
+    }, 1000)
+    setTimeout(() => {
+      this.handleSure({
+        color: '#2362FB',
+        endTime: '2020-02-07 01:00:00',
+        id: 0,
+        startTime: '2020-02-07 01:00:00',
+        title: '今日需联系会员',
+        groupId: 0, // 代办类型
+        name: '张三',
+        createTime: '2019-12-30'
+      }, '#2362FB')
+    }, 2000)
   },
   methods: {
     /**
@@ -204,16 +253,18 @@ export default {
      */
     gotoPast(date) {
       // 获取日历对象
-      // const time = date.replace(/\//g, '-')
-      const dateArr = date.split('/')
-      let newDate = dateArr[0]
-      newDate += '-' + (dateArr[1] < 10 ? '0' + dateArr[1] : dateArr[1])
-      newDate += '-' + (dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2])
+      if (this.isFirstToDay) {
+        this.isFirstToDay = false
+        return
+      }
+      const timestamp = new Date(date).getTime()
+      const newDate = moment(timestamp).format('YYYY-MM-DD')
+      this.selectDiv = newDate
       const calendarApi = this.$refs.fullCalendar.getApi() // from the ref="..."
-      calendarApi.changeView('dayGridDay')
-      console.log(calendarApi)
+      calendarApi.changeView('listDay')
       calendarApi.gotoDate(newDate)
     },
+
     /**
      * 天点击
      */
@@ -224,6 +275,10 @@ export default {
         td[0].classList.remove('select-day')
       }
       arg.dayEl.classList.add('select-day')
+      this.selectDiv = arg.dateStr
+      if (arg.dateStr) {
+        this.$refs.schedule.selectDay(arg.dateStr, true)
+      }
     },
 
     /**
@@ -250,6 +305,15 @@ export default {
             div.insertBefore(img, div.children[0])
           }
         }
+      } else {
+        if (this.currentTime === info.view.title) {
+          if (this.selectDiv) {
+          // 保证切换模式时，关联的日期被选中
+            document.querySelector(`td[data-date="${this.selectDiv}"]`).classList.add('select-day')
+          }
+        } else {
+          this.currentTime = info.view.title
+        }
       }
     },
 
@@ -258,6 +322,19 @@ export default {
      */
     eventClick(data) {
       console.log(data)
+      this.todayDetailData = {
+        startTime: data.event.start || '',
+        endTime: data.event.end || data.event.start,
+        id: data.event.id,
+        title: data.event.title,
+        groupId: data.event.groupId,
+        backgroundColor: data.event.backgroundColor
+      }
+      if (data.event.extendedProps) {
+        this.todayDetailData.name = data.event.extendedProps.name
+        this.todayDetailData.createTime = data.event.extendedProps.createTime
+      }
+      this.showTodayDetail = true
     },
 
     /**
@@ -274,6 +351,12 @@ export default {
       console.log(data)
     },
 
+    /**
+     * 选中某月
+     */
+    changeMonths(data) {
+      console.log(data, 'mouth')
+    },
     /**
      * 系统筛选
      */
@@ -302,7 +385,11 @@ export default {
       this.calendarEvents.push({
         title: data.title,
         start: data.startTime,
+        id: 1,
         color: color,
+        groupId: data.groupId,
+        name: data.name,
+        createTime: data.createTime,
         end: data.endTime
       })
     }

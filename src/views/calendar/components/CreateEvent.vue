@@ -4,9 +4,9 @@
       :visible.sync="visible"
       :close-on-click-modal="false"
       :before-close="beforeClose"
+      :title="title"
       append-to-body
-      width="580px"
-      title="新建日程">
+      width="580px">
       <div v-if="!showRepeat">
         <el-form ref="ruleForm" :model="form" :rules="rules" label-position="left">
           <el-form-item>
@@ -113,6 +113,10 @@ export default {
     showCreate: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: '新增日程'
     }
   },
   data() {
@@ -134,16 +138,15 @@ export default {
       typeList: [
         { label: '自定义1', value: 0, index: 0 },
         { label: '自定义2', value: 1, index: 1 },
-        { label: '自定义1', value: 2, index: 2 },
-        { label: '自定义2', value: 3, index: 3 },
-        { label: '自定义1', value: 4, index: 4 },
-        { label: '自定义2', value: 5, index: 5 },
-        { label: '自定义1', value: 6, index: 6 },
-        { label: '自定义2', value: 7, index: 7 },
-        { label: '自定义1', value: 8, index: 8 },
-        { label: '自定义2', value: 9, index: 9 },
-        { label: '自定义1', value: 10, index: 10 },
-        { label: '自定义2', value: 11, index: 11 }
+        { label: '自定义3', value: 2, index: 2 },
+        { label: '自定义4', value: 3, index: 3 },
+        { label: '自定义5', value: 4, index: 4 },
+        { label: '自定义6', value: 5, index: 5 },
+        { label: '自定义7', value: 6, index: 6 },
+        { label: '自定义8', value: 7, index: 7 },
+        { label: '自定义9', value: 8, index: 8 },
+        { label: '自定义10', value: 9, index: 9 },
+        { label: '自定义11', value: 10, index: 10 }
       ],
       // 颜色数组需要跟自定义类型对应
       colorList: [
@@ -203,7 +206,11 @@ export default {
      * 选择类型
      */
     changeType(value) {
-      this.colorItem = value
+      if (value > 11) {
+        this.colorItem = 11
+      } else {
+        this.colorItem = value
+      }
     },
 
     /**

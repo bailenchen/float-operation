@@ -2,6 +2,7 @@
   <div class="schedule-calendar">
     <div>
       <Calendar
+        ref="calendar"
         :mark-date-more="calendarArr"
         v-bind="$attrs"
         v-on="$listeners"
@@ -33,13 +34,23 @@ export default {
     }
   },
   mounted() {
+    this.selectDay(new Date(), true)
   },
   methods: {
-    // 切换月份
+    /**
+     * 切换月份
+     */
     changeMonth(val) {
       this.scheduleList = []
       this.currentMonthDate = new Date(val)
       this.$emit('changeMonth', this.currentMonthDate)
+    },
+
+    /**
+     * 切换某天
+     */
+    selectDay(date, boolean) {
+      this.$refs.calendar.ChoseMonth(date, boolean)
     }
   }
 }
@@ -130,9 +141,9 @@ export default {
         }
         .wh_isToday,
         .wh_isToday:hover {
-          background: #3487e2;
+          background: #fcf8e3;
           border-radius: 30px;
-          color: #fff;
+          color: #333;
         }
         .wh_chose_day,
         .wh_chose_day:hover {
