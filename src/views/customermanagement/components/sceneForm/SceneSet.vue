@@ -237,18 +237,15 @@ export default {
         type: crmTypeModel[this.crmType]
       })
         .then(res => {
-          this.checkedLeftData = res.data.value.map(function(item, index) {
+          this.checkedLeftData = res.data.value.map(item => {
             item.check = false
             return item
           })
-          this.checkedRightData = res.data.hide_value.map(function(
-            item,
-            index
-          ) {
+          this.checkedRightData = res.data.hideValue.map(item => {
             item.check = false
             return item
           })
-          var defaultScene = this.checkedLeftData.filter(function(item, index) {
+          var defaultScene = this.checkedLeftData.filter(item => {
             return item.isDefault == 1
           })
           // 如果有默认场景
@@ -265,9 +262,8 @@ export default {
      */
     handleConfirm() {
       // 如果选择默认的 不包含在左侧列表 重置为没有默认
-      var self = this
-      var leftTemps = this.checkedLeftData.filter(function(item, index) {
-        return item.sceneId == self.defaultId
+      var leftTemps = this.checkedLeftData.filter(item => {
+        return item.sceneId == this.defaultId
       })
       if (leftTemps.length == 0) {
         this.defaultId = ''
@@ -395,22 +391,16 @@ export default {
       if (value) {
         this.isleftIndeterminate = false
       }
-      this.checkedLeftData = this.checkedLeftData.filter(function(
-        item,
-        index,
-        array
-      ) {
-        item.check = value
-        return item
+      this.checkedLeftData.forEach(item => {
+        item.check = item.isSystem == 1 ? false : value
       })
-      this.leftCheckItems = value ? this.checkedLeftData : []
+
+      this.leftCheckItems = value ? this.checkedLeftData.filter(item => {
+        return item.check
+      }) : []
     },
     leftCheckItemChange() {
-      this.leftCheckItems = this.checkedLeftData.filter(function(
-        item,
-        index,
-        array
-      ) {
+      this.leftCheckItems = this.checkedLeftData.filter(item => {
         return item.check == true
       })
       if (this.leftCheckItems.length > 0) {
@@ -431,22 +421,13 @@ export default {
       if (value) {
         this.isrightIndeterminate = false
       }
-      this.checkedRightData = this.checkedRightData.filter(function(
-        item,
-        index,
-        array
-      ) {
+      this.checkedRightData.forEach(item => {
         item.check = value
-        return item
       })
       this.rightCheckItems = value ? this.checkedRightData : []
     },
     rightCheckItemChange() {
-      this.rightCheckItems = this.checkedRightData.filter(function(
-        item,
-        index,
-        array
-      ) {
+      this.rightCheckItems = this.checkedRightData.filter(item => {
         return item.check == true
       })
       if (this.rightCheckItems.length > 0) {

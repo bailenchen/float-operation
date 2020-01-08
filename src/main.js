@@ -56,6 +56,9 @@ Vue.use(require('vue-moment'))
 import moment from 'moment'
 moment.locale('zh_cn')
 
+// 限制数据数值
+import inputLimit from './directives/input-limit'
+Vue.use(inputLimit)
 // 自定义全局点击空白处组件
 import clickoutside from './directives'
 Vue.directive('clickoutside', clickoutside)

@@ -159,6 +159,7 @@ import ReportList from '@/views/customermanagement/workbench/components/reportLi
 
 import { mapGetters } from 'vuex'
 import moment from 'moment'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'WorkLog',
@@ -367,6 +368,9 @@ export default {
         this.loading = false
         const data = res.data || {}
         this.reportList = this.reportList.map(item => {
+          if (item.key == 'receivablesMoney') {
+            data.receivablesMoney = separatorInt(Math.floor(data.receivablesMoney || 0))
+          }
           item.name = `${item.info} ${data[item.key]}`
           return item
         })

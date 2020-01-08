@@ -13,7 +13,7 @@
         </div>
 
         <el-avatar
-          :src="data.img"
+          :src="dataSrc"
           :size="44"
           class="user-img">{{ showName }}</el-avatar>
       </flexbox>
@@ -50,7 +50,8 @@ export default {
   name: 'XrUserView',
   components: {},
   props: {
-    data: Object
+    data: Object,
+    src: String
   },
   data() {
     return {}
@@ -68,6 +69,10 @@ export default {
         return 'wk wk-woman'
       }
       return ''
+    },
+
+    dataSrc() {
+      return this.src || this.data.img
     }
   },
   watch: {},

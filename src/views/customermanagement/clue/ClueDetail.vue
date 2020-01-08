@@ -7,9 +7,11 @@
     :body-style="{padding: 0, height: '100%'}"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <div
       v-loading="loading"
+      ref="crmDetailMain"
       class="detail-main">
       <flexbox
         v-if="canShowDetail && detailData"
