@@ -2054,6 +2054,7 @@ $btn-b-hover-color: #eff4ff;
 
     .user-img {
       margin-right: 10px;
+      flex-shrink: 0;
     }
 
     &__bd {
@@ -2078,6 +2079,9 @@ $btn-b-hover-color: #eff4ff;
         font-size: 14px;
         color: #666;
         line-height: 17px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-all;
       }
     }
   }
