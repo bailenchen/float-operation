@@ -6,6 +6,7 @@
     class="d-view"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <flexbox
       v-loading="loading"
@@ -73,10 +74,11 @@
           <el-checkbox
             v-model="taskData.checked"
             @change="completeMainTask" />
-          <div
-            v-if="!nameVinput"
-            :class="['task-name', { 'is-checked': taskData.checked }]"
-            @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="light" placement="top">
+            <div
+              :class="['task-name', { 'is-checked': taskData.checked }]"
+              @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          </el-tooltip>
           <div
             v-else
             class="show-input">
@@ -765,16 +767,21 @@ export default {
       }
     }
   },
-  mounted() {
-    if (this.id) {
-      this.getDetail()
-      this.getCommentList()
-      this.getActivityList()
-    }
-  },
+  mounted() {},
 
   beforeDestroy() {},
   methods: {
+    /**
+     * 动画完成方法
+     */
+    viewAfterEnter() {
+      if (this.id) {
+        this.getDetail()
+        this.getCommentList()
+        this.getActivityList()
+      }
+    },
+
     initInfo() {
       this.taskData = null
       this.subTaskDoneNum = 0
@@ -1707,6 +1714,12 @@ $btn-b-hover-color: #eff4ff;
   font-size: 22px;
   color: #333;
   cursor: pointer;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 28px;
 }
 
 .task-name.is-checked {
@@ -2047,6 +2060,7 @@ $btn-b-hover-color: #eff4ff;
 
     .user-img {
       margin-right: 10px;
+      flex-shrink: 0;
     }
 
     &__bd {
@@ -2071,6 +2085,9 @@ $btn-b-hover-color: #eff4ff;
         font-size: 14px;
         color: #666;
         line-height: 17px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-all;
       }
     }
   }
@@ -2123,6 +2140,7 @@ $btn-b-hover-color: #eff4ff;
 
 .d-view {
   position: fixed;
+  background: white;
   min-width: 926px;
   width: 75%;
   top: 60px;

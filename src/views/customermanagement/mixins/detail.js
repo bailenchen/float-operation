@@ -52,18 +52,17 @@ export default {
         this.getDetial()
         this.getTabsNum()
       }
+    },
+
+    detailData() {
+      if (this.$refs.crmDetailMain && this.$refs.crmDetailMain.style.background == 'white') {
+        this.$refs.crmDetailMain.style.background = 'inherit'
+      }
     }
   },
 
-  created() {
-    if (this.canShowDetail) {
-      this.getDetial()
-      this.getTabsNum()
-
-      this.$bus.on('crm-tab-num-update', () => {
-        this.getTabsNum()
-      })
-    }
+  mounted() {
+    this.$refs.crmDetailMain.style.background = 'white'
   },
 
   beforeDestroy() {
@@ -73,6 +72,16 @@ export default {
   },
 
   methods: {
+    viewAfterEnter() {
+      if (this.canShowDetail) {
+        this.getDetial()
+        this.getTabsNum()
+        this.$bus.on('crm-tab-num-update', () => {
+          this.getTabsNum()
+        })
+      }
+    },
+
     /**
      * 顶部头 操作
      * @param {*} data

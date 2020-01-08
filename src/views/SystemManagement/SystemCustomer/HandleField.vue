@@ -296,16 +296,32 @@ export default {
       if (this.rejectHandle) return
 
       var tempFieldArr = objDeepCopy(this.fieldArr)
+      const names = [] // 判断名称重复
+
       for (let index = 0; index < tempFieldArr.length; index++) {
         const item = tempFieldArr[index]
 
         item.isNull = item.isNull == true ? 1 : 0
         item.isUnique = item.isUnique == true ? 1 : 0
         item.isHidden = item.isHidden == true ? 1 : 0
+        if (item.name !== '' && item.name !== null && item.name !== undefined) {
+          item.name = item.name.trim()
+
+          if (names.includes(item.name)) {
+            this.$message({
+              message: `第${(index + 1)}行（${item.name}）自定义字段标识名重复`,
+              type: 'error'
+            })
+            return
+          } else {
+            names.push(item.name)
+          }
+        }
+
         if (!item.name) {
           this.$message({
             type: 'error',
-            message: '第' + (index + 1) + '行的自定义字段，标识名不能为空'
+            message: `第${index + 1}行自定义字段，标识名不能为空`
           })
           return
         } else if (item.formType == 'select' || item.formType == 'checkbox') {
@@ -323,7 +339,7 @@ export default {
         } else if (item.formType == 'mobile' && item.defaultValue) {
           if (!regexIsCRMMobile(item.defaultValue)) {
             this.$message({
-              message: `${item.name}字段输入的默认值手机格式有误`,
+              message: `第${(index + 1)}行（${item.name}）自定义字段输入的默认值手机格式有误`,
               type: 'error'
             })
             return
@@ -331,7 +347,7 @@ export default {
         } else if (item.formType == 'email' && item.defaultValue) {
           if (!regexIsCRMEmail(item.defaultValue)) {
             this.$message({
-              message: `${item.name}字段输入的默认值邮箱格式有误`,
+              message: `第${(index + 1)}行（${item.name}）自定义字段输入的默认值邮箱格式有误`,
               type: 'error'
             })
             return
