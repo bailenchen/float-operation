@@ -4,7 +4,7 @@
     <div class="box-left">
       <div class="left-title" >
         <img width="20px" src="@/assets/img/crm/todo.png" alt="">
-        <span class="title-text">日历类型</span>
+        <span class="title-text">日历</span>
       </div>
       <div class="left-scroll">
         <schedule
@@ -77,6 +77,7 @@
     </div>
     <create-event
       :show-create="showCreate"
+      :select-div="selectDiv"
       @handleSure="handleSure"
       @close="showCreate = false"/>
     <!-- 今日需..的详情 -->
@@ -97,6 +98,7 @@ import listPlugin from '@fullcalendar/list'
 import Schedule from './schedule'
 import TodayListDetail from './components/TodayListDetail'
 import moment from 'moment'
+// import { getMaxIndex } from '@/utils'
 import CreateEvent from './components/CreateEvent'
 // must manually include stylesheets for each plugin
 import '@fullcalendar/core/main.css'
@@ -203,7 +205,7 @@ export default {
     window.onresize = () => {
       this.contentHeight = document.documentElement.clientHeight - 80
     }
-    this.handleDateClick({ dayEl: document.getElementsByClassName('fc-today')[0] })
+    // this.handleDateClick({ dayEl: document.getElementsByClassName('fc-today')[0] })
     setTimeout(() => {
       this.handleSure({
         color: '#53D397',
@@ -270,15 +272,39 @@ export default {
      */
 
     handleDateClick(arg) {
+      if (this.selectDiv === arg.dateStr) {
+        this.createEvents()
+      } else {
+        this.selectDiv = arg.dateStr
+        // 注开会生成提示文字
+        // const div = document.createElement('div')
+        // div.style.position = 'absolute'
+        // div.style.left = arg.jsEvent.clientX + 20 + 'px'
+        // div.style.top = arg.jsEvent.clientY - 20 + 'px'
+        // div.style.border = '1px solid #999'
+        // div.style.backgroundColor = '#999'
+        // div.style.padding = '10px'
+        // div.style.fontSize = '12px'
+        // div.style.zIndex = getMaxIndex()
+        // div.style.boxShadow = ''
+        // div.innerHTML = '双击新建'
+        // div.style.color = '#333'
+        // div.className = 'create__event?'
+        // if (document.getElementsByClassName('create__event?')[0]) {
+        //   const oldDiv = document.getElementsByClassName('create__event?')[0]
+        //   document.documentElement.removeChild(oldDiv)
+        // }
+        // document.documentElement.appendChild(div)
+        // console.log(arg, 'arg')
+      }
       const td = document.getElementsByClassName('select-day')
       if (td.length) {
         td[0].classList.remove('select-day')
       }
       arg.dayEl.classList.add('select-day')
-      this.selectDiv = arg.dateStr
-      if (arg.dateStr) {
-        this.$refs.schedule.selectDay(arg.dateStr, true)
-      }
+      // if (arg.dateStr) {
+      //   this.$refs.schedule.selectDay(arg.dateStr, true)
+      // }
     },
 
     /**
@@ -401,7 +427,7 @@ export default {
 @import './style/color.scss';
 @import './style/fullCalendar.scss';
 .calendar-box {
-  padding: 15px 10px;
+  padding: 5px 5px 10px;
   min-width: 1200px;
   overflow-y: hidden;
   overflow-x: auto;
@@ -410,18 +436,18 @@ export default {
 }
 .el-button{
   position: absolute;
-  top: 43px;
-  right: 50px;
+  top: 17px;
+  right: 40px;
   background-color: #FF6A00;
   border-color: #ff6a00;
 }
 .box-left {
-  width: 236px;
+  width: 280px;
   background-color: #fff;
   height: 100%;
   border:1px solid rgba(230,230,230,1);
   border-radius:4px;
-  margin-right: 9px;
+  margin-right: 20px;
   flex-shrink: 0;
   .left-scroll{
     height: calc(100% - 120px);
@@ -484,9 +510,10 @@ export default {
     }
   }
    /deep/.el-checkbox{
-      height: 50px;
-      line-height: 50px;
+      height: 40px;
+      line-height: 40px;
       padding-left: 13px;
+      display: block;
       .el-checkbox__label{
         padding-left: 15px;
         font-size: 13px;
@@ -497,8 +524,8 @@ export default {
   background-color: #fff;
   height: 100%;
   width: 100%;
-  border:1px solid rgba(230,230,230,1);
-  padding: 25px 35px;
+  border:1px solid #f3f3f3;
+  padding: 10px 0px 0px;
 }
 /deep/.select-day{
   background-color: #4983EF !important;

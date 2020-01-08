@@ -286,6 +286,7 @@ export default {
         'todayCustomer': crmMessageTodayCustomerAPI
       }[this.infoType]
     },
+
     /**
      * 关闭
      */

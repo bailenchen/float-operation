@@ -117,6 +117,10 @@ export default {
     title: {
       type: String,
       default: '新增日程'
+    },
+    selectDiv: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -186,6 +190,7 @@ export default {
   watch: {
     showCreate(val) {
       this.visible = val
+      this.form.startTime = this.selectDiv
     }
   },
   methods: {

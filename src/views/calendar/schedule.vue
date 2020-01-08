@@ -58,13 +58,13 @@ export default {
 
 <style scoped lang="scss">
 .schedule-calendar {
-  padding-bottom: 20px;
+  padding: 0px 10px 20px;
   .title {
     height: 44px;
     line-height: 44px;
     border-bottom: 1px solid #e6e6e6;
     .rt {
-      color: #3e84e9;
+      color: #2362FB;
       margin-right: 0;
       cursor: pointer;
       .el-icon-plus {
@@ -100,21 +100,28 @@ export default {
       display: block;
       margin: 15px 0 10px;
       li {
-        color: #3c8be3;
+        color: #2362FB;
         display: inline-block;
         height: 13px;
         .wh_jiantou1,
         .wh_jiantou2 {
           border-color: #333;
-          width: 12px;
-          height: 12px;
+          width: 8px;
+          height: 8px;
+          margin-left: 25px;
+          margin-top: 4px;
+          border-width: 1px;
+        }
+        .wh_jiantou1{
+          margin-left: 0px;
+          margin-right: 28px;
+          margin-top: 4px;
         }
       }
       .wh_content_li {
         margin: 0 30px;
-        font-weight: 500;
-        font-size: 18px;
-        letter-spacing: 1px;
+        font-weight: 700;
+        font-size: 16px;
         color: #333;
       }
     }
@@ -137,7 +144,7 @@ export default {
         }
         .wh_item_date:hover {
           background: transparent;
-          color: #3c8be3;
+          color: #2362FB;
         }
         .wh_isToday,
         .wh_isToday:hover {
@@ -147,13 +154,13 @@ export default {
         }
         .wh_chose_day,
         .wh_chose_day:hover {
-          background: #3487e2;
+          background: #2362FB;
           border-radius: 40px;
           color: #fff;
         }
         .mark1:after {
           content: ' ';
-          background-color: #3c8be3;
+          background-color: #2362FB;
           width: 5px;
           height: 5px;
           position: absolute;
