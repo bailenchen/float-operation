@@ -189,6 +189,7 @@ import ReplyComment from '@/components/ReplyComment'
 import CommentList from './commentList'
 
 import { mapGetters } from 'vuex'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   // 日志详情
@@ -325,8 +326,12 @@ export default {
         .then(res => {
           this.detail = res.data
           if (this.detail.getBulletin) {
+            const data = this.detail.bulletin || {}
             this.reportList = this.reportList.map(item => {
-              item.name = `${item.info} ${this.detail.bulletin[item.key]}`
+              if (item.key == 'receivablesMoney') {
+                data.receivablesMoney = separatorInt(Math.floor(data.receivablesMoney || 0))
+              }
+              item.name = `${item.info} ${data[item.key]}`
               return item
             })
           }

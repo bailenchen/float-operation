@@ -289,8 +289,8 @@ export default {
     // })
 
     if (this.data.getBulletin) {
+      const data = this.data.bulletin || {}
       this.reportList = this.reportList.map(item => {
-        const data = this.data.bulletin || {}
         if (item.key == 'receivablesMoney') {
           data.receivablesMoney = separatorInt(Math.floor(data.receivablesMoney || 0))
         }
