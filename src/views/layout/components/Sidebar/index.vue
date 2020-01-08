@@ -102,7 +102,15 @@ export default {
     ...mapGetters(['collapse']),
     activeMenu() {
       const route = this.$route
-      const { meta, path } = route
+      const { meta, path, params } = route
+
+      let title = this.WKConfig.companyName
+      if (meta.title) {
+        title += ' - ' + meta.title
+      } else if (params && params.title) {
+        title += ' - ' + params.title
+      }
+      document.title = title
       // if set path, the sidebar will highlight the path you set
       if (meta.activeMenu) {
         return meta.activeMenu
