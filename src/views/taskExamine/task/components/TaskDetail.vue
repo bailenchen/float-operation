@@ -1564,6 +1564,7 @@ $btn-b-hover-color: #eff4ff;
 .main {
   position: relative;
   height: 100%;
+  background: #f5f6f9;
 
   &__hd {
     margin-bottom: 15px;
