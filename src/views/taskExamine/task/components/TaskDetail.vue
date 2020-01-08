@@ -313,7 +313,7 @@
                   <el-input
                     :autosize="{ minRows: 2}"
                     v-model="addDescriptionTextarea"
-                    :maxlength="300"
+                    :maxlength="2000"
                     show-word-limit
                     type="textarea"
                     placeholder="请输入内容" />
@@ -1564,6 +1564,7 @@ $btn-b-hover-color: #eff4ff;
 .main {
   position: relative;
   height: 100%;
+  background: #f5f6f9;
 
   &__hd {
     margin-bottom: 15px;
