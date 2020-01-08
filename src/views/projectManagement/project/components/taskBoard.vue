@@ -111,7 +111,8 @@
                 :size="24"
                 :src="element.mainUser.img"
                 :disabled="false"
-                class="head-png" />
+                class="head-png"
+                trigger="hover" />
               <flexbox align="stretch">
                 <div
                   style="display: inline-block;"

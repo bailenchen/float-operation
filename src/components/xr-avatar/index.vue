@@ -18,7 +18,8 @@
     popper-class="no-padding-popover">
     <xr-user-view
       v-loading="loading"
-      :data="userData" />
+      :data="userData"
+      :src="dataCatchInfo[src]" />
     <el-avatar
       slot="reference"
       v-bind="$attrs"
