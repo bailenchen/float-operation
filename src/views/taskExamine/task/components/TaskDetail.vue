@@ -6,6 +6,7 @@
     class="d-view"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <flexbox
       v-loading="loading"
@@ -766,16 +767,21 @@ export default {
       }
     }
   },
-  mounted() {
-    if (this.id) {
-      this.getDetail()
-      this.getCommentList()
-      this.getActivityList()
-    }
-  },
+  mounted() {},
 
   beforeDestroy() {},
   methods: {
+    /**
+     * 动画完成方法
+     */
+    viewAfterEnter() {
+      if (this.id) {
+        this.getDetail()
+        this.getCommentList()
+        this.getActivityList()
+      }
+    },
+
     initInfo() {
       this.taskData = null
       this.subTaskDoneNum = 0
@@ -2134,6 +2140,7 @@ $btn-b-hover-color: #eff4ff;
 
 .d-view {
   position: fixed;
+  background: white;
   min-width: 926px;
   width: 75%;
   top: 60px;
