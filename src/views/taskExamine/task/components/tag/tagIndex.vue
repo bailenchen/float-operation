@@ -191,10 +191,10 @@ export default {
           value.check = true
         })
       } else {
-        value.check = true
         const labelIds = this.tagList.filter(item => {
           return item.check
-        })
+        }).concat(value)
+
         setTaskAPI({
           taskId: this.taskData.taskId,
           labelId: labelIds
@@ -204,8 +204,14 @@ export default {
             .join(',')
         }).then(res => {
           value.check = true
-          value.labelName = value.name
-          this.taskData.labelList.push(value)
+          const labelList = []
+          this.tagList.forEach(item => {
+            if (item.check) {
+              item.labelName = item.name
+              labelList.push(item)
+            }
+          })
+          this.taskData.labelList = labelList
         }).catch(() => {
           value.check = false
         })
