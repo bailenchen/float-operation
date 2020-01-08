@@ -4,6 +4,7 @@
       <span>产品类别设置</span>
     </div>
     <div class="product-setting">
+      <div class="tips">注：产品类别最多设置20级</div>
       <div class="product-setting-con">
         <div>
           <span
@@ -329,10 +330,15 @@ export default {
 
 .product-setting-con {
   position: absolute;
-  top: 0;
+  top: 20px;
   right: 0;
   bottom: 0;
   left: 0;
   overflow: auto;
+}
+
+.tips {
+  color: #999;
+  font-size: 13px;
 }
 </style>
