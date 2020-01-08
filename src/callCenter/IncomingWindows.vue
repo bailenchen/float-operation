@@ -630,9 +630,9 @@ export default {
             console.log('错误信息')
             break
           case 'UploadResponse':
-            if (data.data.code === 0) {
-              this.$message.success('录音上传成功')
-            }
+            // if (data.data.code === 0) {
+            //   this.$message.success('录音上传成功')
+            // }
             break
         }
         // console.log(data)
