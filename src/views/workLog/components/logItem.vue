@@ -157,6 +157,7 @@ import CommentList from './commentList'
 import ReportMenu from './ReportMenu'
 
 import { mapGetters } from 'vuex'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'LogItem',
@@ -296,7 +297,11 @@ export default {
 
     if (this.data.getBulletin) {
       this.reportList = this.reportList.map(item => {
-        item.name = `${item.info} ${this.data.bulletin[item.key]}`
+        const data = this.data.bulletin || {}
+        if (item.key == 'receivablesMoney') {
+          data.receivablesMoney = separatorInt(Math.floor(data.receivablesMoney || 0))
+        }
+        item.name = `${item.info} ${data[item.key]}`
         return item
       })
     }
