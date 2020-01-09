@@ -69,6 +69,7 @@
           <file-cell
             v-for="(file, fileIndex) in data.file"
             :key="fileIndex"
+            :list="data.file"
             :data="file"
             :cell-index="fileIndex"/>
         </div>

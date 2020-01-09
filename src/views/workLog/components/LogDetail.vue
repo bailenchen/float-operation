@@ -81,6 +81,7 @@
                 v-for="(file, fileIndex) in detail.file"
                 :key="fileIndex"
                 :data="file"
+                :list="detail.file"
                 :cell-index="fileIndex" />
             </div>
           </div>
@@ -189,6 +190,7 @@ import ReplyComment from '@/components/ReplyComment'
 import CommentList from './commentList'
 
 import { mapGetters } from 'vuex'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   // 日志详情
@@ -274,7 +276,7 @@ export default {
 
       // 回复
       commentLoading: false,
-      replyListData: []
+      replyList: []
     }
   },
   computed: {
@@ -295,17 +297,6 @@ export default {
         }
       }
       return tempsData
-    },
-
-    /**
-     * 日志回复
-     */
-    replyList() {
-      let arr = [].concat(this.replyListData || [])
-      arr = arr.sort((a, b) => {
-        return new Date(b.createTime) - new Date(a.createTime)
-      }) || []
-      return arr
     }
   },
   watch: {
@@ -336,8 +327,12 @@ export default {
         .then(res => {
           this.detail = res.data
           if (this.detail.getBulletin) {
+            const data = this.detail.bulletin || {}
             this.reportList = this.reportList.map(item => {
-              item.name = `${item.info} ${this.detail.bulletin[item.key]}`
+              if (item.key == 'receivablesMoney') {
+                data.receivablesMoney = separatorInt(Math.floor(data.receivablesMoney || 0))
+              }
+              item.name = `${item.info} ${data[item.key]}`
               return item
             })
           }
@@ -521,7 +516,10 @@ export default {
         type: 2 // 任务1 日志2
       })
         .then(res => {
-          this.replyListData = res.data || []
+          const list = res.data || []
+          this.replyList = list.sort((a, b) => {
+            return new Date(b.createTime) - new Date(a.createTime)
+          }) || []
         })
         .catch(() => {})
     },
@@ -533,7 +531,7 @@ export default {
     },
 
     deleteComment(index) {
-      this.replyListData.splice(index, 1)
+      this.replyList.splice(index, 1)
     },
 
     /**
@@ -556,7 +554,8 @@ export default {
         //   data: res.data,
         //   index: this.index
         // })
-        this.replyListData.unshift(res.data)
+        this.$refs.f_reply.commentsTextarea = ''
+        this.replyList.unshift(res.data)
         this.commentLoading = false
       }).catch(() => {
         this.commentLoading = false
@@ -585,7 +584,7 @@ export default {
 }
 
 .d-view {
-  padding: 0;
+  padding: 0 !important;
 }
 
 // 日志内容
