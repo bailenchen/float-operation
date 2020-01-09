@@ -2,7 +2,7 @@
 // 盒子滚动条拖拽
 import { on, off } from '@/utils/dom'
 import Vue from 'vue'
-import { debounce } from 'throttle-debounce'
+// import { debounce } from 'throttle-debounce'
 
 let targetDrag = { // 托拽
   isDown: false,
@@ -30,20 +30,17 @@ const scrollMouseup = event => {
 }
 
 const scrollMousemove = event => {
-  const movX = targetDrag.coord.x - event.pageX
-  targetDrag.coord.x = event.pageX
-  if (checkDomIsIgnore(event)) {
-    dom.style.cursor = 'default'
-    targetDrag.isDown = false
-  } else if (targetDrag.isDown) {
+  if (targetDrag.isDown) {
+    const movX = targetDrag.coord.x - event.pageX
+    targetDrag.coord.x = event.pageX
     dom.scrollLeft = dom.scrollLeft + movX
   }
 }
 
-const scrollMouseout = event => {
-  dom.style.cursor = 'default'
-  targetDrag.isDown = false
-}
+// const scrollMouseout = event => {
+//   dom.style.cursor = 'default'
+//   targetDrag.isDown = false
+// }
 
 const scrollMousewheel = event => {
   if (checkIsIgnore(event)) {
@@ -58,22 +55,22 @@ const scrollMousewheel = event => {
  * 检查dom是否忽略
  * @param {*} e
  */
-const checkDomIsIgnore = debounce(300, (e) => {
-  let ignore = false
-  ignoreClass.forEach(element => {
-    var items = document.getElementsByClassName(element)
-    if (items && !ignore) {
-      for (let index = 0; index < items.length; index++) {
-        const element = items[index]
-        if (element.contains(e.target)) {
-          ignore = true
-          break
-        }
-      }
-    }
-  })
-  return ignore
-})
+// const checkDomIsIgnore = debounce(300, (e) => {
+//   let ignore = false
+//   ignoreClass.forEach(element => {
+//     var items = document.getElementsByClassName(element)
+//     if (items && !ignore) {
+//       for (let index = 0; index < items.length; index++) {
+//         const element = items[index]
+//         if (element.contains(e.target)) {
+//           ignore = true
+//           break
+//         }
+//       }
+//     }
+//   })
+//   return ignore
+// })
 
 /**
  * 忽略滚轮
@@ -107,21 +104,21 @@ export default Vue.directive('scrollx', {
     dom = el
 
     // 鼠标按下
-    on(el, 'mousedown', scrollMousedown)
-    on(el, 'mouseout', scrollMouseout)
-    on(el, 'wheel', scrollMousewheel)
+    on(document, 'mousedown', scrollMousedown)
+    // on(document, 'mouseout', scrollMouseout)
+    on(document, 'wheel', scrollMousewheel)
     // 鼠标释放
-    on(el, 'mouseup', scrollMouseup)
+    on(document, 'mouseup', scrollMouseup)
     // 鼠标托拽
-    on(el, 'mousemove', scrollMousemove)
+    on(document, 'mousemove', scrollMousemove)
   },
 
   unbind: function(el) {
-    off(el, 'mousedown', scrollMousedown)
-    off(el, 'mouseup', scrollMouseup)
-    off(el, 'mouseout', scrollMouseout)
-    off(el, 'wheel', scrollMousewheel)
-    off(el, 'mousemove', scrollMousemove)
+    off(document, 'mousedown', scrollMousedown)
+    off(document, 'mouseup', scrollMouseup)
+    // off(document, 'mouseout', scrollMouseout)
+    off(document, 'wheel', scrollMousewheel)
+    off(document, 'mousemove', scrollMousemove)
 
     // 清空
     targetDrag = { // 托拽
