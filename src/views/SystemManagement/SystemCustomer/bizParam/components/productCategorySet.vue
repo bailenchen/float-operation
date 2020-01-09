@@ -98,7 +98,7 @@ export default {
       /** 更多操作 */
       treeSetTypes: [],
       // 最大可创建20级
-      maxCreateLevel: 19,
+      maxCreateLevel: 20,
       // 编辑产品弹窗
       productHandleDialog: false,
       productForm: { name: '', type: '', pid: '', categoryId: '' },
