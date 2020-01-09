@@ -135,6 +135,7 @@
               v-for="(file, fileIndex) in fileList"
               :key="fileIndex"
               :data="file"
+              :list="fileList"
               :cell-index="fileIndex" />
           </div>
         </div>

@@ -10,8 +10,9 @@
         class="pic-icon">
       <div class="file-name">{{ file.name }}</div>
       <div class="file-size">( {{ file.size | fontSizeValue }} )</div>
-      <div class="down" @click="downloadClick(file)">
-        <span>下载</span>
+      <div class="down">
+        <span @click="previewClick(file, fileIndex)">预览</span>
+        <span @click="downloadClick(file)">下载</span>
       </div>
     </div>
   </div>
@@ -57,8 +58,21 @@ export default {
 
       return getFileIconWithSuffix(ext)
     },
+
     downloadClick(file) {
       downloadFile({ path: file.filePath, name: file.name })
+    },
+
+    previewClick(file, fileIndex) {
+      this.$bus.emit('preview-image-bus', {
+        index: fileIndex,
+        data: this.list.map(function(item) {
+          return {
+            url: item.filePath,
+            name: item.name
+          }
+        })
+      })
     }
   }
 }
@@ -90,10 +104,8 @@ export default {
       .down {
         color: #2362FB;
         cursor: pointer;
-        &:hover {
-          span {
-            text-decoration: underline;
-          }
+        span:hover {
+          text-decoration: underline;
         }
       }
     }

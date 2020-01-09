@@ -14,6 +14,10 @@
     </div>
     <div class="cell-foot">
       <span
+        v-if="previewShow"
+        class="xr-text-btn primary"
+        @click="previewClick">预览</span>
+      <span
         class="xr-text-btn primary"
         @click="downloadClick">下载</span>
       <span
@@ -38,6 +42,8 @@ export default {
   props: {
     cellIndex: Number,
     data: Object,
+    // 完整数据
+    list: Array,
     showFoot: {
       type: Boolean,
       default: true
@@ -65,6 +71,10 @@ export default {
         ext = ''
       }
       return getFileIconWithSuffix(ext)
+    },
+
+    previewShow() {
+      return this.list
     }
   },
   watch: {},
@@ -72,9 +82,31 @@ export default {
 
   beforeDestroy() {},
   methods: {
+    /**
+     * 下载
+     */
     downloadClick() {
       downloadFile({ path: this.data.filePath, name: this.data.name })
     },
+
+    /**
+     * 附件预览
+     */
+    previewClick() {
+      this.$bus.emit('preview-image-bus', {
+        index: this.cellIndex || 0,
+        data: this.list.map(function(item) {
+          return {
+            url: item.filePath,
+            name: item.name
+          }
+        })
+      })
+    },
+
+    /**
+     * 删除
+     */
     deleteClick() {
       this.$confirm('确定删除?', '提示', {
         confirmButtonText: '确定',
@@ -129,7 +161,7 @@ export default {
 
   .cell-foot {
     display: none;
-    margin-left: 8px;
+    margin-left: 15px;
     flex-shrink: 0;
     margin-right: 8px;
     cursor: pointer;

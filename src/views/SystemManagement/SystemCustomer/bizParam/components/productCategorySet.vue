@@ -32,6 +32,7 @@
                 src="@/assets/img/unfold.png">
               <div class="node-label">{{ node.label }}</div>
               <el-dropdown
+                v-if="node.level < maxCreateLevel"
                 trigger="click"
                 @command="handleTreeSetDrop">
                 <div
@@ -96,6 +97,8 @@ export default {
       treeData: [],
       /** 更多操作 */
       treeSetTypes: [],
+      // 最大可创建20级
+      maxCreateLevel: 19,
       // 编辑产品弹窗
       productHandleDialog: false,
       productForm: { name: '', type: '', pid: '', categoryId: '' },
