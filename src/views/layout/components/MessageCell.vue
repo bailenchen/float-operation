@@ -107,7 +107,7 @@ export default {
       } else {
         if ([1, 2, 3].includes(this.data.type)) {
           key = 'task'
-        } else if ([4, 5].includes(this.data.type)) {
+        } else if ([4, 5, 34].includes(this.data.type)) {
           key = 'log'
         } else if ([6, 7, 25].includes(this.data.type)) {
           key = 'examine'
@@ -167,7 +167,8 @@ export default {
         30: `${this.data.realname}退出了您合同`,
         31: `${this.data.realname}将您移出了商机`,
         32: `${this.data.realname}将您移出了客户`,
-        33: `${this.data.realname}将您移出了合同`
+        33: `${this.data.realname}将您移出了合同`,
+        34: `${this.data.realname}回复了您评论的日志`
       }[this.data.type]
     },
 
@@ -198,15 +199,15 @@ export default {
         1: `任务分配给您，请及时查看`,
         2: `任务，请及时查看`,
         3: `任务标记结束`,
-        4: `日志：“${this.data.content || '无'}”，请及时查看`,
+        4: `日志：“${this.data.content}”，请及时查看`,
         5: `发送给您，请及时查看`,
-        6: `，拒绝理由：“${this.data.content || '无'}”，请及时处理`,
+        6: `，拒绝理由：“${this.data.content}”，请及时处理`,
         7: `已经审核通过，请及时查看`,
         8: `，请及时查看`,
         9: `日程，请及时查看`,
-        10: `合同审批，拒绝理由：“${this.data.content || '无'}”，请及时处理`,
+        10: `合同审批，拒绝理由：“${this.data.content}”，请及时处理`,
         11: `合同已经审核通过，请及时查看`,
-        12: `回款审批，拒绝理由：“${this.data.content || '无'}”，请及时处理`,
+        12: `回款审批，拒绝理由：“${this.data.content}”，请及时处理`,
         13: `回款已经审核通过，请及时查看`,
         14: ``,
         15: ``,
@@ -227,7 +228,8 @@ export default {
         30: `的团队`,
         31: `的团队`,
         32: `的团队`,
-        33: `的团队`
+        33: `的团队`,
+        34: `：“${this.data.content}”，请及时查看`
       }[this.data.type]
     }
   },
