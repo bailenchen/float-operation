@@ -6,6 +6,7 @@
     class="d-view"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <div
       v-if="detail"
@@ -19,104 +20,132 @@
         <div class="header-name">日志</div>
       </flexbox>
       <div class="main__bd">
-        <div class="content">
-          <div
-            v-if="detail.content"
-            class="content-box">
-            <div class="content-title">
-              今日工作内容：
-            </div>
-            <div class="content-text">{{ detail.content }}</div>
-          </div>
-          <div
-            v-if="detail.tomorrow"
-            class="content-box">
-            <div class="content-title">
-              明日工作的内容：
-            </div>
-            <div class="content-text">{{ detail.tomorrow }}</div>
-          </div>
-          <div
-            v-if="detail.question"
-            class="content-box">
-            <div class="content-title">
-              遇到的问题：
-            </div>
-            <div class="content-text">{{ detail.question }}</div>
-          </div>
-        </div>
-
-        <picture-list-view
-          v-if="detail.img.length !== 0"
-          :list="detail.img" />
-
-        <flexbox v-if="detail.sendUserList && detail.sendUserList.length" class="send-list">
-          <span class="send-list__label">发送给：</span>
-          <span
-            v-for="(item, index) in detail.sendUserList"
-            :key="index"
-            class="send-list__user">
-            <xr-avatar
-              :name="item.realname"
-              :size="32"
-              :src="item.img"
-              :id="item.userId"
-              :disabled="false"
-              trigger="hover" />
-          </span>
-        </flexbox>
-
-        <!-- 附件 -->
-        <div v-if="detail.file.length" class="section">
-          <div class="section__hd">
-            <i class="wukong wukong-file" />
-            <span>附件</span>
-            <span>({{ detail.file.length }})</span>
-          </div>
-          <div class="section__bd">
-            <file-cell
-              v-for="(file, fileIndex) in detail.file"
-              :key="fileIndex"
-              :data="file"
-              :cell-index="fileIndex" />
-          </div>
-        </div>
-
-        <!-- 相关信息 -->
-        <div
-          v-if="Object.keys(relatedListData).length > 0"
-          class="section">
-          <div class="section__hd">
-            <i class="wukong wukong-relevance" />
-            <span>相关信息</span>
-          </div>
-          <div class="section__bd">
+        <!-- 基本信息 -->
+        <div class="main__bd--info">
+          <div class="content">
             <div
-              v-for="(items, key) in relatedListData"
-              :key="key">
-              <related-business-cell
-                v-for="(item, itemIndex) in items"
-                :data="item"
-                :cell-index="itemIndex"
-                :type="key"
-                :key="itemIndex"
-                :show-foot="false"
-                @click.native="checkRelatedDetail(key, item)" />
+              v-if="detail.content"
+              class="content-box">
+              <div class="content-title">
+                今日工作内容：
+              </div>
+              <div class="content-text">{{ detail.content }}</div>
+            </div>
+            <div
+              v-if="detail.tomorrow"
+              class="content-box">
+              <div class="content-title">
+                明日工作的内容：
+              </div>
+              <div class="content-text">{{ detail.tomorrow }}</div>
+            </div>
+            <div
+              v-if="detail.question"
+              class="content-box">
+              <div class="content-title">
+                遇到的问题：
+              </div>
+              <div class="content-text">{{ detail.question }}</div>
+            </div>
+          </div>
+
+          <picture-list-view
+            v-if="detail.img.length !== 0"
+            :list="detail.img" />
+
+          <flexbox v-if="detail.sendUserList && detail.sendUserList.length" class="send-list">
+            <span class="send-list__label">发送给：</span>
+            <span
+              v-for="(item, index) in detail.sendUserList"
+              :key="index"
+              class="send-list__user">
+              <xr-avatar
+                :name="item.realname"
+                :size="32"
+                :src="item.img"
+                :id="item.userId"
+                :disabled="false"
+                trigger="hover" />
+            </span>
+          </flexbox>
+
+          <!-- 附件 -->
+          <div v-if="detail.file.length" class="section">
+            <div class="section__hd">
+              <i class="wukong wukong-file" />
+              <span>附件</span>
+              <span>({{ detail.file.length }})</span>
+            </div>
+            <div class="section__bd">
+              <file-cell
+                v-for="(file, fileIndex) in detail.file"
+                :key="fileIndex"
+                :data="file"
+                :cell-index="fileIndex" />
+            </div>
+          </div>
+
+          <!-- 相关信息 -->
+          <div
+            v-if="Object.keys(relatedListData).length > 0"
+            class="section">
+            <div class="section__hd">
+              <i class="wukong wukong-relevance" />
+              <span>相关信息</span>
+            </div>
+            <div class="section__bd">
+              <div
+                v-for="(items, key) in relatedListData"
+                :key="key">
+                <related-business-cell
+                  v-for="(item, itemIndex) in items"
+                  :data="item"
+                  :cell-index="itemIndex"
+                  :type="key"
+                  :key="itemIndex"
+                  :show-foot="false"
+                  @click.native="checkRelatedDetail(key, item)" />
+              </div>
+            </div>
+          </div>
+
+          <div v-if="detail.getBulletin" class="section">
+            <div class="section__hd">
+              <i class="wk wk-briefing" />
+              <span>销售简报</span>
+            </div>
+            <div class="section__bd">
+              <report-menu
+                :list="reportList"
+                @select="reportSelect" />
             </div>
           </div>
         </div>
 
-        <div v-if="detail.getBulletin" class="section">
-          <div class="section__hd">
-            <i class="wk wk-briefing" />
-            <span>销售简报</span>
-          </div>
-          <div class="section__bd">
-            <report-menu
-              :list="reportList"
-              @select="reportSelect" />
-          </div>
-        </div>
+        <!-- 回复 -->
+        <el-tabs
+          value="commont"
+          type="border-card"
+          class="commont">
+          <el-tab-pane
+            label="回复"
+            name="commont">
+            <reply-comment
+              v-loading="commentLoading"
+              ref="f_reply"
+              @toggle="closeOtherReply"
+              @reply="handleReply" />
+            <comment-list
+              v-if="replyList.length > 0"
+              ref="comment_list"
+              :id="id"
+              :list="replyList"
+              type="2"
+              @delete="deleteComment"
+              @close-other-reply="$refs.f_reply.toggleFocus(true)" />
+          </el-tab-pane>
+        </el-tabs>
+
       </div>
     </div>
     <c-r-m-full-screen-detail
@@ -145,6 +174,10 @@ import {
   journalQueryByIdAPI,
   journalQueryRecordCountAPI,
   journalQueryBulletinByTypeAPI } from '@/api/oamanagement/journal'
+import {
+  setCommentAPI,
+  queryCommentListAPI
+} from '@/api/oamanagement/common'
 
 import SlideView from '@/components/SlideView'
 import PictureListView from '@/components/PictureListView'
@@ -152,6 +185,11 @@ import FileCell from '@/views/OAManagement/components/fileCell'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import ReportMenu from './ReportMenu'
 import ReportList from '@/views/customermanagement/workbench/components/reportList'
+import ReplyComment from '@/components/ReplyComment'
+import CommentList from './commentList'
+
+import { mapGetters } from 'vuex'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   // 日志详情
@@ -163,6 +201,8 @@ export default {
     RelatedBusinessCell,
     ReportMenu,
     ReportList,
+    ReplyComment,
+    CommentList,
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
@@ -231,10 +271,17 @@ export default {
         params: null,
         paging: true,
         sortable: false
-      }
+      },
+
+      // 回复
+      commentLoading: false,
+      replyList: []
     }
   },
   computed: {
+    ...mapGetters([
+      'userInfo'
+    ]),
     /**
      * 相关信息
      */
@@ -252,18 +299,24 @@ export default {
     }
   },
   watch: {
-    id: function(val) {
-      this.detail = null
-      this.getDetail()
+    id() {
+      this.viewAfterEnter()
     }
   },
-  mounted() {
-    this.getDetail()
-  },
+  mounted() {},
 
   beforeDestroy() {},
 
   methods: {
+    /**
+     * 页面展示发请求
+     */
+    viewAfterEnter() {
+      this.detail = null
+      this.getDetail()
+      this.getCommentList()
+    },
+
     /**
      * 详情
      */
@@ -273,8 +326,12 @@ export default {
         .then(res => {
           this.detail = res.data
           if (this.detail.getBulletin) {
+            const data = this.detail.bulletin || {}
             this.reportList = this.reportList.map(item => {
-              item.name = `${item.info} ${this.detail.bulletin[item.key]}`
+              if (item.key == 'receivablesMoney') {
+                data.receivablesMoney = separatorInt(Math.floor(data.receivablesMoney || 0))
+              }
+              item.name = `${item.info} ${data[item.key]}`
               return item
             })
           }
@@ -447,7 +504,63 @@ export default {
           }
         ]
       }[type]
+    },
+
+    /**
+     * 评论逻辑
+     */
+    getCommentList() {
+      queryCommentListAPI({
+        typeId: this.id,
+        type: 2 // 任务1 日志2
+      })
+        .then(res => {
+          const list = res.data || []
+          this.replyList = list.sort((a, b) => {
+            return new Date(b.createTime) - new Date(a.createTime)
+          }) || []
+        })
+        .catch(() => {})
+    },
+
+    closeOtherReply(flag) {
+      if (!flag && this.$refs.comment_list) {
+        this.$refs.comment_list.closeReply()
+      }
+    },
+
+    deleteComment(index) {
+      this.replyList.splice(index, 1)
+    },
+
+    /**
+     * 日志评论
+     */
+    handleReply(data) {
+      this.commentLoading = true
+      setCommentAPI({
+        type: 2,
+        content: data,
+        typeId: this.id
+      }).then(res => {
+        res.data.user = {
+          userId: this.userInfo.userId,
+          realname: this.userInfo.realname,
+          img: this.userInfo.img
+        }
+        res.data.childCommentList = []
+        // this.$emit('add-comment', {
+        //   data: res.data,
+        //   index: this.index
+        // })
+        this.$refs.f_reply.commentsTextarea = ''
+        this.replyList.unshift(res.data)
+        this.commentLoading = false
+      }).catch(() => {
+        this.commentLoading = false
+      })
     }
+
   }
 }
 </script>
@@ -456,17 +569,27 @@ export default {
 .main {
   position: relative;
   height: 100%;
+  background: #f5f6f9;
 
   &__bd {
     height: calc(100% - 40px);
     overflow: auto;
+
+    &--info {
+      padding: 0 20px 10px;
+      background: white;
+    }
   }
+}
+
+.d-view {
+  padding: 0 !important;
 }
 
 // 日志内容
 
 .content {
-  margin-top: 30px;
+  padding-top: 30px;
   .content-box {
     font-size: 14px;
     margin-bottom: 20px;
@@ -488,6 +611,9 @@ export default {
 }
 
 .detail-header {
+  padding: 30px 20px 0;
+  background: white;
+
   .header-icon {
     width: 40px;
     height: 40px;
@@ -558,6 +684,44 @@ export default {
     margin-top: 15px;
     padding-left: 25px;
   }
+}
+
+// 详情
+.commont {
+  box-shadow: none;
+  margin-bottom: 50px;
+
+  /deep/ .el-tabs__item {
+    color: #333;
+    font-size: 12px;
+    top: 2px;
+    margin-top: -2px;
+  }
+
+  /deep/ .el-tabs__nav-scroll {
+    min-height: 39px;
+  }
+
+  /deep/ .el-tabs__item.is-active {
+    border-top: 2px solid $xr-color-primary;
+    color: #333;
+  }
+
+  /deep/ .el-tabs {
+    height: calc(100% - 15px) !important;
+  }
+
+  // /deep/ .el-tabs__content {
+  //   height: calc(100% - 40px) !important;
+  //   padding: 0;
+  //   overflow: hidden;
+  //   position: relative;
+
+  //   .el-tab-pane {
+  //     height: 100%;
+  //     overflow: hidden;
+  //   }
+  // }
 }
 
 </style>
