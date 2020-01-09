@@ -10,6 +10,7 @@
     @close="hideView">
     <flexbox
       v-loading="loading"
+      v-if="loading !== null"
       direction="column"
       align="stretch"
       class="main">
@@ -603,7 +604,7 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: null,
       canShowDetail: true,
       // 紧急弹出框
       priorityVisible: false,
