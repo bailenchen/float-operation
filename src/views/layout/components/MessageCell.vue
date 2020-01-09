@@ -294,6 +294,9 @@ export default {
 
   &__bd {
     flex: 1;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
   }
 
   &__ft {
