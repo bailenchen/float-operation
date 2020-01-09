@@ -416,6 +416,7 @@ export default {
      * 列表拖拽
      */
     moveEndParentTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt && evt.oldIndex != evt.newIndex) {
         workTaskUpdateClassOrderAPI({
           workId: this.workId,
@@ -441,6 +442,7 @@ export default {
      * 任务拖拽
      */
     moveEndSonTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt) {
         const fromId = evt.from.id
         const toId = evt.to.id
@@ -722,6 +724,8 @@ export default {
   overflow-x: auto;
   position: relative;
   white-space: nowrap;
+  user-select: none;
+
   .board-column-content-parent {
     position: absolute;
     top: 0;

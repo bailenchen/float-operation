@@ -243,6 +243,7 @@ export default {
      * 移动任务
      */
     moveEndTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt) {
         const fromTop = evt.from.id
         const toTop = evt.to.id
@@ -396,6 +397,7 @@ export default {
 .my-task {
   height: 100%;
   overflow: hidden;
+  user-select: none;
 }
 
 .my-task-body {
