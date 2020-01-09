@@ -3,7 +3,7 @@
     <el-form :model="form" label-width="80px" label-position="left">
       <el-form-item label="重复">
         <el-select
-          v-model="form.repeat"
+          v-model="form.repetitionType"
           placeholder="选择重复类型"
           @change="changeRepeat">
           <el-option
@@ -13,39 +13,52 @@
             :value="item.value"/>
         </el-select>
       </el-form-item>
-      <template v-if="form.repeat !== '从不重复'">
+      <template v-if="form.repetitionType !== 1">
         <el-form-item label="重复频率" style="whiteSpace: nowrap">
           <el-input
-            v-model.number="form.count"
+            v-model.number="form.repeatRate"
             type="number"
             min="0"
             autocomplete="off"/>
-          <span>{{ form.repeat.substr(1) }}</span>
+          <span>{{ timeList[form.repetitionType] }}</span>
         </el-form-item>
-        <el-form-item label="重复时间">
-          <el-input
-            v-model.number="form.time"
-            type="number"
-            min="0"
-            autocomplete="off"/>
+        <el-form-item v-if="form.repetitionType !== 2 && form.repetitionType !== 5" label="重复时间">
+          <el-checkbox-group
+            v-if="form.repetitionType === 3"
+            v-model="checkedRepeatTime"
+            @change="changeRepeatTime">
+            <el-checkbox
+              v-for="item in repeatTimeList"
+              :label="item.label"
+              :value="item.value"
+              :key="item.value"/>
+          </el-checkbox-group>
+          <el-select v-else v-model="form.repeatTime" placeholder="请选择">
+            <el-option
+              v-for="item in dayList"
+              :key="item"
+              :label="item"
+              :value="item"/>
+          </el-select>
         </el-form-item>
         <el-form-item label="结束" class="form_radio">
-          <el-radio-group v-model="form.end" @change="changeEndDate">
-            <el-radio :label="3">从不</el-radio>
-            <el-radio :label="6">重复
+          <el-radio-group v-model="form.endType" @change="changeEndDate">
+            <el-radio label="1">从不</el-radio>
+            <el-radio label="2">重复
               <el-input
-                :disabled="!(form.end == 6)"
-                v-model.number="form.endCount"
+                :disabled="!(form.endType == 2)"
+                v-model="endCount"
                 type="number"
                 class="radio_input"/> 次以后
             </el-radio>
-            <el-radio :label="9">
+            <el-radio label="3">
               <span class="date_span"> 结束日期</span>
               <el-date-picker
-                :disabled="!(form.end == 9)"
-                v-model="form.date"
+                :disabled="!(form.endType == 3)"
+                v-model="endDate"
                 class="form_date"
-                type="date"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                type="datetime"
                 placeholder="选择日期"/>
             </el-radio>
           </el-radio-group>
@@ -62,43 +75,66 @@ export default {
   name: 'Repeat',
   props: {
     repeatType: {
-      type: String,
-      default: '每天'
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       form: {
-        repeat: '',
-        time: 1,
-        count: 1,
-        end: '',
-        date: '',
-        endCount: ''
+        repeatTime: '',
+        repeatRate: '', // 重复频率
+        endType: '', // 结束类型
+        endTypeConfig: '', // 结束次数/时间
+        repetitionType: 0
       },
+      endDate: '',
+      endCount: '',
       repeatList: [
-        { label: '从不重复', value: '从不重复' },
-        { label: '每天', value: '每天' },
-        { label: '每周', value: '每周' },
-        { label: '每月', value: '每月' },
-        { label: '每年', value: '每年' }
-      ]
+        { label: '从不重复', value: 1 },
+        { label: '每天', value: 2 },
+        { label: '每周', value: 3 },
+        { label: '每月', value: 4 },
+        { label: '每年', value: 5 }
+      ],
+      timeList: ['', '', '天', '周', '月', '年'],
+      checkedRepeatTime: [],
+      repeatTimeList: [
+        { label: '一', value: '1' },
+        { label: '二', value: '2' },
+        { label: '三', value: '3' },
+        { label: '四', value: '4' },
+        { label: '五', value: '5' },
+        { label: '六', value: '6' },
+        { label: '日', value: '7' }
+      ],
+      dayList: []
     }
   },
   watch: {
   },
   mounted() {
-    this.form.repeat = this.repeatType
+    this.dayList = []
+    this.form.repetitionType = this.repeatType
+    for (let i = 1; i <= 31; i++) {
+      this.dayList.push(i)
+    }
   },
   methods: {
     /**
      * 摘要文字
      */
     summaryText() {
-      if (this.form.repeat === '从不重复') {
+      if (this.form.repetitionType === 1) {
         return '从不重复'
-      } else {
-        return `每${this.form.count}${this.form.repeat.substr(1)}，重复${this.form.time}次`
+      } else if (this.form.repetitionType === 2) {
+        return `每${this.form.repeatRate}天`
+      } else if (this.form.repetitionType === 3) {
+        return `每${this.form.repeatRate}周, 周${this.checkedRepeatTime.join('、')}`
+      } else if (this.form.repetitionType === 4) {
+        return `每${this.form.repeatRate}月，第${this.form.repeatTime}天`
+      } else if (this.form.repetitionType === 5) {
+        return `每${this.form.repeatRate}年`
       }
     },
 
@@ -106,8 +142,6 @@ export default {
      * 改变结束时间
      */
     changeEndDate(value) {
-      this.form.date = ''
-      this.form.endCount = ''
     },
 
     /**
@@ -115,12 +149,30 @@ export default {
      */
     changeRepeat(value) {
       this.form = {
-        repeat: value,
-        time: 1,
-        count: 1,
-        end: '',
-        date: '',
-        endCount: ''
+        repetitionType: value,
+        repeatTime: '',
+        repeatRate: '', // 重复频率
+        endType: '', // 结束类型
+        endTypeConfig: '' // 结束次数/时间
+      }
+    },
+
+    /**
+     * 改变重复时间
+     */
+    changeRepeatTime() {
+      if (this.checkedRepeatTime.length) {
+        const list = []
+        this.repeatTimeList.forEach(item => {
+          this.checkedRepeatTime.forEach(element => {
+            if (item.label === element) {
+              list.push(item.value)
+            }
+          })
+        })
+        this.form.repeatTime = list.join(',')
+      } else {
+        this.form.repeatTime = ''
       }
     }
   }

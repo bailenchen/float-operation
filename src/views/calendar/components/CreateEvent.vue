@@ -12,12 +12,12 @@
           <el-form-item>
             <el-input v-model="form.title" placeholder="请输入日程安排" class="input_one"/>
           </el-form-item>
-          <el-form-item label="日历类型" prop="type">
+          <el-form-item label="日历类型" prop="typeId">
             <div class="color_change">
               <span :style="{backgroundColor: colorList[colorItem]}" class="custom_left"/>
             </div>
             <el-select
-              v-model="form.type"
+              v-model="form.typeId"
               placeholder="选择日历类型"
               class="select_color"
               @change="changeType">
@@ -37,7 +37,7 @@
           <el-form-item label="结束时间">
             <el-date-picker
               v-model="form.endTime"
-              type="datetime"
+              type="date"
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="选择日期"/>
           </el-form-item>
@@ -45,7 +45,7 @@
             <xh-user-cell
               :value="checkedUser"
               :radio="false"
-              @valueChange="selectUser"/>
+              @value-change="selectUser"/>
           </el-form-item>
           <el-form-item v-if="!choseMore" style="margin-top: -10px">
             <el-button style="font-size: 14px" type="text" @click="choseMore = true">添加更多选项</el-button>
@@ -53,7 +53,7 @@
           <template v-if="choseMore">
             <el-form-item label="重复">
               <el-select
-                v-model="form.repeat"
+                v-model="form.repetitionType"
                 placeholder="选择重复类型"
                 @change="selectRepeat">
                 <el-option
@@ -63,7 +63,7 @@
                   :value="item.value"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="提前">
+            <!-- <el-form-item label="提前">
               <el-select v-model="form.time" placeholder="选择时间" class="time_select">
                 <el-option
                   v-for="item in timeList"
@@ -72,7 +72,7 @@
                   :value="item"/>
               </el-select>
               提醒
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="相关信息">
               <related-business
                 :is-task="true"
@@ -90,6 +90,8 @@
       </div>
       <repeat
         v-else
+        ref="repeat"
+        :repeat-type="form.repetitionType"
         margin-left="80px"/>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="sure">确 定</el-button>
@@ -103,6 +105,9 @@
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 import RelatedBusiness from '@/components/relatedBusiness'
 import Repeat from './Repeat'
+import {
+  canlendarSaveAPI
+} from '@/api/calendar'
 export default {
   components: {
     XhUserCell,
@@ -128,16 +133,18 @@ export default {
       visible: false,
       // 是否展示按日期重复的dialog
       showRepeat: false,
+      repeatForm: {},
       form: {
         title: '',
-        type: 0,
-        repeat: '',
+        typeId: 1, // 日历类型
+        ownerUserIds: 0,
+        repetitionType: '',
         startTime: '',
-        endTime: '',
-        business: {}
+        endTime: ''
       },
       // 选中的关联项
       allData: {},
+      businessRelation: {},
       // 类型数组
       typeList: [
         { label: '自定义1', value: 0, index: 0 },
@@ -172,11 +179,11 @@ export default {
       // 选中的参与人员
       checkedUser: [],
       repeatList: [
-        { label: '从不重复', value: '从不重复' },
-        { label: '每天', value: '每天' },
-        { label: '每周', value: '每周' },
-        { label: '每月', value: '每月' },
-        { label: '每年', value: '每年' }
+        { label: '从不重复', value: 1 },
+        { label: '每天', value: 2 },
+        { label: '每周', value: 3 },
+        { label: '每月', value: 4 },
+        { label: '每年', value: 5 }
       ],
       timeList: ['5分钟', '10分钟', '20分钟', '30分钟', '50分钟', '1个小时'],
       rules: {
@@ -190,7 +197,7 @@ export default {
   watch: {
     showCreate(val) {
       this.visible = val
-      this.form.startTime = this.selectDiv
+      this.form.startTime = this.selectDiv + ' 08:00:00'
     }
   },
   methods: {
@@ -222,7 +229,14 @@ export default {
      * 选择员工
      */
     selectUser(data) {
-      this.checkedUser = data
+      this.checkedUser = data.value
+      if (data.value.length) {
+        this.form.ownerUserIds = data.value.map(item => {
+          return item.userId
+        }).join(',')
+      } else {
+        this.form.ownerUserIds = ''
+      }
     },
 
     /**
@@ -230,6 +244,9 @@ export default {
      */
     checkInfos(dataIds, data) {
       this.allData = data
+      Object.keys(dataIds).forEach(key => {
+        this.businessRelation[key] = dataIds[key].length ? dataIds[key].join(',') : ''
+      })
     },
 
     /**
@@ -265,7 +282,9 @@ export default {
     cancle() {
       if (this.showRepeat) {
         this.showRepeat = false
+        this.repeatForm = {}
       } else {
+        this.form = {}
         this.$emit('close')
       }
     },
@@ -275,10 +294,33 @@ export default {
      */
     sure() {
       if (this.showRepeat) {
+        this.repeatForm = this.$refs.repeat.form
+        if (this.$refs.repeat.endDate) {
+          this.repeatForm.endTypeConfig = this.$refs.repeat.endDate
+        } else {
+          this.repeatForm.endTypeConfig = this.$refs.repeat.endCount
+        }
         this.showRepeat = false
       } else {
         this.$emit('handleSure', this.form, this.colorList[this.colorItem])
+        this.createSchedule()
       }
+    },
+
+    /**
+     * 新建日程
+     */
+    createSchedule() {
+      const params = {
+        relation: this.businessRelation
+      }
+      params.event = {
+        ...this.form,
+        ...this.repeatForm
+      }
+      canlendarSaveAPI(params).then(res => {
+        this.$message.success('新建日程成功')
+      }).catch(() => {})
     }
   }
 }

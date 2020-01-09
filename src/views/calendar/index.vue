@@ -97,6 +97,9 @@ import timelinePlugin from '@fullcalendar/timeline'
 import listPlugin from '@fullcalendar/list'
 import Schedule from './schedule'
 import TodayListDetail from './components/TodayListDetail'
+import {
+  canlendarQueryListAPI
+} from '@/api/calendar'
 import moment from 'moment'
 // import { getMaxIndex } from '@/utils'
 import CreateEvent from './components/CreateEvent'
@@ -198,7 +201,9 @@ export default {
       choseTitle: '',
       showTodayDetail: false,
       todayDetailData: {},
-      selectDiv: null
+      selectDiv: null,
+      // 储存显示日期的开始时间和结束时间
+      activeTime: {}
     }
   },
   mounted() {
@@ -206,32 +211,20 @@ export default {
       this.contentHeight = document.documentElement.clientHeight - 80
     }
     // this.handleDateClick({ dayEl: document.getElementsByClassName('fc-today')[0] })
-    setTimeout(() => {
-      this.handleSure({
-        color: '#53D397',
-        endTime: '2020-02-07 00:00:00',
-        id: 1,
-        startTime: '2020-02-07 00:00:00',
-        title: '大萨达',
-        groupId: 1, // 代办类型
-        name: '张三',
-        createTime: '2019-12-30'
-      }, '#53D397')
-    }, 1000)
-    setTimeout(() => {
-      this.handleSure({
-        color: '#2362FB',
-        endTime: '2020-02-07 01:00:00',
-        id: 0,
-        startTime: '2020-02-07 01:00:00',
-        title: '今日需联系会员',
-        groupId: 0, // 代办类型
-        name: '张三',
-        createTime: '2019-12-30'
-      }, '#2362FB')
-    }, 2000)
+    this.getList()
   },
   methods: {
+    /**
+     * 查询列表
+     */
+    getList() {
+      canlendarQueryListAPI(this.activeTime).then(res => {
+        res.data.forEach(item => {
+          this.handleSure(item, '#53D397')
+        })
+      }).catch(() => {})
+    },
+
     /**
      * 格式化日列表左侧的时间
      */
@@ -341,6 +334,8 @@ export default {
           this.currentTime = info.view.title
         }
       }
+      this.activeTime.startTime = new Date(info.view.activeStart).getTime()
+      this.activeTime.endTime = new Date(info.view.activeEnd).getTime()
     },
 
     /**
@@ -410,13 +405,13 @@ export default {
     handleSure(data, color) {
       this.calendarEvents.push({
         title: data.title,
-        start: data.startTime,
-        id: 1,
+        start: moment(data.startTime).format('YYYY-MM-DD'),
+        id: data.eventId,
         color: color,
-        groupId: data.groupId,
-        name: data.name,
-        createTime: data.createTime,
-        end: data.endTime
+        groupId: 1,
+        name: '张三',
+        createTime: '2019-12-20',
+        end: moment(data.endTime).format('YYYY-MM-DD')
       })
     }
   }
