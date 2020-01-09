@@ -10,6 +10,7 @@
     @close="hideView">
     <flexbox
       v-loading="loading"
+      v-if="loading !== null"
       direction="column"
       align="stretch"
       class="main">
@@ -445,6 +446,7 @@
                   v-for="(file, fileIndex) in fileList"
                   :key="fileIndex"
                   :data="file"
+                  :list="fileList"
                   :cell-index="fileIndex"
                   :module-id="id"
                   :show-delete="true"
@@ -603,7 +605,7 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: null,
       canShowDetail: true,
       // 紧急弹出框
       priorityVisible: false,

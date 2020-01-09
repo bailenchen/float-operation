@@ -1,29 +1,20 @@
 <template>
-  <el-avatar
-    v-if="popoverDisabled"
-    v-bind="$attrs"
-    :src="dataCatchInfo[src]"
-    :key="src"
-    :style="{ fontSize: fontSize, background: background }"
-    :class="{ 'cursor-pointer': !disabled }"
-    :size="size"
-    fit="fill">{{ showName }}</el-avatar>
   <el-popover
-    v-else
     v-model="popoverShow"
     :visible-arrow="false"
     :trigger="trigger"
+    :disabled="popoverDisabled"
     placement="bottom"
     width="250"
     popper-class="no-padding-popover">
     <xr-user-view
       v-loading="loading"
       :data="userData"
-      :src="dataCatchInfo[src]" />
+      :src="imageCache[src]" />
     <el-avatar
       slot="reference"
       v-bind="$attrs"
-      :src="dataCatchInfo[src]"
+      :src="imageCache[src]"
       :key="src"
       :style="{ fontSize: fontSize, background: background }"
       :class="{ 'cursor-pointer': !disabled }"
@@ -37,8 +28,7 @@
 import { systemUserInfoAPI } from '@/api/common'
 import { getImageData } from '@/utils'
 import XRTheme from '@/styles/xr-theme.scss'
-
-const dataCatch = {}
+import { mapGetters } from 'vuex'
 
 export default {
   // Avatar 头像
@@ -76,6 +66,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['imageCache']),
     fontSize() {
       if (this.size <= 30) {
         return '12px'
@@ -93,10 +84,6 @@ export default {
       }
 
       return !this.id
-    },
-
-    dataCatchInfo() {
-      return dataCatch
     }
   },
   watch: {
@@ -118,14 +105,17 @@ export default {
   methods: {
     handleImage() {
       if (this.src) {
-        if (!dataCatch.hasOwnProperty(this.src)) {
-          dataCatch[this.src] = ''
+        if (!this.imageCache.hasOwnProperty(this.src)) {
+          this.$set(this.imageCache, this.src, '')
+          this.$store.commit('SET_IMAGECACHE', this.imageCache)
           getImageData(this.src)
             .then(data => {
-              dataCatch[this.src] = data.src
+              this.$set(this.imageCache, this.src, data.src)
+              this.$store.commit('SET_IMAGECACHE', this.imageCache)
             })
             .catch(() => {
-              delete dataCatch[this.src]
+              delete this.imageCache[this.src]
+              this.$store.commit('SET_IMAGECACHE', this.imageCache)
             })
         }
       }

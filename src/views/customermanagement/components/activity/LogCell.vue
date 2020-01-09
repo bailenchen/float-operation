@@ -69,6 +69,7 @@
           </div>
           <div class="cell-ft">
             <span class="des">（{{ file.size | getFileSize }}）</span>
+            <a @click="previewImg(item.file, index)">预览</a>
             <a @click="downloadFile(file)">下载</a>
           </div>
         </flexbox>
