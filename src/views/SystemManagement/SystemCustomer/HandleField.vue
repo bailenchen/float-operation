@@ -297,7 +297,7 @@ export default {
 
       var tempFieldArr = objDeepCopy(this.fieldArr)
       const names = [] // 判断名称重复
-
+      const limitFields = 'select|update|union|and|or|delete|insert|trancate|char|substr|ascii|declare|exec|count|master|into|drop|execute'.split('|')
       for (let index = 0; index < tempFieldArr.length; index++) {
         const item = tempFieldArr[index]
 
@@ -307,7 +307,13 @@ export default {
         if (item.name !== '' && item.name !== null && item.name !== undefined) {
           item.name = item.name.trim()
 
-          if (names.includes(item.name)) {
+          if (limitFields.includes(item.name)) {
+            this.$message({
+              message: `（${item.name}）自定义字段标识名与系统字段重复，请使用其他字段！`,
+              type: 'error'
+            })
+            return
+          } else if (names.includes(item.name)) {
             this.$message({
               message: `第${(index + 1)}行（${item.name}）自定义字段标识名重复`,
               type: 'error'
