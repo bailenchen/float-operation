@@ -28,6 +28,10 @@
       icon="el-icon-plus"
       type="primary"
       @click="createClick">新建审批</el-button>
+    <el-button
+      slot="right"
+      class="export-btn"
+      @click="exportClick">导出</el-button>
   </base-tabs-head>
 </template>
 
@@ -91,6 +95,13 @@ export default {
      */
     createClick() {
       this.$emit('add')
+    },
+
+    /**
+     * 导出
+     */
+    exportClick() {
+      this.$emit('export')
     }
   }
 }
@@ -117,6 +128,7 @@ export default {
   border-radius: $xr-border-radius-base;
 }
 
+.export-btn,
 .xr-btn--orange {
   margin-right: 8px;
 }

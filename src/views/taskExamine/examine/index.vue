@@ -7,7 +7,8 @@
       :select-value.sync="tabsSelectValue"
       @change="tabsChange"
       @select="tabsSelect"
-      @add="createClick" />
+      @add="createClick"
+      @export="exportClick" />
 
     <div
       v-infinite-scroll="getList"
@@ -76,7 +77,8 @@ import {
   oaExamineCategoryList,
   oaExamineMyExamineIndex,
   oaExamineMyCreateIndex,
-  oaExamineDelete
+  oaExamineDelete,
+  oaExamineExportAPI
 } from '@/api/oamanagement/examine'
 import ExamineTabsHead from './components/ExamineTabsHead'
 import ExamineCell from './components/ExamineCell'
@@ -87,6 +89,8 @@ import ExamineCreateView from '@/views/OAManagement/examine//components/examineC
 import ExamineDetail from '@/views/OAManagement/examine/components/examineDetail'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import ExamineHandle from '@/components/Examine/ExamineHandle'
+
+import { downloadExcelWithResData } from '@/utils/index'
 
 export default {
   /** 审批 */
@@ -432,6 +436,37 @@ export default {
     detailHandleCallBack(data, index) {
       this.detailIndex = index
       this.refreshDataByHandle()
+    },
+
+    /**
+     * 审批导出
+     */
+    exportClick() {
+      if (this.selectId === '') {
+        this.$message.error('请选择一种审批类型导出')
+        return
+      }
+
+      this.loading = true
+      const params = {
+        categoryId: this.selectId
+      }
+
+      const status = this.tabsSelectValue == 'all' ? '' : this.tabsSelectValue
+      if (this.examineType == 'my') {
+        params.checkStatus = status
+      } else if (this.examineType == 'wait') {
+        params.status = status
+      }
+
+      oaExamineExportAPI(params)
+        .then(res => {
+          downloadExcelWithResData(res)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }
