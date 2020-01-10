@@ -56,7 +56,8 @@ export function biCustomerRecordListExportAPI(data) {
   return request({
     url: 'biCustomer/customerRecordInfoExport',
     method: 'post',
-    data: data
+    data: data,
+    responseType: 'blob'
   })
 }
 
@@ -130,6 +131,15 @@ export function biCustomerPoolListAPI(data) {
   })
 }
 
+export function biCustomerPoolListExportAPI(data) {
+  return request({
+    url: 'biCustomer/poolTableExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 员工客户成交周期
  * @param {*} data
@@ -139,6 +149,15 @@ export function biCustomerUserCycleAPI(data) {
     url: 'biCustomer/employeeCycle',
     method: 'post',
     data: data
+  })
+}
+
+export function biCustomerUserCycleExportAPI(data) {
+  return request({
+    url: 'biCustomer/employeeCycleInfoExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
@@ -165,6 +184,15 @@ export function biCustomerAddressCycleAPI(data) {
   })
 }
 
+export function biCustomerAddressCycleExportAPI(data) {
+  return request({
+    url: 'biCustomer/districtCycleExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 产品成交周期
  * @param {*} data
@@ -174,5 +202,14 @@ export function biCustomerProductCycleAPI(data) {
     url: 'biCustomer/productCycle',
     method: 'post',
     data: data
+  })
+}
+
+export function biCustomerProductCycleExportAPI(data) {
+  return request({
+    url: 'biCustomer/productCycleExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
