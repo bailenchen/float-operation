@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       loading: false,
-      tableHeight: document.documentElement.clientHeight - 155,
+      tableHeight: document.documentElement.clientHeight - 170,
       postParams: {}, // 筛选参数
 
       headFieldList: [
@@ -101,7 +101,7 @@ export default {
     /** 控制table的高度 */
     window.onresize = function() {
       var offsetHei = document.documentElement.clientHeight
-      self.tableHeight = offsetHei - 155
+      self.tableHeight = offsetHei - 170
     }
   },
   methods: {
@@ -233,10 +233,10 @@ export default {
           /** 上一个最后产品的处理 */
           var preItem = spanList[seriesIndex]
           preItem.rowspan += 1
-          newList.push({ productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
+          newList.push({ productPrice: '合计', productNum: subCount, productSubtotal: subMoney }) // 产品小计数据
           spanList.push({ rowspan: 0, productRowspan: 1, isSum: true }) // 产品小计style
 
-          newList.push({ productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
+          newList.push({ productPrice: '总计', productNum: allCount, productSubtotal: allMoney }) // 系列小计数据
           spanList.push({ rowspan: 1, productRowspan: 1, isAllSum: true }) // 系列小计style
 
           /** * 新系列开始 */
