@@ -507,6 +507,58 @@ export function downloadFileWithBuffer(data, name, type) {
   window.URL.revokeObjectURL(href) // 释放掉blob对象
 }
 
+import FileSaver from 'file-saver'
+/**
+ * 导出ElTable表格
+ * @param {*} name
+ */
+export function exportElTable(name, domId) {
+  const fix = document.querySelector('.el-table__fixed')
+  let wb
+  if (fix) {
+    wb = XLSX.utils.table_to_book(
+      document.getElementById(domId).removeChild(fix)
+    )
+    document.getElementById(domId).appendChild(fix)
+  } else {
+    wb = XLSX.utils.table_to_book(
+      document.getElementById(domId)
+    )
+  }
+  const wopts = {
+    bookType: 'xlsx',
+    bookSST: false,
+    type: 'binary'
+  }
+  const wbout = XLSX.write(wb, wopts)
+
+  FileSaver.saveAs(
+    new Blob([s2ab(wbout)], {
+      type: 'application/octet-stream;charset=utf-8'
+    }),
+    name
+  )
+}
+
+function s2ab(s) {
+  var cuf
+  var i
+  if (typeof ArrayBuffer !== 'undefined') {
+    cuf = new ArrayBuffer(s.length)
+    var view = new Uint8Array(cuf)
+    for (i = 0; i !== s.length; i++) {
+      view[i] = s.charCodeAt(i) & 0xff
+    }
+    return cuf
+  } else {
+    cuf = new Array(s.length)
+    for (i = 0; i !== s.length; ++i) {
+      cuf[i] = s.charCodeAt(i) & 0xff
+    }
+    return cuf
+  }
+}
+
 /**
  * 获取百度地图
  */
