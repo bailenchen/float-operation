@@ -563,6 +563,7 @@ import {
 import membersDep from '@/components/selectEmployee/membersDep'
 import TagIndex from './tag/tagIndex'
 import SubTask from './subTask'
+
 // emoji
 import emoji from '@/components/emoji'
 // 相关信息 - 选中列表
@@ -574,6 +575,7 @@ import CommentList from '@/views/workLog/components/commentList'
 import ReplyComment from '@/components/ReplyComment'
 import moment from 'moment'
 import { objDeepCopy } from '@/utils'
+import taskMixin from '../mixins/taskMixin'
 
 export default {
   name: 'TaskDetail',
@@ -591,6 +593,7 @@ export default {
     CommentList,
     ReplyComment
   },
+  mixins: [taskMixin],
   props: {
     id: [String, Number],
     isTrash: Boolean,
@@ -610,12 +613,12 @@ export default {
       // 紧急弹出框
       priorityVisible: false,
       // 优先级列表
-      priorityList: [
-        { id: 3, label: '高', color: '#F95A5A' },
-        { id: 2, label: '中', color: '#F7AD3D' },
-        { id: 1, label: '低', color: '#67C23A' },
-        { id: 0, label: '无', color: '#D8D8D8' }
-      ],
+      // priorityList: [
+      //   { id: 3, label: '高', color: '#F95A5A' },
+      //   { id: 2, label: '中', color: '#F7AD3D' },
+      //   { id: 1, label: '低', color: '#67C23A' },
+      //   { id: 0, label: '无', color: '#D8D8D8' }
+      // ],
 
       /**
      * 限制时间选择`
@@ -670,26 +673,9 @@ export default {
     ...mapGetters(['userInfo']),
     priority() {
       if (this.taskData.priority == 0 || !this.taskData.priority) {
-        return {
-          color: '#D8D8D8',
-          label: '无'
-        }
-      } else if (this.taskData.priority == 1) {
-        return {
-          color: '#67C23A',
-          label: '低'
-        }
-      } else if (this.taskData.priority == 2) {
-        return {
-          color: '#F7AD3D',
-          label: '中'
-        }
-      } else if (this.taskData.priority == 3) {
-        return {
-          color: '#F95A5A',
-          label: '高'
-        }
+        return this.priorityList[3] // 默认读取 priorityList 返回
       }
+      return this.getPriorityColor(this.taskData.priority)
     },
 
     /**

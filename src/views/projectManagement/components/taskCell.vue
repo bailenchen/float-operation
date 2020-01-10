@@ -1,7 +1,7 @@
 <template>
   <div
     ref="taskRow"
-    :style="{'border-left-color': data.priority == 1 ? '#8bb5f0' : data.priority == 2 ? '#FF9668' : data.priority == 3 ? '#ED6363': 'transparent'}"
+    :style="{'border-left-color': getPriorityColor(data.priority).color }"
     class="list"
     @click="rowFun(data)">
     <div
@@ -131,10 +131,14 @@
 <script type="text/javascript">
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
+
 export default {
   name: 'TaskCell', // 任务cell
 
   components: {},
+
+  mixins: [taskMixin],
 
   props: {
     data: Object,

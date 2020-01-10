@@ -102,7 +102,7 @@
               ref="taskRow"
               :key="i"
               :class="element.checked ? 'board-item board-item-active' : 'board-item'"
-              :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
+              :style="{'border-color': getPriorityColor(element.priority).color}"
               @click="showDetailView(element, index , i)">
               <xr-avatar
                 v-if="element.mainUser"
@@ -256,11 +256,6 @@
   </div>
 </template>
 <script>
-import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
-import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
-import draggable from 'vuedraggable'
-import scrollx from '@/directives/scrollx'
-
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
   workTaskClassSetAPI,
@@ -270,6 +265,13 @@ import {
   workTaskUpdateOrderAPI,
   workTaskUpdateClassOrderAPI
 } from '@/api/projectManagement/project'
+
+import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
+import draggable from 'vuedraggable'
+import scrollx from '@/directives/scrollx'
+
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
 
 export default {
   components: {
@@ -281,6 +283,8 @@ export default {
   directives: {
     scrollx
   },
+
+  mixins: [taskMixin],
 
   props: {
     workId: [String, Number],

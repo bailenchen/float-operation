@@ -40,7 +40,7 @@
                 ref="taskRow"
                 :key="i"
                 :class="element.checked ? 'board-item board-item-active' : 'board-item'"
-                :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
+                :style="{'border-color': getPriorityColor(element.priority).color }"
                 @click="showDetailView(element, index, i)">
                 <flexbox align="stretch">
                   <div @click.stop>
@@ -172,6 +172,7 @@ import XrHeader from '@/components/xr-header'
 
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
 
 
 export default {
@@ -185,6 +186,8 @@ export default {
   directives: {
     scrollx
   },
+
+  mixins: [taskMixin],
 
   data() {
     return {

@@ -11,7 +11,7 @@
     </div>
     <div
       ref="hoverDialog"
-      :style="{'border-color': getPriorityColor(hoverDialogList.priority)}"
+      :style="{'border-color': getPriorityColor(hoverDialogList.priority).color}"
       class="hover-dialog">
       <flexbox
         class="title"
@@ -54,11 +54,15 @@ import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 // API
 import { workTaskDateListAPI } from '@/api/projectManagement/calendars'
 
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
+
 export default {
   components: {
     newDialog,
     TaskDetail
   },
+
+  mixins: [taskMixin],
 
   data() {
     return {
@@ -171,7 +175,7 @@ export default {
                   item.end = item.updateTime
                 }
 
-                item.color = this.getPriorityColor(item.priority)
+                item.color = this.getPriorityColor(item.priority).color
                 item.title = item.name
                 return item
               })
@@ -183,21 +187,6 @@ export default {
             })
         }
       })
-    },
-
-    /**
-     * 获取优先级颜色
-     */
-    getPriorityColor(priority) {
-      if (priority == 1) {
-        return '#8bb5f0'
-      } else if (priority == 2) {
-        return '#FF9668'
-      } else if (priority == 3) {
-        return '#ED6363'
-      } else {
-        return '#ccc'
-      }
     },
 
     /**
