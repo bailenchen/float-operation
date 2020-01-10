@@ -25,7 +25,7 @@
           <div class="bottom-title">自定义类型</div>
           <template>
             <el-checkbox-group v-model="checkCusList" @change="customFifter">
-              <el-checkbox v-for="item in cusCheck" :class="item.class" :label="item.label" :key="item.label"/>
+              <el-checkbox v-for="item in cusCheck" :class="item.class" :label="item.typeName" :key="item.typeId"/>
             </el-checkbox-group>
           </template>
         </div>
@@ -40,7 +40,7 @@
         ref="fullCalendar"
         :button-text="buttonText"
         :header="{
-          left: 'listDay,timeGridWeek,dayGridMonth',
+          left: 'listDay,timeGridWeek,dayGridMonth, today',
           center: 'prevYear,prev, title, next,nextYear',
           right: ''
         }"
@@ -78,6 +78,8 @@
     <create-event
       :show-create="showCreate"
       :select-div="selectDiv"
+      :color-list="colorList"
+      :cus-check="cusCheck"
       @handleSure="handleSure"
       @close="showCreate = false"/>
     <!-- 今日需..的详情 -->
@@ -97,6 +99,10 @@ import timelinePlugin from '@fullcalendar/timeline'
 import listPlugin from '@fullcalendar/list'
 import Schedule from './schedule'
 import TodayListDetail from './components/TodayListDetail'
+import calendarColor from '@/views/SystemManagement/other/components/calendarColor.js'
+import {
+  calendarQueryTypeListAPI
+} from '@/api/systemManagement/other'
 import {
   canlendarQueryListAPI
 } from '@/api/calendar'
@@ -141,11 +147,13 @@ export default {
           createTime: '2019-12-30'
         }
       ],
+      colorList: calendarColor.colorList,
       // 按钮文字
       buttonText: {
         month: '月',
         week: '周',
-        day: '日'
+        day: '日',
+        today: '今天'
       },
       evnetTime: {
         hour: 'numeric',
@@ -171,32 +179,8 @@ export default {
         { label: '今日到期的合同' },
         { label: '今日回款的合同' }
       ],
-      checkCusList: [
-        '自定义1',
-        '自定义2',
-        '自定义3',
-        '自定义4',
-        '自定义5',
-        '自定义6',
-        '自定义7',
-        '自定义8',
-        '自定义9',
-        '自定义10',
-        '自定义11'
-      ],
-      cusCheck: [
-        { label: '自定义1', class: 'color_1' },
-        { label: '自定义2', class: 'color_2' },
-        { label: '自定义3', class: 'color_3' },
-        { label: '自定义4', class: 'color_4' },
-        { label: '自定义5', class: 'color_5' },
-        { label: '自定义6', class: 'color_6' },
-        { label: '自定义7', class: 'color_7' },
-        { label: '自定义8', class: 'color_8' },
-        { label: '自定义9', class: 'color_9' },
-        { label: '自定义10', class: 'color_10' },
-        { label: '自定义11', class: 'color_11' }
-      ],
+      checkCusList: [],
+      cusCheck: [],
       showCreate: false,
       choseTitle: '',
       showTodayDetail: false,
@@ -212,6 +196,7 @@ export default {
     }
     // this.handleDateClick({ dayEl: document.getElementsByClassName('fc-today')[0] })
     this.getList()
+    this.getCusCheck()
   },
   methods: {
     /**
@@ -219,10 +204,34 @@ export default {
      */
     getList() {
       canlendarQueryListAPI(this.activeTime).then(res => {
+        this.calendarEvents = []
+        this.calendarArr = []
         res.data.forEach(item => {
           this.handleSure(item, '#53D397')
         })
       }).catch(() => {})
+    },
+
+    /**
+     * 查询自定义日历类型
+     */
+    getCusCheck() {
+      calendarQueryTypeListAPI().then(res => {
+        this.checkCusList = res.data.map(item => {
+          return item.typeName
+        })
+        this.cusCheck = res.data
+        this.cusCheck.forEach(item => {
+          this.colorList.forEach((color, index) => {
+            if (item.color === color) {
+              item.class = `color_${index + 1}`
+              item.color = color
+            }
+          })
+        })
+      }).catch((
+
+      ) => {})
     },
 
     /**
@@ -334,8 +343,11 @@ export default {
           this.currentTime = info.view.title
         }
       }
-      this.activeTime.startTime = new Date(info.view.activeStart).getTime()
-      this.activeTime.endTime = new Date(info.view.activeEnd).getTime()
+      if (this.activeTime.startTime !== new Date(info.view.activeStart).getTime()) {
+        this.activeTime.startTime = new Date(info.view.activeStart).getTime()
+        this.activeTime.endTime = new Date(info.view.activeEnd).getTime()
+        this.getList()
+      }
     },
 
     /**
