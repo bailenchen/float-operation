@@ -14,16 +14,20 @@
           </el-form-item>
           <el-form-item label="日历类型" prop="typeId">
             <div class="color_change">
-              <span :style="{backgroundColor: colorList[colorItem]}" class="custom_left"/>
+              <span :style="{backgroundColor: colorItem}" class="custom_left"/>
             </div>
             <el-select
               v-model="form.typeId"
               placeholder="选择日历类型"
-              class="select_color"
-              @change="changeType">
-              <el-option v-for="item in typeList" :key="item.value" :value="item.value" :label="item.label">
-                <span :style="{backgroundColor: colorList[item.index]}" class="custom_left"/>
-                <span class="custom_right">{{ item.label }}</span>
+              class="select_color">
+              <el-option
+                v-for="item in cusCheck"
+                :key="item.typeId"
+                :value="item.typeId"
+                :label="item.typeName"
+                @click.native="changeType(item)">
+                <span :style="{backgroundColor: item.color}" class="custom_left"/>
+                <span class="custom_right">{{ item.typeName }}</span>
               </el-option>
             </el-select>
           </el-form-item>
@@ -37,7 +41,7 @@
           <el-form-item label="结束时间">
             <el-date-picker
               v-model="form.endTime"
-              type="date"
+              type="datetime"
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="选择日期"/>
           </el-form-item>
@@ -126,6 +130,18 @@ export default {
     selectDiv: {
       type: String,
       default: ''
+    },
+    colorList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    cusCheck: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
@@ -145,36 +161,8 @@ export default {
       // 选中的关联项
       allData: {},
       businessRelation: {},
-      // 类型数组
-      typeList: [
-        { label: '自定义1', value: 0, index: 0 },
-        { label: '自定义2', value: 1, index: 1 },
-        { label: '自定义3', value: 2, index: 2 },
-        { label: '自定义4', value: 3, index: 3 },
-        { label: '自定义5', value: 4, index: 4 },
-        { label: '自定义6', value: 5, index: 5 },
-        { label: '自定义7', value: 6, index: 6 },
-        { label: '自定义8', value: 7, index: 7 },
-        { label: '自定义9', value: 8, index: 8 },
-        { label: '自定义10', value: 9, index: 9 },
-        { label: '自定义11', value: 10, index: 10 }
-      ],
-      // 颜色数组需要跟自定义类型对应
-      colorList: [
-        '#53D397',
-        '#20C1BD',
-        '#58DADA',
-        '#0FC9E7',
-        '#3498DB',
-        '#4586FF',
-        '#8983F3',
-        '#AEA1EA',
-        '#FF6699',
-        '#F24D70',
-        '#FF6F6F'
-      ],
       // 选中的类型对应的颜色在颜色数组中的位置
-      colorItem: 0,
+      colorItem: '',
       choseMore: false,
       // 选中的参与人员
       checkedUser: [],
@@ -198,6 +186,7 @@ export default {
     showCreate(val) {
       this.visible = val
       this.form.startTime = this.selectDiv + ' 08:00:00'
+      this.colorItem = this.cusCheck[0].color
     }
   },
   methods: {
@@ -217,12 +206,8 @@ export default {
     /**
      * 选择类型
      */
-    changeType(value) {
-      if (value > 11) {
-        this.colorItem = 11
-      } else {
-        this.colorItem = value
-      }
+    changeType(data) {
+      this.colorItem = data.color
     },
 
     /**
@@ -302,7 +287,7 @@ export default {
         }
         this.showRepeat = false
       } else {
-        this.$emit('handleSure', this.form, this.colorList[this.colorItem])
+        this.$emit('handleSure', this.form, this.colorItem)
         this.createSchedule()
       }
     },

@@ -45,6 +45,14 @@
           box-shadow: none;
         }
       }
+      /deep/.fc-button-primary,.fc-button-primary:disabled{
+        background-color: #fff;
+        color: #333;
+        border-color: #E1E1E1;
+        height: 30px;
+        box-shadow: none;
+        border-width: 1px;
+      }
     }
     .fc-center{
       display: flex;
