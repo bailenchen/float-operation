@@ -7,7 +7,12 @@
       class="filtrate-bar"
       module-type="contract"
       @load="loading=true"
-      @change="getDataList"/>
+      @change="getDataList">
+      <el-button
+        class="export-button"
+        type="primary"
+        @click.native="exportClick">导出</el-button>
+    </filtrate-handle-view>
     <div class="content">
       <div class="content-title">
         签约合同数：{{ data.count_zong }}个；签约合同金额：<span class="special">{{ data.money_zong }}</span>元；回款金额：<span class="special">{{ data.back_zong }}</span>元；未收款金额：<span class="special">{{ data.w_back_zong }}</span>元</div>
@@ -37,7 +42,8 @@
 
 <script>
 import sortMixins from '../mixins/sort'
-import { biAchievementSummaryAPI } from '@/api/businessIntelligence/achievement'
+import base from '../mixins/base'
+import { biAchievementSummaryAPI, biAchievementSummaryExportAPI } from '@/api/businessIntelligence/achievement'
 import filtrateHandleView from '../components/filtrateHandleView'
 
 export default {
@@ -46,11 +52,14 @@ export default {
   components: {
     filtrateHandleView
   },
-  mixins: [sortMixins],
+  mixins: [base, sortMixins],
   data() {
     return {
       loading: false,
       tableHeight: document.documentElement.clientHeight - 220,
+
+      postParams: {}, // 筛选参数
+
       list: [],
       data: {
         back_zong: 0,
@@ -75,6 +84,7 @@ export default {
   },
   methods: {
     getDataList(params) {
+      this.postParams = params
       this.loading = true
       biAchievementSummaryAPI(params)
         .then(res => {
@@ -91,6 +101,13 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biAchievementSummaryExportAPI, this.postParams)
     }
   }
 }

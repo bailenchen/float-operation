@@ -18,6 +18,11 @@
         <div id="axismain"/>
       </div>
       <div class="table-content">
+        <div class="handle-bar">
+          <el-button
+            class="export-btn"
+            @click="exportClick">导出</el-button>
+        </div>
         <el-table
           :data="list"
           height="400"
@@ -50,7 +55,7 @@
 <script>
 import rankingMixins from '../mixins/ranking'
 import echarts from 'echarts'
-import { biRankingSigningAPI } from '@/api/businessIntelligence/ranking'
+import { biRankingSigningAPI, biRankingSigningExportAPI } from '@/api/businessIntelligence/ranking'
 
 export default {
   /** 签约合同排行 */
@@ -70,6 +75,7 @@ export default {
   },
   methods: {
     getDataList(params) {
+      this.postParams = params
       this.loading = true
       biRankingSigningAPI(params)
         .then(res => {
@@ -99,6 +105,13 @@ export default {
       this.axisOption.tooltip.formatter = '{b} : {c}个'
       this.axisOption.xAxis[0].name = '（个）'
       this.chartObj.setOption(this.axisOption, true)
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biRankingSigningExportAPI, this.postParams)
     }
   }
 }

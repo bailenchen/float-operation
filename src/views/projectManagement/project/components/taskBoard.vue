@@ -102,7 +102,7 @@
               ref="taskRow"
               :key="i"
               :class="element.checked ? 'board-item board-item-active' : 'board-item'"
-              :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
+              :style="{'border-color': getPriorityColor(element.priority).color}"
               @click="showDetailView(element, index , i)">
               <xr-avatar
                 v-if="element.mainUser"
@@ -130,7 +130,7 @@
                   <i
                     :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}"
                     class="wukong wukong-time-task"/>
-                  <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ new Date(element.stopTime).getTime() | filterTimestampToFormatTime('MM-DD') }}截止</span>
+                  <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ element.stopTime | moment("MM-DD") }}截止</span>
                 </div>
                 <div
                   v-if="element.childAllCount > 0"
@@ -256,11 +256,6 @@
   </div>
 </template>
 <script>
-import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
-import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
-import draggable from 'vuedraggable'
-import scrollx from '@/directives/scrollx'
-
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
   workTaskClassSetAPI,
@@ -270,6 +265,13 @@ import {
   workTaskUpdateOrderAPI,
   workTaskUpdateClassOrderAPI
 } from '@/api/projectManagement/project'
+
+import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
+import draggable from 'vuedraggable'
+import scrollx from '@/directives/scrollx'
+
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
 
 export default {
   components: {
@@ -281,6 +283,8 @@ export default {
   directives: {
     scrollx
   },
+
+  mixins: [taskMixin],
 
   props: {
     workId: [String, Number],
@@ -416,6 +420,7 @@ export default {
      * 列表拖拽
      */
     moveEndParentTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt && evt.oldIndex != evt.newIndex) {
         workTaskUpdateClassOrderAPI({
           workId: this.workId,
@@ -441,6 +446,7 @@ export default {
      * 任务拖拽
      */
     moveEndSonTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt) {
         const fromId = evt.from.id
         const toId = evt.to.id
@@ -651,7 +657,7 @@ export default {
           this.taskList[data.section].list.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {
           const stopTime = new Date(data.value).getTime() / 1000 + 86399
-          if (stopTime > new Date(new Date()).getTime() / 1000) {
+          if (stopTime > new Date().getTime() / 1000) {
             this.taskList[data.section].list[data.index].isEnd = false
           } else {
             this.taskList[data.section].list[data.index].isEnd = true
@@ -722,6 +728,8 @@ export default {
   overflow-x: auto;
   position: relative;
   white-space: nowrap;
+  user-select: none;
+
   .board-column-content-parent {
     position: absolute;
     top: 0;

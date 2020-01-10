@@ -73,6 +73,11 @@
         <div id="axismain"/>
       </div>
       <div class="table-content">
+        <div class="handle-bar">
+          <el-button
+            class="export-btn"
+            @click="exportClick">导出</el-button>
+        </div>
         <el-table
           v-if="showTable"
           :data="list"
@@ -108,12 +113,13 @@
 <script>
 
 import { adminStructuresSubIndex, usersList } from '@/api/common'
-import { biAchievementStatistics } from '@/api/businessIntelligence/bi'
+import { biAchievementStatistics, biAchievementStatisticsExport } from '@/api/businessIntelligence/bi'
 
 import XhStructureCell from '@/components/CreateCom/XhStructureCell'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 
 import moment from 'moment'
+import base from './mixins/base'
 import sortMixins from './mixins/sort'
 import echarts from 'echarts'
 import { floatAdd } from '@/utils'
@@ -126,7 +132,7 @@ export default {
     XhStructureCell,
     XhUserCell
   },
-  mixins: [sortMixins],
+  mixins: [base, sortMixins],
   data() {
     return {
       pickerOptions: {
@@ -168,7 +174,22 @@ export default {
       axisOption: null
     }
   },
-  computed: {},
+  computed: {
+    postParams() {
+      const params = {
+        year: this.dateSelect,
+        type: this.typeSelect
+      }
+      params.isUser = this.dataSelect == 1 ? 0 : 1 // isUser  0 部门 1 员工
+      if (this.dataSelect == 1) {
+        params.deptId = this.deptSelectValue.length > 0 ? this.deptSelectValue[0].id : ''
+      } else {
+        params.userId = this.userSelectValue.length > 0 ? this.userSelectValue[0].userId : ''
+      }
+
+      return params
+    }
+  },
   mounted() {
     this.debouncedResize = debounce(300, this.resizeFn)
 
@@ -267,17 +288,8 @@ export default {
     /** 获取部门业绩完成信息 */
     getAhievementDatalist() {
       this.loading = true
-      const params = {
-        year: this.dateSelect,
-        type: this.typeSelect
-      }
-      params.isUser = this.dataSelect == 1 ? 0 : 1 // isUser  0 部门 1 员工
-      if (this.dataSelect == 1) {
-        params.deptId = this.deptSelectValue.length > 0 ? this.deptSelectValue[0].id : ''
-      } else {
-        params.userId = this.userSelectValue.length > 0 ? this.userSelectValue[0].userId : ''
-      }
-      biAchievementStatistics(params)
+
+      biAchievementStatistics(this.postParams)
         .then(res => {
           if (res.data && res.data.length > 0) {
             this.list = []
@@ -528,6 +540,13 @@ export default {
       axisChart.setOption(option, true)
       this.axisOption = option
       this.axisChart = axisChart
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biAchievementStatisticsExport, this.postParams)
     }
   }
 }

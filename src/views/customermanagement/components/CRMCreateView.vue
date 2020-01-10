@@ -362,35 +362,48 @@ export default {
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
       // 商机下处理商机状态
-      if (this.crmType == 'business' && item.data.formType == 'business_type') {
-        // 找到阶段数据
-        for (
-          let statusIndex = 0;
-          statusIndex < this.crmForm.crmFields.length;
-          statusIndex++
-        ) {
-          const statusElement = this.crmForm.crmFields[statusIndex]
-          if (statusElement.data.formType == 'business_status') {
-            for (let typeIndex = 0; typeIndex < data.data.length; typeIndex++) {
-              const typeElement = data.data[typeIndex]
-              if (typeElement.typeId == data.value) {
-                statusElement.data.setting = typeElement.statusList.map(
-                  function(item, index) {
-                    item['value'] = item.statusId
-                    return item
+      if (this.crmType == 'business') {
+        if (item.data.formType == 'business_type') {
+          // 找到阶段数据
+          for (
+            let statusIndex = 0;
+            statusIndex < this.crmForm.crmFields.length;
+            statusIndex++
+          ) {
+            const statusElement = this.crmForm.crmFields[statusIndex]
+            if (statusElement.data.formType == 'business_status') {
+              for (let typeIndex = 0; typeIndex < data.data.length; typeIndex++) {
+                const typeElement = data.data[typeIndex]
+                if (typeElement.typeId == data.value) {
+                  statusElement.data.setting = typeElement.statusList.map(
+                    function(item, index) {
+                      item['value'] = item.statusId
+                      return item
+                    }
+                  )
+                  if (data.type != 'init') {
+                    // 编辑初始化时 不重置
+                    statusElement.value = ''
                   }
-                )
-                if (data.type != 'init') {
-                  // 编辑初始化时 不重置
-                  statusElement.value = ''
+                  this.$set(this.crmForm.crmFields, statusIndex, statusElement)
+                  break
                 }
-                this.$set(this.crmForm.crmFields, statusIndex, statusElement)
-                break
               }
             }
           }
+        } else if (item.data.formType == 'product') {
+          for (
+            let index = 0;
+            index < this.crmForm.crmFields.length;
+            index++
+          ) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key === 'money') {
+              element['value'] = item.value.totalPrice || ''
+            }
+          }
         }
-      } else if (this.crmType == 'contract') {
+      } else if (this.crmType == 'contract') { // 合同更改
         if (item.data.formType == 'customer') {
           let contractForCount = 0
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {

@@ -112,10 +112,12 @@
 // API
 import { editTask } from '@/api/oamanagement/task'
 
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
+
 export default {
   name: 'TaskCell', // 任务cell
   components: {},
-  mixins: [],
+  mixins: [taskMixin],
   props: {
     data: Object,
     dataIndex: Number
@@ -126,26 +128,9 @@ export default {
   computed: {
     priority() {
       if (this.data.priority == 0 || !this.data.priority) {
-        return {
-          color: '#D8D8D8',
-          label: '无'
-        }
-      } else if (this.data.priority == 1) {
-        return {
-          color: '#67C23A',
-          label: '低'
-        }
-      } else if (this.data.priority == 2) {
-        return {
-          color: '#F7AD3D',
-          label: '中'
-        }
-      } else if (this.data.priority == 3) {
-        return {
-          color: '#F95A5A',
-          label: '高'
-        }
+        return this.priorityList[3] // 默认读取 priorityList 返回
       }
+      return this.getPriorityColor(this.data.priority)
     },
 
     showLabels() {

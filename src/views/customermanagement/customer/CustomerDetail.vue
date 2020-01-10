@@ -56,6 +56,7 @@
                 :detail="detailData"
                 :type-list="logTyps"
                 :id="id"
+                :pool-id="poolId"
                 :handle="activityHandle"
                 :is-seas="isSeasDetail"
                 :crm-type="crmType"
@@ -76,6 +77,7 @@
                 <chiefly-contacts
                   :contacts-id="firstContactsId"
                   :id="id"
+                  :pool-id="poolId"
                   :crm-type="crmType"
                   :is-seas="isSeasDetail"
                   @add="addChieflyContacts" />
@@ -326,9 +328,15 @@ export default {
     getDetial() {
       this.firstContactsId = ''
       this.loading = true
-      crmCustomerRead({
+      const params = {
         customerId: this.id
-      })
+      }
+
+      if (this.poolId) {
+        params.poolId = this.poolId
+      }
+
+      crmCustomerRead(params)
         .then(res => {
           this.loading = false
           this.detailData = res.data

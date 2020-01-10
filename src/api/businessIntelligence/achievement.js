@@ -26,6 +26,31 @@ export function biAchievementAnalysisAPI(data) {
   }
 }
 
+export function biAchievementAnalysisExportAPI(data) {
+  if (data.type === 'count') {
+    return request({
+      url: 'biEmployee/contractNumStatsExport',
+      method: 'post',
+      data: data,
+      responseType: 'blob'
+    })
+  } else if (data.type === 'money') {
+    return request({
+      url: 'biEmployee/contractMoneyStatsExport',
+      method: 'post',
+      data: data,
+      responseType: 'blob'
+    })
+  } else if (data.type === 'back') {
+    return request({
+      url: 'biEmployee/receivablesMoneyStatsExport',
+      method: 'post',
+      data: data,
+      responseType: 'blob'
+    })
+  }
+}
+
 /**
  * 合同汇总表
  * @param {*} data
@@ -35,5 +60,14 @@ export function biAchievementSummaryAPI(data) {
     url: 'biEmployee/totalContract',
     method: 'post',
     data: data
+  })
+}
+
+export function biAchievementSummaryExportAPI(data) {
+  return request({
+    url: 'biEmployee/totalContractExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }

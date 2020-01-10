@@ -81,6 +81,7 @@ export default {
   },
   props: {
     id: [Number, String],
+    poolId: [Number, String],
     contactsId: [Number, String],
     crmType: {
       required: true,
@@ -196,10 +197,17 @@ export default {
      */
     getBaseInfo() {
       this.loading = true
-      filedGetInformation({
+      const params = {
         types: crmTypeModel[this.crmType],
         id: this.id
-      })
+      }
+
+      // 如果有公海id 需上传确定展示字段
+      if (this.poolId) {
+        params.poolId = this.poolId
+      }
+
+      filedGetInformation(params)
         .then(res => {
           this.list = res.data
           this.loading = false

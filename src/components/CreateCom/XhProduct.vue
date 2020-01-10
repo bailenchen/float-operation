@@ -31,12 +31,15 @@
         label="产品名称"/>
       <el-table-column
         prop="categoryName"
+        show-overflow-tooltip
         label="产品类别"/>
       <el-table-column
         prop="unit"
+        show-overflow-tooltip
         label="单位"/>
       <el-table-column
         prop="price"
+        show-overflow-tooltip
         label="标准价格"/>
       <el-table-column label="售价">
         <template slot-scope="scope">

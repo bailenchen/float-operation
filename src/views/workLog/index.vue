@@ -79,7 +79,12 @@
             prefix-icon="el-icon-search"
             @blur="refreshList"
             @keyup.enter.native="refreshList"/>
-          <span class="total-count">已筛选出<span>{{ totalCount }}</span>项</span>
+          <div class="filter-right">
+            <span class="total-count">已筛选出<span>{{ totalCount }}</span>项</span>
+            <el-button
+              class="export-btn"
+              @click="logExportClick">导出</el-button>
+          </div>
         </flexbox>
       </div>
 
@@ -145,7 +150,8 @@ import {
   journalQueryBulletinAPI,
   journalQueryRecordCountAPI,
   journalQueryBulletinByTypeAPI,
-  journalGetLogWelcomeAPI } from '@/api/oamanagement/journal'
+  journalGetLogWelcomeAPI,
+  OaLogExportAPI } from '@/api/oamanagement/journal'
 import { crmIndexIndex } from '@/api/customermanagement/workbench'
 
 import ReportMenu from './components/ReportMenu'
@@ -159,6 +165,7 @@ import ReportList from '@/views/customermanagement/workbench/components/reportLi
 
 import { mapGetters } from 'vuex'
 import moment from 'moment'
+import { downloadExcelWithResData } from '@/utils/index'
 import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
@@ -766,6 +773,29 @@ export default {
           }
         ]
       }[type]
+    },
+
+    /**
+     * 日志导出功能
+     */
+    logExportClick() {
+      if (this.filterForm.categoryId == 0) {
+        this.$message.error('请先选择”日报、周报、月报“中的一种类型导出')
+        return
+      }
+
+      this.loading = true
+      OaLogExportAPI({
+        search: this.search,
+        ...this.filterForm
+      })
+        .then(res => {
+          downloadExcelWithResData(res)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }
