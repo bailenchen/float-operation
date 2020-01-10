@@ -15,21 +15,23 @@ let targetDrag = { // 托拽
 let dom = null
 let ignoreClass = [] // 忽略的类名
 
-const scrollMousedown = event => {
-  dom.style.cursor = 'pointer'
-  targetDrag.isDown = true
-  targetDrag.coord.x = event.pageX
-  targetDrag.coord.y = event.pageY
+const scrollMousedown = function(event) {
+  if (this && this.contains(event.target)) {
+    dom.style.cursor = 'pointer'
+    targetDrag.isDown = true
+    targetDrag.coord.x = event.pageX
+    targetDrag.coord.y = event.pageY
+  }
 }
 
-const scrollMouseup = event => {
+const scrollMouseup = function(event) {
   dom.style.cursor = 'default'
   targetDrag.isDown = false
   targetDrag.coord.x = 0
   targetDrag.coord.y = 0
 }
 
-const scrollMousemove = event => {
+const scrollMousemove = function(event) {
   if (targetDrag.isDown) {
     const movX = targetDrag.coord.x - event.pageX
     targetDrag.coord.x = event.pageX
@@ -37,17 +39,19 @@ const scrollMousemove = event => {
   }
 }
 
-// const scrollMouseout = event => {
+// const scrollMouseout = function (event) {
 //   dom.style.cursor = 'default'
 //   targetDrag.isDown = false
 // }
 
-const scrollMousewheel = event => {
+const scrollMousewheel = function(event) {
   if (checkIsIgnore(event)) {
     dom.style.cursor = 'default'
     targetDrag.isDown = false
   } else {
-    dom.scrollLeft += event.deltaY
+    if (this && this.contains(event.target)) {
+      dom.scrollLeft += event.deltaY
+    }
   }
 }
 
@@ -104,21 +108,21 @@ export default Vue.directive('scrollx', {
     dom = el
 
     // 鼠标按下
-    on(document, 'mousedown', scrollMousedown)
+    on(document, 'mousedown', scrollMousedown.bind(el))
     // on(document, 'mouseout', scrollMouseout)
-    on(document, 'wheel', scrollMousewheel)
+    on(document, 'wheel', scrollMousewheel.bind(el))
     // 鼠标释放
-    on(document, 'mouseup', scrollMouseup)
+    on(document, 'mouseup', scrollMouseup.bind(el))
     // 鼠标托拽
-    on(document, 'mousemove', scrollMousemove)
+    on(document, 'mousemove', scrollMousemove.bind(el))
   },
 
   unbind: function(el) {
-    off(document, 'mousedown', scrollMousedown)
-    off(document, 'mouseup', scrollMouseup)
+    off(document, 'mousedown', scrollMousedown.bind(el))
+    off(document, 'mouseup', scrollMouseup.bind(el))
     // off(document, 'mouseout', scrollMouseout)
-    off(document, 'wheel', scrollMousewheel)
-    off(document, 'mousemove', scrollMousemove)
+    off(document, 'wheel', scrollMousewheel.bind(el))
+    off(document, 'mousemove', scrollMousemove.bind(el))
 
     // 清空
     targetDrag = { // 托拽
