@@ -16,6 +16,16 @@ export function biRankingContractAPI(data) {
   })
 }
 
+export function biRankingContractExportAPI(data) {
+  return request({
+    url: 'biRanking/contractRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+
 /**
  * 回款金额排行
  * @param {*} data
@@ -25,6 +35,15 @@ export function biRankingReceivablesAPI(data) {
     url: 'biRanking/receivablesRanKing',
     method: 'post',
     data: data
+  })
+}
+
+export function biRankingReceivablesExportAPI(data) {
+  return request({
+    url: 'biRanking/receivablesRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
@@ -40,6 +59,15 @@ export function biRankingSigningAPI(data) {
   })
 }
 
+export function biRankingSigningExportAPI(data) {
+  return request({
+    url: 'biRanking/contractCountRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 产品销量排行
  * @param {*} data
@@ -49,6 +77,15 @@ export function biRankingProductAPI(data) {
     url: 'biRanking/productCountRanKing',
     method: 'post',
     data: data
+  })
+}
+
+export function biRankingProductExportAPI(data) {
+  return request({
+    url: 'biRanking/productCountRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
@@ -64,6 +101,15 @@ export function biRankingAddCustomerAPI(data) {
   })
 }
 
+export function biRankingAddCustomerExportAPI(data) {
+  return request({
+    url: 'biRanking/customerCountRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 新增联系人数排行
  * @param {*} data
@@ -76,6 +122,16 @@ export function biRankingAddContactsAPI(data) {
   })
 }
 
+export function biRankingAddContactsExportAPI(data) {
+  return request({
+    url: 'biRanking/contactsCountRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+
 /**
  * 跟进次数排行
  * @param {*} data
@@ -85,6 +141,15 @@ export function biRankingRecordNunAPI(data) {
     url: 'biRanking/recordCountRanKing',
     method: 'post',
     data: data
+  })
+}
+
+export function biRankingRecordNunExportAPI(data) {
+  return request({
+    url: 'biRanking/recordCountRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
@@ -100,6 +165,15 @@ export function biRankingRecordCustomerAPI(data) {
   })
 }
 
+export function biRankingRecordCustomerExportAPI(data) {
+  return request({
+    url: 'biRanking/customerGenjinCountRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 出差次数排行
  * @param {*} data
@@ -109,5 +183,14 @@ export function biRankingExamineAPI(data) {
     url: 'biRanking/travelCountRanKing',
     method: 'post',
     data: data
+  })
+}
+
+export function biRankingExamineExportAPI(data) {
+  return request({
+    url: 'biRanking/travelCountRanKingExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }

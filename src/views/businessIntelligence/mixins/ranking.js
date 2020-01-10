@@ -76,6 +76,8 @@ export default {
         }]
       },
 
+      postParams: {}, // 筛选参数
+
       list: [],
       fieldList: []
     }
