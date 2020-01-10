@@ -17,6 +17,11 @@
         <div id="axismain"/>
       </div>
       <div class="table-content">
+        <div class="handle-bar">
+          <el-button
+            class="export-btn"
+            @click="exportClick">导出</el-button>
+        </div>
         <el-table
           v-if="showTable"
           :data="list"
@@ -46,7 +51,10 @@
 import base from '../mixins/base'
 import sortMixins from '../mixins/sort'
 import echarts from 'echarts'
-import { biCustomerRecordModeAPI } from '@/api/businessIntelligence/customer'
+import {
+  biCustomerRecordModeAPI,
+  biCustomerRecordModeExportAPI
+} from '@/api/businessIntelligence/customer'
 
 export default {
   /** 客户跟进方式分析 */
@@ -56,6 +64,8 @@ export default {
     return {
       loading: false,
       showType: 'pie',
+
+      postParams: {}, // 筛选参数
 
       axisOption: null,
 
@@ -88,6 +98,7 @@ export default {
       }
     },
     getDataList(params) {
+      this.postParams = params
       biCustomerRecordModeAPI(params)
         .then(res => {
           this.loading = false
@@ -252,6 +263,13 @@ export default {
           }
         ]
       }
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biCustomerRecordModeExportAPI, this.postParams)
     }
   }
 }

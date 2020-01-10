@@ -1,6 +1,7 @@
 import filtrateHandleView from '../components/filtrateHandleView'
 
 import { debounce } from 'throttle-debounce'
+import { downloadExcelWithResData } from '@/utils/index'
 
 export default {
   data() {
@@ -64,6 +65,22 @@ export default {
       if (this.chartOtherObj) {
         this.chartOtherObj.resize()
       }
+    },
+
+    /**
+     * 审批导出
+     */
+    requestExportInfo(request, params) {
+      return new Promise((resolve, reject) => {
+        request(params)
+          .then(res => {
+            downloadExcelWithResData(res)
+            resolve && resolve(res)
+          })
+          .catch(err => {
+            reject && reject(err)
+          })
+      })
     }
   },
 

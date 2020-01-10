@@ -19,6 +19,15 @@ export function biCustomerTotalListAPI(data) {
   })
 }
 
+export function biCustomerTotalListExportAPI(data) {
+  return request({
+    url: 'biCustomer/totalCustomerTableExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 员工客户跟进次数分析
  * @param {*} data
@@ -43,6 +52,14 @@ export function biCustomerRecordListAPI(data) {
   })
 }
 
+export function biCustomerRecordListExportAPI(data) {
+  return request({
+    url: 'biCustomer/customerRecordInfoExport',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 员工跟进方式分析
  * @param {*} data
@@ -52,6 +69,15 @@ export function biCustomerRecordModeAPI(data) {
     url: 'biCustomer/customerRecodCategoryStats',
     method: 'post',
     data: data
+  })
+}
+
+export function biCustomerRecordModeExportAPI(data) {
+  return request({
+    url: 'biCustomer/customerRecodCategoryStatsExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
