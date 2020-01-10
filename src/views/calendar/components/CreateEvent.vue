@@ -55,7 +55,7 @@
             <el-button style="font-size: 14px" type="text" @click="choseMore = true">添加更多选项</el-button>
           </el-form-item>
           <template v-if="choseMore">
-            <el-form-item label="重复">
+            <el-form-item v-if="!editAll" label="重复">
               <el-select
                 v-model="form.repetitionType"
                 placeholder="选择重复类型"
@@ -142,6 +142,17 @@ export default {
       default: () => {
         return []
       }
+    },
+    todayDetailData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    // 是否编辑所有的系列
+    editAll: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -185,9 +196,18 @@ export default {
   watch: {
     showCreate(val) {
       this.visible = val
-      this.form.startTime = this.selectDiv + ' 08:00:00'
-      this.colorItem = this.cusCheck[0].color
+      if (val) {
+        if (this.selectDiv) {
+          this.form.startTime = this.selectDiv + ' 08:00:00'
+        } else {
+          this.form.startTime = ''
+        }
+        this.getDetail()
+        this.choseMore = false
+      }
     }
+  },
+  mounted() {
   },
   methods: {
     /**
@@ -203,6 +223,30 @@ export default {
       }
     },
 
+    /**
+     * 详情
+     */
+    getDetail() {
+      const length = Object.keys(this.todayDetailData).length
+      if (length !== 0) {
+        this.form = {
+          title: this.todayDetailData.title,
+          typeId: this.todayDetailData.typeId, // 日历类型
+          ownerUserIds: this.todayDetailData.ownerUserIds,
+          repetitionType: this.todayDetailData.repetitionType || '',
+          startTime: this.todayDetailData.startTime || '',
+          endTime: this.todayDetailData.endTime || ''
+        }
+        this.cusCheck.forEach(item => {
+          if (item.typeId === this.form.typeId) {
+            this.colorItem = item.color
+            return
+          }
+        })
+      } else {
+        this.colorItem = this.cusCheck[0].color
+      }
+    },
     /**
      * 选择类型
      */
@@ -287,7 +331,6 @@ export default {
         }
         this.showRepeat = false
       } else {
-        this.$emit('handleSure', this.form, this.colorItem)
         this.createSchedule()
       }
     },
@@ -305,6 +348,7 @@ export default {
       }
       canlendarSaveAPI(params).then(res => {
         this.$message.success('新建日程成功')
+        this.$emit('createSuccess')
       }).catch(() => {})
     }
   }

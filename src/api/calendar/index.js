@@ -44,3 +44,18 @@ export function canlendarQueryListAPI(data) {
     data: data
   })
 }
+
+/**
+ * 编辑日程
+ *
+ */
+export function canlendarUpdateAPI(data) {
+  return request({
+    url: 'OaEvent/update',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

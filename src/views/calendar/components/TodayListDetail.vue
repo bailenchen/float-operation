@@ -7,7 +7,7 @@
     @close="close">
     <div slot="title">
       <span :style="{backgroundColor: todayDetailData.backgroundColor}" class="block"/>
-      <span class="title-text">{{ todayDetailData.title }}</span>
+      <span class="title-text">{{ todayDetailData.headTitle }}</span>
       <span class="title-message">{{ todayDetailData.name }}创建于{{ todayDetailData.createTime }}
         <el-dropdown
           trigger="click"
@@ -17,7 +17,7 @@
             <el-dropdown-item
               v-for="(item, index) in moreTypes"
               :key="index"
-              :command="item">{{ item }}</el-dropdown-item>
+              :command="item.type">{{ item.title }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </span>
@@ -133,6 +133,9 @@
     </template>
     <create-event
       :show-create="showCreate"
+      :edit-all="editAll"
+      :cus-check="cusCheck"
+      :today-detail-data="todayDetailData"
       title="编辑日程"
       @handleSure="handleSure"
       @close="showCreate = false"/>
@@ -146,6 +149,9 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   crmMessageTodayCustomerAPI
 } from '@/api/customermanagement/message'
+import {
+  canlendarDeleteAPI
+} from '@/api/calendar'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import CreateEvent from './CreateEvent'
 import moment from 'moment'
@@ -164,6 +170,12 @@ export default {
       type: Object,
       default: () => {
         return {}
+      }
+    },
+    cusCheck: {
+      type: Array,
+      default: () => {
+        return []
       }
     }
   },
@@ -186,8 +198,14 @@ export default {
         { customerName: '申月' }
       ],
       total: 0,
-      moreTypes: ['删除', '编辑'],
-      showCreate: false
+      moreTypes: [
+        { title: '只删除本次', type: 'delete' },
+        { title: '删除此系列', type: 'deleteAll' },
+        { title: '只编辑本次', type: 'edit' },
+        { title: '编辑本系列', type: 'editAll' }],
+      showCreate: false,
+      // 是否编辑整个系列
+      editAll: false
     }
   },
   computed: {
@@ -204,6 +222,8 @@ export default {
     showTodayDetail(val) {
       this.dialogVisible = val
       if (val) {
+        console.log(this.todayDetailData)
+
         if (this.todayDetailData.groupId == 0) {
           this.getFieldList()
         }
@@ -337,26 +357,40 @@ export default {
      * 更多操作
      */
     handleTypeDrop(command) {
-      if (command === '删除') {
-        this.delete()
-      } else if (command === '编辑') {
-        this.edit()
+      if (command === 'delete') {
+        this.delete(command)
+      } else if (command === 'deleteAll') {
+        this.delete(command)
+      } else if (command === 'edit') {
+        this.edit(command)
+      } else if (command === 'editAll') {
+        this.edit(command)
       }
     },
 
     /**
      * 删除
      */
-    delete() {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+    delete(type) {
+      this.$confirm('此操作将永久删除该日程, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
+        const timestemp = new Date(this.todayDetailData.startTime).getTime()
+        const params = {
+          eventId: this.todayDetailData.id,
+          time: timestemp
+        }
+        if (type === 'delete') {
+          params.type = 1
+        } else if (type === 'deleteAll') {
+          params.type = 2
+        }
+        canlendarDeleteAPI(params).then(res => {
+          this.$message.success('删除成功')
+          this.$emit('deleteSuccess')
+        }).catch(() => {})
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -368,7 +402,12 @@ export default {
     /**
      * 编辑
      */
-    edit() {
+    edit(type) {
+      if (type === 'editAll') {
+        this.editAll = true
+      } else {
+        this.editAll = false
+      }
       this.showCreate = true
     },
 

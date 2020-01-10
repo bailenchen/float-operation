@@ -1,5 +1,5 @@
 <template>
-  <flexbox :style="{height: contentHeight + 'px'}" class="calendar-box">
+  <flexbox v-loading="loading" :style="{height: contentHeight + 'px'}" class="calendar-box">
     <el-button type="warning" icon="el-icon-plus" @click="createEvents">新建日程</el-button>
     <div class="box-left">
       <div class="left-title" >
@@ -80,12 +80,14 @@
       :select-div="selectDiv"
       :color-list="colorList"
       :cus-check="cusCheck"
-      @handleSure="handleSure"
+      @createSuccess="createSuccess"
       @close="showCreate = false"/>
     <!-- 今日需..的详情 -->
     <today-list-detail
       :show-today-detail="showTodayDetail"
+      :cus-check="cusCheck"
       :today-detail-data="todayDetailData"
+      @deleteSuccess="deleteSuccess"
       @close="showTodayDetail = false"/>
   </flexbox>
 </template>
@@ -123,6 +125,7 @@ export default {
   },
   data: function() {
     return {
+      loading: false,
       contentHeight: document.documentElement.clientHeight - 80,
       // 你需要用到的插件
       calendarPlugins: [
@@ -203,13 +206,17 @@ export default {
      * 查询列表
      */
     getList() {
+      this.loading = true
       canlendarQueryListAPI(this.activeTime).then(res => {
         this.calendarEvents = []
         this.calendarArr = []
         res.data.forEach(item => {
           this.handleSure(item, '#53D397')
         })
-      }).catch(() => {})
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
@@ -363,9 +370,12 @@ export default {
         groupId: data.event.groupId,
         backgroundColor: data.event.backgroundColor
       }
+      // 不是组件自带的字段都会被插入到entendedProps里面
       if (data.event.extendedProps) {
         this.todayDetailData.name = data.event.extendedProps.name
         this.todayDetailData.createTime = data.event.extendedProps.createTime
+        this.todayDetailData.headTitle = data.event.extendedProps.headTitle
+        this.todayDetailData.typeId = data.event.extendedProps.typeId || 3
       }
       this.showTodayDetail = true
     },
@@ -412,7 +422,7 @@ export default {
     },
 
     /**
-     * 确定新建日程
+     * 新建日程
      */
     handleSure(data, color) {
       this.calendarEvents.push({
@@ -422,9 +432,26 @@ export default {
         color: color,
         groupId: 1,
         name: '张三',
+        headTitle: '集体会议',
         createTime: '2019-12-20',
         end: moment(data.endTime).format('YYYY-MM-DD')
       })
+    },
+
+    /**
+     * 新建或者编辑成功的回调
+     */
+    createSuccess() {
+      this.showCreate = false
+      this.getList()
+    },
+
+    /**
+     * 删除成功的回调
+     */
+    deleteSuccess() {
+      this.showTodayDetail = false
+      this.getList()
     }
   }
 }
