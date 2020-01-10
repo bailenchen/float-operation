@@ -309,13 +309,13 @@ export default {
 
           if (limitFields.includes(item.name)) {
             this.$message({
-              message: `（${item.name}）自定义字段标识名与系统字段重复，请使用其他字段！`,
+              message: `[${item.name}]自定义字段标识名与系统字段重复，请使用其他字段！`,
               type: 'error'
             })
             return
           } else if (names.includes(item.name)) {
             this.$message({
-              message: `第${(index + 1)}行（${item.name}）自定义字段标识名重复`,
+              message: `第${(index + 1)}行[${item.name}]自定义字段标识名重复`,
               type: 'error'
             })
             return
