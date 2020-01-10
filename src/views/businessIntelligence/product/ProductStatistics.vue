@@ -7,7 +7,12 @@
       class="filtrate-bar"
       module-type="product"
       @load="loading=true"
-      @change="getProductDatalist"/>
+      @change="getProductDatalist">
+      <el-button
+        class="export-button"
+        type="primary"
+        @click.native="exportClick">导出</el-button>
+    </filtrate-handle-view>
     <div class="content">
       <el-table
         id="crm-table"
@@ -46,7 +51,7 @@
 </template>
 
 <script>
-import { biProductStatistics } from '@/api/businessIntelligence/bi'
+import { biProductStatistics, biProductStatisticsExport } from '@/api/businessIntelligence/bi'
 import ContractDetail from '@/views/customermanagement/contract/ContractDetail'
 import CustomerDetail from '@/views/customermanagement/customer/CustomerDetail'
 import ProductDetail from '@/views/customermanagement/product/ProductDetail'
@@ -172,6 +177,7 @@ export default {
     },
     /** 获取部门业绩完成信息 */
     getProductDatalist(params) {
+      this.postParams = params
       this.loading = true
       biProductStatistics(params)
         .then(res => {
@@ -295,6 +301,13 @@ export default {
       this.spanList = spanList
       newList[newList.length - 1].productPrice = '总计'
       this.newList = newList
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biProductStatisticsExport, this.postParams)
     }
   }
 }

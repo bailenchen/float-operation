@@ -12,6 +12,15 @@ export function biAchievementStatistics(data) {
   })
 }
 
+export function biAchievementStatisticsExport(data) {
+  return request({
+    url: 'bi/taskCompleteStatisticsExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 产品销售情况统计
  * @param {*} data
@@ -21,6 +30,15 @@ export function biProductStatistics(data) {
     url: 'bi/productStatistics',
     method: 'post',
     data: data
+  })
+}
+
+export function biProductStatisticsExport(data) {
+  return request({
+    url: 'bi/productStatisticsExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
