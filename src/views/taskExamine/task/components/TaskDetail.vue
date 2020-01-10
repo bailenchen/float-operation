@@ -1159,12 +1159,15 @@ export default {
       params[type] = this.taskData[type]
       setTaskAPI(params)
         .then(res => {
-          this.$emit('on-handle', {
-            type: type,
-            value: this[type],
-            index: this.detailIndex,
-            section: this.detailSection
-          })
+          // 停止时间回调
+          if (type == 'stopTime') {
+            this.$emit('on-handle', {
+              type: 'change-stop-time',
+              value: this.taskData[type],
+              index: this.detailIndex,
+              section: this.detailSection
+            })
+          }
         })
         .catch(() => {})
     },
