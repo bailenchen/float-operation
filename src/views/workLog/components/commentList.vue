@@ -190,7 +190,7 @@ export default {
         } else {
           res.data.replyUser = f_comment.user
         }
-        this.list[arr[0]].childCommentList.unshift(res.data)
+        this.list[arr[0]].childCommentList.push(res.data)
         this.replyIndex = null
         this.commentLoading = false
       }).catch(() => {
