@@ -27,7 +27,17 @@ export default {
         '#F7A57C',
         '#F661AC',
         '#8652EE'
-      ]
+      ],
+
+      // echart 操作项
+      toolbox: {
+        showTitle: false,
+        feature: {
+          saveAsImage: {
+            pixelRatio: 2
+          }
+        }
+      }
     }
   },
 
