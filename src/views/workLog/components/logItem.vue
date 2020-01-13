@@ -377,7 +377,7 @@ export default {
         //   data: res.data,
         //   index: this.index
         // })
-        this.replyList.unshift(res.data)
+        this.replyList.push(res.data)
         this.commentLoading = false
         this.showReply = false
         this.$nextTick(() => {
@@ -425,9 +425,10 @@ export default {
       })
         .then(res => {
           const list = res.data || []
-          this.replyList = list.sort((a, b) => {
-            return new Date(b.createTime) - new Date(a.createTime)
-          }) || []
+          this.replyList = list
+          // this.replyList = list.sort((a, b) => {
+          //   return new Date(b.createTime) - new Date(a.createTime)
+          // }) || []
         })
         .catch(() => {})
     },

@@ -517,9 +517,10 @@ export default {
       })
         .then(res => {
           const list = res.data || []
-          this.replyList = list.sort((a, b) => {
-            return new Date(b.createTime) - new Date(a.createTime)
-          }) || []
+          this.replyList = list
+          // this.replyList = list.sort((a, b) => {
+          //   return new Date(b.createTime) - new Date(a.createTime)
+          // }) || []
         })
         .catch(() => {})
     },
@@ -555,7 +556,7 @@ export default {
         //   index: this.index
         // })
         this.$refs.f_reply.commentsTextarea = ''
-        this.replyList.unshift(res.data)
+        this.replyList.push(res.data)
         this.commentLoading = false
       }).catch(() => {
         this.commentLoading = false

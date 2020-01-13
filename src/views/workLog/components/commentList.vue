@@ -148,13 +148,13 @@ export default {
     /**
      * 子评论排序
      */
-    sortChildComment(childList) {
-      let arr = [].concat(childList || [])
-      arr = arr.sort((a, b) => {
-        return new Date(b.createTime) - new Date(a.createTime)
-      }) || []
-      return arr
-    },
+    // sortChildComment(childList) {
+    //   let arr = [].concat(childList || [])
+    //   arr = arr.sort((a, b) => {
+    //     return new Date(b.createTime) - new Date(a.createTime)
+    //   }) || []
+    //   return arr
+    // },
     /**
      * 回复
      * @param data

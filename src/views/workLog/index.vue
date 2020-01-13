@@ -497,7 +497,7 @@ export default {
      * 添加回复
      */
     handleAddComment(data) {
-      this.listData[data.index].replyList.unshift(data.data)
+      this.listData[data.index].replyList.push(data.data)
     },
 
     /**
