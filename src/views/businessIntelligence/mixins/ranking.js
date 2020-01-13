@@ -6,6 +6,14 @@ export default {
       loading: false,
       axisOption: {
         color: ['#6ca2ff'],
+        toolbox: {
+          showTitle: false,
+          feature: {
+            saveAsImage: {
+              pixelRatio: 2
+            }
+          }
+        },
         tooltip: {
           trigger: 'axis',
           formatter: '{b} : {c}元',

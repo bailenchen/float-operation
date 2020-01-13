@@ -176,6 +176,7 @@ export default {
           }
         ],
         color: this.chartColors,
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'item',
           formatter: '{b} : {c}'

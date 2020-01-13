@@ -146,6 +146,7 @@ export default {
           '#FFB270',
           '#FECD51'
         ],
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'axis',
           axisPointer: {
