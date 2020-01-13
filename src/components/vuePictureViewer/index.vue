@@ -478,8 +478,7 @@ export default {
       if (this.currentFile.url) {
         const urlS = this.currentFile.url.split('?')
         const url = urlS.length > 1 ? urlS[1] : ''
-        console.log('-------', `${WKConfig.getLocationOrigin()}/onlinePreview?${url}`, window.location)
-        window.open(`${WKConfig.getLocationOrigin()}/onlinePreview?${url}`)
+        window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
       }
     },
     getShowTypeInfo(name) {
