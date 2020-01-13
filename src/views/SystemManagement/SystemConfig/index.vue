@@ -18,17 +18,18 @@
             <p class="info-title">账号使用情况</p>
             <radial-progress-bar
               :diameter="126"
-              :completed-steps="100"
+              :completed-steps="systemInfo.userProgress"
               :total-steps="100"
               :stroke-width="10"
               inner-stroke-color="#E8F2FA"
               start-color="#2362FB"
               stop-color="#2362FB"
               class="progress">
-              <p class="progress-title">可用账号</p>
-              <p class="progress-value">{{ systemInfo.usingNum }}<span>个</span></p>
+              <p class="progress-title">剩余可用</p>
+              <p class="progress-value">{{ systemInfo.allNum - systemInfo.usingNum }}<span>个</span></p>
             </radial-progress-bar>
-            <p class="info-value">可用账号：{{ systemInfo.usingNum }}个</p>
+            <p class="info-value">已购买用户数：{{ systemInfo.allNum }}个</p>
+            <p class="info-value">已使用用户数：{{ systemInfo.usingNum }}个</p>
           </flexbox-item>
           <flexbox-item class="progress-info-item">
             <p class="info-title">租期到期时间</p>
@@ -58,11 +59,11 @@
               start-color="#FF9B25"
               stop-color="#FF9B25"
               class="progress">
-              <p class="progress-title">已使用</p>
-              <p class="progress-value">{{ systemInfo.size }}</p>
+              <p class="progress-title">剩余空间</p>
+              <p class="progress-value">{{ systemInfo.surplusSize }}</p>
             </radial-progress-bar>
             <p class="info-value">总存储空间：{{ systemInfo.allSize }}</p>
-            <p class="info-value">已使用：{{ systemInfo.size }}</p>
+            <p class="info-value">已使用空间：{{ systemInfo.size }}</p>
           </flexbox-item>
         </flexbox>
       </div>
@@ -206,16 +207,25 @@ export default {
       this.loading = true
       adminSystemConfigIndex().then(res => {
         const data = res.data || {}
+        if (data.usingNum != data.allNum) {
+          data.userProgress = Math.floor(((data.allNum - data.usingNum) / data.allNum) * 100)
+        } else {
+          data.userProgress = 0
+        }
+
         const startMoment = moment(data.startTime)
         const endMoment = moment(data.endTime)
-
-        // data.startTime = startMoment.format('YYYY-MM-DD')
-        // data.endTime = endMoment.format('YYYY-MM-DD')
         data.surplusDays = endMoment.diff(moment(), 'days')
         const totalDays = endMoment.diff(startMoment, 'days')
         data.dayProgress = data.surplusDays > 0 ? Math.floor((data.surplusDays / totalDays) * 100) : 0
 
-        data.sizeProgress = data.size > 0 ? (data.size / data.allSize) * 100 : 100
+        if (data.size != data.allSize) {
+          data.sizeProgress = Math.floor(((data.allSize - data.size) / data.allSize) * 100)
+        } else {
+          data.sizeProgress = 0
+        }
+
+        data.surplusSize = fileSize(data.allSize - data.size)
         data.size = fileSize(data.size)
         data.allSize = fileSize(data.allSize)
 
