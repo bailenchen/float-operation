@@ -790,7 +790,7 @@ export default {
 
   .board-column-wrapper {
     max-height: 100%;
-    padding: 10px;
+    padding: 10px 0;
     vertical-align: top;
     border-radius: $xr-border-radius-base;
     border: 1px solid $xr-border-color-base;
@@ -798,7 +798,7 @@ export default {
     margin-right: 14px;
     position: relative;
     .board-column-header {
-      padding: 10px 3px 17px 3px;
+      padding: 10px 13px 17px;
       color: #333;
       .text {
         font-size: 15px;
@@ -822,9 +822,8 @@ export default {
       }
     }
     .board-column-content {
-      margin-right: -10px;
-      padding-right: 14px;
-      padding-left: 7px;
+      min-height: 20px;
+      padding: 0 10px;
       flex: 1;
       overflow: auto;
       .board-item {
