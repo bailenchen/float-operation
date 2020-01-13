@@ -165,6 +165,7 @@ export default {
 
       this.axisOption = {
         color: ['#6ca2ff'],
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -235,6 +236,7 @@ export default {
     initPie() {
       this.pieOption = {
         color: this.chartColors,
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'item',
           formatter: '{b} : {c}% '

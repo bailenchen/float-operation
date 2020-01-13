@@ -6,6 +6,7 @@
         :user-checked-data="filterValue.users"
         radio
         @popoverSubmit="userStrucSelect">
+        <span slot="dep-footer">包含：下级部门数据</span>
         <flexbox slot="membersDep" class="user-box">
           <i v-if="avatarData.showIcon" class="wk wk-multi-user user-icon" />
           <xr-avatar

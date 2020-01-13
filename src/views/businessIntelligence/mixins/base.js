@@ -31,7 +31,17 @@ export default {
       currentPage: 1,
       pageSizes: [15, 30, 45, 60],
       pageSize: 0,
-      total: 0
+      total: 0,
+
+      // echart 操作项
+      toolbox: {
+        showTitle: false,
+        feature: {
+          saveAsImage: {
+            pixelRatio: 2
+          }
+        }
+      }
     }
   },
 

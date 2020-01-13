@@ -137,6 +137,8 @@ export default {
           ctx.fillStyle = '#999'
           ctx.fillText(this.info.companyName, 42, 735)
 
+          ctx.fillStyle = '#fff'
+          ctx.fillRect(405, 578, 150, 150)
           ctx.drawImage(this.EWurlImg, 405, 578, 150, 150)
         })
       }
@@ -293,6 +295,7 @@ export default {
   height: 116.25px;
   margin: 10px 10px 10px 0px;
   border-radius: 6px;
+  cursor: pointer;
 }
 .preview-image {
   margin: 20px 0 0 15px;
