@@ -20,7 +20,7 @@
       <div
         v-if="!bigShowType.isImage"
         class="file-show">
-        <!-- <div class="title">该附件格式不支持预览，请下载后查看</div> -->
+        <div class="title">该附件格式不支持预览，请下载后查看</div>
         <i
           class="el-icon-close"
           @click="closeViewer" />
@@ -29,10 +29,10 @@
             :src="bigShowType.icon"
             class="file-icon">
           <div class="file-handle">
-            <el-button
+            <!-- <el-button
               type="primary"
               plain
-              @click.native="previewFile">预览</el-button>
+              @click.native="previewFile">预览</el-button> -->
             <el-button
               type="primary"
               @click.native="downloadFile">下载</el-button>
