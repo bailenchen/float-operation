@@ -230,3 +230,61 @@ export function workupdateWorkOrderAPI(data) {
     data: data
   })
 }
+
+/**
+ * 项目任务导出
+ * @param {*} data
+ */
+export function workTaskExportAPI(data) {
+  return request({
+    url: 'work/workTaskExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+/**
+ * 获取导入模板
+ * @param {*} data
+ */
+export function workDownloadExcelAPI(data) {
+  return request({
+    url: 'work/downloadExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+/**
+ * 项目任务导入
+ * @param {*} data
+ */
+export function workExcelImportAPI(data) {
+  var param = new FormData()
+  Object.keys(data).forEach(key => {
+    param.append(key, data[key])
+  })
+  return request({
+    url: 'work/excelImport',
+    method: 'post',
+    data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+/**
+ * 项目任务下载错误模板
+ * @param {*} data
+ */
+export function workDownloadErrorExcelAPI(data) {
+  return request({
+    url: 'work/downloadErrorExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}

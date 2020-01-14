@@ -2,8 +2,21 @@
   <div class="my-task">
     <xr-header
       icon-class="wk wk-task"
-      icon-color="#D376FF"
-      label="我的任务" />
+      icon-color="#D376FF">
+      <span slot="label">我的任务</span>
+      <el-popover
+        slot="label"
+        v-model="taskHandleShow"
+        placement="bottom-start"
+        width="182">
+        <div class="project-list-popover-btn-list">
+          <p @click="exportClick">导出任务</p>
+        </div>
+        <i
+          slot="reference"
+          class="wk wk-manage set-img" />
+      </el-popover>
+    </xr-header>
     <div class="my-task-body">
       <div
         v-loading="loading"
@@ -163,7 +176,8 @@
 import {
   workTaskMyTaskAPI,
   workTaskUpdateTopAPI,
-  workTaskSaveAPI
+  workTaskSaveAPI,
+  taskWorkbenchExportAPI
 } from '@/api/projectManagement/task'
 
 import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
@@ -173,6 +187,7 @@ import XrHeader from '@/components/xr-header'
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
 import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
+import { downloadExcelWithResData } from '@/utils'
 
 
 export default {
@@ -191,6 +206,9 @@ export default {
 
   data() {
     return {
+      // 任务设置
+      taskHandleShow: false,
+
       taskList: [],
       // 加载中
       loading: true,
@@ -392,6 +410,22 @@ export default {
      */
     closeBtn() {
       this.taskDetailShow = false
+    },
+
+    /**
+     * 审批导出
+     */
+    exportClick() {
+      this.taskHandleShow = false
+      this.loading = true
+      taskWorkbenchExportAPI()
+        .then(res => {
+          downloadExcelWithResData(res)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }
@@ -411,6 +445,32 @@ export default {
   overflow-y: hidden;
   overflow-x: auto;
   white-space: nowrap;
+}
+
+// 设置
+.project-list-popover-btn-list {
+  margin: 0 -12px;
+  p {
+    height: 34px;
+    line-height: 34px;
+    cursor: pointer;
+    padding-left: 32px;
+  }
+  p:hover {
+    background: #f7f8fa;
+    color: #2362FB;
+  }
+}
+
+.set-img {
+  margin-left: 15px;
+  font-size: 14px;
+  color: #ccc;
+  cursor: pointer;
+
+  &:hover {
+    color: $xr-color-primary;
+  }
 }
 
 .content-box {
