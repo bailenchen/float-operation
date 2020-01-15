@@ -48,15 +48,14 @@
                       </div>
                       <div class="content">
                         <el-input
-                          :value="item.className"
-                          v-model="renameInput"
+                          v-model="editTaskListName"
                           :maxlength="10"
                           size="mini"/>
                         <div class="btn-box">
                           <el-button
                             size="mini"
                             type="primary"
-                            @click="renameSubmit(item)">保存</el-button>
+                            @click="renameTaskListSubmit(item)">保存</el-button>
                           <el-button
                             size="mini"
                             @click="item.renameShow = false">取消</el-button>
@@ -103,7 +102,7 @@
               ref="taskRow"
               :key="i"
               :class="element.checked ? 'board-item board-item-active' : 'board-item'"
-              :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
+              :style="{'border-color': getPriorityColor(element.priority).color}"
               @click="showDetailView(element, index , i)">
               <xr-avatar
                 v-if="element.mainUser"
@@ -112,7 +111,8 @@
                 :size="24"
                 :src="element.mainUser.img"
                 :disabled="false"
-                class="head-png" />
+                class="head-png"
+                trigger="hover" />
               <flexbox align="stretch">
                 <div
                   style="display: inline-block;"
@@ -130,7 +130,7 @@
                   <i
                     :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}"
                     class="wukong wukong-time-task"/>
-                  <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ new Date(element.stopTime).getTime() | filterTimestampToFormatTime('MM-DD') }}截止</span>
+                  <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ element.stopTime | moment("MM-DD") }}截止</span>
                 </div>
                 <div
                   v-if="element.childAllCount > 0"
@@ -256,11 +256,6 @@
   </div>
 </template>
 <script>
-import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
-import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
-import draggable from 'vuedraggable'
-import scrollx from '@/directives/scrollx'
-
 import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
   workTaskClassSetAPI,
@@ -270,6 +265,13 @@ import {
   workTaskUpdateOrderAPI,
   workTaskUpdateClassOrderAPI
 } from '@/api/projectManagement/project'
+
+import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
+import draggable from 'vuedraggable'
+import scrollx from '@/directives/scrollx'
+
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
 
 export default {
   components: {
@@ -281,6 +283,8 @@ export default {
   directives: {
     scrollx
   },
+
+  mixins: [taskMixin],
 
   props: {
     workId: [String, Number],
@@ -301,7 +305,7 @@ export default {
       // 新建列表
       taskListName: '',
       // 重命名
-      renameInput: '',
+      editTaskListName: '',
       // 主数据
       taskList: [],
       // 详情对应的任务对象数据 -- 用于更新数据
@@ -416,6 +420,7 @@ export default {
      * 列表拖拽
      */
     moveEndParentTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt && evt.oldIndex != evt.newIndex) {
         workTaskUpdateClassOrderAPI({
           workId: this.workId,
@@ -441,6 +446,7 @@ export default {
      * 任务拖拽
      */
     moveEndSonTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt) {
         const fromId = evt.from.id
         const toId = evt.to.id
@@ -567,20 +573,20 @@ export default {
      * 重命名
      */
     renameTaskListClick(val) {
-      this.renameInput = val.className
+      this.editTaskListName = val.className
       val.taskHandleShow = false
     },
 
     /**
      * 重命名 -- 提交
      */
-    renameSubmit(val) {
+    renameTaskListSubmit(val) {
       workTaskClassSetAPI({
-        name: this.renameInput,
+        name: this.editTaskListName,
         classId: val.classId
       })
         .then(res => {
-          val.className = this.renameInput
+          val.className = this.editTaskListName
           this.$message.success('编辑成功')
         })
         .catch(() => {})
@@ -651,7 +657,7 @@ export default {
           this.taskList[data.section].list.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {
           const stopTime = new Date(data.value).getTime() / 1000 + 86399
-          if (stopTime > new Date(new Date()).getTime() / 1000) {
+          if (stopTime > new Date().getTime() / 1000) {
             this.taskList[data.section].list[data.index].isEnd = false
           } else {
             this.taskList[data.section].list[data.index].isEnd = true
@@ -722,6 +728,8 @@ export default {
   overflow-x: auto;
   position: relative;
   white-space: nowrap;
+  user-select: none;
+
   .board-column-content-parent {
     position: absolute;
     top: 0;
@@ -782,7 +790,7 @@ export default {
 
   .board-column-wrapper {
     max-height: 100%;
-    padding: 10px;
+    padding: 10px 0;
     vertical-align: top;
     border-radius: $xr-border-radius-base;
     border: 1px solid $xr-border-color-base;
@@ -790,7 +798,7 @@ export default {
     margin-right: 14px;
     position: relative;
     .board-column-header {
-      padding: 10px 3px 17px 3px;
+      padding: 10px 13px 17px;
       color: #333;
       .text {
         font-size: 15px;
@@ -814,9 +822,8 @@ export default {
       }
     }
     .board-column-content {
-      margin-right: -10px;
-      padding-right: 14px;
-      padding-left: 7px;
+      min-height: 20px;
+      padding: 0 10px;
       flex: 1;
       overflow: auto;
       .board-item {

@@ -35,7 +35,7 @@
         <i
           :style="{ color: activityIconColor }"
           :class="activityIcon" />
-        <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-跟进记录' }}</span>
+        <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-' + getRecordLogTypeName(item.type) }}</span>
       </span>
     </flexbox>
     <div class="fl-b">
@@ -69,6 +69,7 @@
           </div>
           <div class="cell-ft">
             <span class="des">（{{ file.size | getFileSize }}）</span>
+            <a @click="previewImg(item.file, index)">预览</a>
             <a @click="downloadFile(file)">下载</a>
           </div>
         </flexbox>

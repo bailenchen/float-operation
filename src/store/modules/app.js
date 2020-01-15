@@ -19,8 +19,10 @@ const app = {
     navbar: {
       activeIndex: '' // 导航目前是第几个 个人中心需要
     },
-    /** CRM配置信息 */
-    CRMConfig: {}
+    // CRM配置信息
+    CRMConfig: {},
+    // 图片缓存
+    imageCache: {}
   },
 
   mutations: {
@@ -48,6 +50,9 @@ const app = {
     },
     SET_CRMCONFIG: (state, config) => {
       state.CRMConfig = config
+    },
+    SET_IMAGECACHE: (state, value) => {
+      state.imageCache = value
     }
   },
 

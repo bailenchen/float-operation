@@ -28,7 +28,7 @@
       </ul>
     </div>
 
-    <el-form v-show="showRestPwd">
+    <el-form v-show="showRestPwd" class="login-from">
       <el-form-item>
         <el-popover
           v-model="pwdPopover"

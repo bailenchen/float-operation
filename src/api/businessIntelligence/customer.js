@@ -19,6 +19,15 @@ export function biCustomerTotalListAPI(data) {
   })
 }
 
+export function biCustomerTotalListExportAPI(data) {
+  return request({
+    url: 'biCustomer/totalCustomerTableExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 员工客户跟进次数分析
  * @param {*} data
@@ -43,6 +52,15 @@ export function biCustomerRecordListAPI(data) {
   })
 }
 
+export function biCustomerRecordListExportAPI(data) {
+  return request({
+    url: 'biCustomer/customerRecordInfoExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 员工跟进方式分析
  * @param {*} data
@@ -52,6 +70,15 @@ export function biCustomerRecordModeAPI(data) {
     url: 'biCustomer/customerRecodCategoryStats',
     method: 'post',
     data: data
+  })
+}
+
+export function biCustomerRecordModeExportAPI(data) {
+  return request({
+    url: 'biCustomer/customerRecodCategoryStatsExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
@@ -104,6 +131,15 @@ export function biCustomerPoolListAPI(data) {
   })
 }
 
+export function biCustomerPoolListExportAPI(data) {
+  return request({
+    url: 'biCustomer/poolTableExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 员工客户成交周期
  * @param {*} data
@@ -113,6 +149,15 @@ export function biCustomerUserCycleAPI(data) {
     url: 'biCustomer/employeeCycle',
     method: 'post',
     data: data
+  })
+}
+
+export function biCustomerUserCycleExportAPI(data) {
+  return request({
+    url: 'biCustomer/employeeCycleInfoExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }
 
@@ -139,6 +184,15 @@ export function biCustomerAddressCycleAPI(data) {
   })
 }
 
+export function biCustomerAddressCycleExportAPI(data) {
+  return request({
+    url: 'biCustomer/districtCycleExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 /**
  * 产品成交周期
  * @param {*} data
@@ -148,5 +202,14 @@ export function biCustomerProductCycleAPI(data) {
     url: 'biCustomer/productCycle',
     method: 'post',
     data: data
+  })
+}
+
+export function biCustomerProductCycleExportAPI(data) {
+  return request({
+    url: 'biCustomer/productCycleExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
   })
 }

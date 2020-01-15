@@ -39,6 +39,19 @@ export default {
         11: '任务',
         12: '发邮件'
       }[activityType]
+    },
+
+    getRecordLogTypeName(type) {
+      if (!type) {
+        return '跟进记录'
+      }
+      // 活动类型 1 跟进记录 2 创建记录 3 商机阶段变更 4 外勤签到
+      return {
+        1: '跟进记录',
+        2: '创建记录',
+        3: '商机阶段变更',
+        4: '外勤签到'
+      }[type]
     }
   }
 }

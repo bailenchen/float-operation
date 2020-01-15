@@ -125,3 +125,16 @@ export function journalGetLogWelcomeAPI(data) {
     data
   })
 }
+
+/**
+ * 日志导出
+ * @param {*} data
+ */
+export function OaLogExportAPI(data) {
+  return request({
+    url: 'OaLog/export',
+    method: 'post',
+    data,
+    responseType: 'blob'
+  })
+}

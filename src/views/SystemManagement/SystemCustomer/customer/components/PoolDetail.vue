@@ -69,19 +69,19 @@
             align="stretch"
             class="rule-item">
             <div class="label">领取频率规则</div>
-            <div class="value">{{ detail.preOwnerSetting == 1 ? `每天最多领取${detail.receiveNum}个公海客户` : '不限制' }}</div>
+            <div class="value">{{ detail.receiveSetting == 1 ? `每天最多领取${detail.receiveNum}个公海客户` : '不限制' }}</div>
           </flexbox>
           <flexbox
             align="stretch"
             class="rule-item">
             <div class="label">提醒规则</div>
-            <div class="value">{{ detail.receiveSetting == 1 ? `提前${detail.remindDay}天提醒负责人` : '不提醒' }}</div>
+            <div class="value">{{ detail.remindSetting == 1 ? `提前${detail.remindDay}天提醒负责人` : '不提醒' }}</div>
           </flexbox>
           <flexbox
             align="stretch"
             class="rule-item">
             <div class="label">收回规则</div>
-            <div v-if="detail.receiveSetting == 0" class="value">不自动回收</div>
+            <div v-if="detail.putInRule == 0" class="value">不自动回收</div>
             <div v-else class="value rule-value">
               <detail-recycle-rule
                 v-for="(item, index) in detail.rule"

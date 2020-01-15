@@ -111,3 +111,16 @@ export function oaExamineFlowAuditExamine(data) {
     data: data
   })
 }
+
+/**
+ * 审批导出
+ * @param {*} data
+ */
+export function oaExamineExportAPI(data) {
+  return request({
+    url: 'OaExamine/export ',
+    method: 'post',
+    data,
+    responseType: 'blob'
+  })
+}

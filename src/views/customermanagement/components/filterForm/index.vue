@@ -499,17 +499,17 @@ export default {
       for (let i = 0; i < this.form.length; i++) {
         const o = this.form[i]
         if (!o.fieldName || o.fieldName === '') {
-          this.$message.error('要筛选的字段名称不能为空！')
+          this.$message.error('筛选的字段名称不能为空！')
           return
         }
         if (o.formType == 'business_type') {
           if (!o.typeId && !o.statusId) {
-            this.$message.error('请输入筛选条件的值！')
+            this.$message.error('筛选内容不能为空！')
             return
           }
         } else if (o.formType == 'map_address') {
           if (!o.address.state && !o.address.city && !o.address.area) {
-            this.$message.error('请选择筛选条件的值！')
+            this.$message.error('筛选内容不能为空！')
             return
           }
         } else if (
@@ -520,11 +520,11 @@ export default {
           o.formType == 'checkbox'
         ) {
           if (!o.value || o.value.length === 0) {
-            this.$message.error('请选择筛选条件的值！')
+            this.$message.error('筛选内容不能为空！')
             return
           }
-        } else if (!o.value && o.value != 0) {
-          this.$message.error('请输入筛选条件的值！')
+        } else if (o.value === '' || o.value === undefined || o.value === null) {
+          this.$message.error('筛选内容不能为空')
           return
         }
       }

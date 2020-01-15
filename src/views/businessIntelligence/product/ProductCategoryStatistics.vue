@@ -69,6 +69,7 @@ export default {
           bottom: '10'
         },
         color: this.chartColors,
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'item',
           formatter: '{b} : {c}'

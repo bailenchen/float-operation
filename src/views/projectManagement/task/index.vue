@@ -40,7 +40,7 @@
                 ref="taskRow"
                 :key="i"
                 :class="element.checked ? 'board-item board-item-active' : 'board-item'"
-                :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
+                :style="{'border-color': getPriorityColor(element.priority).color }"
                 @click="showDetailView(element, index, i)">
                 <flexbox align="stretch">
                   <div @click.stop>
@@ -172,6 +172,7 @@ import XrHeader from '@/components/xr-header'
 
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
 
 
 export default {
@@ -185,6 +186,8 @@ export default {
   directives: {
     scrollx
   },
+
+  mixins: [taskMixin],
 
   data() {
     return {
@@ -243,6 +246,7 @@ export default {
      * 移动任务
      */
     moveEndTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt) {
         const fromTop = evt.from.id
         const toTop = evt.to.id
@@ -348,8 +352,9 @@ export default {
         } else if (data.type == 'delete') {
           this.taskList[data.section].list.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {
-          const stopTime = parseInt(data.value) + 86399
-          if (stopTime > new Date(new Date()).getTime() / 1000) {
+          // 86399 一天多总秒数 减 1
+          const stopTime = new Date(data.value).getTime() / 1000 + 86399
+          if (stopTime > new Date().getTime() / 1000) {
             this.taskList[data.section].list[data.index].isEnd = false
           } else {
             this.taskList[data.section].list[data.index].isEnd = true
@@ -396,6 +401,7 @@ export default {
 .my-task {
   height: 100%;
   overflow: hidden;
+  user-select: none;
 }
 
 .my-task-body {
@@ -429,7 +435,7 @@ export default {
 
   .board-column-wrapper {
     max-height: 100%;
-    padding: 10px;
+    padding: 10px 0;
     vertical-align: top;
     border-radius: $xr-border-radius-base;
     border: 1px solid $xr-border-color-base;
@@ -437,7 +443,7 @@ export default {
     margin-right: 14px;
     position: relative;
     .board-column-header {
-      padding: 10px 3px 17px 3px;
+      padding: 10px 13px 17px;
       color: #333;
       .text {
         font-size: 15px;
@@ -456,10 +462,7 @@ export default {
       }
     }
     .board-column-content {
-      min-height: 20px;
-      margin-right: -10px;
-      padding-right: 14px;
-      padding-left: 7px;
+      padding: 0 10px;
       max-height: calc(100% - 90px);
       overflow: auto;
       .board-item {

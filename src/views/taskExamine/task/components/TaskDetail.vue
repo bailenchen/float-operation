@@ -6,9 +6,11 @@
     class="d-view"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <flexbox
       v-loading="loading"
+      v-if="loading !== null"
       direction="column"
       align="stretch"
       class="main">
@@ -73,10 +75,11 @@
           <el-checkbox
             v-model="taskData.checked"
             @change="completeMainTask" />
-          <div
-            v-if="!nameVinput"
-            :class="['task-name', { 'is-checked': taskData.checked }]"
-            @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="light" placement="top">
+            <div
+              :class="['task-name', { 'is-checked': taskData.checked }]"
+              @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          </el-tooltip>
           <div
             v-else
             class="show-input">
@@ -311,7 +314,7 @@
                   <el-input
                     :autosize="{ minRows: 2}"
                     v-model="addDescriptionTextarea"
-                    :maxlength="300"
+                    :maxlength="2000"
                     show-word-limit
                     type="textarea"
                     placeholder="请输入内容" />
@@ -443,6 +446,7 @@
                   v-for="(file, fileIndex) in fileList"
                   :key="fileIndex"
                   :data="file"
+                  :list="fileList"
                   :cell-index="fileIndex"
                   :module-id="id"
                   :show-delete="true"
@@ -559,6 +563,7 @@ import {
 import membersDep from '@/components/selectEmployee/membersDep'
 import TagIndex from './tag/tagIndex'
 import SubTask from './subTask'
+
 // emoji
 import emoji from '@/components/emoji'
 // 相关信息 - 选中列表
@@ -570,6 +575,7 @@ import CommentList from '@/views/workLog/components/commentList'
 import ReplyComment from '@/components/ReplyComment'
 import moment from 'moment'
 import { objDeepCopy } from '@/utils'
+import taskMixin from '../mixins/taskMixin'
 
 export default {
   name: 'TaskDetail',
@@ -587,6 +593,7 @@ export default {
     CommentList,
     ReplyComment
   },
+  mixins: [taskMixin],
   props: {
     id: [String, Number],
     isTrash: Boolean,
@@ -601,17 +608,17 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: null,
       canShowDetail: true,
       // 紧急弹出框
       priorityVisible: false,
       // 优先级列表
-      priorityList: [
-        { id: 3, label: '高', color: '#F95A5A' },
-        { id: 2, label: '中', color: '#F7AD3D' },
-        { id: 1, label: '低', color: '#67C23A' },
-        { id: 0, label: '无', color: '#D8D8D8' }
-      ],
+      // priorityList: [
+      //   { id: 3, label: '高', color: '#F95A5A' },
+      //   { id: 2, label: '中', color: '#F7AD3D' },
+      //   { id: 1, label: '低', color: '#67C23A' },
+      //   { id: 0, label: '无', color: '#D8D8D8' }
+      // ],
 
       /**
      * 限制时间选择`
@@ -666,26 +673,9 @@ export default {
     ...mapGetters(['userInfo']),
     priority() {
       if (this.taskData.priority == 0 || !this.taskData.priority) {
-        return {
-          color: '#D8D8D8',
-          label: '无'
-        }
-      } else if (this.taskData.priority == 1) {
-        return {
-          color: '#67C23A',
-          label: '低'
-        }
-      } else if (this.taskData.priority == 2) {
-        return {
-          color: '#F7AD3D',
-          label: '中'
-        }
-      } else if (this.taskData.priority == 3) {
-        return {
-          color: '#F95A5A',
-          label: '高'
-        }
+        return this.priorityList[3] // 默认读取 priorityList 返回
       }
+      return this.getPriorityColor(this.taskData.priority)
     },
 
     /**
@@ -765,16 +755,21 @@ export default {
       }
     }
   },
-  mounted() {
-    if (this.id) {
-      this.getDetail()
-      this.getCommentList()
-      this.getActivityList()
-    }
-  },
+  mounted() {},
 
   beforeDestroy() {},
   methods: {
+    /**
+     * 动画完成方法
+     */
+    viewAfterEnter() {
+      if (this.id) {
+        this.getDetail()
+        this.getCommentList()
+        this.getActivityList()
+      }
+    },
+
     initInfo() {
       this.taskData = null
       this.subTaskDoneNum = 0
@@ -1150,12 +1145,15 @@ export default {
       params[type] = this.taskData[type]
       setTaskAPI(params)
         .then(res => {
-          this.$emit('on-handle', {
-            type: type,
-            value: this[type],
-            index: this.detailIndex,
-            section: this.detailSection
-          })
+          // 停止时间回调
+          if (type == 'stopTime') {
+            this.$emit('on-handle', {
+              type: 'change-stop-time',
+              value: this.taskData[type],
+              index: this.detailIndex,
+              section: this.detailSection
+            })
+          }
         })
         .catch(() => {})
     },
@@ -1557,6 +1555,7 @@ $btn-b-hover-color: #eff4ff;
 .main {
   position: relative;
   height: 100%;
+  background: #f5f6f9;
 
   &__hd {
     margin-bottom: 15px;
@@ -1707,6 +1706,12 @@ $btn-b-hover-color: #eff4ff;
   font-size: 22px;
   color: #333;
   cursor: pointer;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 28px;
 }
 
 .task-name.is-checked {
@@ -2047,6 +2052,7 @@ $btn-b-hover-color: #eff4ff;
 
     .user-img {
       margin-right: 10px;
+      flex-shrink: 0;
     }
 
     &__bd {
@@ -2071,6 +2077,9 @@ $btn-b-hover-color: #eff4ff;
         font-size: 14px;
         color: #666;
         line-height: 17px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-all;
       }
     }
   }
@@ -2123,6 +2132,7 @@ $btn-b-hover-color: #eff4ff;
 
 .d-view {
   position: fixed;
+  background: white;
   min-width: 926px;
   width: 75%;
   top: 60px;

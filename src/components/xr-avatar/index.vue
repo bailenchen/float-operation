@@ -1,31 +1,25 @@
 <template>
-  <el-avatar
-    v-if="popoverDisabled"
-    v-bind="$attrs"
-    :src="dataSrc"
-    :key="dataSrc"
-    :style="{ fontSize: fontSize, background: background }"
-    :class="{ 'cursor-pointer': !disabled }"
-    :size="size">{{ showName }}</el-avatar>
   <el-popover
-    v-else
     v-model="popoverShow"
     :visible-arrow="false"
     :trigger="trigger"
+    :disabled="popoverDisabled"
     placement="bottom"
     width="250"
     popper-class="no-padding-popover">
     <xr-user-view
       v-loading="loading"
-      :data="userData" />
+      :data="userData"
+      :src="imageCache[src]" />
     <el-avatar
       slot="reference"
       v-bind="$attrs"
-      :src="dataSrc"
-      :key="dataSrc"
+      :src="imageCache[src]"
+      :key="src"
       :style="{ fontSize: fontSize, background: background }"
       :class="{ 'cursor-pointer': !disabled }"
-      :size="size">{{ showName }}</el-avatar>
+      :size="size"
+      fit="fill">{{ showName }}</el-avatar>
   </el-popover>
 
 </template>
@@ -34,8 +28,7 @@
 import { systemUserInfoAPI } from '@/api/common'
 import { getImageData } from '@/utils'
 import XRTheme from '@/styles/xr-theme.scss'
-
-const dataCatch = {}
+import { mapGetters } from 'vuex'
 
 export default {
   // Avatar 头像
@@ -69,11 +62,11 @@ export default {
     return {
       popoverShow: false,
       loading: false,
-      userData: null,
-      dataSrc: ''
+      userData: null
     }
   },
   computed: {
+    ...mapGetters(['imageCache']),
     fontSize() {
       if (this.size <= 30) {
         return '12px'
@@ -99,29 +92,31 @@ export default {
         this.getUserData()
       }
     },
-    src() {
-      this.dataSrc = this.src
-      this.handleImage()
+    src: {
+      handler() {
+        this.handleImage()
+      },
+      immediate: true
     }
   },
-  created() {
-    this.dataSrc = this.src
-    this.handleImage()
-  },
+  created() {},
 
   beforeDestroy() {},
   methods: {
     handleImage() {
       if (this.src) {
-        if (dataCatch[this.src]) {
-          this.dataSrc = dataCatch[this.src]
-        } else {
+        if (!this.imageCache.hasOwnProperty(this.src)) {
+          this.$set(this.imageCache, this.src, '')
+          this.$store.commit('SET_IMAGECACHE', this.imageCache)
           getImageData(this.src)
             .then(data => {
-              this.dataSrc = data.src
-              dataCatch[this.src] = data.src
+              this.$set(this.imageCache, this.src, data.src)
+              this.$store.commit('SET_IMAGECACHE', this.imageCache)
             })
-            .catch(() => {})
+            .catch(() => {
+              delete this.imageCache[this.src]
+              this.$store.commit('SET_IMAGECACHE', this.imageCache)
+            })
         }
       }
     },
@@ -142,5 +137,12 @@ export default {
 <style lang="scss" scoped>
 .cursor-pointer {
   cursor: pointer;
+}
+
+.el-avatar {
+  /deep/ img {
+    width: 100%;
+    background: white !important;
+  }
 }
 </style>

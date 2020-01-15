@@ -120,6 +120,8 @@
         </div>
       </div>
       <div class="popover-footer">
+        <slot v-if="activeTabName === 'user'" name="user-footer" />
+        <slot v-else name="dep-footer" />
         <el-button @click="popoverVisible = false">取 消</el-button>
         <el-button
           v-if="!radio"

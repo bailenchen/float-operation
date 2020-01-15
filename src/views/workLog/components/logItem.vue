@@ -157,6 +157,7 @@ import CommentList from './commentList'
 import ReportMenu from './ReportMenu'
 
 import { mapGetters } from 'vuex'
+import { separatorInt } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'LogItem',
@@ -187,7 +188,7 @@ export default {
       isWaiting: false,
       showReply: false,
       commentLoading: false,
-      replyListData: [],
+      replyList: [],
 
       // 简报信息
       reportList: [
@@ -247,18 +248,11 @@ export default {
     },
     replyTotal() {
       let num = 0
-      this.replyListData.forEach(item => {
+      this.replyList.forEach(item => {
         num++
         num += item.childCommentList.length || 0
       })
       return num || this.data.replyNum
-    },
-    replyList() {
-      let arr = [].concat(this.replyListData || [])
-      arr = arr.sort((a, b) => {
-        return new Date(b.createTime) - new Date(a.createTime)
-      }) || []
-      return arr
     },
     // 日志标题
     logTitleName() {
@@ -295,8 +289,12 @@ export default {
     // })
 
     if (this.data.getBulletin) {
+      const data = this.data.bulletin || {}
       this.reportList = this.reportList.map(item => {
-        item.name = `${item.info} ${this.data.bulletin[item.key]}`
+        if (item.key == 'receivablesMoney') {
+          data.receivablesMoney = separatorInt(Math.floor(data.receivablesMoney || 0))
+        }
+        item.name = `${item.info} ${data[item.key]}`
         return item
       })
     }
@@ -372,14 +370,14 @@ export default {
         res.data.user = {
           userId: this.userInfo.userId,
           realname: this.userInfo.realname,
-          img: this.data.userImg
+          img: this.userInfo.img
         }
         res.data.childCommentList = []
         // this.$emit('add-comment', {
         //   data: res.data,
         //   index: this.index
         // })
-        this.replyListData.unshift(res.data)
+        this.replyList.push(res.data)
         this.commentLoading = false
         this.showReply = false
         this.$nextTick(() => {
@@ -391,7 +389,7 @@ export default {
     },
 
     deleteComment(index) {
-      this.replyListData.splice(index, 1)
+      this.replyList.splice(index, 1)
     },
 
     closeOtherReply(flag) {
@@ -412,7 +410,7 @@ export default {
      */
     replayClick() {
       this.showReply = !this.showReply
-      if (this.replyListData.length == 0) {
+      if (this.replyList.length == 0) {
         this.getCommentList()
       }
     },
@@ -426,7 +424,11 @@ export default {
         type: 2 // 任务1 日志2
       })
         .then(res => {
-          this.replyListData = res.data || []
+          const list = res.data || []
+          this.replyList = list
+          // this.replyList = list.sort((a, b) => {
+          //   return new Date(b.createTime) - new Date(a.createTime)
+          // }) || []
         })
         .catch(() => {})
     },

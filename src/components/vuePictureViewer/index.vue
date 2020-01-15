@@ -28,10 +28,15 @@
           <img
             :src="bigShowType.icon"
             class="file-icon">
-          <el-button
-            type="primary"
-            plain
-            @click.native="downloadFile">下载</el-button>
+          <div class="file-handle">
+            <!-- <el-button
+              type="primary"
+              plain
+              @click.native="previewFile">预览</el-button> -->
+            <el-button
+              type="primary"
+              @click.native="downloadFile">下载</el-button>
+          </div>
         </div>
       </div>
       <!-- tips -->
@@ -469,6 +474,13 @@ export default {
         }).catch(() => {})
       }
     },
+    previewFile() {
+      if (this.currentFile.url) {
+        const urlS = this.currentFile.url.split('?')
+        const url = urlS.length > 1 ? urlS[1] : ''
+        window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
+      }
+    },
     getShowTypeInfo(name) {
       const temps = name ? name.split('.') : []
       var ext = ''
@@ -770,12 +782,21 @@ ul li {
       vertical-align: middle;
     }
 
-    .el-button {
-      vertical-align: middle;
+    .file-handle {
       width: 100px;
       margin-left: 50px;;
       margin-right: 0;
-      height: 34px;
+      vertical-align: middle;
+      display: inline-block;
+
+      .el-button {
+        height: 34px;
+        margin-left: 0;
+      }
+
+      .el-button + .el-button {
+        margin-top: 8px;
+      }
     }
   }
 }

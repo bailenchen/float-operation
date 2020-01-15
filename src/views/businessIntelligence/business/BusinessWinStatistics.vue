@@ -190,6 +190,7 @@ export default {
 
       var option = {
         color: ['#6ca2ff', '#6ac9d7', '#ff7474'],
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'axis',
           axisPointer: {

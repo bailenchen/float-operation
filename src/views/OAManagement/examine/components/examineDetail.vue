@@ -4,6 +4,7 @@
     :listener-ids="['workbench-main-container']"
     :no-listener-class="noListenerClass"
     class="d-view"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <flexbox
       v-if="detail"
@@ -135,6 +136,7 @@
               v-for="(file, fileIndex) in fileList"
               :key="fileIndex"
               :data="file"
+              :list="fileList"
               :cell-index="fileIndex" />
           </div>
         </div>
@@ -341,10 +343,15 @@ export default {
       this.getDetail()
     }
   },
-  mounted() {
-    this.getDetail()
-  },
+  mounted() {},
   methods: {
+    /**
+     * 动画完成方法
+     */
+    viewAfterEnter() {
+      this.getDetail()
+    },
+
     // 获取基础信息
     getBaseInfo() {
       this.loading = true
