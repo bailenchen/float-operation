@@ -150,7 +150,7 @@ export default {
           }, 0)
 
           if (index === 2) {
-            sums[index] = sums[index] > 100 ? '100.00' : sums[index].toFixed(2)
+            sums[index] = sums[index] > 0 ? '100.00' : '0.00'
           }
         } else {
           sums[index] = 'N/A'
