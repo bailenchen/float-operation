@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    v-loading="loading"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     append-to-body
@@ -7,8 +8,8 @@
     @close="close">
     <div slot="title">
       <span :style="{backgroundColor: todayDetailData.backgroundColor}" class="block"/>
-      <span class="title-text">{{ todayDetailData.headTitle }}</span>
-      <span class="title-message">{{ todayDetailData.name }}创建于{{ todayDetailData.createTime }}
+      <span class="title-text">{{ todayDetailData.typeName || todayDetailData.title }}</span>
+      <span v-if="id != -1" class="title-message">{{ detail.createUserName }} 创建于 {{ timeFormatted(detail.createTime) }}
         <el-dropdown
           trigger="click"
           @command="handleTypeDrop">
@@ -22,9 +23,8 @@
         </el-dropdown>
       </span>
     </div>
-    <template v-if="todayDetailData.groupId == 0">
+    <template v-if="id == -1">
       <el-table
-        v-loading="loading"
         id="crm-table"
         :data="list"
         height="500"
@@ -86,40 +86,60 @@
           <div class="content-title">参与人</div>
           <flexbox>
             <xr-avatar
-              :id="166"
+              v-for="item in detail.ownerUserList"
+              :id="item.userId"
+              :key="item.userId"
               :size="32"
               :disabled="false"
-              name="侯沛源"
-              src=""
-              trigger="hover"
-              class="user-img"/>
-            <xr-avatar
-              :id="167"
-              :size="32"
-              :disabled="false"
-              name="申月"
-              src=""
+              :name="item.realname"
+              :src="item.img"
               trigger="hover"
               class="user-img"/>
           </flexbox>
         </div>
 
         <div class="common-foot">
-          <div class="section__hd">
+          <div v-if="detail.customerList" class="section__hd">
             <i class="wukong wukong-relevance" />
-            <span>相关信息(1)</span>
+            <span>相关信息({{ detail.customerList.length }})</span>
           </div>
+
+          <p v-else>暂无相关信息</p>
 
           <div class="section_scroll">
             <div>
               <related-business-cell
-                v-for="(item, itemIndex) in items"
+                v-for="(item, itemIndex) in detail.customerList"
                 :data="item"
                 :cell-index="itemIndex"
-                :key="itemIndex"
+                :key="item.customerId"
                 :show-foot="false"
                 type="customer"
-                @click.native="checkRelatedDetail(key, item)" />
+                @click.native="checkRelatedDetail(item, 'customer')" />
+              <related-business-cell
+                v-for="(item, itemIndex) in detail.contactsList"
+                :data="item"
+                :cell-index="itemIndex"
+                :key="item.customerId"
+                :show-foot="false"
+                type="contacts"
+                @click.native="checkRelatedDetail(item, 'contacts')" />
+              <related-business-cell
+                v-for="(item, itemIndex) in detail.contractList"
+                :data="item"
+                :cell-index="itemIndex"
+                :key="item.customerId"
+                :show-foot="false"
+                type="contract"
+                @click.native="checkRelatedDetail(item, 'contract')" />
+              <related-business-cell
+                v-for="(item, itemIndex) in detail.businessList"
+                :data="item"
+                :cell-index="itemIndex"
+                :key="item.customerId"
+                :show-foot="false"
+                type="business"
+                @click.native="checkRelatedDetail(item, 'business')" />
             </div>
           </div>
 
@@ -127,7 +147,7 @@
 
         <div class="common-bootom">
           <span>重复</span>
-          <span>每1天重复2次</span>
+          <span>{{ repeatText }}</span>
         </div>
       </div>
     </template>
@@ -135,10 +155,24 @@
       :show-create="showCreate"
       :edit-all="editAll"
       :cus-check="cusCheck"
-      :today-detail-data="todayDetailData"
+      :today-detail-data="detail"
       title="编辑日程"
+      @createSuccess="handleSure"
       @handleSure="handleSure"
       @close="showCreate = false"/>
+    <!-- CRM详情 -->
+    <c-r-m-full-screen-detail
+      :visible.sync="showFullDetail"
+      :crm-type="relationCrmType"
+      :id="relationID" />
+    <!-- 详情 -->
+    <task-detail
+      v-if="taskDetailShow"
+      ref="particulars"
+      :id="taskID"
+      :detail-index="detailIndex"
+      is-trash
+      @close="taskDetailShow = false"/>
   </el-dialog>
 </template>
 <script>
@@ -147,21 +181,30 @@ import {
 } from '@/api/customermanagement/common'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
-  crmMessageTodayCustomerAPI
-} from '@/api/customermanagement/message'
-import {
-  canlendarDeleteAPI
+  canlendarDeleteAPI,
+  canlendarQueryByIdAPI,
+  canlendarTodayTaskAPI,
+  canlendarTodayContractAPI,
+  canlendarTodayCustomerAPI
 } from '@/api/calendar'
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
+import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 import CreateEvent from './CreateEvent'
 import moment from 'moment'
 export default {
   name: 'TodayListDetail',
   components: {
     RelatedBusinessCell,
-    CreateEvent
+    CreateEvent,
+    TaskDetail,
+    CRMFullScreenDetail: () =>
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
   props: {
+    id: {
+      type: String,
+      default: ''
+    },
     showTodayDetail: {
       type: Boolean,
       default: false
@@ -169,7 +212,9 @@ export default {
     todayDetailData: {
       type: Object,
       default: () => {
-        return {}
+        return {
+          customerList: []
+        }
       }
     },
     cusCheck: {
@@ -181,22 +226,25 @@ export default {
   },
   data() {
     return {
+      // 详情参数
+      showFullDetail: false,
+      relationCrmType: 'customer',
+      relationID: 0,
+      // 任务详情
+      taskDetailShow: false,
+      taskID: 0,
+      detailIndex: -1,
+
       dialogVisible: false,
+      detail: {
+        customerList: []
+      },
       fieldList: [],
       list: [],
       loading: false,
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
-      items: [
-        { customerName: '侯沛源' },
-        { customerName: '侯沛源' },
-        { customerName: '侯沛源' },
-        { customerName: '侯沛源' },
-        { customerName: '侯沛源' },
-        { customerName: '侯沛源' },
-        { customerName: '申月' }
-      ],
       total: 0,
       moreTypes: [
         { title: '只删除本次', type: 'delete' },
@@ -205,39 +253,90 @@ export default {
         { title: '编辑本系列', type: 'editAll' }],
       showCreate: false,
       // 是否编辑整个系列
-      editAll: false
+      editAll: false,
+      repeatText: ''
     }
   },
   computed: {
-    crmType() {
-      const crmTypeList = ['customer', 'contract', 'receivables']
-      return crmTypeList[this.todayDetailData.groupId]
-    },
-    infoType() {
-      const typeList = ['todayCustomer', 'todayContract', 'todayReceivables']
-      return typeList[this.todayDetailData.groupId]
-    }
   },
   watch: {
     showTodayDetail(val) {
       this.dialogVisible = val
       if (val) {
-        console.log(this.todayDetailData)
-
-        if (this.todayDetailData.groupId == 0) {
+        if (this.id == -1) {
           this.getFieldList()
+        } else {
+          this.getDetail()
         }
       }
+    },
+    detail: {
+      handler(val) {
+        if (val.repetitionType === 1) {
+          this.moreTypes = [
+            { title: '删除', type: 'delete' },
+            { title: '编辑', type: 'edit' }
+          ]
+        } else {
+          this.moreTypes = [
+            { title: '只删除本次', type: 'delete' },
+            { title: '删除此系列', type: 'deleteAll' },
+            { title: '只编辑本次', type: 'edit' },
+            { title: '编辑本系列', type: 'editAll' }]
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
+    /**
+     * 获取详情
+     */
+
+    getDetail() {
+      this.loading = true
+      const startTime = new Date(this.todayDetailData.startTime).getTime()
+      const endTime = new Date(this.todayDetailData.endTime).getTime()
+      canlendarQueryByIdAPI({
+        eventId: this.id,
+        startTime: startTime,
+        endTime: endTime
+      }).then(res => {
+        this.detail = res.data
+        this.repeatText = this.summaryText()
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
     /**
      * 获取表头
      */
     getFieldList() {
       this.loading = true
+      let crmType = ''
+      if (this.todayDetailData.title === '今日需联系客户') {
+        crmType = 'customer'
+      } else if (this.todayDetailData.title === '今日到期任务') {
+        crmType = 'task'
+        this.fieldList = [
+          { prop: 'name', label: '任务名称', width: 200 },
+          { prop: 'priority', label: '优先级', width: 200 },
+          { prop: 'createTime', label: '创建时间', width: 200 },
+          { prop: 'mainUser.realname', label: '负责人', width: 200 },
+          { prop: 'startTime', label: '开始时间', width: 200 },
+          { prop: 'stopTime', label: '结束时间', width: 200 }
+        ]
+        this.getList()
+        return
+      } else {
+        crmType = 'contract'
+      }
+      this.fieldList = []
       filedGetTableField({
-        label: crmTypeModel[this.crmType]
+        label: crmTypeModel[crmType]
       })
         .then(res => {
           this.handelFieldList(res.data)
@@ -250,6 +349,22 @@ export default {
         })
     },
 
+    /**
+     * 重复文字
+     */
+    summaryText() {
+      if (this.detail.repetitionType === 1) {
+        return '从不重复'
+      } else if (this.detail.repetitionType === 2) {
+        return `每${this.detail.repeatRate}天`
+      } else if (this.detail.repetitionType === 3) {
+        return `每${this.detail.repeatRate}周，每周${this.detail.repeatTime}`
+      } else if (this.detail.repetitionType === 4) {
+        return `每${this.detail.repeatRate}月，第${this.detail.repeatTime}天`
+      } else if (this.detail.repetitionType === 5) {
+        return `每${this.detail.repeatRate}年`
+      }
+    },
     /**
      * 获取宽度
      */
@@ -286,8 +401,8 @@ export default {
         isSub: 1,
         type: 1
       }
-      crmIndexRequest(params)
       this.loading = true
+      crmIndexRequest(params)
         .then(res => {
           this.list = res.data.list
           this.total = res.data.totalRow
@@ -302,9 +417,13 @@ export default {
      * 获取列表请求
      */
     getIndexRequest() {
-      return {
-        'todayCustomer': crmMessageTodayCustomerAPI
-      }[this.infoType]
+      if (this.todayDetailData.title == '今日需联系客户') {
+        return canlendarTodayCustomerAPI
+      } else if (this.todayDetailData.title == '今日到期任务') {
+        return canlendarTodayTaskAPI
+      } else {
+        return canlendarTodayContractAPI
+      }
     },
 
     /**
@@ -317,12 +436,31 @@ export default {
     /**
      * 数据格式化
      */
-    fieldFormatter() {},
+    fieldFormatter(row, column, cellValue) {
+      if (column.property === 'priority') {
+        const list = ['无', '低', '中', '高']
+        return list[cellValue]
+      }
+      return cellValue
+    },
 
     /**
      * 行点击
      */
-    handleRowClick() {},
+    handleRowClick(row, column, event) {
+      if (this.todayDetailData.title === '今日到期任务') {
+        this.taskID = row.taskId
+        this.taskDetailShow = true
+      } else if (this.todayDetailData.title === '今日需联系会员') {
+        this.relationID = this.detail.customerId
+        this.relationCrmType = 'customer'
+        this.showFullDetail = true
+      } else {
+        this.relationID = this.detail.contractId
+        this.relationCrmType = 'contract'
+        this.showFullDetail = true
+      }
+    },
 
     /**
      * 每页条数改变
@@ -347,11 +485,21 @@ export default {
       const timestemp = new Date(date)
       return moment(timestemp).format('MMMDo')
     },
-
+    /**
+     * 时间格式化
+     */
+    timeFormatted(date) {
+      const timestemp = new Date(date)
+      return moment(timestemp).format('YYYY-MM-DD')
+    },
     /**
      * 相关信息的点击
      */
-    checkRelatedDetail() {},
+    checkRelatedDetail(item, key) {
+      this.relationCrmType = key
+      this.relationID = item[key + 'Id']
+      this.showFullDetail = true
+    },
 
     /**
      * 更多操作
@@ -380,7 +528,8 @@ export default {
         const timestemp = new Date(this.todayDetailData.startTime).getTime()
         const params = {
           eventId: this.todayDetailData.id,
-          time: timestemp
+          time: timestemp,
+          batchId: this.detail.batchId
         }
         if (type === 'delete') {
           params.type = 1
@@ -414,7 +563,10 @@ export default {
     /**
      * 编辑成功的回调
      */
-    handleSure() {}
+    handleSure() {
+      this.showCreate = false
+      this.$emit('createSuccess')
+    }
   }
 }
 </script>

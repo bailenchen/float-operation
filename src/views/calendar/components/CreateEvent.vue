@@ -22,6 +22,7 @@
               class="select_color">
               <el-option
                 v-for="item in cusCheck"
+                v-if="item.type == 2"
                 :key="item.typeId"
                 :value="item.typeId"
                 :label="item.typeName"
@@ -52,31 +53,46 @@
               @value-change="selectUser"/>
           </el-form-item>
           <el-form-item v-if="!choseMore" style="margin-top: -10px">
-            <el-button style="font-size: 14px" type="text" @click="choseMore = true">添加更多选项</el-button>
+            <el-button
+              style="font-size: 14px"
+              type="text"
+              @click="choseMore = true">添加更多选项</el-button>
           </el-form-item>
           <template v-if="choseMore">
-            <el-form-item v-if="!editAll" label="重复">
+            <el-form-item v-if="editAll" label="重复">
               <el-select
                 v-model="form.repetitionType"
-                placeholder="选择重复类型"
-                @change="selectRepeat">
+                placeholder="选择重复类型">
                 <el-option
                   v-for="item in repeatList"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"/>
+                  :value="item.value"
+                  @click.native="selectRepeat"/>
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="提前">
-              <el-select v-model="form.time" placeholder="选择时间" class="time_select">
-                <el-option
-                  v-for="item in timeList"
-                  :key="item"
-                  :label="item"
-                  :value="item"/>
-              </el-select>
-              提醒
-            </el-form-item> -->
+            <template v-for="(noticeItem,index) in notice">
+              <el-form-item :key="index" label="提前">
+                <el-select v-model="notice[index].value" placeholder="选择时间" class="time_select">
+                  <el-option
+                    v-for="item in timeList"
+                    :key="item"
+                    :label="item"
+                    :value="item"/>
+                </el-select>
+                <el-select v-model="notice[index].type" placeholder="请选择" class="time_select">
+                  <el-option :value="1" label="分钟"/>
+                  <el-option :value="2" label="小时"/>
+                  <el-option :value="3" label="天"/>
+                </el-select>
+                <el-button
+                  v-if="index != 0"
+                  icon="el-icon-delete"
+                  type="text"
+                  @click="deleteNotice(index)"/>
+              </el-form-item>
+            </template>
+            <div class="new_notice" @click="addNewNotice">+ 添加新提醒</div>
             <el-form-item label="相关信息">
               <related-business
                 :is-task="true"
@@ -95,6 +111,7 @@
       <repeat
         v-else
         ref="repeat"
+        :detail="todayDetailData"
         :repeat-type="form.repetitionType"
         margin-left="80px"/>
       <div slot="footer" class="dialog-footer">
@@ -110,7 +127,8 @@ import XhUserCell from '@/components/CreateCom/XhUserCell'
 import RelatedBusiness from '@/components/relatedBusiness'
 import Repeat from './Repeat'
 import {
-  canlendarSaveAPI
+  canlendarSaveAPI,
+  canlendarUpdateAPI
 } from '@/api/calendar'
 export default {
   components: {
@@ -152,7 +170,7 @@ export default {
     // 是否编辑所有的系列
     editAll: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
@@ -169,6 +187,12 @@ export default {
         startTime: '',
         endTime: ''
       },
+      notice: [
+        {
+          value: 5,
+          type: 1
+        }
+      ],
       // 选中的关联项
       allData: {},
       businessRelation: {},
@@ -184,7 +208,7 @@ export default {
         { label: '每月', value: 4 },
         { label: '每年', value: 5 }
       ],
-      timeList: ['5分钟', '10分钟', '20分钟', '30分钟', '50分钟', '1个小时'],
+      timeList: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
       rules: {
         type: [
           { required: true, message: '请选择日历类型', trigger: 'change' }
@@ -197,6 +221,15 @@ export default {
     showCreate(val) {
       this.visible = val
       if (val) {
+        this.form = {
+          title: '',
+          typeId: 1, // 日历类型
+          ownerUserIds: 0,
+          repetitionType: '',
+          startTime: '',
+          endTime: ''
+        }
+        this.checkedUser = []
         if (this.selectDiv) {
           this.form.startTime = this.selectDiv + ' 08:00:00'
         } else {
@@ -205,6 +238,20 @@ export default {
         this.getDetail()
         this.choseMore = false
       }
+    },
+
+    allData: {
+      handler(val) {
+        Object.keys(val).forEach(key => {
+          const list = this.allData[key] || []
+          const ids = []
+          list.forEach(item => {
+            ids.push(item[key + 'Id'])
+          })
+          this.businessRelation[key + 'Ids'] = ids.join(',')
+        })
+      },
+      deep: true
     }
   },
   mounted() {
@@ -235,8 +282,21 @@ export default {
           ownerUserIds: this.todayDetailData.ownerUserIds,
           repetitionType: this.todayDetailData.repetitionType || '',
           startTime: this.todayDetailData.startTime || '',
-          endTime: this.todayDetailData.endTime || ''
+          endTime: this.todayDetailData.endTime || '',
+          eventId: this.todayDetailData.eventId,
+          batchId: this.todayDetailData.batchId
         }
+        this.allData = {
+          customer: this.todayDetailData.customerList,
+          contacts: this.todayDetailData.contactsList,
+          contract: this.todayDetailData.contractList,
+          business: this.todayDetailData.businessList
+        }
+        this.notice = this.todayDetailData.noticeList
+        this.form.repeatTime = this.todayDetailData.repeatTime
+        this.form.repeatRate = this.todayDetailData.repeatRate
+        this.form.endType = this.todayDetailData.endType || ''
+        this.checkedUser = this.todayDetailData.ownerUserList
         this.cusCheck.forEach(item => {
           if (item.typeId === this.form.typeId) {
             this.colorItem = item.color
@@ -245,6 +305,8 @@ export default {
         })
       } else {
         this.colorItem = this.cusCheck[0].color
+        this.form.typeId = this.cusCheck[0].typeId
+        this.businessRelation = []
       }
     },
     /**
@@ -273,9 +335,12 @@ export default {
      */
     checkInfos(dataIds, data) {
       this.allData = data
+      console.log(this.allData, dataIds)
       Object.keys(dataIds).forEach(key => {
         this.businessRelation[key] = dataIds[key].length ? dataIds[key].join(',') : ''
       })
+      this.businessRelation = JSON.parse(JSON.stringify(this.businessRelation))
+      console.log(this.businessRelation)
     },
 
     /**
@@ -329,6 +394,10 @@ export default {
         } else {
           this.repeatForm.endTypeConfig = this.$refs.repeat.endCount
         }
+        this.form = {
+          ...this.form,
+          ...this.repeatForm
+        }
         this.showRepeat = false
       } else {
         this.createSchedule()
@@ -336,20 +405,62 @@ export default {
     },
 
     /**
-     * 新建日程
+     * 新建/编辑日程
      */
     createSchedule() {
-      const params = {
-        relation: this.businessRelation
+      const params = { }
+      if (Object.keys(this.businessRelation).length) {
+        params.relation = this.businessRelation
       }
+      const length = Object.keys(this.todayDetailData).length
+      const request = this.getRequest()
+      params.notice = this.notice
       params.event = {
-        ...this.form,
-        ...this.repeatForm
+        ...this.form
       }
-      canlendarSaveAPI(params).then(res => {
-        this.$message.success('新建日程成功')
+      if (length) {
+        params.time = new Date(this.todayDetailData.startTime).getTime()
+        if (this.editAll) {
+          params.type = 3
+        } else {
+          params.type = 2
+          params.event.repetitionType = 1
+        }
+      }
+
+      request(params).then(res => {
+        this.$message.success('新建或编辑日程成功')
         this.$emit('createSuccess')
       }).catch(() => {})
+    },
+
+    /**
+     * 获取请求
+     */
+    getRequest() {
+      const length = Object.keys(this.todayDetailData).length
+      if (length) {
+        return canlendarUpdateAPI
+      } else {
+        return canlendarSaveAPI
+      }
+    },
+
+    /**
+     * 添加新提醒
+     */
+    addNewNotice() {
+      this.notice.push({
+        value: '',
+        type: ''
+      })
+    },
+
+    /**
+     * 删除提醒
+     */
+    deleteNotice(index) {
+      this.notice.splice(index, 1)
     }
   }
 }
@@ -430,6 +541,15 @@ export default {
 }
 /deep/.related-business{
   margin-top: -5px;
+}
+/deep/.el-icon-delete{
+  color: #333;
+}
+.new_notice{
+  color: #2362FB;
+  padding-left: 80px;
+  padding-bottom: 10px;
+  cursor: pointer;
 }
 </style>
 

@@ -3,7 +3,7 @@
     <div>
       <Calendar
         ref="calendar"
-        :mark-date-more="calendarArr"
+        :mark-date-more="scheduleList"
         v-bind="$attrs"
         v-on="$listeners"
         @changeMonth="changeMonth"/>
@@ -13,16 +13,17 @@
 
 <script>
 import Calendar from 'vue-calendar-component'
+import { canlendarQueryListStatusAPI } from '@/api/calendar'
 export default {
   name: 'Schedule',
   components: {
     Calendar
   },
   props: {
-    calendarArr: {
-      type: Array,
+    activeTime: {
+      type: Object,
       default: () => {
-        return []
+        return {}
       }
     }
   },
@@ -33,15 +34,25 @@ export default {
       currentMonthDate: new Date()
     }
   },
+  watch: {
+    activeTime: {
+      handler(val) {
+        if (val.endTime - val.startTime > 24 * 60 * 60 * 1000) {
+          this.getDateList(val)
+        }
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.selectDay(new Date(), true)
+    this.getDateList(this.activeTime)
   },
   methods: {
     /**
      * 切换月份
      */
     changeMonth(val) {
-      this.scheduleList = []
       this.currentMonthDate = new Date(val)
       this.$emit('changeMonth', this.currentMonthDate)
     },
@@ -50,7 +61,22 @@ export default {
      * 切换某天
      */
     selectDay(date, boolean) {
-      this.$refs.calendar.ChoseMonth(date, boolean)
+      this.$refs.calendar.ChoseMonth(date, true)
+    },
+
+    /**
+     * 获取标注
+     */
+    getDateList(data) {
+      this.scheduleList = []
+      canlendarQueryListStatusAPI(data).then(res => {
+        res.data.forEach(element => {
+          this.scheduleList.push({
+            date: element,
+            className: 'mark1'
+          })
+        })
+      }).catch(() => {})
     }
   }
 }

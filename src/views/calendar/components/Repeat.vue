@@ -13,7 +13,7 @@
             :value="item.value"/>
         </el-select>
       </el-form-item>
-      <template v-if="form.repetitionType !== 1">
+      <template v-if="form.repetitionType != 1">
         <el-form-item label="重复频率" style="whiteSpace: nowrap">
           <el-input
             v-model.number="form.repeatRate"
@@ -22,9 +22,9 @@
             autocomplete="off"/>
           <span>{{ timeList[form.repetitionType] }}</span>
         </el-form-item>
-        <el-form-item v-if="form.repetitionType !== 2 && form.repetitionType !== 5" label="重复时间">
+        <el-form-item v-if="form.repetitionType != 2 && form.repetitionType != 5" label="重复时间">
           <el-checkbox-group
-            v-if="form.repetitionType === 3"
+            v-if="form.repetitionType == 3"
             v-model="checkedRepeatTime"
             @change="changeRepeatTime">
             <el-checkbox
@@ -77,6 +77,12 @@ export default {
     repeatType: {
       type: Number,
       default: 0
+    },
+    detail: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
@@ -116,6 +122,20 @@ export default {
   mounted() {
     this.dayList = []
     this.form.repetitionType = this.repeatType
+    if (Object.keys(this.detail).length) {
+      this.form.repetitionType = this.detail.repetitionType
+      this.form.repeatTime = this.detail.repeatTime || ''
+      this.form.repeatRate = this.detail.repeatRate || ''
+      this.form.endType = this.detail.endType + '' || ''
+      if (this.detail.endType == 2) {
+        this.endCount = this.detail.endTypeConfig
+        this.endDate = ''
+      } else if (this.detail.endType == 3) {
+        this.endDate = this.detail.endTypeConfig
+        this.endCount = ''
+      }
+      this.form.endTypeConfig = this.detail.endTypeConfig
+    }
     for (let i = 1; i <= 31; i++) {
       this.dayList.push(i)
     }
