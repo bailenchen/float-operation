@@ -7,8 +7,8 @@
     width="950px"
     @close="close">
     <div slot="title">
-      <span :style="{backgroundColor: todayDetailData.backgroundColor}" class="block"/>
-      <span class="title-text">{{ todayDetailData.typeName || todayDetailData.title }}</span>
+      <span :style="{backgroundColor: blockColor}" class="block"/>
+      <span class="title-text">{{ todayDetailData.typeName || detail.title }}</span>
       <span v-if="id != -1" class="title-message">{{ detail.createUserName }} 创建于 {{ timeFormatted(detail.createTime) }}
         <el-dropdown
           trigger="click"
@@ -59,7 +59,7 @@
     </template>
     <template v-else>
       <div class="common-box">
-        <div class="common-title">{{ todayDetailData.title }}</div>
+        <div class="common-title">{{ todayDetailData.title || detail.title }}</div>
 
         <flexbox class="common-header">
           <flexbox class="header-left">
@@ -165,14 +165,6 @@
       :visible.sync="showFullDetail"
       :crm-type="relationCrmType"
       :id="relationID" />
-    <!-- 详情 -->
-    <task-detail
-      v-if="taskDetailShow"
-      ref="particulars"
-      :id="taskID"
-      :detail-index="detailIndex"
-      is-trash
-      @close="taskDetailShow = false"/>
   </el-dialog>
 </template>
 <script>
@@ -202,7 +194,7 @@ export default {
   },
   props: {
     id: {
-      type: String,
+      type: [String, Number],
       default: ''
     },
     showTodayDetail: {
@@ -254,7 +246,8 @@ export default {
       showCreate: false,
       // 是否编辑整个系列
       editAll: false,
-      repeatText: ''
+      repeatText: '',
+      blockColor: ''
     }
   },
   computed: {
@@ -265,6 +258,7 @@ export default {
       if (val) {
         if (this.id == -1) {
           this.getFieldList()
+          this.blockColor = this.todayDetailData.backgroundColor
         } else {
           this.getDetail()
         }
@@ -305,6 +299,7 @@ export default {
       }).then(res => {
         this.detail = res.data
         this.repeatText = this.summaryText()
+        this.blockColor = this.detail.color
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -449,14 +444,15 @@ export default {
      */
     handleRowClick(row, column, event) {
       if (this.todayDetailData.title === '今日到期任务') {
-        this.taskID = row.taskId
-        this.taskDetailShow = true
+        this.relationID = row.taskId
+        this.relationCrmType = 'task'
+        this.showFullDetail = true
       } else if (this.todayDetailData.title === '今日需联系会员') {
-        this.relationID = this.detail.customerId
+        this.relationID = row.customerId
         this.relationCrmType = 'customer'
         this.showFullDetail = true
       } else {
-        this.relationID = this.detail.contractId
+        this.relationID = row.contractId
         this.relationCrmType = 'contract'
         this.showFullDetail = true
       }
@@ -525,9 +521,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const timestemp = new Date(this.todayDetailData.startTime).getTime()
+        const timestemp = new Date(this.detail.startTime).getTime()
         const params = {
-          eventId: this.todayDetailData.id,
+          eventId: this.id,
           time: timestemp,
           batchId: this.detail.batchId
         }

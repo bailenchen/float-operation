@@ -230,8 +230,24 @@ export default {
       this.contentHeight = document.documentElement.clientHeight - 80
     }
     this.showUserSelect()
+    this.addBus()
   },
+
+  destroyed() {
+    this.$bus.off('handleSuccess')
+  },
+
   methods: {
+
+    /**
+     * 添加监听事件
+     */
+    addBus() {
+      this.$bus.on('handleSuccess', () => {
+        this.getCusCheck()
+      })
+    },
+
     /**
      * 查询列表
      */
