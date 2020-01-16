@@ -1343,16 +1343,17 @@ export default {
               }
               if (val.checked) {
                 this.subTaskDoneNum--
-                this.$emit('on-handle', {
-                  type: 'change-sub-task',
-                  value: {
-                    subdonecount: this.subTaskDoneNum,
-                    allcount: this.taskData.childTask.length
-                  },
-                  index: this.detailIndex,
-                  section: this.detailSection
-                })
               }
+
+              this.$emit('on-handle', {
+                type: 'change-sub-task',
+                value: {
+                  subdonecount: this.subTaskDoneNum,
+                  allcount: this.taskData.childTask.length
+                },
+                index: this.detailIndex,
+                section: this.detailSection
+              })
               this.$message.success('子任务删除成功')
             })
             .catch(() => {
@@ -1395,7 +1396,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskDoneNum,
-              allcount: this.taskData.childTask.length + 1
+              allcount: this.taskData.childTask.length
             },
             index: this.detailIndex,
             section: this.detailSection
@@ -1405,7 +1406,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskDoneNum,
-              allcount: this.taskData.childTask.length - 1
+              allcount: this.taskData.childTask.length
             },
             index: this.detailIndex,
             section: this.detailSection
