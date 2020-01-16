@@ -61,6 +61,7 @@
       align="stretch">
       <flexbox-item
         v-for="(item, index) in headDetails"
+        v-show="item.title"
         :key="index"
         class="h-item"
         span="200">
