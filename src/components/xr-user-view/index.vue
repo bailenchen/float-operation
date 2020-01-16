@@ -31,12 +31,12 @@
         <flexbox class="info-cell">
           <i class="wk wk-b-mobile" />
           <div class="info-cell__label">手机</div>
-          <div class="info-cell__value text-one-line">{{ data.mobile }}</div>
+          <div :title="data.mobile" class="info-cell__value text-one-line">{{ data.mobile }}</div>
         </flexbox>
         <flexbox class="info-cell">
           <i class="wk wk-email" />
           <div class="info-cell__label">邮箱</div>
-          <div class="info-cell__value text-one-line">{{ data.email }}</div>
+          <div :title="data.email" class="info-cell__value text-one-line">{{ data.email }}</div>
         </flexbox>
       </div>
     </div>
@@ -141,12 +141,14 @@ export default {
   i {
     font-size: 12px;
     color: #999;
+    flex-shrink: 0;
   }
 
   &__label {
     margin-left: 5px;
     color: #666;
-    widows: 50px;
+    width: 50px;
+    flex-shrink: 0;
   }
 
   &__value {
