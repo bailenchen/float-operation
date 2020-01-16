@@ -52,7 +52,7 @@
           <div
             slot="reference"
             class="select-box">
-            <template v-if="subtaskChange">
+            <template v-if="xhUserData && xhUserData.length">
               <span
                 v-for="(item, index) in xhUserData"
                 :key="index">
@@ -117,10 +117,8 @@ export default {
       // 子任务数据
       xhUserData: [],
       // 子任务人员
-      subtaskChange: false,
-      num: 0,
+      isRequesting: false, // 是请求中
       subtasksTextarea: '',
-      isNum: 0,
       showUserPopover: false
     }
   },
@@ -135,6 +133,21 @@ export default {
 
     workId() {
       return this.taskData.workId
+    },
+
+    isChangeUser() {
+      const oldUserData = this.subData.mainUser ? [this.subData.mainUser] : []
+      if (this.xhUserData.length != oldUserData.length) {
+        return true
+      }
+
+      if (this.xhUserData.length) {
+        if (this.xhUserData[0].userId != this.subData.mainUser.userId) {
+          return true
+        }
+      }
+
+      return false
     }
   },
   watch: {},
@@ -144,20 +157,18 @@ export default {
       this.subtasksDate = this.time
       if (JSON.stringify(this.subData) !== '{}') {
         if (this.subData.mainUser) {
-          this.subtaskChange = true
           this.xhUserData = [this.subData.mainUser]
         }
       } else {
         this.xhUserData = []
-        this.subtaskChange = false
       }
     }
   },
   methods: {
     subtasksSubmit(event) {
       this.subtasksTextarea = this.subtasksTextarea.split(/[\n]/).join('')
-      if (this.subtasksTextarea && this.num == 0) {
-        this.num = 1
+      if (this.subtasksTextarea && !this.isRequesting) {
+        this.isRequesting = true
         if (this.subTaskCom == 'new') {
           // this.$emit('on-handle', { type: 'add', result: 'success' })
           setTaskAPI({
@@ -178,18 +189,17 @@ export default {
               // 创建成功 -- 清除选择
               this.subtasksTextarea = ''
               this.subtasksDate = ''
-              this.subtaskChange = false
-              this.num = 0
+              this.isRequesting = false
               this.$emit('on-handle', { type: 'add', result: 'success' })
             })
             .catch(() => {
               this.$emit('on-handle', { type: 'add', result: 'error' })
               this.$message.error('子任务创建失败')
-              this.num = 0
+              this.isRequesting = true
             })
         } else if (this.subTaskCom == 'edit') {
           if (
-            this.isNum == 1 ||
+            this.isChangeUser == 1 ||
             this.text != this.subtasksTextarea ||
             this.subtasksDate != this.time
           ) {
@@ -198,7 +208,7 @@ export default {
               taskId: this.taskId,
               stopTime: this.subtasksDate,
               mainUserId:
-                this.xhUserData.length > 0 ? this.xhUserData[0].id : '',
+                this.xhUserData.length > 0 ? this.xhUserData[0].userId : '',
               name: this.subtasksTextarea
             })
               .then(res => {
@@ -214,14 +224,14 @@ export default {
                     break
                   }
                 }
-                this.num = 0
+                this.isRequesting = false
                 this.$emit('on-handle', { type: 'edit', result: 'success' })
                 this.$message.success('子任务编辑成功')
               })
               .catch(() => {
                 this.$emit('on-handle', { type: 'edit', result: 'error' })
                 this.$message.error('子任务编辑失败')
-                this.num = 0
+                this.isRequesting = false
               })
           } else {
             this.$emit('on-handle', { type: 'cancel' })
@@ -232,19 +242,8 @@ export default {
       }
     },
     xhUserCheckout(data) {
-      if (data.length != 0) {
-        this.subtaskChange = true
-        if (this.xhUserData.length != 0) {
-          this.$set(this.xhUserData[0], 'img', data[0].img)
-          this.$set(this.xhUserData[0], 'realname', data[0].realname)
-        } else {
-          this.xhUserData = data
-        }
-        this.isNum = 1
-      } else {
-        this.isNum = 0
-        this.subtaskChange = false
-      }
+      console.log('object---', this.xhUserData, data)
+      this.xhUserData = data
       this.showUserPopover = false
     },
     // 子任务 -- 时间弹框

@@ -1053,7 +1053,7 @@ export default {
             const anotherItem = this.crmForm.crmFields.find(item => {
               return item.key == anotherTime
             })
-            if (value && anotherItem.value) {
+            if (value && anotherItem && anotherItem.value) {
               let noPass = false
               if (anotherTime === 'start_time') {
                 noPass = moment(value).isBefore(anotherItem.value)
