@@ -2,7 +2,7 @@
   <div
     class="project-list"
     direction="column">
-    <div class="nav-box">
+    <div v-loading="loading" class="nav-box">
       <xr-header
         :icon-color="projectColor || '#4AB8B8'"
         class="xr-header"
@@ -12,7 +12,6 @@
           slot="label"
           v-model="projectHandleShow"
           placement="bottom-start"
-          popper-class="project-settings-182"
           width="182">
           <div class="project-list-popover-btn-list">
             <members-dep
@@ -36,6 +35,8 @@
               @submite="setSubmite"
               @handle="projectSettingsHandle"
               @click="projectHandleShow = false"/>
+            <p @click="taskImportShow = true">导入任务</p>
+            <p @click="exportClick">导出任务</p>
             <p
               v-if="canUpdateWork"
               @click="archiveProject">归档项目</p>
@@ -108,6 +109,13 @@
       :permission="permission"
       :visible.sync="membersShow"
       @handle="membersHandle"/>
+
+    <!-- 任务导入 -->
+    <task-import
+      :work-id="workId"
+      :show.sync="taskImportShow"
+      @success="taskImportSuccess"
+    />
   </div>
 </template>
 
@@ -117,7 +125,8 @@ import {
   workWorkDeleteAPI,
   workWorkLeaveAPI,
   workWorkOwnerListAPI,
-  workWorkSaveAPI
+  workWorkSaveAPI,
+  workTaskExportAPI
 } from '@/api/projectManagement/project'
 
 import TaskBoard from './components/taskBoard'
@@ -127,8 +136,11 @@ import ArchivingTask from './components/archivingTask'
 import ProjectSettings from './components/projectSettings'
 import TaskScreening from './components/taskScreening'
 import Members from './components/members'
+import TaskImport from '../components/TaskImport' // 任务导入
 import MembersDep from '@/components/selectEmployee/membersDep'
 import XrHeader from '@/components/xr-header'
+
+import { downloadExcelWithResData } from '@/utils'
 
 export default {
   components: {
@@ -139,6 +151,7 @@ export default {
     ProjectSettings,
     TaskScreening,
     Members,
+    TaskImport,
     MembersDep,
     XrHeader
   },
@@ -146,6 +159,7 @@ export default {
   data() {
     return {
       // 项目ID
+      loading: false,
       workId: '',
       projectName: '',
       projectColor: '',
@@ -163,6 +177,8 @@ export default {
       // 是否显示筛选
       screeningButtonShow: true,
       screeningShow: false,
+      // 任务导入展示
+      taskImportShow: false,
 
       // 权限
       permission: {}
@@ -371,6 +387,31 @@ export default {
         this.$bus.$emit('members-update', data)
         this.membersList = data
       }
+    },
+
+    /**
+     * 审批导出
+     */
+    exportClick() {
+      this.projectHandleShow = false
+      this.loading = true
+      workTaskExportAPI({
+        workId: this.workId
+      })
+        .then(res => {
+          downloadExcelWithResData(res)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
+    /**
+     * 任务导入成功
+     */
+    taskImportSuccess() {
+      this.$bus.$emit('work-task-import')
     }
   }
 }

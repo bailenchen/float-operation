@@ -31,7 +31,7 @@
             <p class="info-value">已购买用户数：{{ systemInfo.allNum }}个</p>
             <p class="info-value">已使用用户数：{{ systemInfo.usingNum }}个</p>
           </flexbox-item>
-          <flexbox-item class="progress-info-item">
+          <flexbox-item v-if="systemInfo.startTime" class="progress-info-item">
             <p class="info-title">租期到期时间</p>
             <radial-progress-bar
               :diameter="126"
@@ -213,12 +213,16 @@ export default {
           data.userProgress = 0
         }
 
-        const startMoment = moment(data.startTime)
-        const endMoment = moment(data.endTime)
-        data.surplusDays = endMoment.diff(moment(), 'days')
-        const totalDays = endMoment.diff(startMoment, 'days')
-        data.dayProgress = data.surplusDays > 0 ? Math.floor((data.surplusDays / totalDays) * 100) : 0
+        // 时间
+        if (data.startTime) {
+          const startMoment = moment(data.startTime)
+          const endMoment = moment(data.endTime)
+          data.surplusDays = endMoment.diff(moment(), 'days')
+          const totalDays = endMoment.diff(startMoment, 'days')
+          data.dayProgress = data.surplusDays > 0 ? Math.floor((data.surplusDays / totalDays) * 100) : 0
+        }
 
+        // 存储
         if (data.size != data.allSize) {
           data.sizeProgress = Math.floor(((data.allSize - data.size) / data.allSize) * 100)
         } else {

@@ -151,3 +151,17 @@ export function taskDeleteLabelAPI(data) {
     data: data
   })
 }
+
+/**
+ * 办公任务导出
+ * @param {*} data
+ */
+export function taskOaExportAPI(data) {
+  return request({
+    url: 'task/oaTaskExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+

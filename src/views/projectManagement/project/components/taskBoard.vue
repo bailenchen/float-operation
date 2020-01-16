@@ -366,6 +366,11 @@ export default {
         labelId: tagIds
       })
     })
+
+    // 导入
+    this.$bus.$on('work-task-import', (userIds, timeId, tagIds) => {
+      this.getList()
+    })
   },
 
   mounted() {
@@ -382,6 +387,7 @@ export default {
 
   beforeDestroy() {
     this.$bus.$off('search')
+    this.$bus.$off('work-task-import')
   },
 
   methods: {
