@@ -130,7 +130,7 @@
                   <i
                     :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}"
                     class="wukong wukong-time-task"/>
-                  <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ element.stopTime | moment("MM-DD") }}截止</span>
+                  <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ element.stopTime | moment("YYYY-MM-DD") }}截止</span>
                 </div>
                 <div
                   v-if="element.childAllCount > 0"
