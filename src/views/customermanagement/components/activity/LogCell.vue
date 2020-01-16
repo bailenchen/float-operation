@@ -35,7 +35,7 @@
         <i
           :style="{ color: activityIconColor }"
           :class="activityIcon" />
-        <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-跟进记录' }}</span>
+        <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-' + getRecordLogTypeName(item.type) }}</span>
       </span>
     </flexbox>
     <div class="fl-b">

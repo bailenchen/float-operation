@@ -10,7 +10,7 @@
       @on-handle="listHeadHandle"
       @on-search="crmSearch"/>
     <div
-      v-empty="!crm.leads.index"
+      v-empty="!crm.marketing.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">

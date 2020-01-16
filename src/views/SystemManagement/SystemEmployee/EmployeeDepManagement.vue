@@ -654,9 +654,9 @@ export default {
             trigger: 'blur'
           }
         ],
-        parentId: [
-          { required: true, message: '直属上级不能为空', trigger: 'change' }
-        ],
+        // parentId: [
+        //   { required: true, message: '直属上级不能为空', trigger: 'change' }
+        // ],
         deptId: [
           { required: true, message: '部门不能为空', trigger: 'change' }
         ],
@@ -1501,7 +1501,10 @@ export default {
       this.loading = true
       usersList({ pageType: 0 })
         .then(res => {
-          this.optionsList['parentId'].list = []
+          this.optionsList['parentId'].list = [{
+            id: '',
+            name: '请选择'
+          }]
           for (const i of res.data) {
             this.optionsList['parentId'].list.push({
               id: i.userId,

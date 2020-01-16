@@ -459,6 +459,7 @@ export default {
         params.status = status
       }
 
+      params.queryType = this.examineType == 'my' ? 1 : 2 // 1我发出的  2待我审批的
       oaExamineExportAPI(params)
         .then(res => {
           downloadExcelWithResData(res)
