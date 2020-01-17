@@ -9,7 +9,7 @@
       width="580px">
       <div v-if="!showRepeat">
         <el-form ref="ruleForm" :model="form" :rules="rules" label-position="left">
-          <el-form-item>
+          <el-form-item prop="title" class="form_1">
             <el-input v-model="form.title" placeholder="请输入日程安排" class="input_one"/>
           </el-form-item>
           <el-form-item label="日历类型" prop="typeId">
@@ -32,21 +32,21 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="开始时间">
+          <el-form-item label="开始时间" prop="startTime">
             <el-date-picker
               v-model="form.startTime"
               value-format="yyyy-MM-dd HH:mm:ss"
               type="datetime"
               placeholder="选择日期"/>
           </el-form-item>
-          <el-form-item label="结束时间">
+          <el-form-item label="结束时间" prop="endTime">
             <el-date-picker
               v-model="form.endTime"
               type="datetime"
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="选择日期"/>
           </el-form-item>
-          <el-form-item label="参与人员">
+          <el-form-item label="参与人员" prop="ownerUserIds">
             <xh-user-cell
               :value="checkedUser"
               :radio="false"
@@ -183,7 +183,7 @@ export default {
         title: '',
         typeId: 1, // 日历类型
         ownerUserIds: 0,
-        repetitionType: '',
+        repetitionType: 1,
         startTime: '',
         endTime: ''
       },
@@ -210,8 +210,20 @@ export default {
       ],
       timeList: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
       rules: {
-        type: [
+        title: [
+          { required: true, message: '日程安排不能为空', trigger: 'blur' }
+        ],
+        typeId: [
           { required: true, message: '请选择日历类型', trigger: 'change' }
+        ],
+        startTime: [
+          { required: true, message: '请选择开始时间', trigger: 'change' }
+        ],
+        endTime: [
+          { required: true, message: '请选择结束时间', trigger: 'change' }
+        ],
+        ownerUserIds: [
+          { required: true, message: '请选择参与人', trigger: 'change' }
         ]
       }
     }
@@ -224,8 +236,8 @@ export default {
         this.form = {
           title: '',
           typeId: 1, // 日历类型
-          ownerUserIds: 0,
-          repetitionType: '',
+          ownerUserIds: '',
+          repetitionType: 1,
           startTime: '',
           endTime: ''
         }
@@ -377,6 +389,7 @@ export default {
       if (this.showRepeat) {
         this.showRepeat = false
         this.repeatForm = {}
+        this.form.repetitionType = 1
       } else {
         this.form = {}
         this.$emit('close')
@@ -389,18 +402,30 @@ export default {
     sure() {
       if (this.showRepeat) {
         this.repeatForm = this.$refs.repeat.form
-        if (this.$refs.repeat.endDate) {
-          this.repeatForm.endTypeConfig = this.$refs.repeat.endDate
-        } else {
-          this.repeatForm.endTypeConfig = this.$refs.repeat.endCount
-        }
-        this.form = {
-          ...this.form,
-          ...this.repeatForm
-        }
-        this.showRepeat = false
+        this.$refs.repeat.$refs['ruleForm'].validate(valid => {
+          if (valid) {
+            if (this.$refs.repeat.endDate) {
+              this.repeatForm.endTypeConfig = this.$refs.repeat.endDate
+            } else {
+              this.repeatForm.endTypeConfig = this.$refs.repeat.endCount
+            }
+            this.form = {
+              ...this.form,
+              ...this.repeatForm
+            }
+            this.showRepeat = false
+          } else {
+            return false
+          }
+        })
       } else {
-        this.createSchedule()
+        this.$refs['ruleForm'].validate((valid) => {
+          if (valid) {
+            this.createSchedule()
+          } else {
+            return false
+          }
+        })
       }
     },
 
@@ -451,8 +476,8 @@ export default {
      */
     addNewNotice() {
       this.notice.push({
-        value: '',
-        type: ''
+        value: 5,
+        type: 1
       })
     },
 
@@ -476,9 +501,12 @@ export default {
        width: 510px !important;
       }
     }
+/deep/.form_1 .el-form-item__error{
+          left: 0px !important;
+          }
     .el-form{
       .el-form-item{
-        margin-bottom: 12px;
+        margin-bottom: 20px;
        .el-input__inner{
         width: 430px;
       }
@@ -489,6 +517,9 @@ export default {
           letter-spacing: 1px;
           width: 80px;
           position: relative;
+        }
+        /deep/.el-form-item__error{
+          left: 80px;
         }
         .el-form-item__label::before{
            position: absolute;

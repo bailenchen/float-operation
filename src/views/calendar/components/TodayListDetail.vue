@@ -8,7 +8,7 @@
     @close="close">
     <div slot="title">
       <span :style="{backgroundColor: blockColor}" class="block"/>
-      <span class="title-text">{{ todayDetailData.typeName || detail.title }}</span>
+      <span class="title-text">{{ todayDetailData.title || detail.title }}</span>
       <span v-if="id != -1" class="title-message">{{ detail.createUserName }} 创建于 {{ timeFormatted(detail.createTime) }}
         <el-dropdown
           trigger="click"
@@ -175,7 +175,6 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   canlendarDeleteAPI,
   canlendarQueryByIdAPI,
-  canlendarTodayTaskAPI,
   canlendarTodayContractAPI,
   canlendarTodayCustomerAPI
 } from '@/api/calendar'
@@ -312,20 +311,8 @@ export default {
     getFieldList() {
       this.loading = true
       let crmType = ''
-      if (this.todayDetailData.title === '今日需联系客户') {
+      if (this.todayDetailData.title === '需联系的客户') {
         crmType = 'customer'
-      } else if (this.todayDetailData.title === '今日到期任务') {
-        crmType = 'task'
-        this.fieldList = [
-          { prop: 'name', label: '任务名称', width: 200 },
-          { prop: 'priority', label: '优先级', width: 200 },
-          { prop: 'createTime', label: '创建时间', width: 200 },
-          { prop: 'mainUser.realname', label: '负责人', width: 200 },
-          { prop: 'startTime', label: '开始时间', width: 200 },
-          { prop: 'stopTime', label: '结束时间', width: 200 }
-        ]
-        this.getList()
-        return
       } else {
         crmType = 'contract'
       }
@@ -390,11 +377,18 @@ export default {
      */
     getList() {
       var crmIndexRequest = this.getIndexRequest()
+      const startTime = new Date(this.todayDetailData.startTime).getTime()
       const params = {
         page: this.currentPage,
         limit: this.pageSize,
+        time: startTime,
         isSub: 1,
         type: 1
+      }
+      if (this.todayDetailData.title === '需要回款的合同') {
+        params.type = 2
+      } else if (this.todayDetailData.title === '即将到期的合同') {
+        params.type = 1
       }
       this.loading = true
       crmIndexRequest(params)
@@ -412,10 +406,8 @@ export default {
      * 获取列表请求
      */
     getIndexRequest() {
-      if (this.todayDetailData.title == '今日需联系客户') {
+      if (this.todayDetailData.title == '需联系的客户') {
         return canlendarTodayCustomerAPI
-      } else if (this.todayDetailData.title == '今日到期任务') {
-        return canlendarTodayTaskAPI
       } else {
         return canlendarTodayContractAPI
       }
@@ -443,11 +435,7 @@ export default {
      * 行点击
      */
     handleRowClick(row, column, event) {
-      if (this.todayDetailData.title === '今日到期任务') {
-        this.relationID = row.taskId
-        this.relationCrmType = 'task'
-        this.showFullDetail = true
-      } else if (this.todayDetailData.title === '今日需联系会员') {
+      if (this.todayDetailData.title === '需联系的客户') {
         this.relationID = row.customerId
         this.relationCrmType = 'customer'
         this.showFullDetail = true

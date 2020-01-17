@@ -118,12 +118,12 @@ export function canlendarTodayTaskAPI(data) {
 }
 
 /**
- * 今日到期的合同
+ * 今日到期的合同（type: 1 当日到期合同 2 当日回款合同）
  */
 
 export function canlendarTodayContractAPI(data) {
   return request({
-    url: 'OaCalendar/todayContract',
+    url: 'OaCalendar/eventContract',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -133,12 +133,12 @@ export function canlendarTodayContractAPI(data) {
 }
 
 /**
- * 今日需联系客户 OaEvent/queryListStatus
+ * 需联系客户 OaEvent/queryListStatus
  */
 
 export function canlendarTodayCustomerAPI(data) {
   return request({
-    url: 'OaCalendar/todayCustomer',
+    url: 'OaCalendar/eventCustomer',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -148,12 +148,42 @@ export function canlendarTodayCustomerAPI(data) {
 }
 
 /**
- * 小日历标记 OaEvent/queryListStatus
+ * 小日历标记 OaCalendar/eventCrm
  */
 
 export function canlendarQueryListStatusAPI(data) {
   return request({
     url: 'OaEvent/queryListStatus',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
+/**
+ * 今日crm状态提醒
+ */
+
+export function canlendarEventCrmAPI(data) {
+  return request({
+    url: 'OaCalendar/eventCrm',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
+/**
+ * 即将到期的任务
+ */
+
+export function canlendarEventTaskAPI(data) {
+  return request({
+    url: 'OaCalendar/eventTask',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'

@@ -1,6 +1,6 @@
 <template>
   <div class="repeat-box">
-    <el-form :model="form" label-width="80px" label-position="left">
+    <el-form ref="ruleForm" :rules="rules" :model="form" label-width="80px" label-position="left">
       <el-form-item label="重复">
         <el-select
           v-model="form.repetitionType"
@@ -14,7 +14,7 @@
         </el-select>
       </el-form-item>
       <template v-if="form.repetitionType != 1">
-        <el-form-item label="重复频率" style="whiteSpace: nowrap">
+        <el-form-item label="重复频率" style="whiteSpace: nowrap" prop="repeatRate" class="form_1">
           <el-input
             v-model.number="form.repeatRate"
             type="number"
@@ -22,7 +22,11 @@
             autocomplete="off"/>
           <span>{{ timeList[form.repetitionType] }}</span>
         </el-form-item>
-        <el-form-item v-if="form.repetitionType != 2 && form.repetitionType != 5" label="重复时间">
+        <el-form-item
+          v-if="form.repetitionType != 2 && form.repetitionType != 5"
+          class="form_1"
+          label="重复时间"
+          prop="repeatTime">
           <el-checkbox-group
             v-if="form.repetitionType == 3"
             v-model="checkedRepeatTime"
@@ -41,7 +45,7 @@
               :value="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="结束" class="form_radio">
+        <el-form-item label="结束" class="form_radio" prop="endTypeConfig">
           <el-radio-group v-model="form.endType" @change="changeEndDate">
             <el-radio label="1">从不</el-radio>
             <el-radio label="2">重复
@@ -90,7 +94,7 @@ export default {
       form: {
         repeatTime: '',
         repeatRate: '', // 重复频率
-        endType: '', // 结束类型
+        endType: '1', // 结束类型
         endTypeConfig: '', // 结束次数/时间
         repetitionType: 0
       },
@@ -114,13 +118,33 @@ export default {
         { label: '六', value: '6' },
         { label: '日', value: '7' }
       ],
-      dayList: []
+      dayList: [],
+      rules: {
+        repeatRate: [
+          { required: true, message: '重复频率不能为空', trigger: 'blur' }
+        ],
+        endTypeConfig: [
+          { required: true, message: '请输入重复次数或结束日期', trigger: 'change' }
+        ],
+        repeatTime: [
+          { required: true, message: '请选择重复时间', trigger: 'change' }
+        ]
+      }
     }
   },
   watch: {
+    endDate(val) {
+      this.form.endTypeConfig = val
+      this.$refs['ruleForm'].validateField('endTypeConfig')
+    },
+    endCount(val) {
+      this.form.endTypeConfig = val
+      this.$refs['ruleForm'].validateField('endTypeConfig')
+    }
   },
   mounted() {
     this.dayList = []
+    this.changeEndDate(1)
     this.form.repetitionType = this.repeatType
     if (Object.keys(this.detail).length) {
       this.form.repetitionType = this.detail.repetitionType
@@ -159,9 +183,22 @@ export default {
     },
 
     /**
-     * 改变结束时间
+     * 改变结束类型
      */
     changeEndDate(value) {
+      if (value == 1) {
+        // 此值没有仅作为表单验证使用，没有任何意义
+        this.form.endTypeConfig = 'useless'
+        this.endDate = ''
+        this.endCount = ''
+      } else if (value == 2) {
+        this.endDate = ''
+        this.form.endTypeConfig = ''
+      } else if (value == 3) {
+        this.endCount = ''
+        this.form.endTypeConfig = ''
+      }
+      this.$refs['ruleForm'].validateField('endTypeConfig')
     },
 
     /**
@@ -172,9 +209,10 @@ export default {
         repetitionType: value,
         repeatTime: '',
         repeatRate: '', // 重复频率
-        endType: '', // 结束类型
+        endType: '1', // 结束类型
         endTypeConfig: '' // 结束次数/时间
       }
+      this.changeEndDate(1)
     },
 
     /**
@@ -210,11 +248,14 @@ export default {
   line-height: 46px;
   height: 46px;
 }
-.form_radio{
+/deep/.form_radio{
   margin-bottom: 10px;
   /deep/.el-form-item__content{
     margin-top: 0px;
-  }
+    }
+  .el-form-item__error{
+    left: 100px !important;
+    }
 }
 .form_bottom{
   margin-bottom: 10px;
@@ -229,7 +270,7 @@ export default {
  .form_date{
    width: 200px !important;
    /deep/.el-input__inner{
-     width: 145px !important;
+     width: 200px !important;
    }
  }
  .date_span{

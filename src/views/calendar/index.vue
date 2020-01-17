@@ -4,26 +4,21 @@
     <div class="box-left">
       <div class="left-title" >
         <img width="20px" src="@/assets/img/crm/todo.png" alt="">
-        <span class="title-text">日历</span>
         <xh-user-cell
           v-if="showUser"
           ref="xhuserCell"
           :value="checkedUser"
           :info-request="subUserListIndex"
           :radio="true"
+          v-bind="$attrs"
           class="left-user"
           @value-change="selectUser">
           <flexbox slot="reference" class="user-box">
-            <i v-if="!checkedUser || checkedUser.length === 0" class="wk wk-multi-user user-icon" />
-            <xr-avatar
-              v-else
-              :name="checkedUser[0].realname"
-              :size="28"
-              :src="checkedUser[0].img" />
-            <span class="username">{{ checkedUser[0]?checkedUser[0].realname: '本人' }}</span>
-            <span class="el-icon-caret-bottom icon" />
+            <span class="username">{{ checkedUser[0]?checkedUser[0].realname + '的日程': '我的日程' }}</span>
+            <span :class="{ 'is-reverse' : $refs.xhuserCell && $refs.xhuserCell.showPopover }" class="el-icon-arrow-up icon"/>
           </flexbox>
         </xh-user-cell>
+        <span v-else class="username">我的日程</span>
       </div>
       <div class="left-scroll">
         <schedule
@@ -34,22 +29,33 @@
           @choseDay="gotoPast"
           @changeMonth="changeMonth"/>
         <div class="left-main">
-          <div class="main-title">系统类型</div>
+          <div class="main-title" @click="showSys = !showSys">
+            <img src="@/assets/img/calendar_sys.png" alt="" width="20px">
+            <span class="main-text">系统类型</span>
+            <span :class="{ 'is-reverse' : showSys }" class="el-icon-arrow-up icon"/>
+          </div>
           <template v-if="showGroup">
-            <el-checkbox-group v-model="checkCusList" @change="sysFifter">
+
+            <el-checkbox-group v-show="showSys" v-model="checkCusList" @change="sysFifter">
               <el-checkbox
                 v-for="item in cusCheck"
                 v-if="item.type === 1"
                 :checked="item.select"
+                :class="item.class"
                 :label="item.typeName"
                 :key="item.typeName"/>
             </el-checkbox-group>
+
           </template>
         </div>
         <div class="left-bottom">
-          <div class="bottom-title">自定义类型</div>
+          <div class="bottom-title" @click="showCus = !showCus">
+            <img src="@/assets/img/calendar_cus.png" alt="" width="20px">
+            <span class="main-text">自定义类型</span>
+            <span :class="{ 'is-reverse' : showCus }" class="el-icon-arrow-up icon"/>
+          </div>
           <template v-if="showGroup">
-            <el-checkbox-group v-model="checkCusList" @change="customFifter">
+            <el-checkbox-group v-show="showCus" v-model="checkCusList" @change="customFifter">
               <el-checkbox
                 v-for="item in cusCheck"
                 v-if="item.type === 2"
@@ -121,6 +127,11 @@
       @deleteSuccess="handleSuccess"
       @createSuccess="handleSuccess"
       @close="showTodayDetail = false"/>
+
+    <c-r-m-full-screen-detail
+      :visible.sync="showFullDetail"
+      :crm-type="relationCrmType"
+      :id="relationID" />
   </flexbox>
 </template>
 
@@ -138,6 +149,8 @@ import XhUserCell from '@/components/CreateCom/XhUserCell'
 import {
   canlendarQueryListAPI,
   canlendarQueryTypeListAPI,
+  canlendarEventCrmAPI,
+  canlendarEventTaskAPI,
   canlendarUpdateTypeAPI
 } from '@/api/calendar'
 import { subUserListIndex } from '@/api/common'
@@ -155,7 +168,9 @@ export default {
     Schedule,
     CreateEvent,
     TodayListDetail,
-    XhUserCell
+    XhUserCell,
+    CRMFullScreenDetail: () =>
+      import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
   data() {
     return {
@@ -198,10 +213,10 @@ export default {
       checkSysList: [
       ],
       sysCheck: [
-        { label: '今日需联系客户' },
-        { label: '今日到期的任务' },
-        { label: '今日到期的合同' },
-        { label: '今日回款的合同' }
+        { label: '分配给我的任务' },
+        { label: '需联系的客户' },
+        { label: '即将到期的合同' },
+        { label: '需要回款的合同' }
       ],
       checkCusList: [],
       cusCheck: [],
@@ -216,8 +231,21 @@ export default {
       activeTime: {},
       // 今日显示的联系
       todaySchedule: [],
+      // 相关的系统联系字段
+      needData: {
+        customerTimeList: [],
+        endContractTimeList: [],
+        receiveContractTimeList: []
+      },
       checkedUser: [],
-      showUser: true
+      showUser: true,
+      showpover: false,
+      showSys: true,
+      showCus: false,
+      taskList: [],
+      showFullDetail: false,
+      relationCrmType: 'task',
+      relationID: ''
     }
   },
   computed: {
@@ -257,7 +285,7 @@ export default {
       canlendarQueryListAPI(this.activeTime).then(res => {
         this.calendarEvents = []
         const list = [
-          ...res.data, ...this.todaySchedule
+          ...res.data, ...this.todaySchedule, ...this.taskList
         ]
         list.forEach(item => {
           this.handleSure(item, item.color)
@@ -287,9 +315,15 @@ export default {
         this.cusCheck.forEach(item => {
           if (item.select) {
             this.typeIds.push(item.typeId)
-            if (item.type === 1) {
-              this.changeSys(item)
-            }
+          }
+          if (item.color === '1') {
+            item.class = 'color_8'
+          } else if (item.color === '2') {
+            item.class = 'color_1'
+          } else if (item.color === '3') {
+            item.class = 'color_5'
+          } else if (item.color === '4') {
+            item.class = 'color_11'
           }
           this.colorList.forEach((color, index) => {
             if (item.color === color) {
@@ -298,7 +332,7 @@ export default {
             }
           })
         })
-        this.getList()
+        this.getTodayTypeList()
       }).catch((
 
       ) => {})
@@ -307,7 +341,7 @@ export default {
     /**
      * 编辑左侧多选框列表
      */
-    updateList(type) {
+    updateList() {
       this.loading = true
       canlendarUpdateTypeAPI({ typeIds: this.typeIds, userId: this.activeTime.userId }).then(res => {
         this.getCusCheck()
@@ -348,7 +382,6 @@ export default {
       this.selectDiv = newDate
       const calendarApi = this.$refs.fullCalendar.getApi() // from the ref="..."
       if (calendarApi) {
-        console.log(boolean, '==')
         if (!boolean) {
           calendarApi.changeView('listDay')
         }
@@ -448,6 +481,15 @@ export default {
      * 点击事件
      */
     eventClick(data) {
+      console.log(data)
+      if (data.event.groupId == -2) {
+        this.relationID = data.event.id
+        this.relationCrmType = 'task'
+        setTimeout(() => {
+          this.showFullDetail = true
+        }, 200)
+        return
+      }
       this.eventId = data.event.id
       this.todayDetailData = {
         startTime: data.event.start || '',
@@ -461,7 +503,7 @@ export default {
       if (data.event.extendedProps) {
         this.todayDetailData.name = data.event.extendedProps.name
         this.todayDetailData.createTime = data.event.extendedProps.createTime
-        this.todayDetailData.headTitle = data.event.extendedProps.headTitle
+        this.todayDetailData.headTitle = data.event.title
         this.todayDetailData.typeId = data.event.extendedProps.typeId || 3
       }
       this.showTodayDetail = true
@@ -489,22 +531,6 @@ export default {
     },
 
     /**
-     * 拼接数据
-     */
-    changeSys(data) {
-      const obj = {
-        start: moment(new Date()).format('YYYY-MM-DD'),
-        eventId: -1,
-        color: '#2362FB',
-        typeId: data.typeId,
-        groupId: 0,
-        end: moment(new Date()).format('YYYY-MM-DD')
-      }
-      obj.title = data.typeName
-      this.todaySchedule.push(obj)
-    },
-
-    /**
      * 系统筛选
      */
     sysFifter(data) {
@@ -516,7 +542,7 @@ export default {
           }
         })
       })
-      this.updateList(1)
+      this.updateList()
     },
 
     /**
@@ -531,7 +557,7 @@ export default {
           }
         })
       })
-      this.updateList(2)
+      this.updateList()
     },
 
     /**
@@ -547,11 +573,11 @@ export default {
     handleSure(data, color) {
       this.calendarEvents.push({
         title: data.title,
-        start: moment(data.startTime).format('YYYY-MM-DD'),
+        start: moment(data.startTime).format('YYYY-MM-DD HH:mm:ss'),
         id: data.eventId,
         color: color,
         groupId: data.typeId,
-        end: moment(data.endTime).format('YYYY-MM-DD')
+        end: moment(data.endTime).format('YYYY-MM-DD HH:mm:ss')
       })
     },
 
@@ -598,7 +624,106 @@ export default {
           this.showUser = true
         }
       }).catch(() => {})
+    },
+
+    /**
+     * 获取今日需要展示的日程
+     */
+    getTodayTypeList() {
+      const params = {
+        startTime: this.activeTime.startTime,
+        endTime: this.activeTime.endTime
+      }
+      canlendarEventCrmAPI(params).then(res => {
+        this.needData = res.data
+        this.todaySchedule = this.handleData(this.cusCheck)
+        this.getList()
+      }).catch(() => {})
+    },
+
+    /**
+     * 获取分配给我的任务
+     */
+    getTask() {
+      const params = {
+        startTime: this.activeTime.startTime,
+        endTime: this.activeTime.endTime
+      }
+      this.taskList = []
+      canlendarEventTaskAPI(params).then(res => {
+        res.data.forEach(item => {
+          this.taskList.push({
+            title: item.name,
+            startTime: moment(item.startTime).format('YYYY-MM-DD HH:mm:ss'),
+            id: item.taskId,
+            eventId: item.taskId,
+            color: '#AEA1EA',
+            groupId: -2,
+            typeId: -2,
+            endTime: moment(item.endTime).format('YYYY-MM-DD HH:mm:ss')
+          })
+        })
+      }).catch(() => {})
+    },
+
+    /**
+     * 将需要展示的日程拼接入日程展示的数组
+     * color 1 分配给我的任务 2 需联系的客户 3 即将到期的合同 4 需要回款的合同
+     */
+    handleData(list) {
+      const selectSysList = []
+      const dataList = []
+      list.forEach(item => {
+        if (item.type === 1) {
+          if (item.select) {
+            selectSysList.push(item.color)
+          }
+        }
+      })
+      if (selectSysList.includes('1')) {
+        this.getTask()
+      } else {
+        this.taskList = []
+      }
+      if (selectSysList.includes('2')) {
+        this.needData.customerTimeList.forEach(date => {
+          dataList.push({
+            title: '需联系的客户',
+            startTime: date,
+            eventId: -1,
+            color: '#53D397',
+            groupId: 0,
+            endTime: date
+          })
+        })
+      }
+      if (selectSysList.includes('3')) {
+        this.needData.endContractTimeList.forEach(date => {
+          dataList.push({
+            title: '即将到期的合同',
+            startTime: date,
+            eventId: -1,
+            color: '#3498DB',
+            groupId: 0,
+            endTime: date
+          })
+        })
+      }
+      if (selectSysList.includes('4')) {
+        this.needData.receiveContractTimeList.forEach(date => {
+          dataList.push({
+            title: '需要回款的合同',
+            startTime: date,
+            eventId: -1,
+            color: '#FF6F6F',
+            groupId: 0,
+            endTime: date
+          })
+        })
+      }
+      return dataList
     }
+
   }
 }
 </script>
@@ -678,36 +803,76 @@ export default {
   }
   .left-main{
     width: 100%;
-    padding: 10px;
-    min-height: 210px;
-    border-bottom: 1px solid rgb(239,239,239);
-    border-top: 1px solid rgb(239,239,239);
+    padding: 0px;
+    color:#666666;
+
+    // border-bottom: 1px solid rgb(239,239,239);
+    // border-top: 1px solid rgb(239,239,239);
+    .main-title:hover{
+      background-color: #EDF2FF;
+    }
     .main-title{
-      color:#666666;
       font-size: 12px;
       margin-top: 10px;
+      display: flex;
+      padding: 15px;
+      width: 100%;
+      height: 45px;
       margin-bottom: 5px;
+      cursor: pointer;
+
+      .main-text{
+        display: inline-block;
+        width: 240px;
+      }
+       img {
+        width: 18px;
+        height: 18px;
+        margin-top: -2px;
+        margin-right: 10px;
+      }
     }
   }
   .left-bottom{
     width: 100%;
-    padding: 10px;
+     padding: 0px;
+    .bottom-title:hover{
+      background-color: #EDF2FF;
+      }
     .bottom-title{
       color:#666666;
       font-size: 12px;
-      margin-top: 10px;
+      padding: 15px;
+      display: flex;
+      height: 45px;
       margin-bottom: 5px;
+      cursor: pointer;
+
+       .main-text{
+        display: inline-block;
+        width: 240px;
+      }
+      img {
+        width: 18px;
+        height: 18px;
+        margin-top: -2px;
+        margin-right: 10px;
+      }
     }
   }
    /deep/.el-checkbox{
       height: 40px;
       line-height: 40px;
-      padding-left: 13px;
+      padding-left: 15px;
       display: block;
       .el-checkbox__label{
         padding-left: 15px;
         font-size: 13px;
       }
+   }
+   /deep/.el-checkbox:hover{
+     width: 100%;
+     background-color: #F6F8FA;
    }
 }
 .box-right{
@@ -720,9 +885,6 @@ export default {
 .user-box {
     width: unset;
     height: 36px;
-    padding: 4px 7px;
-    border: 1px solid #E1E1E1;
-    border-radius: $xr-border-radius-base;
     background-color: white;
     margin-right: 10px;
     display: flex;
@@ -737,17 +899,27 @@ export default {
       text-align: center;
     }
     .username {
-      font-size: 12px;
+      font-size: 13px;
       display: inline-block;
-      width: 70px;
       text-overflow: ellipsis;
       overflow: hidden;
+      margin-right: 3px;
       white-space: nowrap;
-      margin: 0 8px;
     }
   }
 /deep/.select-day{
   background-color: #4983EF !important;
   opacity: 0.04 !important;
+}
+.el-icon-arrow-up {
+  color: #333;
+  font-size: 14px;
+  transition: transform .3s;
+  transform: rotate(180deg);
+  cursor: pointer;
+  margin-right: 10px;
+}
+.el-icon-arrow-up.is-reverse {
+  transform: rotate(0deg);
 }
 </style>
