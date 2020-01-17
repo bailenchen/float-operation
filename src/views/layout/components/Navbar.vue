@@ -115,6 +115,7 @@ export default {
         announceCount: 0,
         crmCount: 0,
         examineCount: 0,
+        eventCount: 0,
         logCount: 0,
         taskCount: 0
       },

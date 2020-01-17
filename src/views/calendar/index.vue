@@ -264,7 +264,16 @@ export default {
   destroyed() {
     this.$bus.off('handleSuccess')
   },
-
+  /**
+   * 路由进入前切换顶部导航条
+   */
+  beforeRouteEnter(to, from, next) {
+    next(
+      vm => {
+        vm.$store.commit('SET_NAVACTIVEINDEX', to.fullPath)
+      }
+    )
+  },
   methods: {
 
     /**
