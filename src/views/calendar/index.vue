@@ -24,6 +24,7 @@
         <schedule
           v-loading="scheduleLoading"
           ref="schedule"
+          :list-data-type="listDataType"
           :active-time="activeTime"
           :calendar-arr="calendarArr"
           @choseDay="gotoPast"
@@ -210,6 +211,8 @@ export default {
       isFirstToDay: true,
       // 视图当前所展示的时间： 保证月，年切换时，视图更新引起的报错
       currentTime: '',
+      // 储存当前活动的时间，保证月份切换时，小日历跟随切换
+      currentActiveTime: '',
       checkSysList: [
       ],
       sysCheck: [
@@ -229,6 +232,7 @@ export default {
       typeIds: [],
       // 储存显示日期的开始时间和结束时间
       activeTime: {},
+      listDataType: '',
       // 今日显示的联系
       todaySchedule: [],
       // 相关的系统联系字段
@@ -342,9 +346,9 @@ export default {
           })
         })
         this.getTodayTypeList()
-      }).catch((
-
-      ) => {})
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
@@ -404,7 +408,7 @@ export default {
 
     handleDateClick(arg) {
       if (this.selectDiv === arg.dateStr) {
-        this.createEvents()
+        this.showCreate = true
       } else {
         this.selectDiv = arg.dateStr
         // 注开会生成提示文字
@@ -462,35 +466,36 @@ export default {
             div.insertBefore(img, div.children[0])
           }
         }
-      } else {
+      } else if (info.view.type === 'dayGridMonth') {
         if (this.currentTime === info.view.title) {
           if (this.selectDiv && document.querySelector(`td[data-date="${this.selectDiv}"]`)) {
           // 保证切换模式时，关联的日期被选中
             document.querySelector(`td[data-date="${this.selectDiv}"]`).classList.add('select-day')
           }
         } else {
+          // this.$refs.schedule.selectMouth(info.view.activeStart)
           this.currentTime = info.view.title
         }
-      }
-      if (this.activeTime.startTime !== new Date(info.view.activeStart).getTime()) {
-        this.activeTime.startTime = new Date(info.view.activeStart).getTime()
-        this.activeTime.endTime = new Date(info.view.activeEnd).getTime()
-        // 优化 只有月切换才会刷新列表
-        const leadTime = this.activeTime.endTime - this.activeTime.startTime
-        this.activeTime = JSON.parse(JSON.stringify(this.activeTime))
-        if (leadTime > 24 * 60 * 60 * 1000) {
-          this.getCusCheck()
-        } else {
-          this.$refs.schedule.selectDay(info.view.activeStart, true)
+        if (this.activeTime.startTime !== new Date(info.view.activeStart).getTime()) {
+          this.activeTime.startTime = new Date(info.view.activeStart).getTime()
+          this.activeTime.endTime = new Date(info.view.activeEnd).getTime()
+          // 优化 只有月切换才会刷新列表
+          const leadTime = this.activeTime.endTime - this.activeTime.startTime
+          this.activeTime = JSON.parse(JSON.stringify(this.activeTime))
+          if (leadTime > 24 * 60 * 60 * 1000) {
+            this.getCusCheck()
+          }
         }
+      } else if (info.view.type === 'timeGridWeek') {
+        // 周逻辑处理
       }
+      this.listDataType = info.view.type
     },
 
     /**
      * 点击事件
      */
     eventClick(data) {
-      console.log(data)
       if (data.event.groupId == -2) {
         this.relationID = data.event.id
         this.relationCrmType = 'task'
@@ -533,13 +538,6 @@ export default {
     },
 
     /**
-     * 选中某月
-     */
-    changeMonths(data) {
-      console.log(data, 'mouth')
-    },
-
-    /**
      * 系统筛选
      */
     sysFifter(data) {
@@ -573,6 +571,7 @@ export default {
      * 新建日程
      */
     createEvents() {
+      this.selectDiv = ''
       this.showCreate = true
     },
 
@@ -639,6 +638,7 @@ export default {
      * 获取今日需要展示的日程
      */
     getTodayTypeList() {
+      this.loading = true
       const params = {
         startTime: this.activeTime.startTime,
         endTime: this.activeTime.endTime

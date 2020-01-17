@@ -25,6 +25,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    listDataType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -37,7 +41,7 @@ export default {
   watch: {
     activeTime: {
       handler(val) {
-        if (val.endTime - val.startTime > 24 * 60 * 60 * 1000) {
+        if (val.endTime - val.startTime == 24 * 60 * 60 * 1000) {
           this.getDateList(val)
         }
       },
@@ -46,7 +50,6 @@ export default {
   },
   mounted() {
     this.selectDay(new Date(), true)
-    this.getDateList(this.activeTime)
   },
   methods: {
     /**
@@ -54,14 +57,23 @@ export default {
      */
     changeMonth(val) {
       this.currentMonthDate = new Date(val)
+      this.getDateList(this.activeTime)
       this.$emit('changeMonth', this.currentMonthDate)
     },
 
     /**
      * 切换某天
      */
-    selectDay(date, boolean) {
+    selectDay(date) {
       this.$refs.calendar.ChoseMonth(date, true)
+      this.getDateList(this.activeTime)
+    },
+
+    /**
+     * 切换某月
+     */
+    selectMouth(date) {
+      this.$refs.calendar.ChoseMonth(date)
     },
 
     /**

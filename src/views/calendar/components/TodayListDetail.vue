@@ -8,7 +8,7 @@
     @close="close">
     <div slot="title">
       <span :style="{backgroundColor: blockColor}" class="block"/>
-      <span class="title-text">{{ todayDetailData.title || detail.title }}</span>
+      <span class="title-text">{{ detail.typeName || todayDetailData.title }}</span>
       <span v-if="id != -1" class="title-message">{{ detail.createUserName }} 创建于 {{ timeFormatted(detail.createTime) }}
         <el-dropdown
           trigger="click"
@@ -41,7 +41,27 @@
           :label="item.label"
           :width="item.width"
           :formatter="fieldFormatter"
-          show-overflow-tooltip/>
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <template v-if="item.prop == 'dealStatus'">
+              <i :class="scope.row[item.prop] | dealIcon"/>
+              <span>{{ scope.row[item.prop] | dealName }}</span>
+            </template>
+            <template v-else-if="item.prop == 'status' && crmType === 'customer'">
+              <i
+                v-if="scope.row.status == 2"
+                class="wk wk-circle-password customer-lock"/>
+            </template>
+            <template v-else-if="item.prop == 'checkStatus'">
+              <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
+              <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+            </template>
+            <template v-else>
+              {{ scope.row[item.prop] }}
+            </template>
+          </template>
+        </el-table-column>
+        <el-table-column :resizable="false"/>
         <el-table-column :resizable="false"/>
       </el-table>
       <div class="p-contianer">
@@ -163,7 +183,7 @@
     <!-- CRM详情 -->
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
-      :crm-type="relationCrmType"
+      :crm-type="crmType"
       :id="relationID" />
   </el-dialog>
 </template>
@@ -181,6 +201,7 @@ import {
 import RelatedBusinessCell from '@/views/OAManagement/components/relatedBusinessCell'
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 import CreateEvent from './CreateEvent'
+import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import moment from 'moment'
 export default {
   name: 'TodayListDetail',
@@ -191,6 +212,16 @@ export default {
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
+  filters: {
+    dealIcon(statu) {
+      return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    },
+
+    dealName(statu) {
+      return statu == 1 ? '已成交' : '未成交'
+    }
+  },
+  mixins: [CheckStatusMixin],
   props: {
     id: {
       type: [String, Number],
@@ -219,7 +250,7 @@ export default {
     return {
       // 详情参数
       showFullDetail: false,
-      relationCrmType: 'customer',
+      crmType: 'customer',
       relationID: 0,
       // 任务详情
       taskDetailShow: false,
@@ -258,6 +289,9 @@ export default {
         if (this.id == -1) {
           this.getFieldList()
           this.blockColor = this.todayDetailData.backgroundColor
+          this.detail = {
+            customerList: []
+          }
         } else {
           this.getDetail()
         }
@@ -428,7 +462,7 @@ export default {
         const list = ['无', '低', '中', '高']
         return list[cellValue]
       }
-      return cellValue
+      return cellValue || '--'
     },
 
     /**
@@ -437,11 +471,11 @@ export default {
     handleRowClick(row, column, event) {
       if (this.todayDetailData.title === '需联系的客户') {
         this.relationID = row.customerId
-        this.relationCrmType = 'customer'
+        this.crmType = 'customer'
         this.showFullDetail = true
       } else {
         this.relationID = row.contractId
-        this.relationCrmType = 'contract'
+        this.crmType = 'contract'
         this.showFullDetail = true
       }
     },
@@ -467,7 +501,7 @@ export default {
      */
     formattedTime(date) {
       const timestemp = new Date(date)
-      return moment(timestemp).format('MMMDo')
+      return moment(timestemp).format('MMMDo HH:mm:ss')
     },
     /**
      * 时间格式化
@@ -480,7 +514,7 @@ export default {
      * 相关信息的点击
      */
     checkRelatedDetail(item, key) {
-      this.relationCrmType = key
+      this.crmType = key
       this.relationID = item[key + 'Id']
       this.showFullDetail = true
     },
@@ -550,11 +584,19 @@ export default {
     handleSure() {
       this.showCreate = false
       this.$emit('createSuccess')
+    },
+
+    // 0待审核、1审核中、2审核通过、3审核未通过
+    getStatusStyle(status) {
+      return {
+        backgroundColor: this.getStatusColor(status)
+      }
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+@import '@/views/customermanagement/styles/table.scss';
 .block{
   width: 12px;
   height: 12px;

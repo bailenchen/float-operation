@@ -28,6 +28,7 @@
         :visible.sync="showCreate"
         append-to-body
         width="580px"
+        @close="close"
       >
         <el-form ref="form" :model="form" :rules="rule" label-position="left" label-width="80px">
           <el-form-item label="类型名称" prop="typeName">
@@ -46,7 +47,7 @@
         </flexbox>
         <span slot="footer" class="dialog-footer">
           <el-button @click="showCreate = false">取 消</el-button>
-          <el-button type="primary" @click="save">确 定</el-button>
+          <el-button :disabled="disabled" type="primary" @click="save">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -87,6 +88,8 @@ export default {
           { min: 0, max: 10, message: '请输入小于10个字符', trigger: 'blur' }
         ]
       },
+      // 防抖：避免重复提交
+      disabled: false,
       list: [] // 展示类型数据
     }
   },
@@ -160,15 +163,18 @@ export default {
      */
     save() {
       this.form.color = this.selectColor
+      this.disabled = true
       this.$refs['form'].validate((valid) => {
         if (valid) {
           calendarAddOrUpdateAPI(this.form)
             .then(res => {
               this.getDetail()
               this.showCreate = false
+              this.disabled = false
               this.$message.success('操作成功')
             })
             .catch(() => {
+              this.disabled = false
             })
         }
       })
@@ -179,6 +185,13 @@ export default {
      */
     changeColor(color) {
       this.selectColor = color
+    },
+
+    /**
+     * 关闭时取消表单验证
+     */
+    close() {
+      this.$refs['form'].resetFields()
     }
   }
 }

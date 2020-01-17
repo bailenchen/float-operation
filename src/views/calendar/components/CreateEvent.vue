@@ -37,11 +37,13 @@
               v-model="form.startTime"
               value-format="yyyy-MM-dd HH:mm:ss"
               type="datetime"
-              placeholder="选择日期"/>
+              placeholder="选择日期"
+              @change="changeStartTime"/>
           </el-form-item>
           <el-form-item label="结束时间" prop="endTime">
             <el-date-picker
               v-model="form.endTime"
+              :picker-options="pickerOptions"
               type="datetime"
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="选择日期"/>
@@ -75,12 +77,16 @@
               <el-form-item :key="index" label="提前">
                 <el-select v-model="notice[index].value" placeholder="选择时间" class="time_select">
                   <el-option
-                    v-for="item in timeList"
+                    v-for="item in timeList[notice[index].type || 1]"
                     :key="item"
                     :label="item"
                     :value="item"/>
                 </el-select>
-                <el-select v-model="notice[index].type" placeholder="请选择" class="time_select">
+                <el-select
+                  v-model="notice[index].type"
+                  placeholder="请选择"
+                  class="time_select"
+                  @change="changeTimeType(notice[index].type, index)">
                   <el-option :value="1" label="分钟"/>
                   <el-option :value="2" label="小时"/>
                   <el-option :value="3" label="天"/>
@@ -115,7 +121,7 @@
         :repeat-type="form.repetitionType"
         margin-left="80px"/>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="sure">确 定</el-button>
+        <el-button :disabled="disabled" type="primary" @click="sure">确 定</el-button>
         <el-button @click="cancle">取 消</el-button>
       </div>
     </el-dialog>
@@ -181,7 +187,7 @@ export default {
       repeatForm: {},
       form: {
         title: '',
-        typeId: 1, // 日历类型
+        typeId: '', // 日历类型
         ownerUserIds: 0,
         repetitionType: 1,
         startTime: '',
@@ -208,7 +214,10 @@ export default {
         { label: '每月', value: 4 },
         { label: '每年', value: 5 }
       ],
-      timeList: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
+      timeList: ['',
+        [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]],
       rules: {
         title: [
           { required: true, message: '日程安排不能为空', trigger: 'blur' }
@@ -217,14 +226,20 @@ export default {
           { required: true, message: '请选择日历类型', trigger: 'change' }
         ],
         startTime: [
-          { required: true, message: '请选择开始时间', trigger: 'change' }
+          { required: true, message: '请选择开始时间', trigger: 'blur' }
         ],
         endTime: [
-          { required: true, message: '请选择结束时间', trigger: 'change' }
+          { required: true, message: '请选择结束时间', trigger: 'blur' }
         ],
         ownerUserIds: [
           { required: true, message: '请选择参与人', trigger: 'change' }
         ]
+      },
+      disabled: false,
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < (Date.now() - 24 * 60 * 60 * 1000)
+        }
       }
     }
   },
@@ -235,7 +250,7 @@ export default {
       if (val) {
         this.form = {
           title: '',
-          typeId: 1, // 日历类型
+          typeId: '', // 日历类型
           ownerUserIds: '',
           repetitionType: 1,
           startTime: '',
@@ -244,6 +259,7 @@ export default {
         this.checkedUser = []
         if (this.selectDiv) {
           this.form.startTime = this.selectDiv + ' 08:00:00'
+          this.changeStartTime(this.form.startTime)
         } else {
           this.form.startTime = ''
         }
@@ -277,6 +293,7 @@ export default {
         this.showRepeat = false
         return
       } else {
+        this.$refs['ruleForm'].resetFields()
         this.$emit('close')
         done()
       }
@@ -316,8 +333,14 @@ export default {
           }
         })
       } else {
-        this.colorItem = this.cusCheck[0].color
-        this.form.typeId = this.cusCheck[0].typeId
+        const defaultList = []
+        this.cusCheck.forEach((item) => {
+          if (item.type === 2) {
+            defaultList.push(item)
+          }
+        })
+        this.colorItem = defaultList[0].color
+        this.form.typeId = defaultList[0].typeId
         this.businessRelation = []
       }
     },
@@ -390,8 +413,10 @@ export default {
         this.showRepeat = false
         this.repeatForm = {}
         this.form.repetitionType = 1
+        this.$refs.repeat.$refs['ruleForm'].resetFields()
       } else {
         this.form = {}
+        this.$refs['ruleForm'].resetFields()
         this.$emit('close')
       }
     },
@@ -434,6 +459,7 @@ export default {
      */
     createSchedule() {
       const params = { }
+      this.disabled = true
       if (Object.keys(this.businessRelation).length) {
         params.relation = this.businessRelation
       }
@@ -455,6 +481,7 @@ export default {
 
       request(params).then(res => {
         this.$message.success('新建或编辑日程成功')
+        this.disabled = false
         this.$emit('createSuccess')
       }).catch(() => {})
     },
@@ -486,6 +513,30 @@ export default {
      */
     deleteNotice(index) {
       this.notice.splice(index, 1)
+    },
+
+    /**
+     * 更换时间类型
+     */
+    changeTimeType(type, index) {
+      if (type == 1) {
+        this.notice[index].value = 5
+      } else {
+        this.notice[index].value = 1
+      }
+    },
+
+    /**
+     * 改变开始时间
+     */
+    changeStartTime(date) {
+      this.form.endTime = ''
+      const template = new Date(date).getTime()
+      this.pickerOptions = {
+        disabledDate(time) {
+          return time.getTime() < template
+        }
+      }
     }
   }
 }

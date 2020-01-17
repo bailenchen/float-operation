@@ -1,21 +1,22 @@
 /deep/.fc{
   height: 100%;
+  /deep/.fc-more{
+    border-radius: 18px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: calc(100% - 20px);
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    background-color: #D9E6FF;
+    color: #2362FB;
+ }
   .fc-content-skeleton{
     /deep/.fc-more-cell{
       padding: 2px 10px;
       text-align: center;
-      .fc-more{
-         border-radius: 18px;
-         display: inline-block;
-         overflow: hidden;
-         text-overflow: ellipsis;
-         white-space: nowrap;
-         width: 100%;
-         height: 18px;
-         line-height: 18px;
-         background-color: #D9E6FF;
-         color: #2362FB;
-      }
     }
   }
   .fc-header-toolbar{
