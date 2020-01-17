@@ -65,7 +65,7 @@
       <span
         v-if="data.stopTime"
         :class="[ 'due-time', { 'is-past': data.isEnd == 1 } ]">
-        截止时间{{ data.stopTime | moment("MM-DD") }}
+        截止时间{{ data.stopTime | moment("YYYY-MM-DD") }}
       </span>
 
       <div class="img-group">

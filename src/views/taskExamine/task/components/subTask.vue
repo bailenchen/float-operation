@@ -29,7 +29,7 @@
             placeholder="选择日期"/>
           <span
             v-if="subtasksDate"
-            class="bg-color">{{ subtasksDate | moment("MM-DD") }}</span>
+            class="bg-color">{{ subtasksDate | moment("YYYY-MM-DD") }}</span>
           <i
             v-else
             class="wukong wukong-time-task"
