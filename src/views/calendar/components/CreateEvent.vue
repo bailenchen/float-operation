@@ -548,7 +548,7 @@ export default {
     max-height: 600px;
     overflow-y: auto;
     .input_one{
-     /deep/.el-input__inner{
+    .el-input__inner{
        width: 510px !important;
       }
     }

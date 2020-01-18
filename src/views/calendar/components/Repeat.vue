@@ -229,8 +229,10 @@ export default {
           })
         })
         this.form.repeatTime = list.join(',')
+        this.$refs['ruleForm'].validateField('repeatTime')
       } else {
         this.form.repeatTime = ''
+        this.$refs['ruleForm'].validateField('repeatTime')
       }
     }
   }

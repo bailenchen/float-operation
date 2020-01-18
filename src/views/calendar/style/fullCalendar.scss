@@ -1,6 +1,6 @@
 /deep/.fc{
   height: 100%;
-  /deep/.fc-more{
+  .fc-more{
     border-radius: 18px;
     display: inline-block;
     overflow: hidden;
@@ -14,7 +14,7 @@
     color: #2362FB;
  }
   .fc-content-skeleton{
-    /deep/.fc-more-cell{
+    .fc-more-cell{
       padding: 2px 10px;
       text-align: center;
     }
@@ -54,7 +54,7 @@
           box-shadow: none;
         }
       }
-      /deep/.fc-button-primary,.fc-button-primary:disabled{
+      .fc-button-primary,.fc-button-primary:disabled{
         background-color: #fff;
         color: #333;
         border-color: #E1E1E1;
@@ -193,7 +193,7 @@
     }
   }
 
-  /deep/.fc-more-popover{
+  .fc-more-popover{
     width: 200px;
     border:1px solid rgba(239,239,239,1);
     margin-left: -10px;
@@ -270,7 +270,7 @@
       }
     }
     .fc-list-table {
-      /deep/td{
+      td{
         border: none;
       }
       .fc-list-item{
@@ -301,9 +301,11 @@
       }
     }
   }
-
   .fc-timeGridWeek-view{
     height: 100%;
+    .fc-body{
+      border: 1px #f3f3f3 solid;
+    }
     .fc-divider{
       padding: 0px;
     }
@@ -314,7 +316,12 @@
         tr{
           height: 100%;
           .fc-scroller{
-            height: calc(100% - 46px) !important;
+            height: calc(100% - 42px) !important;
+            .fc-content{
+              .fc-time{
+            display: none;
+          }
+            }
             .fc-time-grid{
               height: auto;
               .fc-bg{
@@ -322,7 +329,7 @@
               }
               .fc-slats{
                 height: auto;
-                  /deep/.fc-minor{
+                 .fc-minor{
                     td{
                       border: none;
                       border-right: 1px solid #e4e4e4;
