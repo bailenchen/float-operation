@@ -202,14 +202,15 @@ export default {
     }
   },
   watch: {
-    visible(val) {
-      this.showDetail = val
-      if (val) {
-        document.body.appendChild(this.$el)
-        this.$el.addEventListener('click', this.handleDocumentClick, false)
-        this.$el.style.zIndex = getMaxIndex()
-        this.refreshList()
-      }
+    visible: {
+      handler(val) {
+        this.showDetail = val
+        if (val) {
+          this.$el.style.zIndex = getMaxIndex()
+          this.refreshList()
+        }
+      },
+      immediate: true
     },
     showDetail(val) {
       if (!val) {
@@ -220,11 +221,8 @@ export default {
     }
   },
   mounted() {
-    if (this.visible) {
-      document.body.appendChild(this.$el)
-      this.$el.addEventListener('click', this.handleDocumentClick, false)
-      this.$el.style.zIndex = getMaxIndex()
-    }
+    document.body.appendChild(this.$el)
+    this.$el.addEventListener('click', this.handleDocumentClick, false)
   },
 
   beforeDestroy() {
