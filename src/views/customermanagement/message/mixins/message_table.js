@@ -292,6 +292,15 @@ export default {
           width: width
         })
       }
+
+      // 待进入公海的客户 添加距进入公海天数字段
+      if (this.infoType == 'putInPoolRemind') {
+        this.fieldList.push({
+          prop: 'poolDay',
+          label: '距进入公海天数',
+          width: 140
+        })
+      }
     },
 
     /** 格式化字段 */
