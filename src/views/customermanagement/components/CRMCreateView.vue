@@ -368,21 +368,25 @@ export default {
           ) {
             const statusElement = this.crmForm.crmFields[statusIndex]
             if (statusElement.data.formType == 'business_status') {
-              for (let typeIndex = 0; typeIndex < data.data.length; typeIndex++) {
-                const typeElement = data.data[typeIndex]
-                if (typeElement.typeId == data.value) {
-                  statusElement.data.setting = typeElement.statusList.map(
-                    function(item, index) {
-                      item['value'] = item.statusId
-                      return item
+              if (item.value == '' || item.value == null || item.value == undefined) {
+                statusElement.value = ''
+              } else {
+                for (let typeIndex = 0; typeIndex < data.data.length; typeIndex++) {
+                  const typeElement = data.data[typeIndex]
+                  if (typeElement.typeId == data.value) {
+                    statusElement.data.setting = typeElement.statusList.map(
+                      function(item, index) {
+                        item['value'] = item.statusId
+                        return item
+                      }
+                    )
+                    if (data.type != 'init') {
+                      // 编辑初始化时 不重置
+                      statusElement.value = ''
                     }
-                  )
-                  if (data.type != 'init') {
-                    // 编辑初始化时 不重置
-                    statusElement.value = ''
+                    this.$set(this.crmForm.crmFields, statusIndex, statusElement)
+                    break
                   }
-                  this.$set(this.crmForm.crmFields, statusIndex, statusElement)
-                  break
                 }
               }
             }
