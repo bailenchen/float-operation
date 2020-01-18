@@ -177,7 +177,7 @@
               <div class="head-btn__bd">
                 <div
                   v-if="taskData.startTime"
-                  class="head-btn__bd--title">{{ taskData.startTime | moment('MM月DD日') }}</div>
+                  class="head-btn__bd--title">{{ taskData.startTime | moment('YYYY年MM月DD日') }}</div>
                 <div class="head-btn__bd--des">开始时间</div>
               </div>
               <i
@@ -201,7 +201,7 @@
               <div class="head-btn__bd">
                 <div
                   v-if="taskData.stopTime"
-                  class="head-btn__bd--title">{{ taskData.stopTime | moment('MM月DD日') }}</div>
+                  class="head-btn__bd--title">{{ taskData.stopTime | moment('YYYY年MM月DD日') }}</div>
                 <div class="head-btn__bd--des">结束时间</div>
               </div>
               <i
@@ -396,7 +396,7 @@
 
                         <div
                           v-if="item.stopTime"
-                          class="bg-color task-bg-color">{{ item.stopTime | moment("MM-DD") }} 截止</div>
+                          class="bg-color task-bg-color">{{ item.stopTime | moment("YYYY-MM-DD") }} 截止</div>
                         <xr-avatar
                           v-if="item.mainUser"
                           :name="item.mainUser.realname"
@@ -1343,16 +1343,17 @@ export default {
               }
               if (val.checked) {
                 this.subTaskDoneNum--
-                this.$emit('on-handle', {
-                  type: 'change-sub-task',
-                  value: {
-                    subdonecount: this.subTaskDoneNum,
-                    allcount: this.taskData.childTask.length
-                  },
-                  index: this.detailIndex,
-                  section: this.detailSection
-                })
               }
+
+              this.$emit('on-handle', {
+                type: 'change-sub-task',
+                value: {
+                  subdonecount: this.subTaskDoneNum,
+                  allcount: this.taskData.childTask.length
+                },
+                index: this.detailIndex,
+                section: this.detailSection
+              })
               this.$message.success('子任务删除成功')
             })
             .catch(() => {
@@ -1395,7 +1396,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskDoneNum,
-              allcount: this.taskData.childTask.length + 1
+              allcount: this.taskData.childTask.length
             },
             index: this.detailIndex,
             section: this.detailSection
@@ -1405,7 +1406,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskDoneNum,
-              allcount: this.taskData.childTask.length - 1
+              allcount: this.taskData.childTask.length
             },
             index: this.detailIndex,
             section: this.detailSection

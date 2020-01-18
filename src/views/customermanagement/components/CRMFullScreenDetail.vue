@@ -125,7 +125,7 @@ export default {
       this.showDetail = false
     },
     handleDocumentClick(e) {
-      e.stopPropagation()
+      // e.stopPropagation()
       if (this.$el == e.target) {
         this.showDetail = false
       }

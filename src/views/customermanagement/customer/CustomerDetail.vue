@@ -355,6 +355,8 @@ export default {
             }
             dealItem.value = '未成交'
           }
+
+          this.headDetails[2].title = this.isSeasDetail ? '' : '负责人'
           this.headDetails[2].value = res.data.ownerUserName
           this.headDetails[3].value = res.data.updateTime
         })

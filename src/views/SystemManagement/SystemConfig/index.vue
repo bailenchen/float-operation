@@ -207,8 +207,8 @@ export default {
       this.loading = true
       adminSystemConfigIndex().then(res => {
         const data = res.data || {}
-        if (data.usingNum != data.allNum) {
-          data.userProgress = Math.floor(((data.allNum - data.usingNum) / data.allNum) * 100)
+        if (data.usingNum) {
+          data.userProgress = Math.floor((data.usingNum / data.allNum) * 100)
         } else {
           data.userProgress = 0
         }
@@ -217,14 +217,15 @@ export default {
         if (data.startTime) {
           const startMoment = moment(data.startTime)
           const endMoment = moment(data.endTime)
+          data.startDays = moment().diff(startMoment, 'days')
           data.surplusDays = endMoment.diff(moment(), 'days')
           const totalDays = endMoment.diff(startMoment, 'days')
-          data.dayProgress = data.surplusDays > 0 ? Math.floor((data.surplusDays / totalDays) * 100) : 0
+          data.dayProgress = data.startDays > 0 ? Math.floor((data.startDays / totalDays) * 100) : 0
         }
 
         // 存储
-        if (data.size != data.allSize) {
-          data.sizeProgress = Math.floor(((data.allSize - data.size) / data.allSize) * 100)
+        if (data.size) {
+          data.sizeProgress = Math.floor((data.size / data.allSize) * 100)
         } else {
           data.sizeProgress = 0
         }
