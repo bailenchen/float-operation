@@ -11,10 +11,19 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://192.168.1.116:8000/',
+        // target: 'http://192.168.1.116:8000/',
+        // target: 'http://192.168.1.32:8080/',
+        target: 'https://www.72crm.com/api/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
+        }
+      },
+      '/centerIndex': {
+        target: 'https://www.72crm.com/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/centerIndex': ''
         }
       }
     },
