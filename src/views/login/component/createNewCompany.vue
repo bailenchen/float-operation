@@ -3,6 +3,7 @@
     <get-sms-code
       v-show="!showNext"
       ref="smsCode"
+      :show-tips="true"
       sms-type="register" />
 
     <el-form v-show="showNext" class="login-from">
@@ -117,6 +118,26 @@
             class="form-icon wk wk-circle-password" />
         </el-input>
       </el-form-item>
+
+      <el-form-item>
+        <el-input
+          ref="discount"
+          v-model.trim="form.discount"
+          :maxlength="7"
+          :class="{error: !validateRes.discount}"
+          placeholder="请输入邀请码(非必填)"
+          type="text"
+          @focus="focusKey = 'discount'"
+          @blur="checkForm">
+          <span
+            slot="prefix"
+            :class="{
+              full: Boolean(form.discount),
+              focus: focusKey === 'discount'
+            }"
+            class="form-icon wk wk-circle-password" />
+        </el-input>
+      </el-form-item>
     </el-form>
 
     <div
@@ -181,7 +202,8 @@ export default {
         company_name: true,
         company_credit_number: true,
         password: true,
-        re_password: true
+        re_password: true,
+        discount: true
       },
       errorInfo: '',
 
@@ -193,6 +215,9 @@ export default {
         password: [
           { required: true, msg: '密码不能为空' },
           { reg: pwdReg, msg: '密码由8-20位字母、数字组成' }
+        ],
+        discount: [
+          { required: false, reg: /^[0-9]{7}$/, msg: '邀请码格式错误' }
         ]
       },
 
@@ -251,6 +276,10 @@ export default {
       if (params.hasOwnProperty('re_password')) {
         delete params.re_password
       }
+      if (this.$router.query && this.$router.query.source) {
+        params.source = this.$router.query.source
+      }
+      params.type = 'register'
       const loading = Loading.service({
         target: document.querySelector('.login-main-content')
       })
@@ -273,7 +302,7 @@ export default {
      */
     checkForm() {
       this.clearError()
-      const arr = ['company_name', 'company_credit_number', 'password']
+      const arr = ['company_name', 'company_credit_number', 'password', 'discount']
       for (let i = 0; i < arr.length; i++) {
         const res = this.checkFromItem(arr[i], this.form[arr[i]] || null)
         if (!res) return false
@@ -290,7 +319,8 @@ export default {
         company_name: true,
         company_credit_number: true,
         password: true,
-        re_password: true
+        re_password: true,
+        discount: true
       }
       this.errorInfo = null
     },

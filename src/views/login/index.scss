@@ -149,7 +149,18 @@
     margin-top: 15px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: left;
+
+    .el-dropdown {
+      cursor: pointer;
+      .dropdown {
+        color: #3E6BEA;
+      }
+    }
+
+    .empty {
+      flex: 1;
+    }
 
     .box {
       cursor: pointer;

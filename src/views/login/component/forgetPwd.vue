@@ -3,6 +3,7 @@
     <get-sms-code
       v-show="!showNext"
       ref="smsCode"
+      :show-tips="true"
       sms-type="forget" />
 
     <div
@@ -148,7 +149,9 @@ export default {
   data() {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
-      form: {},
+      form: {
+        phone: sessionStorage.getItem('account') || ''
+      },
       validateRes: {
         phone: true,
         smscode: true,

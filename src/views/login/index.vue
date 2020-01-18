@@ -105,6 +105,9 @@ export default {
     if (this.$route.query && this.$route.query.type === 'register') {
       this.activeCom = 'CreateNewCompany'
     }
+    if (this.$route.query && this.$route.query.mobile) {
+      sessionStorage.setItem('account', this.$route.query.mobile)
+    }
   },
   methods: {
     handleToggleCom(com, list = []) {
@@ -197,7 +200,8 @@ export default {
       .login-main-content {
         position: relative;
         width: 100%;
-        height: 510px;
+        height: 570px;
+        // height: 510px;
         background-color: white;
         border-radius: 6px;
         overflow: hidden;

@@ -7,6 +7,7 @@
           v-model.trim="form.username"
           :class="{error: !validateRes.username}"
           placeholder="请输入用户名"
+          autofocus
           type="text"
           @focus="focusKey = 'username'"
           @blur="checkFromItem('username', form.username)"
@@ -70,6 +71,24 @@
         登&nbsp;&nbsp;&nbsp;录
       </div>
       <div class="others">
+        <el-dropdown
+          trigger="click"
+          @command="handleToggle">
+          <span class="el-dropdown-link">
+            默认登录：
+            <span class="dropdown">
+              {{ loginType === 1 ? '云平台' : '个人中心' }}
+              <i class="el-icon-arrow-down el-icon--right" />
+            </span>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item :command="1">云平台</el-dropdown-item>
+            <el-dropdown-item :command="2">个人中心</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <div class="empty">
+          &nbsp;
+        </div>
         <div
           class="box"
           @click="$emit('toggle', 'LoginByCode')">
@@ -89,6 +108,7 @@
 
 <script>
 import { Loading } from 'element-ui'
+import request from '@/utils/request'
 
 import mixins from './mixins'
 
@@ -99,7 +119,9 @@ export default {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
       redirect: undefined,
-      form: {},
+      form: {
+        username: sessionStorage.getItem('account') || ''
+      },
       errorInfo: null,
       validateRes: {
         username: true,
@@ -111,7 +133,9 @@ export default {
           { required: true, msg: '密码不能为空' },
           { reg: pwdReg, msg: '密码由8-20位字母、数字组成' }
         ]
-      }
+      },
+
+      loginType: 1
     }
   },
   watch: {
@@ -121,6 +145,11 @@ export default {
       },
       immediate: true
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.username.focus()
+    })
   },
   methods: {
     /**
@@ -139,12 +168,53 @@ export default {
             loading.close()
             this.$emit('toggle', 'MultipleCompany', res.companyList)
           } else {
-            this.$router.push({ path: this.redirect || '/' })
+            if (this.loginType === 2) {
+              if (res.isAdmin) {
+                this.loginCenter({
+                  admin_token: res['Admin-Token'],
+                  loginUserInfo: res.user
+                })
+              } else {
+                this.$message.error('只用超级管理员才能登录个人中心')
+                localStorage.clear()
+                loading.close()
+              }
+            } else {
+              this.$router.push({ path: this.redirect || '/' })
+            }
           }
         })
         .catch(() => {
           loading.close()
         })
+    },
+
+    handleToggle(command) {
+      console.log('command', command)
+      this.loginType = command
+    },
+    /**
+     * 个人中心登录操作
+     */
+    loginCenter(data) {
+      const loading = Loading.service({
+        target: document.querySelector('.login-main-content')
+      })
+      const url = process.env.NODE_ENV === 'development' ? '/centerIndex/get_data' : '/get_data'
+      request({
+        url: window.location.origin + url,
+        method: 'post',
+        data: data
+      }).then(res => {
+        loading.close()
+        if (res.data === '200') {
+          const origin = process.env.NODE_ENV === 'development' ? 'https://wwww.72crm.com/' : window.location.origin
+          window.location.href = origin + '/center'
+        }
+      }).catch(() => {
+        loading.close()
+        console.log('error')
+      })
     },
 
     /**
