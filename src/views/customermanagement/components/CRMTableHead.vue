@@ -918,6 +918,9 @@ export default {
 
   .scene-select {
     width: 180px;
+    /deep/ .el-input__inner {
+      cursor: pointer;
+    }
   }
 
   .filter-button {

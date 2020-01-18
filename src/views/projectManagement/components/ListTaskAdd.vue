@@ -158,6 +158,7 @@ export default {
 
 <style lang="scss" scoped>
 .list-task-add {
+  padding: 10px 10px 0;
   .btn-box {
     text-align: right;
   }
