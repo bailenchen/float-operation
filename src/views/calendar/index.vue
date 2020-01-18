@@ -220,7 +220,7 @@ export default {
         { label: '分配给我的任务' },
         { label: '需联系的客户' },
         { label: '即将到期的合同' },
-        { label: '需要回款的合同' }
+        { label: '计划回款' }
       ],
       checkCusList: [],
       cusCheck: [],
@@ -722,7 +722,7 @@ export default {
       if (selectSysList.includes('4')) {
         this.needData.receiveContractTimeList.forEach(date => {
           dataList.push({
-            title: '需要回款的合同',
+            title: '计划回款',
             startTime: date,
             eventId: -1,
             color: '#FF6F6F',
