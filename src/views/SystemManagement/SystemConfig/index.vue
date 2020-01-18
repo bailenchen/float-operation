@@ -214,6 +214,10 @@ export default {
         }
 
         // 时间
+        if (data.allNum == 2) {
+          data.endTime = '2099-01-01'
+        }
+
         if (data.startTime) {
           const startMoment = moment(data.startTime)
           const endMoment = moment(data.endTime)
