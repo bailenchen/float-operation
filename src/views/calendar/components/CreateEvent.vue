@@ -534,7 +534,7 @@ export default {
       const template = new Date(date).getTime()
       this.pickerOptions = {
         disabledDate(time) {
-          return time.getTime() < template
+          return time.getTime() < template - 24 * 60 * 60 * 1000
         }
       }
     }
