@@ -14,21 +14,21 @@
 .color_1{
   /deep/.el-checkbox__inner{
      border-color: #53D397;
+     
     }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
-     background-color: #53D397;
+    .el-checkbox__inner{
      border-color: #53D397;
+     background-color: #53D397;
     }
   }
 }
-
 .color_2{
   /deep/.el-checkbox__inner{
     border-color: #20C1BD;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #20C1BD;
      border-color: #20C1BD;
       }
@@ -40,7 +40,7 @@
      border-color: #58DADA;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #58DADA;
      border-color: #58DADA;
       }
@@ -52,7 +52,7 @@
      border-color: #0FC9E7;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #0FC9E7;
      border-color: #0FC9E7;
       }
@@ -64,7 +64,7 @@
      border-color: #3498DB;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #3498DB;
      border-color: #3498DB;
       }
@@ -76,7 +76,7 @@
      border-color: #4586FF;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #4586FF;
      border-color: #4586FF;
       }
@@ -88,7 +88,7 @@
      border-color: #8983F3;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #8983F3;
      border-color: #8983F3;
       }
@@ -100,7 +100,7 @@
      border-color: #AEA1EA;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+  .el-checkbox__inner{
      background-color: #AEA1EA;
      border-color: #AEA1EA;
       }
@@ -112,7 +112,7 @@
      border-color: #FF6699;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #FF6699;
      border-color: #FF6699;
       }
@@ -124,7 +124,7 @@
      border-color: #F24D70;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #F24D70;
      border-color: #F24D70;
       }
@@ -136,7 +136,7 @@
      border-color: #FF6F6F;
   }
  /deep/.is-checked{
-   /deep/.el-checkbox__inner{
+   .el-checkbox__inner{
      background-color: #FF6F6F;
      border-color: #FF6F6F;
       }

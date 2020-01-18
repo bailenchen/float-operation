@@ -12,6 +12,7 @@
           :radio="true"
           v-bind="$attrs"
           class="left-user"
+          placement="bottom-start"
           @value-change="selectUser">
           <flexbox slot="reference" class="user-box">
             <span class="username">{{ checkedUser[0]?checkedUser[0].realname + '的日程': '我的日程' }}</span>
@@ -827,11 +828,12 @@ export default {
       padding: 15px;
       width: 100%;
       height: 45px;
-      margin-bottom: 5px;
       cursor: pointer;
 
       .main-text{
         display: inline-block;
+        color: #333;
+        font-weight: bolder;
         width: 240px;
       }
        img {
@@ -854,11 +856,12 @@ export default {
       padding: 15px;
       display: flex;
       height: 45px;
-      margin-bottom: 5px;
       cursor: pointer;
 
        .main-text{
         display: inline-block;
+        color: #333;
+        font-weight: bolder;
         width: 240px;
       }
       img {

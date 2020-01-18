@@ -419,7 +419,7 @@ export default {
         isSub: 1,
         type: 1
       }
-      if (this.todayDetailData.title === '需要回款的合同') {
+      if (this.todayDetailData.title === '计划回款') {
         params.type = 2
       } else if (this.todayDetailData.title === '即将到期的合同') {
         params.type = 1

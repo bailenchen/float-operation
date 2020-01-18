@@ -96,7 +96,7 @@ export default {
 
 <style scoped lang="scss">
 .schedule-calendar {
-  padding: 0px 10px 20px;
+  padding: 0px 10px 0px;
   .title {
     height: 44px;
     line-height: 44px;
@@ -133,6 +133,7 @@ export default {
   max-width: max-content;
   .wh_content_all {
     background: #fff;
+    padding-bottom: 0px;
     .wh_top_changge {
       text-align: center;
       display: block;

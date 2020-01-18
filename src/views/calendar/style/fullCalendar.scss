@@ -21,10 +21,18 @@
   }
   .fc-header-toolbar{
     margin-bottom: 16px;
-    padding-bottom: 10px;
+    padding-bottom: 6px;
     padding-left: 20px;
     border-bottom: 1px solid #f3f3f3;
     .fc-left{
+      .fc-today-button{
+        background-color: #fff;
+        color: #333;
+        border-color: #E1E1E1;
+        box-shadow: none;
+        height: 30px;
+        border-width: 1px;
+      }
       .fc-button-group{
         width: 130px;
         height: 30px;
@@ -58,20 +66,24 @@
     .fc-center{
       display: flex;
       line-height: 20px;
-      margin-left: -150px;
+      margin-left: -200px;
       h2{
         font-weight: lighter;
-        font-size: 20px;
+        font-size: 15px;
         height: 100%;
-        line-height: 32px;
+        line-height: 34px;
         letter-spacing: 1px;
         color: #333;
+        font-weight: bolder;
       }
       .fc-button-group{
         .fc-button{
            background-color: #fff;
            border: none;
            color: #333;
+           .fc-icon{
+            font-size: 22.5px;
+          }
         }
         .fc-button:focus{
           border: none;
@@ -101,9 +113,11 @@
             }
             .fc-day-header{
               border: none;
-              color: #999999;
-              font-size: 16px;
-              height: 30px;
+              color: #333;
+              font-size: 13px;
+              position: relative;
+              top: -5px;
+              height: 16px;
             }
           }
         }
