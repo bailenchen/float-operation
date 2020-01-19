@@ -13,6 +13,10 @@ export default {
     catchData: {
       type: Function,
       default: null
+    },
+    content: {
+      type: String,
+      default: ''
     }
   }, // 接收父组件的方法
   data() {
@@ -21,7 +25,15 @@ export default {
       editorContent: ''
     }
   },
+  created() {},
   mounted() {
+    if (this.content) {
+      this.$nextTick(() => {
+        var element = document.querySelector('.w-e-text')
+        element.innerHTML = this.content
+        console.log(this.$refs.editorElem, 'gg', element)
+      })
+    }
     this.editor = new E(this.$refs.editorElem)
     // 编辑器的事件，每次改变会获取其html内容
     this.editor.customConfig.onchange = html => {

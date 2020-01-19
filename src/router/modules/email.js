@@ -15,6 +15,7 @@ const layout = function(meta = {}, hidden) {
 
 export default [
   {
+    ...layout({}, true),
     path: '/email/set', // 设置
     name: 'email-set',
     component: () => import('@/views/email/set/index'),
@@ -23,6 +24,16 @@ export default [
       title: '设置',
       icon: 'board'
     }
+  },
+  {
+    ...layout({}, true),
+    children: [{
+      path: 'index/writeLetter', // 列表
+      component: () => import('@/views/email/CreateEmail'),
+      meta: {
+        icon: 'board'
+      }
+    }]
   },
   {
     ...layout({}, true),

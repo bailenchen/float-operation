@@ -7,6 +7,7 @@
       <slot name="header"/>
     </flexbox>
     <el-input
+      v-if="emailType != 'writeLetter'"
       :placeholder="placeholder"
       v-model="inputContent"
       class="sc-container"
@@ -17,9 +18,6 @@
         type="primary"
         @click.native="searchInput">搜索</el-button>
     </el-input>
-    <div style="float:right;margin-top:15px;margin-right:30px;">
-      <slot name="emailbtn"/>
-    </div>
   </div>
 </template>
 
@@ -59,7 +57,7 @@ export default {
 
   },
   mounted() {
-    console.log(this.title, '标题')
+    console.log(this.emailType, '标题')
   },
   beforeDestroy() { },
   methods: {
@@ -68,6 +66,7 @@ export default {
     },
     // 进行搜索操作
     searchInput() {
+      console.log('123456')
       this.$emit('on-search', this.inputContent)
     }
   }

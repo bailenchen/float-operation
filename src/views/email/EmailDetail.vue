@@ -3,18 +3,21 @@
     v-if="visible"
     @close="hideView">
     <!-- <div class="email-detail"> -->
-    <div class="container">
-      <detail-head class="header"/>
+    <div v-loading="loading" class="container">
+      <detail-head
+        :detail-data="rowItem"
+        :email-type="emailType"
+        class="header"
+        @on-del="delCurrentEmail"
+        @move="handleMove"/>
       <div class="detail-body">
         <div class="wk wk-focus-on"><span class="font-title">2019年度报告</span></div>
-        <div class="main-info">发件人：</div>
-        <div class="main-info">收件人：</div>
-        <div class="main-info">时间：</div>
+        <div class="main-info">发件人：{{ rowItem.sendUser }}</div>
+        <div class="main-info">收件人：{{ rowItem.receivingUser }}</div>
+        <div class="main-info">时间：{{ rowItem.sendDate.slice(0, 10) }}</div>
       </div>
-      <div class="article">
-        时光飞逝，伴随着比较紧凑又略显紧张的工作节奏，20XX年就这样快接近尾声，虽然我来公司时间还不太长，可是时间的脚步依然没有放慢它前行的脚步，经过这一段时间的工作，有很多所感所悟，现总结如下：
-        对于工作这个词，是潜移默化的理解的，作为一名从高校毕业时间很短的学生来说，社会经验、工作经验都很缺乏，所以在平时我要多学多问，付出比别人更多的努力。在公司里面我深切的感受到的是领导们无微不至的关怀，同事们团结奋发、互帮互助的干劲，工作中认真务实的作风，这对走上工作岗位时间短的我来说是受益匪浅的，为我迈向正确的人生道路打下了良好的基础。
-        没有太多宏伟的高瞻远瞩，也没有过于细腻的深切体会，只是在工作的当中的一些琐碎的想法和话语，分为几方面总结：
+      <div :style="{ height: emailFileHeight + 'px' }" class="article" v-html="rowItem.content">
+        {{ rowItem.content }}
       </div>
 
     </div>
@@ -23,6 +26,8 @@
 </template>
 
 <script>
+import { emailStateUpdateAPI, saveDraftBoxAPI } from '@/api/email/email'
+
 import DetailHead from './components/DetailHead'
 import SlideView from '@/components/SlideView'
 
@@ -35,7 +40,6 @@ export default {
   },
   // mixins: [detail],
   props: {
-    id: [String, Number],
     emailType: {
       type: String,
       default: ''
@@ -43,19 +47,166 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    rowItem: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
-    return {}
+    return {
+      emailFileHeight: document.documentElement.clientHeight - 340,
+      loading: false,
+      typeConfig: {
+        receive: 'INBOX',
+        star: 'FLAGGED',
+        draft: 'Drafts',
+        sent: 'Sent Messages',
+        deleted: 'Deleted Messages',
+        spam: '垃圾邮件'
+      }
+    }
   },
   computed: {},
-  mounted() {},
+  watch: {
+    rowItem() {
+      this.testAutoPlay()
+    }
+  },
+  created() {},
+  mounted() {
+    // this.detailDatas = this.rowItem
+    // this.emailTypes = this.emailType
+    console.log(this.rowItem, 'hang', this.emailTypes)
+  },
   methods: {
+    /**
+     * 音频报错处理
+     */
+    testAutoPlay() {
+      // 返回一个promise以告诉调用者检测结果
+      return new Promise(resolve => {
+        const audio = document.createElement('audio')
+        // require一个本地文件，会变成base64格式
+        audio.src = ''
+        document.body.appendChild(audio)
+        let autoplay = true
+        // play返回的是一个promise
+        audio.play().then(() => {
+          // 支持自动播放
+          autoplay = true
+        }).catch(() => {
+          // 不支持自动播放
+          autoplay = false
+        }).finally(() => {
+          audio.remove()
+          // 告诉调用者结果
+          resolve(autoplay)
+        })
+      })
+    },
+
     /**
      * 关闭详情
      */
     hideView() {
       this.$emit('close')
+    },
+
+    /**
+     * 删除当前邮件
+     */
+    delCurrentEmail() {
+      console.log('kooooooooooo', this.rowItem)
+      this.$confirm('您确定要删除该邮件吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.updateEmailState()
+      }).catch(() => {
+
+      })
+      console.log('删除当前邮件')
+    },
+
+    /**
+     * 更改邮件状态
+     */
+    updateEmailState() {
+      this.loading = true
+      var params = {
+        page: this.rowItem.page,
+        limit: this.rowItem.limit,
+        type: this.typeConfig[this.emailType],
+        search: this.rowItem.search,
+        index: this.rowItem.messageId,
+        state: 'LOGICDELETE',
+        flag: true
+      }
+      emailStateUpdateAPI(params).then((res) => {
+        this.loading = false
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        this.$emit('update-list')
+        console.log(res, '状态修改')
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('删除失败')
+      })
+    },
+
+    /**
+     * 移动邮件
+     */
+    handleMove(val) {
+      this.loading = true
+      var params = {
+        id: '',
+        receipt_emails: this.rowItem.receivingUser,
+        cc_emails: this.rowItem.sendUser || '',
+        fileBatchId: '',
+        filePaths: this.rowItem.fileList.length ? this.rowItem.fileList[0].path : '',
+        theme: this.rowItem.themeVal || '',
+        content: this.rowItem.content || '',
+        type: val == 0 ? 'INBOX' : 'Sent Messages'
+      }
+      saveDraftBoxAPI(params).then((res) => {
+        this.updateCurrentState(val)
+      }).catch(() => {
+        this.loading = false
+      })
+      console.log(val, 'movee')
+    },
+
+    /**
+     * 彻底删除
+     */
+    updateCurrentState(val) {
+      var stateParams = {
+        page: this.rowItem.page,
+        limit: this.rowItem.limit,
+        type: this.typeConfig[this.emailType],
+        search: this.rowItem.search,
+        index: this.rowItem.messageId,
+        state: 'DELETED',
+        flag: true
+      }
+      emailStateUpdateAPI(stateParams).then((res) => {
+        this.loading = false
+        this.$message({
+          type: 'success',
+          message: '移动成功'
+        })
+        this.$emit('update-list')
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('移动失败')
+      })
     }
 
   }
@@ -97,6 +248,7 @@ export default {
   }
   .article {
     width: 100%;
+    overflow-y: auto;
     margin-top: 15px;
     background: #F5F5F5;
     padding: 42px 62px 70px 47px;
@@ -106,6 +258,10 @@ export default {
     font-size: 16px;
     line-height: 27px;
   }
+}
+
+.qmbox {
+  overflow-y: auto;
 }
 
 /** 客户管理详情页面的 css 侧滑进入的详情 */

@@ -8,12 +8,9 @@
       @on-search="emailSearch">
       <template>
         <div v-if="emailType == 'receive'" slot="header" class="record-receive">
-          （收件箱有<span class="blue-font">0</span>封未读）
+          （收件箱有<span class="blue-font">{{ receiveNumber }}</span>封未读）
           <span class="blue-font">全部标为已读</span>
         </div>
-      </template>
-      <template slot="emailbtn">
-        <el-button type="primary" @click="createEmail">新建邮件</el-button>
       </template>
     </email-list-head>
     <div class="email-container">
@@ -22,152 +19,121 @@
         :operat-list="tableHeadList"
         :email-type="emailType"
         @change="operatList"/>
-      <table border="0px" cellpadding="0px" cellspacing="0">
-        <thead>
-          <tr class="table-row">
-            <td class="tb-head border-bottom" width="55px">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange"/>
-            </td>
-            <td class="tb-head border-bottom" width="55px">
-              <i
-                class="wk wk-focus-on"
-                style="cursor: not-allowed; color: #9DA9C2;"/>
-            </td>
-            <td class="tb-head border-bottom" width="55px">
-              <i
-                class="wk wk-focus-on"
-                style="cursor: not-allowed; color: #9DA9C2;"/>
-            </td>
-            <td class="tb-head border-bottom" width="55px">
-              <i
-                class="wk wk-email"
-                style="cursor: not-allowed; color: #9DA9C2;"/>
-            </td>
-            <td class="tb-h-align head-font-color border-bottom">
-              发件人
-            </td>
-            <td class="tb-h-align head-font-color border-bottom">
-              主题
-            </td>
-            <td class="tb-h-align head-font-color end-column border-bottom">
-              时间
-            </td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="table-row">
-            <span class="row-title">今天<span class="number">3</span>封</span>
-          </tr>
-          <tr v-for="(item, index) in lists" :key="index" class="table-row" @click.stop="clickRow(item, index)">
-            <td class="tb-head" width="55px">
-              <el-checkbox @change="handleCheckedCitiesChange"/>
-            </td>
-            <td class="tb-head" width="55px">
-              <i
-                class="wk wk-focus-on"
-                style="cursor: not-allowed; color: #9DA9C2;"/>
-            </td>
-            <td class="tb-head" width="55px">
-              <i
-                class="wk wk-focus-on"
-                style="cursor: not-allowed; color: #9DA9C2;"/>
-            </td>
-            <td class="tb-head" width="55px">
-              <i
-                class="wk wk-email"
-                style="cursor: not-allowed; color: #9DA9C2;"/>
-            </td>
-            <td class="tb-h-align font-color">
-              {{ item.send }}
-            </td>
-            <td class="tb-h-align font-color">
-              {{ item.subject }}
-            </td>
-            <td class="tb-h-align font-color end-column">
-              {{ item.time }}
-            </td>
-          </tr>
-          <tr class="table-row">
-            <span class="row-title">今天<span class="number">3</span>封</span>
-          </tr>
-        </tbody>
-      </table>
-      <el-table
-        id="crm-table"
-        :data="list"
-        :height="tableHeight"
-        :cell-class-name="cellClassName"
-        :span-method="arraySpanMethod"
-        class="n-table--border"
-        stripe
-        border
-        highlight-current-row
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        @row-click="handleRowClick">
-        <!-- v-loading="loading"
-        @header-dragend="handleHeaderDragend" -->
-        <el-table-column
-          show-overflow-tooltip
-          type="selection"
-          align="center"
-          width="55"/>
-        <el-table-column
-          :resizable="false"
-          align="center"
-          fixed
-          width="55">
-          <template slot="header" slot-scope="slot">
-            <i
-              class="wk wk-focus-on"
-              style="cursor: not-allowed; color: #9DA9C2;"/>
+      <div v-loading="loading" class="parent-table">
+        <div class="head-table" style="width:100%">
+          <table border="0px" cellpadding="0px" cellspacing="0" class="table-head">
+            <thead>
+              <tr class="table-row head-bg">
+                <th class="tb-head">
+                  <div style="width:55px">
+                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @click="1" @change="handleCheckedAll"/>
+                  </div>
+                </th>
+                <th class="tb-head">
+                  <div style="width:55px">
+                    <i
+                      class="wk wk-focus-on"
+                      style="cursor: not-allowed; color: #9DA9C2;"/>
+                  </div>
+                </th>
+                <th class="tb-head">
+                  <div style="width:55px">
+                    <i
+                      class="wk wk-email"
+                      style="cursor: not-allowed; color: #9DA9C2;"/>
+                  </div>
+                </th>
+                <th class="tb-head" width="55px">
+                  <div style="width:55px">
+                    <i
+                      class="el-icon-paperclip"
+                      style="cursor: not-allowed; color: #9DA9C2;"/>
+                  </div>
+                </th>
+                <th class="tb-h-align head-font-color sent-column">
+                  <div ref="sent" class="sent-column" style="width:100%">
+                    发件人
+                  </div>
+                </th>
+                <th class="tb-h-align head-font-color subject-column">
+                  <div ref="theme" class="subject-column" style="width:100%">
+                    主题
+                  </div>
+                </th>
+                <th class="tb-h-align head-font-color end-column time-column">
+                  <div ref="time" class="time-column" style="width:100%">
+                    时间
+                  </div>
+                </th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div :style="{ width: tableWidth + 'px', height: tableHeight + 'px' }" :class="{ 'empty-list': lists.length == 0 }" class="table-container">
+
+          <template v-for="(item, index) in lists">
+            <div v-if="item.first" :key="`title${index}`" class="row-title block-title">
+              <div class="cell">
+                {{ getEmailDateSectionTitle(item) }}<span class="number">（{{ item.numIndex }}&nbsp;封）</span>
+              </div>
+            </div>
+            <table :key="`row${index}`" :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2) }" border="0px" cellpadding="0px" cellspacing="0">
+              <tbody>
+                <tr class="table-row">
+                  <td class="tb-head first-cell">
+                    <div style="width:55px">
+                      <el-checkbox v-model="item.checked" @change="handleCheckedPart"/>
+                    </div>
+                  </td>
+                  <td class="tb-head">
+                    <div style="width:55px;" @click="handleStar(item)">
+                      <i
+                        :class="{ 'star': item.isStar }"
+                        class="wk wk-focus-on"
+                        style="cursor: pointer; color: #9DA9C2;"/>
+                    </div>
+                  </td>
+                  <td class="tb-head">
+                    <div style="width:55px" @click="handleRead(item)">
+                      <i
+                        :class="{ 'read': item.isRead }"
+                        class="wk wk-email"
+                        style="cursor: pointer; color: #9DA9C2;"/>
+                    </div>
+                  </td>
+                  <td class="tb-head">
+                    <div style="width:55px">
+                      <i
+                        v-if="item.fileList.length > 0"
+                        class="el-icon-paperclip"
+                        style="cursor: pointer; color: #9DA9C2;"/>
+                    </div>
+                  </td>
+                  <td class="tb-h-align font-color sent-column">
+                    <div :title="item.sendUser" :style="{ width: calcCellWidth('sent') + 'px' }" class="sent-column1" @click.stop="clickRow(item, index)">
+                      {{ item.sendUser }}
+                      <!-- :style="{ width: calcCellWidth('sent') + 'px' }" -->
+                    </div>
+                  </td>
+                  <td class="tb-h-align font-color subject-column">
+                    <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" class="subject-column1">
+                      {{ item.theme }}
+                      <!-- :style="{ width: calcCellWidth('theme') + 'px' }" -->
+                    </div>
+                  </td>
+                  <td class="tb-h-align font-color end-column time-column">
+                    <div :style="{ width: calcCellWidth('time') + 'px' }" class="time-column1">
+                      {{ item.sendDate }}
+                      <!-- :style="{ width: calcCellWidth('time') + 'px' }" -->
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </template>
-        </el-table-column>
-        <el-table-column
-          :resizable="false"
-          align="center"
-          fixed
-          width="55">
-          <template slot="header" slot-scope="slot">
-            <i
-              class="wk wk-focus-on"
-              style="cursor: not-allowed; color: #9DA9C2;"/>
-          </template>
-        </el-table-column>
-        <el-table-column
-          :resizable="false"
-          align="center"
-          fixed
-          width="55">
-          <template slot="header" slot-scope="slot">
-            <i
-              class="wk wk-email"
-              style="cursor: not-allowed; color: #9DA9C2;"/>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-for="(item, index) in fieldList"
-          :key="index"
-          :prop="item.prop"
-          :label="item.label"
-          :width="item.width"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            <!-- 行标题 <span class="row-title">今天<span class="number">3</span>封</span>-->
-            <template v-if="item.prop == 'fa'">
-              <!-- <span v-if="item.title == '标题'" class="row-title">今天<span class="number">3</span>封</span> -->
-              <span>{{ scope.row[item.prop] }}</span>
-            </template>
-            <template v-else-if="item.prop == 'zhu'">
-              <span>{{ scope.row[item.prop] }}</span>
-            </template>
-            <template v-else-if="item.prop == 'shi'">
-              <span>{{ scope.row[item.prop] }}</span>
-            </template>
-          </template>
-        </el-table-column>
-        <el-table-column/>
-      </el-table>
+          <span v-if="lists.length == 0" class="no-data">暂无数据</span>
+        </div>
+      </div>
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
@@ -180,64 +146,63 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
       </div>
+
     </div>
     <!-- 相关详情页面 -->
     <email-detail
       :visible.sync="showDview"
       :email-type="emailType"
-      :id="rowID"
+      :row-item="rowItem"
       class="d-view"
-      @close="hideView"/>
+      @close="hideView"
+      @update-list="refreshList"/>
 
-    <!-- 新建邮件 -->
-    <create-email
-      v-if="isCreate"
-      @hiden-view="isCreate = false"/>
   </div>
 </template>
 
 <script>
-import table from './mixins/table'
+import { emailNumAPI } from '@/api/email/email'
+
 import EmailDetail from './EmailDetail'
-import createEmail from './components/CreateEmail'
+
+import table from './mixins/table'
+
 export default {
   // 列表
   name: 'Index',
   components: {
-    EmailDetail,
-    createEmail
+    EmailDetail
   },
   // props: {},
   mixins: [table],
   data() {
     return {
-      search: '', // 搜索内容
+      // 展示加载loading
+      loading: false,
+      receiveNumber: 0, // 收件箱数量
       emailType: 'receive',
-      list: [
-        { fa: '123', zhu: '156', shi: '124', id: 0 },
-        { fa: '', zhu: '', shi: '', id: 1, title: '标题' }
-      ], // 列表数组
-      fieldList: [
-        { label: '发件人', width: 200, prop: 'fa' },
-        { label: '主题', width: 600, prop: 'zhu' },
-        { label: '时间', width: 200, prop: 'shi' }
-      ],
-      lists: [
-        { send: '123', subject: '156', time: '124', id: 0 },
-        { send: '1235', subject: 'zhuti', time: 'shijain', id: 0 }
-      ],
+      lists: [],
       showDview: false,
-      isCreate: false,
-
-      // 勾选
-      checkAll: false,
-      isIndeterminate: true,
-      checkedItem: [], // 勾选的数据
-      itemObj: '',
-      objIndex: ''
+      rowObj: '',
+      rowIndex: '',
+      rowItem: {},
+      tableWidth: ''
+      // emailDate: '12' // 用来比较邮箱日期，是否显示信封数标题
     }
   },
   computed: {
+    calcCellWidth() {
+      return function(cell) {
+        console.log(this.$refs.sent.offsetWidth, 'ff')
+        if (cell == 'sent') {
+          return this.$refs.sent.offsetWidth - 1
+        } else if (cell == 'theme') {
+          return this.$refs.theme.offsetWidth - 1
+        } else if (cell == 'time') {
+          return this.$refs.time.offsetWidth - 1
+        }
+      }
+    },
     sideNavTitle() {
       return {
         receive: '收件箱',
@@ -250,94 +215,52 @@ export default {
     },
     tableHeadList() {
       const handleInfos = {
-        transfer: {
-          name: '转移',
-          type: 'transfer',
+        star: {
+          name: '标为星标',
+          type: 'star',
           icon: 'transfer'
         },
-        transform: {
-          name: '转化为客户',
-          type: 'transform',
+        cancelStar: {
+          name: '取消星标',
+          type: 'cancelStar',
+          icon: 'transfer'
+        },
+        read: {
+          name: '标为已读',
+          type: 'read',
           icon: 'transform'
         },
-        transformLead: {
-          name: '转化为线索',
-          type: 'transformLead',
+        noRead: {
+          name: '标为未读',
+          type: 'noRead',
           icon: 'transform'
-        },
-        export: {
-          name: '导出选中',
-          type: 'export',
-          icon: 'export'
         },
         delete: {
-          name: '删除',
+          name: '删除邮件',
           type: 'delete',
-          icon: 'delete'
+          icon: 'transform'
         },
-        put_seas: {
-          name: '放入公海',
-          type: 'put_seas',
+        rootDel: {
+          name: '彻底删除',
+          type: 'rootDel',
+          icon: 'export'
+        },
+        // newEmail: {
+        //   name: '标为新邮件',
+        //   type: 'newEmail',
+        //   icon: 'delete'
+        // },
+        draft: {
+          name: '草稿',
+          type: 'draft',
           icon: 'seas'
-        },
-        lock: {
-          name: '锁定',
-          type: 'lock',
-          icon: 'lock'
-        },
-        unlock: {
-          name: '解锁',
-          type: 'unlock',
-          icon: 'unlock'
-        },
-        add_user: {
-          name: '添加团队成员',
-          type: 'add_user',
-          icon: 'add'
-        },
-        delete_user: {
-          name: '移除团队成员',
-          type: 'delete_user',
-          icon: 'remove'
-        },
-        alloc: {
-          name: '分配',
-          type: 'alloc',
-          icon: 'alloc'
-        },
-        get: {
-          name: '领取',
-          type: 'get',
-          icon: 'receive'
-        },
-        start: {
-          name: '上架',
-          type: 'start',
-          icon: 'shelves'
-        },
-        disable: {
-          name: '下架',
-          type: 'disable',
-          icon: 'sold-out'
-        },
-        state_start: {
-          name: '启用',
-          type: 'state_start',
-          icon: 'activation'
-        },
-        state_disable: {
-          name: '停用',
-          type: 'state_disable',
-          icon: 'remove'
-        },
-        deal_status: {
-          name: '更改成交状态',
-          type: 'deal_status',
-          icon: 's-status'
         }
       }
       return {
-        receive: [handleInfos['delete'], handleInfos['export']],
+        receive: [
+          handleInfos['star'], handleInfos['cancelStar'], handleInfos['read'],
+          handleInfos['noRead'], handleInfos['delete'], handleInfos['rootDel']
+        ],
         star: [],
         draft: [],
         sent: [],
@@ -347,109 +270,108 @@ export default {
     }
   },
   watch: {},
-  mounted() {},
+  mounted() {
+    this.$nextTick(() => {
+      this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+    })
+    window.onresize = () => {
+      return (() => {
+        this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+      })()
+    }
+  },
 
   beforeDestroy() {},
 
   created() {
     this.emailType = this.$route.params.type
+    this.queryEmailNum()
+    this.getEmailList()
     console.log(this.emailType, this.$route, 'leixing')
   },
 
   beforeRouteUpdate(to, from, next) {
     this.emailType = to.params.type
-    // this.totalCount = 0
-    // if (this.$refs.createLog) {
-    //   this.$refs.createLog.showMore = false
-    // }
-    // this.filterForm = {
-    //   categoryId: 0,
-    //   createUserId: ''
-    // }
-    // this.userSelects = []
-
-    // this.timeSelect = {
-    //   type: 'default',
-    //   value: 'month'
-    // }
-    // this.refreshList()
+    console.log(this.emailType, 'lx')
+    this.$refs.crmTableHead.headSelectionChange([])
+    if (this.emailType != 'writeLetter') {
+      this.lists = []
+      if (this.emailType == 'receive') {
+        this.queryEmailNum()
+      }
+      this.getEmailList()
+    }
     next()
   },
 
   methods: {
-    // 全选
-    handleCheckAllChange(val) {
-      console.log('全部勾选', val)
-      this.checkedCities = val ? this.lists : []
-      this.isIndeterminate = false
+    /**
+     * 数量查询
+     */
+    queryEmailNum() {
+      emailNumAPI().then((res) => {
+        this.receiveNumber = res.data.unreadCount
+        console.log('数量差', res)
+      }).catch(() => {
+
+      })
     },
 
-    handleCheckedCitiesChange(value) {
-      console.log('局部勾选', value)
-      if (value) {
-        this.checkedItem[this.itemIndex] = this.itemObj
-        // this.checkedItem.push(this.itemObj)
-        console.log(this.checkedItem, '已勾选')
-        const checkedCount = this.checkedItem.length
-        this.checkAll = checkedCount === this.lists.length
-        this.isIndeterminate = checkedCount > 0 && checkedCount < this.lists.length
-      } else {
-        this.checkedItem[this.itemIndex] = this.itemObj
-        
-      }
-    },
-
+    /**
+     * 点击每行
+     */
     clickRow(item, index) {
-      this.itemObj = item
-      this.itemIndex = index
+      this.showDview = true
+      item.page = this.currentPage
+      item.limit = this.pageSize
+      item.search = this.search
+      this.rowItem = item
       console.log(item, index, 'item')
     },
 
     /**
-     * 邮件搜索
+     * 关闭详情
      */
-    emailSearch(value) {
-      console.log(value, 'search')
+    hideView() {
+      this.showDview = false
     },
 
     /**
-     * 勾选后操作列表
+     * 操作勾选的列表
      */
     operatList(type) {
+      var listapi = {
+        star: 'FLAGGED',
+        cancelStar: 'FLAGGED',
+        read: 'SEEN',
+        noRead: 'SEEN',
+        delete: 'LOGICDELETE',
+        rootDel: 'DELETED'
+      }[type]
+      if (type == 'star' || type == 'read' || type == 'delete' || type == 'rootDel') {
+        var isdo = true
+      } else {
+        var isdo = false
+      }
+      this.idLists = []
+      for (let index = 0; index < this.checkLists.length; index++) {
+        const element = this.checkLists[index]
+        this.idLists.push(element.messageId)
+      }
+
+      this.isConfirm(type, listapi, isdo)
       console.log(type, 'leixing')
     },
 
     /**
-     * 独占一行
+     * 删除后刷新列表
      */
-    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-      console.log(row, column, rowIndex, columnIndex, 'SSS')
-      if (row.title) {
-        return [rowIndex, 8]
-      } else {
-        return ''
-      }
-    },
-
-    /**
-     * 通过回调控制class
-     */
-    cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'customerName') {
-        return 'can-visit--underline'
-      } else if (column.property === 'businessCheck') {
-        return 'can-visit'
-      } else {
-        return ''
-      }
-    },
-
-    /**
-     * 创建邮件
-     */
-    createEmail() {
-      this.isCreate = true
+    refreshList() {
+      this.showDview = false
+      this.getEmailList()
     }
+
+
   }
 }
 </script>
@@ -466,7 +388,40 @@ export default {
   }
 }
 
+.el-main {
+  overflow: hidden !important;
+}
+
+.no-data {
+  line-height: 60px;
+  width: 100%;
+  color: #999;
+  text-align: center;
+}
+
+.empty-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-container {
+  width: 100%;
+  min-width: 1100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.parent-table {
+  min-width: 1100px;
+  overflow-x: auto;
+}
+
 .row-title {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
   display: block;
   text-align: left;
   font-size: 12px;
@@ -476,19 +431,31 @@ export default {
   }
 }
 
+.first-cell {
+   width: 55px !important;
+   box-sizing: border-box;
+}
+
+.cell {
+  margin-left: 16px;
+}
+
 .table-row {
   height: 40px;
   line-height: 40px;
-  border-bottom: 1px solid red;
 }
 
-.border-bottom {
-  // border-bottom: 1px solid red;
+.head-bg {
+  background: rgb(246, 248, 250);
 }
 
-.row-title {
-  width: 100%;
-  margin-left: 16px;
+.head-bg th {
+  border-right: 1px solid #E6E6E6;
+  border-bottom: 1px solid #E6E6E6;
+}
+
+.block-title {
+  background: #F5F5F5;
 }
 
 // 表
@@ -496,19 +463,8 @@ export default {
   text-align: center;
 }
 
-table {
-  border: 1px solid red;
-  border-top: 1px solid red;
-}
-
 tr > td {
-  // border-right: 1px solid red;
-  // border-top: 1px solid red;
   height: 40px;
-}
-
-table tr {
-  border-bottom: 1px solid red !important;
 }
 
 .end-column {
@@ -531,5 +487,46 @@ table tr {
   padding-left: 10px;
 }
 
+.rowbg {
+  background: rgba(246, 248, 250, 1);
+}
+
+.star:before {
+  color: #FAC23D;
+}
+
+.read:before {
+  color: #2362FB;
+}
+
+.sent-column, .subject-column, .time-column {
+  text-align: left;
+}
+
+.sent-column {
+  width: 14%;
+  min-width: 154px;
+}
+
+.subject-column {
+  width: 70%;
+  min-width: 770px;
+}
+
+.time-column {
+  width: 16%;
+  min-width: 176px;
+}
+
+.sent-column1, .subject-column1, .time-column1 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sent-column1 {
+  color: #2362FB;
+  cursor: pointer;
+}
 
 </style>

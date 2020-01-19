@@ -81,6 +81,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.item.data.formType, this.relationAction, this.selectedData, 'nm')
     if (this.relation && this.relation.moduleType) {
       this.relationAction = { type: 'condition', data: this.relation }
     } else {

@@ -52,6 +52,10 @@ export default {
       type: Boolean,
       default: true
     },
+    acceptEmail: {
+      type: String,
+      default: ''
+    },
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
@@ -118,6 +122,7 @@ export default {
     }
   },
   mounted() {
+    console.log('kk', this.radio, this.crmType, this.selectedData, this.show, this.action, this.acceptEmail)
     var leftItems = {
       customer: {
         name: '客户',
@@ -213,12 +218,18 @@ export default {
      */
     confirmClick() {
       if (this.crmType) {
-        // 以单类型传值
-        this.$emit('changeCheckout', {
-          data: this.currentSelectedData[this.crmType]
-            ? this.currentSelectedData[this.crmType]
-            : []
-        })
+        if (this.acceptEmail == 'receive') {
+          this.$emit('changeCheckout', { data: this.currentSelectedData[this.crmType], type: 'receive' })
+        } else if (this.acceptEmail == 'sent') {
+          this.$emit('changeCheckout', { data: this.currentSelectedData[this.crmType], type: 'sent' })
+        } else {
+          // 以单类型传值
+          this.$emit('changeCheckout', {
+            data: this.currentSelectedData[this.crmType]
+              ? this.currentSelectedData[this.crmType]
+              : []
+          })
+        }
       } else {
         this.$emit('changeCheckout', { data: this.currentSelectedData })
       }

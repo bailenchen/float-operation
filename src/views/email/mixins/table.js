@@ -2,10 +2,12 @@
 import {
   mapGetters
 } from 'vuex'
+import { emailListsAPI, emailStateUpdateAPI } from '@/api/email/email'
 import EmailListHead from '../components/EmailListHead'
 import EmailTableHead from '../components/EmailTableHead'
 
 import Lockr from 'lockr'
+import moment from 'moment'
 
 export default {
   components: {
@@ -14,13 +16,27 @@ export default {
   },
   data() {
     return {
-      tableHeight: document.documentElement.clientHeight - 240, // 表的高度
-      selectionList: [], // 勾选数据
+      tableHeight: document.documentElement.clientHeight - 280, // 表的高度
+      search: '', // 搜索内容
+      idLists: [], // 修改邮件状态时id集合
+      typeConfig: {
+        receive: 'INBOX',
+        star: 'FLAGGED',
+        draft: 'Drafts',
+        sent: 'Sent Messages',
+        deleted: 'Deleted Messages',
+        spam: '垃圾邮件'
+      },
+      // 勾选
+      isIndeterminate: true,
+      checkAll: false,
+      checkLists: [],
+
+      // 页码与数量
       currentPage: 1,
       pageSize: Lockr.get('crmPageSizes') || 15,
       pageSizes: [15, 30, 60, 100],
-      total: 0,
-      rowID: ''
+      total: 0
 
     }
   },
@@ -32,41 +48,257 @@ export default {
   },
   methods: {
     /**
-     * 勾选列表项
+     * 获取列表
      */
-    handleSelectionChange(val) {
-      this.selectionList = val
-      this.$refs.crmTableHead.headSelectionChange(val)
-      console.log(val, 'kk')
+    getEmailList() {
+      this.loading = true
+      var listType = this.typeConfig[this.emailType]
+      var params = {
+        page: this.currentPage,
+        limit: this.pageSize,
+        search: this.search,
+        type: listType
+      }
+      emailListsAPI(params).then((res) => {
+        this.loading = false
+        console.log(res.data.list.length, 'cd')
+        const list = JSON.parse(JSON.stringify(res.data.list)).reverse()
+        let sectionDate = ''
+        // let sectionIndex = -1
+
+        for (let index = 0; index < list.length; index++) {
+          const item = list[index]
+          console.log('123')
+          if (item.sendDate == null) {
+            item.sendDate = '0000-00-00'
+          }
+          item.sendDate = item.sendDate.slice(0, 10)
+          if (item.sendDate != sectionDate) {
+            sectionDate = item.sendDate
+            item.first = true
+            item.bgIndex = 0
+            item.numIndex = 0
+            // if (item.first && index != 0) {
+            //   list[index - list[index - 1].bgIndex].numIndex = list[index - 1].bgIndex + 1
+            // }
+            // if (sectionIndex >= 0) {
+            //   list[sectionIndex].count = index - sectionIndex
+            // }
+
+            // sectionIndex = index
+
+            // if (this.lists.length > 0 && this.lists.length - 1 === index) {
+            //   list[sectionIndex].count = index - sectionIndex + 1
+            // }
+          } else {
+            item.bgIndex = (list[index - 1].bgIndex + 1)
+          }
+          // 计算邮件表内每块封数
+          if (item.bgIndex == 0) {
+            list[index].numIndex = 1
+          } else {
+            list[index - item.bgIndex].numIndex = (item.bgIndex + 1)
+          }
+        }
+        if (res.data.totalRow && Math.ceil(res.data.totalRow / this.pageSize) < this.currentPage && this.currentPage > 1) {
+          this.currentPage = this.currentPage - 1
+          this.getEmailList()
+        } else {
+          this.total = res.data.totalRow
+          this.loading = false
+        }
+        this.lists = list
+        console.log(list, 'res')
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
-     * 列表操作
-     * 点击某一行
+     * 更改每页展示数量
+     * @param {*} val
      */
-    handleRowClick(row, column, event) {
-      console.log(row, column, 'lie')
-      this.rowID = row.id
-      this.showDview = true
-    },
-
-    // 更改每页展示数量
     handleSizeChange(val) {
       Lockr.set('crmPageSizes', val)
       this.pageSize = val
-      // this.getList()
-    },
-    // 更改当前页数
-    handleCurrentChange(val) {
-      this.currentPage = val
-      // this.getList()
+      this.getEmailList()
     },
 
     /**
-     * 关闭详情
+     * 更改当前页数
+     * @param {*}
      */
-    hideView() {
-      this.showDview = false
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.getEmailList()
+    },
+
+    /**
+     * 邮件搜索
+     */
+    emailSearch(value) {
+      console.log('sousuo')
+      this.currentPage = 1
+      this.search = value
+      this.lists = []
+      this.getEmailList()
+    },
+
+    /**
+     * 全选
+     */
+    handleCheckedAll(all) {
+      if (all) {
+        this.isIndeterminate = false
+        this.checkLists = this.lists.map((item) => {
+          item.checked = true
+          return item
+        })
+      } else {
+        this.isIndeterminate = true
+        this.checkLists = []
+        this.lists.map((item) => {
+          item.checked = false
+          return item
+        })
+      }
+      this.$refs.crmTableHead.headSelectionChange(this.checkLists)
+      console.log('全部勾选', this.lists, all, this.checkLists, 'all')
+    },
+
+    /**
+     * 局部勾选
+     */
+    handleCheckedPart(part) {
+      console.log('局部勾选', part)
+      this.checkLists = []
+      if (part) {
+        this.lists.map((item) => {
+          if (item.checked) {
+            this.checkLists.push(item)
+            this.$refs.crmTableHead.headSelectionChange(this.checkLists)
+            if (this.checkLists.length == this.lists.length) {
+              this.isIndeterminate = false
+              this.checkAll = true
+            } else {
+              this.isIndeterminate = true
+              this.checkAll = false
+            }
+          }
+          return item
+        })
+      } else {
+        this.lists.map((item) => {
+          if (item.checked) {
+            this.checkAll = false
+            this.checkLists.push(item)
+          }
+          this.$refs.crmTableHead.headSelectionChange(this.checkLists)
+          return item
+        })
+      }
+      console.log('123', this.checkLists)
+    },
+
+    /**
+     * 列表邮件标题
+     */
+    getEmailDateSectionTitle(item) {
+      if (item.sendDate) {
+        if (item.sendDate == moment().format('YYYY-MM-DD')) {
+          return '今天'
+        } else if (item.sendDate == moment().subtract(1, 'days').format('YYYY-MM-DD')) {
+          return '昨天'
+        } else {
+          return item.sendDate
+        }
+      }
+      return ''
+    },
+
+    /**
+     * 星标操作（非批量）
+     */
+    handleStar(item) {
+      this.idLists = []
+      this.idLists.push(item.messageId)
+      var starType = item.isStar ? 'cancelStar' : 'star'
+      this.isConfirm(starType, 'FLAGGED', !item.isStar)
+    },
+
+    /**
+     * 读取操作（非批量）
+     */
+    handleRead(item) {
+      this.idLists = []
+      this.idLists.push(item.messageId)
+      var readType = item.isRead ? 'noRead' : 'read'
+      this.isConfirm(readType, 'SEEN', !item.isRead)
+    },
+
+    /**
+     * 修改邮件状态前提示
+     * @param {* string} type: 指定修改为哪种状态
+     * @param {* string} listapi: 指定修改状态state的值
+     * @param {* boolean} isdo：指定flag的值
+     */
+    isConfirm(type, apiType, bool) {
+      var message = ''
+      if (type == 'star') {
+        message = '确定将邮件标记为星标邮件吗?'
+      } else if (type == 'cancelStar') {
+        message = '确定将邮件取消星标邮件吗?'
+      } else if (type == 'read') {
+        message = '确定将邮件标记为已读邮件吗?'
+      } else if (type == 'noRead') {
+        message = '确定将邮件标记为未读邮件吗?'
+      } else if (type == 'delete') {
+        message = '确定将邮件删除吗?'
+      } else if (type == 'rootDel') {
+        message = '确定将邮件彻底删除吗?'
+      }
+      this.$confirm(message, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.updateEmailState(apiType, bool)
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    },
+
+    /**
+     * 更改邮件状态
+     */
+    updateEmailState(stateType, is) {
+      var params = {
+        page: this.currentPage,
+        limit: this.pageSize,
+        type: this.typeConfig[this.emailType],
+        search: this.search,
+        index: this.idLists.join(','),
+        state: stateType,
+        flag: is
+      }
+      emailStateUpdateAPI(params).then((res) => {
+        this.$message({
+          type: 'success',
+          message: '操作成功'
+        })
+        this.getEmailList()
+        console.log(res, '状态修改')
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('操作失败')
+      })
     }
+
+
   }
 }

@@ -1,13 +1,13 @@
 <template>
   <div class="email-set">
-    <div :class="{ 'left-pic': isShow }">
+    <div :class="{ 'left-pic': isShow }" class="left-bg">
       <img src="~@/assets/img/email/email_set.png" alt="">
     </div>
     <div class="right-form">
       <div class="form-title btitle">验证邮箱账号</div>
       <div class="form-item bottom-height">
         <div class="form-label">邮箱账号</div>
-        <el-input v-model="emailAccount" class="same-width" type="text" @input="changeVal" />
+        <el-input v-model="emailAccount" class="same-width" type="text" @input="changeVal" @change="validDataFormat(emailAccount)"/>
       </div>
       <div class="form-item">
         <div class="form-label">邮箱密码</div>
@@ -33,29 +33,33 @@
         <div class="form-item bottom-height">
           <label class="form-label">收信服务器</label>
           <div class="input-check">
-            <el-input v-model="server" class="server-input" placeholder=""/>
-            <el-checkbox v-model="checked" class="port-box">
+            <el-input v-model="receivingServer" class="server-input" placeholder=""/>
+            <!-- <el-checkbox v-model="checked" class="port-box"> -->
+            <div class="port-box">
               SLL端口
-              <el-input v-model="port" class="port-input" placeholder=""/>
-            </el-checkbox>
+              <el-input v-model="receivingPort" class="port-input" placeholder=""/>
+            </div>
+            <!-- </el-checkbox> -->
           </div>
         </div>
         <div class="form-item bottom-height">
           <label class="form-label">SMTP服务器</label>
           <div class="input-check">
-            <el-input v-model="server" class="server-input" placeholder=""/>
-            <el-checkbox v-model="checked" class="port-box">
+            <el-input v-model="smtpServer" class="server-input" placeholder=""/>
+            <!-- <el-checkbox v-model="checked" class="port-box"> -->
+            <div class="port-box">
               SLL端口
-              <el-input v-model="port" class="port-input" placeholder=""/>
-            </el-checkbox>
+              <el-input v-model="smtpPort" class="port-input" placeholder=""/>
+            </div>
+            <!-- </el-checkbox> -->
           </div>
         </div>
       </div>
       <div class="form-item">
         <div class="form-label"/>
         <div class="tip btn-size">
-          <el-button type="primary" class="valid-btn" @click="valid">验证</el-button>
-          <el-button plain @click="autoConfig">自动配置</el-button>
+          <el-button type="primary" class="valid-btn" @click="valid()">验证</el-button>
+          <el-button plain @click="autoConfig">手动配置</el-button>
         </div>
       </div>
     </div>
@@ -63,6 +67,7 @@
 </template>
 
 <script>
+// import { emailValidAPI } from '@/api/email/email'
 
 export default {
   // 设置
@@ -74,11 +79,14 @@ export default {
       emailAccount: '',
       emailPassward: '',
       typeList: [],
-      server: null,
-      port: null,
       isShow: false,
       emailType: '',
-      emailParamType: []
+      emailParamType: [],
+      emailTypeList: ['qq', '163', '126', 'year', 'aliyun', '139', 'foxmail', 'yahoo', 'sina', 'sohu', 'outlook', 'gmail'],
+      receivingServer: '',
+      receivingPort: '',
+      smtpServer: '',
+      smtpPort: ''
     }
   },
   computed: {},
@@ -99,17 +107,58 @@ export default {
 
   methods: {
     /**
+     * 验证数据格式
+     */
+    validDataFormat(data) {
+      if (this.emailType) {
+        console.log('格式正确')
+        // emailValidAPI(this.emailAccount).then((res) => {
+        //   console.log(res, '122')
+        // }).catch(() => {
+
+        // })
+      } else {
+        console.log('格式不正确')
+      }
+    },
+
+    /**
      * 判断邮箱类型
      */
     changeVal(e) {
       var eType = this.emailAccount.includes('@') && this.emailAccount.includes('.') ? String(this.emailAccount.split('@')[1].split('.')[0]).toLowerCase() : ''
-      this.emailType = eType == ('qq' || '163' || '126' || 'yahoo' || 'sina' || 'shouhu' || 'outlook' || 'gmail') ? eType : ''
+      this.emailType = (this.emailTypeList.includes(eType) ? eType : '')
     },
 
     /**
      * 验证
      */
     valid() {
+      // if (this.isShow) {
+      //   var params = {
+      //     email_account: this.emailAccount,
+      //     email_password: this.emailPassward,
+      //     receiving_server: this.receivingServer,
+      //     receiving_ssl: this.receivingPort,
+      //     smtp_server: this.smtpServer,
+      //     smtp_ssl: this.smtpPort
+      //   }
+      // } else {
+      //   var params = {
+      //     email_account: this.emailAccount,
+      //     email_password: this.emailPassward,
+      //     receiving_server: `imap.${this.emailType}.com`,
+      //     receiving_ssl: '993',
+      //     smtp_server: `smtp.${this.emailType}.com`,
+      //     smtp_ssl: 465
+      //   }
+      // }
+      // emailValidAPI(params).then((res) => {
+      //   console.log(res, '验证')
+      // }).catch(() => {
+
+      // })
+
       this.$router.push({
         path: '/email/index/receive'
       })
@@ -127,6 +176,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.left-bg {
+  margin-right: 100px;
+  img {
+    width: 100%;
+  }
+}
 .email-set {
   width: 1150px;
   margin: 0 auto;
@@ -164,7 +219,7 @@ export default {
 
 .form-item /deep/ .el-input .el-input__inner {
   height: 50px;
-  border-radius: 0;
+  border-radius: 4px;
 }
 
 .bottom-height {
