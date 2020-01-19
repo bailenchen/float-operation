@@ -39,6 +39,13 @@
           <span class="text">密码登录</span>
         </div>
       </div>
+
+      <div
+        v-if="loginType === 2"
+        class="center-tips">
+        <span class="el-icon-warning" />
+        <span>个人中心仅管理员可登录</span>
+      </div>
     </div>
 
     <div
@@ -119,13 +126,13 @@ export default {
                 this.$emit('toggle', 'MultipleCompany', res.companyList)
               } else {
                 if (this.loginType === 2) {
-                  if (res.cardAuth) {
+                  if (res.isAdmin) {
                     this.loginCenter({
                       admin_token: res['Admin-Token'],
                       loginUserInfo: res.user
                     })
                   } else {
-                    this.$message.error('只用超级管理员才能登录个人中心')
+                    this.$message.error('个人中心仅管理员可登录')
                     localStorage.clear()
                   }
                 } else {
@@ -158,11 +165,15 @@ export default {
         data: data
       }).then(res => {
         loading.close()
-        if (res.data === '200') {
-          const origin = process.env.NODE_ENV === 'development' ? 'https://wwww.72crm.com/' : window.location.origin
-          window.location.href = origin + '/center'
-        }
+        // if (res.code === 200) {
+        // } else {
+        //   this.$message.error('登录失败')
+        //   loading.close()
+        // }
+        const origin = process.env.NODE_ENV === 'development' ? 'https://www.72crm.com' : window.location.origin
+        window.location.href = origin + '/center'
       }).catch(() => {
+        this.$message.error('登录失败')
         loading.close()
         console.log('error')
       })
@@ -184,6 +195,16 @@ export default {
   .tips-special {
     color: #3E6BEA;
     cursor: pointer;
+  }
+}
+
+.center-tips {
+  font-size: 12px;
+  color: #999;
+  margin-top: 10px;
+  .el-icon-warning {
+    color: #f9a74e;
+    font-size: 14px;
   }
 }
 
