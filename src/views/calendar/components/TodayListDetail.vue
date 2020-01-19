@@ -420,6 +420,9 @@ export default {
         isSub: 1,
         type: 1
       }
+      if (this.todayDetailData.userId) {
+        params.userId = this.todayDetailData.userId
+      }
       if (this.todayDetailData.title === '计划回款') {
         params.type = 2
       } else if (this.todayDetailData.title === '即将到期的合同') {

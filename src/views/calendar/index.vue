@@ -511,6 +511,7 @@ export default {
         endTime: data.event.end || data.event.start,
         id: data.event.id,
         title: data.event.title,
+        userId: this.activeTime.userId,
         groupId: data.event.groupId,
         backgroundColor: data.event.backgroundColor
       }
@@ -619,6 +620,7 @@ export default {
         this.activeTime.userId = ''
       }
       this.getCusCheck()
+      this.$refs.schedule.getDateList(this.activeTime)
       this.activeTime = JSON.parse(JSON.stringify(this.activeTime))
     },
 
