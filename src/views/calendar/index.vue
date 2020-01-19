@@ -642,7 +642,8 @@ export default {
       this.loading = true
       const params = {
         startTime: this.activeTime.startTime,
-        endTime: this.activeTime.endTime
+        endTime: this.activeTime.endTime,
+        userId: this.activeTime.userId
       }
       canlendarEventCrmAPI(params).then(res => {
         this.needData = res.data
@@ -655,11 +656,12 @@ export default {
      * 获取分配给我的任务
      */
     getTask() {
+      this.taskList = []
       const params = {
         startTime: this.activeTime.startTime,
-        endTime: this.activeTime.endTime
+        endTime: this.activeTime.endTime,
+        userId: this.activeTime.userId
       }
-      this.taskList = []
       canlendarEventTaskAPI(params).then(res => {
         res.data.forEach(item => {
           this.taskList.push({
@@ -690,6 +692,7 @@ export default {
           }
         }
       })
+      console.log(selectSysList)
       if (selectSysList.includes('1')) {
         this.getTask()
       } else {
