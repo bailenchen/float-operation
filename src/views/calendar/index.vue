@@ -250,7 +250,8 @@ export default {
       taskList: [],
       showFullDetail: false,
       relationCrmType: 'task',
-      relationID: ''
+      relationID: '',
+      selectSysList: []
     }
   },
   computed: {
@@ -650,7 +651,12 @@ export default {
       canlendarEventCrmAPI(params).then(res => {
         this.needData = res.data
         this.todaySchedule = this.handleData(this.cusCheck)
-        this.getList()
+        if (this.selectSysList.includes('1')) {
+          this.getTask()
+        } else {
+          this.taskList = []
+          this.getList()
+        }
       }).catch(() => {})
     },
 
@@ -677,6 +683,7 @@ export default {
             endTime: moment(item.endTime).format('YYYY-MM-DD HH:mm:ss')
           })
         })
+        this.getList()
       }).catch(() => {})
     },
 
@@ -685,22 +692,16 @@ export default {
      * color 1 分配给我的任务 2 需联系的客户 3 即将到期的合同 4 需要回款的合同
      */
     handleData(list) {
-      const selectSysList = []
+      this.selectSysList = []
       const dataList = []
       list.forEach(item => {
         if (item.type === 1) {
           if (item.select) {
-            selectSysList.push(item.color)
+            this.selectSysList.push(item.color)
           }
         }
       })
-      console.log(selectSysList)
-      if (selectSysList.includes('1')) {
-        this.getTask()
-      } else {
-        this.taskList = []
-      }
-      if (selectSysList.includes('2')) {
+      if (this.selectSysList.includes('2')) {
         this.needData.customerTimeList.forEach(date => {
           dataList.push({
             title: '需联系的客户',
@@ -712,7 +713,7 @@ export default {
           })
         })
       }
-      if (selectSysList.includes('3')) {
+      if (this.selectSysList.includes('3')) {
         this.needData.endContractTimeList.forEach(date => {
           dataList.push({
             title: '即将到期的合同',
@@ -724,7 +725,7 @@ export default {
           })
         })
       }
-      if (selectSysList.includes('4')) {
+      if (this.selectSysList.includes('4')) {
         this.needData.receiveContractTimeList.forEach(date => {
           dataList.push({
             title: '计划回款',
