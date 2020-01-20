@@ -48,7 +48,7 @@
             <p class="info-value">开始时间：{{ systemInfo.startTime }}</p>
             <p class="info-value">结束时间：{{ systemInfo.endTime }}</p>
           </flexbox-item>
-          <flexbox-item class="progress-info-item">
+          <!-- <flexbox-item class="progress-info-item">
             <p class="info-title">空间使用情况</p>
             <radial-progress-bar
               :diameter="126"
@@ -64,7 +64,7 @@
             </radial-progress-bar>
             <p class="info-value">总存储空间：{{ systemInfo.allSize }}</p>
             <p class="info-value">已使用空间：{{ systemInfo.size }}</p>
-          </flexbox-item>
+          </flexbox-item> -->
         </flexbox>
       </div>
 
@@ -130,7 +130,7 @@ import EditImage from '@/components/EditImage'
 import XrHeader from '@/components/xr-header'
 
 import { mapGetters } from 'vuex'
-import { fileSize } from '@/utils/index'
+// import { fileSize } from '@/utils/index'
 import moment from 'moment'
 
 export default {
@@ -215,6 +215,7 @@ export default {
 
         // 时间
         if (data.allNum == 2) {
+          data.startTime = data.createTime
           data.endTime = '2099-01-01'
         }
 
@@ -228,15 +229,15 @@ export default {
         }
 
         // 存储
-        if (data.size) {
-          data.sizeProgress = Math.floor((data.size / data.allSize) * 100)
-        } else {
-          data.sizeProgress = 0
-        }
+        // if (data.size) {
+        //   data.sizeProgress = Math.floor((data.size / data.allSize) * 100)
+        // } else {
+        //   data.sizeProgress = 0
+        // }
 
-        data.surplusSize = fileSize(data.allSize - data.size)
-        data.size = fileSize(data.size)
-        data.allSize = fileSize(data.allSize)
+        // data.surplusSize = fileSize(data.allSize - data.size)
+        // data.size = fileSize(data.size)
+        // data.allSize = fileSize(data.allSize)
 
         this.systemInfo = data
         this.loading = false
