@@ -268,6 +268,7 @@ export default {
         this.checkedUser = [
           { userId: this.userInfo.userId, realname: this.userInfo.realname }
         ]
+        this.form.ownerUserIds = this.userInfo.userId
         if (this.selectDiv) {
           this.form.startTime = this.selectDiv + ' 08:00:00'
           this.changeStartTime(this.form.startTime)
