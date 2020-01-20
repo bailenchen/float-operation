@@ -39,14 +39,6 @@ export default {
     }
   },
   watch: {
-    activeTime: {
-      handler(val) {
-        if (val.endTime - val.startTime == 24 * 60 * 60 * 1000) {
-          this.getDateList(val)
-        }
-      },
-      deep: true
-    }
   },
   mounted() {
     this.selectDay(new Date(), true)
@@ -57,7 +49,6 @@ export default {
      */
     changeMonth(val) {
       this.currentMonthDate = new Date(val)
-      this.getDateList(this.activeTime)
       this.$emit('changeMonth', this.currentMonthDate)
     },
 
@@ -66,7 +57,6 @@ export default {
      */
     selectDay(date) {
       this.$refs.calendar.ChoseMonth(date, true)
-      this.getDateList(this.activeTime)
     },
 
     /**

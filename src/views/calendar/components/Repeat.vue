@@ -159,6 +159,9 @@ export default {
         this.endCount = ''
       }
       this.form.endTypeConfig = this.detail.endTypeConfig
+      if (this.form.endType == 1 || !this.form.endType) {
+        this.form.endTypeConfig = this.detail.endTypeConfig || 'useless'
+      }
     }
     for (let i = 1; i <= 31; i++) {
       this.dayList.push(i)

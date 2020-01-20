@@ -207,13 +207,15 @@ export default {
         })
       }
 
-      tempsItems.push({
-        title: '日历',
-        type: 8,
-        path: '/calendar/index',
-        icon: 'wk wk-business-intelligence',
-        fontSize: '18px'
-      })
+      if (this.oa.calendar) {
+        tempsItems.push({
+          title: '日历',
+          type: 8,
+          path: '/calendar/index',
+          icon: 'wk wk-calendar',
+          fontSize: '18px'
+        })
+      }
       return tempsItems
     }
   },

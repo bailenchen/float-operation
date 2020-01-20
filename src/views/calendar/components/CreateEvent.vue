@@ -132,6 +132,7 @@
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 import RelatedBusiness from '@/components/relatedBusiness'
 import Repeat from './Repeat'
+import { mapGetters } from 'vuex'
 import {
   canlendarSaveAPI,
   canlendarUpdateAPI
@@ -243,7 +244,9 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   watch: {
     showCreate(val) {
       this.visible = val
@@ -256,7 +259,15 @@ export default {
           startTime: '',
           endTime: ''
         }
-        this.checkedUser = []
+        this.notice = [
+          {
+            value: 5,
+            type: 1
+          }
+        ]
+        this.checkedUser = [
+          { userId: this.userInfo.userId, realname: this.userInfo.realname }
+        ]
         if (this.selectDiv) {
           this.form.startTime = this.selectDiv + ' 08:00:00'
           this.changeStartTime(this.form.startTime)
@@ -316,14 +327,15 @@ export default {
           batchId: this.todayDetailData.batchId
         }
         this.allData = {
-          customer: this.todayDetailData.customerList,
-          contacts: this.todayDetailData.contactsList,
-          contract: this.todayDetailData.contractList,
-          business: this.todayDetailData.businessList
+          customer: this.todayDetailData.customerList || [],
+          contacts: this.todayDetailData.contactsList || [],
+          contract: this.todayDetailData.contractList || [],
+          business: this.todayDetailData.businessList || []
         }
         this.notice = this.todayDetailData.noticeList
         this.form.repeatTime = this.todayDetailData.repeatTime
         this.form.repeatRate = this.todayDetailData.repeatRate
+        this.form.endTypeConfig = this.todayDetailData.endTypeConfig
         this.form.endType = this.todayDetailData.endType || ''
         this.checkedUser = this.todayDetailData.ownerUserList
         this.cusCheck.forEach(item => {
@@ -355,6 +367,7 @@ export default {
      * 选择员工
      */
     selectUser(data) {
+      this.checkedUser = []
       this.checkedUser = data.value
       if (data.value.length) {
         this.form.ownerUserIds = data.value.map(item => {

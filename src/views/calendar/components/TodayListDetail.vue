@@ -306,10 +306,10 @@ export default {
           ]
         } else {
           this.moreTypes = [
-            { title: '只删除本次', type: 'delete' },
-            { title: '删除此系列', type: 'deleteAll' },
             { title: '只编辑本次', type: 'edit' },
-            { title: '编辑本系列', type: 'editAll' }]
+            { title: '编辑当前及以后', type: 'editAll' },
+            { title: '只删除本次', type: 'delete' },
+            { title: '删除此系列', type: 'deleteAll' }]
         }
       },
       deep: true,

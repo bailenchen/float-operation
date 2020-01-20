@@ -3,7 +3,7 @@
     <el-button type="warning" icon="el-icon-plus" @click="createEvents">新建日程</el-button>
     <div class="box-left">
       <div class="left-title" >
-        <img width="20px" src="@/assets/img/crm/todo.png" alt="">
+        <img width="20px" src="@/assets/img/system/app/ce_index.png" alt="">
         <xh-user-cell
           v-if="showUser"
           ref="xhuserCell"
@@ -297,6 +297,7 @@ export default {
     getList() {
       this.loading = true
       this.activeTime.typeIds = this.typeIds
+      this.$refs.schedule.getDateList(this.activeTime)
       canlendarQueryListAPI(this.activeTime).then(res => {
         this.calendarEvents = []
         const list = [
@@ -331,6 +332,7 @@ export default {
           if (item.select) {
             this.typeIds.push(item.typeId)
           }
+          this.activeTime.typeIds = this.typeIds
           if (item.color === '1') {
             item.class = 'color_8'
           } else if (item.color === '2') {
@@ -358,6 +360,7 @@ export default {
      */
     updateList() {
       this.loading = true
+      this.activeTime.typeIds = this.typeIds
       canlendarUpdateTypeAPI({ typeIds: this.typeIds, userId: this.activeTime.userId }).then(res => {
         this.getCusCheck()
       }).catch(() => {
@@ -483,7 +486,6 @@ export default {
           this.activeTime.endTime = new Date(info.view.activeEnd).getTime()
           // 优化 只有月切换才会刷新列表
           const leadTime = this.activeTime.endTime - this.activeTime.startTime
-          this.activeTime = JSON.parse(JSON.stringify(this.activeTime))
           if (leadTime > 24 * 60 * 60 * 1000) {
             this.getCusCheck()
           }
@@ -621,8 +623,6 @@ export default {
         this.activeTime.userId = ''
       }
       this.getCusCheck()
-      this.$refs.schedule.getDateList(this.activeTime)
-      this.activeTime = JSON.parse(JSON.stringify(this.activeTime))
     },
 
     /**

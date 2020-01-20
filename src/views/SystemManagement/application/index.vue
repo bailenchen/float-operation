@@ -231,8 +231,8 @@ export default {
             enable: require('@/assets/img/system/app/book_enable.png')
           },
           taskExamine: {
-            disable: require('@/assets/img/system/app/taskExamine_disable.png'),
-            enable: require('@/assets/img/system/app/taskExamine_enable.png')
+            disable: require('@/assets/img/system/app/oa_disable.png'),
+            enable: require('@/assets/img/system/app/oa_enable.png')
           },
           bi: {
             disable: require('@/assets/img/system/app/bi_disable.png'),
@@ -240,7 +240,11 @@ export default {
           },
           applet: {
             disable: require('@/assets/img/system/app/mp_enable.png'),
-            enable: require('@/assets/img/system/app/mp_enable.png')
+            enable: require('@/assets/img/system/app/mp_disable.png')
+          },
+          calendar: {
+            disable: require('@/assets/img/system/app/ce_disable.png'),
+            enable: require('@/assets/img/system/app/ce_enable.png')
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }
