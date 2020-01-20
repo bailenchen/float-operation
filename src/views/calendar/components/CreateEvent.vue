@@ -341,7 +341,7 @@ export default {
         })
         this.colorItem = defaultList[0].color
         this.form.typeId = defaultList[0].typeId
-        this.businessRelation = []
+        this.businessRelation = {}
       }
     },
     /**
@@ -370,12 +370,10 @@ export default {
      */
     checkInfos(dataIds, data) {
       this.allData = data
-      console.log(this.allData, dataIds)
       Object.keys(dataIds).forEach(key => {
         this.businessRelation[key] = dataIds[key].length ? dataIds[key].join(',') : ''
       })
       this.businessRelation = JSON.parse(JSON.stringify(this.businessRelation))
-      console.log(this.businessRelation)
     },
 
     /**
