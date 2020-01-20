@@ -1237,7 +1237,12 @@ export default {
     },
     getProductParams(params, element) {
       if (element.value) {
-        params['product'] = element.value.product ? element.value.product : []
+        params['product'] = element.value.product ? element.value.product.map(item => {
+          item.salesPrice = item.salesPrice == '' ? 0 : item.salesPrice
+          item.num = item.num == '' ? 0 : item.num
+          item.discount = item.discount == '' ? 0 : item.discount
+          return item
+        }) : []
         params.entity['totalPrice'] = element.value.totalPrice
           ? element.value.totalPrice
           : 0
