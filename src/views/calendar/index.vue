@@ -19,7 +19,7 @@
             <span :class="{ 'is-reverse' : $refs.xhuserCell && $refs.xhuserCell.showPopover }" class="el-icon-arrow-up icon"/>
           </flexbox>
         </xh-user-cell>
-        <span v-else class="username">我的日程</span>
+        <span v-else class="username">我的日历</span>
       </div>
       <div class="left-scroll">
         <schedule
@@ -38,7 +38,7 @@
           </div>
           <template v-if="showGroup">
 
-            <el-checkbox-group v-show="showSys" v-model="checkCusList" @change="sysFifter">
+            <el-checkbox-group v-show="showSys" v-model="checkCusList" @change="customFifter">
               <el-checkbox
                 v-for="item in cusCheck"
                 v-if="item.type === 1"
@@ -192,6 +192,8 @@ export default {
       calendarWeekends: true,
       // 默认选中当天
       calendarEvents: [],
+      // 存储所有事件，方便筛选
+      calendarList: [],
       colorList: calendarColor.colorList,
       // 按钮文字
       buttonText: {
@@ -217,7 +219,7 @@ export default {
       checkSysList: [
       ],
       sysCheck: [
-        { label: '分配给我的任务' },
+        { label: '分配的任务' },
         { label: '需联系的客户' },
         { label: '即将到期的合同' },
         { label: '计划回款' }
@@ -251,7 +253,8 @@ export default {
       showFullDetail: false,
       relationCrmType: 'task',
       relationID: '',
-      selectSysList: []
+      selectSysList: [],
+      sysTypeId: []
     }
   },
   computed: {
@@ -280,6 +283,15 @@ export default {
       }
     )
   },
+
+  /**
+   *  路由更新
+   */
+  beforeUpdate(to, from, next) {
+    this.updateList()
+    next()
+  },
+
   methods: {
 
     /**
@@ -306,6 +318,7 @@ export default {
         list.forEach(item => {
           this.handleSure(item, item.color)
         })
+        this.calendarList = this.calendarEvents
         this.showGroup = true
         this.loading = false
       }).catch(() => {
@@ -323,6 +336,7 @@ export default {
       this.calendarEvents = []
       this.checkCusList = []
       this.showGroup = false
+      this.sysTypeId = []
       canlendarQueryTypeListAPI({
         userId: this.activeTime.userId
       }).then(res => {
@@ -332,6 +346,12 @@ export default {
           if (item.select) {
             this.typeIds.push(item.typeId)
           }
+          if (item.type === 1) {
+            this.sysTypeId.push(
+              { typeId: item.typeId, name: item.typeName }
+            )
+          }
+
           this.activeTime.typeIds = this.typeIds
           if (item.color === '1') {
             item.class = 'color_8'
@@ -362,7 +382,7 @@ export default {
       this.loading = true
       this.activeTime.typeIds = this.typeIds
       canlendarUpdateTypeAPI({ typeIds: this.typeIds, userId: this.activeTime.userId }).then(res => {
-        this.getCusCheck()
+        this.loading = false
       }).catch(() => {
         this.loading = false
       })
@@ -543,33 +563,35 @@ export default {
     },
 
     /**
-     * 系统筛选
-     */
-    sysFifter(data) {
-      this.typeIds = []
-      data.forEach(item => {
-        this.cusCheck.forEach(element => {
-          if (item === element.typeName) {
-            this.typeIds.push(element.typeId)
-          }
-        })
-      })
-      this.updateList()
-    },
-
-    /**
      * 筛选
      */
     customFifter(data) {
       this.typeIds = []
+      const list = []
       data.forEach(item => {
         this.cusCheck.forEach(element => {
           if (item === element.typeName) {
             this.typeIds.push(element.typeId)
+            list.push({ typeId: element.typeId, title: item })
           }
         })
       })
-      this.updateList()
+      this.updateEvent(list)
+    },
+
+    /**
+     * 筛选完成后处理的函数
+     */
+    updateEvent(data) {
+      const list = []
+      this.calendarList.forEach(item => {
+        data.forEach(element => {
+          if (element.typeId === item.groupId) {
+            list.push(item)
+          }
+        })
+      })
+      this.calendarEvents = list
     },
 
     /**
@@ -670,6 +692,7 @@ export default {
         endTime: this.activeTime.endTime,
         userId: this.activeTime.userId
       }
+      console.log(this.sysTypeId[0].typeId)
       canlendarEventTaskAPI(params).then(res => {
         res.data.forEach(item => {
           this.taskList.push({
@@ -678,8 +701,8 @@ export default {
             id: item.taskId,
             eventId: item.taskId,
             color: '#AEA1EA',
-            groupId: -2,
-            typeId: -2,
+            groupId: this.sysTypeId[0].typeId,
+            typeId: this.sysTypeId[0].typeId,
             endTime: moment(item.endTime).format('YYYY-MM-DD HH:mm:ss')
           })
         })
@@ -708,7 +731,8 @@ export default {
             startTime: date,
             eventId: -1,
             color: '#53D397',
-            groupId: 0,
+            typeId: this.sysTypeId[1].typeId,
+            groupId: this.sysTypeId[1].typeId,
             endTime: date
           })
         })
@@ -720,7 +744,8 @@ export default {
             startTime: date,
             eventId: -1,
             color: '#3498DB',
-            groupId: 0,
+            typeId: this.sysTypeId[2].typeId,
+            groupId: this.sysTypeId[2].typeId,
             endTime: date
           })
         })
@@ -732,7 +757,8 @@ export default {
             startTime: date,
             eventId: -1,
             color: '#FF6F6F',
-            groupId: 0,
+            typeId: this.sysTypeId[3].typeId,
+            groupId: this.sysTypeId[3].typeId,
             endTime: date
           })
         })
