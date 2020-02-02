@@ -105,16 +105,16 @@ export default {
         receivablesMoneys: 0
       },
       options: [
-        { name: '回款金额', value: 2 },
-        { name: '合同金额', value: 1 }
+        { name: '合同金额', value: 1 },
+        { name: '回款金额', value: 2 }
       ],
-      optionName: '回款金额',
-      optionValue: 2
+      optionName: '合同金额',
+      optionValue: 1
     }
   },
   mounted() {
     this.initChart()
-    this.handleCommand(0)
+    this.getData()
   },
   methods: {
     initChart() {
