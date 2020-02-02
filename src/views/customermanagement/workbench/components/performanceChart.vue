@@ -105,11 +105,11 @@ export default {
         receivablesMoneys: 0
       },
       options: [
-        { name: '合同金额', value: 1 },
-        { name: '回款金额', value: 2 }
+        { name: '回款金额', value: 2 },
+        { name: '合同金额', value: 1 }
       ],
-      optionName: '合同金额',
-      optionValue: 1
+      optionName: '回款金额',
+      optionValue: 2
     }
   },
   mounted() {
