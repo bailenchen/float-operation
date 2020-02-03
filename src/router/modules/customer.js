@@ -89,7 +89,8 @@ export default [
       component: () => import('@/views/customermanagement/map/MapIndex'),
       meta: {
         title: '附近的客户',
-        icon: 'nearby'
+        icon: 'nearby',
+        activeMenu: '/crm/customer'
       }
     }]
   },
@@ -116,7 +117,8 @@ export default [
       component: () => import('@/views/customermanagement/seas/SeasIndex'),
       meta: {
         title: '公海',
-        icon: 'seas'
+        icon: 'seas',
+        activeMenu: '/crm/customer'
       }
     }]
   },
