@@ -51,7 +51,8 @@
         <div class="app-down">
           <el-popover
             placement="top"
-            width="100">
+            width="100"
+            trigger="hover">
             <div style="text-align: center;">
               <img
                 src="~@/assets/login/qrcode.png"
