@@ -77,7 +77,7 @@ export default {
      * emoji 表情选择
      */
     selectEmoji(val) {
-      if (this.commentsTextarea && this.commentsTextarea.length + val.length <= 2000) {
+      if (this.commentsTextarea && this.commentsTextarea.length + val.length <= 2000 || !this.commentsTextarea) {
         const list = this.commentsTextarea.split('')
         list.splice(this.blurIndex, 0, val)
         this.commentsTextarea = list.join('')

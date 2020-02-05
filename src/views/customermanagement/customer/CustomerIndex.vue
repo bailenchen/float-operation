@@ -8,7 +8,22 @@
       main-title="新建客户"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
-      @on-export="exportInfos"/>
+      @on-export="exportInfos">
+      <el-menu
+        slot="icon"
+        :default-active="crmType"
+        mode="horizontal"
+        active-text-color="#2362FB"
+        router>
+        <el-menu-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :index="item.path">
+          <img :src="item.icon">
+          <span>{{ item.title }}</span>
+        </el-menu-item>
+      </el-menu>
+    </c-r-m-list-head>
     <div
       v-empty="!crm.customer.index"
       xs-empty-icon="nopermission"
@@ -178,7 +193,36 @@ export default {
       crmType: 'customer'
     }
   },
-  computed: {},
+  computed: {
+    menuItems() {
+      const temp = []
+      if (this.crm && this.crm.customer) {
+        temp.push({
+          title: '客户管理',
+          path: 'customer',
+          icon: require('@/assets/img/crm/customer.png')
+        })
+      }
+
+      if (this.crm && this.crm.pool) {
+        temp.push({
+          title: '公海客户',
+          path: 'seas',
+          icon: require('@/assets/img/crm/seas_not.png')
+        })
+      }
+
+      if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
+        temp.push({
+          title: '附近客户',
+          path: 'map',
+          icon: require('@/assets/img/crm/nearby_not.png')
+        })
+      }
+
+      return temp
+    }
+  },
   mounted() {},
   methods: {
     relativeBusinessClick(data) {

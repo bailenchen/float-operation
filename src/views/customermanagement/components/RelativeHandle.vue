@@ -11,7 +11,7 @@
       justify="flex-start">
       <div class="ha-week">{{ item.createTime|filterTimestampToFormatTime('MM-DD dddd') }}</div>
       <div class="ha-circle"/>
-      <div class="ha-time">{{ item.createTime|filterTimestampToFormatTime('H:mm') }}</div>
+      <div class="ha-time">{{ item.createTime|filterTimestampToFormatTime('HH:mm') }}</div>
       <xr-avatar
         :name="item.realname"
         :id="item.createUserId"

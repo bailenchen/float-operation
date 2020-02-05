@@ -83,12 +83,14 @@ export default [
     ...layout({
       permissions: ['crm', 'customer', 'nearbyCustomer']
     }),
+    hidden: true,
     children: [{
       path: 'map', // 附近的客户
       component: () => import('@/views/customermanagement/map/MapIndex'),
       meta: {
         title: '附近的客户',
-        icon: 'nearby'
+        icon: 'nearby',
+        activeMenu: '/crm/customer'
       }
     }]
   },
@@ -97,7 +99,7 @@ export default [
       permissions: ['crm', 'contacts']
     }),
     children: [{
-      path: 'contacts', // 附近的客户
+      path: 'contacts', // 联系人
       component: () => import('@/views/customermanagement/contacts/ContactsIndex'),
       meta: {
         title: '联系人',
@@ -109,12 +111,14 @@ export default [
     ...layout({
       permissions: ['crm', 'pool']
     }),
+    hidden: true,
     children: [{
       path: 'seas', // 公海列表
       component: () => import('@/views/customermanagement/seas/SeasIndex'),
       meta: {
         title: '公海',
-        icon: 'seas'
+        icon: 'seas',
+        activeMenu: '/crm/customer'
       }
     }]
   },

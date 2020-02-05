@@ -153,6 +153,7 @@ export default {
   margin-right: 15px;
   .el-input__inner {
     height: inherit;
+    cursor: pointer;
   }
 }
 

@@ -5,15 +5,30 @@
     <flexbox class="card-title">
       <div class="card-title-left">
         <span class="icon wk wk-target" />
-        <span class="text">合同金额目标及完成情况</span>
+        <span class="text">{{ typeName }}金额目标及完成情况</span>
       </div>
-      <!--<div class="card-title-right">
-        <span class="box">{{ filterText }}</span>
-        <span class="box">{{ timeLine }}</span>
-      </div>-->
+      <div class="card-title-right">
+        <!--<span class="box">{{ filterText }}</span>
+        <span class="box">{{ timeLine }}</span>-->
+        <el-dropdown
+          trigger="click"
+          @command="handleCommand">
+          <span class="box">
+            {{ optionName }}<i class="el-icon-arrow-down el-icon--right" />
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              v-for="(item, index) in options"
+              :key="index"
+              :command="index">
+              {{ item.name }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </flexbox>
     <div class="card-desc">
-      近一年的合同目标完成情况柱状图
+      近一年的{{ typeName }}目标完成情况柱状图
     </div>
     <div id="sale-statistics" />
   </div>
@@ -29,7 +44,26 @@ export default {
   mixins: [chartMixins],
   data() {
     return {
-      chartOption: {
+      options: [
+        { name: '合同金额', value: 1 },
+        { name: '回款金额', value: 2 }
+      ],
+      optionName: '合同金额',
+      optionValue: 1,
+      chartObj: null,
+      loading: false
+    }
+  },
+  computed: {
+    // 类型名字
+    typeName() {
+      return {
+        1: '合同',
+        2: '回款'
+      }[this.optionValue]
+    },
+    chartOption() {
+      return {
         color: ['#6ca2ff', '#ff7474'],
         tooltip: {
           trigger: 'axis',
@@ -48,7 +82,7 @@ export default {
         },
         legend: {
           right: '20px',
-          data: ['目标合同金额', '合同金额']
+          data: [`目标${this.typeName}金额`, `${this.typeName}金额`]
         },
         xAxis: [
           {
@@ -91,7 +125,7 @@ export default {
         ],
         series: [
           {
-            name: '目标合同金额',
+            name: `目标${this.typeName}金额`,
             type: 'bar',
             stack: 'one',
             barWidth: 25,
@@ -99,7 +133,7 @@ export default {
             data: []
           },
           {
-            name: '合同金额',
+            name: `${this.typeName}金额`,
             type: 'bar',
             stack: 'two',
             barWidth: 25,
@@ -107,29 +141,35 @@ export default {
             data: []
           }
         ]
-      },
-      chartObj: null,
-      loading: false,
-      sendRequest: false
+      }
     }
   },
   mounted() {
     this.initChart()
+    // 获取默认 optionValue 类型的数据
+    this.getData()
   },
   methods: {
     initChart() {
       this.chartObj = echarts.init(document.getElementById('sale-statistics'))
       this.chartObj.setOption(this.chartOption, true)
-      if (!this.sendRequest) {
-        this.getData()
-      }
+    },
+
+    /**
+     * 下拉菜单选项选择
+     * @param index 选项序号
+     */
+    handleCommand(index) {
+      if (this.optionValue === this.options[index].value) return
+      this.optionName = this.options[index].name
+      this.optionValue = this.options[index].value
+      this.getData()
     },
 
     getData() {
-      this.sendRequest = true
       this.loading = true
       crmIndexSaletrend({
-        label: 1,
+        label: this.optionValue,
         ...this.getBaseParams()
       }).then(res => {
         // this.trendData = {

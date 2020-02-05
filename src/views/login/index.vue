@@ -49,19 +49,28 @@
         </div>
 
         <div class="app-down">
-          <span class="text">
-            APP下载
-          </span>
-          <div class="icon wk wk-android" />
-          <div class="icon wk wk-ios" />
-          <div class="popover">
-            <img
-              src="~@/assets/login/qrcode.png"
-              alt=""
-              class="qrcode">
-            <span class="down-text">
-              扫描二维码<br>下载客户端
-            </span>
+          <el-popover
+            placement="top"
+            width="100"
+            trigger="hover">
+            <div style="text-align: center;">
+              <img
+                src="~@/assets/login/qrcode.png"
+                alt=""
+                class="qrcode">
+              <div class="down-text">
+                扫描二维码<br>下载客户端
+              </div>
+            </div>
+            <div slot="reference" class="app">
+              <i class="wk wk-mobile" />
+              <span>APP端下载</span>
+            </div>
+          </el-popover>
+
+          <div class="app destop" @click="downloadDestop">
+            <i class="wk wk-workbench" />
+            <span>Windows/Mac下载</span>
           </div>
         </div>
       </div>
@@ -123,6 +132,21 @@ export default {
       this.activeCom = com
       if (com === 'MultipleCompany') {
         this.companyList = list
+      }
+    },
+
+    /**
+     * 下载桌面软件
+     */
+    downloadDestop() {
+      const isMac = /macintosh|mac os x/i.test(navigator.userAgent)
+      if (isMac) {
+        window.open('https://www.5kcrm.com/download/desktop/mac/10/%E6%82%9F%E7%A9%BACRM-10.0.1.dmg')
+      }
+
+      const isWindows = /windows|win32/i.test(navigator.userAgent)
+      if (isWindows) {
+        window.open('https://www.5kcrm.com/download/desktop/win/10/%E6%82%9F%E7%A9%BACRM%20Setup%2010.0.1.exe')
       }
     }
   }
@@ -231,54 +255,27 @@ export default {
       }
       .app-down {
         position: relative;
-        width: 176px;
-        height: 38px;
+        margin: 25px 0 15px;
         font-size: 14px;
         color: #dadada;
-        background-color: #3545d8;
-        border-radius: 38px;
-        margin: 30px auto 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        .text {
-          line-height: 18px;
-          margin-right: 12px;
-        }
-        .icon {
-          font-size: 16px;
-          margin: 0 6px;
-        }
+        text-align: center;
 
-        .popover {
-          position: absolute;
-          top: -138px;
-          right: -150px;
-          z-index: 200;
-          width: 136px;
-          height: 174px;
-          background-color: white;
-          border-radius: 10px;
-          box-shadow: 0 13px 23px 4px rgba(0, 0, 0, 0.09);
-          flex-direction: column;
-          display: none;
-          .qrcode {
-            width: 90px;
-            height: 90px;
-          }
-          .down-text {
-            font-size: 12px;
-            color: #666;
-            margin-top: 15px;
-          }
-        }
+        .app {
+          display: inline-block;
+          padding: 0 20px;
+          background-color: #3545d8;
+          border-radius: 20px;
+          height: 40px;
+          line-height: 40px;
+          cursor: pointer;
 
-        &:hover {
-          color: white;
-          background-color: #2c3ab8;
-          .popover {
-            @include center;
+          &:hover {
+            color: white;
+            background-color: #2c3ab8;
+          }
+
+          &.destop {
+            margin-left: 15px;
           }
         }
       }

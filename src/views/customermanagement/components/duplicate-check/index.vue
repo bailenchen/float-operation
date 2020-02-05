@@ -144,7 +144,7 @@ export default {
         }, {
           prop: 'module',
           label: '模块',
-          width: 80
+          width: 100
         }]
       }
 
@@ -167,7 +167,7 @@ export default {
       }, {
         prop: 'module',
         label: '模块',
-        width: 80
+        width: 100
       }]
     }
   },
@@ -202,6 +202,9 @@ export default {
         const list = res.data || []
         this.tableData = list.map(item => {
           item.module = crmTypeModel.convertTypeToName(item.type)
+          if (item.poolName) {
+            item.module = `${item.module}（${item.poolName}）`
+          }
           // 是手机号
           if (!this.isCustomerFilter) {
             item.mobile = this.searchContent
