@@ -1,10 +1,10 @@
 <template>
   <div class="navbar">
-    <!-- <img
+    <img
       v-src="logo"
       :key="logo"
       class="logo"
-      @click="enterCustoemBoard" > -->
+      @click="enterCustoemBoard" >
     <div class="nav-items-container">
       <el-menu
         :default-active="navActiveIndex"
