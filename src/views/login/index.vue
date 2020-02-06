@@ -55,6 +55,7 @@
             trigger="hover">
             <div style="text-align: center;">
               <img
+                style="width: 90px;"
                 src="~@/assets/login/qrcode.png"
                 alt=""
                 class="qrcode">
