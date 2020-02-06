@@ -276,8 +276,8 @@ export default {
       if (params.hasOwnProperty('re_password')) {
         delete params.re_password
       }
-      if (this.$router.query && this.$router.query.source) {
-        params.source = this.$router.query.source
+      if (this.$route.query && this.$route.query.source) {
+        params.source = this.$route.query.source
       }
       params.type = 'register'
       const loading = Loading.service({
