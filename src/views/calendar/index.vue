@@ -38,7 +38,7 @@
           </div>
           <template v-if="showGroup">
 
-            <el-checkbox-group v-show="showSys" v-model="checkCusList" @change="customFifter">
+            <el-checkbox-group v-show="showSys" v-model="checkCusList">
               <el-checkbox
                 v-for="item in cusCheck"
                 v-if="item.type === 1"
@@ -57,7 +57,7 @@
             <span :class="{ 'is-reverse' : showCus }" class="el-icon-arrow-up icon"/>
           </div>
           <template v-if="showGroup">
-            <el-checkbox-group v-show="showCus" v-model="checkCusList" @change="customFifter">
+            <el-checkbox-group v-show="showCus" v-model="checkCusList">
               <el-checkbox
                 v-for="item in cusCheck"
                 v-if="item.type === 2"
@@ -254,12 +254,22 @@ export default {
       relationCrmType: 'task',
       relationID: '',
       selectSysList: [],
-      sysTypeId: []
+      sysTypeId: [],
+      firstEnter: true
     }
   },
   computed: {
     subUserListIndex() {
       return subUserListIndex
+    }
+  },
+  watch: {
+    checkCusList: {
+      handler(val) {
+        this.customFifter(val)
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
@@ -287,7 +297,7 @@ export default {
   /**
    *  路由更新
    */
-  beforeUpdate(to, from, next) {
+  beforeRouteLeave(to, from, next) {
     this.updateList()
     next()
   },
@@ -308,7 +318,7 @@ export default {
      */
     getList() {
       this.loading = true
-      this.activeTime.typeIds = this.typeIds
+      this.activeTime.typeIds = null
       this.$refs.schedule.getDateList(this.activeTime)
       canlendarQueryListAPI(this.activeTime).then(res => {
         this.calendarEvents = []
@@ -320,6 +330,7 @@ export default {
         })
         this.calendarList = this.calendarEvents
         this.showGroup = true
+        this.customFifter(this.checkCusList)
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -576,6 +587,7 @@ export default {
           }
         })
       })
+
       this.updateEvent(list)
     },
 
@@ -692,7 +704,6 @@ export default {
         endTime: this.activeTime.endTime,
         userId: this.activeTime.userId
       }
-      console.log(this.sysTypeId[0].typeId)
       canlendarEventTaskAPI(params).then(res => {
         res.data.forEach(item => {
           this.taskList.push({
