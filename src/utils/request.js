@@ -79,6 +79,10 @@ service.interceptors.response.use(
       // 302	登录已失效
       if (res.code === 302) {
         clearCacheEnterLogin()
+
+        if (res.extra == 1) {
+          errorMessage(`您的账号${res.extraTime}在别处登录。如非本人操作，则密码可能已泄漏，建议修改密码`)
+        }
       } else {
         if (res.msg) {
           errorMessage(res.msg)
