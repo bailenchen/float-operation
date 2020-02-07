@@ -12,13 +12,13 @@
           @focus="focusKey = 'username'"
           @blur="checkFromItem('username', form.username)"
           @keyup.enter.native="handleLogin">
-          <span
+          <!--<span
             slot="prefix"
             :class="{
               full: Boolean(form.username),
               focus: focusKey === 'username'
             }"
-            class="form-icon wk wk-user" />
+            class="form-icon wk wk-user" />-->
         </el-input>
       </el-form-item>
       <el-form-item>
@@ -32,13 +32,13 @@
           @focus="focusKey = 'password'"
           @keyup.enter.native="handleLogin"
           @blur="checkForm">
-          <span
+          <!--<span
             slot="prefix"
             :class="{
               full: Boolean(form.password),
               focus: focusKey === 'password'
             }"
-            class="form-icon wk wk-circle-password" />
+            class="form-icon wk wk-circle-password" />-->
           <span
             v-if="focusKey !== 'password'"
             slot="suffix"
@@ -49,6 +49,23 @@
         </el-input>
       </el-form-item>
     </el-form>
+
+    <div class="cell login-action">
+      <div class="cell-box">
+        <el-checkbox
+          v-model="rememberMe">
+          记住我
+        </el-checkbox>
+      </div>
+      <div class="empty">
+        &nbsp;
+      </div>
+      <div
+        class="cell-box login-by-code"
+        @click="$emit('toggle', 'LoginByCode', form.username)">
+        <span class="text">验证码登录</span>
+      </div>
+    </div>
 
     <div
       :class="{ok: !Boolean(errorInfo)}"
@@ -68,14 +85,15 @@
       <div
         class="btn"
         @click="handleLogin">
-        登&nbsp;&nbsp;&nbsp;录
+        登&nbsp;录
       </div>
+
       <div class="others">
         <el-dropdown
           trigger="click"
           @command="handleToggle">
           <span class="el-dropdown-link">
-            默认登录：
+            默认登录方式：
             <span class="dropdown">
               {{ loginType === 1 ? '云平台' : '个人中心' }}
               <i class="el-icon-arrow-down el-icon--right" />
@@ -86,14 +104,14 @@
             <el-dropdown-item :command="2">个人中心</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+
         <div class="empty">
           &nbsp;
         </div>
         <div
-          class="box"
-          @click="$emit('toggle', 'LoginByCode', form.username)">
-          <span class="icon wk wk-mobile" />
-          <span class="text">验证码登录</span>
+          class="register"
+          @click="$emit('toggle', 'CreateNewCompany', form.username)">
+          免费注册
         </div>
       </div>
 
@@ -103,12 +121,6 @@
         <span class="el-icon-warning" />
         <span>个人中心仅管理员可登录</span>
       </div>
-    </div>
-
-    <div
-      class="active-btn"
-      @click="$emit('toggle', 'CreateNewCompany', form.username)">
-      创建新企业
     </div>
   </div>
 </template>
@@ -126,6 +138,7 @@ export default {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
     return {
       redirect: undefined,
+      rememberMe: false,
       form: {
         username: sessionStorage.getItem('account') || ''
       },
@@ -265,10 +278,55 @@ export default {
 
 .login-by-pwd {
   .forget-pwd {
-    padding: 0 5px;
+    height: 70px;
+    color: #999;
+    line-height: 70px;
     cursor: pointer;
+    padding: 0 10px 0 5px;
+    display: block;
     &:hover {
       color: #3e6bea;
+    }
+  }
+}
+
+.cell {
+  width: 100%;
+  padding: 0 60px;
+  display: flex;
+  .empty {
+    flex: 1;
+    visibility: hidden;
+  }
+}
+
+.login-action {
+  margin-top: -10px;
+  /deep/ .el-checkbox {
+    .el-checkbox__inner {
+      width: 16px;
+      height: 16px;
+      &::after {
+        top: 2px;
+        left: 5px;
+      }
+    }
+    .el-checkbox__label {
+      font-size: 16px;
+    }
+  }
+  .login-by-code {
+    font-size: 16px;
+    color: #3e6bea;
+    cursor: pointer;
+  }
+}
+
+.control {
+  .others {
+    font-size: 16px;
+    .el-dropdown {
+      font-size: 16px;
     }
   }
 }

@@ -17,17 +17,52 @@
     <div class="container">
       <div class="left">
         <h1 class="title">
-          数字管家
+          企业销售+管理全流程
         </h1>
-        <div class="text">
+        <h2 class="mini-title">
           客户关系管理的前沿创新
-          <br>
-          帮助企业实现销售过程的全流程管理
+        </h2>
+        <div class="desc">
+          悟空CRM已涉及教育业、制造业、服务业、金融业、政府机构等10多种<br>
+          行业解决方案，全面帮助企业进行信息化建设
+        </div>
+        <div class="register-btn">
+          免费注册
         </div>
         <img
-          src="~@/assets/login/bg.png"
+          src="~@/assets/login/main_pic.png"
           alt=""
-          class="bg">
+          class="main-pic">
+        <ul class="download-group">
+          <li class="download-item">
+            <img
+              src="~@/assets/login/android.png"
+              alt="android"
+              class="icon">
+            <span class="text">Android下载</span>
+          </li>
+          <li class="download-item">
+            <img
+              src="~@/assets/login/ios.png"
+              alt="ios"
+              class="icon">
+            <span class="text">IOS下载</span>
+          </li>
+          <li class="download-item">
+            <img
+              src="~@/assets/login/windows.png"
+              alt="windows"
+              class="icon">
+            <span class="text">Windows下载</span>
+          </li>
+          <li class="download-item">
+            <img
+              src="~@/assets/login/mac.png"
+              alt="mac"
+              class="icon">
+            <span class="text">Mac下载</span>
+          </li>
+        </ul>
       </div>
       <div class="right">
         <div class="login-main-content">
@@ -47,9 +82,19 @@
               :list="companyList"
               @toggle="handleToggleCom" />
           </template>
+
+          <div class="use-tip">
+            <span class="text">建议使用</span>
+            <img src="~@/assets/login/chrome.png" alt="" class="icon">
+            <span class="text">Chorme、</span>
+            <img src="~@/assets/login/firefox.png" alt="" class="icon">
+            <span class="text">火狐以及第三方浏览器</span>
+            <img src="~@/assets/login/fast.png" alt="" class="icon">
+            <span class="text">极速模式</span>
+          </div>
         </div>
 
-        <div class="app-down">
+        <!--<div class="app-down">
           <span class="text">
             APP下载
           </span>
@@ -64,7 +109,7 @@
               扫描二维码<br>下载客户端
             </span>
           </div>
-        </div>
+        </div>-->
       </div>
     </div>
   </div>
@@ -92,8 +137,8 @@ export default {
       activeCom: 'LoginByPwd',
       companyList: [],
       titleMap: {
-        LoginByPwd: '使用数字账户登录',
-        LoginByCode: '使用数字账户登录',
+        LoginByPwd: '欢迎登录悟空CRM',
+        LoginByCode: '欢迎登录悟空CRM',
         CreateNewCompany: '创建新企业',
         MultipleCompany: '选择企业',
         ForgetPwd: '忘记密码'
@@ -147,14 +192,14 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #3e4fea;
+  background: url('~@/assets/login/bg.png') center no-repeat;
   display: flex;
   flex-direction: column;
   overflow: auto;
 
   .top-nav {
     width: 100%;
-    padding: 2.5% 2.8%;
+    padding: 1.5% 2.8%;
     display: flex;
     img {
       width: 164px;
@@ -165,46 +210,80 @@ export default {
   .container {
     width: 100%;
     flex: 1;
-    padding-top: 1.5%;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
+    overflow: hidden;
     .left {
       height: 100%;
+      margin-left: 30px;
       .title {
-        position: relative;
-        font-size: 30px;
+        font-size: 46px;
+        font-weight: normal;
         color: white;
         letter-spacing: 3px;
-        padding-left: 30px;
-        &:after {
-          position: relative;
-          top: 10px;
-          left: 0;
-          content: '';
-          width: 80px;
-          height: 4px;
-          background-color: white;
-          display: block;
-        }
       }
-      .text {
-        font-size: 20px;
-        line-height: 30px;
-        letter-spacing: 2px;
+      .mini-title {
+        font-size: 32px;
+        font-weight: normal;
         color: white;
-        padding-left: 30px;
-        margin-top: 30px;
-        margin-bottom: 80px;
+        margin-top: 24px;
+        margin-bottom: 24px;
       }
-      .bg {
-        width: 80%;
+      .desc {
+        font-size: 18px;
+        color: white;
+        line-height: 1.5;
+      }
+      .register-btn {
+        width: 150px;
+        height: 60px;
+        font-size: 22px;
+        text-align: center;
+        line-height: 60px;
+        color: #394af3;
+        background-color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        margin: 24px 0 52px;
+      }
+      .main-pic {
+        width: 560px;
+        margin-bottom: 30px;
+      }
+      .download-group {
+        width: 100%;
+        overflow: hidden;
+        .download-item {
+          float: left;
+          border-radius: 24px;
+          background-color: #2b5db9;
+          text-align: center;
+          cursor: pointer;
+          margin-right: 20px;
+          padding: 8px 16px;
+          &:last-child {
+            margin-right: 0;
+          }
+          .icon {
+            width: 34px;
+            height: 34px;
+            vertical-align: middle;
+            margin-right: 10px;
+          }
+          .text {
+            font-size: 16px;
+            color: white;
+            vertical-align: middle;
+          }
+        }
       }
     }
     .right {
-      width: 400px;
+      width: 650px;
       height: 100%;
-      margin-left: 250px;
+      margin-left: 120px;
+      padding-top: 56px;
       .login-main-content {
         position: relative;
         width: 100%;
@@ -234,14 +313,26 @@ export default {
             border-radius: 2px;
             display: block;
           }
-          // @include center;
-          // .logo {
-          //    width: 40%;
-          //    margin: 0 auto;
-          //  }
+        }
+        .use-tip {
+          position: absolute;
+          left: 0;
+          bottom: 15px;
+          width: 100%;
+          text-align: center;
+          color: #999;
+          font-size: 14px;
+          .text {
+            vertical-align: middle;
+          }
+          .icon {
+            width: 18px;
+            display: inline-block;
+            vertical-align: middle;
+          }
         }
       }
-      .app-down {
+      /*.app-down {
         position: relative;
         width: 176px;
         height: 38px;
@@ -293,8 +384,10 @@ export default {
             @include center;
           }
         }
-      }
+      }*/
     }
   }
 }
+
+
 </style>
