@@ -4,6 +4,7 @@
       v-show="!showNext"
       ref="smsCode"
       :show-tips="true"
+      :phone="phone"
       sms-type="forget" />
 
     <div
@@ -128,7 +129,7 @@
     <div class="to-login">
       已有账号，<span
         class="special"
-        @click="$emit('toggle', 'LoginByPwd')">去登录</span>
+        @click="$emit('toggle', 'LoginByPwd', $refs.smsCode.form.phone)">去登录</span>
     </div>
   </div>
 </template>
@@ -272,7 +273,7 @@ export default {
       ResetPwdAPI(params)
         .then(() => {
           this.$message.success('修改成功')
-          this.$emit('toggle', 'LoginByPwd')
+          this.$emit('toggle', 'LoginByPwd', this.$refs.smsCode.form.phone)
         })
         .catch()
     },

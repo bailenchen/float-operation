@@ -3,6 +3,7 @@
     <get-sms-code
       ref="smsCode"
       :show-tips="false"
+      :phone="phone"
       sms-type="login" />
 
     <div class="control">
@@ -32,7 +33,7 @@
         </div>
         <div
           class="box"
-          @click="$emit('toggle', 'LoginByPwd')">
+          @click="$emit('toggle', 'LoginByPwd', $refs.smsCode.form.phone)">
           <span
             class="icon wk wk-password"
             style="font-size: 14px" />
@@ -50,7 +51,7 @@
 
     <div
       class="active-btn"
-      @click="$emit('toggle', 'CreateNewCompany')">
+      @click="$emit('toggle', 'CreateNewCompany', $refs.smsCode.form.phone)">
       创建新企业
     </div>
 
@@ -90,6 +91,9 @@ export default {
   name: 'LoginByCode',
   components: {
     GetSmsCode
+  },
+  props: {
+    phone: [String, Number]
   },
   data() {
     return {

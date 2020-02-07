@@ -170,6 +170,13 @@ export default {
   },
   computed: {
   },
+  created() {
+    if (this.phone) {
+      this.form = {
+        phone: this.phone || ''
+      }
+    }
+  },
   beforeDestroy() {
     if (this.timer) {
       clearTimeout(this.timer)
