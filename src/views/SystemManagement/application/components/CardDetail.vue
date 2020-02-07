@@ -13,6 +13,11 @@
       <div class="detail is-block">企业官网、企业产品多维度展示，输出专业企业形象，赋能销售获客推广</div>
       <div class="main">三、提高签单成功率</div>
       <div class="detail is-block">商机、客户浏览时间实时记录，避免低质商机打扰，让销售专注高质量客户</div>
+      <div class="code-detail">
+        <img src="@/assets/img/card-code.jpg">
+        <p>您可以通过扫描上方二维码，立即体验</p>
+        <p>小程序悟空智慧名片</p>
+      </div>
     </div>
     <span
       slot="footer"
@@ -67,5 +72,15 @@ export default {
 .main {
   color: #333;
   font-weight: bold;
+}
+
+.code-detail {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  img {
+    width: 120px;
+    margin: 10px 0;
+  }
 }
 </style>

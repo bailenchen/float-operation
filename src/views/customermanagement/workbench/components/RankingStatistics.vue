@@ -260,6 +260,10 @@ export default {
   right: 0;
   z-index: 1;
 
+  .user-img {
+    display: inline-grid;
+  }
+
   .row {
     display: table-cell;
     padding-left: 10px;

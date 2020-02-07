@@ -1,6 +1,7 @@
 import filtrateHandleView from '../components/filtrateHandleView'
 
 import { debounce } from 'throttle-debounce'
+import { downloadExcelWithResData } from '@/utils/index'
 
 export default {
   data() {
@@ -26,7 +27,17 @@ export default {
         '#F7A57C',
         '#F661AC',
         '#8652EE'
-      ]
+      ],
+
+      // echart 操作项
+      toolbox: {
+        showTitle: false,
+        feature: {
+          saveAsImage: {
+            pixelRatio: 2
+          }
+        }
+      }
     }
   },
 
@@ -64,6 +75,22 @@ export default {
       if (this.chartOtherObj) {
         this.chartOtherObj.resize()
       }
+    },
+
+    /**
+     * 审批导出
+     */
+    requestExportInfo(request, params) {
+      return new Promise((resolve, reject) => {
+        request(params)
+          .then(res => {
+            downloadExcelWithResData(res)
+            resolve && resolve(res)
+          })
+          .catch(err => {
+            reject && reject(err)
+          })
+      })
     }
   },
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form>
+    <el-form class="login-from">
       <el-form-item>
         <el-input
           ref="telephone"
@@ -99,7 +99,7 @@
 
 <script>
 import { SendSmsAPI } from '@/api/login'
-import SlideVerify from './slideVerify'
+import SlideVerify from '@/components/SlideVerify'
 import mixins from './mixins'
 
 export default {

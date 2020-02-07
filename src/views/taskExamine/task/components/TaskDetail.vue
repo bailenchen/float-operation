@@ -6,9 +6,11 @@
     class="d-view"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <flexbox
       v-loading="loading"
+      v-if="loading !== null"
       direction="column"
       align="stretch"
       class="main">
@@ -73,10 +75,11 @@
           <el-checkbox
             v-model="taskData.checked"
             @change="completeMainTask" />
-          <div
-            v-if="!nameVinput"
-            :class="['task-name', { 'is-checked': taskData.checked }]"
-            @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="light" placement="top">
+            <div
+              :class="['task-name', { 'is-checked': taskData.checked }]"
+              @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+          </el-tooltip>
           <div
             v-else
             class="show-input">
@@ -174,7 +177,7 @@
               <div class="head-btn__bd">
                 <div
                   v-if="taskData.startTime"
-                  class="head-btn__bd--title">{{ taskData.startTime | moment('MM月DD日') }}</div>
+                  class="head-btn__bd--title">{{ taskData.startTime | moment('YYYY年MM月DD日') }}</div>
                 <div class="head-btn__bd--des">开始时间</div>
               </div>
               <i
@@ -198,7 +201,7 @@
               <div class="head-btn__bd">
                 <div
                   v-if="taskData.stopTime"
-                  class="head-btn__bd--title">{{ taskData.stopTime | moment('MM月DD日') }}</div>
+                  class="head-btn__bd--title">{{ taskData.stopTime | moment('YYYY年MM月DD日') }}</div>
                 <div class="head-btn__bd--des">结束时间</div>
               </div>
               <i
@@ -311,7 +314,7 @@
                   <el-input
                     :autosize="{ minRows: 2}"
                     v-model="addDescriptionTextarea"
-                    :maxlength="300"
+                    :maxlength="2000"
                     show-word-limit
                     type="textarea"
                     placeholder="请输入内容" />
@@ -338,11 +341,11 @@
               <div class="section__bd">
                 <related-business
                   :margin-left="'0'"
-                  :is-task="true"
                   :all-data="allData"
-                  :task-id="taskData.taskId"
+                  show-foot
                   @checkRelatedDetail="checkRelatedDetail"
-                  @checkInfos="checkInfos" />
+                  @checkInfos="checkInfos"
+                  @unbind="unbindRelatedInfo" />
               </div>
             </div>
 
@@ -393,7 +396,7 @@
 
                         <div
                           v-if="item.stopTime"
-                          class="bg-color task-bg-color">{{ item.stopTime | moment("MM-DD") }} 截止</div>
+                          class="bg-color task-bg-color">{{ item.stopTime | moment("YYYY-MM-DD") }} 截止</div>
                         <xr-avatar
                           v-if="item.mainUser"
                           :name="item.mainUser.realname"
@@ -443,6 +446,7 @@
                   v-for="(file, fileIndex) in fileList"
                   :key="fileIndex"
                   :data="file"
+                  :list="fileList"
                   :cell-index="fileIndex"
                   :module-id="id"
                   :show-delete="true"
@@ -559,6 +563,7 @@ import {
 import membersDep from '@/components/selectEmployee/membersDep'
 import TagIndex from './tag/tagIndex'
 import SubTask from './subTask'
+
 // emoji
 import emoji from '@/components/emoji'
 // 相关信息 - 选中列表
@@ -569,6 +574,8 @@ import { mapGetters } from 'vuex'
 import CommentList from '@/views/workLog/components/commentList'
 import ReplyComment from '@/components/ReplyComment'
 import moment from 'moment'
+import { objDeepCopy } from '@/utils'
+import taskMixin from '../mixins/taskMixin'
 
 export default {
   name: 'TaskDetail',
@@ -586,6 +593,7 @@ export default {
     CommentList,
     ReplyComment
   },
+  mixins: [taskMixin],
   props: {
     id: [String, Number],
     isTrash: Boolean,
@@ -600,17 +608,17 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: null,
       canShowDetail: true,
       // 紧急弹出框
       priorityVisible: false,
       // 优先级列表
-      priorityList: [
-        { id: 3, label: '高', color: '#F95A5A' },
-        { id: 2, label: '中', color: '#F7AD3D' },
-        { id: 1, label: '低', color: '#67C23A' },
-        { id: 0, label: '无', color: '#D8D8D8' }
-      ],
+      // priorityList: [
+      //   { id: 3, label: '高', color: '#F95A5A' },
+      //   { id: 2, label: '中', color: '#F7AD3D' },
+      //   { id: 1, label: '低', color: '#67C23A' },
+      //   { id: 0, label: '无', color: '#D8D8D8' }
+      // ],
 
       /**
      * 限制时间选择`
@@ -665,26 +673,9 @@ export default {
     ...mapGetters(['userInfo']),
     priority() {
       if (this.taskData.priority == 0 || !this.taskData.priority) {
-        return {
-          color: '#D8D8D8',
-          label: '无'
-        }
-      } else if (this.taskData.priority == 1) {
-        return {
-          color: '#67C23A',
-          label: '低'
-        }
-      } else if (this.taskData.priority == 2) {
-        return {
-          color: '#F7AD3D',
-          label: '中'
-        }
-      } else if (this.taskData.priority == 3) {
-        return {
-          color: '#F95A5A',
-          label: '高'
-        }
+        return this.priorityList[3] // 默认读取 priorityList 返回
       }
+      return this.getPriorityColor(this.taskData.priority)
     },
 
     /**
@@ -764,16 +755,21 @@ export default {
       }
     }
   },
-  mounted() {
-    if (this.id) {
-      this.getDetail()
-      this.getCommentList()
-      this.getActivityList()
-    }
-  },
+  mounted() {},
 
   beforeDestroy() {},
   methods: {
+    /**
+     * 动画完成方法
+     */
+    viewAfterEnter() {
+      if (this.id) {
+        this.getDetail()
+        this.getCommentList()
+        this.getActivityList()
+      }
+    },
+
     initInfo() {
       this.taskData = null
       this.subTaskDoneNum = 0
@@ -1149,12 +1145,15 @@ export default {
       params[type] = this.taskData[type]
       setTaskAPI(params)
         .then(res => {
-          this.$emit('on-handle', {
-            type: type,
-            value: this[type],
-            index: this.detailIndex,
-            section: this.detailSection
-          })
+          // 停止时间回调
+          if (type == 'stopTime') {
+            this.$emit('on-handle', {
+              type: 'change-stop-time',
+              value: this.taskData[type],
+              index: this.detailIndex,
+              section: this.detailSection
+            })
+          }
         })
         .catch(() => {})
     },
@@ -1276,6 +1275,42 @@ export default {
     },
 
     /**
+     * 解绑详情信息
+     */
+    unbindRelatedInfo(field, item, index) {
+      this.$confirm('确认取消关联?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'is-particulars'
+      })
+        .then(() => {
+          const params = { taskId: this.taskData.taskId }
+          const tempRelatedListData = objDeepCopy(this.allData)
+          tempRelatedListData[field].splice(index, 1)
+          const showTypes = ['customer', 'contacts', 'business', 'contract']
+          for (let index = 0; index < showTypes.length; index++) {
+            const typeItem = showTypes[index]
+            const typeArray = tempRelatedListData[typeItem] || []
+            params[typeItem + 'Ids'] = typeArray
+              .map(aItem => {
+                return aItem[typeItem + 'Id']
+              })
+              .join(',')
+          }
+          editTaskRelationAPI(params)
+            .then(res => {
+              this.allData = tempRelatedListData
+              this.$message.success('关联取消成功')
+            })
+            .catch(() => {})
+        })
+        .catch(() => {
+          this.$message.info('已取消操作')
+        })
+    },
+
+    /**
      * 查看相关详情
      */
     checkRelatedDetail(crmType, item) {
@@ -1308,16 +1343,17 @@ export default {
               }
               if (val.checked) {
                 this.subTaskDoneNum--
-                this.$emit('on-handle', {
-                  type: 'change-sub-task',
-                  value: {
-                    subdonecount: this.subTaskDoneNum,
-                    allcount: this.taskData.childTask.length
-                  },
-                  index: this.detailIndex,
-                  section: this.detailSection
-                })
               }
+
+              this.$emit('on-handle', {
+                type: 'change-sub-task',
+                value: {
+                  subdonecount: this.subTaskDoneNum,
+                  allcount: this.taskData.childTask.length
+                },
+                index: this.detailIndex,
+                section: this.detailSection
+              })
               this.$message.success('子任务删除成功')
             })
             .catch(() => {
@@ -1360,7 +1396,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskDoneNum,
-              allcount: this.taskData.childTask.length + 1
+              allcount: this.taskData.childTask.length
             },
             index: this.detailIndex,
             section: this.detailSection
@@ -1370,7 +1406,7 @@ export default {
             type: 'change-sub-task',
             value: {
               subdonecount: this.subTaskDoneNum,
-              allcount: this.taskData.childTask.length - 1
+              allcount: this.taskData.childTask.length
             },
             index: this.detailIndex,
             section: this.detailSection
@@ -1520,6 +1556,7 @@ $btn-b-hover-color: #eff4ff;
 .main {
   position: relative;
   height: 100%;
+  background: #f5f6f9;
 
   &__hd {
     margin-bottom: 15px;
@@ -1670,6 +1707,12 @@ $btn-b-hover-color: #eff4ff;
   font-size: 22px;
   color: #333;
   cursor: pointer;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 28px;
 }
 
 .task-name.is-checked {
@@ -2010,6 +2053,7 @@ $btn-b-hover-color: #eff4ff;
 
     .user-img {
       margin-right: 10px;
+      flex-shrink: 0;
     }
 
     &__bd {
@@ -2034,6 +2078,9 @@ $btn-b-hover-color: #eff4ff;
         font-size: 14px;
         color: #666;
         line-height: 17px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-all;
       }
     }
   }
@@ -2086,6 +2133,7 @@ $btn-b-hover-color: #eff4ff;
 
 .d-view {
   position: fixed;
+  background: white;
   min-width: 926px;
   width: 75%;
   top: 60px;

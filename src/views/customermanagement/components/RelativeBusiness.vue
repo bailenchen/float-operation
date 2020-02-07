@@ -64,6 +64,7 @@
         :key="index"
         :prop="item.prop"
         :label="item.label"
+        :formatter="fieldFormatter"
         show-overflow-tooltip/>
     </el-table>
 
@@ -91,6 +92,7 @@ import {
   crmContactsUnrelateBusinessAPI
 } from '@/api/customermanagement/contacts'
 import CrmRelative from '@/components/CreateCom/CrmRelative'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'RelativeBusiness', // 相关联系人商机  可能再很多地方展示 放到客户管理目录下（新建时仅和客户进行关联）
@@ -238,6 +240,13 @@ export default {
         label: '商机组'
       })
       this.fieldList.push({ prop: 'statusName', width: '200', label: '商机阶段' })
+    },
+
+    fieldFormatter(row, column) {
+      if (column.property == 'money') {
+        return separator(row[column.property] || 0)
+      }
+      return row[column.property]
     },
 
     getDetail() {

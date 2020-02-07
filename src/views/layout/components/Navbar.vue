@@ -40,7 +40,7 @@
       :visible-arrow="false"
       placement="bottom"
       popper-class="no-padding-popover"
-      width="200"
+      width="220"
       trigger="click">
       <div class="handel-items">
         <div

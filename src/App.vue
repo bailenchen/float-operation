@@ -14,6 +14,8 @@
       :show.sync="showCRMImport"
       :crm-type="crmType"
       :is-seas="isSeas"
+      :cache-show.sync="cacheShow"
+      :cache-done="cacheDone"
       @status="crmImportChange"
       @close="crmImportClose"/>
   </div>

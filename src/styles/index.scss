@@ -303,3 +303,10 @@ div[lazy=loading] {
 .wk-help:hover {
   color: $xr-color-primary;
 }
+
+// form 表单样式
+.el-form-item.is-error {
+  .xh-form-border {
+    border-color: #F56C6C;
+  }
+}

@@ -293,6 +293,65 @@
               v-model="resetUserNameForm.password"
               type="password" />
           </el-form-item>
+
+          <template v-if="isManageReset">
+            <el-popover
+              v-model="slideVerifyShow"
+              :disabled="slideVerifyPass || !canSlideVerify"
+              placement="top-start"
+              width="332"
+              popper-class="no-padding-popover"
+              trigger="click">
+              <slide-verify
+                :phone="resetUserNameForm.username"
+                slider-text="向右滑动"
+                @success="sliderSuccess"
+                @fail="sliderFail"
+                @refresh="sliderRefresh"
+                @close="slideVerifyShow = false" />
+              <div
+                slot="reference"
+                :class="{success: slideVerifyPass}"
+                class="verify-picture">
+                <template v-if="!slideVerifyPass">
+                  <img
+                    src="~@/assets/login/verify_picture.png"
+                    alt=""
+                    class="icon">
+                  <span class="text">点击完成验证</span>
+                </template>
+                <template v-else>
+                  <img
+                    src="~@/assets/login/verify_success.png"
+                    alt=""
+                    class="icon">
+                  <span class="text">验证成功</span>
+                </template>
+              </div>
+            </el-popover>
+
+            <el-form-item>
+              <div class="sms-box">
+                <el-input
+                  ref="smscode"
+                  v-model.trim="resetUserNameForm.smscode"
+                  placeholder="请输入短信验证码" />
+                <el-button
+                  :disabled="codeTime !== codeSecond"
+                  @click="getSmsCode">
+                  <div class="btn-content">
+                    <template v-if="codeTime === codeSecond">
+                      <!--<span class="icon wk wk-shouji" />-->
+                      <span>获取验证码</span>
+                    </template>
+                    <template v-else>
+                      <span>重新发送({{ codeSecond }}s)</span>
+                    </template>
+                  </div>
+                </el-button>
+              </div>
+            </el-form-item>
+          </template>
         </el-form>
         <div
           class="tips"
@@ -408,9 +467,11 @@ import {
   roleList,
   adminUsersUpdatePwd,
   adminUsersUsernameEditAPI,
+  adminUsersManagerUsernameEditAPI,
   usersEditStatus
 } from '@/api/systemManagement/EmployeeDepManagement'
 import { usersList, depList } from '@/api/common' // 直属上级接口
+import { SendSmsAPI } from '@/api/login'
 
 import { mapGetters } from 'vuex'
 
@@ -418,6 +479,9 @@ import BulkImportUser from './components/BulkImportUser'
 import EmployeeDetail from './components/employeeDetail'
 import XrHeader from '@/components/xr-header'
 import Reminder from '@/components/reminder'
+import SlideVerify from '@/components/SlideVerify'
+
+import { chinaMobileRegex } from '@/utils'
 
 export default {
   /** 系统管理 的 员工部门管理 */
@@ -426,7 +490,8 @@ export default {
     EmployeeDetail,
     BulkImportUser,
     XrHeader,
-    Reminder
+    Reminder,
+    SlideVerify
   },
   data() {
     return {
@@ -560,7 +625,7 @@ export default {
         username: [
           { required: true, message: '手机号码不能为空', trigger: 'blur' },
           {
-            pattern: /^1\d{10}$/,
+            pattern: chinaMobileRegex,
             message: '目前只支持中国大陆的手机号码',
             trigger: 'blur'
           }
@@ -572,9 +637,9 @@ export default {
             trigger: 'blur'
           }
         ],
-        parentId: [
-          { required: true, message: '直属上级不能为空', trigger: 'change' }
-        ],
+        // parentId: [
+        //   { required: true, message: '直属上级不能为空', trigger: 'change' }
+        // ],
         deptId: [
           { required: true, message: '部门不能为空', trigger: 'change' }
         ],
@@ -586,6 +651,12 @@ export default {
         username: '',
         password: ''
       },
+      isManageReset: false, // 是管理员重置密码
+      slideVerifyShow: false,
+      slideVerifyPass: false,
+      codeTime: 60,
+      codeSecond: 60,
+      codeTimer: null,
       // 批量导入
       bulkImportShow: false
     }
@@ -715,6 +786,13 @@ export default {
           { field: 'roleId', value: '角色', type: 'selectCheckout' }
         ]
       }
+    },
+
+    /**
+     * 能进行滑动验证
+     */
+    canSlideVerify() {
+      return chinaMobileRegex.test(this.resetUserNameForm.username)
     }
   },
   mounted() {
@@ -1156,6 +1234,14 @@ export default {
       } else if (type === 'reset') {
         this.resetPasswordVisible = true
       } else if (type === 'resetName') {
+        // 重置验证码弹窗变量
+        this.isManageReset = false
+        this.slideVerifyPass = false
+        this.slideVerifyShow = false
+        this.resetUserNameForm = {
+          username: '',
+          password: ''
+        }
         this.resetUserNameVisible = true
       } else if (type === 'edit') {
         this.dialogData = this.selectionList[0]
@@ -1230,22 +1316,95 @@ export default {
         if (valid) {
           if (this.selectionList.length > 0) {
             val.id = this.selectionList[0].userId
-            this.loading = true
-            adminUsersUsernameEditAPI(val)
-              .then(res => {
-                this.$message.success('重置成功')
-                this.searchClick()
-                this.resetUserNameVisible = false
-                this.loading = false
-              })
-              .catch(() => {
-                this.loading = false
-              })
+            if (this.isManageReset) {
+              if (!this.resetUserNameForm.smscode) {
+                this.$message.error('请输入验证码')
+                return
+              }
+              this.loading = true
+              adminUsersManagerUsernameEditAPI(val)
+                .then(res => {
+                  this.$message.success('重置成功')
+                  this.resetUserNameVisible = false
+                  this.loading = false
+                  this.refreshUserList()
+                })
+                .catch(() => {
+                  this.loading = false
+                })
+            } else {
+              this.loading = true
+              adminUsersUsernameEditAPI(val)
+                .then(res => {
+                  if (res.status === 3) {
+                    this.$message.error('当前为系统注册账号（手机号），重置需要获取新手机号验证码')
+                    this.isManageReset = true
+                  } else {
+                    this.$message.success('重置成功')
+                    this.resetUserNameVisible = false
+                    this.refreshUserList()
+                  }
+                  this.loading = false
+                })
+                .catch(() => {
+                  this.loading = false
+                })
+            }
           }
         } else {
           return false
         }
       })
+    },
+
+    sliderSuccess() {
+      setTimeout(() => {
+        this.slideVerifyPass = true
+        this.slideVerifyShow = false
+      }, 500)
+    },
+
+    sliderFail() {},
+    sliderRefresh() {},
+
+    getSmsCode() {
+      if (!this.canSlideVerify) {
+        this.$message.error('请输入正确的手机号')
+        return
+      }
+
+      if (!this.slideVerifyPass) {
+        this.$message.error('请先进行滑动验证')
+        return
+      }
+
+      SendSmsAPI({
+        telephone: this.resetUserNameForm.username,
+        type: 1 // 注册
+      })
+        .then(() => {
+          this.startTimer()
+        })
+        .catch()
+    },
+
+    /**
+     * 发送短信倒计时
+     */
+    startTimer() {
+      if (this.codeSecond === this.codeTime) {
+        this.codeSecond--
+      }
+      this.codeTimer = setTimeout(() => {
+        this.codeSecond--
+        if (this.codeSecond >= 0) {
+          this.startTimer()
+        } else {
+          clearTimeout(this.codeTimer)
+          this.codeTimer = null
+          this.codeSecond = this.codeTime
+        }
+      }, 1000)
     },
 
     /**
@@ -1273,7 +1432,10 @@ export default {
       this.loading = true
       usersList({ pageType: 0 })
         .then(res => {
-          this.optionsList['parentId'].list = []
+          this.optionsList['parentId'].list = [{
+            id: '',
+            name: '请选择'
+          }]
           for (const i of res.data) {
             this.optionsList['parentId'].list.push({
               id: i.userId,
@@ -1308,6 +1470,49 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/views/login/index.scss';
+.verify-picture {
+  margin-top: 20px;
+}
+
+.sms-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  .el-input {
+    width: 210px;
+  }
+  .el-button {
+    flex: 1;
+    font-size: 12px;
+    color: white;
+    background-color: #3e6bea;
+    border-radius: $xr-border-radius-base;
+    border: 0 none;
+    padding: 0;
+    margin-left: 20px;
+
+    .btn-content {
+      width: 100%;
+      height: 42px;
+      @include center;
+      .icon {
+        font-size: 16px;
+        margin-right: 5px;
+      }
+    }
+    &:hover,
+    &.is-disabled,
+    &.is-disabled:hover {
+      color: white;
+      border-color: #517aec;
+      background-color: #517aec;
+    }
+  }
+}
+
 .employee-dep-management {
   padding: 0 15px;
   height: 100%;
@@ -1451,6 +1656,10 @@ export default {
 /* 详情 */
 .employee-dep-management /deep/ .el-dialog__wrapper {
   margin-top: 60px !important;
+}
+
+.el-form {
+  padding: 0;
 }
 
 /* 新建和编辑 */

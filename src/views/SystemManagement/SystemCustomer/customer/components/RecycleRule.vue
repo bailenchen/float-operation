@@ -31,16 +31,16 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="name"
+            prop="level"
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limitDay"
-            label="未跟进天数">
+            :label="limitDayName"
+            prop="limitDay">
             <template slot-scope="scope">
               <span>超过</span>
               <el-input v-model="scope.row.limitDay" class="value-input" @keyup.native="inputLimit(scope.row)" />
-              <span>天未跟进，进入公海</span>
+              <span>天{{ limitDayUnit }}，进入公海</span>
             </template>
           </el-table-column>
         </el-table>
@@ -53,16 +53,16 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="name"
+            prop="level"
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limitDay"
-            label="未跟进天数">
+            :label="limitDayName"
+            prop="limitDay">
             <template slot-scope="scope">
               <span>超过</span>
               <el-input v-model="scope.row.limitDay" class="value-input" @keyup.native="inputLimit(scope.row)" />
-              <span>天未跟进，进入公海</span>
+              <span>天{{ limitDayUnit }}，进入公海</span>
             </template>
           </el-table-column>
         </el-table>
@@ -72,6 +72,7 @@
 </template>
 
 <script>
+
 
 export default {
   // 回收规则
@@ -98,28 +99,21 @@ export default {
           level: []
         }
       }
+    },
+    levelCustomer: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
     return {
       allCustomerData: [{
-        name: '所有客户',
-        level: 1, // 客户级别 1全部 2 A（重要客户）3 B（普通客户）4 C（非优先客户）
+        level: '所有客户', // 客户级别 1全部 2 A（重要客户）3 B（普通客户）4 C（非优先客户）
         limitDay: ''
       }],
-      levelCustomerData: [{
-        name: 'A（重要客户）',
-        level: 2,
-        limitDay: ''
-      }, {
-        name: 'B（普通客户）',
-        level: 3,
-        limitDay: ''
-      }, {
-        name: 'C（非优先客户）',
-        level: 4,
-        limitDay: ''
-      }]
+      levelCustomerData: []
     }
   },
   computed: {
@@ -128,6 +122,22 @@ export default {
         1: '超过N天“无新建跟进（跟进记录）”的客户，由系统定时退回公海客户池',
         2: '超过N天“无新建商机”的客户，由系统定时退回公海客户池',
         3: '超过N天“未成交”的客户，由系统定时退回公海客户池'
+      }[parseInt(this.trueLabel)]
+    },
+
+    limitDayName() {
+      return {
+        1: '未跟进天数',
+        2: '未新建天数',
+        3: '未成交天数'
+      }[parseInt(this.trueLabel)]
+    },
+
+    limitDayUnit() {
+      return {
+        1: '未跟进',
+        2: '未新建商机',
+        3: '未成交'
       }[parseInt(this.trueLabel)]
     },
 
@@ -149,7 +159,9 @@ export default {
           }
         } else {
           if (this.isEdit && oldVal == null) {
-            this.data.level = this.getEditData(this.levelCustomerData, this.data.level)
+            if (this.levelCustomerData && this.levelCustomerData.length) {
+              this.data.level = this.getEditData(this.levelCustomerData, this.data.level)
+            }
           } else {
             this.data.level = this.levelCustomerData
           }
@@ -157,17 +169,36 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    levelCustomer: {
+      handler(value) {
+        if (value && value.length) {
+          this.levelCustomerData = value.map(item => {
+            const obj = {
+              limitDay: ''
+            }
+            obj.level = item
+            return obj
+          })
+
+          // 类型是2
+          if (this.data.customerLevelSetting == 2) {
+            if (this.isEdit && this.levelCustomerData && this.levelCustomerData.length) {
+              this.data.level = this.getEditData(this.levelCustomerData, this.data.level)
+            }
+          }
+        }
+      },
+      immediate: true
     }
   },
-  mounted() {
-  },
+  created() {},
 
   beforeDestroy() {},
   methods: {
     getEditData(list, editList) {
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
-
         for (let editIndex = 0; editIndex < editList.length; editIndex++) {
           const editItem = editList[editIndex]
           if (editItem.level == item.level) {

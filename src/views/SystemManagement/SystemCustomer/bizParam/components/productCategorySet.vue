@@ -4,6 +4,7 @@
       <span>产品类别设置</span>
     </div>
     <div class="product-setting">
+      <div class="tips">注：产品类别最多设置20级</div>
       <div class="product-setting-con">
         <div>
           <span
@@ -31,6 +32,7 @@
                 src="@/assets/img/unfold.png">
               <div class="node-label">{{ node.label }}</div>
               <el-dropdown
+                v-if="node.level < maxCreateLevel"
                 trigger="click"
                 @command="handleTreeSetDrop">
                 <div
@@ -95,6 +97,8 @@ export default {
       treeData: [],
       /** 更多操作 */
       treeSetTypes: [],
+      // 最大可创建20级
+      maxCreateLevel: 20,
       // 编辑产品弹窗
       productHandleDialog: false,
       productForm: { name: '', type: '', pid: '', categoryId: '' },
@@ -329,10 +333,15 @@ export default {
 
 .product-setting-con {
   position: absolute;
-  top: 0;
+  top: 20px;
   right: 0;
   bottom: 0;
   left: 0;
   overflow: auto;
+}
+
+.tips {
+  color: #999;
+  font-size: 13px;
 }
 </style>

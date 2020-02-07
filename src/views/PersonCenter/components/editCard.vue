@@ -18,13 +18,13 @@
       <el-form-item label="微信号" prop="wechatNumber">
         <el-input
           v-model.trim="form.wechatNumber"
-          :maxlength="20"
+          :maxlength="30"
           type="text" />
       </el-form-item>
       <el-form-item label="公司网址" prop="url">
         <el-input
           v-model.trim="form.url"
-          :maxlength="20"
+          :maxlength="30"
           type="text" />
       </el-form-item>
       <el-form-item label="公司地址" prop="address">

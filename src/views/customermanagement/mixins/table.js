@@ -16,7 +16,8 @@ import {
   crmCustomerIndex,
   crmCustomerPool,
   crmCustomerExcelAllExport,
-  crmCustomerPoolExcelAllExport
+  crmCustomerPoolExcelAllExport,
+  crmCustomerStarAPI
 } from '@/api/customermanagement/customer'
 import {
   crmAppletIndexAPI,
@@ -24,15 +25,18 @@ import {
 } from '@/api/customermanagement/applet'
 import {
   crmLeadsIndex,
-  crmLeadsExcelAllExport
+  crmLeadsExcelAllExport,
+  crmLeadsStarAPI
 } from '@/api/customermanagement/clue'
 import {
   crmContactsIndex,
-  crmContactsExcelAllExport
+  crmContactsExcelAllExport,
+  crmContactsStarAPI
 } from '@/api/customermanagement/contacts'
 import {
   crmBusinessIndex,
-  crmBusinessExcelAllExportAPI
+  crmBusinessExcelAllExportAPI,
+  crmBusinessStarAPI
 } from '@/api/customermanagement/business'
 import {
   crmContractIndex,
@@ -65,7 +69,7 @@ export default {
   data() {
     return {
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 240, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 235, // 表的高度
       list: [],
       fieldList: [],
       sortData: {}, // 字段排序
@@ -175,6 +179,10 @@ export default {
             this.total = res.data.totalRow
             this.loading = false
           }
+
+          this.$nextTick(() => {
+            document.querySelector('.el-table__body-wrapper').scrollTop = 1
+          })
         })
         .catch(() => {
           this.loading = false
@@ -465,7 +473,7 @@ export default {
     handleFilter(data) {
       this.filterObj = data
       var offsetHei = document.documentElement.clientHeight
-      var removeHeight = Object.keys(this.filterObj).length > 0 ? 310 : 240
+      var removeHeight = Object.keys(this.filterObj).length > 0 ? 295 : 235
       this.tableHeight = offsetHei - removeHeight
       this.currentPage = 1
       this.getList()
@@ -557,11 +565,38 @@ export default {
     },
 
     /**
+     * 切换关注状态
+     * @param index
+     * @param status
+     */
+    toggleStar(data) {
+      this.loading = true
+
+      const request = {
+        leads: crmLeadsStarAPI,
+        customer: crmCustomerStarAPI,
+        contacts: crmContactsStarAPI,
+        business: crmBusinessStarAPI
+      }[this.crmType]
+
+      const params = {}
+      params[`${this.crmType}Id`] = data[`${this.crmType}Id`]
+
+      request(params).then(() => {
+        this.loading = false
+        this.$message.success(data.star > 0 ? '取消关注成功' : '关注成功')
+        data.star = data.star > 0 ? 0 : 1
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    /**
      * 更新表高
      */
     updateTableHeight() {
       var offsetHei = document.documentElement.clientHeight
-      var removeHeight = Object.keys(this.filterObj).length > 0 ? 310 : 240
+      var removeHeight = Object.keys(this.filterObj).length > 0 ? 285 : 235
       this.tableHeight = offsetHei - removeHeight
     }
   },

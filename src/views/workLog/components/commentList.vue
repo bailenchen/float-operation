@@ -148,13 +148,13 @@ export default {
     /**
      * 子评论排序
      */
-    sortChildComment(childList) {
-      let arr = [].concat(childList || [])
-      arr = arr.sort((a, b) => {
-        return new Date(b.createTime) - new Date(a.createTime)
-      }) || []
-      return arr
-    },
+    // sortChildComment(childList) {
+    //   let arr = [].concat(childList || [])
+    //   arr = arr.sort((a, b) => {
+    //     return new Date(b.createTime) - new Date(a.createTime)
+    //   }) || []
+    //   return arr
+    // },
     /**
      * 回复
      * @param data
@@ -190,7 +190,7 @@ export default {
         } else {
           res.data.replyUser = f_comment.user
         }
-        this.list[arr[0]].childCommentList.unshift(res.data)
+        this.list[arr[0]].childCommentList.push(res.data)
         this.replyIndex = null
         this.commentLoading = false
       }).catch(() => {

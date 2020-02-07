@@ -101,6 +101,11 @@ export default {
       smsType: null
     }
   },
+  created() {
+    if (this.$route.query && this.$route.query.type === 'register') {
+      this.activeCom = 'CreateNewCompany'
+    }
+  },
   methods: {
     handleToggleCom(com, list = []) {
       this.companyList = []

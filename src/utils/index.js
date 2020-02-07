@@ -125,20 +125,18 @@ export function createBlob(result) {
 }
 
 /** 获取file大小的名称 */
-export function fileSize(size) {
-  var size_int = size
-  if (typeof size === 'string' && size.constructor == String) {
-    size_int = parseInt(size)
+export function fileSize(value) {
+  if (value == null || value == '') {
+    return '0 Bytes'
   }
-  var formatSize
-  if (parseInt(size_int / 1024 / 1024) > 0) {
-    formatSize = (size_int / 1024 / 1024).toFixed(2) + 'MB'
-  } else if (parseInt(size_int / 1024) > 0) {
-    formatSize = (size_int / 1024).toFixed(2) + 'kB'
-  } else {
-    formatSize = size_int + 'Byte'
-  }
-  return formatSize
+  var unitArr = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var index = 0
+  var srcsize = parseFloat(value)
+  index = Math.floor(Math.log(srcsize) / Math.log(1024))
+  var size = srcsize / Math.pow(1024, index)
+  //  保留的小数位数
+  size = size.toFixed(2)
+  return size + unitArr[index]
 }
 
 /** 获取最大 z-index 的值 */
@@ -247,6 +245,9 @@ export function regexIsCRMMobile(mobile) {
   }
   return true
 }
+
+// 中国手机号
+export const chinaMobileRegex = /^1\d{10}$/
 
 /** 判断输入的是邮箱*/
 export function regexIsCRMEmail(email) {
@@ -504,6 +505,58 @@ export function downloadFileWithBuffer(data, name, type) {
   downloadElement.click() // 点击下载
   document.body.removeChild(downloadElement) // 下载完成移除元素
   window.URL.revokeObjectURL(href) // 释放掉blob对象
+}
+
+import FileSaver from 'file-saver'
+/**
+ * 导出ElTable表格
+ * @param {*} name
+ */
+export function exportElTable(name, domId) {
+  const fix = document.querySelector('.el-table__fixed')
+  let wb
+  if (fix) {
+    wb = XLSX.utils.table_to_book(
+      document.getElementById(domId).removeChild(fix)
+    )
+    document.getElementById(domId).appendChild(fix)
+  } else {
+    wb = XLSX.utils.table_to_book(
+      document.getElementById(domId)
+    )
+  }
+  const wopts = {
+    bookType: 'xlsx',
+    bookSST: false,
+    type: 'binary'
+  }
+  const wbout = XLSX.write(wb, wopts)
+
+  FileSaver.saveAs(
+    new Blob([s2ab(wbout)], {
+      type: 'application/octet-stream;charset=utf-8'
+    }),
+    name
+  )
+}
+
+function s2ab(s) {
+  var cuf
+  var i
+  if (typeof ArrayBuffer !== 'undefined') {
+    cuf = new ArrayBuffer(s.length)
+    var view = new Uint8Array(cuf)
+    for (i = 0; i !== s.length; i++) {
+      view[i] = s.charCodeAt(i) & 0xff
+    }
+    return cuf
+  } else {
+    cuf = new Array(s.length)
+    for (i = 0; i !== s.length; ++i) {
+      cuf[i] = s.charCodeAt(i) & 0xff
+    }
+    return cuf
+  }
 }
 
 /**

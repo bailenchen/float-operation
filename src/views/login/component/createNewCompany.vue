@@ -5,7 +5,7 @@
       ref="smsCode"
       sms-type="register" />
 
-    <el-form v-show="showNext">
+    <el-form v-show="showNext" class="login-from">
       <el-form-item>
         <el-input
           ref="company_name"
@@ -160,6 +160,8 @@
 <script>
 import { RegisterAPI, VerfySmsAPI } from '@/api/login'
 
+import { Loading } from 'element-ui'
+
 import GetSmsCode from './getSmsCode'
 import mixins from './mixins'
 
@@ -249,15 +251,19 @@ export default {
       if (params.hasOwnProperty('re_password')) {
         delete params.re_password
       }
-
+      const loading = Loading.service({
+        target: document.querySelector('.login-main-content')
+      })
       RegisterAPI(params)
         .then(() => {
           this.$message.success('注册成功')
           this.disabledBtn = false
           this.$emit('toggle', 'LoginByPwd')
+          loading.close()
         })
         .catch(() => {
           this.disabledBtn = false
+          loading.close()
         })
     },
 

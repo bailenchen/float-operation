@@ -6,7 +6,7 @@
       <el-input
         v-model="commentsTextarea"
         :rows="3"
-        :maxlength="300"
+        :maxlength="2000"
         show-word-limit
         type="textarea"
         placeholder="请输入回复内容"
@@ -77,10 +77,12 @@ export default {
      * emoji 表情选择
      */
     selectEmoji(val) {
-      const list = this.commentsTextarea.split('')
-      list.splice(this.blurIndex, 0, val)
-      this.commentsTextarea = list.join('')
-      this.showEmoji = false
+      if (this.commentsTextarea && this.commentsTextarea.length + val.length <= 2000) {
+        const list = this.commentsTextarea.split('')
+        list.splice(this.blurIndex, 0, val)
+        this.commentsTextarea = list.join('')
+        this.showEmoji = false
+      }
     },
     /**
      * 提交评论回复

@@ -18,6 +18,11 @@
         <div id="axismain"/>
       </div>
       <div class="table-content">
+        <div class="handle-bar">
+          <el-button
+            class="export-btn"
+            @click="exportClick">导出</el-button>
+        </div>
         <el-table
           :data="list"
           height="400"
@@ -50,7 +55,7 @@
 <script>
 import rankingMixins from '../mixins/ranking'
 import echarts from 'echarts'
-import { biRankingContractAPI } from '@/api/businessIntelligence/ranking'
+import { biRankingContractAPI, biRankingContractExportAPI } from '@/api/businessIntelligence/ranking'
 
 export default {
   /** 合同金额排行 */
@@ -70,6 +75,7 @@ export default {
   },
   methods: {
     getDataList(params) {
+      this.postParams = params
       this.loading = true
       biRankingContractAPI(params)
         .then(res => {
@@ -97,6 +103,13 @@ export default {
     initAxis() {
       this.chartObj = echarts.init(document.getElementById('axismain'))
       this.chartObj.setOption(this.axisOption, true)
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biRankingContractExportAPI, this.postParams)
     }
   }
 }

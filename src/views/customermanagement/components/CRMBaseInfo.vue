@@ -122,6 +122,8 @@ import FileListView from '@/components/FileListView'
 import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
+import { separator } from '@/filters/vue-numeral-filter/filters'
+
 export default {
   // 客户管理 的 基本信息
   name: 'CRMBaseInfo',
@@ -150,6 +152,7 @@ export default {
   props: {
     // 模块ID
     id: [String, Number],
+    poolId: [String, Number],
     detail: {
       type: Object,
       default: () => {
@@ -208,14 +211,24 @@ export default {
           this.loading = false
         })
       } else {
-        filedGetInformation({
+        const params = {
           types: crmTypeModel[this.crmType],
           id: this.id
-        })
+        }
+
+        // 如果有公海id 需上传确定展示字段
+        if (this.poolId) {
+          params.poolId = this.poolId
+        }
+
+        filedGetInformation(params)
           .then(res => {
             const baseList = []
             const systemList = []
             res.data.forEach(item => {
+              if (item.formType === 'floatnumber') {
+                item.value = separator(item.value)
+              }
               if (item.sysInformation == 1) {
                 systemList.push(item)
               } else {

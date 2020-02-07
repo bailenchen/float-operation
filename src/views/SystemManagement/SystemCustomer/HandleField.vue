@@ -109,7 +109,7 @@ import draggable from 'vuedraggable'
 import Field from './model/field'
 import FieldList from './model/fieldList'
 import FieldInfo from './components/FieldInfo'
-import { objDeepCopy } from '@/utils'
+import { objDeepCopy, regexIsCRMMobile, regexIsCRMEmail } from '@/utils'
 
 export default {
   name: 'Handlefield',
@@ -294,22 +294,42 @@ export default {
     // 保存数据
     handleSave() {
       if (this.rejectHandle) return
-      var save = true
 
       var tempFieldArr = objDeepCopy(this.fieldArr)
+      const names = [] // 判断名称重复
+      const limitFields = 'select|update|union|and|or|delete|insert|trancate|char|substr|ascii|declare|exec|count|master|into|drop|execute'.split('|')
       for (let index = 0; index < tempFieldArr.length; index++) {
         const item = tempFieldArr[index]
 
         item.isNull = item.isNull == true ? 1 : 0
         item.isUnique = item.isUnique == true ? 1 : 0
         item.isHidden = item.isHidden == true ? 1 : 0
+        if (item.name !== '' && item.name !== null && item.name !== undefined) {
+          item.name = item.name.trim()
+
+          if (limitFields.includes(item.name)) {
+            this.$message({
+              message: `[${item.name}]自定义字段标识名与系统字段重复，请使用其他字段！`,
+              type: 'error'
+            })
+            return
+          } else if (names.includes(item.name)) {
+            this.$message({
+              message: `第${(index + 1)}行[${item.name}]自定义字段标识名重复`,
+              type: 'error'
+            })
+            return
+          } else {
+            names.push(item.name)
+          }
+        }
+
         if (!item.name) {
-          save = false
           this.$message({
             type: 'error',
-            message: '第' + (index + 1) + '行的自定义字段，标识名不能为空'
+            message: `第${index + 1}行自定义字段，标识名不能为空`
           })
-          break
+          return
         } else if (item.formType == 'select' || item.formType == 'checkbox') {
           var temps = []
           for (let i = 0; i < item.showSetting.length; i++) {
@@ -322,42 +342,57 @@ export default {
           if (item.formType == 'checkbox') {
             item.defaultValue = item.defaultValue.join(',')
           }
-        }
-        item.type = this.getTypeFromFormType(item.formType)
-      }
-
-      if (save) {
-        this.loading = true
-        var params = {}
-        params.data = tempFieldArr
-        params.label = this.$route.params.label
-        if (this.$route.params.type === 'oa_examine') {
-          params.categoryId = this.$route.params.id
-        }
-        for (const item of params.data) {
-          for (const key in item) {
-            if (JSON.stringify(item[key]) == '{}') {
-              item[key] = null
-            }
+        } else if (item.formType == 'mobile' && item.defaultValue) {
+          if (!regexIsCRMMobile(item.defaultValue)) {
+            this.$message({
+              message: `第${(index + 1)}行（${item.name}）自定义字段输入的默认值手机格式有误`,
+              type: 'error'
+            })
+            return
+          }
+        } else if (item.formType == 'email' && item.defaultValue) {
+          if (!regexIsCRMEmail(item.defaultValue)) {
+            this.$message({
+              message: `第${(index + 1)}行（${item.name}）自定义字段输入的默认值邮箱格式有误`,
+              type: 'error'
+            })
+            return
           }
         }
 
-        // 请求
-        const request = this.$route.params.type === 'oa_examine' ? oaFieldHandle : customFieldHandle
-        request(params)
-          .then(res => {
-            this.$message({
-              type: 'success',
-              message: '操作成功'
-            })
-            this.loading = false
-            this.getCustomInfo()
-          })
-          .catch(() => {
-            this.loading = false
-            this.getCustomInfo()
-          })
+        item.type = this.getTypeFromFormType(item.formType)
       }
+
+      this.loading = true
+      var params = {}
+      params.data = tempFieldArr
+      params.label = this.$route.params.label
+      if (this.$route.params.type === 'oa_examine') {
+        params.categoryId = this.$route.params.id
+      }
+      for (const item of params.data) {
+        for (const key in item) {
+          if (JSON.stringify(item[key]) == '{}') {
+            item[key] = null
+          }
+        }
+      }
+
+      // 请求
+      const request = this.$route.params.type === 'oa_examine' ? oaFieldHandle : customFieldHandle
+      request(params)
+        .then(res => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+          this.loading = false
+          this.getCustomInfo()
+        })
+        .catch(() => {
+          this.loading = false
+          this.getCustomInfo()
+        })
     },
     getTypeFromFormType(formType) {
       return (

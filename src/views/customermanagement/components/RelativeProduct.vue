@@ -19,6 +19,7 @@
         :key="index"
         :prop="item.prop"
         :label="item.label"
+        :formatter="fieldFormatter"
         show-overflow-tooltip/>
     </el-table>
     <flexbox class="handle-footer">
@@ -36,6 +37,7 @@
 import loading from '../mixins/loading'
 import { crmBusinessProduct } from '@/api/customermanagement/business'
 import { crmContractProduct } from '@/api/customermanagement/contract'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'RelativeProduct', // 相关产品  可能再很多地方展示 放到客户管理目录下
@@ -110,6 +112,14 @@ export default {
       })
       this.fieldList.push({ prop: 'subtotal', width: '200', label: '合计' })
     },
+
+    fieldFormatter(row, column) {
+      if (column.property == 'price' || column.property == 'salesPrice') {
+        return separator(row[column.property] || 0)
+      }
+      return row[column.property]
+    },
+
     getDetail() {
       this.loading = true
       this.getRequest()(this.getParams())

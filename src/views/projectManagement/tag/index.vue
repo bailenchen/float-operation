@@ -270,7 +270,7 @@ export default {
           this.taskList.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {
           const stopTime = new Date(data.value).getTime() / 1000 + 86399
-          if (stopTime > new Date(new Date()).getTime() / 1000) {
+          if (stopTime > new Date().getTime() / 1000) {
             this.taskList[data.section].list[data.index].isEnd = false
           } else {
             this.taskList[data.section].list[data.index].isEnd = true

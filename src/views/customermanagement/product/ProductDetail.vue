@@ -7,9 +7,11 @@
     :body-style="{padding: 0, height: '100%'}"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <div
       v-loading="loading"
+      ref="crmDetailMain"
       class="detail-main">
       <flexbox
         v-if="canShowDetail && detailData"
@@ -106,6 +108,7 @@ import DetailImg from './components/DetailImg'
 import Sections from '../components/Sections'
 
 import detail from '../mixins/detail'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   // 客户管理 的 产品详情
@@ -201,7 +204,7 @@ export default {
 
           this.headDetails[0].value = res.data.categoryName
           this.headDetails[1].value = res.data.单位
-          this.headDetails[2].value = res.data.price
+          this.headDetails[2].value = separator(res.data.price || 0)
           this.headDetails[3].value = res.data.num
         })
         .catch(() => {

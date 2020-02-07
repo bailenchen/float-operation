@@ -54,7 +54,7 @@
           </div>
         </div>
         <div v-if="!isSeas" class="sections">
-          <div class="sections__title">四、请选择负责人（{{ crmType == 'customer' ? '如不选择，导入的客户将进入公海' : '必选' }}）</div>
+          <div class="sections__title">四、请选择负责人（负责人为必填字段，若不填写，则会导致导入失败）</div>
           <div class="content">
             <div class="user-cell">
               <xh-user-cell
@@ -96,7 +96,7 @@
         <div class="result-info">
           <i class="wk wk-success result-info__icon" />
           <p class="result-info__des">数据导入完成</p>
-          <p class="result-info__detail">导入总数据<span class="result-info__detail--all">{{ resultData.totalSize }}</span>条，导入成功<span class="result-info__detail--suc">{{ resultData.totalSize - resultData.errSize }}</span>条，导入失败<span class="result-info__detail--err">{{ resultData.errSize }}</span>条</p>
+          <p v-if="resultData" class="result-info__detail">导入总数据<span class="result-info__detail--all">{{ resultData.totalSize }}</span>条，导入成功<span class="result-info__detail--suc">{{ resultData.totalSize - resultData.errSize }}</span>条，导入失败<span class="result-info__detail--err">{{ resultData.errSize }}</span>条</p>
           <el-button
             v-if="resultData && resultData.errSize > 0"
             class="result-info__btn--err"
@@ -175,6 +175,7 @@ import CRMImportHistory from './CRMImportHistory'
 import { mapGetters } from 'vuex'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { downloadExcelWithResData } from '@/utils/index'
+import Lockr from 'lockr'
 
 export default {
   name: 'CRMImport', // 文件导入
@@ -194,6 +195,15 @@ export default {
     },
     // 公海
     isSeas: {
+      type: Boolean,
+      default: false
+    },
+    // 是有缓存的信息展示的页面 是否完成状态
+    cacheShow: {
+      type: Boolean,
+      default: false
+    },
+    cacheDone: {
       type: Boolean,
       default: false
     }
@@ -284,17 +294,46 @@ export default {
     }
   },
   watch: {
+    cacheShow: {
+      handler(val) {
+        // 展示缓存
+        if (val) {
+          this.$emit('update:cacheShow', false)
+          const beforeImportInfo = Lockr.get('crmImportInfo')
+          if (beforeImportInfo && beforeImportInfo.messageId) {
+            this.loading = true
+            this.messageId = beforeImportInfo.messageId
+            this.stepList[0].status = 'finish'
+
+            if (this.cacheDone) {
+              this.stepList[1].status = 'finish'
+              this.stepsActive = 3
+              this.thirdQueryResult()
+            } else {
+              this.stepsActive = 2
+              this.stepList[1].status = 'process'
+            }
+
+            this.loopSecondQueryNum()
+          }
+        }
+      },
+      immediate: true
+    },
+
     show: function(val) {
       if (val) {
+        // 阶段一展示 需要获取的信息
         if (this.stepsActive == 1) {
           if (this.userInfo) {
             this.user = [this.userInfo]
           }
+
+          if (this.isSeas) {
+            this.getPoolList()
+          }
+          this.getField()
         }
-        if (this.isSeas) {
-          this.getPoolList()
-        }
-        this.getField()
       } else {
         if (this.stepsActive == 3) {
           this.resetData()
@@ -330,22 +369,21 @@ export default {
           this.stepsActive = 2
           this.firstUpdateFile(res => {
             this.messageId = res.data
-            this.secondQueryNum()
-            this.intervalTimer = setInterval(() => {
-              if (this.processData.status == 'end') {
-                clearInterval(this.intervalTimer)
-                this.intervalTimer = null
-                this.thirdQueryResult()
-              } else {
-                this.secondQueryNum()
-              }
-            }, 2000)
+
+            // 写入本次缓存
+            Lockr.set('crmImportInfo', {
+              messageId: this.messageId,
+              isSeas: this.isSeas,
+              crmType: this.crmType
+            })
+
+            this.loopSecondQueryNum()
           })
         } else {
           if (!this.file.name) {
             this.$message.error('请选择导入文件')
           } else if (
-            this.crmType != 'customer' &&
+            !this.isSeas &&
             (!this.user || this.user.length == 0)
           ) {
             this.$message.error('请选择负责人')
@@ -392,6 +430,19 @@ export default {
     /**
      * 第二步查询数量
      */
+    loopSecondQueryNum() {
+      this.secondQueryNum()
+      this.intervalTimer = setInterval(() => {
+        if (this.processData.status == 'end') {
+          clearInterval(this.intervalTimer)
+          this.intervalTimer = null
+          this.thirdQueryResult()
+        } else {
+          this.secondQueryNum()
+        }
+      }, 2000)
+    },
+
     secondQueryNum() {
       crmQueryImportNumAPI({ messageId: this.messageId })
         .then(res => {
@@ -502,7 +553,7 @@ export default {
       const hasFile = this.file && this.file.size
       const hasUser = this.user && this.user.length > 0
 
-      if (this.crmType === 'customer') {
+      if (this.isSeas) {
         this.stepList[0].status = hasFile ? 'finish' : 'wait'
       } else {
         this.stepList[0].status = hasFile && hasUser ? 'finish' : 'wait'
@@ -527,6 +578,7 @@ export default {
       this.$emit('update:show', false)
       if (this.stepsActive == 3) {
         this.$bus.emit('import-crm-done-bus', this.crmType)
+        Lockr.rm('crmImportInfo')
       }
       this.$emit('close', this.stepsActive == 3 ? 'finish' : '')
     },

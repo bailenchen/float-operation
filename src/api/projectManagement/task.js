@@ -170,3 +170,16 @@ export function taskSvaeTaskRelationAPI(data) {
     data: data
   })
 }
+
+/**
+ * 工作台任务导出
+ * @param {*} data
+ */
+export function taskWorkbenchExportAPI(data) {
+  return request({
+    url: 'workbench/workBenchTaskExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}

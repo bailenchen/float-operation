@@ -40,7 +40,7 @@
                 <el-input v-model="baseFrom.poolName" :maxlength="100" />
               </el-form-item>
               <el-form-item
-                prop="name1"
+                prop="adminUsers"
                 class="pool-add-item pool-add-item__right">
                 <div
                   slot="label"
@@ -60,7 +60,7 @@
                   @value-change="userChange" />
               </el-form-item>
               <el-form-item
-                prop="name2"
+                prop="memberUsers"
                 class="pool-add-item pool-add-item__left">
                 <div
                   slot="label"
@@ -152,6 +152,7 @@
               v-for="(item, index) in recycleRuleData"
               :key="index"
               :data="item"
+              :level-customer="levelCustomerName"
               :true-label="index + 1"
               :is-edit="isEdit"
             />
@@ -198,7 +199,8 @@
 import {
   crmCustomerPoolQueryPoolFieldtAPI,
   crmCustomerPoolSetAPI,
-  crmCustomerPoolSetDetailAPI
+  crmCustomerPoolSetDetailAPI,
+  crmCustomerPoolQueryLevelAPI
 } from '@/api/customermanagement/customer'
 
 import CreateView from '@/components/CreateView'
@@ -237,15 +239,30 @@ export default {
     }
   },
   data() {
+    const validateMemberUsers = (rule, value, callback) => {
+      if (value && ((value.users && value.users.length) || (value.strucs && value.strucs.length))) {
+        callback()
+      } else {
+        callback(new Error('请选择公海成员'))
+      }
+    }
+
     return {
       loading: false,
       baseFrom: null,
       baseRules: {
         poolName: [
-          { required: true, message: '请输入公海名称 ', trigger: 'blur' }
+          { required: true, message: '请输入公海名称', trigger: 'blur' }
+        ],
+        adminUsers: [
+          { required: true, message: '请选择公海管理员', trigger: ['blur', 'change'] }
+        ],
+        memberUsers: [
+          { required: true, validator: validateMemberUsers, trigger: ['blur', 'change'] }
         ]
       },
       recycleRuleData: null,
+      levelCustomerName: [], // 客户级别数据源
       customerPoolFields: [],
       requestFields: {
         preOwnerSettingDay: '前负责人限制领取天数需大于0',
@@ -274,10 +291,18 @@ export default {
     } else {
       this.getCreateInfo()
     }
+
+    this.getLevelCustomerData()
   },
 
   beforeDestroy() {},
   methods: {
+    getLevelCustomerData() {
+      crmCustomerPoolQueryLevelAPI().then(res => {
+        this.levelCustomerName = res.data || []
+      }).catch(() => {})
+    },
+
     /**
      * 编辑操作
      */
@@ -304,7 +329,7 @@ export default {
         preOwnerSetting: data.preOwnerSetting, // 前负责人领取规则 0不限制 1限制
         preOwnerSettingDay: data.preOwnerSettingDay,
         receiveSetting: data.receiveSetting, // 0 不启用 1 启用
-        remindSetting: data.receiveSetting, // 0 不提醒 1 提醒
+        remindSetting: data.remindSetting, // 0 不提醒 1 提醒
         receiveNum: data.receiveNum, // 领取频率规则
         remindDay: data.remindDay, // 提醒规则天数
         putInRule: data.putInRule // 收回规则 0不自动收回 1自动收回
@@ -434,10 +459,12 @@ export default {
      */
     userChange(data) {
       this.baseFrom.adminUsers = data.value
+      this.$refs.ruleForm.validateField('adminUsers')
     },
 
     strcUserChange(data) {
       this.baseFrom.memberUsers = data.value
+      this.$refs.ruleForm.validateField('memberUsers')
     },
 
     /**
@@ -451,7 +478,20 @@ export default {
             this.uploadPoolSet(params)
           }
         } else {
-          this.$message.error('请完善公海名称')
+          // 提示第一个error
+          if (this.$refs.ruleForm.fields) {
+            for (
+              let index = 0;
+              index < this.$refs.ruleForm.fields.length;
+              index++
+            ) {
+              const ruleField = this.$refs.ruleForm.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+          }
           return false
         }
       })

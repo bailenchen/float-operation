@@ -1,6 +1,6 @@
 {
   "name": "5kcrm",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "description": "",
   "author": "5kcrm <service@5kcrm.com>",
   "scripts": {
@@ -16,6 +16,7 @@
     "babel-polyfill": "^6.26.0",
     "clipboard": "^2.0.4",
     "echarts": "^4.3.0",
+    "el-bigdata-table": "^1.0.32",
     "element-ui": "^2.12.0",
     "file-saver": "^2.0.1",
     "fullcalendar": "^3.9.0",

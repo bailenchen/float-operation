@@ -23,10 +23,12 @@
       <el-table
         v-loading="loading"
         id="crm-table"
+        :row-height="40"
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
         class="n-table--border"
+        use-virtual
         stripe
         border
         highlight-current-row
@@ -99,6 +101,20 @@
         </el-table-column>
         <el-table-column/>
         <el-table-column
+          label="关注"
+          align="center"
+          fixed="right"
+          width="60">
+          <template slot-scope="scope">
+            <el-tooltip :content="scope.row.star == 0 ? '添加关注' : '取消关注'" effect="dark" placement="top">
+              <i
+                :class="{active: scope.row.star != 0}"
+                class="wk wk-focus-on focus-icon"
+                @click="toggleStar(scope.row)" />
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column
           :resizable="false"
           fixed="right"
           width="40">
@@ -138,6 +154,7 @@
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import BusinessCheck from './components/BusinessCheck' // 相关商机
 import table from '../mixins/table'
+
 
 export default {
   /** 客户管理 的 客户列表 */

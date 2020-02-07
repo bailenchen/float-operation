@@ -210,6 +210,7 @@ export default {
 
       this.axisOption = {
         color: ['#6ca2ff'],
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'axis',
           formatter: '{b} : {c}% ',

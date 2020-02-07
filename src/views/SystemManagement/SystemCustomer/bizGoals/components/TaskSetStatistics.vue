@@ -147,9 +147,8 @@ import {
 } from '@/api/systemManagement/SystemCustomer'
 
 import moment from 'moment'
-import FileSaver from 'file-saver'
 import AddGoal from './AddGoal'
-import XLSX from 'xlsx'
+import { exportElTable } from '@/utils'
 
 export default {
   /** 业绩目标设置 */
@@ -527,34 +526,10 @@ export default {
       } else if (type == 'edit') {
         this.isEdit = true
       } else if (type == 'export') {
-        const fix = document.querySelector('.el-table__fixed')
-        let wb
-        if (fix) {
-          wb = XLSX.utils.table_to_book(
-            document.getElementById('task-set-table').removeChild(fix)
-          )
-          document.getElementById('task-set-table').appendChild(fix)
-        } else {
-          wb = XLSX.utils.table_to_book(
-            document.getElementById('task-set-table')
-          )
-        }
-        const wopts = {
-          bookType: 'xlsx',
-          bookSST: false,
-          type: 'binary'
-        }
-        const wbout = XLSX.write(wb, wopts)
-
         const name = `${this.dateSelect} 年${
           { department: '部门目标', user: '员工目标' }[this.tabType]
         }.xlsx`
-        FileSaver.saveAs(
-          new Blob([this.s2ab(wbout)], {
-            type: 'application/octet-stream;charset=utf-8'
-          }),
-          name
-        )
+        exportElTable(name, 'task-set-table')
       } else if (type == 'save') {
         this.loading = true
         var list = this.list.filter(function(item, index, array) {
@@ -575,24 +550,7 @@ export default {
         this.isEdit = false
       }
     },
-    s2ab(s) {
-      var cuf
-      var i
-      if (typeof ArrayBuffer !== 'undefined') {
-        cuf = new ArrayBuffer(s.length)
-        var view = new Uint8Array(cuf)
-        for (i = 0; i !== s.length; i++) {
-          view[i] = s.charCodeAt(i) & 0xff
-        }
-        return cuf
-      } else {
-        cuf = new Array(s.length)
-        for (i = 0; i !== s.length; ++i) {
-          cuf[i] = s.charCodeAt(i) & 0xff
-        }
-        return cuf
-      }
-    },
+
     /** 点击搜索 保存 取消时更新信息 */
     updateAhievementList() {
       if (this.tabType === 'department') {

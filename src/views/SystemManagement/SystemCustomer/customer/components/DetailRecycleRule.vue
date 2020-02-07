@@ -16,15 +16,14 @@
           border
           style="width: 100%">
           <el-table-column
-            :formatter="fieldFormatter"
             prop="level"
             label="客户"
             width="180"/>
           <el-table-column
-            prop="limitDay"
-            label="未跟进天数">
+            :label="limitDayName"
+            prop="limitDay">
             <template slot-scope="scope">
-              <span>{{ `超过${scope.row.limitDay}天未跟进，进入公海` }}</span>
+              <span>{{ `超过${scope.row.limitDay}天${getLimitDayUnit(data.type)}，进入公海` }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -54,6 +53,14 @@ export default {
       }[parseInt(this.data.type)]
     },
 
+    limitDayName() {
+      return {
+        1: '未跟进天数',
+        2: '未新建天数',
+        3: '未成交天数'
+      }[parseInt(this.data.type)]
+    },
+
     dealHandleShow() {
       return this.data.type == 1 || this.data.type == 2
     },
@@ -66,16 +73,12 @@ export default {
 
   beforeDestroy() {},
   methods: {
-    /**
-     * 格式化字段
-     */
-    fieldFormatter(row, column) {
+    getLimitDayUnit(type) {
       return {
-        1: '所有客户',
-        2: 'A（重要客户）',
-        3: 'B（普通客户）',
-        4: 'C（非优先客户）'
-      }[row.level]
+        1: '未跟进',
+        2: '未新建商机',
+        3: '未成交'
+      }[type]
     }
   }
 }

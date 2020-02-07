@@ -2,8 +2,21 @@
   <div class="my-task">
     <xr-header
       icon-class="wk wk-task"
-      icon-color="#D376FF"
-      label="我的任务" />
+      icon-color="#D376FF">
+      <span slot="label">我的任务</span>
+      <el-popover
+        slot="label"
+        v-model="taskHandleShow"
+        placement="bottom-start"
+        width="182">
+        <div class="project-list-popover-btn-list">
+          <p @click="exportClick">导出任务</p>
+        </div>
+        <i
+          slot="reference"
+          class="wk wk-manage set-img" />
+      </el-popover>
+    </xr-header>
     <div class="my-task-body">
       <div
         v-loading="loading"
@@ -40,7 +53,7 @@
                 ref="taskRow"
                 :key="i"
                 :class="element.checked ? 'board-item board-item-active' : 'board-item'"
-                :style="{'border-color': element.priority == 1 ? '#8bb5f0' : element.priority == 2 ? '#FF9668' : element.priority == 3 ? '#ED6363' : ''}"
+                :style="{'border-color': getPriorityColor(element.priority).color }"
                 @click="showDetailView(element, index, i)">
                 <flexbox align="stretch">
                   <div @click.stop>
@@ -66,7 +79,7 @@
                     <i
                       :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}"
                       class="wukong wukong-time-task"/>
-                    <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ element.stopTime | moment("MM-DD") }} 截止</span>
+                    <span :style="{'color': element.isEnd == 1 && !element.checked ? 'red': '#999'}">{{ element.stopTime | moment("YYYY-MM-DD") }} 截止</span>
                   </div>
                   <div
                     v-if="element.childAllCount > 0"
@@ -163,7 +176,8 @@
 import {
   workTaskMyTaskAPI,
   workTaskUpdateTopAPI,
-  workTaskSaveAPI
+  workTaskSaveAPI,
+  taskWorkbenchExportAPI
 } from '@/api/projectManagement/task'
 
 import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
@@ -172,6 +186,8 @@ import XrHeader from '@/components/xr-header'
 
 import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
+import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
+import { downloadExcelWithResData } from '@/utils'
 
 
 export default {
@@ -186,8 +202,13 @@ export default {
     scrollx
   },
 
+  mixins: [taskMixin],
+
   data() {
     return {
+      // 任务设置
+      taskHandleShow: false,
+
       taskList: [],
       // 加载中
       loading: true,
@@ -243,6 +264,7 @@ export default {
      * 移动任务
      */
     moveEndTask(evt) {
+      document.dispatchEvent(new MouseEvent('mouseup'))
       if (evt) {
         const fromTop = evt.from.id
         const toTop = evt.to.id
@@ -348,8 +370,9 @@ export default {
         } else if (data.type == 'delete') {
           this.taskList[data.section].list.splice(data.index, 1)
         } else if (data.type == 'change-stop-time') {
-          const stopTime = parseInt(data.value) + 86399
-          if (stopTime > new Date(new Date()).getTime() / 1000) {
+          // 86399 一天多总秒数 减 1
+          const stopTime = new Date(data.value).getTime() / 1000 + 86399
+          if (stopTime > new Date().getTime() / 1000) {
             this.taskList[data.section].list[data.index].isEnd = false
           } else {
             this.taskList[data.section].list[data.index].isEnd = true
@@ -387,6 +410,22 @@ export default {
      */
     closeBtn() {
       this.taskDetailShow = false
+    },
+
+    /**
+     * 审批导出
+     */
+    exportClick() {
+      this.taskHandleShow = false
+      this.loading = true
+      taskWorkbenchExportAPI()
+        .then(res => {
+          downloadExcelWithResData(res)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }
@@ -396,6 +435,7 @@ export default {
 .my-task {
   height: 100%;
   overflow: hidden;
+  user-select: none;
 }
 
 .my-task-body {
@@ -405,6 +445,32 @@ export default {
   overflow-y: hidden;
   overflow-x: auto;
   white-space: nowrap;
+}
+
+// 设置
+.project-list-popover-btn-list {
+  margin: 0 -12px;
+  p {
+    height: 34px;
+    line-height: 34px;
+    cursor: pointer;
+    padding-left: 32px;
+  }
+  p:hover {
+    background: #f7f8fa;
+    color: #2362FB;
+  }
+}
+
+.set-img {
+  margin-left: 15px;
+  font-size: 14px;
+  color: #ccc;
+  cursor: pointer;
+
+  &:hover {
+    color: $xr-color-primary;
+  }
 }
 
 .content-box {
@@ -429,7 +495,7 @@ export default {
 
   .board-column-wrapper {
     max-height: 100%;
-    padding: 10px;
+    padding: 10px 0;
     vertical-align: top;
     border-radius: $xr-border-radius-base;
     border: 1px solid $xr-border-color-base;
@@ -437,7 +503,7 @@ export default {
     margin-right: 14px;
     position: relative;
     .board-column-header {
-      padding: 10px 3px 17px 3px;
+      padding: 10px 13px 17px;
       color: #333;
       .text {
         font-size: 15px;
@@ -456,10 +522,7 @@ export default {
       }
     }
     .board-column-content {
-      min-height: 20px;
-      margin-right: -10px;
-      padding-right: 14px;
-      padding-left: 7px;
+      padding: 0 10px;
       max-height: calc(100% - 90px);
       overflow: auto;
       .board-item {

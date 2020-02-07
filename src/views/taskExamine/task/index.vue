@@ -4,7 +4,8 @@
       :tabs="tabs"
       :title="title"
       :select-value.sync="tabsSelectValue"
-      @change="tabsChange" />
+      @change="tabsChange"
+      @export="exportClick" />
 
     <div
       class="content-wrapper"
@@ -89,12 +90,15 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { taskListAPI, taskOaExportAPI } from '@/api/task/task'
+
 import TaskTabsHead from './components/TaskTabsHead'
 import TaskCell from './components/TaskCell'
 import TaskDetail from './components/TaskDetail'
 import TaskQuickAdd from './components/TaskQuickAdd'
-import { taskListAPI } from '@/api/task/task'
+
+import { mapGetters } from 'vuex'
+import { downloadExcelWithResData } from '@/utils'
 
 export default {
   /** 任务列表 */
@@ -351,6 +355,32 @@ export default {
           })
           .catch(() => {})
       }
+    },
+
+    /**
+     * 审批导出
+     */
+    exportClick() {
+      this.loading = true
+      const params = {
+        type: this.tabsSelectValue,
+        priority: this.priority,
+        dueDate: this.dueDate,
+        status: this.showDone ? '' : '1'
+      }
+
+      if (this.taskType != 1) {
+        params.mold = 1 // 下属任务
+      }
+
+      taskOaExportAPI(params)
+        .then(res => {
+          downloadExcelWithResData(res)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }

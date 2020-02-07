@@ -26,7 +26,7 @@
       v-if="showSelect"
       class="item-section">
       <div class="name">
-        选项设置
+        选项设置<span v-if="field.fieldName == '客户级别'" class="field-tips">（若公海规则启用了“根据客户级别设置”，调整选项后，请同步调整公海规则，否则公海规则将失效）</span>
       </div>
       <el-radio-group
         v-if="field.formType == 'select'"
@@ -340,23 +340,23 @@ export default {
           value: '选' + (this.field.showSetting.length + 1)
         })
       } else if (type == 'remove') {
-        const removeIndex = this.field.default_value.indexOf(item.value)
+        const removeIndex = this.field.defaultValue.indexOf(item.value)
         if (removeIndex != -1) {
-          this.field.default_value.splice(removeIndex, 1)
+          this.field.defaultValue.splice(removeIndex, 1)
         }
         this.field.showSetting.splice(index, 1)
       }
     },
     /** * 输入默认值触发 */
     inputBlur(e) {
-      if (this.field.formType == 'mobile') {
+      if (this.field.formType == 'mobile' && this.field.defaultValue) {
         if (!regexIsCRMMobile(this.field.defaultValue)) {
           this.$message({
             message: '输入的手机格式有误',
             type: 'error'
           })
         }
-      } else if (this.field.formType == 'email') {
+      } else if (this.field.formType == 'email' && this.field.defaultValue) {
         if (!regexIsCRMEmail(this.field.defaultValue)) {
           this.$message({
             message: '输入的邮箱格式有误',
@@ -447,5 +447,10 @@ export default {
 
 .cursor-move {
   cursor: move;
+}
+
+.field-tips {
+  color: #999;
+  line-height: 1.5;
 }
 </style>

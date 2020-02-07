@@ -14,6 +14,11 @@
         <div id="axismain"/>
       </div>
       <div class="table-content">
+        <div class="handle-bar">
+          <el-button
+            class="export-btn"
+            @click="exportClick">导出</el-button>
+        </div>
         <el-table
           v-if="showTable"
           :data="list"
@@ -47,7 +52,8 @@ import summaryMixins from '../mixins/summary'
 import echarts from 'echarts'
 import {
   biCustomerTotalListAPI,
-  biCustomerTotalAPI
+  biCustomerTotalAPI,
+  biCustomerTotalListExportAPI
 } from '@/api/businessIntelligence/customer'
 
 export default {
@@ -61,6 +67,7 @@ export default {
       axisOption: null,
 
       postParams: {}, // 筛选参数
+      dataIndex: null,
 
       list: [],
       axisList: [],
@@ -74,7 +81,21 @@ export default {
       ]
     }
   },
-  computed: {},
+  computed: {
+    // 列表请求参数
+    listPostParams() {
+      const params = { ...this.postParams }
+
+      if (this.dataIndex !== undefined && this.dataIndex !== null) {
+        const dataItem = this.axisList[this.dataIndex]
+        delete params.type
+        params.startTime = dataItem.type
+        params.endTime = dataItem.type
+      }
+
+      return params
+    }
+  },
   mounted() {
     this.initAxis()
   },
@@ -121,18 +142,10 @@ export default {
      * 获取相关列表
      */
     getRecordList(dataIndex) {
+      this.dataIndex = dataIndex
       this.list = []
-
-      const params = this.postParams
-
-      if (typeof dataIndex !== 'undefined') {
-        const dataItem = this.axisList[dataIndex]
-        params.startTime = dataItem.startTime
-        params.endTime = dataItem.endTime
-      }
-
       this.loading = true
-      biCustomerTotalListAPI(params)
+      biCustomerTotalListAPI(this.listPostParams)
         .then(res => {
           this.loading = false
           const data = res.data || {}
@@ -154,6 +167,7 @@ export default {
 
       this.axisOption = {
         color: ['#6ca2ff', '#ff7474'],
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -232,6 +246,13 @@ export default {
           }
         ]
       }
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biCustomerTotalListExportAPI, this.listPostParams)
     }
   }
 }

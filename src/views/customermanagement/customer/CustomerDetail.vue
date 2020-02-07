@@ -7,9 +7,11 @@
     :body-style="{padding: 0, height: '100%'}"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <div
       v-loading="loading"
+      ref="crmDetailMain"
       class="detail-main">
       <flexbox
         v-if="canShowDetail && detailData"
@@ -25,7 +27,15 @@
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView">
-          <p slot="name" class="customer-name">{{ detailData.customerName }}<i v-if="detailData.status == 2" class="wk wk-circle-password" /></p>
+          <template slot="name">
+            <i v-if="detailData.status == 2" class="wk wk-circle-password" />
+            <el-tooltip v-if="!isSeasDetail" :content="detailData.star == 0 ? '添加关注' : '取消关注'" effect="dark" placement="top">
+              <i
+                :class="{active: detailData.star != 0}"
+                class="wk wk-focus-on focus-icon"
+                @click="toggleStar()" />
+            </el-tooltip>
+          </template>
         </c-r-m-detail-head>
         <flexbox
           class="d-container-bd"
@@ -45,6 +55,7 @@
                 :detail="detailData"
                 :type-list="logTyps"
                 :id="id"
+                :pool-id="poolId"
                 :handle="activityHandle"
                 :is-seas="isSeasDetail"
                 :crm-type="crmType"
@@ -65,6 +76,7 @@
                 <chiefly-contacts
                   :contacts-id="firstContactsId"
                   :id="id"
+                  :pool-id="poolId"
                   :crm-type="crmType"
                   :is-seas="isSeasDetail"
                   @add="addChieflyContacts" />
@@ -308,9 +320,15 @@ export default {
     getDetial() {
       this.firstContactsId = ''
       this.loading = true
-      crmCustomerRead({
+      const params = {
         customerId: this.id
-      })
+      }
+
+      if (this.poolId) {
+        params.poolId = this.poolId
+      }
+
+      crmCustomerRead(params)
         .then(res => {
           this.loading = false
           this.detailData = res.data
@@ -337,6 +355,8 @@ export default {
             }
             dealItem.value = '未成交'
           }
+
+          this.headDetails[2].title = this.isSeasDetail ? '' : '负责人'
           this.headDetails[2].value = res.data.ownerUserName
           this.headDetails[3].value = res.data.updateTime
         })
@@ -411,19 +431,14 @@ export default {
   opacity: 0;
 }
 
-.customer-name {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-  i {
-    background-color: #f56c6c;
-    color: white;
-    margin-left: 5px;
-    border-radius: 3px;
-    font-size: 12px;
-    padding: 2px;
-    transform: scale(0.6);
-  }
+.wk-circle-password  {
+  background-color: #f56c6c;
+  color: white;
+  margin-left: 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  padding: 2px;
+  transform: scale(0.6);
 }
 @import '../styles/crmdetail.scss';
 </style>

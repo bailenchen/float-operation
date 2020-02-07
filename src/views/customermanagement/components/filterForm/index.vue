@@ -16,7 +16,8 @@
               <el-select
                 v-model="formItem.fieldName"
                 placeholder="请选择要筛选的字段名"
-                @change="fieldChange(formItem)">
+                @change="fieldChange(formItem)"
+                @focus="fieldFocus">
                 <el-option
                   v-for="item in fieldList"
                   :key="item.fieldName"
@@ -74,6 +75,17 @@
                   :value="item"/>
               </el-select>
               <el-select
+                v-else-if="formItem.formType === 'checkbox'"
+                v-model="formItem.value"
+                multiple
+                placeholder="请选择筛选条件">
+                <el-option
+                  v-for="item in formItem.setting"
+                  :key="item"
+                  :label="item"
+                  :value="item"/>
+              </el-select>
+              <el-select
                 v-else-if="formItem.formType === 'checkStatus' || formItem.formType === 'dealStatus'"
                 v-model="formItem.value"
                 placeholder="请选择筛选条件">
@@ -106,10 +118,12 @@
                 v-else-if="formItem.formType === 'user'"
                 :item="formItem"
                 :info-params="{m	:'crm',c: crmType,a: 'index' }"
+                :value="formItem.value"
                 @value-change="arrayValueChange"/>
               <xh-prouct-cate
                 v-else-if="formItem.formType === 'category'"
                 :item="formItem"
+                :value="formItem.value"
                 @value-change="arrayValueChange"/>
               <v-distpicker
                 v-else-if="formItem.formType === 'map_address'"
@@ -326,7 +340,6 @@ export default {
     calConditionOptions(formType, item) {
       if (
         formType == 'select' ||
-        formType == 'checkbox' ||
         formType == 'user' ||
         formType == 'checkStatus' ||
         formType == 'dealStatus'
@@ -334,6 +347,13 @@ export default {
         return [
           { value: 'is', label: '等于', disabled: false },
           { value: 'isNot', label: '不等于', disabled: false }
+        ]
+      } else if (
+        formType == 'checkbox'
+      ) {
+        return [
+          { value: 'is', label: '等于', disabled: false },
+          { value: 'contains', label: '包含', disabled: false }
         ]
       } else if (
         formType == 'module' ||
@@ -384,6 +404,13 @@ export default {
       }
     },
     /**
+     * 聚焦
+     */
+    fieldFocus() {
+      this.$el.click()
+    },
+
+    /**
      * 当前选择的字段名改变，判断是否有重复
      * @param formItem
      */
@@ -419,6 +446,11 @@ export default {
           formItem.formType === 'user' ||
           formItem.formType === 'category'
         ) {
+          formItem.value = []
+        } else if (
+          formItem.formType === 'checkbox'
+        ) {
+          formItem.setting = obj.setting || []
           formItem.value = []
         } else {
           formItem.value = ''
@@ -467,31 +499,32 @@ export default {
       for (let i = 0; i < this.form.length; i++) {
         const o = this.form[i]
         if (!o.fieldName || o.fieldName === '') {
-          this.$message.error('要筛选的字段名称不能为空！')
+          this.$message.error('筛选的字段名称不能为空！')
           return
         }
         if (o.formType == 'business_type') {
           if (!o.typeId && !o.statusId) {
-            this.$message.error('请输入筛选条件的值！')
+            this.$message.error('筛选内容不能为空！')
             return
           }
         } else if (o.formType == 'map_address') {
           if (!o.address.state && !o.address.city && !o.address.area) {
-            this.$message.error('请选择筛选条件的值！')
+            this.$message.error('筛选内容不能为空！')
             return
           }
         } else if (
           o.formType == 'date' ||
           o.formType == 'datetime' ||
           o.formType == 'user' ||
-          o.formType == 'category'
+          o.formType == 'category' ||
+          o.formType == 'checkbox'
         ) {
           if (!o.value || o.value.length === 0) {
-            this.$message.error('请选择筛选条件的值！')
+            this.$message.error('筛选内容不能为空！')
             return
           }
-        } else if (!o.value && o.value != 0) {
-          this.$message.error('请输入筛选条件的值！')
+        } else if (o.value === '' || o.value === undefined || o.value === null) {
+          this.$message.error('筛选内容不能为空')
           return
         }
       }
@@ -515,6 +548,13 @@ export default {
           obj[o.fieldName] = {
             condition: o.condition,
             value: o.value[0].userId,
+            formType: o.formType,
+            name: o.fieldName
+          }
+        } else if (o.formType == 'checkbox') {
+          obj[o.fieldName] = {
+            condition: o.condition,
+            value: o.value.join(','),
             formType: o.formType,
             name: o.fieldName
           }

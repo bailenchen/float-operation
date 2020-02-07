@@ -11,7 +11,7 @@
       <flexbox
         :class="['is_valid', { 'is_focus': showPopover }]"
         wrap="wrap"
-        class="structure-container"
+        class="structure-container xh-form-border"
         @click.native="focusClick">
         <div
           v-for="(item, index) in showDataValue"

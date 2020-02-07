@@ -8,9 +8,11 @@
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
     class="d-view"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <div
       v-loading="loading"
+      ref="crmDetailMain"
       class="detail-main">
       <flexbox
         v-if="canShowDetail && detailData"

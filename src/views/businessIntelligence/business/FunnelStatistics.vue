@@ -134,14 +134,10 @@ export default {
     initAxis() {
       var chartObj = echarts.init(document.getElementById('axismain'))
       var option = {
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'item',
           formatter: '{b} <br/> 预测金额: {c}元'
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {}
-          }
         },
         calculable: true,
         grid: {

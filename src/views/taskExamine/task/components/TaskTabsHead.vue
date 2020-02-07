@@ -8,6 +8,10 @@
       class="task-title">
       <i class="wk wk-task" />{{ title }}
     </span>
+    <el-button
+      slot="right"
+      class="export-btn"
+      @click="exportClick">导出</el-button>
   </base-tabs-head>
 </template>
 
@@ -31,7 +35,14 @@ export default {
   mounted() {},
 
   beforeDestroy() {},
-  methods: {}
+  methods: {
+    /**
+     * 导出
+     */
+    exportClick() {
+      this.$emit('export')
+    }
+  }
 }
 </script>
 
@@ -47,5 +58,9 @@ export default {
     border-radius: $xr-border-radius-base;
     background-color: #1CBAF5;
   }
+}
+
+.export-btn{
+  margin-right: 8px;
 }
 </style>

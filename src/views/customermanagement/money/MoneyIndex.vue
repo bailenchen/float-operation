@@ -23,10 +23,12 @@
       <el-table
         v-loading="loading"
         id="crm-table"
+        :row-height="40"
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
         class="n-table--border"
+        use-virtual
         stripe
         border
         highlight-current-row
@@ -85,7 +87,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
-        <span class="money-bar">回款金额：{{ moneyPageData.receivablesMoney || 0 }}</span>
+        <span class="money-bar">回款金额：{{ moneyPageData.receivablesMoney || 0 | separator }}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->

@@ -20,3 +20,13 @@ export function adminSystemIndex(data) {
     data: data
   })
 }
+
+// 系统信息
+export function adminSystemConfigIndex(data) {
+  return request({
+    url: 'sysConfig/queryCloudConfig',
+    method: 'post',
+    data: data
+  })
+}
+

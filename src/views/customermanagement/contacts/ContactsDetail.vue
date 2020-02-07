@@ -7,9 +7,11 @@
     :body-style="{padding: 0, height: '100%'}"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限"
+    @afterEnter="viewAfterEnter"
     @close="hideView">
     <div
       v-loading="loading"
+      ref="crmDetailMain"
       class="detail-main">
       <flexbox
         v-if="canShowDetail && detailData"
@@ -22,7 +24,16 @@
           :id="id"
           :crm-type="crmType"
           @handle="detailHeadHandle"
-          @close="hideView"/>
+          @close="hideView">
+          <template slot="name">
+            <el-tooltip :content="detailData.star == 0 ? '添加关注' : '取消关注'" effect="dark" placement="top">
+              <i
+                :class="{active: detailData.star != 0}"
+                class="wk wk-focus-on focus-icon"
+                @click="toggleStar()" />
+            </el-tooltip>
+          </template>
+        </c-r-m-detail-head>
         <flexbox class="d-container-bd" align="stretch">
           <el-tabs
             v-model="tabCurrentName"

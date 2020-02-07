@@ -1,7 +1,8 @@
 import base from './base'
 import echarts from 'echarts'
 import {
-  biAchievementAnalysisAPI
+  biAchievementAnalysisAPI,
+  biAchievementAnalysisExportAPI
 } from '@/api/businessIntelligence/achievement'
 
 export default {
@@ -10,6 +11,8 @@ export default {
       axisOption: null,
 
       loading: false,
+
+      postParams: {}, // 筛选参数
 
       list: [],
       fieldList: [],
@@ -47,7 +50,8 @@ export default {
     getDataList(params) {
       this.loading = true
       params.type = this.type
-      biAchievementAnalysisAPI(params)
+      this.postParams = params
+      biAchievementAnalysisAPI(this.postParams)
         .then(res => {
           this.loading = false
 
@@ -142,6 +146,7 @@ export default {
           '#FFB270',
           '#FECD51'
         ],
+        toolbox: this.toolbox,
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -344,6 +349,13 @@ export default {
         ]
       }
       this.chartObj.setOption(this.axisOption, true)
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biAchievementAnalysisExportAPI, this.postParams)
     }
   },
 

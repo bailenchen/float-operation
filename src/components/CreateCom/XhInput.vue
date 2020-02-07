@@ -1,5 +1,14 @@
 <template>
   <el-input
+    v-wk-number="inputLimitType"
+    v-if="type == 'number'"
+    v-model="dataValue"
+    :type="type"
+    :disabled="disabled"
+    :maxlength="100"
+    @input="valueChange"/>
+  <el-input
+    v-else
     v-model="dataValue"
     :type="type"
     :disabled="disabled"
@@ -26,6 +35,14 @@ export default {
       } else {
         return 'text'
       }
+    },
+
+    inputLimitType() {
+      if (this.item && this.item.data && this.item.data.formType == 'number') {
+        return 'number'
+      }
+
+      return null
     }
   },
   watch: {},

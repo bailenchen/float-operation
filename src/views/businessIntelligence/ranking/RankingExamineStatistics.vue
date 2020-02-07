@@ -18,6 +18,11 @@
         <div id="axismain"/>
       </div>
       <div class="table-content">
+        <div class="handle-bar">
+          <el-button
+            class="export-btn"
+            @click="exportClick">导出</el-button>
+        </div>
         <el-table
           :data="list"
           height="400"
@@ -50,7 +55,7 @@
 <script>
 import rankingMixins from '../mixins/ranking'
 import echarts from 'echarts'
-import { biRankingExamineAPI } from '@/api/businessIntelligence/ranking'
+import { biRankingExamineAPI, biRankingExamineExportAPI } from '@/api/businessIntelligence/ranking'
 
 export default {
   /** 出差次数排行 */
@@ -70,6 +75,7 @@ export default {
   },
   methods: {
     getDataList(params) {
+      this.postParams = params
       this.loading = true
       biRankingExamineAPI(params)
         .then(res => {
@@ -99,6 +105,13 @@ export default {
       this.axisOption.tooltip.formatter = '{b} : {c}次'
       this.axisOption.xAxis[0].name = '（次）'
       this.chartObj.setOption(this.axisOption, true)
+    },
+
+    /**
+     * 导出点击
+     */
+    exportClick() {
+      this.requestExportInfo(biRankingExamineExportAPI, this.postParams)
     }
   }
 }

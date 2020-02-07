@@ -122,14 +122,22 @@
   }
 }
 
-.total-count {
+.filter-right {
   position: absolute;
-  top: 50%;
+  top: 0;
+  bottom: 0;
   right: 20px;
-  margin-top: -8px;
-  font-size: 12px;
+  line-height: 56px;
 
-  span {
-    color: $xr-color-primary;
+  .total-count {
+    font-size: 12px;
+
+    span {
+      color: $xr-color-primary;
+    }
+  }
+
+  .export-btn {
+    margin-left: 5px;
   }
 }

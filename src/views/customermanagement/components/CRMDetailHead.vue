@@ -8,18 +8,13 @@
         class="t-section__hd">
       <div class="t-section__bd">
         <div class="type-name">{{ typeName }}</div>
-        <el-tooltip
-          v-if="!$slots.name"
+        <p class="name"><el-tooltip
           :disabled="!name"
           :content="name"
-          class="item"
           effect="dark"
           placement="top-start">
-          <p
-            v-if="!$slots.name"
-            class="name">{{ name }}</p>
-        </el-tooltip>
-        <slot name="name" />
+          <span>{{ name }}</span>
+        </el-tooltip><slot name="name" /></p>
       </div>
 
       <div class="t-section__ft">
@@ -66,6 +61,7 @@
       align="stretch">
       <flexbox-item
         v-for="(item, index) in headDetails"
+        v-show="item.title"
         :key="index"
         class="h-item"
         span="200">
@@ -437,7 +433,8 @@ export default {
       } else if (type === 'get') {
         // 领取
         crmCustomerReceive({
-          ids: this.id
+          ids: this.id,
+          poolId: this.poolId
         })
           .then(res => {
             this.$message({

@@ -23,10 +23,12 @@
       <el-table
         v-loading="loading"
         id="crm-table"
+        :row-height="40"
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
         class="n-table--border"
+        use-virtual
         stripe
         border
         highlight-current-row
@@ -84,7 +86,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
-        <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 }} / 未回款金额：{{ moneyPageData.unReceivedMoney || 0 }}</span>
+        <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 | separator }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 | separator }} / 未回款金额：{{ moneyPageData.unReceivedMoney || 0 | separator }}</span>
       </div>
     </div>
     <!-- 相关详情页面 -->
