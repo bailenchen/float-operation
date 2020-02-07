@@ -3,6 +3,7 @@
     <get-sms-code
       v-show="!showNext"
       ref="smsCode"
+      :phone="phone"
       sms-type="register" />
 
     <el-form v-show="showNext" class="login-from">
@@ -152,7 +153,7 @@
     <div class="to-login">
       已有账号，<span
         class="special"
-        @click="$emit('toggle', 'LoginByPwd')">去登录</span>
+        @click="$emit('toggle', 'LoginByPwd', $refs.smsCode.form.phone)">去登录</span>
     </div>
   </div>
 </template>
@@ -258,7 +259,7 @@ export default {
         .then(() => {
           this.$message.success('注册成功')
           this.disabledBtn = false
-          this.$emit('toggle', 'LoginByPwd')
+          this.$emit('toggle', 'LoginByPwd', this.$refs.smsCode.form.phone)
           loading.close()
         })
         .catch(() => {
