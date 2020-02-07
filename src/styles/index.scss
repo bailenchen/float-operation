@@ -229,6 +229,11 @@ div[lazy=loading] {
   cursor: pointer
 }
 
+.can-visit--bold {
+  font-weight: bold;
+}
+
+
 .can-visit--underline:hover {
   text-decoration: underline;
 }

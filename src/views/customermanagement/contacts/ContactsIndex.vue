@@ -126,7 +126,9 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'name' || column.property === 'customerName') {
+      if (column.property === 'name') {
+        return 'can-visit--underline can-visit--bold'
+      } else if (column.property === 'customerName') {
         return 'can-visit--underline'
       } else {
         return ''
