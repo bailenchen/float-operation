@@ -122,7 +122,6 @@ export default {
     }
   },
   mounted() {
-    console.log('kk', this.radio, this.crmType, this.selectedData, this.show, this.action, this.acceptEmail)
     var leftItems = {
       customer: {
         name: '客户',

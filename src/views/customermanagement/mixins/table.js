@@ -463,7 +463,6 @@ export default {
     },
     /** 筛选操作 */
     handleFilter(data) {
-      console.log(data, 'shuju')
       this.filterObj = data
       var offsetHei = document.documentElement.clientHeight
       var removeHeight = Object.keys(this.filterObj).length > 0 ? 310 : 240
