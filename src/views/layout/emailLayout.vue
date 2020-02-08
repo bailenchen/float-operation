@@ -2,11 +2,12 @@
   <el-container>
     <el-header class="nav-container">
       <navbar
-        nav-index="/workLog"
+        nav-index="/email/set"
         @nav-items-click="navClick"/>
     </el-header>
     <el-container>
       <sidebar
+        v-if="showMenu"
         :items="emailRouters"
         class="sidebar-container" />
 
@@ -39,7 +40,13 @@ export default {
     }
   },
 
-  computed: {},
+  computed: {
+    // 设置页面不展示左侧菜单
+    showMenu() {
+      const path = this.$route.path
+      return path != '/email/set'
+    }
+  },
 
   created() {
   },

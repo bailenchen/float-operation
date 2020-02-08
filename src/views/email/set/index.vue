@@ -1,6 +1,6 @@
 <template>
   <div class="email-set">
-    <div :class="{ 'left-pic': isShow }" class="left-bg">
+    <div :class="{ 'left-pic': isHand }" class="left-bg">
       <img src="~@/assets/img/email/email_set.png" alt="">
     </div>
     <div class="right-form">
@@ -17,16 +17,16 @@
         <div class="form-label"/>
         <div class="tip">绑定{{ emailType }}邮箱需要使用【授权码】作为密码绑定。请参考帮助指导。</div>
       </div>
-      <div v-if="isShow" class="auto-config">
+      <div v-if="isHand" class="auto-config">
         <div class="form-item bottom-height">
           <div class="form-label">收件服务类型</div>
           <template>
-            <el-select v-model="value" class="select-box" placeholder="">
+            <el-select v-model="serviceType" class="select-box" placeholder="">
               <el-option
                 v-for="item in typeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"/>
+                :key="item"
+                :label="item"
+                :value="item"/>
             </el-select>
           </template>
         </div>
@@ -59,7 +59,7 @@
         <div class="form-label"/>
         <div class="tip btn-size">
           <el-button type="primary" class="valid-btn" @click="valid()">验证</el-button>
-          <el-button plain @click="autoConfig">手动配置</el-button>
+          <el-button plain @click="autoConfig">{{ isHand ? '自动配置' : '手动配置' }}</el-button>
         </div>
       </div>
     </div>
@@ -67,7 +67,9 @@
 </template>
 
 <script>
-// import { emailValidAPI } from '@/api/email/email'
+import { emailValidAPI } from '@/api/email/email'
+
+import { regexIsCRMEmail } from '@/utils'
 
 export default {
   // 设置
@@ -78,8 +80,9 @@ export default {
     return {
       emailAccount: '',
       emailPassward: '',
-      typeList: [],
-      isShow: false,
+      serviceType: 'SMTP',
+      typeList: ['SMTP', 'POP3', 'IMAP'],
+      isHand: false,
       emailType: '',
       emailParamType: [],
       emailTypeList: ['qq', '163', '126', 'year', 'aliyun', '139', 'foxmail', 'yahoo', 'sina', 'sohu', 'outlook', 'gmail'],
@@ -134,41 +137,42 @@ export default {
      * 验证
      */
     valid() {
-      // if (this.isShow) {
-      //   var params = {
-      //     email_account: this.emailAccount,
-      //     email_password: this.emailPassward,
-      //     receiving_server: this.receivingServer,
-      //     receiving_ssl: this.receivingPort,
-      //     smtp_server: this.smtpServer,
-      //     smtp_ssl: this.smtpPort
-      //   }
-      // } else {
-      //   var params = {
-      //     email_account: this.emailAccount,
-      //     email_password: this.emailPassward,
-      //     receiving_server: `imap.${this.emailType}.com`,
-      //     receiving_ssl: '993',
-      //     smtp_server: `smtp.${this.emailType}.com`,
-      //     smtp_ssl: 465
-      //   }
-      // }
-      // emailValidAPI(params).then((res) => {
-      //   console.log(res, '验证')
-      // }).catch(() => {
+      if (!this.emailAccount || !regexIsCRMEmail(this.emailAccount)) {
+        this.$message.error('请输入正确邮箱')
 
-      // })
-
-      this.$router.push({
-        path: '/email/index/receive'
-      })
+        return
+      }
+      if (this.isHand) {
+        var params = {
+          email_account: this.emailAccount,
+          email_password: this.emailPassward,
+          receiving_server: this.receivingServer,
+          receiving_ssl: this.receivingPort,
+          smtp_server: this.smtpServer,
+          smtp_ssl: this.smtpPort
+        }
+      } else {
+        var params = {
+          email_account: this.emailAccount,
+          email_password: this.emailPassward,
+          receiving_server: `imap.${this.emailType}.com`,
+          receiving_ssl: '993',
+          smtp_server: `smtp.${this.emailType}.com`,
+          smtp_ssl: 465
+        }
+      }
+      emailValidAPI(params).then((res) => {
+        this.$router.push({
+          path: '/email/index/receive'
+        })
+      }).catch(() => {})
     },
 
     /**
      * 自动配置
      */
     autoConfig() {
-      this.isShow = true
+      this.isHand = !this.isHand
     }
 
   }
@@ -188,6 +192,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 100%;
   .left-pic {
     position: relative;
     margin-top: -200px;
