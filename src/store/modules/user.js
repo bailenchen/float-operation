@@ -60,6 +60,11 @@ const user = {
       if (data && data.hasOwnProperty('cardAuth')) {
         data.user.cardAuth = data.cardAuth
       }
+
+      // 邮件信息
+      if (data && data.hasOwnProperty('emailId')) {
+        data.user.emailId = data.emailId
+      }
       Lockr.set('loginUserInfo', data.user)
 
       Lockr.set('authList', data.auth)
@@ -127,6 +132,10 @@ const user = {
           // 开启了小程序
           if (response && response.hasOwnProperty('cardAuth')) {
             response.data.cardAuth = response.cardAuth
+          }
+          // 邮件信息
+          if (response && response.hasOwnProperty('emailId')) {
+            response.data.emailId = response.emailId
           }
           commit('SET_USERINFO', response.data)
           resolve(response)

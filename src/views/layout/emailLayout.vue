@@ -2,7 +2,7 @@
   <el-container>
     <el-header class="nav-container">
       <navbar
-        nav-index="/email/set"
+        :nav-index="navIndex"
         @nav-items-click="navClick"/>
     </el-header>
     <el-container>
@@ -24,6 +24,7 @@
 import { Navbar, Sidebar, AppMain } from './components'
 // import { mapGetters } from 'vuex'
 import emailRouter from '@/router/modules/email'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Layout',
@@ -41,10 +42,16 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'userInfo'
+    ]),
     // 设置页面不展示左侧菜单
     showMenu() {
       const path = this.$route.path
       return path != '/email/set'
+    },
+    navIndex() {
+      return this.userInfo.emailId ? '/email/index/receive' : '/email/set'
     }
   },
 

@@ -209,7 +209,7 @@ export default {
       tempsItems.push({
         title: '邮箱',
         type: 7,
-        path: '/email/set',
+        path: this.userInfo.emailId ? '/email/index/receive' : '/email/set',
         icon: 'wk wk-business-intelligence',
         fontSize: '18px'
       })
