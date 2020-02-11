@@ -390,6 +390,11 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.getWidth()
+      if (this.$route.query) {
+        this.form.realname = this.$route.query.name || ''
+        this.form.phone = this.$route.query.mobile || ''
+        this.$forceUpdate()
+      }
     })
   },
   methods: {
