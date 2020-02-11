@@ -137,8 +137,7 @@
           ref="smscode"
           v-model.trim="form.smscode"
           :class="{error: !validateRes.smscode}"
-          placeholder="请输入短信验证码"
-          @blur="checkFromItem('smscode', form.smscode)" />
+          placeholder="请输入短信验证码" />
         <el-button
           :disabled="time !== second"
           @click="getSmsCode">
@@ -387,13 +386,12 @@ export default {
       this.second = this.time
     }
   },
-  mounted() {
+  created() {
     this.$nextTick(() => {
       this.getWidth()
       if (this.$route.query) {
-        this.form.realname = this.$route.query.name || ''
-        this.form.phone = this.$route.query.mobile || ''
-        this.$forceUpdate()
+        this.$set(this.form, 'realname', this.$route.query.name || '')
+        this.$set(this.form, 'phone', this.$route.query.mobile || '')
       }
     })
   },
@@ -617,7 +615,6 @@ export default {
     .el-input__inner {
       height: 46px;
       background-color: #F6F6F6;
-      border: 0 none;
     }
     &.error .el-input__inner {
       border: 1px solid red;
@@ -625,6 +622,12 @@ export default {
   }
   /deep/ .el-select {
     width: 100%;
+    &:hover .el-input__inner {
+      border-color: #f6f6f6;
+    }
+    &:hover .el-input__inner:focus {
+      border-color: #3e6bea;
+    }
     &.error {
       border: 1px solid red;
     }
@@ -820,6 +823,37 @@ export default {
         color: #F54848;
       }
     }
+  }
+}
+
+/deep/ input {
+  border: 1px solid #F6F6F6;
+  background-color: #F6F6F6;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+
+  &:-webkit-autofill {
+    background-image: none;
+    -webkit-box-shadow: 0 0 0 1000px #F6F6F6 inset !important;
+    -webkit-text-fill-color: #333 !important;
+  }
+
+  &:hover {
+    border: 1px solid #F6F6F6;
+  }
+
+  &:focus,
+  &:hover:focus {
+    background-color: white !important;
+    border: 1px solid #3e6bea;
+  }
+
+  &:focus:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  }
+
+  &::-webkit-input-placeholder {
+    color: #C5C5C5;
   }
 }
 </style>

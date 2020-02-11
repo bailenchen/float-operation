@@ -30,20 +30,53 @@
           alt=""
           class="main-pic">
         <ul class="download-group">
-          <li class="download-item" @click="handleDownload('android')">
-            <img
-              src="~@/assets/login/android.png"
-              alt="android"
-              class="icon">
-            <span class="text">Android下载</span>
-          </li>
-          <li class="download-item" @click="handleDownload('ios')">
-            <img
-              src="~@/assets/login/ios.png"
-              alt="ios"
-              class="icon">
-            <span class="text">IOS下载</span>
-          </li>
+          <el-popover
+            width="150"
+            popper-class="download-popover"
+            trigger="hover">
+            <div class="popover-box">
+              <img
+                src="~@/assets/android_10.png"
+                alt=""
+                class="qrcode">
+              <span class="down-text">
+                扫描二维码<br>下载客户端
+              </span>
+            </div>
+            <li
+              slot="reference"
+              class="download-item">
+              <img
+                src="~@/assets/login/android.png"
+                alt="android"
+                class="icon">
+              <span class="text">Android下载</span>
+            </li>
+          </el-popover>
+          <el-popover
+            width="150"
+            popper-class="download-popover"
+            trigger="hover">
+            <div class="popover-box">
+              <img
+                src="~@/assets/ios_10.png"
+                alt=""
+                class="qrcode">
+              <span class="down-text">
+                扫描二维码<br>下载客户端
+              </span>
+            </div>
+            <li
+              slot="reference"
+              class="download-item"
+              @click="handleDownload('ios')">
+              <img
+                src="~@/assets/login/ios.png"
+                alt="ios"
+                class="icon">
+              <span class="text">IOS下载</span>
+            </li>
+          </el-popover>
           <li class="download-item" @click="handleDownload('windows')">
             <img
               src="~@/assets/login/windows.png"
@@ -234,13 +267,10 @@ export default {
      */
     handleDownload(platform) {
       const map = {
-        android: '',
-        ios: '',
         windows: 'https://www.5kcrm.com/download/desktop/win/10/%E6%82%9F%E7%A9%BACRM%20Setup%2010.0.1.exe',
         mac: 'https://www.5kcrm.com/download/desktop/mac/10/%E6%82%9F%E7%A9%BACRM-10.0.1.dmg'
       }
-      const url = map[platform]
-      console.log('download url', url)
+      window.open(map[platform], 'self')
     }
   }
 }
@@ -326,9 +356,6 @@ export default {
           cursor: pointer;
           margin-right: 20px;
           padding: 8px 16px;
-          &:last-child {
-            margin-right: 0;
-          }
           .icon {
             width: 34px;
             height: 34px;
@@ -396,63 +423,30 @@ export default {
           }
         }
       }
-      /*.app-down {
-        position: relative;
-        width: 176px;
-        height: 38px;
-        font-size: 14px;
-        color: #dadada;
-        background-color: #3545d8;
-        border-radius: 38px;
-        margin: 30px auto 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        .text {
-          line-height: 18px;
-          margin-right: 12px;
-        }
-        .icon {
-          font-size: 16px;
-          margin: 0 6px;
-        }
-
-        .popover {
-          position: absolute;
-          top: -138px;
-          right: -150px;
-          z-index: 200;
-          width: 136px;
-          height: 174px;
-          background-color: white;
-          border-radius: 10px;
-          box-shadow: 0 13px 23px 4px rgba(0, 0, 0, 0.09);
-          flex-direction: column;
-          display: none;
-          .qrcode {
-            width: 90px;
-            height: 90px;
-          }
-          .down-text {
-            font-size: 12px;
-            color: #666;
-            margin-top: 15px;
-          }
-        }
-
-        &:hover {
-          color: white;
-          background-color: #2c3ab8;
-          .popover {
-            @include center;
-          }
-        }
-      }*/
     }
   }
 }
 
+.download-popover {
+  .popover-box {
+    width: 126px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .qrcode {
+      width: 126px;
+      height: 126px;
+    }
+    .down-text {
+      width: 126px;
+      font-size: 12px;
+      text-align: center;
+      color: #666;
+      margin-top: 5px;
+    }
+  }
+}
 
 .create-wrapper {
   .container {
