@@ -4,20 +4,35 @@
       ref="smsCode"
       :show-tips="false"
       :phone="phone"
-      sms-type="login" />
+      sms-type="login">
+      <div class="cell">
+        <div class="cell-box tips">
+          没收到验证码？<span class="tips-special" @click="dialogVisible=true">查看帮助</span>
+        </div>
+        <div class="empty">
+          &nbsp;
+        </div>
+        <div
+          class="cell-box login-by-pwd"
+          @click="$emit('toggle', 'LoginByPwd', $refs.smsCode.form.phone)">
+          密码登录
+        </div>
+      </div>
+    </get-sms-code>
 
     <div class="control">
       <div
         class="btn"
         @click="handleLogin">
-        登&nbsp;&nbsp;&nbsp;录
+        登&nbsp;录
       </div>
+
       <div class="others">
         <el-dropdown
           trigger="click"
           @command="handleToggle">
           <span class="el-dropdown-link">
-            默认登录：
+            默认登录方式：
             <span class="dropdown">
               {{ loginType === 1 ? '云平台' : '个人中心' }}
               <i class="el-icon-arrow-down el-icon--right" />
@@ -28,16 +43,14 @@
             <el-dropdown-item :command="2">个人中心</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+
         <div class="empty">
           &nbsp;
         </div>
         <div
-          class="box"
-          @click="$emit('toggle', 'LoginByPwd', $refs.smsCode.form.phone)">
-          <span
-            class="icon wk wk-password"
-            style="font-size: 14px" />
-          <span class="text">密码登录</span>
+          class="register"
+          @click="$emit('toggle', 'CreateNewCompany', phone)">
+          免费注册
         </div>
       </div>
 
@@ -47,16 +60,6 @@
         <span class="el-icon-warning" />
         <span>个人中心仅管理员可登录</span>
       </div>
-    </div>
-
-    <div
-      class="active-btn"
-      @click="$emit('toggle', 'CreateNewCompany', $refs.smsCode.form.phone)">
-      创建新企业
-    </div>
-
-    <div class="tips">
-      没收到验证码？<span class="tips-special" @click="dialogVisible=true">查看帮助</span>
     </div>
 
     <el-dialog
@@ -189,18 +192,46 @@ export default {
 <style scoped lang="scss">
 @import '../index';
 
-.tips {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: #666;
-  .tips-special {
+.login-by-code {
+  margin-bottom: 20px;
+  .tips {
+    font-size: 16px;
+    color: #666;
+    margin-left: 0;
+    .tips-special {
+      color: #3E6BEA;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .login-by-pwd {
     color: #3E6BEA;
+    font-size: 16px;
     cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .control {
+    .others {
+      font-size: 16px;
+      .el-dropdown {
+        font-size: 16px;
+      }
+      .register {
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }
+
 
 .center-tips {
   font-size: 12px;

@@ -10,13 +10,13 @@
           type="text"
           @focus="focusKey = 'phone'"
           @blur="checkFromItem('phone', form.phone)">
-          <span
+          <!--<span
             slot="prefix"
             :class="{
               full: Boolean(form.phone),
               focus: focusKey === 'phone'
             }"
-            class="form-icon wk wk-user" />
+            class="form-icon wk wk-user" />-->
         </el-input>
       </el-form-item>
 
@@ -81,10 +81,20 @@
       </el-form-item>
     </el-form>
 
+    <slot />
+
     <div
       v-if="showTips"
-      class="tips">
-      没收到验证码？<span class="tips-special" @click="dialogVisible=true">查看帮助</span>
+      class="cell">
+      <div class="cell-box">
+        <div
+          class="tips">
+          没收到验证码？<span class="tips-special" @click="dialogVisible=true">查看帮助</span>
+        </div>
+      </div>
+      <div class="empty">
+        &nbsp;
+      </div>
     </div>
 
     <div
@@ -285,6 +295,13 @@ export default {
 
 <style scoped lang="scss">
 @import '../index';
+
+.login-from {
+  .el-form-item {
+    margin-bottom: 15px;
+  }
+}
+
 .sms-box {
   width: 100%;
   display: flex;
@@ -306,7 +323,8 @@ export default {
 
     .btn-content {
       width: 100%;
-      height: 42px;
+      height: 70px;
+      font-size: 16px;
       @include center;
       .icon {
         font-size: 16px;
@@ -322,15 +340,33 @@ export default {
     }
   }
 }
-.tips {
-  font-size: 12px;
-  color: #666;
-  margin-left: 36px;
-  .tips-special {
+
+
+.cell {
+  width: 100%;
+  overflow: hidden;
+  .tips {
+    font-size: 16px;
+    color: #666;
+    .tips-special {
+      color: #3E6BEA;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .login-btn {
     color: #3E6BEA;
     cursor: pointer;
+    font-size: 16px;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
+
 
 /deep/ .el-dialog {
   .el-dialog__close {

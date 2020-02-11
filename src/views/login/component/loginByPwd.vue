@@ -319,6 +319,9 @@ export default {
     font-size: 16px;
     color: #3e6bea;
     cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -327,6 +330,12 @@ export default {
     font-size: 16px;
     .el-dropdown {
       font-size: 16px;
+    }
+    .register {
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

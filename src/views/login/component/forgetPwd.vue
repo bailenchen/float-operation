@@ -1,7 +1,7 @@
 <template>
   <div class="forget-pwd">
     <get-sms-code
-      v-show="!showNext"
+      v-show="!showNext && !showRestPwd && !showChooseList"
       ref="smsCode"
       :show-tips="true"
       :phone="phone"
@@ -42,7 +42,7 @@
             <div class="box">
               <span class="text">密码强度</span>
               <i
-                v-for="i in 4"
+                v-for="i in 3"
                 :key="i"
                 :class="{active: i <= rankIndex}"
                 class="item" />
@@ -50,7 +50,7 @@
             <div class="desc">
               <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
               <span
-                v-if="rankIndex >= 3"
+                v-if="rankIndex >= 2"
                 class="icon wk wk-success" />
               <span
                 v-else
@@ -70,10 +70,10 @@
               @input.native="calcRank"
               @focus="focusKey = 'password'"
               @blur="checkFromItem('password', form.password)">
-              <span
+              <!--<span
                 slot="prefix"
                 :class="{focus: focusKey === 'password'}"
-                class="form-icon wk wk-circle-password" />
+                class="form-icon wk wk-circle-password" />-->
             </el-input>
           </div>
         </el-popover>
@@ -89,15 +89,16 @@
           type="password"
           @focus="focusKey = 're_password'"
           @blur="checkForm">
-          <span
+          <!--<span
             slot="prefix"
             :class="{focus: focusKey === 're_password'}"
-            class="form-icon wk wk-circle-password" />
+            class="form-icon wk wk-circle-password" />-->
         </el-input>
       </el-form-item>
     </el-form>
 
     <div
+      v-if="showRestPwd"
       :class="{ok: !Boolean(errorInfo)}"
       class="error-info">
       <div
@@ -194,8 +195,8 @@ export default {
   methods: {
     getWidth() {
       this.width = document.getElementsByClassName(
-        'el-form-item'
-      )[0].clientWidth
+        'forget-pwd'
+      )[0].clientWidth - 120
     },
     /**
      * 下一步
@@ -374,5 +375,14 @@ export default {
       }
     }
   }
+
+  .el-form-item {
+    height: 70px;
+    margin-bottom: 20px;
+  }
+}
+
+.control {
+
 }
 </style>
