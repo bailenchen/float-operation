@@ -341,7 +341,7 @@ export default {
       second: 60,
 
       agreeLaw: true,
-      showNextStep: true,
+      showNextStep: false,
       disabledBtn: false,
 
       validateRes: {
