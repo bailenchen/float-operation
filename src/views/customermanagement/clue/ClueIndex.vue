@@ -142,7 +142,7 @@ export default {
         temp.push({
           title: '线索管理',
           path: 'leads',
-          icon: require('@/assets/img/crm/customer.png')
+          icon: require('@/assets/img/crm/leads.png')
         })
       }
 
@@ -150,7 +150,7 @@ export default {
         temp.push({
           title: '名片线索',
           path: 'applet',
-          icon: require('@/assets/img/crm/seas_not.png')
+          icon: require('@/assets/img/crm/applet_not.png')
         })
       }
 
