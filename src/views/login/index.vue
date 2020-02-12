@@ -295,7 +295,7 @@ export default {
     img {
       width: 164px;
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       padding: 1.5% 2.8%;
       margin-bottom: 10px;
     }
@@ -317,7 +317,7 @@ export default {
         letter-spacing: 3px;
         margin-top: 10px;
         margin-left: 50px;
-        @media screen and (max-width: 1500px) {
+        @media screen and (max-width: 1600px) {
           font-size: 32px;
         }
       }
@@ -327,7 +327,7 @@ export default {
         color: white;
         margin-bottom: 12px;
         margin-left: 50px;
-        @media screen and (max-width: 1500px) {
+        @media screen and (max-width: 1600px) {
           font-size: 20px;
         }
       }
@@ -336,7 +336,7 @@ export default {
         color: white;
         line-height: 1.5;
         margin-left: 50px;
-        @media screen and (max-width: 1500px) {
+        @media screen and (max-width: 1600px) {
           font-size: 14px;
         }
       }
@@ -351,7 +351,7 @@ export default {
         border-radius: 10px;
         cursor: pointer;
         margin: 20px 0 38px 50px;
-        @media screen and (max-width: 1500px) {
+        @media screen and (max-width: 1600px) {
           width: 100px;
           height: 40px;
           font-size: 16px;
@@ -364,7 +364,7 @@ export default {
         width: 560px;
         margin-bottom: 30px;
         margin-top: 38px;
-        @media screen and (max-width: 1500px) {
+        @media screen and (max-width: 1600px) {
           width: 500px;
           margin-top: 16px;
           margin-left: -20px;
@@ -393,7 +393,7 @@ export default {
             color: white;
             vertical-align: middle;
           }
-          @media screen and (max-width: 1500px) {
+          @media screen and (max-width: 1600px) {
             border-radius: 18px;
             margin-right: 15px;
             padding: 7px 12px;
@@ -466,7 +466,7 @@ export default {
         }
       }
 
-      @media screen and (max-width: 1500px) {
+      @media screen and (max-width: 1600px) {
         width: 480px;
         margin-left: 80px;
         padding-top: 15px;
@@ -548,7 +548,7 @@ export default {
           }
         }
       }
-      @media screen and (max-width: 1500px) {
+      @media screen and (max-width: 1600px) {
         .activity-list {
           width: 500px;
           margin-top: 15px;
@@ -574,7 +574,7 @@ export default {
     .right {
       .login-main-content {
         height: 730px;
-        @media screen and (max-width: 1500px) {
+        @media screen and (max-width: 1600px) {
           height: 600px;
         }
       }

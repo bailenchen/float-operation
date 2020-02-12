@@ -330,7 +330,7 @@ export default {
         font-size: 16px;
         margin-right: 5px;
       }
-      @media screen and (max-width: 1500px) {
+      @media screen and (max-width: 1600px) {
         height: 50px;
         font-size: 14px;
         .icon {
@@ -362,7 +362,7 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       font-size: 14px;
     }
   }

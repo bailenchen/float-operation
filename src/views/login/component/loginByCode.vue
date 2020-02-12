@@ -205,7 +205,7 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       font-size: 14px;
     }
   }
@@ -217,7 +217,7 @@ export default {
     &:hover {
       text-decoration: underline;
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       font-size: 14px;
     }
   }
@@ -235,7 +235,7 @@ export default {
         }
       }
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       .others {
         font-size: 14px;
         .el-dropdown {

@@ -287,7 +287,7 @@ export default {
     &:hover {
       color: #3e6bea;
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       height: 50px;
       font-size: 14px;
       line-height: 50px;
@@ -307,7 +307,7 @@ export default {
     }
   }
 
-  @media screen and (min-width: 1500px) {
+  @media screen and (min-width: 1600px) {
     /deep/ .el-checkbox {
       .el-checkbox__inner {
         width: 16px;
@@ -322,7 +322,7 @@ export default {
       }
     }
   }
-  @media screen and (max-width: 1500px) {
+  @media screen and (max-width: 1600px) {
     margin-top: -5px;
     .login-by-code {
       font-size: 14px;
@@ -343,7 +343,7 @@ export default {
       }
     }
   }
-  @media screen and (max-width: 1500px) {
+  @media screen and (max-width: 1600px) {
     .others {
       font-size: 14px;
       .el-dropdown {

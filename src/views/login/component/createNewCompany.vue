@@ -604,7 +604,7 @@ export default {
       margin-right: 10px;
     }
   }
-  @media screen and (max-width: 1500px) {
+  @media screen and (max-width: 1600px) {
     height: 44px;
     padding: 0 40px;
   }
@@ -657,7 +657,7 @@ export default {
         height: 70px;
       }
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       margin-bottom: 20px;
       /deep/ .el-input {
         height: 50px;
@@ -706,7 +706,7 @@ export default {
     margin-top: 15px;
     .el-input {
       width: 300px;
-      @media screen and (max-width: 1500px)  {
+      @media screen and (max-width: 1600px)  {
         width: 250px;
       }
     }
@@ -725,7 +725,7 @@ export default {
         height: 46px;
         line-height: 46px;
         font-size: 14px;
-        @media screen and (max-width: 1500px) {
+        @media screen and (max-width: 1600px) {
           height: 36px;
           line-height: 36px;
         }
@@ -775,7 +775,7 @@ export default {
       line-height: 70px;
       font-size: 22px;
       margin-top: 80px;
-      @media screen and (max-width: 1500px) {
+      @media screen and (max-width: 1600px) {
         height: 50px;
         line-height: 50px;
         font-size: 20px;
@@ -795,7 +795,7 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1500px) {
+    @media screen and (max-width: 1600px) {
       font-size: 14px;
       margin-top: 10px;
     }
@@ -805,7 +805,7 @@ export default {
     padding: 0;
   }
 
-  @media screen and (max-width: 1500px) {
+  @media screen and (max-width: 1600px) {
     padding: 0 40px;
     /deep/ .el-input {
       height: 36px;
