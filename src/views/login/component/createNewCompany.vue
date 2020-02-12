@@ -252,7 +252,7 @@
 </template>
 
 <script>
-import { SendSmsAPI, RegisterAPI, VerfySmsAPI  } from '@/api/login'
+import { SendSmsAPI, RegisterAPI, VerfySmsAPI } from '@/api/login'
 import SlideVerify from '@/components/SlideVerify'
 import mixins from './mixins'
 import { Loading } from 'element-ui'
