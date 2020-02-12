@@ -1,8 +1,9 @@
 <template>
   <div class="forget-pwd">
     <get-sms-code
-      v-show="!showNext"
+      v-show="!showNext && !showRestPwd && !showChooseList"
       ref="smsCode"
+      :show-tips="true"
       :phone="phone"
       sms-type="forget" />
 
@@ -49,7 +50,7 @@
             <div class="desc">
               <span class="text">密码由6-20位字母、数字组成</span>
               <span
-                v-if="rankIndex >= 3"
+                v-if="rankIndex >= 2"
                 class="icon wk wk-success" />
               <span
                 v-else
@@ -69,10 +70,10 @@
               @input.native="calcRank"
               @focus="focusKey = 'password'"
               @blur="checkFromItem('password', form.password)">
-              <span
+              <!--<span
                 slot="prefix"
                 :class="{focus: focusKey === 'password'}"
-                class="form-icon wk wk-circle-password" />
+                class="form-icon wk wk-circle-password" />-->
             </el-input>
           </div>
         </el-popover>
@@ -88,15 +89,16 @@
           type="password"
           @focus="focusKey = 're_password'"
           @blur="checkForm">
-          <span
+          <!--<span
             slot="prefix"
             :class="{focus: focusKey === 're_password'}"
-            class="form-icon wk wk-circle-password" />
+            class="form-icon wk wk-circle-password" />-->
         </el-input>
       </el-form-item>
     </el-form>
 
     <div
+      v-if="showRestPwd"
       :class="{ok: !Boolean(errorInfo)}"
       class="error-info">
       <div
@@ -149,7 +151,9 @@ export default {
   data() {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
     return {
-      form: {},
+      form: {
+        phone: sessionStorage.getItem('account') || ''
+      },
       validateRes: {
         phone: true,
         smscode: true,
@@ -191,8 +195,8 @@ export default {
   methods: {
     getWidth() {
       this.width = document.getElementsByClassName(
-        'el-form-item'
-      )[0].clientWidth
+        'forget-pwd'
+      )[0].clientWidth - 120
     },
     /**
      * 下一步
@@ -371,5 +375,17 @@ export default {
       }
     }
   }
+
+  .el-form-item {
+    height: 70px;
+    margin-bottom: 20px;
+    @media screen and (max-width: 1600px) {
+      height: 50px;
+    }
+  }
+}
+
+.control {
+
 }
 </style>

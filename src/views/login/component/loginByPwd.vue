@@ -7,17 +7,18 @@
           v-model.trim="form.username"
           :class="{error: !validateRes.username}"
           placeholder="请输入用户名"
+          autofocus
           type="text"
           @focus="focusKey = 'username'"
           @blur="checkFromItem('username', form.username)"
           @keyup.enter.native="handleLogin">
-          <span
+          <!--<span
             slot="prefix"
             :class="{
               full: Boolean(form.username),
               focus: focusKey === 'username'
             }"
-            class="form-icon wk wk-user" />
+            class="form-icon wk wk-user" />-->
         </el-input>
       </el-form-item>
       <el-form-item>
@@ -31,13 +32,13 @@
           @focus="focusKey = 'password'"
           @keyup.enter.native="handleLogin"
           @blur="checkForm">
-          <span
+          <!--<span
             slot="prefix"
             :class="{
               full: Boolean(form.password),
               focus: focusKey === 'password'
             }"
-            class="form-icon wk wk-circle-password" />
+            class="form-icon wk wk-circle-password" />-->
           <span
             v-if="focusKey !== 'password'"
             slot="suffix"
@@ -48,6 +49,23 @@
         </el-input>
       </el-form-item>
     </el-form>
+
+    <div class="cell login-action">
+      <div class="cell-box">
+        <el-checkbox
+          v-model="rememberMe">
+          记住我
+        </el-checkbox>
+      </div>
+      <div class="empty">
+        &nbsp;
+      </div>
+      <div
+        class="cell-box login-by-code"
+        @click="$emit('toggle', 'LoginByCode', form.username)">
+        <span class="text">验证码登录</span>
+      </div>
+    </div>
 
     <div
       :class="{ok: !Boolean(errorInfo)}"
@@ -67,28 +85,49 @@
       <div
         class="btn"
         @click="handleLogin">
-        登&nbsp;&nbsp;&nbsp;录
+        登&nbsp;录
       </div>
+
       <div class="others">
+        <el-dropdown
+          trigger="click"
+          @command="handleToggle">
+          <span class="el-dropdown-link">
+            默认登录方式：
+            <span class="dropdown">
+              {{ loginType === 1 ? '云平台' : '个人中心' }}
+              <i class="el-icon-arrow-down el-icon--right" />
+            </span>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item :command="1">云平台</el-dropdown-item>
+            <el-dropdown-item :command="2">个人中心</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+
+        <div class="empty">
+          &nbsp;
+        </div>
         <div
-          class="box"
-          @click="$emit('toggle', 'LoginByCode', form.username)">
-          <span class="icon wk wk-mobile" />
-          <span class="text">验证码登录</span>
+          class="register"
+          @click="$emit('toggle', 'CreateNewCompany', form.username)">
+          免费注册
         </div>
       </div>
-    </div>
 
-    <div
-      class="active-btn"
-      @click="$emit('toggle', 'CreateNewCompany', form.username)">
-      创建新企业
+      <div
+        v-if="loginType === 2"
+        class="center-tips">
+        <span class="el-icon-warning" />
+        <span>个人中心仅管理员可登录</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { Loading } from 'element-ui'
+import request from '@/utils/request'
 
 import mixins from './mixins'
 
@@ -99,7 +138,10 @@ export default {
     const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
     return {
       redirect: undefined,
-      form: {},
+      rememberMe: false,
+      form: {
+        username: sessionStorage.getItem('account') || ''
+      },
       errorInfo: null,
       validateRes: {
         username: true,
@@ -111,7 +153,9 @@ export default {
           { required: true, msg: '密码不能为空' },
           { reg: pwdReg, msg: '密码由6-20位字母、数字组成' }
         ]
-      }
+      },
+
+      loginType: 1
     }
   },
   watch: {
@@ -121,6 +165,11 @@ export default {
       },
       immediate: true
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.username.focus()
+    })
   },
   created() {
     if (this.phone) {
@@ -146,12 +195,58 @@ export default {
             loading.close()
             this.$emit('toggle', 'MultipleCompany', res.companyList)
           } else {
-            this.$router.push({ path: this.redirect || '/' })
+            if (this.loginType === 2) {
+              if (res.isAdmin) {
+                this.loginCenter({
+                  admin_token: res['Admin-Token'],
+                  loginUserInfo: res.user
+                })
+              } else {
+                this.$message.error('个人中心仅管理员可登录')
+                localStorage.clear()
+                loading.close()
+              }
+            } else {
+              this.$router.push({ path: this.redirect || '/' })
+            }
           }
         })
         .catch(() => {
           loading.close()
         })
+    },
+
+    handleToggle(command) {
+      console.log('command', command)
+      this.loginType = command
+    },
+    /**
+     * 个人中心登录操作
+     */
+    loginCenter(data) {
+      const loading = Loading.service({
+        target: document.querySelector('.login-main-content')
+      })
+      const url = process.env.NODE_ENV === 'development' ? '/centerIndex/get_data' : '/get_data'
+      request({
+        url: window.location.origin + url,
+        method: 'post',
+        data: data
+      }).then(res => {
+        loading.close()
+        console.log(res)
+        // if (res.code === 200) {
+        // } else {
+        //   this.$message.error('登录失败')
+        //   loading.close()
+        // }
+        const origin = process.env.NODE_ENV === 'development' ? 'https://www.72crm.com' : window.location.origin
+        window.location.href = origin + '/center'
+      }).catch(() => {
+        this.$message.error('登录失败')
+        loading.close()
+        console.log('error')
+      })
     },
 
     /**
@@ -183,11 +278,88 @@ export default {
 
 .login-by-pwd {
   .forget-pwd {
-    padding: 0 5px;
+    height: 70px;
+    color: #999;
+    line-height: 70px;
     cursor: pointer;
+    padding: 0 10px 0 5px;
+    display: block;
     &:hover {
       color: #3e6bea;
     }
+    @media screen and (max-width: 1600px) {
+      height: 50px;
+      font-size: 14px;
+      line-height: 50px;
+      padding: 0 5px;
+    }
+  }
+}
+
+.login-action {
+  margin-top: -10px;
+  .login-by-code {
+    font-size: 16px;
+    color: #3e6bea;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  @media screen and (min-width: 1600px) {
+    /deep/ .el-checkbox {
+      .el-checkbox__inner {
+        width: 16px;
+        height: 16px;
+        &::after {
+          top: 2px;
+          left: 5px;
+        }
+      }
+      .el-checkbox__label {
+        font-size: 16px;
+      }
+    }
+  }
+  @media screen and (max-width: 1600px) {
+    margin-top: -5px;
+    .login-by-code {
+      font-size: 14px;
+    }
+  }
+}
+
+.control {
+  .others {
+    font-size: 16px;
+    .el-dropdown {
+      font-size: 16px;
+    }
+    .register {
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  @media screen and (max-width: 1600px) {
+    .others {
+      font-size: 14px;
+      .el-dropdown {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+.center-tips {
+  font-size: 12px;
+  color: #999;
+  margin-top: 10px;
+  .el-icon-warning {
+    color: #f9a74e;
+    font-size: 14px;
   }
 }
 </style>
