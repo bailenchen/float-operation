@@ -1,6 +1,6 @@
 <template>
   <div class="login-by-code">
-    <get-sms-code ref="smsCode" sms-type="login" />
+    <get-sms-code ref="smsCode" :phone="phone" sms-type="login" />
 
     <div class="control">
       <div
@@ -11,7 +11,7 @@
       <div class="others">
         <div
           class="box"
-          @click="$emit('toggle', 'LoginByPwd')">
+          @click="$emit('toggle', 'LoginByPwd', $refs.smsCode.form.phone)">
           <span
             class="icon wk wk-password"
             style="font-size: 14px" />
@@ -22,7 +22,7 @@
 
     <div
       class="active-btn"
-      @click="$emit('toggle', 'CreateNewCompany')">
+      @click="$emit('toggle', 'CreateNewCompany', $refs.smsCode.form.phone)">
       创建新企业
     </div>
   </div>
@@ -36,6 +36,9 @@ export default {
   name: 'LoginByCode',
   components: {
     GetSmsCode
+  },
+  props: {
+    phone: [String, Number]
   },
   data() {
     return {

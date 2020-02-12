@@ -3,7 +3,7 @@ import { getImageData } from '@/utils'
 const dataCache = {}
 
 const loadData = (el, binding) => {
-  const loadingImg = require('@/assets/img/send_img.png')
+  const loadingImg = require('@/assets/img/white.png')
   setSrc(el, binding, loadingImg)
 
   if (binding.value && binding.value.indexOf('/file/downFile') == 0) {

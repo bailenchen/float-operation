@@ -458,7 +458,7 @@ export default {
         label: crmTypeModel[this.crmType]
       })
         .then(res => {
-          this.filterFieldList = res.data
+          this.filterFieldList = res.data || []
           this.showFilter = true
         })
         .catch(() => {})

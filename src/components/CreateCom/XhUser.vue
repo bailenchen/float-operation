@@ -48,6 +48,7 @@
 <script type="text/javascript">
 import { usersList } from '@/api/common'
 import { objDeepCopy } from '@/utils'
+import PinyinMatch from 'pinyin-match'
 
 export default {
   name: 'XhUser', // 新建 user
@@ -95,7 +96,7 @@ export default {
   computed: {
     showList() {
       return this.list.filter(item => {
-        return item.realname.indexOf(this.searchInput) != -1
+        return PinyinMatch.match(item.realname, this.searchInput)
       })
     },
 

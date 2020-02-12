@@ -600,13 +600,13 @@ export default {
           ])
         }
       } else if (this.crmType == 'contacts') {
-        return this.forSelectionHandleItems(handleInfos, ['delete'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'business') {
-        return this.forSelectionHandleItems(handleInfos, ['delete'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'contract') {
-        return this.forSelectionHandleItems(handleInfos, ['delete', 'cancel'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete', 'cancel'])
       } else if (this.crmType == 'receivables') {
-        return this.forSelectionHandleItems(handleInfos, ['delete'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'product') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete', 'start', 'disable'])
       } else if (this.crmType == 'marketing') {

@@ -50,6 +50,7 @@
 </template>
 <script type="text/javascript">
 import { depList } from '@/api/common'
+import PinyinMatch from 'pinyin-match'
 
 export default {
   name: 'XhStructure', // 新建 structure
@@ -90,7 +91,7 @@ export default {
   computed: {
     showDataList() {
       return this.dataList.filter(item => {
-        return item.name.indexOf(this.searchInput) != -1
+        return PinyinMatch.match(item.name, this.searchInput)
       })
     }
   },

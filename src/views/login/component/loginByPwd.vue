@@ -42,7 +42,7 @@
             v-if="focusKey !== 'password'"
             slot="suffix"
             class="forget-pwd"
-            @click="$emit('toggle', 'ForgetPwd')">
+            @click="$emit('toggle', 'ForgetPwd', form.username)">
             忘记密码
           </span>
         </el-input>
@@ -72,7 +72,7 @@
       <div class="others">
         <div
           class="box"
-          @click="$emit('toggle', 'LoginByCode')">
+          @click="$emit('toggle', 'LoginByCode', form.username)">
           <span class="icon wk wk-mobile" />
           <span class="text">验证码登录</span>
         </div>
@@ -81,7 +81,7 @@
 
     <div
       class="active-btn"
-      @click="$emit('toggle', 'CreateNewCompany')">
+      @click="$emit('toggle', 'CreateNewCompany', form.username)">
       创建新企业
     </div>
   </div>
@@ -120,6 +120,13 @@ export default {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
+    }
+  },
+  created() {
+    if (this.phone) {
+      this.form = {
+        username: this.phone
+      }
     }
   },
   methods: {

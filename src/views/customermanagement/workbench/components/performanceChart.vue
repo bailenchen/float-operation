@@ -114,7 +114,7 @@ export default {
   },
   mounted() {
     this.initChart()
-    this.handleCommand(0)
+    this.getData()
   },
   methods: {
     initChart() {

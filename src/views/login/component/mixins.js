@@ -1,4 +1,7 @@
 export default {
+  props: {
+    phone: [String, Number]
+  },
   data() {
     return {
       focusKey: null

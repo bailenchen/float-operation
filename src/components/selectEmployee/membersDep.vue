@@ -140,6 +140,8 @@
 </template>
 <script>
 import { usersList, depList } from '@/api/common'
+import PinyinMatch from 'pinyin-match'
+
 export default {
   props: {
     radio: {
@@ -277,21 +279,13 @@ export default {
     },
     userSearchChange(val) {
       this.userList = this.userList.map(item => {
-        if (item.realname.indexOf(val) != -1) {
-          item.hidden = false
-        } else {
-          item.hidden = true
-        }
+        item.hidden = !PinyinMatch.match(item.realname, val)
         return item
       })
     },
     depSearchChange(val) {
       this.depShowList = this.depShowList.map(item => {
-        if (item.name.indexOf(val) != -1) {
-          item.hidden = false
-        } else {
-          item.hidden = true
-        }
+        item.hidden = !PinyinMatch.match(item.name, val)
         return item
       })
     },
@@ -320,11 +314,7 @@ export default {
         this.depShowList = []
         this.depShowList = depItem.children.map((item, index, array) => {
           item.type = 'dep'
-          if (item.name.indexOf(this.searchDepInput) != -1) {
-            item.hidden = false
-          } else {
-            item.hidden = true
-          }
+          item.hidden = !PinyinMatch.match(item.name, this.searchDepInput)
           item.isCheck = this.getItemCheckInfo(item, 'dep')
           return item
         })
