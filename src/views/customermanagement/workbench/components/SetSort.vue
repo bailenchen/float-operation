@@ -100,7 +100,7 @@ export default {
       sortRight: [],
       data: {
         1: {
-          title: '合同金额目标及完成情况',
+          title: '合同/回款金额目标及完成情况',
           icon: 'wk wk-target',
           iconColor: '#4983EF',
           img: require('@/assets/img/skeleton/sort-chart.png')

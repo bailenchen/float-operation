@@ -24,7 +24,7 @@ export function depList(data) {
   })
 }
 
-// 获取权限范围内部门接口
+// 获取权限范围内部门接口 system/user/querySubUserList
 export function adminStructuresSubIndex(data) {
   return request({
     url: 'system/dept/queryDeptByAuth',
@@ -32,6 +32,16 @@ export function adminStructuresSubIndex(data) {
     data: data
   })
 }
+
+// 获取下属及本人
+export function subUserListIndex(data) {
+  return request({
+    url: 'system/user/querySubUserList',
+    method: 'post',
+    data: data
+  })
+}
+
 // 获取权限范围内部门接口
 export function getUserByDeptId(data) {
   return request({

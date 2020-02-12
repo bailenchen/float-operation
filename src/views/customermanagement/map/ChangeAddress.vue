@@ -32,7 +32,7 @@
   </el-dialog>
 </template>
 <script type="text/javascript">
-import VDistpicker from 'v-distpicker'
+import VDistpicker from '@/components/v-distpicker'
 import { getBaiduMap } from '@/utils'
 
 export default {

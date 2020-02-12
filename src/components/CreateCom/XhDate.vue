@@ -2,6 +2,7 @@
   <el-date-picker
     v-model="dataValue"
     :disabled="disabled"
+    clearable
     style="width: 100%;"
     type="date"
     value-format="yyyy-MM-dd"

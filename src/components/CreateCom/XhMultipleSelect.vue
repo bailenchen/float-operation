@@ -4,6 +4,7 @@
     :disabled="disabled"
     style="width: 100%;"
     multiple
+    clearable
     placeholder="请选择"
     @change="valueChange">
     <el-option

@@ -115,6 +115,7 @@ export default {
         announceCount: 0,
         crmCount: 0,
         examineCount: 0,
+        eventCount: 0,
         logCount: 0,
         taskCount: 0
       },
@@ -202,6 +203,16 @@ export default {
           type: 5,
           path: '/bi',
           icon: 'wk wk-business-intelligence',
+          fontSize: '18px'
+        })
+      }
+
+      if (this.oa.calendar) {
+        tempsItems.push({
+          title: '日历',
+          type: 8,
+          path: '/calendar/index',
+          icon: 'wk wk-calendar',
           fontSize: '18px'
         })
       }
@@ -327,6 +338,7 @@ export default {
     display: block;
     flex-shrink: 0;
     margin-right: 15px;
+    background-color: white;
     cursor: pointer;
   }
   .nav-items-container {

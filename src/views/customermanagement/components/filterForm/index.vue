@@ -187,7 +187,7 @@
 <script>
 import { objDeepCopy } from '@/utils'
 import { XhUserCell, XhProuctCate } from '@/components/CreateCom'
-import VDistpicker from 'v-distpicker'
+import VDistpicker from '@/components/v-distpicker'
 /**
  * fieldList: 高级筛选的字段
  *     type:  date || datetime || select || 其他 input
