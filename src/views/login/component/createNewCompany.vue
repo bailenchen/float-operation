@@ -341,7 +341,7 @@ export default {
       second: 60,
 
       agreeLaw: true,
-      showNextStep: false,
+      showNextStep: true,
       disabledBtn: false,
 
       validateRes: {
@@ -604,6 +604,10 @@ export default {
       margin-right: 10px;
     }
   }
+  @media screen and (max-width: 1500px) {
+    height: 44px;
+    padding: 0 40px;
+  }
 }
 
 .register-box {
@@ -653,15 +657,24 @@ export default {
         height: 70px;
       }
     }
+    @media screen and (max-width: 1500px) {
+      margin-bottom: 20px;
+      /deep/ .el-input {
+        height: 50px;
+        .el-input__inner {
+          height: 50px;
+        }
+      }
+    }
   }
 
   // 图片验证码
   .verify-picture {
     position: relative;
     width: 100%;
-    height: 52px;
+    height: 50px;
     font-size: 14px;
-    line-height: 52px;
+    line-height: 50px;
     background-color: #EEF7FF;
     border-radius: $xr-border-radius-base;
     cursor: pointer;
@@ -673,7 +686,7 @@ export default {
       width: 40px;
       height: 40px;
       margin-left: -10px;
-      margin-top: 6px;
+      margin-top: 5px;
     }
 
     /*.slide-verify {
@@ -693,13 +706,16 @@ export default {
     margin-top: 15px;
     .el-input {
       width: 300px;
+      @media screen and (max-width: 1500px)  {
+        width: 250px;
+      }
     }
     .el-button {
       flex: 1;
       font-size: 12px;
       color: white;
       background-color: #3e6bea;
-      border-radius: 6px;
+      border-radius: 4px;
       border: 0 none;
       padding: 0;
       margin-left: 20px;
@@ -709,6 +725,10 @@ export default {
         height: 46px;
         line-height: 46px;
         font-size: 14px;
+        @media screen and (max-width: 1500px) {
+          height: 36px;
+          line-height: 36px;
+        }
       }
       &:hover,
       &.is-disabled,
@@ -722,7 +742,7 @@ export default {
 
   .service-law {
     margin-top: 10px;
-    font-size: 14px;
+    font-size: 13px;
     .special {
       color: #3255E6;
       cursor: pointer;
@@ -755,6 +775,11 @@ export default {
       line-height: 70px;
       font-size: 22px;
       margin-top: 80px;
+      @media screen and (max-width: 1500px) {
+        height: 50px;
+        line-height: 50px;
+        font-size: 20px;
+      }
     }
   }
 
@@ -770,10 +795,24 @@ export default {
         text-decoration: underline;
       }
     }
+    @media screen and (max-width: 1500px) {
+      font-size: 14px;
+      margin-top: 10px;
+    }
   }
 
   .error-info {
     padding: 0;
+  }
+
+  @media screen and (max-width: 1500px) {
+    padding: 0 40px;
+    /deep/ .el-input {
+      height: 36px;
+      .el-input__inner {
+        height: 36px;
+      }
+    }
   }
 }
 

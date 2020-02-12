@@ -68,8 +68,7 @@
             </div>
             <li
               slot="reference"
-              class="download-item"
-              @click="handleDownload('ios')">
+              class="download-item">
               <img
                 src="~@/assets/login/ios.png"
                 alt="ios"
@@ -284,6 +283,7 @@ export default {
   width: 100%;
   height: 100%;
   background: url('~@/assets/login/bg.png') center no-repeat;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -294,7 +294,10 @@ export default {
     display: flex;
     img {
       width: 164px;
-      height: 50px;
+    }
+    @media screen and (max-width: 1500px) {
+      padding: 1.5% 2.8%;
+      margin-bottom: 10px;
     }
   }
 
@@ -314,6 +317,9 @@ export default {
         letter-spacing: 3px;
         margin-top: 10px;
         margin-left: 50px;
+        @media screen and (max-width: 1500px) {
+          font-size: 32px;
+        }
       }
       .mini-title {
         font-size: 32px;
@@ -321,12 +327,18 @@ export default {
         color: white;
         margin-bottom: 12px;
         margin-left: 50px;
+        @media screen and (max-width: 1500px) {
+          font-size: 20px;
+        }
       }
       .desc {
         font-size: 18px;
         color: white;
         line-height: 1.5;
         margin-left: 50px;
+        @media screen and (max-width: 1500px) {
+          font-size: 14px;
+        }
       }
       .register-btn {
         width: 150px;
@@ -339,11 +351,25 @@ export default {
         border-radius: 10px;
         cursor: pointer;
         margin: 20px 0 38px 50px;
+        @media screen and (max-width: 1500px) {
+          width: 100px;
+          height: 40px;
+          font-size: 16px;
+          line-height: 40px;
+          border-radius: 4px;
+          margin: 25px 0 25px 50px;
+        }
       }
       .main-pic {
         width: 560px;
         margin-bottom: 30px;
         margin-top: 38px;
+        @media screen and (max-width: 1500px) {
+          width: 500px;
+          margin-top: 16px;
+          margin-left: -20px;
+          margin-bottom: 45px;
+        }
       }
       .download-group {
         width: 100%;
@@ -366,6 +392,22 @@ export default {
             font-size: 16px;
             color: white;
             vertical-align: middle;
+          }
+          @media screen and (max-width: 1500px) {
+            border-radius: 18px;
+            margin-right: 15px;
+            padding: 7px 12px;
+            .icon {
+              width: 22px;
+              height: 22px;
+              vertical-align: middle;
+              margin-right: 8px;
+            }
+            .text {
+              font-size: 14px;
+              color: white;
+              vertical-align: middle;
+            }
           }
         }
       }
@@ -420,6 +462,30 @@ export default {
             width: 18px;
             display: inline-block;
             vertical-align: middle;
+          }
+        }
+      }
+
+      @media screen and (max-width: 1500px) {
+        width: 480px;
+        margin-left: 80px;
+        padding-top: 15px;
+        .login-main-content {
+          height: 520px;
+          .logo-box {
+            font-size: 20px;
+            padding: 0 40px;
+            margin: 25px 0 30px;
+            &:before {
+              height: 16px;
+              left: 24px;
+            }
+          }
+          .use-tip {
+            font-size: 12px;
+            .icon {
+              width: 15px;
+            }
           }
         }
       }
@@ -482,10 +548,35 @@ export default {
           }
         }
       }
+      @media screen and (max-width: 1500px) {
+        .activity-list {
+          width: 500px;
+          margin-top: 15px;
+          margin-left: 40px;
+          .activity-list-item {
+            width: 250px;
+            margin: 10px 0;
+            .icon {
+              font-size: 22px;
+            }
+            .box {
+              .activity-title {
+                font-size: 16px;
+              }
+              .text {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
     }
     .right {
       .login-main-content {
         height: 730px;
+        @media screen and (max-width: 1500px) {
+          height: 600px;
+        }
       }
     }
   }

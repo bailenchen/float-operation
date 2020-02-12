@@ -205,6 +205,9 @@ export default {
         text-decoration: underline;
       }
     }
+    @media screen and (max-width: 1500px) {
+      font-size: 14px;
+    }
   }
 
   .login-by-pwd {
@@ -213,6 +216,9 @@ export default {
     cursor: pointer;
     &:hover {
       text-decoration: underline;
+    }
+    @media screen and (max-width: 1500px) {
+      font-size: 14px;
     }
   }
 
@@ -226,6 +232,14 @@ export default {
         cursor: pointer;
         &:hover {
           text-decoration: underline;
+        }
+      }
+    }
+    @media screen and (max-width: 1500px) {
+      .others {
+        font-size: 14px;
+        .el-dropdown {
+          font-size: 14px;
         }
       }
     }

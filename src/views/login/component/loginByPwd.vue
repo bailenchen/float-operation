@@ -287,40 +287,45 @@ export default {
     &:hover {
       color: #3e6bea;
     }
-  }
-}
-
-.cell {
-  width: 100%;
-  padding: 0 60px;
-  display: flex;
-  .empty {
-    flex: 1;
-    visibility: hidden;
+    @media screen and (max-width: 1500px) {
+      height: 50px;
+      font-size: 14px;
+      line-height: 50px;
+      padding: 0 5px;
+    }
   }
 }
 
 .login-action {
   margin-top: -10px;
-  /deep/ .el-checkbox {
-    .el-checkbox__inner {
-      width: 16px;
-      height: 16px;
-      &::after {
-        top: 2px;
-        left: 5px;
-      }
-    }
-    .el-checkbox__label {
-      font-size: 16px;
-    }
-  }
   .login-by-code {
     font-size: 16px;
     color: #3e6bea;
     cursor: pointer;
     &:hover {
       text-decoration: underline;
+    }
+  }
+
+  @media screen and (min-width: 1500px) {
+    /deep/ .el-checkbox {
+      .el-checkbox__inner {
+        width: 16px;
+        height: 16px;
+        &::after {
+          top: 2px;
+          left: 5px;
+        }
+      }
+      .el-checkbox__label {
+        font-size: 16px;
+      }
+    }
+  }
+  @media screen and (max-width: 1500px) {
+    margin-top: -5px;
+    .login-by-code {
+      font-size: 14px;
     }
   }
 }
@@ -335,6 +340,14 @@ export default {
       cursor: pointer;
       &:hover {
         text-decoration: underline;
+      }
+    }
+  }
+  @media screen and (max-width: 1500px) {
+    .others {
+      font-size: 14px;
+      .el-dropdown {
+        font-size: 14px;
       }
     }
   }

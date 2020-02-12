@@ -330,6 +330,13 @@ export default {
         font-size: 16px;
         margin-right: 5px;
       }
+      @media screen and (max-width: 1500px) {
+        height: 50px;
+        font-size: 14px;
+        .icon {
+          font-size: 14px;
+        }
+      }
     }
     &:hover,
     &.is-disabled,
@@ -354,6 +361,9 @@ export default {
       &:hover {
         text-decoration: underline;
       }
+    }
+    @media screen and (max-width: 1500px) {
+      font-size: 14px;
     }
   }
 
