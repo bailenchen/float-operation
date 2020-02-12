@@ -221,7 +221,7 @@
       </div>
     </template>
 
-    <div
+    <!--<div
       :class="{ok: !Boolean(errorInfo)}"
       class="error-info">
       <div
@@ -233,7 +233,7 @@
           class="icon">
         <span>{{ errorInfo }}</span>
       </div>
-    </div>
+    </div>-->
 
     <el-button
       :class="{special: showNextStep}"
@@ -605,8 +605,10 @@ export default {
     }
   }
   @media screen and (max-width: 1600px) {
-    height: 44px;
+    height: 36px;
     padding: 0 40px;
+    margin-top: 10px;
+    margin-bottom: 5px;
   }
 }
 
@@ -647,6 +649,9 @@ export default {
         margin-right: 38px;
       }
     }
+    @media screen and (max-width: 1600px) {
+      margin-bottom: 10px;
+    }
   }
 
   .row {
@@ -658,7 +663,7 @@ export default {
       }
     }
     @media screen and (max-width: 1600px) {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       /deep/ .el-input {
         height: 50px;
         .el-input__inner {
@@ -688,6 +693,17 @@ export default {
       margin-left: -10px;
       margin-top: 5px;
     }
+    @media screen and (max-width: 1600px)  {
+      height: 46px;
+      line-height: 46px;
+      margin-top: 10px;
+      .icon {
+        width: 36px;
+        height: 36px;
+        margin-left: -10px;
+        margin-top: 5px;
+      }
+    }
 
     /*.slide-verify {
       position: absolute;
@@ -704,6 +720,9 @@ export default {
     justify-content: flex-start;
     flex-wrap: nowrap;
     margin-top: 15px;
+    @media screen and (max-width: 1600px)  {
+      margin-top: 10px;
+    }
     .el-input {
       width: 300px;
       @media screen and (max-width: 1600px)  {
@@ -769,6 +788,10 @@ export default {
     }
     &.is-disabled {
       cursor: not-allowed;
+    }
+    @media screen and (max-width: 1600px)  {
+      height: 42px;
+      line-height: 42px;
     }
     &.special {
       height: 70px;
