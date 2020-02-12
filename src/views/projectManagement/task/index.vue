@@ -589,7 +589,7 @@ export default {
       color: #999999;
       padding-top: 10px;
       font-size: 13px;
-      padding-left: 4px;
+      padding-left: 14px;
       .el-icon-plus {
         color: #2362FB;
         font-weight: 700;
@@ -640,11 +640,6 @@ export default {
     height: 20px;
     transform: translate(-50%, -50%);
   }
-}
-
-// 快捷添加
-.list-task-add {
-  padding-top: 10px;
 }
 </style>
 

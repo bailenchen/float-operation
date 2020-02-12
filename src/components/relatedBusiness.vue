@@ -114,6 +114,7 @@ export default {
     checkInfos(val) {
       this.showPopover = false
       this.relatedListData = val.data
+      console.log(val)
       for (const key in val.data) {
         const list = val.data[key]
         this.relevanceAll[key + 'Ids'] = list.map(function(

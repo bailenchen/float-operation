@@ -28,19 +28,21 @@
 <script>
 import LogWelcome from './components/LogWelcome' // 跟进记录类型设置
 import XrHeader from '@/components/xr-header'
-
+import CalendarType from './components/CalendarType'
 export default {
   name: 'OtherSystem',
 
   components: {
     LogWelcome,
+    CalendarType,
     XrHeader
   },
 
   data() {
     return {
       menuList: [
-        { label: '日志欢迎语', key: 'LogWelcome' }
+        { label: '日志欢迎语', key: 'LogWelcome' },
+        { label: '日历类型设置', key: 'CalendarType' }
       ],
       menuIndex: 'LogWelcome',
       types: '' // 区分拥有客户 和 锁定客户

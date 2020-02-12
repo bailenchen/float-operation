@@ -1713,6 +1713,9 @@ $btn-b-hover-color: #eff4ff;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 28px;
+  word-break: break-all;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .task-name.is-checked {

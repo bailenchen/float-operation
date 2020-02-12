@@ -1,8 +1,9 @@
 <template>
   <div class="c-container">
-    <flexbox class="title"><img
+    <flexbox v-if="!$slots.icon" class="title"><img
       :src="titleIcon"
       class="title-icon">{{ title }}</flexbox>
+    <slot v-else name="icon" />
     <el-input
       :placeholder="placeholder"
       v-model="inputContent"

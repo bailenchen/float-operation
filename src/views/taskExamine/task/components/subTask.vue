@@ -242,7 +242,6 @@ export default {
       }
     },
     xhUserCheckout(data) {
-      console.log('object---', this.xhUserData, data)
       this.xhUserData = data
       this.showUserPopover = false
     },

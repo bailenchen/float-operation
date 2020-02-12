@@ -456,6 +456,7 @@ export default {
         const left = res.data.left || []
         const right = res.data.right || []
 
+        // ReceivedStatistics 回款和合同合并，展示保留其位置。数组索引是id，不能删
         const components = ['SaleStatistics', 'DataStatistics', 'ReceivedStatistics', 'PerformanceChart', 'SalesFunnel', 'ForgetRemind', 'RankingStatistics']
 
         this.sortLeft = left.map(item => {

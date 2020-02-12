@@ -61,6 +61,10 @@
         <el-table-column
           :label="`${optionName}（${optionInfo.unit}）`"
           prop="value" />
+        <el-table-column
+          v-if="rateShow"
+          label="目标完成率（%）"
+          prop="rate" />
       </el-table>
       <div
         class="my-ranking">
@@ -81,6 +85,7 @@
           <span class="user-name">{{ myData.realname }}</span>
         </div>
         <div class="row value">{{ myData.value }}</div>
+        <div v-if="rateShow" class="row value">{{ myData.rate }}</div>
       </div>
     </div>
   </div>
@@ -115,8 +120,8 @@ export default {
       loading: false,
 
       options: [
-        { name: '合同金额', value: 1 },
         { name: '回款金额', value: 2 },
+        { name: '合同金额', value: 1 },
         { name: '合同数', value: 3 },
         { name: '新增客户数', value: 4 },
         { name: '新增联系人', value: 5 },
@@ -124,8 +129,8 @@ export default {
         { name: '新增商机金额', value: 7 },
         { name: '新增跟进记录数', value: 8 }
       ],
-      optionName: '合同金额',
-      optionValue: 1
+      optionName: '回款金额',
+      optionValue: 2
     }
   },
   computed: {
@@ -145,6 +150,9 @@ export default {
         key: 'count',
         unit: '个'
       }
+    },
+    rateShow() {
+      return this.optionValue == 1 || this.optionValue == 2
     }
   },
   created() {
@@ -171,7 +179,8 @@ export default {
             this.myData = {
               ...this.userInfo,
               sort: '--',
-              value: '--'
+              value: '--',
+              rate: '--'
             }
           } else {
             myData.value = myData[this.optionInfo.key]

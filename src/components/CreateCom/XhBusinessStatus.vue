@@ -2,6 +2,7 @@
   <el-select
     v-model="dataValue"
     :disabled="disabled"
+    clearable
     style="width: 100%;"
     placeholder="请选择"
     @change="valueChange">

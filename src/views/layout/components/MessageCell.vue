@@ -97,13 +97,18 @@ export default {
           icon: 'wk wk-announcement',
           color: '#6995FF',
           type: 'announcement'
+        },
+        schedule: {
+          icon: 'wk wk-schedule',
+          color: '#6995FF',
+          type: 'schedule'
         }
       }
 
       // 1 任务 2 日志 3 oa审批 4公告 5 日程 6 客户管理
       let key = ''
-      if (this.data.label && this.data.label < 5) {
-        key = ['task', 'log', 'examine', 'announcement'][this.data.label - 1]
+      if (this.data.label && this.data.label <= 5) {
+        key = ['task', 'log', 'examine', 'announcement', 'schedule'][this.data.label - 1]
       } else {
         if ([1, 2, 3].includes(this.data.type)) {
           key = 'task'
@@ -249,7 +254,7 @@ export default {
         if (this.data.isRead == 0) {
           this.$emit('read', this.data.messageId, this.dataIndex)
         }
-        this.$emit('detail', this.typeObj.type, this.data.typeId, this.dataIndex)
+        this.$emit('detail', this.typeObj.type, this.data.typeId, this.dataIndex, this.data)
       }
     },
 

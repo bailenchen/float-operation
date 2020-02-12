@@ -7,7 +7,23 @@
       placeholder="请输入手机号/微信名称"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
-      @on-export="exportInfos"/>
+      @on-export="exportInfos">
+      <el-menu
+        slot="icon"
+        ref="elMenu"
+        :default-active="crmType"
+        mode="horizontal"
+        active-text-color="#2362FB"
+        @select="menuSelect">
+        <el-menu-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :index="item.path">
+          <img :src="item.icon">
+          <span>{{ item.title }}</span>
+        </el-menu-item>
+      </el-menu>
+    </c-r-m-list-head>
     <div
       v-empty="!crm.business.index"
       xs-empty-icon="nopermission"
@@ -77,6 +93,7 @@
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
           :total="total"
+          :pager-count="5"
           class="p-bar"
           background
           layout="prev, pager, next, sizes, total, jumper"
@@ -117,9 +134,40 @@ export default {
       ]
     }
   },
-  computed: {},
+  computed: {
+    menuItems() {
+      const temp = []
+      if (this.crm && this.crm.leads) {
+        temp.push({
+          title: '线索管理',
+          path: 'leads',
+          icon: require('@/assets/img/crm/leads_not.png')
+        })
+      }
+
+      if (this.crm && this.crm.applet) {
+        temp.push({
+          title: '名片线索',
+          path: 'applet',
+          icon: require('@/assets/img/crm/applet.png')
+        })
+      }
+
+      return temp
+    }
+  },
   mounted() {},
+  deactivated: function() {
+    this.$refs.elMenu.activeIndex = this.crmType
+  },
   methods: {
+    /**
+     * 左侧菜单选择
+     */
+    menuSelect(key, keyPath) {
+      this.$emit('menu-select', key, keyPath)
+    },
+
     /**
      * 小程序场景
      */
