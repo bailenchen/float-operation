@@ -65,6 +65,7 @@ import { crmBusinessTransfer } from '@/api/customermanagement/business'
 import { crmContractTransfer } from '@/api/customermanagement/contract'
 import { crmLeadsTransfer } from '@/api/customermanagement/clue'
 import { crmProductTransfer } from '@/api/customermanagement/product'
+import { crmReceivablesTransfer } from '@/api/customermanagement/money'
 
 export default {
   /** 客户管理 的 勾选后的 转移 操作*/
@@ -106,7 +107,7 @@ export default {
   computed: {
     // 是否展示移除操作类型
     showRemoveType() {
-      if (this.crmType == 'leads' || this.crmType == 'contacts' || this.crmType == 'product') {
+      if (this.crmType == 'leads' || this.crmType == 'contacts' || this.crmType == 'receivables' || this.crmType == 'product') {
         return false
       }
       return true
@@ -190,6 +191,8 @@ export default {
         return crmBusinessTransfer
       } else if (this.crmType === 'contract') {
         return crmContractTransfer
+      } else if (this.crmType === 'receivables') {
+        return crmReceivablesTransfer
       } else if (this.crmType === 'product') {
         return crmProductTransfer
       }
