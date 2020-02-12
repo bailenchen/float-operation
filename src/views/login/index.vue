@@ -38,6 +38,7 @@
           <template v-if="activeCom !== 'MultipleCompany'">
             <component
               :is="activeCom"
+              :phone="phone"
               :sms-type="smsType"
               @toggle="handleToggleCom" />
           </template>
@@ -108,7 +109,8 @@ export default {
         ForgetPwd: '忘记密码'
       },
 
-      smsType: null
+      smsType: null,
+      phone: '' // 串联 密码登录 验证码登录 创建 页面的 手机号
     }
   },
   created() {
@@ -117,7 +119,11 @@ export default {
     }
   },
   methods: {
-    handleToggleCom(com, list = []) {
+    /**
+     * MultipleCompany  返回多个公司数组
+     * 其他返回 手机号
+     */
+    handleToggleCom(com, value) {
       this.companyList = []
       const typeMap = {
         LoginByPwd: 'login',
@@ -132,7 +138,9 @@ export default {
       }
       this.activeCom = com
       if (com === 'MultipleCompany') {
-        this.companyList = list
+        this.companyList = value || []
+      } else {
+        this.phone = value || ''
       }
     },
 

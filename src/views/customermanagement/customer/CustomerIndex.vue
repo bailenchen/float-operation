@@ -11,10 +11,11 @@
       @on-export="exportInfos">
       <el-menu
         slot="icon"
+        ref="elMenu"
         :default-active="crmType"
         mode="horizontal"
         active-text-color="#2362FB"
-        router>
+        @select="menuSelect" >
         <el-menu-item
           v-for="(item, index) in menuItems"
           :key="index"
@@ -148,6 +149,7 @@
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
           :total="total"
+          :pager-count="5"
           class="p-bar"
           background
           layout="prev, pager, next, sizes, total, jumper"
@@ -215,7 +217,7 @@ export default {
       if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
         temp.push({
           title: '附近客户',
-          path: 'map',
+          path: 'nearby',
           icon: require('@/assets/img/crm/nearby_not.png')
         })
       }
@@ -224,7 +226,17 @@ export default {
     }
   },
   mounted() {},
+  deactivated: function() {
+    this.$refs.elMenu.activeIndex = this.crmType
+  },
   methods: {
+    /**
+     * 左侧菜单选择
+     */
+    menuSelect(key, keyPath) {
+      this.$emit('menu-select', key, keyPath)
+    },
+
     relativeBusinessClick(data) {
       this.rowID = data.businessId
       this.rowType = 'business'

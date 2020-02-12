@@ -12,10 +12,11 @@
       @on-export="exportInfos">
       <el-menu
         slot="icon"
+        ref="elMenu"
         default-active="seas"
         mode="horizontal"
         active-text-color="#2362FB"
-        router>
+        @select="menuSelect">
         <el-menu-item
           v-for="(item, index) in menuItems"
           :key="index"
@@ -118,6 +119,7 @@
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
           :total="total"
+          :pager-count="5"
           class="p-bar"
           background
           layout="prev, pager, next, sizes, total, jumper"
@@ -188,7 +190,7 @@ export default {
       if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
         temp.push({
           title: '附近客户',
-          path: 'map',
+          path: 'nearby',
           icon: require('@/assets/img/crm/nearby_not.png')
         })
       }
@@ -199,7 +201,17 @@ export default {
   created() {
     this.getPoolList()
   },
+  deactivated: function() {
+    this.$refs.elMenu.activeIndex = 'seas'
+  },
   methods: {
+    /**
+     * 左侧菜单选择
+     */
+    menuSelect(key, keyPath) {
+      this.$emit('menu-select', key, keyPath)
+    },
+
     /**
      * 公海数据
      */

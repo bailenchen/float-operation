@@ -42,58 +42,75 @@ export default [
   },
   {
     ...layout({
-      permissions: ['crm', 'leads']
+      // permissions: ['crm', 'leads']
+      permissionList: [['crm', 'leads'], ['crm', 'applet']]
     }),
     children: [{
-      path: 'clue', // 线索列表
-      component: () => import('@/views/customermanagement/clue/ClueIndex'),
+      path: 'leads', // 线索列表
+      component: () => import('@/views/customermanagement/clue/ClueAllIndex'),
       meta: {
         title: '线索',
         icon: 'leads'
       }
     }]
   },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'applet']
+  //   }),
+  //   children: [{
+  //     path: 'applet', // 名片列表
+  //     component: () => import('@/views/customermanagement/applet/AppletIndex'),
+  //     meta: {
+  //       title: '名片线索',
+  //       icon: 'mp'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
-      permissions: ['crm', 'applet']
-    }),
-    children: [{
-      path: 'applet', // 名片列表
-      component: () => import('@/views/customermanagement/applet/AppletIndex'),
-      meta: {
-        title: '名片线索',
-        icon: 'mp'
-      }
-    }]
-  },
-  {
-    ...layout({
-      permissions: ['crm', 'customer']
+      // permissions: ['crm', 'customer']
+      permissionList: [['crm', 'customer'], ['crm', 'pool'], ['crm', 'customer', 'nearbyCustomer']]
     }),
     children: [{
       path: 'customer', // 客户列表
-      component: () => import('@/views/customermanagement/customer/CustomerIndex'),
+      component: () => import('@/views/customermanagement/customer/CustomerAllIndex'),
       meta: {
         title: '客户',
         icon: 'customer'
       }
     }]
   },
-  {
-    ...layout({
-      permissions: ['crm', 'customer', 'nearbyCustomer']
-    }),
-    hidden: true,
-    children: [{
-      path: 'map', // 附近的客户
-      component: () => import('@/views/customermanagement/map/MapIndex'),
-      meta: {
-        title: '附近的客户',
-        icon: 'nearby',
-        activeMenu: '/crm/customer'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'pool']
+  //   }),
+  //   hidden: true,
+  //   children: [{
+  //     path: 'seas', // 公海列表
+  //     component: () => import('@/views/customermanagement/seas/SeasIndex'),
+  //     meta: {
+  //       title: '公海',
+  //       icon: 'seas',
+  //       activeMenu: '/crm/customer'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'customer', 'nearbyCustomer']
+  //   }),
+  //   hidden: true,
+  //   children: [{
+  //     path: 'nearby', // 附近的客户
+  //     component: () => import('@/views/customermanagement/map/MapIndex'),
+  //     meta: {
+  //       title: '附近的客户',
+  //       icon: 'nearby',
+  //       activeMenu: '/crm/customer'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
       permissions: ['crm', 'contacts']
@@ -104,21 +121,6 @@ export default [
       meta: {
         title: '联系人',
         icon: 'contacts'
-      }
-    }]
-  },
-  {
-    ...layout({
-      permissions: ['crm', 'pool']
-    }),
-    hidden: true,
-    children: [{
-      path: 'seas', // 公海列表
-      component: () => import('@/views/customermanagement/seas/SeasIndex'),
-      meta: {
-        title: '公海',
-        icon: 'seas',
-        activeMenu: '/crm/customer'
       }
     }]
   },

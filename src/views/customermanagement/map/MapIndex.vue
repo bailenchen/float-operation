@@ -8,10 +8,11 @@
         附近的客户
       </flexbox> -->
       <el-menu
-        default-active="map"
+        ref="elMenu"
+        default-active="nearby"
         mode="horizontal"
         active-text-color="#2362FB"
-        router>
+        @select="menuSelect">
         <el-menu-item
           v-for="(item, index) in menuItems"
           :key="index"
@@ -237,7 +238,7 @@ export default {
       if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
         temp.push({
           title: '附近客户',
-          path: 'map',
+          path: 'nearby',
           icon: require('@/assets/img/crm/nearby.png')
         })
       }
@@ -258,7 +259,17 @@ export default {
         this.getMyPosition()
       })
   },
+  deactivated: function() {
+    this.$refs.elMenu.activeIndex = 'nearby'
+  },
   methods: {
+    /**
+     * 左侧菜单选择
+     */
+    menuSelect(key, keyPath) {
+      this.$emit('menu-select', key, keyPath)
+    },
+
     /**
      * 获取当前位置
      */

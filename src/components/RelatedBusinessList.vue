@@ -85,7 +85,6 @@ export default {
      * @param index
      */
     handlerToDetail(type, index) {
-      // console.log(type, this.data[type][index])
       this.$emit('select', type, this.data[type][index])
     }
   }
