@@ -293,10 +293,13 @@ export default {
     padding: 1.2% 2.8% 0;
     display: flex;
     img {
-      width: 10%;
+      width: 164px;
     }
     @media screen and (max-width: 1600px) {
       padding: 1.2% 2.8% 0;
+      img {
+        width: 120px;
+      }
     }
   }
 
