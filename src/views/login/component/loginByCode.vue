@@ -64,8 +64,8 @@
 
     <el-dialog
       :visible.sync="dialogVisible"
-      title="没有收到验证码怎么办？"
-      width="500">
+      :width="dialogWidth"
+      title="没有收到验证码怎么办？">
       <div class="help-doc">
         悟空CRM用户您好，验证码短信正常情况下都会在数秒钟内发送，如果您未收到短信，你可以参考以下解决方案尝试解决：<br>
         1、由于您的手机进行了某些安全设置，短信验证码被拦截。请打开垃圾箱查看，并将悟空CRM号码添加为白名单。<br>
@@ -103,7 +103,8 @@ export default {
       redirect: undefined,
 
       loginType: 1,
-      dialogVisible: false
+      dialogVisible: false,
+      dialogWidth: '50%'
     }
   },
   watch: {
@@ -113,6 +114,16 @@ export default {
       },
       immediate: true
     }
+  },
+  created() {
+    this.$nextTick(() => {
+      if (document.body.clientWidth > 1600) {
+        this.dialogWidth = '40%'
+      } else {
+        this.dialogWidth = '55%'
+      }
+      console.log('dialog', this.dialogWidth)
+    })
   },
   methods: {
     handleLogin() {
