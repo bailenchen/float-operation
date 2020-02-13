@@ -290,13 +290,13 @@ export default {
 
   .top-nav {
     width: 100%;
-    padding: 1.2% 2.8% 0;
+    padding: 23px 2.8% 0;
     display: flex;
     img {
       width: 164px;
     }
     @media screen and (max-width: 1600px) {
-      padding: 1.2% 2.8% 0;
+      padding: 23px 2.8% 0;
       img {
         width: 120px;
       }
