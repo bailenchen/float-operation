@@ -293,7 +293,8 @@ export default {
         { label: '软件和IT信息技术业', value: 7 },
         { label: '文化、体育和娱乐业', value: 8 },
         { label: '制造业', value: 9 },
-        { label: '科学研究和技术服务业', value: 10 }
+        { label: '科学研究和技术服务业', value: 10 },
+        { label: '其他', value: 11 }
       ],
       areaList: [
         { label: '北京市', value: 1 },
@@ -651,6 +652,9 @@ export default {
     }
     @media screen and (max-width: 1600px) {
       margin-bottom: 10px;
+      .cell-box:first-child {
+        margin-right: 15px;
+      }
     }
   }
 
@@ -694,14 +698,15 @@ export default {
       margin-top: 5px;
     }
     @media screen and (max-width: 1600px)  {
-      height: 46px;
-      line-height: 46px;
+      height: 36px;
+      font-size: 12px;
+      line-height: 36px;
       margin-top: 10px;
       .icon {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
         margin-left: -10px;
-        margin-top: 5px;
+        margin-top: 3px;
       }
     }
 

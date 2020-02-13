@@ -214,8 +214,8 @@ export default {
       activeCom: 'LoginByPwd',
       companyList: [],
       titleMap: {
-        LoginByPwd: '欢迎登录悟空CRM',
-        LoginByCode: '欢迎登录悟空CRM',
+        LoginByPwd: '欢迎登录',
+        LoginByCode: '欢迎登录',
         CreateNewCompany: '创建新企业',
         MultipleCompany: '选择企业',
         ForgetPwd: '忘记密码'
@@ -296,7 +296,7 @@ export default {
       width: 10%;
     }
     @media screen and (max-width: 1600px) {
-      padding: 1.2% 2.8%;
+      padding: 1.2% 2.8% 0;
     }
   }
 
@@ -493,7 +493,7 @@ export default {
     }
 
     @media screen and (max-width: 1600px) {
-      margin-top: 0;
+      margin-top: -20px;
     }
   }
 }
@@ -556,7 +556,7 @@ export default {
       @media screen and (max-width: 1600px) {
         .main-pic {
           width: 450px;
-          margin-bottom: 10px;
+          margin-bottom: 5px;
         }
         .activity-list {
           width: 500px;
