@@ -103,7 +103,7 @@
   @media screen and (max-width: 1600px) {
     padding: 0 40px;
     .el-form-item {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       .el-input {
         height: 50px;
         font-size: 14px;
@@ -151,6 +151,7 @@
   @media screen and (max-width: 1600px) {
     height: 44px;
     padding: 0 40px;
+    margin-top: 10px;
   }
 }
 
@@ -224,6 +225,9 @@
       font-size: 20px;
       border-radius: $xr-border-radius-base;
     }
+    .others {
+      margin-top: 10px;
+    }
   }
 }
 
@@ -261,6 +265,9 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+  @media screen and (max-width: 1600px) {
+    margin-top: 10px;
   }
 }
 

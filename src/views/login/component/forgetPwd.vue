@@ -381,6 +381,7 @@ export default {
     margin-bottom: 20px;
     @media screen and (max-width: 1600px) {
       height: 50px;
+      margin-bottom: 15px;
     }
   }
 }

@@ -290,14 +290,13 @@ export default {
 
   .top-nav {
     width: 100%;
-    padding: 1.2% 2.8%;
+    padding: 1.2% 2.8% 0;
     display: flex;
     img {
-      width: 164px;
+      width: 10%;
     }
     @media screen and (max-width: 1600px) {
-      padding: 1.5% 2.8%;
-      margin-bottom: 10px;
+      padding: 1.2% 2.8%;
     }
   }
 
@@ -307,9 +306,9 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: auto;
+    margin-top: -42px;
     .left {
-      height: 100%;
       .title {
         font-size: 46px;
         font-weight: normal;
@@ -319,6 +318,8 @@ export default {
         margin-left: 50px;
         @media screen and (max-width: 1600px) {
           font-size: 32px;
+          margin-top: 0;
+          margin-bottom: 15px;
         }
       }
       .mini-title {
@@ -328,7 +329,8 @@ export default {
         margin-bottom: 12px;
         margin-left: 50px;
         @media screen and (max-width: 1600px) {
-          font-size: 20px;
+          font-size: 18px;
+          margin-bottom: 6px;
         }
       }
       .desc {
@@ -357,7 +359,7 @@ export default {
           font-size: 16px;
           line-height: 40px;
           border-radius: 4px;
-          margin: 25px 0 25px 50px;
+          margin: 10px 0 10px 50px;
         }
       }
       .main-pic {
@@ -366,9 +368,9 @@ export default {
         margin-top: 38px;
         @media screen and (max-width: 1600px) {
           width: 500px;
-          margin-top: 16px;
+          margin-top: 10px;
           margin-left: -20px;
-          margin-bottom: 45px;
+          margin-bottom: 20px;
         }
       }
       .download-group {
@@ -414,7 +416,6 @@ export default {
     }
     .right {
       width: 650px;
-      height: 100%;
       margin-left: 150px;
       padding-top: 36px;
       .login-main-content {
@@ -469,13 +470,13 @@ export default {
       @media screen and (max-width: 1600px) {
         width: 480px;
         margin-left: 80px;
-        padding-top: 15px;
+        padding-top: 10px;
         .login-main-content {
-          height: 520px;
+          height: 450px;
           .logo-box {
             font-size: 20px;
             padding: 0 40px;
-            margin: 25px 0 30px;
+            margin: 15px 0 20px;
             &:before {
               height: 16px;
               left: 24px;
@@ -489,6 +490,10 @@ export default {
           }
         }
       }
+    }
+
+    @media screen and (max-width: 1600px) {
+      margin-top: 0;
     }
   }
 }
@@ -549,15 +554,19 @@ export default {
         }
       }
       @media screen and (max-width: 1600px) {
+        .main-pic {
+          width: 450px;
+          margin-bottom: 10px;
+        }
         .activity-list {
           width: 500px;
-          margin-top: 15px;
+          margin-top: 5px;
           margin-left: 40px;
           .activity-list-item {
             width: 250px;
-            margin: 10px 0;
+            margin: 6px 0;
             .icon {
-              font-size: 22px;
+              font-size: 20px;
             }
             .box {
               .activity-title {
@@ -575,7 +584,7 @@ export default {
       .login-main-content {
         height: 730px;
         @media screen and (max-width: 1600px) {
-          height: 600px;
+          height: 490px;
         }
       }
     }
