@@ -105,6 +105,15 @@ export default {
     },
 
     /**
+     * 编辑成功
+     */
+    editSaveSuccess() {
+      this.$bus.$emit('crm-detail-update', this.crmType)
+      this.$emit('handle', { type: 'save-success' })
+      this.getDetial()
+    },
+
+    /**
      * 获取tab数量
      */
     getTabsNum() {
