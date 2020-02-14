@@ -9,7 +9,7 @@ const wkURL = 'https://s.72crm.com/api/' // 内部私有服务
 const cipherStr = 'wk'
 
 const companyName = '悟空CRM'
-const version = 'V10.1.2.20200117'
+const version = 'V10.1.3.20200214'
 
 export default {
   version,
