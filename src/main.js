@@ -3,6 +3,11 @@ import Vue from 'vue'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
+// 配置信息
+import config from '@/config'
+window.WKConfig = config
+Vue.prototype.WKConfig = config
+
 import ElementUI from 'element-ui'
 Vue.use(ElementUI)
 import 'element-ui/lib/theme-chalk/index.css'
@@ -16,11 +21,6 @@ import store from './store'
 
 import cache from '@/utils/cache'
 cache.loadingCache()
-
-// 配置信息
-import config from '@/config'
-window.WKConfig = config
-Vue.prototype.WKConfig = config
 
 import '@/permission' // permission control
 import 'vue2-animate/dist/vue2-animate.min.css'

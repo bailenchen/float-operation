@@ -8,6 +8,9 @@ import {
 } from '@/utils/auth'
 import qs from 'qs'
 import { debounce } from 'throttle-debounce'
+import config from '@/config'
+import Lockr from 'lockr'
+
 /**
  * 检查dom是否忽略
  * @param {*} e
@@ -40,9 +43,8 @@ const confirmMessage = debounce(1000, (message) => {
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 // 创建axios实例
-
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api 的 base_url
+  baseURL: Lockr.get('wkCipher') ? config.wkURL : process.env.BASE_API, // api 的 base_url
   timeout: 600000 // 请求超时时间
 })
 

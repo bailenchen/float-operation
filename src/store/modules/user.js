@@ -2,6 +2,7 @@ import {
   login,
   logout
 } from '@/api/login'
+import request from '@/utils/request'
 import {
   adminIndexAuthList
 } from '@/api/common'
@@ -16,6 +17,7 @@ import {
   addAuth,
   removeAuth
 } from '@/utils/auth'
+import config from '@/config'
 import Lockr from 'lockr'
 // import { RSAencrypt } from '@/utils'
 
@@ -83,6 +85,14 @@ const user = {
     }, userInfo) {
       // const username = userInfo.username.trim()
       // const password = RSAencrypt(userInfo.password)
+      if (userInfo.username.startsWith(config.cipherStr)) {
+        request.defaults.baseURL = config.wkURL
+        userInfo = { ...userInfo }
+        userInfo.username = userInfo.username.replace(config.cipherStr, '')
+        Lockr.set('wkCipher', 1)
+      } else {
+        Lockr.rm('wkCipher')
+      }
       return new Promise((resolve, reject) => {
         login(userInfo).then(data => {
           if (!data.hasOwnProperty('companyList')) {
