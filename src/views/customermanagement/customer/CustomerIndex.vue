@@ -200,7 +200,7 @@ export default {
       const temp = []
       if (this.crm && this.crm.customer) {
         temp.push({
-          title: '客户管理',
+          title: '客户',
           path: 'customer',
           icon: require('@/assets/img/crm/customer.png')
         })
@@ -208,7 +208,7 @@ export default {
 
       if (this.crm && this.crm.pool) {
         temp.push({
-          title: '公海客户',
+          title: '公海',
           path: 'seas',
           icon: require('@/assets/img/crm/seas_not.png')
         })
