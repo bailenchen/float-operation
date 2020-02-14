@@ -294,11 +294,13 @@ export default {
     display: flex;
     img {
       width: 164px;
+      height: 50px;
     }
     @media screen and (max-width: 1600px) {
       padding: 23px 2.8% 0;
       img {
-        width: 120px;
+        width: 118px;
+        height: 36px;
       }
     }
   }
