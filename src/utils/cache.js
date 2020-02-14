@@ -25,6 +25,9 @@ const cache = {
     store.dispatch('GetUserInfo')
     store.dispatch('SystemLogoAndName')
   },
+  updateAxiosHeaders: function() {
+    axios.defaults.headers['Admin-Token'] = Lockr.get('Admin-Token')
+  },
   /**
    * 移除登录信息
    * @param {*}
