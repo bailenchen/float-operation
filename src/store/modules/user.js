@@ -92,6 +92,7 @@ const user = {
         Lockr.set('wkCipher', 1)
       } else {
         Lockr.rm('wkCipher')
+        request.defaults.baseURL = process.env.BASE_API
       }
       return new Promise((resolve, reject) => {
         login(userInfo).then(data => {
