@@ -83,11 +83,18 @@ export default {
       this.getDetial()
     }
   },
+  created() {
+    this.$bus.on('crm-detail-update', (data) => {
+      this.getBaseInfo()
+    })
+  },
   mounted() {
     this.getDetial()
   },
 
-  beforeDestroy() {},
+  beforeDestroy() {
+    this.$bus.off('crm-detail-update')
+  },
   methods: {
     /**
      * 获取联系人详情

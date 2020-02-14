@@ -151,9 +151,14 @@ export default {
       this.getDetial()
     }
     this.getBaseInfo()
+    this.$bus.on('crm-detail-update', (data) => {
+      this.getBaseInfo()
+    })
   },
 
-  beforeDestroy() {},
+  beforeDestroy() {
+    this.$bus.off('crm-detail-update')
+  },
   methods: {
     /**
      * 获取联系人详情

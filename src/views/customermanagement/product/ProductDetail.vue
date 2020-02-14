@@ -220,13 +220,13 @@ export default {
       this.$emit('hide-view')
     },
 
-    /**
-     * 编辑成功
-     */
-    editSaveSuccess() {
-      this.$emit('handle', { type: 'save-success' })
-      this.getDetial()
-    },
+    // /**
+    //  * 编辑成功
+    //  */
+    // editSaveSuccess() {
+    //   this.$emit('handle', { type: 'save-success' })
+    //   this.getDetial()
+    // },
 
     /**
      * 预览图片

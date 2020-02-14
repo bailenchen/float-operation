@@ -27,6 +27,7 @@
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
+        :header-cell-class-name="headerCellClassName"
         class="n-table--border"
         use-virtual
         stripe
@@ -226,6 +227,12 @@ export default {
       this.$set(scope.row, 'callShow', !scope.row.callShow)
       const popoverEl = e.target.parentNode
       popoverEl.__vue__.showPopper = !scope.row.callShow
+    },
+    headerCellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'name') {
+        return 'header-can-visit-backgroud'
+      }
+      return ''
     }
   }
 }

@@ -27,6 +27,7 @@
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
+        :header-cell-class-name="headerCellClassName"
         class="n-table--border"
         use-virtual
         stripe
@@ -174,6 +175,13 @@ export default {
       } else {
         return ''
       }
+    },
+
+    headerCellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'num') {
+        return 'header-can-visit-backgroud'
+      }
+      return ''
     }
   }
 }
