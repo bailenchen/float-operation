@@ -56,6 +56,7 @@ export default {
   mounted() {
     this.addBus()
     this.addDocumentVisibilityChange()
+    this.setMinHeight()
   },
   methods: {
     addDocumentVisibilityChange() {
@@ -91,6 +92,20 @@ export default {
         self.previewIndex = data.index
         self.previewImgs = data.data
         self.showPreviewImg = true
+      })
+    },
+
+    setMinHeight() {
+      this.$nextTick(() => {
+        const dpr = window.devicePixelRatio || 1
+        const clientWidth = document.body.clientWidth
+        const dom = document.getElementById('app')
+        if (dpr !== 1 && clientWidth > 1600) {
+          dom.style.minHeight = '800px'
+        } else {
+          // dom.style.minWidth = '1200px'
+          dom.style.minHeight = '605px'
+        }
       })
     }
   }
