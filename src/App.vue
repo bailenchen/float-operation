@@ -102,6 +102,8 @@ export default {
         const dom = document.getElementById('app')
         if (dpr !== 1 && clientWidth > 1600) {
           dom.style.minHeight = '800px'
+        } else if (dpr === 1 && clientWidth > 1600) {
+          dom.style.minWidth = '1650px'
         } else {
           // dom.style.minWidth = '1200px'
           dom.style.minHeight = '605px'

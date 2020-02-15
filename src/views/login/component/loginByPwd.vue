@@ -278,16 +278,16 @@ export default {
 
 .login-by-pwd {
   .forget-pwd {
-    height: 70px;
+    height: 62px;
     color: #999;
-    line-height: 70px;
+    line-height: 62px;
     cursor: pointer;
     padding: 0 10px 0 5px;
     display: block;
     &:hover {
       color: #3e6bea;
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       height: 50px;
       font-size: 14px;
       line-height: 50px;
@@ -307,7 +307,7 @@ export default {
     }
   }
 
-  @media screen and (min-width: 1600px) {
+  @media screen and (min-width: 1550px) {
     /deep/ .el-checkbox {
       .el-checkbox__inner {
         width: 16px;
@@ -322,7 +322,7 @@ export default {
       }
     }
   }
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     margin-top: -5px;
     .login-by-code {
       font-size: 14px;
@@ -343,7 +343,7 @@ export default {
       }
     }
   }
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     .others {
       font-size: 14px;
       .el-dropdown {

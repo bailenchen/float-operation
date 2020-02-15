@@ -240,14 +240,25 @@
       :disabled="disabledBtn || !agreeLaw"
       class="register-btn"
       @click="handleNextStep">
-      {{ showNextStep ? '注册' : '下一步' }}
+      {{ showNextStep ? '立即注册' : '下一步' }}
     </el-button>
 
-    <div class="center-tips">
-      <span>已有账号，</span>
-      <span
-        class="special" @click="$emit('toggle', 'LoginByPwd', form.phone)">去登录</span>
-    </div>
+    <template v-if="!showNextStep">
+      <div class="center-tips">
+        <span>已有账号，</span>
+        <span
+          class="special" @click="$emit('toggle', 'LoginByPwd', form.phone)">去登录</span>
+      </div>
+    </template>
+    <template v-else>
+      <div class="center-tips">
+        <span
+          class="special"
+          @click="showNextStep = false">
+          返回上一步
+        </span>
+      </div>
+    </template>
 
     <el-dialog
       :visible.sync="dialogVisible"
@@ -466,7 +477,7 @@ export default {
         this.$set(this.form, 'realname', this.$route.query.name || '')
         this.$set(this.form, 'phone', this.$route.query.mobile || '')
       }
-      if (document.body.clientWidth > 1600) {
+      if (document.body.clientWidth > 1550) {
         this.dialogWidth = '40%'
       } else {
         this.dialogWidth = '60%'
@@ -657,7 +668,7 @@ export default {
 .error-info {
   width: 100%;
   height: 52px;
-  padding: 0 60px;
+  padding: 0 40px;
   margin-bottom: 14px;
   margin-top: 20px;
   &.ok {
@@ -682,7 +693,7 @@ export default {
       margin-right: 10px;
     }
   }
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     height: 36px;
     padding: 0 40px;
     margin-top: 10px;
@@ -692,7 +703,7 @@ export default {
 
 .register-box {
   width: 100%;
-  padding: 0 60px;
+  padding: 0 40px;
 
   /deep/ .el-input {
     height: 46px;
@@ -727,7 +738,7 @@ export default {
         margin-right: 38px;
       }
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       margin-bottom: 10px;
       .cell-box:first-child {
         margin-right: 15px;
@@ -736,14 +747,14 @@ export default {
   }
 
   .row {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     /deep/ .el-input {
-      height: 70px;
+      height: 62px;
       .el-input__inner {
-        height: 70px;
+        height: 62px;
       }
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       margin-bottom: 10px;
       /deep/ .el-input {
         height: 50px;
@@ -774,7 +785,7 @@ export default {
       margin-left: -10px;
       margin-top: 5px;
     }
-    @media screen and (max-width: 1600px)  {
+    @media screen and (max-width: 1550px)  {
       height: 36px;
       font-size: 12px;
       line-height: 36px;
@@ -802,12 +813,12 @@ export default {
     justify-content: flex-start;
     flex-wrap: nowrap;
     margin-top: 15px;
-    @media screen and (max-width: 1600px)  {
+    @media screen and (max-width: 1550px)  {
       margin-top: 10px;
     }
     .el-input {
       width: 300px;
-      @media screen and (max-width: 1600px)  {
+      @media screen and (max-width: 1550px)  {
         width: 250px;
       }
     }
@@ -826,7 +837,7 @@ export default {
         height: 46px;
         line-height: 46px;
         font-size: 14px;
-        @media screen and (max-width: 1600px) {
+        @media screen and (max-width: 1550px) {
           height: 36px;
           line-height: 36px;
         }
@@ -871,16 +882,16 @@ export default {
     &.is-disabled {
       cursor: not-allowed;
     }
-    @media screen and (max-width: 1600px)  {
+    @media screen and (max-width: 1550px)  {
       height: 42px;
       line-height: 42px;
     }
     &.special {
-      height: 70px;
-      line-height: 70px;
+      height: 62px;
+      line-height: 62px;
       font-size: 22px;
       margin-top: 80px;
-      @media screen and (max-width: 1600px) {
+      @media screen and (max-width: 1550px) {
         height: 50px;
         line-height: 50px;
         font-size: 20px;
@@ -900,7 +911,7 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       font-size: 14px;
       margin-top: 10px;
     }
@@ -910,7 +921,7 @@ export default {
     padding: 0;
   }
 
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     padding: 0 40px;
     /deep/ .el-input {
       height: 36px;
