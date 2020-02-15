@@ -207,7 +207,7 @@ export default {
         })
       }
 
-      if (this.oa.calendar) {
+      if (this.oa && this.oa.calendar) {
         tempsItems.push({
           title: '日历',
           type: 8,

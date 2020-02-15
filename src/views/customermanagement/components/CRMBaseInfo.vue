@@ -180,7 +180,7 @@ export default {
   watch: {
     id: function(val) {
       if (!this.filedList) {
-        this.getBaseInfo()
+        this.getBaseInfo(true)
       }
     },
     filedList() {
@@ -188,21 +188,33 @@ export default {
     }
 
   },
+  created() {
+    this.$bus.on('crm-detail-update', (data) => {
+      this.getBaseInfo(false)
+    })
+  },
+  beforeDestroy() {
+    this.$bus.off('crm-detail-update')
+  },
   mounted() {
     if (this.filedList) {
       this.list = this.filedList
     } else {
-      this.getBaseInfo()
+      this.getBaseInfo(true)
     }
   },
-  activated: function() {},
+  activated: function() {
+    console.log('3333')
+    this.getBaseInfo(false)
+  },
   deactivated: function() {},
   methods: {
     /**
      * 获取基础信息
      */
-    getBaseInfo() {
-      this.loading = true
+    getBaseInfo(loading) {
+      console.log('7777')
+      this.loading = !!loading
       if (this.crmType === 'marketing') {
         crmMarketingInformationAPI().then(res => {
           this.list = res.data
