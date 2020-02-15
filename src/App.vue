@@ -28,6 +28,7 @@ import XrImport from '@/components/xr-import'
 import XrImportMixins from '@/components/xr-import/XrImportMixins'
 import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
+import cache from '@/utils/cache'
 
 
 export default {
@@ -82,6 +83,9 @@ export default {
       }
       // 添加监听器，在title里显示状态变化
       document.addEventListener(visibilityChange, () => {
+        if (document[state] == 'visible') {
+          cache.updateAxiosHeaders()
+        }
         this.$bus.emit('document-visibility', document[state])
       }, false)
     },
