@@ -37,6 +37,7 @@
               v-model="form.startTime"
               value-format="yyyy-MM-dd HH:mm:ss"
               type="datetime"
+              default-time="09:00:00"
               placeholder="选择日期"
               @change="changeStartTime"/>
           </el-form-item>
@@ -45,6 +46,7 @@
               v-model="form.endTime"
               :picker-options="pickerOptions"
               type="datetime"
+              default-time="09:00:00"
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="选择日期"/>
           </el-form-item>

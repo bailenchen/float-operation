@@ -178,7 +178,8 @@ export function canlendarEventCrmAPI(data) {
 }
 
 /**
- * 即将到期的任务
+ * 即将到期的任务 system/user/queryAuthUserList
+
  */
 
 export function canlendarEventTaskAPI(data) {
@@ -188,6 +189,17 @@ export function canlendarEventTaskAPI(data) {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     },
+    data: data
+  })
+}
+/**
+ *  日程员工列表
+ */
+
+export function systemUserQueryAuthUserList(data) {
+  return request({
+    url: 'system/user/queryAuthUserList',
+    method: 'post',
     data: data
   })
 }

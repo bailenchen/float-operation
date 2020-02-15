@@ -71,7 +71,7 @@
       </div>
       <div class="left-bottom-text">
         <i class="el-icon-warning"/>
-        <span class="text-span">日历的自定义类型可以在企业管理后台-其他设置-日历类型设置里面进行编辑</span>
+        <span class="text-span">自定义类型可在后台配置</span>
       </div>
     </div>
     <div class="box-right">
@@ -155,7 +155,8 @@ import {
   canlendarEventTaskAPI,
   canlendarUpdateTypeAPI
 } from '@/api/calendar'
-import { subUserListIndex } from '@/api/common'
+// import { subUserListIndex } from '@/api/common'
+import { systemUserQueryAuthUserList } from '@/api/calendar'
 import moment from 'moment'
 // import { getMaxIndex } from '@/utils'
 import CreateEvent from './components/CreateEvent'
@@ -260,7 +261,7 @@ export default {
   },
   computed: {
     subUserListIndex() {
-      return subUserListIndex
+      return systemUserQueryAuthUserList
     }
   },
   watch: {
@@ -531,7 +532,8 @@ export default {
      * 点击事件
      */
     eventClick(data) {
-      if (data.event.groupId == -2) {
+      console.log(data, 'data')
+      if (data.event.extendedProps && data.event.extendedProps.typeId == -2) {
         this.relationID = data.event.id
         this.relationCrmType = 'task'
         setTimeout(() => {
@@ -618,13 +620,18 @@ export default {
      * 新建日程
      */
     handleSure(data, color) {
+      let endTime = moment(data.endTime).format('YYYY-MM-DD HH:mm:ss')
+      if (moment(data.endTime).format('YYYY-MM-DD HH:mm:ss').includes('00:00:00')) {
+        endTime = moment(data.endTime - 0 + 1000).format('YYYY-MM-DD HH:mm:ss')
+      }
       this.calendarEvents.push({
         title: data.title,
         start: moment(data.startTime).format('YYYY-MM-DD HH:mm:ss'),
         id: data.eventId,
         color: color,
+        typeId: data.groupId,
         groupId: data.typeId,
-        end: moment(data.endTime).format('YYYY-MM-DD HH:mm:ss')
+        end: endTime
       })
     },
 
@@ -663,7 +670,7 @@ export default {
      * 展示员工选框
      */
     showUserSelect() {
-      subUserListIndex().then(res => {
+      systemUserQueryAuthUserList().then(res => {
         if (res.data.length === 0) {
           this.showUser = false
         } else {
@@ -708,13 +715,13 @@ export default {
         res.data.forEach(item => {
           this.taskList.push({
             title: item.name,
-            startTime: moment(item.startTime).format('YYYY-MM-DD HH:mm:ss'),
+            startTime: moment(item.startTime - 0 + 1000).format('YYYY-MM-DD HH:mm:ss'),
             id: item.taskId,
             eventId: item.taskId,
             color: '#AEA1EA',
-            groupId: this.sysTypeId[0].typeId,
+            groupId: -2,
             typeId: this.sysTypeId[0].typeId,
-            endTime: moment(item.endTime).format('YYYY-MM-DD HH:mm:ss')
+            endTime: moment(item.endTime - 0 + 1000).format('YYYY-MM-DD HH:mm:ss')
           })
         })
         this.getList()
@@ -808,13 +815,13 @@ export default {
   margin-right: 20px;
   flex-shrink: 0;
   .left-scroll{
-    height: calc(100% - 120px);
+    height: calc(100% - 100px);
     overflow-y: auto;
   }
   .left-bottom-text{
     color: #999;
     width: 240px;
-    height: 40px;
+    height: 20px;
     margin-top: 20px;
     margin-bottom: 10px;
     font-size: 12px;

@@ -1,6 +1,5 @@
 <template>
   <el-dialog
-    v-loading="loading"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     append-to-body
@@ -23,154 +22,160 @@
         </el-dropdown>
       </span>
     </div>
-    <template v-if="id == -1">
-      <el-table
-        id="crm-table"
-        :data="list"
-        height="500"
-        class="n-table--border"
-        stripe
-        border
-        highlight-current-row
-        style="width: 100%"
-        @row-click="handleRowClick">
-        <el-table-column
-          v-for="(item, index) in fieldList"
-          :key="index"
-          :prop="item.prop"
-          :label="item.label"
-          :width="item.width"
-          :formatter="fieldFormatter"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            <template v-if="item.prop == 'dealStatus'">
-              <i :class="scope.row[item.prop] | dealIcon"/>
-              <span>{{ scope.row[item.prop] | dealName }}</span>
+    <div v-loading="loading">
+      <template v-if="id == -1">
+        <el-table
+          id="crm-table"
+          :data="list"
+          :cell-class-name="cellClassName"
+          height="500"
+          class="n-table--border"
+          stripe
+          border
+          highlight-current-row
+          style="width: 100%"
+          @row-click="handleRowClick">
+          <el-table-column
+            v-for="(item, index) in fieldList"
+            :key="index"
+            :prop="item.prop"
+            :label="item.label"
+            :width="item.width"
+            :formatter="fieldFormatter"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <template v-if="item.prop == 'dealStatus'">
+                <i :class="scope.row[item.prop] | dealIcon"/>
+                <span>{{ scope.row[item.prop] | dealName }}</span>
+              </template>
+              <template v-else-if="item.prop == 'status' && crmType === 'customer'">
+                <i
+                  v-if="scope.row.status == 2"
+                  class="wk wk-circle-password customer-lock"/>
+              </template>
+              <template v-else-if="item.prop == 'checkStatus'">
+                <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
+                <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+              </template>
+              <template v-else>
+                {{ scope.row[item.prop] }}
+              </template>
             </template>
-            <template v-else-if="item.prop == 'status' && crmType === 'customer'">
-              <i
-                v-if="scope.row.status == 2"
-                class="wk wk-circle-password customer-lock"/>
-            </template>
-            <template v-else-if="item.prop == 'checkStatus'">
-              <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
-              <span>{{ getStatusName(scope.row.checkStatus) }}</span>
-            </template>
-            <template v-else>
-              {{ scope.row[item.prop] }}
-            </template>
-          </template>
-        </el-table-column>
-        <el-table-column :resizable="false"/>
-        <el-table-column :resizable="false"/>
-      </el-table>
-      <div class="p-contianer">
-        <el-pagination
-          :current-page="currentPage"
-          :page-sizes="pageSizes"
-          :page-size.sync="pageSize"
-          :total="total"
-          class="p-bar"
-          background
-          layout="prev, pager, next, sizes, total, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"/>
-      </div>
-    </template>
-    <template v-else>
-      <div class="common-box">
-        <div class="common-title">{{ todayDetailData.title || detail.title }}</div>
-
-        <flexbox class="common-header">
-          <flexbox class="header-left">
-            <span class="time-circle">
-              <span class="wk wk-l-time"/>
-            </span>
-
-            <div class="time-text">
-              <div class="text-up">{{ formattedTime(todayDetailData.startTime) }}</div>
-              <div class="time-time">开始时间</div>
-            </div>
-          </flexbox>
-
-          <flexbox class="header-right">
-            <i class="el-icon-remove"/>
-            <div class="time-text">
-              <div class="text-up">{{ formattedTime(todayDetailData.endTime) }}</div>
-              <div class="time-time">结束时间</div>
-            </div>
-          </flexbox>
-        </flexbox>
-
-        <div class="common-content">
-          <div class="content-title">参与人</div>
-          <flexbox>
-            <xr-avatar
-              v-for="item in detail.ownerUserList"
-              :id="item.userId"
-              :key="item.userId"
-              :size="32"
-              :disabled="false"
-              :name="item.realname"
-              :src="item.img"
-              trigger="hover"
-              class="user-img"/>
-          </flexbox>
+          </el-table-column>
+          <el-table-column :resizable="false"/>
+          <el-table-column :resizable="false"/>
+        </el-table>
+        <div class="p-contianer">
+          <el-pagination
+            :current-page="currentPage"
+            :page-sizes="pageSizes"
+            :page-size.sync="pageSize"
+            :total="total"
+            class="p-bar"
+            background
+            layout="prev, pager, next, sizes, total, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"/>
         </div>
+      </template>
+      <template v-else>
+        <div class="common-box">
+          <div class="common-title">{{ todayDetailData.title || detail.title }}</div>
 
-        <div class="common-foot">
-          <div v-if="detail.customerList" class="section__hd">
-            <i class="wukong wukong-relevance" />
-            <span>相关信息({{ detail.customerList.length }})</span>
+          <flexbox class="common-header">
+            <flexbox class="header-left">
+              <span class="time-circle">
+                <span class="wk wk-l-time"/>
+              </span>
+
+              <div class="time-text">
+                <div class="text-up">{{ formattedTime(todayDetailData.startTime) }}</div>
+                <div class="time-time">开始时间</div>
+              </div>
+            </flexbox>
+
+            <flexbox class="header-right">
+              <i class="el-icon-remove"/>
+              <div class="time-text">
+                <div class="text-up">{{ formattedTime(todayDetailData.endTime) }}</div>
+                <div class="time-time">结束时间</div>
+              </div>
+            </flexbox>
+          </flexbox>
+
+          <div class="common-content">
+            <div class="content-title">参与人</div>
+            <flexbox>
+              <xr-avatar
+                v-for="item in detail.ownerUserList"
+                :id="item.userId"
+                :key="item.userId"
+                :size="32"
+                :disabled="false"
+                :name="item.realname"
+                :src="item.img"
+                trigger="hover"
+                class="user-img"/>
+            </flexbox>
           </div>
 
-          <p v-else>暂无相关信息</p>
-
-          <div class="section_scroll">
-            <div>
-              <related-business-cell
-                v-for="(item, itemIndex) in detail.customerList"
-                :data="item"
-                :cell-index="itemIndex"
-                :key="item.customerId"
-                :show-foot="false"
-                type="customer"
-                @click.native="checkRelatedDetail(item, 'customer')" />
-              <related-business-cell
-                v-for="(item, itemIndex) in detail.contactsList"
-                :data="item"
-                :cell-index="itemIndex"
-                :key="item.customerId"
-                :show-foot="false"
-                type="contacts"
-                @click.native="checkRelatedDetail(item, 'contacts')" />
-              <related-business-cell
-                v-for="(item, itemIndex) in detail.contractList"
-                :data="item"
-                :cell-index="itemIndex"
-                :key="item.customerId"
-                :show-foot="false"
-                type="contract"
-                @click.native="checkRelatedDetail(item, 'contract')" />
-              <related-business-cell
-                v-for="(item, itemIndex) in detail.businessList"
-                :data="item"
-                :cell-index="itemIndex"
-                :key="item.customerId"
-                :show-foot="false"
-                type="business"
-                @click.native="checkRelatedDetail(item, 'business')" />
+          <div class="common-foot">
+            <div v-if="detail.customerList" class="section__hd">
+              <i class="wukong wukong-relevance" />
+              <span>相关信息({{ detail.customerList.length }})</span>
             </div>
+
+            <p v-else>暂无相关信息</p>
+
+            <div class="section_scroll">
+              <div>
+                <related-business-cell
+                  v-for="(item, itemIndex) in detail.customerList"
+                  :data="item"
+                  :cell-index="itemIndex"
+                  :key="item.customerId"
+                  :show-foot="false"
+                  type="customer"
+                  @click.native="checkRelatedDetail(item, 'customer')" />
+                <related-business-cell
+                  v-for="(item, itemIndex) in detail.contactsList"
+                  :data="item"
+                  :cell-index="itemIndex"
+                  :key="item.customerId"
+                  :show-foot="false"
+                  type="contacts"
+                  @click.native="checkRelatedDetail(item, 'contacts')" />
+                <related-business-cell
+                  v-for="(item, itemIndex) in detail.contractList"
+                  :data="item"
+                  :cell-index="itemIndex"
+                  :key="item.customerId"
+                  :show-foot="false"
+                  type="contract"
+                  @click.native="checkRelatedDetail(item, 'contract')" />
+                <related-business-cell
+                  v-for="(item, itemIndex) in detail.businessList"
+                  :data="item"
+                  :cell-index="itemIndex"
+                  :key="item.customerId"
+                  :show-foot="false"
+                  type="business"
+                  @click.native="checkRelatedDetail(item, 'business')" />
+              </div>
+            </div>
+
           </div>
 
+          <div class="common-bootom">
+            <span>重复类型：</span>
+            <span>{{ repeatText }}</span>
+            <span>提前提醒时间：</span>
+            <span v-for="(notice, index) in noticeList" :key="index"><span v-if="index != 0">、</span>提前{{ notice.value }}{{ timeList[notice.type] }}提醒</span>
+          </div>
         </div>
+      </template>
+    </div>
 
-        <div class="common-bootom">
-          <span>重复</span>
-          <span>{{ repeatText }}</span>
-        </div>
-      </div>
-    </template>
     <create-event
       :show-create="showCreate"
       :edit-all="editAll"
@@ -188,10 +193,7 @@
   </el-dialog>
 </template>
 <script>
-import {
-  filedGetTableField
-} from '@/api/customermanagement/common'
-import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
+
 import {
   canlendarDeleteAPI,
   canlendarQueryByIdAPI,
@@ -277,7 +279,9 @@ export default {
       // 是否编辑整个系列
       editAll: false,
       repeatText: '',
-      blockColor: ''
+      blockColor: '',
+      noticeList: [],
+      timeList: ['', '分钟', '小时', '天']
     }
   },
   computed: {
@@ -331,6 +335,7 @@ export default {
         endTime: endTime
       }).then(res => {
         this.detail = res.data
+        this.noticeList = res.data.noticeList
         this.repeatText = this.summaryText()
         this.blockColor = this.detail.color
         this.loading = false
@@ -344,26 +349,34 @@ export default {
      * 获取表头
      */
     getFieldList() {
-      this.loading = true
-      let crmType = ''
       if (this.todayDetailData.title === '需联系的客户') {
-        crmType = 'customer'
+        this.fieldList = [
+          { label: '客户名称', prop: 'customerName', width: 105 },
+          { label: '下次联系时间', prop: 'nextTime', width: 135 },
+          { label: '最后跟进时间', prop: 'updateTime', width: 135 },
+          { label: '负责人', prop: 'ownerUserName', width: 80 },
+          { label: '创建时间 ', prop: 'createTime', width: 105 }
+        ]
+      } else if (this.todayDetailData.title === '计划回款') {
+        this.fieldList = [
+          { label: '计划回款期数', prop: 'planNum  ', width: 135 },
+          { label: '客户名称', prop: 'customerName', width: 105 },
+          { label: '合同编号', prop: 'num', width: 105 },
+          { label: '计划回款日期', prop: 'returnDate', width: 135 },
+          { label: '计划回款方式', prop: 'returnType', width: 135 }
+        ]
       } else {
-        crmType = 'contract'
+        this.fieldList = [
+          { label: '合同编号', prop: 'num', width: 105 },
+          { label: '合同名称', prop: 'name', width: 105 },
+          { label: '客户名称', prop: 'customerName', width: 105 },
+          { label: '合同金额', prop: 'money', width: 105 },
+          { label: '开始日期', prop: 'startTime', width: 105 },
+          { label: '结束日期', prop: 'endTime', width: 105 },
+          { label: '负责人', prop: 'ownerUserName', width: 80 }
+        ]
       }
-      this.fieldList = []
-      filedGetTableField({
-        label: crmTypeModel[crmType]
-      })
-        .then(res => {
-          this.handelFieldList(res.data)
-
-          // 获取好字段开始请求数据
-          this.getList()
-        })
-        .catch(() => {
-          this.loading = false
-        })
+      this.getList()
     },
 
     /**
@@ -373,7 +386,13 @@ export default {
       if (this.detail.repetitionType === 1) {
         return '从不重复'
       } else if (this.detail.repetitionType === 2) {
-        return `每${this.detail.repeatRate}天`
+        let day = ''
+        if (this.detail.repeatRate == 1) {
+          day = ''
+        } else {
+          day = this.detail.repeatRate
+        }
+        return `每${day}天`
       } else if (this.detail.repetitionType === 3) {
         return `每${this.detail.repeatRate}周，每周${this.detail.repeatTime}`
       } else if (this.detail.repetitionType === 4) {
@@ -474,16 +493,51 @@ export default {
      */
     handleRowClick(row, column, event) {
       if (this.todayDetailData.title === '需联系的客户') {
-        this.relationID = row.customerId
-        this.crmType = 'customer'
-        this.showFullDetail = true
+        if (column.property === 'customerName') {
+          this.relationID = row.customerId
+          this.crmType = 'customer'
+          this.showFullDetail = true
+        } else {
+          this.showFullDetail = false
+        }
+      } else if (this.todayDetailData.title === '计划回款') {
+        if (column.property === 'customerName') {
+          this.relationID = row.customerId
+          this.crmType = 'customer'
+          this.showFullDetail = true
+        } else if (column.property === 'contractNum' || column.property === 'contractName') {
+          this.relationID = row.contractId
+          this.crmType = 'contract'
+          this.showFullDetail = true
+        } else {
+          this.showFullDetail = false
+        }
       } else {
-        this.relationID = row.contractId
-        this.crmType = 'contract'
-        this.showFullDetail = true
+        if (column.property === 'customerName') {
+          this.relationID = row.customerId
+          this.crmType = 'customer'
+          this.showFullDetail = true
+        } else if (column.property === 'businessName') {
+          if (row.businessId) {
+            this.relationID = row.businessId
+            this.crmType = 'business'
+            this.showFullDetail = true
+          } else {
+            this.showFullDetail = false
+          }
+        } else if (column.property === 'contactsName') {
+          this.relationID = row.contactsId
+          this.crmType = 'contacts'
+          this.showFullDetail = true
+        } else if (column.property === 'num') {
+          this.relationID = row.contractId
+          this.crmType = 'contract'
+          this.showFullDetail = true
+        } else {
+          this.showFullDetail = false
+        }
       }
     },
-
     /**
      * 每页条数改变
      */
@@ -590,10 +644,29 @@ export default {
       this.$emit('createSuccess')
     },
 
-    // 0待审核、1审核中、2审核通过、3审核未通过
+    /**
+     *  0待审核、1审核中、2审核通过、3审核未通过
+     */
     getStatusStyle(status) {
       return {
         backgroundColor: this.getStatusColor(status)
+      }
+    },
+
+    /**
+     * 通过回调控制class
+     */
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (
+        column.property === 'customerName' ||
+        column.property === 'num' ||
+        (column.property != 'name' && row[column.property] > 0)
+      ) {
+        return 'can-visit--underline'
+      } else if (column.property === 'businessCheck') {
+        return 'can-visit'
+      } else {
+        return ''
       }
     }
   }
@@ -699,6 +772,8 @@ export default {
      }
   }
   .common-bootom{
+     width: 90%;
+     overflow-x: auto;
      padding-left: 50px;
      padding-top: 30px;
      color: #999;
