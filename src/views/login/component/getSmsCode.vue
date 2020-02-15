@@ -186,7 +186,7 @@ export default {
       }
     }
     this.$nextTick(() => {
-      if (document.body.clientWidth > 1600) {
+      if (document.body.clientWidth > 1550) {
         this.dialogWidth = '40%'
       } else {
         this.dialogWidth = '60%'
@@ -329,14 +329,14 @@ export default {
 
     .btn-content {
       width: 100%;
-      height: 70px;
+      height: 62px;
       font-size: 16px;
       @include center;
       .icon {
         font-size: 16px;
         margin-right: 5px;
       }
-      @media screen and (max-width: 1600px) {
+      @media screen and (max-width: 1550px) {
         height: 50px;
         font-size: 14px;
         .icon {
@@ -369,7 +369,7 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       font-size: 14px;
     }
   }

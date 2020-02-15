@@ -377,9 +377,9 @@ export default {
   }
 
   .el-form-item {
-    height: 70px;
+    height: 62px;
     margin-bottom: 20px;
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       height: 50px;
       margin-bottom: 15px;
     }

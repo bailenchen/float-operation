@@ -117,7 +117,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      if (document.body.clientWidth > 1600) {
+      if (document.body.clientWidth > 1550) {
         this.dialogWidth = '40%'
       } else {
         this.dialogWidth = '55%'
@@ -216,7 +216,7 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       font-size: 14px;
     }
   }
@@ -228,7 +228,7 @@ export default {
     &:hover {
       text-decoration: underline;
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       font-size: 14px;
     }
   }
@@ -246,7 +246,7 @@ export default {
         }
       }
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       .others {
         font-size: 14px;
         .el-dropdown {

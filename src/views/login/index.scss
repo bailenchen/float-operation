@@ -6,13 +6,13 @@
 
 .cell {
   width: 100%;
-  padding: 0 60px;
+  padding: 0 40px;
   display: flex;
   .empty {
     flex: 1;
     visibility: hidden;
   }
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     padding: 0 40px;
   }
 }
@@ -62,21 +62,21 @@
 // form
 .login-from {
   width: 100%;
-  padding: 0 60px;
+  padding: 0 40px;
 
   .el-form-item {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
     .el-input {
-      height: 70px;
+      height: 62px;
       font-size: 16px;
       background-color: #F6F6F6;
       // border-radius: $xr-border-radius-base;
       border-radius: 10px;
 
       /deep/ .el-input__inner {
-        height: 70px;
-        line-height: 70px;
+        height: 62px;
+        line-height: 62px;
         padding: 0 15px;
       }
 
@@ -99,8 +99,7 @@
       }
     }
   }
-
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     padding: 0 40px;
     .el-form-item {
       margin-bottom: 15px;
@@ -122,7 +121,7 @@
 .error-info {
   width: 100%;
   height: 52px;
-  padding: 0 60px;
+  padding: 0 40px;
   margin-bottom: 14px;
   margin-top: 20px;
 
@@ -148,7 +147,7 @@
       margin-right: 10px;
     }
   }
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     height: 44px;
     padding: 0 40px;
     margin-top: 10px;
@@ -159,16 +158,16 @@
 // login/register/next control
 .control {
   width: 100%;
-  padding: 0 60px;
+  padding: 0 40px;
 
   //margin-top: 45px;
   .btn {
     width: 100%;
-    height: 70px;
+    height: 62px;
     font-size: 22px;
     color: white;
     text-align: center;
-    line-height: 70px;
+    line-height: 62px;
     background-color: #3E6BEA;
     border-radius: 6px;
     padding: 0;
@@ -217,7 +216,7 @@
     }
   }
 
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     padding: 0 40px;
     .btn {
       height: 50px;
@@ -266,7 +265,7 @@
       text-decoration: underline;
     }
   }
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     margin-top: 10px;
   }
 }
@@ -275,7 +274,7 @@
 .verify-picture {
   position: relative;
   width: 100%;
-  height: 70px;
+  height: 62px;
   font-size: 14px;
   line-height: 16px;
   background-color: #EEF7FF;
@@ -296,7 +295,7 @@
     z-index: 100;
   }
 
-  @media screen and (max-width: 1600px) {
+  @media screen and (max-width: 1550px) {
     height: 50px;
     .icon {
       width: 42px;

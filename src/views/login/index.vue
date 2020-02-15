@@ -232,6 +232,15 @@ export default {
     if (this.$route.query && this.$route.query.mobile) {
       sessionStorage.setItem('account', this.$route.query.mobile)
     }
+    this.$nextTick(() => {
+      // const doms = Array.from(document.getElementById('login-wrapper').querySelectorAll('*'))
+      // console.log(doms)
+      // let arr = []
+      // doms.forEach(dom => {
+      //   let zIndex = Number(window.getComputedStyle(dom).zIndex) || 0
+      //   arr.push(zIndex)
+      // })
+    })
   },
   methods: {
     /**
@@ -294,11 +303,13 @@ export default {
     display: flex;
     img {
       width: 164px;
+      height: 50px;
     }
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       padding: 23px 2.8% 0;
       img {
-        width: 120px;
+        width: 118px;
+        height: 36px;
       }
     }
   }
@@ -313,50 +324,51 @@ export default {
     margin-top: -42px;
     .left {
       .title {
-        font-size: 46px;
+        font-size: 38px;
         font-weight: normal;
         color: white;
         letter-spacing: 3px;
         margin-top: 10px;
-        margin-left: 50px;
-        @media screen and (max-width: 1600px) {
+        margin-left: 34px;
+        margin-bottom: 20px;
+        @media screen and (max-width: 1550px) {
           font-size: 32px;
           margin-top: 0;
           margin-bottom: 15px;
         }
       }
       .mini-title {
-        font-size: 32px;
+        font-size: 28px;
         font-weight: normal;
         color: white;
         margin-bottom: 12px;
-        margin-left: 50px;
-        @media screen and (max-width: 1600px) {
+        margin-left: 34px;
+        @media screen and (max-width: 1550px) {
           font-size: 18px;
           margin-bottom: 6px;
         }
       }
       .desc {
-        font-size: 18px;
+        font-size: 16px;
         color: white;
         line-height: 1.5;
-        margin-left: 50px;
-        @media screen and (max-width: 1600px) {
+        margin-left: 34px;
+        @media screen and (max-width: 1550px) {
           font-size: 14px;
         }
       }
       .register-btn {
-        width: 150px;
-        height: 56px;
-        font-size: 20px;
+        width: 120px;
+        height: 48px;
+        font-size: 18px;
         text-align: center;
-        line-height: 56px;
+        line-height: 48px;
         color: #394af3;
         background-color: white;
-        border-radius: 10px;
+        border-radius: $xr-border-radius-base;
         cursor: pointer;
-        margin: 20px 0 38px 50px;
-        @media screen and (max-width: 1600px) {
+        margin: 15px 0 15px 34px;
+        @media screen and (max-width: 1550px) {
           width: 100px;
           height: 40px;
           font-size: 16px;
@@ -367,9 +379,10 @@ export default {
       }
       .main-pic {
         width: 560px;
-        margin-bottom: 30px;
-        margin-top: 38px;
-        @media screen and (max-width: 1600px) {
+        margin-bottom: 20px;
+        margin-top: 20px;
+        margin-left: -20px;
+        @media screen and (max-width: 1550px) {
           width: 500px;
           margin-top: 10px;
           margin-left: -20px;
@@ -381,24 +394,24 @@ export default {
         overflow: hidden;
         .download-item {
           float: left;
-          border-radius: 24px;
+          border-radius: 22px;
           background-color: #2b5db9;
           text-align: center;
           cursor: pointer;
           margin-right: 20px;
           padding: 8px 16px;
           .icon {
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             vertical-align: middle;
             margin-right: 10px;
           }
           .text {
-            font-size: 16px;
+            font-size: 14px;
             color: white;
             vertical-align: middle;
           }
-          @media screen and (max-width: 1600px) {
+          @media screen and (max-width: 1550px) {
             border-radius: 18px;
             margin-right: 15px;
             padding: 7px 12px;
@@ -418,13 +431,13 @@ export default {
       }
     }
     .right {
-      width: 650px;
-      margin-left: 150px;
+      width: 560px;
+      margin-left: 100px;
       padding-top: 36px;
       .login-main-content {
         position: relative;
         width: 100%;
-        height: 620px;
+        height: 550px;
         // height: 510px;
         background-color: white;
         border-radius: 6px;
@@ -470,7 +483,7 @@ export default {
         }
       }
 
-      @media screen and (max-width: 1600px) {
+      @media screen and (max-width: 1550px) {
         width: 480px;
         margin-left: 80px;
         padding-top: 10px;
@@ -495,7 +508,7 @@ export default {
       }
     }
 
-    @media screen and (max-width: 1600px) {
+    @media screen and (max-width: 1550px) {
       margin-top: -20px;
     }
   }
@@ -529,7 +542,7 @@ export default {
         width: 700px;
         display: flex;
         flex-wrap: wrap;
-        margin-left: 50px;
+        margin-left: 34px;
         margin-top: 26px;
         .activity-list-item {
           width: 350px;
@@ -556,7 +569,7 @@ export default {
           }
         }
       }
-      @media screen and (max-width: 1600px) {
+      @media screen and (max-width: 1550px) {
         .main-pic {
           width: 450px;
           margin-bottom: 5px;
@@ -585,8 +598,8 @@ export default {
     }
     .right {
       .login-main-content {
-        height: 730px;
-        @media screen and (max-width: 1600px) {
+        height: 630px;
+        @media screen and (max-width: 1550px) {
           height: 490px;
         }
       }
