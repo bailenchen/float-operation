@@ -329,20 +329,20 @@ export default {
 
     .btn-content {
       width: 100%;
-      height: 62px;
-      font-size: 16px;
+      height: 50px;
+      font-size: 14px;
       @include center;
       .icon {
-        font-size: 16px;
+        font-size: 14px;
         margin-right: 5px;
       }
-      @media screen and (max-width: 1550px) {
-        height: 50px;
-        font-size: 14px;
-        .icon {
-          font-size: 14px;
-        }
-      }
+      // @media screen and (max-width: 1550px) {
+      //   height: 50px;
+      //   font-size: 14px;
+      //   .icon {
+      //     font-size: 14px;
+      //   }
+      // }
     }
     &:hover,
     &.is-disabled,
@@ -360,7 +360,7 @@ export default {
   overflow: hidden;
   margin-top: -8px;
   .tips {
-    font-size: 16px;
+    font-size: 14px;
     color: #666;
     .tips-special {
       color: #3E6BEA;
@@ -369,9 +369,9 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1550px) {
-      font-size: 14px;
-    }
+    // @media screen and (max-width: 1550px) {
+    //   font-size: 14px;
+    // }
   }
 
   .login-btn {

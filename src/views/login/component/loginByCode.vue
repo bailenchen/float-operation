@@ -206,7 +206,7 @@ export default {
 .login-by-code {
   margin-bottom: 20px;
   .tips {
-    font-size: 16px;
+    font-size: 14px;
     color: #666;
     margin-left: 0;
     .tips-special {
@@ -216,28 +216,28 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1550px) {
-      font-size: 14px;
-    }
+    // @media screen and (max-width: 1550px) {
+    //   font-size: 14px;
+    // }
   }
 
   .login-by-pwd {
     color: #3E6BEA;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     &:hover {
       text-decoration: underline;
     }
-    @media screen and (max-width: 1550px) {
-      font-size: 14px;
-    }
+    // @media screen and (max-width: 1550px) {
+    //   font-size: 14px;
+    // }
   }
 
   .control {
     .others {
-      font-size: 16px;
+      font-size: 14px;
       .el-dropdown {
-        font-size: 16px;
+        font-size: 14px;
       }
       .register {
         cursor: pointer;
@@ -246,14 +246,14 @@ export default {
         }
       }
     }
-    @media screen and (max-width: 1550px) {
-      .others {
-        font-size: 14px;
-        .el-dropdown {
-          font-size: 14px;
-        }
-      }
-    }
+    // @media screen and (max-width: 1550px) {
+    //   .others {
+    //     font-size: 14px;
+    //     .el-dropdown {
+    //       font-size: 14px;
+    //     }
+    //   }
+    // }
   }
 }
 

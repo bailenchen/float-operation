@@ -278,28 +278,28 @@ export default {
 
 .login-by-pwd {
   .forget-pwd {
-    height: 62px;
+    height: 50px;
     color: #999;
-    line-height: 62px;
+    line-height: 50px;
     cursor: pointer;
-    padding: 0 10px 0 5px;
+    padding: 0 5px;
     display: block;
     &:hover {
       color: #3e6bea;
     }
-    @media screen and (max-width: 1550px) {
-      height: 50px;
-      font-size: 14px;
-      line-height: 50px;
-      padding: 0 5px;
-    }
+    // @media screen and (max-width: 1550px) {
+    //   height: 50px;
+    //   font-size: 14px;
+    //   line-height: 50px;
+    //   padding: 0 5px;
+    // }
   }
 }
 
 .login-action {
   margin-top: -10px;
   .login-by-code {
-    font-size: 16px;
+    font-size: 14px;
     color: #3e6bea;
     cursor: pointer;
     &:hover {
@@ -307,34 +307,35 @@ export default {
     }
   }
 
-  @media screen and (min-width: 1550px) {
+  // @media screen and (min-width: 1550px) {
     /deep/ .el-checkbox {
       .el-checkbox__inner {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
         &::after {
           top: 2px;
           left: 5px;
         }
       }
       .el-checkbox__label {
-        font-size: 16px;
+        font-size: 14px;
       }
     }
-  }
-  @media screen and (max-width: 1550px) {
-    margin-top: -5px;
-    .login-by-code {
-      font-size: 14px;
-    }
-  }
+  // }
+
+  // @media screen and (max-width: 1550px) {
+  //   margin-top: -5px;
+  //   .login-by-code {
+  //     font-size: 14px;
+  //   }
+  // }
 }
 
 .control {
   .others {
-    font-size: 16px;
+    font-size: 14px;
     .el-dropdown {
-      font-size: 16px;
+      font-size: 14px;
     }
     .register {
       cursor: pointer;
@@ -343,14 +344,14 @@ export default {
       }
     }
   }
-  @media screen and (max-width: 1550px) {
-    .others {
-      font-size: 14px;
-      .el-dropdown {
-        font-size: 14px;
-      }
-    }
-  }
+  // @media screen and (max-width: 1550px) {
+  //   .others {
+  //     font-size: 14px;
+  //     .el-dropdown {
+  //       font-size: 14px;
+  //     }
+  //   }
+  // }
 }
 
 .center-tips {

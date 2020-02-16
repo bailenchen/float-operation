@@ -68,16 +68,16 @@
     margin-bottom: 20px;
 
     .el-input {
-      height: 62px;
-      font-size: 16px;
+      height: 50px;
+      font-size: 14px;
       background-color: #F6F6F6;
-      // border-radius: $xr-border-radius-base;
-      border-radius: 10px;
+      border-radius: $xr-border-radius-base;
+      // border-radius: 10px;
 
       /deep/ .el-input__inner {
-        height: 62px;
-        line-height: 62px;
-        padding: 0 15px;
+        height: 50px;
+        line-height: 50px;
+        padding: 0 10px;
       }
 
       /deep/ .el-input__prefix {
@@ -103,16 +103,16 @@
     padding: 0 40px;
     .el-form-item {
       margin-bottom: 15px;
-      .el-input {
-        height: 50px;
-        font-size: 14px;
-        border-radius: $xr-border-radius-base;
-        /deep/ .el-input__inner {
-          height: 50px;
-          line-height: 50px;
-          padding: 0 10px;
-        }
-      }
+      // .el-input {
+      //   height: 50px;
+      //   font-size: 14px;
+      //   border-radius: $xr-border-radius-base;
+      //   /deep/ .el-input__inner {
+      //     height: 50px;
+      //     line-height: 50px;
+      //     padding: 0 10px;
+      //   }
+      // }
     }
   }
 }
@@ -120,7 +120,7 @@
 // error message
 .error-info {
   width: 100%;
-  height: 52px;
+  height: 44px;
   padding: 0 40px;
   margin-bottom: 14px;
   margin-top: 20px;
@@ -147,11 +147,11 @@
       margin-right: 10px;
     }
   }
-  @media screen and (max-width: 1550px) {
-    height: 44px;
-    padding: 0 40px;
-    margin-top: 10px;
-  }
+  // @media screen and (max-width: 1550px) {
+  //   height: 44px;
+  //   padding: 0 40px;
+  //   margin-top: 10px;
+  // }
 }
 
 
@@ -163,13 +163,13 @@
   //margin-top: 45px;
   .btn {
     width: 100%;
-    height: 62px;
-    font-size: 22px;
+    height: 50px;
+    font-size: 20px;
     color: white;
     text-align: center;
-    line-height: 62px;
+    line-height: 50px;
     background-color: #3E6BEA;
-    border-radius: 6px;
+    border-radius: $xr-border-radius-base;
     padding: 0;
     cursor: pointer;
     &:hover {
@@ -217,13 +217,13 @@
   }
 
   @media screen and (max-width: 1550px) {
-    padding: 0 40px;
-    .btn {
-      height: 50px;
-      line-height: 50px;
-      font-size: 20px;
-      border-radius: $xr-border-radius-base;
-    }
+    // padding: 0 40px;
+    // .btn {
+    //   height: 50px;
+    //   line-height: 50px;
+    //   font-size: 20px;
+    //   border-radius: $xr-border-radius-base;
+    // }
     .others {
       margin-top: 10px;
     }
@@ -255,7 +255,7 @@
 .to-login {
   text-align: center;
   font-size: 14px;
-  margin-top: 20px;
+  margin-top: 10px;
 
   .special {
     color: #3E6BEA;
@@ -265,16 +265,16 @@
       text-decoration: underline;
     }
   }
-  @media screen and (max-width: 1550px) {
-    margin-top: 10px;
-  }
+  // @media screen and (max-width: 1550px) {
+  //   margin-top: 10px;
+  // }
 }
 
 // 图片验证码
 .verify-picture {
   position: relative;
   width: 100%;
-  height: 62px;
+  height: 50px;
   font-size: 14px;
   line-height: 16px;
   background-color: #EEF7FF;
@@ -284,7 +284,7 @@
   @include center;
 
   .icon {
-    width: 50px;
+    width: 42px;
     margin-left: -10px;
   }
 
@@ -295,12 +295,12 @@
     z-index: 100;
   }
 
-  @media screen and (max-width: 1550px) {
-    height: 50px;
-    .icon {
-      width: 42px;
-    }
-  }
+  // @media screen and (max-width: 1550px) {
+  //   height: 50px;
+  //   .icon {
+  //     width: 42px;
+  //   }
+  // }
 }
 
 // 多企业选择

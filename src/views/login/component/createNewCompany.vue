@@ -667,10 +667,10 @@ export default {
 // error message
 .error-info {
   width: 100%;
-  height: 52px;
+  height: 36px;
   padding: 0 40px;
-  margin-bottom: 14px;
-  margin-top: 20px;
+  margin-bottom: 5px;
+  margin-top: 10px;
   &.ok {
     margin: 0;
   }
@@ -693,12 +693,12 @@ export default {
       margin-right: 10px;
     }
   }
-  @media screen and (max-width: 1550px) {
-    height: 36px;
-    padding: 0 40px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-  }
+  // @media screen and (max-width: 1550px) {
+  //   height: 36px;
+  //   padding: 0 40px;
+  //   margin-top: 10px;
+  //   margin-bottom: 5px;
+  // }
 }
 
 .register-box {
@@ -706,9 +706,9 @@ export default {
   padding: 0 40px;
 
   /deep/ .el-input {
-    height: 46px;
+    height: 36px;
     .el-input__inner {
-      height: 46px;
+      height: 36px;
       background-color: #F6F6F6;
     }
     &.error .el-input__inner {
@@ -731,72 +731,72 @@ export default {
   .cell {
     width: 100%;
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     .cell-box {
       flex: 1;
       &:first-child {
         margin-right: 38px;
       }
     }
-    @media screen and (max-width: 1550px) {
-      margin-bottom: 10px;
+    // @media screen and (max-width: 1550px) {
+    //   margin-bottom: 10px;
       .cell-box:first-child {
         margin-right: 15px;
       }
-    }
+    // }
   }
 
   .row {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     /deep/ .el-input {
-      height: 62px;
+      height: 50px;
       .el-input__inner {
-        height: 62px;
-      }
-    }
-    @media screen and (max-width: 1550px) {
-      margin-bottom: 10px;
-      /deep/ .el-input {
         height: 50px;
-        .el-input__inner {
-          height: 50px;
-        }
       }
     }
+    // @media screen and (max-width: 1550px) {
+    //   margin-bottom: 10px;
+    //   /deep/ .el-input {
+    //     height: 50px;
+    //     .el-input__inner {
+    //       height: 50px;
+    //     }
+    //   }
+    // }
   }
 
   // 图片验证码
   .verify-picture {
     position: relative;
     width: 100%;
-    height: 50px;
-    font-size: 14px;
-    line-height: 50px;
+    height: 36px;
+    font-size: 12px;
+    line-height: 36px;
     background-color: #EEF7FF;
     border-radius: $xr-border-radius-base;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 10px;
     display: flex;
     align-content: center;
     justify-content: center;
     .icon {
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       margin-left: -10px;
-      margin-top: 5px;
+      margin-top: 3px;
     }
-    @media screen and (max-width: 1550px)  {
-      height: 36px;
-      font-size: 12px;
-      line-height: 36px;
-      margin-top: 10px;
-      .icon {
-        width: 30px;
-        height: 30px;
-        margin-left: -10px;
-        margin-top: 3px;
-      }
-    }
+    // @media screen and (max-width: 1550px)  {
+      // height: 36px;
+      // font-size: 12px;
+      // line-height: 36px;
+      // margin-top: 10px;
+      // .icon {
+      //   width: 30px;
+      //   height: 30px;
+      //   margin-left: -10px;
+      //   margin-top: 3px;
+      // }
+    // }
 
     /*.slide-verify {
       position: absolute;
@@ -812,15 +812,15 @@ export default {
     align-items: center;
     justify-content: flex-start;
     flex-wrap: nowrap;
-    margin-top: 15px;
-    @media screen and (max-width: 1550px)  {
-      margin-top: 10px;
-    }
+    margin-top: 10px;
+    // @media screen and (max-width: 1550px)  {
+    //   margin-top: 10px;
+    // }
     .el-input {
-      width: 300px;
-      @media screen and (max-width: 1550px)  {
-        width: 250px;
-      }
+      width: 250px;
+      // @media screen and (max-width: 1550px)  {
+      //   width: 250px;
+      // }
     }
     .el-button {
       flex: 1;
@@ -834,13 +834,13 @@ export default {
 
       .btn-content {
         width: 100%;
-        height: 46px;
-        line-height: 46px;
+        height: 36px;
+        line-height: 36px;
         font-size: 14px;
-        @media screen and (max-width: 1550px) {
-          height: 36px;
-          line-height: 36px;
-        }
+        // @media screen and (max-width: 1550px) {
+        //   height: 36px;
+        //   line-height: 36px;
+        // }
       }
       &:hover,
       &.is-disabled,
@@ -866,11 +866,11 @@ export default {
 
   .register-btn {
     width: 100%;
-    height: 50px;
+    height: 42px;
     font-size: 20px;
     color: white;
     text-align: center;
-    line-height: 50px;
+    line-height: 42px;
     background-color: #3E6BEA;
     border-radius: 6px;
     padding: 0;
@@ -882,28 +882,28 @@ export default {
     &.is-disabled {
       cursor: not-allowed;
     }
-    @media screen and (max-width: 1550px)  {
-      height: 42px;
-      line-height: 42px;
-    }
+    // @media screen and (max-width: 1550px)  {
+    //   height: 42px;
+    //   line-height: 42px;
+    // }
     &.special {
-      height: 62px;
-      line-height: 62px;
-      font-size: 22px;
+      height: 50px;
+      line-height: 50px;
+      font-size: 20px;
       margin-top: 80px;
-      @media screen and (max-width: 1550px) {
-        height: 50px;
-        line-height: 50px;
-        font-size: 20px;
-      }
+      // @media screen and (max-width: 1550px) {
+      //   height: 50px;
+      //   line-height: 50px;
+      //   font-size: 20px;
+      // }
     }
   }
 
   .center-tips {
     width: 100%;
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
-    margin-top: 15px;
+    margin-top: 10px;
     .special {
       color: #3255E6;
       cursor: pointer;
@@ -911,25 +911,25 @@ export default {
         text-decoration: underline;
       }
     }
-    @media screen and (max-width: 1550px) {
-      font-size: 14px;
-      margin-top: 10px;
-    }
+    // @media screen and (max-width: 1550px) {
+    //   font-size: 14px;
+    //   margin-top: 10px;
+    // }
   }
 
   .error-info {
     padding: 0;
   }
 
-  @media screen and (max-width: 1550px) {
-    padding: 0 40px;
-    /deep/ .el-input {
-      height: 36px;
-      .el-input__inner {
-        height: 36px;
-      }
-    }
-  }
+  // @media screen and (max-width: 1550px) {
+  //   padding: 0 40px;
+  //   /deep/ .el-input {
+  //     height: 36px;
+  //     .el-input__inner {
+  //       height: 36px;
+  //     }
+  //   }
+  // }
 }
 
 .pwd-popover-content {
