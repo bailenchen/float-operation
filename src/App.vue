@@ -28,6 +28,7 @@ import XrImport from '@/components/xr-import'
 import XrImportMixins from '@/components/xr-import/XrImportMixins'
 import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
+import cache from '@/utils/cache'
 
 
 export default {
@@ -56,6 +57,7 @@ export default {
   mounted() {
     this.addBus()
     this.addDocumentVisibilityChange()
+    this.setMinHeight()
   },
   methods: {
     addDocumentVisibilityChange() {
@@ -81,6 +83,9 @@ export default {
       }
       // 添加监听器，在title里显示状态变化
       document.addEventListener(visibilityChange, () => {
+        if (document[state] == 'visible') {
+          cache.updateAxiosHeaders()
+        }
         this.$bus.emit('document-visibility', document[state])
       }, false)
     },
@@ -92,6 +97,22 @@ export default {
         self.previewImgs = data.data
         self.showPreviewImg = true
       })
+    },
+
+    setMinHeight() {
+      this.$nextTick(() => {
+        const dpr = window.devicePixelRatio || 1
+        const clientWidth = document.body.clientWidth
+        const dom = document.getElementById('app')
+        if (dpr !== 1 && clientWidth > 1600) {
+          dom.style.minHeight = '800px'
+        } else if (dpr === 1 && clientWidth > 1600) {
+          dom.style.minWidth = '1650px'
+        } else {
+          // dom.style.minWidth = '1200px'
+          dom.style.minHeight = '605px'
+        }
+      })
     }
   }
 }
@@ -102,5 +123,7 @@ export default {
   width: 100%;
   position: relative;
   height: 100%;
+  min-width: 1200px;
+  min-height: 605px;
 }
 </style>

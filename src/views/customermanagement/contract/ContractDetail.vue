@@ -263,6 +263,7 @@ export default {
      * 编辑成功
      */
     editSaveSuccess() {
+      this.$bus.$emit('crm-detail-update', this.crmType)
       this.$emit('handle', { type: 'save-success' })
       this.detailData = null
       this.getDetial()
