@@ -305,13 +305,13 @@ export default {
       width: 164px;
       height: 50px;
     }
-    @media screen and (max-width: 1550px) {
-      padding: 23px 2.8% 0;
-      img {
-        width: 118px;
-        height: 36px;
-      }
-    }
+    // @media screen and (max-width: 1550px) {
+    //   padding: 23px 2.8% 0;
+    //   img {
+    //     width: 118px;
+    //     height: 36px;
+    //   }
+    // }
   }
 
   .container {
@@ -431,13 +431,13 @@ export default {
       }
     }
     .right {
-      width: 560px;
-      margin-left: 100px;
-      padding-top: 36px;
+      width: 480px;
+      margin-left: 80px;
+      padding-top: 10px;
       .login-main-content {
         position: relative;
         width: 100%;
-        height: 550px;
+        height: 450px;
         // height: 510px;
         background-color: white;
         border-radius: 6px;
@@ -446,19 +446,19 @@ export default {
           position: relative;
           width: 100%;
           font-weight: bold;
-          font-size: 24px;
+          font-size: 20px;
           color: #4c4c4c;
           letter-spacing: 2px;
-          padding: 0 55px;
-          margin: 30px 0 35px;
+          padding: 0 40px;
+          margin: 15px 0 20px;
           &:before {
             position: absolute;
             top: 50%;
-            left: 36px;
+            left: 24px;
             transform: translateY(-50%);
             content: '';
             width: 4px;
-            height: 20px;
+            height: 16px;
             background-color: #3e6bea;
             border-radius: 2px;
             display: block;
@@ -471,41 +471,41 @@ export default {
           width: 100%;
           text-align: center;
           color: #999;
-          font-size: 14px;
+          font-size: 12px;
           .text {
             vertical-align: middle;
           }
           .icon {
-            width: 18px;
+            width: 15px;
             display: inline-block;
             vertical-align: middle;
           }
         }
       }
 
-      @media screen and (max-width: 1550px) {
-        width: 480px;
-        margin-left: 80px;
-        padding-top: 10px;
-        .login-main-content {
-          height: 450px;
-          .logo-box {
-            font-size: 20px;
-            padding: 0 40px;
-            margin: 15px 0 20px;
-            &:before {
-              height: 16px;
-              left: 24px;
-            }
-          }
-          .use-tip {
-            font-size: 12px;
-            .icon {
-              width: 15px;
-            }
-          }
-        }
-      }
+      // @media screen and (max-width: 1550px) {
+        // width: 480px;
+        // margin-left: 80px;
+        // padding-top: 10px;
+        // .login-main-content {
+          // height: 450px;
+          // .logo-box {
+            // font-size: 20px;
+            // padding: 0 40px;
+            // margin: 15px 0 20px;
+            // &:before {
+            //   height: 16px;
+            //   left: 24px;
+            // }
+          // }
+          // .use-tip {
+          //   font-size: 12px;
+          //   .icon {
+          //     width: 15px;
+          //   }
+          // }
+        // }
+      // }
     }
 
     @media screen and (max-width: 1550px) {
@@ -598,10 +598,10 @@ export default {
     }
     .right {
       .login-main-content {
-        height: 630px;
-        @media screen and (max-width: 1550px) {
-          height: 490px;
-        }
+        height: 490px;
+        // @media screen and (max-width: 1550px) {
+        //   height: 490px;
+        // }
       }
     }
   }
