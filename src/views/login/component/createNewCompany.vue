@@ -982,30 +982,30 @@ export default {
 }
 
 /deep/ input {
-  border: 1px solid #F6F6F6;
+  // border: 1px solid #F6F6F6;
   background-color: #F6F6F6;
-  box-sizing: border-box;
-  -webkit-appearance: none;
+  // box-sizing: border-box;
+  // -webkit-appearance: none;
 
-  &:-webkit-autofill {
-    background-image: none;
-    -webkit-box-shadow: 0 0 0 1000px #F6F6F6 inset !important;
-    -webkit-text-fill-color: #333 !important;
-  }
+  // &:-webkit-autofill {
+  //   background-image: none;
+  //   -webkit-box-shadow: 0 0 0 1000px #F6F6F6 inset !important;
+  //   -webkit-text-fill-color: #333 !important;
+  // }
 
-  &:hover {
-    border: 1px solid #F6F6F6;
-  }
+  // &:hover {
+  //   border: 1px solid #F6F6F6;
+  // }
 
   &:focus,
   &:hover:focus {
     background-color: white !important;
-    border: 1px solid #3e6bea;
+    // border: 1px solid #3e6bea;
   }
 
-  &:focus:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
-  }
+  // &:focus:-webkit-autofill {
+  //   -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  // }
 
   &::-webkit-input-placeholder {
     color: #C5C5C5;
