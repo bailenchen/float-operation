@@ -22,7 +22,7 @@
         </el-dropdown>
       </span>
     </div>
-    <div v-loading="loading">
+    <div v-loading="loading" class="scroll_content">
       <template v-if="id == -1">
         <el-table
           id="crm-table"
@@ -119,7 +119,20 @@
             </flexbox>
           </div>
 
+          <div class="common-bootom">
+            <div class="type_type">
+              <p>重复类型：</p>
+              <span>{{ repeatText }}</span>
+            </div>
+            <div class="type_time">
+              <p>提前提醒时间：</p>
+              <span v-for="(notice, index) in noticeList" :key="index"><span v-if="index != 0">、</span>提前{{ notice.value }}{{ timeList[notice.type] }}提醒</span>
+
+            </div>
+          </div>
+
           <div class="common-foot">
+
             <div v-if="detail.customerList" class="section__hd">
               <i class="wukong wukong-relevance" />
               <span>相关信息({{ detail.customerList.length }})</span>
@@ -141,7 +154,7 @@
                   v-for="(item, itemIndex) in detail.contactsList"
                   :data="item"
                   :cell-index="itemIndex"
-                  :key="item.customerId"
+                  :key="item.contactsId"
                   :show-foot="false"
                   type="contacts"
                   @click.native="checkRelatedDetail(item, 'contacts')" />
@@ -149,7 +162,7 @@
                   v-for="(item, itemIndex) in detail.contractList"
                   :data="item"
                   :cell-index="itemIndex"
-                  :key="item.customerId"
+                  :key="item.contractId"
                   :show-foot="false"
                   type="contract"
                   @click.native="checkRelatedDetail(item, 'contract')" />
@@ -157,20 +170,13 @@
                   v-for="(item, itemIndex) in detail.businessList"
                   :data="item"
                   :cell-index="itemIndex"
-                  :key="item.customerId"
+                  :key="item.businessId"
                   :show-foot="false"
                   type="business"
                   @click.native="checkRelatedDetail(item, 'business')" />
               </div>
             </div>
 
-          </div>
-
-          <div class="common-bootom">
-            <span>重复类型：</span>
-            <span>{{ repeatText }}</span>
-            <span>提前提醒时间：</span>
-            <span v-for="(notice, index) in noticeList" :key="index"><span v-if="index != 0">、</span>提前{{ notice.value }}{{ timeList[notice.type] }}提醒</span>
           </div>
         </div>
       </template>
@@ -359,9 +365,9 @@ export default {
         ]
       } else if (this.todayDetailData.title === '计划回款') {
         this.fieldList = [
-          { label: '计划回款期数', prop: 'planNum  ', width: 135 },
           { label: '客户名称', prop: 'customerName', width: 105 },
           { label: '合同编号', prop: 'num', width: 105 },
+          { label: '计划回款期数', prop: 'planNum', width: 135 },
           { label: '计划回款日期', prop: 'returnDate', width: 135 },
           { label: '计划回款方式', prop: 'returnType', width: 135 }
         ]
@@ -759,6 +765,7 @@ export default {
   .common-foot{
      padding-left: 50px;
      padding-top: 30px;
+     padding-bottom: 20px;
      .section__hd{
        color: #333;
        font-size: 16px;
@@ -767,8 +774,6 @@ export default {
      }
      .section_scroll{
        width: 854px;
-       height: 100px;
-       overflow-y: auto;
      }
   }
   .common-bootom{
@@ -778,13 +783,27 @@ export default {
      padding-top: 30px;
      color: #999;
      font-size: 12px;
-     position: absolute;
      bottom: 18px;
+     .type_type {
+       margin-bottom: 20px;
+       p {
+         margin-bottom: 10px;
+       }
+     }
+     .type_time {
+        p {
+         margin-bottom: 10px;
+       }
+     }
      span{
        padding-right: 20px;
        display: inline-block;
      }
   }
+}
+.scroll_content {
+  height: 500px;
+  overflow-y: auto;
 }
 /deep/.el-icon-more{
   color: #666;

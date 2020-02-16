@@ -7,7 +7,7 @@
         <xh-user-cell
           v-if="showUser"
           ref="xhuserCell"
-          :value="checkedUser"
+          :value="selectUsers"
           :info-request="subUserListIndex"
           :radio="true"
           v-bind="$attrs"
@@ -246,9 +246,11 @@ export default {
         receiveContractTimeList: []
       },
       checkedUser: [],
+      // 用于勾选仅剩一个时，暂时保存勾选数据
+      copyCheckCusList: [],
       showUser: true,
       showpover: false,
-      showSys: true,
+      showSys: false,
       showCus: false,
       taskList: [],
       showFullDetail: false,
@@ -256,21 +258,41 @@ export default {
       relationID: '',
       selectSysList: [],
       sysTypeId: [],
-      firstEnter: true
+      firstEnter: true,
+      selectUsers: []
     }
   },
   computed: {
     subUserListIndex() {
       return systemUserQueryAuthUserList
+    },
+    showUserPover() {
+      return this.$refs.xhuserCell && this.$refs.xhuserCell.showPopover
     }
   },
   watch: {
     checkCusList: {
       handler(val) {
-        this.customFifter(val)
+        console.log(val, 'val')
+        if (val.length === 1) {
+          this.copyCheckCusList = val
+          this.customFifter(val)
+        } else if (val.length === 0) {
+          if (this.copyCheckCusList.length === 1) {
+            this.checkCusList = this.copyCheckCusList
+            this.$message.error('请至少选中一个类型')
+          }
+        } else {
+          this.customFifter(val)
+        }
       },
       deep: true,
       immediate: true
+    },
+    showUserPover(val) {
+      if (!val) {
+        this.selectUsers = []
+      }
     }
   },
   mounted() {
@@ -391,12 +413,10 @@ export default {
      * 编辑左侧多选框列表
      */
     updateList() {
-      this.loading = true
+      // 只用于记录，去除loading效果，保证前端无痕保存
       this.activeTime.typeIds = this.typeIds
       canlendarUpdateTypeAPI({ typeIds: this.typeIds, userId: this.activeTime.userId }).then(res => {
-        this.loading = false
       }).catch(() => {
-        this.loading = false
       })
     },
 
@@ -597,6 +617,7 @@ export default {
      * 筛选完成后处理的函数
      */
     updateEvent(data) {
+      this.updateList()
       const list = []
       this.calendarList.forEach(item => {
         data.forEach(element => {
@@ -656,6 +677,7 @@ export default {
      */
     selectUser(data) {
       this.checkedUser = data.value
+      this.selectUsers = data.value
       if (data.value.length) {
         this.activeTime.userId = data.value.map(item => {
           return item.userId
