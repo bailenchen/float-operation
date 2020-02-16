@@ -321,7 +321,7 @@ export default {
    *  路由更新
    */
   beforeRouteLeave(to, from, next) {
-    this.updateList()
+    // this.updateList()
     next()
   },
 
@@ -415,6 +415,9 @@ export default {
     updateList() {
       // 只用于记录，去除loading效果，保证前端无痕保存
       this.activeTime.typeIds = this.typeIds
+      if (this.typeIds.length === 0) {
+        return
+      }
       canlendarUpdateTypeAPI({ typeIds: this.typeIds, userId: this.activeTime.userId }).then(res => {
       }).catch(() => {
       })
@@ -617,7 +620,6 @@ export default {
      * 筛选完成后处理的函数
      */
     updateEvent(data) {
-      this.updateList()
       const list = []
       this.calendarList.forEach(item => {
         data.forEach(element => {
@@ -626,6 +628,7 @@ export default {
           }
         })
       })
+      this.updateList()
       this.calendarEvents = list
     },
 
