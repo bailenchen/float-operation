@@ -10,7 +10,7 @@
       <div v-if="!showRepeat">
         <el-form ref="ruleForm" :model="form" :rules="rules" label-position="left">
           <el-form-item prop="title" label="日程内容">
-            <el-input v-model="form.title" placeholder="请输入日程内容"/>
+            <el-input v-model="form.title" placeholder="请输入日程内容" style="width: 430px"/>
           </el-form-item>
           <el-form-item label="日程类型" prop="typeId">
             <div class="color_change">
@@ -565,7 +565,6 @@ export default {
       .el-form-item{
         margin-bottom: 20px;
         white-space: nowrap;
-        overflow: hidden;
        .el-input__inner{
         width: 430px;
       }
