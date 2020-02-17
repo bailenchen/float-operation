@@ -32,7 +32,7 @@
             @change="valueChange"/>
           <el-input
             v-else
-            :type="item.formType"
+            :type="subItem.formType"
             v-model="item[subItem.field]"
             :maxlength="100"
             @input="calculateValueChange(index, subIndex)"/>

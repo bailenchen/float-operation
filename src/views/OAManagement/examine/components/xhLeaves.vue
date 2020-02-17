@@ -43,7 +43,7 @@
           </el-select>
           <el-input
             v-else
-            :type="item.formType"
+            :type="subItem.formType"
             :maxlength="100"
             :disabled="getInputDisable(subItem.field)"
             v-model="item[subItem.field]"/>
