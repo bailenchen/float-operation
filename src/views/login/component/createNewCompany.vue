@@ -236,7 +236,6 @@
     </div>-->
 
     <el-button
-      :class="{special: showNextStep}"
       :disabled="disabledBtn || !agreeLaw"
       class="register-btn"
       @click="handleNextStep">
@@ -893,17 +892,17 @@ export default {
     //   height: 42px;
     //   line-height: 42px;
     // }
-    &.special {
-      height: 50px;
-      line-height: 50px;
-      font-size: 20px;
+    // &.special {
+      // height: 50px;
+      // line-height: 50px;
+      // font-size: 20px;
       // margin-top: 80px;
       // @media screen and (max-width: 1550px) {
       //   height: 50px;
       //   line-height: 50px;
       //   font-size: 20px;
       // }
-    }
+    // }
   }
 
   .center-tips {
