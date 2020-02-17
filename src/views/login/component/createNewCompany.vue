@@ -240,7 +240,7 @@
       :disabled="disabledBtn || !agreeLaw"
       class="register-btn"
       @click="handleNextStep">
-      {{ showNextStep ? '立即注册' : '下一步' }}
+      {{ showNextStep ? '完成注册' : '下一步' }}
     </el-button>
 
     <template v-if="!showNextStep">
@@ -464,6 +464,15 @@ export default {
       width: 0
     }
   },
+  watch: {
+    showNextStep: {
+      handler(val) {
+        this.$emit('regist-height-change', val)
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   beforeDestroy() {
     if (this.timer) {
       clearTimeout(this.timer)
@@ -504,7 +513,6 @@ export default {
 
     getSmsCode() {
       const res = this.checkFromItem('phone', this.form.phone)
-      console.log('res-----', res)
       if (!res) return
 
       if (!this.isUser) {
@@ -647,7 +655,6 @@ export default {
       if (this.$route.query && this.$route.query.source) {
         params.source = this.$route.query.source
       }
-      console.log('register account: ', params)
       this.disabledBtn = true
       RegisterAPI(params).then(() => {
         this.$message.success('注册成功')
@@ -890,7 +897,7 @@ export default {
       height: 50px;
       line-height: 50px;
       font-size: 20px;
-      margin-top: 80px;
+      // margin-top: 80px;
       // @media screen and (max-width: 1550px) {
       //   height: 50px;
       //   line-height: 50px;
