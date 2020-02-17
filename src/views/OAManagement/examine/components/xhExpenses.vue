@@ -32,6 +32,7 @@
             @change="valueChange"/>
           <el-input
             v-else
+            :type="item.formType"
             v-model="item[subItem.field]"
             :maxlength="100"
             @input="calculateValueChange(index, subIndex)"/>
@@ -133,22 +134,22 @@ export default {
         {
           field: 'traffic',
           name: '交通费（元）',
-          formType: 'text'
+          formType: 'number'
         },
         {
           field: 'stay',
           name: '住宿费（元）',
-          formType: 'text'
+          formType: 'number'
         },
         {
           field: 'diet',
           name: '餐饮费（元）',
-          formType: 'text'
+          formType: 'number'
         },
         {
           field: 'other',
           name: '其他费用（元）',
-          formType: 'text'
+          formType: 'number'
         }
       ]
     }
