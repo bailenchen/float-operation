@@ -7,7 +7,7 @@
         <xh-user-cell
           v-if="showUser"
           ref="xhuserCell"
-          :value="selectUsers"
+          :value="checkedUser"
           :info-request="subUserListIndex"
           :radio="true"
           v-bind="$attrs"
@@ -258,8 +258,7 @@ export default {
       relationID: '',
       selectSysList: [],
       sysTypeId: [],
-      firstEnter: true,
-      selectUsers: []
+      firstEnter: true
     }
   },
   computed: {
@@ -288,12 +287,8 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    showUserPover(val) {
-      if (!val) {
-        this.selectUsers = []
-      }
     }
+
   },
   mounted() {
     window.onresize = () => {
@@ -680,13 +675,14 @@ export default {
      */
     selectUser(data) {
       this.checkedUser = data.value
-      this.selectUsers = data.value
+      this.copyCheckCusList = []
       if (data.value.length) {
         this.activeTime.userId = data.value.map(item => {
           return item.userId
         }).join(',')
       } else {
         this.activeTime.userId = ''
+        return
       }
       this.getCusCheck()
     },

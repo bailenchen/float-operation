@@ -10,7 +10,7 @@
     <div class="container">
       <div class="left">
         <h1 class="title">
-          企业销售+管理全流程
+          企业“销售+管理”全流程
         </h1>
         <h2 class="mini-title">
           客户关系管理的前沿创新
@@ -19,12 +19,12 @@
           悟空CRM已涉及教育业、制造业、服务业、金融业、政府机构等10多种<br>
           行业解决方案，全面帮助企业进行信息化建设
         </div>
-        <div
+        <!-- <div
           v-if="activeCom !== 'CreateNewCompany'"
           class="register-btn"
           @click="activeCom = 'CreateNewCompany'">
           免费注册
-        </div>
+        </div> -->
         <img
           src="~@/assets/login/main_pic.png"
           alt=""
@@ -161,13 +161,26 @@
           </template>
 
           <div class="use-tip">
-            <span class="text">建议使用</span>
-            <img src="~@/assets/login/chrome.png" alt="" class="icon">
-            <span class="text">Chrome、</span>
-            <img src="~@/assets/login/firefox.png" alt="" class="icon">
-            <span class="text">火狐以及第三方浏览器</span>
-            <img src="~@/assets/login/fast.png" alt="" class="icon">
-            <span class="text">极速模式</span>
+            <div>
+              <span class="text">建议使用</span>
+              <img src="~@/assets/login/chrome.png" alt="" class="icon">
+              <span class="text">Chrome、</span>
+              <img src="~@/assets/login/firefox.png" alt="" class="icon">
+              <span class="text">火狐、</span>
+              <img src="~@/assets/login/safari.png" alt="" class="icon">
+              <span class="text">Safari浏览器</span>
+            </div>
+            <div>
+              <span class="text">或</span>
+              <img src="~@/assets/login/360.png" alt="" class="icon">
+              <span class="text">360、</span>
+              <img src="~@/assets/login/sougou.png" alt="" class="icon">
+              <span class="text">搜狗、</span>
+              <img src="~@/assets/login/qq.png" alt="" class="icon">
+              <span class="text">QQ等浏览器</span>
+              <img src="~@/assets/login/fast.png" alt="" class="icon">
+              <span class="text">极速模式</span>
+            </div>
           </div>
         </div>
 
@@ -380,13 +393,13 @@ export default {
       .main-pic {
         width: 560px;
         margin-bottom: 20px;
-        margin-top: 20px;
+        margin-top: 50px;
         margin-left: -20px;
         @media screen and (max-width: 1550px) {
           width: 500px;
-          margin-top: 10px;
-          margin-left: -20px;
-          margin-bottom: 20px;
+          // margin-top: 10px;
+          // margin-left: -20px;
+          // margin-bottom: 20px;
         }
       }
       .download-group {
@@ -467,11 +480,14 @@ export default {
         .use-tip {
           position: absolute;
           left: 0;
-          bottom: 15px;
+          bottom: 10px;
           width: 100%;
           text-align: center;
           color: #999;
           font-size: 12px;
+          div + div {
+            margin-top: 3px;
+          }
           .text {
             vertical-align: middle;
           }

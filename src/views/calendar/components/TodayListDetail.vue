@@ -2,6 +2,8 @@
   <el-dialog
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
+    :lock-scroll="true"
+    modal-append-to-body
     append-to-body
     width="950px"
     @close="close">
@@ -28,7 +30,7 @@
           id="crm-table"
           :data="list"
           :cell-class-name="cellClassName"
-          height="500"
+          height="450"
           class="n-table--border"
           stripe
           border
@@ -365,8 +367,8 @@ export default {
         ]
       } else if (this.todayDetailData.title === '计划回款') {
         this.fieldList = [
-          { label: '客户名称', prop: 'customerName', width: 105 },
           { label: '合同编号', prop: 'num', width: 105 },
+          { label: '客户名称', prop: 'customerName', width: 105 },
           { label: '计划回款期数', prop: 'planNum', width: 135 },
           { label: '计划回款日期', prop: 'returnDate', width: 135 },
           { label: '计划回款方式', prop: 'returnType', width: 135 }
@@ -511,7 +513,7 @@ export default {
           this.relationID = row.customerId
           this.crmType = 'customer'
           this.showFullDetail = true
-        } else if (column.property === 'contractNum' || column.property === 'contractName') {
+        } else if (column.property === 'num' || column.property === 'contractName') {
           this.relationID = row.contractId
           this.crmType = 'contract'
           this.showFullDetail = true
@@ -571,6 +573,9 @@ export default {
      * 时间格式化
      */
     timeFormatted(date) {
+      if (!date) {
+        return ''
+      }
       const timestemp = new Date(date)
       return moment(timestemp).format('YYYY-MM-DD')
     },
@@ -665,8 +670,7 @@ export default {
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (
         column.property === 'customerName' ||
-        column.property === 'num' ||
-        (column.property != 'name' && row[column.property] > 0)
+        column.property === 'num'
       ) {
         return 'can-visit--underline'
       } else if (column.property === 'businessCheck') {
@@ -708,7 +712,6 @@ export default {
 }
 .common-box{
   width: 100%;
-  height: 438px;
   .common-title{
     font-size: 22px;
     width: 500px;
