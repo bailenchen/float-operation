@@ -782,6 +782,7 @@ export default {
   .common-bootom{
      width: 90%;
      overflow-x: auto;
+     overflow-y: hidden;
      padding-left: 50px;
      padding-top: 30px;
      color: #999;
