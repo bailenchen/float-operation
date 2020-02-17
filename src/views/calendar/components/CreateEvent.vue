@@ -9,16 +9,16 @@
       width="580px">
       <div v-if="!showRepeat">
         <el-form ref="ruleForm" :model="form" :rules="rules" label-position="left">
-          <el-form-item prop="title" class="form_1">
-            <el-input v-model="form.title" placeholder="请输入日程安排" class="input_one"/>
+          <el-form-item prop="title" label="日程内容">
+            <el-input v-model="form.title" placeholder="请输入日程内容"/>
           </el-form-item>
-          <el-form-item label="日历类型" prop="typeId">
+          <el-form-item label="日程类型" prop="typeId">
             <div class="color_change">
               <span :style="{backgroundColor: colorItem}" class="custom_left"/>
             </div>
             <el-select
               v-model="form.typeId"
-              placeholder="选择日历类型"
+              placeholder="选择日程类型"
               class="select_color">
               <el-option
                 v-for="item in cusCheck"
@@ -63,7 +63,7 @@
               @click="choseMore = true">添加更多选项</el-button>
           </el-form-item>
           <template v-if="choseMore">
-            <el-form-item v-if="editAll" label="重复">
+            <!-- <el-form-item v-if="editAll" label="重复">
               <el-select
                 v-model="form.repetitionType"
                 placeholder="选择重复类型">
@@ -74,7 +74,7 @@
                   :value="item.value"
                   @click.native="selectRepeat"/>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <template v-for="(noticeItem,index) in notice">
               <el-form-item :key="index" label="提前">
                 <el-select v-model="notice[index].value" placeholder="选择时间" class="time_select">
@@ -211,11 +211,11 @@ export default {
       // 选中的参与人员
       checkedUser: [],
       repeatList: [
-        { label: '从不重复', value: 1 },
-        { label: '每天', value: 2 },
-        { label: '每周', value: 3 },
-        { label: '每月', value: 4 },
-        { label: '每年', value: 5 }
+        { label: '从不重复', value: 1 }
+        // { label: '每天', value: 2 },
+        // { label: '每周', value: 3 },
+        // { label: '每月', value: 4 },
+        // { label: '每年', value: 5 }
       ],
       timeList: ['',
         [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
@@ -223,7 +223,7 @@ export default {
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]],
       rules: {
         title: [
-          { required: true, message: '日程安排不能为空', trigger: 'blur' }
+          { required: true, message: '日程内容不能为空', trigger: 'blur' }
         ],
         typeId: [
           { required: true, message: '请选择日历类型', trigger: 'change' }
@@ -561,17 +561,11 @@ export default {
     padding: 25px;
     max-height: 600px;
     overflow-y: auto;
-    .input_one{
-    .el-input__inner{
-       width: 510px !important;
-      }
-    }
-/deep/.form_1 .el-form-item__error{
-          left: 0px !important;
-          }
     .el-form{
       .el-form-item{
         margin-bottom: 20px;
+        white-space: nowrap;
+        overflow: hidden;
        .el-input__inner{
         width: 430px;
       }
