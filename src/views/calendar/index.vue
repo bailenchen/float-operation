@@ -226,6 +226,7 @@ export default {
         { label: '计划回款' }
       ],
       checkCusList: [],
+      dayEventList: [],
       cusCheck: [],
       showGroup: false,
       showCreate: false,
@@ -272,7 +273,6 @@ export default {
   watch: {
     checkCusList: {
       handler(val) {
-        console.log(val, 'val')
         if (val.length === 1) {
           this.copyCheckCusList = val
           this.customFifter(val)
@@ -340,15 +340,8 @@ export default {
       this.$refs.schedule.getDateList(this.activeTime)
       canlendarQueryListAPI(this.activeTime).then(res => {
         this.calendarEvents = []
-        const list = [
-          ...res.data, ...this.todaySchedule, ...this.taskList
-        ]
-        list.forEach(item => {
-          this.handleSure(item, item.color)
-        })
-        this.calendarList = this.calendarEvents
-        this.showGroup = true
-        this.customFifter(this.checkCusList)
+        this.dayEventList = res.data
+        this.handleShowData()
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -758,51 +751,64 @@ export default {
       const dataList = []
       list.forEach(item => {
         if (item.type === 1) {
-          if (item.select) {
-            this.selectSysList.push(item.color)
-          }
+          this.selectSysList.push(item.color)
         }
       })
-      if (this.selectSysList.includes('2')) {
-        this.needData.customerTimeList.forEach(date => {
-          dataList.push({
-            title: '需联系的客户',
-            startTime: date,
-            eventId: -1,
-            color: '#53D397',
-            typeId: this.sysTypeId[1].typeId,
-            groupId: this.sysTypeId[1].typeId,
-            endTime: date
-          })
+
+      this.needData.customerTimeList.forEach(date => {
+        dataList.push({
+          title: '需联系的客户',
+          startTime: date,
+          eventId: -1,
+          color: '#53D397',
+          typeId: this.sysTypeId[1].typeId,
+          groupId: this.sysTypeId[1].typeId,
+          endTime: date
         })
-      }
-      if (this.selectSysList.includes('3')) {
-        this.needData.endContractTimeList.forEach(date => {
-          dataList.push({
-            title: '即将到期的合同',
-            startTime: date,
-            eventId: -1,
-            color: '#3498DB',
-            typeId: this.sysTypeId[2].typeId,
-            groupId: this.sysTypeId[2].typeId,
-            endTime: date
-          })
+      })
+
+
+      this.needData.endContractTimeList.forEach(date => {
+        dataList.push({
+          title: '即将到期的合同',
+          startTime: date,
+          eventId: -1,
+          color: '#3498DB',
+          typeId: this.sysTypeId[2].typeId,
+          groupId: this.sysTypeId[2].typeId,
+          endTime: date
         })
-      }
-      if (this.selectSysList.includes('4')) {
-        this.needData.receiveContractTimeList.forEach(date => {
-          dataList.push({
-            title: '计划回款',
-            startTime: date,
-            eventId: -1,
-            color: '#FF6F6F',
-            typeId: this.sysTypeId[3].typeId,
-            groupId: this.sysTypeId[3].typeId,
-            endTime: date
-          })
+      })
+
+
+      this.needData.receiveContractTimeList.forEach(date => {
+        dataList.push({
+          title: '计划回款',
+          startTime: date,
+          eventId: -1,
+          color: '#FF6F6F',
+          typeId: this.sysTypeId[3].typeId,
+          groupId: this.sysTypeId[3].typeId,
+          endTime: date
         })
-      }
+      })
+
       return dataList
+    },
+
+    /**
+     * 拼接展示数据
+     */
+    handleShowData() {
+      const list = [
+        ...this.dayEventList, ...this.todaySchedule, ...this.taskList
+      ]
+      list.forEach(item => {
+        this.handleSure(item, item.color)
+      })
+      this.calendarList = this.calendarEvents
+      this.showGroup = true
+      this.customFifter(this.checkCusList)
     }
 
   }
