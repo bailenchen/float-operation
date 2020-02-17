@@ -54,7 +54,7 @@
       <div class="cell-box">
         <el-checkbox
           v-model="rememberMe">
-          记住我
+          记住账号
         </el-checkbox>
       </div>
       <div class="empty">
@@ -217,7 +217,6 @@ export default {
     },
 
     handleToggle(command) {
-      console.log('command', command)
       this.loginType = command
     },
     /**
@@ -234,7 +233,6 @@ export default {
         data: data
       }).then(res => {
         loading.close()
-        console.log(res)
         // if (res.code === 200) {
         // } else {
         //   this.$message.error('登录失败')
@@ -245,7 +243,6 @@ export default {
       }).catch(() => {
         this.$message.error('登录失败')
         loading.close()
-        console.log('error')
       })
     },
 

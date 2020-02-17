@@ -142,7 +142,7 @@
         </ul>
       </div>
       <div class="right">
-        <div class="login-main-content">
+        <div :style="{ height: showRegistNextStep ? '350px' :'500px'}" class="login-main-content">
           <div class="logo-box">
             {{ titleMap[activeCom] }}
           </div>
@@ -152,7 +152,8 @@
               :is="activeCom"
               :phone="phone"
               :sms-type="smsType"
-              @toggle="handleToggleCom" />
+              @toggle="handleToggleCom"
+              @regist-height-change="registHeightChange" />
           </template>
           <template v-else>
             <multiple-company
@@ -225,6 +226,7 @@ export default {
     return {
       usePwd: true,
       activeCom: 'LoginByPwd',
+      showRegistNextStep: false,
       companyList: [],
       titleMap: {
         LoginByPwd: '欢迎登录',
@@ -238,6 +240,11 @@ export default {
       phone: '' // 串联 密码登录 验证码登录 创建 页面的 手机号
     }
   },
+  watch: {
+    activeCom(val) {
+      this.showRegistNextStep = false
+    }
+  },
   created() {
     if (this.$route.query && this.$route.query.type === 'register') {
       this.activeCom = 'CreateNewCompany'
@@ -247,7 +254,6 @@ export default {
     }
     this.$nextTick(() => {
       // const doms = Array.from(document.getElementById('login-wrapper').querySelectorAll('*'))
-      // console.log(doms)
       // let arr = []
       // doms.forEach(dom => {
       //   let zIndex = Number(window.getComputedStyle(dom).zIndex) || 0
@@ -257,11 +263,17 @@ export default {
   },
   methods: {
     /**
+     * 注册高更改
+     */
+    registHeightChange(val) {
+      this.showRegistNextStep = val
+    },
+
+    /**
      * MultipleCompany  返回多个公司数组
      * 其他返回 手机号
      */
     handleToggleCom(com, value) {
-      console.log('cccc', com, value)
       this.companyList = []
       const typeMap = {
         LoginByPwd: 'login',
@@ -450,7 +462,7 @@ export default {
       .login-main-content {
         position: relative;
         width: 100%;
-        height: 450px;
+        height: 500px;
         // height: 510px;
         background-color: white;
         border-radius: 6px;
@@ -480,7 +492,7 @@ export default {
         .use-tip {
           position: absolute;
           left: 0;
-          bottom: 10px;
+          bottom: 18px;
           width: 100%;
           text-align: center;
           color: #999;

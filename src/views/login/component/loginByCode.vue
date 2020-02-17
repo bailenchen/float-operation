@@ -122,7 +122,6 @@ export default {
       } else {
         this.dialogWidth = '55%'
       }
-      console.log('dialog', this.dialogWidth)
     })
   },
   methods: {
@@ -166,7 +165,6 @@ export default {
     },
 
     handleToggle(command) {
-      console.log('command', command)
       this.loginType = command
     },
     /**
@@ -193,7 +191,6 @@ export default {
       }).catch(() => {
         this.$message.error('登录失败')
         loading.close()
-        console.log('error')
       })
     }
   }
