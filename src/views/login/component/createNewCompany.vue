@@ -658,7 +658,7 @@ export default {
       RegisterAPI(params).then(() => {
         this.$message.success('注册成功')
         this.disabledBtn = false
-        this.$emit('toggle', 'LoginByPwd', this.$refs.smsCode.form.phone)
+        this.$emit('toggle', 'LoginByPwd', this.form.phone || '')
         loading.close()
       }).catch(() => {
         this.disabledBtn = false
