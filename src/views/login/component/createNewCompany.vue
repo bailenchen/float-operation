@@ -484,6 +484,7 @@ export default {
       if (this.$route.query) {
         this.$set(this.form, 'realname', this.$route.query.name || '')
         this.$set(this.form, 'phone', this.$route.query.mobile || '')
+        this.$set(this.form, 'discount', this.$route.query.discount || '')
       }
       if (document.body.clientWidth > 1550) {
         this.dialogWidth = '40%'
