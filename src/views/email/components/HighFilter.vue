@@ -11,7 +11,7 @@
         class="search-input"
         placeholder="搜索"
         prefix-icon="el-icon-search"/>
-      <el-button type="primary" class="filter-btn" @click="filter">高级筛选</el-button>
+        <!-- <el-button type="primary" class="filter-btn" @click="filter">高级筛选</el-button> -->
     </div>
 
     <div class="filter-list">
@@ -21,7 +21,7 @@
       </div>
       <div v-for="(item, index) in filterList" :key="index" class="all">
         <el-checkbox v-model="item.checked"/>
-        <span class="all-txt">{{ item.customerName }}&lt;{{ item.website }}&gt;</span>
+        <span class="all-txt">{{ item.customerName }}&lt;{{ item.email }}&gt;</span>
       </div>
     </div>
 

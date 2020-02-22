@@ -1,20 +1,36 @@
+
 <template>
   <div class="add-receive-wrap">
-    <div v-for="(item, index) in sentLists" :key="index" class="receiver">
+    <div v-for="(item, index) in emailList" :key="index" class="receiver">
       <div class="current-receiver">
         <div v-if="isHide(item)" class="end-wrap">
-          <div :class="{ 'wrong': isCorectEmail(item) }" class="receiver-email">{{ item.website }}</div>
+          <div :class="{ 'wrong': isCorectEmail(item) }" class="receiver-email">
+            <span>{{ item.customerName }}</span>
+            <span :contenteditable="true" @input="inputs($event, item, index)" @blur="blurs">{{ getemail(item.email) }}</span>
+          </div>
           <div class="icon-wrap" @click="delEmail(item, index)">
             <i class="el-icon-close"/>
           </div>
         </div>
       </div>
     </div>
-    <el-input v-model="val" class="enter-input" @change="handleAddEmail()"/>
+    <el-autocomplete
+      v-model="val"
+      :fetch-suggestions="querySearchAsync"
+      :highlight-first-item="true"
+      :debounce="500"
+      class="enter-input"
+      @blur="handleAddEmail"
+      @select="handleInputSelect">
+      <template slot-scope="{ item }">
+        <div class="name">{{ item.name }}<{{ item.value }}></div>
+      </template>
+    </el-autocomplete>
   </div>
 </template>
 
 <script>
+import { emailAccountSearchEmailAPI } from '@/api/email/email'
 export default {
   name: 'AddSenter',
   props: {
@@ -31,7 +47,9 @@ export default {
   },
   data() {
     return {
-      val: ''
+      val: '',
+      emailList: [],
+      emailCopy: []
     }
   },
   computed: {
@@ -40,8 +58,8 @@ export default {
      */
     isCorectEmail() {
       return function(item) {
-        console.log('1111111', this.validEmail(item.website))
-        if (this.validEmail(item.website)) {
+        console.log('1111111', this.validEmail(item.email))
+        if (this.validEmail(item.email)) {
           item.valid = true
           return false
         } else {
@@ -60,18 +78,37 @@ export default {
       }
     }
   },
+  watch: {
+    sentLists: {
+      handler(val) {
+        this.emailCopy = JSON.parse(JSON.stringify(this.sentLists))
+        this.emailList = JSON.parse(JSON.stringify(this.sentLists))
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   mounted() {
-    console.log(this.sentLists, '111', this.comType)
+    this.emailList = JSON.parse(JSON.stringify(this.sentLists))
   },
   methods: {
     handleAddEmail() {
       if (this.comType == 'receive') {
-        this.$emit('add-receive', this.val)
+        if (this.validEmail(this.val)) {
+          this.$emit('add-receive', this.val, this.emailList)
+          this.val = ''
+        } else {
+          this.$message.error('您输入的邮箱格式错误')
+        }
       } else if (this.comType == 'sent') {
-        this.$emit('add-sent', this.val)
+        if (this.validEmail(this.val)) {
+          this.$emit('add-sent', this.val, this.emailList)
+          this.val = ''
+        } else {
+          this.$message.error('您输入的邮箱格式错误')
+        }
       }
-      this.val = ''
-      console.log(this.comType, 'inputtype')
+      this.emailList = JSON.parse(JSON.stringify(this.emailCopy))
     },
     /**
      * 验证邮箱
@@ -93,6 +130,54 @@ export default {
         this.$emit('del-sent', index)
       }
       console.log('12', this.receiverLists)
+    },
+    inputs(e, item, index) {
+      const startCount = e.target.textContent.indexOf('<') + 1
+      const endCount = e.target.textContent.indexOf('>')
+      const string = e.target.textContent.substring(startCount, endCount)
+      this.emailCopy[index].email = string
+      this.emailCopy[index].valid = true
+    },
+    blurs() {
+      this.emailList = JSON.parse(JSON.stringify(this.emailCopy))
+      this.$emit('change', this.emailList)
+    },
+
+    /**
+     * 网址拼接<>
+     */
+    getemail(email) {
+      return '<' + email + '>'
+    },
+
+    /**
+     * 模糊查询邮箱
+     */
+    getEamilList() {
+      emailAccountSearchEmailAPI({ email: this.val }).then(res => {
+
+      }).catch(() => {})
+    },
+
+    /**
+     * 搜索的回调
+     */
+    querySearchAsync(queryString, cb) {
+      if (queryString) {
+        emailAccountSearchEmailAPI({ email: queryString }).then(res => {
+          cb(res.data)
+        }).catch(() => {})
+      } else {
+        cb([])
+      }
+    },
+
+    /**
+     *选中的回调
+     */
+    handleInputSelect(item) {
+      this.val = item.value
+      this.handleAddEmail()
     }
   }
 }
@@ -102,10 +187,9 @@ export default {
 // 添加收件人样式
 .add-receive-wrap {
   width: 100%;
-  height: 35px;
-  line-height: 35px;
   display: flex;
   justify-content: flex-start;
+  flex-wrap: wrap;
   align-items: center;
 }
 
@@ -123,6 +207,7 @@ export default {
     font-size: 12px;
     .receiver-email {
       background: #d7e9ff;
+      white-space: nowrap;
       padding: 2px 5px;
       color: #2e3133;
     }
@@ -139,6 +224,7 @@ export default {
 
 .enter-input {
   font-size: 12px;
+  width: 150px;
   /deep/ .el-input__inner {
     border: 0;
   }
@@ -150,6 +236,7 @@ export default {
 
 .receiver {
   margin-right: 5px;
+  margin-bottom: 5px;
 }
 </style>
 

@@ -44,7 +44,12 @@ export default {
     ...mapGetters(['crm'])
   },
   created() {
-    console.log(this.emailType, this.sideNavTitle, 'yxlx')
+    this.$bus.on('synEmail', () => {
+      this.getEmailList()
+    })
+  },
+  destroyed() {
+    this.$bus.off('synEmail')
   },
   methods: {
     /**
@@ -204,13 +209,14 @@ export default {
      * 列表邮件标题
      */
     getEmailDateSectionTitle(item) {
-      if (item.sendDate) {
-        if (item.sendDate == moment().format('YYYY-MM-DD')) {
+      if (item.createTime) {
+        const template = new Date(item.createTime).getTime()
+        if (moment(template).format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) {
           return '今天'
-        } else if (item.sendDate == moment().subtract(1, 'days').format('YYYY-MM-DD')) {
+        } else if (moment(template).format('YYYY-MM-DD') == moment().subtract(1, 'days').format('YYYY-MM-DD')) {
           return '昨天'
         } else {
-          return item.sendDate
+          return moment(template).format('YYYY-MM-DD')
         }
       }
       return ''
@@ -221,7 +227,7 @@ export default {
      */
     handleStar(item) {
       this.idLists = []
-      this.idLists.push(item.messageId)
+      this.idLists.push(item.id)
       var starType = item.isStar ? 'cancelStar' : 'star'
       this.isConfirm(starType, 'FLAGGED', !item.isStar)
     },
@@ -231,7 +237,7 @@ export default {
      */
     handleRead(item) {
       this.idLists = []
-      this.idLists.push(item.messageId)
+      this.idLists.push(item.id)
       var readType = item.isRead ? 'noRead' : 'read'
       this.isConfirm(readType, 'SEEN', !item.isRead)
     },
@@ -244,14 +250,19 @@ export default {
      */
     isConfirm(type, apiType, bool) {
       var message = ''
+      let state = ''
       if (type == 'star') {
         message = '确定将邮件标记为星标邮件吗?'
+        state = 3
       } else if (type == 'cancelStar') {
         message = '确定将邮件取消星标邮件吗?'
+        state = 4
       } else if (type == 'read') {
         message = '确定将邮件标记为已读邮件吗?'
+        state = 1
       } else if (type == 'noRead') {
         message = '确定将邮件标记为未读邮件吗?'
+        state = 2
       } else if (type == 'delete') {
         message = '确定将邮件删除吗?'
       } else if (type == 'rootDel') {
@@ -263,7 +274,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.updateEmailState(apiType, bool)
+          this.updateEmailState(state, bool)
         })
         .catch(() => {
           this.$message({
@@ -278,24 +289,20 @@ export default {
      */
     updateEmailState(stateType, is) {
       var params = {
-        page: this.currentPage,
-        limit: this.pageSize,
-        type: this.typeConfig[this.emailType],
-        search: this.search,
-        index: this.idLists.join(','),
-        state: stateType,
-        flag: is
+        emailIds: this.idLists.join(','),
+        state: stateType
       }
       emailStateUpdateAPI(params).then((res) => {
-        this.$message({
-          type: 'success',
-          message: '操作成功'
-        })
+        if (is !== 'detail') {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+        }
+
         this.getEmailList()
-        console.log(res, '状态修改')
       }).catch(() => {
         this.loading = false
-        this.$message.error('操作失败')
       })
     }
 

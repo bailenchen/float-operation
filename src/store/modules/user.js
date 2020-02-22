@@ -28,10 +28,14 @@ const user = {
     bi: {}, // 商业智能
     manage: {}, // 管理后台
     oa: {}, // 办公
+    emailMsg: {},
     project: {} // 项目管理
   },
 
   mutations: {
+    SET_EMAIL: (state, emailMsg) => {
+      state.emailMsg = emailMsg
+    },
     SET_USERINFO: (state, userInfo) => {
       state.userInfo = userInfo
       localStorage.setItem('loginUserInfo', JSON.stringify(userInfo))

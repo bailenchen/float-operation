@@ -38,7 +38,8 @@ const getters = {
   messageOANum: state => state.oa.messageOANum,
   // 配置信息
   CRMConfig: state => state.app.CRMConfig,
-  imageCache: state => state.app.imageCache
+  imageCache: state => state.app.imageCache,
+  emailMsg: state => state.user.emailMsg
 }
 /**
  * 使用说明

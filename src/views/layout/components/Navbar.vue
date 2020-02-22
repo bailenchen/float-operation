@@ -119,7 +119,8 @@ export default {
         taskCount: 0
       },
       sysMessageShow: false,
-      intervalId: null
+      intervalId: null,
+      type: 0
     }
   },
   computed: {
@@ -209,7 +210,7 @@ export default {
       tempsItems.push({
         title: '邮箱',
         type: 7,
-        path: this.userInfo.emailId ? '/email/index/receive' : '/email/set',
+        path: '/email/index/receive',
         icon: 'wk wk-business-intelligence',
         fontSize: '18px'
       })

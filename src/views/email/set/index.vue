@@ -1,5 +1,5 @@
 <template>
-  <div class="email-set">
+  <div v-loading="loading" class="email-set">
     <div :class="{ 'left-pic': isHand }" class="left-bg">
       <img src="~@/assets/img/email/email_set.png" alt="">
     </div>
@@ -70,7 +70,7 @@
 import { emailValidAPI } from '@/api/email/email'
 
 import { regexIsCRMEmail } from '@/utils'
-
+import { mapGetters } from 'vuex'
 export default {
   // 设置
   name: 'Set',
@@ -78,6 +78,7 @@ export default {
   props: {},
   data() {
     return {
+      loading: false,
       emailAccount: '',
       emailPassward: '',
       serviceType: 'SMTP',
@@ -92,20 +93,25 @@ export default {
       smtpPort: ''
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   watch: {},
   mounted() {},
 
   beforeDestroy() {},
 
   created() {
-    console.log(this.emailParamType)
+    if (this.userInfo.emailId) {
+      this.$router.push({ name: 'email_index' })
+    }
   },
 
   beforeRouteUpdate(to, from, next) {
     this.emailParamType.push(to)
     this.emailParamType.push(from)
     this.emailParamType.push(next)
+    next()
   },
 
   methods: {
@@ -149,6 +155,7 @@ export default {
           receiving_server: this.receivingServer,
           receiving_ssl: this.receivingPort,
           smtp_server: this.smtpServer,
+          configuration_mode: 1,
           smtp_ssl: this.smtpPort
         }
       } else {
@@ -158,14 +165,38 @@ export default {
           receiving_server: `imap.${this.emailType}.com`,
           receiving_ssl: '993',
           smtp_server: `smtp.${this.emailType}.com`,
+          configuration_mode: 2,
           smtp_ssl: 465
         }
       }
+      this.loading = true
       emailValidAPI(params).then((res) => {
-        this.$router.push({
-          path: '/email/index/receive'
-        })
-      }).catch(() => {})
+        if (res.msg === 105) {
+          this.$confirm('账号或密码错误，腾讯、网易等邮箱等服务商需要在网页端设置中开启POP3/IMAP/SMPT服务，且对于第三方邮箱服务要求使用“授权码”登录。没有开启相关服务或使用原邮箱密码登录均可能导致密码错误问题。', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            closeOnClickModal: false,
+            type: 'warning'
+          }).then(() => {
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+          this.loading = false
+          this.$router.push({ name: 'email_set' })
+        } else {
+          this.$store.dispatch('GetUserInfo').then(res => {
+            this.$router.push({
+              path: '/email/index/receive'
+            })
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        }
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**

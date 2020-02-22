@@ -40,6 +40,7 @@
         mode="vertical"
         class="el-menu-vertical"
         @select="handleSelect">
+        <slot name="emailSynchronizes"/>
         <sidebar-item
           v-for="(route, index) in items"
           :key="`${route.path}${index}`"
@@ -49,7 +50,7 @@
           :active-menu="activeMenu" />
       </el-menu>
     </el-scrollbar>
-
+    <slot name="person"/>
     <div
       :style="{ 'background-color':variables.menuBg }"
       class="sidebar-bottom">

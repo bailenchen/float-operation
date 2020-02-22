@@ -43,13 +43,13 @@
                       style="cursor: not-allowed; color: #9DA9C2;"/>
                   </div>
                 </th>
-                <th class="tb-head" width="55px">
+                <!-- <th class="tb-head" width="55px">
                   <div style="width:55px">
                     <i
                       class="el-icon-paperclip"
                       style="cursor: not-allowed; color: #9DA9C2;"/>
                   </div>
-                </th>
+                </th> -->
                 <th class="tb-h-align head-font-color sent-column">
                   <div ref="sent" class="sent-column" style="width:100%">
                     发件人
@@ -69,7 +69,7 @@
             </thead>
           </table>
         </div>
-        <div :style="{ width: tableWidth + 'px', height: tableHeight + 'px' }" :class="{ 'empty-list': lists.length == 0 }" class="table-container">
+        <div :style="{ width: tableWidth + 'px', height: tableHeight + 'px' }" :class="{ 'empty-list':lists && lists.length == 0 }" class="table-container">
 
           <template v-for="(item, index) in lists">
             <div v-if="item.first" :key="`title${index}`" class="row-title block-title">
@@ -77,7 +77,7 @@
                 {{ getEmailDateSectionTitle(item) }}<span class="number">（{{ item.numIndex }}&nbsp;封）</span>
               </div>
             </div>
-            <table :key="`row${index}`" :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2) }" border="0px" cellpadding="0px" cellspacing="0">
+            <table :key="`row${index}`" :style="{background: item.checked ? '#fff6f7': ''}" :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2) }" border="0px" cellpadding="0px" cellspacing="0">
               <tbody>
                 <tr class="table-row">
                   <td class="tb-head first-cell">
@@ -101,29 +101,29 @@
                         style="cursor: pointer; color: #9DA9C2;"/>
                     </div>
                   </td>
-                  <td class="tb-head">
+                  <!-- <td class="tb-head">
                     <div style="width:55px">
                       <i
-                        v-if="item.fileList.length > 0"
+                        v-if="item.fileList && item.fileList.length > 0"
                         class="el-icon-paperclip"
                         style="cursor: pointer; color: #9DA9C2;"/>
                     </div>
-                  </td>
+                  </td> -->
                   <td class="tb-h-align font-color sent-column">
-                    <div :title="item.sendUser" :style="{ width: calcCellWidth('sent') + 'px' }" class="sent-column1" @click.stop="clickRow(item, index)">
-                      {{ item.sendUser }}
+                    <div :title="item.sender" :style="{ width: calcCellWidth('sent') + 'px' }" :class="item.isRead ? 'read' : ''" class="sent-column1" @click.stop="clickRow(item, index)">
+                      {{ item.sender }}
                       <!-- :style="{ width: calcCellWidth('sent') + 'px' }" -->
                     </div>
                   </td>
                   <td class="tb-h-align font-color subject-column">
-                    <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" class="subject-column1">
+                    <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" :class="item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
                       {{ item.theme }}
                       <!-- :style="{ width: calcCellWidth('theme') + 'px' }" -->
                     </div>
                   </td>
                   <td class="tb-h-align font-color end-column time-column">
                     <div :style="{ width: calcCellWidth('time') + 'px' }" class="time-column1">
-                      {{ item.sendDate }}
+                      {{ item.createTime }}
                       <!-- :style="{ width: calcCellWidth('time') + 'px' }" -->
                     </div>
                   </td>
@@ -131,7 +131,7 @@
               </tbody>
             </table>
           </template>
-          <span v-if="lists.length == 0" class="no-data">暂无数据</span>
+          <span v-if="lists && lists.length == 0" class="no-data">暂无数据</span>
         </div>
       </div>
       <div class="p-contianer">
@@ -166,7 +166,7 @@ import { emailNumAPI } from '@/api/email/email'
 import EmailDetail from './EmailDetail'
 
 import table from './mixins/table'
-
+import { mapGetters } from 'vuex'
 export default {
   // 列表
   name: 'Index',
@@ -191,6 +191,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     calcCellWidth() {
       return function(cell) {
         console.log(this.$refs.sent.offsetWidth, 'ff')
@@ -272,11 +273,15 @@ export default {
   watch: {},
   mounted() {
     this.$nextTick(() => {
-      this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+      if (document.getElementsByClassName('table-head')[0]) {
+        this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+      }
     })
     window.onresize = () => {
       return (() => {
-        this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+        if (document.getElementsByClassName('table-head')[0]) {
+          this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+        }
       })()
     }
   },
@@ -287,7 +292,6 @@ export default {
     this.emailType = this.$route.params.type
     this.queryEmailNum()
     this.getEmailList()
-    console.log(this.emailType, this.$route, 'leixing')
   },
 
   beforeRouteUpdate(to, from, next) {
@@ -311,7 +315,6 @@ export default {
     queryEmailNum() {
       emailNumAPI().then((res) => {
         this.receiveNumber = res.data.unreadCount
-        console.log('数量差', res)
       }).catch(() => {
 
       })
@@ -325,8 +328,9 @@ export default {
       item.page = this.currentPage
       item.limit = this.pageSize
       item.search = this.search
+      this.idLists = [item.id]
       this.rowItem = item
-      console.log(item, index, 'item')
+      this.updateEmailState(1, 'detail')
     },
 
     /**
@@ -356,7 +360,7 @@ export default {
       this.idLists = []
       for (let index = 0; index < this.checkLists.length; index++) {
         const element = this.checkLists[index]
-        this.idLists.push(element.messageId)
+        this.idLists.push(element.id)
       }
 
       this.isConfirm(type, listapi, isdo)
@@ -420,8 +424,8 @@ export default {
 
 .row-title {
   width: 100%;
-  height: 40px;
-  line-height: 40px;
+  height: 24px;
+  line-height: 24px;
   display: block;
   text-align: left;
   font-size: 12px;
@@ -441,8 +445,8 @@ export default {
 }
 
 .table-row {
-  height: 40px;
-  line-height: 40px;
+  height: 24px;
+  line-height: 24px;
 }
 
 .head-bg {
@@ -464,7 +468,7 @@ export default {
 }
 
 tr > td {
-  height: 40px;
+  height: 24px;
 }
 
 .end-column {
@@ -522,10 +526,16 @@ tr > td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.read {
+  font-weight: bolder;
+  color: #333333 !important;
 }
 
 .sent-column1 {
-  color: #2362FB;
+  color: #666666;
   cursor: pointer;
 }
 

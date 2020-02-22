@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="new-email">
-      <create-email class="left"/>
+      <create-email ref="createEmail" class="left"/>
       <high-filter class="right"/>
     </div>
   </div>
@@ -27,6 +27,23 @@ export default {
   },
   data() {
     return {
+    }
+  },
+  beforeRouteLeave(to, form, next) {
+    // 有收件人或者分别发送人或者分别发送人才有提示
+    if (this.$refs.createEmail.receiverLists.length || this.$refs.createEmail.deffientList.length) {
+      this.$confirm('内容已被修改, 是否要将此邮件存为草稿?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$refs.createEmail.saveDraft('savebtn')
+        next()
+      }).catch(() => {
+        next()
+      })
+    } else {
+      next()
     }
   }
 }

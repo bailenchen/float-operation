@@ -31,7 +31,6 @@ export default {
       this.$nextTick(() => {
         var element = document.querySelector('.w-e-text')
         element.innerHTML = this.content
-        console.log(this.$refs.editorElem, 'gg', element)
       })
     }
     this.editor = new E(this.$refs.editorElem)

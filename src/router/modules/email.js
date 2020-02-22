@@ -18,11 +18,23 @@ export default [
     ...layout({}, true),
     children: [{
       path: '/email/set', // 设置
-      component: () => import('@/views/email//set/index'),
+      name: 'email_set',
+      component: () => import('@/views/email/set/index'),
       meta: {
         title: '设置',
         icon: 'board',
         name: 'email-set'
+      }
+    }]
+  },
+  {
+    ...layout({}, true),
+    children: [{
+      path: '/email/person', // 个人中心
+      component: () => import('@/views/email/person'),
+      meta: {
+        title: '个人中心',
+        icon: 'board'
       }
     }]
   },
@@ -61,6 +73,7 @@ export default [
     ...layout({}),
     ignore: true, // 路由添加时忽略
     children: [{
+      name: 'email_index',
       path: 'index/receive', // 列表
       meta: {
         title: '收件箱',

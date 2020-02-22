@@ -5,30 +5,53 @@
       <flexbox class="btn-group">
         <el-button type="success" @click="send('sentbtn')">发送</el-button>
         <el-button type="info" plain @click="saveDraft('savebtn')">存稿箱</el-button>
-        <el-button type="info" plain>关闭</el-button>
       </flexbox>
+      <div v-if="!showDeffient">
+        <flexbox class="form-item" direction="row" align="flex-start">
+          <div class="form-label line" @click="addReceive()">收件人</div>
+          <!-- 收件人布局 begin-->
+          <add-senter
+            :com-type="receiveType"
+            :sent-lists="receiverLists"
+            @change="changeReceiverList"
+            @add-receive="addReceiveEmail"
+            @del-receive="delReceiveEmail"/>
+            <!-- end -->
+        </flexbox>
+        <flexbox v-if="showSent" class="form-item" direction="row" align="flex-start">
+          <div class="form-label line" @click="sentTo()">抄送</div>
+          <!-- 抄送人布局 begin-->
+          <add-senter
+            :com-type="sentType"
+            :sent-lists="sentLists"
+            @change="changeSentList"
+            @add-sent="addSentEmail"
+            @del-sent="delSentEmail"/>
 
-      <flexbox class="form-item" direction="row" align="flex-start">
-        <div class="form-label" @click="addReceive()">收件人 ＋</div>
-        <!-- 收件人布局 begin-->
+            <!-- end -->
+        </flexbox>
+      </div>
+
+      <flexbox v-else class="form-item" direction="row" align="flex-start">
+        <div class="form-label line" @click="addReceive()">分别发送</div>
+        <!-- 分别发送布局 begin-->
         <add-senter
           :com-type="receiveType"
-          :sent-lists="receiverLists"
+          :sent-lists="deffientList"
+          @change="changeReceiverList"
           @add-receive="addReceiveEmail"
           @del-receive="delReceiveEmail"/>
           <!-- end -->
       </flexbox>
-      <flexbox class="form-item" direction="row" align="flex-start">
-        <div class="form-label" @click="sentTo()">抄送 ＋</div>
-        <!-- 抄送人布局 begin-->
-        <add-senter
-          :com-type="sentType"
-          :sent-lists="sentLists"
-          @add-sent="addSentEmail"
-          @del-sent="delSentEmail"/>
+      <div>
+        <span v-if="!showDeffient">
+          <el-button v-if="!showSent" type="text" @click="showSent = true">添加抄送</el-button>
+          <el-button v-else type="text" @click="deleteSent">删除抄送</el-button>
+        </span>
 
-          <!-- end -->
-      </flexbox>
+        <span v-if="showDeffient" class="deffient_text">每个收件人将收到单独发给他/她的邮件。</span><el-button v-if="showDeffient" type="text" @click="showDeffient = false">取消分别发送</el-button>
+        <el-button v-else type="text" @click="differenceSend">分别发送</el-button>
+      </div>
       <flexbox class="form-item" direction="row" align="flex-start" style="margin:0;">
         <div class="form-label">主题</div>
         <div class="form-add" style="width:100%;cursor:text">
@@ -70,7 +93,7 @@
         ref="crmrelative"
         :crm-type="crmType"
         :accept-email="acceptEmail"
-        :radio="radio"
+        :radio="false"
         :action="relationAction"
         :selected-data="selectedData"
         @close="hideAddEmail"
@@ -80,15 +103,18 @@
 </template>
 
 <script>
-import { emailSendAPI, saveDraftBoxAPI } from '@/api/email/email'
+import {
+  emailSendAPI,
+  emailQueryAccountByIdAPI,
+  saveDraftBoxAPI } from '@/api/email/email'
 import axios from 'axios'
 import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import { guid } from '@/utils'
-
+import { regexIsCRMEmail } from '@/utils'
 import CrmRelative from '../../../components/CreateCom/CrmRelative'
 import RichTxt from './RichTxt'
 import AddSenter from './AddSenter'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'CreateEmail',
   components: {
@@ -108,16 +134,20 @@ export default {
       radio: true, // 是否单选
       relationAction: { type: 'default' },
       receiverLists: [], // 收件人列表
-      sentLists: [],
+      sentLists: [], // 抄送人列表
+      deffientList: [], // 分别发送人列表
+      showSent: false, // 是否展示抄送人
+      showDeffient: false, // 展示分别发送
       acceptEmail: '',
       fileList: [],
       batchId: guid(),
-
       content: '',
-      emailcontent: '123'
+      emailcontent: '',
+      sendEmailMsg: {} // 发件人信息
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     crmFileSaveUrl() {
       return crmFileSaveUrl
     },
@@ -135,8 +165,8 @@ export default {
   created() {
     if (this.$route.query.reply) {
       console.log(this.$route.query, 'hhH')
-      this.receiverLists.push({ 'website': this.$route.query.sendUser.split('<')[1].split('>')[0], 'show': true })
-      this.sentLists.push({ 'website': this.$route.query.receivingUser.split('<')[1].split('>')[0], 'show': true })
+      this.receiverLists.push({ 'email': this.$route.query.sendUser.split('<')[1].split('>')[0], 'show': true })
+      this.sentLists.push({ 'email': this.$route.query.receivingUser.split('<')[1].split('>')[0], 'show': true })
       this.themeVal = this.$route.query.theme
       this.fileList = this.$route.query.fileList.length ? this.$route.query.fileList.map((item) => {
         item.name = item.fileName
@@ -155,31 +185,40 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.query, 'canshu')
+    this.getSendEmailMsg()
   },
   methods: {
     /**
+     * 查询发件邮箱基本信息
+     */
+    getSendEmailMsg() {
+      emailQueryAccountByIdAPI({ id: this.userInfo.emailId }).then(res => {
+        this.sendEmailMsg = res.data
+      }).catch(() => {})
+    },
+    /**
      * 手动添加收件人
      */
-    addReceiveEmail(val) {
-      console.log(val, 'shoujian')
-      this.receiverLists.push({ 'website': val, 'show': true })
+    addReceiveEmail(val, list) {
+      this.receiverLists = list
+      this.receiverLists.push({ 'email': val, valid: true, 'show': true })
+      this.eliminateArray()
     },
 
     /**
      * 手动删除收件人
      */
     delReceiveEmail(index) {
-      console.log(index, 'shoujian')
       this.receiverLists.splice(index, 1)
+      this.eliminateArray()
     },
 
     /**
      * 手动添加抄送人
      */
-    addSentEmail(val) {
-      console.log(val, 'chaosong')
-      this.sentLists.push({ 'website': val, 'show': true })
+    addSentEmail(val, list) {
+      this.sentLists = list
+      this.sentLists.push({ 'email': val, valid: true, 'show': true })
       console.log(this.sentLists, 'add')
     },
 
@@ -285,40 +324,51 @@ export default {
      * 发送与存稿请求
      */
     sendSaveDraft(btnType) {
-      let isSent = false
-      const newlist = this.receiverLists.concat(this.sentLists)
-      console.log(newlist, 'lllllllllllllllllll')
-      newlist.map((item) => {
-        if (!item.valid) {
-          isSent = false
-          return
-        } else {
+      let isSent = true
+      var type = 1
+      let newlist = []
+      if (this.showDeffient) {
+        newlist = this.deffientList
+        type = 2
+      } else if (this.showSent) {
+        newlist = this.receiverLists.concat(this.sentLists)
+      } else {
+        newlist = this.receiverLists
+      }
+      //  统一进行邮箱判断
+      if (newlist.length === 0) {
+        this.$message.error('收件人不能为空')
+        return
+      }
+      newlist.forEach((item, index) => {
+        // 只要邮箱有一个是错的，就永远返回false
+        if (isSent && regexIsCRMEmail(item.email)) {
           isSent = true
+        } else {
+          this.$$message.error(`第${index}的邮箱错误`)
+          isSent = false
         }
-        return item
       })
       if (isSent) {
-        this.batchIdList = []
-        this.fileList.map((item) => {
-          this.batchIdList.push(item.response.batchId)
-          return item
+        this.batchIdList = this.fileList.map((item) => {
+          return item.response.batchId
         })
-        const newReceiveList = []
-        const newSentList = []
-        this.receiverLists.map((item) => {
-          newReceiveList.push(item.website)
+        let newReceiveList = []
+        let newSentList = []
+        newReceiveList = this.receiverLists.map((item) => {
+          return item.email
         })
-        this.sentLists.map((item) => {
-          newSentList.push(item.website)
+        newSentList = this.sentLists.map((item) => {
+          return item.email
         })
-        console.log(newReceiveList, newSentList, 'xxxxxxxxxxxx')
         var params = {
           id: '',
           receipt_emails: newReceiveList.join(','),
           cc_emails: newSentList.join(',') || '',
           fileBatchId: Array.from(new Set(this.batchIdList)).join(',') || '',
           theme: this.themeVal || '',
-          content: this.content || ''
+          content: this.content || '',
+          type: type
         }
         if (btnType == 'savebtn') {
           params.type = 'Drafts'
@@ -327,21 +377,16 @@ export default {
           sentbtn: emailSendAPI,
           savebtn: saveDraftBoxAPI
         }[btnType]
-        console.log(params, '参数')
         requestAPI(params).then((res) => {
           if (btnType == 'sentbtn') {
             this.$message.success('发送成功')
+            this.$router.push({ path: '/email/index/receive' })
           } else if (btnType == 'savebtn') {
             this.$message.success('存稿成功')
+            this.$router.push({ path: '/email/index/receive' })
           }
-          console.log(res, '发送')
         }).catch(() => {
-          this.$message.error('操作失败')
         })
-        console.log('邮箱正确')
-      } else {
-        this.$message.error('邮箱格式错误')
-        console.log('邮箱不正确')
       }
     },
 
@@ -393,6 +438,54 @@ export default {
     hideAddEmail() {
       this.showPopover = false
       this.showSelectView = false
+    },
+
+    /**
+     * 增加邮箱的回调
+     */
+    changeReceiverList(list) {
+      this.receiverLists = list
+      console.log(list)
+    },
+    changeSentList(list) {
+      this.sentLists = list
+      this.eliminateArray()
+    },
+
+    /**
+     * 删除抄送
+     */
+    deleteSent() {
+      this.sentLists = []
+      this.eliminateArray()
+      this.showSent = false
+    },
+
+    /**
+     * 分别发送
+     */
+    differenceSend() {
+      this.eliminateArray()
+      this.showDeffient = true
+    },
+
+    /**
+     * 数组去重
+     */
+    eliminateArray() {
+      const list = [...this.sentLists, ...this.receiverLists]
+      const copyList = []
+      for (let i = 0; i < list.length; i++) {
+        const item = list[i]
+
+        copyList.forEach((ele, index) => {
+          if (ele.customerId == item.customerId) {
+            copyList.splice(index, 1)
+          }
+        })
+        copyList.push(item)
+      }
+      this.deffientList = copyList
     }
   }
 }
@@ -420,6 +513,12 @@ export default {
       color: #333;
       cursor: pointer;
       font-size: 14px;
+    }
+    .line {
+      color: #2362FB;
+    }
+    .line:hover {
+      text-decoration: underline;
     }
     .form-add {
       color: #2362FB;
@@ -525,7 +624,10 @@ export default {
   cursor: text;
   display: inline-block;
 }
-
+.deffient_text {
+  font-size: 13px;
+  color: #857277;
+}
 /deep/ .w-e-toolbar .w-e-menu {
   z-index: 2000 !important;
 }

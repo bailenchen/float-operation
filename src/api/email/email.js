@@ -48,7 +48,7 @@ export function emailSendAPI(data) {
  */
 export function saveDraftBoxAPI(data) {
   return request({
-    url: 'EmailRecord/saveTheBox',
+    url: 'EmailRecord/saveDraftsBox',
     method: 'post',
     data: data,
     headers: {
@@ -85,16 +85,84 @@ export function emailValidAPI(data) {
 }
 
 /**
- * 操作邮件状态
+ * 操作邮件状态 EmailAccount/queryAccountById
  * @param {*} data
  */
 export function emailStateUpdateAPI(data) {
   return request({
-    url: 'EmailRecord/updateEmailState',
+    url: 'EmailRecord/changeEmailState',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
+  })
+}
+/**
+ * 查询邮箱基本信息
+ * @param {*} data
+ */
+export function emailQueryAccountByIdAPI(data) {
+  return request({
+    url: 'EmailAccount/queryAccountById',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 邮箱模糊查询
+ * @param {*} data
+ */
+export function emailAccountSearchEmailAPI(data) {
+  return request({
+    url: 'EmailAccount/searchEmail',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 同步数据
+ * @param {*} data
+ */
+export function emailRecordReceivingEmailAPI(data) {
+  return request({
+    url: 'EmailRecord/receivingEmail',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 解除绑定
+ * @param {*} data
+ */
+export function emailUnbundleAccountAPI(data) {
+  return request({
+    url: 'EmailAccount/unbundleEmailAccount',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 编辑发送昵称 EmailAccount/updateSignature
+ * @param {*} data
+ */
+export function emailUpdateSendNickAPI(data) {
+  return request({
+    url: 'EmailAccount/updateSendNick',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 编辑个性签名 EmailAccount/updateSignature
+ * @param {*} data
+ */
+export function emailUpdateSignatureAPI(data) {
+  return request({
+    url: 'EmailAccount/updateSignature',
+    method: 'post',
+    data: data
   })
 }
