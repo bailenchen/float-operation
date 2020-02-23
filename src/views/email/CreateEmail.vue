@@ -9,8 +9,8 @@
       </div>
     </div>
     <div class="new-email">
-      <create-email ref="createEmail" class="left"/>
-      <high-filter class="right"/>
+      <create-email ref="createEmail" :handle-list="handleList" class="left"/>
+      <high-filter class="right" @handle="handleHigh"/>
     </div>
   </div>
 </template>
@@ -27,6 +27,7 @@ export default {
   },
   data() {
     return {
+      handleList: []
     }
   },
   beforeRouteLeave(to, form, next) {
@@ -45,7 +46,17 @@ export default {
     } else {
       next()
     }
+  },
+  methods: {
+    /**
+   * 勾选右侧的人员
+   */
+    handleHigh(data) {
+      console.log(data)
+      this.handleList = data
+    }
   }
+
 }
 </script>
 

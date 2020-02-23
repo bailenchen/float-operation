@@ -156,12 +156,60 @@ export function emailUpdateSendNickAPI(data) {
 }
 
 /**
- * 编辑个性签名 EmailAccount/updateSignature
+ * 编辑个性签名
  * @param {*} data
  */
 export function emailUpdateSignatureAPI(data) {
   return request({
     url: 'EmailAccount/updateSignature',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 逻辑删除
+ * @param {*} data
+ */
+export function emailRecordLogicDeleteAPI(data) {
+  return request({
+    url: 'EmailRecord/logicDelete',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 彻底删除
+ * @param {*} data
+ */
+export function emailRecordDeleteByEmailIdAPI(data) {
+  return request({
+    url: 'EmailRecord/deleteByEmailId',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 移动邮件
+ * @param {*} data
+ */
+export function emailRecordShiftEmailAPI(data) {
+  return request({
+    url: 'EmailRecord/shiftEmail',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 移动邮件 EmailAccount/queryLately
+ * @param {*} data
+ */
+export function emailAccountQueryLatelyAPI(data) {
+  return request({
+    url: 'EmailAccount/queryLately',
     method: 'post',
     data: data
   })

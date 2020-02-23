@@ -9,7 +9,7 @@
       <template>
         <div v-if="emailType == 'receive'" slot="header" class="record-receive">
           （收件箱有<span class="blue-font">{{ receiveNumber }}</span>封未读）
-          <span class="blue-font">全部标为已读</span>
+          <el-button type="text" class="blue-font" @click="allRead">全部标为已读</el-button>
         </div>
       </template>
     </email-list-head>
@@ -69,7 +69,7 @@
             </thead>
           </table>
         </div>
-        <div :style="{ width: tableWidth + 'px', height: tableHeight + 'px' }" :class="{ 'empty-list':lists && lists.length == 0 }" class="table-container">
+        <div :style="{ height: tableHeight + 'px' }" :class="{ 'empty-list':lists && lists.length == 0 }" class="table-container">
 
           <template v-for="(item, index) in lists">
             <div v-if="item.first" :key="`title${index}`" class="row-title block-title">
@@ -88,7 +88,7 @@
                   <td class="tb-head">
                     <div style="width:55px;" @click="handleStar(item)">
                       <i
-                        :class="{ 'star': item.isStar }"
+                        :class="{ 'star': item.isStart }"
                         class="wk wk-focus-on"
                         style="cursor: pointer; color: #9DA9C2;"/>
                     </div>
@@ -186,6 +186,7 @@ export default {
       rowObj: '',
       rowIndex: '',
       rowItem: {},
+      refashShow: true, // 页面宽度变化时，表格动态更新
       tableWidth: ''
       // emailDate: '12' // 用来比较邮箱日期，是否显示信封数标题
     }
@@ -278,6 +279,7 @@ export default {
       }
     })
     window.onresize = () => {
+      location.reload()
       return (() => {
         if (document.getElementsByClassName('table-head')[0]) {
           this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
@@ -364,7 +366,6 @@ export default {
       }
 
       this.isConfirm(type, listapi, isdo)
-      console.log(type, 'leixing')
     },
 
     /**
@@ -374,8 +375,6 @@ export default {
       this.showDview = false
       this.getEmailList()
     }
-
-
   }
 }
 </script>
@@ -412,14 +411,8 @@ export default {
 
 .table-container {
   width: 100%;
-  min-width: 1100px;
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.parent-table {
-  min-width: 1100px;
-  overflow-x: auto;
 }
 
 .row-title {
@@ -509,17 +502,14 @@ tr > td {
 
 .sent-column {
   width: 14%;
-  min-width: 154px;
 }
 
 .subject-column {
   width: 70%;
-  min-width: 770px;
 }
 
 .time-column {
   width: 16%;
-  min-width: 176px;
 }
 
 .sent-column1, .subject-column1, .time-column1 {

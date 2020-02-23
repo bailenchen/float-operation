@@ -2,7 +2,7 @@
 import {
   mapGetters
 } from 'vuex'
-import { emailListsAPI, emailStateUpdateAPI } from '@/api/email/email'
+import { emailListsAPI, emailStateUpdateAPI, emailRecordLogicDeleteAPI, emailRecordDeleteByEmailIdAPI } from '@/api/email/email'
 import EmailListHead from '../components/EmailListHead'
 import EmailTableHead from '../components/EmailTableHead'
 
@@ -19,9 +19,10 @@ export default {
       tableHeight: document.documentElement.clientHeight - 280, // 表的高度
       search: '', // 搜索内容
       idLists: [], // 修改邮件状态时id集合
+      allIds: [], // 全部信息id数组
       typeConfig: {
         receive: 'INBOX',
-        star: 'FLAGGED',
+        star: 'STAR',
         draft: 'Drafts',
         sent: 'Sent Messages',
         deleted: 'Deleted Messages',
@@ -58,6 +59,7 @@ export default {
     getEmailList() {
       this.loading = true
       var listType = this.typeConfig[this.emailType]
+      this.allIds = []
       var params = {
         page: this.currentPage,
         limit: this.pageSize,
@@ -73,7 +75,7 @@ export default {
 
         for (let index = 0; index < list.length; index++) {
           const item = list[index]
-          console.log('123')
+          this.allIds.push(item.id)
           if (item.sendDate == null) {
             item.sendDate = '0000-00-00'
           }
@@ -142,7 +144,6 @@ export default {
      * 邮件搜索
      */
     emailSearch(value) {
-      console.log('sousuo')
       this.currentPage = 1
       this.search = value
       this.lists = []
@@ -265,8 +266,10 @@ export default {
         state = 2
       } else if (type == 'delete') {
         message = '确定将邮件删除吗?'
+        state = 5 // 删除
       } else if (type == 'rootDel') {
         message = '确定将邮件彻底删除吗?'
+        state = 6 // 彻底删除
       }
       this.$confirm(message, '提示', {
         confirmButtonText: '确定',
@@ -288,24 +291,66 @@ export default {
      * 更改邮件状态
      */
     updateEmailState(stateType, is) {
+      if (stateType === 5) {
+        this.deleteEmail()
+      } else if (stateType === 6) {
+        this.destoryEmail()
+      } else {
+        this.handleMore(stateType, is)
+        return
+      }
+      this.getEmailList()
+    },
+
+    /**
+     * 普通删除邮件
+     */
+    deleteEmail() {
+      emailRecordLogicDeleteAPI({ emailIds: this.idLists.join(',') }).then(res => {
+        this.$message.success('删除成功')
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    /**
+     * 彻底删除邮件
+     */
+    destoryEmail() {
+      emailRecordDeleteByEmailIdAPI({ emailIds: this.idLists.join(',') }).then(res => {
+        this.$message.success('彻底删除成功')
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    /**
+     * 已读，未读，星标，取消星标
+     */
+    handleMore(stateType, is) {
       var params = {
         emailIds: this.idLists.join(','),
         state: stateType
       }
-      emailStateUpdateAPI(params).then((res) => {
+      emailStateUpdateAPI(params).then(res => {
         if (is !== 'detail') {
           this.$message({
             type: 'success',
             message: '操作成功'
           })
         }
-
         this.getEmailList()
       }).catch(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 全部标记为已读
+     */
+    allRead() {
+      this.idLists = this.allIds
+      this.handleMore(1, '')
     }
-
-
   }
 }

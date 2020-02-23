@@ -1,5 +1,5 @@
 <template>
-  <div class="crm-create-container">
+  <div v-loading="loading" class="crm-create-container">
     <div class="crm-create-flex">
 
       <flexbox class="btn-group">
@@ -122,8 +122,17 @@ export default {
     RichTxt,
     AddSenter
   },
+  props: {
+    handleList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
   data() {
     return {
+      loading: false,
       themeVal: '',
       sentType: 'sent',
       receiveType: 'receive',
@@ -162,25 +171,32 @@ export default {
       return crmObj
     }
   },
+  watch: {
+    handleList: {
+      handler(val) {
+        console.log(val)
+        this.receiverLists = val
+      },
+      deep: true
+    }
+  },
   created() {
     if (this.$route.query.reply) {
-      console.log(this.$route.query, 'hhH')
-      this.receiverLists.push({ 'email': this.$route.query.sendUser.split('<')[1].split('>')[0], 'show': true })
-      this.sentLists.push({ 'email': this.$route.query.receivingUser.split('<')[1].split('>')[0], 'show': true })
+      this.receiverLists.push({ 'email': this.$route.query.senderEmail, 'show': true })
+      this.sentLists.push({ 'email': this.$route.query.receiptEmails, 'show': true })
       this.themeVal = this.$route.query.theme
-      this.fileList = this.$route.query.fileList.length ? this.$route.query.fileList.map((item) => {
+      this.fileList = this.$route.query.fileList && this.$route.query.fileList.length ? this.$route.query.fileList.map((item) => {
         item.name = item.fileName
         return item
       }) : []
       this.emailcontent = this.$route.query.content
-      console.log(this.fileList, 'hhH')
     }
     if (this.$route.query.share) {
       this.themeVal = this.$route.query.theme
-      this.fileList = this.$route.query.fileList.map((item) => {
+      this.fileList = this.$route.query.fileList && this.$route.query.fileList.length ? this.$route.query.fileList.map((item) => {
         item.name = item.fileName
         return item
-      })
+      }) : []
       this.emailcontent = this.$route.query.content
     }
   },
@@ -254,7 +270,6 @@ export default {
     },
 
     handleFileRemove(file, fileList) {
-      console.log(file, fileList, 'ooooooooooooooooo')
       if (file.response || file.fileId) {
         let fileId
         if (file.response) {
@@ -367,7 +382,7 @@ export default {
           cc_emails: newSentList.join(',') || '',
           fileBatchId: Array.from(new Set(this.batchIdList)).join(',') || '',
           theme: this.themeVal || '',
-          content: this.content || '',
+          content: this.emailcontent || '',
           type: type
         }
         if (btnType == 'savebtn') {
@@ -377,7 +392,12 @@ export default {
           sentbtn: emailSendAPI,
           savebtn: saveDraftBoxAPI
         }[btnType]
+        this.loading = true
         requestAPI(params).then((res) => {
+          this.loading = true
+          this.receiverLists = []
+          this.delReceiveEmail = []
+          this.sentLists = []
           if (btnType == 'sentbtn') {
             this.$message.success('发送成功')
             this.$router.push({ path: '/email/index/receive' })
@@ -386,6 +406,7 @@ export default {
             this.$router.push({ path: '/email/index/receive' })
           }
         }).catch(() => {
+          this.loading = false
         })
       }
     },
@@ -428,8 +449,7 @@ export default {
      * 获取富文本代码段内容
      */
     catchData(val) {
-      this.content = val
-      console.log(val)
+      this.emailcontent = val
     },
 
     /**

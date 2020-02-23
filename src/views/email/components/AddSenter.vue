@@ -3,9 +3,9 @@
   <div class="add-receive-wrap">
     <div v-for="(item, index) in emailList" :key="index" class="receiver">
       <div class="current-receiver">
-        <div v-if="isHide(item)" class="end-wrap">
+        <div v-if="isHide" class="end-wrap">
           <div :class="{ 'wrong': isCorectEmail(item) }" class="receiver-email">
-            <span>{{ item.customerName }}</span>
+            <span v-if="item.customerName">{{ item.customerName }}</span>
             <span :contenteditable="true" @input="inputs($event, item, index)" @blur="blurs">{{ getemail(item.email) }}</span>
           </div>
           <div class="icon-wrap" @click="delEmail(item, index)">
@@ -19,8 +19,11 @@
       :fetch-suggestions="querySearchAsync"
       :highlight-first-item="true"
       :debounce="500"
+      style="width: 220px"
+      placement="bottom"
       class="enter-input"
-      @blur="handleAddEmail"
+      popper-class="source"
+      @change="handleAddEmail"
       @select="handleInputSelect">
       <template slot-scope="{ item }">
         <div class="name">{{ item.name }}<{{ item.value }}></div>
@@ -69,13 +72,14 @@ export default {
       }
     },
     isHide() {
-      return function(item) {
-        if (item.show) {
-          return true
-        } else {
-          return false
-        }
-      }
+      return true
+      // return function(item) {
+      //   if (item.show) {
+      //     return true
+      //   } else {
+      //     return false
+      //   }
+      // }
     }
   },
   watch: {
@@ -238,6 +242,10 @@ export default {
   margin-right: 5px;
   margin-bottom: 5px;
 }
+/deep/.el-autocomplete-suggestion {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
 </style>
-
 

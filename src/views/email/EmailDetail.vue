@@ -12,9 +12,9 @@
         @move="handleMove"/>
       <div class="detail-body">
         <div class="wk wk-focus-on"><span class="font-title">2019年度报告</span></div>
-        <div class="main-info">发件人：{{ rowItem.sendUser }}</div>
-        <div class="main-info">收件人：{{ rowItem.receivingUser }}</div>
-        <div class="main-info">时间：{{ rowItem.sendDate.slice(0, 10) }}</div>
+        <div class="main-info">发件人：{{ rowItem.sender }}</div>
+        <div class="main-info">收件人：{{ rowItem.receiptName }}</div>
+        <div class="main-info">时间：{{ rowItem.createTime.slice(0, 10) }}</div>
       </div>
       <div :style="{ height: emailFileHeight + 'px' }" class="article" v-html="rowItem.content">
         {{ rowItem.content }}
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { emailStateUpdateAPI, saveDraftBoxAPI } from '@/api/email/email'
+import { emailStateUpdateAPI, emailRecordShiftEmailAPI, emailRecordLogicDeleteAPI } from '@/api/email/email'
 
 import DetailHead from './components/DetailHead'
 import SlideView from '@/components/SlideView'
@@ -119,7 +119,6 @@ export default {
      * 删除当前邮件
      */
     delCurrentEmail() {
-      console.log('kooooooooooo', this.rowItem)
       this.$confirm('您确定要删除该邮件吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -129,7 +128,6 @@ export default {
       }).catch(() => {
 
       })
-      console.log('删除当前邮件')
     },
 
     /**
@@ -137,27 +135,12 @@ export default {
      */
     updateEmailState() {
       this.loading = true
-      var params = {
-        page: this.rowItem.page,
-        limit: this.rowItem.limit,
-        type: this.typeConfig[this.emailType],
-        search: this.rowItem.search,
-        index: this.rowItem.messageId,
-        state: 'LOGICDELETE',
-        flag: true
-      }
-      emailStateUpdateAPI(params).then((res) => {
-        this.loading = false
-        this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-        this.$emit('update-list')
-        console.log(res, '状态修改')
+      emailRecordLogicDeleteAPI({ emailIds: this.rowItem.id }).then(res => {
+        this.$message.success('删除成功')
       }).catch(() => {
         this.loading = false
-        this.$message.error('删除失败')
       })
+      this.$emit('update-list')
     },
 
     /**
@@ -166,21 +149,15 @@ export default {
     handleMove(val) {
       this.loading = true
       var params = {
-        id: '',
-        receipt_emails: this.rowItem.receivingUser,
-        cc_emails: this.rowItem.sendUser || '',
-        fileBatchId: '',
-        filePaths: this.rowItem.fileList.length ? this.rowItem.fileList[0].path : '',
-        theme: this.rowItem.themeVal || '',
-        content: this.rowItem.content || '',
-        type: val == 0 ? 'INBOX' : 'Sent Messages'
+        emailIds: this.rowItem.id,
+        emailType: val == 0 ? 'INBOX' : 'Sent Messages'
       }
-      saveDraftBoxAPI(params).then((res) => {
-        this.updateCurrentState(val)
+      emailRecordShiftEmailAPI(params).then((res) => {
+        this.$message.success('移动成功')
+        this.$emit('update-list')
       }).catch(() => {
         this.loading = false
       })
-      console.log(val, 'movee')
     },
 
     /**
