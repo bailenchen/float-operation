@@ -195,7 +195,6 @@ export default {
     ...mapGetters(['userInfo']),
     calcCellWidth() {
       return function(cell) {
-        console.log(this.$refs.sent.offsetWidth, 'ff')
         if (cell == 'sent') {
           return this.$refs.sent.offsetWidth - 1
         } else if (cell == 'theme') {
@@ -298,7 +297,6 @@ export default {
 
   beforeRouteUpdate(to, from, next) {
     this.emailType = to.params.type
-    console.log(this.emailType, 'lx')
     this.$refs.crmTableHead.headSelectionChange([])
     if (this.emailType != 'writeLetter') {
       this.lists = []

@@ -43,8 +43,6 @@ export default {
     }
   },
   mounted() {
-    // if () {}
-    console.log(this.detailData, 'jjk', this.emailType)
   },
   methods: {
     /**
@@ -58,7 +56,6 @@ export default {
           ...this.detailData
         }
       })
-      console.log('huifu')
     },
 
     /**
@@ -72,7 +69,6 @@ export default {
           ...this.detailData
         }
       })
-      console.log('zhuangfa')
     },
 
     /**
@@ -91,7 +87,6 @@ export default {
       } else {
         this.$emit('move', val)
       }
-      console.log(val, 'jj')
     }
 
   }

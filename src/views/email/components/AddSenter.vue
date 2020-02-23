@@ -61,7 +61,6 @@ export default {
      */
     isCorectEmail() {
       return function(item) {
-        console.log('1111111', this.validEmail(item.email))
         if (this.validEmail(item.email)) {
           item.valid = true
           return false
@@ -133,7 +132,6 @@ export default {
       } else if (this.comType == 'sent') {
         this.$emit('del-sent', index)
       }
-      console.log('12', this.receiverLists)
     },
     inputs(e, item, index) {
       const startCount = e.target.textContent.indexOf('<') + 1

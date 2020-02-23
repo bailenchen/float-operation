@@ -41,7 +41,6 @@ export default {
     }
   },
   created() {
-    console.log(this.emailType, 'clx', this.operatList)
   },
   methods: {
     /** 勾选后的表头操作 */

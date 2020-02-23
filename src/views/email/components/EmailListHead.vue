@@ -57,7 +57,6 @@ export default {
 
   },
   mounted() {
-    console.log(this.emailType, '标题')
   },
   beforeDestroy() { },
   methods: {
@@ -66,7 +65,6 @@ export default {
     },
     // 进行搜索操作
     searchInput() {
-      console.log('123456')
       this.$emit('on-search', this.inputContent)
     }
   }

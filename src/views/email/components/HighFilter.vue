@@ -206,7 +206,6 @@ export default {
           data: JSON.stringify(form.obj)
         })
           .then(res => {
-            console.log(res, 'changjing')
             // this.updateSceneList()
           })
           .catch(() => {})

@@ -52,7 +52,6 @@ export default {
    * 勾选右侧的人员
    */
     handleHigh(data) {
-      console.log(data)
       this.handleList = data
     }
   }

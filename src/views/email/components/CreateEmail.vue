@@ -174,7 +174,6 @@ export default {
   watch: {
     handleList: {
       handler(val) {
-        console.log(val)
         this.receiverLists = val
       },
       deep: true
@@ -235,7 +234,6 @@ export default {
     addSentEmail(val, list) {
       this.sentLists = list
       this.sentLists.push({ 'email': val, valid: true, 'show': true })
-      console.log(this.sentLists, 'add')
     },
 
     /**
@@ -266,7 +264,6 @@ export default {
 
     fileUploadSuccess(response, file, fileList) {
       this.fileList = fileList
-      console.log(this.fileList, '123456')
     },
 
     handleFileRemove(file, fileList) {
@@ -295,7 +292,6 @@ export default {
                   this.$refs.fileUpload.uploadFiles.splice(removeIndex, 1)
                 }
                 removeIndex = this.getFileIndex(this.fileList, fileId)
-                console.log(removeIndex, 'remove')
                 this.$message.success('操作成功')
 
                 if (removeIndex != -1) {
@@ -320,7 +316,6 @@ export default {
      * 添加附件
      */
     addFile() {
-      console.log('tinajiafujain')
     },
 
     /**
@@ -433,7 +428,6 @@ export default {
 
     /** 选中 */
     checkInfos(data) {
-      console.log(data, 'data')
       if (data.type == 'sent') {
         this.sentLists = data.data.map((item) => {
           item.show = true
@@ -467,7 +461,6 @@ export default {
      */
     changeReceiverList(list) {
       this.receiverLists = list
-      console.log(list)
     },
     changeSentList(list) {
       this.sentLists = list

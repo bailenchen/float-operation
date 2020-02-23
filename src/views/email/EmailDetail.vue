@@ -79,7 +79,6 @@ export default {
   mounted() {
     // this.detailDatas = this.rowItem
     // this.emailTypes = this.emailType
-    console.log(this.rowItem, 'hang', this.emailTypes)
   },
   methods: {
     /**

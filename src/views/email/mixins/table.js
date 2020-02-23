@@ -68,7 +68,6 @@ export default {
       }
       emailListsAPI(params).then((res) => {
         this.loading = false
-        console.log(res.data.list.length, 'cd')
         const list = JSON.parse(JSON.stringify(res.data.list)).reverse()
         let sectionDate = ''
         // let sectionIndex = -1
@@ -115,7 +114,6 @@ export default {
           this.loading = false
         }
         this.lists = list
-        console.log(list, 'res')
       }).catch(() => {
         this.loading = false
       })
@@ -169,14 +167,12 @@ export default {
         })
       }
       this.$refs.crmTableHead.headSelectionChange(this.checkLists)
-      console.log('全部勾选', this.lists, all, this.checkLists, 'all')
     },
 
     /**
      * 局部勾选
      */
     handleCheckedPart(part) {
-      console.log('局部勾选', part)
       this.checkLists = []
       if (part) {
         this.lists.map((item) => {
@@ -203,7 +199,6 @@ export default {
           return item
         })
       }
-      console.log('123', this.checkLists)
     },
 
     /**
