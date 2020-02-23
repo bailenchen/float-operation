@@ -22,7 +22,7 @@ export default [
       component: () => import('@/views/email/set/index'),
       meta: {
         title: '设置',
-        icon: 'board',
+        icon: 'manage',
         name: 'email-set'
       }
     }]
@@ -34,7 +34,7 @@ export default [
       component: () => import('@/views/email/person'),
       meta: {
         title: '个人中心',
-        icon: 'board'
+        icon: 'user'
       }
     }]
   },
@@ -44,7 +44,7 @@ export default [
       path: 'index/writeLetter', // 列表
       component: () => import('@/views/email/CreateEmail'),
       meta: {
-        icon: 'board'
+        icon: 'circle-edit'
       }
     }]
   },
@@ -54,7 +54,7 @@ export default [
       path: 'index/:type', // 列表
       component: () => import('@/views/email/index'),
       meta: {
-        icon: 'board'
+        icon: 'inbox'
       }
     }]
   },
@@ -65,7 +65,7 @@ export default [
       path: 'index/writeLetter', // 列表
       meta: {
         title: '写信',
-        icon: 'board'
+        icon: 'circle-edit'
       }
     }]
   },
@@ -77,7 +77,7 @@ export default [
       path: 'index/receive', // 列表
       meta: {
         title: '收件箱',
-        icon: 'board'
+        icon: 'inbox'
       }
     }]
   },
@@ -88,7 +88,7 @@ export default [
       path: 'index/star', // 列表
       meta: {
         title: '星标邮件',
-        icon: 'board'
+        icon: 'focus-on'
       }
     }]
   },
@@ -99,7 +99,7 @@ export default [
       path: 'index/draft', // 列表
       meta: {
         title: '草稿箱',
-        icon: 'board'
+        icon: 'drafts'
       }
     }]
   },
@@ -110,7 +110,7 @@ export default [
       path: 'index/sent', // 列表
       meta: {
         title: '已发送',
-        icon: 'board'
+        icon: 'inbox'
       }
     }]
   },
@@ -120,7 +120,7 @@ export default [
     children: [{
       path: 'index/deleted', // 列表
       meta: {
-        title: '已删除',
+        title: 'bin',
         icon: 'board'
       }
     }]
@@ -132,7 +132,7 @@ export default [
       path: 'index/spam', // 列表
       meta: {
         title: '垃圾邮件',
-        icon: 'board'
+        icon: 'recycle-bin'
       }
     }]
   }
