@@ -277,7 +277,7 @@ export default {
         } else {
           fileId = file.fileId
         }
-        this.$confirm('您确定要删除该文件吗?', '提示', {
+        return this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -287,7 +287,6 @@ export default {
               id: fileId
             })
               .then(res => {
-                this.$message.success('操作成功')
                 var removeIndex = this.getFileIndex(
                   this.$refs.fileUpload.uploadFiles,
                   fileId
@@ -296,11 +295,15 @@ export default {
                   this.$refs.fileUpload.uploadFiles.splice(removeIndex, 1)
                 }
                 removeIndex = this.getFileIndex(this.fileList, fileId)
+                console.log(removeIndex, 'remove')
+                this.$message.success('操作成功')
+
                 if (removeIndex != -1) {
                   this.fileList.splice(removeIndex, 1)
                 }
               })
-              .catch(() => {})
+              .catch(() => {
+              })
           })
           .catch(() => {
             this.$message({
@@ -308,7 +311,6 @@ export default {
               message: '已取消操作'
             })
           })
-        return false
       } else {
         return true
       }
@@ -506,6 +508,24 @@ export default {
         copyList.push(item)
       }
       this.deffientList = copyList
+    },
+
+    getFileIndex(files, fileId) {
+      var removeIndex = -1
+      for (let index = 0; index < files.length; index++) {
+        const item = files[index]
+        let itemFileId
+        if (item.response) {
+          itemFileId = item.response.fileId
+        } else {
+          itemFileId = item.fileId
+        }
+        if (itemFileId == fileId) {
+          removeIndex = index
+          break
+        }
+      }
+      return removeIndex
     }
   }
 }
