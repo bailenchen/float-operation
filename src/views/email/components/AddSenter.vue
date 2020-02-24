@@ -23,7 +23,7 @@
       placement="bottom"
       class="enter-input"
       popper-class="source"
-      @change="handleAddEmail"
+      @blur="handleAddEmail"
       @select="handleInputSelect">
       <template slot-scope="{ item }">
         <div class="name">{{ item.name }}<{{ item.value }}></div>
