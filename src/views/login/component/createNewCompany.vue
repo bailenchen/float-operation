@@ -236,7 +236,6 @@
     </div>-->
 
     <el-button
-      :class="{special: showNextStep}"
       :disabled="disabledBtn || !agreeLaw"
       class="register-btn"
       @click="handleNextStep">
@@ -485,6 +484,7 @@ export default {
       if (this.$route.query) {
         this.$set(this.form, 'realname', this.$route.query.name || '')
         this.$set(this.form, 'phone', this.$route.query.mobile || '')
+        this.$set(this.form, 'discount', this.$route.query.discount || '')
       }
       if (document.body.clientWidth > 1550) {
         this.dialogWidth = '40%'
@@ -659,7 +659,7 @@ export default {
       RegisterAPI(params).then(() => {
         this.$message.success('注册成功')
         this.disabledBtn = false
-        this.$emit('toggle', 'LoginByPwd', this.$refs.smsCode.form.phone)
+        this.$emit('toggle', 'LoginByPwd', this.form.phone || '')
         loading.close()
       }).catch(() => {
         this.disabledBtn = false
@@ -893,17 +893,17 @@ export default {
     //   height: 42px;
     //   line-height: 42px;
     // }
-    &.special {
-      height: 50px;
-      line-height: 50px;
-      font-size: 20px;
+    // &.special {
+      // height: 50px;
+      // line-height: 50px;
+      // font-size: 20px;
       // margin-top: 80px;
       // @media screen and (max-width: 1550px) {
       //   height: 50px;
       //   line-height: 50px;
       //   font-size: 20px;
       // }
-    }
+    // }
   }
 
   .center-tips {
