@@ -393,7 +393,7 @@ export default {
         requestAPI(params).then((res) => {
           this.loading = true
           this.receiverLists = []
-          this.delReceiveEmail = []
+          this.deffientList = []
           this.sentLists = []
           if (btnType == 'sentbtn') {
             this.$message.success('发送成功')
