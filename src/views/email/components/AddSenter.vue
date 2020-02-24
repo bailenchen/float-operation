@@ -24,9 +24,11 @@
       class="enter-input"
       popper-class="source"
       @blur="handleAddEmail"
+      @keyup.enter.native="handleAddEmail"
+      @keyup.delete.native="handleDeleteEmail"
       @select="handleInputSelect">
       <template slot-scope="{ item }">
-        <div class="name">{{ item.name }}<{{ item.value }}></div>
+        <div class="name">{{ `${item.name}&lt;${item.value}&gt;` }}</div>
       </template>
     </el-autocomplete>
   </div>
@@ -112,6 +114,12 @@ export default {
         }
       }
       this.emailList = JSON.parse(JSON.stringify(this.emailCopy))
+    },
+    handleDeleteEmail() {
+      if (this.emailList.length && !this.val.length) {
+        const index = this.emailList.length - 1
+        this.delEmail(this.emailList[index], index)
+      }
     },
     /**
      * 验证邮箱
