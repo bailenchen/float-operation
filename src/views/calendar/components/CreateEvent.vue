@@ -10,7 +10,12 @@
       <div v-if="!showRepeat">
         <el-form ref="ruleForm" :model="form" :rules="rules" label-position="left">
           <el-form-item prop="title" label="日程内容">
-            <el-input v-model="form.title" placeholder="请输入日程内容" style="width: 430px"/>
+            <el-input
+              v-model="form.title"
+              maxlength="100"
+              placeholder="请输入日程内容"
+              style="width: 430px"
+              show-word-limit/>
           </el-form-item>
           <el-form-item label="日程类型" prop="typeId">
             <div class="color_change">
@@ -241,7 +246,7 @@ export default {
       disabled: false,
       pickerOptions: {
         disabledDate(time) {
-          return time.getTime() < (Date.now() - 24 * 60 * 60 * 1000)
+          return time.getTime() <= (Date.now() - 24 * 60 * 60 * 1000)
         }
       }
     }
@@ -548,7 +553,7 @@ export default {
       const template = new Date(date).getTime()
       this.pickerOptions = {
         disabledDate(time) {
-          return time.getTime() < template - 24 * 60 * 60 * 1000
+          return time.getTime() <= template - 24 * 60 * 60 * 1000
         }
       }
     }
