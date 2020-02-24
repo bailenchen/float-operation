@@ -120,8 +120,8 @@ export default [
     children: [{
       path: 'index/deleted', // 列表
       meta: {
-        title: 'bin',
-        icon: 'board'
+        title: '已删除',
+        icon: 'bin'
       }
     }]
   },
