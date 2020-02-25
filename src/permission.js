@@ -16,13 +16,6 @@ router.beforeEach((to, from, next) => {
     next(false)
     return
   }
-
-  if (to.path) {
-    if (window._hmt) {
-      window._hmt.push(['_trackPageview', '/#' + to.fullPath])
-    }
-  }
-
   NProgress.start()
   /** 请求头包含授权信息 并且 页面必须授权 直接进入 */
   if (getAuth()) {
