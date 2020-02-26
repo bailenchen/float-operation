@@ -98,6 +98,9 @@ export default {
   },
   methods: {
     handleAddEmail() {
+      if (!this.val) {
+        return
+      }
       if (this.comType == 'receive') {
         if (this.validEmail(this.val)) {
           this.$emit('add-receive', this.val, this.emailList)

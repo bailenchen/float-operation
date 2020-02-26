@@ -29,17 +29,14 @@
                     <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @click="1" @change="handleCheckedAll"/>
                   </div>
                 </th>
+
                 <th class="tb-head">
-                  <div style="width:55px">
-                    <i
-                      class="wk wk-focus-on"
-                      style="cursor: not-allowed; color: #9DA9C2;"/>
-                  </div>
-                </th>
-                <th class="tb-head">
-                  <div style="width:55px">
+                  <div style="width:100px">
                     <i
                       class="wk wk-email"
+                      style="cursor: not-allowed; color: #9DA9C2;"/>
+                    <i
+                      class="el-icon-paperclip"
                       style="cursor: not-allowed; color: #9DA9C2;"/>
                   </div>
                 </th>
@@ -52,17 +49,26 @@
                 </th> -->
                 <th class="tb-h-align head-font-color sent-column">
                   <div ref="sent" class="sent-column" style="width:100%">
-                    发件人
+                    <b>发件人</b>
                   </div>
                 </th>
                 <th class="tb-h-align head-font-color subject-column">
                   <div ref="theme" class="subject-column" style="width:100%">
-                    主题
+                    <b>主题</b>
+
                   </div>
                 </th>
                 <th class="tb-h-align head-font-color end-column time-column">
                   <div ref="time" class="time-column" style="width:100%">
-                    时间
+                    <b>时间</b>
+                  </div>
+                </th>
+
+                <th class="tb-head">
+                  <div style="width:55px">
+                    <i
+                      class="el-icon-star-off"
+                      style="cursor: not-allowed;"/>
                   </div>
                 </th>
               </tr>
@@ -85,19 +91,16 @@
                       <el-checkbox v-model="item.checked" @change="handleCheckedPart"/>
                     </div>
                   </td>
+
                   <td class="tb-head">
-                    <div style="width:55px;" @click="handleStar(item)">
-                      <i
-                        :class="{ 'star': item.isStart }"
-                        class="wk wk-focus-on"
-                        style="cursor: pointer; color: #9DA9C2;"/>
-                    </div>
-                  </td>
-                  <td class="tb-head">
-                    <div style="width:55px" @click="handleRead(item)">
+                    <div style="width:100px" @click="handleRead(item)">
                       <i
                         :class="{ 'read': item.isRead }"
                         class="wk wk-email"
+                        style="cursor: pointer; color: #9DA9C2;"/>
+                      <i
+                        v-if="item.fileList && item.fileList.length > 0"
+                        class="el-icon-paperclip"
                         style="cursor: pointer; color: #9DA9C2;"/>
                     </div>
                   </td>
@@ -117,14 +120,26 @@
                   </td>
                   <td class="tb-h-align font-color subject-column">
                     <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" :class="item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
-                      {{ item.theme }}
+                      {{ item.theme }} - {{ item.content }}
                       <!-- :style="{ width: calcCellWidth('theme') + 'px' }" -->
                     </div>
                   </td>
-                  <td class="tb-h-align font-color end-column time-column">
+                  <td class="tb-h-align font-color time-column">
                     <div :style="{ width: calcCellWidth('time') + 'px' }" class="time-column1">
-                      {{ item.createTime }}
+                      <b>
+                        {{ fifterTime(item.createTime) }}
+                      </b>
                       <!-- :style="{ width: calcCellWidth('time') + 'px' }" -->
+                    </div>
+                  </td>
+
+                  <td class="tb-head end-column ">
+                    <div style="width:55px;" @click="handleStar(item)">
+                      <i
+                        v-if="item.isStart"
+                        class="el-icon-star-on"
+                        style="cursor: pointer; color: #FAC23D;font-size: 18px;"/>
+                      <i v-else style="cursor: pointer;" class="el-icon-star-off"/>
                     </div>
                   </td>
                 </tr>
@@ -167,6 +182,7 @@ import EmailDetail from './EmailDetail'
 
 import table from './mixins/table'
 import { mapGetters } from 'vuex'
+import moment from 'moment'
 export default {
   // 列表
   name: 'Index',
@@ -278,7 +294,7 @@ export default {
       }
     })
     window.onresize = () => {
-      location.reload()
+      // location.reload()
       return (() => {
         if (document.getElementsByClassName('table-head')[0]) {
           this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
@@ -372,6 +388,14 @@ export default {
     refreshList() {
       this.showDview = false
       this.getEmailList()
+    },
+
+    /**
+     * 格式化时间
+     */
+    fifterTime(time) {
+      const template = new Date(time).getTime()
+      return moment(template).format('MM-DD')
     }
   }
 }
@@ -507,7 +531,7 @@ tr > td {
 }
 
 .time-column {
-  width: 16%;
+  width: 10%;
 }
 
 .sent-column1, .subject-column1, .time-column1 {
@@ -526,5 +550,8 @@ tr > td {
   color: #666666;
   cursor: pointer;
 }
-
+/deep/.el-icon-star-on,.el-icon-star-off {
+  display: inline-block;
+  vertical-align: middle;
+}
 </style>

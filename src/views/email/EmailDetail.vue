@@ -11,14 +11,22 @@
         @on-del="delCurrentEmail"
         @move="handleMove"/>
       <div class="detail-body">
-        <div class="wk wk-focus-on"><span class="font-title">2019年度报告</span></div>
-        <div class="main-info">发件人：{{ rowItem.sender }}</div>
-        <div class="main-info">收件人：{{ rowItem.receiptName }}</div>
-        <div class="main-info">时间：{{ rowItem.createTime.slice(0, 10) }}</div>
+        <div class="detail-header">
+          <div :class="rowItem.isStart ? 'isStart' : ''" class="wk wk-focus-on"><span class="font-title">{{ rowItem.theme }}</span></div>
+          <div class="main-info">发件人：{{ rowItem.sender }}</div>
+          <div class="main-info">收件人：{{ rowItem.receiptName }}</div>
+          <div class="main-info">时间：{{ rowItem.createTime.slice(0, 10) }}</div>
+          <div v-if="fileCount" class="main-info">
+            附件: {{ fileCount }} 个 <span>({{ fileNames }})</span>
+          </div>
+        </div>
       </div>
-      <div :style="{ height: emailFileHeight + 'px' }" class="article" v-html="rowItem.content">
-        {{ rowItem.content }}
+      <div :style="{ height: emailFileHeight + 'px' }" class="article" >
+        <div class="detail_content" v-html="rowItem.content"/>
+        <files-list ref="file" :batch-id="rowItem.batchId" @getFileCount="getFileCount"/>
+
       </div>
+
 
     </div>
     <!-- </div> -->
@@ -30,12 +38,13 @@ import { emailStateUpdateAPI, emailRecordShiftEmailAPI, emailRecordLogicDeleteAP
 
 import DetailHead from './components/DetailHead'
 import SlideView from '@/components/SlideView'
-
+import FilesList from './components/FilesList'
 export default {
   // 客户管理 的 客户详情
   name: 'EmailDetail',
   components: {
     DetailHead,
+    FilesList,
     SlideView
   },
   // mixins: [detail],
@@ -59,6 +68,8 @@ export default {
     return {
       emailFileHeight: document.documentElement.clientHeight - 340,
       loading: false,
+      fileCount: 0,
+      fileNames: '',
       typeConfig: {
         receive: 'INBOX',
         star: 'FLAGGED',
@@ -69,7 +80,13 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    fileIndex() {
+      if (this.$refs.file) {
+        return this.$refs.file.fileList.length
+      }
+    }
+  },
   watch: {
     rowItem() {
       this.testAutoPlay()
@@ -183,6 +200,25 @@ export default {
         this.loading = false
         this.$message.error('移动失败')
       })
+    },
+
+    /**
+     * 获取文件个数
+     */
+    getFileCount(list) {
+      this.fileCount = list.length
+      if (list.length === 1) {
+        this.fileNames = list[0].name
+      } else {
+        this.fileNames = list.map(item => {
+          return item.name
+        }).join(',')
+        if (this.fileNames.length <= 5) {
+          this.fileNames = this.fileNames
+        } else {
+          this.fileNames = this.fileNames.slice(0, 5) + '......'
+        }
+      }
     }
 
   }
@@ -216,18 +252,28 @@ export default {
       line-height: 30px;
       margin-left: 14px;
     }
+    .detail-header {
+      background-color: #F5F5F5;
+      border-bottom: 1px solid #e4e4e4;
+      border-top: 1px solid #e4e4e4;
+      padding-left: 20px;
+    }
+
     .main-info {
       color: #666666;
       font-size: 12px;
       line-height: 24px;
     }
   }
+   .detail_content {
+      width: 100%;
+      min-height: 100px;
+    }
   .article {
     width: 100%;
     overflow-y: auto;
     margin-top: 15px;
-    background: #F5F5F5;
-    padding: 42px 62px 70px 47px;
+    background: #fff;
     text-align: justify;
     text-indent: 2em;
     color: #666666;
@@ -250,6 +296,8 @@ export default {
   right: 0px;
   background: #fff;
 }
-
+.isStart {
+  color: #FAC23D;
+}
 @import './styles/emaildetail.scss';
 </style>

@@ -30,7 +30,7 @@ export default {
       },
       // 勾选
       isIndeterminate: true,
-      checkAll: false,
+      checkAll: true,
       checkLists: [],
 
       // 页码与数量
@@ -74,6 +74,8 @@ export default {
 
         for (let index = 0; index < list.length; index++) {
           const item = list[index]
+          // 保证每次刷新列表时，列表不勾选
+          item.checked = false
           this.allIds.push(item.id)
           if (item.sendDate == null) {
             item.sendDate = '0000-00-00'
@@ -114,6 +116,9 @@ export default {
           this.loading = false
         }
         this.lists = list
+        this.isIndeterminate = true
+        // 保证刷新列表后，不显示表头操作
+        this.$refs.crmTableHead.headSelectionChange([])
       }).catch(() => {
         this.loading = false
       })
@@ -152,6 +157,7 @@ export default {
      * 全选
      */
     handleCheckedAll(all) {
+      console.log(all)
       if (all) {
         this.isIndeterminate = false
         this.checkLists = this.lists.map((item) => {
@@ -179,25 +185,25 @@ export default {
           if (item.checked) {
             this.checkLists.push(item)
             this.$refs.crmTableHead.headSelectionChange(this.checkLists)
-            if (this.checkLists.length == this.lists.length) {
-              this.isIndeterminate = false
-              this.checkAll = true
-            } else {
-              this.isIndeterminate = true
-              this.checkAll = false
-            }
           }
           return item
         })
       } else {
         this.lists.map((item) => {
           if (item.checked) {
-            this.checkAll = false
             this.checkLists.push(item)
           }
           this.$refs.crmTableHead.headSelectionChange(this.checkLists)
           return item
         })
+      }
+      // 勾选了就展示全选的对号
+      if (this.checkLists.length) {
+        this.checkAll = true
+        this.isIndeterminate = false
+      } else {
+        this.isIndeterminate = true
+        this.checkAll = false
       }
     },
 
@@ -335,6 +341,7 @@ export default {
           })
         }
         this.getEmailList()
+        this.queryEmailNum()
       }).catch(() => {
         this.loading = false
       })
