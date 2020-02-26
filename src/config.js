@@ -3,7 +3,7 @@ const getLocationOrigin = () => {
 }
 
 const companyName = '数字管家'
-const version = 'V10.1.3.20200217'
+const version = 'V10.1.4.20200226'
 
 export default {
   version,
