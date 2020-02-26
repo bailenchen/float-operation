@@ -77,12 +77,12 @@ export default {
           // 保证每次刷新列表时，列表不勾选
           item.checked = false
           this.allIds.push(item.id)
-          if (item.sendDate == null) {
-            item.sendDate = '0000-00-00'
+          if (item.createTime == null) {
+            item.createTime = '0000-00-00'
           }
-          item.sendDate = item.sendDate.slice(0, 10)
-          if (item.sendDate != sectionDate) {
-            sectionDate = item.sendDate
+          item.createTime = item.createTime.slice(0, 10)
+          if (item.createTime != sectionDate) {
+            sectionDate = item.createTime
             item.first = true
             item.bgIndex = 0
             item.numIndex = 0
@@ -115,7 +115,7 @@ export default {
           this.total = res.data.totalRow
           this.loading = false
         }
-        this.lists = list
+        this.lists = list.reverse()
         this.isIndeterminate = true
         // 保证刷新列表后，不显示表头操作
         this.$refs.crmTableHead.headSelectionChange([])

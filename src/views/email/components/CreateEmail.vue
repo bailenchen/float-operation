@@ -377,7 +377,7 @@ export default {
           id: '',
           receipt_emails: newReceiveList.join(','),
           cc_emails: newSentList.join(',') || '',
-          fileBatchId: Array.from(new Set(this.batchIdList)).join(',') || '',
+          batchId: Array.from(new Set(this.batchIdList)).join(',') || '',
           theme: this.themeVal || '',
           content: this.emailcontent || '',
           type: type

@@ -58,13 +58,13 @@
 
                   </div>
                 </th>
-                <th class="tb-h-align head-font-color end-column time-column">
+                <th class="tb-h-align head-font-color time-column">
                   <div ref="time" class="time-column" style="width:100%">
                     <b>时间</b>
                   </div>
                 </th>
 
-                <th class="tb-head">
+                <th class="end-column">
                   <div style="width:55px">
                     <i
                       class="el-icon-star-off"
@@ -133,8 +133,8 @@
                     </div>
                   </td>
 
-                  <td class="tb-head end-column ">
-                    <div style="width:55px;" @click="handleStar(item)">
+                  <td class="tb-h-align">
+                    <div style="width: 65px;" class="end-column" @click="handleStar(item)">
                       <i
                         v-if="item.isStart"
                         class="el-icon-star-on"
@@ -294,7 +294,7 @@ export default {
       }
     })
     window.onresize = () => {
-      // location.reload()
+      location.reload()
       return (() => {
         if (document.getElementsByClassName('table-head')[0]) {
           this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
@@ -488,6 +488,8 @@ tr > td {
 
 .end-column {
   border-right: 0 !important;
+  padding-left: 9px;
+  text-align: left;
 }
 
 .head-font-color {
@@ -531,7 +533,7 @@ tr > td {
 }
 
 .time-column {
-  width: 10%;
+  width: 16%;
 }
 
 .sent-column1, .subject-column1, .time-column1 {
@@ -553,5 +555,8 @@ tr > td {
 /deep/.el-icon-star-on,.el-icon-star-off {
   display: inline-block;
   vertical-align: middle;
+}
+/deep/.el-icon-star-on {
+ margin-left: -2px;
 }
 </style>
