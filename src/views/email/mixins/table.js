@@ -68,7 +68,7 @@ export default {
       }
       emailListsAPI(params).then((res) => {
         this.loading = false
-        const list = JSON.parse(JSON.stringify(res.data.list)).reverse()
+        const list = JSON.parse(JSON.stringify(res.data.list))
         let sectionDate = ''
         // let sectionIndex = -1
 
@@ -115,7 +115,7 @@ export default {
           this.total = res.data.totalRow
           this.loading = false
         }
-        this.lists = list.reverse()
+        this.lists = list
         this.isIndeterminate = true
         // 保证刷新列表后，不显示表头操作
         this.$refs.crmTableHead.headSelectionChange([])
