@@ -26,7 +26,7 @@
               <tr class="table-row head-bg">
                 <th class="tb-head">
                   <div style="width:55px">
-                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @click="1" @change="handleCheckedAll"/>
+                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckedAll"/>
                   </div>
                 </th>
 
@@ -99,7 +99,7 @@
                         class="wk wk-email"
                         style="cursor: pointer; color: #9DA9C2;"/>
                       <i
-                        v-if="item.fileList && item.fileList.length > 0"
+                        v-if="item.fileNum && item.fileNum > 0"
                         class="el-icon-paperclip"
                         style="cursor: pointer; color: #9DA9C2;"/>
                     </div>
@@ -359,15 +359,7 @@ export default {
     /**
      * 操作勾选的列表
      */
-    operatList(type) {
-      var listapi = {
-        star: 'FLAGGED',
-        cancelStar: 'FLAGGED',
-        read: 'SEEN',
-        noRead: 'SEEN',
-        delete: 'LOGICDELETE',
-        rootDel: 'DELETED'
-      }[type]
+    operatList(type, item) {
       if (type == 'star' || type == 'read' || type == 'delete' || type == 'rootDel') {
         var isdo = true
       } else {
@@ -379,7 +371,7 @@ export default {
         this.idLists.push(element.id)
       }
 
-      this.isConfirm(type, listapi, isdo)
+      this.isConfirm(type, item, isdo)
     },
 
     /**

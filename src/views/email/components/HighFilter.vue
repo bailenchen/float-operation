@@ -46,9 +46,15 @@
           style="font-size: 12px;"
           class="all">{{ item.name }}&lt;{{ item.value }}&gt;</el-checkbox>
       </el-checkbox-group>
-
     </div>
-
+    <div class="pagination">
+      <el-pagination
+        :total="5"
+        prev-text="上一页"
+        next-text="下一页"
+        layout="prev, pager, next"
+        @current-change="currentChange"/>
+    </div>
     <filter-form
       v-if="showFilterView"
       :field-list="fieldList"
@@ -97,6 +103,8 @@ export default {
       filterObj: { form: [] }, // 筛选确定数据
       isSeas: false,
       crmType: '',
+      page: 1,
+      total: 0,
       // 勾选
       allCheck: false,
       isIndeterminate: true,
@@ -132,7 +140,7 @@ export default {
         }[this.crmType]
       }
       var params = {
-        page: 1,
+        page: this.page,
         limit: 15,
         // page: this.currentPage,
         // limit: this.pageSize,
@@ -147,6 +155,7 @@ export default {
           // if (this.crmType === 'customer') {
           this.handleFoucs(res.data.list)
           this.filterList = res.data.list
+          this.total = res.data.totalRow
           this.loading = false
           // if (res.data.totalRow && Math.ceil(res.data.totalRow / this.pageSize) < this.currentPage && this.currentPage > 1) {
           //   this.currentPage = this.currentPage - 1
@@ -164,6 +173,7 @@ export default {
      * 点击导航
      */
     clickNav(item, index) {
+      this.page = 1
       this.activeIndex = index
       this.crmType = item.crmType
       this.getFilterList()
@@ -328,12 +338,23 @@ export default {
         })
       })
       return list
+    },
+
+    /**
+     * 当前页码变化
+     */
+    currentChange(val) {
+      this.page = val
+      this.getFilterList()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.filter {
+  position: relative;
+}
 .filter-nav {
   width: 100%;
   margin-top: 25px;
@@ -379,6 +400,7 @@ export default {
 // 列表
 .filter-list {
   width: 100%;
+  position: relative;
   padding: 5px 12px 12px 12px;
   .all {
     color: #333333;
@@ -386,6 +408,11 @@ export default {
     padding-bottom: 12px;
   }
 }
-
+.pagination {
+  right: 20px;
+  line-height: 30px;
+  position: absolute;
+  bottom: 10px;
+}
 </style>
 

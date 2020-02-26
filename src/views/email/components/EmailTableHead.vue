@@ -8,14 +8,31 @@
       <flexbox class="selection-items-box">
         <!-- v-if="whetherTypeShowByPermision(item.type)" -->
         <el-button
-          v-for="(item, index) in operatList"
-          :icon="item.icon | wkIconPre"
+          v-for="(item, index) in list"
+          :icon="item.icon"
           :key="index"
           type="primary"
-          @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
+          @click.native="selectionBarClick(item)">{{ item.name }}</el-button>
       </flexbox>
     </flexbox>
     <div v-if="selectionList.length == 0" style="height:50px;"/>
+    <el-dialog
+      :visible.sync="dialogVisible"
+      title="操作"
+      width="30%">
+      <el-select v-model="type" placeholder="请选择">
+        <el-option
+          v-for="item in options"
+          :key="item.type"
+          :label="item.name"
+          :value="item.type"
+          @click.native="changeItem(item)"/>
+      </el-select>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sure">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -37,18 +54,88 @@ export default {
   },
   data() {
     return {
-      selectionList: [] // 勾选数据操作
+      dialogVisible: false,
+      options: [],
+      selectionList: [], // 勾选数据操作
+      list: [],
+      type: '',
+      item: {}
     }
   },
   created() {
+    this.list = [
+      { name: '删除', type: '2', icon: 'el-icon-delete-solid', children: [
+        {
+          name: '删除邮件',
+          type: 'delete',
+          icon: 'transform'
+        },
+        {
+          name: '彻底删除',
+          type: 'rootDel',
+          icon: 'export'
+        }
+      ] },
+      { name: '标记为', type: '1', icon: 'el-icon-s-flag', children: [
+        {
+          name: '标为星标',
+          type: 'star',
+          icon: 'transfer'
+        },
+        {
+          name: '取消星标',
+          type: 'cancelStar',
+          icon: 'transfer'
+        },
+        {
+          name: '标为已读',
+          type: 'read',
+          icon: 'transform'
+        },
+        {
+          name: '标为未读',
+          type: 'noRead',
+          icon: 'transform'
+        }
+      ] },
+      { name: '移动到', type: '3', icon: 'el-icon-sort', children: [
+        {
+          name: '收件箱',
+          type: 'INBOX',
+          kind: 'INBOX'
+        },
+        {
+          name: '发送箱',
+          type: 'Sent Messages',
+          kind: 'Sent Messages'
+        }
+      ] }
+    ]
   },
   methods: {
     /** 勾选后的表头操作 */
     headSelectionChange(array) {
       this.selectionList = array
     },
-    selectionBarClick(type) {
-      this.$emit('change', type)
+    selectionBarClick(item) {
+      this.options = item.children
+      this.type = item.children[0].type
+      this.item = item.children[0]
+      this.dialogVisible = true
+    },
+
+    /**
+     * 确定选择
+     */
+    sure() {
+      this.$emit('change', this.type, this.item)
+    },
+
+    /**
+     * 选择
+     */
+    changeItem(item) {
+      this.item = item
     }
   }
 }
@@ -102,6 +189,9 @@ export default {
   .el-button + .el-button {
     margin-left: 15px;
   }
+}
+/deep/.el-icon-sort {
+  transform: rotate(90deg)
 }
 </style>
 

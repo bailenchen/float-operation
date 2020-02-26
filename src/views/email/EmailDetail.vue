@@ -12,7 +12,11 @@
         @move="handleMove"/>
       <div class="detail-body">
         <div class="detail-header">
-          <div :class="rowItem.isStart ? 'isStart' : ''" class="wk wk-focus-on"><span class="font-title">{{ rowItem.theme }}</span></div>
+          <flexbox>
+            <span class="font-title">{{ rowItem.theme }}</span>
+            <i v-if="!rowItem.isStart" class="el-icon-star-off"/>
+            <i v-else class="el-icon-star-on" style="color: #FAC23D;"/>
+          </flexbox>
           <div class="main-info">发件人：{{ rowItem.sender }}</div>
           <div class="main-info">收件人：{{ rowItem.receiptName }}</div>
           <div class="main-info">时间：{{ rowItem.createTime.slice(0, 10) }}</div>
@@ -247,10 +251,10 @@ export default {
   }
   .detail-body {
     .font-title {
-      color: #666666;
+      color: #333;
       font-size: 16px;
       line-height: 30px;
-      margin-left: 14px;
+      margin-right: 10px;
     }
     .detail-header {
       background-color: #F5F5F5;
@@ -298,6 +302,9 @@ export default {
 }
 .isStart {
   color: #FAC23D;
+}
+/deep/ .el-icon-star-on {
+  font-size: 20px;
 }
 @import './styles/emaildetail.scss';
 </style>

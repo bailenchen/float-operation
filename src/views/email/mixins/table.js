@@ -2,7 +2,12 @@
 import {
   mapGetters
 } from 'vuex'
-import { emailListsAPI, emailStateUpdateAPI, emailRecordLogicDeleteAPI, emailRecordDeleteByEmailIdAPI } from '@/api/email/email'
+import {
+  emailListsAPI,
+  emailStateUpdateAPI,
+  emailRecordLogicDeleteAPI,
+  emailRecordShiftEmailAPI,
+  emailRecordDeleteByEmailIdAPI } from '@/api/email/email'
 import EmailListHead from '../components/EmailListHead'
 import EmailTableHead from '../components/EmailTableHead'
 
@@ -116,6 +121,7 @@ export default {
           this.loading = false
         }
         this.lists = list
+        this.checkAll = false
         this.isIndeterminate = true
         // 保证刷新列表后，不显示表头操作
         this.$refs.crmTableHead.headSelectionChange([])
@@ -250,7 +256,7 @@ export default {
      * @param {* string} listapi: 指定修改状态state的值
      * @param {* boolean} isdo：指定flag的值
      */
-    isConfirm(type, apiType, bool) {
+    isConfirm(type, item, bool) {
       var message = ''
       let state = ''
       if (type == 'star') {
@@ -271,6 +277,10 @@ export default {
       } else if (type == 'rootDel') {
         message = '确定将邮件彻底删除吗?'
         state = 6 // 彻底删除
+      } else {
+        state = 7
+        console.log(item)
+        message = `确定要移动邮件到${item.name}吗`
       }
       this.$confirm(message, '提示', {
         confirmButtonText: '确定',
@@ -278,7 +288,10 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.updateEmailState(state, bool)
+          this.updateEmailState(state, bool, item)
+          if (this.$refs.crmTableHead) {
+            this.$refs.crmTableHead.dialogVisible = false
+          }
         })
         .catch(() => {
           this.$message({
@@ -291,11 +304,14 @@ export default {
     /**
      * 更改邮件状态
      */
-    updateEmailState(stateType, is) {
+    updateEmailState(stateType, is, item) {
       if (stateType === 5) {
         this.deleteEmail()
       } else if (stateType === 6) {
         this.destoryEmail()
+      } else if (stateType === 7) {
+        this.transform(item)
+        return
       } else {
         this.handleMore(stateType, is)
         return
@@ -353,6 +369,21 @@ export default {
     allRead() {
       this.idLists = this.allIds
       this.handleMore(1, '')
+    },
+
+    /**
+     * 移动到
+     */
+    transform(item) {
+      const params = {
+        emailIds: this.idLists.join(','),
+        emailType: item.kind
+      }
+
+      emailRecordShiftEmailAPI(params).then(() => {
+        this.$message.success('移动成功')
+        this.getEmailList()
+      }).catch(() => {})
     }
   }
 }
