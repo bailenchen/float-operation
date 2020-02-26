@@ -29,12 +29,11 @@
         v-loading="loading"
         :data="listData"
         :height="tableHeight"
-        :row-class-name="getRowClass"
         stripe
         border
         class="n-table--border"
         @sort-change="sortTableList">
-        <el-table-column
+        <!-- <el-table-column
           sortable="custom"
           label="排序"
           align="center"
@@ -45,7 +44,7 @@
               {{ scope.row.initial || '' }}
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="name"
           label="关注"
@@ -53,7 +52,6 @@
           width="120">
           <template slot-scope="scope">
             <span
-              v-if="!specialRowArr.includes(scope.$index)"
               :class="{active: scope.row.status === 1}"
               class="wk wk-focus-on focus-icon"
               @click="toggleStar(scope.$index, scope.row.status)" />
@@ -64,7 +62,6 @@
           label="姓名">
           <template slot-scope="scope">
             <flexbox
-              v-if="!specialRowArr.includes(scope.$index)"
               class="user-box">
               <xr-avatar
                 :name="scope.row.realname"
@@ -158,7 +155,8 @@ export default {
       addresslist(this.params).then(res => {
         this.loading = false
         this.total = res.data.totalRow
-        this.formatList(res.data.list)
+        this.listData = res.data.list || []
+        // this.formatList(res.data.list)
       }).catch(() => {
         this.loading = false
       })
