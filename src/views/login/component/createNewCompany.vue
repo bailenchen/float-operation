@@ -627,7 +627,7 @@ export default {
         })
       } else {
         this.clearError()
-        const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
+        const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
         if (!this.form.password) {
           this.validateRes.password = false
           this.setError('password', '密码不能为空')
@@ -635,7 +635,7 @@ export default {
         }
         if (!pwdReg.test(this.form.password)) {
           this.validateRes.password = false
-          this.setError('password', '密码必须由8-20位字母、数字组成')
+          this.setError('password', '密码必须由6-20位字母、数字组成')
           return
         }
         if (this.form.password !== this.form.re_password) {
