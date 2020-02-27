@@ -83,7 +83,7 @@
                 {{ getEmailDateSectionTitle(item) }}<span class="number">（{{ item.numIndex }}&nbsp;封）</span>
               </div>
             </div>
-            <table :key="`row${index}`" :style="{background: item.checked ? '#fff6f7': ''}" :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2) }" border="0px" cellpadding="0px" cellspacing="0">
+            <table :key="`row${index}`" :style="{background: item.checked ? '#fff6f7': '', width: `${tableWidth}px`}" :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2) }" border="0px" cellpadding="0px" cellspacing="0">
               <tbody>
                 <tr class="table-row">
                   <td class="tb-head first-cell">
@@ -294,12 +294,7 @@ export default {
       }
     })
     window.onresize = () => {
-      location.reload()
-      return (() => {
-        if (document.getElementsByClassName('table-head')[0]) {
-          this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
-        }
-      })()
+      this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
     }
   },
 
