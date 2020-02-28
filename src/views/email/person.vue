@@ -34,9 +34,10 @@
       :visible.sync="dialogNick"
       :title="title"
       :close-on-click-modal="false"
+      append-to-body
       width="500px"
       @close="close">
-      <rich-txt v-if="showNick" :catch-data="catchData" :content="signature" class="rich-txt"/>
+      <tinymce v-if="showNick && dialogNick" v-model="signature" :height="300" class="rich-txt" />
       <el-form v-else ref="form" :model="form" label-width="80px" class="demo-ruleForm">
         <el-form-item
           :rules="[
@@ -62,11 +63,12 @@ import {
   emailUnbundleAccountAPI,
   emailUpdateSignatureAPI,
   emailUpdateSendNickAPI } from '@/api/email/email'
-import RichTxt from './components/RichTxt'
+import Tinymce from '@/components/Tinymce'
+
 export default {
   name: 'Person',
   components: {
-    RichTxt
+    Tinymce
   },
   data() {
     return {
@@ -196,13 +198,6 @@ export default {
       if (!this.showNick) {
         this.$refs['form'].resetFields()
       }
-    },
-
-    /**
-     * 获取富文本内容的回调
-     */
-    catchData(data) {
-      this.signature = data
     }
   }
 }

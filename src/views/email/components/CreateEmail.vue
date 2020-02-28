@@ -78,8 +78,7 @@
           </el-upload>
         </div>
       </flexbox>
-
-      <rich-txt :catch-data="catchData" :content="emailcontent" class="rich-txt"/>
+      <tinymce v-model="emailcontent" :height="300" class="rich-txt" />
     </div>
     <el-popover
       v-model="showPopover"
@@ -112,14 +111,14 @@ import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import { guid } from '@/utils'
 import { regexIsCRMEmail } from '@/utils'
 import CrmRelative from '../../../components/CreateCom/CrmRelative'
-import RichTxt from './RichTxt'
+import Tinymce from '@/components/Tinymce'
 import AddSenter from './AddSenter'
 import { mapGetters } from 'vuex'
 export default {
   name: 'CreateEmail',
   components: {
     CrmRelative,
-    RichTxt,
+    Tinymce,
     AddSenter
   },
   props: {
@@ -442,13 +441,6 @@ export default {
     },
 
     /**
-     * 获取富文本代码段内容
-     */
-    catchData(val) {
-      this.emailcontent = val
-    },
-
-    /**
      * 隐藏添加邮件弹窗
      */
     hideAddEmail() {
@@ -573,6 +565,7 @@ export default {
   }
   .rich-txt {
     margin-top: 20px;
+    margin-right: 5px;
   }
 }
 
