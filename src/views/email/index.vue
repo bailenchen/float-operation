@@ -295,7 +295,9 @@ export default {
       }
     })
     window.onresize = () => {
-      this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+      if (document.getElementsByClassName('table-head')[0]) {
+        this.tableWidth = document.getElementsByClassName('table-head')[0].offsetWidth
+      }
     }
   },
 
