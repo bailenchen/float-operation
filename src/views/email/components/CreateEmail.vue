@@ -18,7 +18,12 @@
             @del-receive="delReceiveEmail"/>
             <!-- end -->
         </flexbox>
-        <flexbox v-if="showSent" class="form-item" direction="row" align="flex-start">
+        <flexbox
+          v-if="showSent"
+          class="form-item"
+          style="margin-top: 15px;"
+          direction="row"
+          align="flex-start">
           <div class="form-label line" @click="sentTo()">抄送</div>
           <!-- 抄送人布局 begin-->
           <add-senter
@@ -43,10 +48,11 @@
           @del-receive="delReceiveEmail"/>
           <!-- end -->
       </flexbox>
-      <div>
+      <div class="form-label_two" style="margin-left: 60px">
         <span v-if="!showDeffient">
           <el-button v-if="!showSent" type="text" @click="showSent = true">添加抄送</el-button>
           <el-button v-else type="text" @click="deleteSent">删除抄送</el-button>
+          <span class="segmentation">|</span>
         </span>
 
         <span v-if="showDeffient" class="deffient_text">每个收件人将收到单独发给他/她的邮件。</span><el-button v-if="showDeffient" type="text" @click="showDeffient = false">取消分别发送</el-button>
@@ -59,7 +65,7 @@
         </div>
       </flexbox>
 
-      <flexbox class="extra-file">
+      <flexbox style="margin-left: 60px" class="extra-file">
         <div class="add-file-wrap" @click="addFile">
           <el-upload
             ref="fileUpload"
@@ -77,8 +83,29 @@
             <div class="add-file">添加附件</div>
           </el-upload>
         </div>
+
+        <!-- <div class="add-file-wrap" style="margin-left: 10px" @click="addFile">
+          <el-upload
+            ref="fileUpload"
+            :action="crmFileSaveUrl"
+            :headers="httpHeader"
+            :data="{type: 'file', batchId: batchId}"
+            :on-preview="handleFilePreview"
+            :before-remove="handleFileRemove"
+            :on-success="fileUploadSuccess"
+            :file-list="imgList"
+            name="file"
+            multiple
+            accept="image/*">
+            <i class="el-icon-link"/>
+            <div class="add-file">添加图片</div>
+          </el-upload>
+        </div> -->
       </flexbox>
-      <tinymce v-model="emailcontent" :height="300" class="rich-txt" />
+      <flexbox align="baseline" style="padding-right: 10px;">
+        <div class="form-label-three">正文</div>
+        <tinymce v-model="emailcontent" :height="300" class="rich-txt" />
+      </flexbox>
     </div>
     <el-popover
       v-model="showPopover"
@@ -98,6 +125,25 @@
         @close="hideAddEmail"
         @changeCheckout="checkInfos"/>
     </el-popover>
+    <flexbox class="email_bottom" justify="flex-start">
+      <div class="email_one">
+        <span>发件人：</span>
+        <span class="">{{ emailMsg.sendNick }} {{ emailMsg.emailAccount }}</span>
+      </div>
+      <span class="email_line" style="font-size: 14px;">|</span>
+      <flexbox style="width: 200px; margin-left: 20px">
+        <div>签名：</div>
+        <el-dropdown @command="handleCommand">
+          <span class="el-dropdown-link">
+            {{ signText }}<i class="el-icon-arrow-down el-icon--right"/>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="使用">使用</el-dropdown-item>
+            <el-dropdown-item command="不使用">不使用</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </flexbox>
+    </flexbox>
   </div>
 </template>
 
@@ -148,14 +194,16 @@ export default {
       showDeffient: false, // 展示分别发送
       acceptEmail: '',
       fileList: [],
+      imgList: [],
       batchId: guid(),
       content: '',
       emailcontent: '',
+      signText: '不使用',
       sendEmailMsg: {} // 发件人信息
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(['userInfo', 'emailMsg']),
     crmFileSaveUrl() {
       return crmFileSaveUrl
     },
@@ -348,15 +396,16 @@ export default {
       }
       //  统一进行邮箱判断
       if (newlist.length === 0) {
-        this.$message.error('收件人不能为空')
+        this.$message.error('请填写收件人后再发送')
         return
       }
+      const countList = []
       newlist.forEach((item, index) => {
         // 只要邮箱有一个是错的，就永远返回false
         if (isSent && regexIsCRMEmail(item.email)) {
           isSent = true
         } else {
-          this.$$message.error(`第${index}的邮箱错误`)
+          countList.push(index + 1)
           isSent = false
         }
       })
@@ -404,6 +453,8 @@ export default {
         }).catch(() => {
           this.loading = false
         })
+      } else {
+        this.$message.error(`第${countList.join(',')}个的邮箱格式错误`)
       }
     },
 
@@ -511,6 +562,20 @@ export default {
         }
       }
       return removeIndex
+    },
+
+    /**
+     * 签名使用不使用
+     */
+    handleCommand(command) {
+      this.signText = command
+      if (command === '使用') {
+        this.emailcontent = this.emailcontent + '<br>' + this.emailMsg.signature
+      } else {
+        console.log(this.emailcontent, '===')
+        const index = this.emailcontent.lastIndexOf('<br>')
+        this.emailcontent = this.emailcontent.substring(0, index)
+      }
     }
   }
 }
@@ -519,30 +584,38 @@ export default {
 <style lang="scss" scoped>
 .crm-create-container {
   position: relative;
+  width: 100%;
   height: 100%;
-  padding-right: 30px;
 }
 
 .crm-create-flex {
+  padding-right: 8px;
   height: 90%;
   overflow-x: hidden;
   overflow-y: auto;
   flex: 1;
+  .form-label_two {
+      margin-bottom: 10px;
+    }
+  .form-label-three {
+    display: inline-block;
+    padding-right: 10px;
+    text-align: right;
+    width: 60px;
+  }
   .form-item {
-    border-bottom: 1px solid #E6E6E6;
     line-height: 35px;
-    margin-bottom: 15px;
+    padding-right: 20px;
     .form-label {
-      width: 66px;
-      margin-right: 10px;
+      width: 60px;
+      padding-right: 10px;
       color: #333;
       cursor: pointer;
-      font-size: 14px;
-    }
-    .line {
-      color: #2362FB;
+      text-align: right;
+      font-size: 13px;
     }
     .line:hover {
+      color: #2362FB;
       text-decoration: underline;
     }
     .form-add {
@@ -550,11 +623,7 @@ export default {
     }
   }
   .extra-file {
-    margin-top: 28px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start
+    margin-top: 15px;
   }
   .btn-group {
     margin-bottom: 30px;
@@ -588,10 +657,16 @@ export default {
 }
 
 .add-file {
-  color: #2362FB;
-  margin-left: 10px;
+  color: #333;
+  font-size: 13px;
+  margin-left: 5px;
 }
-
+.add-file:hover {
+  color: #2362FB;
+}
+.el-icon-link {
+  color: #2362FB;
+}
 .crm-create-container {
   position: relative;
 }
@@ -639,9 +714,17 @@ export default {
 
 .theme-input {
   width: 100%;
-  /deep/ .el-input__inner {
-    border: 0;
+  /deep/.el-input__inner {
+    height: 38px;
+    border:1px solid #e4e4e4 !important;
   }
+}
+
+.segmentation {
+  color: #999;
+  display: inline-block;
+  position: relative;
+  top: -1px;
 }
 
 .is-input {
@@ -654,11 +737,30 @@ export default {
   font-size: 13px;
   color: #857277;
 }
+.email_bottom {
+  height: 50px;
+  font-size: 12px;
+  color: #857277;
+  padding-left: 60px;
+  padding-top: 10px;
+  .email_one {
+    white-space: nowrap;
+    padding-right: 20px;
+  }
+  .email_line {
+    position: relative;
+    top: -2px;
+  }
+}
 /deep/ .w-e-toolbar .w-e-menu {
   z-index: 2000 !important;
 }
 
 /deep/ .w-e-text-container {
   z-index: 2000 !important;
+}
+
+/deep/.el-dropdown-link {
+  font-size: 12px;
 }
 </style>

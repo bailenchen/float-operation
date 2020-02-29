@@ -8,8 +8,8 @@
       @on-search="emailSearch">
       <template>
         <div v-if="emailType == 'receive'" slot="header" class="record-receive">
-          （收件箱有<span class="blue-font">{{ receiveNumber }}</span>封未读）
-          <el-button type="text" class="blue-font" @click="allRead">全部标为已读</el-button>
+          （收件箱有<span class="blue-font">{{ allNumber }}</span>封邮件，其中<span class="blue-font">{{ receiveNumber }}</span>封未读）
+          <!-- <el-button type="text" class="blue-font" @click="allRead">全部标为已读</el-button> -->
         </div>
       </template>
     </email-list-head>
@@ -195,7 +195,8 @@ export default {
     return {
       // 展示加载loading
       loading: false,
-      receiveNumber: 0, // 收件箱数量
+      allNumber: 0, // 收件箱数量
+      receiveNumber: 0, // 收件箱未读数量
       emailType: 'receive',
       lists: [],
       showDview: false,
@@ -326,6 +327,7 @@ export default {
     queryEmailNum() {
       emailNumAPI().then((res) => {
         this.receiveNumber = res.data.unreadCount
+        this.allNumber = res.data.inBoxCount
       }).catch(() => {
 
       })

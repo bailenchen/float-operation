@@ -7,31 +7,15 @@
       <detail-head
         :detail-data="rowItem"
         :email-type="emailType"
-        class="header"
+        :file-count="fileCount"
+        :file-names="fileNames"
+        :src="src"
         @on-del="delCurrentEmail"
         @move="handleMove"/>
-      <div class="detail-body">
-        <div class="detail-header">
-          <flexbox>
-            <span class="font-title">{{ rowItem.theme }}</span>
-            <i v-if="!rowItem.isStart" class="el-icon-star-off"/>
-            <i v-else class="el-icon-star-on" style="color: #FAC23D;"/>
-          </flexbox>
-          <div class="main-info">发件人：{{ rowItem.sender }}</div>
-          <div class="main-info">收件人：{{ rowItem.receiptName }}</div>
-          <div class="main-info">时间：{{ rowItem.createTime.slice(0, 10) }}</div>
-          <div v-if="fileCount" class="main-info">
-            附件: {{ fileCount }} 个 <span>({{ fileNames }})</span>
-          </div>
-        </div>
-      </div>
       <div :style="{ height: emailFileHeight + 'px' }" class="article" >
         <div class="detail_content" v-html="rowItem.content"/>
         <files-list ref="file" :batch-id="rowItem.batchId" @getFileCount="getFileCount"/>
-
       </div>
-
-
     </div>
     <!-- </div> -->
   </slide-view>
@@ -70,7 +54,7 @@ export default {
   },
   data() {
     return {
-      emailFileHeight: document.documentElement.clientHeight - 340,
+      emailFileHeight: document.documentElement.clientHeight - 260,
       loading: false,
       fileCount: 0,
       fileNames: '',
@@ -81,7 +65,8 @@ export default {
         sent: 'Sent Messages',
         deleted: 'Deleted Messages',
         spam: '垃圾邮件'
-      }
+      },
+      src: ''
     }
   },
   computed: {
@@ -157,6 +142,7 @@ export default {
       this.loading = true
       emailRecordLogicDeleteAPI({ emailIds: this.rowItem.id }).then(res => {
         this.$message.success('删除成功')
+        this.loading = false
       }).catch(() => {
         this.loading = false
       })
@@ -174,6 +160,7 @@ export default {
       }
       emailRecordShiftEmailAPI(params).then((res) => {
         this.$message.success('移动成功')
+        this.loading = false
         this.$emit('update-list')
       }).catch(() => {
         this.loading = false
@@ -211,6 +198,8 @@ export default {
      */
     getFileCount(list) {
       this.fileCount = list.length
+      this.src = list[0] ? list[0].src : ''
+
       if (list.length === 1) {
         this.fileNames = list[0].name
       } else {
@@ -241,14 +230,6 @@ export default {
 
 
 .container {
-  padding: 33px 22px 20px 20px;
-  .header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 60px;
-    padding-bottom: 40px;
-  }
   .detail-body {
     .font-title {
       color: #333;
@@ -275,6 +256,7 @@ export default {
     }
   .article {
     width: 100%;
+    padding: 0px 20px;
     overflow-y: auto;
     margin-top: 15px;
     background: #fff;

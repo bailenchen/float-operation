@@ -8,17 +8,17 @@
         新建邮件
       </div>
     </div>
-    <div class="new-email">
+    <flexbox class="new-email">
       <create-email ref="createEmail" :handle-list="handleList" class="left"/>
       <high-filter class="right" @handle="handleHigh"/>
-    </div>
+    </flexbox>
   </div>
 </template>
 
 <script>
 import createEmail from './components/CreateEmail'
 import HighFilter from './components/HighFilter'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'CreateEmail',
   components: {
@@ -29,6 +29,9 @@ export default {
     return {
       handleList: []
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   beforeRouteLeave(to, form, next) {
     // 有收件人或者分别发送人或者分别发送人才有提示
@@ -62,6 +65,7 @@ export default {
 <style lang="scss" scoped>
 .new {
   height: calc(100% - 60px);
+  width: 100%;
 }
 .top-title {
   line-height: 60px;
@@ -80,20 +84,14 @@ export default {
   }
 }
 .new-email {
+  width: 100%;
   height: 100%;
-  min-width: 1200px;
-  padding: 0 0 0 28px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  background: #fff;
-  .left {
-    width: 80%
-  }
+  padding: 0 0 0 20px;
+  background: ghostwhite;
   .right {
-    width: 20%;
+    flex-shrink: 0;
+    width: 240px;
     height: 100%;
-    border-left: 1px solid #F0F0F0;
   }
 }
 

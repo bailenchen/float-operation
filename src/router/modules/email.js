@@ -59,7 +59,7 @@ export default [
     }]
   },
   {
-    ...layout({}),
+    ...layout({}, true),
     ignore: true, // 路由添加时忽略
     children: [{
       path: 'index/writeLetter', // 列表

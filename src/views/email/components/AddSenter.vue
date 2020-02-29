@@ -1,6 +1,6 @@
 
 <template>
-  <div class="add-receive-wrap">
+  <flexbox class="add-receive-wrap" justify="flex-start">
     <div v-for="(item, index) in emailList" :key="index" class="receiver">
       <div class="current-receiver">
         <div v-if="isHide" class="end-wrap">
@@ -31,7 +31,7 @@
         <div class="name">{{ `${item.name}&lt;${item.value}&gt;` }}</div>
       </template>
     </el-autocomplete>
-  </div>
+  </flexbox>
 </template>
 
 <script>
@@ -102,19 +102,11 @@ export default {
         return
       }
       if (this.comType == 'receive') {
-        if (this.validEmail(this.val)) {
-          this.$emit('add-receive', this.val, this.emailList)
-          this.val = ''
-        } else {
-          this.$message.error('您输入的邮箱格式错误')
-        }
+        this.$emit('add-receive', this.val, this.emailList)
+        this.val = ''
       } else if (this.comType == 'sent') {
-        if (this.validEmail(this.val)) {
-          this.$emit('add-sent', this.val, this.emailList)
-          this.val = ''
-        } else {
-          this.$message.error('您输入的邮箱格式错误')
-        }
+        this.$emit('add-sent', this.val, this.emailList)
+        this.val = ''
       }
       this.emailList = JSON.parse(JSON.stringify(this.emailCopy))
     },
@@ -200,10 +192,10 @@ export default {
 // 添加收件人样式
 .add-receive-wrap {
   width: 100%;
-  display: flex;
-  justify-content: flex-start;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+  background: #fff;
   flex-wrap: wrap;
-  align-items: center;
 }
 
 .current-receiver {
@@ -248,8 +240,7 @@ export default {
 }
 
 .receiver {
-  margin-right: 5px;
-  margin-bottom: 5px;
+  margin-left: 5px;
 }
 /deep/.el-autocomplete-suggestion {
   text-overflow: ellipsis;

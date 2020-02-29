@@ -1,60 +1,63 @@
 <template>
   <div v-loading="loading" class="filter">
-    <div class="filter-nav">
-      <span v-for="(item, index) in filterNavList" :class="{'active-line': activeIndex == index }" :key="index" class="filter-item" @click="clickNav(item, index)">
-        {{ item.name }}
-      </span>
-    </div>
-    <div class="search">
-      <el-input
-        v-model="search"
-        class="search-input"
-        placeholder="搜索"
-        prefix-icon="el-icon-search"/>
-      <el-button type="primary" class="filter-btn" @click="filter">搜索</el-button>
-    </div>
-
-    <div class="filter-list">
-      <div class="all">
-        <el-checkbox :indeterminate="isIndeterminate" v-model="allCheck" @change="handleAll"/>
-        <span class="all-txt">全部</span>
+    <div class="filter_box">
+      <div class="filter-nav">
+        <span v-for="(item, index) in filterNavList" :class="{'active-line': activeIndex == index }" :key="index" class="filter-item" @click="clickNav(item, index)">
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="search">
+        <el-input
+          v-model="search"
+          class="search-input"
+          placeholder="搜索"
+          prefix-icon="el-icon-search"/>
+        <el-button type="primary" class="filter-btn" @click="filter">搜索</el-button>
       </div>
 
-      <el-checkbox-group v-if="crmType === 'customer'" v-model="customerCheckList" @change="handleSender">
-        <el-checkbox
-          v-for="(item, index) in filterList"
-          :key="index"
-          :label="item.customerId"
-          style="font-size: 12px;"
-          class="all">{{ item.customerName }}&lt;{{ item.email }}&gt;</el-checkbox>
-      </el-checkbox-group>
+      <div class="filter-list">
+        <div class="all">
+          <el-checkbox :indeterminate="isIndeterminate" v-model="allCheck" @change="handleAll"/>
+          <span class="all-txt">全部</span>
+        </div>
 
-      <el-checkbox-group v-else-if="crmType === 'contact'" v-model="contactCheckList" @change="handleSender">
-        <el-checkbox
-          v-for="(item, index) in filterList"
-          :key="index"
-          :label="item.contactId"
-          style="font-size: 12px;"
-          class="all">{{ item.contactName }}&lt;{{ item.email }}&gt;</el-checkbox>
-      </el-checkbox-group>
+        <el-checkbox-group v-if="crmType === 'customer'" v-model="customerCheckList" @change="handleSender">
+          <el-checkbox
+            v-for="(item, index) in filterList"
+            :key="index"
+            :label="item.customerId"
+            style="font-size: 12px;"
+            class="all">{{ item.customerName }}&lt;{{ item.email }}&gt;</el-checkbox>
+        </el-checkbox-group>
 
-      <el-checkbox-group v-else v-model="shortCheckList" @change="handleSender">
-        <el-checkbox
-          v-for="(item, index) in filterList"
-          :key="index"
-          :label="item.value"
-          style="font-size: 12px;"
-          class="all">{{ item.name }}&lt;{{ item.value }}&gt;</el-checkbox>
-      </el-checkbox-group>
+        <el-checkbox-group v-else-if="crmType === 'contact'" v-model="contactCheckList" @change="handleSender">
+          <el-checkbox
+            v-for="(item, index) in filterList"
+            :key="index"
+            :label="item.contactId"
+            style="font-size: 12px;"
+            class="all">{{ item.contactName }}&lt;{{ item.email }}&gt;</el-checkbox>
+        </el-checkbox-group>
+
+        <el-checkbox-group v-else v-model="shortCheckList" @change="handleSender">
+          <el-checkbox
+            v-for="(item, index) in filterList"
+            :key="index"
+            :label="item.value"
+            style="font-size: 12px;"
+            class="all">{{ item.name }}&lt;{{ item.value }}&gt;</el-checkbox>
+        </el-checkbox-group>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          :total="5"
+          prev-text="上一页"
+          next-text="下一页"
+          layout="prev, pager, next"
+          @current-change="currentChange"/>
+      </div>
     </div>
-    <div class="pagination">
-      <el-pagination
-        :total="5"
-        prev-text="上一页"
-        next-text="下一页"
-        layout="prev, pager, next"
-        @current-change="currentChange"/>
-    </div>
+
     <filter-form
       v-if="showFilterView"
       :field-list="fieldList"
@@ -353,8 +356,21 @@ export default {
 
 <style lang="scss" scoped>
 .filter {
-  position: relative;
+  overflow: hidden;
+  width: 240px;
 }
+
+.filter_box {
+  width: 220px;
+  margin: 10px;
+  margin-top: 0px;
+  position: relative;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+  background-color: #fff;
+  height: calc(100% - 50px);
+}
+
 .filter-nav {
   width: 100%;
   margin-top: 25px;
@@ -403,6 +419,10 @@ export default {
   position: relative;
   padding: 5px 12px 12px 12px;
   .all {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: #333333;
     font-size: 12px;
     padding-bottom: 12px;

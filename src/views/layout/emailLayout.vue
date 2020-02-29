@@ -10,14 +10,33 @@
         v-if="showMenu"
         :items="emailRouters"
         class="sidebar-container" >
-        <div slot="emailSynchronizes" class="syn">
-          <el-tooltip v-if="showIcon" class="item" effect="dark" content="同步数据" placement="right">
-            <span class="syn_span">
+        <div slot="emailSynchronizes" style="margin-bottom: 15px;">
+          <div class="modal"/>
+          <div class="syn" @click="toSend">
+            <el-tooltip v-if="showIcon" class="item" effect="dark" content="写信" placement="right">
+              <span class="syn_span">
+                <i class="wk wk-circle-edit"/>
+              </span>
+            </el-tooltip>
+            <div v-if="!showIcon" class="hr hr-line">
+              <i class="wk wk-circle-edit"/>
+              <span class="nav-text" style="font-size: 14px;">写信</span>
+            </div>
+
+          </div>
+          <div class="syn">
+            <el-tooltip v-if="showIcon" class="item" effect="dark" content="收信（同步）" placement="right">
+              <span class="syn_span">
+                <i :class="isRotate ? 'rotate' : ''" class="el-icon-refresh" @click="synEmail"/>
+              </span>
+            </el-tooltip>
+            <div v-if="!showIcon" class="hr">
               <i :class="isRotate ? 'rotate' : ''" class="el-icon-refresh" @click="synEmail"/>
-            </span>
-          </el-tooltip>
-          <span v-if="!showIcon">同步邮箱</span>
-        <i v-if="!showIcon" :class="isRotate ? 'rotate' : ''" class="el-icon-refresh right_refresh" @click="synEmail"/></div>
+              <span class="nav-text" style="font-size: 14px;" @click="synEmail">收信（同步）</span>
+            </div>
+          </div>
+        </div>
+
         <div slot="person" class="person" @click="toPerson">
           <el-tooltip v-if="showIcon" :content="email" class="item" effect="dark" placement="right">
             <span class="person_span">
@@ -59,7 +78,8 @@ export default {
       emailRouters: emailRouter,
       isRotate: false,
       showIcon: false,
-      email: ''
+      email: '',
+      emailIndex: 0
     }
   },
 
@@ -127,6 +147,13 @@ export default {
     },
 
     /**
+     * 写信
+     */
+    toSend() {
+      this.$router.push({ path: '/email/index/writeLetter' })
+    },
+
+    /**
      * 查询邮箱基本信息
      */
     getEmailMsg() {
@@ -148,17 +175,44 @@ export default {
     min-height: 0;
     height: 100%;
   }
-
+  .modal {
+    background-color: #fff;
+    width: 165px;
+    height: 80px;
+    border-radius: 4px;
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 20px;
+    opacity: .1;
+  }
+  .nav-text {
+    cursor: pointer;
+  }
   .nav-container {
     padding: 0;
     box-shadow: 0px 1px 2px #dbdbdb;
     z-index: 100;
     min-width: 1200px;
   }
+
+  .wk-circle-edit {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+ .white {
+   color: #fff !important;
+ }
+
   .syn {
-    color: white;
+    color: #fff;
     width: 100%;
+    position: relative;
+    z-index: 3;
+    cursor: pointer;
     height: 40px;
+    line-height: 40px;
     font-size: 16px;
     padding-left: 30px;
     display: flex;
@@ -167,6 +221,13 @@ export default {
     .syn_span {
       width: 100%;
       display: inline-block;
+    }
+    .hr {
+      line-height: 40px;
+      width: 120px;
+    }
+    .hr-line {
+      border-bottom: 1px solid #fff;
     }
     .el-icon-refresh {
       cursor: pointer;
@@ -180,7 +241,6 @@ export default {
     animation-play-state: paused;
     }
     .rotate {
-      display: block;
       animation: rotate 6s linear infinite;
     }
   }
