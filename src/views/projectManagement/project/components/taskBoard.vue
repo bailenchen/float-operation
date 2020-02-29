@@ -6,7 +6,13 @@
       v-scrollx="{ ignoreClass :['ignoreClass']}"
       id="task-board-body"
       :list="taskList"
-      :options="{ group: 'mission', forceFallback: false, dragClass: 'sortable-parent-drag', filter: '.ignore-elements'}"
+      :options="{
+        group: 'mission',
+        forceFallback: false,
+        disabled: canOrderTaskClass,
+        dragClass: 'sortable-parent-drag',
+        filter: '.ignore-elements'
+      }"
       :move="moveParentTask"
       handle=".board-column-wrapper"
       class="board-column-content-parent"
@@ -91,10 +97,15 @@
           </div>
           <draggable
             :list="item.list"
-            :options="{ group: {
-              name: 'missionSon',
-              put: item.classId != -1
-            }, forceFallback: false, dragClass: 'sortable-drag'}"
+            :options="{
+              group: {
+                name: 'missionSon',
+                put: item.classId != -1
+              },
+              forceFallback: false,
+              disabled: canOrderTask,
+              dragClass: 'sortable-drag'
+            }"
             :id="item.classId"
             class="board-column-content"
             @end="moveEndSonTask">
@@ -120,6 +131,7 @@
                   @click.stop>
                   <el-checkbox
                     v-model="element.checked"
+                    :disabled="!permission.setTaskStatus"
                     @change="checkboxChange(element, item)"/>
                 </div>
                 <div class="element-label">{{ element.name }}</div>
@@ -328,6 +340,14 @@ export default {
       this.permission.saveTask ||
       this.permission.archiveTask ||
       this.permission.deleteTaskClass
+    },
+    // 可以移动任务分类
+    canOrderTaskClass() {
+      return !this.permission.updateClassOrder
+    },
+    // 可以移动任务
+    canOrderTask() {
+      return !this.permission.setTaskOrder
     }
   },
 

@@ -32,6 +32,7 @@
               :color="projectColor"
               :is-open="projectData.isOpen"
               :add-members-data="membersList"
+              :permission="permission"
               @close="projectHandleShow = false"
               @submite="setSubmite"
               @handle="projectSettingsHandle"

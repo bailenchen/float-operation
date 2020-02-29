@@ -72,6 +72,7 @@
             v-show="tabType == 'member'"
             class="add-members">
             <members-dep
+              v-if="permission.setTaskOwnerUser"
               :user-checked-data="membersList"
               :close-dep="true"
               :content-block="false"
@@ -109,6 +110,7 @@
                       :value="val.roleId"/>
                   </el-select>
                   <span
+                    v-if="permission.setTaskOwnerUser"
                     class="el-icon-close"
                     @click="deleteMember(item, index)"/>
                 </div>
@@ -156,6 +158,12 @@ export default {
       type: Array,
       default: () => {
         return []
+      }
+    },
+    permission: {
+      type: Object,
+      default: () => {
+        return {}
       }
     }
   },
