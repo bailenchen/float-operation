@@ -38,25 +38,25 @@
               v-if="isRecycle"
               class="task-hd__top--info">该任务已于 {{ taskData.hiddenTime }} 被放入回收站</span>
             <el-button
-              v-if="isRecycle"
+              v-if="isRecycle && getPermission('restoreTask')"
               class="xr-btn--primary"
               icon="wk wk-activation"
               type="primary"
               @click="recoverTask">恢复</el-button>
             <el-button
-              v-if="isRecycle"
+              v-if="isRecycle && getPermission('cleanTask')"
               class="xr-btn--red"
               icon="el-icon-delete-solid"
               type="primary"
               @click="thoroughDeleteTask">彻底删除</el-button>
             <el-button
-              v-if="showArchiveBtn"
+              v-if="showArchiveBtn && getPermission('archiveTask')"
               class="xr-btn--green"
               icon="wk wk-archive"
               type="primary"
               @click="moreArchive">归档</el-button>
             <el-dropdown
-              v-if="!isRecycle"
+              v-if="!isRecycle && getPermission('deleteTask')"
               trigger="click"
               @command="morkDropdownClick">
               <el-button icon="el-icon-more" />
@@ -74,11 +74,12 @@
           align="stretch">
           <el-checkbox
             v-model="taskData.checked"
+            :disabled="!getPermission('setTaskStatus')"
             @change="completeMainTask" />
           <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="light" placement="top">
             <div
               :class="['task-name', { 'is-checked': taskData.checked }]"
-              @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+              @click="editTaskName">{{ taskData.name }}</div>
           </el-tooltip>
           <div
             v-else
@@ -104,6 +105,7 @@
             <flexbox @click.native="priorityVisible = true">
               <el-popover
                 v-model="priorityVisible"
+                :disabled="!getPermission('setTaskPriority')"
                 popper-class="no-padding-popover"
                 placement="bottom"
                 trigger="click">
@@ -133,6 +135,7 @@
               :value="taskData.mainUser ? [taskData.mainUser] : []"
               :info-request="ownerListRequest"
               :info-params="ownerListParams"
+              :disabled="!getPermission('setTaskMainUser')"
               style="width: 100%;"
               placement="top"
               radio
@@ -170,6 +173,7 @@
               <el-date-picker
                 v-model="taskData.startTime"
                 :clearable="false"
+                :disabled="!getPermission('setTaskTime')"
                 :picker-options="startTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
@@ -194,6 +198,7 @@
               <el-date-picker
                 v-model="taskData.stopTime"
                 :clearable="false"
+                :disabled="!getPermission('setTaskTime')"
                 :picker-options="stopTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
@@ -243,11 +248,13 @@
                       class="user-img" />
                   </el-tooltip>
                   <img
+                    v-if="getPermission('setTaskOwnerUser')"
                     src="@/assets/img/delete_task.png"
                     class="el-icon-close"
                     @click="deleteOwnerList(item, index)">
                 </span>
                 <members-dep
+                  v-if="getPermission('setTaskOwnerUser')"
                   :close-dep="true"
                   :content-block="false"
                   :user-checked-data="taskData.ownerUserList"
@@ -269,7 +276,7 @@
                 class="item-color">
                 {{ item.labelName }}
               </span>
-              <div class="add-tag">
+              <div v-if="getPermission('setTaskLabel')" class="add-tag">
                 <tag-index
                   :placement="'right'"
                   :task-data="taskData">
@@ -297,12 +304,13 @@
                   <div
                     v-if="taskData.description"
                     class="description-content"
-                    @click="addDescriptionShow = true; addDescriptionTextarea = taskData.description">{{ taskData.description }}</div>
+                    @click="editTaskDescription">{{ taskData.description }}</div>
                   <div
                     v-else
                     class="description-empty">
                     <span class="color-label">暂无描述</span>
                     <span
+                      v-if="getPermission('setTaskDescription')"
                       class="add-btn"
                       @click="addDescriptionShow = true">
                       <i class="wk wk-l-plus" />
@@ -342,7 +350,8 @@
                 <related-business
                   :margin-left="'0'"
                   :all-data="allData"
-                  show-foot
+                  :show-foot="getPermission('saveTaskRelation')"
+                  :show-add="getPermission('saveTaskRelation')"
                   @checkRelatedDetail="checkRelatedDetail"
                   @checkInfos="checkInfos"
                   @unbind="unbindRelatedInfo" />
@@ -377,6 +386,7 @@
                         <div @click.stop>
                           <el-checkbox
                             v-model="item.checked"
+                            :disabled="getPermission('setChildTaskStatus')"
                             @change="subtasksCheckbox(item, $event)" />
                         </div>
                         <div
@@ -387,9 +397,11 @@
 
                         <div class="edit-del-box">
                           <span
+                            v-if="getPermission('updateChildTask')"
                             class="xr-text-btn primary"
                             @click="editSubTask(item)">编辑</span>
                           <span
+                            v-if="getPermission('deleteChildTask')"
                             class="xr-text-btn delete"
                             @click="deleteSubTask(item)">删除</span>
                         </div>
@@ -417,19 +429,21 @@
                         @on-handle="handleSubTasksBlock($event, item)" />
                     </div>
                   </template>
-                  <div v-if="addSubtasks">
-                    <span
-                      class="add-btn"
-                      @click="addSubtasks = false">
-                      <i class="wk wk-l-plus" />
-                      <span class="label">子任务</span>
-                    </span>
-                  </div>
-                  <sub-task
-                    v-else
-                    :sub-task-com="'new'"
-                    :task-data="taskData"
-                    @on-handle="handleSubTasksBlock" />
+                  <template v-if="getPermission('addChildTask')">
+                    <div v-if="addSubtasks">
+                      <span
+                        class="add-btn"
+                        @click="addSubtasks = false">
+                        <i class="wk wk-l-plus" />
+                        <span class="label">子任务</span>
+                      </span>
+                    </div>
+                    <sub-task
+                      v-else
+                      :sub-task-com="'new'"
+                      :task-data="taskData"
+                      @on-handle="handleSubTasksBlock" />
+                  </template>
                 </div>
               </div>
             </div>
@@ -449,9 +463,10 @@
                   :list="fileList"
                   :cell-index="fileIndex"
                   :module-id="id"
-                  :show-delete="true"
+                  :show-delete="getPermission('deleteTaskFile')"
                   @delete="accessoryDeleteFun" />
                 <el-upload
+                  v-if="getPermission('uploadTaskFile')"
                   :http-request="httpRequest"
                   class="upload-file"
                   action="https://jsonplaceholder.typicode.com/posts/"
@@ -895,6 +910,38 @@ export default {
           // })
           this.taskData.checked = !this.taskData.checked
         })
+    },
+
+    /**
+     * 编辑任务标题
+     */
+    editTaskName() {
+      if (this.getPermission('setTaskTitle')) {
+        this.nameVinput = true
+        this.taskDataName = this.taskData.name
+      }
+    },
+
+    /**
+     * 编辑任务描述
+     */
+    editTaskDescription() {
+      if (this.getPermission('setTaskDescription')) {
+        this.addDescriptionShow = true
+        this.addDescriptionTextarea = this.taskData.description
+      }
+    },
+
+    /**
+     * 获取权限
+     */
+    getPermission(key) {
+      if (!this.workId) {
+        return true
+      }
+
+      const permission = this.taskData ? this.taskData.authList.project || {} : {}
+      return permission[key]
     },
 
     /**

@@ -4,6 +4,7 @@
     class="related-business">
     <!-- 新建- 相关信息 -->
     <el-popover
+      v-if="showAdd"
       v-model="showPopover"
       placement="bottom"
       width="800"
@@ -75,6 +76,10 @@ export default {
     showFoot: {
       type: Boolean,
       default: false
+    },
+    showAdd: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
