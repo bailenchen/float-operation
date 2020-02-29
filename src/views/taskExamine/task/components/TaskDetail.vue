@@ -560,7 +560,9 @@ import {
   workTaskTimeSetAPI,
   workTaskOwnerUserSetAPI,
   workTaskOwnerUserDeleteAPI,
-  workTaskPrioritySetAPI
+  workTaskPrioritySetAPI,
+  workTaskDeleteAPI,
+  workSubTaskDeleteAPI
 } from '@/api/projectManagement/projectTask'
 // 项目参与人
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
@@ -935,7 +937,8 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          deleteTaskAPI({
+          const request = this.workId ? workTaskDeleteAPI : deleteTaskAPI
+          request({
             taskId: this.id
           })
             .then(res => {
@@ -1349,7 +1352,8 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          deleteTaskAPI({
+          const request = this.workId ? workSubTaskDeleteAPI : deleteTaskAPI
+          request({
             taskId: val.taskId
           })
             .then(res => {

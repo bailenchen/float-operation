@@ -157,6 +157,46 @@ export function workTaskPrioritySetAPI(data) {
 }
 
 /**
+ *
+ * 新建子任务
+ * @param {*} data
+ */
+export function workSubTaskAddAPI(data) {
+  return request({
+    url: 'task/addWorkChildTask',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ *
+ * 编辑子任务
+ * @param {*} data
+ */
+export function workSubTaskUpdateAPI(data) {
+  return request({
+    url: 'task/updateWorkChildTask',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ *
+ * 删除子任务
+ * @param {*} data
+ */
+export function workSubTaskDeleteAPI(data) {
+  return request({
+    url: 'task/deleteWorkChildTask',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
 
  * 任务添加附件
  * @param {*} data
