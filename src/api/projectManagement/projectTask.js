@@ -132,6 +132,19 @@ export function workTaskOwnerUserSetAPI(data) {
 
 /**
  *
+ * 添加任务参与人
+ * @param {*} data
+ */
+export function workTaskOwnerUserDeleteAPI(data) {
+  return request({
+    url: 'task/deleteWorkTaskOwnerUser',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ *
  * 设置任务优先级
  * @param {*} data
  */

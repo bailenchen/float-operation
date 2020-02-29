@@ -552,6 +552,16 @@ import {
   queryLogTaskAPI,
   taskDeleteOwnerUserAPI
 } from '@/api/task/task'
+import {
+  workTaskStatusSetAPI,
+  workTaskTitleSetAPI,
+  workTaskDescriptionSetAPI,
+  workTaskMainUserSetAPI,
+  workTaskTimeSetAPI,
+  workTaskOwnerUserSetAPI,
+  workTaskOwnerUserDeleteAPI,
+  workTaskPrioritySetAPI
+} from '@/api/projectManagement/projectTask'
 // 项目参与人
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 import { crmFileSave } from '@/api/common'
@@ -860,7 +870,8 @@ export default {
      */
     completeMainTask(val) {
       this.taskData.checked = val
-      setTaskAPI({
+      const request = this.workId ? workTaskStatusSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         status: this.taskData.checked ? 5 : 1
       })
@@ -896,7 +907,8 @@ export default {
      */
     priorityBtn(value, def) {
       this.taskData.priority = value.id
-      setTaskAPI({
+      const request = this.workId ? workTaskPrioritySetAPI : setTaskAPI
+      request({
         taskId: this.id,
         priority: value.id
       })
@@ -1009,7 +1021,8 @@ export default {
       //   index: this.detailIndex,
       //   section: this.detailSection
       // })
-      setTaskAPI({
+      const request = this.workId ? workTaskStatusSetAPI : setTaskAPI
+      request({
         taskId: val.taskId,
         status: e ? 5 : 1
       })
@@ -1049,7 +1062,8 @@ export default {
      * 参与人操作
      */
     editOwnerList(users, dep) {
-      setTaskAPI({
+      const request = this.workId ? workTaskOwnerUserSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         ownerUserId: users
           .map(item => {
@@ -1067,7 +1081,8 @@ export default {
      * 参与人删除按钮
      */
     deleteOwnerList(item, index) {
-      taskDeleteOwnerUserAPI({
+      const request = this.workId ? workTaskOwnerUserDeleteAPI : taskDeleteOwnerUserAPI
+      request({
         taskId: this.id,
         userId: item.userId
       })
@@ -1089,7 +1104,8 @@ export default {
      * 上传负责人信息
      */
     submiteMainUser(mainUser) {
-      setTaskAPI({
+      const request = this.workId ? workTaskMainUserSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         mainUserId: mainUser ? mainUser.userId : ''
       })
@@ -1114,7 +1130,8 @@ export default {
      * 编辑任务名
      */
     submiteTaskName(val) {
-      setTaskAPI({
+      const request = this.workId ? workTaskTitleSetAPI : setTaskAPI
+      request({
         name: val,
         taskId: this.id
       })
@@ -1143,7 +1160,8 @@ export default {
     timeChange(type) {
       const params = { taskId: this.id }
       params[type] = this.taskData[type]
-      setTaskAPI(params)
+      const request = this.workId ? workTaskTimeSetAPI : setTaskAPI
+      request(params)
         .then(res => {
           // 停止时间回调
           if (type == 'stopTime') {
@@ -1162,7 +1180,8 @@ export default {
      * 描述提交按钮
      */
     submiteDescription() {
-      setTaskAPI({
+      const request = this.workId ? workTaskDescriptionSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         description: this.addDescriptionTextarea
       })
@@ -1425,7 +1444,8 @@ export default {
      * 删除截止时间
      */
     deleteTimeTop() {
-      setTaskAPI({
+      const request = this.workId ? workTaskTimeSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         stopTime: ''
       })
