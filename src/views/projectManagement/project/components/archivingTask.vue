@@ -29,7 +29,7 @@
 <script>
 import TaskCell from '@/views/projectManagement/components/taskCell'
 import { workTaskArchListAPI } from '@/api/projectManagement/project'
-import { workTaskSaveAPI } from '@/api/projectManagement/task'
+import { workTaskStatusSetAPI } from '@/api/projectManagement/projectTask'
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 
 export default {
@@ -100,7 +100,7 @@ export default {
      * 页面勾选删除
      */
     changeCheckbox(val) {
-      workTaskSaveAPI({
+      workTaskStatusSetAPI({
         taskId: val.taskId,
         status: val.checked ? 5 : 1
       })

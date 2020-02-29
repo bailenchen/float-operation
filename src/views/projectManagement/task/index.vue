@@ -176,9 +176,10 @@
 import {
   workTaskMyTaskAPI,
   workTaskUpdateTopAPI,
-  workTaskSaveAPI,
   taskWorkbenchExportAPI
 } from '@/api/projectManagement/task'
+import { setTaskAPI } from '@/api/task/task'
+import { workTaskStatusSetAPI } from '@/api/projectManagement/projectTask'
 
 import ListTaskAdd from '@/views/projectManagement/components/ListTaskAdd'
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
@@ -327,7 +328,9 @@ export default {
       } else {
         value.checkedNum--
       }
-      workTaskSaveAPI({
+
+      const request = element.workId ? workTaskStatusSetAPI : setTaskAPI
+      request({
         taskId: element.taskId,
         status: element.checked ? 5 : 1
       })

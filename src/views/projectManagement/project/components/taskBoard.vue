@@ -25,7 +25,7 @@
               <span class="text"> {{ item.className }} </span>
               <span class="text-num">{{ item.checkedNum }} / {{ item.list.length }}</span>
               <el-popover
-                v-if="canUpdateTaskClass && item.classId != -1"
+                v-if="showMoreBtn && item.classId != -1"
                 v-model="item.taskHandleShow"
                 placement="bottom-start"
                 width="150"
@@ -33,6 +33,7 @@
                 <div class="omit-popover-box">
                   <!-- 重命名 -->
                   <el-popover
+                    v-if="permission.updateTaskClass"
                     v-model="item.renameShow"
                     :visible-arrow="false"
                     placement="bottom-start"
@@ -67,13 +68,13 @@
                       @click="renameTaskListClick(item)">重命名</p>
                   </el-popover>
                   <p
-                    v-if="canCreateTask"
+                    v-if="permission.saveTask"
                     @click="createSubTaskClick(item)">新建任务</p>
                   <p
-                    v-if="canUpdateTaskClass"
+                    v-if="permission.archiveTask"
                     @click="archiveTaskListClick(item)">归档已完成任务</p>
                   <p
-                    v-if="canDeleteTaskClass"
+                    v-if="permission.deleteTaskClass"
                     @click="delectTaskListClick(item, index)">删除列表</p>
                 </div>
                 <i
@@ -202,7 +203,7 @@
             @send="addSubTaskSuc"
             @close="createSubTaskClassId = 'hidden'"/>
           <div
-            v-else-if="canCreateTask && item.classId != -1"
+            v-else-if="permission.saveTask && item.classId != -1"
             class="new-task"
             @click="createSubTaskClick(item)">
             <span class="el-icon-plus"/>
@@ -213,7 +214,7 @@
 
       <!-- 新建列表 -->
       <div
-        v-if="canCreateTaskClass"
+        v-if="permission.saveTaskClass"
         class="board-column-new-list">
         <div
           v-if="!createTaskListShow && loading == false"
@@ -256,9 +257,12 @@
   </div>
 </template>
 <script>
-import { workTaskSaveAPI } from '@/api/projectManagement/task'
 import {
-  workTaskClassSetAPI,
+  workTaskStatusSetAPI,
+  workTaskClassSaveAPI,
+  workTaskClassUpateAPI
+} from '@/api/projectManagement/projectTask'
+import {
   workTaskclassDeleteAPI,
   workTaskIndexAPI,
   workTaskArchiveTaskAPI,
@@ -318,32 +322,12 @@ export default {
   },
 
   computed: {
-    /**
-     * 可以新建任务
-     */
-    canCreateTask() {
-      return this.permission.task && this.permission.task.save
-    },
-
-    /**
-     * 可以创建任务列表
-     */
-    canCreateTaskClass() {
-      return this.permission.taskClass && this.permission.taskClass.save
-    },
-
-    /**
-     * 可以编辑任务列表
-     */
-    canUpdateTaskClass() {
-      return this.permission.taskClass && this.permission.taskClass.update
-    },
-
-    /**
-     * 可以删除任务列表
-     */
-    canDeleteTaskClass() {
-      return this.permission.taskClass && this.permission.taskClass.delete
+    // 展示更多操作按钮
+    showMoreBtn() {
+      return this.permission.updateTaskClass ||
+      this.permission.saveTask ||
+      this.permission.archiveTask ||
+      this.permission.deleteTaskClass
     }
   },
 
@@ -518,7 +502,7 @@ export default {
       } else {
         value.checkedNum--
       }
-      workTaskSaveAPI({
+      workTaskStatusSetAPI({
         taskId: element.taskId,
         status: element.checked ? 5 : 1
       })
@@ -587,7 +571,7 @@ export default {
      * 重命名 -- 提交
      */
     renameTaskListSubmit(val) {
-      workTaskClassSetAPI({
+      workTaskClassUpateAPI({
         name: this.editTaskListName,
         classId: val.classId
       })
@@ -603,7 +587,7 @@ export default {
      * 新建列表提交
      */
     createTaskListSave() {
-      workTaskClassSetAPI({
+      workTaskClassSaveAPI({
         name: this.taskListName,
         workId: this.workId
       })

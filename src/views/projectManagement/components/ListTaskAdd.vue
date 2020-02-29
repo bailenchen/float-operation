@@ -55,6 +55,7 @@
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 import { XhUserCell } from '@/components/CreateCom'
 import { setTaskAPI } from '@/api/task/task'
+import { workTaskSaveAPI } from '@/api/projectManagement/projectTask'
 
 export default {
   // 项目列底部任务快捷添加
@@ -127,7 +128,8 @@ export default {
           params.isTop = this.isTop
         }
 
-        setTaskAPI(params)
+        const request = this.workId ? workTaskSaveAPI : setTaskAPI
+        request(params)
           .then(res => {
             this.sendLoading = false
             this.$message.success('新建成功')
