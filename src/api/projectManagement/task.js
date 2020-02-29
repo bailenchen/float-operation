@@ -13,18 +13,6 @@ export function workTaskMyTaskAPI(data) {
 }
 
 /**
- * 删除任务
- * @param {*} data
- */
-export function workTaskDeleteAPI(data) {
-  return request({
-    url: 'task/deleteTask',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
  * 拖拽改变分类
  * @param {*} data
  */

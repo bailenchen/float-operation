@@ -15,6 +15,19 @@ export function workTaskClassSaveAPI(data) {
 
 /**
  *
+ * 删除任务
+ * @param {*} data
+ */
+export function workTaskDeleteAPI(data) {
+  return request({
+    url: 'task/deleteWorkTask',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ *
  * 编辑任务列表
  * @param {*} data
  */

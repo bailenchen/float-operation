@@ -7,9 +7,11 @@
       type="textarea"
       placeholder="请输入内容" />
     <flexbox
+      v-if="canSetTime || canSetMainUser"
       class="add-info"
       justify="flex-end">
       <el-date-picker
+        v-if="canSetTime"
         ref="endTime"
         :class="{ 'no-time-top': !sendStopTime }"
         v-model="sendStopTime"
@@ -17,10 +19,12 @@
         value-format="yyyy-MM-dd"
         placeholder="" />
       <xh-user-cell
+        v-if="canSetMainUser"
         ref="userCell"
         :value="mainUser"
         :info-request="ownerListRequest"
         :info-params="ownerListParams"
+        :disabled="!canSetMainUser"
         placement="top"
         @value-change="selectMainUser">
         <div
@@ -66,7 +70,15 @@ export default {
   props: {
     workId: [String, Number],
     classId: [String, Number],
-    isTop: [String, Number]
+    isTop: [String, Number],
+    // 项目权限
+    permission: {
+      type: Object,
+      default: () => {
+        return {
+        }
+      }
+    }
   },
   data() {
     return {
@@ -91,6 +103,22 @@ export default {
 
     ownerListParams() {
       return this.workId ? { workId: this.workId } : null
+    },
+
+    // 是否能分配负责人
+    canSetMainUser() {
+      if (!this.workId) {
+        return true
+      }
+      return this.permission && this.permission.setTaskMainUser
+    },
+
+    // 是否能设置时间
+    canSetTime() {
+      if (!this.workId) {
+        return true
+      }
+      return this.permission && this.permission.setTaskTime
     }
   },
   watch: {},

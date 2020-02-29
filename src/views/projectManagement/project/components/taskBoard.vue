@@ -212,6 +212,7 @@
             v-if="createSubTaskClassId == item.classId"
             :work-id="workId"
             :class-id="item.classId"
+            :permission="permission"
             @send="addSubTaskSuc"
             @close="createSubTaskClassId = 'hidden'"/>
           <div
