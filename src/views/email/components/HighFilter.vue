@@ -27,7 +27,11 @@
             :key="index"
             :label="item.customerId"
             style="font-size: 12px;"
-            class="all">{{ item.customerName }}&lt;{{ item.email }}&gt;</el-checkbox>
+          >
+            <span class="all">
+              {{ item.customerName }}&lt;{{ item.email }}&gt;
+            </span>
+          </el-checkbox>
         </el-checkbox-group>
 
         <el-checkbox-group v-else-if="crmType === 'contact'" v-model="contactCheckList" @change="handleSender">
@@ -35,8 +39,10 @@
             v-for="(item, index) in filterList"
             :key="index"
             :label="item.contactId"
-            style="font-size: 12px;"
-            class="all">{{ item.contactName }}&lt;{{ item.email }}&gt;</el-checkbox>
+            style="font-size: 12px;">
+            <span class="all">
+              {{ item.customerName }}&lt;{{ item.email }}&gt;
+          </span></el-checkbox>
         </el-checkbox-group>
 
         <el-checkbox-group v-else v-model="shortCheckList" @change="handleSender">
@@ -45,7 +51,11 @@
             :key="index"
             :label="item.value"
             style="font-size: 12px;"
-            class="all">{{ item.name }}&lt;{{ item.value }}&gt;</el-checkbox>
+            class="all">
+            <span class="all">
+              {{ item.customerName }}&lt;{{ item.email }}&gt;
+            </span>
+          </el-checkbox>
         </el-checkbox-group>
       </div>
       <div class="pagination">

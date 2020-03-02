@@ -87,7 +87,7 @@ export default {
   width: 100%;
   height: 100%;
   padding: 0 0 0 20px;
-  background: ghostwhite;
+  background: #fafafa;
   .right {
     flex-shrink: 0;
     width: 240px;

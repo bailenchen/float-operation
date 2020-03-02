@@ -11,7 +11,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        // target: 'http://192.168.1.52:8080/',
+        // target: 'http://192.168.1.116:8080/',
         target: 'https://s.72crm.com/api/',
         changeOrigin: true,
         pathRewrite: {

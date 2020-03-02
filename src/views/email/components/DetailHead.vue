@@ -23,7 +23,7 @@
       <el-button type="plain" size="mini" icon="el-icon-chat-dot-round" @click="reply">回复</el-button>
       <el-button type="plain" size="mini" icon="el-icon-share" @click="share">转发</el-button>
       <el-button type="plain" size="mini" icon="el-icon-delete" @click="delItemEmail">删除</el-button>
-      <el-select v-model="value" placeholder="请选择" @change="changeval">
+      <el-select v-model="value" placeholder="移动到" @change="changeval">
         <el-option
           v-for="item in moveList"
           :key="item.value"
@@ -66,8 +66,8 @@ export default {
     return {
       value: '',
       moveList: [
-        { label: '移动到收件箱', value: 0 },
-        { label: '移动到已发送', value: 1 }
+        { label: '收件箱', value: 0 },
+        { label: '已发送', value: 1 }
       ],
       detailTypeConfig: {
         receive: 'INBOX',
@@ -144,7 +144,7 @@ export default {
     font-size: 16px;
     font-weight: bolder;
     .font-title {
-      margin-right: 5px;
+      margin-right: 10px;
     }
   }
   .main-info {
@@ -159,6 +159,10 @@ export default {
 .el-select {
   width: 80px;
   margin-left: 10px;
+}
+.el-icon-star-on {
+  position: relative;
+  top: 0px;
 }
 </style>
 

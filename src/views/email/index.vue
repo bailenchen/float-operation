@@ -16,6 +16,7 @@
     <div class="email-container">
       <email-table-head
         ref="crmTableHead"
+        :email-go-to="emailGoTo"
         :operat-list="tableHeadList"
         :email-type="emailType"
         @change="operatList"/>
@@ -31,7 +32,7 @@
                 </th>
 
                 <th class="tb-head">
-                  <div style="width:100px">
+                  <div style="width:80px">
                     <i
                       class="wk wk-email"
                       style="cursor: not-allowed; color: #9DA9C2;"/>
@@ -83,7 +84,16 @@
                 {{ getEmailDateSectionTitle(item) }}<span class="number">（{{ item.numIndex }}&nbsp;封）</span>
               </div>
             </div>
-            <table :key="`row${index}`" :style="{background: item.checked ? '#fff6f7': '', width: `${tableWidth}px`}" :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2) }" border="0px" cellpadding="0px" cellspacing="0">
+            <table
+              :key="`row${index}`"
+              :style="{backgroundColor: item.checked ? 'rgba(246, 248, 250, 1)': '', width: `${tableWidth}px`}"
+              :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2), 'hoverbg': index === bgIndex}"
+              border="0px"
+              cellpadding="0px"
+              cellspacing="0"
+              @mouseenter="bgIndex = index"
+              @mouseleave="bgIndex = -1"
+            >
               <tbody>
                 <tr class="table-row">
                   <td class="tb-head first-cell">
@@ -92,8 +102,8 @@
                     </div>
                   </td>
 
-                  <td class="tb-head">
-                    <div style="width:100px" @click="handleRead(item)">
+                  <td class="tb-head" style="text-align: left;">
+                    <div style="width:80px;padding-left:25px;" @click="handleRead(item)">
                       <i
                         :class="{ 'read': item.isRead }"
                         class="wk wk-email"
@@ -113,14 +123,39 @@
                     </div>
                   </td> -->
                   <td class="tb-h-align font-color sent-column">
-                    <div :title="item.sender" :style="{ width: calcCellWidth('sent') + 'px' }" :class="item.isRead ? 'read' : ''" class="sent-column1" @click.stop="clickRow(item, index)">
-                      {{ item.sender }}
+                    <div
+                      :style="{ width: calcCellWidth('sent') + 'px' }"
+                      :class="item.isRead ? 'read' : ''"
+                      class="sent-column1"
+                      @click.stop="clickRow(item, index)">
+                      <el-popover
+                        v-if="emailType !== 'goTo'"
+                        placement="bottom"
+                        title=""
+                        width="300"
+                        popper-class="no-padding-popover"
+                        trigger="hover">
+                        <flexbox class="sender_pover">
+                          <div class="user_img">
+                            {{ item.handleSender.slice(-2) }}
+                          </div>
+
+                          <div class="sender_msg">
+                            <div>{{ item.handleSender }}</div>
+                            <div class="sender_text">{{ item.senderEmail }}</div>
+                          </div>
+
+                          <el-button type="text" @click="getDealingsEmail(item.handleSender, item.senderEmail)">往来邮件</el-button>
+                        </flexbox>
+                        <span slot="reference"> {{ item.handleSender }}</span>
+                      </el-popover>
+                      <div v-else>{{ item.handleSender }}</div>
                       <!-- :style="{ width: calcCellWidth('sent') + 'px' }" -->
                     </div>
                   </td>
                   <td class="tb-h-align font-color subject-column">
                     <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" :class="item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
-                      {{ item.theme }} - {{ item.content }}
+                      {{ item.theme }} - {{ handlContent(item.content) }}
                       <!-- :style="{ width: calcCellWidth('theme') + 'px' }" -->
                     </div>
                   </td>
@@ -203,6 +238,8 @@ export default {
       rowObj: '',
       rowIndex: '',
       rowItem: {},
+      emailGoTo: '',
+      bgIndex: -1,
       refashShow: true, // 页面宽度变化时，表格动态更新
       tableWidth: ''
       // emailDate: '12' // 用来比较邮箱日期，是否显示信封数标题
@@ -287,7 +324,14 @@ export default {
       }[this.emailType]
     }
   },
-  watch: {},
+  watch: {
+    emailGoTo: {
+      handler(val) {
+        this.getEmailList()
+      },
+      immediate: true
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       if (document.getElementsByClassName('table-head')[0]) {
@@ -306,9 +350,7 @@ export default {
   created() {
     this.emailType = this.$route.params.type
     this.queryEmailNum()
-    this.getEmailList()
   },
-
   beforeRouteUpdate(to, from, next) {
     this.emailType = to.params.type
     this.$refs.crmTableHead.headSelectionChange([])
@@ -316,12 +358,29 @@ export default {
       this.lists = []
       if (this.emailType == 'receive') {
         this.queryEmailNum()
+        this.emailGoTo = ''
+      } else if (to.params.type === 'goTo') {
+        this.emailGoTo = to.query.email
+      } else {
+        this.emailGoTo = ''
       }
       this.getEmailList()
     }
+
+
     next()
   },
 
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (to.params.type === 'goTo') {
+        vm.emailGoTo = to.query.email
+        console.log(vm.emailGoTo, 'vm.em')
+      } else {
+        vm.emailGoTo = ''
+      }
+    })
+  },
   methods: {
     /**
      * 数量查询
@@ -387,6 +446,16 @@ export default {
     fifterTime(time) {
       const template = new Date(time).getTime()
       return moment(template).format('MM-DD')
+    },
+
+    /**
+     * 处理内容
+     */
+    handlContent(content) {
+      let str = content.replace(/&gt;/g, '>').replace(/&lt;/g, '<')
+      const handleIndex = str.indexOf('<meta')
+      str = handleIndex === -1 ? str : str.substr(0, handleIndex)
+      return str
     }
   }
 }
@@ -430,8 +499,8 @@ export default {
 
 .row-title {
   width: 100%;
-  height: 24px;
-  line-height: 24px;
+  height: 29px;
+  line-height: 29px;
   display: block;
   text-align: left;
   font-size: 12px;
@@ -451,8 +520,8 @@ export default {
 }
 
 .table-row {
-  height: 24px;
-  line-height: 24px;
+  height: 29px;
+  line-height: 29px;
 }
 
 .head-bg {
@@ -500,7 +569,7 @@ tr > td {
 }
 
 .rowbg {
-  background: rgba(246, 248, 250, 1);
+  background-color: #e4e4e4;
 }
 
 .star:before {
@@ -513,6 +582,32 @@ tr > td {
 
 .sent-column, .subject-column, .time-column {
   text-align: left;
+  position: relative;
+}
+.sender_pover {
+  width: 100%;
+  height: 80px;
+}
+.sender_msg {
+  margin-left: 20px;
+}
+.sender_text {
+  overflow: hidden;
+  color: #999;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+}
+.user_img {
+  background-color: #2362FB;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  color: #fff;
+  line-height: 36px;
+  border-radius: 3px;
+  margin-left: 10px;
 }
 
 .sent-column {
@@ -549,5 +644,8 @@ tr > td {
 }
 /deep/.el-icon-star-on {
  margin-left: -2px;
+}
+.hoverbg {
+  background-color: rgba(246, 248, 250, 1);
 }
 </style>

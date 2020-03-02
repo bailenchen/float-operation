@@ -70,6 +70,18 @@ export default [
     }]
   },
   {
+    ...layout({}, true),
+    ignore: true, // 路由添加时忽略
+    children: [{
+      name: 'email_index',
+      path: 'index/goTo', // 列表
+      meta: {
+        title: '往来邮件',
+        icon: 'inbox'
+      }
+    }]
+  },
+  {
     ...layout({}),
     ignore: true, // 路由添加时忽略
     children: [{

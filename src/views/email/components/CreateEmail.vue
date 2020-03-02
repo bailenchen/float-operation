@@ -104,7 +104,7 @@
       </flexbox>
       <flexbox align="baseline" style="padding-right: 10px;">
         <div class="form-label-three">正文</div>
-        <tinymce v-model="emailcontent" :height="300" class="rich-txt" />
+        <tinymce v-model="emailcontent" :height="richHeight" class="rich-txt" />
       </flexbox>
     </div>
     <el-popover
@@ -183,6 +183,7 @@ export default {
       receiveType: 'receive',
       // 添加收件人组件部分
       crmType: 'customer',
+      richHeight: document.documentElement.clientHeight - 450,
       showPopover: false, // 展示popover
       showSelectView: false, // 内容
       radio: true, // 是否单选

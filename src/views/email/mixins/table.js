@@ -31,6 +31,7 @@ export default {
         draft: 'Drafts',
         sent: 'Sent Messages',
         deleted: 'Deleted Messages',
+        goTo: 'INBOX',
         spam: '垃圾邮件'
       },
       // 勾选
@@ -42,6 +43,7 @@ export default {
       currentPage: 1,
       pageSize: Lockr.get('crmPageSizes') || 15,
       pageSizes: [15, 30, 60, 100],
+      emailGoTo: '',
       total: 0
 
     }
@@ -71,6 +73,9 @@ export default {
         search: this.search,
         type: listType
       }
+      if (this.emailGoTo) {
+        params.email = this.emailGoTo
+      }
       emailListsAPI(params).then((res) => {
         this.loading = false
         const list = JSON.parse(JSON.stringify(res.data.list))
@@ -79,6 +84,7 @@ export default {
 
         for (let index = 0; index < list.length; index++) {
           const item = list[index]
+          item.handleSender = this.handleSender(item.sender)
           // 保证每次刷新列表时，列表不勾选
           item.checked = false
           this.allIds.push(item.id)
@@ -128,6 +134,21 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 处理发件人
+     */
+    handleSender(sender) {
+      const endIndex = sender.indexOf('@')
+      const startIndex = sender.indexOf('<') + 1
+      const realStr = sender.slice(0, startIndex - 1).replace(/\"/g, '').trim()
+      const str = sender.slice(startIndex, endIndex).trim()
+      if (realStr) {
+        return realStr
+      } else {
+        return str
+      }
     },
 
     /**
@@ -384,6 +405,15 @@ export default {
         this.$message.success('移动成功')
         this.getEmailList()
       }).catch(() => {})
+    },
+
+    /**
+     * 往来邮件
+     */
+    getDealingsEmail(name, email) {
+      this.emailGoTo = email
+      const emailText = `${name}<${email}>`
+      this.$router.push({ path: '/email/index/goTo', query: { email: email, emailText: emailText }})
     }
   }
 }

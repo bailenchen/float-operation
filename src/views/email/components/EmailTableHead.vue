@@ -15,7 +15,10 @@
           @click.native="selectionBarClick(item)">{{ item.name }}</el-button>
       </flexbox>
     </flexbox>
-    <div v-if="selectionList.length == 0" style="height:50px;"/>
+    <div v-if="selectionList.length == 0" style="height:50px;">
+      <flexbox v-if="emailType === 'goTo'" class="email_fifter">与
+      <el-button type="text">{{ emailGoTo }}</el-button>的往来邮件</flexbox>
+    </div>
     <el-dialog
       :visible.sync="dialogVisible"
       title="操作"
@@ -48,6 +51,12 @@ export default {
     },
     // CRM类型
     emailType: {
+      type: String,
+      default: ''
+    },
+
+    // 邮箱
+    emailGoTo: {
       type: String,
       default: ''
     }
@@ -160,6 +169,11 @@ export default {
       color: $xr-color-primary;
     }
   }
+}
+
+.email_fifter {
+  padding-left: 20px;
+  height: 100%;
 }
 
 .selection-items-box {

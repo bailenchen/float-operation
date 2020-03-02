@@ -52,6 +52,9 @@ export default {
     ...mapGetters(['crm']),
 
     titleIcon() {
+      if (this.emailType === 'goTo') {
+        return require(`@/assets/img/email/receive.png`)
+      }
       return require(`@/assets/img/email/${this.emailType}.png`)
     }
 

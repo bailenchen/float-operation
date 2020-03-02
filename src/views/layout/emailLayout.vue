@@ -10,7 +10,7 @@
         v-if="showMenu"
         :items="emailRouters"
         class="sidebar-container" >
-        <div slot="emailSynchronizes" style="margin-bottom: 15px;">
+        <div slot="emailSynchronizes" style="margin-bottom: 25px;">
           <div class="modal"/>
           <div class="syn" @click="toSend">
             <el-tooltip v-if="showIcon" class="item" effect="dark" content="写信" placement="right">
@@ -178,7 +178,7 @@ export default {
   .modal {
     background-color: #fff;
     width: 165px;
-    height: 80px;
+    height: 90px;
     border-radius: 4px;
     position: absolute;
     z-index: 2;
@@ -222,13 +222,7 @@ export default {
       width: 100%;
       display: inline-block;
     }
-    .hr {
-      line-height: 40px;
-      width: 120px;
-    }
-    .hr-line {
-      border-bottom: 1px solid #fff;
-    }
+
     .el-icon-refresh {
       cursor: pointer;
       height: 16px;
