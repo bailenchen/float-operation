@@ -51,7 +51,7 @@
             :key="index"
             :label="item.value"
             style="font-size: 12px;"
-            class="all">
+          >
             <span class="all">
               {{ item.customerName }}&lt;{{ item.email }}&gt;
             </span>
@@ -168,6 +168,10 @@ export default {
           // if (this.crmType === 'customer') {
           this.handleFoucs(res.data.list)
           this.filterList = res.data.list
+          this.filterList.forEach(item => {
+            item.customerName = item.name || item.contactName || item.customerName
+            item.email = item.value || item.email
+          })
           this.total = res.data.totalRow
           this.loading = false
           // if (res.data.totalRow && Math.ceil(res.data.totalRow / this.pageSize) < this.currentPage && this.currentPage > 1) {
@@ -323,7 +327,7 @@ export default {
         this.contactList.forEach(element => {
           if (element.customerId === item) {
             obj = {
-              customerName: element.customerName,
+              customerName: element.contactName,
               email: element.email || ''
             }
             list.push(obj)
@@ -429,13 +433,15 @@ export default {
   position: relative;
   padding: 5px 12px 12px 12px;
   .all {
-    width: 100%;
+    width: 160px;
+    display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #333333;
     font-size: 12px;
-    padding-bottom: 12px;
+    position: relative;
+    top: 6px;
   }
 }
 .pagination {

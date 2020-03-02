@@ -257,7 +257,7 @@ export default {
     handleStar(item) {
       this.idLists = []
       this.idLists.push(item.id)
-      var starType = item.isStar ? 'cancelStar' : 'star'
+      var starType = item.isStart ? 'cancelStar' : 'star'
       this.isConfirm(starType, 'FLAGGED', !item.isStar)
     },
 

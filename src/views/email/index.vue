@@ -86,7 +86,7 @@
             </div>
             <table
               :key="`row${index}`"
-              :style="{backgroundColor: item.checked ? 'rgba(246, 248, 250, 1)': '', width: `${tableWidth}px`}"
+              :style="{backgroundColor: item.checked ? '#e9efff': '', width: `${tableWidth}px`}"
               :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2), 'hoverbg': index === bgIndex}"
               border="0px"
               cellpadding="0px"
@@ -125,7 +125,7 @@
                   <td class="tb-h-align font-color sent-column">
                     <div
                       :style="{ width: calcCellWidth('sent') + 'px' }"
-                      :class="item.isRead ? 'read' : ''"
+                      :class="!item.isRead ? 'read' : ''"
                       class="sent-column1"
                       @click.stop="clickRow(item, index)">
                       <el-popover
@@ -154,7 +154,7 @@
                     </div>
                   </td>
                   <td class="tb-h-align font-color subject-column">
-                    <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" :class="item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
+                    <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" :class="!item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
                       {{ item.theme }} - {{ handlContent(item.content) }}
                       <!-- :style="{ width: calcCellWidth('theme') + 'px' }" -->
                     </div>
@@ -505,6 +505,7 @@ export default {
   text-align: left;
   font-size: 12px;
   color: #333333;
+  border-bottom: 1px solid #e4e4e4;
   .number {
     color: #2362FB;
   }
@@ -569,7 +570,9 @@ tr > td {
 }
 
 .rowbg {
-  background-color: #e4e4e4;
+  background-color: #fafafa;
+  border-top: 1px solid #e4e4e4;
+  border-bottom: 1px solid #e4e4e4;
 }
 
 .star:before {
@@ -646,6 +649,6 @@ tr > td {
  margin-left: -2px;
 }
 .hoverbg {
-  background-color: rgba(246, 248, 250, 1);
+  background-color: #e9efff;
 }
 </style>
