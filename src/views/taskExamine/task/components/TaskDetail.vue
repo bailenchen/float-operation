@@ -159,7 +159,7 @@
                   <div class="head-btn__bd--des">负责人</div>
                 </div>
                 <i
-                  v-show="taskData.mainUser"
+                  v-show="taskData.mainUser && getPermission('setTaskMainUser')"
                   class="el-icon-close head-btn__close"
                   @click="submiteMainUser(null)" />
               </flexbox>
