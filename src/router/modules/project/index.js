@@ -46,6 +46,17 @@ export default [
   {
     ...layout(),
     children: [{
+      path: 'project', // 项目封面列表
+      component: () => import('@/views/projectManagement/project/Corver'),
+      meta: {
+        title: '项目',
+        icon: 'project'
+      }
+    }]
+  },
+  {
+    ...layout(),
+    children: [{
       path: 'statistics', // 统计分析
       component: () => import('@/views/projectManagement/statistics/index'),
       meta: {
