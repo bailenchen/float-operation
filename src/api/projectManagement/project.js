@@ -48,6 +48,19 @@ export function workWorkSaveAPI(data) {
   })
 }
 
+
+/**
+ * 编辑项目
+ * @param {*} data
+ */
+export function workWorkUpdateAPI(data) {
+  return request({
+    url: 'work/updateWork',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 退出项目
  * @param {*} data

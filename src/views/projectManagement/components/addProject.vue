@@ -8,7 +8,7 @@
       class="add-project">
       <div
         class="header">
-        <span class="text">创建项目</span>
+        <span class="text">{{ title }}</span>
         <span
           class="el-icon-close"
           @click="close"/>
@@ -132,7 +132,11 @@
 </template>
 <script>
 import { crmFileSave, crmFileDelete } from '@/api/common'
-import { workWorkSaveAPI } from '@/api/projectManagement/project'
+import {
+  workWorkSaveAPI,
+  workWorkUpdateAPI,
+  workWorkReadAPI
+} from '@/api/projectManagement/project'
 
 import MembersDep from '@/components/selectEmployee/membersDep'
 import CreateView from '@/components/CreateView'
@@ -146,7 +150,9 @@ export default {
     MembersDep
   },
 
-  props: {},
+  props: {
+    id: [Number, String] // 编辑用
+  },
 
   data() {
     return {
@@ -213,12 +219,20 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    title() {
+      return this.id ? '编辑项目' : '创建项目'
+    }
   },
 
   created() {
     this.selectUserList.push(this.userInfo)
     this.coverImg = this.coverImgList[0]
+
+    // 是编辑
+    if (this.id) {
+      this.getDetail()
+    }
   },
 
   mounted() {
@@ -233,6 +247,41 @@ export default {
   },
 
   methods: {
+    /**
+     * 获取项目详情
+     */
+    getDetail() {
+      this.loading = true
+      workWorkReadAPI({
+        workId: this.id
+      })
+        .then(res => {
+          const data = res.data || {}
+          this.name = data.name
+          this.description = data.description
+          this.typeColor = data.color
+          this.openType = data.isOpen
+          if (this.openType == 0) {
+            this.selectUserList = data.ownerUser || []
+          }
+
+          this.batchId = data.batchId
+          if (data.coverUrl) {
+            this.coverImg = {
+              custom: data.isSystemCover != 1,
+              url: data.coverUrl
+            }
+          } else {
+            this.coverImg = this.coverImgList[0]
+          }
+
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
     /**
      * 保存
      */
@@ -260,12 +309,18 @@ export default {
           })
           .join(',')
       }
-      workWorkSaveAPI(params)
+
+      if (this.id) {
+        params.workId = this.id
+      }
+
+      const request = this.id ? workWorkUpdateAPI : workWorkSaveAPI
+      request(params)
         .then(res => {
           this.loading = false
           this.$message.success('新建成功')
           this.$emit('save-success')
-          this.$bus.$emit('add-project', this.name, res.work.workId)
+          // this.$bus.$emit('add-project', this.name, res.work.workId)
           this.close()
         })
         .catch(() => {
@@ -472,7 +527,7 @@ $color3: #333;
       height: 100px;
       display: flex;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: $xr-border-radius-base;
       position: relative;
       text-align: center;
       border: 1px #c0ccda dashed;

@@ -17,18 +17,20 @@
             class="cover-content"
             @end="moveItem">
             <div
-              v-src:background-image="item.coverUrl || defaultCorverUrl"
-              v-for="(item, index) in item.list"
-              :key="index"
+              v-src:background-image="childItem.coverUrl || defaultCorverUrl"
+              v-for="(childItem, childIndex) in item.list"
+              :key="childIndex"
               class="cover-content-item"
-              @click.native="enterDetail(item)">
+              @click="enterDetail(childItem)">
               <div class="handle-bar">
-                <div :title="item.name" class="title text-one-line">{{ item.name }}</div>
-                <i class="wk wk-circle-edit" />
+                <div :title="childItem.name" class="title text-one-line">{{ childItem.name }}</div>
                 <i
-                  :class="{ 'is-collect': item.collect == 1 }"
+                  class="wk wk-circle-edit"
+                  @click.stop="editProjectClick(childItem)"/>
+                <i
+                  :class="{ 'is-collect': childItem.collect == 1 }"
                   class="wk wk-focus-on"
-                  @click.stop="collectClick(item)" />
+                  @click.stop="collectClick(childItem)" />
               </div>
             </div>
             <div
@@ -43,6 +45,7 @@
     </div>
     <add-project
       v-if="isCreate"
+      :id="editId"
       @save-success="createSuccess"
       @close="isCreate = false"/>
   </div>
@@ -84,7 +87,8 @@ export default {
           name: 'star',
           list: []
         }
-      ]
+      ],
+      editId: null
     }
   },
   computed: {},
@@ -173,6 +177,15 @@ export default {
      * 创建项目
      */
     createProjectClick() {
+      this.editId = null
+      this.isCreate = true
+    },
+
+    /**
+     * 编辑项目
+     */
+    editProjectClick(item) {
+      this.editId = item.workId
       this.isCreate = true
     },
 
