@@ -112,7 +112,7 @@
                       <i
                         v-if="item.fileNum && item.fileNum > 0"
                         class="el-icon-paperclip"
-                        style="cursor: pointer; color: #E69900;"/>
+                        style="cursor: pointer; color: #9DA9C2;"/>
                     </div>
                   </td>
                   <!-- <td class="tb-head">

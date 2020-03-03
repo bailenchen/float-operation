@@ -39,11 +39,23 @@ export default [
     }]
   },
   {
-    ...layout({}, true),
+    ...layout('/email'),
+    children: [{
+      path: 'sync', // 收信
+      meta: {
+        title: '收信（同步）',
+        icon: 'b-download',
+        disabled: true // 禁止next
+      }
+    }]
+  },
+  {
+    ...layout({}, false),
     children: [{
       path: 'index/writeLetter', // 列表
       component: () => import('@/views/email/CreateEmail'),
       meta: {
+        title: '写信',
         icon: 'circle-edit'
       }
     }]
@@ -55,17 +67,6 @@ export default [
       component: () => import('@/views/email/index'),
       meta: {
         icon: 'inbox'
-      }
-    }]
-  },
-  {
-    ...layout({}, true),
-    ignore: true, // 路由添加时忽略
-    children: [{
-      path: 'index/writeLetter', // 列表
-      meta: {
-        title: '写信',
-        icon: 'circle-edit'
       }
     }]
   },

@@ -37,10 +37,10 @@
         :background-color="variables.menuBg"
         :text-color="variables.menuText"
         :active-text-color="variables.menuActiveText"
+        :style="{ paddingBottom: paddingBottom}"
         mode="vertical"
         class="el-menu-vertical"
         @select="handleSelect">
-        <slot name="emailSynchronizes"/>
         <sidebar-item
           v-for="(route, index) in items"
           :key="`${route.path}${index}`"
@@ -50,7 +50,7 @@
           :active-menu="activeMenu" />
       </el-menu>
     </el-scrollbar>
-    <slot name="person"/>
+    <slot name="bottom"/>
     <div
       :style="{ 'background-color':variables.menuBg }"
       class="sidebar-bottom">
@@ -92,6 +92,11 @@ export default {
     createButtonIcon: {
       type: String,
       default: 'el-icon-plus'
+    },
+    // 防止菜单被底部布局遮住
+    paddingBottom: {
+      type: String,
+      default: '48px'
     }
   },
   data() {

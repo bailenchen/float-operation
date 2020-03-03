@@ -9,44 +9,15 @@
       <sidebar
         v-if="showMenu"
         :items="emailRouters"
-        class="sidebar-container" >
-        <div slot="emailSynchronizes" style="margin-bottom: 25px;">
-          <div class="modal"/>
-          <div class="syn" @click="toSend">
-            <el-tooltip v-if="showIcon" class="item" effect="dark" content="写信" placement="right">
-              <span class="syn_span">
-                <i class="wk wk-circle-edit"/>
-              </span>
-            </el-tooltip>
-            <div v-if="!showIcon" class="hr hr-line">
-              <i class="wk wk-circle-edit"/>
-              <span class="nav-text" style="font-size: 14px;">写信</span>
-            </div>
-
-          </div>
-          <div class="syn">
-            <el-tooltip v-if="showIcon" class="item" effect="dark" content="收信（同步）" placement="right">
-              <span class="syn_span">
-                <i :class="isRotate ? 'rotate' : ''" class="el-icon-refresh" @click="synEmail"/>
-              </span>
-            </el-tooltip>
-            <div v-if="!showIcon" class="hr">
-              <i :class="isRotate ? 'rotate' : ''" class="el-icon-refresh" @click="synEmail"/>
-              <span class="nav-text" style="font-size: 14px;" @click="synEmail">收信（同步）</span>
-            </div>
-          </div>
-        </div>
-
-        <div slot="person" class="person" @click="toPerson">
-          <el-tooltip v-if="showIcon" :content="email" class="item" effect="dark" placement="right">
-            <span class="person_span">
-              <i class="el-icon-user-solid"/>
-            </span>
+        class="sidebar-container"
+        padding-bottom="84px"
+        @select="siderbarSelect" >
+        <flexbox slot="bottom" class="person" @click.native="toPerson">
+          <el-tooltip :disabled="!showIcon" :content="email" class="item" effect="dark" placement="right">
+            <i class="el-icon-user-solid"/>
           </el-tooltip>
-          <i v-else class="el-icon-user-solid"/>
-          <span v-if="!showIcon" class="person_email">{{ email }}</span>
-
-        </div>
+          <div v-if="!showIcon" class="text-one-line">{{ email }}</div>
+        </flexbox>
       </sidebar>
 
       <el-main
@@ -125,6 +96,12 @@ export default {
   methods: {
     navClick(index) {},
 
+    siderbarSelect(key, keyPath) {
+      if (key == '/email/sync') {
+        this.synEmail()
+      }
+    },
+
     /**
      * 同步邮箱
      */
@@ -171,6 +148,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import './components/Sidebar/variables.scss';
   .el-container {
     min-height: 0;
     height: 100%;
@@ -253,24 +231,20 @@ export default {
   color: #fff;
   width: 100%;
   position: absolute;
+  background-color: $menuBg;
   padding: 10px 10px 10px 25px;
   bottom: 50px;
   cursor: pointer;
   white-space: nowrap;
-  .person_span {
-    display: inline-block;
-    width: 36px;
-  }
-  .person_email {
-    display: inline-block;
-    max-width: 120px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
   .el-icon-user-solid {
     cursor: pointer;
     font-size: 16px;
+    margin-right: 8px;
+  }
+}
+/deep/ .el-menu-item {
+  .wk-inbox {
+    font-size: 14px;
   }
 }
 </style>
