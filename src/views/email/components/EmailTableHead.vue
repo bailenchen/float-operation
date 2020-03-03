@@ -22,8 +22,8 @@
     <el-dialog
       :visible.sync="dialogVisible"
       title="操作"
-      width="30%">
-      <el-select v-model="type" placeholder="请选择">
+      width="300px">
+      <el-select v-model="type" style="width: 100%;" placeholder="请选择">
         <el-option
           v-for="item in options"
           :key="item.type"

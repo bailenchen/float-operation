@@ -31,7 +31,7 @@
                   </div>
                 </th>
 
-                <th class="tb-head" style="width:80px">
+                <th class="tb-email-head " style="width:57px">
                   <div >
                     <i
                       class="wk wk-email"
@@ -87,7 +87,8 @@
             <table
               :key="`row${index}`"
               :style="{backgroundColor: item.checked ? '#e9efff': '', width: `${tableWidth}px`}"
-              :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2), 'hoverbg': index === bgIndex}"
+              :class="{ 'rowbg': !Number.isInteger(item.bgIndex/2), 'hoverbg': index === bgIndex,'un-read': !item.isRead }"
+              class="content-table"
               border="0px"
               cellpadding="0px"
               cellspacing="0"
@@ -102,8 +103,8 @@
                     </div>
                   </td>
 
-                  <td class="tb-head" style="width:80px;">
-                    <div style="text-align: center;" @click="handleRead(item)">
+                  <td class="tb-email-head" style="width:57px;">
+                    <div @click="handleRead(item)">
                       <i
                         :class="['wk', item.isRead ? 'wk-open-email' : 'wk-email']"
                         :style="{ color: item.isRead ? '#9DA9C2' : '#E69900' }"
@@ -124,11 +125,12 @@
                   </td> -->
                   <td class="tb-h-align font-color" style="width:150px">
                     <div
-                      :class="!item.isRead ? 'read' : ''"
-                      class="sent-column1"
+                      class="text-one-line"
+                      style="cursor: pointer;"
                       @click.stop="clickRow(item, index)">
                       <el-popover
                         v-if="emailType !== 'goTo'"
+                        :open-delay="1000"
                         placement="bottom"
                         title=""
                         width="300"
@@ -149,21 +151,19 @@
                         <span slot="reference"> {{ item.handleSender }}</span>
                       </el-popover>
                       <div v-else>{{ item.handleSender }}</div>
-                      <!-- :style="{ width: calcCellWidth('sent') + 'px' }" -->
                     </div>
                   </td>
-                  <td class="tb-h-align font-color text-one-line">
-                    <div :title="item.theme" :class="!item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
-                      {{ item.theme }} - {{ handlContent(item.content) }}
-                      <!-- :style="{ width: calcCellWidth('theme') + 'px' }" -->
-                    </div>
+                  <td class="tb-h-align font-color">
+                    <div
+                      :title="item.theme"
+                      class="text-one-line"
+                      style="cursor: pointer;"
+                      @click.stop="clickRow(item, index)"
+                      v-html="handlContent(item)" />
                   </td>
                   <td class="tb-h-align font-color " style="width: 100px;">
-                    <div>
-                      <b>
-                        {{ fifterTime(item.createTime) }}
-                      </b>
-                      <!-- :style="{ width: calcCellWidth('time') + 'px' }" -->
+                    <div :class="!item.isRead ? 'un-read' : ''">
+                      {{ fifterTime(item.createTime) }}
                     </div>
                   </td>
 
@@ -216,7 +216,8 @@ import EmailDetail from './EmailDetail'
 
 import table from './mixins/table'
 import { mapGetters } from 'vuex'
-import moment from 'moment'
+import { formatTime } from '@/utils'
+
 export default {
   // 列表
   name: 'Index',
@@ -246,15 +247,6 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
-    calcCellWidth() {
-      return function(cell) {
-        if (cell == 'sent') {
-          return this.$refs.sent.offsetWidth - 1
-        } else if (cell == 'theme') {
-          return this.$refs.theme.offsetWidth - 1
-        }
-      }
-    },
     sideNavTitle() {
       return {
         receive: '收件箱',
@@ -395,13 +387,18 @@ export default {
      * 点击每行
      */
     clickRow(item, index) {
-      this.showDview = true
       item.page = this.currentPage
       item.limit = this.pageSize
       item.search = this.search
+
+
       this.idLists = [item.id]
       this.rowItem = item
-      this.updateEmailState(1, 'detail')
+      this.showDview = true
+      if (item.isRead == 0) {
+        item.isRead = 1
+        this.submitMoreHandle(1, 'detail')
+      }
     },
 
     /**
@@ -441,18 +438,17 @@ export default {
      * 格式化时间
      */
     fifterTime(time) {
-      const template = new Date(time).getTime()
-      return moment(template).format('MM-DD')
+      return formatTime(new Date(time))
     },
 
     /**
      * 处理内容
      */
-    handlContent(content) {
-      let str = content.replace(/&gt;/g, '>').replace(/&lt;/g, '<')
-      const handleIndex = str.indexOf('<meta')
-      str = handleIndex === -1 ? str : str.substr(0, handleIndex)
-      return str
+    handlContent(item) {
+      let content = item.content
+      const handleIndex = content.indexOf('<meta')
+      content = handleIndex === -1 ? content : content.substr(0, handleIndex)
+      return `${item.theme}-${content}`
     }
   }
 }
@@ -545,6 +541,11 @@ table {
   text-align: center;
 }
 
+.tb-email-head {
+  text-align: initial;
+  padding: 0 10px;
+}
+
 tr > td {
   height: 24px;
 }
@@ -577,6 +578,15 @@ tr > td {
   border-bottom: 1px solid #e4e4e4;
 }
 
+.content-table {
+  &.un-read {
+    .font-color {
+      font-weight: bolder;
+      color: #333333 !important;
+    }
+  }
+}
+
 .star:before {
   color: #FAC23D;
 }
@@ -607,22 +617,6 @@ tr > td {
   margin-left: 10px;
 }
 
-.sent-column1, .subject-column1, .time-column1 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-}
-
-.read {
-  font-weight: bolder;
-  color: #333333 !important;
-}
-
-.sent-column1 {
-  color: #666666;
-  cursor: pointer;
-}
 /deep/.el-icon-star-on,.el-icon-star-off {
   display: inline-block;
   vertical-align: middle;

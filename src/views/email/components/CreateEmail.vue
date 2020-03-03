@@ -634,6 +634,7 @@ export default {
     align-items: center;
   }
   .rich-txt {
+    flex: 1;
     margin-top: 20px;
     margin-right: 5px;
   }

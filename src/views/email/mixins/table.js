@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      tableHeight: document.documentElement.clientHeight - 280, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 265, // 表的高度
       search: '', // 搜索内容
       idLists: [], // 修改邮件状态时id集合
       allIds: [], // 全部信息id数组
@@ -55,6 +55,11 @@ export default {
     this.$bus.on('synEmail', () => {
       this.getEmailList()
     })
+  },
+  mounted() {
+    window.onresize = () => {
+      this.tableHeight = document.documentElement.clientHeight - 265
+    }
   },
   destroyed() {
     this.$bus.off('synEmail')
@@ -366,11 +371,7 @@ export default {
      * 已读，未读，星标，取消星标
      */
     handleMore(stateType, is) {
-      var params = {
-        emailIds: this.idLists.join(','),
-        state: stateType
-      }
-      emailStateUpdateAPI(params).then(res => {
+      this.submitMoreHandle(stateType, is).then(res => {
         if (is !== 'detail') {
           this.$message({
             type: 'success',
@@ -381,6 +382,20 @@ export default {
         this.queryEmailNum()
       }).catch(() => {
         this.loading = false
+      })
+    },
+
+    submitMoreHandle(stateType, is) {
+      var params = {
+        emailIds: this.idLists.join(','),
+        state: stateType
+      }
+      return new Promise((resolve, reject) => {
+        emailStateUpdateAPI(params).then(res => {
+          resolve(res)
+        }).catch(() => {
+          reject()
+        })
       })
     },
 
