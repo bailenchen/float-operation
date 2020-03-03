@@ -25,14 +25,14 @@
           <table border="0px" cellpadding="0px" cellspacing="0" class="table-head">
             <thead>
               <tr class="table-row head-bg">
-                <th class="tb-head">
-                  <div style="width:55px">
+                <th class="tb-head" style="width:55px">
+                  <div >
                     <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckedAll"/>
                   </div>
                 </th>
 
-                <th class="tb-head">
-                  <div style="width:80px">
+                <th class="tb-head" style="width:80px">
+                  <div >
                     <i
                       class="wk wk-email"
                       style="cursor: not-allowed; color: #9DA9C2;"/>
@@ -48,25 +48,25 @@
                       style="cursor: not-allowed; color: #9DA9C2;"/>
                   </div>
                 </th> -->
-                <th class="tb-h-align head-font-color sent-column">
-                  <div ref="sent" class="sent-column" style="width:100%">
+                <th class="tb-h-align head-font-color " style="width:150px">
+                  <div ref="sent">
                     <b>发件人</b>
                   </div>
                 </th>
-                <th class="tb-h-align head-font-color subject-column">
-                  <div ref="theme" class="subject-column" style="width:100%">
+                <th class="tb-h-align head-font-color">
+                  <div ref="theme">
                     <b>主题</b>
 
                   </div>
                 </th>
-                <th class="tb-h-align head-font-color time-column">
-                  <div ref="time" class="time-column" style="width:100%">
+                <th class="tb-h-align head-font-color " style="width:100px">
+                  <div ref="time">
                     <b>时间</b>
                   </div>
                 </th>
 
-                <th class="end-column">
-                  <div style="width:55px">
+                <th class="end-column" style="width:55px">
+                  <div >
                     <i
                       class="el-icon-star-off"
                       style="cursor: not-allowed;"/>
@@ -96,22 +96,22 @@
             >
               <tbody>
                 <tr class="table-row">
-                  <td class="tb-head first-cell">
-                    <div style="width:55px">
+                  <td class="tb-head first-cell" style="width:55px">
+                    <div>
                       <el-checkbox v-model="item.checked" @change="handleCheckedPart"/>
                     </div>
                   </td>
 
-                  <td class="tb-head" style="text-align: left;">
-                    <div style="width:80px;padding-left:25px;" @click="handleRead(item)">
+                  <td class="tb-head" style="width:80px;">
+                    <div style="text-align: center;" @click="handleRead(item)">
                       <i
-                        :class="{ 'read': item.isRead }"
-                        class="wk wk-email"
-                        style="cursor: pointer; color: #9DA9C2;"/>
+                        :class="['wk', item.isRead ? 'wk-open-email' : 'wk-email']"
+                        :style="{ color: item.isRead ? '#9DA9C2' : '#E69900' }"
+                        style="cursor: pointer;"/>
                       <i
                         v-if="item.fileNum && item.fileNum > 0"
                         class="el-icon-paperclip"
-                        style="cursor: pointer; color: #9DA9C2;"/>
+                        style="cursor: pointer; color: #E69900;"/>
                     </div>
                   </td>
                   <!-- <td class="tb-head">
@@ -119,12 +119,11 @@
                       <i
                         v-if="item.fileList && item.fileList.length > 0"
                         class="el-icon-paperclip"
-                        style="cursor: pointer; color: #9DA9C2;"/>
+                        style="cursor: pointer; color: #E69900;"/>
                     </div>
                   </td> -->
-                  <td class="tb-h-align font-color sent-column">
+                  <td class="tb-h-align font-color" style="width:150px">
                     <div
-                      :style="{ width: calcCellWidth('sent') + 'px' }"
                       :class="!item.isRead ? 'read' : ''"
                       class="sent-column1"
                       @click.stop="clickRow(item, index)">
@@ -153,14 +152,14 @@
                       <!-- :style="{ width: calcCellWidth('sent') + 'px' }" -->
                     </div>
                   </td>
-                  <td class="tb-h-align font-color subject-column">
-                    <div :title="item.theme" :style="{ width: calcCellWidth('theme') + 'px' }" :class="!item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
+                  <td class="tb-h-align font-color text-one-line">
+                    <div :title="item.theme" :class="!item.isRead ? 'read' : ''" class="subject-column1" @click.stop="clickRow(item, index)" >
                       {{ item.theme }} - {{ handlContent(item.content) }}
                       <!-- :style="{ width: calcCellWidth('theme') + 'px' }" -->
                     </div>
                   </td>
-                  <td class="tb-h-align font-color time-column">
-                    <div :style="{ width: calcCellWidth('time') + 'px' }" class="time-column1">
+                  <td class="tb-h-align font-color " style="width: 100px;">
+                    <div>
                       <b>
                         {{ fifterTime(item.createTime) }}
                       </b>
@@ -168,8 +167,8 @@
                     </div>
                   </td>
 
-                  <td class="tb-h-align">
-                    <div style="width: 65px;" class="end-column" @click="handleStar(item)">
+                  <td class="tb-h-align" style="width: 55px;">
+                    <div @click="handleStar(item)">
                       <i
                         v-if="item.isStart"
                         class="el-icon-star-on"
@@ -253,8 +252,6 @@ export default {
           return this.$refs.sent.offsetWidth - 1
         } else if (cell == 'theme') {
           return this.$refs.theme.offsetWidth - 1
-        } else if (cell == 'time') {
-          return this.$refs.time.offsetWidth - 1
         }
       }
     },
@@ -539,6 +536,11 @@ export default {
 }
 
 // 表
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .tb-head {
   text-align: center;
 }
@@ -579,14 +581,6 @@ tr > td {
   color: #FAC23D;
 }
 
-.read:before {
-  color: #2362FB;
-}
-
-.sent-column, .subject-column, .time-column {
-  text-align: left;
-  position: relative;
-}
 .sender_pover {
   width: 100%;
   height: 80px;
@@ -611,18 +605,6 @@ tr > td {
   line-height: 36px;
   border-radius: 3px;
   margin-left: 10px;
-}
-
-.sent-column {
-  width: 14%;
-}
-
-.subject-column {
-  width: 70%;
-}
-
-.time-column {
-  width: 16%;
 }
 
 .sent-column1, .subject-column1, .time-column1 {
@@ -650,5 +632,9 @@ tr > td {
 }
 .hoverbg {
   background-color: #e9efff;
+}
+
+.wk-open-email {
+  font-size: 18px;
 }
 </style>
