@@ -42,11 +42,14 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$refs.createEmail.saveDraft('savebtn')
+        localStorage.removeItem('crm-emailContent')
         next()
       }).catch(() => {
+        localStorage.removeItem('crm-emailContent')
         next()
       })
     } else {
+      localStorage.removeItem('crm-emailContent')
       next()
     }
   },

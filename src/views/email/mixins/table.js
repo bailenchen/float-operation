@@ -189,7 +189,6 @@ export default {
      * 全选
      */
     handleCheckedAll(all) {
-      console.log(all)
       if (all) {
         this.isIndeterminate = false
         this.checkLists = this.lists.map((item) => {
@@ -286,11 +285,21 @@ export default {
       var message = ''
       let state = ''
       if (type == 'star') {
-        message = '确定将邮件标记为星标邮件吗?'
+        // message = '确定将邮件标记为星标邮件吗?'
         state = 3
+        this.updateEmailState(state, bool, item)
+        if (this.$refs.crmTableHead) {
+          this.$refs.crmTableHead.dialogVisible = false
+        }
+        return
       } else if (type == 'cancelStar') {
-        message = '确定将邮件取消星标邮件吗?'
+        // message = '确定将邮件取消星标邮件吗?'
         state = 4
+        this.updateEmailState(state, bool, item)
+        if (this.$refs.crmTableHead) {
+          this.$refs.crmTableHead.dialogVisible = false
+        }
+        return
       } else if (type == 'read') {
         message = '确定将邮件标记为已读邮件吗?'
         state = 1
@@ -429,6 +438,29 @@ export default {
       this.emailGoTo = email
       const emailText = `${name}<${email}>`
       this.$router.push({ path: '/email/index/goTo', query: { email: email, emailText: emailText }})
+    },
+
+    /**
+     * 选择当前天的所有邮件
+     */
+    selectCurrent(index, count) {
+      // index 当前数据所处数组的位置，当前数据所包含几条数据
+      this.lists.forEach((item, number) => {
+        if (number >= index && number < (index + count)) {
+          item.checked = !item.checked
+          if (item.checked) {
+            this.checkLists.push(item)
+          } else {
+            this.checkLists.forEach((ele, index) => {
+              if (ele.id === item.id) {
+                this.checkLists.splice(index, 1)
+              }
+            })
+          }
+        }
+      })
+      this.$refs.crmTableHead.headSelectionChange(this.checkLists)
+      this.lists = JSON.parse(JSON.stringify(this.lists))
     }
   }
 }

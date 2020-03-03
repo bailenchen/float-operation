@@ -5,6 +5,7 @@
       <flexbox class="btn-group">
         <el-button type="success" @click="send('sentbtn')">发送</el-button>
         <el-button type="info" plain @click="saveDraft('savebtn')">存稿箱</el-button>
+        <el-button type="info" plain @click="close">关闭</el-button>
       </flexbox>
       <div v-if="!showDeffient">
         <flexbox class="form-item" direction="row" align="flex-start">
@@ -152,6 +153,7 @@ import {
   emailSendAPI,
   emailQueryAccountByIdAPI,
   saveDraftBoxAPI } from '@/api/email/email'
+import { crmFileIndex } from '@/api/common'
 import axios from 'axios'
 import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import { guid } from '@/utils'
@@ -228,15 +230,18 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.reply) {
-      this.receiverLists.push({ 'email': this.$route.query.senderEmail, 'show': true })
-      this.sentLists.push({ 'email': this.$route.query.receiptEmails, 'show': true })
-      this.themeVal = this.$route.query.theme
-      this.fileList = this.$route.query.fileList && this.$route.query.fileList.length ? this.$route.query.fileList.map((item) => {
-        item.name = item.fileName
-        return item
-      }) : []
-      this.emailcontent = this.$route.query.content
+    let emailObj = localStorage.getItem('crm-emailContent') || null
+    if (emailObj) {
+      emailObj = JSON.parse(emailObj)
+      this.receiverLists.push({ 'email': emailObj.senderEmail, 'show': true })
+      this.sentLists.push({ 'email': emailObj.receiptEmails, 'show': true })
+      this.themeVal = emailObj.theme
+      this.getFileList(emailObj.batchId)
+      // this.fileList = emailObj.fileList && emailObj.fileList.length ? emailObj.fileList.map((item) => {
+      //   item.name = item.fileName
+      //   return item
+      // }) : []
+      this.emailcontent = emailObj.content
     }
     if (this.$route.query.share) {
       this.themeVal = this.$route.query.theme
@@ -251,6 +256,14 @@ export default {
     this.getSendEmailMsg()
   },
   methods: {
+
+    /**
+     * 关闭
+     */
+    close() {
+      this.$router.push({ path: '/email/index/receive' })
+    },
+
     /**
      * 查询发件邮箱基本信息
      */
@@ -259,6 +272,17 @@ export default {
         this.sendEmailMsg = res.data
       }).catch(() => {})
     },
+
+    /**
+       * 查询附件列表
+       */
+    getFileList(batchId) {
+      crmFileIndex({ batchId: batchId }).then(res => {
+        this.fileList = res.data.file
+        this.$emit('getFileCount', this.fileList)
+      }).catch(() => {})
+    },
+
     /**
      * 手动添加收件人
      */
@@ -463,9 +487,10 @@ export default {
      * 添加收件人
      */
     addReceive() {
-      this.showPopover = true
-      this.showSelectView = true
-      this.acceptEmail = 'receive'
+      // 暂时注释掉此功能
+      // this.showPopover = true
+      // this.showSelectView = true
+      // this.acceptEmail = 'receive'
     },
 
     /**
@@ -615,10 +640,10 @@ export default {
       text-align: right;
       font-size: 13px;
     }
-    .line:hover {
-      color: #2362FB;
-      text-decoration: underline;
-    }
+    // .line:hover {
+    //   color: #2362FB;
+    //   text-decoration: underline;
+    // }
     .form-add {
       color: #2362FB;
     }

@@ -233,7 +233,7 @@ export default {
   position: absolute;
   background-color: $menuBg;
   padding: 10px 10px 10px 25px;
-  bottom: 50px;
+  bottom: 45px;
   cursor: pointer;
   white-space: nowrap;
   .el-icon-user-solid {

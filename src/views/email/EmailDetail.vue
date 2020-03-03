@@ -13,7 +13,7 @@
         @on-del="delCurrentEmail"
         @move="handleMove"/>
       <div :style="{ height: emailFileHeight + 'px' }" class="article" >
-        <div class="detail_content" v-html="rowItem.content"/>
+        <tinymce v-model="rowItem.content" :height="richHeight" class="rich-txt" />
         <files-list ref="file" :batch-id="rowItem.batchId" @getFileCount="getFileCount"/>
       </div>
     </div>
@@ -23,6 +23,7 @@
 
 <script>
 import { emailStateUpdateAPI, emailRecordShiftEmailAPI, emailRecordLogicDeleteAPI } from '@/api/email/email'
+import Tinymce from '@/components/Tinymce'
 
 import DetailHead from './components/DetailHead'
 import SlideView from '@/components/SlideView'
@@ -33,6 +34,7 @@ export default {
   components: {
     DetailHead,
     FilesList,
+    Tinymce,
     SlideView
   },
   // mixins: [detail],
@@ -55,6 +57,7 @@ export default {
   data() {
     return {
       emailFileHeight: document.documentElement.clientHeight - 260,
+      richHeight: document.documentElement.clientHeight - 450,
       loading: false,
       fileCount: 0,
       fileNames: '',

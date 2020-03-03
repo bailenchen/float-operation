@@ -8,7 +8,7 @@
       @on-search="emailSearch">
       <template>
         <div v-if="emailType == 'receive'" slot="header" class="record-receive">
-          （收件箱有<span class="blue-font">{{ allNumber }}</span>封邮件，其中<span class="blue-font">{{ receiveNumber }}</span>封未读）
+          （收件箱共有<span>{{ allNumber }}</span>封邮件，其中<span class="blue-font">未读邮件</span>{{ receiveNumber }}封）
           <!-- <el-button type="text" class="blue-font" @click="allRead">全部标为已读</el-button> -->
         </div>
       </template>
@@ -31,7 +31,7 @@
                   </div>
                 </th>
 
-                <th class="tb-email-head " style="width:57px">
+                <th class="tb-email-head" style="width:57px">
                   <div >
                     <i
                       class="wk wk-email"
@@ -81,7 +81,7 @@
           <template v-for="(item, index) in lists">
             <div v-if="item.first" :key="`title${index}`" class="row-title block-title">
               <div class="cell">
-                {{ getEmailDateSectionTitle(item) }}<span class="number">（{{ item.numIndex }}&nbsp;封）</span>
+                {{ getEmailDateSectionTitle(item) }}<span class="number" @click="selectCurrent(index, item.numIndex)">（{{ item.numIndex }}&nbsp;封）</span>
               </div>
             </div>
             <table
@@ -93,8 +93,7 @@
               cellpadding="0px"
               cellspacing="0"
               @mouseenter="bgIndex = index"
-              @mouseleave="bgIndex = -1"
-            >
+              @mouseleave="bgIndex = -1">
               <tbody>
                 <tr class="table-row">
                   <td class="tb-head first-cell" style="width:55px">
@@ -369,7 +368,6 @@ export default {
     next(vm => {
       if (to.params.type === 'goTo') {
         vm.emailGoTo = to.query.email
-        console.log(vm.emailGoTo, 'vm.em')
       } else {
         vm.emailGoTo = ''
       }
@@ -392,6 +390,12 @@ export default {
      * 点击每行
      */
     clickRow(item, index) {
+      if (this.emailType === 'draft') {
+        localStorage.setItem('crm-emailContent', JSON.stringify(item))
+        this.$router.push({ path: '/email/index/writeLetter' })
+        return
+      }
+
       item.page = this.currentPage
       item.limit = this.pageSize
       item.search = this.search
@@ -475,6 +479,7 @@ export default {
   font-size: 14px;
   .blue-font {
     color: #2362FB;
+    cursor: pointer;
   }
 }
 
@@ -523,6 +528,7 @@ export default {
 
 .cell {
   margin-left: 16px;
+  cursor: pointer;
 }
 
 .table-row {
