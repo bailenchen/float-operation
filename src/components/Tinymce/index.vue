@@ -26,17 +26,12 @@ export default {
         return 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
       }
     },
+    init: Object,
     value: {
       type: String,
       default: ''
     },
-    toolbar: {
-      type: Array,
-      required: false,
-      default() {
-        return []
-      }
-    },
+    toolbar: [Array, String],
     menubar: {
       type: String,
       default: '' // file edit insert view format table
@@ -50,12 +45,16 @@ export default {
       type: [Number, String],
       required: false,
       default: 'auto'
-    }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    inline: Boolean
   },
   data() {
     return {
-      hasChange: false,
-      hasInit: false,
+      editor: null,
       tinymceId: this.id,
       fullscreen: false,
       languageTypeList: {
@@ -76,16 +75,18 @@ export default {
     }
   },
   watch: {
-    value(val) {
-      if (!this.hasChange && this.hasInit) {
-        this.$nextTick(() => {
-          window.tinymce.get(this.tinymceId).setContent(val || '')
-        })
+    value(val, prevVal) {
+      if (this.editor && typeof val === 'string' && val !== prevVal && val !== this.editor.getContent()) {
+        this.editor.setContent(val || '')
       }
+    },
+
+    disabled() {
+      this.editor.setMode(this.disabled ? 'readonly' : 'design')
     }
   },
   mounted() {
-    this.init()
+    this.loadTinymce()
   },
   activated() {
     if (window.tinymce) {
@@ -99,7 +100,7 @@ export default {
     this.destroyTinymce()
   },
   methods: {
-    init() {
+    loadTinymce() {
       // dynamic load tinymce from cdn
       load(tinymceCDN, (err) => {
         if (err) {
@@ -112,7 +113,10 @@ export default {
     initTinymce() {
       const _this = this
       window.tinymce.init({
+        ...this.init,
         selector: `#${this.tinymceId}`,
+        readonly: this.disabled,
+        inline: (this.init && this.init.inline) || this.inline,
         skin: 'wukong',
         resize: false,
         branding: false,
@@ -120,7 +124,7 @@ export default {
         height: this.height,
         body_class: 'panel-body ',
         image_advtab: true,
-        toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
+        toolbar: (this.toolbar || (this.init && this.init.toolbar)) || toolbar,
         menubar: this.menubar ? this.menubar : false,
         plugins: plugins,
         end_container_on_empty_block: true,
@@ -135,12 +139,12 @@ export default {
         quickbars_insert_toolbar: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         init_instance_callback: editor => {
+          console.log('123123')
+          this.editor = editor
           if (_this.value) {
             editor.setContent(_this.value)
           }
-          _this.hasInit = true
           editor.on('change keyup undo redo', () => {
-            this.hasChange = true
             this.$emit('input', editor.getContent())
           })
         },
@@ -186,7 +190,7 @@ export default {
     },
     destroyTinymce() {
       if (window.tinymce) {
-        const tinymce = window.tinymce.get(this.tinymceId)
+        const tinymce = this.editor
         if (this.fullscreen) {
           tinymce.execCommand('mceFullScreen')
         }
@@ -197,15 +201,14 @@ export default {
       }
     },
     setContent(value) {
-      window.tinymce.get(this.tinymceId).setContent(value)
+      this.editor.setContent(value)
     },
     getContent() {
-      window.tinymce.get(this.tinymceId).getContent()
+      return this.editor.getContent()
     },
     imageSuccessCBK(arr) {
-      const _this = this
       arr.forEach(v => {
-        window.tinymce.get(_this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`)
+        this.editor.insertContent(`<img class="wscnph" src="${v.url}" >`)
       })
     }
   }
