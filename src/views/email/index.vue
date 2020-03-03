@@ -153,13 +153,15 @@
                       <div v-else>{{ item.handleSender }}</div>
                     </div>
                   </td>
-                  <td class="tb-h-align font-color">
+                  <td class="tb-h-align">
                     <div
                       :title="item.theme"
                       class="text-one-line"
                       style="cursor: pointer;"
-                      @click.stop="clickRow(item, index)"
-                      v-html="handlContent(item)" />
+                      @click.stop="clickRow(item, index)">
+                      <span class="content-theme">{{ item.theme }}</span>
+                      <span class="content-detail">&nbsp;-&nbsp;{{ handlContent(item) }}</span>
+                    </div>
                   </td>
                   <td class="tb-h-align font-color " style="width: 100px;">
                     <div :class="!item.isRead ? 'un-read' : ''">
@@ -254,7 +256,8 @@ export default {
         draft: '草稿箱',
         sent: '已发送',
         deleted: '已删除',
-        spam: '垃圾邮件'
+        spam: '垃圾邮件',
+        goTo: '往来邮箱'
       }[this.emailType]
     },
     tableHeadList() {
@@ -446,9 +449,16 @@ export default {
      */
     handlContent(item) {
       let content = item.content
-      const handleIndex = content.indexOf('<meta')
-      content = handleIndex === -1 ? content : content.substr(0, handleIndex)
-      return `${item.theme}-${content}`
+      content = content.replace(/(\n)/g, '')
+      content = content.replace(/(\t)/g, '')
+      content = content.replace(/(\r)/g, '')
+      content = content.replace(/<\/?[^>]*>/g, '')
+      content = content.replace(/(^\s*)|(\s*$)/g, '')
+      content = content.replace(/&nbsp;/ig, '')
+      if (content.length > 100) {
+        content = content.substring(0, 100)
+      }
+      return content
     }
   }
 }
@@ -564,7 +574,6 @@ tr > td {
 
 .font-color {
   font-size: 12px;
-  color: #666666;
 }
 
 .tb-h-align {
@@ -579,10 +588,24 @@ tr > td {
 }
 
 .content-table {
+  .content-theme,
+  .content-detail {
+    font-size: 12px;
+    color: #999;
+  }
+
   &.un-read {
     .font-color {
       font-weight: bolder;
       color: #333333 !important;
+    }
+    .content-theme {
+      font-weight: bold;
+      color: #333;
+    }
+    .content-detail {
+      font-weight: normal;
+      color: #999;
     }
   }
 }
