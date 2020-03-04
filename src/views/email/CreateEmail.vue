@@ -90,10 +90,11 @@ export default {
   width: 100%;
   height: 100%;
   padding: 0 0 0 20px;
+  border-top: 1px solid #e4e4e4;
   background: #fafafa;
   .right {
     flex-shrink: 0;
-    width: 240px;
+    width: 350px;
     height: 100%;
   }
 }

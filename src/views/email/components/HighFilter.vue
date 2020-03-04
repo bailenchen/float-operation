@@ -60,10 +60,10 @@
       </div>
       <div class="pagination">
         <el-pagination
-          :total="5"
+          :total="total"
           prev-text="上一页"
           next-text="下一页"
-          layout="prev, pager, next"
+          layout="prev, next"
           @current-change="currentChange"/>
       </div>
     </div>
@@ -371,15 +371,15 @@ export default {
 <style lang="scss" scoped>
 .filter {
   overflow: hidden;
+  border-left: 1px solid #e4e4e4;
+  background-color: #fff;
+  position: relative;
   width: 240px;
 }
 
 .filter_box {
-  width: 220px;
-  margin: 10px;
-  margin-top: 0px;
-  position: relative;
-  border: 1px solid #e4e4e4;
+  width: 330px;
+  margin: 0px;
   border-radius: 4px;
   background-color: #fff;
   height: calc(100% - 50px);
@@ -449,6 +449,19 @@ export default {
   line-height: 30px;
   position: absolute;
   bottom: 10px;
+  /deep/.btn-next {
+    border: 1px solid #e4e4e4;
+    padding-left: 5px;
+    text-align: center;
+    border-radius: 3px;
+  }
+  /deep/.btn-prev {
+    border: 1px solid #e4e4e4;
+    text-align: center;
+    padding-left: 10px;
+    border-radius: 3px;
+    margin-right: 10px;
+  }
 }
 </style>
 

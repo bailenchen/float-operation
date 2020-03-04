@@ -85,7 +85,7 @@
           </el-upload>
         </div>
 
-        <!-- <div class="add-file-wrap" style="margin-left: 10px" @click="addFile">
+        <div class="add-file-wrap" style="margin-left: 10px" @click="addFile">
           <el-upload
             ref="fileUpload"
             :action="crmFileSaveUrl"
@@ -93,7 +93,7 @@
             :data="{type: 'file', batchId: batchId}"
             :on-preview="handleFilePreview"
             :before-remove="handleFileRemove"
-            :on-success="fileUploadSuccess"
+            :on-success="fileUploadImgSuccess"
             :file-list="imgList"
             name="file"
             multiple
@@ -101,7 +101,7 @@
             <i class="el-icon-link"/>
             <div class="add-file">添加图片</div>
           </el-upload>
-        </div> -->
+        </div>
       </flexbox>
       <flexbox align="baseline" style="padding-right: 20px;">
         <div class="form-label-three">正文</div>
@@ -134,7 +134,7 @@
       <span class="email_line" style="font-size: 14px;">|</span>
       <flexbox style="width: 200px; margin-left: 20px">
         <div>签名：</div>
-        <el-dropdown @command="handleCommand">
+        <el-dropdown trigger="click" @command="handleCommand">
           <span class="el-dropdown-link">
             {{ signText }}<i class="el-icon-arrow-down el-icon--right"/>
           </span>
@@ -227,6 +227,8 @@ export default {
     handleList: {
       handler(val) {
         this.receiverLists = val
+        console.log(val)
+        this.eliminateArray()
       },
       deep: true
     }
@@ -338,6 +340,10 @@ export default {
 
     fileUploadSuccess(response, file, fileList) {
       this.fileList = fileList
+    },
+
+    fileUploadImgSuccess(response, file, fileList) {
+      this.imgList = fileList
     },
 
     handleFileRemove(file, fileList) {
@@ -561,11 +567,12 @@ export default {
     eliminateArray() {
       const list = [...this.sentLists, ...this.receiverLists]
       const copyList = []
+      console.log(list, 'list')
       for (let i = 0; i < list.length; i++) {
         const item = list[i]
 
         copyList.forEach((ele, index) => {
-          if (ele.customerId == item.customerId) {
+          if (ele.email == item.email) {
             copyList.splice(index, 1)
           }
         })
@@ -604,6 +611,7 @@ export default {
       //   const index = this.emailcontent.lastIndexOf('<br>')
       //   this.emailcontent = this.emailcontent.substring(0, index)
       // }
+      this.signText = command
       const editor = this.$refs.createTinymce.editor
       if (command === '使用') {
         if (!this.signaTime) {
@@ -657,7 +665,7 @@ export default {
     line-height: 35px;
     padding-right: 20px;
     .form-label {
-      width: 60px;
+      width: 68px;
       padding-right: 10px;
       color: #333;
       cursor: pointer;
@@ -814,5 +822,6 @@ export default {
 
 /deep/.el-dropdown-link {
   font-size: 12px;
+  cursor: pointer;
 }
 </style>

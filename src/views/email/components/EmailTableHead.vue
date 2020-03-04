@@ -86,6 +86,52 @@ export default {
       item: {}
     }
   },
+  watch: {
+    emailType: {
+      handler(val) {
+        this.list = [
+          { name: '标记为', type: 'one', icon: 'el-icon-s-flag', children: [
+            {
+              name: '标为星标',
+              type: 'star',
+              icon: 'el-icon-star-on'
+            },
+            {
+              name: '取消星标',
+              type: 'cancelStar',
+              icon: 'el-icon-star-off'
+            }
+          ] },
+          { name: '移动到', type: 'two', icon: 'el-icon-sort', children: [
+            {
+              name: '收件箱',
+              type: 'INBOX',
+              kind: 'INBOX'
+            },
+            {
+              name: '已发送',
+              type: 'Sent Messages',
+              kind: 'Sent Messages'
+            }
+          ] }
+        ]
+        const tempList = [{
+          name: '标为已读',
+          type: 'read',
+          icon: 'wk wk-open-email'
+        },
+        {
+          name: '标为未读',
+          type: 'noRead',
+          icon: 'wk wk-email'
+        }]
+        if (this.emailType !== 'draft') {
+          this.list[0].children = [...this.list[0].children, ...tempList]
+        }
+      },
+      immediate: true
+    }
+  },
   created() {
     this.deleteList = [
       {
@@ -98,42 +144,6 @@ export default {
         type: 'rootDel',
         icon: 'el-icon-delete-solid'
       }
-    ]
-    this.list = [
-      { name: '标记为', type: 'one', icon: 'el-icon-s-flag', children: [
-        {
-          name: '标为星标',
-          type: 'star',
-          icon: 'el-icon-star-on'
-        },
-        {
-          name: '取消星标',
-          type: 'cancelStar',
-          icon: 'el-icon-star-off'
-        },
-        {
-          name: '标为已读',
-          type: 'read',
-          icon: 'wk wk-open-email'
-        },
-        {
-          name: '标为未读',
-          type: 'noRead',
-          icon: 'wk wk-email'
-        }
-      ] },
-      { name: '移动到', type: 'two', icon: 'el-icon-sort', children: [
-        {
-          name: '收件箱',
-          type: 'INBOX',
-          kind: 'INBOX'
-        },
-        {
-          name: '已发送',
-          type: 'Sent Messages',
-          kind: 'Sent Messages'
-        }
-      ] }
     ]
   },
   methods: {

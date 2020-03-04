@@ -18,6 +18,7 @@
               :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
               :title="onlyOneChild.meta.title"
               :num="onlyOneChild.meta.num"
+              :count="onlyOneChild.count"
               :collapse="collapse" />
           </el-menu-item>
         </app-link>

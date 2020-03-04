@@ -5,11 +5,14 @@
         <img
           :src="titleIcon"
           class="title-icon">
-        {{ title }}
+        <span v-if="!isNoRead">
+          {{ title }}
+        </span>
+        <span v-else>未读邮件</span>
       </flexbox>
       <flexbox v-if="showGoBack" style="padding-left: 10px;">
         <div class="back_span">|</div>
-        <el-button type="text" class="back_button" @click="goBack">返回收件箱</el-button>
+        <el-button type="text" class="back_button" @click="goBack">返回{{ title }}</el-button>
       </flexbox>
       <slot name="header"/>
     </flexbox>
@@ -48,7 +51,11 @@ export default {
       type: String,
       default: ''
     },
-    search: String
+    search: String,
+    isNoRead: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -68,7 +75,7 @@ export default {
     },
 
     showGoBack() {
-      if (this.emailType === 'noRead') {
+      if (this.isNoRead) {
         return true
       }
       return false

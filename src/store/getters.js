@@ -39,6 +39,8 @@ const getters = {
   // 配置信息
   CRMConfig: state => state.app.CRMConfig,
   imageCache: state => state.app.imageCache,
+  // 邮箱信息
+  emailNum: state => state.user.emailNum,
   emailMsg: state => state.user.emailMsg
 }
 /**

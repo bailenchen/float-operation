@@ -32,7 +32,8 @@ export default {
         sent: 'Sent Messages',
         deleted: 'Deleted Messages',
         goTo: 'INBOX',
-        spam: '垃圾邮件'
+        spam: '垃圾邮件',
+        noRead: 'READ'
       },
       // 勾选
       isIndeterminate: true,
@@ -70,16 +71,22 @@ export default {
      */
     getEmailList() {
       this.loading = true
+      this.$store.dispatch('GetEmailCount')
       var listType = this.typeConfig[this.emailType]
       this.allIds = []
       var params = {
         page: this.currentPage,
         limit: this.pageSize,
-        search: this.search,
-        type: listType
+        search: this.search
       }
       if (this.emailGoTo) {
         params.email = this.emailGoTo
+      } else {
+        params.type = listType
+      }
+      console.log(this.isNoRead)
+      if (this.isNoRead) {
+        params.read = 1
       }
       emailListsAPI(params).then((res) => {
         this.loading = false
@@ -89,7 +96,12 @@ export default {
 
         for (let index = 0; index < list.length; index++) {
           const item = list[index]
-          item.handleSender = this.handleSender(item.sender)
+          if (this.isSender) {
+            item.handleSender = this.handleSender(item.receiptName)
+          } else {
+            item.handleSender = this.handleSender(item.sender)
+          }
+
           // 保证每次刷新列表时，列表不勾选
           item.checked = false
           this.allIds.push(item.id)
@@ -142,12 +154,15 @@ export default {
     },
 
     /**
-     * 处理发件人
+     * 处理发件人/收件人
      */
     handleSender(sender) {
       const endIndex = sender.indexOf('@')
       const startIndex = sender.indexOf('<') + 1
-      const realStr = sender.slice(0, startIndex - 1).replace(/\"/g, '').trim()
+      let realStr = ''
+      if (startIndex) {
+        realStr = sender.slice(0, startIndex - 1).replace(/[\", \\]/g, '').trim()
+      }
       const str = sender.slice(startIndex, endIndex).trim()
       if (realStr) {
         return realStr
@@ -285,21 +300,25 @@ export default {
       var message = ''
       let state = ''
       if (type == 'star') {
-        // message = '确定将邮件标记为星标邮件吗?'
+        message = '确定将邮件标记为星标邮件吗?'
         state = 3
-        this.updateEmailState(state, bool, item)
-        if (this.$refs.crmTableHead) {
-          this.$refs.crmTableHead.dialogVisible = false
+        if (!this.checkLists.length) {
+          this.updateEmailState(state, bool, item)
+          if (this.$refs.crmTableHead) {
+            this.$refs.crmTableHead.dialogVisible = false
+          }
+          return
         }
-        return
       } else if (type == 'cancelStar') {
-        // message = '确定将邮件取消星标邮件吗?'
+        message = '确定将邮件取消星标邮件吗?'
         state = 4
-        this.updateEmailState(state, bool, item)
-        if (this.$refs.crmTableHead) {
-          this.$refs.crmTableHead.dialogVisible = false
+        if (!this.checkLists.length) {
+          this.updateEmailState(state, bool, item)
+          if (this.$refs.crmTableHead) {
+            this.$refs.crmTableHead.dialogVisible = false
+          }
+          return
         }
-        return
       } else if (type == 'read') {
         message = '确定将邮件标记为已读邮件吗?'
         state = 1
@@ -342,8 +361,10 @@ export default {
     updateEmailState(stateType, is, item) {
       if (stateType === 5) {
         this.deleteEmail()
+        return
       } else if (stateType === 6) {
         this.destoryEmail()
+        return
       } else if (stateType === 7) {
         this.transform(item)
         return
@@ -351,7 +372,6 @@ export default {
         this.handleMore(stateType, is)
         return
       }
-      this.getEmailList()
     },
 
     /**
@@ -360,6 +380,7 @@ export default {
     deleteEmail() {
       emailRecordLogicDeleteAPI({ emailIds: this.idLists.join(',') }).then(res => {
         this.$message.success('删除成功')
+        this.getEmailList()
       }).catch(() => {
         this.loading = false
       })
@@ -371,6 +392,7 @@ export default {
     destoryEmail() {
       emailRecordDeleteByEmailIdAPI({ emailIds: this.idLists.join(',') }).then(res => {
         this.$message.success('彻底删除成功')
+        this.getEmailList()
       }).catch(() => {
         this.loading = false
       })
@@ -434,10 +456,10 @@ export default {
     /**
      * 往来邮件
      */
-    getDealingsEmail(name, email) {
-      this.emailGoTo = email
-      const emailText = `${name}<${email}>`
-      this.$router.push({ path: '/email/index/goTo', query: { email: email, emailText: emailText }})
+    getDealingsEmail(name, item) {
+      this.emailGoTo = this.isSender ? item.receiptEmails : item.senderEmail
+      const emailText = `${name}<${this.emailGoTo}>`
+      this.$router.push({ path: '/email/index/goTo', query: { email: this.emailGoTo, emailText: emailText }})
     },
 
     /**

@@ -57,7 +57,8 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo',
-      'collapse'
+      'collapse',
+      'emailNum'
     ]),
     // 设置页面不展示左侧菜单
     showMenu() {
@@ -87,6 +88,13 @@ export default {
         this.getEmailMsg()
       },
       deep: true
+    },
+    emailNum: {
+      handler(val) {
+        console.log(val)
+        this.getEmailNumber()
+      },
+      deep: true
     }
   },
 
@@ -110,6 +118,7 @@ export default {
       emailRecordReceivingEmailAPI().then(res => {
         this.$bus.emit('synEmail')
         this.$message.success('数据同步成功')
+        this.$store.dispatch('GetEmailCount')
         this.isRotate = false
       }).catch(() => {
         this.isRotate = false
@@ -139,9 +148,34 @@ export default {
         return
       }
       emailQueryAccountByIdAPI({ id: this.userInfo.emailId }).then(res => {
+        this.$store.dispatch('GetEmailCount')
+
         this.email = res.data.sendNick || res.data.emailAccount
         this.$store.commit('SET_EMAIL', res.data)
       }).catch(() => {})
+    },
+
+    /**
+     * 查询邮件数量
+     */
+
+    getEmailNumber() {
+      this.emailRouters.forEach(item => {
+        const ele = item.children[0]
+        if (ele.path === 'index/receive') {
+          ele.count = this.emailNum.inBoxUnreadCount
+        } else if (ele.path === 'index/star') {
+          ele.count = this.emailNum.starUnreadCount
+        } else if (ele.path === 'index/draft') {
+          ele.count = 0
+        } else if (ele.path === 'index/sent') {
+          ele.count = this.emailNum.sendUnreadCount
+        } else if (ele.path === 'index/deleted') {
+          ele.count = this.emailNum.deleteUnreadCount
+        } else if (ele.path === 'index/spam') {
+          ele.count = this.emailNum.ljUnreadCount
+        }
+      })
     }
   }
 }

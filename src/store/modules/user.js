@@ -12,6 +12,8 @@ import {
 import {
   adminUsersRead
 } from '@/api/personCenter/personCenter'
+import { emailNumAPI } from '@/api/email/email'
+
 import {
   addAuth,
   removeAuth
@@ -29,12 +31,17 @@ const user = {
     manage: {}, // 管理后台
     oa: {}, // 办公
     emailMsg: {},
+    emailNum: {},
     project: {} // 项目管理
   },
 
   mutations: {
     SET_EMAIL: (state, emailMsg) => {
       state.emailMsg = emailMsg
+    },
+
+    SET_EMAIL_NUMBER: (state, emailNum) => {
+      state.emailNum = emailNum
     },
     SET_USERINFO: (state, userInfo) => {
       state.userInfo = userInfo
@@ -142,6 +149,21 @@ const user = {
             response.data.emailId = response.emailId
           }
           commit('SET_USERINFO', response.data)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    // 获取邮箱number
+    GetEmailCount({
+      commit,
+      state
+    }) {
+      return new Promise((resolve, reject) => {
+        emailNumAPI().then(response => {
+          commit('SET_EMAIL_NUMBER', response.data)
           resolve(response)
         }).catch(error => {
           reject(error)

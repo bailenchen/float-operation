@@ -3,6 +3,7 @@
     <i
       :class="['wk', `wk-${icon}`]"/>
     <span class="side-bar-label">{{ title }}</span>
+    <span v-if="count">({{ count }})</span>
     <el-badge
       v-if="num && num > 0"
       :max="99"
@@ -19,7 +20,8 @@ export default {
     icon: String,
     title: String,
     num: [String, Number],
-    collapse: Boolean
+    collapse: Boolean,
+    count: [String, Number]
   },
   data() {
     return {}

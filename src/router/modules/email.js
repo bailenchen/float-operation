@@ -87,6 +87,7 @@ export default [
     ignore: true, // 路由添加时忽略
     children: [{
       name: 'email_index',
+      count: 0,
       path: 'index/receive', // 列表
       meta: {
         title: '收件箱',
@@ -99,6 +100,7 @@ export default [
     ignore: true, // 路由添加时忽略
     children: [{
       path: 'index/star', // 列表
+      count: 0,
       meta: {
         title: '星标邮件',
         icon: 'focus-on'
@@ -110,6 +112,7 @@ export default [
     ignore: true, // 路由添加时忽略
     children: [{
       path: 'index/draft', // 列表
+      count: 0,
       meta: {
         title: '草稿箱',
         icon: 'drafts'
@@ -121,6 +124,7 @@ export default [
     ignore: true, // 路由添加时忽略
     children: [{
       path: 'index/sent', // 列表
+      count: 0,
       meta: {
         title: '已发送',
         icon: 'inbox'
@@ -132,6 +136,7 @@ export default [
     ignore: true, // 路由添加时忽略
     children: [{
       path: 'index/deleted', // 列表
+      count: 0,
       meta: {
         title: '已删除',
         icon: 'bin'
@@ -143,6 +148,7 @@ export default [
     ignore: true, // 路由添加时忽略
     children: [{
       path: 'index/spam', // 列表
+      count: 0,
       meta: {
         title: '垃圾邮件',
         icon: 'recycle-bin'

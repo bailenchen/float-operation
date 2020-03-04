@@ -4,11 +4,13 @@
       :search.sync="search"
       :email-type="emailType"
       :title="sideNavTitle"
+      :is-no-read="isNoRead"
       placeholder="搜索邮件"
+      @goBack="goBack"
       @on-search="emailSearch">
-      <template>
-        <div v-if="emailType == 'receive'" slot="header" class="record-receive">
-          （收件箱共有<span>{{ allNumber }}</span>封邮件，其中<span class="blue-font">未读邮件</span>{{ receiveNumber }}封）
+      <template v-if="!isNoRead">
+        <div slot="header" class="record-receive">
+          （共有<span>{{ allNumber }}</span>封邮件<span v-if="receiveNumber">，其中<span class="blue-font" @click="noRead"> 未读邮件 </span>{{ receiveNumber }}封</span>）
           <!-- <el-button type="text" class="blue-font" @click="allRead">全部标为已读</el-button> -->
         </div>
       </template>
@@ -50,7 +52,7 @@
                 </th> -->
                 <th class="tb-h-align head-font-color " style="width:150px">
                   <div ref="sent">
-                    <b>发件人</b>
+                    <b>{{ isSender ? '收件人' : '发件人' }}</b>
                   </div>
                 </th>
                 <th class="tb-h-align head-font-color">
@@ -142,10 +144,10 @@
 
                           <div class="sender_msg">
                             <div>{{ item.handleSender }}</div>
-                            <div class="sender_text">{{ item.senderEmail }}</div>
+                            <div class="sender_text">{{ isSender ? item.receiptEmails : item.senderEmail }}</div>
                           </div>
 
-                          <el-button type="text" @click="getDealingsEmail(item.handleSender, item.senderEmail)">往来邮件</el-button>
+                          <el-button type="text" @click="getDealingsEmail(item.handleSender, item)">往来邮件</el-button>
                         </flexbox>
                         <span slot="reference"> {{ item.handleSender }}</span>
                       </el-popover>
@@ -213,7 +215,6 @@
 </template>
 
 <script>
-import { emailNumAPI } from '@/api/email/email'
 
 import EmailDetail from './EmailDetail'
 
@@ -236,6 +237,7 @@ export default {
       allNumber: 0, // 收件箱数量
       receiveNumber: 0, // 收件箱未读数量
       emailType: 'receive',
+      isNoRead: false, // 未读邮件筛选
       lists: [],
       showDview: false,
       rowObj: '',
@@ -249,7 +251,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(['userInfo', 'emailNum']),
+    isSender() {
+      if (this.emailType === 'sent' || this.emailType === 'draft') {
+        return true
+      }
+      return false
+    },
     sideNavTitle() {
       return {
         receive: '收件箱',
@@ -318,11 +326,11 @@ export default {
     }
   },
   watch: {
-    emailGoTo: {
+    emailNum: {
       handler(val) {
-        this.getEmailList()
+        this.queryEmailNum()
       },
-      immediate: true
+      deep: true
     }
   },
   mounted() {
@@ -343,10 +351,13 @@ export default {
   created() {
     this.emailType = this.$route.params.type
     this.queryEmailNum()
+    this.getEmailList()
   },
   beforeRouteUpdate(to, from, next) {
     this.emailType = to.params.type
     this.$refs.crmTableHead.headSelectionChange([])
+    this.checkLists = []
+    this.isNoRead = false
     if (this.emailType != 'writeLetter') {
       this.lists = []
       if (this.emailType == 'receive') {
@@ -359,8 +370,6 @@ export default {
       }
       this.getEmailList()
     }
-
-
     next()
   },
 
@@ -368,6 +377,8 @@ export default {
     next(vm => {
       if (to.params.type === 'goTo') {
         vm.emailGoTo = to.query.email
+        // 保证页面刷新时，请求正确
+        vm.getEmailList()
       } else {
         vm.emailGoTo = ''
       }
@@ -378,12 +389,25 @@ export default {
      * 数量查询
      */
     queryEmailNum() {
-      emailNumAPI().then((res) => {
-        this.receiveNumber = res.data.unreadCount
-        this.allNumber = res.data.inBoxCount
-      }).catch(() => {
-
-      })
+      if (this.emailType === 'receive') {
+        this.receiveNumber = this.emailNum.inBoxUnreadCount
+        this.allNumber = this.emailNum.inBoxCount
+      } else if (this.emailType === 'star') {
+        this.receiveNumber = this.emailNum.starUnreadCount
+        this.allNumber = this.emailNum.starCount
+      } else if (this.emailType === 'sent') {
+        this.receiveNumber = this.emailNum.sendUnreadCount
+        this.allNumber = this.emailNum.sendCount
+      } else if (this.emailType === 'deleted') {
+        this.receiveNumber = this.emailNum.deleteUnreadCount
+        this.allNumber = this.emailNum.deleteCount
+      } else if (this.emailType === 'spam') {
+        this.receiveNumber = this.emailNum.ljUnreadCount
+        this.allNumber = this.emailNum.ljCount
+      } else {
+        // 草稿箱没有未读邮件
+        this.allNumber = this.emailNum.draftsCount
+      }
     },
 
     /**
@@ -408,6 +432,14 @@ export default {
         item.isRead = 1
         this.submitMoreHandle(1, 'detail')
       }
+    },
+
+    /**
+     * 未读邮件
+     */
+    noRead() {
+      this.isNoRead = true
+      this.getEmailList()
     },
 
     /**
@@ -465,6 +497,14 @@ export default {
         content = content.substring(0, 100)
       }
       return content
+    },
+
+    /**
+     * 返回收件箱
+     */
+    goBack() {
+      this.isNoRead = false
+      this.getEmailList()
     }
   }
 }
@@ -591,11 +631,10 @@ tr > td {
 
 .rowbg {
   background-color: #fafafa;
-  border-top: 1px solid #e4e4e4;
-  border-bottom: 1px solid #e4e4e4;
 }
 
 .content-table {
+  border-bottom: 1px solid #e4e4e4;
   .content-theme,
   .content-detail {
     font-size: 12px;
