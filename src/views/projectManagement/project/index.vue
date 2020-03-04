@@ -296,6 +296,7 @@ export default {
                 message: '删除成功!'
               })
               this.$bus.$emit('delete-project', this.workId)
+              this.$router.go(-1)
             })
             .catch(() => {})
         })

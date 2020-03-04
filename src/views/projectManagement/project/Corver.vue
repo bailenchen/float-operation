@@ -25,6 +25,7 @@
               <div class="handle-bar">
                 <div :title="childItem.name" class="title text-one-line">{{ childItem.name }}</div>
                 <i
+                  v-if="childItem.authList && childItem.authList.project && childItem.authList.project.setWork"
                   class="wk wk-circle-edit"
                   @click.stop="editProjectClick(childItem)"/>
                 <i
@@ -251,6 +252,7 @@ export default {
     box-shadow: 0 0 0 rgba(0,0,0,0.15);
     transition: box-shadow 0.218s ease;
     border-radius: $xr-border-radius-base;
+    background-size: 200px 100px;
     cursor: pointer;
 
     .handle-bar {
