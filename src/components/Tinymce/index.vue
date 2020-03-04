@@ -2,6 +2,7 @@
   <editor
     ref="mceEditor"
     :id="id"
+    v-model="dataValue"
     v-bind="$attrs"
     :init="showInit"
     :plugins="showPlugins"
@@ -45,6 +46,7 @@ export default {
           validator: (prop: string) => prop === 'html' || prop === 'text'
         }
      */
+    value: String,
     init: Object,
     height: [String, Number],
     plugins: [String, Array],
@@ -54,6 +56,7 @@ export default {
   data() {
     return {
       id: this.uuid(),
+      dataValue: '',
       languageTypeList: {
         'en': 'en',
         'zh': 'zh_CN',
@@ -100,7 +103,20 @@ export default {
       }
     }
   },
-  watch: {},
+  watch: {
+    value: {
+      handler(val) {
+        if (val != this.dataValue) {
+          this.dataValue = val
+        }
+      },
+      immediate: true,
+      deep: true
+    },
+    dataValue() {
+      this.$emit('input', this.dataValue)
+    }
+  },
   mounted() {
   },
   methods: {
