@@ -103,9 +103,9 @@
           </el-upload>
         </div> -->
       </flexbox>
-      <flexbox align="baseline" style="padding-right: 10px;">
+      <flexbox align="baseline" style="padding-right: 20px;">
         <div class="form-label-three">正文</div>
-        <tinymce ref="createTinymce" :inline="true" v-model="emailcontent" :height="richHeight" class="rich-txt" />
+        <tinymce ref="createTinymce" v-model="emailcontent" :height="richHeight" class="rich-txt" />
       </flexbox>
     </div>
     <el-popover
@@ -682,7 +682,8 @@ export default {
     justify-content: flex-start;
     align-items: center;
   }
-  .rich-txt {
+
+  /deep/.tox-tinymce {
     flex: 1;
     margin-top: 20px;
     margin-right: 5px;

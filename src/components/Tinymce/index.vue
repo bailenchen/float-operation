@@ -1,62 +1,59 @@
 <template>
-  <div :class="{fullscreen:fullscreen}" :style="{width:containerWidth}" class="tinymce-container">
-    <textarea :id="tinymceId" class="tinymce-textarea" />
-  </div>
+  <editor
+    ref="mceEditor"
+    :id="id"
+    v-bind="$attrs"
+    :init="showInit"
+    :plugins="showPlugins"
+    :toolbar="showToolbar"
+    tinymce-script-src="https://www.72crm.com/npm/tinymce/tinymce.min.js"
+    v-on="$listeners"
+  />
 </template>
 
 <script>
-/**
- * docs:
- * https://panjiachen.github.io/vue-element-admin-site/feature/component/rich-editor.html#tinymce
- */
+import Editor from '@tinymce/tinymce-vue'
+
 import plugins from './plugins'
 import toolbar from './toolbar'
-import load from './dynamicLoadScript'
 
-// why use this cdn, detail see https://github.com/PanJiaChen/tinymce-all-in-one
-const tinymceCDN = 'https://www.72crm.com/npm/tinymce/tinymce.min.js'
+let unique = 0
 
 export default {
   name: 'Tinymce',
-  components: {},
+  components: {
+    Editor
+  },
+  inheritAttrs: false,
   props: {
-    id: {
-      type: String,
-      default: function() {
-        return 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
-      }
-    },
+    /**
+     *  apiKey: String,
+        cloudChannel: String,
+        id: String,
+        init: Object,
+        initialValue: String,
+        inline: Boolean,
+        modelEvents: [String, Array],
+        plugins: [String, Array],
+        tagName: String,
+        toolbar: [String, Array],
+        value: String,
+        disabled: Boolean,
+        tinymceScriptSrc: String,
+        outputFormat: {
+          type: String,
+          validator: (prop: string) => prop === 'html' || prop === 'text'
+        }
+     */
     init: Object,
-    value: {
-      type: String,
-      default: ''
-    },
-    toolbar: [Array, String],
-    menubar: {
-      type: String,
-      default: '' // file edit insert view format table
-    },
-    height: {
-      type: [Number, String],
-      required: false,
-      default: 360
-    },
-    width: {
-      type: [Number, String],
-      required: false,
-      default: 'auto'
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    inline: Boolean
+    height: [String, Number],
+    plugins: [String, Array],
+    toolbar: [String, Array],
+    menubar: [String, Array]
   },
   data() {
     return {
-      editor: null,
-      tinymceId: this.id,
-      fullscreen: false,
+      id: this.uuid(),
       languageTypeList: {
         'en': 'en',
         'zh': 'zh_CN',
@@ -66,67 +63,28 @@ export default {
     }
   },
   computed: {
-    containerWidth() {
-      const width = this.width
-      if (/^[\d]+(\.[\d]+)?$/.test(width)) { // matches `100`, `'100'`
-        return `${width}px`
-      }
-      return width
-    }
-  },
-  watch: {
-    value(val, prevVal) {
-      if (this.editor && typeof val === 'string' && val !== prevVal && val !== this.editor.getContent()) {
-        this.editor.setContent(val || '')
-      }
+    editor() {
+      return window.tinymce.get(this.id)
     },
 
-    disabled() {
-      this.editor.setMode(this.disabled ? 'readonly' : 'design')
-    }
-  },
-  mounted() {
-    this.loadTinymce()
-  },
-  activated() {
-    if (window.tinymce) {
-      this.initTinymce()
-    }
-  },
-  deactivated() {
-    this.destroyTinymce()
-  },
-  destroyed() {
-    this.destroyTinymce()
-  },
-  methods: {
-    loadTinymce() {
-      // dynamic load tinymce from cdn
-      load(tinymceCDN, (err) => {
-        if (err) {
-          this.$message.error(err.message)
-          return
-        }
-        this.initTinymce()
-      })
+    showToolbar() {
+      return this.toolbar != undefined ? this.toolbar : toolbar
     },
-    initTinymce() {
-      const _this = this
-      window.tinymce.init({
-        ...this.init,
-        selector: `#${this.tinymceId}`,
-        readonly: this.disabled,
-        inline: (this.init && this.init.inline) || this.inline,
+
+    showPlugins() {
+      return this.plugins != undefined ? this.plugins : plugins
+    },
+
+    showInit() {
+      return {
         skin: 'wukong',
         resize: false,
+        height: this.height,
         branding: false,
         language: this.languageTypeList['zh'],
-        height: this.height,
-        body_class: 'panel-body ',
-        image_advtab: true,
-        toolbar: (this.toolbar || (this.init && this.init.toolbar)) || toolbar,
         menubar: this.menubar ? this.menubar : false,
-        plugins: plugins,
+        body_class: 'panel-body',
+        image_advtab: true,
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
@@ -137,74 +95,58 @@ export default {
         default_link_target: '_blank',
         link_title: false,
         quickbars_insert_toolbar: false,
-        nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
-        init_instance_callback: editor => {
-          console.log('123123')
-          this.editor = editor
-          if (_this.value) {
-            editor.setContent(_this.value)
-          }
-          editor.on('change keyup undo redo', () => {
-            this.$emit('input', editor.getContent())
-          })
-        },
-        setup(editor) {
-          editor.on('FullscreenStateChanged', (e) => {
-            _this.fullscreen = e.state
-          })
-        }
-        // 整合七牛上传
-        // images_dataimg_filter(img) {
-        //   setTimeout(() => {
-        //     const $image = $(img);
-        //     $image.removeAttr('width');
-        //     $image.removeAttr('height');
-        //     if ($image[0].height && $image[0].width) {
-        //       $image.attr('data-wscntype', 'image');
-        //       $image.attr('data-wscnh', $image[0].height);
-        //       $image.attr('data-wscnw', $image[0].width);
-        //       $image.addClass('wscnph');
-        //     }
-        //   }, 0);
-        //   return img
-        // },
-        // images_upload_handler(blobInfo, success, failure, progress) {
-        //   progress(0);
-        //   const token = _this.$store.getters.token;
-        //   getToken(token).then(response => {
-        //     const url = response.data.qiniu_url;
-        //     const formData = new FormData();
-        //     formData.append('token', response.data.qiniu_token);
-        //     formData.append('key', response.data.qiniu_key);
-        //     formData.append('file', blobInfo.blob(), url);
-        //     upload(formData).then(() => {
-        //       success(url);
-        //       progress(100);
-        //     })
-        //   }).catch(err => {
-        //     failure('出现未知问题，刷新页面，或者联系程序员')
-        //     console.log(err);
-        //   });
-        // },
-      })
-    },
-    destroyTinymce() {
-      if (window.tinymce) {
-        const tinymce = this.editor
-        if (this.fullscreen) {
-          tinymce.execCommand('mceFullScreen')
-        }
-
-        if (tinymce) {
-          tinymce.destroy()
-        }
+        nonbreaking_force_tab: true,
+        ...this.init
       }
+    }
+  },
+  watch: {},
+  mounted() {
+  },
+  methods: {
+    initTinymce() {
+
+      // 整合七牛上传
+      // images_dataimg_filter(img) {
+      //   setTimeout(() => {
+      //     const $image = $(img);
+      //     $image.removeAttr('width');
+      //     $image.removeAttr('height');
+      //     if ($image[0].height && $image[0].width) {
+      //       $image.attr('data-wscntype', 'image');
+      //       $image.attr('data-wscnh', $image[0].height);
+      //       $image.attr('data-wscnw', $image[0].width);
+      //       $image.addClass('wscnph');
+      //     }
+      //   }, 0);
+      //   return img
+      // },
+      // images_upload_handler(blobInfo, success, failure, progress) {
+      //   progress(0);
+      //   const token = _this.$store.getters.token;
+      //   getToken(token).then(response => {
+      //     const url = response.data.qiniu_url;
+      //     const formData = new FormData();
+      //     formData.append('token', response.data.qiniu_token);
+      //     formData.append('key', response.data.qiniu_key);
+      //     formData.append('file', blobInfo.blob(), url);
+      //     upload(formData).then(() => {
+      //       success(url);
+      //       progress(100);
+      //     })
+      //   }).catch(err => {
+      //     failure('出现未知问题，刷新页面，或者联系程序员')
+      //     console.log(err);
+      //   });
+      // },
     },
-    setContent(value) {
-      this.editor.setContent(value)
-    },
-    getContent() {
-      return this.editor.getContent()
+    uuid() {
+      const time = Date.now()
+      const random = Math.floor(Math.random() * 1000000000)
+
+      unique++
+
+      return 'wukong_' + random + unique + String(time)
     },
     imageSuccessCBK(arr) {
       arr.forEach(v => {
