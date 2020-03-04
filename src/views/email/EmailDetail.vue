@@ -13,7 +13,7 @@
         @on-del="delCurrentEmail"
         @move="handleMove"/>
       <div :style="{ height: emailFileHeight + 'px' }" class="article" >
-        <tinymce v-model="rowItem.content" :height="richHeight" class="rich-txt" />
+        <tinymce :disabled="true" :toolbar="[]" v-model="rowItem.content" :height="richHeight" class="rich-txt" />
         <files-list ref="file" :batch-id="rowItem.batchId" @getFileCount="getFileCount"/>
       </div>
     </div>

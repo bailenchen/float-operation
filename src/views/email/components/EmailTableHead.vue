@@ -8,18 +8,32 @@
       <flexbox class="selection-items-box">
         <!-- v-if="whetherTypeShowByPermision(item.type)" -->
         <el-button
-          v-for="(item, index) in list"
+          v-for="(item, index) in deleteList"
           :icon="item.icon"
           :key="index"
           type="primary"
           @click.native="selectionBarClick(item)">{{ item.name }}</el-button>
+        <el-dropdown v-for="(item) in list" :key="item.type" trigger="click">
+          <span class="el-dropdown-link">
+            <i :class="item.icon"/>
+            <span style="margin-left: 5px;">{{ item.name }}</span>
+            <i class="el-icon-arrow-down el-icon--right"/>
+          </span>
+          <el-dropdown-menu slot="dropdown" >
+            <el-dropdown-item
+              v-for="dropdownItem in item.children"
+              :key="dropdownItem.type"
+              :icon="dropdownItem.icon"
+              @click.native="selectionBarClick(dropdownItem)">{{ dropdownItem.name }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </flexbox>
     </flexbox>
     <div v-if="selectionList.length == 0" style="height:50px;">
       <flexbox v-if="emailType === 'goTo'" class="email_fifter">与
       <el-button type="text">{{ emailGoTo }}</el-button>的往来邮件</flexbox>
     </div>
-    <el-dialog
+    <!-- <el-dialog
       :visible.sync="dialogVisible"
       title="操作"
       width="300px">
@@ -35,7 +49,7 @@
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="sure">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -67,54 +81,55 @@ export default {
       options: [],
       selectionList: [], // 勾选数据操作
       list: [],
+      deleteList: [],
       type: '',
       item: {}
     }
   },
   created() {
+    this.deleteList = [
+      {
+        name: '删除邮件',
+        type: 'delete',
+        icon: 'el-icon-delete-solid'
+      },
+      {
+        name: '彻底删除',
+        type: 'rootDel',
+        icon: 'el-icon-delete-solid'
+      }
+    ]
     this.list = [
-      { name: '删除', type: '2', icon: 'el-icon-delete-solid', children: [
-        {
-          name: '删除邮件',
-          type: 'delete',
-          icon: 'transform'
-        },
-        {
-          name: '彻底删除',
-          type: 'rootDel',
-          icon: 'export'
-        }
-      ] },
-      { name: '标记为', type: '1', icon: 'el-icon-s-flag', children: [
+      { name: '标记为', type: 'one', icon: 'el-icon-s-flag', children: [
         {
           name: '标为星标',
           type: 'star',
-          icon: 'transfer'
+          icon: 'el-icon-star-on'
         },
         {
           name: '取消星标',
           type: 'cancelStar',
-          icon: 'transfer'
+          icon: 'el-icon-star-off'
         },
         {
           name: '标为已读',
           type: 'read',
-          icon: 'transform'
+          icon: 'wk wk-open-email'
         },
         {
           name: '标为未读',
           type: 'noRead',
-          icon: 'transform'
+          icon: 'wk wk-email'
         }
       ] },
-      { name: '移动到', type: '3', icon: 'el-icon-sort', children: [
+      { name: '移动到', type: 'two', icon: 'el-icon-sort', children: [
         {
           name: '收件箱',
           type: 'INBOX',
           kind: 'INBOX'
         },
         {
-          name: '发送箱',
+          name: '已发送',
           type: 'Sent Messages',
           kind: 'Sent Messages'
         }
@@ -127,10 +142,9 @@ export default {
       this.selectionList = array
     },
     selectionBarClick(item) {
-      this.options = item.children
-      this.type = item.children[0].type
-      this.item = item.children[0]
-      this.dialogVisible = true
+      this.type = item.type
+      this.item = item
+      this.$emit('change', this.type, this.item)
     },
 
     /**
@@ -186,6 +200,7 @@ export default {
     background-color: $xr--background-color-base;
     border-color: $xr--background-color-base;
     font-size: 12px;
+    line-height: 1px;
     height: 28px;
     border-radius: 14px;
     /deep/ i {
@@ -207,6 +222,35 @@ export default {
 /deep/.el-icon-sort {
   transform: rotate(90deg)
 }
+/deep/.el-icon-star-on {
+  font-size: 16px;
+  position: relative;
+  left: -2px;
+  }
+  /deep/.el-dropdown{
+    margin: 0px 10px;
+  }
+ .el-dropdown-link {
+    display: inline-block;
+    color: #666;
+    cursor: pointer;
+    background-color: #F6F8FA;
+    border-color: #F6F8FA;
+    line-height: 30px;
+    font-size: 12px;
+    height: 28px;
+    width: 96px;
+    padding: 0px 10px;
+    border-radius:14px;
+  }
+  .el-dropdown-link:hover{
+    background-color: #2362FB;
+    border-color: #2362FB;
+    color: #ffffff;
+  }
+  /deep/.el-icon--right{
+    margin-left: 0px;
+  }
 </style>
 
 

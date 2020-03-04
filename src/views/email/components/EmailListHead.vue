@@ -1,9 +1,16 @@
 <template>
   <div class="c-container">
-    <flexbox class="title"><img
-      :src="titleIcon"
-      class="title-icon">
-      {{ title }}
+    <flexbox class="title">
+      <flexbox class="title_left">
+        <img
+          :src="titleIcon"
+          class="title-icon">
+        {{ title }}
+      </flexbox>
+      <flexbox v-if="showGoBack" style="padding-left: 10px;">
+        <div class="back_span">|</div>
+        <el-button type="text" class="back_button" @click="goBack">返回收件箱</el-button>
+      </flexbox>
       <slot name="header"/>
     </flexbox>
     <el-input
@@ -54,10 +61,18 @@ export default {
     titleIcon() {
       if (this.emailType === 'goTo') {
         return require(`@/assets/img/email/receive.png`)
+      } else if (this.emailType === 'noRead') {
+        return require(`@/assets/img/email/receive.png`)
       }
       return require(`@/assets/img/email/${this.emailType}.png`)
-    }
+    },
 
+    showGoBack() {
+      if (this.emailType === 'noRead') {
+        return true
+      }
+      return false
+    }
   },
   mounted() {
   },
@@ -69,6 +84,13 @@ export default {
     // 进行搜索操作
     searchInput() {
       this.$emit('on-search', this.inputContent)
+    },
+
+    /**
+     * 返回
+     */
+    goBack() {
+      this.$emit('goBack')
     }
   }
 }
@@ -94,6 +116,19 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    .title_left {
+      width: 100px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .back_button {
+      margin-left: 5px;
+    }
+    .back_span {
+      color: #999;
+      position: relative;
+      top: -1px;
+    }
   }
   .sc-container {
     width: 300px;
@@ -102,7 +137,6 @@ export default {
     left: 50%;
     top: 50%;
   }
-
   .el-input {
     /deep/ .el-input-group__append {
       background-color: $xr-color-primary;
