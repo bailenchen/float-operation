@@ -29,7 +29,7 @@
     </div>
 
     <div
-      class="active-btn"
+      class="center-tips"
       @click="$emit('toggle', 'LoginByPwd')">
       返回上一步
     </div>
@@ -89,6 +89,18 @@ export default {
 @import '../index';
 
 .control {
-  margin-top: 50px;
+  margin-top: 30px;
+}
+
+.center-tips {
+  width: 100%;
+  color: #3255E6;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 </style>

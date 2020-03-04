@@ -1,12 +1,26 @@
 <template>
   <div class="map-box">
     <div class="map-title">
-      <flexbox class="map-title-content">
+      <!-- <flexbox class="map-title-content">
         <img
           src="@/assets/img/crm/customer.png"
           class="title-icon">
         附近的客户
-      </flexbox>
+      </flexbox> -->
+      <el-menu
+        ref="elMenu"
+        default-active="nearby"
+        mode="horizontal"
+        active-text-color="#2362FB"
+        @select="menuSelect">
+        <el-menu-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :index="item.path">
+          <img :src="item.icon">
+          <span>{{ item.title }}</span>
+        </el-menu-item>
+      </el-menu>
     </div>
     <div v-loading="loading" class="map-content">
       <flexbox align="stretch" class="map-content--title">
@@ -131,6 +145,7 @@ import { crmCrmCustomerNearbyCustomerAPI } from '@/api/customermanagement/map'
 import CustomerDetail from '../customer/CustomerDetail'
 
 import { getBaiduMap } from '@/utils'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'MapIndex', // 新建 客户位置
@@ -200,7 +215,37 @@ export default {
       rowID: null
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['crm']),
+    menuItems() {
+      const temp = []
+      if (this.crm && this.crm.customer) {
+        temp.push({
+          title: '客户',
+          path: 'customer',
+          icon: require('@/assets/img/crm/customer_not.png')
+        })
+      }
+
+      if (this.crm && this.crm.pool) {
+        temp.push({
+          title: '公海',
+          path: 'seas',
+          icon: require('@/assets/img/crm/seas_not.png')
+        })
+      }
+
+      if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
+        temp.push({
+          title: '附近客户',
+          path: 'nearby',
+          icon: require('@/assets/img/crm/nearby.png')
+        })
+      }
+
+      return temp
+    }
+  },
   watch: {},
   mounted() {
     getBaiduMap()
@@ -214,7 +259,17 @@ export default {
         this.getMyPosition()
       })
   },
+  deactivated: function() {
+    this.$refs.elMenu.activeIndex = 'nearby'
+  },
   methods: {
+    /**
+     * 左侧菜单选择
+     */
+    menuSelect(key, keyPath) {
+      this.$emit('menu-select', key, keyPath)
+    },
+
     /**
      * 获取当前位置
      */
@@ -450,6 +505,8 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+@import '../styles/table.scss';
+
 .map-box {
   width: 100%;
   overflow-x: auto;

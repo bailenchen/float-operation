@@ -154,3 +154,15 @@ export function crmReceivablesExcelAllExportAPI(data) {
     }
   })
 }
+
+/**
+ * 转移
+ * @param {*} data
+ */
+export function crmReceivablesTransfer(data) {
+  return request({
+    url: 'CrmReceivables/transfer',
+    method: 'post',
+    data: data
+  })
+}

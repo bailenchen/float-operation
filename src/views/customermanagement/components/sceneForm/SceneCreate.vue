@@ -188,7 +188,7 @@ import { crmSceneSave, crmSceneUpdate } from '@/api/customermanagement/common'
 import { productCategoryIndex } from '@/api/systemManagement/SystemCustomer'
 import { objDeepCopy } from '@/utils'
 import { XhUserCell, XhProuctCate } from '@/components/CreateCom'
-import VDistpicker from 'v-distpicker'
+import VDistpicker from '@/components/v-distpicker'
 import { usersList } from '@/api/common'
 
 /**

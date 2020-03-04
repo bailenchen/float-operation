@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {
-  Message
+  Message,
+  MessageBox
 } from 'element-ui'
 import {
   removeAuth
@@ -23,6 +24,17 @@ const errorMessage = debounce(500, (message) => {
   Message({
     message: message,
     type: 'error'
+  })
+})
+
+const confirmMessage = debounce(1000, (message) => {
+  MessageBox.confirm(message, '提示', {
+    confirmButtonText: '确定',
+    showCancelButton: false,
+    type: 'warning'
+  }).then(() => {
+    clearCacheEnterLogin()
+  }).catch(() => {
   })
 })
 
@@ -78,7 +90,11 @@ service.interceptors.response.use(
     } else if (res.code !== 0) {
       // 302	登录已失效
       if (res.code === 302) {
-        clearCacheEnterLogin()
+        if (res.extra == 1) {
+          confirmMessage(`您的账号${res.extraTime}在别处登录。如非本人操作，则密码可能已泄漏，建议修改密码`)
+        } else {
+          clearCacheEnterLogin()
+        }
       } else {
         if (res.msg) {
           errorMessage(res.msg)

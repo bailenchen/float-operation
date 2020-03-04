@@ -17,6 +17,7 @@ import taskExamineRouter from './modules/taskExamine'
 import workLogRouter from './modules/workLog'
 import addressBookRouter from './modules/addressBook'
 import emailRouter from './modules/email'
+import calendarRouter from './modules/calendar'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -73,5 +74,6 @@ export const asyncRouterMap = [
   { type: 'project', router: projectRouter },
   { type: 'bi', router: biRouter },
   { type: 'manage', router: managerRouter },
-  { type: 'email', router: emailRouter }
+  { type: 'email', router: emailRouter },
+  { type: 'calendar', router: calendarRouter }
 ]

@@ -148,15 +148,23 @@ export default {
      * 标记数据
      */
     checkTreeByUpdateInfo() {
-      if (this.action.type == 'update') {
-        this.$nextTick(() => {
-          if (this.$refs.tree) {
+      this.$nextTick(() => {
+        if (this.$refs.tree) {
+          if (this.action.type == 'update') {
             this.$refs.tree.setCheckedKeys(
               this.getUserModuleRules(this.action.data.rules)
             )
           }
-        })
-      }
+
+          let children = this.$refs.tree.$children && this.$refs.tree.$children.length ? this.$refs.tree.$children[0].$el : null
+          if (children) {
+            children = children.children && children.children.length ? children.children[0] : null
+            if (children) {
+              children.style.display = 'none'
+            }
+          }
+        }
+      })
     },
 
     /**
@@ -299,6 +307,7 @@ export default {
   overflow-y: auto;
   padding: 10px 0;
 }
+
 .jurisdiction-content-checkbox
   .el-tree
   /deep/

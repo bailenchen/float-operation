@@ -4,6 +4,7 @@
     class="related-business">
     <!-- 新建- 相关信息 -->
     <el-popover
+      v-if="showAdd"
       v-model="showPopover"
       placement="bottom"
       width="800"
@@ -75,6 +76,10 @@ export default {
     showFoot: {
       type: Boolean,
       default: false
+    },
+    showAdd: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -114,6 +119,7 @@ export default {
     checkInfos(val) {
       this.showPopover = false
       this.relatedListData = val.data
+      console.log(val)
       for (const key in val.data) {
         const list = val.data[key]
         this.relevanceAll[key + 'Ids'] = list.map(function(

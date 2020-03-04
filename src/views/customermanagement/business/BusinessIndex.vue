@@ -27,6 +27,7 @@
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
+        :header-cell-class-name="headerCellClassName"
         class="n-table--border"
         use-virtual
         stripe
@@ -86,6 +87,7 @@
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
           :total="total"
+          :pager-count="5"
           class="p-bar"
           background
           layout="prev, pager, next, sizes, total, jumper"
@@ -146,14 +148,20 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (
-        column.property === 'businessName' ||
-        column.property === 'customerName'
-      ) {
+      if (column.property === 'businessName') {
+        return 'can-visit--underline can-visit--bold'
+      } else if (column.property === 'customerName') {
         return 'can-visit--underline'
       } else {
         return ''
       }
+    },
+
+    headerCellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'businessName') {
+        return 'header-can-visit-backgroud'
+      }
+      return ''
     }
   }
 }

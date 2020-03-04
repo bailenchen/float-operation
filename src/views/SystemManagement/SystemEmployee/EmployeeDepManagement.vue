@@ -507,6 +507,11 @@ export default {
           type: 'new'
         },
         {
+          icon: 'wk wk-active-employee',
+          label: '激活员工',
+          type: 'active'
+        },
+        {
           icon: 'wk wk-inactive-employee',
           label: '未激活员工',
           type: 'inactive'
@@ -848,12 +853,16 @@ export default {
       if (this.currentMenuData) {
         // 员工有type值
         if (this.currentMenuData.type) {
-          params.label = {
-            all: 0,
-            new: 1,
-            inactive: 2,
-            disable: 3
-          }[this.currentMenuData.type]
+          if (this.currentMenuData.type == 'active') {
+            params.status = 1
+          } else {
+            params.label = {
+              all: 0,
+              new: 1,
+              inactive: 2,
+              disable: 3
+            }[this.currentMenuData.type]
+          }
         } else if (this.currentMenuData.id) {
           params.deptId = this.currentMenuData.id
         }

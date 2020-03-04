@@ -48,6 +48,19 @@ export function workWorkSaveAPI(data) {
   })
 }
 
+
+/**
+ * 编辑项目
+ * @param {*} data
+ */
+export function workWorkUpdateAPI(data) {
+  return request({
+    url: 'work/updateWork',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 退出项目
  * @param {*} data
@@ -75,17 +88,17 @@ export function workTaskIndexAPI(data) {
   })
 }
 
-/**
- * 设置任务类别
- * @param {*} data
- */
-export function workTaskClassSetAPI(data) {
-  return request({
-    url: 'task/setTaskClass',
-    method: 'post',
-    data: data
-  })
-}
+// /**
+//  * 设置任务类别 改为 saveWorkTaskClass
+//  * @param {*} data
+//  */
+// export function workTaskClassSetAPI(data) {
+//   return request({
+//     url: 'task/setTaskClass',
+//     method: 'post',
+//     data: data
+//   })
+// }
 
 /**
  * 分类删除

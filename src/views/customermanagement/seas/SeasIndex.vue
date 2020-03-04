@@ -9,7 +9,23 @@
       crm-type="customer"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
-      @on-export="exportInfos"/>
+      @on-export="exportInfos">
+      <el-menu
+        slot="icon"
+        ref="elMenu"
+        default-active="seas"
+        mode="horizontal"
+        active-text-color="#2362FB"
+        @select="menuSelect">
+        <el-menu-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :index="item.path">
+          <img :src="item.icon">
+          <span>{{ item.title }}</span>
+        </el-menu-item>
+      </el-menu>
+    </c-r-m-list-head>
     <div
       v-empty="!crm.pool.index"
       xs-empty-icon="nopermission"
@@ -103,6 +119,7 @@
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
           :total="total"
+          :pager-count="5"
           class="p-bar"
           background
           layout="prev, pager, next, sizes, total, jumper"
@@ -151,11 +168,50 @@ export default {
       poolList: []
     }
   },
-  computed: {},
+  computed: {
+    menuItems() {
+      const temp = []
+      if (this.crm && this.crm.customer) {
+        temp.push({
+          title: '客户',
+          path: 'customer',
+          icon: require('@/assets/img/crm/customer_not.png')
+        })
+      }
+
+      if (this.crm && this.crm.pool) {
+        temp.push({
+          title: '公海',
+          path: 'seas',
+          icon: require('@/assets/img/crm/seas.png')
+        })
+      }
+
+      if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
+        temp.push({
+          title: '附近客户',
+          path: 'nearby',
+          icon: require('@/assets/img/crm/nearby_not.png')
+        })
+      }
+
+      return temp
+    }
+  },
   created() {
     this.getPoolList()
   },
+  deactivated: function() {
+    this.$refs.elMenu.activeIndex = 'seas'
+  },
   methods: {
+    /**
+     * 左侧菜单选择
+     */
+    menuSelect(key, keyPath) {
+      this.$emit('menu-select', key, keyPath)
+    },
+
     /**
      * 公海数据
      */

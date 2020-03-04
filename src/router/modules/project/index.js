@@ -26,20 +26,31 @@ export default [
   },
   {
     ...layout('/project-list'),
+    hidden: true,
     children: [{
       name: 'project-list',
       path: 'project/:id', // 项目
       component: () => import('@/views/projectManagement/project/index'),
-      hidden: true,
       meta: {
-        activeMenu: '/project-list/index'
+        activeMenu: '/project/list'
       }
-    }, {
+    }/** , {
       path: 'index', // 展示用
       meta: {
         title: '项目',
         icon: 'project',
         disabled: true // 禁止next
+      }
+    }*/]
+  },
+  {
+    ...layout(),
+    children: [{
+      path: 'list', // 项目封面列表
+      component: () => import('@/views/projectManagement/project/Corver'),
+      meta: {
+        title: '项目',
+        icon: 'project'
       }
     }]
   },

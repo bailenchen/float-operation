@@ -17,6 +17,13 @@ module.exports = {
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/centerIndex': {
+        target: 'https://www.72crm.com/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/centerIndex': ''
+        }
       }
     },
 

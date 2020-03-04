@@ -229,6 +229,15 @@ div[lazy=loading] {
   cursor: pointer
 }
 
+.can-visit--bold {
+  font-weight: bold;
+}
+
+.header-can-visit-backgroud {
+  background-color: #ebeef5 !important;
+}
+
+
 .can-visit--underline:hover {
   text-decoration: underline;
 }

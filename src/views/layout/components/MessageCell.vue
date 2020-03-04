@@ -26,7 +26,7 @@
 </template>
 
 <script>
-
+// import moment from 'moment'
 export default {
   // 消息cell
   name: 'MessageCell',
@@ -97,13 +97,18 @@ export default {
           icon: 'wk wk-announcement',
           color: '#6995FF',
           type: 'announcement'
+        },
+        schedule: {
+          icon: 'wk wk-schedule',
+          color: '#6995FF',
+          type: 'schedule'
         }
       }
 
       // 1 任务 2 日志 3 oa审批 4公告 5 日程 6 客户管理
       let key = ''
-      if (this.data.label && this.data.label < 5) {
-        key = ['task', 'log', 'examine', 'announcement'][this.data.label - 1]
+      if (this.data.label && this.data.label <= 5) {
+        key = ['task', 'log', 'examine', 'announcement', 'schedule'][this.data.label - 1]
       } else {
         if ([1, 2, 3].includes(this.data.type)) {
           key = 'task'
@@ -204,7 +209,7 @@ export default {
         6: `，拒绝理由：“${this.data.content}”，请及时处理`,
         7: `已经审核通过，请及时查看`,
         8: `，请及时查看`,
-        9: `日程，请及时查看`,
+        9: `的日程，${this.getStartTime(this.data.content)}请及时查看`,
         10: `合同审批，拒绝理由：“${this.data.content}”，请及时处理`,
         11: `合同已经审核通过，请及时查看`,
         12: `回款审批，拒绝理由：“${this.data.content}”，请及时处理`,
@@ -249,7 +254,7 @@ export default {
         if (this.data.isRead == 0) {
           this.$emit('read', this.data.messageId, this.dataIndex)
         }
-        this.$emit('detail', this.typeObj.type, this.data.typeId, this.dataIndex)
+        this.$emit('detail', this.typeObj.type, this.data.typeId, this.dataIndex, this.data)
       }
     },
 
@@ -265,6 +270,21 @@ export default {
      */
     messageDeleteClick() {
       this.$emit('delete', this.data.messageId, this.dataIndex)
+    },
+
+    /**
+     * 日程提醒，多长时间后开始
+     */
+    getStartTime(content) {
+      const timeObj = content ? JSON.parse(content) : { type: 0, value: '' }
+
+      let dataValue = ''
+      if (!timeObj.type) {
+        dataValue = ''
+      } else {
+        dataValue = '将于' + timeObj.value + ['', '分钟', '小时', '天'][timeObj.type] + '后开始, '
+      }
+      return dataValue
     }
   }
 }

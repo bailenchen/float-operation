@@ -92,6 +92,14 @@
       :visible.sync="showFullDetail"
       :crm-type="relationCrmType"
       :id="relationID" />
+
+    <today-list-detail
+      :id="relationID"
+      :show-today-detail="showTodayDetail"
+      :today-detail-data="todayDetailData"
+      @deleteSuccess="todayHandle"
+      @createSuccess="todayHandle"
+      @close="showTodayDetail = false"/>
   </div>
 </template>
 
@@ -105,7 +113,7 @@ import {
 import {
   crmDownImportErrorAPI
 } from '@/api/customermanagement/common'
-
+import TodayListDetail from '@/views/calendar/components/TodayListDetail'
 import SlideView from '@/components/SlideView'
 import NewDialog from '@/views/OAManagement/notice/newDialog'
 import MessageCell from './MessageCell'
@@ -120,6 +128,7 @@ export default {
     SlideView,
     NewDialog,
     MessageCell,
+    TodayListDetail,
     CRMFullScreenDetail: () =>
       import('@/views/customermanagement/components/CRMFullScreenDetail.vue')
   },
@@ -132,6 +141,8 @@ export default {
   },
   data() {
     return {
+      showTodayDetail: false,
+      todayDetailData: {},
       showDetail: false,
       // 1 任务 2 日志 3 oa审批 4公告 5 日程 6 客户管理
       menuLabel: 'all',
@@ -159,6 +170,10 @@ export default {
         name: '客户管理',
         label: 6,
         countKey: 'crmCount'
+      }, {
+        name: '日程',
+        label: 5,
+        countKey: 'eventCount'
       }],
 
       // 公告
@@ -202,14 +217,15 @@ export default {
     }
   },
   watch: {
-    visible(val) {
-      this.showDetail = val
-      if (val) {
-        document.body.appendChild(this.$el)
-        this.$el.addEventListener('click', this.handleDocumentClick, false)
-        this.$el.style.zIndex = getMaxIndex()
-        this.refreshList()
-      }
+    visible: {
+      handler(val) {
+        this.showDetail = val
+        if (val) {
+          this.$el.style.zIndex = getMaxIndex()
+          this.refreshList()
+        }
+      },
+      immediate: true
     },
     showDetail(val) {
       if (!val) {
@@ -220,11 +236,8 @@ export default {
     }
   },
   mounted() {
-    if (this.visible) {
-      document.body.appendChild(this.$el)
-      this.$el.addEventListener('click', this.handleDocumentClick, false)
-      this.$el.style.zIndex = getMaxIndex()
-    }
+    document.body.appendChild(this.$el)
+    this.$el.addEventListener('click', this.handleDocumentClick, false)
   },
 
   beforeDestroy() {
@@ -236,8 +249,12 @@ export default {
   },
   methods: {
     /**
-     * 头部
+     * 日程事件
      */
+    todayHandle() {
+      this.$bus.emit('handleSuccess')
+      this.showTodayDetail = false
+    },
 
     /**
      * 新建公告
@@ -313,7 +330,17 @@ export default {
     /**
      * 查看详情
      */
-    checkCRMDetail(type, id) {
+    checkCRMDetail(type, id, dataIndex, data) {
+      console.log(data.content, type)
+
+      if (type === 'schedule') {
+        this.relationID = id
+        if (data.content) {
+          this.todayDetailData = JSON.parse(data.content)
+        }
+        this.showTodayDetail = true
+        return
+      }
       this.relationID = id
       this.relationCrmType = type
       this.showFullDetail = true
@@ -451,7 +478,7 @@ export default {
 
 .d-view {
   position: fixed;
-  width: 500px;
+  width: 530px;
   top: 0px;
   bottom: 0px;
   right: 0px;

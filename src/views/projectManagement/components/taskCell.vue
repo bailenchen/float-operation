@@ -129,7 +129,7 @@
   </div>
 </template>
 <script type="text/javascript">
-import { workTaskSaveAPI } from '@/api/projectManagement/task'
+import { workTaskStatusSetAPI } from '@/api/projectManagement/projectTask'
 
 import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
 
@@ -157,7 +157,7 @@ export default {
      * 列表标记任务
      */
     taskOverClick(val) {
-      workTaskSaveAPI({
+      workTaskStatusSetAPI({
         taskId: val.taskId,
         status: val.checked ? 5 : 1
       })

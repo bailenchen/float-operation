@@ -1,4 +1,7 @@
 export default {
+  props: {
+    phone: [String, Number]
+  },
   data() {
     return {
       focusKey: null
@@ -20,9 +23,16 @@ export default {
           }
         }
         if (rule.hasOwnProperty('reg') && rule.reg) {
-          if (!(rule.reg.test(value))) {
-            this.setError(key, rule.msg)
-            return false
+          if (rule.required) {
+            if (!(rule.reg.test(value))) {
+              this.setError(key, rule.msg)
+              return false
+            }
+          } else {
+            if (value && !(rule.reg.test(value))) {
+              this.setError(key, rule.msg)
+              return false
+            }
           }
         }
       }

@@ -70,6 +70,7 @@
           :page-sizes="pageSizes"
           :page-size.sync="pageSize"
           :total="total"
+          :pager-count="5"
           class="p-bar"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
