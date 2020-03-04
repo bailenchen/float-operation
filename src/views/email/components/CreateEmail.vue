@@ -105,7 +105,7 @@
       </flexbox>
       <flexbox align="baseline" style="padding-right: 10px;">
         <div class="form-label-three">正文</div>
-        <tinymce v-model="emailcontent" :height="richHeight" class="rich-txt" />
+        <tinymce ref="createTinymce" :inline="true" v-model="emailcontent" :height="richHeight" class="rich-txt" />
       </flexbox>
     </div>
     <el-popover
@@ -202,7 +202,9 @@ export default {
       content: '',
       emailcontent: '',
       signText: '不使用',
-      sendEmailMsg: {} // 发件人信息
+      sendEmailMsg: {}, // 发件人信息
+      addSign: false,
+      signaTime: null // 签名标示
     }
   },
   computed: {
@@ -594,13 +596,35 @@ export default {
      * 签名使用不使用
      */
     handleCommand(command) {
-      this.signText = command
+      // this.signText = command
+      // if (command === '使用') {
+      //   this.emailcontent = this.emailcontent + '<br>' + this.emailMsg.signature || ''
+      // } else {
+      //   console.log(this.emailcontent, '===')
+      //   const index = this.emailcontent.lastIndexOf('<br>')
+      //   this.emailcontent = this.emailcontent.substring(0, index)
+      // }
+      const editor = this.$refs.createTinymce.editor
       if (command === '使用') {
-        this.emailcontent = this.emailcontent + '<br>' + this.emailMsg.signature
+        if (!this.signaTime) {
+          editor.dom.add(editor.getBody(), 'div', null, `<br>`)
+          this.signaTime = new Date().getTime()
+        }
+        const content = `
+      <div>
+          <hr align="left" style="margin: 0 0 10px 0;border: 0;border-bottom:1px solid #E4E5E6;height:0;line-height:0;font-size:0;padding: 20px 0 0 0;width: 50px;">
+          <div style="font-size:14px;font-family:Verdana;color:#000;">
+            ${this.emailMsg.signature || ''}
+          </div>
+        </div>
+        `
+        if (!this.addSign) {
+          this.addSign = true
+          editor.dom.add(editor.getBody(), 'div', { nreadytime: this.signaTime }, content)
+        }
       } else {
-        console.log(this.emailcontent, '===')
-        const index = this.emailcontent.lastIndexOf('<br>')
-        this.emailcontent = this.emailcontent.substring(0, index)
+        this.addSign = false
+        editor.dom.remove(editor.dom.select(`div[nreadytime="${this.signaTime}"]`))
       }
     }
   }
