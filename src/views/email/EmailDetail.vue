@@ -13,7 +13,7 @@
         @on-del="delCurrentEmail"
         @move="handleMove"/>
       <div :style="{ height: emailFileHeight + 'px' }" class="article" >
-        <tinymce :disabled="true" :toolbar="[]" v-model="rowItem.content" :height="richHeight" class="rich-txt" />
+        <tinymce :disabled="true" :toolbar="[]" v-model="rowItem.content" :init="{statusbar: false}" plugins="autoresize" class="rich-txt" />
         <files-list ref="file" :batch-id="rowItem.batchId" @getFileCount="getFileCount"/>
       </div>
     </div>
@@ -290,6 +290,10 @@ export default {
 }
 /deep/ .el-icon-star-on {
   font-size: 20px;
+}
+
+/deep/ .tox-tinymce {
+  border-color: white;
 }
 @import './styles/emaildetail.scss';
 </style>

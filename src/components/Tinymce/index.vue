@@ -79,10 +79,9 @@ export default {
     },
 
     showInit() {
-      return {
+      const initDefault = {
         skin: 'wukong',
         resize: false,
-        height: this.height,
         branding: false,
         language: this.languageTypeList['zh'],
         menubar: this.menubar ? this.menubar : false,
@@ -101,6 +100,16 @@ export default {
         nonbreaking_force_tab: true,
         ...this.init
       }
+
+      /**
+       * statusbar 隐藏底部状态栏
+       */
+
+      if (this.height != undefined) {
+        initDefault.height = this.height
+      }
+
+      return initDefault
     }
   },
   watch: {
