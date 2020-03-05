@@ -22,17 +22,22 @@
               :key="childIndex"
               class="cover-content-item"
               @click="enterDetail(childItem)">
-              <div class="handle-bar">
-                <div :title="childItem.name" class="title text-one-line">{{ childItem.name }}</div>
-                <i
-                  v-if="childItem.authList && childItem.authList.project && childItem.authList.project.setWork"
-                  class="wk wk-circle-edit"
-                  @click.stop="editProjectClick(childItem)"/>
-                <i
-                  :class="{ 'is-collect': childItem.collect == 1 }"
-                  class="wk wk-focus-on"
-                  @click.stop="collectClick(childItem)" />
+
+              <div class="cover-content-item__content">
+                <div class="cover-content-shadow"/>
+                <div class="handle-bar">
+                  <div :title="childItem.name" class="title text-one-line">{{ childItem.name }}</div>
+                  <i
+                    v-if="childItem.authList && childItem.authList.project && childItem.authList.project.setWork"
+                    class="wk wk-circle-edit"
+                    @click.stop="editProjectClick(childItem)"/>
+                  <i
+                    :class="{ 'is-collect': childItem.collect == 1 }"
+                    class="wk wk-focus-on"
+                    @click.stop="collectClick(childItem)" />
+                </div>
               </div>
+
             </div>
             <div
               class="content-cross"
@@ -246,60 +251,99 @@ export default {
   &-item {
     position: relative;
     flex: none;
-    width: 200px;
+    width: 235px;
     margin: 8px;
-    height: 100px;
+    height: 120px;
+    border-radius: $xr-border-radius-base;
     box-shadow: 0 0 0 rgba(0,0,0,0.15);
     transition: box-shadow 0.218s ease;
-    border-radius: $xr-border-radius-base;
-    background-size: 200px 100px;
-    cursor: pointer;
+    transform: translateY(0);
 
-    .handle-bar {
-      text-align: right;
-      margin: 10px;
+    &__content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      box-shadow: 0 0 0 rgba(0,0,0,0.15);
+      transition: box-shadow 0.218s ease;
+      background-size: 235px 120px;
+      background-repeat: no-repeat;
+      cursor: pointer;
 
-      .title {
-        text-align: left;
-        color: white;
-        width: calc(100% - 45px);
-        display: inline-block;
+      .handle-bar {
+        text-align: right;
+        margin: 10px;
+        z-index: 1;
+        z-index: 1;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+
+        .title {
+          text-align: left;
+          color: white;
+          width: calc(100% - 45px);
+          display: inline-block;
+          font-weight: bold;
+        }
+
+        i {
+          color: white;
+          cursor: pointer;
+        }
+
+        .wk-focus-on.is-collect {
+          color: #F7AD3D;
+        }
+
+        .wk-circle-edit {
+          visibility: hidden;
+        }
       }
 
-      i {
-        color: white;
-        cursor: pointer;
-      }
-
-      .wk-focus-on.is-collect {
-        color: #F7AD3D;
-      }
-
-      .wk-circle-edit {
-        visibility: hidden;
+      &:hover {
+        .wk-circle-edit {
+          visibility: visible;
+        }
       }
     }
 
     &:hover {
-      .wk-circle-edit {
-        visibility: visible;
+      transform: translateY(-4px);
+      .cover-content-item__content {
+        box-shadow: 0 6px 12px rgba(38,38,38,0.1);
       }
     }
   }
 
+  &-shadow {
+    background-image: linear-gradient(180deg,rgba(0,0,0,0.5) 0%,transparent);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#59000000",endColorstr="#00000000",GradientType=0);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    z-index: 0;
+  }
+
   .content-cross {
     flex-shrink: 0;
-    width: 200px;
+    width: 235px;
     margin: 8px;
-    height: 100px;
+    height: 120px;
     cursor: pointer;
     border-radius: $xr-border-radius-base;
     position: relative;
     text-align: center;
-    border: 1px #c0ccda solid;
+    border: 1px #e6e6e6 solid;
     margin-bottom: 5px;
     color: #999;
-    background: #EEEDED;
+    background: #f7f7f7;
 
     .wk-l-plus {
       margin-top: 25px;
