@@ -163,7 +163,7 @@
                     >
                       <span class="content-theme">{{ item.theme }}</span>
                       <span class="content-detail">&nbsp;-&nbsp;</span>
-                      <span class="content-detail" v-html="handlContent(item)"/>
+                      <span class="content-detail" v-html="handlContent(item)" />
                     </div>
                   </td>
                   <td class="tb-h-align font-color " style="width: 100px;">
@@ -490,9 +490,9 @@ export default {
       content = content.replace(/(\n)/g, '')
       content = content.replace(/(\t)/g, '')
       content = content.replace(/(\r)/g, '')
+      content = content.replace(/<style>[\s\S]*?<\/style>/ig, '')
       content = content.replace(/<\/?[^>]*>/g, '')
       content = content.replace(/(^\s*)|(\s*$)/g, '')
-      // content = content.replace(/&nbsp;/ig, '')
       if (content.length > 100) {
         content = content.substring(0, 100)
       }
