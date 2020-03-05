@@ -16,54 +16,56 @@
       </div>
 
       <div class="filter-list">
-        <div class="all">
-          <el-checkbox :indeterminate="isIndeterminate" v-model="allCheck" @change="handleAll"/>
-          <span class="all-txt">全部</span>
-        </div>
-
-        <el-checkbox-group v-if="crmType === 'customer'" v-model="customerCheckList" @change="handleSender">
-          <el-checkbox
+        <div v-if="crmType === 'customer'">
+          <div
             v-for="(item, index) in filterList"
             :key="index"
             :label="item.customerId"
-            style="font-size: 12px;"
+            class="item_email"
+            style="font-size: 13px;"
+            @click="listFifter(item)"
           >
             <span class="all">
               {{ item.customerName }}&lt;{{ item.email }}&gt;
             </span>
-          </el-checkbox>
-        </el-checkbox-group>
+          </div>
+        </div>
 
-        <el-checkbox-group v-else-if="crmType === 'contact'" v-model="contactCheckList" @change="handleSender">
-          <el-checkbox
+        <div v-else-if="crmType === 'contact'">
+          <div
             v-for="(item, index) in filterList"
             :key="index"
             :label="item.contactId"
-            style="font-size: 12px;">
+            class="item_email"
+            style="font-size: 13px;"
+            @click="listFifter(item)">
             <span class="all">
               {{ item.customerName }}&lt;{{ item.email }}&gt;
-          </span></el-checkbox>
-        </el-checkbox-group>
+            </span>
+          </div>
+        </div>
 
-        <el-checkbox-group v-else v-model="shortCheckList" @change="handleSender">
-          <el-checkbox
+        <div v-else>
+          <div
             v-for="(item, index) in filterList"
             :key="index"
             :label="item.value"
-            style="font-size: 12px;"
+            class="item_email"
+            style="font-size: 13px;"
+            @click="listFifter(item)"
           >
             <span class="all">
               {{ item.customerName }}&lt;{{ item.email }}&gt;
             </span>
-          </el-checkbox>
-        </el-checkbox-group>
+          </div>
+        </div>
       </div>
       <div class="pagination">
         <el-pagination
           :total="total"
           prev-text="上一页"
           next-text="下一页"
-          layout="prev, next"
+          layout="total,prev, next"
           @current-change="currentChange"/>
       </div>
     </div>
@@ -120,7 +122,6 @@ export default {
       total: 0,
       // 勾选
       allCheck: false,
-      isIndeterminate: true,
       customerCheckList: [], // 客户
       customerList: [],
       contactCheckList: [], // 联系人
@@ -143,7 +144,6 @@ export default {
     getFilterList() {
       this.loading = true
       var crmIndexRequest
-      this.isIndeterminate = true
       if (!this.crmType) {
         crmIndexRequest = emailAccountQueryLatelyAPI
       } else {
@@ -154,7 +154,7 @@ export default {
       }
       var params = {
         page: this.page,
-        limit: 15,
+        limit: 100,
         // page: this.currentPage,
         // limit: this.pageSize,
         search: this.search,
@@ -253,7 +253,6 @@ export default {
         this.shortCheckList = val ? this.checkAllValue : []
       }
 
-      this.isIndeterminate = false
       this.handleSender()
     },
 
@@ -304,15 +303,11 @@ export default {
       const list = []
       let obj = {}
       this.customerCheckList.forEach(item => {
-        this.customerList.forEach(element => {
-          if (element.customerId === item) {
-            obj = {
-              customerName: element.customerName,
-              email: element.email || ''
-            }
-            list.push(obj)
-          }
-        })
+        obj = {
+          customerName: item.customerName,
+          email: item.email || ''
+        }
+        list.push(obj)
       })
       return list
     },
@@ -324,15 +319,11 @@ export default {
       const list = []
       let obj = {}
       this.contactCheckList.forEach(item => {
-        this.contactList.forEach(element => {
-          if (element.customerId === item) {
-            obj = {
-              customerName: element.contactName,
-              email: element.email || ''
-            }
-            list.push(obj)
-          }
-        })
+        obj = {
+          customerName: item.contactName,
+          email: item.email || ''
+        }
+        list.push(obj)
       })
       return list
     },
@@ -344,15 +335,11 @@ export default {
       const list = []
       let obj = {}
       this.shortCheckList.forEach(item => {
-        this.shortList.forEach(element => {
-          if (element.name === item) {
-            obj = {
-              customerName: element.name,
-              email: element.value || ''
-            }
-            list.push(obj)
-          }
-        })
+        obj = {
+          customerName: item.name,
+          email: item.value || ''
+        }
+        list.push(obj)
       })
       return list
     },
@@ -363,6 +350,35 @@ export default {
     currentChange(val) {
       this.page = val
       this.getFilterList()
+    },
+
+    /**
+     * 验重
+     */
+    listFifter(item) {
+      if (this.crmType === 'customer') {
+        this.customerCheckList.forEach((ele, index) => {
+          if (item.customerId === ele.customerId) {
+            this.customerCheckList.splice(index, 1)
+          }
+        })
+        this.customerCheckList.push(item)
+      } else if (this.crmType === 'contact') {
+        this.contactCheckList.forEach((ele, index) => {
+          if (item.customerId === ele.customerId) {
+            this.contactCheckList.splice(index, 1)
+          }
+        })
+        this.contactCheckList.push(item)
+      } else {
+        this.shortCheckList.forEach((ele, index) => {
+          if (item.customerId === ele.customerId) {
+            this.shortCheckList.splice(index, 1)
+          }
+        })
+        this.shortCheckList.push(item)
+      }
+      this.handleSender()
     }
   }
 }
@@ -430,16 +446,27 @@ export default {
 // 列表
 .filter-list {
   width: 100%;
+  height: calc(100% - 100px);
+  overflow-y: auto;
   position: relative;
   padding: 5px 12px 12px 12px;
+  .item_email {
+    line-height: 20px;
+    height: 30px;
+    padding-left: 10px;
+    cursor: pointer;
+  }
+  .item_email:hover {
+    background-color: #F6F8FA;
+  }
   .all {
-    width: 160px;
+    width: 260px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #333333;
-    font-size: 12px;
+    font-size: 13px;
     position: relative;
     top: 6px;
   }

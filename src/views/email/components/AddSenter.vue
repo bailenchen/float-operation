@@ -212,12 +212,14 @@ export default {
     font-size: 12px;
     .receiver-email {
       background: #d7e9ff;
+      margin-top: 5px;
       white-space: nowrap;
       padding: 2px 5px;
       color: #2e3133;
     }
     .icon-wrap {
       background: #d7e9ff;
+      margin-top: 5px;
       margin-left: 1px;
       padding: 2px 5px;
       & :hover {
