@@ -5,7 +5,12 @@
       <div class="current-receiver">
         <div v-if="isHide" class="end-wrap">
           <div :class="{ 'wrong': isCorectEmail(item) }" class="receiver-email">
-            <span v-if="item.customerName">{{ item.customerName }}</span>
+            <span v-if="item.customerName">
+              <b>
+                {{ item.customerName }}
+              </b>
+
+            </span>
             <span :contenteditable="true" @input="inputs($event, item, index)" @blur="blurs">{{ getemail(item.email) }}</span>
           </div>
           <div class="icon-wrap" @click="delEmail(item, index)">

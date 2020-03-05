@@ -639,7 +639,9 @@ tr > td {
 
 .content-table {
   border-bottom: 1px solid #e4e4e4;
-  .content-theme,
+  .content-theme {
+    font-size: 12px;
+  }
   .content-detail {
     font-size: 12px;
     color: #999;

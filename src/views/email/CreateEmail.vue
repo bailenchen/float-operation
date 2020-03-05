@@ -37,16 +37,21 @@ export default {
     // 有收件人或者分别发送人或者分别发送人才有提示
     if (this.$refs.createEmail.receiverLists.length || this.$refs.createEmail.deffientList.length) {
       this.$confirm('内容已被修改, 是否要将此邮件存为草稿?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        distinguishCancelAndClose: true,
+        confirmButtonText: '是',
+        cancelButtonText: '否',
         type: 'warning'
       }).then(() => {
         this.$refs.createEmail.saveDraft('savebtn')
         localStorage.removeItem('crm-emailContent')
         next()
-      }).catch(() => {
-        localStorage.removeItem('crm-emailContent')
-        next()
+      }).catch((action) => {
+        if (action === 'close') {
+          return false
+        } else {
+          localStorage.removeItem('crm-emailContent')
+          next()
+        }
       })
     } else {
       localStorage.removeItem('crm-emailContent')

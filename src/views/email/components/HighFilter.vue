@@ -13,8 +13,34 @@
           placeholder="搜索"
           prefix-icon="el-icon-search"/>
         <el-button type="primary" class="filter-btn" @click="filter">搜索</el-button>
+        <el-button v-if="crmType" type="text" class="filter-btn" @click="highFilter">高级筛选</el-button>
       </div>
+      <flexbox class="select_title" justify="space-between">
+        <div>
+          <span v-if="crmType === 'customer'" class="title_left">
+            {{ customerCheckList.length }}位客户
+          </span>
+          <span v-else-if="crmType === 'contact'" class="title_left">
+            {{ contactList.length }}位联系人
+          </span>
+          <span v-else class="title_left">
+            {{ shortCheckList.length }}个邮箱
+          </span>
+        </div>
 
+        <el-button
+          v-if="allCheck"
+          type="text"
+          style="font-weight: 600"
+          icon="el-icon-circle-check"
+          @click="handleAll(true)">批量选择</el-button>
+        <el-button
+          v-else
+          type="text"
+          style="font-weight: 600"
+          icon="el-icon-circle-close"
+          @click="handleAll(false)">取消批量选择</el-button>
+      </flexbox>
       <div class="filter-list">
         <div v-if="crmType === 'customer'">
           <div
@@ -60,14 +86,19 @@
           </div>
         </div>
       </div>
-      <div class="pagination">
+      <flexbox class="pagination" justify="space-between">
+        <span>隐藏无邮箱数据</span>
+        <el-switch
+          v-model="showIsEmail"
+          active-color="#2362FB"
+          inactive-color="#e6e6e6"/>
         <el-pagination
           :total="total"
           prev-text="上一页"
           next-text="下一页"
           layout="total,prev, next"
           @current-change="currentChange"/>
-      </div>
+      </flexbox>
     </div>
 
     <filter-form
@@ -121,13 +152,14 @@ export default {
       page: 1,
       total: 0,
       // 勾选
-      allCheck: false,
+      allCheck: true,
       customerCheckList: [], // 客户
       customerList: [],
       contactCheckList: [], // 联系人
       contactList: [],
       shortCheckList: [], // 最近
       shortList: [],
+      showIsEmail: true, // 展示没有邮箱的客户
       checkAllCustomer: [], // 所有客户
       checkAllContact: [], // 所有联系人
       checkAllValue: [], // 所有的最近的人
@@ -166,11 +198,12 @@ export default {
       crmIndexRequest(params)
         .then(res => {
           // if (this.crmType === 'customer') {
-          this.handleFoucs(res.data.list)
+          // this.handleFoucs(res.data.list)
           this.filterList = res.data.list
           this.filterList.forEach(item => {
             item.customerName = item.name || item.contactName || item.customerName
             item.email = item.value || item.email
+            item.customerId = item.id || item.contactId || item.customerId
           })
           this.total = res.data.totalRow
           this.loading = false
@@ -194,6 +227,9 @@ export default {
       this.activeIndex = index
       this.crmType = item.crmType
       this.getFilterList()
+      if (this.crmType) {
+        this.getFilterFieldInfo()
+      }
     },
 
     /**
@@ -205,6 +241,10 @@ export default {
       this.getFilterList()
     },
 
+    highFilter() {
+      this.showFilterView = true
+      this.showFilter = true
+    },
     /**
      * 获取高级筛选字段数据
      */
@@ -245,12 +285,13 @@ export default {
      * 点击全选
      */
     handleAll(val) {
+      this.allCheck = !val
       if (this.crmType === 'customer') {
-        this.customerCheckList = val ? this.checkAllCustomer : []
+        this.customerCheckList = val ? this.filterList : []
       } else if (this.crmType === 'contact') {
-        this.contactCheckList = val ? this.checkAllContact : []
+        this.contactCheckList = val ? this.filterList : []
       } else {
-        this.shortCheckList = val ? this.checkAllValue : []
+        this.shortCheckList = val ? this.filterList : []
       }
 
       this.handleSender()
@@ -442,7 +483,22 @@ export default {
   height: 30px;
   line-height: 30px;
 }
-
+.select_title {
+  height: 30px;
+  width: 300px;
+  margin-left: 20px;
+  border-top: 1px solid #e4e4e4;
+  .title_left {
+    font-size: 12px;
+    color: #999;
+  }
+  /deep/.el-icon-circle-check {
+    font-weight: 600;
+  }
+  /deep/.el-icon-circle-close {
+    font-weight: 600;
+  }
+}
 // 列表
 .filter-list {
   width: 100%;
@@ -472,10 +528,15 @@ export default {
   }
 }
 .pagination {
-  right: 20px;
-  line-height: 30px;
-  position: absolute;
-  bottom: 10px;
+  width: 350px;
+  height: 50px;
+  position: relative;
+  padding: 0 10px;
+  font-size: 13px;
+  color: #333;
+  top: -30px;
+  z-index: 10;
+  background-color: #f7f8fa;
   /deep/.btn-next {
     border: 1px solid #e4e4e4;
     padding-left: 5px;

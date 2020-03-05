@@ -1,9 +1,9 @@
 <template>
   <div v-loading="loading" class="email-set">
     <div :class="{ 'left-pic': isHand }" class="left-bg">
-      <img src="~@/assets/img/email/email_set.png" alt="">
+      <img src="@/assets/img/email/email_set.png" alt="">
     </div>
-    <div class="right-form">
+    <!-- <div class="right-form">
       <div class="form-title btitle">验证邮箱账号</div>
       <div class="form-item bottom-height">
         <div class="form-label">邮箱账号</div>
@@ -35,33 +35,73 @@
           <div class="input-check">
             <el-input v-model="receivingServer" class="server-input" placeholder=""/>
             <!-- <el-checkbox v-model="checked" class="port-box"> -->
-            <div class="port-box">
+    <!-- <div class="port-box">
               SLL端口
               <el-input v-model="receivingPort" class="port-input" placeholder=""/>
             </div>
             <!-- </el-checkbox> -->
-          </div>
+    <!-- </div>
         </div>
         <div class="form-item bottom-height">
           <label class="form-label">SMTP服务器</label>
           <div class="input-check">
             <el-input v-model="smtpServer" class="server-input" placeholder=""/>
             <!-- <el-checkbox v-model="checked" class="port-box"> -->
-            <div class="port-box">
+    <!-- <div class="port-box">
               SLL端口
               <el-input v-model="smtpPort" class="port-input" placeholder=""/>
             </div>
             <!-- </el-checkbox> -->
-          </div>
-        </div>
-      </div>
+    <!-- </div>
+        </div>  -->
+    <!-- </div>
       <div class="form-item">
         <div class="form-label"/>
         <div class="tip btn-size">
           <el-button type="primary" class="valid-btn" @click="valid()">验证</el-button>
           <el-button plain @click="autoConfig">{{ isHand ? '自动配置' : '手动配置' }}</el-button>
         </div>
-      </div>
+      </div> -->
+    <!-- </div> -->
+    <div class="right-form">
+      <div class="form-title btitle">验证邮箱账号</div>
+      <el-form ref="ruleForm" :model="form" :rules="rules" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="邮箱账号" prop="emailAccount">
+          <el-input v-model="form.emailAccount"/>
+        </el-form-item>
+        <el-form-item label="邮箱密码" prop="emailPassward">
+          <el-input v-model="form.emailPassward"/>
+          <div class="tip">绑定{{ emailType }}邮箱需要使用【授权码】作为密码绑定。请参考帮助指导。</div>
+        </el-form-item>
+        <template v-if="isHand">
+
+          <el-form-item label="收件服务类型" prop="emailAccount">
+            <el-input v-model="form.receivingServer" class="server-input" placeholder=""/>
+
+            <div class="input-check">
+              <el-checkbox v-model="checked" class="port-box">
+                <div class="port-box">
+                  SLL端口
+                  <el-input v-model="receivingPort" class="port-input" placeholder=""/>
+                </div>
+              </el-checkbox>
+            </div>
+
+          </el-form-item>
+          <el-form-item label="SLL端口" prop="emailAccount">
+            <el-checkbox v-model="checked" class="port-box"/>
+            <el-input :disabled="!checked" v-model="form.receivingPort" class="port-input" placeholder=""/>
+          </el-form-item>
+          <el-form-item label="邮箱密码" prop="emailPassward">
+            <el-input v-model="form.emailPassward"/>
+            <div class="tip">绑定{{ emailType }}邮箱需要使用【授权码】作为密码绑定。请参考帮助指导。</div>
+          </el-form-item>
+        </template>
+        <el-form-item>
+          <el-button type="primary" class="valid-btn" @click="valid">验证</el-button>
+          <el-button plain @click="autoConfig">{{ isHand ? '自动配置' : '手动配置' }}</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -85,10 +125,13 @@ export default {
       typeList: ['SMTP', 'POP3', 'IMAP'],
       isHand: false,
       emailType: '',
+      form: {},
+      rules: {},
       emailParamType: [],
       emailTypeList: ['qq', '163', '126', 'year', 'aliyun', '139', 'foxmail', 'yahoo', 'sina', 'sohu', 'outlook', 'gmail'],
       receivingServer: '',
       receivingPort: '',
+      checked: true,
       smtpServer: '',
       smtpPort: ''
     }
@@ -217,6 +260,10 @@ export default {
     width: 100%;
   }
 }
+.tip {
+   font-size: 12px;
+   line-height: 20px;
+   }
 .email-set {
   width: 1150px;
   margin: 0 auto;
@@ -244,10 +291,6 @@ export default {
         width: 100px !important;
         text-align: left;
         margin-right: 16px;
-      }
-      .tip {
-        font-size: 12px;
-        line-height: 40px;
       }
     }
   }
