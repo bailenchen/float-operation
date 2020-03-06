@@ -9,8 +9,8 @@
       </div>
     </div>
     <flexbox class="new-email">
-      <create-email ref="createEmail" :handle-list="handleList" class="left"/>
-      <high-filter class="right" @handle="handleHigh"/>
+      <create-email ref="createEmail" :handle-list="handleList" class="left" @delete="deletes" @changeType="changeType"/>
+      <high-filter :delete-item="deleteItem" :type="type" class="right" @handle="handleHigh"/>
     </flexbox>
   </div>
 </template>
@@ -27,7 +27,9 @@ export default {
   },
   data() {
     return {
-      handleList: []
+      handleList: [],
+      deleteItem: {},
+      type: 'receive'
     }
   },
   computed: {
@@ -64,6 +66,20 @@ export default {
    */
     handleHigh(data) {
       this.handleList = data
+    },
+
+    /**
+     * 删除的回调
+     */
+    deletes(data) {
+      this.deleteItem = data
+    },
+
+    /**
+     * 聚焦的回调
+     */
+    changeType(type) {
+      this.type = type
     }
   }
 

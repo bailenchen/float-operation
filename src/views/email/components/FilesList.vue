@@ -7,9 +7,9 @@
       <img :src="item.src" width="32px" alt="">
       <div class="item">
         <div class="item_name">
-          {{ item.name }}
+          {{ item.fileName }}
         </div>
-        <el-button type="text" @click="handleFile(item, index)">预览</el-button>
+        <!-- <el-button type="text" @click="handleFile(item, index)">预览</el-button> -->
         <el-button type="text" @click="handleDown(item)">下载</el-button>
       </div>
 
@@ -18,13 +18,18 @@
 </template>
 
 <script>
-import { crmFileIndex, downloadFileAPI } from '@/api/common'
+// import { crmFileIndex, downloadFileAPI } from '@/api/common'
+import { emailGetEmailFileByBatchIdAPI, emailGetDownFileAPI } from '@/api/email/email'
 import { getFileIconWithSuffix, downloadFileWithBuffer } from '@/utils'
 export default {
   name: 'FilesList',
   props: {
     batchId: {
       type: String,
+      default: ''
+    },
+    recordId: {
+      type: [String, Number],
       default: ''
     }
   }, // 接收父组件的方法
@@ -54,10 +59,11 @@ export default {
        * 附件列表
        */
     getFileList() {
-      crmFileIndex({ batchId: this.batchId }).then(res => {
-        this.fileList = res.data.file
+      emailGetEmailFileByBatchIdAPI({ batchId: this.batchId }).then(res => {
+        this.fileList = res.data
         this.fileList.forEach(item => {
-          item.src = this.getFileTypeIcon(item.name)
+          item.name = item.fileName
+          item.src = this.getFileTypeIcon(item.fileName)
         })
         this.$emit('getFileCount', this.fileList)
       }).catch(() => {})
@@ -93,11 +99,11 @@ export default {
      * 下载
      */
     handleDown(item) {
-      downloadFileAPI(item.filePath).then(res => {
+      emailGetDownFileAPI({ id: item.id, recordId: this.recordId }).then(res => {
         const blob = new Blob([res.data], {
           type: ''
         })
-        downloadFileWithBuffer(blob, item.name)
+        downloadFileWithBuffer(blob, item.fileName)
       }).catch(() => {})
     }
   }
@@ -143,6 +149,7 @@ export default {
     padding-left: 15px;
     padding-right: 5px;
 }
+
 </style>
 
 

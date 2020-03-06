@@ -3,66 +3,6 @@
     <div class="left-bg">
       <img src="@/assets/img/email/email_set.png" alt="">
     </div>
-    <!-- <div class="right-form">
-      <div class="form-title btitle">验证邮箱账号</div>
-      <div class="form-item bottom-height">
-        <div class="form-label">邮箱账号</div>
-        <el-input v-model="emailAccount" class="same-width" type="text" @input="changeVal" @change="validDataFormat(emailAccount)"/>
-      </div>
-      <div class="form-item">
-        <div class="form-label">邮箱密码</div>
-        <el-input v-model="emailPassward" class="same-width" type="text"/>
-      </div>
-      <div class="form-item">
-        <div class="form-label"/>
-        <div class="tip">绑定{{ emailType }}邮箱需要使用【授权码】作为密码绑定。请参考帮助指导。</div>
-      </div>
-      <div v-if="isHand" class="auto-config">
-        <div class="form-item bottom-height">
-          <div class="form-label">收件服务类型</div>
-          <template>
-            <el-select v-model="serviceType" class="select-box" placeholder="">
-              <el-option
-                v-for="item in typeList"
-                :key="item"
-                :label="item"
-                :value="item"/>
-            </el-select>
-          </template>
-        </div>
-        <div class="form-item bottom-height">
-          <label class="form-label">收信服务器</label>
-          <div class="input-check">
-            <el-input v-model="receivingServer" class="server-input" placeholder=""/>
-            <!-- <el-checkbox v-model="checked" class="port-box"> -->
-    <!-- <div class="port-box">
-              SLL端口
-              <el-input v-model="receivingPort" class="port-input" placeholder=""/>
-            </div>
-            <!-- </el-checkbox> -->
-    <!-- </div>
-        </div>
-        <div class="form-item bottom-height">
-          <label class="form-label">SMTP服务器</label>
-          <div class="input-check">
-            <el-input v-model="smtpServer" class="server-input" placeholder=""/>
-            <!-- <el-checkbox v-model="checked" class="port-box"> -->
-    <!-- <div class="port-box">
-              SLL端口
-              <el-input v-model="smtpPort" class="port-input" placeholder=""/>
-            </div>
-            <!-- </el-checkbox> -->
-    <!-- </div>
-        </div>  -->
-    <!-- </div>
-      <div class="form-item">
-        <div class="form-label"/>
-        <div class="tip btn-size">
-          <el-button type="primary" class="valid-btn" @click="valid()">验证</el-button>
-          <el-button plain @click="autoConfig">{{ isHand ? '自动配置' : '手动配置' }}</el-button>
-        </div>
-      </div> -->
-    <!-- </div> -->
     <div class="right-form">
       <div class="form-title btitle">验证邮箱账号</div>
       <el-form ref="ruleForm" :model="form" :rules="rules" label-width="100px" style="margin-left: 23px;" class="demo-ruleForm">
@@ -126,7 +66,6 @@
 <script>
 import { emailValidAPI } from '@/api/email/email'
 
-import { regexIsCRMEmail } from '@/utils'
 import { mapGetters } from 'vuex'
 export default {
   // 设置

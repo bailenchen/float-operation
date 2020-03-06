@@ -204,13 +204,40 @@ export function emailRecordShiftEmailAPI(data) {
 }
 
 /**
- * 移动邮件 EmailAccount/queryLately
+ * 移动邮件 EmailRecord/getEmailFileByBatchId
  * @param {*} data
  */
 export function emailAccountQueryLatelyAPI(data) {
   return request({
     url: 'EmailAccount/queryLately',
     method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 查询邮件附件 EmailRecord/downFile
+ * @param {*} data
+ */
+export function emailGetEmailFileByBatchIdAPI(data) {
+  return request({
+    url: 'EmailRecord/getEmailFileByBatchId',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 查询邮件附件 EmailRecord/downFile
+ * @param {*} data
+ */
+export function emailGetDownFileAPI(data) {
+  return request({
+    url: 'EmailRecord/downFile',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     data: data
   })
 }

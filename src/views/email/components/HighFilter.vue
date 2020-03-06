@@ -47,6 +47,7 @@
             v-for="(item, index) in filterList"
             :key="index"
             :label="item.customerId"
+            :class="item.checked ? 'selected' : ''"
             class="item_email"
             style="font-size: 13px;"
             @click="listFifter(item)"
@@ -62,6 +63,7 @@
             v-for="(item, index) in filterList"
             :key="index"
             :label="item.contactsId"
+            :class="item.checked ? 'selected' : ''"
             class="item_email"
             style="font-size: 13px;"
             @click="listFifter(item)">
@@ -76,6 +78,7 @@
             v-for="(item, index) in filterList"
             :key="index"
             :label="item.value"
+            :class="item.checked ? 'selected' : ''"
             class="item_email"
             style="font-size: 13px;"
             @click="listFifter(item)"
@@ -135,6 +138,19 @@ export default {
     filterForm,
     filterContent
   },
+  props: {
+    deleteItem: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    // 聚焦类型
+    type: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       loading: false,
@@ -156,6 +172,19 @@ export default {
       total: 0,
       // 勾选
       allCheck: true,
+      allObj: {
+        receive: {
+          customerCheckList: [],
+          contactCheckList: [],
+          shortCheckList: []
+        },
+        sent: {
+          customerCheckList: [],
+          contactCheckList: [],
+          shortCheckList: []
+        }
+      },
+
       customerCheckList: [], // 客户
       customerList: [],
       contactCheckList: [], // 联系人
@@ -173,6 +202,29 @@ export default {
   watch: {
     showIsEmail() {
       this.getFilterList()
+    },
+
+    deleteItem: {
+      handler(val) {
+        this.allObj[this.type].customerCheckList.forEach((item, index) => {
+          console.log(item.customerName, item.customerName)
+          if (val.item.customerName === item.customerName) {
+            this.allObj[this.type].customerCheckList.splice(index, 1)
+          }
+        })
+        this.allObj[this.type].contactCheckList.forEach((item, index) => {
+          if (val.item.customerName === item.customerName) {
+            this.allObj[this.type].customerCheckList.splice(index, 1)
+          }
+        })
+        this.allObj[this.type].shortCheckList.forEach((item, index) => {
+          if (val.item.customerName === item.customerName) {
+            this.allObj[this.type].customerCheckList.splice(index, 1)
+          }
+        })
+        this.mathChangeColor()
+      },
+      deep: true
     }
   },
   mounted() {
@@ -211,8 +263,6 @@ export default {
             name: 'email',
             value: ''
           }
-        } else {
-          delete (params.data.email)
         }
       } else {
         if (this.showIsEmail) {
@@ -224,8 +274,6 @@ export default {
               value: ''
             }
           }
-        } else {
-          delete (params.data.email)
         }
       }
 
@@ -239,6 +287,7 @@ export default {
             item.customerId = item.id || item.contactsId || item.customerId
           })
           this.total = res.data.totalRow
+          this.mathChangeColor()
           this.loading = false
           // if (res.data.totalRow && Math.ceil(res.data.totalRow / this.pageSize) < this.currentPage && this.currentPage > 1) {
           //   this.currentPage = this.currentPage - 1
@@ -331,16 +380,11 @@ export default {
       const customerList = this.handleCustomer()
       const contactList = this.handleContact()
       const valueList = this.handleValue()
-      let list = [
+      const list = [
         ...customerList,
         ...contactList,
         ...valueList
       ]
-      if (list.length > 100) {
-        list = list.slice(0, 100)
-        this.showErrorMsg = true
-        return false
-      }
       this.$emit('handle', list)
     },
 
@@ -350,7 +394,7 @@ export default {
     handleCustomer() {
       const list = []
       let obj = {}
-      this.customerCheckList.forEach(item => {
+      this.allObj[this.type].customerCheckList.forEach(item => {
         obj = {
           customerName: item.customerName,
           email: item.email || ''
@@ -366,7 +410,7 @@ export default {
     handleContact() {
       const list = []
       let obj = {}
-      this.contactCheckList.forEach(item => {
+      this.allObj[this.type].contactCheckList.forEach(item => {
         obj = {
           customerName: item.customerName,
           email: item.email || ''
@@ -382,7 +426,7 @@ export default {
     handleValue() {
       const list = []
       let obj = {}
-      this.shortCheckList.forEach(item => {
+      this.allObj[this.type].shortCheckList.forEach(item => {
         obj = {
           customerName: item.customerName,
           email: item.value || ''
@@ -405,31 +449,29 @@ export default {
      * 验重
      */
     listFifter(item) {
-      if (!this.handleSender()) {
-        return
-      }
       if (this.crmType === 'customer') {
-        this.customerCheckList.forEach((ele, index) => {
+        this.allObj[this.type].customerCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
-            this.customerCheckList.splice(index, 1)
+            this.allObj[this.type].customerCheckList.splice(index, 1)
           }
         })
-        this.customerCheckList.push(item)
+        this.allObj[this.type].customerCheckList.push(item)
       } else if (this.crmType === 'contacts') {
-        this.contactCheckList.forEach((ele, index) => {
+        this.allObj[this.type].contactCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
-            this.contactCheckList.splice(index, 1)
+            this.allObj[this.type].contactCheckList.splice(index, 1)
           }
         })
-        this.contactCheckList.push(item)
+        this.allObj[this.type].contactCheckList.push(item)
       } else {
-        this.shortCheckList.forEach((ele, index) => {
+        this.allObj[this.type].shortCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
-            this.shortCheckList.splice(index, 1)
+            this.allObj[this.type].shortCheckList.splice(index, 1)
           }
         })
-        this.shortCheckList.push(item)
+        this.allObj[this.type].shortCheckList.push(item)
       }
+      this.mathChangeColor()
       this.handleSender()
     },
 
@@ -439,6 +481,41 @@ export default {
     handleDeleteField(data) {
       this.filterObj = data.obj
       this.getFilterList()
+    },
+
+    /**
+     * 匹配选中的变灰
+     */
+    mathChangeColor() {
+      if (this.crmType === 'customer') {
+        this.filterList.forEach(item => {
+          item.checked = false
+          this.allObj[this.type].customerCheckList.forEach(ele => {
+            if (item.customerId === ele.customerId) {
+              item.checked = true
+            }
+          })
+        })
+      } else if (this.crmType === 'contacts') {
+        this.filterList.forEach(item => {
+          item.checked = false
+          this.allObj[this.type].contactCheckList.forEach(ele => {
+            if (item.customerId === ele.customerId) {
+              item.checked = true
+            }
+          })
+        })
+      } else {
+        this.filterList.forEach(item => {
+          item.checked = false
+          this.allObj[this.type].shortCheckList.forEach(ele => {
+            if (item.customerId === ele.customerId) {
+              item.checked = true
+            }
+          })
+        })
+      }
+      this.filterList = JSON.parse(JSON.stringify(this.filterList))
     }
   }
 }
@@ -528,10 +605,14 @@ export default {
   .item_email {
     line-height: 20px;
     height: 30px;
+    margin-top: 5px;
     padding-left: 10px;
     cursor: pointer;
   }
   .item_email:hover {
+    background-color: #F6F8FA;
+  }
+  .selected {
     background-color: #F6F8FA;
   }
   .all {

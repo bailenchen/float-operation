@@ -28,6 +28,7 @@
       placement="bottom"
       class="enter-input"
       popper-class="source"
+      @focus="focuses"
       @blur="handleAddEmail"
       @keyup.enter.native="handleAddEmail"
       @keyup.delete.native="handleDeleteEmail"
@@ -136,9 +137,9 @@ export default {
      */
     delEmail(item, index) {
       if (this.comType == 'receive') {
-        this.$emit('del-receive', index)
+        this.$emit('del-receive', index, item)
       } else if (this.comType == 'sent') {
-        this.$emit('del-sent', index)
+        this.$emit('del-sent', index, item)
       }
     },
     inputs(e, item, index) {
@@ -153,6 +154,10 @@ export default {
       this.$emit('change', this.emailList)
     },
 
+    focuses() {
+      console.log(this.comType)
+      this.$emit('changeType', this.comType)
+    },
     /**
      * 网址拼接<>
      */

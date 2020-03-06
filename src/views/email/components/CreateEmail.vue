@@ -14,6 +14,7 @@
           <add-senter
             :com-type="receiveType"
             :sent-lists="receiverLists"
+            @changeType="changeType"
             @change="changeReceiverList"
             @add-receive="addReceiveEmail"
             @del-receive="delReceiveEmail"/>
@@ -30,6 +31,7 @@
           <add-senter
             :com-type="sentType"
             :sent-lists="sentLists"
+            @changeType="changeType"
             @change="changeSentList"
             @add-sent="addSentEmail"
             @del-sent="delSentEmail"/>
@@ -44,6 +46,7 @@
         <add-senter
           :com-type="receiveType"
           :sent-lists="deffientList"
+          @changeType="changeType"
           @change="changeReceiverList"
           @add-receive="addReceiveEmail"
           @del-receive="delReceiveEmail"/>
@@ -85,7 +88,7 @@
           </el-upload>
         </div>
 
-        <div class="add-file-wrap" style="margin-left: 10px" @click="addFile">
+        <div class="add-file-wrap" style="margin-left: 10px;margin-top: -1px;" @click="addFile">
           <el-upload
             ref="fileUpload"
             :action="crmFileSaveUrl"
@@ -204,6 +207,7 @@ export default {
       signText: '不使用',
       sendEmailMsg: {}, // 发件人信息
       addSign: false,
+      type: 'receive',
       signaTime: null // 签名标示
     }
   },
@@ -226,8 +230,11 @@ export default {
   watch: {
     handleList: {
       handler(val) {
-        this.receiverLists = val
-        console.log(val)
+        if (this.type === 'receive') {
+          this.receiverLists = val
+        } else if (this.type === 'sent') {
+          this.sentLists = val
+        }
         this.eliminateArray()
       },
       deep: true
@@ -299,8 +306,14 @@ export default {
     /**
      * 手动删除收件人
      */
-    delReceiveEmail(index) {
+    delReceiveEmail(index, item) {
       this.receiverLists.splice(index, 1)
+      this.type = 'receive'
+      this.$emit('changeType', this.type)
+      this.$emit('delete', {
+        item: item,
+        type: 'receive'
+      })
       this.eliminateArray()
     },
 
@@ -315,8 +328,15 @@ export default {
     /**
      * 手动删除抄送人
      */
-    delSentEmail(index) {
+    delSentEmail(index, item) {
       this.sentLists.splice(index, 1)
+      this.type = 'sent'
+      this.$emit('changeType', this.type)
+      this.$emit('delete', {
+        item: item,
+        type: 'sent'
+      })
+      this.eliminateArray()
     },
 
     // 查看图片
@@ -538,12 +558,19 @@ export default {
      */
     changeReceiverList(list) {
       this.receiverLists = list
+      this.eliminateArray()
     },
     changeSentList(list) {
       this.sentLists = list
       this.eliminateArray()
     },
-
+    /**
+     * 更换类型
+     */
+    changeType(type) {
+      this.type = type
+      this.$emit('changeType', type)
+    },
     /**
      * 删除抄送
      */
@@ -572,7 +599,7 @@ export default {
         const item = list[i]
 
         copyList.forEach((ele, index) => {
-          if (ele.email == item.email) {
+          if (ele.customerName == item.customerName) {
             copyList.splice(index, 1)
           }
         })
@@ -690,7 +717,9 @@ export default {
     justify-content: flex-start;
     align-items: center;
   }
-
+/deep/.extra-file {
+  align-items: flex-start;
+}
   /deep/.tox-tinymce {
     flex: 1;
     margin-top: 20px;
@@ -749,7 +778,6 @@ export default {
     justify-content: flex-start;
     align-items: center;
   }
-
   /deep/ .el-icon-document:before {
     content: "\E737";
   }

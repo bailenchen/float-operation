@@ -23,7 +23,7 @@
       <el-button type="plain" size="mini" icon="el-icon-chat-dot-round" @click="reply">回复</el-button>
       <el-button type="plain" size="mini" icon="el-icon-share" @click="share">转发</el-button>
       <el-button type="plain" size="mini" icon="el-icon-delete" @click="delItemEmail">删除</el-button>
-      <el-select v-model="value" placeholder="移动到" @change="changeval">
+      <el-select v-model="value" size="mini" placeholder="移动到" @change="changeval">
         <el-option
           v-for="item in moveList"
           :key="item.value"
