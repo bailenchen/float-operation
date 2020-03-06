@@ -52,9 +52,9 @@
             style="font-size: 13px;"
             @click="listFifter(item)"
           >
-            <span class="all">
+            <el-checkbox v-model="item.checked" class="all">
               {{ item.customerName }}&lt;{{ item.email }}&gt;
-            </span>
+            </el-checkbox>
           </div>
         </div>
 
@@ -67,9 +67,9 @@
             class="item_email"
             style="font-size: 13px;"
             @click="listFifter(item)">
-            <span class="all">
+            <el-checkbox v-model="item.checked" class="all">
               {{ item.customerName }}&lt;{{ item.email }}&gt;
-            </span>
+            </el-checkbox>
           </div>
         </div>
 
@@ -83,9 +83,9 @@
             style="font-size: 13px;"
             @click="listFifter(item)"
           >
-            <span class="all">
+            <el-checkbox v-model="item.checked" class="all">
               {{ item.customerName }}&lt;{{ item.email }}&gt;
-            </span>
+            </el-checkbox>
           </div>
         </div>
       </div>
