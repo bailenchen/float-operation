@@ -21,6 +21,7 @@
       </sidebar>
 
       <el-main
+        v-loading="loading"
         id="workLog-main-container"
         style="padding:0;">
         <app-main/>
@@ -49,6 +50,7 @@ export default {
       emailRouters: emailRouter,
       isRotate: false,
       showIcon: false,
+      loading: false,
       email: '',
       emailIndex: 0
     }
@@ -115,13 +117,16 @@ export default {
      */
     synEmail() {
       this.isRotate = true
+      this.loading = true
       emailRecordReceivingEmailAPI().then(res => {
         this.$bus.emit('synEmail')
         this.$message.success('数据同步成功')
         this.$store.dispatch('GetEmailCount')
         this.isRotate = false
+        this.loading = false
       }).catch(() => {
         this.isRotate = false
+        this.loading = false
       })
     },
 

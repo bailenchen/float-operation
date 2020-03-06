@@ -80,7 +80,7 @@
             name="file"
             multiple
             accept="*.*">
-            <i class="el-icon-link"/>
+            <i class="wk wk-attachment"/>
             <div class="add-file">添加附件</div>
           </el-upload>
         </div>
@@ -98,7 +98,7 @@
             name="file"
             multiple
             accept="image/*">
-            <i class="el-icon-link"/>
+            <i class="wk wk-picture"/>
             <div class="add-file">添加图片</div>
           </el-upload>
         </div>
@@ -823,5 +823,13 @@ export default {
 /deep/.el-dropdown-link {
   font-size: 12px;
   cursor: pointer;
+}
+
+/deep/.wk-attachment{
+  color: #2362FB;
+  font-size: 14px;
+}
+/deep/.wk-picture {
+  color: #24A4FE;
 }
 </style>

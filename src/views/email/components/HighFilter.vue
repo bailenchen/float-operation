@@ -15,33 +15,33 @@
         <el-button type="primary" class="filter-btn" @click="filter">搜索</el-button>
         <el-button v-if="crmType" type="text" class="filter-btn" @click="highFilter">高级筛选</el-button>
       </div>
+      <filter-content
+        v-if="filterObj.form && filterObj.form.length > 0"
+        :obj="filterObj"
+        @delete="handleDeleteField" />
       <flexbox class="select_title" justify="space-between">
         <div>
           <span v-if="crmType === 'customer'" class="title_left">
-            {{ customerCheckList.length }}位客户
+            {{ total }}位客户
           </span>
-          <span v-else-if="crmType === 'contact'" class="title_left">
-            {{ contactList.length }}位联系人
-          </span>
-          <span v-else class="title_left">
-            {{ shortCheckList.length }}个邮箱
+          <span v-else-if="crmType === 'contacts'" class="title_left">
+            {{ total }}位联系人
           </span>
         </div>
 
         <el-button
-          v-if="allCheck"
           type="text"
           style="font-weight: 600"
           icon="el-icon-circle-check"
-          @click="handleAll(true)">批量选择</el-button>
-        <el-button
+          @click="handleAll(true)">选择当前页</el-button>
+          <!-- <el-button
           v-else
           type="text"
           style="font-weight: 600"
           icon="el-icon-circle-close"
-          @click="handleAll(false)">取消批量选择</el-button>
+          @click="handleAll(false)">取消批量选择</el-button> -->
       </flexbox>
-      <div class="filter-list">
+      <div :class="filterObj.form && filterObj.form.length > 0 ? 'list_height' : ''" class="filter-list">
         <div v-if="crmType === 'customer'">
           <div
             v-for="(item, index) in filterList"
@@ -57,11 +57,11 @@
           </div>
         </div>
 
-        <div v-else-if="crmType === 'contact'">
+        <div v-else-if="crmType === 'contacts'">
           <div
             v-for="(item, index) in filterList"
             :key="index"
-            :label="item.contactId"
+            :label="item.contactsId"
             class="item_email"
             style="font-size: 13px;"
             @click="listFifter(item)">
@@ -86,21 +86,24 @@
           </div>
         </div>
       </div>
-      <flexbox class="pagination" justify="space-between">
-        <span>隐藏无邮箱数据</span>
+    </div>
+    <flexbox class="pagination" justify="space-between">
+      <div style="width: 200px;">
+        <span v-show="crmType">隐藏无邮箱数据</span>
         <el-switch
+          v-show="crmType"
           v-model="showIsEmail"
           active-color="#2362FB"
           inactive-color="#e6e6e6"/>
-        <el-pagination
-          :total="total"
-          prev-text="上一页"
-          next-text="下一页"
-          layout="total,prev, next"
-          @current-change="currentChange"/>
-      </flexbox>
-    </div>
+      </div>
 
+      <el-pagination
+        :total="total"
+        prev-text="上一页"
+        next-text="下一页"
+        layout="prev, next"
+        @current-change="currentChange"/>
+    </flexbox>
     <filter-form
       v-if="showFilterView"
       :field-list="fieldList"
@@ -159,11 +162,17 @@ export default {
       contactList: [],
       shortCheckList: [], // 最近
       shortList: [],
+      showErrorMsg: false,
       showIsEmail: true, // 展示没有邮箱的客户
       checkAllCustomer: [], // 所有客户
       checkAllContact: [], // 所有联系人
       checkAllValue: [], // 所有的最近的人
       filterList: [] // 过滤后的列表
+    }
+  },
+  watch: {
+    showIsEmail() {
+      this.getFilterList()
     }
   },
   mounted() {
@@ -193,17 +202,41 @@ export default {
         type: crmTypeModel[this.crmType] // 9是公海
       }
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
-        params.data = this.filterObj.obj
+        params.data = this.filterObj.obj || {}
+        if (this.showIsEmail) {
+        // 如果隐藏无邮箱客户
+          params.data.email = {
+            condition: 'isNot',
+            formType: 'text',
+            name: 'email',
+            value: ''
+          }
+        } else {
+          delete (params.data.email)
+        }
+      } else {
+        if (this.showIsEmail) {
+          params.data = {
+            email: {
+              condition: 'isNot',
+              formType: 'text',
+              name: 'email',
+              value: ''
+            }
+          }
+        } else {
+          delete (params.data.email)
+        }
       }
+
       crmIndexRequest(params)
         .then(res => {
           // if (this.crmType === 'customer') {
-          // this.handleFoucs(res.data.list)
           this.filterList = res.data.list
           this.filterList.forEach(item => {
-            item.customerName = item.name || item.contactName || item.customerName
+            item.customerName = item.name || item.contactsName || item.customerName
             item.email = item.value || item.email
-            item.customerId = item.id || item.contactId || item.customerId
+            item.customerId = item.id || item.contactsId || item.customerId
           })
           this.total = res.data.totalRow
           this.loading = false
@@ -226,6 +259,7 @@ export default {
       this.page = 1
       this.activeIndex = index
       this.crmType = item.crmType
+      this.allCheck = true
       this.getFilterList()
       if (this.crmType) {
         this.getFilterFieldInfo()
@@ -285,41 +319,9 @@ export default {
      * 点击全选
      */
     handleAll(val) {
-      this.allCheck = !val
-      if (this.crmType === 'customer') {
-        this.customerCheckList = val ? this.filterList : []
-      } else if (this.crmType === 'contact') {
-        this.contactCheckList = val ? this.filterList : []
-      } else {
-        this.shortCheckList = val ? this.filterList : []
-      }
-
-      this.handleSender()
-    },
-
-    /**
-     * 处理全部选中的函数
-     */
-    handleFoucs(list) {
-      if (this.crmType === 'customer') {
-        this.checkAllCustomer = []
-        this.customerList = list
-        list.forEach(item => {
-          this.checkAllCustomer.push(item.customerId)
-        })
-      } else if (this.crmType === 'contact') {
-        this.checkAllContact = []
-        this.contactList = list
-        list.forEach(item => {
-          this.checkAllContact.push(item.contactId)
-        })
-      } else {
-        this.checkAllValue = []
-        this.shortList = list
-        list.forEach(item => {
-          this.checkAllValue.push(item.value)
-        })
-      }
+      this.filterList.forEach(item => {
+        this.listFifter(item)
+      })
     },
 
     /**
@@ -329,11 +331,16 @@ export default {
       const customerList = this.handleCustomer()
       const contactList = this.handleContact()
       const valueList = this.handleValue()
-      const list = [
+      let list = [
         ...customerList,
         ...contactList,
         ...valueList
       ]
+      if (list.length > 100) {
+        list = list.slice(0, 100)
+        this.showErrorMsg = true
+        return false
+      }
       this.$emit('handle', list)
     },
 
@@ -361,7 +368,7 @@ export default {
       let obj = {}
       this.contactCheckList.forEach(item => {
         obj = {
-          customerName: item.contactName,
+          customerName: item.customerName,
           email: item.email || ''
         }
         list.push(obj)
@@ -377,7 +384,7 @@ export default {
       let obj = {}
       this.shortCheckList.forEach(item => {
         obj = {
-          customerName: item.name,
+          customerName: item.customerName,
           email: item.value || ''
         }
         list.push(obj)
@@ -390,6 +397,7 @@ export default {
      */
     currentChange(val) {
       this.page = val
+      this.allCheck = true
       this.getFilterList()
     },
 
@@ -397,6 +405,9 @@ export default {
      * 验重
      */
     listFifter(item) {
+      if (!this.handleSender()) {
+        return
+      }
       if (this.crmType === 'customer') {
         this.customerCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
@@ -404,7 +415,7 @@ export default {
           }
         })
         this.customerCheckList.push(item)
-      } else if (this.crmType === 'contact') {
+      } else if (this.crmType === 'contacts') {
         this.contactCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.contactCheckList.splice(index, 1)
@@ -420,6 +431,14 @@ export default {
         this.shortCheckList.push(item)
       }
       this.handleSender()
+    },
+
+    /**
+     * 删除筛选条件
+     */
+    handleDeleteField(data) {
+      this.filterObj = data.obj
+      this.getFilterList()
     }
   }
 }
@@ -502,7 +521,7 @@ export default {
 // 列表
 .filter-list {
   width: 100%;
-  height: calc(100% - 100px);
+  height: calc(100% - 120px);
   overflow-y: auto;
   position: relative;
   padding: 5px 12px 12px 12px;
@@ -527,6 +546,9 @@ export default {
     top: 6px;
   }
 }
+.list_height {
+   height: calc(100% - 170px);
+}
 .pagination {
   width: 350px;
   height: 50px;
@@ -534,7 +556,7 @@ export default {
   padding: 0 10px;
   font-size: 13px;
   color: #333;
-  top: -30px;
+  top: -20px;
   z-index: 10;
   background-color: #f7f8fa;
   /deep/.btn-next {

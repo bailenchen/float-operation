@@ -251,7 +251,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'emailNum']),
+    ...mapGetters(['userInfo', 'emailNum', 'emailMsg']),
     isSender() {
       if (this.emailType === 'sent' || this.emailType === 'draft') {
         return true
@@ -349,11 +349,19 @@ export default {
   beforeDestroy() {},
 
   created() {
+    if (!this.userInfo.emailId) {
+      this.$router.push({ path: '/email/set' })
+      return
+    }
     this.emailType = this.$route.params.type
     this.queryEmailNum()
     this.getEmailList()
   },
   beforeRouteUpdate(to, from, next) {
+    if (!this.userInfo.emailId) {
+      this.$router.push({ path: '/email/set' })
+      return
+    }
     this.emailType = to.params.type
     this.$refs.crmTableHead.headSelectionChange([])
     this.checkLists = []
@@ -375,6 +383,10 @@ export default {
 
   beforeRouteEnter(to, from, next) {
     next(vm => {
+      if (!vm.userInfo.emailId) {
+        vm.$router.push({ path: '/email/set' })
+        return
+      }
       if (to.params.type === 'goTo') {
         vm.emailGoTo = to.query.email
         // 保证页面刷新时，请求正确
