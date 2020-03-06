@@ -233,7 +233,7 @@ export default {
           receiving_server: this.form.receivingServer,
           receiving_ssl: this.form.receivingPort,
           smtp_server: this.form.smtpServer,
-          configuration_mode: 1,
+          configuration_mode: 2,
           smtp_ssl: this.smtpPort
         }
       } else {
@@ -243,7 +243,7 @@ export default {
           receiving_server: `imap.${this.emailType}.com`,
           receiving_ssl: '993',
           smtp_server: `smtp.${this.emailType}.com`,
-          configuration_mode: 2,
+          configuration_mode: 1,
           smtp_ssl: 465
         }
         if (!this.emailType) {
