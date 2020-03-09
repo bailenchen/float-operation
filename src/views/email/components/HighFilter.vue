@@ -112,7 +112,7 @@
       <div style="width: 200px;">
         <span v-show="showFifter">隐藏无邮箱数据</span>
         <el-switch
-          v-show="crmType"
+          v-show="showFifter"
           v-model="showIsEmail"
           active-color="#2362FB"
           inactive-color="#e6e6e6"/>
@@ -172,12 +172,6 @@ export default {
   data() {
     return {
       loading: false,
-      filterNavList: [
-        { name: '最近', crmType: '' },
-        { name: '客户', crmType: 'customer' },
-        { name: '联系人', crmType: 'contacts' },
-        { name: '同事', crmType: 'user' }
-      ],
       activeIndex: 0,
       // 高级筛选
       search: '',
@@ -242,6 +236,19 @@ export default {
       } else {
         return false
       }
+    },
+    filterNavList() {
+      const list = [
+        { name: '最近', crmType: '' }
+      ]
+      if (this.crmType === 'customer') {
+        list.push({ name: '客户', crmType: 'customer' })
+      }
+      if (this.crmType === 'contacts') {
+        list.push({ name: '联系人', crmType: 'contacts' })
+      }
+      list.push({ name: '同事', crmType: 'user' })
+      return list
     }
   },
 
@@ -322,7 +329,7 @@ export default {
             condition: 'isNotNull',
             formType: 'email',
             name: 'email',
-            value: ''
+            value: '1'
           }
         }
       } else {
@@ -332,7 +339,7 @@ export default {
               condition: 'isNotNull',
               formType: 'email',
               name: 'email',
-              value: ''
+              value: '1'
             }
           }
         }
