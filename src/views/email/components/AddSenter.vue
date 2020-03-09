@@ -1,6 +1,6 @@
 
 <template>
-  <flexbox class="add-receive-wrap" justify="flex-start">
+  <flexbox class="add-receive-wrap" justify="flex-start" @click.native="inputFocus">
     <div v-for="(item, index) in emailList" :key="index" class="receiver">
       <div class="current-receiver">
         <div v-if="isHide" class="end-wrap">
@@ -20,6 +20,7 @@
       </div>
     </div>
     <el-autocomplete
+      ref="inputs"
       v-model="val"
       :fetch-suggestions="querySearchAsync"
       :highlight-first-item="true"
@@ -193,6 +194,13 @@ export default {
     handleInputSelect(item) {
       this.val = item.value
       this.handleAddEmail()
+    },
+
+    /**
+     * 点击聚焦
+     */
+    inputFocus() {
+      this.$refs.inputs.focus()
     }
   }
 }
@@ -206,6 +214,7 @@ export default {
   border-radius: 4px;
   background: #fff;
   flex-wrap: wrap;
+  cursor: text;
 }
 
 .current-receiver {
