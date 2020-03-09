@@ -182,7 +182,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .tinymce-container {
   position: relative;
   line-height: normal;

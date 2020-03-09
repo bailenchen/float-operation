@@ -100,7 +100,7 @@ export default {
      */
     handleDown(item) {
       emailGetDownFileAPI({ id: item.id, recordId: this.recordId }).then(res => {
-        const blob = new Blob([res.data], {
+        const blob = new Blob([res], {
           type: ''
         })
         downloadFileWithBuffer(blob, item.fileName)

@@ -30,16 +30,17 @@
         </div>
 
         <el-button
+          v-if="allCheck"
           type="text"
           style="font-weight: 600"
           icon="el-icon-circle-check"
-          @click="handleAll(true)">选择当前页</el-button>
-          <!-- <el-button
+          @click="handleAll(true)">全选</el-button>
+        <el-button
           v-else
           type="text"
           style="font-weight: 600"
           icon="el-icon-circle-close"
-          @click="handleAll(false)">取消批量选择</el-button> -->
+          @click="handleAll(false)">取消全选</el-button>
       </flexbox>
       <div :class="filterObj.form && filterObj.form.length > 0 ? 'list_height' : ''" class="filter-list">
         <div v-if="crmType === 'customer'">
@@ -49,12 +50,12 @@
             :label="item.customerId"
             :class="item.checked ? 'selected' : ''"
             class="item_email"
-            style="font-size: 13px;"
-            @click="listFifter(item)"
-          >
-            <span class="all">
-              {{ item.customerName }}&lt;{{ item.email }}&gt;
-            </span>
+            style="font-size: 13px;">
+            <el-checkbox v-model="item.checked" @change="listFifter(item)">
+              <span class="all">
+                {{ item.customerName }}&lt;{{ item.email }}&gt;
+              </span>
+            </el-checkbox>
           </div>
         </div>
 
@@ -65,11 +66,12 @@
             :label="item.contactsId"
             :class="item.checked ? 'selected' : ''"
             class="item_email"
-            style="font-size: 13px;"
-            @click="listFifter(item)">
-            <span class="all">
-              {{ item.customerName }}&lt;{{ item.email }}&gt;
-            </span>
+            style="font-size: 13px;">
+            <el-checkbox v-model="item.checked" @change="listFifter(item)">
+              <span class="all">
+                {{ item.customerName }}&lt;{{ item.email }}&gt;
+              </span>
+            </el-checkbox>
           </div>
         </div>
 
@@ -80,12 +82,12 @@
             :label="item.value"
             :class="item.checked ? 'selected' : ''"
             class="item_email"
-            style="font-size: 13px;"
-            @click="listFifter(item)"
-          >
-            <span class="all">
-              {{ item.customerName }}&lt;{{ item.email }}&gt;
-            </span>
+            style="font-size: 13px;">
+            <el-checkbox v-model="item.checked" @change="listFifter(item)">
+              <span class="all">
+                {{ item.customerName }}&lt;{{ item.email }}&gt;
+              </span>
+            </el-checkbox>
           </div>
         </div>
       </div>
@@ -206,22 +208,26 @@ export default {
 
     deleteItem: {
       handler(val) {
-        this.allObj[this.type].customerCheckList.forEach((item, index) => {
-          console.log(item.customerName, item.customerName)
-          if (val.item.customerName === item.customerName) {
-            this.allObj[this.type].customerCheckList.splice(index, 1)
-          }
-        })
-        this.allObj[this.type].contactCheckList.forEach((item, index) => {
-          if (val.item.customerName === item.customerName) {
-            this.allObj[this.type].customerCheckList.splice(index, 1)
-          }
-        })
-        this.allObj[this.type].shortCheckList.forEach((item, index) => {
-          if (val.item.customerName === item.customerName) {
-            this.allObj[this.type].customerCheckList.splice(index, 1)
-          }
-        })
+        console.log(val, '==val')
+        if (val.item.model === 'customer') {
+          this.allObj[val.item.sendType].customerCheckList.forEach((item, index) => {
+            if (val.item.customerName === item.customerName) {
+              this.allObj[val.item.sendType].customerCheckList.splice(index, 1)
+            }
+          })
+        } else if (val.item.model === 'contacts') {
+          this.allObj[val.item.sendType].contactCheckList.forEach((item, index) => {
+            if (val.item.customerName === item.customerName) {
+              this.allObj[val.item.sendType].contactCheckList.splice(index, 1)
+            }
+          })
+        } else {
+          this.allObj[val.item.sendType].shortCheckList.forEach((item, index) => {
+            if (val.item.customerName === item.customerName) {
+              this.allObj[val.item.sendType].shortCheckList.splice(index, 1)
+            }
+          })
+        }
         this.mathChangeColor()
       },
       deep: true
@@ -328,6 +334,7 @@ export default {
       this.showFilterView = true
       this.showFilter = true
     },
+
     /**
      * 获取高级筛选字段数据
      */
@@ -368,9 +375,12 @@ export default {
      * 点击全选
      */
     handleAll(val) {
+      this.allCheck = !this.allCheck
       this.filterList.forEach(item => {
-        this.listFifter(item)
+        item.checked = !this.allCheck
+        this.listFifter(item, true)
       })
+      this.mathChangeColor()
     },
 
     /**
@@ -397,6 +407,8 @@ export default {
       this.allObj[this.type].customerCheckList.forEach(item => {
         obj = {
           customerName: item.customerName,
+          sendType: item.sendType,
+          model: 'customer',
           email: item.email || ''
         }
         list.push(obj)
@@ -413,6 +425,8 @@ export default {
       this.allObj[this.type].contactCheckList.forEach(item => {
         obj = {
           customerName: item.customerName,
+          sendType: item.sendType,
+          model: 'contacts',
           email: item.email || ''
         }
         list.push(obj)
@@ -429,6 +443,8 @@ export default {
       this.allObj[this.type].shortCheckList.forEach(item => {
         obj = {
           customerName: item.customerName,
+          sendType: item.sendType,
+          model: 'nearBy',
           email: item.value || ''
         }
         list.push(obj)
@@ -446,33 +462,61 @@ export default {
     },
 
     /**
+     * 选中此行
+     */
+    listFifter(item, bool) {
+      this.addFifter(item)
+      if (!bool) {
+        // 全选是不用每次刷新页面，优化展示速度
+        this.mathChangeColor()
+      }
+      this.handleSender()
+    },
+
+    /**
      * 验重
      */
-    listFifter(item) {
+    addFifter(item) {
       if (this.crmType === 'customer') {
+        if (!this.allCheck) {
+          this.allObj[this.type].customerCheckList[0].allCheck = true
+        }
         this.allObj[this.type].customerCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].customerCheckList.splice(index, 1)
           }
         })
-        this.allObj[this.type].customerCheckList.push(item)
+        if (item.checked) {
+          item.sendType = this.type
+          this.allObj[this.type].customerCheckList.push(item)
+        }
       } else if (this.crmType === 'contacts') {
+        if (!this.allCheck) {
+          this.allObj[this.type].customerCheckList[0].allCheck = true
+        }
         this.allObj[this.type].contactCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].contactCheckList.splice(index, 1)
           }
         })
-        this.allObj[this.type].contactCheckList.push(item)
+        if (item.checked) {
+          item.sendType = this.type
+          this.allObj[this.type].contactCheckList.push(item)
+        }
       } else {
+        if (!this.allCheck) {
+          this.allObj[this.type].customerCheckList[0].allCheck = true
+        }
         this.allObj[this.type].shortCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].shortCheckList.splice(index, 1)
           }
         })
-        this.allObj[this.type].shortCheckList.push(item)
+        if (item.checked) {
+          item.sendType = this.type
+          this.allObj[this.type].shortCheckList.push(item)
+        }
       }
-      this.mathChangeColor()
-      this.handleSender()
     },
 
     /**

@@ -88,22 +88,19 @@
           </el-upload>
         </div>
 
-        <div class="add-file-wrap" style="margin-left: 10px;margin-top: -1px;" @click="addFile">
-          <el-upload
-            ref="fileUpload"
-            :action="crmFileSaveUrl"
-            :headers="httpHeader"
-            :data="{type: 'file', batchId: batchId}"
-            :on-preview="handleFilePreview"
-            :before-remove="handleFileRemove"
-            :on-success="fileUploadImgSuccess"
-            :file-list="imgList"
-            name="file"
-            multiple
-            accept="image/*">
+        <div class="add-img-wrap" @click="addFile">
+          <flexbox @click.native="upLoadImg">
             <i class="wk wk-picture"/>
             <div class="add-file">添加图片</div>
-          </el-upload>
+          </flexbox>
+          <div class="img-item-add">
+            <input
+              ref="imgUpLoad"
+              type="file"
+              class="img-item-iput"
+              accept="image/*"
+              @change="uploadFile">
+          </div>
         </div>
       </flexbox>
       <flexbox align="baseline" style="padding-right: 20px;">
@@ -155,6 +152,7 @@
 import {
   emailSendAPI,
   emailQueryAccountByIdAPI,
+  emailRecordUploadAPI,
   saveDraftBoxAPI } from '@/api/email/email'
 import { crmFileIndex } from '@/api/common'
 import axios from 'axios'
@@ -215,6 +213,9 @@ export default {
     ...mapGetters(['userInfo', 'emailMsg']),
     crmFileSaveUrl() {
       return crmFileSaveUrl
+    },
+    emailRecordUploadAPI() {
+      return emailRecordUploadAPI
     },
     httpHeader() {
       return {
@@ -307,7 +308,11 @@ export default {
      * 手动删除收件人
      */
     delReceiveEmail(index, item) {
-      this.receiverLists.splice(index, 1)
+      this.receiverLists.forEach((ele, index) => {
+        if (ele.customerName === item.customerName) {
+          this.receiverLists.splice(index, 1)
+        }
+      })
       this.type = 'receive'
       this.$emit('changeType', this.type)
       this.$emit('delete', {
@@ -362,8 +367,24 @@ export default {
       this.fileList = fileList
     },
 
-    fileUploadImgSuccess(response, file, fileList) {
-      this.imgList = fileList
+    /**
+     * 图片上传
+     */
+    upLoadImg() {
+      this.$refs.imgUpLoad.click()
+    },
+
+    /**
+     * 选择图片的回调
+     */
+    uploadFile(e) {
+      const files = e.target.files
+      const params = {
+        file: files[0]
+      }
+      emailRecordUploadAPI(params).then(res => {
+        this.$refs.createTinymce.imageSuccessCBK([res])
+      }).catch(() => {})
     },
 
     handleFileRemove(file, fileList) {
@@ -525,9 +546,9 @@ export default {
      * 抄送给
      */
     sentTo() {
-      this.showPopover = true
-      this.showSelectView = true
-      this.acceptEmail = 'sent'
+      // this.showPopover = true
+      // this.showSelectView = true
+      // this.acceptEmail = 'sent'
     },
 
     /** 选中 */
@@ -709,6 +730,7 @@ export default {
   }
   .extra-file {
     margin-top: 15px;
+    position: relative;
   }
   .btn-group {
     margin-bottom: 30px;
@@ -778,6 +800,14 @@ export default {
     justify-content: flex-start;
     align-items: center;
   }
+
+.add-img-wrap {
+  position: absolute;
+  cursor: pointer;
+  left: 90px;
+  top: -1px;
+}
+
   /deep/ .el-icon-document:before {
     content: "\E737";
   }
@@ -798,6 +828,11 @@ export default {
     font-size: 12px;
     color: #2362FB;
   }
+}
+
+.img-item-add {
+  position: absolute;
+  opacity: 0;
 }
 
 .theme-input {

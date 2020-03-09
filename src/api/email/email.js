@@ -216,7 +216,7 @@ export function emailAccountQueryLatelyAPI(data) {
 }
 
 /**
- * 查询邮件附件 EmailRecord/downFile
+ * 查询邮件附件
  * @param {*} data
  */
 export function emailGetEmailFileByBatchIdAPI(data) {
@@ -235,9 +235,25 @@ export function emailGetDownFileAPI(data) {
   return request({
     url: 'EmailRecord/downFile',
     method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
     data: data
+  })
+}
+
+/**
+ * 上传文件（仅适用于富文本）
+ * @param {*} data
+ */
+export function emailRecordUploadAPI(data) {
+  var param = new FormData()
+  Object.keys(data).forEach(key => {
+    param.append(key, data[key])
+  })
+  return request({
+    url: 'EmailRecord/upload',
+    method: 'post',
+    data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
