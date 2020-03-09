@@ -186,7 +186,19 @@ export default {
           shortCheckList: []
         }
       },
-
+      // 记录哪种类型的那几页被选中
+      pageSelect: {
+        receive: {
+          customerPages: {},
+          contactPages: {},
+          shortPages: {}
+        },
+        sent: {
+          customerPages: {},
+          contactPages: {},
+          shortPages: {}
+        }
+      },
       customerCheckList: [], // 客户
       customerList: [],
       contactCheckList: [], // 联系人
@@ -314,7 +326,6 @@ export default {
       this.page = 1
       this.activeIndex = index
       this.crmType = item.crmType
-      this.allCheck = true
       this.getFilterList()
       if (this.crmType) {
         this.getFilterFieldInfo()
@@ -478,7 +489,11 @@ export default {
      */
     addFifter(item) {
       if (this.crmType === 'customer') {
-        this.allObj[this.type].customerCheckList[0].allCheck = this.allCheck
+        console.log(this.pageSelect[this.type].customerPages)
+        if (this.pageSelect[this.type].customerPages) {
+          this.pageSelect[this.type].customerpages[this.page] = !this.allCheck
+        }
+
         this.allObj[this.type].customerCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].customerCheckList.splice(index, 1)
@@ -489,7 +504,12 @@ export default {
           this.allObj[this.type].customerCheckList.push(item)
         }
       } else if (this.crmType === 'contacts') {
-        this.allObj[this.type].customerCheckList[0].allCheck = this.allCheck
+        if (this.allObj[this.type].contactCheckList[0]) {
+          this.allObj[this.type].contactCheckList[0].allCheck = {
+            allCheck: !this.allCheck,
+            page: this.page
+          }
+        }
         this.allObj[this.type].contactCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].contactCheckList.splice(index, 1)
@@ -500,7 +520,12 @@ export default {
           this.allObj[this.type].contactCheckList.push(item)
         }
       } else {
-        this.allObj[this.type].customerCheckList[0].allCheck = this.allCheck
+        if (this.allObj[this.type].shortCheckList[0]) {
+          this.allObj[this.type].shortCheckList[0].allCheck = {
+            allCheck: !this.allCheck,
+            page: this.page
+          }
+        }
         this.allObj[this.type].shortCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].shortCheckList.splice(index, 1)
@@ -527,7 +552,17 @@ export default {
     mathChangeColor() {
       if (this.crmType === 'customer') {
         this.filterList.forEach(item => {
-          item.checked = false
+          // 查看此页是否全部被选中
+          const bool = this.pageSelect[this.type].customerpages[this.page]
+          if (bool) {
+            item.checked = true
+            // 展示取消选中
+            this.allCheck = false
+          } else {
+            item.checked = false
+            this.allCheck = true
+          }
+
           this.allObj[this.type].customerCheckList.forEach(ele => {
             if (item.customerId === ele.customerId) {
               item.checked = true
@@ -536,7 +571,8 @@ export default {
         })
       } else if (this.crmType === 'contacts') {
         this.filterList.forEach(item => {
-          item.checked = false
+          const data = this.allObj[this.type].contactCheckList[0] || {}
+          item.checked = data.allCheck || false
           this.allObj[this.type].contactCheckList.forEach(ele => {
             if (item.customerId === ele.customerId) {
               item.checked = true
@@ -545,7 +581,8 @@ export default {
         })
       } else {
         this.filterList.forEach(item => {
-          item.checked = false
+          const data = this.allObj[this.type].shortCheckList[0] || {}
+          item.checked = data.allCheck || false
           this.allObj[this.type].shortCheckList.forEach(ele => {
             if (item.customerId === ele.customerId) {
               item.checked = true

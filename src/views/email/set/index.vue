@@ -17,7 +17,7 @@
         <template v-if="isHand">
 
           <el-form-item label="收件服务类型" prop="serviceType">
-            <el-select v-model="serviceType" class="select-box" placeholder="">
+            <el-select v-model="form.serviceType" class="select-box" placeholder="">
               <el-option
                 v-for="item in typeList"
                 :key="item"
@@ -173,7 +173,7 @@ export default {
           receiving_ssl: this.form.receivingPort,
           smtp_server: this.form.smtpServer,
           configuration_mode: 2,
-          smtp_ssl: this.smtpPort
+          smtp_ssl: this.form.smtpPort
         }
       } else {
         var params = {
