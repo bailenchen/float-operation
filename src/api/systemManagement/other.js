@@ -59,3 +59,24 @@ export function calendarDeleteAPI(data) {
     data: data
   })
 }
+
+// 查询日志规则接口
+export function oaLogRuleQueryAPI(data) {
+  return request({
+    url: 'OaLog/queryOaLogRuleList',
+    method: 'post',
+    data: data
+  })
+}
+
+// 设置日志规则接口
+export function oaLogRuleSetAPI(data) {
+  return request({
+    url: 'OaLog/setOaLogRule',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data
+  })
+}
