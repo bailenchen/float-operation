@@ -150,6 +150,7 @@ import { usersList } from '@/api/common'
 import filterForm from '../../customermanagement/components/filterForm'
 import filterContent from '../../customermanagement/components/filterForm/filterContent'
 import { emailAccountQueryLatelyAPI } from '@/api/email/email'
+import { mapGetters } from 'vuex'
 export default {
   name: 'HighFilter',
   components: {
@@ -230,6 +231,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['crm']),
     showFifter() {
       if (this.crmType === 'customer' || this.crmType === 'contacts') {
         return true
@@ -241,10 +243,10 @@ export default {
       const list = [
         { name: '最近', crmType: '' }
       ]
-      if (this.crmType === 'customer') {
+      if (this.crm.customer && this.crm.customer.index) {
         list.push({ name: '客户', crmType: 'customer' })
       }
-      if (this.crmType === 'contacts') {
+      if (this.crm.contacts && this.crm.contacts.index) {
         list.push({ name: '联系人', crmType: 'contacts' })
       }
       list.push({ name: '同事', crmType: 'user' })
