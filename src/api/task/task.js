@@ -62,6 +62,16 @@ export function editTaskRelationAPI(data) {
   })
 }
 
+// 编辑项目任务相关信息
+export function editWorkTaskRelationAPI(data) {
+  return request({
+    url: 'task/saveWorkTaskRelation',
+    method: 'post',
+    data: data
+  })
+}
+
+
 // 创建标签
 export function createTagAPI(data) {
   return request({
