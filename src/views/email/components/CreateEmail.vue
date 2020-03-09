@@ -77,6 +77,7 @@
             :headers="httpHeader"
             :data="{type: 'file', batchId: batchId}"
             :on-preview="handleFilePreview"
+            :before-upload="beforeAvatarUpload"
             :before-remove="handleFileRemove"
             :on-success="fileUploadSuccess"
             :file-list="fileList"
@@ -86,6 +87,11 @@
             <i class="wk wk-attachment"/>
             <div class="add-file">添加附件</div>
           </el-upload>
+          <!-- <flexbox v-if="(file,index) in fileList" :key="index">
+            <div>{{ file.name }}</div>
+            <span>{{ file.size }}</span>
+            <el-button>删除</el-button>
+          </flexbox> -->
         </div>
 
         <div class="add-img-wrap" @click="addFile">
@@ -362,9 +368,28 @@ export default {
         })
       }
     },
-
+    /**
+     * 限制附件大小不超过30M
+     */
+    beforeAvatarUpload(file) {
+      const isLt30M = file.size / 1024 / 1024 < 30
+      if (!isLt30M) {
+        this.$confirm('您上传的文件过大，请上传小于30M的文件', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        }).then(() => {
+          return false
+        }).catch(() => {
+          return false
+        })
+      }
+      return isLt30M
+    },
     fileUploadSuccess(response, file, fileList) {
       this.fileList = fileList
+      this.fileList.forEach(file => {
+        file.name = file.name + '（' + Math.floor(file.size / 1024) + 'K）'
+      })
     },
 
     /**
@@ -894,5 +919,9 @@ export default {
 }
 /deep/.wk-picture {
   color: #24A4FE;
+}
+/deep/.el-icon-document {
+  color: #333;
+  font-weight: 600;
 }
 </style>
