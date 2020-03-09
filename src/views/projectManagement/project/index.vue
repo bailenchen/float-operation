@@ -127,10 +127,9 @@ import {
   workWorkDeleteAPI,
   workWorkLeaveAPI,
   workWorkOwnerListAPI,
-  workWorkSaveAPI,
-  workTaskExportAPI
+  workTaskExportAPI,
+  workWorkUpdateAPI
 } from '@/api/projectManagement/project'
-import { workTaskOwnerUserSetAPI } from '@/api/projectManagement/projectTask'
 
 import TaskBoard from './components/taskBoard'
 import Attachment from './components/attachment'
@@ -259,7 +258,7 @@ export default {
      * 编辑成员
      */
     userSelectChange(members, dep) {
-      workTaskOwnerUserSetAPI({
+      workWorkUpdateAPI({
         workId: this.workId,
         ownerUserId: members
           .map(item => {
@@ -346,7 +345,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          workWorkSaveAPI({ workId: this.workId, status: 3 }) // 状态 1启用 2 删除 3归档
+          workWorkUpdateAPI({ workId: this.workId, status: 3 }) // 状态 1启用 2 删除 3归档
             .then(res => {
               this.$message({
                 type: 'success',
