@@ -97,7 +97,7 @@
                 v-for="item in weekDaysOptions"
                 :key="item.value"
                 :label="`每${item.label}`"
-                :value="item.value"/>
+                :value="parseInt(item.value)"/>
             </el-select>
           </el-form-item>
 
@@ -116,7 +116,7 @@
                 v-for="item in weekDaysOptions"
                 :key="item.value"
                 :label="`每${item.label}`"
-                :value="item.value"/>
+                :value="parseInt(item.value)"/>
             </el-select>
           </el-form-item>
 
@@ -255,7 +255,7 @@ export default {
   },
 
   created() {
-    for (let index = 7; index <= 24; index++) {
+    for (let index = 7; index <= 23; index++) {
       this.dayTimeOptions.push(index < 10 ? `0${index}:00` : `${index}:00`)
     }
 
@@ -415,5 +415,9 @@ export default {
 .el-form {
   margin-top: 15px;
   width: 80%;
+}
+
+.user-container {
+  width: 200px;
 }
 </style>
