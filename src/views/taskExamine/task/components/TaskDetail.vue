@@ -558,6 +558,7 @@ import {
 import {
   setTaskAPI,
   editTaskRelationAPI,
+  editWorkTaskRelationAPI,
   deleteTaskAPI,
   commentListAPI,
   setCommentAPI,
@@ -1313,7 +1314,8 @@ export default {
 
     // 相关信息提交按钮
     checkInfos(val) {
-      editTaskRelationAPI({
+      const request = this.workId ? editWorkTaskRelationAPI : editTaskRelationAPI
+      request({
         taskId: this.id,
         customerIds:
           val.customerIds && val.customerIds.length
@@ -1367,7 +1369,8 @@ export default {
               })
               .join(',')
           }
-          editTaskRelationAPI(params)
+          const request = this.workId ? editWorkTaskRelationAPI : editTaskRelationAPI
+          request(params)
             .then(res => {
               this.allData = tempRelatedListData
               this.$message.success('关联取消成功')
