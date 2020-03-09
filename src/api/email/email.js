@@ -235,6 +235,7 @@ export function emailGetDownFileAPI(data) {
   return request({
     url: 'EmailRecord/downFile',
     method: 'post',
+    responseType: 'blob',
     data: data
   })
 }

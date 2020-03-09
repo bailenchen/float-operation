@@ -478,9 +478,7 @@ export default {
      */
     addFifter(item) {
       if (this.crmType === 'customer') {
-        if (!this.allCheck) {
-          this.allObj[this.type].customerCheckList[0].allCheck = true
-        }
+        this.allObj[this.type].customerCheckList[0].allCheck = this.allCheck
         this.allObj[this.type].customerCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].customerCheckList.splice(index, 1)
@@ -491,9 +489,7 @@ export default {
           this.allObj[this.type].customerCheckList.push(item)
         }
       } else if (this.crmType === 'contacts') {
-        if (!this.allCheck) {
-          this.allObj[this.type].customerCheckList[0].allCheck = true
-        }
+        this.allObj[this.type].customerCheckList[0].allCheck = this.allCheck
         this.allObj[this.type].contactCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].contactCheckList.splice(index, 1)
@@ -504,9 +500,7 @@ export default {
           this.allObj[this.type].contactCheckList.push(item)
         }
       } else {
-        if (!this.allCheck) {
-          this.allObj[this.type].customerCheckList[0].allCheck = true
-        }
+        this.allObj[this.type].customerCheckList[0].allCheck = this.allCheck
         this.allObj[this.type].shortCheckList.forEach((ele, index) => {
           if (item.customerId === ele.customerId) {
             this.allObj[this.type].shortCheckList.splice(index, 1)
