@@ -386,7 +386,7 @@
                         <div @click.stop>
                           <el-checkbox
                             v-model="item.checked"
-                            :disabled="getPermission('setChildTaskStatus')"
+                            :disabled="!getPermission('setChildTaskStatus')"
                             @change="subtasksCheckbox(item, $event)" />
                         </div>
                         <div
