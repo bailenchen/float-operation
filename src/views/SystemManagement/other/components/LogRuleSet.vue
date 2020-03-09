@@ -17,7 +17,16 @@
     <div class="content-body">
       <create-sections title="日报规则">
         <el-form ref="dayForm" :model="dayForm" label-width="120px">
-          <el-form-item label="谁需要提交">
+          <el-form-item>
+            <template slot="label">
+              <span>谁需要提交</span>
+              <el-tooltip
+                content="默认全部员工"
+                effect="dark"
+                placement="top">
+                <i class="wk wk-help"/>>
+              </el-tooltip>
+            </template>
             <xh-user-cell
               :value="dayForm.memberUser"
               :radio="false"
@@ -56,7 +65,16 @@
       </create-sections>
       <create-sections title="周报规则">
         <el-form ref="weekForm" :model="weekForm" label-width="120px">
-          <el-form-item label="谁需要提交">
+          <el-form-item>
+            <template slot="label">
+              <span>谁需要提交</span>
+              <el-tooltip
+                content="默认全部员工"
+                effect="dark"
+                placement="top">
+                <i class="wk wk-help"/>>
+              </el-tooltip>
+            </template>
             <xh-user-cell
               :value="weekForm.memberUser"
               :radio="false"
@@ -107,7 +125,16 @@
       </create-sections>
       <create-sections title="月报规则">
         <el-form ref="monthForm" :model="monthForm" label-width="120px">
-          <el-form-item label="谁需要提交">
+          <el-form-item>
+            <template slot="label">
+              <span>谁需要提交</span>
+              <el-tooltip
+                content="默认全部员工"
+                effect="dark"
+                placement="top">
+                <i class="wk wk-help"/>>
+              </el-tooltip>
+            </template>
             <xh-user-cell
               :value="monthForm.memberUser"
               :radio="false"
@@ -308,10 +335,11 @@ export default {
     save() {
       for (const key in this.dayForm) {
         const value = this.dayForm[key]
-        if (key == 'memberUser' && value.length == 0) {
-          this.$message.error('请选择日报谁需要提交')
-          return
-        } else if (key == 'weekDaysOptions' && value.length == 0) {
+        // if (key == 'memberUser' && value.length == 0) {
+        //   this.$message.error('请选择日报谁需要提交')
+        //   return
+        // } else
+        if (key == 'weekDaysOptions' && value.length == 0) {
           this.$message.error('请选择需要统计的日志')
           return
         } else if ((key == 'startTime' || key == 'endTime') && !value) {
@@ -322,10 +350,11 @@ export default {
 
       for (const key in this.weekForm) {
         const value = this.weekForm[key]
-        if (key == 'memberUser' && value.length == 0) {
-          this.$message.error('请选择谁需要提交')
-          return
-        } else if ((key == 'startDay' || key == 'endDay') && !value) {
+        // if (key == 'memberUser' && value.length == 0) {
+        //   this.$message.error('请选择谁需要提交')
+        //   return
+        // } else
+        if ((key == 'startDay' || key == 'endDay') && !value) {
           this.$message.error('请选择周报规则时间')
           return
         }
@@ -334,10 +363,11 @@ export default {
 
       for (const key in this.monthForm) {
         const value = this.monthForm[key]
-        if (key == 'memberUser' && value.length == 0) {
-          this.$message.error('请选择谁需要提交')
-          return
-        } else if ((key == 'startDay' || key == 'endDay') && !value) {
+        // if (key == 'memberUser' && value.length == 0) {
+        //   this.$message.error('请选择谁需要提交')
+        //   return
+        // } else
+        if ((key == 'startDay' || key == 'endDay') && !value) {
           this.$message.error('请选择月报规则时间')
           return
         }
