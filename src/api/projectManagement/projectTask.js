@@ -33,7 +33,7 @@ export function workTaskDeleteAPI(data) {
  */
 export function workTaskClassUpateAPI(data) {
   return request({
-    url: 'task/setWorkTaskClass',
+    url: 'task/updateWorkTaskClass',
     method: 'post',
     data: data
   })

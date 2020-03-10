@@ -101,10 +101,15 @@ export default {
   watch: {},
   created() {
     this.getList()
+    this.$bus.on('add-project', () => {
+      this.getList()
+    })
   },
   mounted() {},
 
-  beforeDestroy() {},
+  beforeDestroy() {
+    this.$bus.off('add-project')
+  },
   methods: {
     tabChange(tab, event) {
       console.log(tab, event)
