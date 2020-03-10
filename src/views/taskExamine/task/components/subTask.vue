@@ -86,6 +86,8 @@ import { workSubTaskAddAPI, workSubTaskUpdateAPI } from '@/api/projectManagement
 import XhUser from '@/components/CreateCom/XhUser'
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 
+import { mapGetters } from 'vuex'
+
 export default {
   components: {
     XhUser
@@ -149,7 +151,11 @@ export default {
       }
 
       return false
-    }
+    },
+
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   watch: {},
   created() {
@@ -185,7 +191,7 @@ export default {
                 name: this.subtasksTextarea,
                 stopTime: this.subtasksDate,
                 taskId: res.data.taskId,
-                mainUser: this.xhUserData.length > 0 ? this.xhUserData[0] : null
+                mainUser: this.xhUserData.length > 0 ? this.xhUserData[0] : this.userInfo
               })
               this.$message.success('子任务创建成功')
               // 创建成功 -- 清除选择
