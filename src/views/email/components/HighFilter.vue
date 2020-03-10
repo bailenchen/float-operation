@@ -243,10 +243,10 @@ export default {
       const list = [
         { name: '最近', crmType: '' }
       ]
-      if (this.crm.customer && this.crm.customer.index) {
+      if (this.crm && this.crm.customer && this.crm.customer.index) {
         list.push({ name: '客户', crmType: 'customer' })
       }
-      if (this.crm.contacts && this.crm.contacts.index) {
+      if (this.crm && this.crm.contacts && this.crm.contacts.index) {
         list.push({ name: '联系人', crmType: 'contacts' })
       }
       list.push({ name: '同事', crmType: 'user' })

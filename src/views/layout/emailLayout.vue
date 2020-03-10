@@ -52,7 +52,8 @@ export default {
       showIcon: false,
       loading: false,
       email: '',
-      emailIndex: 0
+      emailIndex: 0,
+      navIndex: '/email/set'
     }
   },
 
@@ -66,9 +67,6 @@ export default {
     showMenu() {
       const path = this.$route.path
       return path != '/email/set'
-    },
-    navIndex() {
-      return this.userInfo.emailId ? '/email/index/receive' : '/email/set'
     }
   },
 
@@ -87,13 +85,16 @@ export default {
     },
     userInfo: {
       handler(val) {
-        this.getEmailMsg()
+        if (val) {
+          this.navIndex = val.emailId ? '/email/index/receive' : '/email/set'
+          this.getEmailMsg()
+        }
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
     emailNum: {
       handler(val) {
-        console.log(val)
         this.getEmailNumber()
       },
       deep: true
@@ -101,7 +102,6 @@ export default {
   },
 
   created() {
-    this.getEmailMsg()
   },
   methods: {
     navClick(index) {},
