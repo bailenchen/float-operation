@@ -20,7 +20,7 @@
               :close-dep="true"
               @popoverSubmit="userSelectChange">
               <p
-                v-if="permission.setTaskOwnerUser && projectData.isOpen != 1"
+                v-if="permission.setTaskOwnerUser && projectData.isOpen != 1 && permission.setWork"
                 slot="membersDep"
                 @click="projectHandleShow = false">添加项目成员</p>
             </members-dep>
@@ -40,10 +40,10 @@
             <p v-if="permission.excelImport" @click="taskImportShow = true">导入任务</p>
             <p v-if="permission.excelExport" @click="exportClick">导出任务</p>
             <p
-              v-if="permission.archiveTask"
+              v-if="permission.archiveTask && permission.setWork"
               @click="archiveProject">归档项目</p>
             <p
-              v-if="permission.deleteTask"
+              v-if="permission.deleteTask && permission.setWork"
               @click="deleteProject">删除项目</p>
             <p v-if="projectData.isOpen == 0" @click="exitProject">退出项目</p>
           </div>
