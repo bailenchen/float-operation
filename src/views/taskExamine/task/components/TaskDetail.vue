@@ -570,6 +570,7 @@ import {
 } from '@/api/task/task'
 import {
   workTaskStatusSetAPI,
+  workTaskChildStatusSetAPI,
   workTaskTitleSetAPI,
   workTaskDescriptionSetAPI,
   workTaskMainUserSetAPI,
@@ -1072,7 +1073,7 @@ export default {
       //   index: this.detailIndex,
       //   section: this.detailSection
       // })
-      const request = this.workId ? workTaskStatusSetAPI : setTaskAPI
+      const request = this.workId ? workTaskChildStatusSetAPI : setTaskAPI
       request({
         taskId: val.taskId,
         status: e ? 5 : 1

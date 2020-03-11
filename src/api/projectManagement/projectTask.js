@@ -65,6 +65,20 @@ export function workTaskStatusSetAPI(data) {
   })
 }
 
+
+/**
+ *
+ * 完成任务状态
+ * @param {*} data
+ */
+export function workTaskChildStatusSetAPI(data) {
+  return request({
+    url: 'task/setWorkChildTaskStatus',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  *
  * 编辑任务标题
