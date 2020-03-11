@@ -508,7 +508,7 @@ export default {
      */
     handlContent(item) {
       let content = item.content
-      content = content.replace(/<style>[\s\S]*?<\/style>/ig, '')
+      content = content.replace(/<style[\s\S]*?<\/style>/ig, '')
       let div = document.createElement('div')
       div.innerHTML = content
       content = div.innerText || div.textContent
