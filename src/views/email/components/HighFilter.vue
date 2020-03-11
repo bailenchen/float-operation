@@ -494,6 +494,7 @@ export default {
       const contactList = this.handleContact()
       const valueList = this.handleValue()
       const userList = this.handleUser()
+      console.log(valueList, 'value==')
       const list = [
         ...customerList,
         ...contactList,
@@ -550,7 +551,7 @@ export default {
           customerName: item.customerName,
           sendType: item.sendType,
           model: 'nearBy',
-          email: item.value || ''
+          email: item.email || ''
         }
         list.push(obj)
       })

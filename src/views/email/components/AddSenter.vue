@@ -11,7 +11,7 @@
               </b>
 
             </span>
-            <span :contenteditable="true" @input="inputs($event, item, index)" @blur="blurs">{{ getemail(item.email) }}</span>
+            <span :contenteditable="true" @click.stop @input="inputs($event, item, index)" @blur="blurs">{{ getemail(item.email) }}</span>
           </div>
           <div class="icon-wrap" @click="delEmail(item, index)">
             <i class="el-icon-close"/>
