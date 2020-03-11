@@ -20,7 +20,7 @@
               :close-dep="true"
               @popoverSubmit="userSelectChange">
               <p
-                v-if="permission.setTaskOwnerUser && projectData.isOpen != 1"
+                v-if="permission.setTaskOwnerUser && projectData.isOpen != 1 && permission.setWork"
                 slot="membersDep"
                 @click="projectHandleShow = false">添加项目成员</p>
             </members-dep>
@@ -40,10 +40,10 @@
             <p v-if="permission.excelImport" @click="taskImportShow = true">导入任务</p>
             <p v-if="permission.excelExport" @click="exportClick">导出任务</p>
             <p
-              v-if="permission.archiveTask"
+              v-if="permission.archiveTask && permission.setWork"
               @click="archiveProject">归档项目</p>
             <p
-              v-if="permission.deleteTask"
+              v-if="permission.deleteTask && permission.setWork"
               @click="deleteProject">删除项目</p>
             <p v-if="projectData.isOpen == 0" @click="exitProject">退出项目</p>
           </div>
@@ -127,10 +127,9 @@ import {
   workWorkDeleteAPI,
   workWorkLeaveAPI,
   workWorkOwnerListAPI,
-  workWorkSaveAPI,
-  workTaskExportAPI
+  workTaskExportAPI,
+  workWorkUpdateAPI
 } from '@/api/projectManagement/project'
-import { workTaskOwnerUserSetAPI } from '@/api/projectManagement/projectTask'
 
 import TaskBoard from './components/taskBoard'
 import Attachment from './components/attachment'
@@ -259,7 +258,7 @@ export default {
      * 编辑成员
      */
     userSelectChange(members, dep) {
-      workTaskOwnerUserSetAPI({
+      workWorkUpdateAPI({
         workId: this.workId,
         ownerUserId: members
           .map(item => {
@@ -346,7 +345,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          workWorkSaveAPI({ workId: this.workId, status: 3 }) // 状态 1启用 2 删除 3归档
+          workWorkUpdateAPI({ workId: this.workId, status: 3 }) // 状态 1启用 2 删除 3归档
             .then(res => {
               this.$message({
                 type: 'success',

@@ -132,7 +132,7 @@
                   <el-checkbox
                     v-model="element.checked"
                     :disabled="!permission.setTaskStatus"
-                    @change="checkboxChange(element, item)"/>
+                    @change="checkboxChange(element, item, i)"/>
                 </div>
                 <div class="element-label">{{ element.name }}</div>
               </flexbox>
@@ -517,7 +517,7 @@ export default {
     /**
      * 勾选
      */
-    checkboxChange(element, value) {
+    checkboxChange(element, value, fromIndex) {
       if (element.checked) {
         value.checkedNum++
       } else {
@@ -527,7 +527,32 @@ export default {
         taskId: element.taskId,
         status: element.checked ? 5 : 1
       })
-        .then(res => {})
+        .then(res => {
+          if (element.checked) {
+            let toIndex = null
+            for (let index = value.list.length - 1; index < value.list.length; index--) {
+              const taskItem = value.list[index]
+              if (!taskItem.checked) {
+                toIndex = index
+                break
+              }
+            }
+
+            if (toIndex) {
+              value.list.splice(fromIndex, 1)
+              value.list.splice(toIndex, 0, element)
+
+              workTaskUpdateOrderAPI({
+                toList: value.list.map(item => {
+                  return item.taskId
+                }),
+                toId: value.classId
+              })
+                .then(res => {})
+                .catch(() => {})
+            }
+          }
+        })
         .catch(() => {
           if (element.checked) {
             value.checkedNum--
@@ -594,7 +619,8 @@ export default {
     renameTaskListSubmit(val) {
       workTaskClassUpateAPI({
         name: this.editTaskListName,
-        classId: val.classId
+        classId: val.classId,
+        workId: this.workId
       })
         .then(res => {
           val.className = this.editTaskListName

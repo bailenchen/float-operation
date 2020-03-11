@@ -16,6 +16,15 @@
     </div>
     <div class="content-body">
       <create-sections title="日报规则">
+        <div slot="header" :class="{ 'is-inactive': dayForm.status == 0}" class="rule-set">
+          <el-switch
+            v-model="dayForm.status"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#2362FB"/>
+          <span class="label">已启用规则</span>
+        </div>
+
         <el-form ref="dayForm" :model="dayForm" label-width="120px">
           <el-form-item>
             <template slot="label">
@@ -64,6 +73,14 @@
         </el-form>
       </create-sections>
       <create-sections title="周报规则">
+        <div slot="header" :class="{ 'is-inactive': weekForm.status == 0}" class="rule-set">
+          <el-switch
+            v-model="weekForm.status"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#2362FB"/>
+          <span class="label">已启用规则</span>
+        </div>
         <el-form ref="weekForm" :model="weekForm" label-width="120px">
           <el-form-item>
             <template slot="label">
@@ -97,7 +114,7 @@
                 v-for="item in weekDaysOptions"
                 :key="item.value"
                 :label="`每${item.label}`"
-                :value="item.value"/>
+                :value="parseInt(item.value)"/>
             </el-select>
           </el-form-item>
 
@@ -116,7 +133,7 @@
                 v-for="item in weekDaysOptions"
                 :key="item.value"
                 :label="`每${item.label}`"
-                :value="item.value"/>
+                :value="parseInt(item.value)"/>
             </el-select>
           </el-form-item>
 
@@ -124,6 +141,14 @@
         </el-form>
       </create-sections>
       <create-sections title="月报规则">
+        <div slot="header" :class="{ 'is-inactive': monthForm.status == 0}" class="rule-set">
+          <el-switch
+            v-model="monthForm.status"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#2362FB"/>
+          <span class="label">已启用规则</span>
+        </div>
         <el-form ref="monthForm" :model="monthForm" label-width="120px">
           <el-form-item>
             <template slot="label">
@@ -255,7 +280,7 @@ export default {
   },
 
   created() {
-    for (let index = 7; index <= 24; index++) {
+    for (let index = 7; index <= 23; index++) {
       this.dayTimeOptions.push(index < 10 ? `0${index}:00` : `${index}:00`)
     }
 
@@ -280,6 +305,7 @@ export default {
           const dayData = res.data[0] || {}
           this.dayForm = {
             type: dayData.type,
+            status: dayData.status,
             ruleId: dayData.ruleId,
             memberUser: dayData.memberUser || [],
             effectiveDay: dayData.effectiveDay ? dayData.effectiveDay.split(',') : [],
@@ -289,6 +315,7 @@ export default {
           const weekData = res.data[1] || {}
           this.weekForm = {
             type: weekData.type,
+            status: weekData.status,
             ruleId: weekData.ruleId,
             memberUser: weekData.memberUser || [],
             startDay: weekData.startDay,
@@ -297,6 +324,7 @@ export default {
           const monthData = res.data[2] || {}
           this.monthForm = {
             type: monthData.type,
+            status: monthData.status,
             ruleId: monthData.ruleId,
             memberUser: monthData.memberUser || [],
             startDay: monthData.startDay,
@@ -333,45 +361,51 @@ export default {
      * 保存操作
      */
     save() {
-      for (const key in this.dayForm) {
-        const value = this.dayForm[key]
-        // if (key == 'memberUser' && value.length == 0) {
-        //   this.$message.error('请选择日报谁需要提交')
-        //   return
-        // } else
-        if (key == 'weekDaysOptions' && value.length == 0) {
-          this.$message.error('请选择需要统计的日志')
-          return
-        } else if ((key == 'startTime' || key == 'endTime') && !value) {
-          this.$message.error('请选择日报规则时间')
-          return
+      if (this.dayForm.status == 1) {
+        for (const key in this.dayForm) {
+          const value = this.dayForm[key]
+          // if (key == 'memberUser' && value.length == 0) {
+          //   this.$message.error('请选择日报谁需要提交')
+          //   return
+          // } else
+          if (key == 'weekDaysOptions' && value.length == 0) {
+            this.$message.error('请选择需要统计的日志')
+            return
+          } else if ((key == 'startTime' || key == 'endTime') && !value) {
+            this.$message.error('请选择日报规则时间')
+            return
+          }
         }
       }
 
-      for (const key in this.weekForm) {
-        const value = this.weekForm[key]
-        // if (key == 'memberUser' && value.length == 0) {
-        //   this.$message.error('请选择谁需要提交')
-        //   return
-        // } else
-        if ((key == 'startDay' || key == 'endDay') && !value) {
-          this.$message.error('请选择周报规则时间')
-          return
+      if (this.weekForm.status == 1) {
+        for (const key in this.weekForm) {
+          const value = this.weekForm[key]
+          // if (key == 'memberUser' && value.length == 0) {
+          //   this.$message.error('请选择谁需要提交')
+          //   return
+          // } else
+          if ((key == 'startDay' || key == 'endDay') && !value) {
+            this.$message.error('请选择周报规则时间')
+            return
+          }
         }
       }
 
-
-      for (const key in this.monthForm) {
-        const value = this.monthForm[key]
-        // if (key == 'memberUser' && value.length == 0) {
-        //   this.$message.error('请选择谁需要提交')
-        //   return
-        // } else
-        if ((key == 'startDay' || key == 'endDay') && !value) {
-          this.$message.error('请选择月报规则时间')
-          return
+      if (this.monthForm.status == 1) {
+        for (const key in this.monthForm) {
+          const value = this.monthForm[key]
+          // if (key == 'memberUser' && value.length == 0) {
+          //   this.$message.error('请选择谁需要提交')
+          //   return
+          // } else
+          if ((key == 'startDay' || key == 'endDay') && !value) {
+            this.$message.error('请选择月报规则时间')
+            return
+          }
         }
       }
+
       this.loading = true
       const dayForm = { ...this.dayForm }
       dayForm.effectiveDay = dayForm.effectiveDay.join(',')
@@ -415,5 +449,21 @@ export default {
 .el-form {
   margin-top: 15px;
   width: 80%;
+}
+
+.user-container {
+  width: 200px;
+}
+
+.rule-set {
+  margin-left: 8px;
+
+  &.is-inactive {
+    color: #E2E2E2;
+  }
+
+  .label {
+    font-size: 13px;
+  }
 }
 </style>

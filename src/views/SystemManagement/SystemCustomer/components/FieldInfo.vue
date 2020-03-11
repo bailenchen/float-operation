@@ -30,6 +30,7 @@
       </div>
       <el-radio-group
         v-if="field.formType == 'select'"
+        ref="radioGroup"
         v-model="field.defaultValue"
         :disabled="disabled">
         <draggable
@@ -45,7 +46,9 @@
               <el-input
                 v-model="item.value"
                 :disabled="disabled"
-                class="input"/>
+                class="input"
+                @focus="radioInputChange(field)"
+                @blur="radioInputChange(field)"/>
             </el-radio>
             <i
               class="el-icon-circle-plus handle"
@@ -72,7 +75,9 @@
             <el-input
               v-model="item.value"
               :disabled="disabled"
-              class="input"/>
+              class="input"
+              @focus="checkboxInputChange(field)"
+              @blur="checkboxInputChange(field)"/>
             <i
               class="el-icon-circle-plus handle"
               @click.stop="handleCheckbox('add', item, index)"/>
@@ -327,6 +332,23 @@ export default {
         ? (this.field.defaultValue = '')
         : (this.field.defaultValue = val)
     },
+
+    radioInputChange(field) {
+      if (this.field.defaultValue) {
+        let has = false
+        for (let index = 0; index < field.showSetting.length; index++) {
+          const item = field.showSetting
+          if (this.field.defaultValue == item.value) {
+            has = true
+          }
+        }
+
+        if (!has) {
+          this.field.defaultValue = ''
+        }
+      }
+    },
+
     /**
      * 多选
      */
@@ -347,6 +369,25 @@ export default {
         this.field.showSetting.splice(index, 1)
       }
     },
+
+    checkboxInputChange(field) {
+      if (this.field.defaultValue && this.field.defaultValue.length) {
+        const datas = this.field.showSetting.map(item => item.value)
+        const newValue = []
+
+        for (let index = 0; index < this.field.defaultValue.length; index++) {
+          const item = this.field.defaultValue[index]
+          if (datas.includes(item)) {
+            newValue.push(item)
+          }
+        }
+
+        if (this.field.defaultValue.length != newValue.length) {
+          this.field.defaultValue = newValue
+        }
+      }
+    },
+
     /** * 输入默认值触发 */
     inputBlur(e) {
       if (this.field.formType == 'mobile' && this.field.defaultValue) {

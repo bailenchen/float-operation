@@ -135,7 +135,7 @@
 
 <script>
 import {
-  workWorkSaveAPI,
+  workWorkUpdateAPI,
   workWorkOwnerDelAPI,
   workWorkAddUserGroupAPI,
   workWorkGroupListAPI
@@ -253,7 +253,7 @@ export default {
     submite() {
       if (this.tabType == 'base') {
         this.loading = true
-        workWorkSaveAPI({
+        workWorkUpdateAPI({
           name: this.setTitle,
           color: this.setColor,
           isOpen: this.setIsOpen,
@@ -297,7 +297,7 @@ export default {
      * 编辑成员
      */
     userSelectChange(members, dep) {
-      workWorkSaveAPI({
+      workWorkUpdateAPI({
         workId: this.workId,
         ownerUserId: members
           .map(item => {

@@ -33,7 +33,7 @@ export function workTaskDeleteAPI(data) {
  */
 export function workTaskClassUpateAPI(data) {
   return request({
-    url: 'task/setWorkTaskClass',
+    url: 'task/updateWorkTaskClass',
     method: 'post',
     data: data
   })
@@ -60,6 +60,20 @@ export function workTaskSaveAPI(data) {
 export function workTaskStatusSetAPI(data) {
   return request({
     url: 'task/setWorkTaskStatus',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
+ *
+ * 完成任务状态
+ * @param {*} data
+ */
+export function workTaskChildStatusSetAPI(data) {
+  return request({
+    url: 'task/setWorkChildTaskStatus',
     method: 'post',
     data: data
   })

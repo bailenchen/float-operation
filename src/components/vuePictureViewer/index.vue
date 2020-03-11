@@ -29,10 +29,10 @@
             :src="bigShowType.icon"
             class="file-icon">
           <div class="file-handle">
-            <!-- <el-button
+            <el-button
               type="primary"
               plain
-              @click.native="previewFile">预览</el-button> -->
+              @click.native="previewFile">预览</el-button>
             <el-button
               type="primary"
               @click.native="downloadFile">下载</el-button>
@@ -478,7 +478,9 @@ export default {
       if (this.currentFile.url) {
         const urlS = this.currentFile.url.split('?')
         const url = urlS.length > 1 ? urlS[1] : ''
-        window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
+        // https://file.72crm.com/onlinePreview?fileId=949051ca66ed45ca8a1bacae0e862d32
+        // window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
+        window.open(`https://file.72crm.com/onlinePreview?${url}`)
       }
     },
     getShowTypeInfo(name) {

@@ -17,14 +17,12 @@
             class="cover-content"
             @end="moveItem">
             <div
-              v-src:background-image="childItem.coverUrl || defaultCorverUrl"
               v-for="(childItem, childIndex) in item.list"
               :key="childIndex"
               class="cover-content-item"
               @click="enterDetail(childItem)">
 
-              <div class="cover-content-item__content">
-                <div class="cover-content-shadow"/>
+              <div v-src:background-image="childItem.coverUrl || defaultCorverUrl" class="cover-content-item__content">
                 <div class="handle-bar">
                   <div :title="childItem.name" class="title text-one-line">{{ childItem.name }}</div>
                   <i
@@ -36,14 +34,19 @@
                     class="wk wk-focus-on"
                     @click.stop="collectClick(childItem)" />
                 </div>
+                <div class="cover-content-item__content-shadow"/>
               </div>
 
             </div>
             <div
-              class="content-cross"
+              class="cover-content-item content-cross"
               @click="createProjectClick">
-              <i class="wk wk-l-plus" />
-              <div>创建新项目</div>
+              <div class="content-cross__content">
+                <flexbox justify="center" align="center" orient="vertical">
+                  <i class="wk wk-l-plus" />
+                  <div>创建新项目</div>
+                </flexbox>
+              </div>
             </div>
           </draggable>
         </el-tab-pane>
@@ -101,10 +104,15 @@ export default {
   watch: {},
   created() {
     this.getList()
+    this.$bus.on('add-project', () => {
+      this.getList()
+    })
   },
   mounted() {},
 
-  beforeDestroy() {},
+  beforeDestroy() {
+    this.$bus.off('add-project')
+  },
   methods: {
     tabChange(tab, event) {
       console.log(tab, event)
@@ -247,39 +255,38 @@ export default {
   align-items: stretch;
   flex-wrap: wrap;
   flex-direction: row;
+  padding-top: 8px;
 
   &-item {
     position: relative;
     flex: none;
     width: 235px;
-    margin: 8px;
-    height: 120px;
-    border-radius: $xr-border-radius-base;
-    box-shadow: 0 0 0 rgba(0,0,0,0.15);
-    transition: box-shadow 0.218s ease;
+    height: 0;
+    padding: 8px;
     transform: translateY(0);
+    margin-bottom: 20px;
+
 
     &__content {
       position: absolute;
       top: 0;
-      left: 0;
-      right: 0;
+      left: 8px;
+      right: 8px;
       bottom: 0;
       box-shadow: 0 0 0 rgba(0,0,0,0.15);
       transition: box-shadow 0.218s ease;
-      background-size: 235px 120px;
-      background-repeat: no-repeat;
       cursor: pointer;
+      border-radius: $xr-border-radius-base;
+
+      background-position: 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
 
       .handle-bar {
         text-align: right;
         margin: 10px;
-        z-index: 1;
-        z-index: 1;
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
+        z-index: 1222222222;
+        position: relative;
 
         .title {
           text-align: left;
@@ -303,6 +310,20 @@ export default {
         }
       }
 
+      &-shadow {
+        background-image: linear-gradient(180deg,rgba(0,0,0,0.5) 0%,transparent);
+        background-repeat: repeat-x;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#59000000",endColorstr="#00000000",GradientType=0);
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border-radius: 4px 4px 0 0;
+        z-index: 0;
+      }
+
+
       &:hover {
         .wk-circle-edit {
           visibility: visible;
@@ -318,46 +339,80 @@ export default {
     }
   }
 
-  &-shadow {
-    background-image: linear-gradient(180deg,rgba(0,0,0,0.5) 0%,transparent);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#59000000",endColorstr="#00000000",GradientType=0);
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    border-radius: 4px 4px 0 0;
-    z-index: 0;
+
+  @media screen and (max-width: 900px) {
+    .cover-content-item {
+      width: 33.3%;
+      padding-bottom: calc(16.65% - 16px);
+    }
   }
 
-  .content-cross {
-    flex-shrink: 0;
-    width: 235px;
-    margin: 8px;
-    height: 120px;
-    cursor: pointer;
-    border-radius: $xr-border-radius-base;
-    position: relative;
-    text-align: center;
-    border: 1px #e6e6e6 solid;
-    margin-bottom: 5px;
-    color: #999;
-    background: #f7f7f7;
-
-    .wk-l-plus {
-      margin-top: 25px;
-      display: inline-block;
-      font-size: 16px;
+    @media screen and (min-width: 900px)  and (max-width: 1280px) {
+      .cover-content-item {
+        width: 25%;
+        padding-bottom: calc(12.5% - 16px);
+      }
     }
 
-    div {
-      margin-top: 10px;
+
+  @media screen and (min-width: 1280px)  and (max-width: 1680px) {
+    .cover-content-item {
+      width: 20%;
+      padding-bottom: calc(10% - 16px);
+    }
+  }
+
+
+  @media screen and (min-width: 1680px)  and (max-width: 1920px) {
+    .cover-content-item {
+      width: 16.6%;
+      padding-bottom: calc(8.3% - 16px);
+    }
+  }
+
+  @media screen and (min-width: 1921px) {
+    .cover-content-item {
+      width: 16.6%;
+      padding-bottom: calc(8.3% - 16px);
+    }
+  }
+
+
+  .content-cross {
+
+    &__content {
+      position: absolute;
+      top: 0;
+      left: 8px;
+      right: 8px;
+      bottom: 0;
+      border: 1px #e6e6e6 solid;
+      border-radius: $xr-border-radius-base;
+      background: #f7f7f7;
+      text-align: center;
+      cursor: pointer;
+
+      .vux-flexbox {
+        height: 100%;
+        .wk-l-plus {
+          display: inline-block;
+          font-size: 16px;
+        }
+
+        div {
+          margin-top: 10px;
+        }
+      }
+
+
+      &:hover {
+        background: rgba($color: $xr-color-primary, $alpha: 0.1);
+        color: $xr-color-primary;
+      }
     }
 
     &:hover {
-      background: rgba($color: $xr-color-primary, $alpha: 0.1);
-      color: $xr-color-primary;
+      transform: translateY(0);
     }
   }
 }

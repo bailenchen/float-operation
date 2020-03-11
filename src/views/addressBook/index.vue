@@ -33,18 +33,11 @@
         border
         class="n-table--border"
         @sort-change="sortTableList">
-        <!-- <el-table-column
-          sortable="custom"
-          label="排序"
+        <el-table-column
+          label="字母"
           align="center"
-          prop="startEn"
-          width="90">
-          <template slot-scope="scope">
-            <span v-if="specialRowArr.includes(scope.$index)">
-              {{ scope.row.initial || '' }}
-            </span>
-          </template>
-        </el-table-column> -->
+          prop="initial"
+          width="90"/>
         <el-table-column
           prop="name"
           label="关注"

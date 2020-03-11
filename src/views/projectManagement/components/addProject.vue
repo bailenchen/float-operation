@@ -97,6 +97,18 @@
               :value="item.value"/>
           </el-select>
         </div>
+        <div v-if="openType == 1" class="describe">
+          <div class="label">成员权限</div>
+          <el-select
+            v-model="ownerRole"
+            placeholder="请选择">
+            <el-option
+              v-for="item in projectRoleList"
+              :key="item.roleId"
+              :label="`${item.roleName}：${item.remark}`"
+              :value="item.roleId"/>
+          </el-select>
+        </div>
         <div
           v-if="openType == 0"
           class="member">
@@ -137,6 +149,9 @@ import {
   workWorkUpdateAPI,
   workWorkReadAPI
 } from '@/api/projectManagement/project'
+import {
+  systemRoleQueryProjectRoleListAPI
+} from '@/api/systemManagement/project'
 
 import MembersDep from '@/components/selectEmployee/membersDep'
 import CreateView from '@/components/CreateView'
@@ -161,6 +176,7 @@ export default {
       batchId: guid(),
       description: '',
       typeColor: '#53D397',
+      projectRoleList: [],
       typeColorList: [
         '#53D397',
         '#20C1BD',
@@ -203,6 +219,7 @@ export default {
         }
       ],
       openType: 0,
+      ownerRole: '',
       openOptions: [
         {
           value: 0,
@@ -233,6 +250,8 @@ export default {
     if (this.id) {
       this.getDetail()
     }
+
+    this.getProjectRoleList()
   },
 
   mounted() {
@@ -261,6 +280,7 @@ export default {
           this.description = data.description
           this.typeColor = data.color
           this.openType = data.isOpen
+          this.ownerRole = data.ownerRole
           if (this.openType == 0) {
             this.selectUserList = data.ownerUser || []
           }
@@ -308,6 +328,8 @@ export default {
             return item.userId
           })
           .join(',')
+      } else {
+        params.ownerRole = this.ownerRole
       }
 
       if (this.id) {
@@ -320,7 +342,7 @@ export default {
           this.loading = false
           this.$message.success('新建成功')
           this.$emit('save-success')
-          // this.$bus.$emit('add-project', this.name, res.work.workId)
+          this.$bus.emit('add-project', this.name, res.work.workId)
           this.close()
         })
         .catch(() => {
@@ -392,6 +414,24 @@ export default {
             type: 'info',
             message: '已取消操作'
           })
+        })
+    },
+
+    /**
+     * 获取列表数据
+     */
+    getProjectRoleList() {
+      this.loading = true
+      systemRoleQueryProjectRoleListAPI()
+        .then(res => {
+          this.projectRoleList = res.data || []
+          if (this.projectRoleList.length) {
+            this.ownerRole = this.projectRoleList[0].roleId
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
         })
     }
   }
@@ -481,6 +521,10 @@ $color3: #333;
 
   .describe {
     margin-top: 12px;
+
+    .el-select {
+      width: 40%;
+    }
   }
 
   .cover {
