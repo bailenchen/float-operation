@@ -619,7 +619,8 @@ export default {
     renameTaskListSubmit(val) {
       workTaskClassUpateAPI({
         name: this.editTaskListName,
-        classId: val.classId
+        classId: val.classId,
+        workId: this.workId
       })
         .then(res => {
           val.className = this.editTaskListName

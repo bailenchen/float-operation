@@ -17,6 +17,7 @@
     </el-tabs>
 
     <span
+      v-if="completeInfo.status !== 0"
       class="complete-btn"
       @click="completeClick">
       <i
@@ -531,7 +532,6 @@ export default {
       })
         .then(res => {
           this.completeInfo = res.data
-          console.log('123', res)
         })
         .catch(() => {})
     }
