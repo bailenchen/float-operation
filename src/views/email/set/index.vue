@@ -21,62 +21,65 @@
       </flexbox>
       <img width="80px" src="@/assets/img/email/Outlook.png" alt="">
     </div>
-    <div class="right-form">
-      <div class="form-title btitle">验证邮箱账号</div>
-      <el-form ref="ruleForm" :model="form" :rules="rules" label-width="100px" style="margin-left: 23px;" class="demo-ruleForm">
-        <el-form-item label="邮箱账号" prop="emailAccount">
-          <el-input v-model="form.emailAccount" placeholder="请输入您的邮箱帐号" @blur="emailValid(form.emailAccount)"/>
-        </el-form-item>
-        <el-form-item label="邮箱密码" prop="emailPassward" >
-          <el-input v-model="form.emailPassward" type="password" placeholder="QQ、163等邮箱请使用授权码"/>
-        </el-form-item>
-        <div class="tip">授权码可在邮箱的【设置】-【账户】页面生成</div>
-
-        <template v-if="isHand">
-
-          <el-form-item label="收件服务类型" prop="serviceType">
-            <el-select v-model="form.serviceType" class="select-box" placeholder="">
-              <el-option
-                v-for="item in typeList"
-                :key="item"
-                :label="item"
-                :value="item"/>
-            </el-select>
+    <flexbox class="right-form">
+      <div>
+        <div class="form-title btitle">验证邮箱账号</div>
+        <el-form ref="ruleForm" :model="form" :rules="rules" label-width="100px" style="margin-left: 23px;width:500px" class="demo-ruleForm">
+          <el-form-item label="邮箱账号" prop="emailAccount">
+            <el-input v-model="form.emailAccount" placeholder="请输入您的邮箱帐号" @blur="emailValid(form.emailAccount)"/>
           </el-form-item>
-
-          <el-form-item label="收信服务器" required>
-            <el-col :span="12">
-              <el-form-item prop="receivingServer">
-                <el-input v-model="form.receivingServer" class="port-input" placeholder=""/>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item label="SLL端口" prop="receivingPort" class="form_init">
-                <el-input v-model="form.receivingPort" placeholder=""/>
-              </el-form-item>
-            </el-col>
+          <el-form-item label="邮箱密码" prop="emailPassward" >
+            <el-input v-model="form.emailPassward" type="password" placeholder="QQ、163等邮箱请使用授权码"/>
           </el-form-item>
+          <div class="tip">授权码可在邮箱的【设置】-【账户】页面生成</div>
 
-          <el-form-item label="SMTP服务器" required>
-            <el-col :span="12">
-              <el-form-item prop="smtpServer">
-                <el-input v-model="form.smtpServer" placeholder=""/>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="SLL端口" prop="smtpPort" class="form_init">
-                <el-input v-model="form.smtpPort" class="port-input" placeholder=""/>
-              </el-form-item>
-            </el-col>
+          <template v-if="isHand">
 
+            <el-form-item label="收件服务类型" prop="serviceType">
+              <el-select v-model="form.serviceType" class="select-box" placeholder="">
+                <el-option
+                  v-for="item in typeList"
+                  :key="item"
+                  :label="item"
+                  :value="item"/>
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="收信服务器" required>
+              <el-col :span="12">
+                <el-form-item prop="receivingServer">
+                  <el-input v-model="form.receivingServer" class="port-input" placeholder=""/>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="12">
+                <el-form-item label="SLL端口" prop="receivingPort" class="form_init">
+                  <el-input v-model="form.receivingPort" placeholder=""/>
+                </el-form-item>
+              </el-col>
+            </el-form-item>
+
+            <el-form-item label="SMTP服务器" required>
+              <el-col :span="12">
+                <el-form-item prop="smtpServer">
+                  <el-input v-model="form.smtpServer" placeholder=""/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="SLL端口" prop="smtpPort" class="form_init">
+                  <el-input v-model="form.smtpPort" class="port-input" placeholder=""/>
+                </el-form-item>
+              </el-col>
+
+            </el-form-item>
+          </template>
+          <el-form-item>
+            <el-button type="primary" class="valid-btn" @click="valid">验证</el-button>
+            <el-button plain @click="autoConfig">{{ isHand ? '自动配置' : '手动配置' }}</el-button>
           </el-form-item>
-        </template>
-        <el-form-item>
-          <el-button type="primary" class="valid-btn" @click="valid">验证</el-button>
-          <el-button plain @click="autoConfig">{{ isHand ? '自动配置' : '手动配置' }}</el-button>
-        </el-form-item>
-      </el-form>
+        </el-form>
+      </div>
+
 
       <flexbox class="bottom_box" style="width: 550px;" justify="space-between" wrap="wrap">
         <div class="imgs_bottom">
@@ -123,7 +126,7 @@
           悟空CRM支持20多种邮箱对接，以上仅罗列出10种主流的邮箱类型
         </div>
       </flexbox>
-    </div>
+    </flexbox>
   </flexbox>
 </template>
 
@@ -339,7 +342,8 @@ export default {
   .right-form {
     width: 500px;
     flex-shrink: 0;
-    line-height: 50px;
+    height: 100%;
+    position: relative;
     .form-title {
       font-size: 16px;
       color: #333;
@@ -348,6 +352,7 @@ export default {
     }
     .form-item {
       font-size: 16px;
+      width: 100%;
       color: #333;
       display: flex;
       justify-content: flex-start;
@@ -414,9 +419,9 @@ export default {
 }
 
 .bottom_box {
-  position: relative;
-  top: 100px;
-  left: 100px;
+  position: absolute;
+  bottom: 10px;
+  left: 110px;
 }
 
 .bottom_text {
