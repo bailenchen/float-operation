@@ -1,7 +1,25 @@
 <template>
   <flexbox v-loading="loading" class="email-set" justify="flex-start">
     <div class="left-bg">
-      <img src="@/assets/img/email/email_set.png" alt="">
+      <h1>安全稳定的悟空邮箱</h1>
+      <p class="left_text">您可以在使用悟空CRM的同时也能获得高效的邮箱支持。悟空CRM与邮箱完美的融合方式，让您工作更加快捷</p>
+      <flexbox class="img_box">
+        <img width="30px" src="@/assets/img/email/tom.png" alt="">
+        <img width="50px" src="@/assets/img/email/189.png" alt="">
+        <img width="30px" src="@/assets/img/email/189.png" alt="">
+        <img width="50px" src="@/assets/img/email/163.png" alt="">
+        <img width="30px" src="@/assets/img/email/xinlang.png" alt="">
+      </flexbox>
+      <flexbox class="img_box" style="width: 220px;">
+        <img width="30px" src="@/assets/img/email/yahu.png" alt="">
+        <img width="50px" src="@/assets/img/email/enterprise.png" alt="">
+        <img width="30px" src="@/assets/img/email/soho.png" alt="">
+      </flexbox>
+      <flexbox class="img_box" style="width: 110px">
+        <img width="30px" src="@/assets/img/email/Outlook.png" alt="">
+        <img width="30px" src="@/assets/img/email/126.png" alt="">
+      </flexbox>
+      <img width="80px" src="@/assets/img/email/Outlook.png" alt="">
     </div>
     <div class="right-form">
       <div class="form-title btitle">验证邮箱账号</div>
@@ -59,6 +77,52 @@
           <el-button plain @click="autoConfig">{{ isHand ? '自动配置' : '手动配置' }}</el-button>
         </el-form-item>
       </el-form>
+
+      <flexbox class="bottom_box" style="width: 550px;" justify="space-between" wrap="wrap">
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/tom.png" alt="">
+          <div>QQ邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/enterprise.png" alt="">
+          <div>企业邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/163.png" alt="">
+          <div>163邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/xinlang.png" alt="">
+          <div>新浪邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/soho.png" alt="">
+          <div>搜狐邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/126.png" alt="">
+          <div>126邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/Outlook.png" alt="">
+          <div>Outlook邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/yahu.png" alt="">
+          <div>雅虎邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/tom.png" alt="">
+          <div>tom邮箱</div>
+        </div>
+        <div class="imgs_bottom">
+          <img width="20px" src="@/assets/img/email/189.png" alt="">
+          <div>189邮箱</div>
+        </div>
+        <div class="bottom_text">
+          悟空CRM支持20多种邮箱对接，以上仅罗列出10种主流的邮箱类型
+        </div>
+      </flexbox>
     </div>
   </flexbox>
 </template>
@@ -236,8 +300,22 @@ export default {
   width: 45%;
   flex-shrink: 1;
   text-align: center;
-  img {
-    width: 50%;
+  h1 {
+    width: 420px;
+    margin: 15px auto;
+    text-align: left;
+  }
+  .left_text {
+    width: 420px;
+    color: #333;
+    margin: 0 auto;
+    line-height: 20px;
+    text-align: left;
+  }
+  .img_box {
+    width: 420px;
+    margin: 30px auto;
+    justify-content: space-around;
   }
 }
 .tip {
@@ -250,6 +328,7 @@ export default {
 .email-set {
   width: 100%;
   margin: 0 auto;
+  background-color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -262,7 +341,10 @@ export default {
     flex-shrink: 0;
     line-height: 50px;
     .form-title {
-      font-size: 18px;
+      font-size: 16px;
+      color: #333;
+      font-weight: bolder;
+      text-align: center;
     }
     .form-item {
       font-size: 16px;
@@ -329,6 +411,26 @@ export default {
   margin-left: 20px;
   margin-bottom: 20px;
   position: relative;
+}
+
+.bottom_box {
+  position: relative;
+  top: 100px;
+  left: 100px;
+}
+
+.bottom_text {
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  line-height: 25px;
+  color: #333;
+}
+
+.imgs_bottom {
+  text-align: center;
+  line-height: 25px;
+  font-size: 12px;
 }
 /deep/ .el-form-item__label {
   text-align: left;
