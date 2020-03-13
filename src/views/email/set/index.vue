@@ -3,23 +3,7 @@
     <div class="left-bg">
       <h1>安全稳定的悟空邮箱</h1>
       <p class="left_text">您可以在使用悟空CRM的同时也能获得高效的邮箱支持。悟空CRM与邮箱完美的融合方式，让您工作更加快捷</p>
-      <flexbox class="img_box">
-        <img width="30px" src="@/assets/img/email/tom.png" alt="">
-        <img width="50px" src="@/assets/img/email/189.png" alt="">
-        <img width="30px" src="@/assets/img/email/189.png" alt="">
-        <img width="50px" src="@/assets/img/email/163.png" alt="">
-        <img width="30px" src="@/assets/img/email/xinlang.png" alt="">
-      </flexbox>
-      <flexbox class="img_box" style="width: 220px;">
-        <img width="30px" src="@/assets/img/email/yahu.png" alt="">
-        <img width="50px" src="@/assets/img/email/enterprise.png" alt="">
-        <img width="30px" src="@/assets/img/email/soho.png" alt="">
-      </flexbox>
-      <flexbox class="img_box" style="width: 110px">
-        <img width="30px" src="@/assets/img/email/Outlook.png" alt="">
-        <img width="30px" src="@/assets/img/email/126.png" alt="">
-      </flexbox>
-      <img width="80px" src="@/assets/img/email/Outlook.png" alt="">
+      <img width="350px" src="@/assets/img/email/left.png" alt="">
     </div>
     <flexbox class="right-form">
       <div>
@@ -83,7 +67,7 @@
 
       <flexbox class="bottom_box" style="width: 550px;" justify="space-between" wrap="wrap">
         <div class="imgs_bottom">
-          <img width="20px" src="@/assets/img/email/tom.png" alt="">
+          <img width="20px" src="@/assets/img/email/qq.png" alt="">
           <div>QQ邮箱</div>
         </div>
         <div class="imgs_bottom">
