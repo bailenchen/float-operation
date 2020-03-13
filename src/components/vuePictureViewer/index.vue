@@ -480,7 +480,8 @@ export default {
         const url = urlS.length > 1 ? urlS[1] : ''
         // https://file.72crm.com/onlinePreview?fileId=949051ca66ed45ca8a1bacae0e862d32
         // window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
-        window.open(`https://file.72crm.com/onlinePreview?${url}`)
+        // http://dev.5kcrm.cn/file/preview?id=xxx
+        window.open(`https://dev.5kcrm.cn/file/preview?${url}`)
       }
     },
     getShowTypeInfo(name) {
