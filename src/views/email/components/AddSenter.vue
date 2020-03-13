@@ -24,13 +24,13 @@
       v-model="val"
       :fetch-suggestions="querySearchAsync"
       :highlight-first-item="true"
-      :debounce="500"
+      :debounce="100"
       style="width: 220px"
       placement="bottom"
       class="enter-input"
       popper-class="source"
       @focus="focuses"
-      @blur="handleAddEmail"
+      @blur.prevent.stop="handleAddEmail"
       @keyup.enter.native="handleAddEmail"
       @keyup.delete.native="handleDeleteEmail"
       @select="handleInputSelect">
@@ -156,7 +156,6 @@ export default {
     },
 
     focuses() {
-      console.log(this.comType)
       this.$emit('changeType', this.comType)
     },
     /**
@@ -179,9 +178,10 @@ export default {
      * 搜索的回调
      */
     querySearchAsync(queryString, cb) {
+      // 远程搜索暂时不加
       if (queryString) {
         emailAccountSearchEmailAPI({ email: queryString }).then(res => {
-          cb(res.data)
+          cb([])
         }).catch(() => {})
       } else {
         cb([])
@@ -193,6 +193,7 @@ export default {
      */
     handleInputSelect(item) {
       this.val = item.value
+      this.$refs.inputs.focus()
       this.handleAddEmail()
     },
 

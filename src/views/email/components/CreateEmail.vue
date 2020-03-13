@@ -252,8 +252,8 @@ export default {
     let emailObj = localStorage.getItem('crm-emailContent') || null
     if (emailObj) {
       emailObj = JSON.parse(emailObj)
-      this.receiverLists.push({ 'email': emailObj.senderEmail, 'show': true })
-      this.sentLists.push({ 'email': emailObj.receiptEmails, 'show': true })
+      this.receiverLists.push({ 'email': emailObj.receiptEmails, 'show': true })
+      // this.sentLists.push({ 'email': emailObj.receiptEmails, 'show': true })
       this.themeVal = emailObj.theme
       this.id = emailObj.id
       this.getFileList(emailObj.batchId)
