@@ -244,7 +244,7 @@ export default {
       this.loading = true
       emailValidAPI(params).then((res) => {
         if (res.msg === 105) {
-          this.$confirm('账号或密码错误，腾讯、网易等邮箱等服务商需要在网页端设置中开启POP3/IMAP/SMPT服务，且对于第三方邮箱服务要求使用“授权码”登录。没有开启相关服务或使用原邮箱密码登录均可能导致密码错误问题。', {
+          this.$confirm('账号或密码错误，腾讯、网易等邮箱等服务商需要在网页端设置中开启POP3/IMAP/SMTP服务，且对于第三方邮箱服务要求使用“授权码”登录。没有开启相关服务或使用原邮箱密码登录均可能导致密码错误问题。', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             closeOnClickModal: false,
