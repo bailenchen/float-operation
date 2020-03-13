@@ -122,9 +122,27 @@ export function setCommentAPI(data) {
   })
 }
 
+// 设置项目评论
+export function setWorkTaskCommentAPI(data) {
+  return request({
+    url: 'comment/setWorkTaskComment',
+    method: 'post',
+    data: data
+  })
+}
+
 export function deleteCommentAPI(data) {
   return request({
     url: 'comment/deleteComment',
+    method: 'post',
+    data: data
+  })
+}
+
+// 删除项目任务接口
+export function deleteWorkTaskCommentAPI(data) {
+  return request({
+    url: 'comment/deleteWorkTaskComment',
     method: 'post',
     data: data
   })
