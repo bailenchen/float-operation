@@ -18,6 +18,7 @@
       :cache-done="cacheDone"
       @status="crmImportChange"
       @close="crmImportClose"/>
+    <xr-upgrade-dialog v-if="upgradeDialogShow" :visible.sync="upgradeDialogShow" />
   </div>
 </template>
 
@@ -25,10 +26,12 @@
 /** 常用图片预览创建组件 */
 import VuePictureViewer from '@/components/vuePictureViewer/index'
 import XrImport from '@/components/xr-import'
+import XrUpgradeDialog from '@/components/XrUpgradeDialog'
 import XrImportMixins from '@/components/xr-import/XrImportMixins'
 import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
 import cache from '@/utils/cache'
+import Lockr from 'lockr'
 
 
 export default {
@@ -36,22 +39,33 @@ export default {
   components: {
     VuePictureViewer,
     XrImport,
-    CRMImport
+    CRMImport,
+    XrUpgradeDialog
   },
   mixins: [XrImportMixins],
   data() {
     return {
       showPreviewImg: false,
       previewIndex: 0,
-      previewImgs: []
+      previewImgs: [],
+      upgradeDialogShow: false
     }
   },
   computed: {
-    ...mapGetters(['activeIndex'])
+    ...mapGetters(['activeIndex', 'addRouters'])
   },
   watch: {
     $route(to, from) {
       this.showPreviewImg = false // 切换页面隐藏图片预览
+    },
+
+    addRouters() {
+      const build = Lockr.get('wk-build')
+      if (!build || build < WKConfig.build) {
+        if (!this.upgradeDialogShow) {
+          this.upgradeDialogShow = true
+        }
+      }
     }
   },
   mounted() {
