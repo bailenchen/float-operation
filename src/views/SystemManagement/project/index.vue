@@ -39,7 +39,7 @@
           width="100">
           <template slot-scope="scope">
             <el-button
-              :disabled="scope.row.roleType == 5"
+              :disabled="scope.row.label == 2"
               type="text"
               size="small"
               @click="handleClick('edit', scope)">编辑</el-button>

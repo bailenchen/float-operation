@@ -520,12 +520,16 @@ export default {
           o.formType == 'checkbox'
         ) {
           if (!o.value || o.value.length === 0) {
-            this.$message.error('筛选内容不能为空！')
-            return
+            if (o.condition != 'isNull' && o.condition != 'isNotNull') {
+              this.$message.error('筛选内容不能为空！')
+              return
+            }
           }
         } else if (o.value === '' || o.value === undefined || o.value === null) {
-          this.$message.error('筛选内容不能为空')
-          return
+          if (o.condition != 'isNull' && o.condition != 'isNotNull') {
+            this.$message.error('筛选内容不能为空')
+            return
+          }
         }
       }
       const obj = {}

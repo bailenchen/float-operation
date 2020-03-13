@@ -32,6 +32,7 @@
         <el-input
           v-if="item.type !== 'select'"
           v-model="form[item.field]"
+          :maxlength="30"
           :disabled="item.disabled" />
         <el-select
           v-else

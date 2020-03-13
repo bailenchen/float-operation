@@ -92,7 +92,7 @@ export default {
      * 可以编辑项目
      */
     canUpdateWork() {
-      return this.isOpen != 1 && this.permission.work && this.permission.work.update
+      return this.isOpen != 1 && this.permission.setTaskOwnerUser
     }
   },
 

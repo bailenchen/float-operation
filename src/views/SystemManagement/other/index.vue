@@ -29,19 +29,23 @@
 import LogWelcome from './components/LogWelcome' // 跟进记录类型设置
 import XrHeader from '@/components/xr-header'
 import CalendarType from './components/CalendarType'
+import LogRuleSet from './components/LogRuleSet'
+
 export default {
   name: 'OtherSystem',
 
   components: {
     LogWelcome,
     CalendarType,
-    XrHeader
+    XrHeader,
+    LogRuleSet
   },
 
   data() {
     return {
       menuList: [
         { label: '日志欢迎语', key: 'LogWelcome' },
+        { label: '日志规则设置', key: 'LogRuleSet' },
         { label: '日历类型设置', key: 'CalendarType' }
       ],
       menuIndex: 'LogWelcome',

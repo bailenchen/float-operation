@@ -2,11 +2,13 @@
   <create-view
     v-loading="loading"
     :body-style="{height: '100%'}">
-    <div class="add-project">
+    <flexbox
+      direction="column"
+      align="stretch"
+      class="add-project">
       <div
-        slot="header"
         class="header">
-        <span class="text">创建项目</span>
+        <span class="text">{{ title }}</span>
         <span
           class="el-icon-close"
           @click="close"/>
@@ -34,6 +36,45 @@
               @click="typeColor = item"/>
           </div>
         </div>
+
+        <div class="cover">
+          <div class="label">项目封面</div>
+          <flexbox
+            :gutter="0"
+            align="stretch"
+            wrap="wrap"
+            class="cover-content">
+            <flexbox-item
+              v-for="(item, index) in coverImgList"
+              :key="index"
+              :span="0.25"
+              :class="{'select': coverImg.url == item.url}"
+              class="cover-content-item"
+              @click.native="corverSelect(item)">
+              <img v-src="item.url" class="cover-img">
+              <i class="wk wk-success cover-select" />
+              <i v-if="item.custom && !coverImg.custom" class="wk wk-close cover-delete" @click="corverDelete" />
+            </flexbox-item>
+            <flexbox-item
+              v-loading="imgLoading"
+              v-if="coverImgList.length <= 8"
+              :span="0.25"
+              class="content-cross"
+              @click.native="upLoadCustomImg">
+              <input
+                ref="imageInput"
+                accept="image/*"
+                type="file"
+                class="file-input"
+                @change="customImgChange">
+              <el-button
+                type="text"
+                icon="el-icon-plus"
+                class="cross"/>
+            </flexbox-item>
+          </flexbox>
+        </div>
+
         <div class="describe">
           <div class="label">项目描述</div>
           <el-input
@@ -54,6 +95,18 @@
               :key="item.value"
               :label="item.label"
               :value="item.value"/>
+          </el-select>
+        </div>
+        <div v-if="openType == 1" class="describe">
+          <div class="label">成员权限</div>
+          <el-select
+            v-model="ownerRole"
+            placeholder="请选择">
+            <el-option
+              v-for="item in projectRoleList"
+              :key="item.roleId"
+              :label="`${item.roleName}：${item.remark}`"
+              :value="item.roleId"/>
           </el-select>
         </div>
         <div
@@ -79,21 +132,32 @@
             </members-dep>
           </flexbox>
         </div>
-        <div class="footer">
-          <el-button
-            type="primary"
-            @click="submitBtn">确定</el-button>
-          <el-button @click="close">取消</el-button>
-        </div>
       </div>
-    </div>
+      <div class="footer">
+        <el-button
+          type="primary"
+          @click="submitBtn">确定</el-button>
+        <el-button @click="close">取消</el-button>
+      </div>
+    </flexbox>
   </create-view>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import CreateView from '@/components/CreateView'
-import { workWorkSaveAPI } from '@/api/projectManagement/project'
+import { crmFileSave, crmFileDelete } from '@/api/common'
+import {
+  workWorkSaveAPI,
+  workWorkUpdateAPI,
+  workWorkReadAPI
+} from '@/api/projectManagement/project'
+import {
+  systemRoleQueryProjectRoleListAPI
+} from '@/api/systemManagement/project'
+
 import MembersDep from '@/components/selectEmployee/membersDep'
+import CreateView from '@/components/CreateView'
+
+import { mapGetters } from 'vuex'
+import { guid } from '@/utils'
 
 export default {
   components: {
@@ -101,14 +165,18 @@ export default {
     MembersDep
   },
 
-  props: {},
+  props: {
+    id: [Number, String] // 编辑用
+  },
 
   data() {
     return {
       loading: false,
       name: '',
+      batchId: guid(),
       description: '',
       typeColor: '#53D397',
+      projectRoleList: [],
       typeColorList: [
         '#53D397',
         '#20C1BD',
@@ -122,7 +190,36 @@ export default {
         '#F24D70',
         '#FF6F6F'
       ],
+      imgLoading: false,
+      coverImg: null,
+      coverImgList: [
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-1.jpg'
+        },
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-2.jpg'
+        },
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-3.jpg'
+        },
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-4.jpg'
+        },
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-5.jpg'
+        },
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-6.jpg'
+        },
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-7.jpg'
+        },
+        {
+          url: 'https://www.72crm.com/api/uploads/project-cover-8.jpg'
+        }
+      ],
       openType: 0,
+      ownerRole: '',
       openOptions: [
         {
           value: 0,
@@ -139,11 +236,22 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    title() {
+      return this.id ? '编辑项目' : '创建项目'
+    }
   },
 
   created() {
     this.selectUserList.push(this.userInfo)
+    this.coverImg = this.coverImgList[0]
+
+    // 是编辑
+    if (this.id) {
+      this.getDetail()
+    }
+
+    this.getProjectRoleList()
   },
 
   mounted() {
@@ -159,6 +267,46 @@ export default {
 
   methods: {
     /**
+     * 获取项目详情
+     */
+    getDetail() {
+      this.loading = true
+      workWorkReadAPI({
+        workId: this.id
+      })
+        .then(res => {
+          const data = res.data || {}
+          this.name = data.name
+          this.description = data.description
+          this.typeColor = data.color
+          this.openType = data.isOpen
+          this.ownerRole = data.ownerRole
+          if (this.openType == 0) {
+            this.selectUserList = data.ownerUser || []
+          }
+
+          this.batchId = data.batchId
+          if (data.coverUrl) {
+            this.coverImg = {
+              custom: data.isSystemCover != 1,
+              url: data.coverUrl
+            }
+            this.coverImgList.push({
+              custom: data.isSystemCover != 1,
+              url: data.coverUrl
+            })
+          } else {
+            this.coverImg = this.coverImgList[0]
+          }
+
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
+    /**
      * 保存
      */
     submitBtn() {
@@ -169,19 +317,36 @@ export default {
         color: this.typeColor,
         isOpen: this.openType
       }
+
+      if (this.coverImg.custom) {
+        params.isSystemCover = 0
+        params.batchId = this.batchId
+      } else {
+        params.isSystemCover = 1
+        params.coverUrl = this.coverImg.url
+      }
+
       if (this.openType == 0) {
         params.ownerUserId = this.selectUserList
           .map(item => {
             return item.userId
           })
           .join(',')
+      } else {
+        params.ownerRole = this.ownerRole
       }
-      workWorkSaveAPI(params)
+
+      if (this.id) {
+        params.workId = this.id
+      }
+
+      const request = this.id ? workWorkUpdateAPI : workWorkSaveAPI
+      request(params)
         .then(res => {
           this.loading = false
           this.$message.success('新建成功')
           this.$emit('save-success')
-          this.$bus.$emit('add-project', this.name, res.work.workId)
+          this.$bus.emit('add-project', this.name, res.work.workId)
           this.close()
         })
         .catch(() => {
@@ -201,6 +366,77 @@ export default {
      */
     userSelectChange(members, dep) {
       this.selectUserList = members
+    },
+
+    /**
+     * 封面选择
+     */
+    corverSelect(item) {
+      this.coverImg = item
+    },
+
+    /**
+     * 上传自定义图片
+     */
+    upLoadCustomImg() {
+      this.$refs.imageInput.click()
+    },
+
+    customImgChange() {
+      var files = event.target.files
+      this.imgLoading = true
+      crmFileSave({
+        file: files[0],
+        batchId: this.batchId
+      }).then(res => {
+        this.imgLoading = false
+        res.custom = true
+        this.coverImgList.push(res)
+      }).catch(() => {
+        this.imgLoading = false
+      })
+    },
+
+    corverDelete() {
+      this.$confirm('您确定要删除该封面吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          crmFileDelete({
+            id: this.coverImg.fileId
+          })
+            .then(res => {
+              this.coverImgList.pop()
+              this.$message.success('操作成功')
+            })
+            .catch(() => {})
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    },
+
+    /**
+     * 获取列表数据
+     */
+    getProjectRoleList() {
+      this.loading = true
+      systemRoleQueryProjectRoleListAPI()
+        .then(res => {
+          this.projectRoleList = res.data || []
+          if (this.projectRoleList.length) {
+            this.ownerRole = this.projectRoleList[0].roleId
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }
@@ -219,19 +455,32 @@ $color3: #333;
 }
 .header {
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  flex-shrink: 0;
   .text {
     color: $color3;
     font-size: 17px;
     height: 40px;
     line-height: 40px;
+    color:#333;
+    font-weight: bold;
   }
   .el-icon-close {
     @include rt;
+    font-size: 24px;
+    color: #909399;
+    padding: 10px;
+    cursor: pointer;
+    &:hover {
+      color: $xr-color-primary;
+    }
   }
 }
 .content {
   padding: 0 10px;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
   .project-name {
     .color-box {
       margin: 10px 0;
@@ -273,6 +522,75 @@ $color3: #333;
       width: 40%;
     }
   }
+
+  .describe {
+    margin-top: 12px;
+
+    .el-select {
+      width: 40%;
+    }
+  }
+
+  .cover {
+    &-content {
+      &-item {
+        position: relative;
+        .cover-img {
+          width: 200px;
+          height: 100px;
+        }
+
+        .cover-delete,
+        .cover-select {
+          position: absolute;
+          top: 10px;
+          right: 15px;
+          z-index: 1;
+          color: white;
+          cursor: pointer;
+          visibility: hidden;
+        }
+
+        .cover-delete:hover {
+          color: $xr-color-primary;
+        }
+
+        &.select {
+          .cover-select {
+            visibility: visible;
+          }
+        }
+
+        &:hover {
+          .cover-delete {
+            visibility: visible;
+          }
+        }
+      }
+    }
+
+    .content-cross {
+      flex-shrink: 0;
+      width: 195px;
+      height: 100px;
+      display: flex;
+      cursor: pointer;
+      border-radius: $xr-border-radius-base;
+      position: relative;
+      text-align: center;
+      border: 1px #c0ccda dashed;
+      margin-bottom: 5px;
+      .file-input {
+        display: none;
+      }
+      .cross {
+        color: #606266;
+        font-size: 20px;
+        margin-left: calc(50% - 10px);
+      }
+    }
+  }
+
   .member {
     img {
       width: 25px;
@@ -296,10 +614,11 @@ $color3: #333;
       border-color: $xr-color-primary;
     }
   }
-  .footer {
-    position: absolute;
-    bottom: 0;
-    right: 20px;
-  }
+}
+
+.footer {
+  padding: 5px 20px 0;
+  flex-shrink: 0;
+  text-align: right;
 }
 </style>

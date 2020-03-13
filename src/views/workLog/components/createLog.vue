@@ -16,6 +16,16 @@
         name="month" />
     </el-tabs>
 
+    <span
+      v-if="completeInfo.status !== 0"
+      class="complete-btn"
+      @click="completeClick">
+      <i
+        class="wk wk-log complete-btn__icon"
+        style="color: #2362FB " />
+      <span class="complete-btn__name">{{ activeMap[activeTab] }}完成情况<span class="value">{{ completeInfo.totalNum }}</span>/<span class="value">{{ completeInfo.completeNum }}</span></span>
+    </span>
+
     <template v-if="!showMore">
       <div class="content-box">
         <flexbox
@@ -192,7 +202,8 @@
 
 <script>
 import {
-  journalAdd
+  journalAdd,
+  OaLogCompleteStatsAPI
   // journalEdit
 } from '@/api/oamanagement/journal'
 import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
@@ -219,6 +230,11 @@ export default {
       isRelevanceReport: true,
       textFormKeyList: [],
       activeTab: 'day',
+      activeMap: {
+        day: '日报',
+        week: '周报',
+        month: '月报'
+      },
       showLoading: false,
       categoryIdMap: {
         day: 1, // 日报
@@ -234,7 +250,11 @@ export default {
       showRelatePopover: false, // 关联业务信息框
       relateData: {},
       sendUserList: [], // 发送人
-      showMore: false
+      showMore: false,
+      completeInfo: {
+        completeNum: 0,
+        totalNum: 0
+      } // 完成信息
     }
   },
   computed: {
@@ -254,6 +274,14 @@ export default {
         return this.sendUserList.slice(0, 5)
       }
       return this.sendUserList
+    }
+  },
+  watch: {
+    activeTab: {
+      handler() {
+        this.getCompelteInfo()
+      },
+      immediate: true
     }
   },
   created() {
@@ -486,6 +514,26 @@ export default {
      */
     sendUserChange(users) {
       this.sendUserList = users
+    },
+
+    /**
+     * 完成情况点击
+     */
+    completeClick() {
+      this.$emit('completeSelect', this.categoryIdMap[this.activeTab])
+    },
+
+    /**
+     * 获取完成概要
+     */
+    getCompelteInfo() {
+      OaLogCompleteStatsAPI({
+        type: this.categoryIdMap[this.activeTab]
+      })
+        .then(res => {
+          this.completeInfo = res.data
+        })
+        .catch(() => {})
     }
   }
 }
@@ -504,6 +552,7 @@ export default {
 }
 
 .create-log {
+  position: relative;
   .content-box {
     padding: 15px 10px;
     .box {
@@ -649,4 +698,33 @@ export default {
   color: #666;
 }
 
+// 完成情况
+.complete-btn {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: $xr--background-color-base;
+  font-size: 13px;
+  color: #333;
+  border-radius: 13px;
+  cursor: pointer;
+
+  position: absolute;
+  top: 8px;
+  right: 10px;
+
+  &__icon {
+    font-size: 12px;
+  }
+
+  &__name {
+    margin-left: 3px;
+    .value {
+      color: $xr-color-primary;
+    }
+  }
+
+  &:hover {
+    background-color: #ecf1ff;
+  }
+}
 </style>

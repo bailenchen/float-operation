@@ -61,7 +61,7 @@ export default {
       chartOption: {
         tooltip: {
           trigger: 'item',
-          formatter: '{b} <br/> 预测金额: {c}元'
+          formatter: '{b} <br/> 商机个数: {c}个'
         },
         calculable: true,
         legend: {
@@ -156,19 +156,19 @@ export default {
         this.loading = false
         const data = []
 
-        let sumMoney = 0
+        let sumCount = 0
         for (let index = 0; index < res.data.list.length; index++) {
           const element = res.data.list[index]
           data.push({
-            name: (element.name || '') + '(' + element.count + ')',
-            value: element.money
+            name: (element.name || '') + '(预测金额: ' + element.money + '元)',
+            value: element.count
           })
-          sumMoney += parseFloat(element.money || 0)
+          sumCount += parseFloat(element.Count || 0)
         }
 
         this.chartOption.series[0].data = data
         this.chartOption.legend.data = data.map(o => o.name)
-        this.chartOption.series[0].max = sumMoney < 1 ? 1 : sumMoney
+        this.chartOption.series[0].max = sumCount < 1 ? 1 : sumCount
         this.chartObj.setOption(this.chartOption, true)
 
         this.funnelData = {

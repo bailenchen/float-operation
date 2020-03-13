@@ -138,3 +138,39 @@ export function OaLogExportAPI(data) {
     responseType: 'blob'
   })
 }
+
+/**
+ * 查询日志完成概要
+ * @param {*} data
+ */
+export function OaLogCompleteStatsAPI(data) {
+  return request({
+    url: 'OaLog/queryCompleteStats',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询日志完成情况
+ * @param {*} data
+ */
+export function OaLogCompleteListAPI(data) {
+  return request({
+    url: 'OaLog/queryCompleteOaLogList',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询日志未完成情况
+ * @param {*} data
+ */
+export function OaLogUnCompleteListAPI(data) {
+  return request({
+    url: 'OaLog/queryIncompleteOaLogList',
+    method: 'post',
+    data
+  })
+}

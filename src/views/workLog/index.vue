@@ -50,7 +50,7 @@
         </div>
 
 
-        <create-log v-if="showAdd" ref="createLog" class="add-card card" @update="addLogSuccess" />
+        <create-log v-if="showAdd" ref="createLog" class="add-card card" @update="addLogSuccess" @completeSelect="completeSelect" />
 
         <flexbox class="filter-control card">
           <xh-user-cell
@@ -140,6 +140,8 @@
       :field-list="fieldReportList"
       :paging="reportData.paging"
       :sortable="reportData.sortable"/>
+
+    <log-com-detail :show.sync="logComDetailShow" :type="logComDetailType" />
   </div>
 </template>
 
@@ -157,6 +159,7 @@ import { crmIndexIndex } from '@/api/customermanagement/workbench'
 import ReportMenu from './components/ReportMenu'
 import LogItem from './components/logItem'
 import CreateLog from './components/createLog'
+import LogComDetail from './components/LogComDetail' // 日志完成 情况详情
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import newDialog from '@/views/OAManagement/journal/newDialog'
@@ -174,6 +177,7 @@ export default {
     ReportMenu,
     LogItem,
     CreateLog,
+    LogComDetail,
     XhUserCell,
     CRMAllDetail,
     newDialog,
@@ -278,7 +282,11 @@ export default {
         params: null,
         paging: true,
         sortable: false
-      }
+      },
+
+      // 日志完成详情
+      logComDetailType: '',
+      logComDetailShow: false
     }
   },
   computed: {
@@ -796,6 +804,14 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+
+    /**
+     * 查看完成信息
+     */
+    completeSelect(type) {
+      this.logComDetailType = type
+      this.logComDetailShow = true
     }
   }
 }

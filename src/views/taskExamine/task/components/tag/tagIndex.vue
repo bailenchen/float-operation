@@ -86,6 +86,7 @@ import {
   editTagAPI,
   taskDeleteLabelAPI
 } from '@/api/task/task'
+import { workTaskLabelSetAPI } from '@/api/projectManagement/projectTask'
 
 export default {
   components: {
@@ -143,6 +144,13 @@ export default {
       }
 
       return 220
+    },
+
+    /**
+     * 项目ID 说明是项目
+     */
+    workId() {
+      return this.taskData.workId
     }
   },
   watch: {},
@@ -195,7 +203,8 @@ export default {
           return item.check
         }).concat(value)
 
-        setTaskAPI({
+        const request = this.workId ? workTaskLabelSetAPI : setTaskAPI
+        request({
           taskId: this.taskData.taskId,
           labelId: labelIds
             .map(item => {

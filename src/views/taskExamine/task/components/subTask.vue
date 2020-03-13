@@ -82,8 +82,11 @@
 
 <script>
 import { setTaskAPI } from '@/api/task/task'
+import { workSubTaskAddAPI, workSubTaskUpdateAPI } from '@/api/projectManagement/projectTask'
 import XhUser from '@/components/CreateCom/XhUser'
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
+
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -148,7 +151,11 @@ export default {
       }
 
       return false
-    }
+    },
+
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   watch: {},
   created() {
@@ -171,7 +178,8 @@ export default {
         this.isRequesting = true
         if (this.subTaskCom == 'new') {
           // this.$emit('on-handle', { type: 'add', result: 'success' })
-          setTaskAPI({
+          const request = this.workId ? workSubTaskAddAPI : setTaskAPI
+          request({
             pid: this.taskData.taskId,
             name: this.subtasksTextarea,
             stopTime: this.subtasksDate,
@@ -183,7 +191,7 @@ export default {
                 name: this.subtasksTextarea,
                 stopTime: this.subtasksDate,
                 taskId: res.data.taskId,
-                mainUser: this.xhUserData.length > 0 ? this.xhUserData[0] : null
+                mainUser: this.xhUserData.length > 0 ? this.xhUserData[0] : this.userInfo
               })
               this.$message.success('子任务创建成功')
               // 创建成功 -- 清除选择
@@ -204,7 +212,8 @@ export default {
             this.subtasksDate != this.time
           ) {
             // this.$emit('on-handle', { type: 'edit', result: 'success' })
-            setTaskAPI({
+            const request = this.workId ? workSubTaskUpdateAPI : setTaskAPI
+            request({
               taskId: this.taskId,
               stopTime: this.subtasksDate,
               mainUserId:

@@ -23,6 +23,7 @@
       :cache-done="cacheDone"
       @status="crmImportChange"
       @close="crmImportClose"/>
+    <xr-upgrade-dialog v-if="upgradeDialogShow" :visible.sync="upgradeDialogShow" />
   </div>
 </template>
 
@@ -30,12 +31,14 @@
 /** 常用图片预览创建组件 */
 import VuePictureViewer from '@/components/vuePictureViewer/index'
 import XrImport from '@/components/xr-import'
+import XrUpgradeDialog from '@/components/XrUpgradeDialog'
 import XrImportMixins from '@/components/xr-import/XrImportMixins'
 import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
 import IncomingWindows from './callCenter/IncomingWindows'
 import CallOutWindows from './callCenter/CallOutWindows'
 import cache from '@/utils/cache'
+import Lockr from 'lockr'
 
 
 export default {
@@ -45,7 +48,8 @@ export default {
     XrImport,
     IncomingWindows,
     CallOutWindows,
-    CRMImport
+    CRMImport,
+    XrUpgradeDialog
   },
   mixins: [XrImportMixins],
   data() {
@@ -54,11 +58,12 @@ export default {
       previewIndex: 0,
       showCall: false,
       modelData: {},
-      previewImgs: []
+      previewImgs: [],
+      upgradeDialogShow: false
     }
   },
   computed: {
-    ...mapGetters(['activeIndex']),
+    ...mapGetters(['activeIndex', 'addRouters']),
     showOutCall() {
       if (this.$store.state.customer.isCall) {
         return this.$store.state.customer.showCallOut
@@ -69,6 +74,15 @@ export default {
   watch: {
     $route(to, from) {
       this.showPreviewImg = false // 切换页面隐藏图片预览
+    },
+
+    addRouters() {
+      const build = Lockr.get('wk-build')
+      if (!build || build < WKConfig.build) {
+        if (!this.upgradeDialogShow) {
+          this.upgradeDialogShow = true
+        }
+      }
     }
   },
   mounted() {

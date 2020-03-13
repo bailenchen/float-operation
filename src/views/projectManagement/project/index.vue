@@ -9,6 +9,7 @@
         icon-class="wk wk-project">
         <span slot="label">{{ projectName }}</span>
         <el-popover
+          v-if="showSet"
           slot="label"
           v-model="projectHandleShow"
           placement="bottom-start"
@@ -19,29 +20,30 @@
               :close-dep="true"
               @popoverSubmit="userSelectChange">
               <p
-                v-if="canUpdateWork && projectData.isOpen != 1"
+                v-if="permission.setTaskOwnerUser && projectData.isOpen != 1 && permission.setWork"
                 slot="membersDep"
                 @click="projectHandleShow = false">添加项目成员</p>
             </members-dep>
 
             <project-settings
-              v-if="canUpdateWork"
+              v-if="permission.setWork"
               :work-id="workId"
               :title="projectName"
               :color="projectColor"
               :is-open="projectData.isOpen"
               :add-members-data="membersList"
+              :permission="permission"
               @close="projectHandleShow = false"
               @submite="setSubmite"
               @handle="projectSettingsHandle"
               @click="projectHandleShow = false"/>
-            <p @click="taskImportShow = true">导入任务</p>
-            <p @click="exportClick">导出任务</p>
+            <p v-if="permission.excelImport" @click="taskImportShow = true">导入任务</p>
+            <p v-if="permission.excelExport" @click="exportClick">导出任务</p>
             <p
-              v-if="canUpdateWork"
+              v-if="permission.archiveTask && permission.setWork"
               @click="archiveProject">归档项目</p>
             <p
-              v-if="canUpdateWork"
+              v-if="permission.deleteTask && permission.setWork"
               @click="deleteProject">删除项目</p>
             <p v-if="projectData.isOpen == 0" @click="exitProject">退出项目</p>
           </div>
@@ -125,8 +127,8 @@ import {
   workWorkDeleteAPI,
   workWorkLeaveAPI,
   workWorkOwnerListAPI,
-  workWorkSaveAPI,
-  workTaskExportAPI
+  workTaskExportAPI,
+  workWorkUpdateAPI
 } from '@/api/projectManagement/project'
 
 import TaskBoard from './components/taskBoard'
@@ -186,11 +188,15 @@ export default {
   },
 
   computed: {
-    /**
-     * 可以编辑项目
-     */
-    canUpdateWork() {
-      return this.permission.work && this.permission.work.update
+    // 展示项目设置按钮
+    showSet() {
+      return (this.permission.setTaskOwnerUser && this.projectData.isOpen != 1) ||
+      this.permission.setWork ||
+      this.permission.excelImport ||
+      this.permission.excelExport ||
+      this.permission.archiveTask ||
+      this.permission.deleteTask ||
+      this.projectData.isOpen == 0
     }
   },
 
@@ -225,7 +231,7 @@ export default {
           this.projectColor = data.color
           this.projectName = data.name
 
-          this.permission = data.authList.work || {}
+          this.permission = data.authList.project || {}
         })
         .catch(() => {})
     },
@@ -252,7 +258,7 @@ export default {
      * 编辑成员
      */
     userSelectChange(members, dep) {
-      workWorkSaveAPI({
+      workWorkUpdateAPI({
         workId: this.workId,
         ownerUserId: members
           .map(item => {
@@ -289,6 +295,7 @@ export default {
                 message: '删除成功!'
               })
               this.$bus.$emit('delete-project', this.workId)
+              this.$router.go(-1)
             })
             .catch(() => {})
         })
@@ -338,7 +345,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          workWorkSaveAPI({ workId: this.workId, status: 3 }) // 状态 1启用 2 删除 3归档
+          workWorkUpdateAPI({ workId: this.workId, status: 3 }) // 状态 1启用 2 删除 3归档
             .then(res => {
               this.$message({
                 type: 'success',

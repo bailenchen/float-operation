@@ -38,25 +38,25 @@
               v-if="isRecycle"
               class="task-hd__top--info">该任务已于 {{ taskData.hiddenTime }} 被放入回收站</span>
             <el-button
-              v-if="isRecycle"
+              v-if="isRecycle && getPermission('restoreTask')"
               class="xr-btn--primary"
               icon="wk wk-activation"
               type="primary"
               @click="recoverTask">恢复</el-button>
             <el-button
-              v-if="isRecycle"
+              v-if="isRecycle && getPermission('cleanTask')"
               class="xr-btn--red"
               icon="el-icon-delete-solid"
               type="primary"
               @click="thoroughDeleteTask">彻底删除</el-button>
             <el-button
-              v-if="showArchiveBtn"
+              v-if="showArchiveBtn && getPermission('archiveTask')"
               class="xr-btn--green"
               icon="wk wk-archive"
               type="primary"
               @click="moreArchive">归档</el-button>
             <el-dropdown
-              v-if="!isRecycle"
+              v-if="!isRecycle && getPermission('deleteTask')"
               trigger="click"
               @command="morkDropdownClick">
               <el-button icon="el-icon-more" />
@@ -74,11 +74,12 @@
           align="stretch">
           <el-checkbox
             v-model="taskData.checked"
+            :disabled="!getPermission('setTaskStatus')"
             @change="completeMainTask" />
           <el-tooltip v-if="!nameVinput" :content="taskData.name" effect="light" placement="top">
             <div
               :class="['task-name', { 'is-checked': taskData.checked }]"
-              @click="nameVinput = true, taskDataName = taskData.name">{{ taskData.name }}</div>
+              @click="editTaskName">{{ taskData.name }}</div>
           </el-tooltip>
           <div
             v-else
@@ -104,6 +105,7 @@
             <flexbox @click.native="priorityVisible = true">
               <el-popover
                 v-model="priorityVisible"
+                :disabled="!getPermission('setTaskPriority')"
                 popper-class="no-padding-popover"
                 placement="bottom"
                 trigger="click">
@@ -133,6 +135,7 @@
               :value="taskData.mainUser ? [taskData.mainUser] : []"
               :info-request="ownerListRequest"
               :info-params="ownerListParams"
+              :disabled="!getPermission('setTaskMainUser')"
               style="width: 100%;"
               placement="top"
               radio
@@ -156,7 +159,7 @@
                   <div class="head-btn__bd--des">负责人</div>
                 </div>
                 <i
-                  v-show="taskData.mainUser"
+                  v-show="taskData.mainUser && getPermission('setTaskMainUser')"
                   class="el-icon-close head-btn__close"
                   @click="submiteMainUser(null)" />
               </flexbox>
@@ -170,6 +173,7 @@
               <el-date-picker
                 v-model="taskData.startTime"
                 :clearable="false"
+                :disabled="!getPermission('setTaskTime')"
                 :picker-options="startTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
@@ -194,6 +198,7 @@
               <el-date-picker
                 v-model="taskData.stopTime"
                 :clearable="false"
+                :disabled="!getPermission('setTaskTime')"
                 :picker-options="stopTimeOptions"
                 type="date"
                 value-format="yyyy-MM-dd"
@@ -243,11 +248,13 @@
                       class="user-img" />
                   </el-tooltip>
                   <img
+                    v-if="getPermission('setTaskOwnerUser')"
                     src="@/assets/img/delete_task.png"
                     class="el-icon-close"
                     @click="deleteOwnerList(item, index)">
                 </span>
                 <members-dep
+                  v-if="getPermission('setTaskOwnerUser')"
                   :close-dep="true"
                   :content-block="false"
                   :user-checked-data="taskData.ownerUserList"
@@ -269,7 +276,7 @@
                 class="item-color">
                 {{ item.labelName }}
               </span>
-              <div class="add-tag">
+              <div v-if="getPermission('setTaskLabel')" class="add-tag">
                 <tag-index
                   :placement="'right'"
                   :task-data="taskData">
@@ -297,12 +304,13 @@
                   <div
                     v-if="taskData.description"
                     class="description-content"
-                    @click="addDescriptionShow = true; addDescriptionTextarea = taskData.description">{{ taskData.description }}</div>
+                    @click="editTaskDescription">{{ taskData.description }}</div>
                   <div
                     v-else
                     class="description-empty">
                     <span class="color-label">暂无描述</span>
                     <span
+                      v-if="getPermission('setTaskDescription')"
                       class="add-btn"
                       @click="addDescriptionShow = true">
                       <i class="wk wk-l-plus" />
@@ -342,7 +350,8 @@
                 <related-business
                   :margin-left="'0'"
                   :all-data="allData"
-                  show-foot
+                  :show-foot="getPermission('saveTaskRelation')"
+                  :show-add="getPermission('saveTaskRelation')"
                   @checkRelatedDetail="checkRelatedDetail"
                   @checkInfos="checkInfos"
                   @unbind="unbindRelatedInfo" />
@@ -377,6 +386,7 @@
                         <div @click.stop>
                           <el-checkbox
                             v-model="item.checked"
+                            :disabled="!getPermission('setChildTaskStatus')"
                             @change="subtasksCheckbox(item, $event)" />
                         </div>
                         <div
@@ -387,9 +397,11 @@
 
                         <div class="edit-del-box">
                           <span
+                            v-if="getPermission('updateChildTask')"
                             class="xr-text-btn primary"
                             @click="editSubTask(item)">编辑</span>
                           <span
+                            v-if="getPermission('deleteChildTask')"
                             class="xr-text-btn delete"
                             @click="deleteSubTask(item)">删除</span>
                         </div>
@@ -417,19 +429,21 @@
                         @on-handle="handleSubTasksBlock($event, item)" />
                     </div>
                   </template>
-                  <div v-if="addSubtasks">
-                    <span
-                      class="add-btn"
-                      @click="addSubtasks = false">
-                      <i class="wk wk-l-plus" />
-                      <span class="label">子任务</span>
-                    </span>
-                  </div>
-                  <sub-task
-                    v-else
-                    :sub-task-com="'new'"
-                    :task-data="taskData"
-                    @on-handle="handleSubTasksBlock" />
+                  <template v-if="getPermission('addChildTask')">
+                    <div v-if="addSubtasks">
+                      <span
+                        class="add-btn"
+                        @click="addSubtasks = false">
+                        <i class="wk wk-l-plus" />
+                        <span class="label">子任务</span>
+                      </span>
+                    </div>
+                    <sub-task
+                      v-else
+                      :sub-task-com="'new'"
+                      :task-data="taskData"
+                      @on-handle="handleSubTasksBlock" />
+                  </template>
                 </div>
               </div>
             </div>
@@ -449,9 +463,10 @@
                   :list="fileList"
                   :cell-index="fileIndex"
                   :module-id="id"
-                  :show-delete="true"
+                  :show-delete="getPermission('deleteTaskFile')"
                   @delete="accessoryDeleteFun" />
                 <el-upload
+                  v-if="getPermission('uploadTaskFile')"
                   :http-request="httpRequest"
                   class="upload-file"
                   action="https://jsonplaceholder.typicode.com/posts/"
@@ -543,6 +558,7 @@ import {
 import {
   setTaskAPI,
   editTaskRelationAPI,
+  editWorkTaskRelationAPI,
   deleteTaskAPI,
   commentListAPI,
   setCommentAPI,
@@ -552,6 +568,19 @@ import {
   queryLogTaskAPI,
   taskDeleteOwnerUserAPI
 } from '@/api/task/task'
+import {
+  workTaskStatusSetAPI,
+  workTaskChildStatusSetAPI,
+  workTaskTitleSetAPI,
+  workTaskDescriptionSetAPI,
+  workTaskMainUserSetAPI,
+  workTaskTimeSetAPI,
+  workTaskOwnerUserSetAPI,
+  workTaskOwnerUserDeleteAPI,
+  workTaskPrioritySetAPI,
+  workTaskDeleteAPI,
+  workSubTaskDeleteAPI
+} from '@/api/projectManagement/projectTask'
 // 项目参与人
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 import { crmFileSave } from '@/api/common'
@@ -860,7 +889,8 @@ export default {
      */
     completeMainTask(val) {
       this.taskData.checked = val
-      setTaskAPI({
+      const request = this.workId ? workTaskStatusSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         status: this.taskData.checked ? 5 : 1
       })
@@ -885,6 +915,38 @@ export default {
     },
 
     /**
+     * 编辑任务标题
+     */
+    editTaskName() {
+      if (this.getPermission('setTaskTitle')) {
+        this.nameVinput = true
+        this.taskDataName = this.taskData.name
+      }
+    },
+
+    /**
+     * 编辑任务描述
+     */
+    editTaskDescription() {
+      if (this.getPermission('setTaskDescription')) {
+        this.addDescriptionShow = true
+        this.addDescriptionTextarea = this.taskData.description
+      }
+    },
+
+    /**
+     * 获取权限
+     */
+    getPermission(key) {
+      if (!this.workId) {
+        return true
+      }
+
+      const permission = this.taskData ? this.taskData.authList.project || {} : {}
+      return permission[key]
+    },
+
+    /**
      * 关闭
      */
     closeBtn() {
@@ -896,7 +958,8 @@ export default {
      */
     priorityBtn(value, def) {
       this.taskData.priority = value.id
-      setTaskAPI({
+      const request = this.workId ? workTaskPrioritySetAPI : setTaskAPI
+      request({
         taskId: this.id,
         priority: value.id
       })
@@ -923,7 +986,8 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          deleteTaskAPI({
+          const request = this.workId ? workTaskDeleteAPI : deleteTaskAPI
+          request({
             taskId: this.id
           })
             .then(res => {
@@ -1009,7 +1073,8 @@ export default {
       //   index: this.detailIndex,
       //   section: this.detailSection
       // })
-      setTaskAPI({
+      const request = this.workId ? workTaskChildStatusSetAPI : setTaskAPI
+      request({
         taskId: val.taskId,
         status: e ? 5 : 1
       })
@@ -1049,7 +1114,8 @@ export default {
      * 参与人操作
      */
     editOwnerList(users, dep) {
-      setTaskAPI({
+      const request = this.workId ? workTaskOwnerUserSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         ownerUserId: users
           .map(item => {
@@ -1067,7 +1133,8 @@ export default {
      * 参与人删除按钮
      */
     deleteOwnerList(item, index) {
-      taskDeleteOwnerUserAPI({
+      const request = this.workId ? workTaskOwnerUserDeleteAPI : taskDeleteOwnerUserAPI
+      request({
         taskId: this.id,
         userId: item.userId
       })
@@ -1089,7 +1156,8 @@ export default {
      * 上传负责人信息
      */
     submiteMainUser(mainUser) {
-      setTaskAPI({
+      const request = this.workId ? workTaskMainUserSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         mainUserId: mainUser ? mainUser.userId : ''
       })
@@ -1114,7 +1182,8 @@ export default {
      * 编辑任务名
      */
     submiteTaskName(val) {
-      setTaskAPI({
+      const request = this.workId ? workTaskTitleSetAPI : setTaskAPI
+      request({
         name: val,
         taskId: this.id
       })
@@ -1143,7 +1212,8 @@ export default {
     timeChange(type) {
       const params = { taskId: this.id }
       params[type] = this.taskData[type]
-      setTaskAPI(params)
+      const request = this.workId ? workTaskTimeSetAPI : setTaskAPI
+      request(params)
         .then(res => {
           // 停止时间回调
           if (type == 'stopTime') {
@@ -1162,7 +1232,8 @@ export default {
      * 描述提交按钮
      */
     submiteDescription() {
-      setTaskAPI({
+      const request = this.workId ? workTaskDescriptionSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         description: this.addDescriptionTextarea
       })
@@ -1244,7 +1315,8 @@ export default {
 
     // 相关信息提交按钮
     checkInfos(val) {
-      editTaskRelationAPI({
+      const request = this.workId ? editWorkTaskRelationAPI : editTaskRelationAPI
+      request({
         taskId: this.id,
         customerIds:
           val.customerIds && val.customerIds.length
@@ -1298,7 +1370,8 @@ export default {
               })
               .join(',')
           }
-          editTaskRelationAPI(params)
+          const request = this.workId ? editWorkTaskRelationAPI : editTaskRelationAPI
+          request(params)
             .then(res => {
               this.allData = tempRelatedListData
               this.$message.success('关联取消成功')
@@ -1330,7 +1403,8 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          deleteTaskAPI({
+          const request = this.workId ? workSubTaskDeleteAPI : deleteTaskAPI
+          request({
             taskId: val.taskId
           })
             .then(res => {
@@ -1425,7 +1499,8 @@ export default {
      * 删除截止时间
      */
     deleteTimeTop() {
-      setTaskAPI({
+      const request = this.workId ? workTaskTimeSetAPI : setTaskAPI
+      request({
         taskId: this.id,
         stopTime: ''
       })
