@@ -187,6 +187,31 @@ export default [
     }]
   },
   {
+    ...layout({
+      permissions: ['manage', 'adminLog'],
+      title: '系统日志',
+      icon: 'record'
+    }, '/manage/log/'),
+    alwaysShow: true,
+    children: [{
+      path: 'handle',
+      component: () => import('@/views/SystemManagement/SystemLog/DataHandleLog'),
+      meta: {
+        title: '数据操作日志',
+        requiresAuth: true,
+        permissions: ['manage', 'adminLog', 'actionRecord']
+      }
+    }, {
+      path: 'login',
+      component: () => import('@/views/SystemManagement/SystemLog/LoginLog'),
+      meta: {
+        title: '登录日志',
+        requiresAuth: true,
+        permissions: ['manage', 'adminLog', 'systemLog']
+      }
+    }]
+  },
+  {
     ...layout({}, '/manage', false),
     children: [{
       name: 'system-other',

@@ -241,6 +241,10 @@ export default {
           data: {} // 编辑所需信息
         }
       }
+    },
+    phone: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -605,6 +609,13 @@ export default {
 
       filedGetField(params)
         .then(res => {
+          if (this.phone !== '') {
+            res.data.forEach(item => {
+              if (item.field === 'mobile') {
+                item.value = this.phone
+              }
+            })
+          }
           this.getcrmRulesAndModel(res.data)
           this.loading = false
         })

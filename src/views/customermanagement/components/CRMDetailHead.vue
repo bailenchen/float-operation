@@ -16,7 +16,7 @@
           <span>{{ name }}</span>
         </el-tooltip><slot name="name" /></p>
       </div>
-
+      <time-piece v-if="showTimer && isCall"/>
       <div class="t-section__ft">
         <el-button
           v-if="showTransfer"
@@ -126,6 +126,7 @@ import {
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
+import TimePiece from '../../../callCenter/TimePiece'
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 
 export default {
@@ -133,6 +134,7 @@ export default {
   components: {
     TransferHandle,
     AllocHandle,
+    TimePiece,
     DealStatusHandle,
     PutPoolHandle
   },
@@ -162,6 +164,13 @@ export default {
       default: () => {
         return []
       }
+    },
+    /** 呼出信息 */
+    modelData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
@@ -177,6 +186,21 @@ export default {
     ...mapGetters(['crm']),
     crmIcon() {
       return require(`@/assets/img/crm/${this.crmType}.png`)
+    },
+    showTimer() {
+      return this.$store.state.customer.showTimer
+    },
+    // 只有正在通话的页面才能展示时间
+    isCall() {
+      if (this.modelData) {
+        if (this.modelData.modelId == this.id && this.modelData.model === this.crmType) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return true
+      }
     },
     typeName() {
       return (

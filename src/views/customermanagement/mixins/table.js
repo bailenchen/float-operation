@@ -98,7 +98,17 @@ export default {
   computed: {
     ...mapGetters(['crm'])
   },
-
+  watch: {
+    showDview() {
+      const callOutData = JSON.parse(localStorage.getItem('callOutData'))
+      if (callOutData) {
+        this.modelData = {
+          modelId: callOutData.id,
+          model: callOutData.type
+        }
+      }
+    }
+  },
   mounted() {
     /** 控制table的高度 */
     window.onresize = () => {

@@ -48,7 +48,7 @@
                 class="item" />
             </div>
             <div class="desc">
-              <span class="text">密码由8~20位字母、数字、特殊字符组成</span>
+              <span class="text">密码由6-20位字母、数字组成</span>
               <span
                 v-if="rankIndex >= 2"
                 class="icon wk wk-success" />
@@ -149,7 +149,7 @@ export default {
   },
   mixins: [mixins],
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
     return {
       form: {
         phone: sessionStorage.getItem('account') || ''
@@ -178,7 +178,7 @@ export default {
         smscode: [{ required: true, msg: '短信验证码不能为空' }],
         password: [
           { required: true, msg: '密码不能为空' },
-          { reg: pwdReg, msg: '密码必须由8-20位字母、数字组成' }
+          { reg: pwdReg, msg: '密码必须由6-20位字母、数字组成' }
         ]
       },
 
@@ -302,7 +302,7 @@ export default {
      */
     calcRank() {
       const pwd = this.form.password
-      if (pwd.length < 8) {
+      if (pwd.length < 6) {
         this.rankIndex = 0
         return
       }

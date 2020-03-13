@@ -6,7 +6,6 @@ const loadData = (el, binding) => {
   const loadingImg = require('@/assets/img/white.png')
   setSrc(el, binding, loadingImg)
 
-
   if (binding.value && binding.value.indexOf('/file/downFile') == 0) {
     if (dataCache[binding.value]) {
       setSrc(el, binding, dataCache[binding.value])

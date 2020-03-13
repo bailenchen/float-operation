@@ -17,7 +17,12 @@ const app = {
       remindReceivablesPlan: 0,
       endContract: 0,
       totalNum: 0
-    }
+    },
+    showRing: true,
+    showTimer: false,
+    showCallOut: false,
+    isCall: false, // 呼叫中心权限
+    callinTime: '00:00:00'
   },
 
   mutations: {
@@ -33,6 +38,36 @@ const app = {
       }
       messageNum.totalNum = totalNum
       state.messageNum = messageNum
+    },
+    /**
+     * 通话计时
+     */
+    CALL_STATUS: (state, callinTime) => {
+      state.callinTime = callinTime
+    },
+    /**
+     * 振铃中
+     */
+    SHOW_RING: (state, showRing) => {
+      state.showRing = showRing
+    },
+    /**
+     * 是否展示通话
+     */
+    SHOW_TIMER: (state, showTimer) => {
+      state.showTimer = showTimer
+    },
+    /**
+     * 展示来电弹框
+     */
+    SHOW_CALL_OUT: (state, showCallOut) => {
+      state.showCallOut = showCallOut
+    },
+    /**
+     * 呼叫中心权限
+     */
+    GET_IS_CALL: (state, isCall) => {
+      state.isCall = isCall
     }
   },
 

@@ -21,6 +21,7 @@
         <c-r-m-detail-head
           :is-seas="isSeasDetail"
           :detail="detailData"
+          :model-data="modelData"
           :head-details="headDetails"
           :id="id"
           :pool-id="poolId"
@@ -160,6 +161,13 @@ export default {
       type: Array,
       default: () => {
         return ['el-table__body']
+      }
+    },
+    /** 呼出信息 */
+    modelData: {
+      type: Object,
+      default: () => {
+        return {}
       }
     }
   },

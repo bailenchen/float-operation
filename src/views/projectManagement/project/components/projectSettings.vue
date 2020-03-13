@@ -67,6 +67,20 @@
                 </el-select>
               </div>
             </div>
+            <div v-if="setIsOpen == 1" class="row">
+              <span class="label name">成员权限</span>
+              <div class="color-dynamic">
+                <el-select
+                  v-model="ownerRole"
+                  placeholder="请选择">
+                  <el-option
+                    v-for="item in projectRoleList"
+                    :key="item.roleId"
+                    :label="`${item.roleName}：${item.remark}`"
+                    :value="item.roleId"/>
+                </el-select>
+              </div>
+            </div>
           </div>
           <div
             v-show="tabType == 'member'"
@@ -140,7 +154,11 @@ import {
   workWorkAddUserGroupAPI,
   workWorkGroupListAPI
 } from '@/api/projectManagement/project'
+import {
+  systemRoleQueryProjectRoleListAPI
+} from '@/api/systemManagement/project'
 import MembersDep from '@/components/selectEmployee/membersDep'
+
 
 export default {
   components: {
@@ -203,7 +221,10 @@ export default {
       ],
       membersList: [],
       // 角色权限
-      optionList: []
+      optionList: [],
+      // 成员权限
+      ownerRole: '',
+      projectRoleList: []
     }
   },
 
@@ -220,6 +241,7 @@ export default {
 
   created() {
     this.membersList = this.addMembersData || []
+    this.getProjectRoleList()
   },
 
   beforeDestroy() {},
@@ -253,12 +275,16 @@ export default {
     submite() {
       if (this.tabType == 'base') {
         this.loading = true
-        workWorkUpdateAPI({
+        const params = {
           name: this.setTitle,
           color: this.setColor,
           isOpen: this.setIsOpen,
           workId: this.workId
-        })
+        }
+        if (this.setIsOpen == 1) {
+          params.ownerRole = this.ownerRole
+        }
+        workWorkUpdateAPI(params)
           .then(res => {
             this.loading = false
             this.$message.success('操作成功')
@@ -324,6 +350,24 @@ export default {
         this.membersList.splice(index, 1)
         this.$message.success('删除成功')
       }).catch(() => {})
+    },
+
+    /**
+     * 获取列表数据
+     */
+    getProjectRoleList() {
+      this.loading = true
+      systemRoleQueryProjectRoleListAPI()
+        .then(res => {
+          this.projectRoleList = res.data || []
+          if (this.projectRoleList.length) {
+            this.ownerRole = this.projectRoleList[0].roleId
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }

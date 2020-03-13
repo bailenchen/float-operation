@@ -117,13 +117,6 @@ export default {
     },
 
     /**
-     * 打电话
-     */
-    callPhone() {
-      this.$message.error('请先开通呼叫中心')
-    },
-
-    /**
      * 获取基础信息
      */
     getBaseInfo() {

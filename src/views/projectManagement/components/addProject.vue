@@ -291,6 +291,10 @@ export default {
               custom: data.isSystemCover != 1,
               url: data.coverUrl
             }
+            this.coverImgList.push({
+              custom: data.isSystemCover != 1,
+              url: data.coverUrl
+            })
           } else {
             this.coverImg = this.coverImgList[0]
           }

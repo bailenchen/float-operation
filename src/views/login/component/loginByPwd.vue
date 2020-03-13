@@ -135,7 +135,7 @@ export default {
   name: 'LoginByPwd',
   mixins: [mixins],
   data() {
-    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
+    const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d).{6,20}$/
     return {
       redirect: undefined,
       rememberMe: false,
@@ -151,7 +151,7 @@ export default {
         username: [{ required: true, msg: '用户名不能为空' }],
         password: [
           { required: true, msg: '密码不能为空' },
-          { reg: pwdReg, msg: '密码由8-20位字母、数字组成' }
+          { reg: pwdReg, msg: '密码由6-20位字母、数字组成' }
         ]
       },
 

@@ -6,6 +6,7 @@
       v-if="id&&showDetail"
       :is="tabName"
       :crm-type="crmType"
+      :model-data="modelData"
       :id="id"
       class="d-view"
       @handle="detailHandle"
@@ -53,6 +54,13 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    /** 呼出信息 */
+    modelData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {

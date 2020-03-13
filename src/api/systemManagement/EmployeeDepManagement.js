@@ -158,3 +158,15 @@ export function userErrorExcelDownAPI(data) {
     responseType: 'blob'
   })
 }
+
+// 呼叫中心状态是否启用
+export function crmCallAuthorize(data) {
+  return request({
+    url: 'call/authorize',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

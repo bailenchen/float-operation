@@ -3,6 +3,7 @@
     v-if="id&&visible"
     :is="tabName"
     :crm-type="crmType"
+    :model-data="modelData"
     :id="id"
     :listener-ids="listenerIDs"
     :no-listener-ids="noListenerIDs"
@@ -63,6 +64,13 @@ export default {
       type: Array,
       default: () => {
         return ['el-table__body']
+      }
+    },
+    /** 呼出信息 */
+    modelData: {
+      type: Object,
+      default: () => {
+        return {}
       }
     }
   },

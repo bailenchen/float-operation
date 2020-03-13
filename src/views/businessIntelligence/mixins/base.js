@@ -28,6 +28,10 @@ export default {
         '#F661AC',
         '#8652EE'
       ],
+      currentPage: 1,
+      pageSizes: [15, 30, 45, 60],
+      pageSize: 0,
+      total: 0,
 
       // echart 操作项
       toolbox: {
@@ -75,6 +79,18 @@ export default {
       if (this.chartOtherObj) {
         this.chartOtherObj.resize()
       }
+    },
+
+    // 页面展示条数
+    handleSizeChange(val) {
+      this.pageData.limit = val
+      this.getList(this.pageData)
+    },
+
+    // 分页切换
+    handleCurrentChange(val) {
+      this.pageData.page = val
+      this.getList(this.pageData)
     },
 
     /**

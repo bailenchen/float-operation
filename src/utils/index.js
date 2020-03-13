@@ -367,6 +367,22 @@ export function downloadFile(data) {
   }).catch(() => {})
 }
 
+/**
+ * path  和 name
+ */
+export function conversionFileToUrl(path) {
+  return new Promise((resolve, reject) => {
+    downloadFileAPI(path).then(res => {
+      const blob = new Blob([res.data], {
+        type: 'audio/ogg'
+      })
+      resolve(URL.createObjectURL(blob))
+    }).catch(() => {
+      reject()
+    })
+  })
+}
+
 export function dataURLtoBlob(dataurl) {
   // eslint-disable-next-line one-var
   var arr = dataurl.split(','),
@@ -574,7 +590,7 @@ export function getBaiduMap() {
       }
       const $script = document.createElement('script')
       global.document.body.appendChild($script)
-      $script.src = `https://api.map.baidu.com/api?v=3.0&ak=mK88Pr44OK97tFxyPIX6UOlRDdwhD0ZL&callback=_initBaiduMap`
+      $script.src = `https://api.map.baidu.com/api?v=3.0&ak=fa7XUwX6dxlmDPV7PQRyiMMSP08kPNdG&callback=_initBaiduMap`
     })
     return global.BMap._preloader
   } else if (!global.BMap._preloader) {

@@ -59,6 +59,43 @@
           align="center"
           width="55"/>
         <el-table-column
+          v-if="isShow"
+          :resizable="false"
+          prop="call"
+          fixed
+          label=""
+          width="55">
+          <template
+            slot="header"
+            slot-scope="slot">
+            <i
+              class="el-icon-phone"
+              style="cursor: not-allowed; opacity: 0.5;color: #2486E4"/>
+          </template>
+          <template slot-scope="scope">
+            <el-popover
+              placement="right"
+              width="500"
+              popper-class="no-padding-popover"
+              trigger="click"
+              @show="showData(scope.row.leadsId)"
+              @hiden="showCount = -1">
+              <call-center
+                :scope="scope"
+                :show="scope.row.leadsId === showCount"
+                crm-type="leads"
+                @changeType="changeCRMType"/>
+              <el-button
+                slot="reference"
+                :style="{'opacity' :scope.$index >= 0 ? 1 : 0}"
+                type="primary"
+                icon="el-icon-phone"
+                circle
+                @click.stop="callCheckClick($event,scope,scope.$index)"/>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column
           v-for="(item, index) in fieldList"
           :key="index"
           :fixed="index==0"
@@ -113,6 +150,7 @@
     <clue-detail
       v-if="showDview"
       :id="rowID"
+      :model-data="modelData"
       class="d-view"
       @handle="handleHandle"
       @hide-view="showDview=false"/>
@@ -122,20 +160,26 @@
 <script>
 import ClueDetail from './ClueDetail'
 import table from '../mixins/table'
-
+import CallCenter from '@/callCenter/CallCenter'
 export default {
   /** 客户管理 的 线索列表 */
   name: 'ClueIndex',
   components: {
-    ClueDetail
+    ClueDetail,
+    CallCenter
   },
   mixins: [table],
   data() {
     return {
-      crmType: 'leads'
+      crmType: 'leads',
+      showCount: 0,
+      modelData: {}
     }
   },
   computed: {
+    isShow() {
+      return this.$store.state.customer.isCall
+    },
     menuItems() {
       const temp = []
       if (this.crm && this.crm.leads) {
@@ -178,6 +222,43 @@ export default {
       } else {
         return ''
       }
+    },
+    /**
+       * pover 显示时触发
+       */
+    showData(val) {
+      this.showCount = val
+    },
+    /**
+       * 查看详情
+       * @param val
+       */
+    changeCRMType(val) {
+      this.rowType = val.type
+      this.rowID = val.id
+
+      this.modelData = {
+        modelId: val.id,
+        model: val.type
+      }
+
+      this.showDview = true
+
+      let callOutData = {
+        modelId: val.id,
+        model: val.type
+      }
+      callOutData = JSON.stringify(callOutData)
+      localStorage.setItem('callOutData', callOutData)
+    },
+    /** 解决povper重复的bug */
+    callCheckClick(e, scope) {
+      this.list.forEach(item => {
+        this.$set(item, 'callShow', false)
+      })
+      this.$set(scope.row, 'callShow', !scope.row.callShow)
+      const popoverEl = e.target.parentNode
+      popoverEl.__vue__.showPopper = !scope.row.callShow
     }
   }
 }
