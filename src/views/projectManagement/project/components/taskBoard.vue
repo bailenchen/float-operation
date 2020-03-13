@@ -528,20 +528,20 @@ export default {
         status: element.checked ? 5 : 1
       })
         .then(res => {
-          if (element.checked) {
+          if (element.checked && value.list.length > 1) {
             let toIndex = null
             for (let index = value.list.length - 1; index < value.list.length; index--) {
-              const taskItem = value.list[index]
-              if (!taskItem.checked) {
-                toIndex = index
-                break
+              if (index >= 0) {
+                const taskItem = value.list[index]
+                if (!taskItem.checked) {
+                  toIndex = index
+                  break
+                }
               }
             }
-
             if (toIndex) {
               value.list.splice(fromIndex, 1)
               value.list.splice(toIndex, 0, element)
-
               workTaskUpdateOrderAPI({
                 toList: value.list.map(item => {
                   return item.taskId
