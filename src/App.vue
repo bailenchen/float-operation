@@ -80,7 +80,9 @@ export default {
       const build = Lockr.get('wk-build')
       if (!build || build < WKConfig.build) {
         if (!this.upgradeDialogShow) {
-          this.upgradeDialogShow = true
+          setTimeout(() => {
+            this.upgradeDialogShow = true
+          }, 3000)
         }
       }
     }

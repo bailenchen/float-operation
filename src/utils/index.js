@@ -179,6 +179,46 @@ export function getFileTypeIcon(file) {
   }
 }
 
+/**
+ * 根据文件名字判断是否能预览
+ * @param {*} name
+ */
+export function canPreviewFile(name) {
+  const temps = name ? name.split('.') : []
+  var ext = ''
+  if (temps.length > 0) {
+    ext = temps[temps.length - 1]
+  } else {
+    ext = ''
+  }
+
+  if (['xlsx', 'xls'].includes(ext)) {
+    return true
+  } else if (['doc', 'docx'].includes(ext)) {
+    return true
+  } else if (ext === 'pdf') {
+    return true
+  } else if (['ppt', 'pptx'].includes(ext)) {
+    return true
+  } else if (['txt', 'text'].includes(ext)) {
+    return true
+  }
+
+  return false
+}
+
+/**
+ * 预览文件
+ */
+export function wkPreviewFile(path) {
+  const urlS = path.split('?')
+  const url = urlS.length > 1 ? urlS[1] : ''
+  // https://file.72crm.com/onlinePreview?fileId=949051ca66ed45ca8a1bacae0e862d32
+  // window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
+  // http://dev.5kcrm.cn/file/preview?id=xxx
+  window.open(`http://dev.5kcrm.cn/file/preview?${url}`)
+}
+
 export function getFileIconWithSuffix(ext) {
   ext = (ext && ext.toLowerCase()) || ''
 

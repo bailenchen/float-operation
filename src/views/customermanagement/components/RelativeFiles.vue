@@ -35,8 +35,12 @@
         <template slot-scope="scope">
           <flexbox>
             <el-button
+              :disabled="!showPreviewBtn(scope)"
               type="text"
               @click.native="handleFile('preview', scope)">预览</el-button>
+            <el-button
+              type="text"
+              @click.native="handleFile('download', scope)">下载</el-button>
             <el-button
               :disabled="scope.row.readOnly == 1"
               type="text"
@@ -78,7 +82,7 @@
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
-import { crmFileSave, crmFileDelete, crmFileUpdate } from '@/api/common'
+import { crmFileSave, crmFileDelete, crmFileUpdate, downloadFileAPI } from '@/api/common'
 
 import { crmLeadsFileListAPI } from '@/api/customermanagement/clue'
 import { crmCustomerFileListAPI } from '@/api/customermanagement/customer'
@@ -88,7 +92,7 @@ import { crmContractFileListAPI } from '@/api/customermanagement/contract'
 import { crmProductFileListAPI } from '@/api/customermanagement/product'
 import { crmReceivablesFileListAPI } from '@/api/customermanagement/money'
 
-import { fileSize } from '@/utils'
+import { fileSize, canPreviewFile, wkPreviewFile, downloadFileWithBuffer } from '@/utils'
 import { debounce } from 'throttle-debounce'
 
 export default {
@@ -205,17 +209,28 @@ export default {
     },
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {},
-    /** 编辑删除cell */
+
+    showPreviewBtn(item) {
+      return canPreviewFile(item.row.name)
+    },
+
+    /**
+     * 编辑删除cell
+     */
     handleFile(type, item) {
       if (type === 'preview') {
-        var previewList = this.list.map(element => {
-          element.url = element.filePath
-          return element
-        })
-        this.$bus.emit('preview-image-bus', {
-          index: item.$index,
-          data: previewList
-        })
+        if (canPreviewFile(item.row.name)) {
+          wkPreviewFile(item.row.filePath)
+        } else {
+          var previewList = this.list.map(element => {
+            element.url = element.filePath
+            return element
+          })
+          this.$bus.emit('preview-image-bus', {
+            index: item.$index,
+            data: previewList
+          })
+        }
       } else if (type === 'delete') {
         this.$confirm('您确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
@@ -239,6 +254,13 @@ export default {
               message: '已取消操作'
             })
           })
+      } else if (type === 'download') {
+        downloadFileAPI(item.row.filePath).then(res => {
+          const blob = new Blob([res.data], {
+            type: ''
+          })
+          downloadFileWithBuffer(blob, item.row.name)
+        }).catch(() => {})
       } else {
         this.editForm.data = item
         this.editForm.name = item.row.name

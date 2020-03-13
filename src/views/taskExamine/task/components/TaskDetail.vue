@@ -562,7 +562,9 @@ import {
   deleteTaskAPI,
   commentListAPI,
   setCommentAPI,
+  setWorkTaskCommentAPI,
   deleteCommentAPI,
+  deleteWorkTaskCommentAPI,
   detailsTaskAPI,
   detailsTrashTaskAPI,
   queryLogTaskAPI,
@@ -1250,7 +1252,8 @@ export default {
     handleReply(data) {
       if (data) {
         this.commentsLoading = true
-        setCommentAPI({
+        const request = this.workId ? setWorkTaskCommentAPI : setCommentAPI
+        request({
           typeId: this.id,
           type: 1,
           content: xss(data)
@@ -1291,7 +1294,8 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          deleteCommentAPI({
+          const request = this.workId ? deleteWorkTaskCommentAPI : deleteCommentAPI
+          request({
             commentId: val.commentId
           })
             .then(res => {

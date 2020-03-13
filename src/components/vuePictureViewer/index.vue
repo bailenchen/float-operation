@@ -30,6 +30,7 @@
             class="file-icon">
           <div class="file-handle">
             <el-button
+              v-if="showPreviewBtn"
               type="primary"
               plain
               @click.native="previewFile">预览</el-button>
@@ -127,7 +128,10 @@ import {
   getMaxIndex,
   getFileIconWithSuffix,
   downloadFileWithBuffer,
-  getImageData } from '@/utils'
+  canPreviewFile,
+  wkPreviewFile,
+  getImageData
+} from '@/utils'
 import { downloadFileAPI } from '@/api/common'
 
 export default {
@@ -210,6 +214,10 @@ export default {
 
     bigImgUrl() {
       return this.currentFile.src
+    },
+
+    showPreviewBtn() {
+      return canPreviewFile(this.currentFile.name)
     }
   },
   mounted() {
@@ -476,11 +484,7 @@ export default {
     },
     previewFile() {
       if (this.currentFile.url) {
-        const urlS = this.currentFile.url.split('?')
-        const url = urlS.length > 1 ? urlS[1] : ''
-        // https://file.72crm.com/onlinePreview?fileId=949051ca66ed45ca8a1bacae0e862d32
-        // window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
-        window.open(`https://file.72crm.com/onlinePreview?${url}`)
+        wkPreviewFile(this.currentFile.url)
       }
     },
     getShowTypeInfo(name) {
