@@ -408,6 +408,9 @@ export default {
       this.page = 1
       this.activeIndex = index
       this.crmType = item.crmType
+      this.showFilterView = false
+      this.filterShowObj = { form: [] }
+      this.filterObj = { form: [] }
       this.getFilterList()
       if (this.crmType && this.crmType !== 'user') {
         this.getFilterFieldInfo()
@@ -440,7 +443,6 @@ export default {
       request(params)
         .then(res => {
           this.fieldList = res.data
-          this.showFilter = true
         })
         .catch(() => {})
     },

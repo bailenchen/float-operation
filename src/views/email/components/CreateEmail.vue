@@ -188,6 +188,7 @@ export default {
     return {
       loading: false,
       themeVal: '',
+      id: '',
       sentType: 'sent',
       receiveType: 'receive',
       // 添加收件人组件部分
@@ -254,6 +255,7 @@ export default {
       this.receiverLists.push({ 'email': emailObj.senderEmail, 'show': true })
       this.sentLists.push({ 'email': emailObj.receiptEmails, 'show': true })
       this.themeVal = emailObj.theme
+      this.id = emailObj.id
       this.getFileList(emailObj.batchId)
       // this.fileList = emailObj.fileList && emailObj.fileList.length ? emailObj.fileList.map((item) => {
       //   item.name = item.fileName
@@ -521,7 +523,7 @@ export default {
           return item.email
         })
         var params = {
-          id: '',
+          id: this.id,
           receipt_emails: newReceiveList.join(','),
           cc_emails: newSentList.join(',') || '',
           batchId: Array.from(new Set(this.batchIdList)).join(',') || '',
@@ -538,7 +540,7 @@ export default {
         }[btnType]
         this.loading = true
         requestAPI(params).then((res) => {
-          this.loading = true
+          this.loading = false
           this.receiverLists = []
           this.deffientList = []
           this.sentLists = []

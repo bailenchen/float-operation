@@ -96,6 +96,7 @@ export default {
 
         for (let index = 0; index < list.length; index++) {
           const item = list[index]
+          console.log(item, 'item')
           if (this.isSender) {
             item.handleSender = this.handleSender(item.receiptName)
           } else {
@@ -143,6 +144,7 @@ export default {
           this.total = res.data.totalRow
           this.loading = false
         }
+
         this.lists = list
         this.checkAll = false
         this.isIndeterminate = true
@@ -157,6 +159,9 @@ export default {
      * 处理发件人/收件人
      */
     handleSender(sender) {
+      if (!sender) {
+        return ''
+      }
       const endIndex = sender.indexOf('@')
       const startIndex = sender.indexOf('<') + 1
       let realStr = ''
