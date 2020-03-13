@@ -35,6 +35,7 @@
         <template slot-scope="scope">
           <flexbox>
             <el-button
+              :disabled="!showPreviewBtn(scope)"
               type="text"
               @click.native="handleFile('preview', scope)">预览</el-button>
             <el-button
@@ -208,7 +209,14 @@ export default {
     },
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {},
-    /** 编辑删除cell */
+
+    showPreviewBtn(item) {
+      return canPreviewFile(item.row.name)
+    },
+
+    /**
+     * 编辑删除cell
+     */
     handleFile(type, item) {
       if (type === 'preview') {
         if (canPreviewFile(item.row.name)) {
