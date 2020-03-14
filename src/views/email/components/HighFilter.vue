@@ -280,7 +280,7 @@ export default {
               this.allObj[val.item.sendType].usersCheckList.splice(index, 1)
             }
           })
-        } else {
+        } else if (val.item.model === 'nearby') {
           this.allObj[val.item.sendType].shortCheckList.forEach((item, index) => {
             if (val.item.customerName === item.customerName) {
               this.allObj[val.item.sendType].shortCheckList.splice(index, 1)

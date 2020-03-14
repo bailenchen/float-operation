@@ -82,11 +82,11 @@ export default {
      * 回复
      */
     reply() {
+      // localStorage.setItem('crm-emailContent', this.detailData)
       this.$router.push({
         path: '/email/index/writeLetter',
         query: {
-          reply: true,
-          ...this.detailData
+          reply: true
         }
       })
     },
@@ -98,8 +98,7 @@ export default {
       this.$router.push({
         path: '/email/index/writeLetter',
         query: {
-          share: true,
-          ...this.detailData
+          share: true
         }
       })
     },

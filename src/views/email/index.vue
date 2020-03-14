@@ -435,9 +435,11 @@ export default {
      * 点击每行
      */
     clickRow(item, index) {
+      localStorage.setItem('crm-emailContent', JSON.stringify(item))
       if (this.emailType === 'draft') {
-        localStorage.setItem('crm-emailContent', JSON.stringify(item))
-        this.$router.push({ path: '/email/index/writeLetter' })
+        this.$router.push({ path: '/email/index/writeLetter', query: {
+          draft: true
+        }})
         return
       }
 

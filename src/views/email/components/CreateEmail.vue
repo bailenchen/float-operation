@@ -160,7 +160,7 @@ import {
   emailQueryAccountByIdAPI,
   emailRecordUploadAPI,
   saveDraftBoxAPI } from '@/api/email/email'
-import { crmFileIndex } from '@/api/common'
+import { emailGetEmailFileByBatchIdAPI } from '@/api/email/email'
 import axios from 'axios'
 import { crmFileDelete, crmFileSaveUrl } from '@/api/common'
 import { guid } from '@/utils'
@@ -252,24 +252,30 @@ export default {
     let emailObj = localStorage.getItem('crm-emailContent') || null
     if (emailObj) {
       emailObj = JSON.parse(emailObj)
-      this.receiverLists.push({ 'email': emailObj.receiptEmails, 'show': true })
+
+      if (this.$route.query.draft) {
+        this.changeType('receive')
+        this.addReceiveEmail(emailObj.receiptEmails, [])
+        this.themeVal = emailObj.theme
+        this.id = emailObj.id
+        this.getFileList(emailObj.batchId)
+        this.emailcontent = emailObj.content
+      } else {
+        if (this.$route.query.reply) {
+          this.changeType('receive')
+          this.addReceiveEmail(emailObj.receiptEmails, [])
+        } else if (this.$route.query.share) {
+          this.themeVal = emailObj.theme
+          this.id = emailObj.id
+          this.getFileList(emailObj.batchId)
+          this.emailcontent = emailObj.content
+        }
+      }
       // this.sentLists.push({ 'email': emailObj.receiptEmails, 'show': true })
-      this.themeVal = emailObj.theme
-      this.id = emailObj.id
-      this.getFileList(emailObj.batchId)
       // this.fileList = emailObj.fileList && emailObj.fileList.length ? emailObj.fileList.map((item) => {
       //   item.name = item.fileName
       //   return item
       // }) : []
-      this.emailcontent = emailObj.content
-    }
-    if (this.$route.query.share) {
-      this.themeVal = this.$route.query.theme
-      this.fileList = this.$route.query.fileList && this.$route.query.fileList.length ? this.$route.query.fileList.map((item) => {
-        item.name = item.fileName
-        return item
-      }) : []
-      this.emailcontent = this.$route.query.content
     }
   },
   mounted() {
@@ -297,8 +303,13 @@ export default {
        * 查询附件列表
        */
     getFileList(batchId) {
-      crmFileIndex({ batchId: batchId }).then(res => {
-        this.fileList = res.data.file
+      console.log(batchId, '====')
+      emailGetEmailFileByBatchIdAPI({ batchId: batchId }).then(res => {
+        res.data.forEach(item => {
+          item.name = item.fileName + '（' + Math.floor(item.fileSize / 1024) + 'K）'
+          console.log(item.name)
+        })
+        this.fileList = res.data
         this.$emit('getFileCount', this.fileList)
       }).catch(() => {})
     },

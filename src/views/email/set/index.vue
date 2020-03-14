@@ -15,7 +15,7 @@
           <el-form-item label="邮箱密码" prop="emailPassward" >
             <el-input v-model="form.emailPassward" type="password" placeholder="QQ、163等邮箱请使用授权码"/>
           </el-form-item>
-          <div class="tip">授权码可在邮箱的【设置】-【账户】页面生成</div>
+          <div class="tip">请使用邮箱密码或授权码进行登录，如无法正常登录请查看<a href="https://www.5kcrm.com/help_detail/menu_id/129">邮箱登录帮助</a></div>
 
           <template v-if="isHand">
 
@@ -311,6 +311,9 @@ export default {
    position: relative;
    top: -8px;
    left: 100px;
+   a {
+     color: #2362fb;
+   }
    }
 .email-set {
   width: 100%;
