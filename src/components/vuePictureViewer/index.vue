@@ -20,7 +20,7 @@
       <div
         v-if="!bigShowType.isImage"
         class="file-show">
-        <div class="title">该附件格式不支持预览，请下载后查看</div>
+        <div v-if="!showPreviewBtn" class="title">该附件格式不支持预览，请下载后查看</div>
         <i
           class="el-icon-close"
           @click="closeViewer" />
