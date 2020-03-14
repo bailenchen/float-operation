@@ -135,16 +135,18 @@ export default {
   created() {
     this.deleteList = [
       {
-        name: '删除邮件',
-        type: 'delete',
-        icon: 'el-icon-delete-solid'
-      },
-      {
         name: '彻底删除',
         type: 'rootDel',
         icon: 'el-icon-delete-solid'
       }
     ]
+    if (this.emailType !== 'deleted') {
+      this.deleteList.unshift({
+        name: '删除邮件',
+        type: 'delete',
+        icon: 'el-icon-delete-solid'
+      })
+    }
   },
   methods: {
     /** 勾选后的表头操作 */

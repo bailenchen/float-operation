@@ -338,7 +338,6 @@ export default {
         state = 6 // 彻底删除
       } else {
         state = 7
-        console.log(item)
         message = `确定要移动邮件到${item.name}吗`
       }
       this.$confirm(message, '提示', {
@@ -383,6 +382,7 @@ export default {
      * 普通删除邮件
      */
     deleteEmail() {
+      this.loading = true
       emailRecordLogicDeleteAPI({ emailIds: this.idLists.join(',') }).then(res => {
         this.$message.success('删除成功')
         this.getEmailList()
@@ -395,6 +395,7 @@ export default {
      * 彻底删除邮件
      */
     destoryEmail() {
+      this.loading = true
       emailRecordDeleteByEmailIdAPI({ emailIds: this.idLists.join(',') }).then(res => {
         this.$message.success('彻底删除成功')
         this.getEmailList()
@@ -407,6 +408,7 @@ export default {
      * 已读，未读，星标，取消星标
      */
     handleMore(stateType, is) {
+      this.loading = true
       this.submitMoreHandle(stateType, is).then(res => {
         if (is !== 'detail') {
           this.$message({
@@ -414,6 +416,7 @@ export default {
             message: '操作成功'
           })
         }
+        this.loading = false
         this.getEmailList()
         this.queryEmailNum()
       }).catch(() => {
@@ -451,11 +454,14 @@ export default {
         emailIds: this.idLists.join(','),
         emailType: item.kind
       }
-
+      this.loading = true
       emailRecordShiftEmailAPI(params).then(() => {
         this.$message.success('移动成功')
+        this.loading = false
         this.getEmailList()
-      }).catch(() => {})
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**

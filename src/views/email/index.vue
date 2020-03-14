@@ -320,7 +320,8 @@ export default {
         star: [],
         draft: [],
         sent: [],
-        deleted: [],
+        deleted: [
+        ],
         spam: []
       }[this.emailType]
     }
