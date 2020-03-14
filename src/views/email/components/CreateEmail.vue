@@ -263,7 +263,7 @@ export default {
       } else {
         if (this.$route.query.reply) {
           this.changeType('receive')
-          this.addReceiveEmail(emailObj.receiptEmails, [])
+          this.addReceiveEmail(emailObj.senderEmail, [])
         } else if (this.$route.query.share) {
           this.themeVal = emailObj.theme
           this.id = emailObj.id
