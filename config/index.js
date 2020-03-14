@@ -12,7 +12,7 @@ module.exports = {
     proxyTable: {
       '/api': {
         // target: 'http://192.168.1.116:8080/',
-        target: 'https://s.72crm.com/api/',
+        target: 'http://dev.5kcrm.cn/api/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

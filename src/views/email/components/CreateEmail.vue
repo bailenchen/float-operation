@@ -528,15 +528,15 @@ export default {
         let newReceiveList = []
         let newSentList = []
         newReceiveList = this.receiverLists.map((item) => {
-          return item.email
+          return { email: item.email, name: item.customerName || '' }
         })
         newSentList = this.sentLists.map((item) => {
-          return item.email
+          return { email: item.email, name: item.customerName || '' }
         })
         var params = {
           id: this.id,
-          receipt_emails: newReceiveList.join(','),
-          cc_emails: newSentList.join(',') || '',
+          receipt_emails: newReceiveList,
+          cc_emails: newSentList,
           batchId: Array.from(new Set(this.batchIdList)).join(',') || '',
           theme: this.themeVal || '',
           content: this.emailcontent || '',
