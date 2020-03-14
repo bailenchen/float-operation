@@ -128,25 +128,25 @@ export default {
         if (this.emailType !== 'draft') {
           this.list[0].children = [...this.list[0].children, ...tempList]
         }
+        this.deleteList = [
+          {
+            name: '彻底删除',
+            type: 'rootDel',
+            icon: 'el-icon-delete-solid'
+          }
+        ]
+        if (this.emailType !== 'deleted') {
+          this.deleteList.unshift({
+            name: '删除邮件',
+            type: 'delete',
+            icon: 'el-icon-delete-solid'
+          })
+        }
       },
       immediate: true
     }
   },
   created() {
-    this.deleteList = [
-      {
-        name: '彻底删除',
-        type: 'rootDel',
-        icon: 'el-icon-delete-solid'
-      }
-    ]
-    if (this.emailType !== 'deleted') {
-      this.deleteList.unshift({
-        name: '删除邮件',
-        type: 'delete',
-        icon: 'el-icon-delete-solid'
-      })
-    }
   },
   methods: {
     /** 勾选后的表头操作 */
