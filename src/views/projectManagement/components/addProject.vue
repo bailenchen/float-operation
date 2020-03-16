@@ -393,6 +393,7 @@ export default {
       }).then(res => {
         this.imgLoading = false
         res.custom = true
+        this.coverImg = res
         this.coverImgList.push(res)
       }).catch(() => {
         this.imgLoading = false
