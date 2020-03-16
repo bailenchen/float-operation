@@ -579,7 +579,6 @@ export default {
         }
       }
       .board-item-active {
-        border: 0;
         color: #8f8f8f;
         background: #f3f3f3;
         .element-label {
