@@ -179,8 +179,11 @@ export default {
     /**
      * 收件人为多人时，只展示第一个人的信息
      */
-    handleEmail(email) {
-      const list = email.split(',')
+    handleEmail(item, isSender) {
+      let list = item.receiptEmails.split(',')
+      if (!isSender) {
+        list = item.sender.split(',')
+      }
       if (list.length > 1) {
         return false
       }

@@ -130,7 +130,7 @@
                       style="cursor: pointer;"
                       @click.stop="clickRow(item, index)">
                       <el-popover
-                        v-if="emailType !== 'goTo' && handleEmail(item.receiptEmails)"
+                        v-if="emailType !== 'goTo' && handleEmail(item, isSender)"
                         :open-delay="1000"
                         placement="bottom"
                         title=""
@@ -149,9 +149,9 @@
 
                           <el-button type="text" @click="getDealingsEmail(item.handleSender, item)">往来邮件</el-button>
                         </flexbox>
-                        <span slot="reference"> {{ item.receiptName }}</span>
+                        <span slot="reference"> {{ isSender ? item.receiptName : item.handleSender }}</span>
                       </el-popover>
-                      <div v-else class="email_over">{{ item.receiptName }}</div>
+                      <div v-else class="email_over">{{ isSender ? item.receiptName : item.handleSender }}</div>
                     </div>
                   </td>
                   <td class="tb-h-align">
