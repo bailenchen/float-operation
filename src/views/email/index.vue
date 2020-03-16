@@ -431,6 +431,7 @@ export default {
       } else {
         // 草稿箱没有未读邮件
         this.allNumber = this.emailNum.draftsCount
+        this.receiveNumber = 0
       }
     },
 
