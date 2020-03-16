@@ -8,14 +8,14 @@
       </flexbox>
       <div class="main-info">发件人：&nbsp;&nbsp;{{ detailData.sender }}</div>
       <flexbox>
-        <div class="main-title">收件人：&nbsp;&nbsp;</div>
+        <div class="main-title">收件人：&nbsp;</div>
         <div class="over">
-          {{ detailData.receiptName }}
+          {{ handleDetailReceiptName(detailData) }}
         </div>
       </flexbox>
-      <div class="main-info">时&nbsp;&nbsp;&nbsp;间：&nbsp;&nbsp;{{ detailData.showTime }}</div>
+      <div class="main-info">时&nbsp;&nbsp;&nbsp;间：&nbsp;&nbsp;{{ fifterTime(detailData.showTime) }}</div>
       <div class="main-info">
-        附&nbsp;&nbsp;&nbsp;件: &nbsp;&nbsp;<span style="font-weight: bolder;">{{ fileCount }} 个</span>&nbsp;
+        附&nbsp;&nbsp;&nbsp;件: &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight: bolder;">{{ fileCount }} 个</span>&nbsp;
         <span v-if="fileCount">
           (<span>
             <img :src="src" style="vertical-align: sub;" width="12px" alt="">
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { formatTime } from '@/utils'
 export default {
   name: 'DetailHead',
   props: {
@@ -140,8 +140,25 @@ export default {
      * 格式化时间
      */
     fifterTime(time) {
-      const template = new Date(time).getTime()
-      return moment(template).format('YYYY年MM月DD日 HH:MM')
+      return formatTime(new Date(time))
+    },
+
+    /**
+     * 拼接展示数据
+     */
+    handleDetailReceiptName(data) {
+      const receiptNameList = data.receiptName.split(',')
+      const receiptEmailsList = data.receiptEmails.split(',')
+      const list = []
+      receiptNameList.forEach((item, index) => {
+        // 名称跟邮箱相同时，展示一个就可以了
+        if (item === receiptEmailsList[index]) {
+          list.push(item)
+        } else {
+          list.push(item + ' ' + receiptEmailsList[index])
+        }
+      })
+      return list.join('; ')
     }
 
   }
@@ -167,16 +184,20 @@ export default {
     text-align: left;
   }
   .over {
-    width: 400px;
+    width: 100%;
     word-break: break-word;
     margin: 10px 0;
+    padding-right: 30px;
   }
   .main-title {
-    width: 82px;
+    width: 78px;
+    flex-shrink: 0;
     text-align: right;
   }
   .button_group {
     padding: 10px 15px;
+    position: absolute;
+    right: 20px;
   }
 }
 .el-select {

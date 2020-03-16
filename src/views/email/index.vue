@@ -168,7 +168,7 @@
                   </td>
                   <td class="tb-h-align font-color " style="width: 100px;">
                     <div :class="!item.isRead ? 'un-read' : ''">
-                      {{ fifterTime(item.createTime) }}
+                      {{ fifterTime(item.showTime) }}
                     </div>
                   </td>
 
