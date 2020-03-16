@@ -1318,7 +1318,7 @@ export default {
     },
 
     // 相关信息提交按钮
-    checkInfos(val) {
+    checkInfos(val, alldata) {
       const request = this.workId ? editWorkTaskRelationAPI : editTaskRelationAPI
       request({
         taskId: this.id,
@@ -1341,6 +1341,7 @@ export default {
       })
         .then(res => {
           this.$message.success('关联成功')
+          this.allData = alldata
           this.$emit('on-handle', {
             type: 'relation-business',
             index: this.detailIndex,

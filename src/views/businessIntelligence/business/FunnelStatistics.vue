@@ -80,18 +80,19 @@ export default {
           this.loading = false
           this.list = res.data
           var data = []
-          let sumMoney = 0
+          let sumCount = 0
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index]
             data.push({
-              name: (element.name || '') + '(' + element.count + ')',
-              value: parseFloat(element.money)
+              name: (element.name || '') + '(' + element.money + '元)',
+              value: parseFloat(element.count)
             })
-            sumMoney += parseFloat(element.money)
+            sumCount += parseFloat(element.count)
           }
 
           this.funnelOption.series[0].data = data
-          this.funnelOption.series[0].max = sumMoney < 1 ? 1 : sumMoney
+          this.funnelOption.legend.data = data.map(o => o.name)
+          this.funnelOption.series[0].max = sumCount < 1 ? 1 : sumCount
           this.chartObj.setOption(this.funnelOption, true)
         })
         .catch(() => {
@@ -140,6 +141,13 @@ export default {
           formatter: '{b} <br/> 预测金额: {c}元'
         },
         calculable: true,
+        legend: {
+          data: [],
+          // 图例文本格式化
+          formatter: function(name) {
+            return name.split('(')[0]
+          }
+        },
         grid: {
           left: 0,
           right: 0,
@@ -154,7 +162,7 @@ export default {
             left: '20%',
             width: '56%',
             /** 数据排序 */
-            sort: 'none',
+            sort: 'descending',
             /** 数据图形间距。 */
             gap: 2,
 

@@ -143,7 +143,7 @@
   </create-view>
 </template>
 <script>
-import { crmFileSave, crmFileDelete } from '@/api/common'
+import { crmFileSaveByBatchIdAPI, crmFileDelete } from '@/api/common'
 import {
   workWorkSaveAPI,
   workWorkUpdateAPI,
@@ -294,6 +294,7 @@ export default {
             if (data.isSystemCover != 1) {
               this.coverImgList.push({
                 custom: true,
+                fileId: data.fileId,
                 url: data.coverUrl
               })
             }
@@ -387,12 +388,13 @@ export default {
     customImgChange() {
       var files = event.target.files
       this.imgLoading = true
-      crmFileSave({
+      crmFileSaveByBatchIdAPI({
         file: files[0],
         batchId: this.batchId
       }).then(res => {
         this.imgLoading = false
         res.custom = true
+        this.coverImg = res
         this.coverImgList.push(res)
       }).catch(() => {
         this.imgLoading = false

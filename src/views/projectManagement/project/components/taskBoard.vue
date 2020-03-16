@@ -104,6 +104,7 @@
               },
               forceFallback: false,
               disabled: canOrderTask,
+              filter: '.board-item-active',
               dragClass: 'sortable-drag'
             }"
             :id="item.classId"
@@ -132,7 +133,7 @@
                   <el-checkbox
                     v-model="element.checked"
                     :disabled="!permission.setTaskStatus"
-                    @change="checkboxChange(element, item, i)"/>
+                    @change="debouncedCheckboxChange(element, item, i)"/>
                 </div>
                 <div class="element-label">{{ element.name }}</div>
               </flexbox>
@@ -289,6 +290,7 @@ import draggable from 'vuedraggable'
 import scrollx from '@/directives/scrollx'
 
 import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
+import { throttle } from 'throttle-debounce'
 
 export default {
   components: {
@@ -362,6 +364,9 @@ export default {
   },
 
   created() {
+    this.debouncedCheckboxChange = throttle(500, (element, item, i) => {
+      this.checkboxChange(element, item, i)
+    })
     this.getList()
     // 筛选
     this.$bus.$on('search', (userIds, timeId, tagIds) => {
@@ -518,28 +523,59 @@ export default {
      * 勾选
      */
     checkboxChange(element, value, fromIndex) {
-      if (element.checked) {
-        value.checkedNum++
-      } else {
-        value.checkedNum--
-      }
       workTaskStatusSetAPI({
         taskId: element.taskId,
         status: element.checked ? 5 : 1
       })
         .then(res => {
-          if (element.checked && value.list.length > 1) {
-            let toIndex = null
-            for (let index = value.list.length - 1; index < value.list.length; index--) {
-              if (index >= 0) {
-                const taskItem = value.list[index]
-                if (!taskItem.checked) {
-                  toIndex = index
-                  break
+          let toIndex = null
+
+          if (element.checked) {
+            const newElement = value.list[fromIndex]
+            if (newElement.taskId != element.taskId) {
+              fromIndex = null
+            }
+            for (let index = value.list.length - 1; index >= 0; index--) {
+              const taskItem = value.list[index]
+              if (fromIndex === null) {
+                if (element.taskId == taskItem.taskId) {
+                  fromIndex = index
                 }
               }
+              if (!taskItem.checked) {
+                toIndex = index
+              }
+
+              if (fromIndex !== null && toIndex !== null) {
+                break
+              }
             }
-            if (toIndex) {
+
+            if (toIndex < fromIndex) {
+              toIndex = null
+            }
+          } else {
+            const newElement = value.list[fromIndex]
+            if (newElement.taskId != element.taskId) {
+              fromIndex = null
+            }
+            for (let index = value.list.length - 1; index >= 0; index--) {
+              const taskItem = value.list[index]
+              if (fromIndex === null) {
+                if (element.taskId == taskItem.taskId) {
+                  fromIndex = index
+                }
+              }
+
+              if (fromIndex !== null) {
+                break
+              }
+            }
+            toIndex = 0
+          }
+
+          if (toIndex != null && toIndex >= 0) {
+            if (toIndex != fromIndex) {
               value.list.splice(fromIndex, 1)
               value.list.splice(toIndex, 0, element)
               workTaskUpdateOrderAPI({
@@ -552,14 +588,12 @@ export default {
                 .catch(() => {})
             }
           }
+
+          this.updateTaskListCheckNum(value)
         })
         .catch(() => {
-          if (element.checked) {
-            value.checkedNum--
-          } else {
-            value.checkedNum++
-          }
           element.checked = !element.checked
+          this.updateTaskListCheckNum(value)
         })
     },
 
@@ -859,7 +893,7 @@ export default {
       }
     }
     .board-column-content {
-      min-height: 20px;
+      // min-height: 20px;
       padding: 0 10px;
       flex: 1;
       overflow: auto;
@@ -909,7 +943,6 @@ export default {
       }
       .board-item-active {
         box-shadow: none;
-        border: 0;
         background: #f3f3f3;
         color: #8f8f8f;
         .element-label {
