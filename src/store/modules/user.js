@@ -34,11 +34,12 @@ const user = {
     oa: {}, // 办公
     emailMsg: {},
     emailNum: {},
-    project: {} // 项目管理
+    project: {}, // 项目管理
+    email: {} // 邮箱
   },
 
   mutations: {
-    SET_EMAIL: (state, emailMsg) => {
+    SET_EMAIL_MSG: (state, emailMsg) => {
       state.emailMsg = emailMsg
     },
 
@@ -67,6 +68,9 @@ const user = {
     SET_PROJECT: (state, project) => {
       state.project = project
     },
+    SET_EMAIL: (state, email) => {
+      state.email = email
+    },
     SET_AUTH: (state, data) => {
       Lockr.set('Admin-Token', data['Admin-Token'])
       // 开启了小程序
@@ -91,6 +95,7 @@ const user = {
       state.manage = data.auth.manage
       state.oa = data.auth.oa
       state.project = data.auth.project
+      state.email = data.auth.email
     }
   },
 
@@ -136,6 +141,7 @@ const user = {
           commit('SET_MANAGE', data.manage)
           commit('SET_OA', data.oa)
           commit('SET_PROJECT', data.project)
+          commit('SET_EMAIL', data.email)
 
           resolve(data)
         }).catch(error => {

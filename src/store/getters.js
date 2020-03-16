@@ -23,6 +23,7 @@ const getters = {
   manage: state => state.user.manage,
   oa: state => state.user.oa,
   project: state => state.user.project,
+  email: state => state.user.email,
   // 路由
   addRouters: state => state.permission.addRouters,
   crmRouters: state => state.permission.crmRouters,

@@ -245,6 +245,10 @@ export default {
           calendar: {
             disable: require('@/assets/img/system/app/ce_disable.png'),
             enable: require('@/assets/img/system/app/ce_enable.png')
+          },
+          email: {
+            disable: require('@/assets/img/system/app/email_disable.png'),
+            enable: require('@/assets/img/system/app/email_enable.png')
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }
