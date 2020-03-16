@@ -82,6 +82,25 @@ export function crmFileSave(data) {
   })
 }
 
+/**
+ * 唯一图
+ * @param {*} data
+ */
+export function crmFileSaveByBatchIdAPI(data) {
+  var param = new FormData()
+  Object.keys(data).forEach(key => {
+    param.append(key, data[key])
+  })
+  return request({
+    url: 'file/uploadByBatchId',
+    method: 'post',
+    data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
 export function crmFileFormDataSave(data) {
   return request({
     url: 'file/upload',
