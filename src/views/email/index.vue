@@ -11,7 +11,9 @@
       <template v-if="!isNoRead">
         <div slot="header" class="record-receive">
           （共有<span>{{ allNumber }}</span>封邮件<span v-if="receiveNumber">，其中<span class="blue-font" @click="noRead"> 未读邮件 </span>{{ receiveNumber }}封</span>）
-          <!-- <el-button type="text" class="blue-font" @click="allRead">全部标为已读</el-button> -->
+          <el-tooltip class="item" effect="dark" content="数据在同步的过程中有一定延迟，如出现数量不正确，请稍作等待" placement="top">
+            <el-button type="text"><i class="el-icon-question"/></el-button>
+          </el-tooltip>
         </div>
       </template>
     </email-list-head>
@@ -736,5 +738,8 @@ tr > td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+/deep/.el-icon-question {
+  color: #999;
 }
 </style>
