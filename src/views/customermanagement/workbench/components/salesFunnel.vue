@@ -81,7 +81,7 @@ export default {
           {
             type: 'funnel',
             /** 数据排序 */
-            sort: 'none',
+            sort: 'descending',
             /** 数据图形间距。 */
             gap: 2,
             min: 0,
@@ -155,15 +155,14 @@ export default {
       }).then(res => {
         this.loading = false
         const data = []
-
         let sumCount = 0
         for (let index = 0; index < res.data.list.length; index++) {
           const element = res.data.list[index]
           data.push({
-            name: (element.name || '') + '(预测金额: ' + element.money + '元)',
+            name: (element.name || '') + '(' + element.money + '元)',
             value: element.count
           })
-          sumCount += parseFloat(element.Count || 0)
+          sumCount += parseFloat(element.count || 0)
         }
 
         this.chartOption.series[0].data = data
