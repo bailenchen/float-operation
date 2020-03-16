@@ -294,6 +294,7 @@ export default {
             if (data.isSystemCover != 1) {
               this.coverImgList.push({
                 custom: true,
+                fileId: data.fileId,
                 url: data.coverUrl
               })
             }
