@@ -255,7 +255,12 @@ export default {
 
       if (this.$route.query.draft) {
         this.changeType('receive')
-        this.addReceiveEmail(emailObj.receiptEmails, [])
+        const list = emailObj.receiptEmails.split(',')
+        const nameList = emailObj.receiptName.split(',')
+        list.forEach((email, index) => {
+          this.addReceiveEmail(email, this.receiverLists, nameList[index])
+        })
+
         this.themeVal = emailObj.theme
         this.id = emailObj.id
         this.getFileList(emailObj.batchId)
@@ -263,7 +268,7 @@ export default {
       } else {
         if (this.$route.query.reply) {
           this.changeType('receive')
-          this.addReceiveEmail(emailObj.senderEmail, [])
+          this.addReceiveEmail(emailObj.senderEmail, [], emailObj.sender)
         } else if (this.$route.query.share) {
           this.themeVal = emailObj.theme
           this.id = emailObj.id
@@ -317,9 +322,9 @@ export default {
     /**
      * 手动添加收件人
      */
-    addReceiveEmail(val, list) {
+    addReceiveEmail(val, list, name) {
       this.receiverLists = list
-      this.receiverLists.push({ 'email': val, valid: true, 'show': true })
+      this.receiverLists.push({ 'email': val, customerName: name, valid: true, 'show': true })
       this.eliminateArray()
     },
 

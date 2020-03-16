@@ -84,7 +84,6 @@ export default {
       } else {
         params.type = listType
       }
-      console.log(this.isNoRead)
       if (this.isNoRead) {
         params.read = 1
       }
@@ -109,6 +108,7 @@ export default {
           if (item.createTime == null) {
             item.createTime = '0000-00-00'
           }
+          item.showTime = item.createTime
           item.createTime = item.createTime.slice(0, 10)
           if (item.createTime != sectionDate) {
             sectionDate = item.createTime
@@ -174,6 +174,17 @@ export default {
       } else {
         return str
       }
+    },
+
+    /**
+     * 收件人为多人时，只展示第一个人的信息
+     */
+    handleEmail(email) {
+      const list = email.split(',')
+      if (list.length > 1) {
+        return false
+      }
+      return true
     },
 
     /**

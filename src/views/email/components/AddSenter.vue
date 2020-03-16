@@ -137,6 +137,7 @@ export default {
      * 删除邮箱
      */
     delEmail(item, index) {
+      console.log(item, 'item')
       if (this.comType == 'receive') {
         this.$emit('del-receive', index, item)
       } else if (this.comType == 'sent') {

@@ -7,8 +7,13 @@
         <i v-else class="el-icon-star-on" style="color: #FAC23D;"/>
       </flexbox>
       <div class="main-info">发件人：&nbsp;&nbsp;{{ detailData.sender }}</div>
-      <div class="main-info">收件人：&nbsp;&nbsp;{{ detailData.receiptName }}</div>
-      <div class="main-info">时&nbsp;&nbsp;&nbsp;间：&nbsp;&nbsp;{{ fifterTime(detailData.createTime) }}</div>
+      <flexbox>
+        <div class="main-title">收件人：&nbsp;&nbsp;</div>
+        <div class="over">
+          {{ detailData.receiptName }}
+        </div>
+      </flexbox>
+      <div class="main-info">时&nbsp;&nbsp;&nbsp;间：&nbsp;&nbsp;{{ detailData.showTime }}</div>
       <div class="main-info">
         附&nbsp;&nbsp;&nbsp;件: &nbsp;&nbsp;<span style="font-weight: bolder;">{{ fileCount }} 个</span>&nbsp;
         <span v-if="fileCount">
@@ -137,7 +142,6 @@ export default {
 .detail-head {
   background-color: #F5F5F5;
   align-items: flex-start;
-  height: 160px;
   .title {
     padding: 15px;
     font-size: 16px;
@@ -150,6 +154,16 @@ export default {
     padding: 5px 20px;
     color: #333;
     font-size: 13px;
+    text-align: left;
+  }
+  .over {
+    width: 400px;
+    word-break: break-word;
+    margin: 10px 0;
+  }
+  .main-title {
+    width: 82px;
+    text-align: right;
   }
   .button_group {
     padding: 10px 15px;
