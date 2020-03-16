@@ -92,28 +92,12 @@ export default {
         this.list = [
           { name: '标记为', type: 'one', icon: 'el-icon-s-flag', children: [
             {
-              name: '标为星标',
-              type: 'star',
-              icon: 'el-icon-star-on'
-            },
-            {
               name: '取消星标',
               type: 'cancelStar',
               icon: 'el-icon-star-off'
             }
           ] },
-          { name: '移动到', type: 'two', icon: 'el-icon-sort', children: [
-            {
-              name: '收件箱',
-              type: 'INBOX',
-              kind: 'INBOX'
-            },
-            {
-              name: '已发送',
-              type: 'Sent Messages',
-              kind: 'Sent Messages'
-            }
-          ] }
+          { name: '移动到', type: 'two', icon: 'el-icon-sort', children: [] }
         ]
         const tempList = [{
           name: '标为已读',
@@ -126,6 +110,31 @@ export default {
           icon: 'wk wk-email'
         }]
         if (this.emailType !== 'draft') {
+          if (this.emailType !== 'star') {
+            this.list[0].children.unshift({
+              name: '标为星标',
+              type: 'star',
+              icon: 'el-icon-star-on'
+            })
+          }
+          if (this.emailType !== 'receive') {
+            this.list[1].children.unshift(
+              {
+                name: '收件箱',
+                type: 'INBOX',
+                kind: 'INBOX'
+              }
+            )
+          }
+          if (this.emailType !== 'sent') {
+            this.list[1].children.push(
+              {
+                name: '已发送',
+                type: 'Sent Messages',
+                kind: 'Sent Messages'
+              }
+            )
+          }
           this.list[0].children = [...this.list[0].children, ...tempList]
         }
         this.deleteList = [

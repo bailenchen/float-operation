@@ -70,14 +70,24 @@ export default {
   data() {
     return {
       value: '',
-      moveList: [
-        { label: '收件箱', value: 0 },
-        { label: '已发送', value: 1 }
-      ],
       detailTypeConfig: {
         receive: 'INBOX',
         sent: 'Sent Messages'
       }
+    }
+  },
+  computed: {
+    moveList() {
+      const list = []
+      if (this.emailType === 'receive') {
+        list.push({ label: '已发送', value: 1 })
+      } else if (this.emailType === 'sent') {
+        list.push({ label: '收件箱', value: 0 })
+      } else {
+        list.push({ label: '收件箱', value: 0 })
+        list.push({ label: '已发送', value: 1 })
+      }
+      return list
     }
   },
   mounted() {
