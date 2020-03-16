@@ -143,7 +143,7 @@
   </create-view>
 </template>
 <script>
-import { crmFileSave, crmFileDelete } from '@/api/common'
+import { crmFileSaveByBatchIdAPI, crmFileDelete } from '@/api/common'
 import {
   workWorkSaveAPI,
   workWorkUpdateAPI,
@@ -387,7 +387,7 @@ export default {
     customImgChange() {
       var files = event.target.files
       this.imgLoading = true
-      crmFileSave({
+      crmFileSaveByBatchIdAPI({
         file: files[0],
         batchId: this.batchId
       }).then(res => {
