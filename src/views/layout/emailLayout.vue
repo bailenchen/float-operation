@@ -156,7 +156,7 @@ export default {
         this.$store.dispatch('GetEmailCount')
 
         this.email = res.data.sendNick || res.data.emailAccount
-        this.$store.commit('SET_EMAIL', res.data)
+        this.$store.commit('SET_EMAIL_MSG', res.data)
       }).catch(() => {})
     },
 

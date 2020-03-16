@@ -23,7 +23,7 @@
       <i
         class="wk wk-log complete-btn__icon"
         style="color: #2362FB " />
-      <span class="complete-btn__name">{{ activeMap[activeTab] }}完成情况<span class="value">{{ completeInfo.totalNum }}</span>/<span class="value">{{ completeInfo.completeNum }}</span></span>
+      <span class="complete-btn__name">{{ activeMap[activeTab] }}完成情况<span class="value">{{ completeInfo.completeNum }}</span>/<span class="value">{{ completeInfo.totalNum }}</span></span>
     </span>
 
     <template v-if="!showMore">

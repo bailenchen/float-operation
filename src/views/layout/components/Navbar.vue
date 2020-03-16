@@ -134,6 +134,7 @@ export default {
       'manage',
       'oa',
       'project',
+      'email',
       'navActiveIndex',
       'biRouters'
     ]),
@@ -208,14 +209,15 @@ export default {
         })
       }
 
-      tempsItems.push({
-        title: '邮箱',
-        type: 7,
-        path: this.userInfo && this.userInfo.emailId ? '/email/index/receive' : '/email/set',
-        icon: 'wk wk-business-intelligence',
-        fontSize: '18px'
-      })
-
+      if (this.email) {
+        tempsItems.push({
+          title: '邮箱',
+          type: 7,
+          path: this.userInfo && this.userInfo.emailId ? '/email/index/receive' : '/email/set',
+          icon: 'wk wk-inbox',
+          fontSize: '18px'
+        })
+      }
       if (this.oa && this.oa.calendar) {
         tempsItems.push({
           title: '日历',
