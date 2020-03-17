@@ -162,7 +162,7 @@ export default {
             left: '20%',
             width: '56%',
             /** 数据排序 */
-            sort: 'descending',
+            sort: 'none',
             /** 数据图形间距。 */
             gap: 2,
 
