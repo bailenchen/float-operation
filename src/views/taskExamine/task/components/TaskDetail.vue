@@ -945,7 +945,7 @@ export default {
       }
 
       const permission = this.taskData ? this.taskData.authList.project || {} : {}
-      return permission[key]
+      return !!permission[key]
     },
 
     /**

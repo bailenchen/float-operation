@@ -87,7 +87,7 @@ export default {
       tabName: 'all',
       tabList: [
         {
-          label: '$()全部项目',
+          label: '全部项目',
           name: 'all',
           list: []
         },

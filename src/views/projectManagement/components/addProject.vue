@@ -143,7 +143,7 @@
   </create-view>
 </template>
 <script>
-import { crmFileSaveByBatchIdAPI, crmFileDelete } from '@/api/common'
+import { crmFileSaveByBatchIdAPI } from '@/api/common'
 import {
   workWorkSaveAPI,
   workWorkUpdateAPI,
@@ -408,14 +408,14 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          crmFileDelete({
-            id: this.coverImg.fileId
-          })
-            .then(res => {
-              this.coverImgList.pop()
-              this.$message.success('操作成功')
-            })
-            .catch(() => {})
+          // crmFileDelete({
+          //   id: this.coverImg.fileId
+          // })
+          //   .then(res => {
+          this.coverImgList.pop()
+          this.$message.success('操作成功')
+          // })
+          // .catch(() => {})
         })
         .catch(() => {
           this.$message({
