@@ -268,7 +268,7 @@ export default {
       } else {
         if (this.$route.query.reply) {
           this.changeType('receive')
-          this.addReceiveEmail(emailObj.senderEmail, [], emailObj.sender)
+          this.addReceiveEmail(emailObj.senderEmail, [], emailObj.handleSender)
         } else if (this.$route.query.share) {
           this.themeVal = emailObj.theme
           this.id = emailObj.id

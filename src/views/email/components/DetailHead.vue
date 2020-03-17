@@ -153,7 +153,8 @@ export default {
       receiptNameList.forEach((item, index) => {
         // 名称跟邮箱相同时，展示一个就可以了
         if (item === receiptEmailsList[index]) {
-          list.push(item)
+          const showItem = item.replace(/\\/g, '').replace(/\"/g, '')
+          list.push(showItem)
         } else {
           list.push(item + ' ' + receiptEmailsList[index])
         }
