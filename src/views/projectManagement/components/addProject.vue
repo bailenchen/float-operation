@@ -53,7 +53,7 @@
               @click.native="corverSelect(item)">
               <img v-src="item.url" class="cover-img">
               <i class="wk wk-success cover-select" />
-              <i v-if="item.custom && !coverImg.custom" class="wk wk-close cover-delete" @click="corverDelete" />
+              <i v-if="item.custom && !coverImg.custom" class="wk wk-close cover-delete" @click.stop="corverDelete" />
             </flexbox-item>
             <flexbox-item
               v-loading="imgLoading"
