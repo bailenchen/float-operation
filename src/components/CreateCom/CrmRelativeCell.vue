@@ -18,7 +18,7 @@
       slot="reference"
       :class="[disabled ? 'is_disabled' : 'is_valid']"
       wrap="wrap"
-      class="user-container"
+      class="user-container xh-form-border"
       @click.native="contentClick">
       <div
         v-for="(aitem, aindex) in dataValue"
