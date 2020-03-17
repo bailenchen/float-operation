@@ -81,7 +81,7 @@ export default {
           {
             type: 'funnel',
             /** 数据排序 */
-            sort: 'descending',
+            sort: 'none',
             /** 数据图形间距。 */
             gap: 2,
             min: 0,
