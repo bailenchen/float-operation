@@ -38,7 +38,6 @@ import { mapGetters } from 'vuex'
 import IncomingWindows from './callCenter/IncomingWindows'
 import CallOutWindows from './callCenter/CallOutWindows'
 import cache from '@/utils/cache'
-import Lockr from 'lockr'
 
 
 export default {
@@ -63,7 +62,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['activeIndex', 'addRouters']),
+    ...mapGetters(['activeIndex', 'addRouters', 'userInfo']),
     showOutCall() {
       if (this.$store.state.customer.isCall) {
         return this.$store.state.customer.showCallOut
@@ -77,13 +76,10 @@ export default {
     },
 
     addRouters() {
-      const build = Lockr.get('wk-build')
-      if (!build || build < WKConfig.build) {
-        if (!this.upgradeDialogShow) {
-          setTimeout(() => {
-            this.upgradeDialogShow = true
-          }, 3000)
-        }
+      if (this.userInfo.isReadNotice != 1) {
+        setTimeout(() => {
+          this.upgradeDialogShow = true
+        }, 3000)
       }
     }
   },

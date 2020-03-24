@@ -271,3 +271,14 @@ export function downloadFileAPI(url) {
   })
 }
 
+/**
+ * 已读更新通知
+ * @param {*} data
+ */
+export function readUpdateNoticeAPI(data) {
+  return request({
+    url: 'system/user/readNotice',
+    method: 'post',
+    data: data
+  })
+}

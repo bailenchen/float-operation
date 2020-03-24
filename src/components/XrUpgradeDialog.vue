@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import Lockr from 'lockr'
+import { readUpdateNoticeAPI } from '@/api/common'
 
 export default {
   name: 'XrUpgradeDialog',
@@ -59,8 +59,9 @@ export default {
   beforeDestroy() {},
   methods: {
     closeView() {
-      Lockr.set('wk-version', WKConfig.version)
-      Lockr.set('wk-build', WKConfig.build)
+      readUpdateNoticeAPI().then(res => {
+
+      }).catch(() => {})
       this.$emit('update:visible', false)
     }
   }
