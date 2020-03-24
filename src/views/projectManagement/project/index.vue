@@ -101,7 +101,7 @@
     <div class="content">
       <keep-alive>
         <component
-          :is="activeName"
+          :is="showComponent"
           :work-id="workId"
           :show-type="tabShowType"
           :permission="permission"/>
@@ -143,6 +143,7 @@ import {
 } from '@/api/projectManagement/project'
 
 import TaskBoard from './components/taskBoard'
+import TaskListBoard from './components/TaskListBoard'
 import Attachment from './components/attachment'
 import TaskStatistical from './components/taskStatistical'
 import ArchivingTask from './components/archivingTask'
@@ -158,6 +159,7 @@ import { downloadExcelWithResData } from '@/utils'
 export default {
   components: {
     TaskBoard,
+    TaskListBoard,
     Attachment,
     TaskStatistical,
     ArchivingTask,
@@ -219,6 +221,19 @@ export default {
       this.permission.archiveTask ||
       this.permission.deleteTask ||
       this.projectData.isOpen == 0
+    },
+
+    // tabs 下内容视图的组件
+    showComponent() {
+      if (this.activeName == 'task-board') {
+        if (this.tabShowType == 'list') {
+          return 'TaskListBoard'
+        }
+
+        return this.activeName
+      }
+
+      return this.activeName
     }
   },
 

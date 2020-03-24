@@ -111,6 +111,7 @@
 <script type="text/javascript">
 // API
 import { editTask } from '@/api/oamanagement/task'
+import { workTaskStatusSetAPI } from '@/api/projectManagement/projectTask'
 
 import taskMixin from '@/views/taskExamine/task/mixins/taskMixin'
 
@@ -120,7 +121,8 @@ export default {
   mixins: [taskMixin],
   props: {
     data: Object,
-    dataIndex: Number
+    dataIndex: Number,
+    dataSection: Number
   },
   data() {
     return {}
@@ -152,13 +154,14 @@ export default {
   methods: {
     // 列表标记任务
     taskOverClick(val) {
-      editTask({
+      const request = this.data.workId ? workTaskStatusSetAPI : editTask
+      request({
         taskId: val.taskId,
         status: val.checked ? 5 : 1
       })
         .then(res => {
           this.$store.dispatch('GetOAMessageNum', 'task')
-          this.$emit('on-handle', 'complete', this.data, this.dataIndex)
+          this.$emit('on-handle', 'complete', this.data, this.dataIndex, this.dataSection)
         })
         .catch(() => {
           val.checked = false
@@ -166,7 +169,7 @@ export default {
     },
     // 点击显示详情
     rowFun(val) {
-      this.$emit('on-handle', 'view', this.data, this.dataIndex)
+      this.$emit('on-handle', 'view', this.data, this.dataIndex, this.dataSection)
     },
     onmouseoverFun(item) {
       if (
