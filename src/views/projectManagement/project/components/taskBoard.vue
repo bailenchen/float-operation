@@ -213,6 +213,7 @@
             v-if="createSubTaskClassId == item[tableField]"
             :work-id="workId"
             :class-id="item.classId"
+            :user-id="item.userId"
             :permission="permission"
             @send="addSubTaskSuc"
             @close="createSubTaskClassId = 'hidden'"/>

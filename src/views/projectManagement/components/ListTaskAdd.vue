@@ -69,6 +69,7 @@ export default {
   },
   props: {
     workId: [String, Number],
+    userId: [String, Number],
     classId: [String, Number],
     isTop: [String, Number],
     // 项目权限
@@ -110,7 +111,8 @@ export default {
       if (!this.workId) {
         return true
       }
-      return this.permission && this.permission.setTaskMainUser
+      // 负责人视图下会有userId 着不展示负责人选择
+      return this.permission && this.permission.setTaskMainUser && !this.userId
     },
 
     // 是否能设置时间
@@ -143,8 +145,12 @@ export default {
         this.sendLoading = true
         const params = {
           name: this.sendContent,
-          stopTime: this.sendStopTime,
-          mainUserId: this.createMainUser ? this.createMainUser.userId : ''
+          stopTime: this.sendStopTime
+        }
+        if (this.userId) {
+          params.mainUserId = this.userId
+        } else {
+          params.mainUserId = this.createMainUser ? this.createMainUser.userId : ''
         }
         if (this.workId) {
           params.workId = this.workId

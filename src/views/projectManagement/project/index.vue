@@ -75,7 +75,7 @@
           @tab-click="tabClick">
           <el-tab-pane
             name="task-board">
-            <el-dropdown slot="label" @command="tabShowType = $event">
+            <el-dropdown slot="label" trigger="click" @command="tabShowType = $event">
               <span class="el-dropdown-link" >
                 {{ tabShowType | showTypeName }}<i class="el-icon-arrow-down el-icon--right"/>
               </span>
