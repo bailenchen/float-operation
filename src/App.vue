@@ -76,7 +76,7 @@ export default {
     },
 
     addRouters() {
-      if (this.userInfo.isReadNotice != 1) {
+      if (this.userInfo && this.userInfo.isReadNotice != 1) {
         setTimeout(() => {
           this.upgradeDialogShow = true
         }, 3000)
