@@ -285,7 +285,7 @@ export default {
             this.selectUserList = data.ownerUser || []
           }
 
-          this.batchId = data.batchId
+          this.batchId = data.batchId || guid()
           if (data.coverUrl) {
             this.coverImg = {
               custom: data.isSystemCover != 1,
