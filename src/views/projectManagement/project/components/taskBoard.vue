@@ -9,7 +9,7 @@
       :options="{
         group: 'mission',
         forceFallback: false,
-        disabled: canOrderTaskClass,
+        disabled: orderTaskClassDisabled,
         dragClass: 'sortable-parent-drag',
         filter: '.ignore-elements'
       }"
@@ -28,7 +28,7 @@
           class="board-column-wrapper ignoreClass">
           <div class="board-column-header">
             <div>
-              <span class="text"> {{ item.className }} </span>
+              <span class="text"> {{ item[tableNameField] }} </span>
               <span class="text-num">{{ item.checkedNum }} / {{ item.list.length }}</span>
               <el-popover
                 v-if="showMoreBtn && item.classId != -1"
@@ -39,7 +39,7 @@
                 <div class="omit-popover-box">
                   <!-- 重命名 -->
                   <el-popover
-                    v-if="permission.updateTaskClass"
+                    v-if="permission.updateTaskClass && isBoardShow"
                     v-model="item.renameShow"
                     :visible-arrow="false"
                     placement="bottom-start"
@@ -80,7 +80,7 @@
                     v-if="permission.archiveTask"
                     @click="archiveTaskListClick(item)">归档已完成任务</p>
                   <p
-                    v-if="permission.deleteTaskClass"
+                    v-if="permission.deleteTaskClass && isBoardShow"
                     @click="delectTaskListClick(item, index)">删除列表</p>
                 </div>
                 <i
@@ -103,7 +103,7 @@
                 put: item.classId != -1
               },
               forceFallback: false,
-              disabled: canOrderTask,
+              disabled: orderTaskDisabled,
               filter: '.board-item-active',
               dragClass: 'sortable-drag'
             }"
@@ -210,14 +210,14 @@
           </draggable>
           <!-- 新建任务 -->
           <list-task-add
-            v-if="createSubTaskClassId == item.classId"
+            v-if="createSubTaskClassId == item[tableField]"
             :work-id="workId"
             :class-id="item.classId"
             :permission="permission"
             @send="addSubTaskSuc"
             @close="createSubTaskClassId = 'hidden'"/>
           <div
-            v-else-if="permission.saveTask && item.classId != -1"
+            v-else-if="permission.saveTask && item[tableField] != -1"
             class="new-task"
             @click="createSubTaskClick(item)">
             <span class="el-icon-plus"/>
@@ -228,7 +228,7 @@
 
       <!-- 新建列表 -->
       <div
-        v-if="permission.saveTaskClass"
+        v-if="permission.saveTaskClass && isBoardShow"
         class="board-column-new-list">
         <div
           v-if="!createTaskListShow && loading == false"
@@ -279,7 +279,9 @@ import {
 import {
   workTaskclassDeleteAPI,
   workTaskIndexAPI,
+  workTaskOwnerIndexAPI,
   workTaskArchiveTaskAPI,
+  workTaskArchiveOwnerTaskAPI,
   workTaskUpdateOrderAPI,
   workTaskUpdateClassOrderAPI
 } from '@/api/projectManagement/project'
@@ -307,6 +309,7 @@ export default {
 
   props: {
     workId: [String, Number],
+    showType: String,
     permission: {
       type: Object,
       default: () => {
@@ -339,22 +342,47 @@ export default {
   computed: {
     // 展示更多操作按钮
     showMoreBtn() {
-      return this.permission.updateTaskClass ||
+      return (this.permission.updateTaskClass && this.isBoardShow) ||
       this.permission.saveTask ||
       this.permission.archiveTask ||
-      this.permission.deleteTaskClass
+      (this.permission.deleteTaskClass && this.isBoardShow)
     },
     // 可以移动任务分类
-    canOrderTaskClass() {
-      return !this.permission.updateClassOrder
+    orderTaskClassDisabled() {
+      return !this.permission.updateClassOrder || !this.isBoardShow
     },
     // 可以移动任务
-    canOrderTask() {
-      return !this.permission.setTaskOrder
+    orderTaskDisabled() {
+      return !this.permission.setTaskOrder || !this.isBoardShow
+    },
+    // 表的展示字段
+    tableNameField() {
+      return {
+        board: 'className',
+        user: 'realname'
+      }[this.showType || 'board']
+    },
+    // 表的字段
+    tableField() {
+      return {
+        board: 'classId',
+        user: 'userId'
+      }[this.showType || 'board']
+    },
+    // 是面板展示
+    isBoardShow() {
+      return this.showType == 'board'
     }
   },
 
   watch: {
+    showType() {
+      this.createTaskListShow = false
+      this.taskDetailShow = false
+      this.taskList = []
+      this.getList()
+    },
+
     workId() {
       this.createTaskListShow = false
       this.taskDetailShow = false
@@ -411,7 +439,12 @@ export default {
         params = { workId: this.workId }
       }
       this.loading = true
-      workTaskIndexAPI(params)
+      const request = {
+        board: workTaskIndexAPI,
+        user: workTaskOwnerIndexAPI
+      }[this.showType || 'board']
+
+      request(params)
         .then(res => {
           this.loading = false
           for (const item of res.data) {
@@ -630,9 +663,15 @@ export default {
      * 归档已完成任务
      */
     archiveTaskListClick(val) {
-      workTaskArchiveTaskAPI({
-        classId: val.classId
-      }).then(res => {
+      const request = {
+        board: workTaskArchiveTaskAPI,
+        user: workTaskArchiveOwnerTaskAPI
+      }[this.showType || 'board']
+      const params = {
+        workId: this.workId
+      }
+      params[this.tableField] = val[this.tableField]
+      request(params).then(res => {
         this.$message.success('归档成功')
         val.taskHandleShow = false
         this.getList()
@@ -643,7 +682,7 @@ export default {
      * 重命名
      */
     renameTaskListClick(val) {
-      this.editTaskListName = val.className
+      this.editTaskListName = val[this.tableNameField]
       val.taskHandleShow = false
     },
 
@@ -657,7 +696,7 @@ export default {
         workId: this.workId
       })
         .then(res => {
-          val.className = this.editTaskListName
+          val[this.tableNameField] = this.editTaskListName
           this.$message.success('编辑成功')
         })
         .catch(() => {})
@@ -693,7 +732,7 @@ export default {
      * 创建新任务
      */
     createSubTaskClick(val) {
-      this.createSubTaskClassId = val.classId
+      this.createSubTaskClassId = val[this.tableField]
       if (val.taskHandleShow) {
         val.taskHandleShow = false
       }

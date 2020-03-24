@@ -74,8 +74,18 @@
           v-model="activeName"
           @tab-click="tabClick">
           <el-tab-pane
-            label="任务板"
-            name="task-board"/>
+            name="task-board">
+            <el-dropdown slot="label" @command="tabShowType = $event">
+              <span class="el-dropdown-link" >
+                {{ tabShowType | showTypeName }}<i class="el-icon-arrow-down el-icon--right"/>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="board">看板视图</el-dropdown-item>
+                <el-dropdown-item command="list">列表视图</el-dropdown-item>
+                <el-dropdown-item command="user">负责人视图</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-tab-pane>
           <el-tab-pane
             label="附件"
             name="attachment"/>
@@ -93,6 +103,7 @@
         <component
           :is="activeName"
           :work-id="workId"
+          :show-type="tabShowType"
           :permission="permission"/>
       </keep-alive>
     </div>
@@ -158,10 +169,21 @@ export default {
     XrHeader
   },
 
+  filters: {
+    showTypeName(value) {
+      return {
+        board: '看板视图',
+        list: '列表视图',
+        user: '负责人视图'
+      }[value]
+    }
+  },
+
   data() {
     return {
       // 项目ID
       loading: false,
+      tabShowType: 'board',
       workId: '',
       projectName: '',
       projectColor: '',

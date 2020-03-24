@@ -88,6 +88,20 @@ export function workTaskIndexAPI(data) {
   })
 }
 
+/**
+ * 任务板列表
+ * @param {*} data
+ */
+export function workTaskOwnerIndexAPI(data) {
+  return request({
+    url: 'work/queryOwnerTaskListByWorkId',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
 // /**
 //  * 设置任务类别 改为 saveWorkTaskClass
 //  * @param {*} data
@@ -155,6 +169,18 @@ export function workWorkOwnerDelAPI(data) {
 export function workTaskArchiveTaskAPI(data) {
   return request({
     url: 'work/archiveTask',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 项目 -- 归档负责人已完成任务
+ * @param {*} data
+ */
+export function workTaskArchiveOwnerTaskAPI(data) {
+  return request({
+    url: 'work/archiveTaskByOwner',
     method: 'post',
     data: data
   })
