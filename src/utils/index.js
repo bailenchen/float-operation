@@ -216,7 +216,7 @@ export function wkPreviewFile(path) {
   // https://file.72crm.com/onlinePreview?fileId=949051ca66ed45ca8a1bacae0e862d32
   // window.open(`${WKConfig.getLocationOrigin()}/file/onlinePreview?${url}`)
   // http://dev.5kcrm.cn/file/preview?id=xxx
-  window.open(`http://dev.5kcrm.cn/file/preview?${url}`)
+  window.open(`${WKConfig.getLocationOrigin()}/file/preview?${url}`)
 }
 
 export function getFileIconWithSuffix(ext) {
