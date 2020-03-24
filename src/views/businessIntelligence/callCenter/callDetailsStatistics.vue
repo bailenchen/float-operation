@@ -357,7 +357,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-//   @import "../styles/table";
+  @import '../styles/detail.scss';
   @import '@/views/customermanagement/styles/detailview.scss';
   .content {
     overflow: hidden;
