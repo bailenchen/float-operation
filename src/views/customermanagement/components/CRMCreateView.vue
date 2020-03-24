@@ -272,7 +272,10 @@ export default {
     /** 合同 回款 下展示审批人信息 */
     showExamine() {
       if (this.crmType === 'contract' || this.crmType === 'receivables') {
-        return true
+        if (this.examineInfo) {
+          return this.examineInfo.status !== 0
+        }
+        return false
       }
       return false
     },
@@ -284,7 +287,7 @@ export default {
       return false
     },
     sureBtnTitle() {
-      if (this.crmType === 'contract' || this.crmType === 'receivables') {
+      if (this.showExamine) {
         return '提交审核'
       }
       return '保存'

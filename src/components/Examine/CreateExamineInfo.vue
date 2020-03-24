@@ -128,22 +128,22 @@ export default {
       }
       reqeust(params)
         .then(res => {
-          this.examineInfo = res.data
-          if (res.data.examineType == 2 && res.data.examineUser) {
+          this.examineInfo = res.data || {}
+          if (this.examineInfo.examineType == 2 && this.examineInfo.examineUser) {
             this.draftUser = {
-              realname: res.data.examineUserName,
-              userId: res.data.examineUser
+              realname: this.examineInfo.examineUserName,
+              userId: this.examineInfo.examineUser
             }
-            this.form.name = res.data.examineUserName
+            this.form.name = this.examineInfo.examineUserName
             this.$emit('value-change', {
-              examineType: res.data.examineType, // 审批类型
+              ...this.examineInfo, // 审批类型
               value: [this.draftUser] // 审批信息
             })
           } else {
             this.form.name = ''
             this.draftUser = null
             this.$emit('value-change', {
-              examineType: res.data.examineType, // 审批类型
+              ...this.examineInfo, // 审批类型
               value: [] // 审批信息
             })
           }
@@ -182,7 +182,7 @@ export default {
         this.form.name = ''
       }
       this.$emit('value-change', {
-        examineType: this.examineInfo.examineType, // 审批类型
+        ...this.examineInfo, // 审批类型
         value: data.value // 审批信息
       })
       this.$refs.form.validateField('name')
