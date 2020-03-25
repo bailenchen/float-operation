@@ -38,7 +38,6 @@ export default {
         return {}
       }
     },
-    conditionSearch: String,
     conditionData: {
       type: Object,
       default: () => {
@@ -154,7 +153,7 @@ export default {
         params.mainUserId = this.conditionData.userIds
         params.stopTimeType = this.conditionData.timeId
         params.labelId = this.conditionData.tagIds
-        params.search = this.conditionSearch
+        params.search = this.conditionData.search
       }
 
       this.loading = true

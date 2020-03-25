@@ -103,7 +103,6 @@
         <component
           :is="showComponent"
           :condition-data="taskConditionObj"
-          :condition-search="taskConditionSearch"
           :work-id="workId"
           :show-type="tabShowType"
           :permission="permission"/>
@@ -115,8 +114,6 @@
       v-if="screeningShow"
       :work-id="workId"
       :data="taskConditionObj"
-      :search="taskConditionSearch"
-      @search="taskConditionSearch = $event"
       @change="taskScreeningChange"
       @close="screeningShow = false"/>
 
@@ -198,7 +195,6 @@ export default {
       projectData: {
         isOpen: 0
       },
-      taskConditionSearch: '',
       taskConditionObj: {
         userIds: [],
         timeId: '',
@@ -473,11 +469,12 @@ export default {
     /**
      * 任务筛选
      */
-    taskScreeningChange(userIds, timeId, tagIds) {
+    taskScreeningChange(userIds, timeId, tagIds, search) {
       this.taskConditionObj = {
         userIds,
         timeId,
-        tagIds
+        tagIds,
+        search
       }
     }
   }

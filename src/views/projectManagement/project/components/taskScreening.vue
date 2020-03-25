@@ -13,7 +13,7 @@
           @click="close"/>
       </p>
       <div class="content">
-        <el-input v-model="searchContent" placeholder="搜索项目内任务" @input="searchChange" />
+        <el-input v-model="search" placeholder="搜索项目内任务" @input="debouncedSeach" />
         <div
           v-for="(item, index) in menuList"
           :key="index"
@@ -61,18 +61,18 @@
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
 import { workTasklableIndexAPI } from '@/api/projectManagement/tag'
 import { getMaxIndex } from '@/utils/index'
+import { debounce } from 'throttle-debounce'
 
 export default {
 
   props: {
     workId: [Number, String],
-    data: Object,
-    search: String
+    data: Object
   },
   data() {
     return {
       zIndex: getMaxIndex(),
-      searchContent: '',
+      search: '',
       menuList: [
         {
           label: '成员',
@@ -139,7 +139,10 @@ export default {
     }
   },
   created() {
-    this.searchChange = this.search
+    this.debouncedSeach = debounce(500, () => {
+      this.searchChange()
+    })
+    this.search = this.data.search
     this.getUserList()
     this.getTagList()
     this.menuList[1].list.forEach(item => {
@@ -227,11 +230,11 @@ export default {
           tagIds.push(item.id)
         }
       }
-      this.$emit('change', userIds, timeId, tagIds, this.searchContent)
+      this.$emit('change', userIds, timeId, tagIds, this.search)
     },
 
     searchChange() {
-      this.$emit('search', this.searchContent)
+      this.$emit('change', this.data.userIds, this.data.timeId, this.data.tagIds, this.search)
     },
 
     resetBtn() {
@@ -240,8 +243,8 @@ export default {
           i.checked = false
         }
       }
-      this.searchContent = ''
-      this.$emit('change', [], '', [], this.searchContent)
+      this.search = ''
+      this.$emit('change', [], '', [], this.search)
     },
 
     rowFun(val) {
