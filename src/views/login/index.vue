@@ -176,12 +176,6 @@ export default {
     }
   },
   created() {
-    if (this.$route.query && this.$route.query.type === 'register') {
-      this.activeCom = 'CreateNewCompany'
-    }
-    if (this.$route.query && this.$route.query.mobile) {
-      sessionStorage.setItem('account', this.$route.query.mobile)
-    }
     this.$nextTick(() => {
       // const doms = Array.from(document.getElementById('login-wrapper').querySelectorAll('*'))
       // let arr = []
@@ -222,18 +216,6 @@ export default {
       } else {
         this.phone = value || ''
       }
-    },
-
-    /**
-     * 下载客户端
-     * @param platform
-     */
-    handleDownload(platform) {
-      const map = {
-        windows: WKConfig.winUrl,
-        mac: WKConfig.macUrl
-      }
-      window.open(map[platform], 'self')
     }
   }
 }
