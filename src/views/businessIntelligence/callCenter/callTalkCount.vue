@@ -5,6 +5,7 @@
     <filtrate-handle-view
       class="filtrate-bar"
       module-type="product"
+      title="员工通话记录分析"
       @load="loading=true"
       @change="getList"/>
     <div class="content">
@@ -23,6 +24,7 @@
           :formatter="timeFormatter"
           :prop="item.field"
           :label="item.name"
+          :width="item.width"
           align="center"
           header-align="center"
           show-overflow-tooltip/>
@@ -78,7 +80,7 @@ export default {
   data() {
     return {
       loading: false,
-      tableHeight: document.documentElement.clientHeight - 205,
+      tableHeight: document.documentElement.clientHeight - 215,
       postParams: {}, // 筛选参数
       headFieldList: [
         { field: 'userInfo.realname', name: '姓名', width: '115px' },
@@ -90,11 +92,11 @@ export default {
         { field: 'totalCountAnswerOut', name: '外呼接通数', width: '115px' },
         { field: 'rateAnswerOut', name: '外呼接通率', width: '115px' },
         { field: 'totalTimeCallsOut', name: '外呼通话时长', width: '115px' },
-        { field: 'averageTimeCallOut', name: '外呼通话平均时长', width: '115px' },
+        { field: 'averageTimeCallOut', name: '外呼通话平均时长', width: '140px' },
         { field: 'totalCountCallsIn', name: '呼入通话总数', width: '115px' },
         { field: 'totalCountAnswerIn', name: '呼入通话接通数', width: '115px' },
         { field: 'totalTimeCallsIn', name: '呼入通话总时长', width: '115px' },
-        { field: 'averageTimeCallIn', name: '呼入通话平均时长', width: '115px' },
+        { field: 'averageTimeCallIn', name: '呼入通话平均时长', width: '140px' },
         { field: 'rateAnswerIn', name: '呼入接通率', width: '115px' }
       ],
       list: [],
@@ -192,6 +194,7 @@ export default {
     /** 获取部门呼叫中心完成信息 */
     getList(params) {
       this.loading = true
+
       crmCallAnalysis(params)
         .then(res => {
           this.list = res.data.list

@@ -202,7 +202,7 @@ export default [
   {
     ...layout('/bi/call', true, {
       permissions: ['bi', 'call'],
-      icon: 'left-trophy',
+      icon: 'wk wk-phoneing',
       title: '呼叫中心'
     }),
     children: [

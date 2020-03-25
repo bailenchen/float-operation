@@ -4,9 +4,19 @@
     class="main-container">
     <filtrate-handle-view
       class="filtrate-bar"
+      title="员工通话记录"
       module-type="product"
       @load="loading=true"
-      @change="getProductDatalist"/>
+      @change="getProductDatalist">
+      <el-input slot="append" v-model="talkTime" class="input-with-select">
+        <el-select slot="prepend" v-model="talkTimeCondition" style="width: 100px" placeholder="通话时长">
+          <el-option label="大于" value=">"/>
+          <el-option label="小于" value="<"/>
+          <el-option label="等于" value="="/>
+        </el-select>
+        <el-button slot="append" type="text">秒</el-button>
+      </el-input>
+    </filtrate-handle-view>
     <div class="content">
       <el-table
         id="crm-table"
@@ -94,7 +104,7 @@ export default {
   data() {
     return {
       loading: false,
-      tableHeight: document.documentElement.clientHeight - 205,
+      tableHeight: document.documentElement.clientHeight - 215,
       postParams: {}, // 筛选参数
       stateArr: ['未振铃', '未接通', '接通', '呼入未接通'],
       typeArr: ['呼出', '呼入'],
@@ -117,7 +127,9 @@ export default {
       showCustomerView: false,
       customertype: '',
       rowID: '',
-      pageData: {}
+      pageData: {},
+      talkTime: '',
+      talkTimeCondition: ''
     }
   },
   computed: {},
@@ -178,6 +190,8 @@ export default {
       this.pageData = params // 储存页面的筛选条件
       const data = {
         ...params,
+        talkTime: this.talkTime,
+        talkTimeCondition: this.talkTimeCondition,
         page: 1 // 每次筛选都从第一页开始展示
       }
       this.getList(data)
@@ -422,5 +436,12 @@ export default {
     margin: 5px 100px 0 0;
     font-size: 14px !important;
   }
+}
+/deep/.el-input-group__append {
+  text-align: center;
+}
+.input-with-select {
+  width: 300px;
+  margin-right: 10px;
 }
 </style>

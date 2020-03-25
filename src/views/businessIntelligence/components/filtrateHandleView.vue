@@ -100,6 +100,7 @@
         :label="item.name"
         :value="item.value"/>
     </el-select>
+    <slot name="append"/>
     <el-button
       type="primary"
       @click.native="postFiltrateValue()">搜索</el-button>

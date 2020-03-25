@@ -43,6 +43,43 @@
             @row-click="handleRowClick"
             @sort-change="sortChange">
             <el-table-column
+              v-if="showCall"
+              :resizable="false"
+              prop="call"
+              fixed
+              label=""
+              width="65">
+              <template
+                slot="header"
+                slot-scope="slot">
+                <i
+                  class="el-icon-phone"
+                  style="cursor: not-allowed; opacity: 0.5;color: #2486E4"/>
+              </template>
+              <template slot-scope="scope">
+                <el-popover
+                  placement="right"
+                  width="500"
+                  popper-class="no-padding-popover"
+                  trigger="click"
+                  @show="showData(scope.row.customerId)"
+                  @hiden="showCount = -1">
+                  <call-center
+                    :scope="scope"
+                    :show="scope.row.customerId === showCount"
+                    crm-type="customer"
+                    @changeType="changeCRMType"/>
+                  <el-button
+                    slot="reference"
+                    :style="{'opacity' :scope.$index >= 0 ? 1 : 0}"
+                    type="primary"
+                    icon="el-icon-phone"
+                    circle
+                    @click.stop="callCheckClick($event,scope,scope.$index)"/>
+                </el-popover>
+              </template>
+            </el-table-column>
+            <el-table-column
               v-for="(item, index) in showFieldList"
               :key="index"
               :sortable="sortable"
@@ -94,6 +131,7 @@
         :visible.sync="showDview"
         :crm-type="rowType"
         :id="rowID"
+        :model-data="modelData"
         class="d-view"
         @handle="handleHandle" />
 
@@ -117,12 +155,13 @@ import RecordList from './components/recordList'
 import { mapGetters } from 'vuex'
 import Lockr from 'lockr'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
-
+import CallCenter from '@/callCenter/CallCenter'
 export default {
   name: 'ReportList', // 简报列表
   components: {
     CRMAllDetail,
-    RecordList
+    RecordList,
+    CallCenter
   },
   filters: {
     dealIcon(statu) {
@@ -178,9 +217,10 @@ export default {
       rowID: '', // 行信息
       rowType: '', // 详情类型
       showDview: false,
-
+      showCount: 0,
       recordParams: {},
-      recordShow: false
+      recordShow: false,
+      modelData: {}
     }
   },
   computed: {
@@ -196,6 +236,10 @@ export default {
         return false
       }
       return true
+    },
+
+    showCall() {
+      return this.$store.state.customer.isCall && this.crmType === 'customer'
     }
   },
   watch: {
@@ -207,6 +251,15 @@ export default {
   },
   mounted() {
     this.$el.addEventListener('click', this.handleDocumentClick, false)
+    this.$nextTick(() => {
+      const callOutData = JSON.parse(localStorage.getItem('callOutData'))
+      if (callOutData) {
+        this.modelData = {
+          modelId: callOutData.id,
+          model: callOutData.type
+        }
+      }
+    })
   },
 
   destroyed() {
@@ -559,6 +612,47 @@ export default {
       if (hidden) {
         this.showDview = false
       }
+    },
+    /**
+       * 查看详情
+       * @param val
+       */
+    changeCRMType(val) {
+      this.rowType = val.type
+      this.rowID = val.id
+
+      this.modelData = {
+        modelId: val.id,
+        model: val.type
+      }
+
+      this.showDview = true
+
+      let callOutData = {
+        modelId: val.id,
+        model: val.type
+      }
+      callOutData = JSON.stringify(callOutData)
+      localStorage.setItem('callOutData', callOutData)
+    },
+
+    /**
+     * pover 显示时触发
+     */
+    showData(val) {
+      this.showCount = val
+    },
+
+    /**
+     * 解决povper重复的bug
+     */
+    callCheckClick(e, scope) {
+      this.list.forEach(item => {
+        this.$set(item, 'callShow', false)
+      })
+      this.$set(scope.row, 'callShow', !scope.row.callShow)
+      const popoverEl = e.target.parentNode
+      popoverEl.__vue__.showPopper = !scope.row.callShow
     }
   }
 }

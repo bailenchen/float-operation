@@ -355,6 +355,10 @@
   content: "\e618";
 }
 
+.wk-left-call:before {
+  content: "\e603";
+}
+
 .wk-customer-solid:before {
   content: "\eb01";
 }
