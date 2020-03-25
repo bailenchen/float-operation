@@ -1,9 +1,10 @@
 <template>
   <div class="task-list-board">
-    <el-collapse>
+    <el-collapse v-model="collapseValue">
 
       <template v-for="(item, index) in taskList">
         <el-collapse-item
+          :name="index"
           :key="index">
           <template slot="title">
             <span class="list-text"> {{ item[tableNameField] }} </span>
@@ -70,7 +71,7 @@
           <task-cell
             v-for="(item, sIndex) in item.list"
             :key="sIndex"
-            :section="index"
+            :data-section="index"
             :data="item"
             :data-index="sIndex"
             @on-handle="taskCellHandle" />
@@ -83,11 +84,12 @@
             :class-id="item.classId"
             :user-id="item.userId"
             :permission="permission"
+            style="width: 280px;"
             @send="addSubTaskSuc"
             @close="createSubTaskClassId = 'hidden'"/>
           <div
             v-else-if="permission.saveTask && item[tableField] != -1"
-            class="new-task"
+            class="new-list-task"
             @click="createSubTaskClick(item)">
             <span class="el-icon-plus"/>
             <span>新建任务</span>
@@ -95,6 +97,37 @@
         </div>
       </template>
     </el-collapse>
+
+    <!-- 新建列表 -->
+    <div
+      v-if="permission.saveTaskClass && isBoardShow"
+      class="board-column-new-list">
+      <div
+        v-if="!createTaskListShow && loading == false"
+        class="new-list"
+        @click="createTaskListShow = true">
+        <span class="el-icon-plus"/>
+        <span>新建列表</span>
+      </div>
+      <div
+        v-else-if="createTaskListShow && loading == false"
+        class="input-btn">
+        <el-input
+          v-model="taskListName"
+          :maxlength="10"
+          size="small"
+          placeholder="列表名"/>
+        <div class="button-box">
+          <el-button
+            size="mini"
+            type="primary"
+            @click="createTaskListSave">保存</el-button>
+          <el-button
+            size="mini"
+            @click="createTaskListShow = false">取消</el-button>
+        </div>
+      </div>
+    </div>
     <!-- 详情 -->
     <task-detail
       v-if="taskDetailShow"
@@ -147,7 +180,9 @@ export default {
       taskID: '',
       detailIndex: -1,
       detailSection: -1,
-      taskDetailShow: false
+      taskDetailShow: false,
+
+      collapseValue: []
     }
   },
   computed: {},
@@ -161,21 +196,26 @@ export default {
   },
   methods: {
     /**
+     * 全部展开
+     */
+    getListRest() {
+      this.collapseValue = this.taskList.map((item, index) => {
+        return index
+      })
+    },
+    /**
      * 任务cell 操作
      */
     taskCellHandle(type, data, index, section) {
       if (type == 'view') {
-        // this.taskID = data.taskId
-        // this.detailIndex = index
-        // this.taskDetailShow = true
         this.taskID = data.taskId
         this.detailIndex = index
         this.detailSection = section
         this.taskDetailShow = true
       } else if (type == 'complete') {
-        // this.progress.stopTask = data.checked
-        //   ? ++this.progress.stopTask
-        //   : --this.progress.stopTask
+        const value = this.taskList[section]
+        this.changeListCompleteOrder(data, value, index)
+        this.updateTaskListCheckNum(value)
       }
     },
 
@@ -213,18 +253,26 @@ export default {
   padding: 15px;
   position: relative;
   overflow: auto;
+  user-select: none;
 }
 
-// /deep/ .el-collapse {
-  // .el-collapse-item__arrow {
-  //   display: none;
-  // }
-// }
+/deep/ .el-collapse {
+  border-top: none;
+  border-bottom: none;
+  .el-collapse-item__header,
+  .el-collapse-item__wrap {
+    border-bottom: none;
+  }
+
+  .el-collapse-item__content {
+    padding-bottom: 0px;
+    border-bottom: 1px solid #EBEEF5;
+    margin-bottom: 5px;
+  }
+}
 
 .list-text {
-  font-size: 15px;
   display: inline-block;
-  padding-bottom: 5px;
 }
 .el-progress /deep/ .el-progress-bar {
   padding-right: 0;
@@ -234,11 +282,11 @@ export default {
 }
 .list-text-num {
   margin-left: 10px;
-  color: #999;
+  color: #ccc;
 }
 .img-gd {
   margin-left: 15px;
-  color: #666;
+  color: #ccc;
   cursor: pointer;
 }
 
@@ -283,15 +331,42 @@ export default {
 }
 
 // 新建按钮
-.new-task {
+.new-list-task {
   cursor: pointer;
   color: #999999;
-  padding-top: 10px;
+  padding: 10px 0;
   font-size: 13px;
-  padding-left: 14px;
   .el-icon-plus {
     color: #2362FB;
     font-weight: 700;
+  }
+}
+
+// 新建列表
+.board-column-new-list {
+  width: 280px;
+  background: #fff;
+  vertical-align: top;
+  display: inline-block;
+  border-radius: $xr-border-radius-base;
+  .new-list {
+    height: 50px;
+    line-height: 50px;
+    color: #999;
+    cursor: pointer;
+    .el-icon-plus {
+      color: #2362FB;
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+  .input-btn {
+    height: 100px;
+    padding: 20px;
+    .button-box {
+      float: right;
+      margin-top: 10px;
+    }
   }
 }
 </style>

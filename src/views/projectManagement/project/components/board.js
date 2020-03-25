@@ -169,11 +169,17 @@ export default {
             }
           }
           this.taskList = res.data
+          this.getListRest()
         })
         .catch(() => {
           this.loading = false
         })
     },
+
+    /**
+     * 覆盖改方法 获取反馈
+     */
+    getListRest() {},
 
     /**
      * 列表拖拽
@@ -271,73 +277,81 @@ export default {
         status: element.checked ? 5 : 1
       })
         .then(res => {
-          let toIndex = null
-
-          if (element.checked) {
-            const newElement = value.list[fromIndex]
-            if (newElement.taskId != element.taskId) {
-              fromIndex = null
-            }
-            for (let index = value.list.length - 1; index >= 0; index--) {
-              const taskItem = value.list[index]
-              if (fromIndex === null) {
-                if (element.taskId == taskItem.taskId) {
-                  fromIndex = index
-                }
-              }
-              if (!taskItem.checked) {
-                toIndex = index
-              }
-
-              if (fromIndex !== null && toIndex !== null) {
-                break
-              }
-            }
-
-            if (toIndex < fromIndex) {
-              toIndex = null
-            }
-          } else {
-            const newElement = value.list[fromIndex]
-            if (newElement.taskId != element.taskId) {
-              fromIndex = null
-            }
-            for (let index = value.list.length - 1; index >= 0; index--) {
-              const taskItem = value.list[index]
-              if (fromIndex === null) {
-                if (element.taskId == taskItem.taskId) {
-                  fromIndex = index
-                }
-              }
-
-              if (fromIndex !== null) {
-                break
-              }
-            }
-            toIndex = 0
-          }
-
-          if (toIndex != null && toIndex >= 0) {
-            if (toIndex != fromIndex) {
-              value.list.splice(fromIndex, 1)
-              value.list.splice(toIndex, 0, element)
-              workTaskUpdateOrderAPI({
-                toList: value.list.map(item => {
-                  return item.taskId
-                }),
-                toId: value.classId
-              })
-                .then(res => {})
-                .catch(() => {})
-            }
-          }
-
+          this.changeListCompleteOrder(element, value, fromIndex)
           this.updateTaskListCheckNum(value)
         })
         .catch(() => {
           element.checked = !element.checked
           this.updateTaskListCheckNum(value)
         })
+    },
+
+    /**
+     * 更改已完成顺序
+     * @param {*} val
+     * @param {*} index
+     */
+    changeListCompleteOrder(element, value, fromIndex) {
+      let toIndex = null
+
+      if (element.checked) {
+        const newElement = value.list[fromIndex]
+        if (newElement.taskId != element.taskId) {
+          fromIndex = null
+        }
+        for (let index = value.list.length - 1; index >= 0; index--) {
+          const taskItem = value.list[index]
+          if (fromIndex === null) {
+            if (element.taskId == taskItem.taskId) {
+              fromIndex = index
+            }
+          }
+          if (!taskItem.checked) {
+            toIndex = index
+          }
+
+          if (fromIndex !== null && toIndex !== null) {
+            break
+          }
+        }
+
+        if (toIndex < fromIndex) {
+          toIndex = null
+        }
+      } else {
+        const newElement = value.list[fromIndex]
+        if (newElement.taskId != element.taskId) {
+          fromIndex = null
+        }
+        for (let index = value.list.length - 1; index >= 0; index--) {
+          const taskItem = value.list[index]
+          if (fromIndex === null) {
+            if (element.taskId == taskItem.taskId) {
+              fromIndex = index
+            }
+          }
+
+          if (fromIndex !== null) {
+            break
+          }
+        }
+        toIndex = 0
+      }
+
+      if (toIndex != null && toIndex >= 0) {
+        if (toIndex != fromIndex) {
+          value.list.splice(fromIndex, 1)
+          value.list.splice(toIndex, 0, element)
+          workTaskUpdateOrderAPI({
+            toList: value.list.map(item => {
+              return item.taskId
+            }),
+            toId: value.classId
+          })
+            .then(res => {})
+            .catch(() => {})
+        }
+      }
     },
 
     /**
