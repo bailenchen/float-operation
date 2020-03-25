@@ -13,6 +13,7 @@
           @click="close"/>
       </p>
       <div class="content">
+        <el-input v-model="searchContent" placeholder="搜索项目内任务" @input="searchChange" />
         <div
           v-for="(item, index) in menuList"
           :key="index"
@@ -64,11 +65,14 @@ import { getMaxIndex } from '@/utils/index'
 export default {
 
   props: {
-    workId: [Number, String]
+    workId: [Number, String],
+    data: Object,
+    search: String
   },
   data() {
     return {
       zIndex: getMaxIndex(),
+      searchContent: '',
       menuList: [
         {
           label: '成员',
@@ -135,8 +139,12 @@ export default {
     }
   },
   created() {
+    this.searchChange = this.search
     this.getUserList()
     this.getTagList()
+    this.menuList[1].list.forEach(item => {
+      item.checked = this.data && this.data.timeId == item.id
+    })
   },
 
   mounted() {
@@ -154,7 +162,7 @@ export default {
         workId: this.workId
       }).then(res => {
         this.menuList[0].list = res.data.map(item => {
-          item.checked = false
+          item.checked = this.data && this.data.userIds && this.data.userIds.includes(item.userId)
           item.name = item.realname
           item.type = 'user'
           return item
@@ -171,7 +179,7 @@ export default {
         .then(res => {
           this.menuList[2].list = res.data.map(item => {
             item.id = item.labelId
-            item.checked = false
+            item.checked = this.data && this.data.tagIds && this.data.tagIds.includes(item.labelId)
             item.type = 'tag'
             return item
           })
@@ -219,7 +227,11 @@ export default {
           tagIds.push(item.id)
         }
       }
-      this.$bus.$emit('search', userIds, timeId, tagIds)
+      this.$emit('change', userIds, timeId, tagIds, this.searchContent)
+    },
+
+    searchChange() {
+      this.$emit('search', this.searchContent)
     },
 
     resetBtn() {
@@ -228,7 +240,8 @@ export default {
           i.checked = false
         }
       }
-      this.$bus.$emit('search', [], '', [])
+      this.searchContent = ''
+      this.$emit('change', [], '', [], this.searchContent)
     },
 
     rowFun(val) {
@@ -258,6 +271,10 @@ export default {
   right: 0;
   width: 300px;
   overflow: auto;
+  /deep/ .el-card__body {
+    height: 100%;
+  }
+
   .header {
     border-bottom: 1px solid #e6e6e6;
     margin-bottom: 10px;
@@ -281,7 +298,12 @@ export default {
     }
   }
   .content {
+    .el-input {
+      padding: 10px 15px;
+    }
     font-size: 13px;
+    height: calc(100% - 60px);
+    overflow-y: auto;
     .menu-list {
       margin-bottom: 10px;
       .item-label {
@@ -319,7 +341,7 @@ export default {
         margin: 5px 0;
         color: #333;
         .el-icon-check {
-          margin-top: 8px;
+          margin-top: 3px;
           opacity: 0;
         }
         .user-img {

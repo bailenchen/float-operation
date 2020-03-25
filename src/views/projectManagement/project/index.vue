@@ -102,6 +102,8 @@
       <keep-alive>
         <component
           :is="showComponent"
+          :condition-data="taskConditionObj"
+          :condition-search="taskConditionSearch"
           :work-id="workId"
           :show-type="tabShowType"
           :permission="permission"/>
@@ -112,6 +114,10 @@
     <task-screening
       v-if="screeningShow"
       :work-id="workId"
+      :data="taskConditionObj"
+      :search="taskConditionSearch"
+      @search="taskConditionSearch = $event"
+      @change="taskScreeningChange"
       @close="screeningShow = false"/>
 
     <!-- 人员列表 -->
@@ -191,6 +197,12 @@ export default {
       projectColor: '',
       projectData: {
         isOpen: 0
+      },
+      taskConditionSearch: '',
+      taskConditionObj: {
+        userIds: [],
+        timeId: '',
+        tagIds: []
       },
 
       activeName: 'task-board',
@@ -456,6 +468,17 @@ export default {
      */
     taskImportSuccess() {
       this.$bus.$emit('work-task-import')
+    },
+
+    /**
+     * 任务筛选
+     */
+    taskScreeningChange(userIds, timeId, tagIds) {
+      this.taskConditionObj = {
+        userIds,
+        timeId,
+        tagIds
+      }
     }
   }
 }

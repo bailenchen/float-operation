@@ -37,7 +37,18 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    conditionSearch: String,
+    conditionData: {
+      type: Object,
+      default: () => {
+        return {
+          userIds: [],
+          timeId: [],
+          tagIds: []
+        }
+      }
+    } // 筛选条件
   },
 
   data() {
@@ -104,6 +115,15 @@ export default {
       this.taskDetailShow = false
       this.taskList = []
       this.getList()
+    },
+
+    conditionData() {
+      this.getList()
+    },
+
+    // 任务列表更新 重置刷新
+    taskList() {
+
     }
   },
 
@@ -112,14 +132,6 @@ export default {
       this.checkboxChange(element, item, i)
     })
     this.getList()
-    // 筛选
-    this.$bus.$on('search', (userIds, timeId, tagIds) => {
-      this.getList({
-        mainUserId: userIds,
-        stopTimeType: timeId,
-        labelId: tagIds
-      })
-    })
 
     // 导入
     this.$bus.$on('work-task-import', (userIds, timeId, tagIds) => {
@@ -134,7 +146,6 @@ export default {
   },
 
   beforeDestroy() {
-    this.$bus.$off('search')
     this.$bus.$off('work-task-import')
   },
 
@@ -142,11 +153,12 @@ export default {
     /**
      * 获取所有数据
      */
-    getList(params) {
-      if (params) {
-        params.workId = this.workId
-      } else {
-        params = { workId: this.workId }
+    getList() {
+      const params = { workId: this.workId }
+      if (this.conditionData) {
+        params.mainUserId = this.conditionData.userIds
+        params.stopTimeType = this.conditionData.timeId
+        params.labelId = this.conditionData.tagIds
       }
       this.loading = true
       const request = {
