@@ -119,11 +119,6 @@ export default {
 
     conditionData() {
       this.getList()
-    },
-
-    // 任务列表更新 重置刷新
-    taskList() {
-
     }
   },
 
@@ -159,7 +154,9 @@ export default {
         params.mainUserId = this.conditionData.userIds
         params.stopTimeType = this.conditionData.timeId
         params.labelId = this.conditionData.tagIds
+        params.search = this.conditionSearch
       }
+
       this.loading = true
       const request = {
         board: workTaskIndexAPI,
