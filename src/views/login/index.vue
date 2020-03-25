@@ -29,68 +29,6 @@
           src="~@/assets/login/main_pic.png"
           alt=""
           class="main-pic">
-        <ul class="download-group">
-          <el-popover
-            width="150"
-            popper-class="download-popover"
-            trigger="hover">
-            <div class="popover-box">
-              <img
-                src="~@/assets/android_10.png"
-                alt=""
-                class="qrcode">
-              <span class="down-text">
-                扫描二维码<br>下载客户端
-              </span>
-            </div>
-            <li
-              slot="reference"
-              class="download-item">
-              <img
-                src="~@/assets/login/android.png"
-                alt="android"
-                class="icon">
-              <span class="text">Android下载</span>
-            </li>
-          </el-popover>
-          <el-popover
-            width="150"
-            popper-class="download-popover"
-            trigger="hover">
-            <div class="popover-box">
-              <img
-                src="~@/assets/ios_10.png"
-                alt=""
-                class="qrcode">
-              <span class="down-text">
-                扫描二维码<br>下载客户端
-              </span>
-            </div>
-            <li
-              slot="reference"
-              class="download-item">
-              <img
-                src="~@/assets/login/ios.png"
-                alt="ios"
-                class="icon">
-              <span class="text">IOS下载</span>
-            </li>
-          </el-popover>
-          <li class="download-item" @click="handleDownload('windows')">
-            <img
-              src="~@/assets/login/windows.png"
-              alt="windows"
-              class="icon">
-            <span class="text">Windows下载</span>
-          </li>
-          <li class="download-item" @click="handleDownload('mac')">
-            <img
-              src="~@/assets/login/mac.png"
-              alt="mac"
-              class="icon">
-            <span class="text">Mac下载</span>
-          </li>
-        </ul>
 
         <ul
           v-if="activeCom === 'CreateNewCompany'"
@@ -208,19 +146,11 @@
 
 <script>
 import LoginByPwd from './component/loginByPwd'
-import LoginByCode from './component/loginByCode'
-import CreateNewCompany from './component/createNewCompany'
-import MultipleCompany from './component/multipleCompany'
-import ForgetPwd from './component/forgetPwd'
 
 export default {
   name: 'Login',
   components: {
-    LoginByPwd,
-    LoginByCode,
-    CreateNewCompany,
-    MultipleCompany,
-    ForgetPwd
+    LoginByPwd
   },
   data() {
     return {

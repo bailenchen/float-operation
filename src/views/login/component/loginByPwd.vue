@@ -31,22 +31,7 @@
           type="password"
           @focus="focusKey = 'password'"
           @keyup.enter.native="handleLogin"
-          @blur="checkForm">
-          <!--<span
-            slot="prefix"
-            :class="{
-              full: Boolean(form.password),
-              focus: focusKey === 'password'
-            }"
-            class="form-icon wk wk-circle-password" />-->
-          <span
-            v-if="focusKey !== 'password'"
-            slot="suffix"
-            class="forget-pwd"
-            @click="$emit('toggle', 'ForgetPwd', form.username)">
-            忘记密码
-          </span>
-        </el-input>
+          @blur="checkForm"/>
       </el-form-item>
     </el-form>
 
@@ -59,11 +44,6 @@
       </div>
       <div class="empty">
         &nbsp;
-      </div>
-      <div
-        class="cell-box login-by-code"
-        @click="$emit('toggle', 'LoginByCode', form.username)">
-        <span class="text">验证码登录</span>
       </div>
     </div>
 
@@ -86,40 +66,6 @@
         class="btn"
         @click="handleLogin">
         登&nbsp;录
-      </div>
-
-      <div class="others">
-        <el-dropdown
-          trigger="click"
-          @command="handleToggle">
-          <span class="el-dropdown-link">
-            默认登录方式：
-            <span class="dropdown">
-              {{ loginType === 1 ? '云平台' : '个人中心' }}
-              <i class="el-icon-arrow-down el-icon--right" />
-            </span>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item :command="1">云平台</el-dropdown-item>
-            <el-dropdown-item :command="2">个人中心</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-
-        <div class="empty">
-          &nbsp;
-        </div>
-        <div
-          class="register"
-          @click="$emit('toggle', 'CreateNewCompany', form.username)">
-          免费注册
-        </div>
-      </div>
-
-      <div
-        v-if="loginType === 2"
-        class="center-tips">
-        <span class="el-icon-warning" />
-        <span>个人中心仅管理员可登录</span>
       </div>
     </div>
   </div>
