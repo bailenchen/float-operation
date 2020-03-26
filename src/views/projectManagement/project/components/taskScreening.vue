@@ -28,7 +28,7 @@
             v-for="(val, i) in item.list"
             v-show="item.expand == false"
             :key="i"
-            :class="['item-list', val.checked ? 'item-list-active' : '']"
+            :class="['item-list', val.checked ? 'item-list-active' : '', {'time-item-list': index == 1} ]"
             @click="rowChecked(val)">
             <xr-avatar
               v-if="val.type == 'user'"
@@ -338,7 +338,9 @@ export default {
         background-color: $xr-color-primary;
       }
 
-
+      .time-item-list {
+        padding: 8px 10px 8px 35px !important;
+      }
       .item-list {
         padding: 4px 10px 4px 35px;
         margin: 5px 0;

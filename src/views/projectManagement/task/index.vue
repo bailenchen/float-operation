@@ -454,8 +454,8 @@ export default {
 .project-list-popover-btn-list {
   margin: 0 -12px;
   p {
-    height: 34px;
-    line-height: 34px;
+    height: 40px;
+    line-height: 40px;
     cursor: pointer;
     padding-left: 32px;
   }

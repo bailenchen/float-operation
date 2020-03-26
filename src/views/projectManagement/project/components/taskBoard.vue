@@ -349,8 +349,8 @@ export default {
   p {
     font-size: 13px;
     color: #333;
-    height: 26px;
-    line-height: 26px;
+    height: 40px;
+    line-height: 40px;
     padding-left: 20px;
     cursor: pointer;
   }
