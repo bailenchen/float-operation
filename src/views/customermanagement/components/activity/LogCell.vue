@@ -17,6 +17,14 @@
         class="follow">
         <span class="follow-info">{{ item.category }}</span>
       </div>
+      <span
+        :style="{ right: canDelete ? '40px' : '15px' }"
+        class="log-mark">
+        <i
+          :style="{ color: activityIconColor }"
+          :class="activityIcon" />
+        <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-' + getRecordLogTypeName(item.type) }}</span>
+      </span>
       <el-dropdown
         v-if="canDelete"
         class="more-drop"
@@ -28,15 +36,6 @@
           <el-dropdown-item command="delete">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-
-      <span
-        v-else
-        class="log-mark">
-        <i
-          :style="{ color: activityIconColor }"
-          :class="activityIcon" />
-        <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-' + getRecordLogTypeName(item.type) }}</span>
-      </span>
     </flexbox>
     <div class="fl-b">
       <div class="fl-b-content">{{ item.content }}</div>

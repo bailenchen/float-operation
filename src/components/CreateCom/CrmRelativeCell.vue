@@ -140,7 +140,6 @@ export default {
   font-size: 12px;
   border: 1px solid #ddd;
   color: #333333;
-  padding: 5px;
   line-height: 15px;
   cursor: pointer;
   .user-item {
