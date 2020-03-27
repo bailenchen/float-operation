@@ -139,8 +139,8 @@ export default {
           hidden: true
         },
         {
-          name: '需回访客户',
-          crmType: 'visit',
+          name: '待回访合同',
+          crmType: 'contract',
           color: '#ff9232',
           iconClass: 'wk wk-house',
           infoType: 'returnVisitRemind',

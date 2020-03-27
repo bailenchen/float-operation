@@ -11,7 +11,8 @@ import {
   crmMessageFollowCustomerAPI,
   crmMessagEndContractAPI,
   crmMessagRemindreceivablesplanAPI,
-  crmMessagRemindCustomerAPI
+  crmMessagRemindCustomerAPI,
+  crmMessagVisitRemindAPI
 } from '@/api/customermanagement/message'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
@@ -35,7 +36,7 @@ export default {
   computed: {
     // 展示options下拉选择
     showOptions() {
-      if (this.infoType == 'putInPoolRemind') {
+      if (this.infoType == 'putInPoolRemind' || this.infoType == 'returnVisitRemind') {
         return false
       }
       return true
@@ -204,7 +205,8 @@ export default {
         'checkReceivables': crmMessageCheckReceivablesAPI,
         'remindReceivablesPlan': crmMessagRemindreceivablesplanAPI,
         'endContract': crmMessagEndContractAPI,
-        'putInPoolRemind': crmMessagRemindCustomerAPI
+        'putInPoolRemind': crmMessagRemindCustomerAPI,
+        'returnVisitRemind': crmMessagVisitRemindAPI
       }[this.infoType]
     },
 
