@@ -156,6 +156,9 @@ import {
   crmMarketingIsEnableAPI,
   crmMarketingDeleteAPI
 } from '@/api/customermanagement/marketing'
+import {
+  crmReturnVisitDeleteAPI
+} from '@/api/customermanagement/visit'
 
 
 import filterForm from './filterForm'
@@ -572,6 +575,7 @@ export default {
           receivables: crmReceivablesDelete,
           applet: crmWeixinDeleteAPI,
           marketing: crmMarketingDeleteAPI,
+          visit: crmReturnVisitDeleteAPI,
           product: crmProductDeleteAPI
         }[this.crmType]
         const params = {
@@ -801,6 +805,10 @@ export default {
           'state_disable',
           'delete'
         ])
+      } else if (this.crmType == 'visit') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'delete'
+        ])
       }
     },
     forSelectionHandleItems(handleInfos, array) {
@@ -901,6 +909,8 @@ export default {
         return '全部产品'
       } else if (this.crmType === 'applet') {
         return '全部名片线索'
+      } else if (this.crmType === 'visit') {
+        return '全部回访'
       }
     }
   }

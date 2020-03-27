@@ -53,6 +53,9 @@ import {
 import {
   crmMarketingIndexAPI
 } from '@/api/customermanagement/marketing'
+import {
+  crmReturnVisitIndexAPI
+} from '@/api/customermanagement/visit'
 
 
 import Lockr from 'lockr'
@@ -222,6 +225,8 @@ export default {
         return crmReceivablesIndex
       } else if (this.crmType === 'marketing') {
         return crmMarketingIndexAPI
+      } else if (this.crmType === 'visit') {
+        return crmReturnVisitIndexAPI
       }
     },
     /** 获取字段 */

@@ -5,6 +5,7 @@
       class="title-icon">{{ title }}</flexbox>
     <slot v-else name="icon" />
     <el-input
+      v-if="showSearch"
       :placeholder="placeholder"
       v-model="inputContent"
       class="sc-container"
@@ -85,7 +86,11 @@ export default {
       type: Boolean,
       default: false
     },
-    search: String,
+    showSearch: {
+      type: Boolean,
+      default: true
+    },
+    search: String, // 用于联动
     // 自定义方法
     createFun: Function
   },

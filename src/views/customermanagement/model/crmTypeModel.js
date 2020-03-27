@@ -8,6 +8,7 @@ export default {
   receivables: 7,
   receivables_plan: 8,
   pool: 9,
+  visit: 17,
 
   keyToTypeData: {
     leads: 1,
@@ -18,7 +19,8 @@ export default {
     contract: 6,
     receivables: 7,
     receivables_plan: 8,
-    pool: 9
+    pool: 9,
+    visit: 17
   },
 
   typeToKeyData: {
@@ -30,7 +32,8 @@ export default {
     6: 'contract',
     7: 'receivables',
     8: 'receivables_plan',
-    9: 'pool'
+    9: 'pool',
+    17: 'visit'
   },
 
   typeToNameData: {
@@ -42,7 +45,8 @@ export default {
     6: '合同',
     7: '回款',
     8: '回款计划',
-    9: '公海'
+    9: '公海',
+    17: '回访'
   },
 
   keyToNameData: {
@@ -54,7 +58,8 @@ export default {
     contract: '合同',
     receivables: '回款',
     receivables_plan: '回款计划',
-    pool: '公海'
+    pool: '公海',
+    visit: '回访'
   },
 
   convertKeyToType: function(key) {

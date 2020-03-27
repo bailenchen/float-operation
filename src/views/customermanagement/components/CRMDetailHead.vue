@@ -119,6 +119,7 @@ import {
   crmMarketingIsEnableAPI,
   crmMarketingDeleteAPI
 } from '@/api/customermanagement/marketing'
+import { crmReturnVisitDeleteAPI } from '@/api/customermanagement/visit'
 import {
   crmProductStatus,
   crmProductDeleteAPI
@@ -212,7 +213,8 @@ export default {
           business: '商机',
           contract: '合同',
           receivables: '回款',
-          marketing: '活动'
+          marketing: '活动',
+          visit: '回访'
         }[this.crmType] || ''
       )
     },
@@ -225,6 +227,8 @@ export default {
         return this.detail.businessName
       } else if (this.crmType === 'marketing') {
         return this.detail.marketingName
+      } else if (this.crmType === 'visit') {
+        return this.detail.visitNumber
       }
       return this.detail.name
     },
@@ -235,6 +239,7 @@ export default {
         this.crmType === 'product' ||
         this.crmType === 'customer' ||
          this.crmType === 'marketing' ||
+         this.crmType === 'visit' ||
         this.isSeas
       ) {
         return false
@@ -437,6 +442,7 @@ export default {
           contract: crmContractDelete,
           receivables: crmReceivablesDelete,
           marketing: crmMarketingDeleteAPI,
+          visit: crmReturnVisitDeleteAPI,
           product: crmProductDeleteAPI
         }[this.crmType]
         const params = {
@@ -613,6 +619,10 @@ export default {
         return this.forSelectionHandleItems(handleInfos, [
           'state_start',
           'state_disable',
+          'delete'
+        ])
+      } else if (this.crmType == 'visit') {
+        return this.forSelectionHandleItems(handleInfos, [
           'delete'
         ])
       }
