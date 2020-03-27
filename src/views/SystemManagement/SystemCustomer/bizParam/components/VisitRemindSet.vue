@@ -1,7 +1,7 @@
 <template>
-  <div v-loading="loading">
+  <div v-loading="loading" class="visit-remind-set">
     <div class="content-title">
-      <span>合同到期提醒设置</span>
+      <span>客户回访提醒设置</span>
       <el-button
         type="primary"
         class="rt"
@@ -9,18 +9,19 @@
         @click="save">保存</el-button>
     </div>
     <div class="content-body">
-      <div class="tips">设置提前提醒天数之后，根据合同的”合同到期时间”计算提醒时间</div>
+      <div class="tips">设置回访提醒后，到期会自动提醒，合同生效是指到达合同开始时间</div>
       <div class="set-content">
         <el-radio
-          v-model="contractConfig"
+          v-model="status"
           :label="0">不提醒</el-radio>
         <el-radio
-          v-model="contractConfig"
-          :label="1">提前提醒天数</el-radio>
+          v-model="status"
+          :label="1">提醒</el-radio>
         <div
-          v-if="contractConfig == 1"
+          v-if="status == 1"
           class="time-set">
-          <el-input v-model="contractDay" type="number"/><span>天</span>
+          <span>合同生效后</span>
+          <el-input v-model="value" type="number"/><span>天提醒</span>
         </div>
       </div>
     </div>
@@ -28,10 +29,13 @@
 </template>
 
 <script>
-import { crmSettingContractDayAPI } from '@/api/systemManagement/SystemCustomer'
+import {
+  returnVisitConfigQueryAPI,
+  returnVisitConfigSetAPI
+} from '@/api/systemManagement/SystemCustomer'
 
 export default {
-  name: 'ContractExpireSet',
+  name: 'VisitRemindSet',
 
   components: {},
 
@@ -39,8 +43,8 @@ export default {
     return {
       loading: false, // 展示加载中效果
 
-      contractDay: 0, // 合同到期提醒天数
-      contractConfig: 0 // 是否提醒 0、不提醒 1、提醒
+      value: 0, // 天数
+      status: 0 // 是否提醒 0、不提醒 1、提醒
     }
   },
 
@@ -54,13 +58,11 @@ export default {
      */
     getDetail() {
       this.loading = true
-      this.$store
-        .dispatch('CRMSettingConfig')
-        .then(res => {
-          this.loading = false
-          this.contractDay = res.data.contractDay
-          this.contractConfig = parseInt(res.data.contractConfig)
-        })
+      returnVisitConfigQueryAPI().then(res => {
+        this.loading = false
+        this.value = res.data.value
+        this.status = parseInt(res.data.status)
+      })
         .catch(() => {
           this.loading = false
         })
@@ -72,13 +74,13 @@ export default {
     save() {
       this.loading = true
       const params = {}
-      if (this.contractConfig == 1) {
-        params.contractDay = this.contractDay
+      if (this.status == 1) {
+        params.value = this.value
         params.status = 1
       } else {
         params.status = 0
       }
-      crmSettingContractDayAPI(params)
+      returnVisitConfigSetAPI(params)
         .then(res => {
           this.loading = false
           this.$message.success('操作成功')

@@ -32,6 +32,8 @@ import BusinessGroupSet from './components/businessGroupSet' // 商机组设置
 import ProductCategorySet from './components/productCategorySet' // 产品类别设置
 import ContractExpireSet from './components/contractExpireSet' // 合同到期提醒设置
 import CustomerLimitSet from './components/customerLimitSet' // 拥有/锁定客户数限制
+import VisitRemindSet from './components/VisitRemindSet' // 客户回访提醒设置
+import SerialNumberSet from './components/SerialNumberSet' // 编号规则设置
 import XrHeader from '@/components/xr-header'
 
 export default {
@@ -43,6 +45,8 @@ export default {
     FollowLogTypeSet,
     ContractExpireSet,
     CustomerLimitSet,
+    VisitRemindSet,
+    SerialNumberSet,
     XrHeader
   },
 
@@ -54,7 +58,9 @@ export default {
         { label: '产品类别设置', key: 'product-category-set' },
         { label: '合同到期提醒设置', key: 'contract-expire-set' },
         { label: '拥有客户数限制', key: 'own' },
-        { label: '锁定客户数限制', key: 'lock' }
+        { label: '锁定客户数限制', key: 'lock' },
+        { label: '客户回访提醒设置', key: 'VisitRemindSet' },
+        { label: '编号规则设置', key: 'SerialNumberSet' }
       ],
       menuIndex: 'follow-log-type-set',
       types: '' // 区分拥有客户 和 锁定客户

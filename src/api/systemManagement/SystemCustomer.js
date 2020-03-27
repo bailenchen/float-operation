@@ -271,3 +271,27 @@ export function crmSettingCustomerConfigDelAPI(data) {
     data: data
   })
 }
+
+/**
+ * 客户回访查询
+ * @param {*} data
+ */
+export function returnVisitConfigQueryAPI(data) {
+  return request({
+    url: 'CrmReturnVisit/queryReturnVisitRemindConfig',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 客户回访设置
+ * @param {*} data
+ */
+export function returnVisitConfigSetAPI(data) {
+  return request({
+    url: 'CrmReturnVisit/updateReturnVisitRemindConfig',
+    method: 'post',
+    data: data
+  })
+}
