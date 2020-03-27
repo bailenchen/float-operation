@@ -40,7 +40,7 @@ export default {
     },
 
     showTabsNumber() {
-      return this.crmType !== 'marketing'
+      return this.crmType !== 'marketing' && this.crmType !== 'visit'
     }
   },
 

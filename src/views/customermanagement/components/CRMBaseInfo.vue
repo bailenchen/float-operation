@@ -61,8 +61,7 @@
               align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
-              <div class="b-cell-value">{{ getModuleName(item) }}
-              </div>
+              <div class="b-cell-value can-check" @click="checkModuleDetail(item)">{{ getModuleName(item) }}</div>
             </flexbox>
 
             <flexbox
@@ -109,6 +108,11 @@
       :lat="mapViewInfo.lat"
       :lng="mapViewInfo.lng"
       @hidden="showMapView=false" />
+
+    <c-r-m-full-screen-detail
+      :visible.sync="showFullDetail"
+      :id="fullDetailId"
+      :crm-type="fullDetailType"/>
   </div>
 </template>
 
@@ -130,7 +134,8 @@ export default {
   components: {
     Sections,
     MapView,
-    FileListView
+    FileListView,
+    CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue')
   },
   filters: {
     arrayValue(array, field) {
@@ -173,7 +178,10 @@ export default {
       // 控制展示地图详情
       showMapView: false,
       // 地图详情信息
-      mapViewInfo: {}
+      mapViewInfo: {},
+      showFullDetail: false,
+      fullDetailId: '',
+      fullDetailType: ''
     }
   },
   computed: {},
@@ -316,6 +324,15 @@ export default {
         typeName: 'typeName'
       }[item.formType]
       return item.value ? item.value[field] : ''
+    },
+
+    /**
+     * 查看详情
+     */
+    checkModuleDetail(data) {
+      this.fullDetailType = data.formType
+      this.fullDetailId = data[`${data.formType}Id`]
+      this.showFullDetail = true
     }
   }
 }
@@ -380,6 +397,11 @@ export default {
     font-size: 12px;
     margin-right: 10px;
   }
+}
+
+.can-check {
+  color: $xr-color-primary;
+  cursor: pointer;
 }
 
 </style>

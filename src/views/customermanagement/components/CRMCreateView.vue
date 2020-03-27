@@ -117,6 +117,7 @@ import { crmContractSave } from '@/api/customermanagement/contract'
 import { crmProductSave } from '@/api/customermanagement/product'
 import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
+import { crmReturnVisitSaveAPI } from '@/api/customermanagement/visit'
 
 import {
   regexIsCRMNumber,
@@ -1219,6 +1220,8 @@ export default {
         return crmReceivablesSave
       } else if (this.crmType == 'receivables_plan') {
         return crmReceivablesPlanSave
+      } else if (this.crmType == 'visit') {
+        return crmReturnVisitSaveAPI
       }
     },
     /** 拼接上传传输 */
@@ -1343,6 +1346,8 @@ export default {
         return this.action.type == 'update' ? '编辑回款' : '新建回款'
       } else if (this.crmType == 'receivables_plan') {
         return this.action.type == 'update' ? '编辑回款计划' : '新建回款计划'
+      } else if (this.crmType == 'visit') {
+        return this.action.type == 'update' ? '编辑回访' : '新建回访'
       }
     },
     // 获取左边padding

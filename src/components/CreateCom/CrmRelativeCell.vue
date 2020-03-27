@@ -151,7 +151,7 @@ export default {
   }
   .add-item {
     padding: 5px;
-    color: #2362FB;
+    color: $xr-color-text-placeholder;
     cursor: pointer;
   }
   .delete-icon {

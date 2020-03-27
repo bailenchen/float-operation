@@ -420,6 +420,14 @@ export default {
         } else {
           this.showDview = false
         }
+      } else if (this.crmType == 'visit') {
+        if (column.property === 'visitNumber') {
+          this.rowID = row.visitId
+          this.rowType = 'visit'
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       }
 
       if (this.showDview) {

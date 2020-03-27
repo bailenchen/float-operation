@@ -152,10 +152,10 @@ export default {
           this.loading = false
           this.detailData = res.data
 
-          this.headDetails[0].value = res.data.categoryName
-          this.headDetails[1].value = res.data.单位
-          this.headDetails[2].value = res.data.price
-          this.headDetails[3].value = res.data.num
+          this.headDetails[0].value = res.data.customerName
+          this.headDetails[1].value = res.data.visitTime
+          this.headDetails[2].value = res.data.ownerUserName
+          this.headDetails[3].value = res.data.回访形式
         })
         .catch(() => {
           this.loading = false
@@ -170,13 +170,13 @@ export default {
       this.$emit('hide-view')
     },
 
-    // /**
-    //  * 编辑成功
-    //  */
-    // editSaveSuccess() {
-    //   this.$emit('handle', { type: 'save-success' })
-    //   this.getDetial()
-    // },
+    /**
+     * 编辑成功
+     */
+    editSaveSuccess() {
+      this.$emit('handle', { type: 'save-success' })
+      this.getDetial()
+    },
 
     /**
      * 预览图片
