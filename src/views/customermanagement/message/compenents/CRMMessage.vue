@@ -305,7 +305,8 @@ export default {
     showSubType() {
       if (
         this.infoType == 'todayCustomer' ||
-        this.infoType == 'putInPoolRemind'
+        this.infoType == 'putInPoolRemind' ||
+        this.infoType == 'returnVisitRemind'
       ) {
         return true
       }
@@ -494,7 +495,8 @@ export default {
         column.property === 'customerName' ||
         column.property === 'businessName' ||
         column.property === 'contactsName' ||
-        column.property === 'num'
+        column.property === 'num' ||
+        column.property === 'visitNumber'
       ) {
         return 'can-visit--underline'
       } else {

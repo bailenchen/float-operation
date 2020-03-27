@@ -135,3 +135,18 @@ export function crmMessagRemindCustomerAPI(data) {
     }
   })
 }
+
+/**
+ * 需回访客户
+ * @param {*} data
+ */
+export function crmMessagVisitRemindAPI(data) {
+  return request({
+    url: 'CrmBackLog/returnVisitRemind',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

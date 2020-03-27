@@ -137,6 +137,16 @@ export default {
           num: 0,
           tips: '根据“合同到期时间”及设置的“提前提醒天数”提醒',
           hidden: true
+        },
+        {
+          name: '需回访客户',
+          crmType: 'visit',
+          color: '#ff9232',
+          iconClass: 'wk wk-house',
+          infoType: 'returnVisitRemind',
+          num: 0,
+          tips: '',
+          hidden: true
         }
       ]
     }
