@@ -160,14 +160,14 @@ export default {
         11: `${this.data.realname}您的`,
         12: `${this.data.realname}拒绝您的`,
         13: `${this.data.realname}您的`,
-        14: `${this.data.realname}导入客户数据${this.data.title}条，失败${this.data.content}条。`,
-        15: `${this.data.realname}取消导入客户数据，已导入${this.data.title}条，失败${this.data.content}条。`,
-        16: `${this.data.realname}导入联系人数据${this.data.title}条，失败${this.data.content}条。`,
-        17: `${this.data.realname}取消导入联系人数据，已导入${this.data.title}条，失败${this.data.content}条。`,
-        18: `${this.data.realname}导入线索数据${this.data.title}条，失败${this.data.content}条。`,
-        19: `${this.data.realname}取消导入线索数据，已导入${this.data.title}条，失败${this.data.content}条。`,
-        20: `${this.data.realname}导入产品数据${this.data.title}条，失败${this.data.content}条。`,
-        21: `${this.data.realname}取消导入产品数据，已导入${this.data.title}条，失败${this.data.content}条。`,
+        14: `${this.data.realname}导入客户数据${this.data.title}条，${this.getInport(this.data.content)}`,
+        15: `${this.data.realname}取消导入客户数据，已导入${this.data.title}条，${this.getInport(this.data.content)}`,
+        16: `${this.data.realname}导入联系人数据${this.data.title}条，${this.getInport(this.data.content)}`,
+        17: `${this.data.realname}取消导入联系人数据，已导入${this.data.title}条，${this.getInport(this.data.content)}`,
+        18: `${this.data.realname}导入线索数据${this.data.title}条，${this.getInport(this.data.content)}`,
+        19: `${this.data.realname}取消导入线索数据，已导入${this.data.title}条，${this.getInport(this.data.content)}`,
+        20: `${this.data.realname}导入产品数据${this.data.title}条，${this.getInport(this.data.content)}`,
+        21: `${this.data.realname}取消导入产品数据，已导入${this.data.title}条，${this.getInport(this.data.content)}`,
         22: `${this.data.realname}将您添加为商机`,
         23: `${this.data.realname}将您添加为客户`,
         24: `${this.data.realname}将您添加为合同`,
@@ -289,6 +289,9 @@ export default {
      * 日程提醒，多长时间后开始
      */
     getStartTime(content) {
+      if (this.data.type != 9) {
+        return
+      }
       const timeObj = content ? JSON.parse(content) : { type: 0, value: '' }
 
       let dataValue = ''
@@ -298,6 +301,15 @@ export default {
         dataValue = '将于' + timeObj.value + ['', '分钟', '小时', '天'][timeObj.type] + '后开始, '
       }
       return dataValue
+    },
+
+    getInport(content) {
+      const countList = [14, 15, 16, 17, 18, 19, 20, 21]
+      if (!countList.includes(this.data.type)) {
+        return
+      }
+      const list = content.split(',') || []
+      return `失败${list[0]}条，覆盖${list[1] || '0'}条。`
     }
   }
 }
