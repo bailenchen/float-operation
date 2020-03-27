@@ -165,6 +165,19 @@ export default [
   },
   {
     ...layout({
+      permissions: ['crm', 'visit']
+    }),
+    children: [{
+      path: 'visit', // 回访列表
+      component: () => import('@/views/customermanagement/visit/VisitIndex'),
+      meta: {
+        title: '回访',
+        icon: 'house'
+      }
+    }]
+  },
+  {
+    ...layout({
       permissions: ['crm', 'product']
     }),
     children: [{

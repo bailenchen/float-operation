@@ -133,21 +133,23 @@ export default {
      */
     getCustomFieldIcon(type) {
       if (type == 'crm_leads') {
-        return require('@/assets/img/field_leads_manager.png')
+        return require('@/assets/img/crm/leads.png')
       } else if (type == 'crm_customer') {
-        return require('@/assets/img/field_customer_manager.png')
+        return require('@/assets/img/crm/customer.png')
       } else if (type == 'crm_contacts') {
-        return require('@/assets/img/field_contacts_manager.png')
+        return require('@/assets/img/crm/contacts.png')
       } else if (type == 'crm_business') {
-        return require('@/assets/img/field_business_manager.png')
+        return require('@/assets/img/crm/business.png')
       } else if (type == 'crm_contract') {
-        return require('@/assets/img/field_contract_manager.png')
+        return require('@/assets/img/crm/contract.png')
       } else if (type == 'crm_product') {
-        return require('@/assets/img/field_product_manager.png')
+        return require('@/assets/img/crm/product.png')
       } else if (type == 'crm_receivables') {
-        return require('@/assets/img/field_receivables_manager.png')
+        return require('@/assets/img/crm/receivables.png')
+      } else if (type == 'crm_return_visit') {
+        return require('@/assets/img/crm/visit.png')
       }
-      return require('@/assets/img/field_other_manager.png')
+      return require('@/assets/img/crm/product.png')
     }
   }
 }
@@ -170,6 +172,7 @@ export default {
   height: 30px;
   margin-right: 8px;
   vertical-align:middle;
+  border-radius: 4px;
 }
 
 .table-item-time {
