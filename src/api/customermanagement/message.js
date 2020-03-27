@@ -137,7 +137,7 @@ export function crmMessagRemindCustomerAPI(data) {
 }
 
 /**
- * 需回访客户
+ * 待回访合同
  * @param {*} data
  */
 export function crmMessagVisitRemindAPI(data) {

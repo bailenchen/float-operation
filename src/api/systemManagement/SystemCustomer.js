@@ -295,3 +295,30 @@ export function returnVisitConfigSetAPI(data) {
     data: data
   })
 }
+
+/**
+ * 编号查询
+ * @param {*} data
+ */
+export function sysConfigNumberQueryAPI(data) {
+  return request({
+    url: 'sysConfig/queryNumberSetting',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 编号设置
+ * @param {*} data
+ */
+export function sysConfigNumberSetAPI(data) {
+  return request({
+    url: 'sysConfig/setNumberSetting',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

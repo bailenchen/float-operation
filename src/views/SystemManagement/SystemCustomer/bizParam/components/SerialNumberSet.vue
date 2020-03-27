@@ -9,24 +9,30 @@
         @click="save">保存</el-button>
     </div>
     <div class="content-body">
+      <reminder
+        content="1、商机编号、回款编号、发票编号、回访编号的日期类型编号都从创建时间获取，合同编号的日期编号从下单时间获取，若下单时间为空，则从创建时间获取<br />2、启用自动生成编号规则后，系统原编号将不可编辑<br />3、若自动生成的编号与系统现有编号重复时，自动跳过此编号，依次往下生成<br />4、编号规则至少设置两级<br />5、文本类型的最多支持12个字符，数字类型编号起始编号位数1-9" />
       <div v-for="(listItem, index) in list" :key="index" class="rule-section">
         <div class="rule-header">
-          <span class="rule-header-title">{{ listItem.label }}</span>
+          <span class="rule-header-title">{{ listItem.label | labelName }}</span>
           <el-switch
-            v-model="listItem.state"
+            v-model="listItem.status"
             :active-value="1"
             :inactive-value="0"/>
-          <span :class="{'inactive': listItem.state != 1}">{{ listItem.state == 1 ? '已启用自动生成规则': '已停用自动生成规则' }}</span>
+          <span :class="{'inactive': listItem.status != 1}">{{ listItem.status == 1 ? '已启用自动生成规则': '已停用自动生成规则' }}</span>
         </div>
-        <template v-if="listItem.state == 1">
-          <el-checkbox
+        <template v-if="listItem.status == 1">
+          <!-- <el-checkbox
             v-model="listItem.replace"
             :true-label="1"
-            :false-label="0">替换现有编号</el-checkbox>
+            :false-label="0">替换现有编号</el-checkbox> -->
           <div class="rule-body">
-            <div v-for="(typeItem, typeIndex) in listItem.list" :key="'rule'+typeIndex" class="rule">
+            <div v-for="(typeItem, typeIndex) in listItem.setting" :key="'rule'+typeIndex" class="rule">
               <span>{{ typeIndex | typeListName }}</span>
-              <el-select v-model="typeItem.type" class="rule-type" placeholder="请选择">
+              <el-select
+                v-model="typeItem.type"
+                class="rule-type"
+                placeholder="请选择"
+                @change="typeChange(typeItem, listItem.setting, typeIndex)">
                 <el-option
                   v-for="item in typeOptions"
                   :key="'type' + item.value"
@@ -36,7 +42,7 @@
               <template>
                 <el-input v-if="typeItem.type == 1" v-model="typeItem.value" class="rule-input" />
                 <template v-else-if="typeItem.type == 2">
-                  <el-select v-model="typeItem.type" class="rule-select" placeholder="请选择">
+                  <el-select v-model="typeItem.value" class="rule-select" placeholder="请选择">
                     <el-option
                       v-for="item in timeOptions"
                       :key="'time' + item.value"
@@ -53,11 +59,11 @@
 
                 <template v-else-if="typeItem.type == 3">
                   <span class="rule-code-span">起始编号</span>
-                  <el-input v-model="typeItem.value" class="rule-code-input" type="number" />
+                  <el-input v-model="typeItem.value" :maxlength="14" class="rule-code-input" type="number" />
                   <span class="rule-code-span">递增数</span>
-                  <el-input v-model="typeItem.interal" class="rule-code-input" type="number" />
+                  <el-input v-model="typeItem.increaseNumber" :maxlength="9" class="rule-code-input" type="number" />
                   <span class="rule-code-span">重新开始编号</span>
-                  <el-select v-model="typeItem.intervalType" class="rule-code-input" placeholder="请选择">
+                  <el-select v-model="typeItem.resetType" class="rule-code-input" placeholder="请选择">
                     <el-option
                       v-for="item in intervalOptions"
                       :key="'interval' + item.value"
@@ -66,9 +72,18 @@
                   </el-select>
                 </template>
               </template>
+              <i
+                v-if="listItem.setting.length > 2"
+                class="el-icon-remove"
+                @click="deleteItem(listItem.setting, typeIndex)"/>
             </div>
           </div>
-          <div>编号示例：{{ listItem.list | exampleName }}</div>
+          <el-button
+            :disabled="listItem.setting.length >= 6"
+            class="add-buttom"
+            type="text"
+            @click="addItem(listItem.setting)">+添加类型</el-button>
+          <div class="example">编号示例：{{ listItem.setting | exampleName }}</div>
         </template>
       </div>
     </div>
@@ -77,54 +92,75 @@
 
 <script>
 import {
-  crmSettingRecordListAPI
-  // crmSettingRecordEditAPI
+  sysConfigNumberQueryAPI,
+  sysConfigNumberSetAPI
 } from '@/api/systemManagement/SystemCustomer'
+
+import Reminder from '@/components/reminder'
 
 import moment from 'moment'
 
 export default {
   name: 'SerialNumberSet',
 
-  components: {},
+  components: {
+    Reminder
+  },
 
   filters: {
     typeListName(value) {
-      return ['一级编号', '二级编号', '三级编号'][value]
+      return ['一级编号', '二级编号', '三级编号', '四级编号', '五级编号', '六级编号'][value]
     },
 
-    exampleName(list) {
-      console.log(list)
+    labelName(label) {
+      if (label == '6') {
+        return '回款编号'
+      } else if (label == '7') {
+        return '合同编号'
+      } else if (label == '17') {
+        return '回访编号'
+      }
+      return ''
+    },
+
+    exampleName(setting) {
       let names = ''
       for (let i = 0; i < 2; i++) {
         if (i == 1) {
-          names = names + '、'
+          names = names ? `${names}、` : ''
         }
-        for (let index = 0; index < list.length; index++) {
-          const element = list[index]
-          if (element.type == 1) {
-            names = names ? names + `-${element.value}` : names + element.value
-          } else if (element.type == 2) {
-            const value = moment().format({
-              1: 'YYYY',
-              2: 'YYYYMM',
-              3: 'YYYYMMdd'
-            }[element.value])
-            names = names ? names + `-${value}` : names + value
-          } else if (element.type == 3) {
-            const length = element.value.length
-            let startValue = parseInt(element.value || 0)
-            const interalValue = parseInt(element.interal || 0)
-            if (i == 1) {
-              startValue = startValue + interalValue
-            }
-            let startShowValue = startValue.toString()
-            if (startShowValue.length != length) {
-              for (let index = 0; index < length - startShowValue.length; index++) {
-                startShowValue = '0' + startShowValue
+        for (let index = 0; index < setting.length; index++) {
+          const element = setting[index]
+          const line = i == 1 && index == 0 ? '' : '-'
+          if (element.value) {
+            if (element.type == 1) {
+              names = names ? names + `${line}${element.value}` : names + element.value
+            } else if (element.type == 2) {
+              let formate = ''
+              if (element.value) {
+                formate = {
+                  yyyy: 'YYYY',
+                  yyyyMM: 'YYYYMM',
+                  yyyyMMdd: 'YYYYMMDD'
+                }[element.value]
               }
+              const value = formate ? moment().format(formate) : ''
+              names = names ? names + `${line}${value}` : names + value
+            } else if (element.type == 3) {
+              const length = element.value ? element.value.length : 0
+              let startValue = parseInt(element.value || 0)
+              const interalValue = parseInt(element.increaseNumber || 0)
+              if (i == 1) {
+                startValue = startValue + interalValue
+              }
+              let startShowValue = startValue.toString() || ''
+              if (startShowValue.length != length) {
+                for (let index = 0; index < length - startShowValue.length; index++) {
+                  startShowValue = '0' + startShowValue
+                }
+              }
+              names = names ? names + `-${startShowValue}` : names + startShowValue
             }
-            names = names ? names + `-${startShowValue}` : names + startShowValue
           }
         }
       }
@@ -147,13 +183,13 @@ export default {
         label: '数字'
       }],
       timeOptions: [{
-        value: 1,
+        value: 'yyyy',
         label: 'yyyy（年）'
       }, {
-        value: 2,
+        value: 'yyyyMM',
         label: 'yyyyMM（年月）'
       }, {
-        value: 3,
+        value: 'yyyyMMdd',
         label: 'yyyyMMdd（年月日）'
       }],
       intervalOptions: [{
@@ -169,60 +205,12 @@ export default {
         value: 4,
         label: '从不'
       }],
-      list: [{
-        label: '合同编号',
-        state: 1,
-        replace: 1,
-        list: [
-          {
-            type: 1,
-            value: '',
-            interal: '',
-            intervalType: ''
-          },
-          {
-            type: 1,
-            value: '',
-            interal: '',
-            intervalType: ''
-          },
-          {
-            type: 1,
-            value: '',
-            interal: '',
-            intervalType: ''
-          }
-        ]
-      }, {
-        label: '回款编号',
-        state: 1,
-        replace: 1,
-        list: [
-          {
-            type: 1,
-            value: '',
-            interal: '',
-            intervalType: ''
-          },
-          {
-            type: 1,
-            value: '',
-            interal: '',
-            intervalType: ''
-          },
-          {
-            type: 1,
-            value: '',
-            interal: '',
-            intervalType: ''
-          }
-        ]
-      }] // 展示类型数据
+      list: [] // 展示类型数据
     }
   },
 
   created() {
-    // this.getDetail()
+    this.getDetail()
   },
 
   methods: {
@@ -231,12 +219,10 @@ export default {
      */
     getDetail() {
       this.loading = true
-      crmSettingRecordListAPI()
+      sysConfigNumberQueryAPI()
         .then(res => {
           this.loading = false
-          this.list = res.data.map(item => {
-            return { value: item }
-          })
+          this.list = res.data || []
         })
         .catch(() => {
           this.loading = false
@@ -246,38 +232,62 @@ export default {
     /**
      * 增加类型
      */
-    addItem() {
-      this.list.push({ value: '' })
+    addItem(setting) {
+      if (setting.length < 6) {
+        setting.push({
+          type: 1,
+          value: ''
+        })
+      }
     },
 
     /**
      * 删除事项操作
      */
-    deleteItem(item, index) {
-      this.list.splice(index, 1)
+    deleteItem(setting, index) {
+      if (setting.length <= 2) {
+        setting.splice(index, 1)
+      }
+    },
+
+    /**
+     * 类型修改
+     */
+    typeChange(typeItem, list, index) {
+      if (typeItem.type == 3) {
+        this.$set(list, index, {
+          type: typeItem.type,
+          value: '',
+          increaseNumber: '',
+          reset_type: 4
+        })
+      } else if (typeItem.type == 2) {
+        this.$set(list, index, {
+          type: typeItem.type,
+          value: 'yyyy'
+        })
+      } else {
+        this.$set(list, index, {
+          type: typeItem.type,
+          value: ''
+        })
+      }
     },
 
     /**
      * 保存操作
      */
     save() {
-      // const value = []
-      // for (let index = 0; index < this.list.length; index++) {
-      //   const element = this.list[index]
-      //   if (element.value) {
-      //     value.push(element.value)
-      //   }
-      // }
-      // this.loading = true
-      // crmSettingRecordEditAPI({ value: value })
-      //   .then(res => {
-      //     this.loading = false
-      //     this.getDetail()
-      //     this.$message.success('操作成功')
-      //   })
-      //   .catch(() => {
-      //     this.loading = false
-      //   })
+      this.loading = true
+      sysConfigNumberSetAPI(this.list)
+        .then(res => {
+          this.loading = false
+          this.getDetail()
+          this.$message.success('操作成功')
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }
@@ -303,6 +313,7 @@ export default {
 }
 
 .rule-section {
+  margin-top: 20px;
   .rule-header {
     margin-bottom: 8px;
 
@@ -325,6 +336,8 @@ export default {
 
   .rule-body {
     position: relative;
+    margin-top: 10px;
+
     .rule {
       &-type {
         width: 80px;
@@ -344,11 +357,30 @@ export default {
       &-code-span {
         margin-left: 15px;
       }
-    }
 
+      .el-icon-remove {
+        color: #ff6767;
+        cursor: pointer;
+        margin-left: 2px;
+        display: none;
+      }
+    }
     .rule + .rule {
       margin-top: 8px;
     }
+    .rule:hover {
+      .el-icon-remove {
+        display: inline;
+      }
+    }
+  }
+
+  .add-buttom {
+    margin-top: 5px;
+  }
+
+  .example {
+    color: #999;
   }
 }
 
