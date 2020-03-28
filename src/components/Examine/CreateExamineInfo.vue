@@ -116,6 +116,7 @@ export default {
       const reqeust = {
         oa_examine: oaCreateExamineFlow,
         crm_contract: crmCreateExamineFlow,
+        crm_visit: crmCreateExamineFlow,
         crm_receivables: crmCreateExamineFlow
       }[this.types]
 

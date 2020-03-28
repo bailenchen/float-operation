@@ -47,7 +47,7 @@
                     :index="index"
                     :item="item"
                     :relation="item.relation"
-                    :radio="false"
+                    :radio="item.data.formType == 'single_user'"
                     :disabled="item.disabled"
                     :receivables-id="editId"
                     @value-change="fieldValueChange" />
@@ -194,7 +194,7 @@ export default {
         return 'XhDate'
       } else if (formType == 'datetime') {
         return 'XhDateTime'
-      } else if (formType == 'user') {
+      } else if (formType == 'user' || formType == 'single_user') {
         return 'XhUserCell'
       } else if (formType == 'structure') {
         return 'XhStructureCell'
@@ -584,11 +584,31 @@ export default {
             }
           }
         }
+      } else if (this.crmType == 'visit') {
+        if (item.data.formType == 'customer') {
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key === 'contract_id' || element.key === 'contacts_id') {
+              // 如果是合同 改变合同样式和传入客户ID
+              if (item.value.length > 0) {
+                element.disabled = false
+                const customerItem = item.value[0]
+                customerItem['moduleType'] = 'customer'
+                element['relation'] = customerItem
+              } else {
+                element.disabled = true
+                element['relation'] = {}
+                element.value = []
+              }
+            }
+          }
+        }
       }
 
       // 无事件的处理 后期可换成input实现
       if (
         item.data.formType == 'user' ||
+        item.data.formType == 'single_user' ||
         item.data.formType == 'structure' ||
         item.data.formType == 'file' ||
         item.data.formType == 'category' ||
@@ -743,6 +763,7 @@ export default {
           var params = {}
           if (
             item.formType == 'user' ||
+            item.formType == 'single_user' ||
             item.formType == 'structure' ||
             item.formType == 'file' ||
             item.formType == 'category' ||
@@ -906,8 +927,28 @@ export default {
           } else if (item.formType === 'receivables_plan') {
             return true
           }
+        } else if (this.crmType === 'visit') {
+          if (item.formType === 'contract') {
+            return true
+          } else if (item.formType === 'contacts') {
+            return true
+          }
         }
       }
+      return false
+    },
+    /**
+     * 不验证字段必填
+     */
+    ingnoreRequiredField(data) {
+      if (this.crmType == 'contract' && data.fieldName == 'num') {
+        return true
+      } else if (this.crmType == 'receivables' && data.fieldName == 'number') {
+        return true
+      } else if (this.crmType == 'visit' && data.fieldName == 'visit_number') {
+        return true
+      }
+
       return false
     },
     /**
@@ -916,7 +957,7 @@ export default {
     getItemRulesArrayFromItem(item) {
       var tempList = []
       // 验证必填
-      if (item.isNull == 1) {
+      if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
         if (item.formType == 'category') {
           tempList.push({
             required: true,
@@ -945,11 +986,12 @@ export default {
               if (value.length > 0) {
                 if (
                   rule.item.formType == 'user' ||
+                  rule.item.formType == 'single_user' ||
                   rule.item.formType == 'structure'
                 ) {
                   postValue = value
                     .map(valueItem => {
-                      return rule.item.formType == 'user'
+                      return (rule.item.formType == 'user' || rule.item.formType == 'single_user')
                         ? valueItem.userId
                         : valueItem.id
                     })
@@ -1299,11 +1341,12 @@ export default {
         }
       } else if (
         element.data.formType == 'user' ||
+        element.data.formType == 'single_user' ||
         element.data.formType == 'structure'
       ) {
         return element.value
           .map(function(item, index, array) {
-            return element.data.formType == 'user' ? item.userId : item.id
+            return (element.data.formType == 'user' || element.data.formType == 'single_user') ? item.userId : item.id
           })
           .join(',')
       } else if (element.data.formType == 'file') {

@@ -90,6 +90,19 @@
         </el-form-item>
       </el-form>
     </create-sections>
+
+    <create-sections
+      title="审核信息">
+      <div
+        v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
+        slot="header"
+        class="examine-type">{{ examineInfo.examineType===1 ? '固定审批流' : '授权审批人' }}</div>
+      <create-examine-info
+        ref="examineInfo"
+        :types-id="editId"
+        types="crm_visit"
+        @value-change="examineValueChange" />
+    </create-sections>
   </xr-create>
 </template>
 
@@ -98,6 +111,7 @@ import { crmInvoiceSaveAPI } from '@/api/customermanagement/invoice'
 
 import XrCreate from '@/components/xr-create'
 import CreateSections from '@/components/CreateSections'
+import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 
 import {
   XhInput,
@@ -113,6 +127,7 @@ export default {
   components: {
     XrCreate,
     CreateSections,
+    CreateExamineInfo,
     XhInput,
     XhTextarea,
     XhSelect,
@@ -143,6 +158,9 @@ export default {
       loading: false,
       baseFields: [],
       rules: {
+        customerId: [
+          { required: true, message: '请选择客户名称', trigger: 'change' }
+        ],
         contractId: [
           { required: true, message: '请选择合同编号', trigger: 'change' }
         ],
@@ -153,20 +171,31 @@ export default {
           { required: true, message: '请选择开票类型', trigger: 'change' }
         ]
       },
-      baseFrom: {},
+      baseFrom: {
+      },
       // 发票信息
       otherFields: [],
       otherRules: {},
-      otherFrom: {},
+      otherFrom: {
+        titleType: 1
+      },
 
       // 邮寄信息
       mailFields: [],
       mailRules: {},
-      mailFrom: {}
-
+      mailFrom: {},
+      // 审批信息
+      examineInfo: {}
     }
   },
   computed: {
+    editId() {
+      if (this.detail) {
+        return this.detail.visitId
+      }
+      return ''
+    },
+
     title() {
       return this.detail ? '编辑发票' : '新建发票'
     }
@@ -227,11 +256,12 @@ export default {
           name: '合同编号',
           field: 'contractId',
           formType: 'contract',
+          disabled: true,
           setting: []
         },
         {
           name: '合同金额',
-          field: 'customerName',
+          field: 'money',
           formType: 'text',
           disabled: true,
           setting: []
@@ -348,13 +378,28 @@ export default {
       const dataValue = data.value
       this.$set(this.baseFrom, item.field, dataValue)
 
-      if (item.formType == 'contract') {
+      if (item.formType == 'customer') {
+        const contractItem = this.baseFields[data.index + 1]
+        if (dataValue.length) {
+          contractItem.disabled = false
+          const customerItem = dataValue[0]
+          customerItem['moduleType'] = 'customer'
+          customerItem['params'] = { checkStatus: 1 }
+          contractItem['relation'] = customerItem
+        } else {
+          contractItem.disabled = true
+          contractItem['relation'] = {}
+          this.$set(this.baseFrom, 'contractId', [])
+          this.$set(this.baseFrom, 'invoiceMoney', '')
+          this.$set(this.baseFrom, 'money', '')
+        }
+        this.$refs.crmForm.validateField(item.field)
+      } else if (item.formType == 'contract') {
         const contractValue = dataValue && dataValue.length ? dataValue[0] : null
-        this.$set(this.baseFrom, 'customerName', contractValue ? contractValue.customerName : '')
+        this.$set(this.baseFrom, 'money', contractValue ? contractValue.money : '')
         this.$set(this.baseFrom, 'invoiceMoney', contractValue ? contractValue.money : '')
         this.$refs.crmForm.validateField(item.field)
       }
-      console.log('data---', data)
     },
 
     otherFieldValueChange(data) {
@@ -385,7 +430,10 @@ export default {
           for (let index = 0; index < this.baseFields.length; index++) {
             const element = this.baseFields[index]
             if (!element.disabled) {
-              if (element.formType == 'contract') {
+              if (element.formType == 'customer') {
+                const customerValue = this.baseFrom.customerId && this.baseFrom.customerId.length ? this.baseFrom.customerId[0] : null
+                params[element.field] = customerValue ? customerValue.customerId : ''
+              } else if (element.formType == 'contract') {
                 const contractValue = this.baseFrom.contractId && this.baseFrom.contractId.length ? this.baseFrom.contractId[0] : null
                 params[element.field] = contractValue ? contractValue.contractId : ''
               } else {
@@ -401,8 +449,15 @@ export default {
             }
           }
 
+          for (let index = 0; index < this.mailFields.length; index++) {
+            const element = this.mailFields[index]
+            if (!element.disabled) {
+              params[element.field] = this.otherFrom[element.field]
+            }
+          }
+
           if (this.detail) {
-            params.invoiceId = this.detail.invoiceId
+            params.visitId = this.detail.visitId
             params.batchId = this.detail.batchId
           }
 

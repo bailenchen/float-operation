@@ -2,9 +2,9 @@
   <el-select
     v-model="dataValue"
     :disabled="disabled"
+    :clearable="clearable"
     style="width: 100%;"
     placeholder="请选择"
-    clearable
     @change="valueChange">
     <el-option
       v-for="(item, index) in option"
@@ -20,7 +20,12 @@ export default {
   name: 'XhSelect', // 新建 select
   components: {},
   mixins: [stringMixin],
-  props: {},
+  props: {
+    clearable: {
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       option: []
