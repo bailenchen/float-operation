@@ -100,7 +100,7 @@
           slot="reference"
           class="check-item">
           <img
-            :src="getStatusImageIcon(subItem.examineStatus)"
+            :src="getStatusImageIcon(item.examineStatus)"
             class="check-item-img">
           <div class="check-item-name">{{ item|detailName }}</div>
           <div class="check-item-status">{{ getStatusName(item.examineStatus) }}</div>
