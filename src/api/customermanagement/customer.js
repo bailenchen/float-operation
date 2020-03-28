@@ -612,3 +612,28 @@ export function crmCallSaveAPI(data) {
     data: data
   })
 }
+
+/**
+ * 发票信息
+ * @param {*} data
+ */
+export function crmCustomerInvoiceAPI(data) {
+  return request({
+    url: 'CrmCustomer/queryInvoice',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
+ * 删除发票信息
+ * @param {*} data
+ */
+export function crmCustomerInvoiceInfoAPI(data) {
+  return request({
+    url: 'CrmCustomer/queryInvoiceInfo',
+    method: 'post',
+    data: data
+  })
+}

@@ -117,6 +117,7 @@ import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import RelativeTeam from '../components/RelativeTeam' // 团队成员
 import RelativeVisit from '../components/RelativeVisit' // 回访
+import RelativeInvoice from '../components/RelativeInvoice' // 发票
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
@@ -138,7 +139,8 @@ export default {
     RelativeHandle,
     RelativeTeam,
     RelativeVisit,
-    CRMCreateView
+    CRMCreateView,
+    RelativeInvoice
   },
   mixins: [detail],
   props: {
@@ -248,6 +250,11 @@ export default {
       if (this.crm.visit && this.crm.visit.index) {
         tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
       }
+
+      if (this.crm.invoice && this.crm.invoice.index) {
+        tempsTabs.push({ label: this.getTabName('发票', this.tabsNumber.invoiceCount), name: 'RelativeInvoice' })
+      }
+
 
       tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })

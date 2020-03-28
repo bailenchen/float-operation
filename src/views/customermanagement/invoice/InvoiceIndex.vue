@@ -171,6 +171,7 @@ import TransferHandle from '../components/selectionHandle/TransferHandle' // 转
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
+import { separator } from '@/filters/vue-numeral-filter/filters'
 import moment from 'moment'
 import { debounce } from 'throttle-debounce'
 import { mapGetters } from 'vuex'
@@ -389,6 +390,8 @@ export default {
           4: '地税通用机打发票',
           5: '收据'
         }[row[column.property]]
+      } else if (column.property == 'contractMoney' || column.property == 'invoiceMoney') {
+        return separator(row[column.property] || 0)
       }
       return row[column.property] || '--'
     },

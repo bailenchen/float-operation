@@ -123,3 +123,39 @@ export function crmInvoiceTransfer(data) {
     data: data
   })
 }
+
+/**
+ * 新建发票信息
+ * @param {*} data
+ */
+export function crmInvoiceSaveInvoiceInfoAPI(data) {
+  return request({
+    url: 'CrmInvoice/saveInvoiceInfo',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 编辑发票信息
+ * @param {*} data
+ */
+export function crmInvoiceUpdateInvoiceInfoAPI(data) {
+  return request({
+    url: 'CrmInvoice/updateInvoiceInfo',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 删除发票信息
+ * @param {*} data
+ */
+export function crmInvoiceDeleteInvoiceInfoAPI(data) {
+  return request({
+    url: 'CrmInvoice/deleteInvoiceInfo',
+    method: 'post',
+    data: data
+  })
+}

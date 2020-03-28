@@ -25,6 +25,7 @@
             :value="baseFrom[item.field]"
             :index="index"
             :item="item"
+            :relation="item.relation"
             :relative-type="item.formType"
             :disabled="item.disabled"
             :clearable="false"
@@ -198,7 +199,11 @@ export default {
     },
 
     title() {
-      return this.detail ? '编辑发票' : '新建发票'
+      return this.isEdit ? '编辑发票' : '新建发票'
+    },
+
+    isEdit() {
+      return !!this.editId
     }
   },
   watch: {},
@@ -272,7 +277,13 @@ export default {
           name: '合同编号',
           field: 'contractId',
           formType: 'contract',
-          disabled: !(this.detail && this.detail.contractId),
+          disabled: !(this.detail && this.detail.customerId),
+          relation: this.detail && this.detail.customerId ? {
+            moduleType: 'customer',
+            params: { checkStatus: 1 },
+            customerName: this.detail.customerName,
+            customerId: this.detail.customerId
+          } : null,
           setting: []
         },
         {
@@ -483,7 +494,7 @@ export default {
             }
           }
 
-          if (this.detail) {
+          if (this.isEdit) {
             params.invoiceId = this.detail.invoiceId
             params.batchId = this.detail.batchId
           }
@@ -495,7 +506,7 @@ export default {
               }
 
               console.log(params)
-              const request = this.detail ? crmInvoiceUpdateAPI : crmInvoiceSaveAPI
+              const request = this.isEdit ? crmInvoiceUpdateAPI : crmInvoiceSaveAPI
               this.loading = true
               request(params)
                 .then(res => {
