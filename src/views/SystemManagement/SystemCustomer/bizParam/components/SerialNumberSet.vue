@@ -82,7 +82,7 @@
             :disabled="listItem.setting.length >= 6"
             class="add-buttom"
             type="text"
-            @click="addItem(listItem.setting)">+添加类型</el-button>
+            @click="addItem(listItem.setting)">+添加一级</el-button>
           <div class="example">编号示例：{{ listItem.setting | exampleName }}</div>
         </template>
       </div>
@@ -245,7 +245,7 @@ export default {
      * 删除事项操作
      */
     deleteItem(setting, index) {
-      if (setting.length <= 2) {
+      if (setting.length > 2) {
         setting.splice(index, 1)
       }
     },

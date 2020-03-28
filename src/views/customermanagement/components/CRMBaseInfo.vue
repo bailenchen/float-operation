@@ -127,6 +127,7 @@ import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 import { separator } from '@/filters/vue-numeral-filter/filters'
+import { isObject } from '@/utils/types'
 
 export default {
   // 客户管理 的 基本信息
@@ -148,7 +149,7 @@ export default {
 
       return array
         .map(item => {
-          return field ? item[field] : item
+          return field ? item[field] : ''
         })
         .join('，')
     }
@@ -212,7 +213,6 @@ export default {
     }
   },
   activated: function() {
-    console.log('3333')
     this.getBaseInfo(false)
   },
   deactivated: function() {},
@@ -221,7 +221,6 @@ export default {
      * 获取基础信息
      */
     getBaseInfo(loading) {
-      console.log('7777')
       this.loading = !!loading
       if (this.crmType === 'marketing') {
         crmMarketingInformationAPI().then(res => {
@@ -330,9 +329,11 @@ export default {
      * 查看详情
      */
     checkModuleDetail(data) {
-      this.fullDetailType = data.formType
-      this.fullDetailId = data[`${data.formType}Id`]
-      this.showFullDetail = true
+      if (isObject(data.value)) {
+        this.fullDetailType = data.formType
+        this.fullDetailId = data.value[`${data.formType}Id`]
+        this.showFullDetail = true
+      }
     }
   }
 }
@@ -400,7 +401,7 @@ export default {
 }
 
 .can-check {
-  color: $xr-color-primary;
+  color: $xr-color-primary !important;
   cursor: pointer;
 }
 
