@@ -35,6 +35,10 @@
               type="text"
               size="small"
               @click="businessDelect(scope)">删 除</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="businessStatus(scope)">{{ scope.row['status'] === 0 ? '启用' : '停用' }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -65,7 +69,8 @@ import BusinessDialog from '@/views/SystemManagement/components/businessDialog'
 import {
   businessGroupList,
   businessGroupRead,
-  businessGroupDelete
+  businessGroupDelete,
+  businessGroupUpdateStatusAPI
 } from '@/api/systemManagement/SystemCustomer'
 
 export default {
@@ -88,7 +93,8 @@ export default {
         { label: '商机组名称', field: 'name' },
         { label: '应用部门', field: 'deptName' },
         { label: '创建时间', field: 'createTime' },
-        { label: '创建人', field: 'createName' }
+        { label: '创建人', field: 'createName' },
+        { label: '状态', field: 'status' }
       ],
       // 添加商机组
       businessDialogVisible: false,
@@ -163,6 +169,11 @@ export default {
           })
           .join('、')
         return strName || '全公司'
+      } else if (column.property === 'status') {
+        if (row[column.property] == 1) {
+          return '启用'
+        }
+        return '停用'
       }
       return row[column.property]
     },
@@ -204,6 +215,42 @@ export default {
             .then(res => {
               this.businessData.splice(scope.$index, 1)
               this.$message.success('删除成功')
+            })
+            .catch(() => {})
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+
+    businessStatus(scope) {
+      console.log(scope)
+      // 启用停用
+      this.$confirm(
+        '您确定要' +
+            (scope.row.status === 0 ? '启用' : '停用') +
+            '该商机组?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          businessGroupUpdateStatusAPI({
+            typeId: scope.row.typeId,
+            status: scope.row.status === 0 ? 1 : 0
+          })
+            .then(res => {
+              scope.row['status'] = scope.row['status'] === 0 ? 1 : 0
+              this.$message({
+                type: 'success',
+                message: '操作成功'
+              })
             })
             .catch(() => {})
         })

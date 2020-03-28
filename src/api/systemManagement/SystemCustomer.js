@@ -19,6 +19,15 @@ export function businessGroupAdd(data) {
   })
 }
 
+// 商机状态组状态修改
+export function businessGroupUpdateStatusAPI(data) {
+  return request({
+    url: 'businessType/updateStatus',
+    method: 'post',
+    data: data
+  })
+}
+
 /** 商机状态组详情 */
 export function businessGroupRead(data) {
   return request({
