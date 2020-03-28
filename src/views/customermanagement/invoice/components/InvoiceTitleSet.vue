@@ -5,7 +5,8 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :title="title"
-    width="400px"
+    width="500px"
+    class="invoice-title-set"
     @close="handleCancel">
     <div
       :style="{ height: contentHeight }"
@@ -206,31 +207,38 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.handle-box {
-  color: #333;
-  font-size: 12px;
-  height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.handle-item {
-  padding-bottom: 15px;
-  .handle-item-name {
-    flex-shrink: 0;
-    width: 110px;
+<style lang="scss">
+.invoice-title-set {
+  .el-dialog__body {
+    padding: 30px 15px;
   }
-  .handle-item-content {
-    flex: 1;
+
+  .handle-box {
+    padding: 0 10px;
+    color: #333;
+    font-size: 12px;
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
-}
-.handle-bar {
-  position: relative;
-  margin-top: 10px;
-  height: 30px;
-  button {
-    float: right;
-    margin-right: 10px;
+  .handle-item {
+    padding-bottom: 15px;
+    .handle-item-name {
+      flex-shrink: 0;
+      width: 110px;
+    }
+    .handle-item-content {
+      flex: 1;
+    }
+  }
+  .handle-bar {
+    position: relative;
+    margin-top: 10px;
+    height: 30px;
+    button {
+      float: right;
+      margin-right: 10px;
+    }
   }
 }
 </style>
