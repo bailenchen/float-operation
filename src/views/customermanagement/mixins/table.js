@@ -425,6 +425,18 @@ export default {
           this.rowID = row.visitId
           this.rowType = 'visit'
           this.showDview = true
+        } else if (column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'customer'
+          this.showDview = true
+        } else if (column.property === 'contractNum') {
+          this.rowID = row.contractId
+          this.rowType = 'contract'
+          this.showDview = true
+        } else if (column.property === 'contactsName') {
+          this.rowID = row.contactsId
+          this.rowType = 'contacts'
+          this.showDview = true
         } else {
           this.showDview = false
         }

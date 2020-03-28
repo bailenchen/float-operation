@@ -28,6 +28,7 @@
         :data="list"
         :height="tableHeight"
         :cell-class-name="cellClassName"
+        :header-cell-class-name="headerCellClassName"
         class="n-table--border"
         use-virtual
         stripe
@@ -81,23 +82,25 @@
           @current-change="handleCurrentChange"/>
       </div>
     </div>
-    <visit-detail
-      v-if="showDview"
+
+    <!-- 相关详情页面 -->
+    <c-r-m-all-detail
+      :visible.sync="showDview"
+      :crm-type="rowType"
       :id="rowID"
       class="d-view"
-      @handle="handleHandle"
-      @hide-view="showDview=false"/>
+      @handle="handleHandle"/>
   </div>
 </template>
 
 <script>
-import VisitDetail from './VisitDetail'
+import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import table from '../mixins/table'
 
 export default {
   name: 'VisitIndex', // 回访列表
   components: {
-    VisitDetail
+    CRMAllDetail
   },
   mixins: [table],
   data() {
@@ -112,11 +115,21 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'visitNumber') {
+      if (column.property === 'visitNumber' ||
+      column.property === 'customerName' ||
+      column.property === 'contractNum' ||
+      column.property === 'contactsName') {
         return 'can-visit--underline'
       } else {
         return ''
       }
+    },
+
+    headerCellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.property === 'visitNumber') {
+        return 'header-can-visit-backgroud'
+      }
+      return ''
     }
   }
 }
