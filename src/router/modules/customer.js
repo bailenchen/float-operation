@@ -165,6 +165,19 @@ export default [
   },
   {
     ...layout({
+      permissions: ['crm', 'invoice']
+    }),
+    children: [{
+      path: 'invoice', // 发票列表
+      component: () => import('@/views/customermanagement/invoice/InvoiceIndex'),
+      meta: {
+        title: '发票',
+        icon: 'invoice'
+      }
+    }]
+  },
+  {
+    ...layout({
       permissions: ['crm', 'visit']
     }),
     children: [{

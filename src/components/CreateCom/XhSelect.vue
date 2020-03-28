@@ -30,8 +30,9 @@ export default {
   watch: {
     item: {
       handler(val) {
-        if (val && val.data.setting) {
-          var settingList = val.data.setting
+        if (val && (val.setting || val.data.setting)) {
+          const data = val.setting ? val : val.data
+          var settingList = data.setting
           if (settingList.length > 0 && typeof settingList[0] == 'string') {
             var array = []
             for (let index = 0; index < settingList.length; index++) {

@@ -9,7 +9,7 @@
     <crm-relative
       v-if="!disabled&&showSelectView"
       ref="crmrelative"
-      :crm-type="item.data.formType"
+      :crm-type="crmType"
       :action="relationAction"
       :selected-data="selectedData"
       @close="showPopover=false"
@@ -50,7 +50,8 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    relativeType: String
   },
   data() {
     return {
@@ -67,8 +68,14 @@ export default {
     },
     selectedData() {
       const crmObj = {}
-      crmObj[this.item.data.formType] = this.dataValue
+      crmObj[this.crmType] = this.dataValue
       return crmObj
+    },
+    crmType() {
+      if (this.relativeType) {
+        return this.relativeType
+      }
+      return this.item.data.formType
     }
   },
   watch: {
@@ -118,13 +125,13 @@ export default {
       this.showSelectView = true
     },
     getShowName(data) {
-      if (this.item.data.formType === 'receivables') {
+      if (this.crmType === 'receivables') {
         return data.number
-      } else if (this.item.data.formType === 'customer') {
+      } else if (this.crmType === 'customer') {
         return data.customerName
-      } else if (this.item.data.formType === 'business') {
+      } else if (this.crmType === 'business') {
         return data.businessName
-      } else if (this.item.data.formType === 'contract') {
+      } else if (this.crmType === 'contract') {
         return data.contractNum || data.num
       }
       return data.name
