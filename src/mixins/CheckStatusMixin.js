@@ -137,6 +137,24 @@ export default {
           value: 4
         }
       ]
+    },
+
+    /**
+     * 图片标示
+     */
+    getStatusImageIcon(status) {
+      if (status == 0 || status == 3 || status == 5) {
+        return require('@/assets/img/check_wait.png')
+      } else if (status == 1) {
+        return require('@/assets/img/check_suc.png')
+      } else if (status == 2) {
+        return require('@/assets/img/check_fail.png')
+      } else if (status == 4) {
+        return require('@/assets/img/check_revoke.png')
+      } else if (status == 6) {
+        return require('@/assets/img/check_create.png')
+      }
+      return ''
     }
   }
 }

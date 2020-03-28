@@ -19,7 +19,7 @@
         align="stretch"
         justify="flex-start">
         <img
-          :src="item.examineStatus|statusIcon"
+          :src="getStatusImageIcon(item.examineStatus)"
           class="cf-flow-item-img" >
         <div>
           <flexbox class="cf-flow-item-head">
@@ -54,24 +54,6 @@ export default {
   name: 'CheckFlow',
   components: {},
   filters: {
-    statusIcon: function(status) {
-      // 0失败，1通过，2撤回，3创建，4待审核
-      // JAVA 0 未审核 1 审核通过 2 审核拒绝 3 审核中 4 已撤回 5 创建 6 待提交
-      if (status == 2) {
-        return require('@/assets/img/check_fail.png')
-      } else if (status == 1) {
-        return require('@/assets/img/check_suc.png')
-      } else if (status == 4) {
-        return require('@/assets/img/check_revoke.png')
-      } else if (status == 3) {
-        return require('@/assets/img/check_create.png')
-      } else if (status == 0 || status == 6) {
-        return require('@/assets/img/check_wait.png')
-      } else if (status == 5) {
-        return require('@/assets/img/check_create.png')
-      }
-      return ''
-    },
     stepName: function(index) {
       return '第' + Nzhcn.encodeS(index) + '级'
     }

@@ -161,6 +161,7 @@ export default {
           // 刷新待办
           if (
             this.examineType == 'crm_contract' ||
+            this.examineType == 'crm_invoice' ||
             this.examineType == 'crm_receivables'
           ) {
             this.$store.dispatch('GetMessageNum')
@@ -179,6 +180,7 @@ export default {
     getRequest() {
       return {
         crm_contract: crmExamineFlowAuditExamine,
+        crm_invoice: crmExamineFlowAuditExamine,
         crm_receivables: crmExamineFlowAuditExamine,
         oa_examine: oaExamineFlowAuditExamine
       }[this.examineType]
@@ -212,6 +214,7 @@ export default {
           // 刷新待办
           if (
             this.examineType == 'crm_contract' ||
+            this.examineType == 'crm_invoice' ||
             this.examineType == 'crm_receivables'
           ) {
             this.$store.dispatch('GetMessageNum')

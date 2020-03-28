@@ -57,7 +57,7 @@
         :key="index"
         class="check-item">
         <img
-          :src="item.examineStatus|statusIcon"
+          :src="getStatusImageIcon(item.examineStatus)"
           class="check-item-img">
         <div class="check-item-name">{{ item.examinUser.realname }}</div>
         <div class="check-item-status">{{ getStatusName(item.examineStatus) }}</div>
@@ -85,7 +85,7 @@
             align="stretch"
             class="popover-detail-item">
             <img
-              :src="subItem.examineStatus|statusIcon"
+              :src="getStatusImageIcon(subItem.examineStatus)"
               class="popover-detail-item-img">
             <div>
               <div class="popover-detail-item-time">{{ subItem.examineTime }}</div>
@@ -100,7 +100,7 @@
           slot="reference"
           class="check-item">
           <img
-            :src="item.examineStatus|statusIcon"
+            :src="getStatusImageIcon(subItem.examineStatus)"
             class="check-item-img">
           <div class="check-item-name">{{ item|detailName }}</div>
           <div class="check-item-status">{{ getStatusName(item.examineStatus) }}</div>
@@ -139,24 +139,6 @@ export default {
     CheckFlow
   },
   filters: {
-    statusIcon: function(status) {
-      // 0失败，1通过，2撤回，3创建，4待审核
-      // JAVA 0 未审核 1 审核通过 2 审核拒绝 3 审核中 4 已撤回 5 创建 6 待提交
-      if (status == 2) {
-        return require('@/assets/img/check_fail.png')
-      } else if (status == 1) {
-        return require('@/assets/img/check_suc.png')
-      } else if (status == 4) {
-        return require('@/assets/img/check_revoke.png')
-      } else if (status == 3) {
-        return require('@/assets/img/check_create.png')
-      } else if (status == 0 || status == 6) {
-        return require('@/assets/img/check_wait.png')
-      } else if (status == 5) {
-        return require('@/assets/img/check_create.png')
-      }
-      return ''
-    },
     detailName: function(data) {
       if (data.stepType == 2) {
         return data.userList.length + '人或签'
