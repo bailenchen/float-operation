@@ -174,6 +174,7 @@ export default {
       }
 
       if (this.form.titleType == 2) {
+        params.titleType = this.form.titleType
         params.invoiceTitle = this.form.invoiceTitle
         params.telephone = this.form.telephone
       } else {

@@ -315,7 +315,7 @@ export default {
 }
 
 .rule-section {
-  margin-top: 20px;
+  margin-top: 25px;
   .rule-header {
     margin-bottom: 8px;
 
@@ -378,7 +378,7 @@ export default {
   }
 
   .add-buttom {
-    margin-top: 5px;
+    margin-left: 80px;
   }
 
   .example {

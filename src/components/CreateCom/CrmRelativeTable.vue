@@ -20,6 +20,7 @@
       </template>
 
       <el-input
+        v-if="showSearch"
         v-model="searchContent"
         class="search-container">
         <el-button
@@ -57,6 +58,7 @@
         :prop="item.field"
         :label="item.name"
         :width="150"
+        :formatter="fieldFormatter"
         show-overflow-tooltip/>
       <el-table-column/>
     </el-table>
@@ -156,11 +158,24 @@ export default {
     ...mapGetters(['crm']),
 
     canSave() {
-      return this.crm && this.crm[this.crmType].save
+      if (this.action.hasOwnProperty('showCreate')) {
+        return this.action.showCreate
+      }
+      return this.crm && this.crm[this.crmType] && this.crm[this.crmType].save
+    },
+
+    showSearch() {
+      if (this.action.hasOwnProperty('showSearch')) {
+        return this.action.showSearch
+      }
+      return true
     },
 
     // 能否查看详情
     canShowDetail() {
+      if (this.action.hasOwnProperty('canShowDetail')) {
+        return this.action.canShowDetail
+      }
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].index
     },
 
@@ -170,6 +185,9 @@ export default {
     },
 
     showScene() {
+      if (this.action.hasOwnProperty('showScene')) {
+        return this.action.showScene
+      }
       return !this.isRelationShow && this.crmType != 'product'
     }
   },
@@ -181,24 +199,24 @@ export default {
       }
     },
     action: function(val) {
-      if (this.action != val) {
-        this.sceneId = ''
-        this.list = [] // 表数据
-        this.fieldList = [] // 表头数据
-        this.currentPage = 1 // 当前页数
-        this.totalPage = 1 // 总页数
-        if (!this.isRelationShow && this.showScene) {
-          this.getSceneList()
-        } else {
-          this.getFieldList()
-        }
+      // if (this.action != val) {
+      this.sceneId = ''
+      this.list = [] // 表数据
+      this.fieldList = [] // 表头数据
+      this.currentPage = 1 // 当前页数
+      this.totalPage = 1 // 总页数
+      if (!this.isRelationShow && this.showScene) {
+        this.getSceneList()
+      } else {
+        this.getFieldList()
       }
+      // }
     },
     show: {
       handler(val) {
         if (val && this.fieldList.length == 0) {
           // 相关列表展示时不需要场景 直接获取展示字段
-          if (!this.isRelationShow) {
+          if (!this.isRelationShow && this.showScene) {
             this.getSceneList()
           } else {
             this.getFieldList()
@@ -315,13 +333,23 @@ export default {
           { name: '价格', field: 'price', formType: 'text' },
           { name: '产品类别', field: 'categoryName', formType: 'text' }
         ]
+      } else if (this.crmType === 'invoiceTitle') {
+        return [
+          { field: 'titleType', formType: 'text', name: '抬头类型' },
+          { field: 'invoiceTitle', formType: 'text', name: '开票抬头' },
+          { field: 'taxNumber', formType: 'text', name: '纳税人识别号' },
+          { field: 'depositBank', formType: 'text', name: '开户行' },
+          { field: 'depositAccount', formType: 'text', name: '开户账号' },
+          { field: 'depositAddress', formType: 'text', name: '开票地址' },
+          { field: 'telephone', formType: 'text', name: '电话' }
+        ]
       }
     },
     /** 获取列表数据 */
     getList() {
       this.loading = true
       let crmIndexRequest = this.getIndexRequest()
-      const params = { search: this.searchContent }
+      let params = { search: this.searchContent }
       // 注入场景
       if (this.sceneId) {
         params.sceneId = this.sceneId
@@ -351,6 +379,14 @@ export default {
         params.page = this.currentPage
         params.limit = 10
         params.type = crmTypeModel[this.crmType]
+      }
+
+      if (this.action.request) {
+        crmIndexRequest = this.action.request
+      }
+
+      if (this.action.params) {
+        params = { ...params, ...this.action.params }
       }
       crmIndexRequest(params)
         .then(res => {
@@ -419,6 +455,15 @@ export default {
       } else if (this.crmType === 'product') {
         return crmProductSaleIndexAPI
       }
+    },
+    fieldFormatter(row, column, cellValue) {
+      if (this.crmType === 'invoiceTitle' && column.property == 'titleType') {
+        return {
+          1: '单位',
+          2: '个人'
+        }[row[column.property]]
+      }
+      return row[column.property] || '--'
     },
     // 场景选择
     sceneSelect() {

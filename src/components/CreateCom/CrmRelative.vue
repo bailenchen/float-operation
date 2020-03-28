@@ -28,11 +28,12 @@
           @changeCheckout="checkCrmTypeInfos" />
       </div>
     </div>
-    <div class="handle-bar">
-      <el-button @click.native="closeView">取消</el-button>
+    <div
+      class="dialog-footer">
+      <el-button @click="closeView">取消</el-button>
       <el-button
         type="primary"
-        @click.native="confirmClick">确定</el-button>
+        @click="confirmClick">确定</el-button>
     </div>
   </div>
 </template>
@@ -146,6 +147,10 @@ export default {
       product: {
         name: '产品',
         type: 'product'
+      },
+      invoiceTitle: {
+        name: '发票抬头',
+        type: 'invoiceTitle'
       }
     }
     if (this.crmType) {
@@ -261,6 +266,8 @@ export default {
         return '关联产品模块'
       } else if (this.crmType == 'contract') {
         return '关联合同模块'
+      } else if (this.crmType == 'invoiceTitle') {
+        return '关联发票抬头'
       } else {
         return '关联相关信息'
       }
@@ -270,9 +277,9 @@ export default {
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
 .cr-contianer {
-  height: 450px;
+  // height: 450px;
   position: relative;
-  padding: 50px 0 50px 0;
+  padding: 50px 0 10px 0;
 }
 
 .title {
@@ -289,20 +296,10 @@ export default {
   border-bottom: 1px solid $xr-border-line-color;
 }
 
-.handle-bar {
-  height: 50px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  background-color: #f7f8fa;
-  border-top: 1px solid $xr-border-line-color;
-  button {
-    float: right;
-    margin-top: 10px;
-    margin-right: 10px;
-  }
+.dialog-footer {
+  text-align: right;
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
 .cr-body-side {

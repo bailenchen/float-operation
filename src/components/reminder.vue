@@ -25,7 +25,7 @@ export default {
     },
     fontSize: {
       type: String,
-      default: '12'
+      default: '13'
     }
   },
   data() {

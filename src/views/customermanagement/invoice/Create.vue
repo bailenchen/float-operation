@@ -35,6 +35,29 @@
     </create-sections>
 
     <create-sections title="发票信息">
+      <div style="padding: 10px 20px; text-align: right;">
+        <el-popover
+          v-model="showPopover"
+          placement="bottom"
+          width="700"
+          style="padding: 0 !important;"
+          trigger="click">
+          <crm-relative
+            v-if="showSelectView"
+            ref="crmrelative"
+            :radio="false"
+            :show="showPopover"
+            :action="titleAction"
+            crm-type="invoiceTitle"
+            @close="showPopover=false"
+            @changeCheckout="titleSelectChange"/>
+          <el-button
+            slot="reference"
+            :disabled="!baseFrom.customerId"
+            type="primary"
+            @click="showSelectView=true">选择发票信息</el-button>
+        </el-popover>
+      </div>
       <el-form
         ref="otherFrom"
         :model="otherFrom"
@@ -110,6 +133,7 @@
 
 <script>
 import { crmInvoiceSaveAPI, crmInvoiceUpdateAPI, crmInvoiceNumberConfigAPI } from '@/api/customermanagement/invoice'
+import { crmCustomerInvoiceInfoAPI } from '@/api/customermanagement/customer'
 
 import XrCreate from '@/components/xr-create'
 import CreateSections from '@/components/CreateSections'
@@ -122,6 +146,7 @@ import {
   XhDate,
   CrmRelativeCell
 } from '@/components/CreateCom'
+import CrmRelative from '@/components/CreateCom/CrmRelative'
 
 export default {
   // 订单创建
@@ -134,7 +159,8 @@ export default {
     XhTextarea,
     XhSelect,
     XhDate,
-    CrmRelativeCell
+    CrmRelativeCell,
+    CrmRelative
   },
   filters: {
     /** 根据type 找到组件 */
@@ -175,6 +201,11 @@ export default {
       },
       baseFrom: {
       },
+      showPopover: false,
+      titleAction: {
+        type: 'default'
+      },
+      showSelectView: false,
       // 发票信息
       otherFields: [],
       otherRules: {},
@@ -217,6 +248,20 @@ export default {
         customerName: this.detail.customerName,
         customerId: this.detail.customerId
       }] : []
+
+      if (this.detail.customerId) {
+        this.titleAction = {
+          type: 'default',
+          request: crmCustomerInvoiceInfoAPI,
+          showScene: false,
+          showSearch: false,
+          showCreate: false,
+          canShowDetail: true,
+          params: {
+            customerId: this.detail.customerId
+          }
+        }
+      }
 
       baseFrom.contractId = this.detail.contractId ? [{
         num: this.detail.contractNum,
@@ -404,6 +449,18 @@ export default {
       }]
     },
 
+    titleSelectChange(data) {
+      console.log(data)
+      const dataValue = data.data
+      if (dataValue && dataValue.length) {
+        const titleData = dataValue[0]
+        for (let index = 0; index < this.otherFields.length; index++) {
+          const element = this.otherFields[index]
+          this.$set(this.otherFrom, element.field, titleData[element.field])
+        }
+      }
+    },
+
     fieldValueChange(data) {
       const item = this.baseFields[data.index]
       const dataValue = data.value
@@ -417,6 +474,18 @@ export default {
           customerItem['moduleType'] = 'customer'
           customerItem['params'] = { checkStatus: 1 }
           contractItem['relation'] = customerItem
+
+          this.titleAction = {
+            type: 'default',
+            request: crmCustomerInvoiceInfoAPI,
+            showScene: false,
+            showSearch: false,
+            showCreate: false,
+            canShowDetail: true,
+            params: {
+              customerId: customerItem.customerId
+            }
+          }
         } else {
           contractItem.disabled = true
           contractItem['relation'] = {}
