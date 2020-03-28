@@ -116,7 +116,7 @@ export default {
       const reqeust = {
         oa_examine: oaCreateExamineFlow,
         crm_contract: crmCreateExamineFlow,
-        crm_visit: crmCreateExamineFlow,
+        crm_invoice: crmCreateExamineFlow,
         crm_receivables: crmCreateExamineFlow
       }[this.types]
 
@@ -125,7 +125,11 @@ export default {
         params.categoryId = this.typesId
       } else {
         params.id = this.typesId
-        params.categoryType = this.types == 'crm_contract' ? 1 : 2 // 1 合同 2 回款
+        params.categoryType = {
+          crm_contract: 1,
+          crm_receivables: 2,
+          crm_invoice: 3
+        }[this.types] // 1 合同 2 回款 3 发票
       }
       reqeust(params)
         .then(res => {

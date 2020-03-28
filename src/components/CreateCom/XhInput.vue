@@ -29,9 +29,10 @@ export default {
   },
   computed: {
     type() {
-      if (this.item && this.item.data && this.item.data.formType == 'password') {
-        return this.item.data.formType
-      } else if (this.item && this.item.data && (this.item.data.formType == 'floatnumber' || this.item.data.formType == 'number')) {
+      const data = this.item && this.item.data ? this.item.data : this.item
+      if (this.item && data.formType == 'password') {
+        return data.formType
+      } else if (this.item && (data.formType == 'floatnumber' || data.formType == 'number')) {
         return 'number'
       } else {
         return 'text'
@@ -39,7 +40,8 @@ export default {
     },
 
     inputLimitType() {
-      if (this.item && this.item.data && this.item.data.formType == 'number') {
+      const data = this.item && this.item.data ? this.item.data : this.item
+      if (this.item && data.formType == 'number') {
         return 'number'
       }
 
@@ -47,8 +49,9 @@ export default {
     },
 
     isAutoNumber() {
-      if (this.item && this.item.data && this.item.data.autoGeneNumber) {
-        return this.item.data.autoGeneNumber == 1
+      const data = this.item && this.item.data ? this.item.data : this.item
+      if (this.item && data.autoGeneNumber) {
+        return data.autoGeneNumber == 1
       }
       return false
     },

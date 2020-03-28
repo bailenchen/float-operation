@@ -119,6 +119,8 @@ export default {
         return '合同编号'
       } else if (label == '17') {
         return '回访编号'
+      } else if (label == '18') {
+        return '发票编号'
       }
       return ''
     },

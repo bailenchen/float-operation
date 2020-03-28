@@ -23,6 +23,7 @@ import ContractDetail from '../contract/ContractDetail'
 import ProductDetail from '../product/ProductDetail'
 import MoneyDetail from '../money/MoneyDetail'
 import VisitDetail from '../visit/VisitDetail'
+import InvoiceDetail from '../invoice/InvoiceDetail'
 
 export default {
   name: 'CRMAllDetail', // 详情
@@ -34,7 +35,8 @@ export default {
     ContractDetail,
     ProductDetail,
     MoneyDetail,
-    VisitDetail
+    VisitDetail,
+    InvoiceDetail
   },
   props: {
     /** 模块ID */
@@ -100,6 +102,8 @@ export default {
         this.tabName = 'money-detail'
       } else if (this.crmType == 'visit') {
         this.tabName = 'VisitDetail'
+      } else if (this.crmType == 'invoice') {
+        this.tabName = 'InvoiceDetail'
       }
     }
   },

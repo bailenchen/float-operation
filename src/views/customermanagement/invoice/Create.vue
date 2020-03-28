@@ -41,6 +41,7 @@
         label-position="top">
         <el-form-item
           v-for="(item, index) in otherFields"
+          v-show="!item.hidden"
           :key="item.key"
           :prop="item.field">
           <span slot="label">
@@ -100,14 +101,14 @@
       <create-examine-info
         ref="examineInfo"
         :types-id="editId"
-        types="crm_visit"
+        types="crm_invoice"
         @value-change="examineValueChange" />
     </create-sections>
   </xr-create>
 </template>
 
 <script>
-import { crmInvoiceSaveAPI } from '@/api/customermanagement/invoice'
+import { crmInvoiceSaveAPI, crmInvoiceUpdateAPI, crmInvoiceNumberConfigAPI } from '@/api/customermanagement/invoice'
 
 import XrCreate from '@/components/xr-create'
 import CreateSections from '@/components/CreateSections'
@@ -191,7 +192,7 @@ export default {
   computed: {
     editId() {
       if (this.detail) {
-        return this.detail.visitId
+        return this.detail.invoiceId
       }
       return ''
     },
@@ -202,10 +203,12 @@ export default {
   },
   watch: {},
   created() {
+    this.getInvoiceNumberConfig()
+
     // 是编辑
     if (this.detail) {
       const baseFrom = {}
-      // baseFrom.invoiceNumber = this.detail.invoiceNumber
+      // baseFrom.invoiceApplyNumber = this.detail.invoiceApplyNumber
       if (this.detail.contractId) {
         baseFrom.contractId = [{
           num: this.detail.contractNum,
@@ -230,20 +233,25 @@ export default {
       otherFrom.phone = this.detail.phone
       this.otherFrom = otherFrom
     }
-
-    this.getField()
   },
   mounted() {},
 
   beforeDestroy() {},
   methods: {
 
-    getField() {
+    getInvoiceNumberConfig() {
+      crmInvoiceNumberConfigAPI().then(res => {
+        this.getField(res.data.status)
+      }).catch(() => {})
+    },
+
+    getField(status) {
       this.baseFields = [
         {
           name: '发票申请编号',
-          field: 'invoiceNumber',
+          field: 'invoiceApplyNumber',
           formType: 'text',
+          autoGeneNumber: status,
           setting: []
         },
         {
@@ -329,22 +337,26 @@ export default {
           name: '纳税人识别号',
           field: 'taxNumber',
           formType: 'text',
+          hidden: false,
           setting: []
         },
         {
           name: '开户行',
           field: 'depositBank',
           formType: 'text',
+          hidden: false,
           setting: []
         }, {
           name: '开户账号',
           field: 'depositAccount',
           formType: 'text',
+          hidden: false,
           setting: []
         }, {
           name: '开票地址',
           field: 'depositAddress',
           formType: 'text',
+          hidden: false,
           setting: []
         }, {
           name: '电话',
@@ -405,13 +417,20 @@ export default {
     otherFieldValueChange(data) {
       const item = this.otherFields[data.index]
       const dataValue = data.value
-      this.otherFrom[item.field] = dataValue
+      if (item.field == 'titleType') {
+        const hidden = dataValue == 2
+        this.otherFields[2].hidden = hidden
+        this.otherFields[3].hidden = hidden
+        this.otherFields[4].hidden = hidden
+        this.otherFields[5].hidden = hidden
+      }
+      this.$set(this.otherFrom, item.field, dataValue)
     },
 
     mailFieldValueChange(data) {
       const item = this.mailFields[data.index]
       const dataValue = data.value
-      this.mailFrom[item.field] = dataValue
+      this.$set(this.mailFrom, item.field, dataValue)
     },
 
     // 审批信息值更新
@@ -452,26 +471,36 @@ export default {
           for (let index = 0; index < this.mailFields.length; index++) {
             const element = this.mailFields[index]
             if (!element.disabled) {
-              params[element.field] = this.otherFrom[element.field]
+              params[element.field] = this.mailFrom[element.field]
             }
           }
 
           if (this.detail) {
-            params.visitId = this.detail.visitId
+            params.invoiceId = this.detail.invoiceId
             params.batchId = this.detail.batchId
           }
 
-          this.loading = true
-          crmInvoiceSaveAPI(params)
-            .then(res => {
-              this.loading = false
-              this.close()
-              // 回到保存成功
-              this.$emit('save-success')
-            })
-            .catch(() => {
-              this.loading = false
-            })
+          this.$refs.examineInfo.validateField((result) => {
+            if (result) {
+              if (this.examineInfo.examineType === 2) {
+                params['checkUserId'] = this.examineInfo.value[0].userId
+              }
+
+              console.log(params)
+              const request = this.detail ? crmInvoiceUpdateAPI : crmInvoiceSaveAPI
+              this.loading = true
+              request(params)
+                .then(res => {
+                  this.loading = false
+                  this.close()
+                  // 回到保存成功
+                  this.$emit('save-success')
+                })
+                .catch(() => {
+                  this.loading = false
+                })
+            }
+          })
         }
       })
     }

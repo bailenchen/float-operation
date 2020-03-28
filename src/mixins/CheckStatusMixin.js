@@ -113,6 +113,30 @@ export default {
         return 'wk wk-invalid'
       }
       return ''
+    },
+
+    /**
+     * 审核图标
+     */
+    getXhStatusList() {
+      return [
+        {
+          label: '待审核',
+          value: 0
+        }, {
+          label: '通过',
+          value: 1
+        }, {
+          label: '拒绝',
+          value: 2
+        }, {
+          label: '审核中',
+          value: 3
+        }, {
+          label: '撤回',
+          value: 4
+        }
+      ]
     }
   }
 }

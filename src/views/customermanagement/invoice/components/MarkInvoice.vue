@@ -4,18 +4,27 @@
     :visible="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
-    title="提示"
+    :title="title"
     width="400px"
     @close="handleCancel">
     <div class="handle-box">
-      <flexbox
-        class="handle-item"
-        align="stretch">
-        <div
-          class="handle-item-name"
-          style="margin-top: 8px;">请输入发票号码：</div>
-        <el-input v-model="invoiceNum"/>
-      </flexbox>
+      <el-form ref="form" :model="form" label-width="100px">
+        <el-form-item label="发票号码">
+          <el-input v-model="form.invoiceNumber"/>
+        </el-form-item>
+        <el-form-item label="实际开票日期">
+          <el-date-picker
+            v-model="form.realInvoiceDate"
+            style="width: 100%;"
+            value-format="yyyy-MM-dd"
+            type="date"
+            placeholder="选择日期"/>
+        </el-form-item>
+        <el-form-item label="物流单号">
+          <el-input v-model="form.logisticsNumber"/>
+        </el-form-item>
+
+      </el-form>
     </div>
     <span
       slot="footer"
@@ -29,11 +38,13 @@
 </template>
 
 <script>
-import { crmInvoiceUpdateTypeAPI } from '@/api/customermanagement/invoice'
+import { crmInvoiceStatusResetAPI, crmInvoiceStatusUpdateAPI } from '@/api/customermanagement/invoice'
+
 
 export default {
   name: 'MarkInvoice', // 标记为开票
-  components: {},
+  components: {
+  },
   mixins: [],
   props: {
     visible: {
@@ -42,22 +53,31 @@ export default {
       default: false
     },
     detail: Object,
-    // 勾选数据
-    selectionList: {
-      type: Array,
-      default: () => {
-        return []
-      }
+    reset: {
+      type: Boolean,
+      required: true,
+      default: false
     }
   },
   data() {
     return {
       loading: true,
-      invoiceNum: 1
+      form: {
+        invoiceNumber: '',
+        logisticsNumber: '',
+        realInvoiceDate: ''
+      }
     }
   },
-  computed: {},
+  computed: {
+    title() {
+      return this.reset ? '重置开票信息' : '标记为已开票'
+    }
+  },
   watch: {
+    visible() {
+      console.log('显示')
+    }
   },
   mounted() {},
   methods: {
@@ -66,7 +86,11 @@ export default {
      */
     handleCancel() {
       // 重置状态
-      this.status = 1
+      this.form = {
+        invoiceNumber: '',
+        logisticsNumber: '',
+        realInvoiceDate: ''
+      }
       this.$emit('update:visible', false)
     },
 
@@ -74,23 +98,25 @@ export default {
      * 点击确定
      */
     handleConfirm() {
-      if (this.invoiceNum <= 0) {
+      if (this.invoiceNumber <= 0) {
         return
       }
       var params = {
-        invoiceNum: parseInt(this.invoiceNum)
+        ...this.form
       }
       params.invoiceId = this.detail.invoiceId
       this.loading = true
-      crmInvoiceUpdateTypeAPI(params)
+      const request = this.reset ? crmInvoiceStatusResetAPI : crmInvoiceStatusUpdateAPI
+      request(params)
         .then(res => {
           this.$message({
             type: 'success',
             message: '操作成功'
           })
           this.loading = false
-          this.detail.isType = 1
+          this.detail.invoiceStatus = 1
           this.handleCancel()
+          this.$emit('change')
         })
         .catch(() => {
           this.loading = false

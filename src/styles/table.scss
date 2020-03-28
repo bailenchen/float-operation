@@ -89,6 +89,12 @@
   }
 }
 
+.el-table__fixed-right {
+  td::before {
+    display: none;
+  }
+}
+
 .el-table__fixed::before,
 .el-table__fixed-right::before {
   display: none;

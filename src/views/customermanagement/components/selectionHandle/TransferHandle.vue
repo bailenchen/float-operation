@@ -66,6 +66,7 @@ import { crmContractTransfer } from '@/api/customermanagement/contract'
 import { crmLeadsTransfer } from '@/api/customermanagement/clue'
 import { crmProductTransfer } from '@/api/customermanagement/product'
 import { crmReceivablesTransfer } from '@/api/customermanagement/money'
+import { crmInvoiceTransfer } from '@/api/customermanagement/invoice'
 
 export default {
   /** 客户管理 的 勾选后的 转移 操作*/
@@ -107,7 +108,11 @@ export default {
   computed: {
     // 是否展示移除操作类型
     showRemoveType() {
-      if (this.crmType == 'leads' || this.crmType == 'contacts' || this.crmType == 'receivables' || this.crmType == 'product') {
+      if (this.crmType == 'leads' ||
+       this.crmType == 'contacts' ||
+        this.crmType == 'receivables' ||
+         this.crmType == 'product' ||
+         this.crmType == 'invoice') {
         return false
       }
       return true
@@ -195,14 +200,20 @@ export default {
         return crmReceivablesTransfer
       } else if (this.crmType === 'product') {
         return crmProductTransfer
+      } else if (this.crmType === 'invoice') {
+        return crmInvoiceTransfer
       }
     },
     getParams() {
       var ownerUserId = this.usersList[0].userId
       var params = {
-        newOwnerUserId: ownerUserId,
-        transferType: this.removeType
+        newOwnerUserId: ownerUserId
       }
+
+      if (this.showRemoveType) {
+        params.transferType = this.removeType
+      }
+
       if (this.removeType === 2) {
         // 1移出，2转为团队成员
         params.power = this.handleType

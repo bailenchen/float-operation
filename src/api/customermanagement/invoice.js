@@ -1,9 +1,21 @@
 import request from '@/utils/request'
 
-// 新建或编辑
+// 新建
 export function crmInvoiceSaveAPI(data) {
   return request({
-    url: 'CrmInvoice/saveOrUpdate',
+    url: 'CrmInvoice/save',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+// 编辑
+export function crmInvoiceUpdateAPI(data) {
+  return request({
+    url: 'CrmInvoice/update',
     method: 'post',
     data: data,
     headers: {
@@ -13,14 +25,20 @@ export function crmInvoiceSaveAPI(data) {
 }
 
 // 标注已开发票
-export function crmInvoiceUpdateTypeAPI(data) {
+export function crmInvoiceStatusUpdateAPI(data) {
   return request({
-    url: 'CrmInvoice/updateTypeById',
+    url: 'CrmInvoice/updateInvoiceStatus',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
+  })
+}
+
+// 标注已开发票
+export function crmInvoiceStatusResetAPI(data) {
+  return request({
+    url: 'CrmInvoice/resetInvoiceStatus',
+    method: 'post',
+    data: data
   })
 }
 
@@ -41,10 +59,7 @@ export function crmInvoiceReadAPI(data) {
   return request({
     url: 'CrmInvoice/queryById',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
   })
 }
 
@@ -57,10 +72,7 @@ export function crmInvoiceFileListAPI(data) {
   return request({
     url: 'CrmInvoice/queryFileList',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
   })
 }
 
@@ -72,10 +84,7 @@ export function crmInvoiceTransferAPI(data) {
   return request({
     url: 'CrmInvoice/transfer',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
   })
 }
 
@@ -85,11 +94,32 @@ export function crmInvoiceTransferAPI(data) {
  */
 export function crmInvoiceDeleteIdsAPI(data) {
   return request({
-    url: 'CrmInvoice/deleteIds',
+    url: 'CrmInvoice/deleteById',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
+  })
+}
+
+/**
+ * 发票规则信息
+ * @param {*} data
+ */
+export function crmInvoiceNumberConfigAPI(data) {
+  return request({
+    url: 'sysConfig/queryInvoiceNumberSetting',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 转移
+ * @param {*} data
+ */
+export function crmInvoiceTransfer(data) {
+  return request({
+    url: 'CrmInvoice/transfer',
+    method: 'post',
+    data: data
   })
 }
