@@ -124,6 +124,7 @@ import {
   crmProductStatus,
   crmProductDeleteAPI
 } from '@/api/customermanagement/product'
+import { crmInvoiceDeleteIdsAPI } from '@/api/customermanagement/invoice'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
@@ -214,7 +215,8 @@ export default {
           contract: '合同',
           receivables: '回款',
           marketing: '活动',
-          visit: '回访'
+          visit: '回访',
+          invoice: '发票'
         }[this.crmType] || ''
       )
     },
@@ -229,6 +231,8 @@ export default {
         return this.detail.marketingName
       } else if (this.crmType === 'visit') {
         return this.detail.visitNumber
+      } else if (this.crmType === 'invoice') {
+        return this.detail.invoiceApplyNumber
       }
       return this.detail.name
     },
@@ -443,7 +447,8 @@ export default {
           receivables: crmReceivablesDelete,
           marketing: crmMarketingDeleteAPI,
           visit: crmReturnVisitDeleteAPI,
-          product: crmProductDeleteAPI
+          product: crmProductDeleteAPI,
+          invoice: crmInvoiceDeleteIdsAPI
         }[this.crmType]
         const params = {
           [this.crmType + 'Ids']: this.id
@@ -622,6 +627,10 @@ export default {
           'delete'
         ])
       } else if (this.crmType == 'visit') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'delete'
+        ])
+      } else if (this.crmType == 'invoice') {
         return this.forSelectionHandleItems(handleInfos, [
           'delete'
         ])

@@ -146,7 +146,7 @@
       :crm-type="rowType"
       :id="rowID"
       class="d-view"
-      @handle="refreshList"/>
+      @handle="handleHandle"/>
 
     <transfer-handle
       :crm-type="crmType"
@@ -294,8 +294,8 @@ export default {
 
         if (this.crm[this.crmType].transfer) {
           temps.push({
-            name: '转移',
-            type: 'transfer',
+            label: '转移',
+            command: 'transfer',
             icon: 'transfer'
           })
         }
@@ -438,7 +438,7 @@ export default {
           .then(() => {
             var ids = this.selectionList.map(item => {
               return item.invoiceId
-            })
+            }).join(',')
             this.loading = true
             crmInvoiceDeleteIdsAPI({
               invoiceIds: ids
@@ -465,7 +465,7 @@ export default {
         this.transferDialogShow = true
       } else {
         this.rowDetail = this.selectionList[0]
-        this.isResetInvoice = false
+        this.isResetInvoice = true
         this.markShow = true
       }
     },
@@ -491,6 +491,17 @@ export default {
         return 'header-can-visit-backgroud'
       }
       return ''
+    },
+
+    /**
+     * 详情操作
+     */
+    handleHandle(data) {
+      if (['alloc', 'get', 'transfer', 'transform', 'delete', 'put_seas', 'exit-team'].includes(data.type)) {
+        this.showDview = false
+      }
+
+      this.getList()
     },
 
     /**

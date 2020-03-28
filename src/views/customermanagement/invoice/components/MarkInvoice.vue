@@ -76,7 +76,13 @@ export default {
   },
   watch: {
     visible() {
-      console.log('显示')
+      if (this.reset) {
+        this.form = {
+          invoiceNumber: this.detail.invoiceNumber,
+          logisticsNumber: this.detail.logisticsNumber,
+          realInvoiceDate: this.detail.realInvoiceDate
+        }
+      }
     }
   },
   mounted() {},

@@ -303,7 +303,7 @@ export default {
         formType: 'select',
         isNull: 0,
         name: '关联对象',
-        setting: [{ name: '合同', value: 1 }, { name: '回款', value: 2 }],
+        setting: [{ name: '合同', value: 1 }, { name: '回款', value: 2 }, { name: '发票', value: 3 }],
         value: this.handle.data ? this.handle.data.categoryType : 1
       })
 

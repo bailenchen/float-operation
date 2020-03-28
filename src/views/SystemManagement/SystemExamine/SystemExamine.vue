@@ -196,7 +196,7 @@ export default {
         }
         // 1 合同 2 回款
       } else if (column.property === 'categoryType') {
-        return { 1: '合同', 2: '回款' }[row[column.property]]
+        return { 1: '合同', 2: '回款', 3: '发票' }[row[column.property]]
       } else if (column.property === 'userIds') {
         const structures = row['deptIds'] || []
         let strName = structures

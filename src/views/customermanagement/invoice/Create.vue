@@ -208,30 +208,38 @@ export default {
     // 是编辑
     if (this.detail) {
       const baseFrom = {}
-      // baseFrom.invoiceApplyNumber = this.detail.invoiceApplyNumber
-      if (this.detail.contractId) {
-        baseFrom.contractId = [{
-          num: this.detail.contractNum,
-          contractId: this.detail.contractId
-        }]
-      } else {
-        baseFrom.contractId = [this.detail.contract]
-      }
-      baseFrom.customerName = this.detail.customerName
+      baseFrom.customerId = this.detail.customerId ? [{
+        customerName: this.detail.customerName,
+        customerId: this.detail.customerId
+      }] : []
+
+      baseFrom.contractId = this.detail.contractId ? [{
+        num: this.detail.contractNum,
+        contractId: this.detail.contractId
+      }] : []
+
+      baseFrom.contractMoney = this.detail.contractMoney
       baseFrom.invoiceMoney = this.detail.invoiceMoney
-      baseFrom.invoiceTime = this.detail.invoiceTime
+      baseFrom.invoiceDate = this.detail.invoiceDate
       baseFrom.invoiceType = this.detail.invoiceType
-      baseFrom.remarks = this.detail.remarks
+      baseFrom.remark = this.detail.remark
       this.baseFrom = baseFrom
 
       const otherFrom = {}
+      otherFrom.titleType = this.detail.titleType
       otherFrom.invoiceTitle = this.detail.invoiceTitle
-      otherFrom.taxpayerNumber = this.detail.taxpayerNumber
-      otherFrom.openingBank = this.detail.openingBank
-      otherFrom.accountNumber = this.detail.accountNumber
-      otherFrom.invoiceSite = this.detail.invoiceSite
-      otherFrom.phone = this.detail.phone
+      otherFrom.taxNumber = this.detail.taxNumber
+      otherFrom.depositBank = this.detail.depositBank
+      otherFrom.depositAccount = this.detail.depositAccount
+      otherFrom.depositAddress = this.detail.depositAddress
+      otherFrom.telephone = this.detail.telephone
       this.otherFrom = otherFrom
+
+      const mailFrom = {}
+      mailFrom.contactsName = this.detail.contactsName
+      mailFrom.contactsTelephone = this.detail.contactsTelephone
+      mailFrom.contactsAddress = this.detail.contactsAddress
+      this.mailFrom = mailFrom
     }
   },
   mounted() {},
@@ -264,12 +272,12 @@ export default {
           name: '合同编号',
           field: 'contractId',
           formType: 'contract',
-          disabled: true,
+          disabled: !(this.detail && this.detail.contractId),
           setting: []
         },
         {
           name: '合同金额',
-          field: 'money',
+          field: 'contractMoney',
           formType: 'text',
           disabled: true,
           setting: []
@@ -403,12 +411,12 @@ export default {
           contractItem['relation'] = {}
           this.$set(this.baseFrom, 'contractId', [])
           this.$set(this.baseFrom, 'invoiceMoney', '')
-          this.$set(this.baseFrom, 'money', '')
+          this.$set(this.baseFrom, 'contractMoney', '')
         }
         this.$refs.crmForm.validateField(item.field)
       } else if (item.formType == 'contract') {
         const contractValue = dataValue && dataValue.length ? dataValue[0] : null
-        this.$set(this.baseFrom, 'money', contractValue ? contractValue.money : '')
+        this.$set(this.baseFrom, 'contractMoney', contractValue ? contractValue.money : '')
         this.$set(this.baseFrom, 'invoiceMoney', contractValue ? contractValue.money : '')
         this.$refs.crmForm.validateField(item.field)
       }

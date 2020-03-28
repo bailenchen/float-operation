@@ -25,13 +25,13 @@
           :crm-type="crmType"
           @handle="detailHeadHandle"
           @close="hideView" />
-        <!-- <examine-info
+        <examine-info
           :id="id"
           :record-id="detailData.examineRecordId"
           :owner-user-id="detailData.ownerUserId"
           class="examine-info"
           examine-type="crm_invoice"
-          @on-handle="examineHandle" /> -->
+          @on-handle="examineHandle" />
         <div class="d-container-bd">
           <el-tabs
             v-model="tabCurrentName"
@@ -131,10 +131,10 @@ export default {
       // 名称
       name: '',
       headDetails: [
-        { title: '学员名称', value: '' },
+        { title: '客户名称', value: '' },
         { title: '开票金额', value: '' },
-        { title: '开票时间', value: '' },
-        { title: '开票状态', value: '' }
+        { title: '发票号码', value: '' },
+        { title: '实际开票日期', value: '' }
       ],
       tabCurrentName: 'CRMBaseInfo',
       baseDetailList: [], // 基本详情list
@@ -177,8 +177,8 @@ export default {
           //   // 负责人
           this.headDetails[0].value = res.data.customerName
           this.headDetails[1].value = separator(res.data.invoiceMoney || 0)
-          this.headDetails[2].value = res.data.invoiceTime
-          this.headDetails[3].value = res.data.isType == 1 ? '已开票' : '未开票'
+          this.headDetails[2].value = res.data.invoiceNumber
+          this.headDetails[3].value = res.data.realInvoiceDate
         })
         .catch(() => {
           this.loading = false
