@@ -354,6 +354,18 @@ export function crmCustomerQueryContacts(data) {
 }
 
 /**
+ * 客户下回访
+ * @param {*} data
+ */
+export function crmCustomerQueryVisitAPI(data) {
+  return request({
+    url: 'CrmCustomer/queryReturnVisit',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
  * 客户下商机
  * @param {*} data
  */

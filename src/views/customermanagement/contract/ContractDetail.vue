@@ -84,6 +84,7 @@ import RelativeTeam from '../components/RelativeTeam' // 团队成员
 import RelativeProduct from '../components/RelativeProduct' // 团队成员
 import RelativeReturnMoney from '../components/RelativeReturnMoney' // 相关回款
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
+import RelativeVisit from '../components/RelativeVisit' // 回访
 import ExamineInfo from '@/components/Examine/ExamineInfo'
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
@@ -103,6 +104,7 @@ export default {
     RelativeProduct,
     RelativeReturnMoney,
     RelativeFiles,
+    RelativeVisit,
     ExamineInfo,
     CRMCreateView
   },
@@ -176,6 +178,9 @@ export default {
       }
       if (this.crm.receivables && this.crm.receivables.index) {
         tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
+      }
+      if (this.crm.visit && this.crm.visit.index) {
+        tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
       }
       tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
       tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })

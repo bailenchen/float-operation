@@ -49,8 +49,8 @@ import {
   crmCustomerQueryVisitAPI
 } from '@/api/customermanagement/customer'
 import {
-  crmBusinessQueryContactsAPI
-} from '@/api/customermanagement/business'
+  crmContractQueryVisitAPI
+} from '@/api/customermanagement/contract'
 
 export default {
   name: 'RelativeVisit', // 相关回访
@@ -130,7 +130,7 @@ export default {
       this.loading = true
       const request = {
         customer: crmCustomerQueryVisitAPI,
-        business: crmBusinessQueryContactsAPI
+        contract: crmContractQueryVisitAPI
       }[this.crmType]
       const params = { pageType: 0 }
       params[this.crmType + 'Id'] = this.id
@@ -179,10 +179,11 @@ export default {
       //  客户 下新建回访
       if (this.crmType == 'customer') {
         this.createActionInfo.data['customer'] = this.detail
-      } else if (this.crmType == 'business') {
+      } else if (this.crmType == 'contract') {
         this.createActionInfo.data['customer'] = this.detail
+        this.createActionInfo.data['contract'] = this.detail
         this.createActionInfo.relativeData = {
-          businessId: this.detail.businessId
+          contractId: this.detail.contractId
         }
       }
       this.isCreate = true

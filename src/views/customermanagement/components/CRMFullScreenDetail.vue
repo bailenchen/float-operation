@@ -27,6 +27,7 @@ import ExamineDetail from '@/views/OAManagement/examine/components/examineDetail
 import TaskDetail from '@/views/taskExamine/task/components/TaskDetail'
 import LogDetail from '@/views/workLog/components/LogDetail'
 import NoticeDetail from '@/views/OAManagement/notice/NoticeDetail'
+import VisitDetail from '../visit/VisitDetail'
 
 export default {
   name: 'CRMFullScreenDetail', // 客户管理下 重要提醒 回款计划提醒
@@ -41,7 +42,8 @@ export default {
     ExamineDetail,
     TaskDetail,
     LogDetail,
-    NoticeDetail
+    NoticeDetail,
+    VisitDetail
   },
   props: {
     /** 模块ID */
@@ -92,6 +94,8 @@ export default {
         return 'log-detail'
       } else if (this.crmType == 'announcement') {
         return 'notice-detail'
+      } else if (this.crmType == 'visit') {
+        return 'VisitDetail'
       }
       return ''
     }

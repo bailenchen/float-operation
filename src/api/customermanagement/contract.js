@@ -243,3 +243,15 @@ export function crmContractExcelAllExportAPI(data) {
     }
   })
 }
+
+/**
+ * 回访
+ * @param {*} data
+ */
+export function crmContractQueryVisitAPI(data) {
+  return request({
+    url: 'CrmContract/queryReturnVisit',
+    method: 'post',
+    data: data
+  })
+}
