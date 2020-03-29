@@ -57,6 +57,14 @@
             </flexbox>
 
             <flexbox
+              v-else-if="item.formType === 'single_user'"
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div class="b-cell-value">{{ item.value ? item.value.realname : '' }}</div>
+            </flexbox>
+
+            <flexbox
               v-else-if="isModule(item)"
               align="stretch"
               class="b-cell-b">
