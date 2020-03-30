@@ -450,7 +450,6 @@ export default {
     },
 
     titleSelectChange(data) {
-      console.log(data)
       const dataValue = data.data
       if (dataValue && dataValue.length) {
         const titleData = dataValue[0]
@@ -458,6 +457,12 @@ export default {
           const element = this.otherFields[index]
           this.$set(this.otherFrom, element.field, titleData[element.field])
         }
+
+        const hidden = titleData.titleType == 2
+        this.otherFields[2].hidden = hidden
+        this.otherFields[3].hidden = hidden
+        this.otherFields[4].hidden = hidden
+        this.otherFields[5].hidden = hidden
       }
     },
 
@@ -474,6 +479,10 @@ export default {
           customerItem['moduleType'] = 'customer'
           customerItem['params'] = { checkStatus: 1 }
           contractItem['relation'] = customerItem
+
+          this.$set(this.mailFrom, 'contactsName', customerItem.contactsName)
+          this.$set(this.mailFrom, 'contactsMobile', customerItem.contactsMobile)
+          this.$set(this.mailFrom, 'contactsAddress', customerItem.contactsAddress)
 
           this.titleAction = {
             type: 'default',
