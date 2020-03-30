@@ -53,7 +53,7 @@
           <el-option
             v-for="(item, index) in getXhStatusList()"
             :key="index"
-            :label="item.name"
+            :label="item.label"
             :value="item.value"/>
         </el-select>
 

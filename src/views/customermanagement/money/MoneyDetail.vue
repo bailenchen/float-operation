@@ -26,6 +26,7 @@
           @handle="detailHeadHandle"
           @close="hideView" />
         <examine-info
+          v-if="detailData.examineRecordId"
           :id="id"
           :record-id="detailData.examineRecordId"
           :owner-user-id="detailData.ownerUserId"

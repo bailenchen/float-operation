@@ -287,7 +287,7 @@ export default {
 
       const mailFrom = {}
       mailFrom.contactsName = this.detail.contactsName
-      mailFrom.contactsTelephone = this.detail.contactsTelephone
+      mailFrom.contactsMobile = this.detail.contactsMobile
       mailFrom.contactsAddress = this.detail.contactsAddress
       this.mailFrom = mailFrom
     }
@@ -437,7 +437,7 @@ export default {
       },
       {
         name: '联系方式',
-        field: 'contactsTelephone',
+        field: 'contactsMobile',
         formType: 'text',
         setting: []
       },

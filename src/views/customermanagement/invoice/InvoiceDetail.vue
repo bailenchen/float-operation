@@ -26,6 +26,7 @@
           @handle="detailHeadHandle"
           @close="hideView" />
         <examine-info
+          v-if="detailData.examineRecordId"
           :id="id"
           :record-id="detailData.examineRecordId"
           :owner-user-id="detailData.ownerUserId"
@@ -195,44 +196,50 @@ export default {
           name: '基本信息',
           list: [
             {
-              name: '发票编号',
+              name: '发票申请编号',
               formType: 'text',
-              value: data.invoiceNumber
+              value: data.invoiceApplyNumber
             },
             {
-              name: '订单编号',
-              formType: 'text',
-              value: data.contractNum
+              name: '客户名称',
+              formType: 'customer',
+              value: data
             },
             {
-              name: '学员姓名',
-              formType: 'text',
-              value: data.customerName
+              name: '合同编号',
+              formType: 'contract',
+              value: data
             },
             {
-              name: '开票金额',
+              name: '合同金额',
+              formType: 'text',
+              value: data.contractMoney
+            },
+            {
+              name: '开票金额（元）',
               formType: 'text',
               value: data.invoiceMoney
             },
             {
-              name: '开票时间',
+              name: '开票日期',
               formType: 'text',
-              value: data.invoiceTime
+              value: data.invoiceDate
             },
             {
               name: '开票类型',
               formType: 'text',
-              value: data.invoiceType
-            },
-            {
-              name: '开票号码',
-              formType: 'text',
-              value: data.invoiceNum
+              value: {
+                1: '增值税专用发票',
+                2: '增值税普通发票',
+                3: '国税通用机打发票',
+                4: '地税通用机打发票',
+                5: '收据'
+              }[data.invoiceType]
             },
             {
               name: '备注',
               formType: 'text',
-              value: data.remarks
+              value: data.remark
             },
             {
               name: '创建人',
@@ -260,6 +267,14 @@ export default {
           name: '发票信息',
           list: [
             {
+              name: '抬头类型',
+              formType: 'text',
+              value: {
+                1: '单位',
+                2: '个人'
+              }[data.titleType]
+            },
+            {
               name: '开票抬头',
               formType: 'text',
               value: data.invoiceTitle
@@ -267,27 +282,47 @@ export default {
             {
               name: '纳税人识别号',
               formType: 'text',
-              value: data.taxpayerNumber
+              value: data.taxNumber
             },
             {
               name: '开户行',
               formType: 'text',
-              value: data.openingBank
+              value: data.depositBank
             },
             {
               name: '开户账号',
               formType: 'text',
-              value: data.accountNumber
+              value: data.depositAccount
             },
             {
               name: '开票地址',
               formType: 'text',
-              value: data.invoiceSite
+              value: data.depositAddress
             },
             {
               name: '电话',
               formType: 'text',
-              value: data.phone
+              value: data.telephone
+            }
+          ]
+        },
+        {
+          name: '邮寄信息',
+          list: [
+            {
+              name: '联系人',
+              formType: 'text',
+              value: data.contactsName
+            },
+            {
+              name: '联系方式',
+              formType: 'text',
+              value: data.contactsMobile
+            },
+            {
+              name: '邮寄地址',
+              formType: 'text',
+              value: data.contactsAddress
             }
           ]
         }
