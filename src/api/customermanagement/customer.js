@@ -625,7 +625,6 @@ export function crmCustomerInvoiceAPI(data) {
   })
 }
 
-
 /**
  * 删除发票信息
  * @param {*} data
@@ -633,6 +632,18 @@ export function crmCustomerInvoiceAPI(data) {
 export function crmCustomerInvoiceInfoAPI(data) {
   return request({
     url: 'CrmCustomer/queryInvoiceInfo',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 通话记录
+ * @param {*} data
+ */
+export function crmCustomerCallRecordAPI(data) {
+  return request({
+    url: 'CrmCustomer/queryCallRecord',
     method: 'post',
     data: data
   })
