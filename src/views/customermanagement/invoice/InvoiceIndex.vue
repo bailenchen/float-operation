@@ -32,6 +32,7 @@
           v-model="filterParams.invoiceStatus"
           class="product-type"
           placeholder="选择开票状态"
+          clearable
           @change="refreshList">
           <el-option
             v-for="(item, index) in [{
@@ -49,6 +50,7 @@
         <el-select
           v-model="filterParams.checkStatus"
           placeholder="选择审核状态"
+          clearable
           @change="refreshList">
           <el-option
             v-for="(item, index) in getXhStatusList()"

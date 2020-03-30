@@ -538,6 +538,10 @@ export default {
     }
   }
 
+  .el-date-editor {
+    width: 170px;
+  }
+
   .search-container {
     margin: 0 20px;
     width: 200px;
