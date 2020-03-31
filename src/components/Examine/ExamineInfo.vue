@@ -149,7 +149,7 @@ export default {
       } else if (data.stepType == 4) {
         return '上一级审批人主管'
       } else if (data.stepType == 5) {
-        return '创建人'
+        return data.userList && data.userList.length ? data.userList[0].realname : ''
       }
     },
     stepName: function(index) {

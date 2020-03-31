@@ -285,7 +285,7 @@ export default {
         status: element.checked ? 5 : 1
       })
         .then(res => {
-          this.changeListCompleteOrder(element, value, fromIndex)
+          this.changeListCompleteOrder(element, value, fromIndex, this.showType == 'board')
           this.updateTaskListCheckNum(value)
         })
         .catch(() => {
@@ -298,8 +298,10 @@ export default {
      * 更改已完成顺序
      * @param {*} val
      * @param {*} index
+     * @param {*} upload 是否提交排序，负责人只排序不提交
      */
-    changeListCompleteOrder(element, value, fromIndex) {
+    changeListCompleteOrder(element, value, fromIndex, upload = true) {
+      console.log(upload)
       let toIndex = null
 
       if (element.checked) {
@@ -350,14 +352,16 @@ export default {
         if (toIndex != fromIndex) {
           value.list.splice(fromIndex, 1)
           value.list.splice(toIndex, 0, element)
-          workTaskUpdateOrderAPI({
-            toList: value.list.map(item => {
-              return item.taskId
-            }),
-            toId: value.classId
-          })
-            .then(res => {})
-            .catch(() => {})
+          if (upload) {
+            workTaskUpdateOrderAPI({
+              toList: value.list.map(item => {
+                return item.taskId
+              }),
+              toId: value.classId
+            })
+              .then(res => {})
+              .catch(() => {})
+          }
         }
       }
     },
