@@ -1169,6 +1169,9 @@ export default {
             }
           } else {
             var params = this.getSubmiteParams(this.crmForm.crmFields)
+            if (isDraft) {
+              params.entity.checkStatus = 5
+            }
             this.submiteParams(params)
           }
         } else {
