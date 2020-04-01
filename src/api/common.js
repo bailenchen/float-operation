@@ -67,7 +67,7 @@ export function userListByStructid(data) {
  */
 export const crmFileSaveUrl = process.env.BASE_API + 'file/upload'
 
-export function crmFileSave(data) {
+export function crmFileSave(data, config = {}) {
   var param = new FormData()
   Object.keys(data).forEach(key => {
     param.append(key, data[key])
@@ -76,6 +76,7 @@ export function crmFileSave(data) {
     url: 'file/upload',
     method: 'post',
     data: param,
+    ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
     }

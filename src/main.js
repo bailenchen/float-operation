@@ -39,6 +39,9 @@ Vue.component('flexbox-item', FlexboxItem)
 import XrAvatar from '@/components/xr-avatar'
 Vue.component('xr-avatar', XrAvatar)
 
+import FileUpload from '@/components/file-upload/index.js'
+Vue.use(FileUpload)
+
 /** 懒加载图片 */
 import VueSrc from './directives/src'
 Vue.directive('src', VueSrc)

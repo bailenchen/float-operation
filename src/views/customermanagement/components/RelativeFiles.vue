@@ -81,7 +81,7 @@
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
-import { crmFileSave, crmFileDelete, crmFileUpdate, downloadFileAPI } from '@/api/common'
+import { crmFileDelete, crmFileUpdate, downloadFileAPI } from '@/api/common'
 
 import { crmLeadsFileListAPI } from '@/api/customermanagement/clue'
 import { crmCustomerFileListAPI } from '@/api/customermanagement/customer'
@@ -201,11 +201,14 @@ export default {
         var params = {}
         params.batchId = this.detail.batchId
         params.file = file
-        crmFileSave(params)
-          .then(res => {
-            this.debouncedGetDetail()
-          })
-          .catch(() => {})
+        this.$wkUploadFile.upload({
+          file: file,
+          params: {
+            batchId: this.detail.batchId
+          }
+        }).then(completeData => {
+          this.debouncedGetDetail()
+        }).catch(() => {})
       }
 
       event.target.value = ''
