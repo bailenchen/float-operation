@@ -133,10 +133,10 @@ export default {
         }
         for (let index = 0; index < setting.length; index++) {
           const element = setting[index]
-          const line = i == 1 && index == 0 ? '' : '-'
+          const line = index > 0 ? '-' : ''
           if (element.value) {
             if (element.type == 1) {
-              names = names ? names + `${line}${element.value}` : names + element.value
+              names = names + `${line}${element.value}`
             } else if (element.type == 2) {
               let formate = ''
               if (element.value) {
@@ -147,7 +147,7 @@ export default {
                 }[element.value]
               }
               const value = formate ? moment().format(formate) : ''
-              names = names ? names + `${line}${value}` : names + value
+              names = names + `${line}${value}`
             } else if (element.type == 3) {
               const length = element.value ? element.value.length : 0
               let startValue = parseInt(element.value || 0)
@@ -157,11 +157,12 @@ export default {
               }
               let startShowValue = startValue.toString() || ''
               if (startShowValue.length != length) {
-                for (let index = 0; index < length - startShowValue.length; index++) {
+                const addCount = length - startShowValue.length
+                for (let index = 0; index < addCount; index++) {
                   startShowValue = '0' + startShowValue
                 }
               }
-              names = names ? names + `-${startShowValue}` : names + startShowValue
+              names = names + `-${startShowValue}`
             }
           }
         }
