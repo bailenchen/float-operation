@@ -162,7 +162,7 @@
       class="item-check-section">
       <el-checkbox
         v-model="field.isHidden"
-        :disabled="disabled">隐藏字段</el-checkbox>
+        :disabled="disabled || isDisabledHidden">隐藏字段</el-checkbox>
     </div>
     <!-- <div
       v-if="field.fieldType == 1"
@@ -287,6 +287,40 @@ export default {
 
     hiddenTips() {
       return this.field.isNull == 1 ? '该字段为必填字段不可设置为隐藏' : '该字段为非必填字段，设置为隐藏字段后新建时将不显示该字段'
+    },
+
+    /**
+     * 禁用隐藏操作
+     * 1: 'leads',
+     * 2: 'customer',
+     * 3: 'contacts',
+     * 4: 'product',
+     * 5: 'business',
+     * 6: 'contract',
+     * 7: 'receivables',
+     * 8: 'receivables_plan',
+     * 9: 'pool',
+     * 17: 'visit',
+     * 18: 'invoice'
+     */
+    isDisabledHidden() {
+      if (this.field.label == 1) {
+        return ['leads_id', 'leads_name', '客户级别'].includes(this.field.fieldName)
+      } else if (this.field.label == 2) {
+        return ['customer_name', '客户级别'].includes(this.field.fieldName)
+      } else if (this.field.label == 3) {
+        return ['customer_id', 'name'].includes(this.field.fieldName)
+      } else if (this.field.label == 4) {
+        return ['name', 'category_id', 'price', '是否上下架'].includes(this.field.fieldName)
+      } else if (this.field.label == 5) {
+        return ['business_name', 'contract_id'].includes(this.field.fieldName)
+      } else if (this.field.label == 6) {
+        return ['customer_id', 'business_id', 'num', 'money', 'order_date'].includes(this.field.fieldName)
+      } else if (this.field.label == 7) {
+        return ['customer_id', 'contract_id', 'number', 'plan_id'].includes(this.field.fieldName)
+      } else if (this.field.label == 17) {
+        return ['customer_id', 'contract_id'].includes(this.field.fieldName)
+      }
     }
   },
   watch: {

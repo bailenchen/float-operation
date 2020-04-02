@@ -220,7 +220,9 @@ export default {
         params['key'] = item.fieldName
         params['data'] = item
         params['disabled'] = true // 是否可交互
-        this.crmForm.crmFields.push(params)
+        if (item.isHidden != 1) {
+          this.crmForm.crmFields.push(params)
+        }
       }
     },
     hidenView() {
