@@ -117,6 +117,7 @@
     </create-sections>
 
     <create-sections
+      v-if="showExamine"
       title="审核信息">
       <div
         v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
@@ -235,6 +236,13 @@ export default {
 
     isEdit() {
       return !!this.editId
+    },
+
+    showExamine() {
+      if (this.examineInfo) {
+        return this.examineInfo.status !== 0
+      }
+      return false
     }
   },
   watch: {},

@@ -40,7 +40,7 @@
                   :value="item.value"/>
               </el-select>
               <template>
-                <el-input v-if="typeItem.type == 1" v-model="typeItem.value" class="rule-input" />
+                <el-input v-if="typeItem.type == 1" v-model="typeItem.value" :maxlength="12" class="rule-input" />
                 <template v-else-if="typeItem.type == 2">
                   <el-select v-model="typeItem.value" class="rule-select" placeholder="请选择">
                     <el-option
@@ -59,9 +59,9 @@
 
                 <template v-else-if="typeItem.type == 3">
                   <span class="rule-code-span">起始编号</span>
-                  <el-input v-model="typeItem.value" :maxlength="14" class="rule-code-input" type="number" />
+                  <el-input v-model="typeItem.value" :maxlength="9" class="rule-code-input" type="number" @input="if(typeItem.value.length>9)typeItem.value=typeItem.value.slice(0,9)" />
                   <span class="rule-code-span">递增数</span>
-                  <el-input v-model="typeItem.increaseNumber" :maxlength="9" class="rule-code-input" type="number" />
+                  <el-input v-model="typeItem.increaseNumber" :maxlength="9" class="rule-code-input" type="number" @input="if(typeItem.increaseNumber.length>9)typeItem.increaseNumber=typeItem.increaseNumber.slice(0,9)" />
                   <span class="rule-code-span">重新开始编号</span>
                   <el-select v-model="typeItem.resetType" class="rule-code-input" placeholder="请选择">
                     <el-option
