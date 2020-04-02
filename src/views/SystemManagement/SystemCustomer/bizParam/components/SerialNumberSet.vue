@@ -25,65 +25,66 @@
             v-model="listItem.replace"
             :true-label="1"
             :false-label="0">替换现有编号</el-checkbox> -->
-          <div class="rule-body">
-            <div v-for="(typeItem, typeIndex) in listItem.setting" :key="'rule'+typeIndex" class="rule">
-              <span>{{ typeIndex | typeListName }}</span>
-              <el-select
-                v-model="typeItem.type"
-                class="rule-type"
-                placeholder="请选择"
-                @change="typeChange(typeItem, listItem.setting, typeIndex)">
-                <el-option
-                  v-for="item in typeOptions"
-                  :key="'type' + item.value"
-                  :label="item.label"
-                  :value="item.value"/>
-              </el-select>
-              <template>
-                <el-input v-if="typeItem.type == 1" v-model="typeItem.value" :maxlength="12" class="rule-input" />
-                <template v-else-if="typeItem.type == 2">
-                  <el-select v-model="typeItem.value" class="rule-select" placeholder="请选择">
-                    <el-option
-                      v-for="item in timeOptions"
-                      :key="'time' + item.value"
-                      :label="item.label"
-                      :value="item.value"/>
-                  </el-select>
-                  <el-tooltip
-                    content="从合同的下单时间中获取"
-                    effect="dark"
-                    placement="top">
-                    <i class="wk wk-help wk-help-tips"/>
-                  </el-tooltip>
-                </template>
+          <flexbox>
+            <div class="rule-body">
+              <div class="example">编号示例：{{ listItem.setting | exampleName }}</div>
+              <div v-for="(typeItem, typeIndex) in listItem.setting" :key="'rule'+typeIndex" class="rule">
+                <span>{{ typeIndex | typeListName }}</span>
+                <el-select
+                  v-model="typeItem.type"
+                  class="rule-type"
+                  placeholder="请选择"
+                  @change="typeChange(typeItem, listItem.setting, typeIndex)">
+                  <el-option
+                    v-for="item in typeOptions"
+                    :key="'type' + item.value"
+                    :label="item.label"
+                    :value="item.value"/>
+                </el-select>
+                <template>
+                  <el-input v-if="typeItem.type == 1" v-model="typeItem.value" :maxlength="12" class="rule-input" />
+                  <template v-else-if="typeItem.type == 2">
+                    <el-select v-model="typeItem.value" class="rule-select" placeholder="请选择">
+                      <el-option
+                        v-for="item in timeOptions"
+                        :key="'time' + item.value"
+                        :label="item.label"
+                        :value="item.value"/>
+                    </el-select>
+                    <el-tooltip
+                      content="从合同的下单时间中获取"
+                      effect="dark"
+                      placement="top">
+                      <i class="wk wk-help wk-help-tips"/>
+                    </el-tooltip>
+                  </template>
 
-                <template v-else-if="typeItem.type == 3">
-                  <span class="rule-code-span">起始编号</span>
-                  <el-input v-model="typeItem.value" :maxlength="9" class="rule-code-input" type="number" @input="if(typeItem.value.length>9)typeItem.value=typeItem.value.slice(0,9)" />
-                  <span class="rule-code-span">递增数</span>
-                  <el-input v-model="typeItem.increaseNumber" :maxlength="9" class="rule-code-input" type="number" @input="if(typeItem.increaseNumber.length>9)typeItem.increaseNumber=typeItem.increaseNumber.slice(0,9)" />
-                  <span class="rule-code-span">重新开始编号</span>
-                  <el-select v-model="typeItem.resetType" class="rule-code-input" placeholder="请选择">
-                    <el-option
-                      v-for="item in intervalOptions"
-                      :key="'interval' + item.value"
-                      :label="item.label"
-                      :value="item.value"/>
-                  </el-select>
+                  <template v-else-if="typeItem.type == 3">
+                    <span class="rule-code-span">起始编号</span>
+                    <el-input v-model="typeItem.value" :maxlength="9" class="rule-code-input" type="number" @input="if(typeItem.value.length>9)typeItem.value=typeItem.value.slice(0,9)" />
+                    <span class="rule-code-span">递增数</span>
+                    <el-input v-model="typeItem.increaseNumber" :maxlength="9" class="rule-code-input" type="number" @input="if(typeItem.increaseNumber.length>9)typeItem.increaseNumber=typeItem.increaseNumber.slice(0,9)" />
+                    <span class="rule-code-span">重新开始编号</span>
+                    <el-select v-model="typeItem.resetType" class="rule-code-input" placeholder="请选择">
+                      <el-option
+                        v-for="item in intervalOptions"
+                        :key="'interval' + item.value"
+                        :label="item.label"
+                        :value="item.value"/>
+                    </el-select>
+                  </template>
                 </template>
-              </template>
-              <i
-                v-if="listItem.setting.length > 2"
-                class="el-icon-remove"
-                @click="deleteItem(listItem.setting, typeIndex)"/>
+                <i
+                  v-if="listItem.setting.length > 2"
+                  class="el-icon-remove"
+                  @click="deleteItem(listItem.setting, typeIndex)"/>
+              </div>
+              <el-button
+                :disabled="listItem.setting.length >= 6"
+                type="text"
+                @click="addItem(listItem.setting)">+添加一级</el-button>
             </div>
-          </div>
-          <el-button
-            :disabled="listItem.setting.length >= 6"
-            class="add-buttom"
-            type="text"
-            @click="addItem(listItem.setting)">+添加一级</el-button>
-          <div class="example">编号示例：{{ listItem.setting | exampleName }}</div>
+          </flexbox>
         </template>
       </div>
     </div>
@@ -332,6 +333,10 @@ export default {
   .rule-body {
     position: relative;
     margin-top: 10px;
+    background: #FAFAFA;
+    padding: 20px 20px 10px;
+    border-radius: 4px;
+    border: 1px solid #f6f6f6;
 
     .rule {
       &-type {
@@ -370,12 +375,9 @@ export default {
     }
   }
 
-  .add-buttom {
-    margin-left: 80px;
-  }
-
   .example {
-    color: #999;
+    color: #666;
+    margin-bottom: 10px;
   }
 }
 
