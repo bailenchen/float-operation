@@ -117,7 +117,7 @@
               <xh-user-cell
                 v-else-if="formItem.formType === 'user'"
                 :item="formItem"
-                :info-params="{m	:'crm',c: crmType,a: 'index' }"
+                :info-params="infoParams"
                 :value="formItem.value"
                 @value-change="arrayValueChange"/>
               <xh-prouct-cate
@@ -158,7 +158,7 @@
       type="text"
       @click="handleAdd">+ 添加筛选条件</el-button>
     <div
-      v-if="!isSeas"
+      v-if="saveScene"
       class="save">
       <el-checkbox v-model="saveChecked">保存为场景</el-checkbox>
       <el-input
@@ -225,9 +225,9 @@ export default {
       default: ''
     },
     // 辅助 使用 公海没有场景
-    isSeas: {
+    saveScene: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
@@ -238,6 +238,11 @@ export default {
       saveChecked: false, // 展示场景
       saveDefault: false, // 设置为默认场景
       saveName: null // 场景名称
+    }
+  },
+  computed: {
+    infoParams() {
+      return this.crmType ? { m: 'crm', c: this.crmType, a: 'index' } : {}
     }
   },
   watch: {

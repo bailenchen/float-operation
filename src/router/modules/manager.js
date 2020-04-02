@@ -91,10 +91,10 @@ export default [
     }),
     children: [{
       name: 'system-examine',
-      path: 'system-examine', // 审批流（合同/回款）
+      path: 'system-examine', // 业务审批流
       component: () => import('@/views/SystemManagement/SystemExamine/SystemExamine'),
       meta: {
-        title: '审批流（合同/回款）',
+        title: '业务审批流',
         icon: 'approve'
       }
     }]
@@ -105,10 +105,10 @@ export default [
     }),
     children: [{
       name: 'system-workbench',
-      path: 'system-workbench', // 审批流（办公）
+      path: 'system-workbench', // 办公审批流
       component: () => import('@/views/SystemManagement/SystemWorkbench'),
       meta: {
-        title: '审批流（办公）',
+        title: '办公审批流',
         icon: 'approve'
       }
     }, {

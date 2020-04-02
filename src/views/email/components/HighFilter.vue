@@ -131,7 +131,7 @@
       :dialog-visible.sync="showFilter"
       :obj="filterObj"
       :crm-type="crmType"
-      :is-seas="isSeas"
+      :save-scene="false"
       class="filter-dialog"
       @filter="handleFilter" />
   </div>
@@ -181,7 +181,6 @@ export default {
       showFilter: false, // 控制筛选框
       filterObj: { form: [] }, // 筛选确定数据
       filterShowObj: { form: [] },
-      isSeas: true,
       crmType: '',
       page: 1,
       total: 0,

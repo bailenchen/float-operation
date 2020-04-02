@@ -18,52 +18,38 @@
       <xr-table-header
         :handles="handles"
         :selects="selectionList"
+        :scenes="scenes"
         @command="handleCommand">
-        <el-input v-model="filterParams.invoiceNumber" placeholder="请输入发票号码" @input="debouncedRefreshList" />
-        <el-date-picker
-          v-model="filterParams.realInvoiceDate"
-          style="width: 170px;"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择实际开票日期"
-          @change="refreshList"/>
-        <el-input v-model="filterParams.customerName" placeholder="请输入客户姓名" @input="debouncedRefreshList" />
-        <el-input v-model="filterParams.logisticsNumber" placeholder="请输入物流单号" @input="debouncedRefreshList" />
+        <span>场景：</span>
         <el-select
-          v-model="filterParams.invoiceStatus"
-          class="product-type"
-          placeholder="选择开票状态"
-          clearable
-          @change="refreshList">
+          v-model="scene"
+          class="scene-select"
+          placeholder="选择场景"
+          @change="sceneChange">
           <el-option
-            v-for="(item, index) in [{
-              label: '未开票',
-              value: 0
-            },{
-              label: '已开票',
-              value: 1
-            }]"
+            v-for="(item, index) in scenes"
             :key="index"
-            :label="item.label"
-            :value="item.value"/>
+            :label="item.name"
+            :value="item.sceneId"/>
         </el-select>
 
-        <el-select
-          v-model="filterParams.checkStatus"
-          placeholder="选择审核状态"
-          clearable
-          @change="refreshList">
-          <el-option
-            v-for="(item, index) in getXhStatusList()"
-            :key="index"
-            :label="item.label"
-            :value="item.value"/>
-        </el-select>
+        <el-button
+          type="primary"
+          style="margin-left: 20px;"
+          icon="wk wk-screening"
+          @click="showFilterClick">高级筛选</el-button>
+        <filter-form
+          :field-list="filters"
+          :dialog-visible.sync="showFilter"
+          :obj="filterObj"
+          :save-scene="false"
+          @filter="handleFilter" />
 
-        <xh-user-cell
-          :value="filterParams.ownerUserId"
-          placeholder="选择负责人"
-          @value-change="changeUserCell"/>
+        <filter-content
+          v-if="filterObj.form && filterObj.form.length > 0"
+          slot="append"
+          :obj="filterObj"
+          @delete="handleDeleteField" />
       </xr-table-header>
       <el-table
         v-loading="loading"
@@ -172,6 +158,8 @@ import MarkInvoice from './components/MarkInvoice'
 import { XhUserCell } from '@/components/CreateCom'
 import TransferHandle from '../components/selectionHandle/TransferHandle' // 转移
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
+import FilterForm from '../components/filterForm'
+import filterContent from '../components/filterForm/filterContent'
 
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { separator } from '@/filters/vue-numeral-filter/filters'
@@ -187,7 +175,9 @@ export default {
     MarkInvoice,
     XhUserCell,
     TransferHandle,
-    CRMAllDetail
+    CRMAllDetail,
+    FilterForm,
+    filterContent
   },
   mixins: [CheckStatusMixin],
   props: {},
@@ -209,6 +199,73 @@ export default {
         customer: [],
         purposecustomer: []
       },
+      scene: '',
+      scenes: [{
+        name: '全部发票',
+        sceneId: ''
+      }, {
+        name: '我负责的发票',
+        sceneId: 1
+      }, {
+        name: '我下属的发票',
+        sceneId: 2
+      }],
+      showFilter: false, // 控制筛选框
+      filters: [{
+        formType: 'text',
+        fieldName: 'invoiceNumber',
+        name: '发票号码'
+      }, {
+        formType: 'date',
+        fieldName: 'realInvoiceDate',
+        name: '实际开票日期'
+      }, {
+        formType: 'text',
+        fieldName: 'customerName',
+        name: '客户姓名'
+      }, {
+        formType: 'text',
+        fieldName: 'logisticsNumber',
+        name: '物流单号'
+      }, {
+        formType: 'checkStatus',
+        fieldName: 'invoiceStatus',
+        name: '开票状态',
+        setting: [{
+          name: '未开票',
+          value: 0
+        }, {
+          name: '已开票',
+          value: 1
+        }]
+      }, {
+        formType: 'checkStatus',
+        fieldName: 'checkStatus',
+        name: '审核状态',
+        setting: [
+          {
+            name: '待审核',
+            value: 0
+          }, {
+            name: '通过',
+            value: 1
+          }, {
+            name: '拒绝',
+            value: 2
+          }, {
+            name: '审核中',
+            value: 3
+          }, {
+            name: '撤回',
+            value: 4
+          }
+        ]
+      }, {
+        formType: 'user',
+        fieldName: 'ownerUserId',
+        name: '负责人'
+      }],
+      filterObj: { form: [] }, // 筛选确定数据
       list: [],
       fieldList: [{
         label: '发票申请编号',
@@ -314,7 +371,7 @@ export default {
   created() {
     // 控制table的高度
     window.onresize = () => {
-      this.tableHeight = document.documentElement.clientHeight - 235
+      this.updateTableHeight()
     }
 
     this.debouncedRefreshList = debounce(500, () => {
@@ -357,14 +414,14 @@ export default {
         limit: this.pageSize
       }
 
-      params.invoiceStatus = this.filterParams.invoiceStatus
-      params.invoiceNumber = this.filterParams.invoiceNumber
-      params.customerName = this.filterParams.customerName
-      params.logisticsNumber = this.filterParams.logisticsNumber
-      params.realInvoiceDate = this.filterParams.realInvoiceDate
-      params.checkStatus = this.filterParams.checkStatus
+      if (this.filterObj && this.filterObj.obj && Object.keys(this.filterObj.obj).length > 0) {
+        params.data = this.filterObj.obj
+      }
 
-      params.ownerUserId = this.filterParams.ownerUserId && this.filterParams.ownerUserId.length ? this.filterParams.ownerUserId[0].userId : ''
+      if (this.scene) {
+        params.sceneId = this.scene
+      }
+
 
       crmInvoiceIndexAPI(params)
         .then(res => {
@@ -427,7 +484,6 @@ export default {
      * 表头勾选
      */
     handleSelectionChange(val) {
-      console.log('handleSelectionChange', val)
       this.selectionList = val // 勾选的行
     },
 
@@ -534,6 +590,45 @@ export default {
      */
     createClick() {
       this.isCreate = true
+    },
+
+    /**
+     * 切换场景
+     */
+    sceneChange() {
+      this.refreshList()
+    },
+
+    showFilterClick() {
+      this.showFilter = true
+    },
+
+    handleFilter(form) {
+      this.filterObj = form
+      this.showFilter = false
+      this.refreshList()
+      this.updateTableHeight()
+    },
+
+    handleDeleteField(data) {
+      this.filterObj = data.obj
+      this.refreshList()
+      this.updateTableHeight()
+    },
+
+    /**
+     * 更新表高
+     */
+    updateTableHeight() {
+      var offsetHei = document.documentElement.clientHeight
+      var removeHeight = 0
+
+      if (this.filterObj && this.filterObj.obj && Object.keys(this.filterObj.obj).length > 0) {
+        removeHeight = 285
+      } else {
+        removeHeight = 235
+      }
+      this.tableHeight = offsetHei - removeHeight
     }
   }
 }
@@ -543,17 +638,9 @@ export default {
 /deep/ .xr-table-header {
   border-bottom: 1px solid #e6e6e6;
   border-top: 1px solid #e6e6e6;
-  .xr-table-header__body {
-    .el-input,
-    .el-date-editor,
-    .el-select {
-      width: 150px;
-      margin-right: 10px;
-    }
 
-    .user-container {
-      width: 120px;
-    }
+  .scene-select {
+    width: 180px;
   }
 }
 

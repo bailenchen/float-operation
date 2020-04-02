@@ -50,7 +50,7 @@
           :dialog-visible.sync="showFilter"
           :obj="filterObj"
           :crm-type="crmType"
-          :is-seas="true"
+          :save-scene="false"
           @filter="handleFilter"/>
       </div>
       <flexbox

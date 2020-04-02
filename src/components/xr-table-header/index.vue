@@ -21,6 +21,7 @@
         </flexbox>
       </flexbox>
     </template>
+    <slot name="append" />
   </div>
 </template>
 
