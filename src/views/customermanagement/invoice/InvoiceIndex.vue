@@ -174,7 +174,6 @@ import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { separator } from '@/filters/vue-numeral-filter/filters'
-import moment from 'moment'
 import { debounce } from 'throttle-debounce'
 import { mapGetters } from 'vuex'
 
@@ -201,7 +200,7 @@ export default {
         invoiceNumber: '',
         logisticsNumber: '',
         customerName: '',
-        realInvoiceDate: moment().format('YYYY-MM-DD'),
+        realInvoiceDate: '',
         checkStatus: '',
         ownerUserId: []
       },
