@@ -20,6 +20,7 @@
         <el-select
           v-model="types"
           multiple
+          collapse-tags
           placeholder="请选择">
           <el-option
             v-for="item in typesOptions"

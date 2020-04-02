@@ -22,6 +22,7 @@
         <el-input v-model="filterParams.invoiceNumber" placeholder="请输入发票号码" @input="debouncedRefreshList" />
         <el-date-picker
           v-model="filterParams.realInvoiceDate"
+          style="width: 170px;"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择实际开票日期"
@@ -359,6 +360,7 @@ export default {
       params.invoiceStatus = this.filterParams.invoiceStatus
       params.invoiceNumber = this.filterParams.invoiceNumber
       params.customerName = this.filterParams.customerName
+      params.logisticsNumber = this.filterParams.logisticsNumber
       params.realInvoiceDate = this.filterParams.realInvoiceDate
       params.checkStatus = this.filterParams.checkStatus
 
