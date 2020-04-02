@@ -9,7 +9,7 @@
         :content="infoTips"
         effect="dark"
         placement="top">
-        <i class="wk wk-help"/>>
+        <i class="wk wk-help wk-help-tips"/>
       </el-tooltip>
     </div>
     <div class="option-bar">

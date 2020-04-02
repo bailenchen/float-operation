@@ -61,7 +61,7 @@ export default {
   watch: {
     file: {
       handler() {
-        if (this.file && !this.complete) {
+        if (this.file && !this.complete && this.percentage == 0) {
           this.uploadFile()
         }
       },

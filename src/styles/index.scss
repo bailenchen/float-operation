@@ -303,13 +303,13 @@ div[lazy=loading] {
 }
 
 // 帮助提示符
-.wk-help {
+.wk-help-tips {
   cursor: pointer;
   font-size: 13px;
   color: #cbcbcb;
 }
 
-.wk-help:hover {
+.wk-help-tips:hover {
   color: $xr-color-primary;
 }
 

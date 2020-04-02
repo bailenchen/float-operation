@@ -6,7 +6,7 @@
         content="您可以配置日志规则，在日志模块可以根据日志规则来统计日志完成情况"
         effect="dark"
         placement="top">
-        <i class="wk wk-help"/>>
+        <i class="wk wk-help wk-help-tips"/>
       </el-tooltip>
       <el-button
         type="primary"
@@ -33,7 +33,7 @@
                 content="默认全部员工"
                 effect="dark"
                 placement="top">
-                <i class="wk wk-help"/>>
+                <i class="wk wk-help wk-help-tips"/>
               </el-tooltip>
             </template>
             <xh-user-cell
@@ -89,7 +89,7 @@
                 content="默认全部员工"
                 effect="dark"
                 placement="top">
-                <i class="wk wk-help"/>>
+                <i class="wk wk-help wk-help-tips"/>
               </el-tooltip>
             </template>
             <xh-user-cell
@@ -106,7 +106,7 @@
                 content="开始时间为选择时间的00:00"
                 effect="dark"
                 placement="top">
-                <i class="wk wk-help"/>>
+                <i class="wk wk-help wk-help-tips"/>
               </el-tooltip>
             </template>
             <el-select v-model="weekForm.startDay" placeholder="请选择">
@@ -125,7 +125,7 @@
                 content="截止时间为选择时间的24:00"
                 effect="dark"
                 placement="top">
-                <i class="wk wk-help"/>>
+                <i class="wk wk-help wk-help-tips"/>
               </el-tooltip>
             </template>
             <el-select v-model="weekForm.endDay" placeholder="请选择">
@@ -157,7 +157,7 @@
                 content="默认全部员工"
                 effect="dark"
                 placement="top">
-                <i class="wk wk-help"/>>
+                <i class="wk wk-help wk-help-tips"/>
               </el-tooltip>
             </template>
             <xh-user-cell
@@ -174,7 +174,7 @@
                 content="开始时间为选择时间的00:00"
                 effect="dark"
                 placement="top">
-                <i class="wk wk-help"/>>
+                <i class="wk wk-help wk-help-tips"/>
               </el-tooltip>
             </template>
             <el-select v-model="monthForm.startDay" placeholder="请选择">
@@ -193,7 +193,7 @@
                 content="截止时间为选择时间的24:00"
                 effect="dark"
                 placement="top">
-                <i class="wk wk-help"/>>
+                <i class="wk wk-help wk-help-tips"/>
               </el-tooltip>
             </template>
             <el-select v-model="monthForm.endDay" placeholder="请选择">

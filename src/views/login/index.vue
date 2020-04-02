@@ -300,8 +300,8 @@ export default {
      */
     handleDownload(platform) {
       const map = {
-        windows: 'https://www.5kcrm.com/download/desktop/win/10/%E6%82%9F%E7%A9%BACRM%20Setup%2010.0.1.exe',
-        mac: 'https://www.5kcrm.com/download/desktop/mac/10/%E6%82%9F%E7%A9%BACRM-10.0.1.dmg'
+        windows: WKConfig.winUrl,
+        mac: WKConfig.macUrl
       }
       window.open(map[platform], 'self')
     }

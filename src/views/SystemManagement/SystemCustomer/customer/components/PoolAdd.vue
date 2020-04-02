@@ -50,7 +50,7 @@
                       content="客户公海管理员可对客户公海客户进行领取、分配、删除、导出等操作"
                       effect="dark"
                       placement="top">
-                      <i class="wk wk-help"/>>
+                      <i class="wk wk-help wk-help-tips"/>
                     </el-tooltip>
                   </div>
                 </div>
@@ -70,7 +70,7 @@
                       content="客户公海规则对客户公海成员生效(超级管理员除外)，客户公海成员可查看以及领取公海客户"
                       effect="dark"
                       placement="top">
-                      <i class="wk wk-help"/>>
+                      <i class="wk wk-help wk-help-tips"/>
                     </el-tooltip>
                   </div>
                 </div>

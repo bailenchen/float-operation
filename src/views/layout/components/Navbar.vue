@@ -36,34 +36,11 @@
       :unread-nums="unreadNums"
       @update-count="sendSystemUnreadNum"/>
 
-    <el-popover
+    <el-dropdown
       :visible-arrow="false"
-      placement="bottom"
-      popper-class="no-padding-popover"
-      width="220"
-      trigger="click">
-      <div class="handel-items">
-        <div
-          class="handel-item"
-          @click="handleClick('person')"><i class="wukong wukong-personcenter"/>个人中心</div>
-        <div
-          class="handel-item"
-          @click="handleClick('goout')"><i class="wukong wukong-goout"/>退出登录</div>
-        <div
-          :style="{'margin-bottom': manage ? '15px' : '0'}"
-          class="handel-item hr-top"
-          style="pointer-events: none;"><i class="wukong wukong-versions"/>版本 {{ WKConfig.version }}</div>
-        <div
-          v-if="manage"
-          class="handel-box">
-          <el-button
-            type="primary"
-            class="handel-button"
-            @click="enterSystemSet()">进入企业管理后台</el-button>
-        </div>
-      </div>
+      trigger="click"
+      @command="moreMenuClick">
       <div
-        slot="reference"
         class="user-container">
         <template v-if="userInfo && Object.keys(userInfo).length > 0">
           <xr-avatar
@@ -74,8 +51,27 @@
         </template>
         <i class="el-icon-caret-bottom mark"/>
       </div>
-    </el-popover>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item
+          v-for="(item, index) in moreMenu"
+          :key="index"
+          :command="item.command"
+          :divided="item.divided"
+          :icon="item.icon"
+          :disabled="item.disabled"
+        >{{ item.label }}</el-dropdown-item>
+        <div
+          v-if="manage"
+          class="handel-box">
+          <el-button
+            type="primary"
+            class="handel-button"
+            @click="enterSystemSet()">企业管理后台</el-button>
+        </div>
+      </el-dropdown-menu>
+    </el-dropdown>
 
+    <download-dialog :visible.sync="downloadVisible" />
   </div>
 </template>
 
@@ -84,6 +80,7 @@
 import { systemMessageUnreadCountAPI } from '@/api/common'
 
 import SystemMessage from './SystemMessage'
+import DownloadDialog from '@/components/download-dialog'
 
 import { mapGetters } from 'vuex'
 import { Loading } from 'element-ui'
@@ -99,7 +96,8 @@ export default {
     }
   },
   components: {
-    SystemMessage
+    SystemMessage,
+    DownloadDialog
   },
   props: {
     navIndex: {
@@ -121,7 +119,45 @@ export default {
       },
       sysMessageShow: false,
       intervalId: null,
-      type: 0
+      type: 0,
+      moreMenu: [{
+        command: 'baseInfo',
+        divided: false,
+        label: '基本信息',
+        icon: 'wk wk-user'
+      }, {
+        command: 'userPerson',
+        divided: false,
+        label: '用户中心',
+        icon: 'wk wk-s-seas'
+      }, {
+        command: 'download',
+        divided: true,
+        label: '客户端下载',
+        icon: 'wk wk-data-import'
+      }, {
+        command: 'upgradeLog',
+        divided: false,
+        label: '升级日志',
+        icon: 'wk wk-airplane'
+      }, {
+        command: 'help',
+        divided: true,
+        label: '帮助中心',
+        icon: 'wk wk-help'
+      }, {
+        command: 'logOut',
+        divided: false,
+        label: '退出登录',
+        icon: 'wk wk-logout'
+      }, {
+        command: 'version',
+        divided: false,
+        label: `版本 ${WKConfig.version}`,
+        icon: 'wk wk-version',
+        disabled: true
+      }],
+      downloadVisible: false
     }
   },
   computed: {
@@ -259,35 +295,6 @@ export default {
         name: 'manage'
       })
     },
-    handleClick(type) {
-      if (type === 'goout') {
-        this.$confirm('退出登录？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            var loading = Loading.service({
-              target: document.getElementById('#app')
-            })
-            this.$store
-              .dispatch('LogOut')
-              .then(() => {
-                location.reload()
-                loading.close()
-              })
-              .catch(() => {
-                location.reload()
-                loading.close()
-              })
-          })
-          .catch(() => {})
-      } else if (type === 'person') {
-        this.$router.push({
-          name: 'person'
-        })
-      }
-    },
     switchLang(item) {
       this.$store.commit('SET_LANG', item.lang)
       this.langName = item.name
@@ -328,6 +335,44 @@ export default {
     enterCustoemBoard() {
       if (this.crm) {
         this.$router.push('/crm/workbench')
+      }
+    },
+
+    moreMenuClick(command) {
+      if (command == 'baseInfo') {
+        this.$router.push({
+          name: 'person'
+        })
+      } else if (command == 'userPerson') {
+        window.open('https://www.72crm.com/center')
+      } else if (command == 'download') {
+        this.downloadVisible = true
+      } else if (command == 'upgradeLog') {
+        window.open('https://www.72crm.com/upgrade_log')
+      } else if (command == 'help') {
+        window.open('https://www.72crm.com/help')
+      } else if (command == 'logOut') {
+        this.$confirm('退出登录？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            var loading = Loading.service({
+              target: document.getElementById('#app')
+            })
+            this.$store
+              .dispatch('LogOut')
+              .then(() => {
+                location.reload()
+                loading.close()
+              })
+              .catch(() => {
+                location.reload()
+                loading.close()
+              })
+          })
+          .catch(() => {})
       }
     }
   }
@@ -421,32 +466,18 @@ export default {
 }
 
 // 右侧操作
-.handel-items {
-  padding: 10px 0 18px 0;
-  .handel-item {
-    padding: 5px 20px;
-    font-size: 14px;
-    color: #aaa;
-    cursor: pointer;
-    i {
-      margin-right: 8px;
-      font-size: 15px;
-    }
-  }
-  .handel-item:hover {
-    background-color: #f7f8fa;
-    color: #2362fb;
-  }
-  .handel-box {
-    padding: 0 15px;
-    .handel-button {
-      width: 100%;
-      border-radius: $xr-border-radius-base;
-      border-color: #2362fb;
-      background-color: #2362fb;
-    }
+.handel-box {
+  padding: 0 15px;
+  border-top: 1px solid #EBEEF5;
+  padding-top: 10px;
+  .handel-button {
+    width: 100%;
+    border-radius: $xr-border-radius-base;
+    border-color: #2362fb;
+    background-color: #2362fb;
   }
 }
+
 .hr-top {
   margin-top: 8px;
   border-top: 1px solid #f4f4f4;
@@ -479,6 +510,18 @@ export default {
 
 .wk-bell:hover {
   color: $xr-color-primary;
+}
+
+/deep/ .el-dropdown {
+  .popper__arrow {
+    display: none;
+  }
+
+  .el-dropdown-menu__item {
+    i {
+      color: #ccc;
+    }
+  }
 }
 </style>
 

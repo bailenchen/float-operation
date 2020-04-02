@@ -16,7 +16,7 @@
             content="已成交是指客户状态为“已成交”"
             effect="dark"
             placement="top">
-            <i class="wk wk-help"/>>
+            <i class="wk wk-help wk-help-tips"/>
         </el-tooltip></el-checkbox>
         <el-checkbox
           v-if="businessHandleShow"
