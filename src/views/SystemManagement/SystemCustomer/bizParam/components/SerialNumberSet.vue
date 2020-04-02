@@ -97,6 +97,7 @@ import {
 } from '@/api/systemManagement/SystemCustomer'
 
 import Reminder from '@/components/reminder'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 import moment from 'moment'
 
@@ -113,16 +114,7 @@ export default {
     },
 
     labelName(label) {
-      if (label == '6') {
-        return '回款编号'
-      } else if (label == '7') {
-        return '合同编号'
-      } else if (label == '17') {
-        return '回访编号'
-      } else if (label == '18') {
-        return '发票编号'
-      }
-      return ''
+      return crmTypeModel.convertTypeToName(label) + '编号'
     },
 
     exampleName(setting) {

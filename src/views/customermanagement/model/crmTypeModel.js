@@ -76,6 +76,9 @@ export default {
   },
 
   convertTypeToName: function(type) {
+    if (typeof type === 'string') {
+      type = parseInt(type)
+    }
     return this.typeToNameData[type]
   },
 
