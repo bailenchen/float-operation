@@ -92,7 +92,7 @@ export default {
       }
       request(params, config)
         .then(res => {
-          this.$emit('completed', this.index)
+          this.$emit('completed', this.index, res)
         })
         .catch(() => {
           this.$emit('error', this.index)

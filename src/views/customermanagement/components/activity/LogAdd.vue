@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import { crmFileSave, crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
+import { crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
 
 
 import CrmRelative from '@/components/CreateCom/CrmRelative'
@@ -325,20 +325,24 @@ export default {
      * 文件上传
      */
     uploadFileRequest(file, type, result) {
-      crmFileSave({ file: file, type: type, batchId: this.batchId })
-        .then(res => {
-          res.size = fileSize(file.size)
-          if (type == 'img') {
-            this.imgFiles.push(res)
-          } else {
-            res['icon'] = getFileTypeIcon(file)
-            this.files.push(res)
-          }
-          if (result) {
-            result()
-          }
-        })
-        .catch(() => {})
+      this.$wkUploadFile.upload({
+        file: file,
+        params: {
+          type: type,
+          batchId: this.batchId
+        }
+      }).then(({ res }) => {
+        res.size = fileSize(file.size)
+        if (type == 'img') {
+          this.imgFiles.push(res)
+        } else {
+          res['icon'] = getFileTypeIcon(file)
+          this.files.push(res)
+        }
+        if (result) {
+          result()
+        }
+      }).catch(() => {})
     },
 
     /**

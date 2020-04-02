@@ -35,7 +35,7 @@
 </template>
 <script type="text/javascript">
 import arrayMixin from './arrayMixin'
-import { crmFileSave, crmFileDelete } from '@/api/common'
+import { crmFileDelete } from '@/api/common'
 import { fileSize } from '@/utils/index'
 
 export default {
@@ -77,26 +77,25 @@ export default {
     },
     // 发送请求
     sendFileRequest(file, result) {
-      var params = { file: file }
-      if (this.batchId) {
-        params.batchId = this.batchId
-      }
-      crmFileSave(params)
-        .then(res => {
-          if (this.batchId == '') {
-            this.batchId = res.batchId
-          }
-          res.size = fileSize(res.size)
-          this.dataValue.push(res)
-          this.$emit('value-change', {
-            index: this.index,
-            value: this.dataValue
-          })
-          if (result) {
-            result()
-          }
+      this.$wkUploadFile.upload({
+        file: file,
+        params: {
+          batchId: this.batchId
+        }
+      }).then(({ res }) => {
+        if (this.batchId == '') {
+          this.batchId = res.batchId
+        }
+        res.size = fileSize(res.size)
+        this.dataValue.push(res)
+        this.$emit('value-change', {
+          index: this.index,
+          value: this.dataValue
         })
-        .catch(() => {})
+        if (result) {
+          result()
+        }
+      }).catch(() => {})
     },
     /** 删除图片 */
     deleteFile(item, index) {

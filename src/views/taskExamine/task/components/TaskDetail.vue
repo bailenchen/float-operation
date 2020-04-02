@@ -585,7 +585,6 @@ import {
 } from '@/api/projectManagement/projectTask'
 // 项目参与人
 import { workWorkOwnerListAPI } from '@/api/projectManagement/project'
-import { crmFileSave } from '@/api/common'
 import {
   workTrashRecoverAPI,
   workTrashDeleteAPI
@@ -1041,17 +1040,17 @@ export default {
     },
     // 附件 -- 上传
     httpRequest(val) {
-      crmFileSave({
+      this.$wkUploadFile.upload({
         file: val.file,
-        batchId: this.taskData.batchId
-      })
-        .then(res => {
-          res.filePath = res.url
-          this.fileList.push(res)
-          // this.$emit('httpRequest', this.taskData)
-          this.$message.success('上传成功')
-        })
-        .catch(() => {})
+        params: {
+          batchId: this.taskData.batchId
+        }
+      }).then(({ res }) => {
+        res.filePath = res.url
+        this.fileList.push(res)
+        // this.$emit('httpRequest', this.taskData)
+        this.$message.success('上传成功')
+      }).catch(() => {})
     },
     // 附件删除
     accessoryDeleteFun(index, item) {

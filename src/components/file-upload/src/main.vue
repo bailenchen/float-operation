@@ -114,8 +114,9 @@ export default {
     /**
      * 上传完成
      */
-    uploadCompleted(index) {
+    uploadCompleted(index, res) {
       const data = this.uploadList[index]
+      data.res = res
       data.complete = true
       if (data.resolve) {
         data.resolve(data)
@@ -182,7 +183,7 @@ export default {
 
   &__body {
     height: 350px;
-    overflow-y: hidden;
+    overflow-y: auto;
     padding: 10px;
 
     .wk-upload-cell + .wk-upload-cell {

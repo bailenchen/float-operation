@@ -126,6 +126,9 @@ export function createBlob(result) {
 
 /** 获取file大小的名称 */
 export function fileSize(value) {
+  if (typeof value == 'string') {
+    return value
+  }
   if (value == null || value == '') {
     return '0 Bytes'
   }
