@@ -19,7 +19,7 @@
           @click.native="close">取消</el-button>
         <el-button
           type="primary"
-          @click.native="debouncedSaveField(false)">保存</el-button>
+          @click.native="debouncedSaveField(false)">{{ confirmButtonText }}</el-button>
       </div>
     </flexbox>
   </create-view>
@@ -40,6 +40,10 @@ export default {
     appendToBody: {
       type: Boolean,
       default: true
+    },
+    confirmButtonText: {
+      type: String,
+      default: '保存'
     }
   },
   data() {

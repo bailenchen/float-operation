@@ -66,6 +66,20 @@
         :label="item.label"
         :width="item.width"
         show-overflow-tooltip/>
+      <el-table-column
+        v-if="canUpdateStatus"
+        :resizable="false"
+        label="操作"
+        fixed="right"
+        width="150">
+        <template slot-scope="scope">
+          <el-button
+            :disabled="scope.row.invoiceStatus == 1"
+            :type="scope.row.invoiceStatus == 1 ? '' : 'primary'"
+            plain
+            @click.native="markReceivables(scope)">{{ scope.row.invoiceStatus == 1 ? '已开票':'标记为开票' }}</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
@@ -85,6 +99,11 @@
       :customer-id="id"
       :detail="titleDetail"
       @change="getTitleList" />
+    <mark-invoice
+      :visible.sync="markShow"
+      :detail="rowDetail"
+      @change="getInvoiceList"
+    />
   </div>
 </template>
 
@@ -100,7 +119,9 @@ import { crmInvoiceDeleteInvoiceInfoAPI } from '@/api/customermanagement/invoice
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { separator } from '@/filters/vue-numeral-filter/filters'
 import InvoiceTitleSet from '../invoice/components/InvoiceTitleSet'
+import MarkInvoice from '../invoice/components/MarkInvoice'
 import Create from '../invoice/Create'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'RelativeInvoice', // 相关回访
@@ -108,6 +129,7 @@ export default {
   components: {
     Create,
     InvoiceTitleSet,
+    MarkInvoice,
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue')
   },
 
@@ -147,11 +169,20 @@ export default {
       titleFieldList: [],
 
       titleCreateShow: false,
-      titleDetail: null
+      titleDetail: null,
+
+      rowDetail: {},
+      markShow: false
     }
   },
 
-  computed: {},
+  computed: {
+    ...mapGetters(['crm']),
+    // 是否能操作
+    canUpdateStatus() {
+      return this.crm && this.crm.invoice && this.crm.invoice.resetInvoiceStatus
+    }
+  },
 
   watch: {
     id: function(val) {
@@ -331,6 +362,14 @@ export default {
         this.$bus.emit('crm-tab-num-update')
         this.getInvoiceList()
       }
+    },
+
+    /**
+     * 开票操作
+     */
+    markReceivables(scope) {
+      this.rowDetail = scope.row
+      this.markShow = true
     }
   }
 }

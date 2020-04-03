@@ -7,6 +7,7 @@
       label="发票管理" >
       <template slot="ft">
         <el-button
+          v-if="canSave"
           class="xr-btn--orange"
           icon="el-icon-plus"
           type="primary"
@@ -365,6 +366,10 @@ export default {
     // 是否能操作
     canUpdateStatus() {
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].resetInvoiceStatus
+    },
+    // 是否能保存
+    canSave() {
+      return this.crm && this.crm[this.crmType] && this.crm[this.crmType].save
     }
   },
   watch: {},

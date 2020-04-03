@@ -2,6 +2,7 @@
   <xr-create
     v-loading="loading"
     :title="title"
+    :confirm-button-text="confirmButtonText"
     @close="close"
     @save="saveClick">
     <create-sections title="基本信息">
@@ -243,6 +244,13 @@ export default {
         return this.examineInfo.status !== 0
       }
       return false
+    },
+
+    confirmButtonText() {
+      if (this.showExamine) {
+        return '提交审核'
+      }
+      return '保存'
     }
   },
   watch: {},
@@ -585,7 +593,7 @@ export default {
             params.batchId = this.detail.batchId
           }
 
-          this.$refs.examineInfo.validateField((result) => {
+          this.getExamineValidateResult((result) => {
             if (result) {
               if (this.examineInfo.examineType === 2) {
                 params['checkUserId'] = this.examineInfo.value[0].userId
@@ -608,6 +616,19 @@ export default {
           })
         }
       })
+    },
+
+    /**
+     * 获取审批验证结果
+     */
+    getExamineValidateResult(callBack) {
+      if (this.showExamine) {
+        this.$refs.examineInfo.validateField((result) => {
+          callBack(result)
+        })
+      } else {
+        callBack(true)
+      }
     }
   }
 }
