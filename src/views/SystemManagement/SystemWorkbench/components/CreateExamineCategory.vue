@@ -85,6 +85,7 @@
                   class="examine-item-user"
                   @value-change="flowUserSelect"/>
                 <i
+                  v-if="examineList.length > 1"
                   class="el-icon-remove examine-item-delete"
                   @click="deleteExamineItems(index)"/>
               </flexbox>
