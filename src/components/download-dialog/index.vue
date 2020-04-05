@@ -8,7 +8,9 @@
     width="700px"
     @close="close">
     <div class="xr-download-dialog__title">您可以在多平台使用悟空CRM</div>
-    <flexbox class="xr-download-dialog__body">
+    <flexbox
+      justify="center"
+      class="xr-download-dialog__body">
       <xr-download-cell
         v-for="(item, index) in list"
         :key="index"

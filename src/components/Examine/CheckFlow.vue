@@ -93,6 +93,7 @@ export default {
         const request = {
           crm_contract: crmExamineFlowRecordList,
           crm_receivables: crmExamineFlowRecordList,
+          crm_invoice: crmExamineFlowRecordList,
           oa_examine: oaExamineFlowRecordList
         }[this.examineType]
 

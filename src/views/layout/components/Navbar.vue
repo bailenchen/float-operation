@@ -37,7 +37,6 @@
       @update-count="sendSystemUnreadNum"/>
 
     <el-dropdown
-      :visible-arrow="false"
       trigger="click"
       @command="moreMenuClick">
       <div
@@ -51,7 +50,9 @@
         </template>
         <i class="el-icon-caret-bottom mark"/>
       </div>
-      <el-dropdown-menu slot="dropdown">
+      <el-dropdown-menu
+        slot="dropdown"
+        class="el-dropdown-unarrow" >
         <el-dropdown-item
           v-for="(item, index) in moreMenu"
           :key="index"
@@ -512,15 +513,9 @@ export default {
   color: $xr-color-primary;
 }
 
-/deep/ .el-dropdown {
-  .popper__arrow {
+.el-dropdown-menu {
+  /deep/ .popper__arrow {
     display: none;
-  }
-
-  .el-dropdown-menu__item {
-    i {
-      color: #ccc;
-    }
   }
 }
 </style>

@@ -260,6 +260,7 @@ export default {
     // 是编辑
     if (this.detail) {
       const baseFrom = {}
+      baseFrom.invoiceApplyNumber = this.detail.invoiceApplyNumber
       baseFrom.customerId = this.detail.customerId ? [{
         customerName: this.detail.customerName,
         customerId: this.detail.customerId
