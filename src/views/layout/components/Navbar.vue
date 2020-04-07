@@ -137,17 +137,42 @@ export default {
       sysMessageShow: false,
       intervalId: null,
       type: 0,
-      moreMenu: [{
+      downloadVisible: false,
+      showItems: [],
+      hiddenItems: []
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo',
+      'lang',
+      'logo',
+      'crm',
+      'bi',
+      'manage',
+      'oa',
+      'project',
+      'email',
+      'navActiveIndex',
+      'biRouters'
+    ]),
+    moreMenu() {
+      const temps = [{
         command: 'baseInfo',
         divided: false,
         label: '基本信息',
         icon: 'wk wk-user'
-      }, {
-        command: 'userPerson',
-        divided: false,
-        label: '用户中心',
-        icon: 'wk wk-s-seas'
-      }, {
+      }]
+
+      if (this.userInfo.isAdmin) {
+        temps.push({
+          command: 'userPerson',
+          divided: false,
+          label: '用户中心',
+          icon: 'wk wk-s-seas'
+        })
+      }
+      return temps.concat([{
         command: 'download',
         divided: true,
         label: '客户端下载',
@@ -173,26 +198,8 @@ export default {
         label: `版本 ${WKConfig.version}`,
         icon: 'wk wk-version',
         disabled: true
-      }],
-      downloadVisible: false,
-      showItems: [],
-      hiddenItems: []
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'userInfo',
-      'lang',
-      'logo',
-      'crm',
-      'bi',
-      'manage',
-      'oa',
-      'project',
-      'email',
-      'navActiveIndex',
-      'biRouters'
-    ]),
+      }])
+    },
     items() {
       var tempsItems = []
       // if (this.oa) {

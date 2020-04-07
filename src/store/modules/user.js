@@ -82,6 +82,8 @@ const user = {
       if (data && data.hasOwnProperty('emailId')) {
         data.user.emailId = data.emailId
       }
+
+      data.user.isAdmin = data.isAdmin
       data.user.isReadNotice = data.isReadNotice
       Lockr.set('loginUserInfo', data.user)
 
@@ -166,6 +168,7 @@ const user = {
           if (response && response.hasOwnProperty('emailId')) {
             response.data.emailId = response.emailId
           }
+          response.data.isAdmin = response.isAdmin
           response.data.isReadNotice = response.isReadNotice
           commit('SET_USERINFO', response.data)
           resolve(response)
