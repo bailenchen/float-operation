@@ -942,11 +942,11 @@ export default {
      */
     ingnoreRequiredField(data) {
       if (this.crmType == 'contract' && data.fieldName == 'num') {
-        return true
+        return data.autoGeneNumber == 1
       } else if (this.crmType == 'receivables' && data.fieldName == 'number') {
-        return true
+        return data.autoGeneNumber == 1
       } else if (this.crmType == 'visit' && data.fieldName == 'visit_number') {
-        return true
+        return data.autoGeneNumber == 1
       }
 
       return false

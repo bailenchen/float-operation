@@ -380,6 +380,7 @@ export default {
      */
     initTableHead() {
       if (this.show) {
+        this.currentPage = 1
         if (this.fieldList.length == 0) {
           this.getFieldList()
         } else {

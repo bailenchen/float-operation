@@ -123,6 +123,30 @@ export default {
       }, {
         label: '推广',
         value: 10
+      }, {
+        label: '日志',
+        value: 11
+      }, {
+        label: '办公审批',
+        value: 12
+      }, {
+        label: '任务',
+        value: 13
+      }, {
+        label: '项目',
+        value: 14
+      }, {
+        label: '标签',
+        value: 15
+      }, {
+        label: '日历',
+        value: 16
+      }, {
+        label: '回访',
+        value: 17
+      }, {
+        label: '发票',
+        value: 18
       }],
       fieldList: [
         {

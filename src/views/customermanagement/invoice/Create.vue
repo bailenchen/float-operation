@@ -321,6 +321,11 @@ export default {
     },
 
     getField(status) {
+      if (status != 1) {
+        this.$set(this.rules, 'invoiceApplyNumber', [
+          { required: true, message: '请输入发票申请编号', trigger: ['blur', 'change'] }
+        ])
+      }
       this.baseFields = [
         {
           name: '发票申请编号',
