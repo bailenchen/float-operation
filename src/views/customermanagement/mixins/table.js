@@ -308,7 +308,7 @@ export default {
       if (column.property === 'isTransform') {
         return ['否', '是'][cellValue] || '--'
       }
-      return row[column.property] || '--'
+      return row[column.property] === '' || row[column.property] === null ? '--' : row[column.property]
     },
     /** */
     /** */

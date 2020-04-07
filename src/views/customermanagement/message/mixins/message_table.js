@@ -308,7 +308,7 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      return row[column.property] || '--'
+      return row[column.property] === '' || row[column.property] === null ? '--' : row[column.property]
     },
 
     // 更改每页展示数量
