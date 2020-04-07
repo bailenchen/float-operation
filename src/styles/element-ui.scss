@@ -116,3 +116,12 @@ table {
  .el-upload-list__item {
   transition: none !important;
 }
+
+.el-submenu-more {
+  .el-menu {
+    padding: 15px 0;
+  }
+  .el-menu-item + .el-menu-item {
+    margin-top: 10px;
+  }
+}

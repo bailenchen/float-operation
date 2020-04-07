@@ -13,12 +13,28 @@
         router
         @select="navItemsClick">
         <el-menu-item
-          v-for="(item, index) in items"
+          v-for="(item, index) in showItems"
           :key="index"
           :index="item.path">
           <i :style="{ fontSize: item.fontSize }" :class="item.icon" />
           <span>{{ item.title }}</span>
         </el-menu-item>
+        <el-submenu
+          v-if="hiddenItems.length"
+          popper-class="el-submenu-more"
+          index="other">
+          <template slot="title">
+            <i class="wk wk-grid" />
+          </template>
+          <el-menu-item
+            v-for="(mItem, mIndex) in hiddenItems"
+            :key="mIndex"
+            :index="`${mItem.path}`"
+          >
+            <i :style="{ fontSize: mItem.fontSize }" :class="mItem.icon" />
+            <span>{{ mItem.title }}</span>
+          </el-menu-item>
+        </el-submenu>
       </el-menu>
     </div>
 
@@ -158,7 +174,9 @@ export default {
         icon: 'wk wk-version',
         disabled: true
       }],
-      downloadVisible: false
+      downloadVisible: false,
+      showItems: [],
+      hiddenItems: []
     }
   },
   computed: {
@@ -252,7 +270,7 @@ export default {
           type: 7,
           path: this.userInfo && this.userInfo.emailId ? '/email/index/receive' : '/email/set',
           icon: 'wk wk-inbox',
-          fontSize: '18px'
+          fontSize: '17px'
         })
       }
       if (this.oa && this.oa.calendar) {
@@ -261,7 +279,7 @@ export default {
           type: 8,
           path: '/calendar/index',
           icon: 'wk wk-calendar',
-          fontSize: '18px'
+          fontSize: '20px'
         })
       }
       return tempsItems
@@ -271,6 +289,12 @@ export default {
     if (this.navIndex && this.navIndex !== this.navActiveIndex) {
       this.$store.commit('SET_NAVACTIVEINDEX', this.navIndex)
     }
+
+    window.onresize = () => {
+      this.changeMenu(document.documentElement.clientWidth)
+    }
+
+    this.changeMenu(document.documentElement.clientWidth)
 
     // 消息数
     this.getSystemUnreadNum('visible')
@@ -287,6 +311,21 @@ export default {
     }
   },
   methods: {
+    changeMenu(clintWidth) {
+      const showItems = []
+      const hiddenItems = []
+      for (let index = 0; index < this.items.length; index++) {
+        const element = this.items[index]
+        if (clintWidth - 450 - (index + 1) * 130 > 0) {
+          showItems.push(element)
+        } else {
+          hiddenItems.push(element)
+        }
+      }
+      this.showItems = showItems
+      this.hiddenItems = hiddenItems
+    },
+
     navItemsClick(path) {
       this.$store.commit('SET_NAVACTIVEINDEX', path)
       this.$emit('nav-items-click', path)
@@ -432,6 +471,26 @@ export default {
 // 菜单
 .el-menu {
   overflow: hidden;
+
+  /deep/ .el-submenu__icon-arrow {
+    display: none;
+  }
+
+  /deep/ .el-submenu {
+    .el-submenu__title {
+      i {
+        color: #5c6075;
+      }
+    }
+  }
+
+  /deep/ .el-submenu.is-active {
+    .el-submenu__title {
+      i {
+        color: $xr-color-primary;
+      }
+    }
+  }
 }
 
 .el-menu.el-menu--horizontal {
@@ -459,7 +518,7 @@ export default {
   color: $xr-color-primary;
 }
 
-.el-menu--horizontal > .el-menu-item.is-active {
+.el-menu-item.is-active {
   border-width: 3px;
   i {
     color: $xr-color-primary;

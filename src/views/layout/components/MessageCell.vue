@@ -102,6 +102,11 @@ export default {
           icon: 'wk wk-schedule',
           color: '#6995FF',
           type: 'schedule'
+        },
+        invoice: {
+          icon: 'wk wk-invoice',
+          color: '#6995FF',
+          type: 'invoice'
         }
       }
 
@@ -132,6 +137,8 @@ export default {
           key = 'product'
         } else if ([22, 28, 31].includes(this.data.type)) {
           key = 'business'
+        } else if ([35, 36, 37].includes(this.data.type)) {
+          key = 'invoice'
         }
       }
 
@@ -173,7 +180,10 @@ export default {
         31: `${this.data.realname}将您移出了商机`,
         32: `${this.data.realname}将您移出了客户`,
         33: `${this.data.realname}将您移出了合同`,
-        34: `${this.data.realname}回复了您评论的日志`
+        34: `${this.data.realname}回复了您评论的日志`,
+        35: `${this.data.realname}拒绝您的`,
+        36: `${this.data.realname}您的`,
+        37: `${this.data.realname}提交了`
       }[this.data.type]
     },
 
@@ -234,7 +244,10 @@ export default {
         31: `的团队`,
         32: `的团队`,
         33: `的团队`,
-        34: `：“${this.data.content}”，请及时查看`
+        34: `：“${this.data.content}”，请及时查看`,
+        35: `，拒绝理由：“${this.data.content}”，请及时处理`,
+        36: `发票已经审核通过，请及时查看`,
+        37: `发票审批，请及时处理`
       }[this.data.type]
     }
   },

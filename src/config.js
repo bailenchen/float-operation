@@ -14,8 +14,8 @@ const androidUrl = 'https://sj.qq.com/myapp/detail.htm?apkName=com.kakarote.crm1
 const cipherStr = 'wk'
 
 const companyName = '悟空CRM'
-const version = 'V10.1.5.20200402'
-const build = 14
+const version = 'V10.1.5.20200407'
+const build = 15
 
 export default {
   version,
