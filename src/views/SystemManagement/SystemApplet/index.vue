@@ -95,7 +95,7 @@
                         style="padding: 0 !important;"
                         trigger="click">
                         <crm-relative
-                          v-if="scope.row.showPopover"
+                          v-show="scope.row.showPopover"
                           :radio="false"
                           :show="scope.row.showPopover"
                           :selected-data="{ product: scope.row.crmProductList ||[] }"
