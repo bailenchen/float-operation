@@ -157,7 +157,7 @@ export default {
 
       return array
         .map(item => {
-          return field ? item[field] : ''
+          return field ? item[field] : item
         })
         .join('，')
     }
