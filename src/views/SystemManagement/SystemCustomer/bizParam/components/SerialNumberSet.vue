@@ -52,6 +52,7 @@
                         :value="item.value"/>
                     </el-select>
                     <el-tooltip
+                      v-if="listItem.label == 6"
                       content="从合同的下单时间中获取"
                       effect="dark"
                       placement="top">
