@@ -95,6 +95,7 @@ export default {
       if (!this.item.filePath) {
         this.audio.maxTime = 0
       }
+      this.defaultTime = realFormatSecond(this.item.talkTime)
     }
   },
   mounted() {
@@ -114,11 +115,13 @@ export default {
     },
     // 控制音频的播放与暂停
     startPlayOrPause() {
-      console.log(this.audio.playing)
       return this.audio.playing ? this.pause() : this.play()
     },
     // 播放音频
     play() {
+      if (this.defaultTime === '0:00:00') {
+        return false
+      }
       this.filePath()
     },
     // 暂停音频
@@ -157,7 +160,7 @@ export default {
     },
 
     handleTouchStart(e) {
-      document.addEventListener('onmousemove', this.handleTouchMove)
+      document.addEventListener('mousemove', this.handleTouchMove)
       document.addEventListener('mouseup', this.handleTouchEnd)
       document.addEventListener('mouseover', this.handleTouchEnd)
       document.addEventListener('mouseleave', this.handleTouchEnd)
@@ -166,12 +169,11 @@ export default {
       // this.onDragStart(e);
     },
     handleTouchMove(e) {
-      console.log('移动了')
       this.setValue(e)
     },
     handleTouchEnd(e) {
       this.setValue(e)
-      document.removeEventListener('onmousemove', this.handleTouchMove)
+      document.removeEventListener('mousemove', this.handleTouchMove)
       document.removeEventListener('mouseup', this.handleTouchEnd)
       document.removeEventListener('mouseover', this.handleTouchEnd)
       document.removeEventListener('mouseleave', this.handleTouchEnd)
@@ -185,7 +187,6 @@ export default {
         minTime,
         step
       } = this.audio
-      console.log(maxTime - minTime, e.screenX, $el.getBoundingClientRect().left, $el.offsetWidth, '$el.getBoundingClientRect().left')
       let value = (e.screenX - $el.getBoundingClientRect().left) / $el.offsetWidth * (maxTime - minTime)
       value = Math.round(value / step) * step + minTime
       value = parseFloat(value.toFixed(5))
@@ -195,12 +196,10 @@ export default {
       } else if (value < minTime) {
         value = minTime
       }
-      console.log(value, 'value')
       this.$refs.audio.currentTime = value
     },
     // 拖动进度条，改变当前时间，index是进度条改变时的回调函数的参数0-100之间，需要换算成实际时间
     changeCurrentTime(index) {
-      console.log('拖动进度条')
       // this.audio.playing && this.pause();
       // console.log('拖动了',index,this.sliderTime,this.audio.maxTime,parseInt(index / 100 * this.audio.maxTime))
       // !this.audio.playing && this.play();
