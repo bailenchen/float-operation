@@ -104,14 +104,17 @@ export default {
   methods: {
     /** 获取文件路径 */
     filePath() {
-      this.audioUrl = ''
-      conversionFileToUrl(this.item.filePath).then(res => {
-        this.audioUrl = res
-        this.defaultTime = ''
-        this.$nextTick(() => {
-          this.$refs.audio.play()
+      if (!this.audioUrl) {
+        conversionFileToUrl(this.item.filePath).then(res => {
+          this.audioUrl = res
+          this.defaultTime = ''
+          this.$nextTick(() => {
+            this.$refs.audio.play()
+          })
         })
-      })
+      } else {
+        this.$refs.audio.play()
+      }
     },
     // 控制音频的播放与暂停
     startPlayOrPause() {
@@ -187,7 +190,8 @@ export default {
         minTime,
         step
       } = this.audio
-      let value = (e.screenX - $el.getBoundingClientRect().left) / $el.offsetWidth * (maxTime - minTime)
+      let value = (e.screenX - $el.getBoundingClientRect().left - 36) / 154 * (maxTime - minTime)
+      console.log(e.screenX, $el.getBoundingClientRect().left, value, 'value-==')
       value = Math.round(value / step) * step + minTime
       value = parseFloat(value.toFixed(5))
 
