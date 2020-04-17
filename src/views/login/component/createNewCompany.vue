@@ -156,7 +156,7 @@
         <el-checkbox v-model="agreeLaw">
           我同意
         </el-checkbox>
-        <span class="special" @click.stop="dialogVisible = !dialogVisible">《悟空CRM用户协议》</span>
+        <span class="special" @click.stop="dialogVisible = !dialogVisible">《CRM用户协议》</span>
       </div>
     </template>
 
@@ -262,14 +262,14 @@
     <el-dialog
       :visible.sync="dialogVisible"
       :width="dialogWidth"
-      title="悟空CRM用户隐私保护协议">
+      title="CRM用户隐私保护协议">
       <div class="service-doc">
         &nbsp;&nbsp;请用户务必审慎阅读、充分理解各条款内容，以及开通或使用某项服务的单独协议，并选择接受或不接受。
-        <br>&nbsp;&nbsp;除非用户已阅读并接受本协议所有条款，否则用户无权下载或使用悟空CRM相关服务。用户的下载、使用、登录等行为即视为已阅读并同意上述的约束。
+        <br>&nbsp;&nbsp;除非用户已阅读并接受本协议所有条款，否则用户无权下载或使用CRM相关服务。用户的下载、使用、登录等行为即视为已阅读并同意上述的约束。
         <br>1.本协议的范围
         <br>&nbsp;&nbsp;本协议适用主体范围： 本协议是您作为用户，与郑州卡卡罗特软件科技有限公司（以下简称 “卡卡罗特”）之间关于使用卡卡罗特相关服务所订立的协议。
         <br>2. 关于本服务
-        <br>&nbsp;&nbsp;2.1本服务内容是指卡卡罗特通过互联网向用户提供的悟空CRM软件使用权。
+        <br>&nbsp;&nbsp;2.1本服务内容是指卡卡罗特通过互联网向用户提供的CRM软件使用权。
         <br>&nbsp;&nbsp;2.2 本服务的形式
         <br>&nbsp;&nbsp;2.2.1 用户使用本服务需要登陆、注册、填写其他表单，就本服务，卡卡罗特给予用户一项不可转让及非排他性的许可。用户仅可为访问或使用本服务的目的而使用这些内容及服务。
         <br>&nbsp;&nbsp;2.2.2 本服务中软件提供包括但不限于移动端和PC端等多个应用版本，用户应选择与所使用环境相匹配的产品版本。

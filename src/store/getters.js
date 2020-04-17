@@ -11,7 +11,7 @@ const getters = {
     if (state.app.name) {
       return state.app.name
     }
-    return '悟空CRM'
+    return 'CRM'
   },
   collapse: state => state.app.sidebar.collapse,
   activeIndex: state => state.app.sidebar.activeIndex,
