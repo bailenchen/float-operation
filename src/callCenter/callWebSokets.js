@@ -1,3 +1,4 @@
+import { callHangUpPhoneAPI, callBreathePhoneAPI } from '@/api/call'
 class MyWs {
   webSokets
   callinTime
@@ -52,10 +53,13 @@ class MyWs {
   }
   // 拨号
   OnDailout(phoneNumber) {
-    this.send({
-      event: 'Dial',
-      number: String(phoneNumber)
-    })
+    // this.send({
+    //   event: 'Dial',
+    //   number: String(phoneNumber)
+    // })
+    callBreathePhoneAPI({
+      phone: phoneNumber
+    }).then(res => {}).catch(() => {})
   }
   // 接听
   OnAnswer() {
@@ -65,9 +69,10 @@ class MyWs {
   }
   // 挂断
   OnHungUp() {
-    this.send({
-      event: 'HangUp'
-    })
+    // this.send({
+    //   event: 'HangUp'
+    // })
+    callHangUpPhoneAPI().then(res => {}).catch(() => {})
   }
   // 获取通话状态
   OnGetCallState() {
