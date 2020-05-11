@@ -43,6 +43,8 @@ import callCenter from './callWebSokets'
 import { crmCallInNumberSearch } from '../api/businessIntelligence/callCenter'
 import CRMFullScreenDetail from '@/views/customermanagement/components/CRMFullScreenDetail'
 import CrmCreateView from '@/views/customermanagement/components/CRMCreateView'
+import Lockr from 'lockr'
+
 export default {
   name: 'IncomingWindows',
   components: { CrmCreateView, CRMFullScreenDetail },
@@ -60,7 +62,8 @@ export default {
       showCall: false,
       showDrop: false,
       customerType: '',
-      notify: null
+      notify: null,
+      isSoftCallIn: false // 是软乎呼入 2007
     }
   },
   computed: {
@@ -85,10 +88,13 @@ export default {
       handler(val) {
         if (val) {
           crmCallCheckAuth().then(res => {
-            if (res.auth) {
+            const data = res.data || {}
+            if (data.auth) {
               this.$store.commit('GET_IS_CALL', true)
+              Lockr.set('wkCallData', data)
               this.callCenterConnect()
             } else {
+              Lockr.rm('wkCallData')
               this.$store.commit('GET_IS_CALL', false)
             }
           }).catch(() => {
@@ -204,6 +210,7 @@ export default {
      * 来电监听 (调用此方法会触发弹屏)
      */
     incoming() {
+      const isSoft = callCenter.getHisUse() == 1 // hisUse 0 是默认硬呼 1 是软乎
       const h = this.$createElement
       this.notify = this.$notify({
         title: '来电信息',
@@ -316,6 +323,7 @@ export default {
               style: {
                 backgroundColor: (this.showRing && this.isAnswer) ? '#3E84E9' : '#909399',
                 height: '27px',
+                display: isSoft ? 'none' : 'inline-block',
                 paddingTop: '5px',
                 paddingBottom: '5px',
                 paddingLeft: '25px',
@@ -335,6 +343,7 @@ export default {
               style: {
                 backgroundColor: (!this.showRing && this.isAnswer) ? '#909399' : '#f56c6c',
                 height: '27px',
+                display: isSoft ? 'none' : 'inline-block',
                 paddingTop: '5px',
                 paddingBottom: '5px',
                 paddingLeft: '25px',
@@ -489,154 +498,339 @@ export default {
       }, () => {
         callCenter.close()
       })
-      callCenter.message((data) => {
-        switch (data.event) {
-          // 设备呼出
-          case 'OutGoing': {
-            // 刷新页面时,读取储存的信息
-            const callOutData = JSON.parse(localStorage.getItem('callOutData'))
-            if (callOutData) {
-              this.modelData = {
-                modelId: callOutData.id,
-                model: callOutData.type
-              }
-            } else {
-              this.modelData = {}
-            }
 
-            if (this.notify) {
-              this.notify.close()
+      const callData = Lockr.get('wkCallData')
+      if (callData && callData.hisUse == 1) {
+        callCenter.message((data) => {
+          this.callSoftMessage(data)
+        })
+      } else {
+        callCenter.message((data) => {
+          this.callHardwareMessage(data)
+        })
+      }
+    },
+
+    /**
+     * 硬呼和软呼
+     */
+    callHardwareMessage(data) {
+      switch (data.event) {
+        // 设备呼出
+        case 'OutGoing': {
+          // 刷新页面时,读取储存的信息
+          const callOutData = JSON.parse(localStorage.getItem('callOutData'))
+          if (callOutData) {
+            this.modelData = {
+              modelId: callOutData.id,
+              model: callOutData.type
             }
-            this.$store.commit('SHOW_RING', true)
-            this.$store.commit('SHOW_CALL_OUT', true)
-            this.$store.commit('SHOW_TIMER', true)
-            this.rowID = callOutData.id
-            this.crmType = callOutData.type
-            this.$emit('sendMsg', this.modelData)
-            break
-          }
-          // 振铃中
-          case 'RingBack': {
-            // 振铃时计时
-            this.startTimePiece(false)
-            this.$store.commit('SHOW_RING', true)
-            this.$store.commit('SHOW_CALL_OUT', true)
-            this.$store.commit('SHOW_TIMER', true)
-            const newTime = new Date().getTime()
-            localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
-            this.startTimePiece(true)
-            break
-          }
-          // 来电呼入
-          case 'InComing': {
-            this.startTimePiece(false)
-            localStorage.setItem('callPhone', data.number)
-            this.isAnswer = true
-            this.showHang = false
-            this.startTimePiece(true)
-            this.getMember(data.number, 6)
-            const newTime = new Date().getTime()
-            localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
-            if (this.notify) {
-              // 有弹框是关闭第一个弹框, 初始化控制弹框所有变量的数据
-              this.notify.close()
-            }
-            break
+          } else {
+            this.modelData = {}
           }
 
-          case 'Answer': {
-            // 从振铃中变为通话中, 开始计时,disable 接听按钮
-            this.startTimePiece(false)
-            const newTime = new Date().getTime()
-            this.isAnswer = false
-            if (this.notify && data.call_data.type === 1) {
-              this.notify.close()
-              this.incoming()
-            }
-            localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
-            this.$store.commit('SHOW_RING', false)
-            this.ringShow = false
-            this.startTimePiece(true)
-            break
+          if (this.notify) {
+            this.notify.close()
           }
-          case 'HangUp':
-            // 挂断电话
-            this.startTimePiece(false)
-            this.$store.commit('SHOW_TIMER', false)
-            localStorage.removeItem('IntervalTime')
-            this.showCall = false
-            this.ringShow = true
-            this.$store.commit('SHOW_RING', false)
-            this.isAnswer = true
-            if (this.notify) {
-              this.notify.close()
-              setTimeout(() => {
-                this.incoming()
-              }, 500)
-            }
-            this.showHang = true
-            break
-
-          case 'Idle':
-            localStorage.setItem('callPhone', '')
-            localStorage.removeItem('callOutData')
-            localStorage.removeItem('IntervalTime')
-            break
-
-          case 'CallRecord':
-            this.saveRecord(data.data)
-            // 保存通话记录
-            break
-          // 设备通话状态
-          case 'CallState':
-            switch (data.data.callState) {
-              case 1:
-                localStorage.setItem('callPhone', '') // 设备空闲时清空号码
-                localStorage.removeItem('callOutData') // 清空呼出时保留的信息
-                localStorage.removeItem('IntervalTime') // 清空时间
-                break
-
-              case 5: {
-                // 已播出号码,正在呼出时: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
-                this.$store.commit('SHOW_CALL_OUT', true)
-                this.refresh(5)
-                break
-              }
-              case 6: {
-                // 收到来电: 刷新页面时,来电弹框不能消失
-                this.refresh(6)
-                break
-              }
-              case 8: {
-                // 已播出号码,对方正在振铃: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
-                this.$store.commit('SHOW_CALL_OUT', true)
-                this.refresh(8)
-                break
-              }
-              case 9: {
-                // 已播出号码,正在接听: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
-                this.$store.commit('SHOW_CALL_OUT', true)
-                this.refresh(9, data.call_data)
-                break
-              }
-            }
-            break
-
-          case 'DeviceDiscon':
-            console.log('设备已断开链接')
-            break
-
-          case 'Error':
-            console.log('错误信息')
-            break
-          case 'UploadResponse':
-            // if (data.data.code === 0) {
-            //   this.$message.success('录音上传成功')
-            // }
-            break
+          this.$store.commit('SHOW_RING', true)
+          this.$store.commit('SHOW_CALL_OUT', true)
+          this.$store.commit('SHOW_TIMER', true)
+          this.rowID = callOutData.id
+          this.crmType = callOutData.type
+          this.$emit('sendMsg', this.modelData)
+          break
         }
-        // console.log(data)
-      })
+        // 振铃中
+        case 'RingBack': {
+          // 振铃时计时
+          this.startTimePiece(false)
+          this.$store.commit('SHOW_RING', true)
+          this.$store.commit('SHOW_CALL_OUT', true)
+          this.$store.commit('SHOW_TIMER', true)
+          const newTime = new Date().getTime()
+          localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
+          this.startTimePiece(true)
+          break
+        }
+        // 来电呼入
+        case 'InComing': {
+          this.startTimePiece(false)
+          localStorage.setItem('callPhone', data.number)
+          this.isAnswer = true
+          this.showHang = false
+          this.startTimePiece(true)
+          this.getMember(data.number, 6)
+          const newTime = new Date().getTime()
+          localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
+          if (this.notify) {
+            // 有弹框是关闭第一个弹框, 初始化控制弹框所有变量的数据
+            this.notify.close()
+          }
+          break
+        }
+
+        case 'Answer': {
+          // 从振铃中变为通话中, 开始计时,disable 接听按钮
+          this.startTimePiece(false)
+          const newTime = new Date().getTime()
+          this.isAnswer = false
+          if (this.notify && data.call_data.type === 1) {
+            this.notify.close()
+            this.incoming()
+          }
+          localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
+          this.$store.commit('SHOW_RING', false)
+          this.ringShow = false
+          this.startTimePiece(true)
+          break
+        }
+        case 'HangUp':
+          // 挂断电话
+          this.startTimePiece(false)
+          this.$store.commit('SHOW_TIMER', false)
+          localStorage.removeItem('IntervalTime')
+          this.showCall = false
+          this.ringShow = true
+          this.$store.commit('SHOW_RING', false)
+          this.isAnswer = true
+          if (this.notify) {
+            this.notify.close()
+            setTimeout(() => {
+              this.incoming()
+            }, 500)
+          }
+          this.showHang = true
+          break
+
+        case 'Idle':
+          localStorage.setItem('callPhone', '')
+          localStorage.removeItem('callOutData')
+          localStorage.removeItem('IntervalTime')
+          break
+
+        case 'CallRecord':
+          this.saveRecord(data.data)
+          // 保存通话记录
+          break
+          // 设备通话状态
+        case 'CallState':
+          switch (data.data.callState) {
+            case 1:
+              localStorage.setItem('callPhone', '') // 设备空闲时清空号码
+              localStorage.removeItem('callOutData') // 清空呼出时保留的信息
+              localStorage.removeItem('IntervalTime') // 清空时间
+              break
+
+            case 5: {
+              // 已播出号码,正在呼出时: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
+              this.$store.commit('SHOW_CALL_OUT', true)
+              this.refresh(5)
+              break
+            }
+            case 6: {
+              // 收到来电: 刷新页面时,来电弹框不能消失
+              this.refresh(6)
+              break
+            }
+            case 8: {
+              // 已播出号码,对方正在振铃: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
+              this.$store.commit('SHOW_CALL_OUT', true)
+              this.refresh(8)
+              break
+            }
+            case 9: {
+              // 已播出号码,正在接听: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
+              this.$store.commit('SHOW_CALL_OUT', true)
+              this.refresh(9, data.call_data)
+              break
+            }
+          }
+          break
+
+        case 'DeviceDiscon':
+          console.log('设备已断开链接')
+          break
+
+        case 'Error':
+          console.log('错误信息')
+          break
+        case 'UploadResponse':
+          // if (data.data.code === 0) {
+          //   this.$message.success('录音上传成功')
+          // }
+          break
+      }
+    },
+
+    /**
+     * 软呼信息
+     * 设备呼出成功    ：2005
+          设备挂断成功    :        2006
+
+          振铃中变为通话中：2003
+          客户挂断电话：2004
+
+          来电呼入：2007
+
+     */
+    callSoftMessage(data) {
+      console.log('callSoftMessage---', data)
+      switch (data.cmd) {
+        // 设备呼出
+        case 2005: {
+          // 刷新页面时,读取储存的信息
+          const callOutData = JSON.parse(localStorage.getItem('callOutData'))
+          if (callOutData) {
+            this.modelData = {
+              modelId: callOutData.id,
+              model: callOutData.type
+            }
+          } else {
+            this.modelData = {}
+          }
+
+          if (this.notify) {
+            this.notify.close()
+          }
+          this.$store.commit('SHOW_RING', true)
+          this.$store.commit('SHOW_CALL_OUT', true)
+          this.$store.commit('SHOW_TIMER', true)
+          this.rowID = callOutData.id
+          this.crmType = callOutData.type
+          this.$emit('sendMsg', this.modelData)
+          break
+        }
+        // // 振铃中
+        // case 'RingBack': {
+        //   // 振铃时计时
+        //   this.startTimePiece(false)
+        //   this.$store.commit('SHOW_RING', true)
+        //   this.$store.commit('SHOW_CALL_OUT', true)
+        //   this.$store.commit('SHOW_TIMER', true)
+        //   const newTime = new Date().getTime()
+        //   localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
+        //   this.startTimePiece(true)
+        //   break
+        // }
+        // 来电呼入
+        case 2007: {
+          this.isSoftCallIn = true
+          this.startTimePiece(false)
+          localStorage.setItem('callPhone', data.phone)
+          this.isAnswer = true
+          this.showHang = false
+          this.startTimePiece(true)
+          this.getMember(data.phone, 6)
+          const newTime = new Date().getTime()
+          localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
+          if (this.notify) {
+            // 有弹框是关闭第一个弹框, 初始化控制弹框所有变量的数据
+            this.notify.close()
+          }
+          break
+        }
+
+        case 2003: {
+          // 从振铃中变为通话中, 开始计时,disable 接听按钮
+          this.startTimePiece(false)
+          const newTime = new Date().getTime()
+          this.isAnswer = false
+          if (this.notify && this.isSoftCallIn) {
+            this.isSoftCallIn = false
+            this.notify.close()
+            this.incoming()
+          }
+          localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
+          this.$store.commit('SHOW_RING', false)
+          this.ringShow = false
+          this.startTimePiece(true)
+          break
+        }
+        case 2004:
+        case 2006:
+          // 挂断电话
+          this.startTimePiece(false)
+          this.$store.commit('SHOW_TIMER', false)
+          localStorage.removeItem('IntervalTime')
+          this.showCall = false
+          this.ringShow = true
+          this.$store.commit('SHOW_RING', false)
+          this.isAnswer = true
+          if (this.notify) {
+            this.notify.close()
+            setTimeout(() => {
+              this.incoming()
+            }, 500)
+          }
+          this.showHang = true
+          break
+
+        // case 'Idle':
+        //   localStorage.setItem('callPhone', '')
+        //   localStorage.removeItem('callOutData')
+        //   localStorage.removeItem('IntervalTime')
+        //   break
+
+        // case 'CallRecord':
+        //   this.saveRecord(data.data)
+        //   // 保存通话记录
+        //   break
+          // 设备通话状态
+          // 主动获取话机状态：2010
+        // 后台推送话机状态：2011
+        case 2001:
+          switch (data.status) {
+            case 'IDLE':
+              localStorage.setItem('callPhone', '') // 设备空闲时清空号码
+              localStorage.removeItem('callOutData') // 清空呼出时保留的信息
+              localStorage.removeItem('IntervalTime') // 清空时间
+              break
+
+            // case 5: {
+            //   // 已播出号码,正在呼出时: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
+            //   this.$store.commit('SHOW_CALL_OUT', true)
+            //   this.refresh(5)
+            //   break
+            // }
+            // case 6: {
+            //   // 收到来电: 刷新页面时,来电弹框不能消失
+            //   this.refresh(6)
+            //   break
+            // }
+            case 'RINGING': {
+              // 已播出号码,对方正在振铃: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
+              this.$store.commit('SHOW_CALL_OUT', true)
+              this.refresh(8)
+              break
+            }
+            case 'CALL_OUT': {
+              // 已播出号码,正在接听: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
+              this.$store.commit('SHOW_CALL_OUT', true)
+              this.refresh(9, { type: 0 }) // -1设备空闲 0呼出，1呼入
+              break
+            }
+            case 'CALL_IN': {
+              // 已播出号码,正在接听: 刷新页面时,详情页面应该展示通话信息,如果不显示,无法挂断
+              this.$store.commit('SHOW_CALL_OUT', true)
+              this.refresh(9, { type: 1 })
+              break
+            }
+          }
+          break
+
+        case 'DeviceDiscon':
+          console.log('设备已断开链接')
+          break
+
+        case 'Error':
+          console.log('错误信息')
+          break
+        case 'UploadResponse':
+          // if (data.data.code === 0) {
+          //   this.$message.success('录音上传成功')
+          // }
+          break
+      }
     },
     /**
      *  刷新页面的处理逻辑
@@ -736,7 +930,7 @@ export default {
 
         case 9: {
           // 从振铃中变为通话中, 开始计时,disable 接听按钮
-          if (callData.type === 0) {
+          if (callData.type === 0) { // -1设备空闲 0呼出，1呼入
             this.showCall = false
             this.showHang = false
           }
