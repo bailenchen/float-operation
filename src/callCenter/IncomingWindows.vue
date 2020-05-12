@@ -778,9 +778,13 @@ export default {
           // 设备通话状态
           // 主动获取话机状态：2010
         // 后台推送话机状态：2011
-        case 2001:
+        case 2011:
           switch (data.status) {
             case 'IDLE':
+              if (this.notify) {
+                // 有弹框是关闭第一个弹框, 初始化控制弹框所有变量的数据
+                this.notify.close()
+              }
               localStorage.setItem('callPhone', '') // 设备空闲时清空号码
               localStorage.removeItem('callOutData') // 清空呼出时保留的信息
               localStorage.removeItem('IntervalTime') // 清空时间
