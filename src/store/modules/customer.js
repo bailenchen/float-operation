@@ -18,7 +18,7 @@ const app = {
       endContract: 0,
       totalNum: 0
     },
-    showRing: true,
+    showRing: false,
     showTimer: false,
     showCallOut: false,
     isCall: false, // 呼叫中心权限

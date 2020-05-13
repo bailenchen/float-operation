@@ -179,6 +179,7 @@ export default {
             } else if (this.model === 'leads') {
               this.incomingName = '线索客户'
               this.customerName = res.data.name
+              this.companyName = ''
             } else {
               this.incomingName = '客户'
               this.customerName = res.data.name
@@ -231,7 +232,7 @@ export default {
         }, [
           h('div', {
             style: {
-              display: this.customerName ? 'flex' : 'none',
+              display: this.customerName || this.companyName ? 'flex' : 'none',
               marginTop: '20px'
             }
           }, [
@@ -574,7 +575,7 @@ export default {
           this.startTimePiece(false)
           const newTime = new Date().getTime()
           this.isAnswer = false
-          if (this.notify && data.call_data.type === 1) {
+          if (this.notify && data.call_data.type === 1) { // -1设备空闲 0呼出，1呼入
             this.notify.close()
             this.incoming()
           }
@@ -748,7 +749,7 @@ export default {
         }
         case 2004:
         case 2006:
-          // 挂断电话
+          // 挂断电话 设备挂断成功    :        2006 客户挂断电话：2004
           this.startTimePiece(false)
           this.$store.commit('SHOW_TIMER', false)
           localStorage.removeItem('IntervalTime')
@@ -778,6 +779,9 @@ export default {
           // 设备通话状态
           // 主动获取话机状态：2010
         // 后台推送话机状态：2011
+        case 500:
+          this.$message.error(data.msg)
+          break
         case 2011:
           switch (data.status) {
             case 'IDLE':

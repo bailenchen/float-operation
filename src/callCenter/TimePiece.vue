@@ -75,7 +75,7 @@ export default {
     font-size: 13px;
   }
   .time_piece{
-    width: 115px;
+    width: 120px;
     padding: 5px;
     margin: 0 7px;
     background-color: #3e84e9;
@@ -90,7 +90,7 @@ export default {
     }
   }
   .time_piece1{
-    width: 115px;
+    width: 120px;
     padding: 5px;
     margin: 0 7px;
     background-color: #E6A23C;

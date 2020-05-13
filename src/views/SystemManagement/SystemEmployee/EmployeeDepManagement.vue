@@ -1337,8 +1337,12 @@ export default {
           })
             .then(res => {
               this.loading = false
-              this.$message.success('修改成功')
-              this.usersListFun()
+              if (res.agent) {
+                this.$message.success(`修改成功，软呼坐席号：${res.agent}`)
+              } else {
+                this.$message.success('修改成功')
+              }
+              this.getUserList()
             })
             .catch(() => {
               this.loading = false

@@ -90,7 +90,6 @@ class MyWs {
   OnDailout(phoneNumber) {
     const callData = Lockr.get('wkCallData')
     // hisUse 0 是默认硬呼 1 是软乎
-    console.log('OnDailout---', callData, phoneNumber)
     if (callData && callData.hisUse == 1) {
       this.send({
         cmd: 2001, // 2001：拨打电话
