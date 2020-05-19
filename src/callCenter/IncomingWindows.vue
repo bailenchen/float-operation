@@ -737,10 +737,11 @@ export default {
           const newTime = new Date().getTime()
           this.isAnswer = false
           if (this.notify && this.isSoftCallIn) {
-            this.isSoftCallIn = false
             this.notify.close()
             this.incoming()
           }
+          this.isSoftCallIn = false
+
           localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
           this.$store.commit('SHOW_RING', false)
           this.ringShow = false

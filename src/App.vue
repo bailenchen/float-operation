@@ -64,7 +64,7 @@ export default {
   computed: {
     ...mapGetters(['activeIndex', 'addRouters', 'userInfo']),
     showOutCall() {
-      if (this.$store.state.customer.isCall) {
+      if (this.$store.state.customer.isCall && this.$route.name !== 'login') {
         return this.$store.state.customer.showCallOut
       }
       return false
