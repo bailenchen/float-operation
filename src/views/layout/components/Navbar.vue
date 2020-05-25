@@ -164,30 +164,7 @@ export default {
         icon: 'wk wk-user'
       }]
 
-      if (this.userInfo.isAdmin) {
-        temps.push({
-          command: 'userPerson',
-          divided: false,
-          label: '用户中心',
-          icon: 'wk wk-s-seas'
-        })
-      }
       return temps.concat([{
-        command: 'download',
-        divided: true,
-        label: '客户端下载',
-        icon: 'wk wk-data-import'
-      }, {
-        command: 'upgradeLog',
-        divided: false,
-        label: '升级日志',
-        icon: 'wk wk-airplane'
-      }, {
-        command: 'help',
-        divided: true,
-        label: '帮助中心',
-        icon: 'wk wk-help'
-      }, {
         command: 'logOut',
         divided: false,
         label: '退出登录',
