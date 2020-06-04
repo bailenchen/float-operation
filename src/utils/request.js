@@ -44,7 +44,7 @@ const confirmMessage = debounce(1000, (message) => {
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 // 创建axios实例
 const service = axios.create({
-  baseURL: Lockr.get('wkCipher') ? config.wkURL : process.env.BASE_API, // api 的 base_url
+  baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 600000 // 请求超时时间
 })
 
