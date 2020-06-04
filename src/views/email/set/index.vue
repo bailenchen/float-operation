@@ -2,7 +2,7 @@
   <flexbox v-loading="loading" class="email-set" justify="flex-start">
     <div class="left-bg">
       <h1>安全稳定的悟空邮箱</h1>
-      <p class="left_text">您可以在使用悟空CRM的同时也能获得高效的邮箱支持。悟空CRM与邮箱完美的融合方式，让您工作更加快捷</p>
+      <p class="left_text">您可以在使用CRM的同时也能获得高效的邮箱支持。CRM与邮箱完美的融合方式，让您工作更加快捷</p>
       <img width="350px" src="@/assets/img/email/left.png" alt="">
     </div>
     <flexbox class="right-form">
@@ -107,7 +107,7 @@
           <div>189邮箱</div>
         </div>
         <div class="bottom_text">
-          悟空CRM支持20多种邮箱对接，以上仅罗列出10种主流的邮箱类型
+          CRM支持20多种邮箱对接，以上仅罗列出10种主流的邮箱类型
         </div>
       </flexbox>
     </flexbox>

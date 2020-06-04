@@ -7,7 +7,7 @@
     title="客户端下载"
     width="700px"
     @close="close">
-    <div class="xr-download-dialog__title">您可以在多平台使用悟空CRM</div>
+    <div class="xr-download-dialog__title">您可以在多平台使用CRM</div>
     <flexbox
       justify="center"
       class="xr-download-dialog__body">
