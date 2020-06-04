@@ -95,16 +95,6 @@ export default {
           type: 1,
           status: 0,
           sublist: []
-        },
-        {
-          name: '增值应用',
-          type: 3,
-          sublist: []
-        },
-        {
-          name: '敬请期待',
-          type: 2,
-          sublist: []
         }
       ],
       // 展示详情
