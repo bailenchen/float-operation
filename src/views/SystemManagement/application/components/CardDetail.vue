@@ -6,7 +6,7 @@
     :before-close="handleClose"
     width="700px">
     <div class="position-relative">
-      <div class="detail">通过市场活动功能以及小程序获客户名片，为市场部门提供线上线下智能营销与分析平台，您可以联系悟空官方开通微信小程序服务。开通后可</div>
+      <div class="detail">通过市场活动功能以及小程序获客户名片，为市场部门提供线上线下智能营销与分析平台，您可以联系官方开通微信小程序服务。开通后可</div>
       <div class="main">一、提高销售转化率</div>
       <div class="detail is-block">个人信息全面展示，让每一次商务社交都成为个人与品牌的最佳展示机会</div>
       <div class="main">二、增加获客渠道</div>
@@ -16,7 +16,7 @@
       <div class="code-detail">
         <img src="@/assets/img/card-code.jpg">
         <p>您可以通过扫描上方二维码，立即体验</p>
-        <p>小程序悟空智慧名片</p>
+        <p>小程序智慧名片</p>
       </div>
     </div>
     <span

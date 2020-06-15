@@ -6,7 +6,7 @@
     :before-close="handleClose"
     width="700px">
     <div class="position-relative">
-      <div>您可以联系悟空官方开通悟空呼叫中心服务。开通后您可以获得以下服务：</div>
+      <div>您可以联系官方开通呼叫中心服务。开通后您可以获得以下服务：</div>
       <flexbox class="phone-info">
         <img src="@/assets/img/system/app/phone.png" >
         官方服务热线：400-0812-558

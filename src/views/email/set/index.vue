@@ -1,7 +1,7 @@
 <template>
   <flexbox v-loading="loading" class="email-set" justify="flex-start">
     <div class="left-bg">
-      <h1>安全稳定的悟空邮箱</h1>
+      <h1>安全稳定的邮箱</h1>
       <p class="left_text">您可以在使用CRM的同时也能获得高效的邮箱支持。CRM与邮箱完美的融合方式，让您工作更加快捷</p>
       <img width="350px" src="@/assets/img/email/left.png" alt="">
     </div>

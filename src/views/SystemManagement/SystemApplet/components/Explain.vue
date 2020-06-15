@@ -25,7 +25,7 @@
           <div class="step-text" style="line-height: 20px;">
             点击下方【去授权】按钮，<br>
             进入微信授权页面，扫码点击已授权即可使用绑定 <br>
-            悟空智慧名片
+            智慧名片
           </div>
           <div class="auth-bar">
             <el-button
