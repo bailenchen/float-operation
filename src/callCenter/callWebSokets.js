@@ -20,7 +20,8 @@ class MyWs {
     if (callData && callData.hisUse == 1) {
       const token = axios.defaults.headers['Admin-Token']
       this.hisUse = 1
-      this.webSokets = new WebSocket('wss://s.72crm.com/webim?token=' + token)
+      this.webSokets = new WebSocket('ws://192.168.1.116:9986?token=' + token)
+      // ws://192.168.1.52:9986?token= wss://s.72crm.com/webim?token=
     } else {
       this.hisUse = 0
       this.webSokets = new WebSocket('ws://127.0.0.1:9501')
