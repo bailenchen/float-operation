@@ -202,12 +202,20 @@ export default [
         permissions: ['manage', 'adminLog', 'actionRecord']
       }
     }, {
+      path: 'sys',
+      component: () => import('@/views/SystemManagement/SystemLog/SysHandleLog'),
+      meta: {
+        title: '系统操作日志',
+        requiresAuth: true,
+        permissions: ['manage', 'adminLog', 'systemLog']
+      }
+    }, {
       path: 'login',
       component: () => import('@/views/SystemManagement/SystemLog/LoginLog'),
       meta: {
         title: '登录日志',
         requiresAuth: true,
-        permissions: ['manage', 'adminLog', 'systemLog']
+        permissions: ['manage', 'adminLog', 'loginLog']
       }
     }]
   },

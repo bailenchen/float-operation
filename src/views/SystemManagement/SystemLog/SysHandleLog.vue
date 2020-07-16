@@ -3,7 +3,7 @@
     <xr-header
       icon-class="wk wk-record"
       icon-color="#2362FB"
-      label="登录日志" />
+      label="系统操作日志" />
     <div class="main-body">
       <flexbox class="main-table-header">
         <el-date-picker
@@ -17,6 +17,18 @@
           :radio="false"
           placeholder="选择人员"
           @value-change="userChange" />
+        <el-select
+          v-model="types"
+          multiple
+          style="width: 200px;"
+          collapse-tags
+          placeholder="请选择">
+          <el-option
+            v-for="item in sysOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"/>
+        </el-select>
         <el-button
           type="primary"
           @click="refreshList">查询</el-button>
@@ -58,71 +70,31 @@
 
 <script>
 import {
-  queryLoginLogListAPI,
-  loginLogExportAPI
+  querySystemLogListAPI,
+  systemLogExportAPI
 } from '@/api/systemManagement/SystemLog'
 
 import XrHeader from '@/components/xr-header'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 import { Loading } from 'element-ui'
+import HandleLog from './mixins/HandleLog'
 
 export default {
-  // 登录日志
-  name: 'LoginLog',
+  // 系统操作日志
+  name: 'SysHandleLog',
   components: {
     XrHeader,
     XhUserCell
   },
-  mixins: [],
+  mixins: [HandleLog],
   data() {
     return {
       loading: false, // 加载动画
       tableHeight: document.documentElement.clientHeight - 240, // 表的高度
       dateTime: [],
       userList: [],
+      types: [],
       list: [],
-      fieldList: [
-        {
-          prop: 'realname',
-          label: '用户',
-          width: 100
-        },
-        {
-          prop: 'loginTime',
-          label: '登录时间',
-          width: 150
-        },
-        {
-          prop: 'ipAddress',
-          label: 'IP地址',
-          width: 100
-        },
-        {
-          prop: 'loginAddress',
-          label: '登录地点',
-          width: 150
-        },
-        {
-          prop: 'deviceType',
-          label: '设备类型',
-          width: 150
-        },
-        {
-          prop: 'core',
-          label: '终端内核',
-          width: 150
-        },
-        {
-          prop: 'platform',
-          label: '平台',
-          width: 100
-        },
-        {
-          prop: 'authResult',
-          label: '认证结果',
-          width: 100
-        }
-      ],
       currentPage: 1,
       pageSize: 10,
       pageSizes: [10, 20, 30, 40],
@@ -166,8 +138,9 @@ export default {
         params.endTime = this.dateTime[1]
       }
 
+      params.types = this.types.join(',')
       this.postParams = params
-      queryLoginLogListAPI(params)
+      querySystemLogListAPI(params)
         .then(res => {
           this.list = res.data.list
 
@@ -193,7 +166,7 @@ export default {
      */
     exportClick() {
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
-      loginLogExportAPI(this.postParams)
+      systemLogExportAPI(this.postParams)
         .then(res => {
           var blob = new Blob([res.data], {
             type: 'application/vnd.ms-excel;charset=utf-8'
@@ -261,6 +234,10 @@ export default {
 
   /deep/ .user-container {
     width: 200px;
+    margin-right: 20px;
+  }
+
+  .el-select {
     margin-right: 20px;
   }
 }

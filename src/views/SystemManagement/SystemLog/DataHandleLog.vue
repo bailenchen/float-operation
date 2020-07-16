@@ -76,6 +76,7 @@ import {
 import XrHeader from '@/components/xr-header'
 import XhUserCell from '@/components/CreateCom/XhUserCell'
 import { Loading } from 'element-ui'
+import HandleLog from './mixins/HandleLog'
 
 export default {
   // 操作日志日志
@@ -84,7 +85,7 @@ export default {
     XrHeader,
     XhUserCell
   },
-  mixins: [],
+  mixins: [HandleLog],
   data() {
     return {
       loading: false, // 加载动画
@@ -93,102 +94,12 @@ export default {
       userList: [],
       types: [],
       list: [],
-      typesOptions: [{
-        label: '线索',
-        value: 1
-      }, {
-        label: '客户',
-        value: 2
-      }, {
-        label: '客户公海',
-        value: 9
-      }, {
-        label: '联系人',
-        value: 3
-      }, {
-        label: '产品',
-        value: 4
-      }, {
-        label: '商机',
-        value: 5
-      }, {
-        label: '合同',
-        value: 6
-      }, {
-        label: '回款',
-        value: 7
-      }, {
-        label: '回款计划',
-        value: 8
-      }, {
-        label: '推广',
-        value: 10
-      }, {
-        label: '日志',
-        value: 11
-      }, {
-        label: '办公审批',
-        value: 12
-      }, {
-        label: '任务',
-        value: 13
-      }, {
-        label: '项目',
-        value: 14
-      }, {
-        label: '标签',
-        value: 15
-      }, {
-        label: '日历',
-        value: 16
-      }, {
-        label: '回访',
-        value: 17
-      }, {
-        label: '发票',
-        value: 18
-      }],
-      fieldList: [
-        {
-          prop: 'realname',
-          label: '用户',
-          width: 100
-        },
-        {
-          prop: 'createTime',
-          label: '时间',
-          width: 150
-        },
-        {
-          prop: 'ipAddress',
-          label: 'IP地址',
-          width: 100
-        },
-        {
-          prop: 'types',
-          label: '模块',
-          width: 150
-        },
-        {
-          prop: 'behavior',
-          label: '行为',
-          width: 150
-        },
-        {
-          prop: 'object',
-          label: '对象',
-          width: 150
-        },
-        {
-          prop: 'detail',
-          label: '操作详情',
-          width: 100
-        }
-      ],
       currentPage: 1,
       pageSize: 10,
       pageSizes: [10, 20, 30, 40],
-      total: 0
+      total: 0,
+
+      postParams: {}
     }
   },
   computed: {},
@@ -227,6 +138,7 @@ export default {
       }
 
       params.types = this.types.join(',')
+      this.postParams = params
       queryActionRecordListAPI(params)
         .then(res => {
           this.list = res.data.list
@@ -253,7 +165,7 @@ export default {
      */
     exportClick() {
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
-      actionRecordExportAPI()
+      actionRecordExportAPI(this.postParams)
         .then(res => {
           var blob = new Blob([res.data], {
             type: 'application/vnd.ms-excel;charset=utf-8'

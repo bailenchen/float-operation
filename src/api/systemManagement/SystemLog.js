@@ -57,3 +57,33 @@ export function actionRecordExportAPI(data) {
     timeout: 60000
   })
 }
+
+/**
+ * 查看系统操作日志接口
+ * @param {*} data
+ */
+export function querySystemLogListAPI(data) {
+  return request({
+    url: 'system/log/querySystemLogList',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
+
+/**
+ * 系统操作日志导出
+ * @param {*} data
+ */
+export function systemLogExportAPI(data) {
+  return request({
+    url: 'system/log/systemLogExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    timeout: 60000
+  })
+}
