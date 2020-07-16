@@ -79,7 +79,7 @@ import { crmContractRead } from '@/api/customermanagement/contract'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity' // 活动
-import CRMBaseInfo from '../components/CRMBaseInfo' // 商机基本信息
+import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 商机基本信息
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import RelativeTeam from '../components/RelativeTeam' // 团队成员
 import RelativeProduct from '../components/RelativeProduct' // 团队成员
@@ -99,7 +99,7 @@ export default {
     SlideView,
     CRMDetailHead,
     Activity,
-    CRMBaseInfo,
+    CRMEditBaseInfo,
     RelativeHandle,
     RelativeTeam,
     RelativeProduct,
@@ -169,7 +169,7 @@ export default {
     tabNames() {
       var tempsTabs = []
       if (this.crm.contract && this.crm.contract.read) {
-        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
       }
 
       tempsTabs.push({ label: '活动', name: 'Activity' })
@@ -228,7 +228,7 @@ export default {
   },
   mounted() {
     if (this.crm.contract && this.crm.contract.read) {
-      this.tabCurrentName = 'CRMBaseInfo'
+      this.tabCurrentName = 'CRMEditBaseInfo'
     }
   },
   methods: {

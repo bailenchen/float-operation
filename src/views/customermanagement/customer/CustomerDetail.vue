@@ -108,7 +108,7 @@ import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity' // 活动
 import ChieflyContacts from '../components/ChieflyContacts' // 首要联系人
-import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
+import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 基本信息
 import RelativeContacts from '../components/RelativeContacts' // 相关联系人
 import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
 import RelativeContract from '../components/RelativeContract' // 相关合同
@@ -131,7 +131,7 @@ export default {
     Activity,
     ChieflyContacts,
     CRMDetailHead,
-    CRMBaseInfo,
+    CRMEditBaseInfo,
     RelativeContacts,
     RelativeBusiness,
     RelativeContract,
@@ -231,7 +231,7 @@ export default {
       var tempsTabs = []
       tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.customer && this.crm.customer.read) {
-        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
       }
       if (this.crm.contacts && this.crm.contacts.index) {
         tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })

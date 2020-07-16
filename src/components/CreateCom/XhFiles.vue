@@ -55,7 +55,16 @@ export default {
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    dataValue: {
+      handler() {
+        if (!this.batchId && this.dataValue && this.dataValue.length) {
+          this.batchId = this.dataValue[0].batchId
+        }
+      },
+      immediate: true
+    }
+  },
   mounted() {},
   methods: {
     selectImage() {

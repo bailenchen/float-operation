@@ -319,3 +319,29 @@ div[lazy=loading] {
     border-color: #F56C6C;
   }
 }
+
+
+// flex el-form
+.el-form--flex.el-form {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -23px;
+  .el-form-item.is-required .el-form-item__label:before {
+    margin-right: 0;
+  }
+
+  .el-form-item {
+    flex: 0 0 50%;
+    flex-shrink: 0;
+    padding: 0 30px;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    .el-form-item__label {
+      color: #333333;
+    }
+
+    .el-form-item__error {
+      padding-top: 2px;
+    }
+  }
+}

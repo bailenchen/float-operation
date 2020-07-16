@@ -37,6 +37,22 @@ export function filedGetTableField(data) {
   })
 }
 
+
+/**
+ * 基本信息编辑
+ * @param {*} data
+ */
+export function filedUpdateTableField(data) {
+  return request({
+    url: 'field/updateInformation',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 /**
  * 公海表头
  * @param {*} data

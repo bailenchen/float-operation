@@ -92,7 +92,7 @@ import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity'
 import ImportInfo from '../components/ImportInfo' // 重要信息
-import CRMBaseInfo from '../components/CRMBaseInfo' // 线索基本信息
+import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 线索基本信息
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 
@@ -106,7 +106,7 @@ export default {
     SlideView,
     CRMDetailHead,
     Activity,
-    CRMBaseInfo,
+    CRMEditBaseInfo,
     RelativeFiles,
     RelativeHandle,
     ImportInfo,
@@ -175,7 +175,7 @@ export default {
     tabNames() {
       return [
         { label: '活动', name: 'Activity' },
-        { label: '详细资料', name: 'CRMBaseInfo' },
+        { label: '详细资料', name: 'CRMEditBaseInfo' },
         { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
         { label: '操作记录', name: 'RelativeHandle' }
       ]

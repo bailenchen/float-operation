@@ -69,7 +69,7 @@ import { crmReceivablesRead } from '@/api/customermanagement/money'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import CRMBaseInfo from '../components/CRMBaseInfo' // 基本信息
+import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 基本信息
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
@@ -84,7 +84,7 @@ export default {
   components: {
     SlideView,
     CRMDetailHead,
-    CRMBaseInfo,
+    CRMEditBaseInfo,
     RelativeFiles,
     RelativeHandle,
     ExamineInfo,
@@ -130,7 +130,7 @@ export default {
         { title: '回款金额', value: '' },
         { title: '负责人', value: '' }
       ],
-      tabCurrentName: 'CRMBaseInfo',
+      tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
       isCreate: false
     }
@@ -138,7 +138,7 @@ export default {
   computed: {
     tabNames() {
       return [
-        { label: '详细资料', name: 'CRMBaseInfo' },
+        { label: '详细资料', name: 'CRMEditBaseInfo' },
         {
           label: this.getTabName('附件', this.tabsNumber.fileCount),
           name: 'RelativeFiles'

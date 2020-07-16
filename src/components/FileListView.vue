@@ -8,7 +8,7 @@
         :src="getFileTypeIcon(file.name)"
         alt=""
         class="pic-icon">
-      <div class="file-name">{{ file.name }}</div>
+      <div class="file-name text-one-line">{{ file.name }}</div>
       <div class="file-size">( {{ file.size | fontSizeValue }} )</div>
       <div class="down">
         <span @click="previewClick(file, fileIndex)">预览</span>
@@ -96,14 +96,18 @@ export default {
       }
       .file-name {
         margin-right: 14px;
+        width: 0;
+        flex: 1;
       }
       .file-size {
         color: #999;
         margin-right: 15px;
+        flex-shrink: 0;
       }
       .down {
         color: #2362FB;
         cursor: pointer;
+        flex-shrink: 0;
         span:hover {
           text-decoration: underline;
         }

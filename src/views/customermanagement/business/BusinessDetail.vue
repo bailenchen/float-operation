@@ -169,7 +169,7 @@ import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity' // 活动
 import ChieflyContacts from '../components/ChieflyContacts' // 首要联系人
-import CRMBaseInfo from '../components/CRMBaseInfo' // 商机基本信息
+import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 商机基本信息
 import RelativeContract from '../components/RelativeContract' // 相关合同
 import RelativeContacts from '../components/RelativeContacts' // 相关联系人
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
@@ -189,7 +189,7 @@ export default {
     CRMDetailHead,
     Activity,
     ChieflyContacts,
-    CRMBaseInfo,
+    CRMEditBaseInfo,
     RelativeContract,
     RelativeContacts,
     RelativeHandle,
@@ -291,7 +291,7 @@ export default {
       var tempsTabs = []
       tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.business && this.crm.business.read) {
-        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
       }
 
       if (this.crm.contacts && this.crm.contacts.index) {

@@ -37,7 +37,7 @@
               :name="item.name"
               lazy>
               <c-r-m-base-info
-                v-if="item.name === 'CRMBaseInfo'"
+                v-if="item.name === 'CRMEditBaseInfo'"
                 :is="item.name"
                 :detail="detailData"
                 :id="id"
@@ -68,7 +68,7 @@ import { crmReturnVisitReadAPI } from '@/api/customermanagement/visit'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
-import CRMBaseInfo from '../components/CRMBaseInfo' // 产品基本信息
+import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 产品基本信息
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 
@@ -82,7 +82,7 @@ export default {
   components: {
     SlideView,
     CRMDetailHead,
-    CRMBaseInfo,
+    CRMEditBaseInfo,
     RelativeFiles,
     RelativeHandle,
     CRMCreateView,
@@ -124,7 +124,7 @@ export default {
         { title: '回访人', value: '' },
         { title: '回访形式', value: '' }
       ],
-      tabCurrentName: 'CRMBaseInfo',
+      tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
       isCreate: false
     }
@@ -132,7 +132,7 @@ export default {
   computed: {
     tabNames() {
       return [
-        { label: '详细资料', name: 'CRMBaseInfo' },
+        { label: '详细资料', name: 'CRMEditBaseInfo' },
         { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
         { label: '操作记录', name: 'RelativeHandle' }
       ]
