@@ -164,7 +164,11 @@
                         default-expand-all>
                         <span
                           slot-scope="{ node }"
-                          :class="{ 'node-label': node.level == 1 || node.level == 2} ">{{ node.label }}</span>
+                          :class="{ 'node-label': node.level == 1 || node.level == 2} ">{{ node.label }}<el-button
+                            v-if="node.level == 2 && canSetField(node.data.realm)"
+                            icon="wk wk-manage"
+                            type="text"
+                            @click="fieldSetClick(node)" >字段授权</el-button></span>
                       </el-tree>
                     </div>
                   </div>
@@ -194,6 +198,12 @@
       :visible.sync="relateEmpoyeeShow"
       :role-id="roleId"
       @save="employeesSave"/>
+    <!-- 字段授权 -->
+    <field-set-dialog
+      :visible.sync="setFieldShow"
+      :role-id="roleId"
+      :label="setFieldLabel"
+    />
   </div>
 </template>
 
@@ -211,12 +221,16 @@ import {
 } from '@/api/systemManagement/RoleAuthorization'
 
 import RelateEmpoyee from './components/relateEmpoyee'
+import FieldSetDialog from './components/FieldSetDialog'
 import Reminder from '@/components/reminder'
 import XrHeader from '@/components/xr-header'
+
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 export default {
   components: {
     RelateEmpoyee,
+    FieldSetDialog,
     Reminder,
     XrHeader
   },
@@ -264,7 +278,11 @@ export default {
       // 权限加载中
       ruleLoading: false,
       // 员工列表加载中
-      userLoading: false
+      userLoading: false,
+
+      // 字段授权
+      setFieldLabel: '',
+      setFieldShow: false
     }
   },
 
@@ -806,6 +824,22 @@ export default {
         .catch(() => {
           this.ruleLoading = false
         })
+    },
+
+    /**
+     * 是否能字段设置
+     */
+    canSetField(type) {
+      return ['leads', 'customer', 'contacts', 'business', 'contract', 'receivables', 'product', 'visit'].includes(type) &&
+      this.ruleMenuIndex === 'data'
+    },
+
+    /**
+     * 权限设置
+     */
+    fieldSetClick(node) {
+      this.setFieldLabel = crmTypeModel[node.data.realm]
+      this.setFieldShow = true
     }
   }
 }
@@ -916,6 +950,11 @@ export default {
   height: calc(100% - 47px);
   overflow-y: scroll;
   padding: 20px;
+
+  /deep/ .el-tree-node__content:hover {
+    background-color: white;
+    color: $xr-color-primary;
+  }
 }
 .jurisdiction-content-checkbox
   .el-tree
@@ -1037,6 +1076,15 @@ export default {
 .node-label {
   font-weight: bold;
   font-size: 15px;
+  position: relative;
+  .el-button {
+    position: absolute;
+    top: -8px;
+    right: -80px;
+    /deep/ span {
+      margin-left: 3px;
+    }
+  }
 }
 
 @import '../styles/table.scss';

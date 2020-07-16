@@ -660,6 +660,7 @@ export default {
 
         this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
 
+        const canEdit = this.getItemIsCanEdit(item) // 不能编辑 disabled true
         /**
          * 表单数据
          */
@@ -693,7 +694,7 @@ export default {
           } else {
             params['value'] = []
           }
-          params['disabled'] = false // 是否可交互
+          params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
           this.crmForm.crmFields.push(params)
         } else if (item.formType == 'product') {
@@ -800,7 +801,7 @@ export default {
 
           params['key'] = item.fieldName
           params['data'] = item
-          params['disabled'] = false // 是否可交互
+          params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
           this.crmForm.crmFields.push(params)
         }
@@ -935,6 +936,10 @@ export default {
           }
         }
       }
+
+      if (!this.getItemIsCanEdit(item)) {
+        return true
+      }
       return false
     },
     /**
@@ -956,6 +961,9 @@ export default {
      */
     getItemRulesArrayFromItem(item) {
       var tempList = []
+      if (!this.getItemIsCanEdit(item)) {
+        return tempList
+      }
       // 验证必填
       if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
         if (item.formType == 'category') {
@@ -1130,6 +1138,15 @@ export default {
       }
       return tempList
     },
+
+    /**
+     * 获取字段是否可编辑
+     */
+    getItemIsCanEdit(item) {
+      // authLevel 1 不能查看不能编辑 2可查看  3 可编辑可查看
+      return (this.action.type === 'update' && item.authLevel == 3) || this.action.type !== 'update'
+    },
+
     // 保存草稿
     saveDraftField() {
       this.debouncedSaveField(false, true)

@@ -103,3 +103,24 @@ export function systemRuleByTypeAPI(data) {
     data: data
   })
 }
+
+// 查询字段授权设置
+export function systemRoleGetFieldAPI(data) {
+  return request({
+    url: 'system/role/getRoleField',
+    method: 'post',
+    data: data
+  })
+}
+
+// 模块设置字段授权
+export function systemRoleSetFieldAPI(data) {
+  return request({
+    url: 'system/role/setRoleField',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
