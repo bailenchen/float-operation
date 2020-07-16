@@ -1,0 +1,411 @@
+<template>
+  <flexbox
+    class="main"
+    direction="column"
+    align="stretch">
+    <xr-header
+      icon-class="wk wk-enterprise"
+      icon-color="#2362FB"
+      label="企业首页" />
+    <div
+      v-loading="loading"
+      class="body">
+      <!-- 平台信息 -->
+      <div v-if="systemInfo" class="section">
+        <div class="section-title">企业平台信息</div>
+        <flexbox class="progress-info">
+          <flexbox-item class="progress-info-item">
+            <p class="info-title">账号使用情况</p>
+            <radial-progress-bar
+              :diameter="126"
+              :completed-steps="systemInfo.userProgress"
+              :total-steps="100"
+              :stroke-width="10"
+              inner-stroke-color="#E8F2FA"
+              start-color="#2362FB"
+              stop-color="#2362FB"
+              class="progress">
+              <p class="progress-title">剩余可用</p>
+              <p class="progress-value">{{ systemInfo.allNum - systemInfo.usingNum }}<span>个</span></p>
+            </radial-progress-bar>
+            <p class="info-value">已购买用户数：{{ systemInfo.allNum }}个</p>
+            <p class="info-value">已使用用户数：{{ systemInfo.usingNum }}个</p>
+          </flexbox-item>
+          <flexbox-item v-if="systemInfo.startTime" class="progress-info-item">
+            <p class="info-title">租期到期时间</p>
+            <radial-progress-bar
+              :diameter="126"
+              :completed-steps="systemInfo.dayProgress"
+              :total-steps="100"
+              :stroke-width="10"
+              inner-stroke-color="#E8F2FA"
+              start-color="#29C14D"
+              stop-color="#29C14D"
+              class="progress">
+              <p class="progress-title">剩余天数</p>
+              <p class="progress-value">{{ systemInfo.surplusDays }}<span>天</span></p>
+            </radial-progress-bar>
+            <p class="info-value">开始时间：{{ systemInfo.startTime }}</p>
+            <p class="info-value">结束时间：{{ systemInfo.endTime }}</p>
+          </flexbox-item>
+          <!-- <flexbox-item class="progress-info-item">
+            <p class="info-title">空间使用情况</p>
+            <radial-progress-bar
+              :diameter="126"
+              :completed-steps="systemInfo.sizeProgress"
+              :total-steps="100"
+              :stroke-width="10"
+              inner-stroke-color="#E8F2FA"
+              start-color="#FF9B25"
+              stop-color="#FF9B25"
+              class="progress">
+              <p class="progress-title">剩余空间</p>
+              <p class="progress-value">{{ systemInfo.surplusSize }}</p>
+            </radial-progress-bar>
+            <p class="info-value">总存储空间：{{ systemInfo.allSize }}</p>
+            <p class="info-value">已使用空间：{{ systemInfo.size }}</p>
+          </flexbox-item> -->
+        </flexbox>
+      </div>
+
+      <!-- 基本信息 -->
+      <div class="section">
+        <div class="section-title">企业基本信息设置</div>
+        <div class="section-content">
+          <div class="name">企业名称</div>
+          <el-input
+            v-model="systemName"
+            :maxlength="50"/>
+        </div>
+        <div class="section-content">
+          <div class="name">企业logo</div>
+          <el-upload
+            v-if="!systemImage"
+            :show-file-list="false"
+            :http-request="fileUpload"
+            drag
+            class="upload"
+            action="http"
+            accept="image/png, image/jpeg, image/gif, image/jpg">
+            <i class="el-icon-plus uploader-icon"/>
+          </el-upload>
+          <div
+            v-else
+            class="upload-show">
+            <img v-src="systemImage">
+            <i
+              class="el-icon-remove icon-delete"
+              @click="deleteSystemImage"/>
+          </div>
+        </div>
+      </div>
+
+      <el-button
+        v-if="systemSaveAuth"
+        class="save-button"
+        type="primary"
+        @click="save">保存</el-button>
+    </div>
+    <edit-image
+      :fixed-number="[15, 4]"
+      :show="showEditImage"
+      :image="editImage"
+      :file="editFile"
+      title="编辑企业logo"
+      preview-width="150px"
+      preview-height="40px"
+      preview-radius="0"
+      width="550px"
+      save-button-title="确定"
+      @save="submiteImage"
+      @close="showEditImage=false"/>
+  </flexbox>
+</template>
+
+<script>
+import { adminSystemSave, adminSystemConfigIndex } from '@/api/systemManagement/SystemConfig'
+
+import RadialProgressBar from 'vue-radial-progress'
+import EditImage from '@/components/EditImage'
+import XrHeader from '@/components/xr-header'
+
+import { mapGetters } from 'vuex'
+// import { fileSize } from '@/utils/index'
+import moment from 'moment'
+
+export default {
+  name: 'SystemConfig',
+  components: {
+    EditImage,
+    XrHeader,
+    RadialProgressBar
+  },
+  data() {
+    return {
+      loading: false,
+      showEditImage: false,
+      editImage: null,
+      editFile: null,
+      systemName: '',
+      systemImage: '',
+      editedImage: null, // 编辑后的图片
+      systemInfo: null // 系统信息
+    }
+  },
+  computed: {
+    ...mapGetters(['manage']),
+    systemSaveAuth() {
+      return this.manage && this.manage.system && this.manage.system.update
+    }
+  },
+
+  created() {
+    this.getDetail()
+    this.getSystemInfo()
+  },
+  methods: {
+    /** 附件上传 */
+    fileUpload(content) {
+      const reader = new FileReader()
+      var self = this
+      reader.onload = function(e) {
+        let result
+        if (typeof e.target.result === 'object') {
+          // 把Array Buffer转化为blob 如果是base64不需要
+          result = window.URL.createObjectURL(new Blob([e.target.result]))
+        } else {
+          result = e.target.result
+        }
+        self.editImage = result
+        self.editFile = content.file
+        self.showEditImage = true
+      }
+      reader.readAsDataURL(content.file)
+    },
+    deleteSystemImage() {
+      this.systemImage = ''
+      this.editedImage = null
+    },
+    getDetail() {
+      this.loading = true
+      this.$store
+        .dispatch('SystemLogoAndName')
+        .then(res => {
+          this.loading = false
+          this.systemName = res.data.name ? res.data.name : ''
+          this.systemImage = res.data.logo
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
+    /**
+     * 获取系统使用信息
+     */
+    getSystemInfo() {
+      this.loading = true
+      adminSystemConfigIndex().then(res => {
+        const data = res.data || {}
+        if (data.usingNum) {
+          data.userProgress = Math.floor((data.usingNum / data.allNum) * 100)
+        } else {
+          data.userProgress = 0
+        }
+
+        // 时间
+        if (data.allNum == 2) {
+          data.startTime = data.createTime
+          data.endTime = '2099-01-01'
+        }
+
+        if (data.startTime) {
+          const startMoment = moment(data.startTime)
+          const endMoment = moment(data.endTime)
+          data.startDays = moment().diff(startMoment, 'days')
+          data.surplusDays = endMoment.diff(moment(), 'days')
+          const totalDays = endMoment.diff(startMoment, 'days')
+          data.dayProgress = data.startDays > 0 ? Math.floor((data.startDays / totalDays) * 100) : 0
+        }
+
+        // 存储
+        // if (data.size) {
+        //   data.sizeProgress = Math.floor((data.size / data.allSize) * 100)
+        // } else {
+        //   data.sizeProgress = 0
+        // }
+
+        // data.surplusSize = fileSize(data.allSize - data.size)
+        // data.size = fileSize(data.size)
+        // data.allSize = fileSize(data.allSize)
+
+        this.systemInfo = data
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    submiteImage(data) {
+      this.editedImage = data
+      this.systemImage = data.image
+    },
+    save() {
+      if (!this.systemName) {
+        this.$message.error('企业名称不能为空')
+      } else {
+        this.loading = true
+        var param = new FormData()
+        param.append('name', this.systemName)
+        // 编辑头像了
+        if (this.editedImage) {
+          param.append(
+            'file',
+            this.editedImage.blob,
+            this.editedImage.file.name
+          )
+        } else {
+          // 头像删除时 传
+          if (!this.systemImage) {
+            param.append('company_logo', '')
+          }
+        }
+        adminSystemSave(param)
+          .then(res => {
+            this.loading = false
+            this.$message.success('操作成功')
+            this.getDetail()
+          })
+          .catch(() => {
+            this.loading = false
+          })
+      }
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.main {
+  padding: 0 15px;
+  height: 100%;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px 30px 20px 30px;
+  background-color: white;
+  border: 1px solid #e6e6e6;
+  border-radius: $xr-border-radius-base;
+  position: relative;
+}
+
+// 进度信息
+.progress-info {
+  &-item {
+    text-align: center;
+    min-width: 150px;
+    flex-shrink: 0;
+    font-size: 14px;
+
+    .info-title {
+      color: #333;
+    }
+
+    .info-value {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .info-value + .info-value {
+      margin-top: 8px;
+    }
+
+    .progress {
+      margin: 20px 0 30px;
+      font-size: 12px;
+      color: #333;
+
+      &-value {
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    }
+
+    .radial-progress-container {
+      display: inline-block;
+    }
+  }
+}
+.save-button {
+  margin-left: 250px;
+}
+
+.section + .section {
+  margin-top: 50px;
+}
+
+.section:first-child {
+  padding-bottom: 40px;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.section-title {
+  color: #333;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.section-content {
+  margin-bottom: 30px;
+  .name {
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .el-input {
+    width: 300px;
+  }
+}
+
+.uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 300px;
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
+}
+.upload /deep/ .el-upload-dragger {
+  width: 300px;
+  height: 80px;
+}
+.upload-show {
+  position: relative;
+  display: block;
+  width: 300px;
+  height: 80px;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .icon-delete {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    color: red;
+    font-size: 20px;
+    display: none;
+  }
+}
+.upload-show:hover {
+  .icon-delete {
+    display: block;
+  }
+}
+</style>
+
