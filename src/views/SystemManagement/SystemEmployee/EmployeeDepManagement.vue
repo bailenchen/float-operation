@@ -392,6 +392,7 @@
       :before-close="newHandleClose"
       width="60%">
       <el-form
+        v-if="showForm"
         ref="dialogRef"
         :inline="true"
         :model="formInline"
@@ -416,6 +417,7 @@
           <template v-if="item.type == 'select'">
             <el-select
               v-model="formInline[item.field]"
+              :multiple="item.multiple || false"
               filterable
               placeholder="请选择">
               <el-option
@@ -566,18 +568,8 @@ export default {
         { field: 'email', value: '邮箱', width: '150' },
         { field: 'deptName', value: '部门', type: 'select', width: '100' },
         { field: 'post', value: '岗位', width: '150' },
-        {
-          field: 'parentName',
-          value: '直属上级',
-          type: 'select',
-          width: '150'
-        },
-        {
-          field: 'roleName',
-          value: '角色',
-          type: 'selectCheckout',
-          width: '150'
-        }
+        { field: 'parentName', value: '直属上级', type: 'select', width: '150' },
+        { field: 'roleName', value: '角色', type: 'selectCheckout', width: '150' }
       ],
       selectionList: [], // 批量勾选数据
       tableData: [],
@@ -615,6 +607,20 @@ export default {
             { id: 1, name: '男' },
             { id: 2, name: '女' }
           ]
+        },
+        isTeacher: {
+          field: 'isTeacher',
+          list: [
+            { id: 0, name: '否' },
+            { id: 1, name: '是' }
+          ]
+        },
+        isPartTimer: {
+          field: 'isPartTimer',
+          list: [
+            { id: 0, name: '否' },
+            { id: 1, name: '是' }
+          ]
         }
       },
       groupsList: [],
@@ -629,7 +635,7 @@ export default {
           }
         ],
         username: [
-          { required: true, message: '手机号不能为空', trigger: 'blur' }
+          { required: true, message: '登录名不能为空', trigger: 'blur' }
         ]
       },
       passForm: {},
@@ -645,12 +651,7 @@ export default {
           }
         ],
         username: [
-          { required: true, message: '手机号码不能为空', trigger: 'blur' },
-          {
-            pattern: chinaMobileRegex,
-            message: '目前只支持中国大陆的手机号码',
-            trigger: 'blur'
-          }
+          { required: true, message: '登录名不能为空', trigger: 'blur' }
         ],
         email: [
           {
@@ -665,7 +666,9 @@ export default {
         deptId: [
           { required: true, message: '部门不能为空', trigger: 'change' }
         ],
-        roleId: [{ required: true, message: '角色不能为空', trigger: 'change' }]
+        roleId: [{ required: true, message: '角色不能为空', trigger: 'change' }],
+        grade: [{ required: true, message: '年级不能为空', trigger: 'change' }],
+        subject: [{ required: true, message: '科目不能为空', trigger: 'change' }]
       },
       // 重置登录账号
       resetUserNameVisible: false,
@@ -680,7 +683,9 @@ export default {
       codeSecond: 60,
       codeTimer: null,
       // 批量导入
-      bulkImportShow: false
+      bulkImportShow: false,
+
+      showForm: true
     }
   },
   computed: {
@@ -795,34 +800,29 @@ export default {
     },
     /** 添加列表 */
     tableList: function() {
-      if (this.dialogTitle === '新建员工') {
-        return [
-          { field: 'username', value: '手机号（登录名）' },
-          { field: 'password', value: '登录密码' },
-          { field: 'realname', value: '姓名' },
-          { field: 'sex', value: '性别', type: 'select' },
-          { field: 'email', value: '邮箱' },
-          { field: 'deptId', value: '部门', type: 'select' },
-          { field: 'post', value: '岗位' },
-          { field: 'parentId', value: '直属上级', type: 'select' },
-          { field: 'roleId', value: '角色', type: 'selectCheckout' }
-        ]
-      } else {
-        return [
-          {
-            field: 'username',
-            value: '手机号（登录名）',
-            tips: '如需修改登录名，请在列表勾选员工后进行操作'
-          },
-          { field: 'realname', value: '姓名' },
-          { field: 'sex', value: '性别', type: 'select' },
-          { field: 'email', value: '邮箱' },
-          { field: 'deptId', value: '部门', type: 'select' },
-          { field: 'post', value: '岗位' },
-          { field: 'parentId', value: '直属上级', type: 'select' },
-          { field: 'roleId', value: '角色', type: 'selectCheckout' }
-        ]
+      const arr = [
+        { field: 'username', value: '登录名' },
+        { field: 'password', value: '登录密码' },
+        { field: 'realname', value: '姓名' },
+        { field: 'sex', value: '性别', type: 'select' },
+        { field: 'email', value: '邮箱' },
+        { field: 'deptId', value: '部门', type: 'select' },
+        { field: 'post', value: '岗位' },
+        { field: 'isTeacher', value: '是否为教员岗', type: 'select' },
+        { field: 'subject', value: '科目', type: 'select', multiple: true },
+        { field: 'grade', value: '年级', type: 'select', multiple: true },
+        { field: 'isPartTimer', value: '是否为兼职', type: 'select' },
+        { field: 'parentId', value: '直属上级', type: 'select' },
+        { field: 'roleId', value: '角色', type: 'selectCheckout' }
+      ]
+      if (this.formInline.isTeacher != 1) {
+        arr.splice(8, 2)
       }
+      if (this.dialogTitle !== '新建员工') {
+        arr[0].tips = '如需修改登录名，请在列表勾选员工后进行操作'
+        arr.splice(1, 1)
+      }
+      return arr
     },
 
     /**
@@ -830,6 +830,17 @@ export default {
      */
     canSlideVerify() {
       return chinaMobileRegex.test(this.resetUserNameForm.username)
+    }
+  },
+  watch: {
+    tableList: {
+      handler() {
+        this.showForm = false
+        this.$nextTick(() => {
+          this.showForm = true
+        })
+      },
+      deep: true
     }
   },
   mounted() {
@@ -961,7 +972,9 @@ export default {
         deptId:
           this.currentMenuData && this.currentMenuData.id
             ? this.currentMenuData.id
-            : ''
+            : '',
+        grade: [],
+        subject: []
       }
       this.employeeCreateDialog = true
     },
@@ -973,6 +986,8 @@ export default {
       this.getSelectUserList() // 直属上级列表
       this.getDepList()
       this.getRoleList()
+      this.getGradeList()
+      this.getSubjectList()
     },
 
     // 详情 -- 编辑用户
@@ -991,18 +1006,46 @@ export default {
                   return parseInt(item)
                 })
               : []
-          } else if (element.field === 'parentId') {
-            detail.parentId = this.dialogData.parentId || ''
-          } else if (element.field === 'deptId') {
-            detail.deptId = this.dialogData.deptId
+          } else if (['subject', 'grade'].includes(element.field)) {
+            detail[element.field] = this.dialogData[element.field] || []
           } else {
-            detail[element.field] = this.dialogData[element.field]
+            detail[element.field] = this.dialogData[element.field] || ''
           }
         }
       }
       detail['userId'] = this.dialogData.userId
       this.formInline = detail
       this.employeeCreateDialog = true
+    },
+
+    /**
+     * 获取年级列表
+     */
+    getGradeList() {
+      this.optionsList.grade = {
+        field: 'grade',
+        list: [
+          { id: '一年级', name: '一年级' },
+          { id: '二年级', name: '二年级' },
+          { id: '三年级', name: '三年级' },
+          { id: '四年级', name: '四年级' }
+        ]
+      }
+    },
+
+    /**
+     * 获取科目列表
+     */
+    getSubjectList() {
+      this.optionsList.subject = {
+        field: 'subject',
+        list: [
+          { id: '语文', name: '语文' },
+          { id: '数学', name: '数学' },
+          { id: '物理', name: '物理' },
+          { id: '化学', name: '化学' }
+        ]
+      }
     },
 
     /**

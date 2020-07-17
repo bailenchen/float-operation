@@ -25,10 +25,11 @@
         <div
           class="handle-item-name"
           style="margin-top: 8px;">{{ valueLabel }}</div>
-        <el-input
+        <el-input-number
           v-model="customerNum"
-          type="number"
-          placeholder="请输入内容"/>
+          :precision="0"
+          :min="0"
+          :controls="false" />
       </flexbox>
       <flexbox v-if="showDeal" class="handle-item">
         <div class="handle-item-name">{{ dealLabel }}</div>
@@ -60,7 +61,7 @@ export default {
     XhStrucUserCell
   },
   props: {
-    types: [String, Number], // 1拥有客户上限2锁定客户上限
+    types: [String, Number], // own拥有LEADS上限 lock锁定LEADS上限
 
     visible: {
       type: Boolean,
@@ -87,15 +88,15 @@ export default {
   computed: {
     valueLabel() {
       return {
-        1: '拥有客户数上限（个）',
-        2: '锁定客户数上限（个）'
+        own: '拥有LEADS数上限（个）',
+        lock: '锁定LEADS数上限（个）'
       }[this.types]
     },
 
     dealLabel() {
       return {
-        1: '成交客户是否占有拥有客户数：',
-        2: '成交客户是否占有锁定客户数：'
+        own: '成交LEADS是否占有拥有LEADS数：',
+        lock: '成交LEADS是否占有锁定LEADS数：'
       }[this.types]
     },
 
@@ -139,7 +140,7 @@ export default {
 
     sure() {
       if (this.customerNum <= 0) {
-        this.$message.error('请输入正确的客户数')
+        this.$message.error('请输入正确的LEADS数')
       } else if ((!this.users.length && !this.strucs.length)) {
         this.$message.error('请完善信息')
       } else {

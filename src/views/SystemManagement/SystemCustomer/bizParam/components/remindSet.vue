@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" class="visit-remind-set">
     <div class="content-title">
-      <span>客户回访提醒设置</span>
+      <span>LEADS回访提醒设置</span>
       <el-button
         type="primary"
         class="rt"
@@ -21,7 +21,12 @@
           v-if="status == 1"
           class="time-set">
           <span>合同生效后</span>
-          <el-input v-model="value" type="number"/><span>天提醒</span>
+          <el-input-number
+            v-model="value"
+            :precision="0"
+            :min="0"
+            :controls="false" />
+          <span>天提醒</span>
         </div>
       </div>
     </div>

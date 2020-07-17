@@ -19,7 +19,7 @@
       <keep-alive>
         <component
           :is="componentName"
-          :types="types"
+          :types="menuIndex"
           class="system-view-content"/>
       </keep-alive>
     </div>
@@ -27,50 +27,63 @@
 </template>
 
 <script>
-import FollowLogTypeSet from './components/followLogTypeSet' // 跟进记录类型设置
-import BusinessGroupSet from './components/businessGroupSet' // 商机组设置
-import ProductCategorySet from './components/productCategorySet' // 产品类别设置
 import ContractExpireSet from './components/contractExpireSet' // 合同到期提醒设置
-import CustomerLimitSet from './components/customerLimitSet' // 拥有/锁定客户数限制
-import VisitRemindSet from './components/VisitRemindSet' // 客户回访提醒设置
-import SerialNumberSet from './components/SerialNumberSet' // 编号规则设置
 import XrHeader from '@/components/xr-header'
+
+import ChannelCategorySet from './components/channelCategorySet' // 渠道设置
+import ChannelTypeSet from './components/channelTypeSet' // 渠道类型设置
+import GradeSet from './components/gradeSet' // 年级设置
+import PresentRulesSet from './components/presentRulesSet' // 赠送规则设置
+import FollowLogTypeSet from './components/followLogTypeSet' // 跟进计划类型
+import CustomerLimitSet from './components/customerLimitSet' // 拥有/锁定LEADS数限制
+import SignedPossibilitySet from './components/signedPossibilitySet' // 签约可能性设置
+import SubjectSet from './components/subjectSet' // 科目设置
+import RemindSet from './components/remindSet' // 学员回访提醒设置/LEADS承诺到访提醒设置
 
 export default {
   name: 'BizParam',
-
   components: {
-    BusinessGroupSet,
-    ProductCategorySet,
-    FollowLogTypeSet,
     ContractExpireSet,
+    XrHeader,
+
+    ChannelCategorySet,
+    ChannelTypeSet,
+    GradeSet,
+    PresentRulesSet,
+    FollowLogTypeSet,
     CustomerLimitSet,
-    VisitRemindSet,
-    SerialNumberSet,
-    XrHeader
+    SignedPossibilitySet,
+    SubjectSet,
+    RemindSet
   },
 
   data() {
     return {
       menuList: [
-        { label: '跟进记录类型设置', key: 'follow-log-type-set' },
-        { label: '商机组设置', key: 'business-group-set' },
-        { label: '产品类别设置', key: 'product-category-set' },
-        { label: '合同到期提醒设置', key: 'contract-expire-set' },
-        { label: '拥有客户数限制', key: 'own' },
-        { label: '锁定客户数限制', key: 'lock' },
-        { label: '客户回访提醒设置', key: 'VisitRemindSet' },
-        { label: '编号规则设置', key: 'SerialNumberSet' }
+        { label: '渠道设置', key: 'ChannelCategorySet' },
+        { label: '渠道类型设置', key: 'ChannelTypeSet' },
+        { label: '年级设置', key: 'GradeSet' },
+        { label: '累计赠送规则', key: 'PresentRulesSet' },
+        { label: '跟进计划类型设置', key: 'FollowLogTypeSet' },
+        { label: '拥有LEADS数限制', key: 'own' },
+        { label: '锁定LEADS数限制', key: 'lock' },
+        { label: '学员回访提醒设置', key: 'studentVisit' },
+        { label: '签约可能性设置', key: 'SignedPossibilitySet' },
+        { label: '科目设置', key: 'SubjectSet' },
+        { label: 'LEADS承诺到访提醒设置', key: 'leadsVisit' }
       ],
-      menuIndex: 'follow-log-type-set',
+      menuIndex: 'ChannelCategorySet',
       types: '' // 区分拥有客户 和 锁定客户
     }
   },
 
   computed: {
     componentName() {
-      if (this.menuIndex == 'own' || this.menuIndex == 'lock') {
-        return 'customer-limit-set'
+      if (['own', 'lock'].includes(this.menuIndex)) {
+        return 'CustomerLimitSet'
+      }
+      if (['studentVisit', 'leadsVisit'].includes(this.menuIndex)) {
+        return 'RemindSet'
       }
       return this.menuIndex
     }

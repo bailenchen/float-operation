@@ -1,10 +1,10 @@
 <template>
   <div v-loading="loading">
     <div class="content-title">
-      <span>产品类别设置</span>
+      <span>渠道类别设置</span>
     </div>
     <div class="product-setting">
-      <div class="tips">注：产品类别最多设置20级</div>
+      <div class="tips">注：渠道类别最多设置2级</div>
       <div class="product-setting-con">
         <div>
           <span
@@ -32,7 +32,6 @@
                 src="@/assets/img/unfold.png">
               <div class="node-label">{{ node.label }}</div>
               <el-dropdown
-                v-if="node.level < maxCreateLevel"
                 trigger="click"
                 @command="handleTreeSetDrop">
                 <div
@@ -85,7 +84,7 @@ import {
 } from '@/api/systemManagement/SystemCustomer'
 
 export default {
-  name: 'ProductCategorySet',
+  name: 'ChannelCategorySet',
 
   components: {},
 
@@ -93,13 +92,13 @@ export default {
     return {
       loading: false, // 展示加载中效果
 
-      // 产品类别设置
+      // 渠道类别设置
       treeData: [],
       /** 更多操作 */
       treeSetTypes: [],
       // 最大可创建20级
-      maxCreateLevel: 20,
-      // 编辑产品弹窗
+      maxCreateLevel: 2,
+      // 编辑渠道弹窗
       productHandleDialog: false,
       productForm: { name: '', type: '', pid: '', categoryId: '' },
       defaultProps: {
@@ -115,23 +114,30 @@ export default {
 
   methods: {
     /**
-     * 产品类别设置
+     * 渠道类别设置
      */
     getChild(node) {
-      var temps = [
+      const temps = [
         { type: 'create-child', name: '新建子分类' },
         { type: 'create-brother', name: '新建平级分类' },
         { type: 'edit', name: '编辑分类' },
         { type: 'delete', name: '删除分类' }
       ]
-      this.treeSetTypes = temps.map(function(item, index, array) {
-        item['node'] = node
-        return item
-      })
+      if (node.level < this.maxCreateLevel) {
+        this.treeSetTypes = temps.map(item => {
+          item['node'] = node
+          return item
+        })
+      } else {
+        this.treeSetTypes = temps.slice(2).map(item => {
+          item['node'] = node
+          return item
+        })
+      }
     },
 
     /**
-     * 产品操作
+     * 渠道操作
      */
     handleTreeSetDrop(command) {
       if (command.type == 'create-one') {
@@ -188,7 +194,7 @@ export default {
     },
 
     /**
-     * 产品类别操作
+     * 渠道类别操作
      */
     handleProduct() {
       if (this.productForm.name.length == 0) {
@@ -259,7 +265,7 @@ export default {
     },
 
     /**
-     * 获取产品分类数据
+     * 获取渠道分类数据
      */
     getProductCategoryIndex() {
       this.loading = true
@@ -291,7 +297,7 @@ export default {
   margin-left: 20px;
 }
 
-/* 产品类别设置 */
+/* 渠道类别设置 */
 .product-setting {
   flex: 1;
   display: flex;

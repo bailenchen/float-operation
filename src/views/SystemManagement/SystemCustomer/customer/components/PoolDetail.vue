@@ -21,7 +21,7 @@
         </div>
 
         <span class="customer-num">
-          客户数量：<span class="customer-num__value">{{ detail.customerNum || 0 }}个</span>
+          LEADS数量：<span class="customer-num__value">{{ detail.customerNum || 0 }}个</span>
         </span>
       </flexbox>
       <flexbox
@@ -63,13 +63,13 @@
             align="stretch"
             class="rule-item">
             <div class="label">前负责人领取规则</div>
-            <div class="value">{{ detail.preOwnerSetting == 1 ? `前负责人${detail.preOwnerSettingDay}天内不允许领取该客户` : '不限制' }}</div>
+            <div class="value">{{ detail.preOwnerSetting == 1 ? `前负责人${detail.preOwnerSettingDay}天内不允许领取该LEADS` : '不限制' }}</div>
           </flexbox>
           <flexbox
             align="stretch"
             class="rule-item">
             <div class="label">领取频率规则</div>
-            <div class="value">{{ detail.receiveSetting == 1 ? `每天最多领取${detail.receiveNum}个公海客户` : '不限制' }}</div>
+            <div class="value">{{ detail.receiveSetting == 1 ? `每天最多领取${detail.receiveNum}个公海LEADS` : '不限制' }}</div>
           </flexbox>
           <flexbox
             align="stretch"

@@ -7,13 +7,13 @@
       v-if="data.type == trueLabel"
       class="recycle-rule__content">
       <div>
-        <span class="check-label">选择不进入公海客户</span>
+        <span class="check-label">选择不进入公海LEADS</span>
         <el-checkbox
           v-if="dealHandleShow"
           v-model="data.dealHandle"
           :true-label="0"
-          :false-label="1">已成交客户<el-tooltip
-            content="已成交是指客户状态为“已成交”"
+          :false-label="1">已成交LEADS<el-tooltip
+            content="已成交是指LEADS状态为“已成交”"
             effect="dark"
             placement="top">
             <i class="wk wk-help wk-help-tips"/>
@@ -22,17 +22,17 @@
           v-if="businessHandleShow"
           v-model="data.businessHandle"
           :true-label="0"
-          :false-label="1">有商机客户</el-checkbox>
+          :false-label="1">有商机LEADS</el-checkbox>
       </div>
       <div>
-        <el-radio v-model="data.customerLevelSetting" :label="1">所有客户统一设置</el-radio>
+        <el-radio v-model="data.customerLevelSetting" :label="1">所有LEADS统一设置</el-radio>
         <el-table
           :data="allCustomerData"
           border
           style="width: 100%">
           <el-table-column
             prop="level"
-            label="客户"
+            label="LEADS"
             width="180"/>
           <el-table-column
             :label="limitDayName"
@@ -47,14 +47,14 @@
       </div>
 
       <div>
-        <el-radio v-model="data.customerLevelSetting" :label="2">根据客户级别分别设置</el-radio>
+        <el-radio v-model="data.customerLevelSetting" :label="2">根据LEADS级别分别设置</el-radio>
         <el-table
           :data="levelCustomerData"
           border
           style="width: 100%">
           <el-table-column
             prop="level"
-            label="客户"
+            label="LEADS"
             width="180"/>
           <el-table-column
             :label="limitDayName"
@@ -86,9 +86,9 @@ export default {
       default: () => {
         /**
          * "type":1, // 收回规则判断类型 1跟进记录 2商机 3成交状态
-        "dealHandle":0, // 已成交客户是否进入公海 0不进入 1进入
-        "businessHandle":1, // 有商机客户是否进入公海 0不进入 1进入
-        "level":1, // 客户级别 1全部 2 A（重要客户）3 B（普通客户）4 C（非优先  客户）
+        "dealHandle":0, // 已成交LEADS是否进入公海 0不进入 1进入
+        "businessHandle":1, // 有商机LEADS是否进入公海 0不进入 1进入
+        "level":1, // LEADS级别 1全部 2 A（重要LEADS）3 B（普通LEADS）4 C（非优先  LEADS）
         "limitDay":30 // 公海规则限制天数
          */
         return {
@@ -110,7 +110,7 @@ export default {
   data() {
     return {
       allCustomerData: [{
-        level: '所有客户', // 客户级别 1全部 2 A（重要客户）3 B（普通客户）4 C（非优先客户）
+        level: '所有LEADS', // LEADS级别 1全部 2 A（重要LEADS）3 B（普通LEADS）4 C（非优先LEADS）
         limitDay: ''
       }],
       levelCustomerData: []
@@ -119,9 +119,9 @@ export default {
   computed: {
     typeName() {
       return {
-        1: '超过N天“无新建跟进（跟进记录）”的客户，由系统定时退回公海客户池',
-        2: '超过N天“无新建商机”的客户，由系统定时退回公海客户池',
-        3: '超过N天“未成交”的客户，由系统定时退回公海客户池'
+        1: '超过N天“无新建跟进（跟进记录）”的LEADS，由系统定时退回公海LEADS池',
+        2: '超过N天“无新建商机”的LEADS，由系统定时退回公海LEADS池',
+        3: '超过N天“未成交”的LEADS，由系统定时退回公海LEADS池'
       }[parseInt(this.trueLabel)]
     },
 

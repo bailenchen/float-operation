@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading">
     <div class="content-title">
-      <span>跟进计划类型设置</span>
+      <span>科目设置</span>
       <el-button
         type="primary"
         class="rt"
@@ -22,7 +22,7 @@
       </div>
       <el-button
         type="text"
-        @click="addItem">+添加类型</el-button>
+        @click="addItem">+添加科目</el-button>
     </div>
   </div>
 </template>
@@ -34,10 +34,8 @@ import {
 } from '@/api/systemManagement/SystemCustomer'
 
 export default {
-  name: 'FollowLogTypeSet',
-
+  name: 'SubjectSet',
   components: {},
-
   data() {
     return {
       loading: false, // 展示加载中效果

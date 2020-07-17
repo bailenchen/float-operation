@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading">
     <div class="content-title">
-      <span>跟进计划类型设置</span>
+      <span>年级设置</span>
       <el-button
         type="primary"
         class="rt"
@@ -22,7 +22,7 @@
       </div>
       <el-button
         type="text"
-        @click="addItem">+添加类型</el-button>
+        @click="addItem">+添加年级</el-button>
     </div>
   </div>
 </template>
@@ -35,41 +35,34 @@ import {
 
 export default {
   name: 'FollowLogTypeSet',
-
-  components: {},
-
   data() {
     return {
       loading: false, // 展示加载中效果
 
-      list: [] // 展示类型数据
+      list: [] // 展示年级数据
     }
   },
-
   created() {
     this.getDetail()
   },
-
   methods: {
     /**
      * 获取详情
      */
     getDetail() {
       this.loading = true
-      crmSettingRecordListAPI()
-        .then(res => {
-          this.loading = false
-          this.list = res.data.map(item => {
-            return { value: item }
-          })
+      crmSettingRecordListAPI().then(res => {
+        this.loading = false
+        this.list = res.data.map(item => {
+          return { value: item }
         })
-        .catch(() => {
-          this.loading = false
-        })
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
-     * 增加类型
+     * 增加年级
      */
     addItem() {
       this.list.push({ value: '' })

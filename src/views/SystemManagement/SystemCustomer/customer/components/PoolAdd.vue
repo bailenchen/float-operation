@@ -47,7 +47,7 @@
                   style="display: inline-block;">
                   <div class="xr-form-label">
                     公海管理员<el-tooltip
-                      content="客户公海管理员可对客户公海客户进行领取、分配、删除、导出等操作"
+                      content="LEADS公海管理员可对LEADS公海LEADS进行领取、分配、删除、导出等操作"
                       effect="dark"
                       placement="top">
                       <i class="wk wk-help wk-help-tips"/>
@@ -67,7 +67,7 @@
                   style="display: inline-block;">
                   <div class="xr-form-label">
                     公海成员<el-tooltip
-                      content="客户公海规则对客户公海成员生效(超级管理员除外)，客户公海成员可查看以及领取公海客户"
+                      content="LEADS公海规则对LEADS公海成员生效(超级管理员除外)，LEADS公海成员可查看以及领取公海LEADS"
                       effect="dark"
                       placement="top">
                       <i class="wk wk-help wk-help-tips"/>
@@ -87,16 +87,16 @@
           <flexbox
             class="row"
             align="stretch">
-            <div class="row-label">前负责人领取规则</div>
+            <div class="row-label">前教育顾问领取规则</div>
             <div class="row-content">
               <el-radio-group v-model="baseFrom.preOwnerSetting">
                 <el-radio :label="0">不限制</el-radio>
                 <el-radio :label="1">限制</el-radio>
               </el-radio-group>
               <div v-if="baseFrom.preOwnerSetting === 1" class="xr-input">
-                <span>前负责人</span>
+                <span>前教育顾问</span>
                 <el-input v-model="baseFrom.preOwnerSettingDay" @keyup.native="inputLimit('preOwnerSettingDay')" />
-                <span>天内不允许领取该客户</span>
+                <span>天内不允许领取该LEADS</span>
               </div>
             </div>
           </flexbox>
@@ -113,7 +113,7 @@
               <div v-if="baseFrom.receiveSetting === 1" class="xr-input">
                 <span>每天最多领取</span>
                 <el-input v-model="baseFrom.receiveNum" @keyup.native="inputLimit('receiveNum')" />
-                <span>个公海客户</span>
+                <span>个公海LEADS</span>
               </div>
             </div>
           </flexbox>
@@ -130,7 +130,7 @@
               <div v-if="baseFrom.remindSetting === 1" class="xr-input">
                 <span>提前</span>
                 <el-input v-model="baseFrom.remindDay" @keyup.native="inputLimit('remindDay')" />
-                <span>天提醒负责人</span>
+                <span>天提醒教育顾问</span>
               </div>
             </div>
           </flexbox>
@@ -262,7 +262,7 @@ export default {
         ]
       },
       recycleRuleData: null,
-      levelCustomerName: [], // 客户级别数据源
+      levelCustomerName: [], // LEADS级别数据源
       customerPoolFields: [],
       requestFields: {
         preOwnerSettingDay: '前负责人限制领取天数需大于0',

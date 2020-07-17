@@ -76,7 +76,7 @@ export default {
   },
 
   props: {
-    types: [String, Number] // 1拥有客户上限2锁定客户上限
+    types: [String, Number] // own拥有LEADS上限 lock锁定LEADS上限
   },
 
   data() {
@@ -98,8 +98,8 @@ export default {
   computed: {
     title() {
       return {
-        1: '拥有客户数限制',
-        2: '锁定客户数限制'
+        own: '拥有LEADS数限制',
+        lock: '锁定LEADS数限制'
       }[this.types]
     },
 
@@ -108,8 +108,8 @@ export default {
         { label: '适用范围', field: 'userIds' },
         {
           label: {
-            1: '拥有客户数上限',
-            2: '锁定客户数上限'
+            own: '拥有LEADS数上限',
+            lock: '锁定LEADS数上限'
           }[this.types],
           field: 'customerNum'
         }
@@ -118,8 +118,8 @@ export default {
       if (this.types == 1) {
         temps.push({
           label: {
-            1: '成交客户是否占有拥有客户数',
-            2: '成交客户是否占有锁定客户数'
+            own: '成交LEADS是否占有拥有LEADS数',
+            lock: '成交LEADS是否占有锁定LEADS数'
           }[this.types],
           field: 'customerDeal'
         })

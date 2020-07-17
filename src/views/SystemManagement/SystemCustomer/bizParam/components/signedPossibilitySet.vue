@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading">
     <div class="content-title">
-      <span>跟进计划类型设置</span>
+      <span>签约可能性设置</span>
       <el-button
         type="primary"
         class="rt"
@@ -34,7 +34,7 @@ import {
 } from '@/api/systemManagement/SystemCustomer'
 
 export default {
-  name: 'FollowLogTypeSet',
+  name: 'SignedPossibilitySet',
 
   components: {},
 
