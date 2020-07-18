@@ -40,20 +40,20 @@ export default [
       }
     }]
   },
-  {
-    ...layout({
-      // permissions: ['crm', 'leads']
-      permissionList: [['crm', 'leads'], ['crm', 'applet']]
-    }),
-    children: [{
-      path: 'leads', // 线索列表
-      component: () => import('@/views/customermanagement/clue/ClueAllIndex'),
-      meta: {
-        title: '线索',
-        icon: 'leads'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     // permissions: ['crm', 'leads']
+  //     permissionList: [['crm', 'leads'], ['crm', 'applet']]
+  //   }),
+  //   children: [{
+  //     path: 'leads', // 线索列表
+  //     component: () => import('@/views/customermanagement/clue/ClueAllIndex'),
+  //     meta: {
+  //       title: '线索',
+  //       icon: 'leads'
+  //     }
+  //   }]
+  // },
   // {
   //   ...layout({
   //     permissions: ['crm', 'applet']
@@ -76,7 +76,7 @@ export default [
       path: 'customer', // 客户列表
       component: () => import('@/views/customermanagement/customer/CustomerAllIndex'),
       meta: {
-        title: '客户',
+        title: 'LEADS',
         icon: 'customer'
       }
     }]

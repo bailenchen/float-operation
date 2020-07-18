@@ -208,7 +208,7 @@ export default {
       return (
         {
           leads: '线索',
-          customer: '客户',
+          customer: 'LEADS',
           contacts: '联系人',
           product: '产品',
           business: '商机',

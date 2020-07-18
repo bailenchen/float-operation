@@ -233,29 +233,29 @@ export default {
       if (this.crm.customer && this.crm.customer.read) {
         tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
       }
-      if (this.crm.contacts && this.crm.contacts.index) {
-        tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
-      }
+      // if (this.crm.contacts && this.crm.contacts.index) {
+      //   tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
+      // }
 
-      tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
+      // tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
 
-      if (this.crm.business && this.crm.business.index) {
-        tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
-      }
+      // if (this.crm.business && this.crm.business.index) {
+      //   tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
+      // }
 
       if (this.crm.contract && this.crm.contract.index) {
         tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
       }
-      if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
-      }
-      if (this.crm.visit && this.crm.visit.index) {
-        tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
-      }
-
-      if (this.crm.invoice && this.crm.invoice.index) {
-        tempsTabs.push({ label: this.getTabName('发票', this.tabsNumber.invoiceCount), name: 'RelativeInvoice' })
-      }
+      // if (this.crm.receivables && this.crm.receivables.index) {
+      //   tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
+      // }
+      // if (this.crm.visit && this.crm.visit.index) {
+      //   tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
+      // }
+      //
+      // if (this.crm.invoice && this.crm.invoice.index) {
+      //   tempsTabs.push({ label: this.getTabName('发票', this.tabsNumber.invoiceCount), name: 'RelativeInvoice' })
+      // }
 
       if (this.tabsNumber && this.tabsNumber.hasOwnProperty('callRecordCount')) {
         tempsTabs.push({ label: this.getTabName('呼叫记录', this.tabsNumber.callRecordCount), name: 'RelativeCallRecord' })

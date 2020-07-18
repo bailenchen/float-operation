@@ -424,9 +424,9 @@ export default {
         } else if (type == 'delete') {
           message = '确定删除?'
         } else if (type == 'lock') {
-          message = '确定要锁定这些客户吗？锁定后将不会掉入公海。'
+          message = '确定要锁定这些LEADS吗？锁定后将不会掉入公海。'
         } else if (type == 'unlock') {
-          message = '确定要解锁这些客户吗？'
+          message = '确定要解锁这些LEADS吗？'
         } else if (type == 'start') {
           message = '确定要上架这些产品吗?'
         } else if (type == 'disable') {
@@ -436,7 +436,7 @@ export default {
         } else if (type == 'state_disable') {
           message = '确定要停用这些活动吗?'
         } else if (type == 'get') {
-          message = '确定要领取该客户吗?'
+          message = '确定要领取该LEADS吗?'
         } else if (type === 'transformLead') {
           message = '确定将这些名片线索转化为线索吗?'
         }
@@ -725,6 +725,16 @@ export default {
           name: '更改成交状态',
           type: 'deal_status',
           icon: 's-status'
+        },
+        alloc_class_teacher: {
+          name: '分配班主任',
+          type: 'alloc_class_teacher',
+          icon: 'alloc'
+        },
+        change_seas: {
+          name: '转移到其他公海',
+          type: 'change_seas',
+          icon: 'seas'
         }
       }
       if (this.crmType == 'leads') {
@@ -740,19 +750,21 @@ export default {
             'alloc',
             'get',
             'export',
-            'delete'
+            'delete',
+            'change_seas'
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
+            'alloc_class_teacher',
             'transfer',
             'put_seas',
-            'deal_status',
+            // 'deal_status',
             'export',
             'delete',
             'lock',
-            'unlock',
-            'add_user',
-            'delete_user'
+            'unlock'
+            // 'add_user',
+            // 'delete_user'
           ])
         }
       } else if (this.crmType == 'contacts') {
@@ -896,7 +908,7 @@ export default {
       if (this.crmType == 'leads') {
         return '全部线索'
       } else if (this.crmType == 'customer') {
-        return '全部客户'
+        return '全部LEADS'
       } else if (this.crmType == 'contacts') {
         return '全部联系人'
       } else if (this.crmType == 'business') {

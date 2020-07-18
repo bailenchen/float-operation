@@ -173,7 +173,7 @@ export default {
       const temp = []
       if (this.crm && this.crm.customer) {
         temp.push({
-          title: '客户',
+          title: 'LEADS',
           path: 'customer',
           icon: require('@/assets/img/crm/customer_not.png')
         })

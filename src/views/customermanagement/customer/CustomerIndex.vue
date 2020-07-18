@@ -3,9 +3,9 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      title="客户管理"
-      placeholder="请输入客户名称/手机/电话"
-      main-title="新建客户"
+      title="LEADS管理"
+      placeholder="请输入LEADS名称/手机/电话"
+      main-title="新建LEADS"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos">
@@ -247,7 +247,7 @@ export default {
       const temp = []
       if (this.crm && this.crm.customer) {
         temp.push({
-          title: '客户',
+          title: 'LEADS',
           path: 'customer',
           icon: require('@/assets/img/crm/customer.png')
         })
