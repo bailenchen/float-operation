@@ -34,8 +34,6 @@ export default {
       this.componentName = 'CustomerIndex'
     } else if (this.crm && this.crm.pool) {
       this.componentName = 'SeasIndex'
-    } else if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
-      this.componentName = 'MapIndex'
     }
   },
 

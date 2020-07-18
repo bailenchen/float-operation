@@ -261,14 +261,6 @@ export default {
         })
       }
 
-      if (this.crm && this.crm.customer && this.crm.customer.nearbyCustomer) {
-        temp.push({
-          title: '附近客户',
-          path: 'nearby',
-          icon: require('@/assets/img/crm/nearby_not.png')
-        })
-      }
-
       return temp
     }
   },
