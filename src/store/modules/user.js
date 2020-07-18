@@ -2,7 +2,7 @@ import {
   login,
   logout
 } from '@/api/login'
-import request from '@/utils/request'
+// import request from '@/utils/request'
 import {
   adminIndexAuthList
 } from '@/api/common'
@@ -19,7 +19,7 @@ import {
   addAuth,
   removeAuth
 } from '@/utils/auth'
-import config from '@/config'
+// import config from '@/config'
 import Lockr from 'lockr'
 // import { RSAencrypt } from '@/utils'
 

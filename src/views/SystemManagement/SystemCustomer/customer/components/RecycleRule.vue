@@ -6,7 +6,7 @@
     <div
       v-if="data.type == trueLabel"
       class="recycle-rule__content">
-      <div>
+      <!--<div>
         <span class="check-label">选择不进入公海LEADS</span>
         <el-checkbox
           v-if="dealHandleShow"
@@ -23,9 +23,9 @@
           v-model="data.businessHandle"
           :true-label="0"
           :false-label="1">有商机LEADS</el-checkbox>
-      </div>
+      </div>-->
       <div>
-        <el-radio v-model="data.customerLevelSetting" :label="1">所有LEADS统一设置</el-radio>
+        <!--<el-radio v-model="data.customerLevelSetting" :label="1">所有LEADS统一设置</el-radio>-->
         <el-table
           :data="allCustomerData"
           border
@@ -33,20 +33,37 @@
           <el-table-column
             prop="level"
             label="LEADS"
-            width="180"/>
+            width="150"/>
           <el-table-column
-            :label="limitDayName"
+            label="规则"
             prop="limitDay">
             <template slot-scope="scope">
-              <span>超过</span>
-              <el-input v-model="scope.row.limitDay" class="value-input" @keyup.native="inputLimit(scope.row)" />
-              <span>天{{ limitDayUnit }}，进入公海</span>
+              <template v-if="trueLabel === 1">
+                <el-input
+                  v-model="scope.row.limitDay"
+                  class="value-input"
+                  @keyup.native="inputLimit(scope.row)" />
+                <span>天内通话次数小于</span>
+                <el-input
+                  v-model="scope.row.limitDay"
+                  class="value-input"
+                  @keyup.native="inputLimit(scope.row)" />
+                <span>次，进入公海</span>
+              </template>
+              <template v-else>
+                <span>超过</span>
+                <el-input
+                  v-model="scope.row.limitDay"
+                  class="value-input"
+                  @keyup.native="inputLimit(scope.row)" />
+                <span>天{{ limitDayUnit }}，进入公海</span>
+              </template>
             </template>
           </el-table-column>
         </el-table>
       </div>
 
-      <div>
+      <!--<div>
         <el-radio v-model="data.customerLevelSetting" :label="2">根据LEADS级别分别设置</el-radio>
         <el-table
           :data="levelCustomerData"
@@ -66,7 +83,7 @@
             </template>
           </el-table-column>
         </el-table>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
@@ -119,9 +136,9 @@ export default {
   computed: {
     typeName() {
       return {
-        1: '超过N天“无新建跟进（跟进记录）”的LEADS，由系统定时退回公海LEADS池',
-        2: '超过N天“无新建商机”的LEADS，由系统定时退回公海LEADS池',
-        3: '超过N天“未成交”的LEADS，由系统定时退回公海LEADS池'
+        1: 'N天内"通话次数 < N次"，由系统定时退回LEADS公海池',
+        2: '超过N天"无新建跟进（跟进记录）"的LEADS，由系统定时退回LEADS公海',
+        3: '有跟进但超过N天"未成交"的LEADS，由系统定时退回LEADS公海'
       }[parseInt(this.trueLabel)]
     },
 
@@ -136,7 +153,7 @@ export default {
     limitDayUnit() {
       return {
         1: '未跟进',
-        2: '未新建商机',
+        2: '未跟进',
         3: '未成交'
       }[parseInt(this.trueLabel)]
     },

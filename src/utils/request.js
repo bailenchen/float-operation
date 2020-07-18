@@ -8,8 +8,8 @@ import {
 } from '@/utils/auth'
 import qs from 'qs'
 import { debounce } from 'throttle-debounce'
-import config from '@/config'
-import Lockr from 'lockr'
+// import config from '@/config'
+// import Lockr from 'lockr'
 
 /**
  * 检查dom是否忽略

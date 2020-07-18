@@ -3,14 +3,14 @@
     <div>{{ typeName }}</div>
     <div
       class="detail-recycle-rule__content">
-      <div class="range-rule">
+      <!--<div class="range-rule">
         <span>选择不进入公海LEADS</span>
         <span v-if="dealHandleShow && data.dealHandle === 0">已成交LEADS</span>
         <span v-if="businessHandleShow && data.businessHandle === 0">有商机LEADS</span>
-      </div>
+      </div>-->
       <div>
-        <div v-if="data.customerLevelSetting === 1" class="type-rule">所有LEADS统一设置</div>
-        <div v-else-if="data.customerLevelSetting === 2" class="type-rule">根据LEADS级别分别设置</div>
+        <!--<div v-if="data.customerLevelSetting === 1" class="type-rule">所有LEADS统一设置</div>
+        <div v-else-if="data.customerLevelSetting === 2" class="type-rule">根据LEADS级别分别设置</div>-->
         <el-table
           :data="data.level"
           border
@@ -47,9 +47,9 @@ export default {
   computed: {
     typeName() {
       return {
-        1: '超过N天“无新建跟进（跟进记录）”的LEADS，由系统定时退回公海LEADS池',
-        2: '超过N天“无新建商机”的LEADS，由系统定时退回公海LEADS池',
-        3: '超过N天“未成交”的LEADS，由系统定时退回公海LEADS池'
+        1: 'N天内"通话次数 < N次"，由系统定时退回LEADS公海池',
+        2: '超过N天"无新建跟进（跟进记录）"的LEADS，由系统定时退回LEADS公海',
+        3: '有跟进但超过N天"未成交"的LEADS，由系统定时退回LEADS公海'
       }[parseInt(this.data.type)]
     },
 
