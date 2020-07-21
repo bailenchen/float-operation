@@ -2,11 +2,11 @@
   <el-date-picker
     v-model="dataValue"
     :disabled="disabled"
+    :placeholder="item.placeholder || '选择日期'"
     clearable
     style="width: 100%;"
     type="datetime"
     value-format="yyyy-MM-dd HH:mm:ss"
-    placeholder="选择日期"
     @change="valueChange"/>
 </template>
 <script type="text/javascript">

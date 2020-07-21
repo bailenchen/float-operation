@@ -3,8 +3,8 @@
     v-model="dataValue"
     :disabled="disabled"
     :clearable="clearable"
+    :placeholder="item.placeholder || '请选择'"
     style="width: 100%;"
-    placeholder="请选择"
     @change="valueChange">
     <el-option
       v-for="(item, index) in option"

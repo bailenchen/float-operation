@@ -7,11 +7,40 @@
     <div
       v-if="isUnfold"
       class="mix-content-select">
+      <!--<el-date-picker
+        v-model="nextTime"
+        :editable="false"
+        type="datetime"
+        placeholder="跟进时间"
+        value-format="yyyy-MM-dd HH:mm:ss" />
       <el-select
         v-if="showContacts"
         v-model="selectContactsId"
         clearable
-        placeholder="选择联系人">
+        placeholder="跟进计划">
+        <el-option
+          v-for="item in contacts"
+          :key="item.contactsId"
+          :label="item.name"
+          :value="item.contactsId" />
+      </el-select>
+      <el-date-picker
+        v-model="nextTime"
+        :editable="false"
+        type="datetime"
+        placeholder="承诺到访时间"
+        value-format="yyyy-MM-dd HH:mm:ss" />
+      <el-date-picker
+        v-model="nextTime"
+        :editable="false"
+        type="datetime"
+        placeholder="下次跟进时间"
+        value-format="yyyy-MM-dd HH:mm:ss" />
+      <el-select
+        v-if="showContacts"
+        v-model="selectContactsId"
+        clearable
+        placeholder="跟进结果">
         <el-option
           v-for="item in contacts"
           :key="item.contactsId"
@@ -19,21 +48,30 @@
           :value="item.contactsId" />
       </el-select>
       <el-select
-        v-model="followType"
+        v-if="showContacts"
+        v-model="selectContactsId"
         clearable
-        placeholder="选择跟进方式">
+        placeholder="签约可能性">
         <el-option
-          v-for="item in followTypes"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value" />
-      </el-select>
-      <el-date-picker
-        v-model="nextTime"
-        :editable="false"
-        type="datetime"
-        placeholder="选择下次联系时间"
-        value-format="yyyy-MM-dd HH:mm:ss" />
+          v-for="item in contacts"
+          :key="item.contactsId"
+          :label="item.name"
+          :value="item.contactsId" />
+      </el-select>-->
+
+      <div
+        v-for="(field, index) in fieldList"
+        :key="index"
+        :class="field.com"
+        class="form-item">
+        <component
+          :is="field.com"
+          :index="index"
+          :item="field"
+          :placeholder="field.placeholder"
+          :value="field.value"
+          @value-change="handleFormChange" />
+      </div>
       <common-words @select="commonWordsSelect" />
     </div>
     <div :class="['i-cont', { 'unfold': !isUnfold }]">
@@ -132,6 +170,8 @@
 <script>
 import { crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
 
+import XhSelect from '@/components/CreateCom/XhSelect'
+import XhDateTime from '@/components/CreateCom/XhDateTime'
 
 import CrmRelative from '@/components/CreateCom/CrmRelative'
 import AddImageList from '@/components/quickAdd/AddImageList'
@@ -149,7 +189,10 @@ export default {
     AddImageList,
     AddFileList,
     AddRelateList,
-    CommonWords
+    CommonWords,
+
+    XhSelect,
+    XhDateTime
   },
   props: {
     // 展示相关商机关联
@@ -194,7 +237,15 @@ export default {
       nextTime: '',
       /** 展示关联弹窗 */
       showRelativeType: '',
-      batchId: guid() // 批次ID
+      batchId: guid(), // 批次ID
+      fieldList: [
+        { fieldName: '', placeholder: '跟进时间', com: 'XhDateTime', value: '' },
+        { fieldName: '', placeholder: '跟进计划', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: '', placeholder: '跟进结果', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: '', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: '', placeholder: '承诺到访时间', com: 'XhDateTime', value: '' },
+        { fieldName: '', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
+      ]
     }
   },
   computed: {
@@ -217,6 +268,7 @@ export default {
   created() {
     this.selectContactsId = this.contactsId || ''
     this.getDefalutFollowType()
+    this.getOptions()
   },
 
   beforeDestroy() {},
@@ -230,6 +282,23 @@ export default {
       } else {
         this.followType = ''
       }
+    },
+
+    getOptions() {
+      this.fieldList[1].setting = [
+        { name: '无效', value: '无效' },
+        { name: '有效', value: '有效' },
+        { name: '承诺到访', value: '承诺到访' },
+        { name: '已到访', value: '已到访' },
+        { name: '未确定', value: '未确定' }
+      ]
+      this.fieldList[2].setting = ['跟进结果1', '跟进结果2']
+      this.fieldList[3].setting = ['大', '中']
+    },
+
+    handleFormChange(data) {
+      this.fieldList[data.index].value = data.value
+      console.log(this.fieldList)
     },
 
     /**
@@ -470,7 +539,12 @@ export default {
   padding: 8px 8px 0;
 
   &-select {
-    .el-select {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: -5px;
+    /*.el-select {
       width: 110px;
       margin-right: 8px;
     }
@@ -478,6 +552,16 @@ export default {
     .el-date-editor {
       width: 200px;
       margin-right: 8px;
+    }*/
+    .form-item {
+      width: 110px;
+      margin-bottom: 5px;
+      &:not(:last-child) {
+        margin-right: 8px;
+      }
+      &.XhDateTime {
+        width: 200px;
+      }
     }
   }
 
