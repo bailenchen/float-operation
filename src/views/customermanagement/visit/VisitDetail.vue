@@ -119,9 +119,10 @@ export default {
       loading: false,
       crmType: 'visit',
       headDetails: [
-        { title: '客户名称', value: '' },
-        { title: '回访时间', value: '' },
-        { title: '回访人', value: '' },
+        { title: '学员名称', value: '' },
+        { title: '沟通方式', value: '' },
+        { title: '作者', value: '' },
+        { title: '类型', value: '' },
         { title: '回访形式', value: '' }
       ],
       tabCurrentName: 'CRMEditBaseInfo',

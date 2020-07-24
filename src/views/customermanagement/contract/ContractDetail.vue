@@ -141,11 +141,11 @@ export default {
       crmType: 'contract',
       headDetails: [
         { title: '合同编号', value: '' },
-        { title: '客户名称', value: '' },
+        { title: '学员名称', value: '' },
         { title: '合同金额（元）', value: '' },
         { title: '签约时间', value: '' },
-        { title: '回款金额（元）', value: '' },
-        { title: '负责人', value: '' }
+        { title: '付款金额（元）', value: '' },
+        { title: '签约人', value: '' }
       ],
       tabCurrentName: 'Activity',
       // 编辑操作

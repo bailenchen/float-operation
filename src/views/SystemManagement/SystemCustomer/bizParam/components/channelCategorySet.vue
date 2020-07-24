@@ -78,10 +78,10 @@
 
 <script>
 import {
-  productCategoryIndex,
-  productCategorySave,
-  productCategoryDelete
-} from '@/api/systemManagement/SystemCustomer'
+  QueryChannelCategory,
+  AddChannelCategory,
+  DeleteChannelCategory
+} from '@/api/systemManagement/params'
 
 export default {
   name: 'ChannelCategorySet',
@@ -96,14 +96,14 @@ export default {
       treeData: [],
       /** 更多操作 */
       treeSetTypes: [],
-      // 最大可创建20级
+      // 最大可创建2级
       maxCreateLevel: 2,
       // 编辑渠道弹窗
       productHandleDialog: false,
-      productForm: { name: '', type: '', pid: '', categoryId: '' },
+      productForm: { name: '', type: '', parentId: '', categoryId: '' },
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label: 'name'
       }
     }
   },
@@ -140,37 +140,54 @@ export default {
      * 渠道操作
      */
     handleTreeSetDrop(command) {
-      if (command.type == 'create-one') {
-        this.productForm.type = command.type
-        this.productForm.name = ''
+      if (command.type === 'create-one') {
+        // 新增一级分类
+        this.productForm = {
+          type: command.type,
+          name: ''
+        }
         this.productHandleDialog = true
       }
-      if (command.type == 'create-child') {
-        this.productForm.type = command.type
-        this.productForm.pid = command.node.data.categoryId
-        this.productForm.name = ''
+      if (command.type === 'create-child') {
+        // 新增子节点
+        this.productForm = {
+          type: command.type,
+          parentId: command.node.data.id,
+          name: ''
+        }
         this.productHandleDialog = true
-      } else if (command.type == 'create-brother') {
-        this.productForm.type = command.type
-        this.productForm.pid = command.node.data.pid
-        this.productForm.name = ''
+      } else if (command.type === 'create-brother') {
+        // 新增平级节点
+        this.productForm = {
+          type: command.type,
+          parentId: command.node.data.parentId,
+          name: ''
+        }
         this.productHandleDialog = true
-      } else if (command.type == 'edit') {
-        this.productForm.type = command.type
-        this.productForm.name = command.node.data.name
-        this.productForm.categoryId = command.node.data.categoryId
-        this.productForm.pid = command.node.data.pid
+      } else if (command.type === 'edit') {
+        // 编辑节点
+        this.productForm = {
+          type: command.type,
+          parentId: command.node.data.parentId,
+          id: command.node.data.id,
+          name: command.node.data.name
+        }
         this.productHandleDialog = true
-      } else if (command.type == 'delete') {
+      } else if (command.type === 'delete') {
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
           .then(() => {
+            const data = command.node.data
+            if (data.hasOwnProperty('children') && data.children.length > 0) {
+              this.$message.error('该类别下有其他子类别！')
+              return
+            }
             this.loading = true
-            productCategoryDelete({
-              id: command.node.data.categoryId
+            DeleteChannelCategory({
+              id: command.node.data.id
             })
               .then(res => {
                 this.$message({
@@ -197,7 +214,7 @@ export default {
      * 渠道类别操作
      */
     handleProduct() {
-      if (this.productForm.name.length == 0) {
+      if (this.productForm.name.length === 0) {
         this.$message({
           message: '请填写名称',
           type: 'warning'
@@ -205,63 +222,41 @@ export default {
         return
       }
       this.productHandleDialog = false
-      if (this.productForm.type == 'create-one') {
-        this.loading = true
-        productCategorySave({
+      let params = {}
+      let msg = '新建成功'
+      if (this.productForm.type === 'create-one') {
+        params = {
           name: this.productForm.name
-        })
-          .then(res => {
-            this.getProductCategoryIndex()
-            this.$message.success('新增成功')
-            this.loading = false
-          })
-          .catch(() => {
-            this.loading = false
-          })
-      } else if (this.productForm.type == 'create-child') {
-        this.loading = true
-        productCategorySave({
-          pid: this.productForm.pid,
+        }
+      } else if (this.productForm.type === 'create-child') {
+        params = {
+          parentId: this.productForm.parentId,
           name: this.productForm.name
-        })
-          .then(res => {
-            this.getProductCategoryIndex()
-            this.$message.success('新建成功')
-            this.loading = false
-          })
-          .catch(() => {
-            this.loading = false
-          })
-      } else if (this.productForm.type == 'create-brother') {
+        }
         this.loading = true
-        productCategorySave({
-          pid: this.productForm.pid,
+      } else if (this.productForm.type === 'create-brother') {
+        params = {
+          parentId: this.productForm.parentId,
           name: this.productForm.name
-        })
-          .then(res => {
-            this.getProductCategoryIndex()
-            this.$message.success('新建成功')
-            this.loading = false
-          })
-          .catch(() => {
-            this.loading = false
-          })
-      } else if (this.productForm.type == 'edit') {
-        this.loading = true
-        productCategorySave({
-          categoryId: this.productForm.categoryId,
-          pid: this.productForm.pid,
+        }
+      } else if (this.productForm.type === 'edit') {
+        params = {
+          id: this.productForm.id,
+          parentId: this.productForm.parentId,
           name: this.productForm.name
-        })
-          .then(res => {
-            this.getProductCategoryIndex()
-            this.$message.success('编辑成功')
-            this.loading = false
-          })
-          .catch(() => {
-            this.loading = false
-          })
+        }
+        msg = '编辑成功'
       }
+      this.loading = true
+      AddChannelCategory(params)
+        .then(res => {
+          this.getProductCategoryIndex()
+          this.$message.success(msg)
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
 
     /**
@@ -269,9 +264,7 @@ export default {
      */
     getProductCategoryIndex() {
       this.loading = true
-      productCategoryIndex({
-        type: 'tree'
-      })
+      QueryChannelCategory()
         .then(res => {
           this.loading = false
           this.treeData = res.data

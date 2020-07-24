@@ -184,7 +184,7 @@ export default {
       crmType: 'customer',
       headDetails: [
         { title: '学员姓名', value: '' },
-        { title: 'LEADS来源', value: '' },
+        { title: '学员来源', value: '' },
         { title: '第一联系人电话', value: '' },
         { title: '教学顾问', value: '' },
         { title: '创建时间', value: '' }

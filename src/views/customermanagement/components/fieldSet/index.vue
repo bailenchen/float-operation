@@ -33,12 +33,11 @@
         <el-button type="primary" @click="save">保存</el-button>
       </div>
     </div>
-    <slot v-if="$slots.reference" slot="reference" @click="show = !show"/>
+    <slot v-if="$slots.reference" slot="reference"/>
     <i
       v-else
       slot="reference"
-      class="wk wk-config table-set"
-      @click="show = !show"/>
+      class="wk wk-config table-set"/>
   </el-popover>
 </template>
 

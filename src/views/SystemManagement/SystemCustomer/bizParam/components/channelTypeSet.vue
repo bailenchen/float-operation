@@ -38,21 +38,21 @@
               <el-button
                 type="text"
                 size="small"
-                @click="handleAction('edit', scope)">编 辑</el-button>
+                @click="handleAction('edit', scope.row)">编 辑</el-button>
               <el-button
                 type="text"
                 size="small"
-                @click="handleAction('delete', scope)">删 除</el-button>
+                @click="handleAction('delete', scope.row)">删 除</el-button>
               <el-button
                 type="text"
                 size="small"
-                @click="handleAction('status', scope)">
-                {{ scope.row['status'] === 0 ? '启用' : '停用' }}
+                @click="handleAction('status', scope.row)">
+                {{ scope.row['status'] === 1 ? '停用' : '启用' }}
               </el-button>
             </template>
           </el-table-column>
         </el-table>
-        <div class="p-contianer">
+        <!--<div class="p-contianer">
           <el-pagination
             :current-page="currentPage"
             :page-sizes="pageSizes"
@@ -63,7 +63,7 @@
             layout="prev, pager, next, sizes, total, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"/>
-        </div>
+        </div>-->
       </flexbox-item>
     </flexbox>
 
@@ -74,28 +74,27 @@
       width="500px">
       <el-form label-position="top">
         <el-form-item label="渠道类型名称">
-          <el-input v-model="dialogForm.name" />
+          <el-input v-model="dialogForm.typeName" />
         </el-form-item>
         <el-form-item label="包含渠道">
-          <el-select v-model="dialogForm.value" placeholder="请选择">
-            <el-option
-              v-for="item in channelOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value" />
-          </el-select>
+          <el-cascader
+            v-model="dialogForm.channelId"
+            :props="channelProps"
+            :collapse-tags="true"
+            :options="channelOptions"
+            placeholder="请选择" />
         </el-form-item>
         <el-form-item label="是否过滤">
-          <el-select v-model="dialogForm.type" placeholder="请选择">
-            <el-option label="是" value="1" />
-            <el-option label="否" value="0" />
+          <el-select v-model="dialogForm.isFilter" placeholder="请选择">
+            <el-option :value="1" label="是" />
+            <el-option :value="0" label="否" />
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="dialogForm.type == 1"
+          v-if="dialogForm.isFilter === 1"
           label="过滤人员">
           <xh-user-cell
-            :value="selectUsers"
+            :value="dialogForm.filteringPersonnel"
             class="handle-item-content"
             @value-change="handleChangeUser"/>
         </el-form-item>
@@ -113,7 +112,15 @@
 </template>
 
 <script>
+import {
+  QueryChannelType,
+  AddChannelType,
+  DeleteChannelType,
+  QueryChannelCategory
+} from '@/api/systemManagement/params'
+
 import XhUserCell from '@/components/CreateCom/XhUserCell'
+import { isEmpty } from 'element-ui/lib/utils/util'
 
 export default {
   name: 'ChannelTypeSet',
@@ -124,7 +131,8 @@ export default {
     return {
       loading: false, // 展示加载中效果
 
-      tableHeight: document.documentElement.clientHeight - 330, // 表的高度,
+      // tableHeight: document.documentElement.clientHeight - 330, // 表的高度,
+      tableHeight: document.documentElement.clientHeight - 280, // 表的高度,
 
       currentPage: 1,
       pageSize: 10,
@@ -133,32 +141,48 @@ export default {
 
       tableData: [],
       fieldList: [
-        { field: 'field', label: '渠道类型名称' },
-        { field: 'field', label: '包含渠道' },
-        { field: 'field', label: '是否过滤' },
-        { field: 'field', label: '过滤人员' },
-        { field: 'field', label: '创建人' },
-        { field: 'field', label: '状态' }
+        { field: 'typeName', label: '渠道类型名称' },
+        { field: 'name', label: '包含渠道' },
+        { field: 'isFilter', label: '是否过滤' },
+        { field: 'filteringPersonnel', label: '过滤人员' },
+        { field: 'createName', label: '创建人' },
+        { field: 'status', label: '状态' }
       ],
 
       channelOptions: [],
       dialogVisible: false,
       dialogForm: {},
       dialogTitle: '添加',
-      selectUsers: []
+      selectUsers: [],
+
+      channelProps: {
+        multiple: true,
+        value: 'id',
+        label: 'name'
+      }
     }
   },
   created() {
+    this.getChannelOptions()
     this.getDataList()
   },
   methods: {
+    getChannelOptions() {
+      QueryChannelCategory().then(res => {
+        this.channelOptions = res.data
+      }).catch(() => {})
+    },
     /**
      * 获取列表数据
      */
     getDataList() {
-      this.tableData = [
-        { field: '1' }
-      ]
+      this.loading = true
+      QueryChannelType().then(res => {
+        this.loading = false
+        this.tableData = res.data
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
@@ -168,18 +192,13 @@ export default {
      * @return {string|string|*}
      */
     fieldFormatter(row, column) {
-      // 如果需要格式化
-      if (column.property == 'deptName') {
-        // 格式部门
-        const structures = row.deptIds || []
-        const strName = structures
-          .map(item => {
-            return item.name
-          })
-          .join('、')
-        return strName || '全公司'
+      if (column.property === 'isFilter') {
+        if (row[column.property] === 1) {
+          return '是'
+        }
+        return '否'
       } else if (column.property === 'status') {
-        if (row[column.property] == 1) {
+        if (row[column.property] === 1) {
           return '启用'
         }
         return '停用'
@@ -201,22 +220,59 @@ export default {
       this.getDataList()
     },
 
-    handleAction(action, scope) {
-      console.log(action, scope)
+    getCheckedArr(ids) {
+      const res = []
+      if (ids.length === 0) return res
+      function getCode(list, arr = []) {
+        list.forEach(item => {
+          if (ids.includes(item.id)) {
+            res.push([...arr, item.id])
+          } else if (item.hasOwnProperty('children') && item.children.length > 0) {
+            const arr0 = getCode(item.children, [...arr, item.id])
+            if (arr0.length === arr.length) {
+              res.push(arr0)
+            }
+          }
+        })
+        return arr
+      }
+      getCode(this.channelOptions)
+      return res
+    },
+
+    handleAction(action, row) {
+      console.log(action, row)
       switch (action) {
         case 'add':
-          this.dialogForm = {}
+          this.dialogForm = {
+            typeName: '',
+            filteringPersonnel: [],
+            isFilter: 0,
+            status: 1,
+            channelId: []
+          }
           this.dialogVisible = true
           break
         case 'edit':
-          this.dialogForm = {}
+          this.dialogForm = {
+            id: row.id,
+            typeName: row.typeName,
+            filteringPersonnel: [{
+              userId: row.userId,
+              realname: row.filteringPersonnel
+            }],
+            isFilter: row.isFilter,
+            status: row.status,
+            channelId: this.getCheckedArr(row.channelId.split(',').map(o => Number(o)))
+          }
+          console.log(this.dialogForm)
           this.dialogVisible = true
           break
         case 'delete':
-          this.handleDelete(scope.row.id)
+          this.handleDelete(row.id)
           break
         case 'status':
-          this.handleUpdateStatus(scope.row)
+          this.handleUpdateStatus(row)
           break
       }
     },
@@ -231,12 +287,12 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // businessGroupDelete({
-        //   id: scope.row.typeId
-        // }).then(res => {
-        //   this.getDataList()
-        //   this.$message.success('删除成功')
-        // }).catch(() => {})
+        DeleteChannelType({
+          id: id
+        }).then(res => {
+          this.getDataList()
+          this.$message.success('删除成功')
+        }).catch(() => {})
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -250,18 +306,19 @@ export default {
      * @param row
      */
     handleUpdateStatus(row) {
-      const str = `您确定要${row.status === 0 ? '启用' : '停用'}该渠道类型吗？`
+      const str = `您确定要${row.status === 1 ? '停用' : '启用'}该渠道类型吗？`
       this.$confirm(str, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // businessGroupDelete({
-        //   id: row.typeId
-        // }).then(res => {
-        //   this.getDataList()
-        //   this.$message.success('操作成功')
-        // }).catch(() => {})
+        AddChannelType({
+          id: row.id,
+          status: row.status === 1 ? 0 : 1
+        }).then(res => {
+          this.getDataList()
+          this.$message.success('操作成功')
+        }).catch(() => {})
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -274,13 +331,42 @@ export default {
      * 选择员工
      * @param data
      */
-    handleChangeUser(data) {},
+    handleChangeUser(data) {
+      this.dialogForm.filteringPersonnel = data.value
+    },
 
     /**
      * 确定
      */
     handleConfirm() {
+      if (isEmpty(this.dialogForm.typeName)) {
+        this.$message.error('渠道类型名称不能为空')
+        return
+      }
+      if (isEmpty(this.dialogForm.channelId)) {
+        this.$message.error('包含渠道不能为空')
+        return
+      }
+      if (this.dialogForm.isFilter === 1 &&
+        isEmpty(this.dialogForm.filteringPersonnel)) {
+        this.$message.error('请选择过滤人员')
+        return
+      }
       this.dialogVisible = false
+      this.loading = true
+      const userId = this.dialogForm.isFilter === 1 ? this.dialogForm.filteringPersonnel[0].userId : ''
+      const params = {
+        ...this.dialogForm,
+        filteringPersonnel: userId,
+        channelId: this.dialogForm.channelId.map(o => o[o.length - 1]).join(',')
+      }
+      AddChannelType(params).then(() => {
+        this.loading = false
+        this.$message.success('操作成功')
+        this.getDataList()
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
@@ -288,12 +374,7 @@ export default {
      */
     handleCancel() {
       this.dialogVisible = false
-    },
-
-    /**
-     * 保存
-     */
-    handleSave() {}
+    }
   }
 }
 </script>
@@ -311,7 +392,8 @@ export default {
 }
 
 .content-body {
-  height: calc(100% - 57px);
+  // height: calc(100% - 57px);
+  height: 100%;
   padding: 30px;
   overflow-y: auto;
   .tips {
@@ -337,7 +419,7 @@ export default {
     padding: 0;
     line-height: 1.2;
   }
-  .el-select {
+  .el-select, .el-cascader {
     width: 100%;
   }
 }

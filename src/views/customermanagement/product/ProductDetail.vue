@@ -154,10 +154,10 @@ export default {
       loading: false,
       crmType: 'product',
       headDetails: [
-        { title: '产品类别', value: '' },
-        { title: '产品单位', value: '' },
-        { title: '产品价格', value: '' },
-        { title: '产品编码', value: '' }
+        { title: '年级', value: '' },
+        { title: '辅导方式', value: '' },
+        { title: '价格（元）', value: '' },
+        { title: '购买截止日期', value: '' }
       ],
       tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
@@ -188,12 +188,15 @@ export default {
       return []
     }
   },
-  mounted() {},
+  mounted() {
+    this.getDetial()
+  },
   methods: {
     /**
      * 详情
      */
     getDetial() {
+      if (this.loading) return
       this.loading = true
       crmProductRead({
         productId: this.id

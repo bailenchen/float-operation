@@ -1,8 +1,9 @@
 <template>
   <div style="height:100%;">
-    <flexbox class="message-header"><img
-      src="@/assets/img/crm/todo.png"
-      class="title-icon">
+    <flexbox class="message-header">
+      <img
+        src="@/assets/img/crm/todo.png"
+        class="title-icon">
       <span class="title">待办事项</span>
     </flexbox>
     <div class="message-body">
@@ -59,7 +60,7 @@ export default {
       leftType: '',
       leftSides: [
         {
-          name: '今日需联系客户',
+          name: '今日需跟进的LEADS',
           crmType: 'customer',
           color: '#2362FB',
           iconClass: 'wk wk-customer',
@@ -69,7 +70,7 @@ export default {
           hidden: true
         },
         {
-          name: '分配给我的线索',
+          name: '今日承诺到访的LEADS',
           crmType: 'leads',
           color: '#704AFD',
           iconClass: 'wk wk-leads',
@@ -77,77 +78,77 @@ export default {
           num: 0,
           tips: '转移之后未跟进的线索',
           hidden: true
-        },
-        {
-          name: '分配给我的客户',
-          crmType: 'customer',
-          color: '#19B5F6',
-          iconClass: 'wk wk-s-seas',
-          infoType: 'followCustomer',
-          num: 0,
-          tips: '转移、领取、分配之后未跟进的客户，默认显示自己负责的客户',
-          hidden: true
-        },
-        {
-          name: '待进入公海的客户',
-          crmType: 'customer',
-          color: '#26D4DA',
-          iconClass: 'wk wk-seas',
-          infoType: 'putInPoolRemind',
-          num: 0,
-          tips: '',
-          hidden: true
-        },
-        {
-          name: '待审核合同',
-          crmType: 'contract',
-          color: '#FD5B4A',
-          iconClass: 'wk wk-contract',
-          infoType: 'checkContract',
-          num: 0,
-          tips: '',
-          hidden: true
-        },
-        {
-          name: '待审核回款',
-          crmType: 'receivables',
-          color: '#FFB940',
-          iconClass: 'wk wk-receivables',
-          infoType: 'checkReceivables',
-          num: 0,
-          tips: '',
-          hidden: true
-        },
-        {
-          name: '待回款提醒',
-          crmType: 'receivables_plan',
-          color: '#27BA4A',
-          iconClass: 'wk wk-bell',
-          infoType: 'remindReceivablesPlan',
-          num: 0,
-          tips: '',
-          hidden: true
-        },
-        {
-          name: '即将到期的合同',
-          crmType: 'contract',
-          color: '#FF7A38',
-          iconClass: 'wk wk-contract',
-          infoType: 'endContract',
-          num: 0,
-          tips: '根据“合同到期时间”及设置的“提前提醒天数”提醒',
-          hidden: true
-        },
-        {
-          name: '待回访合同',
-          crmType: 'contract',
-          color: '#ff9232',
-          iconClass: 'wk wk-house',
-          infoType: 'returnVisitRemind',
-          num: 0,
-          tips: '',
-          hidden: true
         }
+        // {
+        //   name: '分配给我的客户',
+        //   crmType: 'customer',
+        //   color: '#19B5F6',
+        //   iconClass: 'wk wk-s-seas',
+        //   infoType: 'followCustomer',
+        //   num: 0,
+        //   tips: '转移、领取、分配之后未跟进的客户，默认显示自己负责的客户',
+        //   hidden: true
+        // },
+        // {
+        //   name: '待进入公海的客户',
+        //   crmType: 'customer',
+        //   color: '#26D4DA',
+        //   iconClass: 'wk wk-seas',
+        //   infoType: 'putInPoolRemind',
+        //   num: 0,
+        //   tips: '',
+        //   hidden: true
+        // },
+        // {
+        //   name: '待审核合同',
+        //   crmType: 'contract',
+        //   color: '#FD5B4A',
+        //   iconClass: 'wk wk-contract',
+        //   infoType: 'checkContract',
+        //   num: 0,
+        //   tips: '',
+        //   hidden: true
+        // },
+        // {
+        //   name: '待审核回款',
+        //   crmType: 'receivables',
+        //   color: '#FFB940',
+        //   iconClass: 'wk wk-receivables',
+        //   infoType: 'checkReceivables',
+        //   num: 0,
+        //   tips: '',
+        //   hidden: true
+        // },
+        // {
+        //   name: '待回款提醒',
+        //   crmType: 'receivables_plan',
+        //   color: '#27BA4A',
+        //   iconClass: 'wk wk-bell',
+        //   infoType: 'remindReceivablesPlan',
+        //   num: 0,
+        //   tips: '',
+        //   hidden: true
+        // },
+        // {
+        //   name: '即将到期的合同',
+        //   crmType: 'contract',
+        //   color: '#FF7A38',
+        //   iconClass: 'wk wk-contract',
+        //   infoType: 'endContract',
+        //   num: 0,
+        //   tips: '根据“合同到期时间”及设置的“提前提醒天数”提醒',
+        //   hidden: true
+        // },
+        // {
+        //   name: '待回访合同',
+        //   crmType: 'contract',
+        //   color: '#ff9232',
+        //   iconClass: 'wk wk-house',
+        //   infoType: 'returnVisitRemind',
+        //   num: 0,
+        //   tips: '',
+        //   hidden: true
+        // }
       ]
     }
   },
@@ -231,7 +232,7 @@ export default {
 
 <style lang="scss" scoped>
 .message-header {
-  margin-left: 28px;
+  padding-left: 28px;
   height: 60px;
   .title-icon {
     width: 30px;
@@ -247,7 +248,7 @@ export default {
 .message-body {
   position: relative;
   height: calc(100% - 75px);
-  padding-left: 15px;
+  padding: 0 15px;
 }
 .message-content {
   position: relative;
@@ -256,7 +257,7 @@ export default {
 
 .message-body-side {
   padding: 20px 0;
-  width: 200px;
+  width: 225px;
   font-size: 14px;
   background-color: white;
   position: absolute;
@@ -280,7 +281,7 @@ export default {
   }
 }
 .message-body-content {
-  margin-left: 210px;
+  margin-left: 235px;
   height: 100%;
   overflow: hidden;
   background-color: white;

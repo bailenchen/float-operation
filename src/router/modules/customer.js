@@ -113,30 +113,43 @@ export default [
   // },
   {
     ...layout({
-      permissions: ['crm', 'contacts']
+      // permissions: ['crm', 'contacts']
     }),
     children: [{
-      path: 'contacts', // 联系人
-      component: () => import('@/views/customermanagement/contacts/ContactsIndex'),
+      path: 'student', // 学员
+      component: () => import('@/views/customermanagement/student/StudentIndex'),
       meta: {
-        title: '联系人',
+        title: '学员管理',
         icon: 'contacts'
       }
     }]
   },
-  {
-    ...layout({
-      permissions: ['crm', 'business']
-    }),
-    children: [{
-      path: 'business', // 商机列表
-      component: () => import('@/views/customermanagement/business/BusinessIndex'),
-      meta: {
-        title: '商机',
-        icon: 'business'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'contacts']
+  //   }),
+  //   children: [{
+  //     path: 'contacts', // 联系人
+  //     component: () => import('@/views/customermanagement/contacts/ContactsIndex'),
+  //     meta: {
+  //       title: '联系人',
+  //       icon: 'contacts'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'business']
+  //   }),
+  //   children: [{
+  //     path: 'business', // 商机列表
+  //     component: () => import('@/views/customermanagement/business/BusinessIndex'),
+  //     meta: {
+  //       title: '商机',
+  //       icon: 'business'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
       permissions: ['crm', 'contract']
@@ -150,32 +163,32 @@ export default [
       }
     }]
   },
-  {
-    ...layout({
-      permissions: ['crm', 'receivables']
-    }),
-    children: [{
-      path: 'receivables', // 回款列表
-      component: () => import('@/views/customermanagement/money/MoneyIndex'),
-      meta: {
-        title: '回款',
-        icon: 'receivables'
-      }
-    }]
-  },
-  {
-    ...layout({
-      permissions: ['crm', 'invoice']
-    }),
-    children: [{
-      path: 'invoice', // 发票列表
-      component: () => import('@/views/customermanagement/invoice/InvoiceIndex'),
-      meta: {
-        title: '发票',
-        icon: 'invoice'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'receivables']
+  //   }),
+  //   children: [{
+  //     path: 'receivables', // 回款列表
+  //     component: () => import('@/views/customermanagement/money/MoneyIndex'),
+  //     meta: {
+  //       title: '回款',
+  //       icon: 'receivables'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'invoice']
+  //   }),
+  //   children: [{
+  //     path: 'invoice', // 发票列表
+  //     component: () => import('@/views/customermanagement/invoice/InvoiceIndex'),
+  //     meta: {
+  //       title: '发票',
+  //       icon: 'invoice'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
       permissions: ['crm', 'visit']
@@ -184,7 +197,7 @@ export default [
       path: 'visit', // 回访列表
       component: () => import('@/views/customermanagement/visit/VisitIndex'),
       meta: {
-        title: '回访',
+        title: '学员回访',
         icon: 'house'
       }
     }]
@@ -194,25 +207,38 @@ export default [
       permissions: ['crm', 'product']
     }),
     children: [{
-      path: 'product', // 产品列表
+      path: 'course', // 产品列表
       component: () => import('@/views/customermanagement/product/ProductIndex'),
       meta: {
-        title: '产品',
+        title: '课程单品',
         icon: 'product'
       }
     }]
   },
   {
     ...layout({
-      permissions: ['crm', 'marketing']
+      permissions: ['crm', 'product']
     }),
     children: [{
-      path: 'marketing', // 活动列表
-      component: () => import('@/views/customermanagement/marketing/index'),
+      path: 'course-package', // 产品列表
+      component: () => import('@/views/customermanagement/product/ProductIndex'),
       meta: {
-        title: '市场活动',
-        icon: 'airplane'
+        title: '课程套餐',
+        icon: 'product'
       }
     }]
   }
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'marketing']
+  //   }),
+  //   children: [{
+  //     path: 'marketing', // 活动列表
+  //     component: () => import('@/views/customermanagement/marketing/index'),
+  //     meta: {
+  //       title: '市场活动',
+  //       icon: 'airplane'
+  //     }
+  //   }]
+  // }
 ]

@@ -23,7 +23,6 @@
       :cache-done="cacheDone"
       @status="crmImportChange"
       @close="crmImportClose"/>
-    <xr-upgrade-dialog v-if="upgradeDialogShow" :visible.sync="upgradeDialogShow" />
   </div>
 </template>
 
@@ -31,7 +30,6 @@
 /** 常用图片预览创建组件 */
 import VuePictureViewer from '@/components/vuePictureViewer/index'
 import XrImport from '@/components/xr-import'
-import XrUpgradeDialog from '@/components/XrUpgradeDialog'
 import XrImportMixins from '@/components/xr-import/XrImportMixins'
 import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
@@ -47,8 +45,7 @@ export default {
     XrImport,
     IncomingWindows,
     CallOutWindows,
-    CRMImport,
-    XrUpgradeDialog
+    CRMImport
   },
   mixins: [XrImportMixins],
   data() {

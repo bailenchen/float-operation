@@ -16,39 +16,43 @@
         :key="index"
         class="rule-item">
         <span>购买辅导方式为</span>
-        <el-select v-model="item.type" placeholder="请选择">
+        <el-select
+          v-model="item.coachId"
+          placeholder="请选择">
           <el-option
             v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value" />
+            :key="item.coachId"
+            :label="item.name"
+            :value="item.coachId" />
         </el-select>
         <span>购买</span>
         <el-input-number
-          v-model="item.num"
+          v-model="item.classes"
           :precision="0"
           :min="0"
           :controls="false" />
         <span>节课，</span>
         <span>可赠送</span>
         <el-input-number
-          v-model="item.giftNum"
+          v-model="item.give"
           :precision="0"
           :min="0"
           :controls="false" />
-        <span>节课</span>
-        <!--<span>节课，</span>
+        <span>节课，</span>
         <span>不参与累计赠送套餐</span>
-        <el-select v-model="item.type" placeholder="请选择">
+        <el-select
+          v-model="packageType"
+          placeholder="请选择"
+          class="package-select">
           <el-option
-            v-for="item in options"
+            v-for="item in packageList"
             :key="item.value"
             :label="item.label"
             :value="item.value" />
-        </el-select>-->
+        </el-select>
         <i
           class="el-icon-remove delete-icon"
-          @click="deleteItem(index)"/>
+          @click="deleteItem(item, index)"/>
       </div>
       <el-button
         type="text"
@@ -63,28 +67,107 @@
 /**
  * Create by yxk at 2020/7/16 0016
  */
+import {
+  QueryAdminGive,
+  AddAdminGive,
+  QueryCoach
+} from '@/api/systemManagement/params'
+
 export default {
   name: 'PresentRulesSet',
   data() {
     return {
       loading: false, // 展示加载中效果
-      options: [
-        { label: '1对3', value: 1 },
-        { label: '1对1', value: 2 }
-      ],
-      list: []
+      options: [],
+      list: [],
+      deleteList: [],
+
+      packageType: '',
+      packageList: [
+        // { label: '暑假套餐', value: 1 },
+        // { label: '寒假套餐', value: 2 },
+        // { label: '1对1家教套餐', value: 3 }
+      ]
     }
   },
   created() {
+    this.getCoach()
   },
   methods: {
-    handleSave() {
+    /**
+     * 查询辅导方式
+     */
+    getCoach() {
+      this.loading = true
+      QueryCoach().then(res => {
+        this.loading = false
+        this.options = res.data
+        this.getDetail()
+      }).catch(() => {
+        this.loading = false
+      })
     },
-    deleteItem(index) {
+    /**
+     * 获取详情
+     */
+    getDetail() {
+      this.loading = true
+      QueryAdminGive().then(res => {
+        this.loading = false
+        this.deleteList = []
+        this.list = res.data
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+
+    deleteItem(item, index) {
+      this.deleteList.push(item)
       this.list.splice(index, 1)
     },
+
     addItem() {
-      this.list.push({})
+      this.list.push({
+        coachId: null,
+        give: 0,
+        classes: 0
+      })
+    },
+
+    checkForm() {
+      for (let i = 0; i < this.list.length; i++) {
+        const item = this.list[i]
+        if (!item.coachId) {
+          this.$message.error('请选择辅导方式')
+          return false
+        }
+      }
+      return true
+    },
+
+    handleSave() {
+      this.loading = true
+      const flag = this.checkForm()
+      if (!flag) {
+        this.loading = false
+        return
+      }
+      const data = this.list.map((o, i) => {
+        const item = { ...o }
+        delete item.name
+        return item
+      })
+      const deleteItem = this.deleteList.map(o => { return { id: o.id } })
+      AddAdminGive([
+        ...data,
+        ...deleteItem
+      ]).then(res => {
+        this.loading = false
+        this.getDetail()
+        this.$message.success('操作成功')
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 }
@@ -111,9 +194,14 @@ export default {
   .el-select, .el-input-number {
     width: 100px;
   }
+  .package-select {
+    width: 200px;
+  }
 
   .rule-item {
-    margin-bottom: 10px;
+    & > * {
+      margin-bottom: 10px;
+    }
     .delete-icon {
       display: none;
     }
