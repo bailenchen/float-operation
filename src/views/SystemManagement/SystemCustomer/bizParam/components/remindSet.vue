@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" class="visit-remind-set">
     <div class="content-title">
-      <span>LEADS回访提醒设置</span>
+      <span>{{ title }}</span>
       <el-button
         type="primary"
         class="rt"
@@ -35,36 +35,55 @@
 
 <script>
 import {
-  returnVisitConfigQueryAPI,
-  returnVisitConfigSetAPI
-} from '@/api/systemManagement/SystemCustomer'
+  QueryReminderSettings,
+  UpdateLeadsReminderSettings,
+  UpdateStudentReminderSettings
+} from '@/api/systemManagement/params'
 
 export default {
   name: 'VisitRemindSet',
-
-  components: {},
-
+  props: {
+    type: {
+      type: String,
+      required: true,
+      validator: v => {
+        return ['leadsVisit', 'studentVisit'].includes(v)
+      }
+    }
+  },
   data() {
     return {
       loading: false, // 展示加载中效果
 
+      settingId: null,
       value: 0, // 天数
       status: 0 // 是否提醒 0、不提醒 1、提醒
     }
   },
-
-  created() {
-    this.getDetail()
+  computed: {
+    title() {
+      return this.type === 'leadsVisit' ? 'LEADS承诺到访提醒设置' : '学员回访提醒设置'
+    }
   },
-
+  watch: {
+    type: {
+      handler() {
+        this.getDetail()
+      },
+      immediate: true
+    }
+  },
   methods: {
     /**
      * 获取详情
      */
     getDetail() {
       this.loading = true
-      returnVisitConfigQueryAPI().then(res => {
+      QueryReminderSettings({
+        type: this.type === 'leadsVisit' ? 2 : 1
+      }).then(res => {
         this.loading = false
+        this.settingId = res.data.settingId
         this.value = res.data.value
         this.status = parseInt(res.data.status)
       })
@@ -85,7 +104,12 @@ export default {
       } else {
         params.status = 0
       }
-      returnVisitConfigSetAPI(params)
+      params.settingId = this.settingId
+      const reqMap = {
+        leadsVisit: UpdateLeadsReminderSettings,
+        studentVisit: UpdateStudentReminderSettings
+      }
+      reqMap[this.type](params)
         .then(res => {
           this.loading = false
           this.$message.success('操作成功')

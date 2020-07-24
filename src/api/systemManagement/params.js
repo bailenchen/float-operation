@@ -137,3 +137,50 @@ export function AddAdminGive(data) {
     data: data
   })
 }
+
+// 查询承诺到访/回访提醒设置
+export function QueryReminderSettings(data) {
+  return request({
+    url: 'adminReminderSettings/queryAdminReminderSettings',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改LEADS承诺到访提醒设置
+export function UpdateLeadsReminderSettings(data) {
+  return request({
+    url: 'adminReminderSettings/updateReachVisitRemindConfig',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改学员回访提醒设置
+export function UpdateStudentReminderSettings(data) {
+  return request({
+    url: 'adminReminderSettings/updateReturnVisitRemindConfig',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询签约可能性
+export function QuerySignUpList(data) {
+  return request({
+    url: 'adminSignUp/queryAdminSubject',
+    method: 'post'
+  })
+}
+
+// 添加/编辑科目
+export function AddAdminSignUp(data) {
+  return request({
+    url: 'adminSignUp/addAdminGrade',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

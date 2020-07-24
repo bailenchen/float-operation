@@ -61,7 +61,7 @@ export default {
     XhStrucUserCell
   },
   props: {
-    types: [String, Number], // own拥有LEADS上限 lock锁定LEADS上限
+    type: [String, Number], // own拥有LEADS上限 lock锁定LEADS上限
 
     visible: {
       type: Boolean,
@@ -90,23 +90,27 @@ export default {
       return {
         own: '拥有LEADS数上限（个）',
         lock: '锁定LEADS数上限（个）'
-      }[this.types]
+      }[this.type]
     },
 
     dealLabel() {
       return {
         own: '成交LEADS是否占有拥有LEADS数：',
         lock: '成交LEADS是否占有锁定LEADS数：'
-      }[this.types]
+      }[this.type]
     },
 
     title() {
       return this.action.type == 'update' ? '编辑规则' : '添加规则'
     },
 
+    typeNum() {
+      return ['own', 'lock'].findIndex(o => o === this.type) + 1
+    },
+
     // 展示是否
     showDeal() {
-      return this.types == 1
+      return this.typeNum === 1
     }
   },
   watch: {
@@ -155,7 +159,7 @@ export default {
             return item.id
           }),
           customerNum: this.customerNum,
-          type: this.types
+          type: this.typeNum
         }
 
         if (this.showDeal) {

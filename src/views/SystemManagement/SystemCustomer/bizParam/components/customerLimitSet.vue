@@ -55,7 +55,7 @@
 
     <edit-customer-limit
       :visible.sync="showAddEdit"
-      :types="types"
+      :type="type"
       :action="action"
       @success="getList"/>
   </div>
@@ -75,8 +75,17 @@ export default {
     EditCustomerLimit
   },
 
+  // props: {
+  //   types: [String, Number] // own拥有LEADS上限 lock锁定LEADS上限
+  // },
   props: {
-    types: [String, Number] // own拥有LEADS上限 lock锁定LEADS上限
+    type: {
+      type: String,
+      required: true,
+      validator: v => {
+        return ['own', 'lock'].includes(v)
+      }
+    }
   },
 
   data() {
@@ -110,27 +119,28 @@ export default {
           label: {
             own: '拥有LEADS数上限',
             lock: '锁定LEADS数上限'
-          }[this.types],
+          }[this.type],
           field: 'customerNum'
         }
       ]
-
-      if (this.types == 1) {
+      if (this.type === 'own') {
         temps.push({
           label: {
             own: '成交LEADS是否占有拥有LEADS数',
             lock: '成交LEADS是否占有锁定LEADS数'
-          }[this.types],
+          }[this.type],
           field: 'customerDeal'
         })
       }
-
       return temps
+    },
+    typeNum() {
+      return ['own', 'lock'].findIndex(o => o === this.type) + 1
     }
   },
 
   watch: {
-    types() {
+    type() {
       this.list = []
       this.getList()
     }
@@ -175,7 +185,7 @@ export default {
       crmSettingCustomerConfigListAPI({
         page: this.currentPage,
         limit: this.pageSize,
-        type: this.types
+        type: this.typeNum
       })
         .then(res => {
           this.loading = false

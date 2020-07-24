@@ -14,7 +14,7 @@
         :key="index"
         class="input-item">
         <el-input
-          v-model="item.value"
+          v-model="item.signUpName"
           :maxlength="100"/>
         <i
           class="el-icon-remove"
@@ -29,9 +29,9 @@
 
 <script>
 import {
-  crmSettingRecordListAPI,
-  crmSettingRecordEditAPI
-} from '@/api/systemManagement/SystemCustomer'
+  QuerySignUpList,
+  AddAdminSignUp
+} from '@/api/systemManagement/params'
 
 export default {
   name: 'SignedPossibilitySet',
@@ -42,6 +42,7 @@ export default {
     return {
       loading: false, // 展示加载中效果
 
+      deleteList: [],
       list: [] // 展示类型数据
     }
   },
@@ -56,12 +57,11 @@ export default {
      */
     getDetail() {
       this.loading = true
-      crmSettingRecordListAPI()
+      QuerySignUpList()
         .then(res => {
           this.loading = false
-          this.list = res.data.map(item => {
-            return { value: item }
-          })
+          this.deleteList = []
+          this.list = res.data
         })
         .catch(() => {
           this.loading = false
@@ -72,29 +72,48 @@ export default {
      * 增加类型
      */
     addItem() {
-      this.list.push({ value: '' })
+      this.list.push({ signUpName: '' })
     },
 
     /**
      * 删除事项操作
      */
     deleteItem(item, index) {
+      this.deleteList.push(item)
       this.list.splice(index, 1)
+    },
+
+    checkForm() {
+      for (let i = 0; i < this.list.length; i++) {
+        if (!this.list[i].signUpName) {
+          this.$message.error('可能性不能为空')
+          return false
+        }
+      }
+      return true
     },
 
     /**
      * 保存操作
      */
     save() {
-      const value = []
-      for (let index = 0; index < this.list.length; index++) {
-        const element = this.list[index]
-        if (element.value) {
-          value.push(element.value)
-        }
-      }
       this.loading = true
-      crmSettingRecordEditAPI({ value: value })
+      const flag = this.checkForm()
+      if (!flag) {
+        this.loading = false
+        return
+      }
+      const data = this.list.map((o, i) => {
+        return {
+          ...o,
+          sort: i + 1
+        }
+      })
+      const deleteItem = this.deleteList.map(o => { return { id: o.id } })
+      AddAdminSignUp([
+        ...data,
+        ...deleteItem
+      ])
         .then(res => {
           this.loading = false
           this.getDetail()

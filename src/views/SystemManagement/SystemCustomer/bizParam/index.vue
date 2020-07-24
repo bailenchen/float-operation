@@ -19,7 +19,7 @@
       <keep-alive>
         <component
           :is="componentName"
-          :types="menuIndex"
+          :type="menuIndex"
           class="system-view-content"/>
       </keep-alive>
     </div>
