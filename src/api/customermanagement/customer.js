@@ -120,6 +120,19 @@ export function crmCustomerPoolSetTransferAPI(data) {
 }
 
 /**
+ * 跨公海转移客户
+ * @param data
+ * @constructor
+ */
+export function TransferCustomerAPI(data) {
+  return request({
+    url: 'crmCustomerPoolRule/customerPoolTransfer',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
  * 转移数据源
  * @param {*} data
  */

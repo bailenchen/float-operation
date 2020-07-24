@@ -39,6 +39,7 @@ import CustomerLimitSet from './components/customerLimitSet' // 拥有/锁定LEA
 import SignedPossibilitySet from './components/signedPossibilitySet' // 签约可能性设置
 import SubjectSet from './components/subjectSet' // 科目设置
 import RemindSet from './components/remindSet' // 学员回访提醒设置/LEADS承诺到访提醒设置
+import SerialNumberSet from './components/SerialNumberSet' // 编号规则设置
 
 export default {
   name: 'BizParam',
@@ -54,7 +55,8 @@ export default {
     CustomerLimitSet,
     SignedPossibilitySet,
     SubjectSet,
-    RemindSet
+    RemindSet,
+    SerialNumberSet
   },
 
   data() {
@@ -70,7 +72,8 @@ export default {
         { label: '学员回访提醒设置', key: 'studentVisit' },
         { label: '签约可能性设置', key: 'SignedPossibilitySet' },
         { label: '科目设置', key: 'SubjectSet' },
-        { label: 'LEADS承诺到访提醒设置', key: 'leadsVisit' }
+        { label: 'LEADS承诺到访提醒设置', key: 'leadsVisit' },
+        { label: '编号规则设置', key: 'SerialNumberSet' }
       ],
       menuIndex: 'ChannelCategorySet',
       types: '' // 区分拥有客户 和 锁定客户

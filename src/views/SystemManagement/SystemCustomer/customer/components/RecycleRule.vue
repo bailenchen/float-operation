@@ -39,23 +39,26 @@
             prop="limitDay">
             <template slot-scope="scope">
               <template v-if="trueLabel === 1">
-                <el-input
+                <el-input-number
                   v-model="scope.row.limitDay"
-                  class="value-input"
-                  @keyup.native="inputLimit(scope.row)" />
+                  :min="0"
+                  :controls="false"
+                  class="value-input" />
                 <span>天内通话次数小于</span>
-                <el-input
-                  v-model="scope.row.limitDay"
-                  class="value-input"
-                  @keyup.native="inputLimit(scope.row)" />
+                <el-input-number
+                  v-model="scope.row.numberOfCalls"
+                  :min="0"
+                  :controls="false"
+                  class="value-input" />
                 <span>次，进入公海</span>
               </template>
               <template v-else>
                 <span>超过</span>
-                <el-input
+                <el-input-number
                   v-model="scope.row.limitDay"
-                  class="value-input"
-                  @keyup.native="inputLimit(scope.row)" />
+                  :min="0"
+                  :controls="false"
+                  class="value-input" />
                 <span>天{{ limitDayUnit }}，进入公海</span>
               </template>
             </template>
@@ -128,7 +131,8 @@ export default {
     return {
       allCustomerData: [{
         level: '所有LEADS', // LEADS级别 1全部 2 A（重要LEADS）3 B（普通LEADS）4 C（非优先LEADS）
-        limitDay: ''
+        limitDay: '',
+        numberOfCalls: ''
       }],
       levelCustomerData: []
     }
@@ -207,6 +211,20 @@ export default {
         }
       },
       immediate: true
+    },
+    trueLabel: {
+      handler(val) {
+        if (val == 1) {
+          this.allCustomerData.forEach(o => {
+            o.numberOfCalls = o.numberOfCalls || ''
+          })
+        } else {
+          this.allCustomerData.forEach(o => {
+            delete o.numberOfCalls
+          })
+        }
+      },
+      immediate: true
     }
   },
   created() {},
@@ -220,6 +238,9 @@ export default {
           const editItem = editList[editIndex]
           if (editItem.level == item.level) {
             item.limitDay = editItem.limitDay
+            if (editItem.hasOwnProperty('numberOfCalls')) {
+              item.numberOfCalls = editItem.numberOfCalls
+            }
           }
         }
       }
@@ -253,7 +274,9 @@ export default {
   width: 80px;
   margin: 0 8px;
 }
-
+.el-input-number /deep/ .el-input__inner {
+  text-align: left;
+}
 .check-label {
   margin-right: 8px;
 }

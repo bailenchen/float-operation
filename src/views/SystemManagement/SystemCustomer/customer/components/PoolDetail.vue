@@ -62,8 +62,8 @@
           <flexbox
             align="stretch"
             class="rule-item">
-            <div class="label">前负责人领取规则</div>
-            <div class="value">{{ detail.preOwnerSetting == 1 ? `前负责人${detail.preOwnerSettingDay}天内不允许领取该LEADS` : '不限制' }}</div>
+            <div class="label">前教育顾问领取规则</div>
+            <div class="value">{{ detail.preOwnerSetting == 1 ? `前教育顾问${detail.preOwnerSettingDay}天内不允许领取该LEADS` : '不限制' }}</div>
           </flexbox>
           <flexbox
             align="stretch"
@@ -255,7 +255,7 @@ export default {
     margin-bottom: 20px;
     .label {
       flex-shrink: 0;
-      width: 120px;
+      width: 130px;
       color: #666;
     }
 

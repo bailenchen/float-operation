@@ -23,7 +23,10 @@
             :label="limitDayName"
             prop="limitDay">
             <template slot-scope="scope">
-              <span>{{ `超过${scope.row.limitDay}天${getLimitDayUnit(data.type)}，进入公海` }}</span>
+              <span v-if="data.type === 1">
+                {{ `${scope.row.limitDay}天内通话次数小于${scope.row.numberOfCalls}次，进入公海` }}
+              </span>
+              <span v-else>{{ `超过${scope.row.limitDay}天${getLimitDayUnit(data.type)}，进入公海` }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -54,11 +57,12 @@ export default {
     },
 
     limitDayName() {
-      return {
-        1: '未跟进天数',
-        2: '未新建天数',
-        3: '未成交天数'
-      }[parseInt(this.data.type)]
+      // return {
+      //   1: '未跟进天数',
+      //   2: '未新建天数',
+      //   3: '未成交天数'
+      // }[parseInt(this.data.type)]
+      return '规则'
     },
 
     dealHandleShow() {
@@ -76,7 +80,7 @@ export default {
     getLimitDayUnit(type) {
       return {
         1: '未跟进',
-        2: '未新建商机',
+        2: '无新建跟进',
         3: '未成交'
       }[type]
     }

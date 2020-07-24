@@ -2,7 +2,7 @@
   <div class="employee-dep-management">
     <xr-header
       :content.sync="searchInput"
-      placeholder="请输入员工名称/手机号"
+      placeholder="请输入员工名称/登录名"
       show-search
       icon-class="wk wk-s-seas"
       icon-color="#26D4DA"
@@ -295,15 +295,18 @@
           :model="resetUserNameForm"
           :rules="dialogRules">
           <el-form-item
-            label="新账号（手机号）"
+            label="新账号"
             prop="username">
-            <el-input v-model="resetUserNameForm.username" />
+            <el-input
+              v-model="resetUserNameForm.username"
+              autocomplete="off" />
           </el-form-item>
           <el-form-item
             label="新密码"
             prop="password">
             <el-input
               v-model="resetUserNameForm.password"
+              autocomplete="new-password"
               type="password" />
           </el-form-item>
 
@@ -491,6 +494,10 @@ import {
 } from '@/api/systemManagement/applicationManagement'
 import { usersList, depList } from '@/api/common' // 直属上级接口
 import { SendSmsAPI } from '@/api/login'
+import {
+  QueryAdminSubject,
+  QueryAdminGrade
+} from '@/api/systemManagement/params'
 
 import { mapGetters } from 'vuex'
 
@@ -563,7 +570,7 @@ export default {
       // selectModel: '', // 状态值 用于筛选
       /** 列表 */
       fieldList: [
-        { field: 'username', value: '手机号（登录名）', width: '150' },
+        { field: 'username', value: '登录名', width: '150' },
         { field: 'sex', value: '性别', type: 'select', width: '50' },
         { field: 'email', value: '邮箱', width: '150' },
         { field: 'deptName', value: '部门', type: 'select', width: '100' },
@@ -615,12 +622,20 @@ export default {
             { id: 1, name: '是' }
           ]
         },
-        isPartTimer: {
-          field: 'isPartTimer',
+        isJob: {
+          field: 'isJob',
           list: [
             { id: 0, name: '否' },
             { id: 1, name: '是' }
           ]
+        },
+        gradeIds: {
+          field: 'gradeIds',
+          list: []
+        },
+        subjectIds: {
+          field: 'subjectIds',
+          list: []
         }
       },
       groupsList: [],
@@ -667,8 +682,8 @@ export default {
           { required: true, message: '部门不能为空', trigger: 'change' }
         ],
         roleId: [{ required: true, message: '角色不能为空', trigger: 'change' }],
-        grade: [{ required: true, message: '年级不能为空', trigger: 'change' }],
-        subject: [{ required: true, message: '科目不能为空', trigger: 'change' }]
+        gradeIds: [{ required: true, message: '年级不能为空', trigger: 'change' }],
+        subjectIds: [{ required: true, message: '科目不能为空', trigger: 'change' }]
       },
       // 重置登录账号
       resetUserNameVisible: false,
@@ -809,9 +824,9 @@ export default {
         { field: 'deptId', value: '部门', type: 'select' },
         { field: 'post', value: '岗位' },
         { field: 'isTeacher', value: '是否为教员岗', type: 'select' },
-        { field: 'subject', value: '科目', type: 'select', multiple: true },
-        { field: 'grade', value: '年级', type: 'select', multiple: true },
-        { field: 'isPartTimer', value: '是否为兼职', type: 'select' },
+        { field: 'subjectIds', value: '科目', type: 'select', multiple: true },
+        { field: 'gradeIds', value: '年级', type: 'select', multiple: true },
+        { field: 'isJob', value: '是否为兼职', type: 'select' },
         { field: 'parentId', value: '直属上级', type: 'select' },
         { field: 'roleId', value: '角色', type: 'selectCheckout' }
       ]
@@ -973,8 +988,10 @@ export default {
           this.currentMenuData && this.currentMenuData.id
             ? this.currentMenuData.id
             : '',
-        grade: [],
-        subject: []
+        isTeacher: 0,
+        isJob: 0,
+        gradeIds: [],
+        subjectIds: []
       }
       this.employeeCreateDialog = true
     },
@@ -1006,15 +1023,21 @@ export default {
                   return parseInt(item)
                 })
               : []
-          } else if (['subject', 'grade'].includes(element.field)) {
-            detail[element.field] = this.dialogData[element.field] || []
           } else {
             detail[element.field] = this.dialogData[element.field] || ''
           }
         }
       }
-      detail['userId'] = this.dialogData.userId
+      if (detail.isTeacher === 1) {
+        detail.subjectIds = (this.dialogData.subjects || []).map(o => o.id)
+        detail.gradeIds = (this.dialogData.grades || []).map(o => o.id)
+      } else {
+        detail.subjectIds = []
+        detail.gradeIds = []
+      }
+      detail.userId = this.dialogData.userId
       this.formInline = detail
+      console.log('edit data: ', this.formInline)
       this.employeeCreateDialog = true
     },
 
@@ -1022,30 +1045,28 @@ export default {
      * 获取年级列表
      */
     getGradeList() {
-      this.optionsList.grade = {
-        field: 'grade',
-        list: [
-          { id: '一年级', name: '一年级' },
-          { id: '二年级', name: '二年级' },
-          { id: '三年级', name: '三年级' },
-          { id: '四年级', name: '四年级' }
-        ]
-      }
+      QueryAdminGrade().then(res => {
+        this.optionsList.gradeIds.list = (res.data || []).map(o => {
+          return {
+            id: o.id,
+            name: o.gradeName
+          }
+        })
+      }).catch(() => {})
     },
 
     /**
      * 获取科目列表
      */
     getSubjectList() {
-      this.optionsList.subject = {
-        field: 'subject',
-        list: [
-          { id: '语文', name: '语文' },
-          { id: '数学', name: '数学' },
-          { id: '物理', name: '物理' },
-          { id: '化学', name: '化学' }
-        ]
-      }
+      QueryAdminSubject().then(res => {
+        this.optionsList.subjectIds.list = (res.data || []).map(o => {
+          return {
+            id: o.id,
+            name: o.subjectName
+          }
+        })
+      }).catch(() => {})
     },
 
     /**
@@ -1208,10 +1229,20 @@ export default {
     newDialogSubmit() {
       this.$refs.dialogRef.validate(valid => {
         if (valid) {
+          this.loading = true
+          const params = {
+            ...this.formInline,
+            roleIds: this.formInline.roleId.join(','),
+            gradeIds: this.formInline.gradeIds.join(','),
+            subjectIds: this.formInline.subjectIds.join(',')
+          }
+          if (params.hasOwnProperty('isTeacher') && params.isTeacher !== 1) {
+            params.gradeIds = ''
+            params.subjectIds = ''
+          }
+          console.log('save: ', params)
           if (this.dialogTitle == '新建员工') {
-            this.loading = true
-            this.formInline.roleIds = this.formInline.roleId.join(',')
-            usersAdd(this.formInline)
+            usersAdd(params)
               .then(res => {
                 this.$message.success('新增成功')
                 this.employeeCreateDialog = false
@@ -1223,9 +1254,7 @@ export default {
                 this.loading = false
               })
           } else {
-            this.loading = true
-            this.formInline.roleIds = this.formInline.roleId.join(',')
-            usersEdit(this.formInline)
+            usersEdit(params)
               .then(res => {
                 if (this.employeeDetailDialog) {
                   this.employeeDetailDialog = false
@@ -1330,33 +1359,7 @@ export default {
         this.resetUserNameVisible = true
       } else if (type === 'edit') {
         this.dialogData = this.selectionList[0]
-
-        this.dialogTitle = '编辑员工'
-        this.getHandleEmployeeRelateData()
-        var detail = {}
-        for (let index = 0; index < this.tableList.length; index++) {
-          const element = this.tableList[index]
-          if (element.field !== 'password') {
-            if (element.field === 'roleId') {
-              detail[element.field] = this.dialogData.roleId
-                ? this.dialogData.roleId
-                  .split(',')
-                  .map(function(item, index, array) {
-                    return parseInt(item)
-                  })
-                : []
-            } else if (element.field === 'parentId') {
-              detail.parentId = this.dialogData.parentId
-            } else if (element.field === 'deptId') {
-              detail.deptId = this.dialogData.deptId
-            } else {
-              detail[element.field] = this.dialogData[element.field]
-            }
-          }
-        }
-        detail['userId'] = this.dialogData.userId
-        this.formInline = detail
-        this.employeeCreateDialog = true
+        this.editBtn()
       } else if (type === 'setCall' || type === 'stopCall') {
         var callSet = type === 'setCall' ? '启用呼叫中心' : '禁用呼叫中心'
         this.$confirm('这些员工账号将被' + callSet + ', 是否继续?', '提示', {

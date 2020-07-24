@@ -474,6 +474,7 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           const params = this.getRequestParams()
+          // console.log('save: ', params)
           if (params) {
             this.uploadPoolSet(params)
           }
@@ -583,8 +584,13 @@ export default {
             for (let levelIndex = 0; levelIndex < ruleItem.level.length; levelIndex++) {
               const levelItem = ruleItem.level[levelIndex]
               if (levelItem.limitDay && levelItem.limitDay > 0) {
-                rulePass = true
-                newLevel.push(levelItem)
+                if (!levelItem.hasOwnProperty('numberOfCalls')) {
+                  rulePass = true
+                  newLevel.push(levelItem)
+                } else if (levelItem.numberOfCalls > 0) {
+                  rulePass = true
+                  newLevel.push(levelItem)
+                }
               }
             }
             ruleItem.level = newLevel

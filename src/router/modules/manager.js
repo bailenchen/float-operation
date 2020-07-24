@@ -154,7 +154,7 @@ export default [
       path: 'customer',
       component: () => import('@/views/SystemManagement/SystemCustomer/customer'),
       meta: {
-        title: '客户公海规则设置',
+        title: 'LEADS公海设置',
         requiresAuth: true,
         permissions: ['manage', 'crm', 'pool']
       }

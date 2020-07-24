@@ -74,6 +74,12 @@ export default {
     formatedInfo(data, field) {
       if (field == 'sex') {
         return { 1: '男', 2: '女' }[data.sex]
+      } else if (['isTeacher', 'isJob'].includes(field)) {
+        return ['否', '是'][data[field]]
+      } else if (field === 'grades') {
+        return data.grades.map(o => o.gradeName).join('，')
+      } else if (field === 'subjects') {
+        return data.subjects.map(o => o.subjectName).join('，')
       }
       return data[field]
     }
@@ -85,11 +91,15 @@ export default {
   data() {
     return {
       detailList: [
-        { field: 'username', value: '手机号（登录名）' },
+        { field: 'username', value: '登录名' },
         { field: 'realname', value: '姓名' },
         { field: 'sex', value: '性别', type: 'select' },
         { field: 'email', value: '邮箱' },
         { field: 'deptName', value: '部门', type: 'select' },
+        { field: 'isTeacher', value: '是否为教员' },
+        { field: 'isJob', value: '是否为兼职' },
+        { field: 'grades', value: '年级' },
+        { field: 'subjects', value: '科目' },
         { field: 'post', value: '岗位' },
         { field: 'parentName', value: '直属上级', type: 'select' },
         { field: 'roleName', value: '角色', type: 'selectCheckout' }
