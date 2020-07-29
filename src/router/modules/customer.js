@@ -115,14 +115,33 @@ export default [
     ...layout({
       // permissions: ['crm', 'contacts']
     }),
-    children: [{
-      path: 'student', // 学员
-      component: () => import('@/views/customermanagement/student/StudentIndex'),
-      meta: {
-        title: '学员管理',
-        icon: 'contacts'
+    children: [
+      {
+        path: 'student-manage/:type', // 学员
+        name: 'StudentManageIndex',
+        component: () => import('@/views/customermanagement/studentManage/index'),
+        meta: {
+          title: '学员管理',
+          icon: 'contacts'
+        }
       }
-    }]
+    ]
+  },
+  {
+    ...layout({
+      // permissions: ['crm', 'contacts']
+    }),
+    children: [
+      {
+        path: 'finance-manage/:type', // 学员
+        name: 'FinanceManageIndex',
+        component: () => import('@/views/customermanagement/financeManage/index'),
+        meta: {
+          title: '收款/退款',
+          icon: 'contacts'
+        }
+      }
+    ]
   },
   // {
   //   ...layout({

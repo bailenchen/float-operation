@@ -35,6 +35,7 @@ import ChannelTypeSet from './components/channelTypeSet' // 渠道类型设置
 import GradeSet from './components/gradeSet' // 年级设置
 import PresentRulesSet from './components/presentRulesSet' // 赠送规则设置
 import FollowLogTypeSet from './components/followLogTypeSet' // 跟进计划类型
+import FollowLogResultSet from './components/followLogResult' // 跟进结果
 import CustomerLimitSet from './components/customerLimitSet' // 拥有/锁定LEADS数限制
 import SignedPossibilitySet from './components/signedPossibilitySet' // 签约可能性设置
 import SubjectSet from './components/subjectSet' // 科目设置
@@ -56,7 +57,8 @@ export default {
     SignedPossibilitySet,
     SubjectSet,
     RemindSet,
-    SerialNumberSet
+    SerialNumberSet,
+    FollowLogResultSet
   },
 
   data() {
@@ -67,6 +69,7 @@ export default {
         { label: '年级设置', key: 'GradeSet' },
         { label: '累计赠送规则', key: 'PresentRulesSet' },
         { label: '跟进计划类型设置', key: 'FollowLogTypeSet' },
+        { label: '跟进结果设置', key: 'FollowLogResultSet' },
         { label: '拥有LEADS数限制', key: 'own' },
         { label: '锁定LEADS数限制', key: 'lock' },
         { label: '学员回访提醒设置', key: 'studentVisit' },

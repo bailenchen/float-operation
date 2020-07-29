@@ -138,7 +138,7 @@ export default {
     getList() {
       this.loading = true
       var crmIndexRequest = this.getIndexRequest()
-      var params = {
+      let params = {
         page: this.currentPage,
         limit: this.pageSize,
         search: this.search,
@@ -167,6 +167,12 @@ export default {
 
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
+      }
+      if (this.getOtherParams && typeof this.getOtherParams === 'function') {
+        params = {
+          ...params,
+          ...this.getOtherParams()
+        }
       }
       crmIndexRequest(params)
         .then(res => {

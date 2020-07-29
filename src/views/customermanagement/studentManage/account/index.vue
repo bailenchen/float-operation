@@ -3,9 +3,9 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      title="LEADS管理"
-      placeholder="请输入LEADS名称/手机/电话"
-      main-title="新建LEADS"
+      main-title="新增账户"
+      title="资金账户"
+      placeholder="请输入学员姓名/账户编号"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos">
@@ -58,41 +58,6 @@
           type="selection"
           align="center"
           width="55"/>
-        <el-table-column
-          :resizable="false"
-          prop="businessCheck"
-          fixed
-          label=""
-          width="38">
-          <template
-            slot="header"
-            slot-scope="slot">
-            <i
-              class="wk wk-business"
-              style="cursor: not-allowed; color: #9DA9C2;"/>
-          </template>
-          <template slot-scope="scope">
-            <el-popover
-              :disabled="scope.row.businessCount == 0"
-              :offset="250"
-              placement="right"
-              popper-class="no-padding-popover"
-              width="500"
-              trigger="click">
-              <business-check
-                :data="scope"
-                :show="scope.row.show"
-                @click="relativeBusinessClick"
-                @close="businessClose($event, scope)"/>
-              <i
-                slot="reference"
-                :style="{'opacity' :scope.row.businessCount > 0 ? 1 : 0}"
-                class="wk wk-business"
-                style="color: #FC6E51"
-                @click="businessCheckClick($event, scope)"/>
-            </el-popover>
-          </template>
-        </el-table-column>
         <el-table-column
           v-if="Show"
           :resizable="false"
@@ -208,17 +173,17 @@
 <script>
 import { mapGetters } from 'vuex'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
-import BusinessCheck from './components/BusinessCheck' // 相关商机
-import table from '../mixins/table'
+// import BusinessCheck from './components/BusinessCheck' // 相关商机
+import table from '../../mixins/table'
 import CallCenter from '@/callCenter/CallCenter'
-
+import menuMixins from '../menuMixins'
 
 export default {
-  /** 客户管理 的 客户列表 */
-  name: 'CustomerIndex',
+  /** 客户管理 的 学员列表 */
+  name: 'AccountIndex',
   components: {
     CRMAllDetail,
-    BusinessCheck,
+    // BusinessCheck,
     CallCenter
   },
   filters: {
@@ -230,7 +195,7 @@ export default {
       return statu == 1 ? '已成交' : '未成交'
     }
   },
-  mixins: [table],
+  mixins: [table, menuMixins],
   data() {
     return {
       crmType: 'customer',
@@ -242,26 +207,6 @@ export default {
     ...mapGetters(['CRMConfig']),
     Show() {
       return this.$store.state.customer.isCall
-    },
-    menuItems() {
-      const temp = []
-      if (this.crm && this.crm.customer) {
-        temp.push({
-          title: 'LEADS',
-          path: 'customer',
-          icon: require('@/assets/img/crm/customer.png')
-        })
-      }
-
-      if (this.crm && this.crm.pool) {
-        temp.push({
-          title: '公海',
-          path: 'seas',
-          icon: require('@/assets/img/crm/seas_not.png')
-        })
-      }
-
-      return temp
     }
   },
   mounted() {
@@ -279,19 +224,6 @@ export default {
     this.$refs.elMenu.activeIndex = this.crmType
   },
   methods: {
-    /**
-     * 左侧菜单选择
-     */
-    menuSelect(key, keyPath) {
-      this.$emit('menu-select', key, keyPath)
-    },
-    getOtherParams() {
-      // customerType: 1、LEADS；2、学员
-      return {
-        customerType: 1
-      }
-    },
-
     relativeBusinessClick(data) {
       this.rowID = data.businessId
       this.rowType = 'business'
@@ -370,5 +302,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/table.scss';
+@import '../../styles/table';
 </style>

@@ -8,7 +8,23 @@
       placeholder="请输入学员编号/姓名/第一联系人电话"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
-      @on-export="exportInfos" />
+      @on-export="exportInfos">
+      <el-menu
+        slot="icon"
+        ref="elMenu"
+        :default-active="crmType"
+        mode="horizontal"
+        active-text-color="#2362FB"
+        @select="menuSelect" >
+        <el-menu-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :index="item.path">
+          <img :src="item.icon">
+          <span>{{ item.title }}</span>
+        </el-menu-item>
+      </el-menu>
+    </c-r-m-list-head>
     <div
       v-empty="!crm.customer.index"
       xs-empty-icon="nopermission"
@@ -158,13 +174,14 @@
 import { mapGetters } from 'vuex'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 // import BusinessCheck from './components/BusinessCheck' // 相关商机
-import table from '../mixins/table'
+import table from '../../mixins/table'
 import CallCenter from '@/callCenter/CallCenter'
+import menuMixins from '../menuMixins'
 
 
 export default {
   /** 客户管理 的 学员列表 */
-  name: 'CustomerIndex',
+  name: 'StudentIndex',
   components: {
     CRMAllDetail,
     // BusinessCheck,
@@ -179,7 +196,7 @@ export default {
       return statu == 1 ? '已成交' : '未成交'
     }
   },
-  mixins: [table],
+  mixins: [table, menuMixins],
   data() {
     return {
       crmType: 'customer',
@@ -208,13 +225,6 @@ export default {
     this.$refs.elMenu.activeIndex = this.crmType
   },
   methods: {
-    /**
-     * 左侧菜单选择
-     */
-    menuSelect(key, keyPath) {
-      this.$emit('menu-select', key, keyPath)
-    },
-
     relativeBusinessClick(data) {
       this.rowID = data.businessId
       this.rowType = 'business'
@@ -293,5 +303,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/table.scss';
+@import '../../styles/table';
 </style>

@@ -105,24 +105,23 @@
 import { crmCustomerRead } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
-import CRMDetailHead from '../components/CRMDetailHead'
-import Activity from '../components/activity' // 活动
-import ChieflyContacts from '../components/ChieflyContacts' // 首要联系人
-import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 基本信息
-import RelativeContacts from '../components/RelativeContacts' // 相关联系人
-import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
-import RelativeContract from '../components/RelativeContract' // 相关合同
-import RelativeReturnMoney from '../components/RelativeReturnMoney' // 相关回款
-import RelativeFiles from '../components/RelativeFiles' // 相关附件
-import RelativeHandle from '../components/RelativeHandle' // 相关操作
-import RelativeTeam from '../components/RelativeTeam' // 团队成员
-import RelativeVisit from '../components/RelativeVisit' // 回访
-import RelativeInvoice from '../components/RelativeInvoice' // 发票
-import RelativeCallRecord from '../components/RelativeCallRecord' // 呼叫记录
-import RelativeAccount from '../components/RelativeAccount' // 资金账户
+import CRMDetailHead from '../../components/CRMDetailHead'
+import Activity from '../../components/activity/index' // 活动
+import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系人
+import CRMEditBaseInfo from '../../components/CRMEditBaseInfo' // 基本信息
+import RelativeContacts from '../../components/RelativeContacts' // 相关联系人
+import RelativeBusiness from '../../components/RelativeBusiness' // 相关商机
+import RelativeContract from '../../components/RelativeContract' // 相关合同
+import RelativeReturnMoney from '../../components/RelativeReturnMoney' // 相关回款
+import RelativeFiles from '../../components/RelativeFiles' // 相关附件
+import RelativeHandle from '../../components/RelativeHandle' // 相关操作
+import RelativeTeam from '../../components/RelativeTeam' // 团队成员
+import RelativeVisit from '../../components/RelativeVisit' // 回访
+import RelativeInvoice from '../../components/RelativeInvoice' // 发票
+import RelativeCallRecord from '../../components/RelativeCallRecord' // 呼叫记录
 
-import CRMCreateView from '../components/CRMCreateView' // 新建页面
-import detail from '../mixins/detail'
+import CRMCreateView from '../../components/CRMCreateView' // 新建页面
+import detail from '../../mixins/detail'
 
 export default {
   // 客户管理 的 客户详情
@@ -143,8 +142,7 @@ export default {
     RelativeVisit,
     CRMCreateView,
     RelativeInvoice,
-    RelativeCallRecord,
-    RelativeAccount
+    RelativeCallRecord
   },
   mixins: [detail],
   props: {
@@ -186,7 +184,7 @@ export default {
       crmType: 'customer',
       headDetails: [
         { title: '学员姓名', value: '' },
-        { title: 'LEADS来源', value: '' },
+        { title: '学员来源', value: '' },
         { title: '第一联系人电话', value: '' },
         { title: '教学顾问', value: '' },
         { title: '创建时间', value: '' }
@@ -231,32 +229,40 @@ export default {
   },
   computed: {
     tabNames() {
-      const tempsTabs = []
-      const list = [
-        { label: '活动', name: 'Activity' },
-        { label: '详细资料', name: 'CRMEditBaseInfo', permission: 'crm.customer.read' },
-        { label: '合同', name: 'RelativeContract', permission: 'crm.contract.index', numField: 'contractCount' },
-        { label: '资金账户', name: 'RelativeAccount', permission: 'crm.contract.index' },
-        { label: '收款', name: 'RelativeReturnMoney' },
-        { label: '退费', name: 'RelativeInvoice' },
-        { label: '回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
-        { label: '呼叫记录', name: 'RelativeCallRecord', numField: 'callRecordCount' },
-        { label: '附件', name: 'RelativeFiles', numField: 'fileCount' },
-        { label: '操作记录', name: 'RelativeHandle' }
-      ]
-      list.forEach(o => {
-        let item = null
-        if (!o.permission || this.checkPermission(o.permission)) {
-          item = o
-        }
-        if (!item) return false
-        if (item.numField &&
-          this.tabsNumber &&
-          this.tabsNumber.hasOwnProperty(item.numField)) {
-          item.label = this.getTabName(item.label, this.tabsNumber[item.numField])
-        }
-        tempsTabs.push(item)
-      })
+      var tempsTabs = []
+      tempsTabs.push({ label: '活动', name: 'Activity' })
+      if (this.crm.customer && this.crm.customer.read) {
+        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
+      }
+      // if (this.crm.contacts && this.crm.contacts.index) {
+      //   tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
+      // }
+
+      // tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
+
+      // if (this.crm.business && this.crm.business.index) {
+      //   tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
+      // }
+
+      if (this.crm.contract && this.crm.contract.index) {
+        tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
+      }
+      // if (this.crm.receivables && this.crm.receivables.index) {
+      //   tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
+      // }
+      // if (this.crm.visit && this.crm.visit.index) {
+      //   tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
+      // }
+      //
+      // if (this.crm.invoice && this.crm.invoice.index) {
+      //   tempsTabs.push({ label: this.getTabName('发票', this.tabsNumber.invoiceCount), name: 'RelativeInvoice' })
+      // }
+
+      if (this.tabsNumber && this.tabsNumber.hasOwnProperty('callRecordCount')) {
+        tempsTabs.push({ label: this.getTabName('呼叫记录', this.tabsNumber.callRecordCount), name: 'RelativeCallRecord' })
+      }
+      tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
+      tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
     },
     /**
@@ -451,5 +457,5 @@ export default {
   padding: 2px;
   transform: scale(0.6);
 }
-@import '../styles/crmdetail.scss';
+@import '../../styles/crmdetail';
 </style>

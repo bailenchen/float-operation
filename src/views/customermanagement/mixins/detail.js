@@ -9,6 +9,7 @@ import { crmBusinessNumAPI, crmBusinessStarAPI } from '@/api/customermanagement/
 import { crmContractNumAPI } from '@/api/customermanagement/contract'
 import { crmProductNumAPI } from '@/api/customermanagement/product'
 import { crmReceivablesNumAPI } from '@/api/customermanagement/money'
+import { objDeepCopy } from '@/utils'
 
 
 export default {
@@ -29,7 +30,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['crm']),
+    ...mapGetters(['crm', 'allAuth']),
     // 能否查看详情
     canShowDetail() {
       if (this.detailData && this.detailData.dataAuth === 0) {
@@ -176,6 +177,23 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 权限校验
+     * @param permission {string} eg: crm.customer.index
+     */
+    checkPermission(permission = '') {
+      if (!permission) return true
+      const arr = permission.split('.')
+      if (arr.length === 0) return true
+      let auth = objDeepCopy(this.allAuth)
+      for (let i = 0; i < arr.length; i++) {
+        const key = arr[i]
+        if (!auth.hasOwnProperty(key) || !auth[key]) return false
+        auth = auth[key]
+      }
+      return true
     }
   },
 

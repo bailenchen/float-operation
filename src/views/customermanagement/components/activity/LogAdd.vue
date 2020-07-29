@@ -7,58 +7,6 @@
     <div
       v-if="isUnfold"
       class="mix-content-select">
-      <!--<el-date-picker
-        v-model="nextTime"
-        :editable="false"
-        type="datetime"
-        placeholder="跟进时间"
-        value-format="yyyy-MM-dd HH:mm:ss" />
-      <el-select
-        v-if="showContacts"
-        v-model="selectContactsId"
-        clearable
-        placeholder="跟进计划">
-        <el-option
-          v-for="item in contacts"
-          :key="item.contactsId"
-          :label="item.name"
-          :value="item.contactsId" />
-      </el-select>
-      <el-date-picker
-        v-model="nextTime"
-        :editable="false"
-        type="datetime"
-        placeholder="承诺到访时间"
-        value-format="yyyy-MM-dd HH:mm:ss" />
-      <el-date-picker
-        v-model="nextTime"
-        :editable="false"
-        type="datetime"
-        placeholder="下次跟进时间"
-        value-format="yyyy-MM-dd HH:mm:ss" />
-      <el-select
-        v-if="showContacts"
-        v-model="selectContactsId"
-        clearable
-        placeholder="跟进结果">
-        <el-option
-          v-for="item in contacts"
-          :key="item.contactsId"
-          :label="item.name"
-          :value="item.contactsId" />
-      </el-select>
-      <el-select
-        v-if="showContacts"
-        v-model="selectContactsId"
-        clearable
-        placeholder="签约可能性">
-        <el-option
-          v-for="item in contacts"
-          :key="item.contactsId"
-          :label="item.name"
-          :value="item.contactsId" />
-      </el-select>-->
-
       <div
         v-for="(field, index) in fieldList"
         :key="index"
@@ -169,6 +117,13 @@
 
 <script>
 import { crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
+import {
+  crmSettingRecordListAPI
+} from '@/api/customermanagement/common'
+import {
+  QuerySignUpList,
+  QueryFollowUpResults
+} from '@/api/systemManagement/params'
 
 import XhSelect from '@/components/CreateCom/XhSelect'
 import XhDateTime from '@/components/CreateCom/XhDateTime'
@@ -233,8 +188,6 @@ export default {
       /** 关联联系人信息 */
       selectContactsId: '',
       followType: '',
-      // 下次联系时间
-      nextTime: '',
       /** 展示关联弹窗 */
       showRelativeType: '',
       batchId: guid(), // 批次ID
@@ -245,7 +198,8 @@ export default {
         { fieldName: '', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
         { fieldName: '', placeholder: '承诺到访时间', com: 'XhDateTime', value: '' },
         { fieldName: '', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
-      ]
+      ],
+      form: {}
     }
   },
   computed: {
@@ -258,7 +212,7 @@ export default {
   },
   watch: {
     followTypes() {
-      this.getDefalutFollowType()
+      this.resetInfo()
     },
 
     contactsId() {
@@ -267,7 +221,7 @@ export default {
   },
   created() {
     this.selectContactsId = this.contactsId || ''
-    this.getDefalutFollowType()
+    this.resetInfo()
     this.getOptions()
   },
 
@@ -285,15 +239,27 @@ export default {
     },
 
     getOptions() {
-      this.fieldList[1].setting = [
-        { name: '无效', value: '无效' },
-        { name: '有效', value: '有效' },
-        { name: '承诺到访', value: '承诺到访' },
-        { name: '已到访', value: '已到访' },
-        { name: '未确定', value: '未确定' }
-      ]
-      this.fieldList[2].setting = ['跟进结果1', '跟进结果2']
-      this.fieldList[3].setting = ['大', '中']
+      // 跟进计划
+      crmSettingRecordListAPI().then(res => {
+        this.fieldList[1].setting = res.data.map(o => {
+          return { name: o, value: o }
+        })
+        this.$set(this.fieldList, 1, this.fieldList[1])
+      }).catch(() => {})
+      // 跟进结果
+      QueryFollowUpResults().then().catch(res => {
+        this.fieldList[2].setting = res.data.map(o => {
+          return { name: o.results, value: o.id }
+        })
+        this.$set(this.fieldList, 2, this.fieldList[2])
+      })
+      // 签约可能性
+      QuerySignUpList().then().catch(res => {
+        this.fieldList[3].setting = res.data.map(o => {
+          return { name: o.signUpName, value: o.id }
+        })
+        this.$set(this.fieldList, 3, this.fieldList[3])
+      })
     },
 
     handleFormChange(data) {
@@ -305,7 +271,9 @@ export default {
      * 重置数据
      */
     resetInfo() {
-      this.nextTime = ''
+      this.fieldList.forEach(item => {
+        item.value = ''
+      })
       this.isUnfold = false
       // 输入法
       this.content = ''
@@ -506,6 +474,10 @@ export default {
      * 发布
      */
     sendClick() {
+      const form = {}
+      this.fieldList.forEach(o => {
+        form[o.fieldName] = o.value
+      })
       this.$emit('send', {
         id: this.id,
         content: this.content,
@@ -515,7 +487,7 @@ export default {
         contactsId: this.selectContactsId,
         batchId: this.batchId,
         followType: this.followType,
-        nextTime: this.nextTime
+        ...form
       })
     },
 

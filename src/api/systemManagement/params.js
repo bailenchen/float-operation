@@ -173,10 +173,30 @@ export function QuerySignUpList(data) {
   })
 }
 
-// 添加/编辑科目
+// 添加/编辑签约可能性
 export function AddAdminSignUp(data) {
   return request({
     url: 'adminSignUp/addAdminGrade',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
+// 查询跟进结果
+export function QueryFollowUpResults(data) {
+  return request({
+    url: 'adminFollowUpResults/queryAdminFollowUpResults',
+    method: 'post'
+  })
+}
+
+// 添加/编辑跟进结果
+export function AddFollowUpResults(data) {
+  return request({
+    url: 'adminFollowUpResults/addAdminFollowUpResults',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'

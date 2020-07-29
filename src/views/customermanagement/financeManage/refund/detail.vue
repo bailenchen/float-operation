@@ -105,27 +105,27 @@
 import { crmCustomerRead } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
-import CRMDetailHead from '../components/CRMDetailHead'
-import Activity from '../components/activity' // 活动
-import ChieflyContacts from '../components/ChieflyContacts' // 首要联系人
-import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 基本信息
-import RelativeContacts from '../components/RelativeContacts' // 相关联系人
-import RelativeBusiness from '../components/RelativeBusiness' // 相关商机
-import RelativeContract from '../components/RelativeContract' // 相关合同
-import RelativeReturnMoney from '../components/RelativeReturnMoney' // 相关回款
-import RelativeFiles from '../components/RelativeFiles' // 相关附件
-import RelativeHandle from '../components/RelativeHandle' // 相关操作
-import RelativeTeam from '../components/RelativeTeam' // 团队成员
-import RelativeVisit from '../components/RelativeVisit' // 回访
-import RelativeInvoice from '../components/RelativeInvoice' // 发票
-import RelativeCallRecord from '../components/RelativeCallRecord' // 呼叫记录
+import CRMDetailHead from '../../components/CRMDetailHead'
+import Activity from '../../components/activity/index' // 活动
+import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系人
+import CRMEditBaseInfo from '../../components/CRMEditBaseInfo' // 基本信息
+import RelativeContacts from '../../components/RelativeContacts' // 相关联系人
+import RelativeBusiness from '../../components/RelativeBusiness' // 相关商机
+import RelativeContract from '../../components/RelativeContract' // 相关合同
+import RelativeReturnMoney from '../../components/RelativeReturnMoney' // 相关回款
+import RelativeFiles from '../../components/RelativeFiles' // 相关附件
+import RelativeHandle from '../../components/RelativeHandle' // 相关操作
+import RelativeTeam from '../../components/RelativeTeam' // 团队成员
+import RelativeVisit from '../../components/RelativeVisit' // 回访
+import RelativeInvoice from '../../components/RelativeInvoice' // 发票
+import RelativeCallRecord from '../../components/RelativeCallRecord' // 呼叫记录
 
-import CRMCreateView from '../components/CRMCreateView' // 新建页面
-import detail from '../mixins/detail'
+import CRMCreateView from '../../components/CRMCreateView' // 新建页面
+import detail from '../../mixins/detail'
 
 export default {
   // 客户管理 的 客户详情
-  name: 'CustomerDetail',
+  name: 'AccountDetail',
   components: {
     SlideView,
     Activity,
@@ -457,5 +457,5 @@ export default {
   padding: 2px;
   transform: scale(0.6);
 }
-@import '../styles/crmdetail.scss';
+@import '../../styles/crmdetail';
 </style>
