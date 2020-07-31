@@ -123,15 +123,13 @@
 </template>
 
 <script>
-import { adminSystemSave, adminSystemConfigIndex } from '@/api/systemManagement/SystemConfig'
+import { adminSystemSave } from '@/api/systemManagement/SystemConfig'
 
 import RadialProgressBar from 'vue-radial-progress'
 import EditImage from '@/components/EditImage'
 import XrHeader from '@/components/xr-header'
 
 import { mapGetters } from 'vuex'
-// import { fileSize } from '@/utils/index'
-import moment from 'moment'
 
 export default {
   name: 'SystemConfig',
@@ -204,46 +202,6 @@ export default {
      * 获取系统使用信息
      */
     getSystemInfo() {
-      this.loading = true
-      adminSystemConfigIndex().then(res => {
-        const data = res.data || {}
-        if (data.usingNum) {
-          data.userProgress = Math.floor((data.usingNum / data.allNum) * 100)
-        } else {
-          data.userProgress = 0
-        }
-
-        // 时间
-        if (data.allNum == 2) {
-          data.startTime = data.createTime
-          data.endTime = '2099-01-01'
-        }
-
-        if (data.startTime) {
-          const startMoment = moment(data.startTime)
-          const endMoment = moment(data.endTime)
-          data.startDays = moment().diff(startMoment, 'days')
-          data.surplusDays = endMoment.diff(moment(), 'days')
-          const totalDays = endMoment.diff(startMoment, 'days')
-          data.dayProgress = data.startDays > 0 ? Math.floor((data.startDays / totalDays) * 100) : 0
-        }
-
-        // 存储
-        // if (data.size) {
-        //   data.sizeProgress = Math.floor((data.size / data.allSize) * 100)
-        // } else {
-        //   data.sizeProgress = 0
-        // }
-
-        // data.surplusSize = fileSize(data.allSize - data.size)
-        // data.size = fileSize(data.size)
-        // data.allSize = fileSize(data.allSize)
-
-        this.systemInfo = data
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
     },
 
     submiteImage(data) {
@@ -348,7 +306,6 @@ export default {
 
 .section:first-child {
   padding-bottom: 40px;
-  border-bottom: 1px solid #F0F0F0;
 }
 
 .section-title {

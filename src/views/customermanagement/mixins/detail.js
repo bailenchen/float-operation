@@ -123,13 +123,14 @@ export default {
       }
       const request = {
         leads: crmLeadsNumAPI,
-        customer: crmCustomerNumAPI,
+        // customer: crmCustomerNumAPI,
         contacts: crmContactsNumAPI,
         business: crmBusinessNumAPI,
         contract: crmContractNumAPI,
         product: crmProductNumAPI,
         receivables: crmReceivablesNumAPI
-      }[this.crmType]
+      }[this.crmType] || null
+      if (!request) return
 
       const params = {}
       params[`${this.crmType}Id`] = this.id

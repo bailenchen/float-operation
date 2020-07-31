@@ -52,6 +52,16 @@
           :crm-type="crmType"
           :save-scene="false"
           @filter="handleFilter"/>
+        <el-button
+          :disabled="!canMark"
+          class="el-button--margin"
+          icon="wk wk-tag"
+          style="margin-left: 10px;"
+          type="primary"
+          plain
+          @click="allMarkReadClick">
+          全部标记已处理
+        </el-button>
       </div>
       <flexbox
         v-else
@@ -254,7 +264,7 @@ export default {
       selectionList: [], // 勾选的数据
       selectionButtonList: [
         {
-          name: '已跟进',
+          name: '已处理',
           type: 'follow',
           icon: 'wk wk-edit'
         }
@@ -270,19 +280,18 @@ export default {
   computed: {
     // 展示勾选框
     showSelection() {
-      if (this.infoType == 'followLeads' || this.infoType == 'followCustomer') {
-        return true
-      }
-
-      return false
+      return [
+        'todayCustomer',
+        'promiseVisit'
+      ].includes(this.infoType)
     },
 
     // 展示筛选
     showFilterView() {
-      if (this.crmType == 'receivables_plan') {
-        return false
-      }
-      return true
+      return [
+        'todayCustomer',
+        'promiseVisit'
+      ].includes(this.infoType)
     },
 
     // 展示审核状态
@@ -303,45 +312,50 @@ export default {
 
     // 展示我的/下属筛选
     showSubType() {
-      if (
-        this.infoType == 'todayCustomer' ||
-        this.infoType == 'putInPoolRemind' ||
-        this.infoType == 'returnVisitRemind'
-      ) {
-        return true
-      }
-      return false
+      return [
+        'todayCustomer',
+        'promiseVisit',
+        'returnVisitRemind'
+      ].includes(this.infoType)
     },
 
     // 下拉数据
     options() {
-      if (this.infoType == 'todayCustomer') {
+      if (this.infoType === 'todayCustomer') {
         return [
-          { name: '今日需联系', value: 1 },
+          { name: '今日需跟进', value: 1 },
           { name: '已逾期', value: 2 },
           { name: '已联系', value: 3 }
         ]
-      } else if (
-        this.infoType == 'followLeads' ||
-        this.infoType == 'followCustomer'
-      ) {
-        return [{ name: '待跟进', value: 1 }, { name: '已跟进', value: 2 }]
-      } else if (
-        this.infoType == 'checkContract' ||
-        this.infoType == 'checkReceivables'
-      ) {
-        return [{ name: '待审核', value: 1 }, { name: '已审核', value: 2 }]
-      } else if (this.infoType == 'remindReceivablesPlan') {
-        return [
-          { name: '待回款', value: 1 },
-          { name: '已回款', value: 2 },
-          { name: '已逾期', value: 3 }
-        ]
-      } else if (this.infoType == 'endContract') {
-        return [{ name: '即将到期', value: 1 }, { name: '已到期', value: 2 }]
       }
-
       return []
+      // if (this.infoType == 'todayCustomer') {
+      //   return [
+      //     { name: '今日需跟进', value: 1 },
+      //     { name: '今日需跟进', value: 1 },
+      //     { name: '已联系', value: 3 }
+      //   ]
+      // } else if (
+      //   this.infoType == 'followLeads' ||
+      //   this.infoType == 'followCustomer'
+      // ) {
+      //   return [{ name: '待跟进', value: 1 }, { name: '已跟进', value: 2 }]
+      // } else if (
+      //   this.infoType == 'checkContract' ||
+      //   this.infoType == 'checkReceivables'
+      // ) {
+      //   return [{ name: '待审核', value: 1 }, { name: '已审核', value: 2 }]
+      // } else if (this.infoType == 'remindReceivablesPlan') {
+      //   return [
+      //     { name: '待回款', value: 1 },
+      //     { name: '已回款', value: 2 },
+      //     { name: '已逾期', value: 3 }
+      //   ]
+      // } else if (this.infoType == 'endContract') {
+      //   return [{ name: '即将到期', value: 1 }, { name: '已到期', value: 2 }]
+      // }
+      //
+      // return []
     },
     // 权限
     showCall() {
@@ -353,8 +367,29 @@ export default {
         return this.$store.state.customer.isCall
       }
       return false
-    }
+    },
 
+    /**
+     * 能标记
+     */
+    canMark() {
+      if (this.options.length) {
+        if (this.showSubType && this.showOptions) {
+          return this.optionsType == 1 && this.isSubType == 1
+        }
+
+        if (this.showSubType) {
+          return this.isSubType == 1
+        }
+
+        if (this.showOptions) {
+          return this.optionsType == 1
+        }
+        return false
+      }
+
+      return true
+    }
   },
 
   watch: {
@@ -420,28 +455,28 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            const request = {
-              followLeads: crmLeadsSetFollowAPI,
-              followCustomer: crmCustomerSetFollowAPI
-            }[this.infoType]
-            request({
-              ids: this.selectionList
-                .map(item => {
-                  return item[this.crmType + 'Id']
-                })
-                .join(',')
-            })
-              .then(res => {
-                this.$message.success('操作成功')
-                this.refreshList()
-
-                this.$emit('on-handle', {
-                  type: 'follow',
-                  value: this.selectionList.length,
-                  infoType: this.infoType
-                })
-              })
-              .catch(() => {})
+            // const request = {
+            //   followLeads: crmLeadsSetFollowAPI,
+            //   followCustomer: crmCustomerSetFollowAPI
+            // }[this.infoType]
+            // request({
+            //   ids: this.selectionList
+            //     .map(item => {
+            //       return item[this.crmType + 'Id']
+            //     })
+            //     .join(',')
+            // })
+            //   .then(res => {
+            //     this.$message.success('操作成功')
+            //     this.refreshList()
+            //
+            //     this.$emit('on-handle', {
+            //       type: 'follow',
+            //       value: this.selectionList.length,
+            //       infoType: this.infoType
+            //     })
+            //   })
+            //   .catch(() => {})
           })
           .catch(() => {
             this.$message({
@@ -493,7 +528,7 @@ export default {
         (column.property === 'name' && this.crmType != 'contract') ||
         column.property === 'number' ||
         column.property === 'leadsName' ||
-        column.property === 'customerName' ||
+        column.property === 'leadsNumber' ||
         column.property === 'businessName' ||
         column.property === 'contactsName' ||
         column.property === 'num' ||
@@ -569,7 +604,12 @@ export default {
         }
       }
       return false
-    }
+    },
+
+    /**
+     * 全部标记
+     */
+    allMarkReadClick() {}
   }
 }
 </script>
@@ -666,5 +706,21 @@ export default {
 
 .n-table--border {
   border-top: 1px solid $xr-border-line-color;
+}
+
+.el-button--primary.is-plain {
+  background-color: white;
+}
+
+.el-button--primary.is-plain:hover,
+.el-button--primary.is-plain:focus {
+  color: $xr-color-primary;
+}
+
+// 拉开图标与文字距离
+.el-button--margin {
+  /deep/ i {
+    margin-right: 5px;
+  }
 }
 </style>

@@ -30,7 +30,11 @@
                 v-if="!node.expanded"
                 class="node-img"
                 src="@/assets/img/unfold.png">
-              <div class="node-label">{{ node.label }}</div>
+              <div
+                :class="{gray: node.data.status != 1}"
+                class="node-label">
+                {{ node.label }}
+              </div>
               <el-dropdown
                 trigger="click"
                 @command="handleTreeSetDrop">
@@ -80,7 +84,8 @@
 import {
   QueryChannelCategory,
   AddChannelCategory,
-  DeleteChannelCategory
+  DeleteChannelCategory,
+  UpdateChannelCategory
 } from '@/api/systemManagement/params'
 
 export default {
@@ -129,9 +134,22 @@ export default {
           return item
         })
       } else {
-        this.treeSetTypes = temps.slice(2).map(item => {
+        this.treeSetTypes = temps.slice(1).map(item => {
           item['node'] = node
           return item
+        })
+      }
+      if (node.data.status == 1) {
+        this.treeSetTypes.splice(0, 0, {
+          type: 'status',
+          name: '停用分类',
+          node: node
+        })
+      } else {
+        this.treeSetTypes.splice(0, 0, {
+          type: 'status',
+          name: '启用分类',
+          node: node
         })
       }
     },
@@ -173,6 +191,26 @@ export default {
           name: command.node.data.name
         }
         this.productHandleDialog = true
+      } else if (command.type === 'status') {
+        this.$confirm(`确定${command.node.data.status == 1 ? '停用' : '启用'}?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.loading = true
+          UpdateChannelCategory({
+            id: command.node.data.id,
+            status: command.node.data.status == 1 ? 0 : 1
+          }).then(() => {
+            this.$message.success('操作成功')
+            this.getProductCategoryIndex()
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        }).catch(() => {
+          this.$message.info('已取消')
+        })
       } else if (command.type === 'delete') {
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
@@ -314,6 +352,9 @@ export default {
     height: 15px;
     display: block;
     margin-right: 8px;
+  }
+  .node-label.gray {
+    color: #bbb;
   }
   .node-label:hover {
     background-color: #ededed;

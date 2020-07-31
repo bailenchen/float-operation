@@ -4,22 +4,22 @@
     :visible.sync="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
-    title="批量转移"
+    title="批量变更"
     width="450px"
     @close="handleCancel">
     <div class="handle-box">
       <flexbox class="handle-item">
-        <div class="handle-item-name">变更负责人为：</div>
+        <div class="handle-item-name">变更教育顾问为：</div>
         <xh-user-cell
           :value="usersList"
           class="handle-item-content"
           placeholder="点击选择"
           @value-change="userChage"/>
       </flexbox>
-      <flexbox
+      <!--<flexbox
         v-if="showRemoveType"
         class="handle-item">
-        <div class="handle-item-name">将原负责人：</div>
+        <div class="handle-item-name">将原教育顾问人：</div>
         <el-radio-group v-model="removeType">
           <el-radio :label="1">移出</el-radio>
           <el-radio :label="2">转为团队成员</el-radio>
@@ -33,9 +33,9 @@
           <el-radio :label="1">只读</el-radio>
           <el-radio :label="2">读写</el-radio>
         </el-radio-group>
-      </flexbox>
+      </flexbox>-->
       <!-- 仅客户下可进行同时变成负责人 -->
-      <flexbox
+      <!--<flexbox
         v-if="crmType === 'customer'"
         class="handle-item">
         <div class="handle-item-name">同时变更负责人至：</div>
@@ -44,7 +44,7 @@
           <el-checkbox label="2">商机</el-checkbox>
           <el-checkbox label="3">合同</el-checkbox>
         </el-checkbox-group>
-      </flexbox>
+      </flexbox>-->
     </div>
     <span
       slot="footer"
@@ -108,14 +108,15 @@ export default {
   computed: {
     // 是否展示移除操作类型
     showRemoveType() {
-      if (this.crmType == 'leads' ||
-       this.crmType == 'contacts' ||
-        this.crmType == 'receivables' ||
-         this.crmType == 'product' ||
-         this.crmType == 'invoice') {
-        return false
-      }
-      return true
+      // if (this.crmType == 'leads' ||
+      //  this.crmType == 'contacts' ||
+      //   this.crmType == 'receivables' ||
+      //    this.crmType == 'product' ||
+      //    this.crmType == 'invoice') {
+      //   return false
+      // }
+      // return true
+      return false
     }
   },
   watch: {
@@ -157,7 +158,7 @@ export default {
     },
     handleConfirm() {
       if (this.usersList.length === 0) {
-        this.$message.error('请选择变更负责人')
+        this.$message.error('请选择变更教育顾问')
       } else {
         this.loading = true
         this.getRequest()(this.getParams())
@@ -207,17 +208,18 @@ export default {
     getParams() {
       var ownerUserId = this.usersList[0].userId
       var params = {
-        newOwnerUserId: ownerUserId
+        newOwnerUserId: ownerUserId,
+        transferType: 1
       }
 
-      if (this.showRemoveType) {
-        params.transferType = this.removeType
-      }
-
-      if (this.removeType === 2) {
-        // 1移出，2转为团队成员
-        params.power = this.handleType
-      }
+      // if (this.showRemoveType) {
+      //   params.transferType = this.removeType
+      // }
+      //
+      // if (this.removeType === 2) {
+      //   // 1移出，2转为团队成员
+      //   params.power = this.handleType
+      // }
 
       var self = this
       var actionId = this.selectionList.map(function(item, index, array) {
@@ -226,7 +228,8 @@ export default {
       params[this.crmType + 'Ids'] = actionId.join(',')
       if (this.crmType === 'customer') {
         // 只有客户下面有同时变更
-        params.changeType = this.addsTypes.join(',')
+        // params.changeType = this.addsTypes.join(',')
+        params.changeType = ''
       }
       return params
     }

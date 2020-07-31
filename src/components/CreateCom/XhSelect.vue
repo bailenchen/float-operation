@@ -15,6 +15,13 @@
 </template>
 <script type="text/javascript">
 import stringMixin from './stringMixin'
+import {
+  QueryAdminGrade,
+  QuerySignUpList
+} from '@/api/systemManagement/params'
+import {
+  crmSettingRecordListAPI
+} from '@/api/systemManagement/SystemCustomer'
 
 export default {
   name: 'XhSelect', // 新建 select
@@ -28,7 +35,25 @@ export default {
   },
   data() {
     return {
-      option: []
+      option: [],
+      reqMap: [
+        {
+          formType: 'grades',
+          req: QueryAdminGrade,
+          labelField: 'gradeName',
+          valueField: 'id'
+        },
+        {
+          formType: 'follow_up_plan',
+          req: crmSettingRecordListAPI
+        },
+        {
+          formType: 'sign_up',
+          req: QuerySignUpList,
+          labelField: 'signUpName',
+          valueField: 'id'
+        }
+      ]
     }
   },
   computed: {},
@@ -61,13 +86,34 @@ export default {
         } else {
           this.option = []
         }
+        this.getSettingConfig()
       },
       deep: true,
       immediate: true
     }
   },
-  mounted() {},
-  methods: {}
+  methods: {
+    getSettingConfig() {
+      if (!this.item || !this.item.data || !this.item.data.formType) return
+      const reqObj = this.reqMap.find(o => o.formType === this.item.data.formType)
+      if (!reqObj) return
+      reqObj.req().then(res => {
+        this.option = (res.data || []).map(o => {
+          if (Object.prototype.toString.call(o) === '[object Object]') {
+            return {
+              name: o[reqObj.labelField],
+              value: o[reqObj.valueField]
+            }
+          } else {
+            return {
+              name: o,
+              value: o
+            }
+          }
+        })
+      }).catch(() => {})
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

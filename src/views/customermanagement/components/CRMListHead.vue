@@ -18,11 +18,17 @@
     </el-input>
     <div class="right-container">
       <el-button
+        v-if="canSave && crmType === 'customer'"
+        class="xr-btn--orange"
+        icon="el-icon-plus"
+        type="primary"
+        @click="createClick('introduce')">新建转介绍LEADS</el-button>
+      <el-button
         v-if="canSave"
         class="xr-btn--orange"
         icon="el-icon-plus"
         type="primary"
-        @click="createClick">{{ mainTitle }}</el-button>
+        @click="createClick()">{{ mainTitle }}</el-button>
       <el-button
         v-if="showDupCheck"
         class="dup-check-btn"
@@ -122,11 +128,15 @@ export default {
     },
 
     showDupCheck() {
-      return ['leads', 'customer', 'contacts'].includes(this.crmType) && !this.isSeas
+      return false
+      // return ['leads', 'customer', 'contacts'].includes(this.crmType) && !this.isSeas
     }
   },
   mounted() {
     // 线索和客户判断更多操作
+    if (this.crmType === 'customer') {
+      this.moreTypes.push({ type: 'enter', name: '导入跟进', icon: 'import' })
+    }
     if (this.crm[this.crmType] && this.crm[this.crmType].excelimport) {
       this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
     }
@@ -152,12 +162,15 @@ export default {
         this.$bus.emit('import-crm-bus', this.crmType, this.isSeas)
       }
     },
-    createClick() {
+    createClick(action = '') {
       if (this.createFun) {
         this.createFun()
       } else {
         this.createCRMType = this.crmType
         this.createActionInfo = { type: 'save' }
+        if (this.crmType === 'customer' && action === 'introduce') {
+          this.createActionInfo = { type: 'save', introduce: true }
+        }
         this.isCreate = !this.isCreate
       }
     },

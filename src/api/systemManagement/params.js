@@ -4,10 +4,11 @@
 import request from '@/utils/request'
 
 // 查询渠道
-export function QueryChannelCategory() {
+export function QueryChannelCategory(data) {
   return request({
     url: 'adminChannelCategory/queryList',
-    method: 'post'
+    method: 'post',
+    data: data
   })
 }
 
@@ -29,6 +30,18 @@ export function DeleteChannelCategory(data) {
   })
 }
 
+// 启用/停用渠道
+export function UpdateChannelCategory(data) {
+  return request({
+    url: 'adminChannelCategory/updateStatus',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
+
 // 查询渠道类型列表
 export function QueryChannelType(data) {
   return request({
@@ -36,18 +49,6 @@ export function QueryChannelType(data) {
     method: 'post'
   })
 }
-
-// 编辑渠道类型
-// export function SelectEdit(data) {
-//   return request({
-//     url: 'adminChannelType/selectEdit',
-//     method: 'post',
-//     headers: {
-//       'Content-Type': 'application/json;charset=UTF-8'
-//     },
-//     data: data
-//   })
-// }
 
 // 添加渠道类型
 export function AddChannelType(data) {

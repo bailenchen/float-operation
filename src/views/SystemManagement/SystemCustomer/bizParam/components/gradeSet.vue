@@ -17,6 +17,7 @@
           v-model.trim="item.gradeName"
           :maxlength="100"/>
         <i
+          v-if="list.length > 1"
           class="el-icon-remove"
           @click="deleteItem(item, index)"/>
       </div>

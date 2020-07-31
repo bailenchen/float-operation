@@ -16,3 +16,4 @@ export { default as XhCustomerAddress } from './XhCustomerAddress'
 
 export { default as XhStrucUserCell } from './XhStrucUserCell'
 export { default as XhReceivablesPlan } from './XhReceivablesPlan'
+export { default as XhChannelCategory } from './XhChannelCategory'

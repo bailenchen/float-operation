@@ -140,11 +140,11 @@
           :sortable="item.prop != 'poolDay' ? 'custom' : false"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <template v-if="item.prop == 'dealStatus'">
+            <!--<template v-if="item.prop == 'dealStatus'">
               <i :class="scope.row[item.prop] | dealIcon"/>
               <span>{{ scope.row[item.prop] | dealName }}</span>
-            </template>
-            <template v-else-if="item.prop == 'status'">
+            </template>-->
+            <template v-if="item.prop == 'status'">
               <i
                 v-if="scope.row.status == 2"
                 class="wk wk-circle-password customer-lock"/>
@@ -302,7 +302,7 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'customerName') {
+      if (column.property === 'leadsNumber') {
         return 'can-visit--underline'
       } else if (column.property === 'businessCheck') {
         return 'can-visit'

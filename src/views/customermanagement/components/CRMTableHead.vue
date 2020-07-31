@@ -80,6 +80,11 @@
       :selection-list="selectionList"
       :dialog-visible.sync="allocDialogShow"
       @handle="handleCallBack" />
+    <alloc-class-teacher
+      :crm-type="crmType"
+      :selection-list="selectionList"
+      :dialog-visible.sync="allocClassTeacherDialogShow"
+      @handle="handleCallBack" />
     <deal-status-handle
       :crm-type="crmType"
       :selection-list="selectionList"
@@ -170,6 +175,7 @@ import SceneCreate from './sceneForm/SceneCreate'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import TeamsHandle from './selectionHandle/TeamsHandle' // 操作团队成员
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
+import AllocClassTeacher from './selectionHandle/AllocClassTeacher' // 分配班主任操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 import { Loading } from 'element-ui'
@@ -186,7 +192,8 @@ export default {
     SceneCreate,
     SceneSet,
     DealStatusHandle,
-    PutPoolHandle
+    PutPoolHandle,
+    AllocClassTeacher
   },
   props: {
     title: {
@@ -229,6 +236,7 @@ export default {
       teamsDialogShow: false, // 团队操作提示框
       teamsTitle: '', // 团队操作标题名
       allocDialogShow: false, // 公海分配操作提示框
+      allocClassTeacherDialogShow: false, // 分配班主任操作提示框
       dealStatusShow: false, // 成交状态修改框
       putPoolShow: false // 客户放入公海
     }
@@ -465,6 +473,9 @@ export default {
       } else if (type == 'alloc') {
         // 公海分配操作
         this.allocDialogShow = true
+      } else if (type == 'alloc_class_teacher') {
+        // 分配班主任操作
+        this.allocClassTeacherDialogShow = true
       } else if (type == 'deal_status') {
         // 客户成交状态操作
         this.dealStatusShow = true
@@ -642,7 +653,7 @@ export default {
     getSelectionHandleItemsInfo() {
       const handleInfos = {
         transfer: {
-          name: '转移',
+          name: '变更教育顾问',
           type: 'transfer',
           icon: 'transfer'
         },

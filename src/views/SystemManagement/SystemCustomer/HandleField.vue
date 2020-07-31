@@ -416,7 +416,13 @@ export default {
           map_address: 18,
           category: 19,
           contract: 20,
-          receivables_plan: 21
+          receivables_plan: 21,
+          sign_up: 22,
+          follow_up_plan: 23,
+          leads_source: 24,
+          grades: 25,
+          single_user: 26,
+          single_structure: 27
         }[formType] || '0'
       )
     },

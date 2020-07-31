@@ -15,10 +15,10 @@
         class="input-item">
         <el-input
           v-model="item.value"
-          :disabled="index < 4"
+          :disabled="index < 5"
           :maxlength="100"/>
         <i
-          v-if="index >= 4"
+          v-if="index >= 5"
           class="el-icon-remove"
           @click="deleteItem(item, index)"/>
       </div>

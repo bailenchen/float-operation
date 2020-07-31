@@ -9,7 +9,10 @@
         @click="save">保存</el-button>
     </div>
     <div class="content-body">
-      <div class="tips">设置回访提醒后，到期会自动提醒，合同生效是指到达合同开始时间</div>
+      <div
+        v-if="type === 'leadsVisit'"
+        class="tips">设置承诺到访时间提醒，提前"N"小时进行提醒至待办</div>
+      <div v-else class="tips">设置回访提醒后，到期会自动提醒，合同生效是指到达合同开始时间</div>
       <div class="set-content">
         <el-radio
           v-model="status"
@@ -20,13 +23,15 @@
         <div
           v-if="status == 1"
           class="time-set">
-          <span>合同生效后</span>
+          <span v-if="type === 'leadsVisit'">承诺到访时间前</span>
+          <span v-else>合同生效后</span>
           <el-input-number
             v-model="value"
             :precision="0"
             :min="0"
             :controls="false" />
-          <span>天提醒</span>
+          <span v-if="type === 'leadsVisit'">小时，进行提醒</span>
+          <span v-else>天提醒</span>
         </div>
       </div>
     </div>

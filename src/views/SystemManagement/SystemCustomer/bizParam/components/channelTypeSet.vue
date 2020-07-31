@@ -257,13 +257,15 @@ export default {
           this.dialogForm = {
             id: row.id,
             typeName: row.typeName,
-            filteringPersonnel: [{
-              userId: row.userId,
-              realname: row.filteringPersonnel
-            }],
             isFilter: row.isFilter,
             status: row.status,
             channelId: this.getCheckedArr(row.channelId.split(',').map(o => Number(o)))
+          }
+          if (row.userId) {
+            this.dialogForm.filteringPersonnel = [{
+              userId: row.userId,
+              realname: row.filteringPersonnel
+            }]
           }
           console.log(this.dialogForm)
           this.dialogVisible = true

@@ -151,7 +151,7 @@
 <script>
 import { crmCustomerQueryContacts } from '@/api/customermanagement/customer'
 import {
-  crmSettingRecordListAPI,
+  // crmSettingRecordListAPI,
   crmActivityListAPI,
   crmActivityAddAPI
 } from '@/api/customermanagement/common'
@@ -272,16 +272,16 @@ export default {
      * 获取跟进类型详情
      */
     getLogTypeList() {
-      crmSettingRecordListAPI()
-        .then(res => {
-          this.followTypes = res.data.map(item => {
-            return {
-              value: item,
-              label: item
-            }
-          })
-        })
-        .catch(() => {})
+      // crmSettingRecordListAPI()
+      //   .then(res => {
+      //     this.followTypes = res.data.map(item => {
+      //       return {
+      //         value: item,
+      //         label: item
+      //       }
+      //     })
+      //   })
+      //   .catch(() => {})
     },
 
     /**
@@ -306,7 +306,9 @@ export default {
         return
       }
 
-      const params = {}
+      const params = {
+        ...data
+      }
       params.activityType = crmTypeModel[this.crmType]
       params.activityTypeId = data.id
       params.content = data.content

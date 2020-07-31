@@ -185,11 +185,11 @@ export default {
       loading: false,
       crmType: 'customer',
       headDetails: [
-        { title: '学员姓名', value: '' },
-        { title: 'LEADS来源', value: '' },
-        { title: '第一联系人电话', value: '' },
-        { title: '教学顾问', value: '' },
-        { title: '创建时间', value: '' }
+        { title: 'LEADS编号', value: '', field: 'leadsNumber' },
+        { title: 'LEADS来源', value: '', field: 'channelIdName' },
+        { title: '第一联系人电话', value: '', field: 'mobile' },
+        { title: '教学顾问', value: '', field: 'ownerUserName' },
+        { title: '创建时间', value: '', field: 'createTime' }
       ],
       tabCurrentName: 'Activity',
       // 编辑操作
@@ -202,26 +202,26 @@ export default {
           type: 'log',
           label: '写跟进'
         },
-        {
-          type: 'task',
-          label: '创建任务'
-        },
-        {
-          type: 'contacts',
-          label: '创建联系人'
-        },
-        {
-          type: 'business',
-          label: '创建商机'
-        },
+        // {
+        //   type: 'task',
+        //   label: '创建任务'
+        // },
+        // {
+        //   type: 'contacts',
+        //   label: '创建联系人'
+        // },
+        // {
+        //   type: 'business',
+        //   label: '创建商机'
+        // },
         {
           type: 'contract',
           label: '创建合同'
-        },
-        {
-          type: 'receivables',
-          label: '创建回款'
         }
+        // {
+        //   type: 'receivables',
+        //   label: '创建回款'
+        // }
       ],
       // 展示重要信息
       showImportInfo: true,
@@ -237,9 +237,9 @@ export default {
         { label: '详细资料', name: 'CRMEditBaseInfo', permission: 'crm.customer.read' },
         { label: '合同', name: 'RelativeContract', permission: 'crm.contract.index', numField: 'contractCount' },
         { label: '资金账户', name: 'RelativeAccount', permission: 'crm.contract.index' },
-        { label: '收款', name: 'RelativeReturnMoney' },
-        { label: '退费', name: 'RelativeInvoice' },
-        { label: '回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
+        // { label: '收款', name: 'RelativeReturnMoney' },
+        // { label: '退费', name: 'RelativeInvoice' },
+        // { label: '回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
         { label: '呼叫记录', name: 'RelativeCallRecord', numField: 'callRecordCount' },
         { label: '附件', name: 'RelativeFiles', numField: 'fileCount' },
         { label: '操作记录', name: 'RelativeHandle' }
@@ -352,32 +352,9 @@ export default {
           this.loading = false
           this.detailData = res.data
           this.firstContactsId = this.detailData.contactsId
-
-          // 负责人
-          this.headDetails[0].value = res.data.客户级别
-          const dealItem = this.headDetails[1]
-          dealItem.showIcon = true
-          if (res.data.dealStatus == 1) {
-            dealItem.icon = 'wk wk-success deal-suc'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#20b559',
-              marginRight: '3px'
-            }
-            dealItem.value = '已成交'
-          } else {
-            dealItem.icon = 'wk wk-close deal-un'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#f95a5a',
-              marginRight: '3px'
-            }
-            dealItem.value = '未成交'
-          }
-
-          this.headDetails[2].title = this.isSeasDetail ? '' : '负责人'
-          this.headDetails[2].value = res.data.ownerUserName
-          this.headDetails[3].value = res.data.updateTime
+          this.headDetails.forEach(o => {
+            o.value = res.data[o.field] || '--'
+          })
         })
         .catch(() => {
           this.loading = false

@@ -4,9 +4,10 @@ import {
 } from '@/api/customermanagement/common'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
+  crmMessageTodayCustomerAPI,
+  crmMessagePromiseAPI,
   crmMessageCheckContractAPI,
   crmMessageCheckReceivablesAPI,
-  crmMessageTodayCustomerAPI,
   crmMessageFollowLeadsAPI,
   crmMessageFollowCustomerAPI,
   crmMessagEndContractAPI,
@@ -36,10 +37,13 @@ export default {
   computed: {
     // 展示options下拉选择
     showOptions() {
-      if (this.infoType == 'putInPoolRemind' || this.infoType == 'returnVisitRemind') {
-        return false
-      }
-      return true
+      // if (this.infoType == 'putInPoolRemind' || this.infoType == 'returnVisitRemind') {
+      //   return false
+      // }
+      // return true
+      return [
+        'todayCustomer'
+      ].includes(this.infoType)
     }
   },
 
@@ -75,7 +79,7 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType === 'customer') {
-        if (column.property === 'customerName') {
+        if (column.property === 'leadsNumber') {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true
@@ -166,8 +170,9 @@ export default {
 
     /** 获取列表数据 */
     getList(loading = true) {
+      const crmIndexRequest = this.getIndexRequest()
+      if (!crmIndexRequest) return
       this.loading = loading
-      var crmIndexRequest = this.getIndexRequest()
       const params = {
         page: this.currentPage,
         limit: this.pageSize,
@@ -199,6 +204,7 @@ export default {
     getIndexRequest() {
       return {
         'todayCustomer': crmMessageTodayCustomerAPI,
+        'promiseVisit': crmMessagePromiseAPI,
         'followLeads': crmMessageFollowLeadsAPI,
         'followCustomer': crmMessageFollowCustomerAPI,
         'checkContract': crmMessageCheckContractAPI,

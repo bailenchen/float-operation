@@ -55,20 +55,20 @@ export default [
       }
     }]
   },
-  {
-    ...layout({
-      permissions: ['manage', 'card', 'update']
-    }),
-    children: [{
-      name: 'applet',
-      path: 'applet', // 名片小程序管理
-      component: () => import('@/views/SystemManagement/SystemApplet'),
-      meta: {
-        title: '名片小程序管理',
-        icon: 'mp'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['manage', 'card', 'update']
+  //   }),
+  //   children: [{
+  //     name: 'applet',
+  //     path: 'applet', // 名片小程序管理
+  //     component: () => import('@/views/SystemManagement/SystemApplet'),
+  //     meta: {
+  //       title: '名片小程序管理',
+  //       icon: 'mp'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
       permissions: ['manage', 'permission'],
@@ -166,15 +166,17 @@ export default [
         requiresAuth: true,
         permissions: ['manage', 'crm', 'setting']
       }
-    }, {
-      path: 'biz-goals',
-      component: () => import('@/views/SystemManagement/SystemCustomer/bizGoals'),
-      meta: {
-        title: '业绩目标设置',
-        requiresAuth: true,
-        permissions: ['manage', 'crm', 'achievement']
-      }
-    }, {
+    },
+    // {
+    //   path: 'biz-goals',
+    //   component: () => import('@/views/SystemManagement/SystemCustomer/bizGoals'),
+    //   meta: {
+    //     title: '业绩目标设置',
+    //     requiresAuth: true,
+    //     permissions: ['manage', 'crm', 'achievement']
+    //   }
+    // },
+    {
       name: 'handlefield',
       path: 'custom-field/:type/:id/:label', // type customer contacts business contract money
       component: () => import('@/views/SystemManagement/SystemCustomer/HandleField'),

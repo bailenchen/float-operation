@@ -503,7 +503,7 @@ export default {
     getSelectionHandleItemsInfo() {
       const handleInfos = {
         transfer: {
-          name: '转移',
+          name: '变更教育顾问',
           type: 'transfer',
           icon: 'transfer'
         },

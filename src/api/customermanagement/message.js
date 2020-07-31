@@ -150,3 +150,18 @@ export function crmMessagVisitRemindAPI(data) {
     }
   })
 }
+
+/**
+ * 承诺到访
+ * @param {*} data
+ */
+export function crmMessagePromiseAPI(data) {
+  return request({
+    url: 'CrmBackLog/followUpLeads',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

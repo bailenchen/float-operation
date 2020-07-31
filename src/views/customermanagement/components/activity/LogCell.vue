@@ -114,15 +114,62 @@
         </flexbox>
       </div>
 
-      <div v-if="item.nextTime" class="cell-top">
+      <div
+        v-if="showOtherTips"
+        class="cell-top">
         <flexbox
+          v-if="item.lastTime"
           align="stretch"
           class="cell">
           <div class="cell-hd">
             <i class="wk wk-time" />
           </div>
           <div class="cell-bd text-one-line">
-            下次联系时间：{{ item.nextTime }}
+            跟进时间：{{ item.lastTime }}
+          </div>
+        </flexbox>
+        <flexbox
+          v-if="item.promisedVisitTime"
+          align="stretch"
+          class="cell">
+          <div class="cell-hd">
+            <i class="wk wk-time" />
+          </div>
+          <div class="cell-bd text-one-line">
+            承诺到访时间：{{ item.promisedVisitTime }}
+          </div>
+        </flexbox>
+        <flexbox
+          v-if="item.nextTime"
+          align="stretch"
+          class="cell">
+          <div class="cell-hd">
+            <i class="wk wk-time" />
+          </div>
+          <div class="cell-bd text-one-line">
+            下次跟进时间：{{ item.nextTime }}
+          </div>
+        </flexbox>
+        <flexbox
+          v-if="item.dealStatus"
+          align="stretch"
+          class="cell">
+          <div class="cell-hd">
+            <i class="wk wk-approve" />
+          </div>
+          <div class="cell-bd text-one-line">
+            签约可能性：{{ item.dealStatus }}
+          </div>
+        </flexbox>
+        <flexbox
+          v-if="item.followUpResults"
+          align="stretch"
+          class="cell">
+          <div class="cell-hd">
+            <i class="wk wk-log" />
+          </div>
+          <div class="cell-bd text-one-line">
+            跟进结果：{{ item.followUpResults }}
           </div>
         </flexbox>
       </div>
@@ -205,6 +252,14 @@ export default {
 
     activityIconColor() {
       return this.getXrIconColor(this.getActivityType(this.item.activityType))
+    },
+
+    showOtherTips() {
+      return this.item.nextTime ||
+        this.item.lastTime ||
+        this.item.promisedVisitTime ||
+        this.item.followUpResults ||
+        this.item.dealStatus
     }
   },
   mounted() {},

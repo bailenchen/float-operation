@@ -66,17 +66,17 @@ export default {
           iconClass: 'wk wk-customer',
           infoType: 'todayCustomer',
           num: 0,
-          tips: '下次跟进时间为今日的客户',
+          tips: '下次跟进时间为今日的LEADS',
           hidden: true
         },
         {
-          name: '今日承诺到访的LEADS',
-          crmType: 'leads',
+          name: '承诺到访的LEADS',
+          crmType: 'customer',
           color: '#704AFD',
           iconClass: 'wk wk-leads',
-          infoType: 'followLeads',
+          infoType: 'promiseVisit',
           num: 0,
-          tips: '转移之后未跟进的线索',
+          tips: '承诺到访的LEADS',
           hidden: true
         }
         // {
@@ -195,12 +195,13 @@ export default {
     refreshNum() {
       for (let index = 0; index < this.leftSides.length; index++) {
         const element = this.leftSides[index]
-        if (this.messageNum.hasOwnProperty(element.infoType)) {
-          element.num = this.messageNum[element.infoType] || 0
-          element.hidden = false
-        } else {
-          element.hidden = true
-        }
+        // if (this.messageNum.hasOwnProperty(element.infoType)) {
+        //   element.num = this.messageNum[element.infoType] || 0
+        //   element.hidden = false
+        // } else {
+        //   element.hidden = true
+        // }
+        element.hidden = false
       }
 
       if (!this.leftType && this.showLeftSides.length > 0) {

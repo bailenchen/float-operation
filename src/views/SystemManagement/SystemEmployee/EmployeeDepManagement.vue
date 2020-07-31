@@ -403,59 +403,60 @@
         class="new-dialog-form"
         label-width="80px"
         label-position="top">
-        <el-form-item
-          v-for="(item, index) in tableList"
-          :label="item.value"
-          :prop="item.field"
-          :key="index">
-          <span slot="label">{{ item.value }}</span>
-          <el-tooltip
-            v-if="item.tips"
-            slot="label"
-            :content="item.tips"
-            effect="dark"
-            placement="top">
-            <i class="wukong wukong-help_tips" />
-          </el-tooltip>
-          <template v-if="item.type == 'select'">
-            <el-select
-              v-model="formInline[item.field]"
-              :multiple="item.multiple || false"
-              filterable
-              placeholder="请选择">
-              <el-option
-                v-for="optionItem in optionsList[item.field].list"
-                :key="optionItem.id"
-                :label="optionItem.name"
-                :value="optionItem.id" />
-            </el-select>
-          </template>
-          <template v-else-if="item.type == 'selectCheckout'">
-            <el-select
-              v-model="formInline[item.field]"
-              :popper-append-to-body="false"
-              popper-class="select-popper-class"
-              filterable
-              multiple
-              placeholder="请选择">
-              <el-option-group
-                v-for="group in groupsList"
-                :key="group.pid"
-                :label="group.name">
+        <template v-for="(item, index) in tableList">
+          <el-form-item
+            :label="item.value"
+            :prop="item.field"
+            :key="index">
+            <span slot="label">{{ item.value }}</span>
+            <el-tooltip
+              v-if="item.tips"
+              slot="label"
+              :content="item.tips"
+              effect="dark"
+              placement="top">
+              <i class="wukong wukong-help_tips" />
+            </el-tooltip>
+            <template v-if="item.type == 'select'">
+              <el-select
+                v-model="formInline[item.field]"
+                :multiple="item.multiple || false"
+                filterable
+                placeholder="请选择">
                 <el-option
-                  v-for="item in group.list"
-                  :key="item.id"
-                  :label="item.title"
-                  :value="item.id" />
-              </el-option-group>
-            </el-select>
-          </template>
-          <el-input
-            v-else
-            v-model="formInline[item.field]"
-            :maxlength="100"
-            :disabled="dialogTitle == '编辑员工' && item.field == 'username'" />
-        </el-form-item>
+                  v-for="optionItem in optionsList[item.field].list"
+                  :key="optionItem.id"
+                  :label="optionItem.name"
+                  :value="optionItem.id" />
+              </el-select>
+            </template>
+            <template v-else-if="item.type == 'selectCheckout'">
+              <el-select
+                v-model="formInline[item.field]"
+                :popper-append-to-body="false"
+                popper-class="select-popper-class"
+                filterable
+                multiple
+                placeholder="请选择">
+                <el-option-group
+                  v-for="group in groupsList"
+                  :key="group.pid"
+                  :label="group.name">
+                  <el-option
+                    v-for="item in group.list"
+                    :key="item.id"
+                    :label="item.title"
+                    :value="item.id" />
+                </el-option-group>
+              </el-select>
+            </template>
+            <el-input
+              v-else
+              v-model="formInline[item.field]"
+              :maxlength="100"
+              :disabled="dialogTitle == '编辑员工' && item.field == 'username'" />
+          </el-form-item>
+        </template>
       </el-form>
       <span
         slot="footer"
@@ -508,6 +509,7 @@ import Reminder from '@/components/reminder'
 import SlideVerify from '@/components/SlideVerify'
 
 import { chinaMobileRegex } from '@/utils'
+import { objDeepCopy } from '@/utils'
 
 export default {
   /** 系统管理 的 员工部门管理 */
@@ -700,7 +702,24 @@ export default {
       // 批量导入
       bulkImportShow: false,
 
-      showForm: true
+      showForm: true,
+
+      defaultList: [
+        { field: 'username', value: '登录名' },
+        { field: 'password', value: '登录密码' },
+        { field: 'realname', value: '姓名' },
+        { field: 'sex', value: '性别', type: 'select' },
+        { field: 'email', value: '邮箱' },
+        { field: 'deptId', value: '部门', type: 'select' },
+        { field: 'post', value: '岗位' },
+        { field: 'isTeacher', value: '是否为教员岗', type: 'select' },
+        { field: 'subjectIds', value: '科目', type: 'select', multiple: true },
+        { field: 'gradeIds', value: '年级', type: 'select', multiple: true },
+        { field: 'isJob', value: '是否为兼职', type: 'select' },
+        { field: 'parentId', value: '直属上级', type: 'select' },
+        { field: 'roleId', value: '角色', type: 'selectCheckout' }
+      ],
+      tableList: []
     }
   },
   computed: {
@@ -813,32 +832,6 @@ export default {
       }
       return temps
     },
-    /** 添加列表 */
-    tableList: function() {
-      const arr = [
-        { field: 'username', value: '登录名' },
-        { field: 'password', value: '登录密码' },
-        { field: 'realname', value: '姓名' },
-        { field: 'sex', value: '性别', type: 'select' },
-        { field: 'email', value: '邮箱' },
-        { field: 'deptId', value: '部门', type: 'select' },
-        { field: 'post', value: '岗位' },
-        { field: 'isTeacher', value: '是否为教员岗', type: 'select' },
-        { field: 'subjectIds', value: '科目', type: 'select', multiple: true },
-        { field: 'gradeIds', value: '年级', type: 'select', multiple: true },
-        { field: 'isJob', value: '是否为兼职', type: 'select' },
-        { field: 'parentId', value: '直属上级', type: 'select' },
-        { field: 'roleId', value: '角色', type: 'selectCheckout' }
-      ]
-      if (this.formInline.isTeacher != 1) {
-        arr.splice(8, 2)
-      }
-      if (this.dialogTitle !== '新建员工') {
-        arr[0].tips = '如需修改登录名，请在列表勾选员工后进行操作'
-        arr.splice(1, 1)
-      }
-      return arr
-    },
 
     /**
      * 能进行滑动验证
@@ -856,6 +849,23 @@ export default {
         })
       },
       deep: true
+    },
+    dialogTitle() {
+      const arr = objDeepCopy(this.defaultList)
+      if (this.dialogTitle !== '新建员工') {
+        arr[0].tips = '如需修改登录名，请在列表勾选员工后进行操作'
+        arr.splice(1, 1)
+      }
+      this.tableList = arr
+    },
+    'formInline.isTeacher': {
+      handler() {
+        const arr = objDeepCopy(this.defaultList)
+        if (this.formInline.isTeacher != 1) {
+          arr.splice(8, 2)
+        }
+        this.tableList = arr
+      }
     }
   },
   mounted() {

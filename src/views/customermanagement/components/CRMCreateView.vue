@@ -47,7 +47,7 @@
                     :index="index"
                     :item="item"
                     :relation="item.relation"
-                    :radio="item.data.formType == 'single_user'"
+                    :radio="['single_user', 'single_structure'].includes(item.data.formType)"
                     :disabled="item.disabled"
                     :receivables-id="editId"
                     @value-change="fieldValueChange" />
@@ -81,11 +81,11 @@
         <el-button
           class="handle-button"
           @click.native="hidenView">取消</el-button>
-        <el-button
+        <!--<el-button
           v-if="crmType=='customer' && action.type == 'save'"
           class="handle-button"
           type="primary"
-          @click.native="debouncedSaveField(true)">保存并新建联系人</el-button>
+          @click.native="debouncedSaveField(true)">保存并新建联系人</el-button>-->
         <el-button
           v-if="showDraft"
           class="handle-button"
@@ -123,6 +123,7 @@ import {
   regexIsCRMNumber,
   regexIsCRMMoneyNumber,
   regexIsCRMMobile,
+  chinaMobileRegex,
   regexIsCRMEmail,
   objDeepCopy
 } from '@/utils'
@@ -146,6 +147,7 @@ import {
   XhProduct,
   XhBusinessStatus,
   XhCustomerAddress,
+  XhChannelCategory,
   XhReceivablesPlan // 回款计划期数
 } from '@/components/CreateCom'
 import DetailImg from '../product/components/DetailImg'
@@ -171,7 +173,8 @@ export default {
     XhBusinessStatus,
     XhCustomerAddress,
     XhReceivablesPlan,
-    DetailImg
+    DetailImg,
+    XhChannelCategory
   },
   filters: {
     /** 根据type 找到组件 */
@@ -186,7 +189,13 @@ export default {
         return 'XhInput'
       } else if (formType == 'textarea') {
         return 'XhTextarea'
-      } else if (formType == 'select' || formType == 'business_status') {
+      } else if ([
+        'select',
+        'business_status',
+        'grades',
+        'follow_up_plan',
+        'sign_up'
+      ].includes(formType)) {
         return 'XhSelect'
       } else if (formType == 'checkbox') {
         return 'XhMultipleSelect'
@@ -196,7 +205,7 @@ export default {
         return 'XhDateTime'
       } else if (formType == 'user' || formType == 'single_user') {
         return 'XhUserCell'
-      } else if (formType == 'structure') {
+      } else if (formType == 'structure' || formType == 'single_structure') {
         return 'XhStructureCell'
       } else if (formType == 'file') {
         return 'XhFiles'
@@ -210,6 +219,9 @@ export default {
       } else if (formType == 'category') {
         // 产品类别
         return 'XhProuctCate'
+      } else if (formType == 'leads_source') {
+        // 渠道类别
+        return 'XhChannelCategory'
       } else if (formType == 'business_type') {
         // 商机类别
         return 'XhBusinessStatus'
@@ -612,6 +624,7 @@ export default {
         item.data.formType == 'structure' ||
         item.data.formType == 'file' ||
         item.data.formType == 'category' ||
+        item.data.formType == 'leads_source' ||
         item.data.formType == 'customer' ||
         item.data.formType == 'business' ||
         item.data.formType == 'contract'
@@ -639,6 +652,19 @@ export default {
                 item.value = this.phone
               }
             })
+          }
+          if (this.crmType === 'customer') {
+            // 普通LEADS没有教育顾问
+            let findIndex = res.data.findIndex(o => o.fieldName === 'owner_user_id')
+            if (!this.action.introduce && findIndex !== -1) {
+              res.data.splice(findIndex, 1)
+            }
+            // 转介绍LEADS没有渠道来源
+            findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
+            if ((this.action.introduce && findIndex !== -1) ||
+              res.data[findIndex].value === 0) {
+              res.data.splice(findIndex, 1)
+            }
           }
           this.getcrmRulesAndModel(res.data)
           this.loading = false
@@ -680,17 +706,19 @@ export default {
           params['disabled'] = this.getItemDisabledFromItem(item)
           params['styleIndex'] = showStyleIndex
           this.crmForm.crmFields.push(params)
-        } else if (item.formType == 'category') {
+        } else if (['category', 'leads_source'].includes(item.formType)) {
           /** 产品分类 */
           var params = {}
           params['key'] = item.fieldName
           params['data'] = item
           if (this.action.type == 'update' && item.value) {
-            params['value'] = item.value
-              ? item.value.map(function(item, index, array) {
-                return parseInt(item)
-              })
-              : []
+            let val = item.value || []
+            if (!isArray(val)) {
+              val = [val]
+            }
+            params['value'] = val.map(function(item, index, array) {
+              return parseInt(item)
+            })
           } else {
             params['value'] = []
           }
@@ -766,14 +794,25 @@ export default {
             item.formType == 'user' ||
             item.formType == 'single_user' ||
             item.formType == 'structure' ||
+            item.formType == 'single_structure' ||
             item.formType == 'file' ||
             item.formType == 'category' ||
+            item.formType == 'leads_source' ||
             item.formType == 'customer' ||
             item.formType == 'business' ||
             item.formType == 'contract'
           ) {
             if (this.action.type == 'update') {
               params['value'] = item.value ? objDeepCopy(item.value) : []
+              if (item.formType == 'user' ||
+                item.formType == 'single_user' ||
+                item.formType == 'structure' ||
+                item.formType == 'single_structure') {
+                if (params.value && !isArray(params.value)) {
+                  params.value = [params.value]
+                }
+              }
+              console.log('params: ', params)
             } else {
               params['value'] = item.defaultValue
                 ? objDeepCopy(item.defaultValue)
@@ -966,7 +1005,7 @@ export default {
       }
       // 验证必填
       if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
-        if (item.formType == 'category') {
+        if (['leads_source', 'category'].includes(item.formType)) {
           tempList.push({
             required: true,
             message: item.name + '不能为空',
@@ -1004,7 +1043,7 @@ export default {
                         : valueItem.id
                     })
                     .join(',')
-                } else if (rule.item.fieldName == 'categoryId') {
+                } else if (['categoryId', 'channel_id'].includes(rule.item.fieldName)) {
                   if (value && value.length) {
                     postValue = value[value.length - 1]
                   } else {
@@ -1074,7 +1113,8 @@ export default {
         })
       } else if (item.formType == 'mobile') {
         var validateCRMMobile = (rule, value, callback) => {
-          if (!value || value == '' || regexIsCRMMobile(value)) {
+          // if (!value || value == '' || regexIsCRMMobile(value)) {
+          if (!value || value == '' || chinaMobileRegex.test(value)) {
             callback()
           } else {
             callback(new Error('手机格式有误'))
@@ -1227,6 +1267,17 @@ export default {
       ) {
         params = { ...params, ...this.action.relativeData }
       }
+      // 转介绍LEADS渠道来源为0
+      if (this.crmType === 'customer') {
+        if (!params.entity.hasOwnProperty('channel_id')) {
+          params.entity.channel_id = 0
+        }
+        if (this.action.introduce) {
+          params.entity.channel_id = 0
+        }
+      }
+      console.log('save: ', params)
+      // this.loading = false
       crmRequest(params)
         .then(res => {
           this.loading = false
@@ -1361,20 +1412,28 @@ export default {
         }
       } else if (
         element.data.formType == 'user' ||
-        element.data.formType == 'single_user' ||
         element.data.formType == 'structure'
       ) {
         return element.value
           .map(function(item, index, array) {
-            return (element.data.formType == 'user' || element.data.formType == 'single_user') ? item.userId : item.id
+            return (element.data.formType == 'user' ||
+              element.data.formType == 'single_user') ? item.userId : (item.id || item.deptId)
           })
           .join(',')
+      } else if (element.data.formType === 'single_user') {
+        if (element.value && element.value.length > 0) {
+          return element.value[0].userId
+        }
+      } else if (element.data.formType === 'single_structure') {
+        if (element.value && element.value.length > 0) {
+          return element.value[0].id || element.value[0].deptId
+        }
       } else if (element.data.formType == 'file') {
         if (element.value && element.value.length > 0) {
           return element.value[0].batchId
         }
         return ''
-      } else if (element.data.formType == 'category') {
+      } else if (['leads_source', 'category'].includes(element.data.formType)) {
         if (element.value && element.value.length > 0) {
           return element.value[element.value.length - 1]
         }
@@ -1396,7 +1455,10 @@ export default {
       if (this.crmType == 'leads') {
         return this.action.type == 'update' ? '编辑线索' : '新建线索'
       } else if (this.crmType == 'customer') {
-        return this.action.type == 'update' ? '编辑客户' : '新建客户'
+        if (this.action.introduce && this.action.type !== 'update') {
+          return '新建转介绍LEADS'
+        }
+        return this.action.type == 'update' ? '编辑LEADS' : '新建LEADS'
       } else if (this.crmType == 'contacts') {
         return this.action.type == 'update' ? '编辑联系人' : '新建联系人'
       } else if (this.crmType == 'business') {

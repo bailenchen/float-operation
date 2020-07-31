@@ -78,7 +78,7 @@
           ref="crmrelative"
           :show="showBusinessPopover"
           :radio="false"
-          :action="{ type: 'condition', data: { moduleType: crmType, customerId: id } }"
+          :action="relativeAction"
           :selected-data="{ 'business': business }"
           crm-type="business"
           @close="showBusinessPopover=false"
@@ -192,12 +192,12 @@ export default {
       showRelativeType: '',
       batchId: guid(), // 批次ID
       fieldList: [
-        { fieldName: '', placeholder: '跟进时间', com: 'XhDateTime', value: '' },
-        { fieldName: '', placeholder: '跟进计划', com: 'XhSelect', setting: [], value: '' },
-        { fieldName: '', placeholder: '跟进结果', com: 'XhSelect', setting: [], value: '' },
-        { fieldName: '', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
-        { fieldName: '', placeholder: '承诺到访时间', com: 'XhDateTime', value: '' },
-        { fieldName: '', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
+        { fieldName: 'lastTime', placeholder: '跟进时间', com: 'XhDateTime', value: '' },
+        { fieldName: 'category', placeholder: '跟进计划', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: 'followUpResults', placeholder: '跟进结果', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: 'dealStatus', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: 'promisedVisitTime', placeholder: '承诺到访时间', com: 'XhDateTime', value: '' },
+        { fieldName: 'nextTime', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
       ],
       form: {}
     }
@@ -208,6 +208,15 @@ export default {
         return { minRows: 3, maxRows: 6 }
       }
       return { minRows: 1, maxRows: 1 }
+    },
+    relativeAction() {
+      return {
+        type: 'condition',
+        data: {
+          moduleType: this.crmType,
+          customerId: this.id
+        }
+      }
     }
   },
   watch: {
@@ -231,11 +240,13 @@ export default {
      * 跟进类型初始值
      */
     getDefalutFollowType() {
-      if (this.followTypes && this.followTypes.length > 0) {
-        this.followType = this.followTypes[0].value
-      } else {
-        this.followType = ''
-      }
+      this.fieldList.forEach(item => {
+        if (item.setting && item.setting.length > 0) {
+          item.value = item.setting[0].value
+        } else {
+          item.value = ''
+        }
+      })
     },
 
     getOptions() {
@@ -244,36 +255,41 @@ export default {
         this.fieldList[1].setting = res.data.map(o => {
           return { name: o, value: o }
         })
+        if (res.data.length > 0) {
+          this.fieldList[1].value = this.fieldList[1].setting[0].value
+        }
         this.$set(this.fieldList, 1, this.fieldList[1])
       }).catch(() => {})
       // 跟进结果
-      QueryFollowUpResults().then().catch(res => {
+      QueryFollowUpResults().then(res => {
         this.fieldList[2].setting = res.data.map(o => {
-          return { name: o.results, value: o.id }
+          return { name: o.results, value: o.results }
         })
+        if (res.data.length > 0) {
+          this.fieldList[2].value = this.fieldList[2].setting[0].value
+        }
         this.$set(this.fieldList, 2, this.fieldList[2])
-      })
+      }).catch(() => {})
       // 签约可能性
-      QuerySignUpList().then().catch(res => {
+      QuerySignUpList().then(res => {
         this.fieldList[3].setting = res.data.map(o => {
-          return { name: o.signUpName, value: o.id }
+          return { name: o.signUpName, value: o.signUpName }
         })
+        if (res.data.length > 0) {
+          this.fieldList[3].value = this.fieldList[3].setting[0].value
+        }
         this.$set(this.fieldList, 3, this.fieldList[3])
-      })
+      }).catch(() => {})
     },
 
     handleFormChange(data) {
       this.fieldList[data.index].value = data.value
-      console.log(this.fieldList)
     },
 
     /**
      * 重置数据
      */
     resetInfo() {
-      this.fieldList.forEach(item => {
-        item.value = ''
-      })
       this.isUnfold = false
       // 输入法
       this.content = ''
@@ -486,7 +502,7 @@ export default {
         business: this.business,
         contactsId: this.selectContactsId,
         batchId: this.batchId,
-        followType: this.followType,
+        followType: form.category,
         ...form
       })
     },

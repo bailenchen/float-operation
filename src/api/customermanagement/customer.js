@@ -343,6 +343,21 @@ export function crmCustomerDistribute(data) {
 }
 
 /**
+ * 分配班主任
+ * @param {*} data
+ */
+export function CustomerDistributeTeacher(data) {
+  return request({
+    url: 'CrmCustomer/distribution',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
  * 客户领取
  * @param {*} data
  */
