@@ -666,6 +666,7 @@ export default {
               res.data.splice(findIndex, 1)
             }
           }
+          console.log('res.data: ', res.data)
           this.getcrmRulesAndModel(res.data)
           this.loading = false
         })
@@ -705,7 +706,6 @@ export default {
           this.getParamsValueAndRelativeInfo(params, item, list)
           params['disabled'] = this.getItemDisabledFromItem(item)
           params['styleIndex'] = showStyleIndex
-          this.crmForm.crmFields.push(params)
         } else if (['category', 'leads_source'].includes(item.formType)) {
           /** 产品分类 */
           var params = {}
@@ -724,7 +724,6 @@ export default {
           }
           params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
-          this.crmForm.crmFields.push(params)
         } else if (item.formType == 'product') {
           // 关联产品信息比较多 用字典接收
           var params = {}
@@ -767,7 +766,6 @@ export default {
                 .catch(() => {})
             }
           }
-          this.crmForm.crmFields.push(params)
         } else if (item.formType == 'map_address') {
           // 关联产品信息比较多 用字典接收
           var params = {}
@@ -787,7 +785,6 @@ export default {
           if (index % 2 == 0) {
             showStyleIndex = -1
           }
-          this.crmForm.crmFields.push(params)
         } else {
           var params = {}
           if (
@@ -842,8 +839,17 @@ export default {
           params['data'] = item
           params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
-          this.crmForm.crmFields.push(params)
         }
+        if (this.crmType === 'customer' &&
+          this.action.type === 'update' &&
+          [
+            'dept_id',
+            'owner_user_id',
+            'channel_id'
+          ].includes(item.fieldName)) {
+          params.disabled = true
+        }
+        this.crmForm.crmFields.push(params)
       }
     },
     /**

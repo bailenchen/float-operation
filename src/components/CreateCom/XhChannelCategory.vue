@@ -18,7 +18,12 @@ export default {
   name: 'XhChannelCategory', // 渠道
   components: {},
   mixins: [arrayMixin],
-  props: {},
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       options: [],
@@ -49,7 +54,7 @@ export default {
 
     getVal() {
       if (this.dataValue.length === 0) return
-      const id = this.dataValue[this.dataValue.length - 1]
+      const id = Number(this.dataValue[this.dataValue.length - 1])
       let res = []
       function getCode(list, arr = []) {
         list.forEach(item => {

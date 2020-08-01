@@ -111,7 +111,8 @@ export default {
 
     // 联系人权限
     canShowContacts() {
-      return this.crm && this.crm.contacts && this.crm.contacts.read
+      // return this.crm && this.crm.contacts && this.crm.contacts.read
+      return false
     },
 
     // 有首要联系人

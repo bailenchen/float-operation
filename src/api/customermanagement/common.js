@@ -446,3 +446,37 @@ export function sysConfigSetPhraseAPI(data) {
     }
   })
 }
+
+/**
+ * 跟进导入
+ * @param {*} data
+ * customer_id 客户ID
+ */
+export function RecordExcelImport(data) {
+  var param = new FormData()
+  Object.keys(data).forEach(key => {
+    param.append(key, data[key])
+  })
+  return request({
+    url: 'CrmActivity/uploadExcel',
+    method: 'post',
+    data: param,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+/**
+ * 跟进导入模版下载
+ * @param {*} data
+ * customer_id 客户ID
+ */
+export function RecordTplDownloadExcelAPI(data) {
+  return request({
+    url: 'CrmActivity/downloadExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}

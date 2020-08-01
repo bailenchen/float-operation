@@ -112,6 +112,7 @@ export default {
         limit: 9999,
         type: {
           customer: 14,
+          customerRecord: 35,
           contacts: 16,
           leads: 18,
           product: 20

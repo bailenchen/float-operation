@@ -192,8 +192,11 @@
 <script>
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { filterIndexfields } from '@/api/customermanagement/common'
-import { crmLeadsSetFollowAPI } from '@/api/customermanagement/clue'
-import { crmCustomerSetFollowAPI } from '@/api/customermanagement/customer'
+import {
+  crmMessageHandleStatusAPI,
+  UpdateAllTodayCustomer,
+  UpdateAllFollowUpLeads
+} from '@/api/customermanagement/message'
 import message_table from '../mixins/message_table'
 import filterForm from '@/views/customermanagement/components/filterForm'
 import filterContent from '@/views/customermanagement/components/filterForm/filterContent'
@@ -455,28 +458,28 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            // const request = {
-            //   followLeads: crmLeadsSetFollowAPI,
-            //   followCustomer: crmCustomerSetFollowAPI
-            // }[this.infoType]
-            // request({
-            //   ids: this.selectionList
-            //     .map(item => {
-            //       return item[this.crmType + 'Id']
-            //     })
-            //     .join(',')
-            // })
-            //   .then(res => {
-            //     this.$message.success('操作成功')
-            //     this.refreshList()
-            //
-            //     this.$emit('on-handle', {
-            //       type: 'follow',
-            //       value: this.selectionList.length,
-            //       infoType: this.infoType
-            //     })
-            //   })
-            //   .catch(() => {})
+            const request = {
+              todayCustomer: crmMessageHandleStatusAPI,
+              followCustomer: crmMessageHandleStatusAPI
+            }[this.infoType]
+            request({
+              customerIds: this.selectionList
+                .map(item => {
+                  return item[this.crmType + 'Id']
+                })
+                .join(',')
+            })
+              .then(res => {
+                this.$message.success('操作成功')
+                this.refreshList()
+
+                this.$emit('on-handle', {
+                  type: 'follow',
+                  value: this.selectionList.length,
+                  infoType: this.infoType
+                })
+              })
+              .catch(() => {})
           })
           .catch(() => {
             this.$message({
@@ -609,7 +612,41 @@ export default {
     /**
      * 全部标记
      */
-    allMarkReadClick() {}
+    allMarkReadClick() {
+      this.$confirm('您确定此操作吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const request = {
+          todayCustomer: UpdateAllTodayCustomer,
+          followCustomer: UpdateAllFollowUpLeads
+        }[this.infoType]
+        const params = {
+          isSub: this.isSubType
+        }
+
+        if (this.showOptions) {
+          params.type = this.optionsType
+        }
+        const filterObj = this.filterObj.obj
+        if (filterObj && Object.keys(filterObj).length > 0) {
+          params.data = filterObj
+        }
+        request(params).then(res => {
+          this.$message.success('操作成功')
+          this.refreshList()
+
+          this.$emit('on-handle', {
+            type: 'follow',
+            value: this.selectionList.length,
+            infoType: this.infoType
+          })
+        }).catch(() => {})
+      }).catch(() => {
+        this.$message.info('已取消操作')
+      })
+    }
   }
 }
 </script>

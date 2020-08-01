@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :visible="show"
-    :title="'导入'+crmTypeName"
+    :title="`导入${crmTypeName}${isRecord ? '跟进记录' : ''}`"
     :append-to-body="true"
     :close-on-click-modal="false"
     width="750px"
@@ -19,65 +19,89 @@
       </el-steps>
 
       <div v-if="stepsActive == 1" class="step-section">
-        <div class="sections">
-          <div class="sections__title">一、请按照数据模板的格式准备要导入的数据。<span
-            class="download"
-            @click="download">点击下载《{{ crmTypeName }}导入模板》</span></div>
-          <div class="sections__tips">导入文件请勿超过2MB（约10,000条数据）</div>
-        </div>
-        <div class="sections">
-          <div class="sections__title">二、请选择数据重复时的处理方式（查重规则：【{{ fieldUniqueInfo }}】）</div>
-          <div class="sections__tips">查重规则为：添加{{ crmTypeName }}时所需填写的所有唯一字段，当前设置唯一字段为：{{ fieldUniqueInfo }}</div>
-          <div class="content">
-            <el-select
-              v-model="config"
-              placeholder="请选择">
-              <el-option
-                v-for="(item, index) in [{name: '覆盖系统原有数据',value: 1},{name: '跳过',value: 2}]"
-                :key="index"
-                :label="item.name"
-                :value="item.value"/>
-            </el-select>
+        <template v-if="isRecord">
+          <div class="sections">
+            <div class="sections__title">一、请按照数据模板的格式准备要导入的数据。<span
+              class="download"
+              @click="download">点击下载《{{ crmTypeName }}跟进记录导入模板》</span></div>
+            <div class="sections__tips">导入文件请勿超过2MB（约10,000条数据）</div>
           </div>
-        </div>
-        <div class="sections">
-          <div class="sections__title">三、请选择需要导入的文件</div>
-          <div class="content">
-            <flexbox class="file-select">
-              <el-input
-                v-model="file.name"
-                :disabled="true"/>
-              <el-button
-                type="primary"
-                @click="selectFile">选择文件</el-button>
-            </flexbox>
-          </div>
-        </div>
-        <div v-if="!isSeas" class="sections">
-          <div class="sections__title">四、请选择负责人（负责人为必填字段，若不填写，则会导致导入失败）</div>
-          <div class="content">
-            <div class="user-cell">
-              <xh-user-cell
-                :value="user"
-                @value-change="userSelect"/>
+          <div class="sections">
+            <div class="sections__title">二、请选择需要导入的文件</div>
+            <div class="content">
+              <flexbox class="file-select">
+                <el-input
+                  v-model="file.name"
+                  :disabled="true"/>
+                <el-button
+                  type="primary"
+                  @click="selectFile">选择文件</el-button>
+              </flexbox>
             </div>
           </div>
-        </div>
-
-        <div v-else class="sections">
-          <div class="sections__title">四、请选择公海</div>
-          <div class="content">
-            <div class="user-cell">
-              <el-select v-model="poolId" placeholder="请选择">
+        </template>
+        <template v-else>
+          <div class="sections">
+            <div class="sections__title">一、请按照数据模板的格式准备要导入的数据。<span
+              class="download"
+              @click="download">点击下载《{{ crmTypeName }}导入模板》</span></div>
+            <div class="sections__tips">导入文件请勿超过2MB（约10,000条数据）</div>
+          </div>
+          <div class="sections">
+            <div class="sections__title">二、请选择数据重复时的处理方式（查重规则：【{{ fieldUniqueInfo }}】）</div>
+            <div class="sections__tips">查重规则为：添加{{ crmTypeName }}时所需填写的所有唯一字段，当前设置唯一字段为：{{ fieldUniqueInfo }}</div>
+            <div class="content">
+              <el-select
+                v-model="config"
+                placeholder="请选择">
                 <el-option
-                  v-for="item in poolList"
-                  :key="item.poolId"
-                  :label="item.poolName"
-                  :value="item.poolId"/>
+                  v-for="(item, index) in [{name: '覆盖系统原有数据',value: 1},{name: '跳过',value: 2}]"
+                  :key="index"
+                  :label="item.name"
+                  :value="item.value"/>
               </el-select>
             </div>
           </div>
-        </div>
+          <div class="sections">
+            <div class="sections__title">三、请选择需要导入的文件</div>
+            <div class="content">
+              <flexbox class="file-select">
+                <el-input
+                  v-model="file.name"
+                  :disabled="true"/>
+                <el-button
+                  type="primary"
+                  @click="selectFile">选择文件</el-button>
+              </flexbox>
+            </div>
+          </div>
+          <div v-if="!isSeas" class="sections">
+            <div class="sections__title">四、请选择负责人（负责人为必填字段，若不填写，则会导致导入失败）</div>
+            <div class="content">
+              <div class="user-cell">
+                <xh-user-cell
+                  :value="user"
+                  @value-change="userSelect"/>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="sections">
+            <div class="sections__title">四、请选择公海</div>
+            <div class="content">
+              <div class="user-cell">
+                <el-select v-model="poolId" placeholder="请选择">
+                  <el-option
+                    v-for="item in poolList"
+                    :key="item.poolId"
+                    :label="item.poolName"
+                    :value="item.poolId"/>
+                </el-select>
+              </div>
+            </div>
+          </div>
+        </template>
+
       </div>
 
       <div
@@ -122,7 +146,7 @@
         trigger="click">
         <c-r-m-import-history
           :show="historyPopoverShow"
-          :crm-type="crmType"
+          :crm-type="`${crmType}${isRecord ? 'Record' : ''}`"
           @close="historyPopoverShow = false" />
         <el-button
           slot="reference"
@@ -148,7 +172,9 @@ import {
   crmQueryImportNumAPI,
   crmQueryImportInfoAPI,
   crmDownImportErrorAPI,
-  filedGetField
+  filedGetField,
+  RecordExcelImport,
+  RecordTplDownloadExcelAPI
 } from '@/api/customermanagement/common'
 import {
   crmCustomerExcelImport,
@@ -195,6 +221,11 @@ export default {
     },
     // 公海
     isSeas: {
+      type: Boolean,
+      default: false
+    },
+    // 跟进记录
+    isRecord: {
       type: Boolean,
       default: false
     },
@@ -255,7 +286,7 @@ export default {
     crmTypeName() {
       return (
         {
-          customer: '客户',
+          customer: 'LEADS',
           leads: '线索',
           contacts: '联系人',
           product: '产品'
@@ -406,12 +437,17 @@ export default {
       if (this.isSeas) {
         params.poolId = this.poolId
       }
-      var request = {
+      const crmMap = {
         customer: this.isSeas ? crmCustomerPoolExcelImport : crmCustomerExcelImport,
         leads: crmLeadsExcelImport,
         contacts: crmContactsExcelImport,
         product: crmProductExcelImport
-      }[this.crmType]
+      }
+      const crmRecordMap = {
+        customer: RecordExcelImport
+      }
+      const request = this.isRecord ? crmRecordMap[this.crmType] : crmMap[this.crmType]
+
       this.loading = true
       request(params)
         .then(res => {
@@ -497,12 +533,16 @@ export default {
 
     // 下载模板操作
     download() {
-      const request = {
+      const crmMap = {
         customer: crmCustomerDownloadExcelAPI,
         leads: crmLeadsDownloadExcelAPI,
         contacts: crmContactsDownloadExcelAPI,
         product: crmProductDownloadExcelAPI
-      }[this.crmType]
+      }
+      const crmRecordMap = {
+        customer: RecordTplDownloadExcelAPI
+      }
+      const request = this.isRecord ? crmRecordMap[this.crmType] : crmMap[this.crmType]
       request()
         .then(res => {
           var blob = new Blob([res.data], {
@@ -659,7 +699,7 @@ export default {
 }
 
 .step-section {
-  min-height: 300px;
+  min-height: 260px;
   position: relative;
 
   /deep/ .el-loading-spinner {

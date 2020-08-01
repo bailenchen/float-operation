@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       menuList: [
-        { label: '渠道设置', key: 'ChannelCategorySet' },
+        { label: '渠道类别设置', key: 'ChannelCategorySet' },
         { label: '渠道类型设置', key: 'ChannelTypeSet' },
         { label: '年级设置', key: 'GradeSet' },
         { label: '累计赠送规则', key: 'PresentRulesSet' },

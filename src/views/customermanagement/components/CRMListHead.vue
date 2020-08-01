@@ -135,7 +135,7 @@ export default {
   mounted() {
     // 线索和客户判断更多操作
     if (this.crmType === 'customer') {
-      this.moreTypes.push({ type: 'enter', name: '导入跟进', icon: 'import' })
+      this.moreTypes.push({ type: 'enter-record', name: '导入跟进', icon: 'import' })
     }
     if (this.crm[this.crmType] && this.crm[this.crmType].excelimport) {
       this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
@@ -156,10 +156,16 @@ export default {
   },
   methods: {
     handleTypeDrop(command) {
-      if (command == 'out') {
-        this.$emit('on-export')
-      } else if (command == 'enter') {
-        this.$bus.emit('import-crm-bus', this.crmType, this.isSeas)
+      switch (command) {
+        case 'out':
+          this.$emit('on-export')
+          break
+        case 'enter':
+          this.$bus.emit('import-crm-bus', this.crmType, this.isSeas)
+          break
+        case 'enter-record':
+          this.$bus.emit('import-crm-bus', this.crmType, this.isSeas, true)
+          break
       }
     },
     createClick(action = '') {

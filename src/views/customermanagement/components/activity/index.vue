@@ -43,7 +43,7 @@
 
       <div class="log">
         <!-- 筛选 -->
-        <el-dropdown
+        <!--<el-dropdown
           v-if="typeList.length > 1"
           trigger="click"
           class="tabs-head-select"
@@ -51,7 +51,7 @@
           <span class="el-dropdown-link">
             <i
               :class="['wk', 'dropdown-icon', 'wk-' + activityType.icon]"
-              :style="{ backgroundColor: activityType.color }" />{{ activityType.label }}<i class="el-icon-arrow-down el-icon--right" />
+              :style="{ backgroundColor: activityType.color }" />{{ activityType.label }}<i class="el-icon-arrow-down el-icon&#45;&#45;right" />
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
@@ -61,7 +61,7 @@
                 :class="['wk', 'dropdown-icon', 'wk-' + item.icon]"
                 :style="{ backgroundColor: item.color }" />{{ item.label }}</el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown>-->
 
         <div
           v-for="(seciton, secitonIndex) in list"

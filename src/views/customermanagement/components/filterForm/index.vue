@@ -16,7 +16,7 @@
               <el-select
                 v-model="formItem.fieldName"
                 placeholder="请选择要筛选的字段名"
-                @change="fieldChange(formItem)"
+                @change="fieldChange(formItem, index)"
                 @focus="fieldFocus">
                 <el-option
                   v-for="item in fieldList"
@@ -86,7 +86,13 @@
                   :value="item"/>
               </el-select>
               <el-select
-                v-else-if="formItem.formType === 'checkStatus' || formItem.formType === 'dealStatus'"
+                v-else-if="[
+                  'grades',
+                  'follow_up_plan',
+                  'sign_up',
+                  'checkStatus',
+                  'dealStatus'
+                ].includes(formItem.formType)"
                 v-model="formItem.value"
                 placeholder="请选择筛选条件">
                 <el-option
@@ -115,7 +121,7 @@
                   :value="item.statusId"/>
               </el-select>
               <xh-user-cell
-                v-else-if="formItem.formType === 'user'"
+                v-else-if="['single_user', 'user'].includes(formItem.formType)"
                 :item="formItem"
                 :info-params="infoParams"
                 :value="formItem.value"
@@ -125,6 +131,11 @@
                 :item="formItem"
                 :value="formItem.value"
                 @value-change="arrayValueChange"/>
+              <xh-channel-category
+                v-else-if="formItem.formType === 'leads_source'"
+                :item="formItem"
+                :value="formItem.value"
+                @value-change="arrayValueChange" />
               <v-distpicker
                 v-else-if="formItem.formType === 'map_address'"
                 :province="formItem.address.state"
@@ -185,8 +196,20 @@
 </template>
 
 <script>
+import {
+  QueryAdminGrade,
+  QuerySignUpList
+} from '@/api/systemManagement/params'
+import {
+  crmSettingRecordListAPI
+} from '@/api/systemManagement/SystemCustomer'
+
 import { objDeepCopy } from '@/utils'
-import { XhUserCell, XhProuctCate } from '@/components/CreateCom'
+import {
+  XhUserCell,
+  XhProuctCate,
+  XhChannelCategory
+} from '@/components/CreateCom'
 import VDistpicker from '@/components/v-distpicker'
 /**
  * fieldList: 高级筛选的字段
@@ -197,7 +220,8 @@ export default {
   components: {
     XhUserCell,
     XhProuctCate,
-    VDistpicker
+    VDistpicker,
+    XhChannelCategory
   },
   props: {
     dialogVisible: {
@@ -237,7 +261,26 @@ export default {
       showErrors: false,
       saveChecked: false, // 展示场景
       saveDefault: false, // 设置为默认场景
-      saveName: null // 场景名称
+      saveName: null, // 场景名称
+
+      reqMap: [
+        {
+          formType: 'grades',
+          req: QueryAdminGrade,
+          labelField: 'gradeName',
+          valueField: 'id'
+        },
+        {
+          formType: 'follow_up_plan',
+          req: crmSettingRecordListAPI
+        },
+        {
+          formType: 'sign_up',
+          req: QuerySignUpList,
+          labelField: 'signUpName',
+          valueField: 'id'
+        }
+      ]
     }
   },
   computed: {
@@ -286,6 +329,28 @@ export default {
     }
   },
   methods: {
+    getSettingConfig(index, obj) {
+      if (!this.form[index].formType) return
+      const reqObj = this.reqMap.find(o => o.formType === this.form[index].formType)
+      if (!reqObj) return
+      reqObj.req().then(res => {
+        obj.setting = (res.data || []).map(o => {
+          if (Object.prototype.toString.call(o) === '[object Object]') {
+            return {
+              name: o[reqObj.labelField],
+              value: o[reqObj.valueField]
+            }
+          } else {
+            return {
+              name: o,
+              value: o
+            }
+          }
+        })
+        this.form[index].setting = obj.setting
+        this.$set(this.fieldList, index, this.fieldList[index])
+      }).catch(() => {})
+    },
     /**
      * 位置更改
      */
@@ -335,6 +400,7 @@ export default {
         formType == 'datetime' ||
         formType == 'business_type' ||
         formType == 'category' ||
+        formType == 'leads_source' ||
         formType == 'map_address'
       ) {
         return false
@@ -346,8 +412,12 @@ export default {
       if (
         formType == 'select' ||
         formType == 'user' ||
+        formType == 'single_user' ||
         formType == 'checkStatus' ||
-        formType == 'dealStatus'
+        formType == 'dealStatus' ||
+        formType == 'sign_up' ||
+        formType == 'grades' ||
+        formType == 'follow_up_plan'
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
@@ -384,7 +454,7 @@ export default {
           { value: 'lt', label: '小于', disabled: false },
           { value: 'elt', label: '小于等于', disabled: false }
         ]
-      } else if (formType == 'category') {
+      } else if (['leads_source', 'category'].includes(formType)) {
         return [
           { value: 'is', label: '等于', disabled: false },
           { value: 'isnot', label: '不等于', disabled: false },
@@ -419,7 +489,7 @@ export default {
      * 当前选择的字段名改变，判断是否有重复
      * @param formItem
      */
-    fieldChange(formItem) {
+    fieldChange(formItem, index) {
       const obj = this.fieldList.find(item => {
         return item.fieldName === formItem.fieldName
       })
@@ -435,9 +505,15 @@ export default {
         } else if (
           formItem.formType == 'select' ||
           formItem.formType == 'checkStatus' ||
-          formItem.formType == 'dealStatus'
+          formItem.formType == 'dealStatus' ||
+          formItem.formType == 'sign_up' ||
+          formItem.formType == 'grades' ||
+          formItem.formType == 'follow_up_plan'
         ) {
           formItem.setting = obj.setting || []
+          if (formItem.setting.length === 0) {
+            this.getSettingConfig(index, obj)
+          }
           formItem.value = ''
         } else if (formItem.formType == 'map_address') {
           formItem.address = {
@@ -449,7 +525,9 @@ export default {
           formItem.formType === 'date' ||
           formItem.formType === 'datetime' ||
           formItem.formType === 'user' ||
-          formItem.formType === 'category'
+          formItem.formType === 'single_user' ||
+          formItem.formType === 'category' ||
+          formItem.formType === 'leads_source'
         ) {
           formItem.value = []
         } else if (
@@ -464,10 +542,14 @@ export default {
         // 条件校准
         if (
           formItem.formType == 'select' ||
-        formItem.formType == 'checkbox' ||
-        formItem.formType == 'user' ||
-        formItem.formType == 'checkStatus' ||
-        formItem.formType == 'dealStatus'
+          formItem.formType == 'checkbox' ||
+          formItem.formType == 'user' ||
+          formItem.formType == 'single_user' ||
+          formItem.formType == 'checkStatus' ||
+          formItem.formType == 'dealStatus' ||
+          formItem.formType == 'sign_up' ||
+          formItem.formType == 'grades' ||
+          formItem.formType == 'follow_up_plan'
         ) {
           formItem.condition = 'is'
         } else {
@@ -521,7 +603,9 @@ export default {
           o.formType == 'date' ||
           o.formType == 'datetime' ||
           o.formType == 'user' ||
+          o.formType == 'single_user' ||
           o.formType == 'category' ||
+          o.formType == 'leads_source' ||
           o.formType == 'checkbox'
         ) {
           if (!o.value || o.value.length === 0) {
@@ -553,7 +637,7 @@ export default {
             formType: o.formType,
             name: o.fieldName
           }
-        } else if (o.formType == 'user') {
+        } else if (['single_user', 'user'].includes(o.formType)) {
           obj[o.fieldName] = {
             condition: o.condition,
             value: o.value[0].userId,
@@ -567,7 +651,7 @@ export default {
             formType: o.formType,
             name: o.fieldName
           }
-        } else if (o.formType == 'category') {
+        } else if (['leads_source', 'category'].includes(o.formType)) {
           obj[o.fieldName] = {
             condition: 'is',
             value: o.value[o.value.length - 1],

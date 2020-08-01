@@ -19,6 +19,7 @@
       :show.sync="showCRMImport"
       :crm-type="crmType"
       :is-seas="isSeas"
+      :is-record="isRecord"
       :cache-show.sync="cacheShow"
       :cache-done="cacheDone"
       @status="crmImportChange"

@@ -165,3 +165,38 @@ export function crmMessagePromiseAPI(data) {
     }
   })
 }
+
+/**
+ * 标记为已处理
+ * @param data
+ */
+export function crmMessageHandleStatusAPI(data) {
+  return request({
+    url: 'CrmBackLog/handleStatus',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 全部标记今日需要跟进
+ * @param data
+ */
+export function UpdateAllTodayCustomer(data) {
+  return request({
+    url: 'CrmBackLog/updateTodayCustomer',
+    method: 'post',
+    data: data
+  })
+}
+/**
+ * 全部标记承诺到访LEADS
+ * @param data
+ */
+export function UpdateAllFollowUpLeads(data) {
+  return request({
+    url: 'CrmBackLog/updateFollowUpLeads',
+    method: 'post',
+    data: data
+  })
+}

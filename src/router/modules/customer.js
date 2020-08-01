@@ -13,19 +13,19 @@ const layout = function(meta = {}) {
 }
 
 export default [
-  {
-    ...layout({
-      permissions: ['crm']
-    }),
-    children: [{
-      path: 'workbench', // 仪表盘
-      component: () => import('@/views/customermanagement/workbench/workbench'),
-      meta: {
-        title: '仪表盘',
-        icon: 'board'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['crm']
+  //   }),
+  //   children: [{
+  //     path: 'workbench', // 仪表盘
+  //     component: () => import('@/views/customermanagement/workbench/workbench'),
+  //     meta: {
+  //       title: '仪表盘',
+  //       icon: 'board'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
       permissions: ['crm']

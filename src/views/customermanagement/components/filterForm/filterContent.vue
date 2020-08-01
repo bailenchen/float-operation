@@ -9,10 +9,16 @@
         <span v-else-if="item.formType === 'datetime'">{{ item.name +'&nbsp;“' + item.value[0] + '-' + item.value[1] + '”' }}</span>
         <span v-else-if="item.formType === 'business_type'">{{ item.name +'&nbsp;“' + getTypesName(item) + getStatusName(item) + '”' }}</span>
         <span v-else-if="item.formType === 'map_address'">{{ `${item.name} ${item.address.state} ${item.address.city} ${item.address.area}` }}</span>
-        <span v-else-if="item.formType === 'checkStatus'">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getCheckName(item) }}</span>
+        <span
+          v-else-if="[
+            'grades',
+            'follow_up_plan',
+            'sign_up',
+            'checkStatus'
+        ].includes(item.formType)">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getCheckName(item) }}</span>
         <span v-else-if="item.formType === 'dealStatus'">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getDealStatus(item.value) }}</span>
         <span v-else-if="item.formType === 'user'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
-        <span v-else-if="item.formType === 'category' && item.value.length > 0">{{ item.name +'&nbsp;“' + item.valueContent + '”' }}</span>
+        <span v-else-if="['category', 'leads_source'].includes(item.formType) && item.value.length > 0">{{ item.name +'&nbsp;“' + item.valueContent + '”' }}</span>
         <span v-else>{{ item.name + '&nbsp;' + optionsNames[item.condition] + '“' + item.value + '”' }}</span>
         <i
           class="el-icon-close icon"

@@ -8,6 +8,7 @@ export default {
       showCRMImport: false,
       crmType: '',
       isSeas: false,
+      isRecord: false,
       crmImportStatus: '',
       cacheShow: false, // 缓存展示
       cacheDone: false // 缓存导入是否完成
@@ -40,12 +41,13 @@ export default {
 
   methods: {
     addImportBus() {
-      this.$bus.on('import-crm-bus', (crmType, isSeas) => {
+      this.$bus.on('import-crm-bus', (crmType, isSeas, isRecord = false) => {
         if (this.crmType != crmType && this.showFixImport) {
           this.$message.error('请先处理当前导入的数据')
         } else {
           this.crmType = crmType
           this.isSeas = isSeas
+          this.isRecord = isRecord
           this.showCRMImport = true
         }
       })
