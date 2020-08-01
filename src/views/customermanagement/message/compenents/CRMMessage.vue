@@ -623,6 +623,8 @@ export default {
           followCustomer: UpdateAllFollowUpLeads
         }[this.infoType]
         const params = {
+          page: this.currentPage,
+          limit: this.pageSize,
           isSub: this.isSubType
         }
 
