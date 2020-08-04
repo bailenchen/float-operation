@@ -128,7 +128,10 @@ export function TransferCustomerAPI(data) {
   return request({
     url: 'crmCustomerPoolRule/customerPoolTransfer',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 

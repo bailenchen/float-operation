@@ -116,6 +116,9 @@ export default {
     },
 
     labelName(label) {
+      if (label == 19) {
+        return 'LEADS编号'
+      }
       return crmTypeModel.convertTypeToName(label) + '编号'
     },
 

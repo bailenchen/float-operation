@@ -395,7 +395,12 @@ export default {
           batchId: this.detailData.batchId
         }
         this.isCreate = true
-      } else if (data.type === 'delete' || data.type === 'exit-team') {
+      } else if (
+        [
+          'delete',
+          'exit-team',
+          'change_status'
+        ].includes(data.type)) {
         this.hideView()
       }
 

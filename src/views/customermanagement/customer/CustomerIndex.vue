@@ -302,7 +302,7 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'leadsNumber') {
+      if (['leadsNumber', 'customerName'].includes(column.property)) {
         return 'can-visit--underline'
       } else if (column.property === 'businessCheck') {
         return 'can-visit'

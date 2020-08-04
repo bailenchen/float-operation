@@ -79,7 +79,7 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType === 'customer') {
-        if (column.property === 'leadsNumber') {
+        if (['leadsNumber', 'customerName'].includes(column.property)) {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true

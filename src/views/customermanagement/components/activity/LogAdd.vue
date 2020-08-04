@@ -67,7 +67,7 @@
         class="handle-button"
         icon="wk wk-file"
         @click="barClick('file')">附件</el-button>
-      <el-popover
+      <!--<el-popover
         v-if="showBusiness"
         v-model="showBusinessPopover"
         placement="bottom"
@@ -90,7 +90,7 @@
           class="handle-button"
           style="margin-left: 10px;"
           @click="barClick('business')">关联商机</el-button>
-      </el-popover>
+      </el-popover>-->
       <el-button
         v-debounce="sendClick"
         type="primary"

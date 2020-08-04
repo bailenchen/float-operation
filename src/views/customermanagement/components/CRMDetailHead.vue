@@ -39,6 +39,13 @@
           icon="wk wk-success"
           @click.native="handleTypeClick('deal_status')">更改成交状态</el-button>
 
+        <el-button
+          v-if="showChangeSeas"
+          class="head-handle-button"
+          type="primary"
+          icon="wk wk-success"
+          @click.native="handleTypeClick('change_seas')">转移到其他公海</el-button>
+
         <el-dropdown
           v-if="permissionMoreTypes && permissionMoreTypes.length > 0"
           trigger="click"
@@ -94,6 +101,10 @@
       :visible.sync="putPoolShow"
       :selection-list="[detail]"
       @handle="handleCallBack" />
+    <change-pool-handle
+      :visible.sync="changePoolShow"
+      :selection-list="[detail]"
+      @handle="handleCallBack" />
   </div>
 </template>
 <script type="text/javascript">
@@ -130,6 +141,7 @@ import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
 import TimePiece from '../../../callCenter/TimePiece'
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
+import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 放入公海
 
 export default {
   name: 'CRMDetailHead',
@@ -138,7 +150,8 @@ export default {
     AllocHandle,
     TimePiece,
     DealStatusHandle,
-    PutPoolHandle
+    PutPoolHandle,
+    ChangePoolHandle
   },
   props: {
     /** 模块ID */
@@ -181,7 +194,8 @@ export default {
       transferDialogShow: false, // 转移操作
       allocDialogShow: false, // 公海分配操作提示框
       dealStatusShow: false, // 成交状态修改框
-      putPoolShow: false // 客户放入公海
+      putPoolShow: false, // 客户放入公海
+      changePoolShow: false // LEADS转移公海
     }
   },
   computed: {
@@ -294,6 +308,13 @@ export default {
     },
 
     /**
+     * 转移到其他公海按钮
+     */
+    showChangeSeas() {
+      return this.isSeas && this.crmType === 'customer'
+    },
+
+    /**
      * 权限内的更多按钮
      */
     permissionMoreTypes() {
@@ -319,6 +340,8 @@ export default {
       } else if (type == 'transfer') {
         // 转移
         this.transferDialogShow = true
+      } else if (type === 'change_seas') {
+        this.changePoolShow = true
       } else if (
         type == 'transform' ||
         type == 'delete' ||

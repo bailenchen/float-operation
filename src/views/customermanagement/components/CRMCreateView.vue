@@ -47,7 +47,7 @@
                     :index="index"
                     :item="item"
                     :relation="item.relation"
-                    :radio="['single_user', 'single_structure'].includes(item.data.formType)"
+                    :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
                     :disabled="item.disabled"
                     :receivables-id="editId"
                     @value-change="fieldValueChange" />
@@ -122,7 +122,7 @@ import { crmReturnVisitSaveAPI } from '@/api/customermanagement/visit'
 import {
   regexIsCRMNumber,
   regexIsCRMMoneyNumber,
-  regexIsCRMMobile,
+  // regexIsCRMMobile,
   chinaMobileRegex,
   regexIsCRMEmail,
   objDeepCopy
@@ -212,6 +212,7 @@ export default {
       } else if (
         formType == 'contacts' ||
         formType == 'customer' ||
+        formType == 'student' ||
         formType == 'contract' ||
         formType == 'business'
       ) {
@@ -615,6 +616,26 @@ export default {
             }
           }
         }
+      } else if (this.crmType === 'customer') {
+        if (item.data.fieldName === 'introducer_type') {
+          const findRes = this.crmForm.crmFields.find(o => o.data.fieldName === 'introducer_id')
+          if (findRes) {
+            if (item.value) {
+              const str = item.value == 1 ? '（员工）' : '（学员）'
+              findRes.data.name = '介绍人' + str
+              findRes.data.formType = item.value == 1 ? 'single_user' : 'student'
+              findRes.disabled = false
+              findRes.radio = true
+              findRes.value = []
+            } else {
+              findRes.data.name = '介绍人'
+              findRes.data.formType = 'text'
+              findRes.disabled = true
+              findRes.value = ''
+              delete findRes.radio
+            }
+          }
+        }
       }
 
       // 无事件的处理 后期可换成input实现
@@ -654,11 +675,15 @@ export default {
             })
           }
           if (this.crmType === 'customer') {
-            // 普通LEADS没有教育顾问
-            let findIndex = res.data.findIndex(o => o.fieldName === 'owner_user_id')
-            if (!this.action.introduce && findIndex !== -1) {
-              res.data.splice(findIndex, 1)
-            }
+            // 普通LEADS没有教育顾问，介绍人
+            const arr = ['owner_user_id', 'introducer_type', 'introducer_id']
+            let findIndex = -1
+            arr.forEach(key => {
+              findIndex = res.data.findIndex(o => o.fieldName === key)
+              if (!this.action.introduce && findIndex !== -1) {
+                res.data.splice(findIndex, 1)
+              }
+            })
             // 转介绍LEADS没有渠道来源
             findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
             if ((this.action.introduce && findIndex !== -1) ||
@@ -840,14 +865,19 @@ export default {
           params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
         }
-        if (this.crmType === 'customer' &&
-          this.action.type === 'update' &&
-          [
-            'dept_id',
-            'owner_user_id',
-            'channel_id'
-          ].includes(item.fieldName)) {
-          params.disabled = true
+        if (this.crmType === 'customer') {
+          if (this.action.type === 'update') {
+            params.disabled = [
+              'dept_id',
+              'owner_user_id',
+              'channel_id'
+            ].includes(item.fieldName)
+          } else {
+            params.disabled = [
+              // 'dept_id',
+              'introducer_id'
+            ].includes(item.fieldName)
+          }
         }
         this.crmForm.crmFields.push(params)
       }
@@ -1447,6 +1477,11 @@ export default {
       } else if (element.data.formType == 'checkbox') {
         if (element.value && element.value.length > 0) {
           return element.value.join(',')
+        }
+        return ''
+      } else if (element.data.formType === 'student') {
+        if (element.value && element.value.length > 0) {
+          return element.value.map(o => o.customerId).join(',')
         }
         return ''
       }

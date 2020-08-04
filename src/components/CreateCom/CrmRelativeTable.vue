@@ -70,11 +70,11 @@
         :disabled="currentPage >= totalPage"
         @click.native="changePage('down')">下一页</el-button>
     </div>
-    <c-r-m-create-view
+    <!--<c-r-m-create-view
       v-if="isCreate"
       :crm-type="crmType"
       @save-success="getList"
-      @hiden-view="isCreate=false"/>
+      @hiden-view="isCreate=false"/>-->
   </div>
 </template>
 <script type="text/javascript">
@@ -161,7 +161,8 @@ export default {
       if (this.action.hasOwnProperty('showCreate')) {
         return this.action.showCreate
       }
-      return this.crm && this.crm[this.crmType] && this.crm[this.crmType].save
+      const type = this.crmType === 'student' ? 'customer' : this.crmType
+      return this.crm && this.crm[type] && this.crm[type].save
     },
 
     showSearch() {
@@ -176,7 +177,8 @@ export default {
       if (this.action.hasOwnProperty('canShowDetail')) {
         return this.action.canShowDetail
       }
-      return this.crm && this.crm[this.crmType] && this.crm[this.crmType].index
+      const type = this.crmType === 'student' ? 'customer' : this.crmType
+      return this.crm && this.crm[type] && this.crm[type].index
     },
 
     // 展示相关效果 去除场景
@@ -188,7 +190,7 @@ export default {
       if (this.action.hasOwnProperty('showScene')) {
         return this.action.showScene
       }
-      return !this.isRelationShow && this.crmType != 'product'
+      return !this.isRelationShow && !['student', 'product'].includes(this.crmType)
     }
   },
   watch: {
@@ -246,8 +248,9 @@ export default {
         return
       }
       this.loading = true
+      const type = this.crmType === 'student' ? 'customer' : this.crmType
       crmSceneIndex({
-        type: crmTypeModel[this.crmType]
+        type: crmTypeModel[type]
       })
         .then(res => {
           var defaultScene = res.data.filter(function(item, index) {
@@ -291,7 +294,15 @@ export default {
         ]
       } else if (this.crmType === 'customer') {
         return [
-          { name: '客户名称', field: 'customerName', formType: 'customer' },
+          { name: 'LEADS名称', field: 'customerName', formType: 'customer' },
+          { name: '邮箱', field: 'email', formType: 'text' },
+          { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
+          { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
+          { name: '创建时间 ', field: 'createTime', formType: 'datetime' }
+        ]
+      } else if (this.crmType === 'student') {
+        return [
+          { name: '学员姓名', field: 'customerName', formType: 'customer' },
           { name: '邮箱', field: 'email', formType: 'text' },
           { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
           { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
@@ -354,6 +365,13 @@ export default {
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
+      if (this.crmType === 'student') {
+        // 如果是查学员
+        params.customerType = 2
+      } else if (this.crmType === 'customer') {
+        // 如果是查LEADS
+        params.customerType = 1
+      }
       // 注入关联ID
       if (this.isRelationShow) {
         // this.action.data.moduleType 下的 this.crmType 的列表
@@ -378,7 +396,8 @@ export default {
       } else {
         params.page = this.currentPage
         params.limit = 10
-        params.type = crmTypeModel[this.crmType]
+        const type = this.crmType === 'student' ? 'customer' : this.crmType
+        params.type = crmTypeModel[type]
       }
 
       if (this.action.request) {
@@ -410,7 +429,8 @@ export default {
     },
     // 标记选择数据
     checkItemsWithSelectedData() {
-      const selectedArray = this.selectedData[this.crmType] ? this.selectedData[this.crmType].map(item => {
+      const type = this.crmType === 'student' ? 'customer' : this.crmType
+      const selectedArray = this.selectedData[type] ? this.selectedData[type].map(item => {
         item.has = false
         return item
       }) : []
@@ -420,7 +440,7 @@ export default {
 
       this.list.forEach((item, index) => {
         selectedArray.forEach((selectedItem, selectedIndex) => {
-          if (item[this.crmType + 'Id'] == selectedItem[this.crmType + 'Id']) {
+          if (item[type + 'Id'] == selectedItem[type + 'Id']) {
             selectedItem.has = true
             selectedRows.push(item)
           }
@@ -442,19 +462,15 @@ export default {
     },
     /** 获取列表请求 */
     getIndexRequest() {
-      if (this.crmType === 'leads') {
-        return crmLeadsIndex
-      } else if (this.crmType === 'customer') {
-        return crmCustomerIndex
-      } else if (this.crmType === 'contacts') {
-        return crmContactsIndex
-      } else if (this.crmType === 'business') {
-        return crmBusinessIndex
-      } else if (this.crmType === 'contract') {
-        return crmContractIndex
-      } else if (this.crmType === 'product') {
-        return crmProductSaleIndexAPI
-      }
+      return {
+        leads: crmLeadsIndex,
+        customer: crmCustomerIndex,
+        student: crmCustomerIndex,
+        contacts: crmContactsIndex,
+        business: crmBusinessIndex,
+        contract: crmContractIndex,
+        product: crmProductSaleIndexAPI
+      }[this.crmType]
     },
     fieldFormatter(row, column, cellValue) {
       if (this.crmType === 'invoiceTitle' && column.property == 'titleType') {

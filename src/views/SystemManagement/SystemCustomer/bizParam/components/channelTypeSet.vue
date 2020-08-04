@@ -82,7 +82,8 @@
             :props="channelProps"
             :collapse-tags="true"
             :options="channelOptions"
-            placeholder="请选择" />
+            placeholder="请选择"
+            @change="handleChangeChannel" />
         </el-form-item>
         <el-form-item label="是否过滤">
           <el-select v-model="dialogForm.isFilter" placeholder="请选择">
@@ -157,20 +158,40 @@ export default {
 
       channelProps: {
         multiple: true,
+        checkStrictly: true,
         value: 'id',
         label: 'name'
       }
     }
   },
+  watch: {
+    dialogVisible(val) {
+      if (val && this.channelOptions.length === 0) {
+        this.getChannelOptions()
+      }
+    }
+  },
   created() {
-    this.getChannelOptions()
     this.getDataList()
   },
   methods: {
     getChannelOptions() {
       QueryChannelCategory().then(res => {
+        console.log('options res: ', res.data)
+        // this.formatOptions(res.data)
         this.channelOptions = res.data
+        console.log('options: ', this.channelOptions)
       }).catch(() => {})
+    },
+    formatOptions(list) {
+      const that = this
+      list.forEach(o => {
+        if (o.hasOwnProperty('children') && isEmpty(o.children)) {
+          delete o.children
+        } else {
+          that.formatOptions(o.children)
+        }
+      })
     },
     /**
      * 获取列表数据
@@ -337,6 +358,9 @@ export default {
       this.dialogForm.filteringPersonnel = data.value
     },
 
+    handleChangeChannel() {
+      console.log(arguments)
+    },
     /**
      * 确定
      */

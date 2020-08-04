@@ -3,7 +3,7 @@ import {
 } from 'vuex'
 
 import { crmLeadsNumAPI, crmLeadsStarAPI } from '@/api/customermanagement/clue'
-import { crmCustomerNumAPI, crmCustomerStarAPI } from '@/api/customermanagement/customer'
+import { crmCustomerStarAPI } from '@/api/customermanagement/customer'
 import { crmContactsNumAPI, crmContactsStarAPI } from '@/api/customermanagement/contacts'
 import { crmBusinessNumAPI, crmBusinessStarAPI } from '@/api/customermanagement/business'
 import { crmContractNumAPI } from '@/api/customermanagement/contract'

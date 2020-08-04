@@ -532,6 +532,7 @@ export default {
         column.property === 'number' ||
         column.property === 'leadsName' ||
         column.property === 'leadsNumber' ||
+        column.property === 'customerName' ||
         column.property === 'businessName' ||
         column.property === 'contactsName' ||
         column.property === 'num' ||

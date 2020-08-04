@@ -234,9 +234,11 @@ const permission = {
      * 客户管理待办消息数
      */
     SET_CRMROUTERSNUM: (state, num) => {
-      const messageItem = state.crmRouters[1]
+      // console.log('state.crm', state.crmRouters)
+      const index = 0
+      const messageItem = state.crmRouters[index]
       messageItem.children[0].meta.num = num
-      Vue.set(state.crmRouters, 1, messageItem)
+      Vue.set(state.crmRouters, index, messageItem)
     },
 
     SET_GROUPSLIST: (state, data) => {

@@ -344,7 +344,8 @@ export default {
         if (column.property === 'businessCheck' && row.businessCount > 0) {
           return // 列表查看商机不展示详情
         }
-        if (column.property === 'leadsNumber') {
+        // if (column.property === 'leadsNumber') {
+        if (['leadsNumber', 'customerName'].includes(column.property)) {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true
@@ -528,7 +529,16 @@ export default {
     },
     /** 勾选操作 */
     handleHandle(data) {
-      if (['alloc', 'alloc_class_teacher', 'get', 'transfer', 'transform', 'delete', 'put_seas', 'exit-team'].includes(data.type)) {
+      if ([
+        'alloc',
+        'alloc_class_teacher',
+        'get',
+        'transfer',
+        'transform',
+        'delete',
+        'put_seas',
+        'exit-team'
+      ].includes(data.type)) {
         this.showDview = false
       }
 

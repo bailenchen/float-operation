@@ -68,6 +68,7 @@ export default {
       default: () => {
         return [
           'customer',
+          'student',
           'contacts',
           'leads',
           'business',
@@ -125,8 +126,12 @@ export default {
   mounted() {
     var leftItems = {
       customer: {
-        name: '客户',
+        name: 'LEADS',
         type: 'customer'
+      },
+      student: {
+        name: '学员',
+        type: 'student'
       },
       contacts: {
         name: '联系人',
@@ -257,7 +262,9 @@ export default {
       if (this.crmType == 'leads') {
         return '关联线索模块'
       } else if (this.crmType == 'customer') {
-        return '关联客户模块'
+        return '关联LEADS模块'
+      } else if (this.crmType == 'student') {
+        return '关联学员'
       } else if (this.crmType == 'contacts') {
         return '关联联系人模块'
       } else if (this.crmType == 'business') {

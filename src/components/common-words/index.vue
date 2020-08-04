@@ -20,14 +20,14 @@
           {{ item }}
         </div>
       </div>
-      <div class="handle-interval">
+      <!--<div class="handle-interval">
         <flexbox
           class="handle-button"
           @click.native="setClick">
           <i class="wk wk-manage handle-button-icon"/>
           <div class="handle-button-name">管理</div>
         </flexbox>
-      </div>
+      </div>-->
 
     </div>
     <el-button slot="reference" class="word-button">常用语</el-button>
