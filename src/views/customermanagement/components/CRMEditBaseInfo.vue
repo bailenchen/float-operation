@@ -531,6 +531,8 @@ export default {
         return this.getModuleName(item)
       } else if (item.formType === 'single_user') {
         return item.value ? item.value.realname : ''
+      } else if (item.formType === 'leads_source') {
+        return item.value ? item.value.name : ''
       } else if ([
         'checkbox',
         'structure',
@@ -575,8 +577,18 @@ export default {
         return !['contract', 'customer'].includes(item.formType)
       } else if (this.crmType === 'visit') {
         return !['business', 'contacts', 'customer'].includes(item.formType)
+      } else if (this.crmType === 'customer') {
+        if (item.formType === 'leads_source' &&
+          item.value &&
+          item.value.id == 0) {
+          return false
+        }
+        if (item.formType === 'single_structure' &&
+          item.fieldName === 'dept_id') {
+          return false
+        }
       }
-      console.log('getEdit', item.name, item.fieldName, item.authLevel === 3)
+      // console.log('getEdit', item.name, item.fieldName, item.authLevel === 3)
       return this.crm &&
         this.crm[this.crmType] &&
         this.crm[this.crmType].update // 不能编辑 disabled true
@@ -595,7 +607,7 @@ export default {
       } else if (item.formType === 'category') {
         value = value && value.categoryId ? value.categoryId : []
       } else if (item.formType === 'leads_source') {
-        value = value && value.channel_id ? value.channel_id : []
+        value = value && value.id ? [value.id] : []
       } else if (item.formType === 'single_user') {
         value = value && value.userId ? [value] : []
       }
@@ -709,7 +721,7 @@ export default {
           return value[0].batchId
         }
         return ''
-      } else if (element.formType === 'category') {
+      } else if (['leads_source', 'category'].includes(element.formType)) {
         if (value && value.length > 0) {
           return value[value.length - 1]
         }

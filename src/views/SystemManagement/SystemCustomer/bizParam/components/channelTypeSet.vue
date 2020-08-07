@@ -39,10 +39,10 @@
                 type="text"
                 size="small"
                 @click="handleAction('edit', scope.row)">编 辑</el-button>
-              <el-button
+              <!--<el-button
                 type="text"
                 size="small"
-                @click="handleAction('delete', scope.row)">删 除</el-button>
+                @click="handleAction('delete', scope.row)">删 除</el-button>-->
               <el-button
                 type="text"
                 size="small"

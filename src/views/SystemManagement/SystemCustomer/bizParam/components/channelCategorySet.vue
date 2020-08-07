@@ -128,8 +128,8 @@ export default {
       const temps = [
         { type: 'create-child', name: '新建子分类' },
         { type: 'create-brother', name: '新建平级分类' },
-        { type: 'edit', name: '编辑分类' },
-        { type: 'delete', name: '删除分类' }
+        { type: 'edit', name: '编辑分类' }
+        // { type: 'delete', name: '删除分类' }
       ]
       if (node.level < this.maxCreateLevel) {
         this.treeSetTypes = temps.map(item => {

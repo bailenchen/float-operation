@@ -134,7 +134,7 @@ export default {
   },
   mounted() {
     // 线索和客户判断更多操作
-    if (this.crmType === 'customer') {
+    if (this.crmType === 'customer' && this.crm[this.crmType] && this.crm[this.crmType].activityExcelimport) {
       this.moreTypes.push({ type: 'enter-record', name: '导入跟进', icon: 'import' })
     }
     if (this.crm[this.crmType] && this.crm[this.crmType].excelimport) {

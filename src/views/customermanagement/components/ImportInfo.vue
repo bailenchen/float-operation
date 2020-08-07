@@ -43,10 +43,15 @@ export default {
     getValueContent(item) {
       if (item.formType === 'map_address') {
         return item.value ? item.value.detailAddress : ''
-      } else if (
-        item.formType === 'structure' ||
-        item.formType === 'user' ||
-        item.formType === 'checkbox') {
+      } else if (item.formType === 'single_user') {
+        return item.value ? item.value.realname : ''
+      } else if ([
+        'checkbox',
+        'structure',
+        'single_structure',
+        'user'
+      ].includes(item.formType)
+      ) {
         if (
           !item.value ||
         Object.prototype.toString.call(item.value) !== '[object Array]'
@@ -56,6 +61,7 @@ export default {
 
         const field = {
           structure: 'name',
+          single_structure: 'name',
           user: 'realname',
           checkbox: ''
         }[item.formType]
@@ -64,14 +70,16 @@ export default {
             return field ? item[field] : item
           })
           .join('，')
-      } else if (
-        item.formType === 'customer' ||
-        item.formType === 'business' ||
-        item.formType === 'contract' ||
-        item.formType === 'contacts' ||
-        item.formType === 'category' ||
-        item.formType === 'statusName' ||
-        item.formType === 'typeName') {
+      } else if ([
+        'customer',
+        'business',
+        'contract',
+        'contacts',
+        'category',
+        'leads_source',
+        'statusName',
+        'typeName'
+      ].includes(item.formType)) {
         const field = {
           customer: 'customerName',
           business: 'businessName',
@@ -79,7 +87,8 @@ export default {
           contacts: 'contactsName',
           category: 'categoryName',
           statusName: 'statusName',
-          typeName: 'typeName'
+          typeName: 'typeName',
+          leads_source: 'name'
         }[item.formType]
         return item.value ? item.value[field] : ''
       }
