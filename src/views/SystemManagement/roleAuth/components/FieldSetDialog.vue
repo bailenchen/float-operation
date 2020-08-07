@@ -75,7 +75,10 @@ export default {
     getFieldList() {
       this.list = []
       this.loading = true
-      systemRoleGetFieldAPI({ label: this.label, roleId: this.roleId }).then(res => {
+      systemRoleGetFieldAPI({
+        label: this.label,
+        roleId: this.roleId
+      }).then(res => {
         this.loading = false
         const list = res.data || []
         // authLevel 1 不能查看不能编辑 2可查看  3 可编辑可查看

@@ -526,7 +526,7 @@ export default {
     getSelectionHandleItemsInfo() {
       const handleInfos = {
         transfer: {
-          name: '变更教育顾问',
+          name: '转移教育顾问',
           type: 'transfer',
           icon: 'transfer'
         },
@@ -713,6 +713,8 @@ export default {
       } else if (type == 'state_start' || type == 'state_disable') {
         // 活动停用/启用
         return this.crm[this.crmType].updateStatus
+      } else if (type === 'assignHeadTeacher') {
+        return this.crm[this.crmType].assignHeadTeacher
       }
 
       return true

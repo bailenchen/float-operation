@@ -4,14 +4,15 @@
     :visible.sync="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
-    title="批量变更"
+    title="批量转移"
     width="450px"
     @close="handleCancel">
     <div class="handle-box">
       <flexbox class="handle-item">
-        <div class="handle-item-name">变更教育顾问为：</div>
+        <div class="handle-item-name">转移教育顾问为：</div>
         <xh-user-cell
           :value="usersList"
+          :info-request="QueryHeadmaster"
           class="handle-item-content"
           placeholder="点击选择"
           @value-change="userChage"/>
@@ -67,6 +68,7 @@ import { crmLeadsTransfer } from '@/api/customermanagement/clue'
 import { crmProductTransfer } from '@/api/customermanagement/product'
 import { crmReceivablesTransfer } from '@/api/customermanagement/money'
 import { crmInvoiceTransfer } from '@/api/customermanagement/invoice'
+import { QueryHeadmaster } from '@/api/customermanagement/common' // 教育顾问
 
 export default {
   /** 客户管理 的 勾选后的 转移 操作*/
@@ -106,6 +108,9 @@ export default {
     }
   },
   computed: {
+    QueryHeadmaster() {
+      return QueryHeadmaster
+    },
     // 是否展示移除操作类型
     showRemoveType() {
       // if (this.crmType == 'leads' ||
@@ -158,7 +163,7 @@ export default {
     },
     handleConfirm() {
       if (this.usersList.length === 0) {
-        this.$message.error('请选择变更教育顾问')
+        this.$message.error('请选择转移教育顾问')
       } else {
         this.loading = true
         this.getRequest()(this.getParams())

@@ -531,7 +531,7 @@ export default {
     handleHandle(data) {
       if ([
         'alloc',
-        'alloc_class_teacher',
+        'assignHeadTeacher',
         'get',
         'transfer',
         'transform',

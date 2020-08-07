@@ -77,6 +77,12 @@ export default {
       default: () => {
         return []
       }
+    },
+    infoParams: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
@@ -123,6 +129,13 @@ export default {
         type: 'tree'
       })
         .then(res => {
+          if (this.infoParams &&
+            this.infoParams.hiddenLargePid &&
+            res.data.length > 0 &&
+            res.data[0].children
+          ) {
+            res.data = res.data[0].children
+          }
           const allList = this.handelCheck(this.addIsCheckProp(res.data))
           this.dataList = allList
           this.breadcrumbList.push({ label: '全部', data: allList })

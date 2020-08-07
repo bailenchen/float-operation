@@ -12,6 +12,7 @@
       :show="showPopover"
       :radio="radio"
       :selected-data="dataValue"
+      :info-params="infoParams"
       @changeCheckout="checkStructure"/>
     <div slot="reference">
       <flexbox
@@ -59,6 +60,12 @@ export default {
     max: {
       type: Number,
       default: 2
+    },
+    infoParams: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {

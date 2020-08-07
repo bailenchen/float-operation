@@ -167,7 +167,7 @@ export default {
         label: 2,
         countKey: 'logCount'
       }, {
-        name: '客户管理',
+        name: '学员管理',
         label: 6,
         countKey: 'crmCount'
       }, {

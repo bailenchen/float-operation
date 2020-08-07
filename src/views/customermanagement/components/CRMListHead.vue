@@ -231,7 +231,7 @@ export default {
     margin-top: 15px;
   }
   .sc-container {
-    width: 300px;
+    width: 330px;
     margin: -16px 0 0 -150px;
     position: absolute;
     left: 50%;

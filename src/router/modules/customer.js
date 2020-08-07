@@ -40,6 +40,106 @@ export default [
       }
     }]
   },
+  {
+    ...layout({
+      // permissions: ['crm', 'customer']
+      permissionList: [['crm', 'customer'], ['crm', 'pool']]
+    }),
+    children: [{
+      path: 'customer',
+      component: () => import('@/views/customermanagement/customer/CustomerAllIndex'),
+      meta: {
+        title: 'LEADS',
+        icon: 'customer'
+      }
+    }]
+  }
+  // {
+  //   ...layout({
+  //     // permissions: ['crm', 'contacts']
+  //   }),
+  //   children: [
+  //     {
+  //       path: 'student-manage/:type',
+  //       name: 'StudentManageIndex',
+  //       component: () => import('@/views/customermanagement/studentManage/index'),
+  //       meta: {
+  //         title: '学员管理',
+  //         icon: 'contacts'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   ...layout({
+  //     // permissions: ['crm', 'contacts']
+  //   }),
+  //   children: [
+  //     {
+  //       path: 'finance-manage/:type',
+  //       name: 'FinanceManageIndex',
+  //       component: () => import('@/views/customermanagement/financeManage/index'),
+  //       meta: {
+  //         title: '收款/退款',
+  //         icon: 'contacts'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'contract']
+  //   }),
+  //   children: [{
+  //     path: 'contract',
+  //     component: () => import('@/views/customermanagement/contract/ContractIndex'),
+  //     meta: {
+  //       title: '合同',
+  //       icon: 'contract'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'visit']
+  //   }),
+  //   children: [{
+  //     path: 'visit',
+  //     component: () => import('@/views/customermanagement/visit/VisitIndex'),
+  //     meta: {
+  //       title: '学员回访',
+  //       icon: 'house'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'product']
+  //   }),
+  //   children: [{
+  //     path: 'course',
+  //     component: () => import('@/views/customermanagement/product/ProductIndex'),
+  //     meta: {
+  //       title: '课程单品',
+  //       icon: 'product'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'product']
+  //   }),
+  //   children: [{
+  //     path: 'course-package',
+  //     component: () => import('@/views/customermanagement/product/ProductIndex'),
+  //     meta: {
+  //       title: '课程套餐',
+  //       icon: 'product'
+  //     }
+  //   }]
+  // }
+
+
   // {
   //   ...layout({
   //     // permissions: ['crm', 'leads']
@@ -67,20 +167,6 @@ export default [
   //     }
   //   }]
   // },
-  {
-    ...layout({
-      // permissions: ['crm', 'customer']
-      permissionList: [['crm', 'customer'], ['crm', 'pool'], ['crm', 'customer', 'nearbyCustomer']]
-    }),
-    children: [{
-      path: 'customer', // 客户列表
-      component: () => import('@/views/customermanagement/customer/CustomerAllIndex'),
-      meta: {
-        title: 'LEADS',
-        icon: 'customer'
-      }
-    }]
-  },
   // {
   //   ...layout({
   //     permissions: ['crm', 'pool']
@@ -111,38 +197,6 @@ export default [
   //     }
   //   }]
   // },
-  {
-    ...layout({
-      // permissions: ['crm', 'contacts']
-    }),
-    children: [
-      {
-        path: 'student-manage/:type', // 学员
-        name: 'StudentManageIndex',
-        component: () => import('@/views/customermanagement/studentManage/index'),
-        meta: {
-          title: '学员管理',
-          icon: 'contacts'
-        }
-      }
-    ]
-  },
-  {
-    ...layout({
-      // permissions: ['crm', 'contacts']
-    }),
-    children: [
-      {
-        path: 'finance-manage/:type', // 学员
-        name: 'FinanceManageIndex',
-        component: () => import('@/views/customermanagement/financeManage/index'),
-        meta: {
-          title: '收款/退款',
-          icon: 'contacts'
-        }
-      }
-    ]
-  },
   // {
   //   ...layout({
   //     permissions: ['crm', 'contacts']
@@ -168,20 +222,8 @@ export default [
   //       icon: 'business'
   //     }
   //   }]
-  // },
-  {
-    ...layout({
-      permissions: ['crm', 'contract']
-    }),
-    children: [{
-      path: 'contract', // 合同列表
-      component: () => import('@/views/customermanagement/contract/ContractIndex'),
-      meta: {
-        title: '合同',
-        icon: 'contract'
-      }
-    }]
-  },
+  // }
+  // ,
   // {
   //   ...layout({
   //     permissions: ['crm', 'receivables']
@@ -208,45 +250,6 @@ export default [
   //     }
   //   }]
   // },
-  {
-    ...layout({
-      permissions: ['crm', 'visit']
-    }),
-    children: [{
-      path: 'visit', // 回访列表
-      component: () => import('@/views/customermanagement/visit/VisitIndex'),
-      meta: {
-        title: '学员回访',
-        icon: 'house'
-      }
-    }]
-  },
-  {
-    ...layout({
-      permissions: ['crm', 'product']
-    }),
-    children: [{
-      path: 'course', // 产品列表
-      component: () => import('@/views/customermanagement/product/ProductIndex'),
-      meta: {
-        title: '课程单品',
-        icon: 'product'
-      }
-    }]
-  },
-  {
-    ...layout({
-      permissions: ['crm', 'product']
-    }),
-    children: [{
-      path: 'course-package', // 产品列表
-      component: () => import('@/views/customermanagement/product/ProductIndex'),
-      meta: {
-        title: '课程套餐',
-        icon: 'product'
-      }
-    }]
-  }
   // {
   //   ...layout({
   //     permissions: ['crm', 'marketing']

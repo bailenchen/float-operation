@@ -50,6 +50,7 @@
                     :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
                     :disabled="item.disabled"
                     :receivables-id="editId"
+                    :info-params="getInfoParams(item)"
                     @value-change="fieldValueChange" />
                 </el-form-item>
               </el-form>
@@ -372,6 +373,16 @@ export default {
       } else if (type === 'detailFile') {
         this.action.editDetail.detailFileList = data
       }
+    },
+
+    getInfoParams(field) {
+      if (this.crmType === 'customer' &&
+        field.data.formType === 'single_structure') {
+        return {
+          hiddenLargePid: true
+        }
+      }
+      return {}
     },
 
     // 字段的值更新

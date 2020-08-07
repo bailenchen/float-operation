@@ -70,7 +70,7 @@ export default {
        * 增加类型
        */
     addItem() {
-      this.list.push('')
+      this.list.push({ value: '' })
     },
 
     /**

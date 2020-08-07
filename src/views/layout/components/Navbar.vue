@@ -190,7 +190,7 @@ export default {
 
       if (this.crm) {
         tempsItems.push({
-          title: '客户管理',
+          title: '学员管理',
           type: 1,
           path: '/crm',
           icon: 'wk wk-customer',

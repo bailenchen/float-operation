@@ -74,7 +74,7 @@ export default {
           crmType: 'customer',
           color: '#704AFD',
           iconClass: 'wk wk-leads',
-          infoType: 'promiseVisit',
+          infoType: 'followCustomer',
           num: 0,
           tips: '承诺到访的LEADS',
           hidden: true

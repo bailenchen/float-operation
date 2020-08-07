@@ -37,7 +37,13 @@
               item.formType == 'textarea'"
               v-model="editForm[item.fieldName]"/>
             <el-select
-              v-else-if="item.formType === 'select' || item.formType === 'business_status'"
+              v-else-if="[
+                'select',
+                'business_status',
+                'grades',
+                'follow_up_plan',
+                'sign_up'
+              ].includes(item.formType)"
               v-model="editForm[item.fieldName]"
               style="width: 100%;"
               clearable>
@@ -82,9 +88,9 @@
               @value-change="arrayValueChange($event, item)"
             />
             <xh-structure-cell
-              v-else-if="item.formType === 'structure'"
+              v-else-if="['single_structure', 'structure'].includes(item.formType)"
               :value="editForm[item.fieldName]"
-              :radio="false"
+              :radio="item.formType === 'single_structure'"
               @value-change="arrayValueChange($event, item)"
             />
             <crm-relative-cell
@@ -104,8 +110,12 @@
             <xh-prouct-cate
               v-else-if="item.formType === 'category'"
               :value="editForm[item.fieldName]"
-              @value-change="arrayValueChange($event, item)"
-            />
+              @value-change="arrayValueChange($event, item)" />
+            <xh-channel-category
+              v-else-if="item.formType === 'leads_source'"
+              :item="editForm"
+              :value="editForm[item.fieldName]"
+              @value-change="arrayValueChange($event, item)" />
           </template>
           <template v-else>
             <div v-if="item.formType === 'file'">
@@ -148,11 +158,8 @@
               </div>
             </div>
 
-            <div
-              v-else
-              :class="{'can-check':isModule(item)}"
-              class="form-item__value"
-              @click="checkModuleDetail(item)">{{ getCommonShowValue(item) }}<i v-if="getEditAuth(item)" class="wk wk-edit form-item__edit" @click.stop="editClick(item)" /></div>
+            <div v-else :class="{'can-check':isModule(item)}" class="form-item__value" @click="checkModuleDetail(item)">{{ getCommonShowValue(item) }}<i v-if="getEditAuth(item)" class="wk wk-edit form-item__edit" @click.stop="editClick(item)" />
+            </div>
           </template>
         </el-form-item>
       </el-form>
@@ -177,13 +184,22 @@ import { filedGetInformation, filedUpdateTableField, filedGetField, filedValidat
 import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 
 import {
+  QueryAdminGrade,
+  QuerySignUpList
+} from '@/api/systemManagement/params'
+import {
+  crmSettingRecordListAPI
+} from '@/api/systemManagement/SystemCustomer'
+
+import {
   XhUserCell,
   XhStructureCell,
   XhFiles,
   CrmRelativeCell,
   XhProuctCate,
   XhBusinessStatus,
-  XhReceivablesPlan
+  XhReceivablesPlan,
+  XhChannelCategory
 } from '@/components/CreateCom'
 
 import loading from '../mixins/loading'
@@ -217,6 +233,7 @@ export default {
     XhProuctCate,
     XhBusinessStatus,
     XhReceivablesPlan,
+    XhChannelCategory,
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue')
   },
   filters: {
@@ -259,7 +276,26 @@ export default {
       editRules: {},
       editForm: {},
       editOptions: {},
-      editFieldData: []
+      editFieldData: [],
+
+      reqMap: [
+        {
+          formType: 'grades',
+          req: QueryAdminGrade,
+          labelField: 'gradeName',
+          valueField: 'id'
+        },
+        {
+          formType: 'follow_up_plan',
+          req: crmSettingRecordListAPI
+        },
+        {
+          formType: 'sign_up',
+          req: QuerySignUpList,
+          labelField: 'signUpName',
+          valueField: 'id'
+        }
+      ]
     }
   },
   computed: {
@@ -333,6 +369,9 @@ export default {
               if (item.sysInformation == 1) {
                 systemList.push(item)
               } else {
+                if (this.getEditAuth(item)) {
+                  this.getSettingConfig(item)
+                }
                 baseList.push(item)
               }
             })
@@ -370,12 +409,14 @@ export default {
     },
 
     getArrayKey(type) {
-      if (type === 'structure') {
-        return 'name'
-      } else if (type === 'user') {
-        return 'realname'
+      switch (type) {
+        case 'user':
+          return 'realname'
+        case 'structure':
+          return 'name'
+        case 'single_structure':
+          return 'name'
       }
-
       return ''
     },
 
@@ -460,6 +501,28 @@ export default {
       return setting
     },
 
+    getSettingConfig(item) {
+      if (!item.formType) return
+      const reqObj = this.reqMap.find(o => o.formType === item.formType)
+      if (!reqObj) return
+      reqObj.req().then(res => {
+        item.setting = (res.data || []).map(o => {
+          if (Object.prototype.toString.call(o) === '[object Object]') {
+            return {
+              name: o[reqObj.labelField],
+              value: o[reqObj.valueField]
+            }
+          } else {
+            return {
+              name: o,
+              value: o
+            }
+          }
+        })
+        this.$set(item, 'setting', item.setting)
+      }).catch(() => {})
+    },
+
     /**
      * 获取非附件类型的展示值
      */
@@ -468,7 +531,12 @@ export default {
         return this.getModuleName(item)
       } else if (item.formType === 'single_user') {
         return item.value ? item.value.realname : ''
-      } else if (item.formType === 'checkbox' || item.formType === 'structure' || item.formType === 'user') {
+      } else if ([
+        'checkbox',
+        'structure',
+        'single_structure',
+        'user'
+      ].includes(item.formType)) {
         return this.arrayValue(item.value, this.getArrayKey(item.formType))
       } else if (item.formType === 'check_status') {
         return this.getStatusName(item.value)
@@ -492,20 +560,26 @@ export default {
      * 编辑逻辑
      */
     getEditAuth(item) {
-      if (this.isSeas) {
-        return false
-      }
-      if (this.crmType == 'business' && ['statusName', 'typeName'].includes(item.formType)) {
-        return false
-      } else if (this.crmType == 'contract' && ['business', 'contacts', 'customer'].includes(item.formType)) {
-        return false
-      } else if (this.crmType == 'receivables' && ['contract', 'customer'].includes(item.formType)) {
-        return false
-      } else if (this.crmType == 'visit' && ['business', 'contacts', 'customer'].includes(item.formType)) {
-        return false
-      }
       // authLevel 1 不能查看不能编辑 2可查看  3 可编辑可查看
-      return item.authLevel === 3 && this.crm && this.crm[this.crmType] && this.crm[this.crmType].update // 不能编辑 disabled true
+      if (
+        this.isSeas ||
+        !item.formType ||
+        item.authLevel !== 3
+      ) return false
+
+      if (this.crmType === 'business') {
+        return !['statusName', 'typeName'].includes(item.formType)
+      } else if (this.crmType === 'contract') {
+        return !['business', 'contacts', 'customer'].includes(item.formType)
+      } else if (this.crmType === 'receivables') {
+        return !['contract', 'customer'].includes(item.formType)
+      } else if (this.crmType === 'visit') {
+        return !['business', 'contacts', 'customer'].includes(item.formType)
+      }
+      console.log('getEdit', item.name, item.fieldName, item.authLevel === 3)
+      return this.crm &&
+        this.crm[this.crmType] &&
+        this.crm[this.crmType].update // 不能编辑 disabled true
     },
 
     /**
@@ -520,6 +594,8 @@ export default {
         value = value && value[`${item.formType}Id`] ? [value] : []
       } else if (item.formType === 'category') {
         value = value && value.categoryId ? value.categoryId : []
+      } else if (item.formType === 'leads_source') {
+        value = value && value.channel_id ? value.channel_id : []
       } else if (item.formType === 'single_user') {
         value = value && value.userId ? [value] : []
       }
@@ -606,11 +682,11 @@ export default {
 
     getRealValue(element, value) {
       if (
-        element.formType == 'customer' ||
-        element.formType == 'contacts' ||
-        element.formType == 'business' ||
-        element.formType == 'leads' ||
-        element.formType == 'contract'
+        element.formType === 'customer' ||
+        element.formType === 'contacts' ||
+        element.formType === 'business' ||
+        element.formType === 'leads' ||
+        element.formType === 'contract'
       ) {
         if (value && value.length) {
           return value[0][`${element.formType}Id`]
@@ -618,26 +694,27 @@ export default {
           return ''
         }
       } else if (
-        element.formType == 'user' ||
-        element.formType == 'single_user' ||
-        element.formType == 'structure'
+        element.formType === 'user' ||
+        element.formType === 'single_user' ||
+        element.formType === 'structure' ||
+        element.formType === 'single_structure'
       ) {
         return value
           .map(item => {
-            return (element.formType == 'user' || element.formType == 'single_user') ? item.userId : item.id
+            return (['user', 'single_user'].includes(element.formType)) ? item.userId : item.id
           })
           .join(',')
-      } else if (element.formType == 'file') {
+      } else if (element.formType === 'file') {
         if (value && value.length > 0) {
           return value[0].batchId
         }
         return ''
-      } else if (element.formType == 'category') {
+      } else if (element.formType === 'category') {
         if (value && value.length > 0) {
           return value[value.length - 1]
         }
         return ''
-      } else if (element.formType == 'checkbox') {
+      } else if (element.formType === 'checkbox') {
         if (value && value.length > 0) {
           return value.join(',')
         }

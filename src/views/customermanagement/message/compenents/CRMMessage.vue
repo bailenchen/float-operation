@@ -285,7 +285,7 @@ export default {
     showSelection() {
       return [
         'todayCustomer',
-        'promiseVisit'
+        'followCustomer'
       ].includes(this.infoType)
     },
 
@@ -293,7 +293,7 @@ export default {
     showFilterView() {
       return [
         'todayCustomer',
-        'promiseVisit'
+        'followCustomer'
       ].includes(this.infoType)
     },
 
@@ -317,7 +317,7 @@ export default {
     showSubType() {
       return [
         'todayCustomer',
-        'promiseVisit',
+        'followCustomer',
         'returnVisitRemind'
       ].includes(this.infoType)
     },
@@ -326,9 +326,9 @@ export default {
     options() {
       if (this.infoType === 'todayCustomer') {
         return [
-          { name: '今日需跟进', value: 1 },
+          { name: '今日需联系', value: 1 },
           { name: '已逾期', value: 2 },
-          { name: '已联系', value: 3 }
+          { name: '已处理', value: 3 }
         ]
       }
       return []

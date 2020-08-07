@@ -78,7 +78,7 @@ export default {
         addItems.push({
           icon: 'customer',
           index: 'customer',
-          label: '客户'
+          label: 'LEADS'
         })
       }
       if (this.crm.contacts && this.crm.contacts.save) {

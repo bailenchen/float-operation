@@ -126,6 +126,11 @@
                 :info-params="infoParams"
                 :value="formItem.value"
                 @value-change="arrayValueChange"/>
+              <xh-structure-cell
+                v-else-if="['single_structure'].includes(formItem.formType)"
+                :item="formItem"
+                :value="formItem.value"
+                @value-change="arrayValueChange" />
               <xh-prouct-cate
                 v-else-if="formItem.formType === 'category'"
                 :item="formItem"
@@ -207,6 +212,7 @@ import {
 import { objDeepCopy } from '@/utils'
 import {
   XhUserCell,
+  XhStructureCell,
   XhProuctCate,
   XhChannelCategory
 } from '@/components/CreateCom'
@@ -219,6 +225,7 @@ export default {
   name: 'Index',
   components: {
     XhUserCell,
+    XhStructureCell,
     XhProuctCate,
     VDistpicker,
     XhChannelCategory
@@ -413,6 +420,7 @@ export default {
         formType == 'select' ||
         formType == 'user' ||
         formType == 'single_user' ||
+        formType == 'single_structure' ||
         formType == 'checkStatus' ||
         formType == 'dealStatus' ||
         formType == 'sign_up' ||
@@ -526,6 +534,7 @@ export default {
           formItem.formType === 'datetime' ||
           formItem.formType === 'user' ||
           formItem.formType === 'single_user' ||
+          formItem.formType === 'single_structure' ||
           formItem.formType === 'category' ||
           formItem.formType === 'leads_source'
         ) {
@@ -545,6 +554,7 @@ export default {
           formItem.formType == 'checkbox' ||
           formItem.formType == 'user' ||
           formItem.formType == 'single_user' ||
+          formItem.formType == 'single_structure' ||
           formItem.formType == 'checkStatus' ||
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
@@ -604,6 +614,7 @@ export default {
           o.formType == 'datetime' ||
           o.formType == 'user' ||
           o.formType == 'single_user' ||
+          o.formType == 'single_structure' ||
           o.formType == 'category' ||
           o.formType == 'leads_source' ||
           o.formType == 'checkbox'
@@ -641,6 +652,13 @@ export default {
           obj[o.fieldName] = {
             condition: o.condition,
             value: o.value[0].userId,
+            formType: o.formType,
+            name: o.fieldName
+          }
+        } else if (['single_structure'].includes(o.formType)) {
+          obj[o.fieldName] = {
+            condition: o.condition,
+            value: o.value[0].id,
             formType: o.formType,
             name: o.fieldName
           }

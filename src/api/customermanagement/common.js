@@ -480,3 +480,14 @@ export function RecordTplDownloadExcelAPI(data) {
     responseType: 'blob'
   })
 }
+
+/**
+ * 查询教育顾问
+ */
+export function QueryHeadmaster(data) {
+  return request({
+    url: 'system/user/queryHeadmaster',
+    method: 'post',
+    data: data
+  })
+}

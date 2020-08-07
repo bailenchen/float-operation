@@ -70,7 +70,6 @@ export default {
       usersList: []
     }
   },
-  computed: {},
   watch: {
     dialogVisible: {
       handler(val) {
@@ -115,7 +114,7 @@ export default {
             this.$message.success('操作成功')
             this.loading = false
             this.$emit('handle', {
-              type: 'alloc_class_teacher'
+              type: 'assignHeadTeacher'
             })
             this.handleCancel()
           })

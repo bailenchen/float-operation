@@ -481,7 +481,7 @@ export default {
       } else if (type == 'alloc') {
         // 公海分配操作
         this.allocDialogShow = true
-      } else if (type == 'alloc_class_teacher') {
+      } else if (type == 'assignHeadTeacher') {
         // 分配班主任操作
         this.allocClassTeacherDialogShow = true
       } else if (type == 'deal_status') {
@@ -664,7 +664,7 @@ export default {
     getSelectionHandleItemsInfo() {
       const handleInfos = {
         transfer: {
-          name: '变更教育顾问',
+          name: '转移教育顾问',
           type: 'transfer',
           icon: 'transfer'
         },
@@ -748,9 +748,9 @@ export default {
           type: 'deal_status',
           icon: 's-status'
         },
-        alloc_class_teacher: {
+        assignHeadTeacher: {
           name: '分配班主任',
-          type: 'alloc_class_teacher',
+          type: 'assignHeadTeacher',
           icon: 'alloc'
         },
         change_seas: {
@@ -777,7 +777,7 @@ export default {
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
-            'alloc_class_teacher',
+            'assignHeadTeacher',
             'transfer',
             'put_seas',
             // 'deal_status',
@@ -917,6 +917,8 @@ export default {
       } else if (type == 'state_start' || type == 'state_disable') {
         // 活动停用/启用
         return this.crm[this.crmType].updateStatus
+      } else if (type === 'assignHeadTeacher') {
+        return this.crm[this.crmType].assignHeadTeacher
       }
 
       return true

@@ -173,12 +173,12 @@ export default {
   },
   created() {
     this.getDataList()
+    this.getChannelOptions()
   },
   methods: {
     getChannelOptions() {
       QueryChannelCategory().then(res => {
         console.log('options res: ', res.data)
-        // this.formatOptions(res.data)
         this.channelOptions = res.data
         console.log('options: ', this.channelOptions)
       }).catch(() => {})
@@ -288,7 +288,7 @@ export default {
               realname: row.filteringPersonnel
             }]
           }
-          console.log(this.dialogForm)
+          console.log('edit:', this.dialogForm)
           this.dialogVisible = true
           break
         case 'delete':

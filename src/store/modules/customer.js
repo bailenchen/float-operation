@@ -9,13 +9,13 @@ const app = {
   state: {
     // 待办事项消息
     messageNum: {
-      todayCustomer: 0,
-      followLeads: 0,
-      followCustomer: 0,
-      checkContract: 0,
-      checkReceivables: 0,
-      remindReceivablesPlan: 0,
-      endContract: 0,
+      todayCustomer: 0, // 今日需跟进LEADS
+      followCustomer: 0, // 承诺到访LEADS
+      // followLeads: 0,
+      // checkContract: 0,
+      // checkReceivables: 0,
+      // remindReceivablesPlan: 0,
+      // endContract: 0,
       totalNum: 0
     },
     showRing: false,

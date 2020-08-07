@@ -830,8 +830,16 @@ export default {
      * 是否能字段设置
      */
     canSetField(type) {
-      return ['leads', 'customer', 'contacts', 'business', 'contract', 'receivables', 'product', 'visit'].includes(type) &&
-      this.ruleMenuIndex === 'data'
+      return [
+        'leads',
+        'customer',
+        'contacts',
+        'business',
+        'contract',
+        'receivables',
+        'product',
+        'visit'
+      ].includes(type) && this.ruleMenuIndex === 'data'
     },
 
     /**

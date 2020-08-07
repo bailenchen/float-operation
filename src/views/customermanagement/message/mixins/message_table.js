@@ -9,7 +9,7 @@ import {
   crmMessageCheckContractAPI,
   crmMessageCheckReceivablesAPI,
   crmMessageFollowLeadsAPI,
-  crmMessageFollowCustomerAPI,
+  // crmMessageFollowCustomerAPI,
   crmMessagEndContractAPI,
   crmMessagRemindreceivablesplanAPI,
   crmMessagRemindCustomerAPI,
@@ -204,9 +204,9 @@ export default {
     getIndexRequest() {
       return {
         'todayCustomer': crmMessageTodayCustomerAPI,
-        'promiseVisit': crmMessagePromiseAPI,
+        'followCustomer': crmMessagePromiseAPI,
         'followLeads': crmMessageFollowLeadsAPI,
-        'followCustomer': crmMessageFollowCustomerAPI,
+        // 'followCustomer': crmMessageFollowCustomerAPI,
         'checkContract': crmMessageCheckContractAPI,
         'checkReceivables': crmMessageCheckReceivablesAPI,
         'remindReceivablesPlan': crmMessagRemindreceivablesplanAPI,

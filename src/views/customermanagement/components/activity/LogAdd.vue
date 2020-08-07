@@ -22,11 +22,18 @@
       </div>
       <common-words @select="commonWordsSelect" />
     </div>
-    <div :class="['i-cont', { 'unfold': !isUnfold }]">
+    <div
+      :class="['i-cont', { 'unfold': !isUnfold }]"
+      @click.stop="isUnfold = true">
       <i
         v-if="!isUnfold"
         class="wk wk-write" />
-      <el-input
+      <span
+        :class="{empty: !!!content, unfold: !isUnfold}"
+        class="content-box" >
+        {{ content || '' }}
+      </span>
+      <!--<el-input
         ref="textarea"
         v-model="content"
         :autosize="autosize"
@@ -35,7 +42,7 @@
         clearable
         resize="none"
         placeholder="请输入内容"
-        @focus="inputFocus" />
+        @focus="inputFocus" />-->
     </div>
     <add-image-list
       v-if="imgFiles.length > 0 && isUnfold"
@@ -196,7 +203,6 @@ export default {
         { fieldName: 'category', placeholder: '跟进计划', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'followUpResults', placeholder: '跟进结果', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'dealStatus', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
-        { fieldName: 'promisedVisitTime', placeholder: '承诺到访时间', com: 'XhDateTime', value: '' },
         { fieldName: 'nextTime', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
       ],
       form: {}
@@ -284,6 +290,25 @@ export default {
 
     handleFormChange(data) {
       this.fieldList[data.index].value = data.value
+      // {  }
+      if (this.fieldList[data.index].fieldName === 'category') {
+        const item = {
+          fieldName: 'promisedVisitTime',
+          placeholder: '承诺到访时间',
+          com: 'XhDateTime',
+          value: ''
+        }
+        const findIndex = this.fieldList.findIndex(o => o.fieldName === 'promisedVisitTime')
+        if (data.value === '承诺到访') {
+          if (findIndex === -1) {
+            this.fieldList.splice(-1, 0, item)
+          }
+        } else {
+          if (findIndex !== -1) {
+            this.fieldList.splice(-2, 1)
+          }
+        }
+      }
     },
 
     /**
@@ -511,6 +536,7 @@ export default {
      * 关闭
      */
     close() {
+      this.content = ''
       this.isUnfold = false
       this.$emit('close')
     }
@@ -641,5 +667,16 @@ export default {
   font-size: 12px;
   padding: 5px 9px;
   margin-top: -5px;
+}
+
+.content-box {
+  height: 50px;
+  display: inline-block;
+  &.empty {
+    color: #ccc;
+  }
+  &.unfold {
+    height: unset;
+  }
 }
 </style>

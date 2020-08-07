@@ -75,7 +75,7 @@
               </flexbox>
             </div>
           </div>
-          <div v-if="!isSeas" class="sections">
+          <div v-if="!isSeas && crmType !== 'customer'" class="sections">
             <div class="sections__title">四、请选择负责人（负责人为必填字段，若不填写，则会导致导入失败）</div>
             <div class="content">
               <div class="user-cell">
@@ -86,7 +86,7 @@
             </div>
           </div>
 
-          <div v-else class="sections">
+          <div v-else-if="isSeas" class="sections">
             <div class="sections__title">四、请选择公海</div>
             <div class="content">
               <div class="user-cell">

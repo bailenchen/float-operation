@@ -302,7 +302,7 @@ export default {
      */
     sendLog(data) {
       if (!data.content) {
-        this.$message.error('请输入跟进内容')
+        this.$message.error('请选择常用语')
         return
       }
 
@@ -341,6 +341,7 @@ export default {
      * 操作点击
      */
     handleClick(type) {
+      if (!type) return
       if (this.handleType == type) {
         this.handleType = ''
       } else {
@@ -350,7 +351,7 @@ export default {
       if (type == 'log') {
         this.isTaskCreate = false
         this.$nextTick(() => {
-          this.$refs.logAdd.isUnfold = this.handleType == type
+          this.$refs.logAdd.isUnfold = false
         })
       } else if (type == 'task') {
         this.isTaskCreate = true
