@@ -495,6 +495,8 @@ export default {
             element.value = element.statusId
             return element
           })
+        } else if (item.setting.length > 0) {
+          return item.setting
         }
       }
 
@@ -542,6 +544,10 @@ export default {
         return this.arrayValue(item.value, this.getArrayKey(item.formType))
       } else if (item.formType === 'check_status') {
         return this.getStatusName(item.value)
+      } else if (item.formType === 'grades') {
+        return item.value ? item.value.gradeName : ''
+      } else if (item.formType === 'sign_up') {
+        return item.value ? item.value.signUpName : ''
       }
 
       return item.value
@@ -610,6 +616,10 @@ export default {
         value = value && value.id ? [value.id] : []
       } else if (item.formType === 'single_user') {
         value = value && value.userId ? [value] : []
+      } else if (item.formType === 'grades') {
+        value = item.value ? item.value.id : ''
+      } else if (item.formType === 'sign_up') {
+        value = item.value ? item.value.id : ''
       }
 
 

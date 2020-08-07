@@ -91,6 +91,10 @@ export default {
           leads_source: 'name'
         }[item.formType]
         return item.value ? item.value[field] : ''
+      } else if (item.formType === 'grades') {
+        return item.value ? item.value.gradeName : ''
+      } else if (item.formType === 'sign_up') {
+        return item.value ? item.value.signUpName : ''
       }
 
       return item.value
