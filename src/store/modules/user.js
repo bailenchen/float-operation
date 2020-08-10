@@ -128,6 +128,9 @@ const user = {
       return new Promise((resolve, reject) => {
         adminIndexAuthList().then((response) => {
           const data = response.data
+
+          delete data.bi // 删除商业智能
+
           Lockr.set('authList', data)
           commit('SET_ALLAUTH', data)
           commit('SET_CRM', data.crm)

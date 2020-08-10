@@ -65,11 +65,39 @@ export default [
   //       component: () => import('@/views/customermanagement/studentManage/index'),
   //       meta: {
   //         title: '学员管理',
-  //         icon: 'contacts'
+  //         icon: 'contacts',
+  //         activeMenu: '/crm/student-manage/:type'
   //       }
   //     }
   //   ]
   // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'product']
+  //   }),
+  //   children: [{
+  //     path: 'course',
+  //     component: () => import('@/views/customermanagement/product/ProductIndex'),
+  //     meta: {
+  //       title: '课程单品',
+  //       icon: 'product'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'product']
+  //   }),
+  //   children: [{
+  //     path: 'course-package',
+  //     component: () => import('@/views/customermanagement/coursePackage/CoursePackageIndex'),
+  //     meta: {
+  //       title: '课程套餐',
+  //       icon: 'product'
+  //     }
+  //   }]
+  // }
+
   // {
   //   ...layout({
   //     // permissions: ['crm', 'contacts']
@@ -112,32 +140,6 @@ export default [
   //     }
   //   }]
   // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'product']
-  //   }),
-  //   children: [{
-  //     path: 'course',
-  //     component: () => import('@/views/customermanagement/product/ProductIndex'),
-  //     meta: {
-  //       title: '课程单品',
-  //       icon: 'product'
-  //     }
-  //   }]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'product']
-  //   }),
-  //   children: [{
-  //     path: 'course-package',
-  //     component: () => import('@/views/customermanagement/product/ProductIndex'),
-  //     meta: {
-  //       title: '课程套餐',
-  //       icon: 'product'
-  //     }
-  //   }]
-  // }
 
 
   // {

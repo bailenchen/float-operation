@@ -3,6 +3,7 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
+      is-student
       main-title="新增学员"
       title="学员管理"
       placeholder="请输入学员编号/姓名/第一联系人电话"
@@ -33,6 +34,7 @@
       <c-r-m-table-head
         ref="crmTableHead"
         :crm-type="crmType"
+        is-student
         @filter="handleFilter"
         @handle="handleHandle"
         @scene="handleScene"/>
@@ -165,6 +167,7 @@
       :crm-type="rowType"
       :model-data="modelData"
       :id="rowID"
+      is-student
       class="d-view"
       @handle="handleHandle"/>
   </div>

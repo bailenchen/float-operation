@@ -331,6 +331,7 @@ export default {
           // 重置页面
           this.$refs.logAdd.resetInfo()
           this.refreshLogList()
+          this.$store.dispatch('GetMessageNum')
         })
         .catch(() => {
           this.sendLoading = false

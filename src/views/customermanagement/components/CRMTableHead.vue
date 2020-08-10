@@ -217,6 +217,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isStudent: {
+      type: Boolean,
+      default: false
+    },
     poolId: [String, Number]
   },
   data() {
@@ -932,7 +936,7 @@ export default {
       if (this.crmType == 'leads') {
         return '全部线索'
       } else if (this.crmType == 'customer') {
-        return '全部LEADS'
+        return this.isStudent ? '全部学员' : '全部LEADS'
       } else if (this.crmType == 'contacts') {
         return '全部联系人'
       } else if (this.crmType == 'business') {

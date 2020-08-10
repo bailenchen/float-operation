@@ -3,9 +3,9 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      title="课程单品管理"
-      placeholder="请输入课程单品名称"
-      main-title="新建课程单品"
+      title="课程套餐管理"
+      placeholder="请输入套餐名称"
+      main-title="新建课程套餐"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos"/>
@@ -90,11 +90,11 @@
 </template>
 
 <script>
-import ProductDetail from './ProductDetail'
+import ProductDetail from './CoursePackageDetail'
 import table from '../mixins/table'
 
 export default {
-  /** 课程单品列表 */
+  /** 课程套餐列表 */
   name: 'ProductIndex',
   components: {
     ProductDetail
@@ -123,5 +123,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/table.scss';
+@import '../styles/table';
 </style>

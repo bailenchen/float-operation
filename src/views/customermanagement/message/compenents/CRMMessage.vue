@@ -472,6 +472,7 @@ export default {
               .then(res => {
                 this.$message.success('操作成功')
                 this.refreshList()
+                this.$store.dispatch('GetMessageNum')
 
                 this.$emit('on-handle', {
                   type: 'follow',
@@ -639,6 +640,7 @@ export default {
         request(params).then(res => {
           this.$message.success('操作成功')
           this.refreshList()
+          this.$store.dispatch('GetMessageNum')
 
           this.$emit('on-handle', {
             type: 'follow',

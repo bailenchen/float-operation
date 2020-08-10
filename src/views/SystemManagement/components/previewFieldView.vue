@@ -42,6 +42,7 @@
                   <!-- -->
                   <component
                     :is="item.data.formType | typeToComponentName"
+                    :item="item.data"
                     :radio="false"
                     :disabled="item.disabled"/>
                 </el-form-item>
@@ -110,7 +111,13 @@ export default {
         return 'XhInput'
       } else if (formType == 'textarea') {
         return 'XhTextarea'
-      } else if (formType == 'select' || formType == 'business_status') {
+      } else if ([
+        'select',
+        'business_status',
+        'grades',
+        'leads_source',
+        'single_structure'
+      ].includes(formType)) {
         return 'XhSelect'
       } else if (formType == 'checkbox') {
         return 'XhMultipleSelect'
@@ -143,6 +150,8 @@ export default {
         return 'XhCustomerAddress'
       } else if (formType == 'receivables_plan') {
         return 'XhReceivablesPlan'
+      } else {
+        return 'XhInput'
       }
     }
   },

@@ -678,6 +678,9 @@ export default {
 
       filedGetField(params)
         .then(res => {
+          res.data = res.data.filter(o => {
+            return o.hasOwnProperty('authLevel') ? o.authLevel != 1 : true
+          })
           if (this.phone !== '') {
             res.data.forEach(item => {
               if (item.field === 'mobile') {
@@ -876,7 +879,9 @@ export default {
           params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
         }
-        if (this.crmType === 'customer') {
+        if (item.hasOwnProperty('authLevel') && item.authLevel == 2) {
+          params.disabled = true
+        } else if (this.crmType === 'customer') {
           if (this.action.type === 'update') {
             params.disabled = [
               'dept_id',

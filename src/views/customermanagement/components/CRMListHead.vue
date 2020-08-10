@@ -18,7 +18,7 @@
     </el-input>
     <div class="right-container">
       <el-button
-        v-if="canSave && crmType === 'customer'"
+        v-if="canSave && !isStudent && crmType === 'customer'"
         class="xr-btn--orange"
         icon="el-icon-plus"
         type="primary"
@@ -89,6 +89,11 @@ export default {
     },
     /** 是公海 */
     isSeas: {
+      type: Boolean,
+      default: false
+    },
+    // 是学员
+    isStudent: {
       type: Boolean,
       default: false
     },
@@ -176,6 +181,10 @@ export default {
         this.createActionInfo = { type: 'save' }
         if (this.crmType === 'customer' && action === 'introduce') {
           this.createActionInfo = { type: 'save', introduce: true }
+          // 如果是学员
+          if (this.isStudent) {
+            this.createActionInfo.isStudent = true
+          }
         }
         this.isCreate = !this.isCreate
       }
