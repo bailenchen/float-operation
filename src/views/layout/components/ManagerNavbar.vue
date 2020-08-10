@@ -51,6 +51,7 @@ export default {
           })
           this.$store
             .dispatch('LogOut')
+            .dispatch('LogOut')
             .then(() => {
               loading.close()
               location.reload()
@@ -68,7 +69,7 @@ export default {
      */
     enterCustoemBoard() {
       if (this.crm) {
-        this.$router.push('/crm/workbench')
+        this.$router.push('/')
       }
     }
   }

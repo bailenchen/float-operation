@@ -122,21 +122,18 @@ export default {
       adminConfigsetIndex()
         .then(res => {
           this.loading = false
+          res.data.forEach(o => {
+            if (o.type == 1) {
+              o.canEdit = o.module != 'crm'
+            } else {
+              o.canEdit = false
+            }
+          })
           for (let index = 0; index < this.allList.length; index++) {
             const element = this.allList[index]
-            element.sublist = res.data.filter(item => {
-              if (element.hasOwnProperty('status')) {
-                return (
-                  element.type == item.type && element.status == item.status
-                )
-              }
-
-              if (item.type == 1) {
-                item.canEdit = item.module != 'crm'
-              } else {
-                item.canEdit = false
-              }
-              return element.type == item.type
+            element.sublist = res.data.filter(o => {
+              if (element.type != o.type) return false
+              return element.hasOwnProperty('status') ? element.status == o.status : true
             })
           }
         })
