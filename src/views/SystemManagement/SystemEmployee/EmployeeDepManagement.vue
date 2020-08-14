@@ -1027,36 +1027,45 @@ export default {
 
     // 详情 -- 编辑用户
     editBtn() {
+      console.log('dialogData: ', this.dialogData)
       this.dialogTitle = '编辑员工'
       this.getHandleEmployeeRelateData()
-      var detail = {}
-      for (let index = 0; index < this.tableList.length; index++) {
-        const element = this.tableList[index]
-        if (element.field !== 'password') {
-          if (element.field === 'roleId') {
-            detail[element.field] = this.dialogData.roleId
-              ? this.dialogData.roleId
-                .split(',')
-                .map(function(item, index, array) {
-                  return parseInt(item)
-                })
-              : []
-          } else {
-            detail[element.field] = this.dialogData[element.field] || ''
+      this.formInline = {
+        userId: this.dialogData.userId,
+        isTeacher: this.dialogData.isTeacher
+      }
+      this.$nextTick(() => {
+        var detail = {}
+        for (let index = 0; index < this.tableList.length; index++) {
+          const element = this.tableList[index]
+          if (element.field !== 'password') {
+            if (element.field === 'roleId') {
+              detail[element.field] = this.dialogData.roleId
+                ? this.dialogData.roleId
+                  .split(',')
+                  .map(function(item, index, array) {
+                    return parseInt(item)
+                  })
+                : []
+            } else {
+              detail[element.field] = this.dialogData[element.field] || ''
+            }
           }
         }
-      }
-      if (detail.isTeacher === 1) {
-        detail.subjectIds = (this.dialogData.subjects || []).map(o => o.id)
-        detail.gradeIds = (this.dialogData.grades || []).map(o => o.id)
-      } else {
-        detail.subjectIds = []
-        detail.gradeIds = []
-      }
-      detail.userId = this.dialogData.userId
-      this.formInline = detail
-      console.log('edit data: ', this.formInline)
-      this.employeeCreateDialog = true
+        if (detail.isTeacher === 1) {
+          detail.subjectIds = (this.dialogData.subjects || []).map(o => o.id)
+          detail.gradeIds = (this.dialogData.grades || []).map(o => o.id)
+        } else {
+          detail.subjectIds = []
+          detail.gradeIds = []
+        }
+        detail.userId = this.dialogData.userId
+        this.formInline = {
+          ...this.formInline,
+          ...detail
+        }
+        this.employeeCreateDialog = true
+      })
     },
 
     /**

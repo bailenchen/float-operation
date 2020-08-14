@@ -204,7 +204,8 @@ export default {
     return {
       crmType: 'customer',
       showCount: 0,
-      modelData: {}
+      modelData: {},
+      isStudent: true
     }
   },
   computed: {
@@ -228,6 +229,12 @@ export default {
     this.$refs.elMenu.activeIndex = this.crmType
   },
   methods: {
+    getOtherParams() {
+      // customerType: 1、LEADS；2、学员
+      return {
+        customerType: 2
+      }
+    },
     relativeBusinessClick(data) {
       this.rowID = data.businessId
       this.rowType = 'business'
@@ -238,7 +245,7 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'customerName') {
+      if (['leadsNumber', 'customerName'].includes(column.property)) {
         return 'can-visit--underline'
       } else if (column.property === 'businessCheck') {
         return 'can-visit'

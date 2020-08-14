@@ -167,6 +167,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isStudent: {
+      type: Boolean,
+      default: false
+    },
     /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 合同作废需要合同状态*/
     detail: {
       type: Object,
@@ -219,6 +223,7 @@ export default {
       }
     },
     typeName() {
+      if (this.isStudent) return '学员'
       return (
         {
           leads: '线索',

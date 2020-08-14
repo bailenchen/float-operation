@@ -19,13 +19,12 @@
         align="stretch"
         class="d-container">
         <c-r-m-detail-head
-          :is-seas="isSeasDetail"
           :detail="detailData"
           :model-data="modelData"
           :head-details="headDetails"
           :id="id"
-          :pool-id="poolId"
           :crm-type="crmType"
+          is-student
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
@@ -106,7 +105,7 @@ import { crmCustomerRead } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../../components/CRMDetailHead'
-import Activity from '../../components/activity/index' // 活动
+import Activity from '../../components/activity' // 活动
 import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系人
 import CRMEditBaseInfo from '../../components/CRMEditBaseInfo' // 基本信息
 import RelativeContacts from '../../components/RelativeContacts' // 相关联系人
@@ -119,6 +118,7 @@ import RelativeTeam from '../../components/RelativeTeam' // 团队成员
 import RelativeVisit from '../../components/RelativeVisit' // 回访
 import RelativeInvoice from '../../components/RelativeInvoice' // 发票
 import RelativeCallRecord from '../../components/RelativeCallRecord' // 呼叫记录
+import RelativeAccount from '../../components/RelativeAccount' // 资金账户
 
 import CRMCreateView from '../../components/CRMCreateView' // 新建页面
 import detail from '../../mixins/detail'
@@ -142,7 +142,8 @@ export default {
     RelativeVisit,
     CRMCreateView,
     RelativeInvoice,
-    RelativeCallRecord
+    RelativeCallRecord,
+    RelativeAccount
   },
   mixins: [detail],
   props: {
@@ -183,11 +184,11 @@ export default {
       loading: false,
       crmType: 'customer',
       headDetails: [
-        { title: '学员姓名', value: '' },
-        { title: '学员来源', value: '' },
-        { title: '第一联系人电话', value: '' },
-        { title: '教学顾问', value: '' },
-        { title: '创建时间', value: '' }
+        { title: '学员编号', value: '', field: 'leadsNumber' },
+        { title: 'LEADS来源', value: '', field: 'channelIdName' },
+        { title: '第一联系人电话', value: '', field: 'mobile' },
+        { title: '教学顾问', value: '', field: 'ownerUserName' },
+        { title: '创建时间', value: '', field: 'createTime' }
       ],
       tabCurrentName: 'Activity',
       // 编辑操作
@@ -200,26 +201,26 @@ export default {
           type: 'log',
           label: '写跟进'
         },
-        {
-          type: 'task',
-          label: '创建任务'
-        },
-        {
-          type: 'contacts',
-          label: '创建联系人'
-        },
-        {
-          type: 'business',
-          label: '创建商机'
-        },
+        // {
+        //   type: 'task',
+        //   label: '创建任务'
+        // },
+        // {
+        //   type: 'contacts',
+        //   label: '创建联系人'
+        // },
+        // {
+        //   type: 'business',
+        //   label: '创建商机'
+        // },
         {
           type: 'contract',
           label: '创建合同'
-        },
-        {
-          type: 'receivables',
-          label: '创建回款'
         }
+        // {
+        //   type: 'receivables',
+        //   label: '创建回款'
+        // }
       ],
       // 展示重要信息
       showImportInfo: true,
@@ -229,40 +230,32 @@ export default {
   },
   computed: {
     tabNames() {
-      var tempsTabs = []
-      tempsTabs.push({ label: '活动', name: 'Activity' })
-      if (this.crm.customer && this.crm.customer.read) {
-        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
-      }
-      // if (this.crm.contacts && this.crm.contacts.index) {
-      //   tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
-      // }
-
-      // tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
-
-      // if (this.crm.business && this.crm.business.index) {
-      //   tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
-      // }
-
-      if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
-      }
-      // if (this.crm.receivables && this.crm.receivables.index) {
-      //   tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
-      // }
-      // if (this.crm.visit && this.crm.visit.index) {
-      //   tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
-      // }
-      //
-      // if (this.crm.invoice && this.crm.invoice.index) {
-      //   tempsTabs.push({ label: this.getTabName('发票', this.tabsNumber.invoiceCount), name: 'RelativeInvoice' })
-      // }
-
-      if (this.tabsNumber && this.tabsNumber.hasOwnProperty('callRecordCount')) {
-        tempsTabs.push({ label: this.getTabName('呼叫记录', this.tabsNumber.callRecordCount), name: 'RelativeCallRecord' })
-      }
-      tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
-      tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
+      const tempsTabs = []
+      const list = [
+        { label: '活动', name: 'Activity' },
+        { label: '详细资料', name: 'CRMEditBaseInfo', permission: 'crm.customer.read' },
+        { label: '合同', name: 'RelativeContract', permission: 'crm.contract.index', numField: 'contractCount' },
+        { label: '资金账户', name: 'RelativeAccount', permission: 'crm.contract.index' },
+        // { label: '收款', name: 'RelativeReturnMoney' },
+        // { label: '退费', name: 'RelativeInvoice' },
+        // { label: '回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
+        { label: '呼叫记录', name: 'RelativeCallRecord', numField: 'callRecordCount' },
+        { label: '附件', name: 'RelativeFiles', numField: 'fileCount' },
+        { label: '操作记录', name: 'RelativeHandle' }
+      ]
+      list.forEach(o => {
+        let item = null
+        if (!o.permission || this.checkPermission(o.permission)) {
+          item = o
+        }
+        if (!item) return false
+        if (item.numField &&
+          this.tabsNumber &&
+          this.tabsNumber.hasOwnProperty(item.numField)) {
+          item.label = this.getTabName(item.label, this.tabsNumber[item.numField])
+        }
+        tempsTabs.push(item)
+      })
       return tempsTabs
     },
     /**
@@ -358,32 +351,9 @@ export default {
           this.loading = false
           this.detailData = res.data
           this.firstContactsId = this.detailData.contactsId
-
-          // 负责人
-          this.headDetails[0].value = res.data.客户级别
-          const dealItem = this.headDetails[1]
-          dealItem.showIcon = true
-          if (res.data.dealStatus == 1) {
-            dealItem.icon = 'wk wk-success deal-suc'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#20b559',
-              marginRight: '3px'
-            }
-            dealItem.value = '已成交'
-          } else {
-            dealItem.icon = 'wk wk-close deal-un'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#f95a5a',
-              marginRight: '3px'
-            }
-            dealItem.value = '未成交'
-          }
-
-          this.headDetails[2].title = this.isSeasDetail ? '' : '负责人'
-          this.headDetails[2].value = res.data.ownerUserName
-          this.headDetails[3].value = res.data.updateTime
+          this.headDetails.forEach(o => {
+            o.value = res.data[o.field] || '--'
+          })
         })
         .catch(() => {
           this.loading = false
@@ -424,7 +394,12 @@ export default {
           batchId: this.detailData.batchId
         }
         this.isCreate = true
-      } else if (data.type === 'delete' || data.type === 'exit-team') {
+      } else if (
+        [
+          'delete',
+          'exit-team',
+          'change_status'
+        ].includes(data.type)) {
         this.hideView()
       }
 
@@ -457,5 +432,5 @@ export default {
   padding: 2px;
   transform: scale(0.6);
 }
-@import '../../styles/crmdetail';
+@import '../../styles/crmdetail.scss';
 </style>

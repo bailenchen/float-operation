@@ -205,3 +205,23 @@ export function AddFollowUpResults(data) {
     data: data
   })
 }
+
+// 学员回访沟通方式查询
+export function QueryCommunicationMode(data) {
+  return request({
+    url: 'sysConfig/queryCommunicationMode',
+    method: 'post'
+  })
+}
+
+// 设置学员回访沟通方式
+export function SetCommunicationMode(data) {
+  return request({
+    url: 'sysConfig/setCommunicationMode',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}

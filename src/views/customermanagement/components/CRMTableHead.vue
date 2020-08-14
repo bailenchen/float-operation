@@ -497,6 +497,9 @@ export default {
       } else if (type === 'change_seas') {
         // 转移到其他公海
         this.changePoolShow = true
+      } else if (type === 'change_dept') {
+        // 变更中心
+        console.log('change dept 变更中心')
       }
     },
     confirmHandle(type) {
@@ -761,6 +764,11 @@ export default {
           name: '转移到其他公海',
           type: 'change_seas',
           icon: 'seas'
+        },
+        change_dept: {
+          name: '变更中心',
+          type: 'change_dept',
+          icon: 'transfer'
         }
       }
       if (this.crmType == 'leads') {
@@ -778,6 +786,13 @@ export default {
             'export',
             'delete',
             'change_seas'
+          ])
+        } else if (this.isStudent) {
+          return this.forSelectionHandleItems(handleInfos, [
+            'change_dept',
+            'transfer',
+            'export',
+            'delete'
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [

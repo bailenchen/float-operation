@@ -24,6 +24,7 @@ import ProductDetail from '../product/ProductDetail'
 import MoneyDetail from '../money/MoneyDetail'
 import VisitDetail from '../visit/VisitDetail'
 import InvoiceDetail from '../invoice/InvoiceDetail'
+import StudentDetail from '../studentManage/student/detail'
 
 export default {
   name: 'CRMAllDetail', // 详情
@@ -36,11 +37,17 @@ export default {
     ProductDetail,
     MoneyDetail,
     VisitDetail,
-    InvoiceDetail
+    InvoiceDetail,
+    StudentDetail
   },
+  inheritAttrs: false,
   props: {
     /** 模块ID */
     id: [String, Number],
+    isStudent: {
+      type: Boolean,
+      default: false
+    },
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
@@ -86,6 +93,10 @@ export default {
   computed: {},
   watch: {
     crmType: function(type) {
+      if (this.isStudent) {
+        this.tabName = 'StudentDetail'
+        return
+      }
       if (this.crmType == 'leads') {
         this.tabName = 'clue-detail'
       } else if (this.crmType == 'customer') {

@@ -692,12 +692,14 @@ export default {
             // 普通LEADS没有教育顾问，介绍人
             const arr = ['owner_user_id', 'introducer_type', 'introducer_id']
             let findIndex = -1
-            arr.forEach(key => {
-              findIndex = res.data.findIndex(o => o.fieldName === key)
-              if (!this.action.introduce && findIndex !== -1) {
-                res.data.splice(findIndex, 1)
-              }
-            })
+            if (this.action.type !== 'update') {
+              arr.forEach(key => {
+                findIndex = res.data.findIndex(o => o.fieldName === key)
+                if (!this.action.introduce && findIndex !== -1) {
+                  res.data.splice(findIndex, 1)
+                }
+              })
+            }
             // 转介绍LEADS没有渠道来源
             findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
             if ((this.action.introduce && findIndex !== -1) ||

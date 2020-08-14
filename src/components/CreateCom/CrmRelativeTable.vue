@@ -430,7 +430,7 @@ export default {
     // 标记选择数据
     checkItemsWithSelectedData() {
       const type = this.crmType === 'student' ? 'customer' : this.crmType
-      const selectedArray = this.selectedData[type] ? this.selectedData[type].map(item => {
+      const selectedArray = this.selectedData[this.crmType] ? this.selectedData[this.crmType].map(item => {
         item.has = false
         return item
       }) : []

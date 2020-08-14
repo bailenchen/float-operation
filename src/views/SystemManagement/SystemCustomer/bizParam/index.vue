@@ -41,6 +41,7 @@ import CustomerLimitSet from './components/customerLimitSet' // 拥有/锁定LEA
 import SignedPossibilitySet from './components/signedPossibilitySet' // 签约可能性设置
 import SubjectSet from './components/subjectSet' // 科目设置
 import RemindSet from './components/remindSet' // 学员回访提醒设置/LEADS承诺到访提醒设置
+import CommunicationSet from './components/communicationSet' // 学员回访沟通方式设置
 import SerialNumberSet from './components/SerialNumberSet' // 编号规则设置
 
 export default {
@@ -60,7 +61,8 @@ export default {
     RemindSet,
     SerialNumberSet,
     FollowLogResultSet,
-    FollowCommonWords
+    FollowCommonWords,
+    CommunicationSet
   },
 
   data() {
@@ -76,6 +78,7 @@ export default {
         { label: '拥有LEADS数限制', key: 'own' },
         { label: '锁定LEADS数限制', key: 'lock' },
         { label: '学员回访提醒设置', key: 'studentVisit' },
+        { label: '学员回访沟通方式设置', key: 'CommunicationSet' },
         { label: '签约可能性设置', key: 'SignedPossibilitySet' },
         { label: '科目设置', key: 'SubjectSet' },
         { label: 'LEADS承诺到访提醒设置', key: 'leadsVisit' },

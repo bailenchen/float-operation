@@ -17,7 +17,7 @@
           :radio="false"
           placeholder="选择人员"
           @value-change="userChange" />
-        <el-select
+        <!--<el-select
           v-model="types"
           multiple
           collapse-tags
@@ -27,7 +27,7 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"/>
-        </el-select>
+        </el-select>-->
         <el-button
           type="primary"
           @click="refreshList">查询</el-button>

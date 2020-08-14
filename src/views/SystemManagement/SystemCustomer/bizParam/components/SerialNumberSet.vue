@@ -101,6 +101,7 @@ import {
 import Reminder from '@/components/reminder'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
+import { isEmpty } from 'element-ui/lib/utils/util'
 import moment from 'moment'
 
 export default {
@@ -259,7 +260,7 @@ export default {
           type: typeItem.type,
           value: '',
           increaseNumber: '',
-          reset_type: 4
+          resetType: 4
         })
       } else if (typeItem.type == 2) {
         this.$set(list, index, {
@@ -278,6 +279,35 @@ export default {
      * 保存操作
      */
     save() {
+      console.log('save: ', this.list)
+      const that = this
+      for (let i = 0; i < this.list.length; i++) {
+        const item = this.list[i]
+        if (item.status == 1) {
+          const labelName = that.$options.filters.labelName(item.label)
+          if (item.setting.length < 2) {
+            that.$message.error(`${labelName}的编号规则至少设置为两级`)
+            return
+          }
+          for (let j = 0; j < item.setting.length; j++) {
+            const settingItem = item.setting[j]
+            const typeListName = that.$options.filters.typeListName(j)
+            if (!settingItem.type || isEmpty(settingItem.value)) {
+              that.$message.error(`请先完善${labelName}的${typeListName}规则`)
+              return
+            }
+            if (settingItem.type === 3 &&
+              (
+                isEmpty(settingItem.increaseNumber) ||
+                isEmpty(settingItem.resetType)
+              )
+            ) {
+              that.$message.error(`请先完善${labelName}的${typeListName}规则`)
+              return
+            }
+          }
+        }
+      }
       this.loading = true
       sysConfigNumberSetAPI(this.list)
         .then(res => {

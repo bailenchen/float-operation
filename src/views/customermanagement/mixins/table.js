@@ -260,6 +260,10 @@ export default {
         } else {
           params.label = crmTypeModel[this.crmType]
         }
+        // 如果是学员
+        if (this.isStudent) {
+          params.label = 19
+        }
 
         const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
         request(params)

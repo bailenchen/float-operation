@@ -29,6 +29,7 @@ import LogDetail from '@/views/workLog/components/LogDetail'
 import NoticeDetail from '@/views/OAManagement/notice/NoticeDetail'
 import VisitDetail from '../visit/VisitDetail'
 import InvoiceDetail from '../invoice/InvoiceDetail'
+import StudentDetail from '../studentManage/student/detail'
 
 export default {
   name: 'CRMFullScreenDetail', // 客户管理下 重要提醒 回款计划提醒
@@ -45,11 +46,16 @@ export default {
     LogDetail,
     NoticeDetail,
     VisitDetail,
-    InvoiceDetail
+    InvoiceDetail,
+    StudentDetail
   },
   props: {
     /** 模块ID */
     id: [String, Number],
+    isStudent: {
+      type: Boolean,
+      default: false
+    },
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
       type: String,
@@ -74,6 +80,7 @@ export default {
   },
   computed: {
     tabName() {
+      if (this.isStudent) return 'StudentDetail'
       if (this.crmType == 'leads') {
         return 'clue-detail'
       } else if (this.crmType == 'customer') {
