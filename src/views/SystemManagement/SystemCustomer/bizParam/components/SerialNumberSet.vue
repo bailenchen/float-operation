@@ -131,7 +131,8 @@ export default {
         }
         for (let index = 0; index < setting.length; index++) {
           const element = setting[index]
-          const line = index > 0 ? '-' : ''
+          // const line = index > 0 ? '-' : ''
+          const line = ''
           if (element.value) {
             if (element.type == 1) {
               names = names + `${line}${element.value}`
@@ -160,7 +161,8 @@ export default {
                   startShowValue = '0' + startShowValue
                 }
               }
-              names = names + `-${startShowValue}`
+              // names = names + `-${startShowValue}`
+              names = names + startShowValue
             }
           }
         }

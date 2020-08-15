@@ -854,6 +854,9 @@ export default {
       handler(val) {
         if (val) {
           const arr = objDeepCopy(this.defaultList)
+          if (this.formInline.isTeacher != 1) {
+            arr.splice(8, 2)
+          }
           if (this.dialogTitle !== '新建员工') {
             arr[0].tips = '如需修改登录名，请在列表勾选员工后进行操作'
             arr.splice(1, 1)
@@ -1011,7 +1014,9 @@ export default {
         gradeIds: [],
         subjectIds: []
       }
-      this.employeeCreateDialog = true
+      this.$nextTick(() => {
+        this.employeeCreateDialog = true
+      })
     },
 
     /**

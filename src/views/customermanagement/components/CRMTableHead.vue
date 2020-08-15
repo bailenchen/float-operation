@@ -112,6 +112,11 @@
       :visible.sync="changePoolShow"
       :selection-list="selectionList"
       @handle="handleCallBack" />
+
+    <change-dept-handle
+      :visible.sync="changeDeptShow"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
   </div>
 </template>
 
@@ -184,6 +189,7 @@ import AllocClassTeacher from './selectionHandle/AllocClassTeacher' // 分配班
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 转移到其他公海
+import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中心
 import { Loading } from 'element-ui'
 
 export default {
@@ -200,7 +206,8 @@ export default {
     DealStatusHandle,
     PutPoolHandle,
     AllocClassTeacher,
-    ChangePoolHandle
+    ChangePoolHandle,
+    ChangeDeptHandle
   },
   props: {
     title: {
@@ -250,7 +257,8 @@ export default {
       allocClassTeacherDialogShow: false, // 分配班主任操作提示框
       dealStatusShow: false, // 成交状态修改框
       putPoolShow: false, // 客户放入公海
-      changePoolShow: false
+      changePoolShow: false, // 变更公海
+      changeDeptShow: false // 变更中心
     }
   },
   computed: {
@@ -500,6 +508,7 @@ export default {
       } else if (type === 'change_dept') {
         // 变更中心
         console.log('change dept 变更中心')
+        this.changeDeptShow = true
       }
     },
     confirmHandle(type) {
@@ -961,7 +970,7 @@ export default {
       } else if (this.crmType == 'receivables') {
         return '全部回款'
       } else if (this.crmType == 'product') {
-        return '全部产品'
+        return '全部课程单品'
       } else if (this.crmType === 'applet') {
         return '全部名片线索'
       } else if (this.crmType === 'visit') {

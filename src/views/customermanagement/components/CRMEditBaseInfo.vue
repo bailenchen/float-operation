@@ -42,7 +42,8 @@
                 'business_status',
                 'grades',
                 'follow_up_plan',
-                'sign_up'
+                'sign_up',
+                'communication_mode'
               ].includes(item.formType)"
               v-model="editForm[item.fieldName]"
               style="width: 100%;"
@@ -185,7 +186,8 @@ import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 
 import {
   QueryAdminGrade,
-  QuerySignUpList
+  QuerySignUpList,
+  QueryCommunicationMode
 } from '@/api/systemManagement/params'
 import {
   crmSettingRecordListAPI
@@ -294,6 +296,10 @@ export default {
           req: QuerySignUpList,
           labelField: 'signUpName',
           valueField: 'id'
+        },
+        {
+          formType: 'communication_mode',
+          req: QueryCommunicationMode
         }
       ]
     }

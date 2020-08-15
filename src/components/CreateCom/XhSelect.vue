@@ -17,7 +17,8 @@
 import stringMixin from './stringMixin'
 import {
   QueryAdminGrade,
-  QuerySignUpList
+  QuerySignUpList,
+  QueryCommunicationMode
 } from '@/api/systemManagement/params'
 import {
   crmSettingRecordListAPI
@@ -52,6 +53,10 @@ export default {
           req: QuerySignUpList,
           labelField: 'signUpName',
           valueField: 'id'
+        },
+        {
+          formType: 'communication_mode',
+          req: QueryCommunicationMode
         }
       ]
     }
@@ -59,9 +64,10 @@ export default {
   computed: {},
   watch: {
     item: {
-      handler(val) {
+      handler(val, oldValue) {
         if (val && (val.setting || val.data.setting)) {
           const data = val.setting ? val : val.data
+          const formType = data.formType
           var settingList = data.setting
           if (settingList.length > 0 && typeof settingList[0] == 'string') {
             var array = []
@@ -80,13 +86,13 @@ export default {
               item.value = item.statusId
               return item
             })
+          } else if (formType &&
+            this.reqMap.map(o => o.formType).includes(formType)) {
+            this.getSettingConfig()
           } else {
             this.option = settingList
           }
-        } else {
-          this.option = []
         }
-        this.getSettingConfig()
       },
       deep: true,
       immediate: true
@@ -94,7 +100,11 @@ export default {
   },
   methods: {
     getSettingConfig() {
-      if (!this.item || !this.item.data || !this.item.data.formType) return
+      if (!this.item ||
+        !this.item.data ||
+        !this.item.data.formType ||
+        this.option.length > 0
+      ) return
       const reqObj = this.reqMap.find(o => o.formType === this.item.data.formType)
       if (!reqObj) return
       reqObj.req().then(res => {

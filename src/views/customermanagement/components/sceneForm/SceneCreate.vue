@@ -98,6 +98,7 @@
                 v-else-if="[
                   'grades',
                   'follow_up_plan',
+                  'communication_mode',
                   'sign_up',
                   'checkStatus',
                   'dealStatus'
@@ -204,7 +205,8 @@ import { crmSceneSave, crmSceneUpdate } from '@/api/customermanagement/common'
 import { productCategoryIndex } from '@/api/systemManagement/SystemCustomer'
 import {
   QueryAdminGrade,
-  QuerySignUpList
+  QuerySignUpList,
+  QueryCommunicationMode
 } from '@/api/systemManagement/params'
 import {
   crmSettingRecordListAPI
@@ -297,6 +299,10 @@ export default {
           req: QuerySignUpList,
           labelField: 'signUpName',
           valueField: 'id'
+        },
+        {
+          formType: 'communication_mode',
+          req: QueryCommunicationMode
         }
       ]
     }
@@ -365,6 +371,7 @@ export default {
                 item.formType === 'checkStatus' ||
                 item.formType === 'grades' ||
                 item.formType === 'follow_up_plan' ||
+                item.formType === 'communication_mode' ||
                 item.formType === 'sign_up'
               ) {
                 item.setting = this.getEditSetting(item.formType, item.fieldName)
@@ -374,6 +381,7 @@ export default {
               if (
                 item.formType === 'grades' ||
                 item.formType === 'follow_up_plan' ||
+                item.formType === 'communication_mode' ||
                 item.formType === 'sign_up'
               ) {
                 if (item.setting.length === 0) {
@@ -588,7 +596,8 @@ export default {
         formType == 'dealStatus' ||
         formType == 'sign_up' ||
         formType == 'grades' ||
-        formType == 'follow_up_plan'
+        formType == 'follow_up_plan' ||
+        formType == 'communication_mode'
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
@@ -680,7 +689,8 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
-          formItem.formType == 'follow_up_plan'
+          formItem.formType == 'follow_up_plan' ||
+          formItem.formType == 'communication_mode'
         ) {
           formItem.setting = obj.setting || []
           if (formItem.setting.length === 0) {
@@ -723,7 +733,8 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
-          formItem.formType == 'follow_up_plan'
+          formItem.formType == 'follow_up_plan' ||
+          formItem.formType == 'communication_mode'
         ) {
           formItem.condition = 'is'
         } else {

@@ -132,6 +132,7 @@ import {
 import moment from 'moment'
 import { isArray } from '@/utils/types'
 import { debounce } from 'throttle-debounce'
+import { mapGetters } from 'vuex'
 
 import {
   XhInput,
@@ -195,7 +196,8 @@ export default {
         'business_status',
         'grades',
         'follow_up_plan',
-        'sign_up'
+        'sign_up',
+        'communication_mode'
       ].includes(formType)) {
         return 'XhSelect'
       } else if (formType == 'checkbox') {
@@ -284,6 +286,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'userInfo'
+    ]),
     /** 合同 回款 下展示审批人信息 */
     showExamine() {
       if (this.crmType === 'contract' || this.crmType === 'receivables') {
@@ -608,23 +613,22 @@ export default {
             }
           }
         }
-      } else if (this.crmType == 'visit') {
-        if (item.data.formType == 'customer') {
-          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-            const element = this.crmForm.crmFields[index]
-            if (element.key === 'contract_id' || element.key === 'contacts_id') {
-              // 如果是合同 改变合同样式和传入客户ID
-              if (item.value.length > 0) {
-                element.disabled = false
-                const customerItem = item.value[0]
-                customerItem['moduleType'] = 'customer'
-                element['relation'] = customerItem
-              } else {
-                element.disabled = true
-                element['relation'] = {}
-                element.value = []
-              }
-            }
+      } else if (this.crmType === 'visit') {
+        if (item.data.formType === 'student') {
+          let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'leads_number')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = item.value[0].leadsNumber || ''
+          }
+          findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'mobile')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = item.value[0].mobile || ''
+          }
+          findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'owner_user_id')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = [{
+              userId: item.value[0].ownerUserId,
+              realname: item.value[0].ownerUserName
+            }]
           }
         }
       } else if (this.crmType === 'customer') {
@@ -689,24 +693,12 @@ export default {
             })
           }
           if (this.crmType === 'customer') {
-            // 普通LEADS没有教育顾问，介绍人
-            const arr = ['owner_user_id', 'introducer_type', 'introducer_id']
-            let findIndex = -1
-            if (this.action.type !== 'update') {
-              arr.forEach(key => {
-                findIndex = res.data.findIndex(o => o.fieldName === key)
-                if (!this.action.introduce && findIndex !== -1) {
-                  res.data.splice(findIndex, 1)
-                }
-              })
-            }
-            // 转介绍LEADS没有渠道来源
-            findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
-            if ((this.action.introduce && findIndex !== -1) ||
-              res.data[findIndex].value === 0) {
-              res.data.splice(findIndex, 1)
-            }
+            this.formatLeadsField(res)
           }
+          if (this.crmType === 'visit') {
+            this.formatVisitField(res)
+          }
+
           console.log('res.data: ', res.data)
           this.getcrmRulesAndModel(res.data)
           this.loading = false
@@ -715,6 +707,43 @@ export default {
           this.loading = false
         })
     },
+
+    /**
+     * 预处理LEADS字段
+     * @param res
+     */
+    formatLeadsField(res) {
+      // 普通LEADS没有教育顾问，介绍人
+      const arr = ['owner_user_id', 'introducer_type', 'introducer_id']
+      let findIndex = -1
+      if (this.action.type !== 'update') {
+        arr.forEach(key => {
+          findIndex = res.data.findIndex(o => o.fieldName === key)
+          if (!this.action.introduce && findIndex !== -1) {
+            res.data.splice(findIndex, 1)
+          }
+        })
+      }
+      // 转介绍LEADS没有渠道来源
+      findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
+      if ((this.action.introduce && findIndex !== -1) ||
+        res.data[findIndex].value === 0) {
+        res.data.splice(findIndex, 1)
+      }
+    },
+
+    /**
+     * 预处理回访字段
+     * @param res
+     */
+    formatVisitField(res) {
+      let findIndex = -1
+      findIndex = res.data.findIndex(o => o.fieldName === 'customer_id')
+      if (findIndex !== -1) {
+        res.data[findIndex].formType = 'student'
+      }
+    },
+
     // 根据自定义字段获取自定义字段规则
     getcrmRulesAndModel(list) {
       let showStyleIndex = -1
@@ -736,6 +765,7 @@ export default {
           // crm相关信息特殊处理
           item.formType == 'contacts' ||
           item.formType == 'customer' ||
+          item.formType == 'student' ||
           item.formType == 'contract' ||
           item.formType == 'business' ||
           item.formType == 'receivables_plan'
@@ -884,6 +914,7 @@ export default {
         if (item.hasOwnProperty('authLevel') && item.authLevel == 2) {
           params.disabled = true
         } else if (this.crmType === 'customer') {
+          // 如果是LEADS
           if (this.action.type === 'update') {
             params.disabled = [
               'dept_id',
@@ -895,6 +926,15 @@ export default {
               // 'dept_id',
               'introducer_id'
             ].includes(item.fieldName)
+          }
+        } else if (this.crmType === 'visit') {
+          params.disabled = [
+            'leads_number',
+            'mobile',
+            'owner_user_id'
+          ].includes(item.fieldName)
+          if (item.fieldName === 'author') {
+            params.value = [{ ...this.userInfo }]
           }
         }
         this.crmForm.crmFields.push(params)

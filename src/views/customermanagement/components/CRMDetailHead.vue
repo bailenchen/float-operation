@@ -105,6 +105,10 @@
       :visible.sync="changePoolShow"
       :selection-list="[detail]"
       @handle="handleCallBack" />
+    <change-dept-handle
+      :visible.sync="changeDeptShow"
+      :selection-list="[detail]"
+      @handle="handleCallBack" />
   </div>
 </template>
 <script type="text/javascript">
@@ -141,7 +145,8 @@ import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
 import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状态修改操作
 import TimePiece from '../../../callCenter/TimePiece'
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
-import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 放入公海
+import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 变更公海
+import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中心
 
 export default {
   name: 'CRMDetailHead',
@@ -151,7 +156,8 @@ export default {
     TimePiece,
     DealStatusHandle,
     PutPoolHandle,
-    ChangePoolHandle
+    ChangePoolHandle,
+    ChangeDeptHandle
   },
   props: {
     /** 模块ID */
@@ -199,7 +205,8 @@ export default {
       allocDialogShow: false, // 公海分配操作提示框
       dealStatusShow: false, // 成交状态修改框
       putPoolShow: false, // 客户放入公海
-      changePoolShow: false // LEADS转移公海
+      changePoolShow: false, // LEADS转移公海
+      changeDeptShow: false // 学员变更中心
     }
   },
   computed: {
@@ -408,6 +415,9 @@ export default {
       } else if (type == 'put_seas') {
         // 客户放入公海
         this.putPoolShow = true
+      } else if (type === 'change_dept') {
+        // 变更中心
+        this.changeDeptShow = true
       }
     },
     confirmHandle(type) {
@@ -615,6 +625,11 @@ export default {
           name: '合同作废',
           type: 'cancel',
           icon: 'invalid'
+        },
+        change_dept: {
+          name: '变更中心',
+          type: 'change_dept',
+          icon: 'transform'
         }
       }
       if (this.crmType == 'leads') {
@@ -627,6 +642,11 @@ export default {
           return this.forSelectionHandleItems(handleInfos, [
             'alloc',
             'get',
+            'delete'
+          ])
+        } else if (this.isStudent) {
+          return this.forSelectionHandleItems(handleInfos, [
+            'change_dept',
             'delete'
           ])
         } else {

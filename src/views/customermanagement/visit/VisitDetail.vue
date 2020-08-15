@@ -119,11 +119,10 @@ export default {
       loading: false,
       crmType: 'visit',
       headDetails: [
-        { title: '学员名称', value: '' },
-        { title: '沟通方式', value: '' },
-        { title: '作者', value: '' },
-        { title: '类型', value: '' },
-        { title: '回访形式', value: '' }
+        { title: '学员姓名', value: '', field: 'customerName' },
+        { title: '第一联系人电话', value: '', field: 'mobile' },
+        { title: '课程顾问', value: '', field: 'ownerUserName' },
+        { title: '作者', value: '', field: 'author' }
       ],
       tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
@@ -153,10 +152,9 @@ export default {
           this.loading = false
           this.detailData = res.data
 
-          this.headDetails[0].value = res.data.customerName
-          this.headDetails[1].value = res.data.visitTime
-          this.headDetails[2].value = res.data.ownerUserName
-          this.headDetails[3].value = res.data.回访形式
+          this.headDetails.forEach(o => {
+            o.value = res.data[o.field] || '--'
+          })
         })
         .catch(() => {
           this.loading = false
@@ -176,6 +174,7 @@ export default {
      */
     editSaveSuccess() {
       this.$emit('handle', { type: 'save-success' })
+      this.$bus.emit('crm-detail-update')
       this.getDetial()
     },
 
