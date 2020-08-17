@@ -1280,7 +1280,9 @@ export default {
      */
     getItemIsCanEdit(item) {
       // authLevel 1 不能查看不能编辑 2可查看  3 可编辑可查看
-      return (this.action.type === 'update' && item.authLevel == 3) || this.action.type !== 'update'
+      if (this.action && this.action.type !== 'update') return false
+      return item.authLevel != 3
+      // return (this.action.type === 'update' && item.authLevel == 3) || this.action.type !== 'update'
     },
 
     // 保存草稿
