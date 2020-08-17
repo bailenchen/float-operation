@@ -716,7 +716,7 @@ export default {
       // 普通LEADS没有教育顾问，介绍人
       const arr = ['owner_user_id', 'introducer_type', 'introducer_id']
       let findIndex = -1
-      if (this.action.type !== 'update') {
+      if (this.action && this.action.type !== 'update') {
         arr.forEach(key => {
           findIndex = res.data.findIndex(o => o.fieldName === key)
           if (!this.action.introduce && findIndex !== -1) {
@@ -726,9 +726,11 @@ export default {
       }
       // 转介绍LEADS没有渠道来源
       findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
-      if ((this.action.introduce && findIndex !== -1) ||
-        res.data[findIndex].value === 0) {
-        res.data.splice(findIndex, 1)
+      if (findIndex !== -1) {
+        if (this.action.introduce ||
+          res.data[findIndex].value === 0) {
+          res.data.splice(findIndex, 1)
+        }
       }
     },
 
