@@ -11,25 +11,19 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        // target: 'http://192.168.1.116:8080/',
-        target: 'http://dev.5kcrm.cn/api/',
+        // target: 'http://192.168.1.13:8084/',
+        target: 'http://192.168.1.65:8084/',
+        // target: 'http://dev.5kcrm.cn/api/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
-        }
-      },
-      '/centerIndex': {
-        target: 'https://www.72crm.com/',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/centerIndex': ''
         }
       }
     },
 
     // Various Dev Server settings
     host: '0.0.0.0', // can be overwritten by process.env.HOST
-    port: 8090, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 8093, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: false,
