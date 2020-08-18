@@ -238,15 +238,15 @@ export default {
         })
       }
 
-      if (this.bi) {
-        tempsItems.push({
-          title: '商业智能',
-          type: 5,
-          path: '/bi',
-          icon: 'wk wk-business-intelligence',
-          fontSize: '18px'
-        })
-      }
+      // if (this.bi) {
+      //   tempsItems.push({
+      //     title: '商业智能',
+      //     type: 5,
+      //     path: '/bi',
+      //     icon: 'wk wk-business-intelligence',
+      //     fontSize: '18px'
+      //   })
+      // }
 
       if (this.email) {
         tempsItems.push({

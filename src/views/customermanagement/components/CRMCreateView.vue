@@ -759,7 +759,6 @@ export default {
 
         this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
 
-        const canEdit = this.getItemIsCanEdit(item) // 不能编辑 disabled true
         /**
          * 表单数据
          */
@@ -777,7 +776,6 @@ export default {
           params['data'] = item
           // 获取 value relative 信息
           this.getParamsValueAndRelativeInfo(params, item, list)
-          params['disabled'] = this.getItemDisabledFromItem(item)
           params['styleIndex'] = showStyleIndex
         } else if (['category', 'leads_source'].includes(item.formType)) {
           /** 产品分类 */
@@ -795,7 +793,6 @@ export default {
           } else {
             params['value'] = []
           }
-          params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
         } else if (item.formType == 'product') {
           // 关联产品信息比较多 用字典接收
@@ -853,7 +850,6 @@ export default {
           }
           params['key'] = item.fieldName
           params['data'] = item
-          params['disabled'] = false // 是否可交互
           params['showblock'] = true // 展示整行效果
           if (index % 2 == 0) {
             showStyleIndex = -1
@@ -910,9 +906,10 @@ export default {
 
           params['key'] = item.fieldName
           params['data'] = item
-          params['disabled'] = !canEdit // 是否可交互
           params['styleIndex'] = showStyleIndex
         }
+        params.disabled = !this.getItemIsCanEdit(item) // 不能编辑 disabled true
+
         if (item.hasOwnProperty('authLevel') && item.authLevel == 2) {
           params.disabled = true
         } else if (this.crmType === 'customer') {
@@ -1280,8 +1277,8 @@ export default {
      */
     getItemIsCanEdit(item) {
       // authLevel 1 不能查看不能编辑 2可查看  3 可编辑可查看
-      if (this.action && this.action.type !== 'update') return false
-      return item.authLevel != 3
+      if (this.action && this.action.type !== 'update') return true
+      return item.authLevel == 3
       // return (this.action.type === 'update' && item.authLevel == 3) || this.action.type !== 'update'
     },
 
