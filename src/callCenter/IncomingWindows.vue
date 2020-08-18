@@ -88,8 +88,10 @@ export default {
       handler(val) {
         if (val) {
           crmCallCheckAuth().then(res => {
+            console.log(res.data, 'wwww')
             const data = res.data || {}
-            if (data.auth) {
+            // if (data.auth) {
+            if (!data.auth) {
               this.$store.commit('GET_IS_CALL', true)
               Lockr.set('wkCallData', data)
               this.callCenterConnect()
@@ -467,12 +469,21 @@ export default {
      */
     saveRecord(data) {
       const temp = {
-        type: data.call_type,
-        state: data.connected_state,
-        starttime: data.start_time,
-        answertime: data.answer_time,
-        endtime: data.end_time,
-        number: data.number,
+        // type: data.call_type,
+        // state: data.connected_state,
+        // starttime: data.start_time,
+        // answertime: data.answer_time,
+        // endtime: data.end_time,
+        // number: data.number,
+        // hangType: 0,
+        // model: this.model,
+        // modelId: this.modelId
+        type: data.direction == 'incoming' ? 1 : 0,
+        state: 2,
+        starttime: data.time,
+        answertime: data.begin,
+        endtime: data.end,
+        number: data.remote,
         hangType: 0,
         model: this.model,
         modelId: this.modelId
@@ -516,6 +527,7 @@ export default {
      * 硬呼和软呼
      */
     callHardwareMessage(data) {
+      console.log('回调状态', data)
       switch (data.event) {
         // 设备呼出
         case 'OutGoing': {
@@ -610,7 +622,8 @@ export default {
           break
 
         case 'CallRecord':
-          this.saveRecord(data.data)
+          // this.saveRecord(data.data)
+          this.saveRecord(data)
           // 保存通话记录
           break
           // 设备通话状态

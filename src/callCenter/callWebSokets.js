@@ -22,6 +22,7 @@ class MyWs {
   webSokets
   callinTime
   timer
+  callNumber
 
   /**
    * 配置变量
@@ -98,13 +99,16 @@ class MyWs {
    * 设置电话事件监听、设置电话连接状态监听
    */
   setListener() {
+    const that = this
     this.phoneClient.setPhoneStatusListener({
       handler: this.phoneStatusListener,
       reset: true
     })
 
     this.phoneClient.setPhoneEventListener({
-      handler: this.phoneEventListener,
+      handler: (...args) => {
+        that.phoneEventListener(...args, that)
+      },
       reset: true
     })
   }
@@ -119,71 +123,148 @@ class MyWs {
   /**
    * 电话事件监听
    */
-  phoneEventListener(callInfo) {
+  phoneEventListener(callInfo, that) {
     console.log('event listener', callInfo)
-    if (callInfo.eventType === PhoneEnum.CallStatus.GETUSERMEDIAFAILED) {
+    if (callInfo.eventType === 'PhoneEnum.CallStatus.GETUSERMEDIAFAILED') {
       alert('检测不到麦克风和耳机设备，请查看设备是否正常接入')
       return
     }
-    let currentLine = this.phoneLines.find(x => x.callId === callInfo.callId)
+    let currentLine = that.phoneLines.find(x => x.callId === callInfo.callId)
+    console.log('data1', currentLine)
     if (!currentLine) {
       callInfo.isAnswered = false
       callInfo.callTime = new Date().getTime()
       callInfo.targetLine = true
       callInfo.callStream = null
       callInfo.hold = false
-      callInfo.callType = PhoneEnum.CallType.PHONE
+      callInfo.callType = 'PhoneEnum.CallType.PHONE'
       // 默认置为呼出
       callInfo.direction = 0
       currentLine = callInfo
-
       this.phoneLines.push(currentLine)
-
       currentLine.callStatus = callInfo.callStatus
-
       switch (callInfo.eventType) {
-        case PhoneEnum.CallStatus.SEIZED: // 摘机事件
+        case 'seized': // 摘机事件
           break
-        case PhoneEnum.CallStatus.ADDSTREAM:
+        case 'PhoneEnum.CallStatus.ADDSTREAM':
           break
-        case PhoneEnum.CallStatus.ORIGINATED: // 拨号事件
+        case 'originated': // 拨号事件
           // 主叫
           currentLine.direction = 0
           break
-        case PhoneEnum.CallStatus.RINGING: // 回铃事件
+        case 'ringing': // 振铃事件
           break
-        case PhoneEnum.CallStatus.ALERTING: // 来电振铃事件
-          if (this.phoneLines.filter(x => x.callStatus !== 'cleared').length > 1) {
-            this.phoneClient.hangUpWhenHasCurrentLine({ callId: callInfo.callId })
-            return false
-          }
+        case 'alerting': // 来电振铃事件
           // 被叫
           currentLine.direction = 1
           break
-        case PhoneEnum.CallStatus.ESTABLISHED: // 接通事件
+        case 'established': // 接通事件
           currentLine.isAnswered = true
           currentLine.begin = callInfo.begin
           break
-        case PhoneEnum.CallStatus.HELD: // 保持事件
+        case 'held': // 保持事件
           currentLine.hold = callInfo.held
           break
-        case PhoneEnum.CallStatus.HELD_RETRIEVED: // 取消保持事件
+        case 'held_retrieved': // 取消保持事件
           currentLine.hold = callInfo.held
           break
-        case PhoneEnum.CallStatus.MUTE: // 静音
+        case 'mute': // 静音
           currentLine.mute = callInfo.mute
           break
-        case PhoneEnum.CallStatus.MUTE_RETRIEVED: // 取消静音
+        case 'mute_retrieved': // 取消静音
           currentLine.mute = callInfo.mute
           break
-        case PhoneEnum.CallStatus.CLEARED: // 挂断事件
+        case 'cleared': // 挂断事件
           currentLine.end = callInfo.end
           currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
           break
-        case PhoneEnum.CallStatus.GETUSERMEDIAFAILED: // 获取用户媒体失败
-          break
       }
     }
+    // callInfo.isAnswered = false
+    // callInfo.callTime = new Date().getTime()
+    // callInfo.targetLine = true
+    // callInfo.callStream = null
+    // callInfo.hold = false
+    // callInfo.callType = 'PhoneEnum.CallType.PHONE'
+    // // 默认置为呼出
+    // callInfo.direction = 0
+    // currentLine = callInfo
+
+    // this.phoneLines.push(currentLine)
+    // currentLine.callStatus = callInfo.callStatus
+    switch (callInfo.eventType) {
+      case 'seized': // 摘机事件
+        break
+      case 'PhoneEnum.CallStatus.ADDSTREAM':
+        break
+      case 'originated': // 拨号事件
+        // 主叫
+        currentLine.direction = 0
+
+        callInfo.event = 'OutGoing'
+        this.onLineMessage(callInfo)
+
+        break
+      case 'ringing': // 振铃事件
+
+        callInfo.event = 'RingBack'
+        this.onLineMessage(callInfo)
+
+        break
+      case 'alerting': // 来电振铃事件
+        if (that.phoneLines.filter(x => x.callStatus !== 'cleared').length > 1) {
+          that.phoneClient.hangUpWhenHasCurrentLine({ callId: callInfo.callId })
+          return false
+        }
+        callInfo.event = 'InComing'
+        this.onLineMessage(callInfo)
+        // 被叫
+        currentLine.direction = 1
+        break
+      case 'established': // 接通事件
+        currentLine.isAnswered = true
+        currentLine.begin = callInfo.begin
+
+        callInfo.event = 'Answer'
+        this.onLineMessage(callInfo)
+
+        break
+      case 'held': // 保持事件
+        currentLine.hold = callInfo.held
+        break
+      case 'held_retrieved': // 取消保持事件
+        currentLine.hold = callInfo.held
+        break
+      case 'mute': // 静音
+        currentLine.mute = callInfo.mute
+        break
+      case 'mute_retrieved': // 取消静音
+        currentLine.mute = callInfo.mute
+        break
+      case 'cleared': // 挂断事件
+        currentLine.end = callInfo.end
+        currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
+        currentLine.callStatus = 'cleared'
+        callInfo.event = 'HangUp'
+        this.onLineMessage(callInfo)
+        if (currentLine.duration > 0) {
+          callInfo.event = 'CallRecord'
+          this.onLineMessage(callInfo)
+        }
+
+        break
+      case 'PhoneEnum.CallStatus.GETUSERMEDIAFAILED': // 获取用户媒体失败
+        break
+    }
+    // else {
+    //   if (callInfo.eventType == 'cleared') {
+    //     currentLine.end = callInfo.end
+    //     currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
+
+    //     callInfo.event = 'HangUp'
+    //     this.onLineMessage(callInfo)
+    //   }
+    // }
   }
 
   initAndConnect() {
@@ -203,6 +284,7 @@ class MyWs {
         if (data.phone.ack === 'success') {
           data.event = '电话初始化成功'
           that.appendLog(data.event, data)
+          that.setListener()
           resolve()
         } else {
           data.event = '电话初始化失败'
@@ -285,10 +367,11 @@ class MyWs {
   message(f) {
     // this.webSokets.onmessage = (e) => {
     //   console.log('JSON.parse(e.data)--', JSON.parse(e.data))
-    //   f(JSON.parse(e.data))
+    //  f(JSON.parse(e.data))
     // }
+    this.onLineMessage = f
+    console.log('888', this.onLineMessage)
   }
-
   send(data) {
     // this.webSokets.send(JSON.stringify(data))
   }
@@ -328,13 +411,19 @@ class MyWs {
       return
     }
     const currentLine = this.phoneLines.find(x => x.callStatus !== 'cleared')
+    console.log('ding phoneLines: ', this.phoneLines)
     console.log('ding currentLine: ', currentLine)
     console.log('ding ding: ', callNumber)
     if (!currentLine) {
-      console.log('ding ding: ', this.phoneClient)
+      this.callNumber = callNumber
+      console.log()
+      console.log('ding1: ', this.phoneClient)
       this.phoneClient.makeCall({ dnis: callNumber, extraHeaders: ['X-UUI:123456789'] })
     } else if (currentLine && callNumber != currentLine.remote) {
-      this.phoneClient.consult({ dnis: callNumber })
+      // this.callNumber = callNumber
+      // console.log('ding2: ', this.callNumber)
+      // this.phoneClient.consult({ dnis: callNumber })
+      alert('当前正在通话')
     } else {
       alert('该号码当前正在通话')
     }
@@ -369,9 +458,13 @@ class MyWs {
    * @param callNumber 要挂断的电话号码
    */
   OnHungUp(callNumber) {
-    const currentLine = this.getTargetLine(callNumber)
+    const currentLine = this.getTargetLine(this.callNumber)
+    console.log(99999988, this.callNumber)
+    console.log(9999999999, currentLine)
+    console.log('999', this.phoneLines)
     if (currentLine) {
       this.phoneClient.hangUp({ callId: currentLine.callId })
+      currentLine.callStatus = 'cleared'
     }
   }
   // 获取通话状态
