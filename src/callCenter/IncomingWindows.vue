@@ -541,7 +541,6 @@ export default {
           } else {
             this.modelData = {}
           }
-
           if (this.notify) {
             this.notify.close()
           }
