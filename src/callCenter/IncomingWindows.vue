@@ -567,11 +567,12 @@ export default {
         // 来电呼入
         case 'InComing': {
           this.startTimePiece(false)
-          localStorage.setItem('callPhone', data.number)
+          // localStorage.setItem('callPhone', data.number)
+          localStorage.setItem('callPhone', data.remote)
           this.isAnswer = true
           this.showHang = false
           this.startTimePiece(true)
-          this.getMember(data.number, 6)
+          this.getMember(data.remote, 6)
           const newTime = new Date().getTime()
           localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
           if (this.notify) {
@@ -586,7 +587,8 @@ export default {
           this.startTimePiece(false)
           const newTime = new Date().getTime()
           this.isAnswer = false
-          if (this.notify && data.call_data.type === 1) { // -1设备空闲 0呼出，1呼入
+          // if (this.notify && data.call_data.type === 1) { // -1设备空闲 0呼出，1呼入
+          if (this.notify && data.direction === 'incoming') { // -1设备空闲 0呼出，1呼入
             this.notify.close()
             this.incoming()
           }
