@@ -47,6 +47,10 @@ import {
   crmProductExcelAllExport
 } from '@/api/customermanagement/product'
 import {
+  crmproductSetMealIndex,
+  crmProductSetMealExcelAllExport
+} from '@/api/customermanagement/meal'
+import {
   crmReceivablesIndex,
   crmReceivablesExcelAllExportAPI
 } from '@/api/customermanagement/money'
@@ -227,6 +231,8 @@ export default {
         return crmContractIndex
       } else if (this.crmType === 'product') {
         return crmProductIndex
+      } else if (this.crmType == 'productSetMeal') {
+        return crmproductSetMealIndex
       } else if (this.crmType === 'receivables') {
         return crmReceivablesIndex
       } else if (this.crmType === 'marketing') {
@@ -407,6 +413,13 @@ export default {
         } else {
           this.showDview = false
         }
+      } else if (this.crmType === 'productSetMeal') {
+        if (column.property === 'name') {
+          this.rowID = row.productId
+          this.showDview = true
+        } else {
+          this.showDview = false
+        }
       } else if (this.crmType === 'receivables') {
         if (column.property === 'customerName') {
           this.rowID = row.customerId
@@ -489,7 +502,8 @@ export default {
           business: crmBusinessExcelAllExportAPI,
           contract: crmContractExcelAllExportAPI,
           receivables: crmReceivablesExcelAllExportAPI,
-          product: crmProductExcelAllExport
+          product: crmProductExcelAllExport,
+          productSetMeal: crmProductSetMealExcelAllExport
         }[this.crmType]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })

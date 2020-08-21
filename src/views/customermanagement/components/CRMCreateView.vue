@@ -52,8 +52,29 @@
                     :receivables-id="editId"
                     :info-params="getInfoParams(item)"
                     @value-change="fieldValueChange" />
+
                 </el-form-item>
               </el-form>
+
+              <div v-if="crmType == 'productSetMeal'" class="form-muilt">
+                <div v-for="(bitem, bindex) in formsList" :key="bindex" class="forms-many">
+                  <xh-set-meal
+                    ref="ff"
+                    :item="bitem"
+                    :action="action.type"
+                    :index="bindex"
+                    @value-update="fieldChange"/>
+                  <i
+                    v-if="formsList.length > 1"
+                    class="el-icon-remove"
+                    @click="deleteItem(bitem, bindex)"/>
+                </div>
+                <el-button
+                  style="margin-left:10px;"
+                  type="text"
+                  @click="addItem">+添加年级</el-button>
+              </div>
+
             </div>
           </flexbox>
         </create-sections>
@@ -119,6 +140,7 @@ import { crmProductSave } from '@/api/customermanagement/product'
 import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
 import { crmReturnVisitSaveAPI } from '@/api/customermanagement/visit'
+import { crmproductSetMealCalPrice, crmProductSetMealSave } from '@/api/customermanagement/meal'
 
 import {
   regexIsCRMNumber,
@@ -139,6 +161,8 @@ import {
   XhTextarea,
   XhSelect,
   XhMultipleSelect,
+  XhTerm,
+  XhSetMeal,
   XhDate,
   XhDateTime,
   XhUserCell,
@@ -164,6 +188,8 @@ export default {
     XhTextarea,
     XhSelect,
     XhMultipleSelect,
+    XhTerm,
+    XhSetMeal,
     XhDate,
     XhDateTime,
     XhUserCell,
@@ -181,6 +207,10 @@ export default {
   filters: {
     /** 根据type 找到组件 */
     typeToComponentName(formType) {
+      if (formType == 'termTime') {
+        console.log('xxx')
+        return 'XhTerm'
+      }
       if (
         formType == 'text' ||
         formType == 'number' ||
@@ -195,6 +225,7 @@ export default {
         'select',
         'business_status',
         'grades',
+        'coaching_methods',
         'follow_up_plan',
         'sign_up',
         'communication_mode'
@@ -282,7 +313,10 @@ export default {
       imageData: {
         mainFile: [],
         detailFile: []
-      }
+      },
+
+      formsList: [{}],
+      productSetMealPrice: 0
     }
   },
   computed: {
@@ -318,7 +352,7 @@ export default {
     },
     // 图片操作
     showImageHandle() {
-      return this.crmType === 'product'
+      return false
     }
   },
   watch: {
@@ -346,6 +380,11 @@ export default {
     // 获取title展示名称
     this.title = this.getTitle()
     this.getField()
+    if (this.action.type == 'update') {
+      if (this.crmType == 'productSetMeal') {
+        this.formsList = this.action.editDetail.setting
+      }
+    }
   },
   mounted() {
     document.body.appendChild(this.$el)
@@ -372,6 +411,34 @@ export default {
       }
     },
 
+    vv() {
+      let isPass = true
+      const collectionData = []
+      this.$refs.ff.forEach((item, index) => {
+        const valid = item.parentValid()
+        if (!valid) {
+          isPass = false
+        } else {
+          collectionData.push(item.getForm())
+        }
+      })
+
+      return { isPass, collectionData }
+    },
+
+    addItem() {
+      this.formsList.push({})
+    },
+
+    /**
+     * 删除事项操作
+     */
+    deleteItem(item, index) {
+      if (this.formsList.length > 1) {
+        this.formsList.splice(index, 1)
+      }
+    },
+
     deleteImg(type, data) {
       if (type === 'mainFile') {
         this.action.editDetail.mainFileList = data
@@ -392,6 +459,7 @@ export default {
 
     // 字段的值更新
     fieldValueChange(data) {
+      console.log(data, '-----')
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
       // 商机下处理商机状态
@@ -651,6 +719,36 @@ export default {
             }
           }
         }
+      } else if (this.crmType == 'productSetMeal') {
+        if (item.data.formType === 'coaching_methods') {
+          console.log(item, '123', this.crmForm.crmFields)
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key == 'grade_id' && element.value && item.value) {
+              const params = {
+                gradeId: element.value,
+                coachType: item.value
+              }
+              this.formsList = [{}]
+              this.productSetMealPrice(params)
+            }
+          }
+        } else if (item.data.formType === 'grades') {
+          if (item.data.formType === 'grades') {
+            for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+              const element = this.crmForm.crmFields[index]
+              if (element.key == 'coach_type' && element.value && item.value) {
+                const params = {
+                  gradeId: item.value,
+                  coachType: element.value
+                }
+                console.log(this, 'this789')
+                this.formsList = [{}]
+                this.productSetMealPrices(params)
+              }
+            }
+          }
+        }
       }
 
       // 无事件的处理 后期可换成input实现
@@ -667,6 +765,49 @@ export default {
       ) {
         this.$refs.crmForm.validateField('crmFields.' + data.index + '.value')
       }
+    },
+
+    // 套餐字段更新
+    fieldChange(data) {
+      if (data.type == 'purchaseFrequency') {
+        const list = this.getMealData()
+        let sum = 0
+        for (let index = 0; index < list.length; index++) {
+          const element = list[index]
+          sum += Number(element.purchaseFrequency)
+        }
+        // 课次 X 购买价格
+        for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+          const element = this.crmForm.crmFields[index]
+          if (element.key == 'price') {
+            element.value = this.productSetMealPrice * sum
+            element.data.value = this.productSetMealPrice * sum
+          }
+        }
+      }
+    },
+
+    getMealData() {
+      const collectData = []
+      this.$refs.ff.forEach((item, index) => {
+        collectData.push(item.getForm())
+      })
+      return collectData
+    },
+
+    // 课程套餐购买价格计算
+    productSetMealPrices(params) {
+      crmproductSetMealCalPrice(params).then(res => {
+        this.productSetMealPrice = res.data.price
+        for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+          const element = this.crmForm.crmFields[index]
+          if (element.key == 'price') {
+            element.value = this.productSetMealPrice
+            element.data.value = this.productSetMealPrice
+          }
+          console.log(element, '456')
+        }
+      }).catch(() => {})
     },
     // 获取自定义字段
     getField() {
@@ -748,10 +889,40 @@ export default {
 
     // 根据自定义字段获取自定义字段规则
     getcrmRulesAndModel(list) {
+      if (this.crmType == 'productSetMeal') {
+        list.push({
+          authLevel: 3,
+          defaultValue: [],
+          fieldName: 'termTime',
+          fieldType: 1,
+          formType: 'termTime',
+          inputTips: '',
+          isNull: 0,
+          isUnique: 0,
+          label: 21,
+          name: '购买周期',
+          options: '',
+          setting: Array(0),
+          type: 1,
+          value: []
+        })
+      }
       let showStyleIndex = -1
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
+        console.log(item, 'nkl')
         showStyleIndex += 1
+        if (this.crmType == 'productSetMeal') {
+          if (item.fieldName == 'status') {
+            item.setting = [
+              { value: 1, name: '上架' },
+              { value: 0, name: '下架' }
+            ]
+          }
+          if (this.action.type == 'update' && item.fieldName == 'termTime') {
+            item.value = [this.action.editDetail.startPurchaseCycle, this.action.editDetail.endPurchaseCycle]
+          }
+        }
 
         /**
          * 规则数据
@@ -836,6 +1007,47 @@ export default {
                 .catch(() => {})
             }
           }
+        } else if (item.formType == 'termTime') {
+          var params = {}
+          params['value'] = item.value
+          params['key'] = item.fieldName
+          params['data'] = item
+          params['disabled'] = false // 是否可交互
+          params['showblock'] = false // 展示整行效果
+          if (index % 2 == 0) {
+            showStyleIndex = -1
+          }
+
+          // 相关添加 并且商机存在 获取产品
+          // if (this.action.type == 'relative') {
+          //   const businessData = this.action.data.business
+          //   if (businessData) {
+          //     crmBusinessProduct({
+          //       businessId: businessData.businessId,
+          //       pageType: 0
+          //     })
+          //       .then(res => {
+          //         params['value'] = {
+          //           product: res.data.list,
+          //           totalPrice: res.data.money,
+          //           discountRate: res.data.discountRate
+          //         }
+
+          //         // 金额赋值 金额必须在产品前面
+          //         for (
+          //           let moneyIndex = 0;
+          //           moneyIndex < this.crmForm.crmFields.length;
+          //           moneyIndex++
+          //         ) {
+          //           const moneyElement = this.crmForm.crmFields[moneyIndex]
+          //           if (moneyElement.key === 'money') {
+          //             moneyElement['value'] = res.data.money
+          //           }
+          //         }
+          //       })
+          //       .catch(() => {})
+          //   }
+          // }
         } else if (item.formType == 'map_address') {
           // 关联产品信息比较多 用字典接收
           var params = {}
@@ -916,9 +1128,9 @@ export default {
           // 如果是LEADS
           if (this.action.type === 'update') {
             params.disabled = [
-              'dept_id',
-              'owner_user_id',
-              'channel_id'
+              // 'dept_id',
+              'owner_user_id'
+              // 'channel_id'
             ].includes(item.fieldName)
           } else {
             params.disabled = [
@@ -1291,7 +1503,14 @@ export default {
       this.loading = true
       this.saveAndCreate = saveAndCreate
       this.$refs.crmForm.validate(valid => {
+        const valMeal = this.crmType == 'productSetMeal' ? this.vv() : '' // 处理课程套餐验证的
+        // valMeal.collectionData
         if (valid) {
+          if (this.crmType == 'productSetMeal') {
+            if (!valMeal.isPass) {
+              return
+            }
+          }
           if (this.showExamine) {
             /** 验证审批数据 */
             if (isDraft) {
@@ -1324,6 +1543,16 @@ export default {
             if (isDraft) {
               params.entity.checkStatus = 5
             }
+            // 增加套餐参数提交
+            if (this.crmType == 'productSetMeal') {
+              params['list'] = valMeal.collectionData
+              if (params.entity.termTime && params.entity.termTime.length) {
+                params.entity['start_purchase_cycle'] = params.entity.termTime[0]
+                params.entity['end_purchase_cycle'] = params.entity.termTime[1]
+                delete params.entity.termTime
+              }
+            }
+            console.log(params, 'params-----')
             this.submiteParams(params)
           }
         } else {
@@ -1351,7 +1580,11 @@ export default {
       var crmRequest = this.getSubmiteRequest()
       if (this.action.type == 'update') {
         const key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType
-        params.entity[key + 'Id'] = this.action.id
+        if (this.crmType == 'productSetMeal') {
+          params.entity['productId'] = this.action.id
+        } else {
+          params.entity[key + 'Id'] = this.action.id
+        }
         params.entity.batchId = this.action.batchId
       }
 
@@ -1422,6 +1655,8 @@ export default {
         return crmBusinessSave
       } else if (this.crmType == 'product') {
         return crmProductSave
+      } else if (this.crmType == 'productSetMeal') {
+        return crmProductSetMealSave
       } else if (this.crmType == 'contract') {
         return crmContractSave
       } else if (this.crmType == 'receivables') {
@@ -1565,6 +1800,8 @@ export default {
         return this.action.type == 'update' ? '编辑商机' : '新建商机'
       } else if (this.crmType == 'product') {
         return this.action.type == 'update' ? '编辑产品' : '新建产品'
+      } else if (this.crmType == 'productSetMeal') {
+        return this.action.type == 'update' ? '编辑课程套餐' : '新建课程套餐'
       } else if (this.crmType == 'contract') {
         return this.action.type == 'update' ? '编辑合同' : '新建合同'
       } else if (this.crmType == 'receivables') {
@@ -1705,4 +1942,24 @@ export default {
   border-radius: 8px;
   transform: scale(0.8, 0.8);
 }
+
+  .el-icon-remove {
+    color: #ff6767;
+    cursor: pointer;
+    margin-left: 2px;
+    display: none;
+  }
+
+  .forms-many {
+    position: relative;
+  }
+
+  .forms-many:hover {
+    .el-icon-remove {
+      position: absolute;
+      left: 48%;
+      top: 46%;
+      display: inline;
+    }
+  }
 </style>

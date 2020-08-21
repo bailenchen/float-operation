@@ -79,6 +79,14 @@ export function QueryAdminGrade(data) {
   })
 }
 
+// 查询辅导方式下拉列表
+export function QueryCoachingMethods(data) {
+  return request({
+    url: 'CrmProduct/selectCoachingMethods',
+    method: 'post'
+  })
+}
+
 // 添加/编辑年级
 export function AddAdminGrade(data) {
   return request({

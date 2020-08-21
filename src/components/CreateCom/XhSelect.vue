@@ -18,7 +18,8 @@ import stringMixin from './stringMixin'
 import {
   QueryAdminGrade,
   QuerySignUpList,
-  QueryCommunicationMode
+  QueryCommunicationMode,
+  QueryCoachingMethods
 } from '@/api/systemManagement/params'
 import {
   crmSettingRecordListAPI
@@ -43,6 +44,12 @@ export default {
           req: QueryAdminGrade,
           labelField: 'gradeName',
           valueField: 'id'
+        },
+        {
+          formType: 'coaching_methods',
+          req: QueryCoachingMethods,
+          labelField: 'name',
+          valueField: 'name'
         },
         {
           formType: 'follow_up_plan',

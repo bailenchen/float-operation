@@ -115,6 +115,7 @@ export default {
         'select',
         'business_status',
         'grades',
+        'coaching_methods',
         'leads_source',
         'single_structure'
       ].includes(formType)) {

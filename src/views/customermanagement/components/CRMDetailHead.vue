@@ -212,6 +212,9 @@ export default {
   computed: {
     ...mapGetters(['crm']),
     crmIcon() {
+      if (this.crmType == 'productSetMeal') {
+        return require(`@/assets/img/crm/product.png`)
+      }
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
     showTimer() {

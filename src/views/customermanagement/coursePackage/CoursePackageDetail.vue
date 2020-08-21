@@ -42,7 +42,7 @@
                 :detail="detailData"
                 :id="id"
                 :crm-type="crmType">
-                <sections
+                <!-- <sections
                   class="b-cells"
                   title="图片信息"
                   content-height="auto">
@@ -71,7 +71,7 @@
                     </div>
                     <div v-if="detailFileList.length == 0 && mainFileList.length == 0" class="no-img">暂无图片</div>
                   </div>
-                </sections>
+                </sections> -->
               </c-r-m-base-info>
               <component
                 v-else
@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { crmProductRead } from '@/api/customermanagement/product'
+import { crmProductSetMealRead } from '@/api/customermanagement/meal'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
@@ -152,12 +152,13 @@ export default {
     return {
       // 展示加载loading
       loading: false,
-      crmType: 'product',
+      crmType: 'productSetMeal',
       headDetails: [
-        { title: '年级', value: '' },
+        { title: '课程类型', value: '' },
         { title: '辅导方式', value: '' },
-        { title: '价格（元）', value: '' },
-        { title: '购买截止日期', value: '' }
+        { title: '年级', value: '' },
+        { title: '购买价格（元）', value: '' },
+        { title: '购买周期', value: '' }
       ],
       tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
@@ -198,17 +199,18 @@ export default {
     getDetial() {
       if (this.loading) return
       this.loading = true
-      crmProductRead({
+      crmProductSetMealRead({
         productId: this.id
       })
         .then(res => {
           this.loading = false
           this.detailData = res.data
 
-          this.headDetails[0].value = res.data.categoryName
-          this.headDetails[1].value = res.data.单位
-          this.headDetails[2].value = separator(res.data.price || 0)
-          this.headDetails[3].value = res.data.num
+          this.headDetails[0].value = res.data.courseType
+          this.headDetails[1].value = res.data.coachType
+          this.headDetails[2].value = res.data.gradeName
+          this.headDetails[3].value = separator(res.data.price || 0)
+          this.headDetails[4].value = res.data.startPurchaseCycle + '-' + res.data.endPurchaseCycle
         })
         .catch(() => {
           this.loading = false

@@ -53,7 +53,7 @@ export default [
         icon: 'customer'
       }
     }]
-  },
+  }
   {
     ...layout({
       // permissions: ['crm', 'contacts']

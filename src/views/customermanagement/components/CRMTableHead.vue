@@ -168,6 +168,11 @@ import {
   crmProductDeleteAPI
 } from '@/api/customermanagement/product'
 import {
+  crmProductSetMealStatus,
+  crmProductSetMealExcelExport,
+  crmProductSetMealDeleteAPI
+} from '@/api/customermanagement/meal'
+import {
   crmMarketingIsEnableAPI,
   crmMarketingDeleteAPI
 } from '@/api/customermanagement/marketing'
@@ -407,7 +412,8 @@ export default {
             business: crmBusinessExcelExportAPI,
             contract: crmContractExcelExportAPI,
             receivables: crmReceivablesExcelExportAPI,
-            product: crmProductExcelExport
+            product: crmProductExcelExport,
+            productSetMeal: crmProductSetMealExcelExport
           }[this.crmType]
           params.ids = this.selectionList
             .map((item) => {
@@ -559,7 +565,15 @@ export default {
           return item.productId
         })
         this.loading = true
-        crmProductStatus({
+        var req = null
+        console.log(this.crmType, 'leixing')
+        if (this.crmType == 'product') {
+          req = crmProductStatus
+        } else if (this.crmType == 'productSetMeal') {
+          req = crmProductSetMealStatus
+        }
+
+        req({
           ids: productId.join(','),
           status: type === 'start' ? '1' : '0'
         })
@@ -601,9 +615,17 @@ export default {
         } else {
           crmTypes = this.crmType
         }
-        var ids = this.selectionList.map(function(item, index, array) {
-          return item[crmTypes + 'Id']
-        })
+        var ids = null
+        if (this.crmType == 'productSetMeal') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['productId']
+          })
+        } else {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item[crmTypes + 'Id']
+          })
+        }
+
         const request = {
           leads: crmLeadsDelete,
           customer: this.isSeas ? crmCustomerPoolDeleteAPI : crmCustomerDelete,
@@ -614,10 +636,18 @@ export default {
           applet: crmWeixinDeleteAPI,
           marketing: crmMarketingDeleteAPI,
           visit: crmReturnVisitDeleteAPI,
-          product: crmProductDeleteAPI
+          product: crmProductDeleteAPI,
+          productSetMeal: crmProductSetMealDeleteAPI
         }[this.crmType]
-        const params = {
-          [crmTypes + 'Ids']: ids.join(',')
+        var params = null
+        if (this.crmType == 'productSetMeal') {
+          params = {
+            productIds: ids.join(',')
+          }
+        } else {
+          params = {
+            [crmTypes + 'Ids']: ids.join(',')
+          }
         }
         if (this.isSeas) {
           params.poolId = this.poolId
@@ -861,6 +891,13 @@ export default {
           'start',
           'disable'
         ])
+      } else if (this.crmType == 'productSetMeal') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'export',
+          'delete',
+          'start',
+          'disable'
+        ])
       } else if (this.crmType == 'marketing') {
         return this.forSelectionHandleItems(handleInfos, [
           'state_start',
@@ -932,6 +969,7 @@ export default {
         // 上架 下架(产品)
         for (let index = 0; index < this.selectionList.length; index++) {
           const element = this.selectionList[index]
+          console.log(element, 'njkiii---')
           if (element.是否上下架 == '下架') {
             return false
           }

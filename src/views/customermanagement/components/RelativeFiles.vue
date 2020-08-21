@@ -92,6 +92,7 @@ import { crmProductFileListAPI } from '@/api/customermanagement/product'
 import { crmReceivablesFileListAPI } from '@/api/customermanagement/money'
 import { crmReturnVisitFileAPI } from '@/api/customermanagement/visit'
 import { crmInvoiceFileListAPI } from '@/api/customermanagement/invoice'
+import { crmProductSetMealFileListAPI } from '@/api/customermanagement/meal'
 
 import { fileSize, canPreviewFile, wkPreviewFile, downloadFileWithBuffer } from '@/utils'
 import { debounce } from 'throttle-debounce'
@@ -174,7 +175,8 @@ export default {
         product: crmProductFileListAPI,
         receivables: crmReceivablesFileListAPI,
         visit: crmReturnVisitFileAPI,
-        invoice: crmInvoiceFileListAPI
+        invoice: crmInvoiceFileListAPI,
+        productSetMeal: crmProductSetMealFileListAPI
       }[this.crmType]
       const params = {}
       params[`${this.crmType}Id`] = this.id
