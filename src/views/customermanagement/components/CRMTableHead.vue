@@ -117,6 +117,18 @@
       :visible.sync="changeDeptShow"
       :selection-list="selectionList"
       @handle="handleCallBack" />
+
+    <online-recharge
+      :visible.sync="isShowOnline"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
+
+    <offline-with-draw
+      :visible.sync="isOfflineWithDraw"
+      :money-type="moneyType"
+      :selection-list="selectionList"
+      @handle="handleCallBack"
+      @reset-type="moneyType = ''" />
   </div>
 </template>
 
@@ -195,6 +207,8 @@ import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状�
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 转移到其他公海
 import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中心
+import OnlineRecharge from './selectionHandle/OnlineRecharge' // 在线充值
+import OfflineWithDraw from './selectionHandle/OfflineWithDraw' // 线下充值和提现
 import { Loading } from 'element-ui'
 
 export default {
@@ -212,7 +226,9 @@ export default {
     PutPoolHandle,
     AllocClassTeacher,
     ChangePoolHandle,
-    ChangeDeptHandle
+    ChangeDeptHandle,
+    OnlineRecharge,
+    OfflineWithDraw
   },
   props: {
     title: {
@@ -263,7 +279,10 @@ export default {
       dealStatusShow: false, // 成交状态修改框
       putPoolShow: false, // 客户放入公海
       changePoolShow: false, // 变更公海
-      changeDeptShow: false // 变更中心
+      changeDeptShow: false, // 变更中心
+      isShowOnline: false, // 在线充值
+      isOfflineWithDraw: false, // 线下充值和提现
+      moneyType: ''
     }
   },
   computed: {
@@ -515,6 +534,14 @@ export default {
         // 变更中心
         console.log('change dept 变更中心')
         this.changeDeptShow = true
+      } else if (type == 'online_recharge') {
+        this.isShowOnline = true
+      } else if (type == 'offline_recharge') {
+        this.moneyType = 'offline'
+        this.isOfflineWithDraw = true
+      } else if (type == 'withdraw') {
+        this.moneyType = 'withdraw'
+        this.isOfflineWithDraw = true
       }
     },
     confirmHandle(type) {
@@ -808,6 +835,21 @@ export default {
           name: '变更中心',
           type: 'change_dept',
           icon: 'transfer'
+        },
+        online_recharge: {
+          name: '在线充值',
+          type: 'online_recharge',
+          icon: 'shelves'
+        },
+        offline_recharge: {
+          name: '线下充值',
+          type: 'offline_recharge',
+          icon: 'sold-out'
+        },
+        withdraw: {
+          name: '提现',
+          type: 'withdraw',
+          icon: 'activation'
         }
       }
       if (this.crmType == 'leads') {
@@ -835,16 +877,22 @@ export default {
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
-            'assignHeadTeacher',
-            'transfer',
-            'put_seas',
-            // 'deal_status',
+            'online_recharge',
+            'offline_recharge',
+            'withdraw',
             'export',
-            'delete',
-            'lock',
-            'unlock'
-            // 'add_user',
-            // 'delete_user'
+            'delete'
+
+            // 'assignHeadTeacher',
+            // 'transfer',
+            // 'put_seas',
+            // // 'deal_status',
+            // 'export',
+            // 'delete',
+            // 'lock',
+            // 'unlock'
+            // // 'add_user',
+            // // 'delete_user'
           ])
         }
       } else if (this.crmType == 'contacts') {
@@ -985,6 +1033,12 @@ export default {
         return this.crm[this.crmType].updateStatus
       } else if (type === 'assignHeadTeacher') {
         return this.crm[this.crmType].assignHeadTeacher
+      } else if (type == 'online_recharge') {
+        return true
+      } else if (type == 'offline_recharge') {
+        return true
+      } else if (type == 'withdraw') {
+        return true
       }
 
       return true
