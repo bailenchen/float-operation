@@ -729,8 +729,7 @@ export default {
                 gradeId: element.value,
                 coachType: item.value
               }
-              this.formsList = [{}]
-              this.productSetMealPrice(params)
+              this.productSetMealPrices(params)
             }
           }
         } else if (item.data.formType === 'grades') {
@@ -743,7 +742,6 @@ export default {
                   coachType: element.value
                 }
                 console.log(this, 'this789')
-                this.formsList = [{}]
                 this.productSetMealPrices(params)
               }
             }
@@ -798,16 +796,46 @@ export default {
     // 课程套餐购买价格计算
     productSetMealPrices(params) {
       crmproductSetMealCalPrice(params).then(res => {
-        this.productSetMealPrice = res.data.price
-        for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-          const element = this.crmForm.crmFields[index]
-          if (element.key == 'price') {
-            element.value = this.productSetMealPrice
-            element.data.value = this.productSetMealPrice
+        if (res.data) {
+          this.productSetMealPrice = res.data.price
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key == 'price') {
+              const mlist = this.getMealData()
+              let times = 0
+              mlist.forEach(item => {
+                if (item.purchaseFrequency) {
+                  times += Number(item.purchaseFrequency)
+                }
+              })
+              if (times) {
+                element.value = this.productSetMealPrice * times
+                element.data.value = this.productSetMealPrice * times
+              } else {
+                element.value = this.productSetMealPrice
+                element.data.value = this.productSetMealPrice
+              }
+            }
+            console.log(element, '456')
           }
-          console.log(element, '456')
+        } else {
+          this.resetPurchasePrice()
         }
-      }).catch(() => {})
+      }).catch(() => {
+        this.resetPurchasePrice()
+      })
+    },
+
+    // 没有获取到单价时重置购买价格
+    resetPurchasePrice() {
+      for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+        const element = this.crmForm.crmFields[index]
+        if (element.key == 'price') {
+          element.value = ''
+          element.data.value = ''
+          this.productSetMealPrice = 0
+        }
+      }
     },
     // 获取自定义字段
     getField() {
