@@ -111,7 +111,7 @@ import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系�
 import CRMEditBaseInfo from '../../components/CRMEditBaseInfo' // 基本信息
 import RelativeContacts from '../../components/RelativeContacts' // 相关联系人
 import RelativeBusiness from '../../components/RelativeBusiness' // 相关商机
-import RelativeContract from '../../components/RelativeContract' // 相关合同
+import RelativeTradeFlow from '../../components/RelativeTradeFlow' // 交易流水
 import RelativeReturnMoney from '../../components/RelativeReturnMoney' // 相关回款
 import RelativeFiles from '../../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../../components/RelativeHandle' // 相关操作
@@ -134,7 +134,7 @@ export default {
     CRMEditBaseInfo,
     RelativeContacts,
     RelativeBusiness,
-    RelativeContract,
+    RelativeTradeFlow,
     RelativeReturnMoney,
     RelativeFiles,
     RelativeHandle,
@@ -245,7 +245,7 @@ export default {
       // }
 
       if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
+        tempsTabs.push({ label: this.getTabName('交易流水', this.tabsNumber.contractCount), name: 'RelativeTradeFlow' })
       }
       // if (this.crm.receivables && this.crm.receivables.index) {
       //   tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })

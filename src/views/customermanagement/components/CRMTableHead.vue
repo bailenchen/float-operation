@@ -117,6 +117,18 @@
       :visible.sync="changeDeptShow"
       :selection-list="selectionList"
       @handle="handleCallBack" />
+
+    <online-recharge
+      :visible.sync="isShowOnline"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
+
+    <offline-with-draw
+      :visible.sync="isOfflineWithDraw"
+      :money-type="moneyType"
+      :selection-list="selectionList"
+      @handle="handleCallBack"
+      @reset-type="moneyType = ''" />
   </div>
 </template>
 
@@ -168,6 +180,11 @@ import {
   crmProductDeleteAPI
 } from '@/api/customermanagement/product'
 import {
+  crmProductSetMealStatus,
+  crmProductSetMealExcelExport,
+  crmProductSetMealDeleteAPI
+} from '@/api/customermanagement/meal'
+import {
   crmMarketingIsEnableAPI,
   crmMarketingDeleteAPI
 } from '@/api/customermanagement/marketing'
@@ -190,6 +207,8 @@ import DealStatusHandle from './selectionHandle/DealStatusHandle' // 客户状�
 import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 转移到其他公海
 import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中心
+import OnlineRecharge from './selectionHandle/OnlineRecharge' // 在线充值
+import OfflineWithDraw from './selectionHandle/OfflineWithDraw' // 线下充值和提现
 import { Loading } from 'element-ui'
 
 export default {
@@ -207,7 +226,9 @@ export default {
     PutPoolHandle,
     AllocClassTeacher,
     ChangePoolHandle,
-    ChangeDeptHandle
+    ChangeDeptHandle,
+    OnlineRecharge,
+    OfflineWithDraw
   },
   props: {
     title: {
@@ -258,7 +279,10 @@ export default {
       dealStatusShow: false, // 成交状态修改框
       putPoolShow: false, // 客户放入公海
       changePoolShow: false, // 变更公海
-      changeDeptShow: false // 变更中心
+      changeDeptShow: false, // 变更中心
+      isShowOnline: false, // 在线充值
+      isOfflineWithDraw: false, // 线下充值和提现
+      moneyType: ''
     }
   },
   computed: {
@@ -407,7 +431,8 @@ export default {
             business: crmBusinessExcelExportAPI,
             contract: crmContractExcelExportAPI,
             receivables: crmReceivablesExcelExportAPI,
-            product: crmProductExcelExport
+            product: crmProductExcelExport,
+            productSetMeal: crmProductSetMealExcelExport
           }[this.crmType]
           params.ids = this.selectionList
             .map((item) => {
@@ -509,6 +534,14 @@ export default {
         // 变更中心
         console.log('change dept 变更中心')
         this.changeDeptShow = true
+      } else if (type == 'online_recharge') {
+        this.isShowOnline = true
+      } else if (type == 'offline_recharge') {
+        this.moneyType = 'offline'
+        this.isOfflineWithDraw = true
+      } else if (type == 'withdraw') {
+        this.moneyType = 'withdraw'
+        this.isOfflineWithDraw = true
       }
     },
     confirmHandle(type) {
@@ -559,7 +592,15 @@ export default {
           return item.productId
         })
         this.loading = true
-        crmProductStatus({
+        var req = null
+        console.log(this.crmType, 'leixing')
+        if (this.crmType == 'product') {
+          req = crmProductStatus
+        } else if (this.crmType == 'productSetMeal') {
+          req = crmProductSetMealStatus
+        }
+
+        req({
           ids: productId.join(','),
           status: type === 'start' ? '1' : '0'
         })
@@ -601,9 +642,17 @@ export default {
         } else {
           crmTypes = this.crmType
         }
-        var ids = this.selectionList.map(function(item, index, array) {
-          return item[crmTypes + 'Id']
-        })
+        var ids = null
+        if (this.crmType == 'productSetMeal') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['productId']
+          })
+        } else {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item[crmTypes + 'Id']
+          })
+        }
+
         const request = {
           leads: crmLeadsDelete,
           customer: this.isSeas ? crmCustomerPoolDeleteAPI : crmCustomerDelete,
@@ -614,10 +663,18 @@ export default {
           applet: crmWeixinDeleteAPI,
           marketing: crmMarketingDeleteAPI,
           visit: crmReturnVisitDeleteAPI,
-          product: crmProductDeleteAPI
+          product: crmProductDeleteAPI,
+          productSetMeal: crmProductSetMealDeleteAPI
         }[this.crmType]
-        const params = {
-          [crmTypes + 'Ids']: ids.join(',')
+        var params = null
+        if (this.crmType == 'productSetMeal') {
+          params = {
+            productIds: ids.join(',')
+          }
+        } else {
+          params = {
+            [crmTypes + 'Ids']: ids.join(',')
+          }
         }
         if (this.isSeas) {
           params.poolId = this.poolId
@@ -778,6 +835,21 @@ export default {
           name: '变更中心',
           type: 'change_dept',
           icon: 'transfer'
+        },
+        online_recharge: {
+          name: '在线充值',
+          type: 'online_recharge',
+          icon: 'shelves'
+        },
+        offline_recharge: {
+          name: '线下充值',
+          type: 'offline_recharge',
+          icon: 'sold-out'
+        },
+        withdraw: {
+          name: '提现',
+          type: 'withdraw',
+          icon: 'activation'
         }
       }
       if (this.crmType == 'leads') {
@@ -805,16 +877,22 @@ export default {
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
-            'assignHeadTeacher',
-            'transfer',
-            'put_seas',
-            // 'deal_status',
+            'online_recharge',
+            'offline_recharge',
+            'withdraw',
             'export',
-            'delete',
-            'lock',
-            'unlock'
-            // 'add_user',
-            // 'delete_user'
+            'delete'
+
+            // 'assignHeadTeacher',
+            // 'transfer',
+            // 'put_seas',
+            // // 'deal_status',
+            // 'export',
+            // 'delete',
+            // 'lock',
+            // 'unlock'
+            // // 'add_user',
+            // // 'delete_user'
           ])
         }
       } else if (this.crmType == 'contacts') {
@@ -858,6 +936,13 @@ export default {
       } else if (this.crmType == 'product') {
         return this.forSelectionHandleItems(handleInfos, [
           'export',
+          'start',
+          'disable'
+        ])
+      } else if (this.crmType == 'productSetMeal') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'export',
+          'delete',
           'start',
           'disable'
         ])
@@ -932,6 +1017,7 @@ export default {
         // 上架 下架(产品)
         for (let index = 0; index < this.selectionList.length; index++) {
           const element = this.selectionList[index]
+          console.log(element, 'njkiii---')
           if (element.是否上下架 == '下架') {
             return false
           }
@@ -947,6 +1033,12 @@ export default {
         return this.crm[this.crmType].updateStatus
       } else if (type === 'assignHeadTeacher') {
         return this.crm[this.crmType].assignHeadTeacher
+      } else if (type == 'online_recharge') {
+        return true
+      } else if (type == 'offline_recharge') {
+        return true
+      } else if (type == 'withdraw') {
+        return true
       }
 
       return true

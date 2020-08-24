@@ -1,4 +1,14 @@
+/*
+ * @Author: your name
+ * @Date: 2020-08-20 10:07:15
+ * @LastEditTime: 2020-08-20 17:02:25
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dz-72crm-qiwen\src\components\CreateCom\index.js
+ */
 export { default as XhInput } from './XhInput'
+export { default as XhTerm } from './XhTerm'
+export { default as XhSetMeal } from './XhSetMeal'
 export { default as XhTextarea } from './XhTextarea'
 export { default as XhSelect } from './XhSelect'
 export { default as XhMultipleSelect } from './XhMultipleSelect'

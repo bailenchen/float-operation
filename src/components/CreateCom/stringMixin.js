@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-08-20 10:07:15
+ * @LastEditTime: 2020-08-20 15:10:44
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \dz-72crm-qiwen\src\components\CreateCom\stringMixin.js
+ */
 /** 自定义组件 共同逻辑 */
 export default {
   data() {
