@@ -141,6 +141,8 @@ import AddFileList from '@/components/quickAdd/AddFileList'
 import AddRelateList from '@/components/quickAdd/AddRelateList'
 import CommonWords from '@/components/common-words'
 
+import { objDeepCopy } from '@/utils'
+
 import { fileSize, getFileTypeIcon, guid } from '@/utils/index'
 
 export default {
@@ -205,6 +207,7 @@ export default {
         { fieldName: 'dealStatus', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'nextTime', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
       ],
+      defField: null,
       form: {}
     }
   },
@@ -301,11 +304,19 @@ export default {
         const findIndex = this.fieldList.findIndex(o => o.fieldName === 'promisedVisitTime')
         if (data.value === '承诺到访') {
           if (findIndex === -1) {
-            this.fieldList.splice(-1, 0, item)
+            this.defField = objDeepCopy(this.fieldList)
+            console.log(this.fieldList, 'mmmm')
+            this.fieldList.length = 4
+            console.log(this.fieldList, 'jjjj', this.defField)
+            // this.fieldList.splice(-1, 0, item)
+            this.fieldList.push(item)
+            console.log(this.fieldList, 'xxx')
           }
         } else {
           if (findIndex !== -1) {
-            this.fieldList.splice(-2, 1)
+            this.fieldList = this.defField
+            console.log(this.fieldList, 'nnnnn', this.defField)
+            // this.fieldList.splice(-2, 1)
           }
         }
       }

@@ -436,7 +436,11 @@ export default {
           }[this.crmType]
           params.ids = this.selectionList
             .map((item) => {
-              return item[`${this.crmType}Id`]
+              if (this.crmType == 'productSetMeal') {
+                return item.productId
+              } else {
+                return item[`${this.crmType}Id`]
+              }
             })
             .join(',')
         }
@@ -877,22 +881,22 @@ export default {
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
-            'online_recharge',
-            'offline_recharge',
-            'withdraw',
-            'export',
-            'delete'
-
-            // 'assignHeadTeacher',
-            // 'transfer',
-            // 'put_seas',
-            // // 'deal_status',
+            // 'online_recharge',
+            // 'offline_recharge',
+            // 'withdraw',
             // 'export',
-            // 'delete',
-            // 'lock',
-            // 'unlock'
-            // // 'add_user',
-            // // 'delete_user'
+            // 'delete'
+
+            'assignHeadTeacher',
+            'transfer',
+            'put_seas',
+            // 'deal_status',
+            'export',
+            'delete',
+            'lock',
+            'unlock'
+            // 'add_user',
+            // 'delete_user'
           ])
         }
       } else if (this.crmType == 'contacts') {
@@ -1033,13 +1037,14 @@ export default {
         return this.crm[this.crmType].updateStatus
       } else if (type === 'assignHeadTeacher') {
         return this.crm[this.crmType].assignHeadTeacher
-      } else if (type == 'online_recharge') {
-        return true
-      } else if (type == 'offline_recharge') {
-        return true
-      } else if (type == 'withdraw') {
-        return true
       }
+      //  else if (type == 'online_recharge') {
+      //   return true
+      // } else if (type == 'offline_recharge') {
+      //   return true
+      // } else if (type == 'withdraw') {
+      //   return true
+      // }
 
       return true
     },

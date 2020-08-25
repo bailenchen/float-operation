@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-20 13:50:29
- * @LastEditTime: 2020-08-21 17:43:06
+ * @LastEditTime: 2020-08-25 16:59:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\api\customermanagement\meal.js
@@ -24,6 +24,15 @@ export function crmproductSetMealIndex(data) {
 export function crmProductSetMealRead(data) {
   return request({
     url: 'CrmProductSetMeal/queryById',
+    method: 'post',
+    data: data
+  })
+}
+
+// 套餐 课程类型下拉
+export function crmProductSetMealClassType(data) {
+  return request({
+    url: 'CrmProductSetMeal/selectClass',
     method: 'post',
     data: data
   })

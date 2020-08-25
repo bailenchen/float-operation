@@ -21,6 +21,7 @@ import {
   QueryCommunicationMode,
   QueryCoachingMethods
 } from '@/api/systemManagement/params'
+import { crmProductSetMealClassType } from '@/api/customermanagement/meal'
 import {
   crmSettingRecordListAPI
 } from '@/api/systemManagement/SystemCustomer'
@@ -48,6 +49,12 @@ export default {
         {
           formType: 'coaching_methods',
           req: QueryCoachingMethods,
+          labelField: 'name',
+          valueField: 'name'
+        },
+        {
+          formType: 'class_type',
+          req: crmProductSetMealClassType,
           labelField: 'name',
           valueField: 'name'
         },
