@@ -787,31 +787,31 @@ export default {
       callloading: false,
       callCreateDialog: false,
       callList: [
-        { field: 'phoneUrl', value: '电话连接url' },
+        { field: 'url', value: '电话连接url' },
         { field: 'username', value: '登录账号' },
         { field: 'password', value: '登录密码' },
-        { field: 'region', value: '域' },
+        { field: 'field', value: '域' },
         { field: 'channel', value: '渠道', type: 'select' },
-        { field: 'phone', value: '硬话机' }
+        { field: 'hardPhone', value: '硬话机' }
       ],
       callOptionsList: {
         channel: {
           field: 'channel',
           list: [
-            { id: 1, name: 'telephone' }
+            { id: 'telephone', name: 'telephone' }
           ]
         }
       },
       callForm: {
-        phoneUrl: '',
+        url: '',
         username: '',
         password: '',
-        region: '',
-        channel: 1,
-        phone: ''
+        field: '',
+        channel: 'telephone',
+        hardPhone: ''
       },
       callRules: {
-        phoneUrl: [
+        url: [
           { required: true, message: '电话连接url不能为空', trigger: ['blur', 'change'] }
         ],
         username: [
@@ -820,13 +820,13 @@ export default {
         password: [
           { required: true, message: '登录密码不能为空', trigger: ['blur', 'change'] }
         ],
-        region: [
+        field: [
           { required: true, message: '域不能为空', trigger: ['blur', 'change'] }
         ],
         channel: [
           { required: true, message: '渠道不能为空', trigger: ['blur', 'change'] }
         ],
-        phone: [
+        hardPhone: [
           { required: true, message: '硬话机不能为空', trigger: ['blur', 'change'] }
         ]
 
@@ -1440,21 +1440,23 @@ export default {
       this.$refs.calldialogRef.validate(valid => {
         if (valid) {
           this.callLoading = true
-          const params = this.callForm
-          var ids = this.selectionList
+          const params = { userIds: '', state: 1, entity: '' }
+          params['entity'] = this.callForm
+          params['userIds'] = this.selectionList
             .map(function(item, index, array) {
               return item.userId
             })
-            .join(',')
-          params.ids = ids
           console.log('save: ', params)
-          usersAdd(params)
+          crmCallAuthorize(params)
             .then(res => {
-              this.$message.success('修改成功')
-              this.callCreateDialog = false
-              this.refreshUserList()
-              this.getSelectUserList()
               this.callLoading = false
+              this.callCreateDialog = false
+              if (res.agent) {
+                this.$message.success(`修改成功，软呼坐席号：${res.agent}`)
+              } else {
+                this.$message.success('修改成功')
+              }
+              this.getUserList()
             })
             .catch(() => {
               this.callLoading = false
