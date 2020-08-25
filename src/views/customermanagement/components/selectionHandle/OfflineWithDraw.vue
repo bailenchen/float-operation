@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { Loading } from 'element-ui'
+// import { Loading } from 'element-ui'
 import { XhUserCell } from '@/components/CreateCom'
 export default {
   name: 'OfflineWithDraw',
@@ -181,9 +181,9 @@ export default {
      * 确定
      */
     handleConfirm() {
-      const loading = Loading.service({
-        target: document.querySelector(`.el-dialog[aria-label="在线充值"]`)
-      })
+      // const loading = Loading.service({
+      //   target: document.querySelector(`.el-dialog[aria-label="在线充值"]`)
+      // })
       this.$refs.form.validate((valid) => {
         alert(valid)
       })

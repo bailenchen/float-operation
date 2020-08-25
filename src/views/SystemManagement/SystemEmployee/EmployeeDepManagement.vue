@@ -468,6 +468,69 @@
       </span>
     </el-dialog>
 
+    <!-- 开启呼叫中心 -->
+    <el-dialog
+      v-loading="callloading"
+      v-if="callCreateDialog"
+      :visible.sync="callCreateDialog"
+      :close-on-click-modal="false"
+      :modal-append-to-body="true"
+      :append-to-body="true"
+      :before-close="callHandleClose"
+      title="开启呼叫中心"
+      width="60%">
+      <el-form
+        v-if="showForm"
+        ref="calldialogRef"
+        :inline="true"
+        :model="callForm"
+        :rules="callRules"
+        class="new-dialog-form"
+        label-width="80px"
+        label-position="top">
+        <template v-for="(item, index) in callList">
+          <el-form-item
+            :label="item.value"
+            :prop="item.field"
+            :key="index">
+            <span slot="label">{{ item.value }}</span>
+            <el-tooltip
+              v-if="item.tips"
+              slot="label"
+              :content="item.tips"
+              effect="dark"
+              placement="top">
+              <i class="wukong wukong-help_tips" />
+            </el-tooltip>
+            <template v-if="item.type == 'select'">
+              <el-select
+                v-model="callForm[item.field]"
+                :multiple="item.multiple || false"
+                placeholder="请选择">
+                <el-option
+                  v-for="optionItem in callOptionsList[item.field].list"
+                  :key="optionItem.id"
+                  :label="optionItem.name"
+                  :value="optionItem.id" />
+              </el-select>
+            </template>
+            <el-input
+              v-else
+              v-model="callForm[item.field]"
+              :maxlength="100"/>
+          </el-form-item>
+        </template>
+      </el-form>
+      <span
+        slot="footer"
+        class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="callDialogSubmit">保 存</el-button>
+        <el-button @click="callCreateDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
+
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
@@ -719,7 +782,55 @@ export default {
         { field: 'parentId', value: '直属上级', type: 'select' },
         { field: 'roleId', value: '角色', type: 'selectCheckout' }
       ],
-      tableList: []
+      tableList: [],
+
+      callloading: false,
+      callCreateDialog: false,
+      callList: [
+        { field: 'url', value: '电话连接url' },
+        { field: 'username', value: '登录账号' },
+        { field: 'password', value: '登录密码' },
+        { field: 'field', value: '域' },
+        { field: 'channel', value: '渠道', type: 'select' },
+        { field: 'hardPhone', value: '硬话机' }
+      ],
+      callOptionsList: {
+        channel: {
+          field: 'channel',
+          list: [
+            { id: 'telephone', name: 'telephone' }
+          ]
+        }
+      },
+      callForm: {
+        url: '',
+        username: '',
+        password: '',
+        field: '',
+        channel: 'telephone',
+        hardPhone: ''
+      },
+      callRules: {
+        url: [
+          { required: true, message: '电话连接url不能为空', trigger: ['blur', 'change'] }
+        ],
+        username: [
+          { required: true, message: '登录账号不能为空', trigger: ['blur', 'change'] }
+        ],
+        password: [
+          { required: true, message: '登录密码不能为空', trigger: ['blur', 'change'] }
+        ],
+        field: [
+          { required: true, message: '域不能为空', trigger: ['blur', 'change'] }
+        ],
+        channel: [
+          { required: true, message: '渠道不能为空', trigger: ['blur', 'change'] }
+        ],
+        hardPhone: [
+          { required: true, message: '硬话机不能为空', trigger: ['blur', 'change'] }
+        ]
+
+      }
     }
   },
   computed: {
@@ -998,6 +1109,10 @@ export default {
     // 新建和编辑
     newHandleClose() {
       this.employeeCreateDialog = false
+    },
+    // 开启呼叫中心
+    callHandleClose() {
+      this.callCreateDialog = false
     },
     // 新建用户
     addEmployee() {
@@ -1320,6 +1435,51 @@ export default {
         }
       })
     },
+    // 用户开启呼叫中心
+    callDialogSubmit() {
+      this.$refs.calldialogRef.validate(valid => {
+        if (valid) {
+          this.callLoading = true
+          const params = { userIds: '', state: 1, entity: '' }
+          params['entity'] = this.callForm
+          params['userIds'] = this.selectionList
+            .map(function(item, index, array) {
+              return item.userId
+            })
+          console.log('save: ', params)
+          crmCallAuthorize(params)
+            .then(res => {
+              this.callLoading = false
+              this.callCreateDialog = false
+              if (res.agent) {
+                this.$message.success(`修改成功，软呼坐席号：${res.agent}`)
+              } else {
+                this.$message.success('修改成功')
+              }
+              this.getUserList()
+            })
+            .catch(() => {
+              this.callLoading = false
+            })
+        } else {
+          // 提示第一个error
+          if (this.$refs.calldialogRef.fields) {
+            for (
+              let index = 0;
+              index < this.$refs.calldialogRef.fields.length;
+              index++
+            ) {
+              const ruleField = this.$refs.calldialogRef.fields[index]
+              if (ruleField.validateState == 'error') {
+                this.$message.error(ruleField.validateMessage)
+                break
+              }
+            }
+          }
+          return false
+        }
+      })
+    },
     // 详情里面点击事件
     handleCommand(command) {
       switch (command) {
@@ -1394,6 +1554,10 @@ export default {
         this.editBtn()
       } else if (type === 'setCall' || type === 'stopCall') {
         var callSet = type === 'setCall' ? '启用呼叫中心' : '禁用呼叫中心'
+        if (type === 'setCall') {
+          this.callCreateDialog = true
+          return
+        }
         this.$confirm('这些员工账号将被' + callSet + ', 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

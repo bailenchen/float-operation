@@ -43,23 +43,27 @@ export default {
     }
   },
   watch: {
-    show(val) {
-      if (val) {
-        this.loading = true
-        crmCallQueryPhoneNumber({
-          model: this.crmType,
-          modelId: this.scope.row[`${this.crmType}Id`]
-        }).then(res => {
-          this.list = res.data
-          this.loading = false
-        }).catch(() => {
-          this.loading = false
-        })
+    show: {
+      handler(val) {
+        if (val) {
+          this.loading = true
+          crmCallQueryPhoneNumber({
+            model: this.crmType,
+            modelId: this.scope.row[`${this.crmType}Id`]
+          }).then(res => {
+            this.list = res.data
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        }
+
         // this.list = [
         //   { name: 'test', modelId: '', model: '', phoneNumber: '18899996666' }
         // ]
         // this.loading = false
-      }
+      },
+      immediate: true
     }
   },
   mounted() {

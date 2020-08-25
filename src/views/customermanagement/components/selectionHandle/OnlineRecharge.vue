@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { Loading } from 'element-ui'
+// import { Loading } from 'element-ui'
 export default {
   name: 'OnlineRecharge',
   props: {
@@ -72,9 +72,9 @@ export default {
      * 确定
      */
     handleConfirm() {
-      const loading = Loading.service({
-        target: document.querySelector(`.el-dialog[aria-label="在线充值"]`)
-      })
+      // const loading = Loading.service({
+      //   target: document.querySelector(`.el-dialog[aria-label="在线充值"]`)
+      // })
       this.$refs.form.validate((valid) => {
         alert(valid)
       })

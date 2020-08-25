@@ -241,8 +241,8 @@ export default {
   computed: {
     ...mapGetters(['CRMConfig']),
     Show() {
-      // return this.$store.state.customer.isCall
-      return true
+      return this.$store.state.customer.isCall
+      // return true
     },
     menuItems() {
       const temp = []
