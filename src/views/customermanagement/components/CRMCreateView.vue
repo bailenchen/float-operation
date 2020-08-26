@@ -383,7 +383,9 @@ export default {
     this.getField()
     if (this.action.type == 'update') {
       if (this.crmType == 'productSetMeal') {
+        this.productSetMealPrice = this.action.editDetail.singleprice
         this.formsList = this.action.editDetail.setting
+        console.log(this.formsList, 'bbb')
       }
     }
   },
@@ -436,7 +438,15 @@ export default {
      */
     deleteItem(item, index) {
       if (this.formsList.length > 1) {
-        this.formsList.splice(index, 1)
+        const willDel = this.getMealData()
+        willDel.splice(index, 1)
+        console.log(willDel)
+        this.formsList = willDel
+        this.$refs.ff.forEach((item, inde) => {
+          item.refreshData(this.formsList[inde])
+        })
+        console.log(this.formsList)
+        // this.formsList.splice(index, 1)
       }
     },
 
@@ -1179,6 +1189,13 @@ export default {
         }
         this.crmForm.crmFields.push(params)
       }
+      for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+        const element = this.crmForm.crmFields[index]
+        if (element.key == 'status') {
+          element.value = 1
+          element.data.value = 1
+        }
+      }
     },
     /**
      * 获取关联项的值 和 关联信息
@@ -1832,7 +1849,7 @@ export default {
       } else if (this.crmType == 'business') {
         return this.action.type == 'update' ? '编辑商机' : '新建商机'
       } else if (this.crmType == 'product') {
-        return this.action.type == 'update' ? '编辑产品' : '新建产品'
+        return this.action.type == 'update' ? '编辑课程单品' : '新建课程单品'
       } else if (this.crmType == 'productSetMeal') {
         return this.action.type == 'update' ? '编辑课程套餐' : '新建课程套餐'
       } else if (this.crmType == 'contract') {

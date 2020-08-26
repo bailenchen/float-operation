@@ -1012,11 +1012,11 @@ export default {
       line-height: 30px;
     }
 
-    &:hover {
-      .form-item__edit{
-        display: inline;
-      }
-    }
+    // &:hover {
+    //   .form-item__edit{
+    //     display: inline;
+    //   }
+    // }
   }
 }
 

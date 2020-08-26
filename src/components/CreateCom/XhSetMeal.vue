@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-20 16:37:40
- * @LastEditTime: 2020-08-21 17:26:34
+ * @LastEditTime: 2020-08-26 18:57:04
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\components\CreateCom\XhSetMeal.vue
@@ -71,6 +71,18 @@ export default {
     }
   },
   data() {
+    const classTimes = (rule, value, callback) => {
+      this.form.purchaseFrequency = value.replace(/[^0-9]/g, '')
+      if (value === '') {
+        callback(new Error('购买课次不能为空'))
+      } else {
+        callback()
+      }
+    }
+    const giveClassTimes = (rule, value, callback) => {
+      this.form.giveFrequency = value.replace(/[^0-9]/g, '')
+      callback()
+    }
     return {
       form: {
         detailsName: '',
@@ -83,7 +95,7 @@ export default {
         { label: '套餐' + (this.index + 1), prop: 'detailsName', showblock: false, type: 'text', placeholder: '请输入套餐' },
         { label: '购买课次', prop: 'purchaseFrequency', showblock: false, type: 'text', placeholder: '请输入购买课次' },
         { label: '赠送课次', prop: 'giveFrequency', showblock: false, type: 'text', placeholder: '请输入赠送课次' },
-        { label: '购买周期', prop: 'term', showblock: false, type: 'date' }
+        { label: '使用周期', prop: 'term', showblock: false, type: 'date' }
       ],
 
       rules: {
@@ -91,7 +103,10 @@ export default {
           { required: true, message: '套餐不能为空', trigger: ['blur', 'change'] }
         ],
         purchaseFrequency: [
-          { required: true, message: '购买课次不能为空', trigger: ['blur', 'change'] }
+          { required: true, validator: classTimes, trigger: ['blur', 'change'] }
+        ],
+        giveFrequency: [
+          { required: false, validator: giveClassTimes, trigger: ['blur', 'change'] }
         ]
       },
 
@@ -104,9 +119,9 @@ export default {
       this.form.purchaseFrequency = this.item.purchaseFrequency
       this.form.giveFrequency = this.item.giveFrequency
       this.form.detailsId = this.item.detailsId
-      this.term = [this.item.startLifeCycle, this.item.endLifeCycle]
-      this.form['start_life_cycle'] = this.item.startLifeCycle
-      this.form['end_life_cycle'] = this.item.endLifeCycle
+      this.term = this.item.startLifeCycle && this.item.endLifeCycle ? [this.item.startLifeCycle, this.item.endLifeCycle] : []
+      this.form['start_life_cycle'] = this.item.startLifeCycle || ''
+      this.form['end_life_cycle'] = this.item.endLifeCycle || ''
     }
   },
   methods: {
@@ -126,6 +141,11 @@ export default {
         }
       })
       return result
+    },
+
+    // 删除时校正数据
+    refreshData(data) {
+      this.form = data
     },
 
     /**

@@ -14,13 +14,14 @@
       <div v-for="(listItem, index) in list" :key="index" class="rule-section">
         <div class="rule-header">
           <span class="rule-header-title">{{ listItem.label | labelName }}</span>
-          <el-switch
+          <!-- <el-switch
             v-model="listItem.status"
             :active-value="1"
             :inactive-value="0"/>
-          <span :class="{'inactive': listItem.status != 1}">{{ listItem.status == 1 ? '已启用自动生成规则': '已停用自动生成规则' }}</span>
+          <span :class="{'inactive': listItem.status != 1}">{{ listItem.status == 1 ? '已启用自动生成规则': '已停用自动生成规则' }}</span> -->
         </div>
-        <template v-if="listItem.status == 1">
+        <!-- <template v-if="listItem.status == 1"> -->
+        <template>
           <!-- <el-checkbox
             v-model="listItem.replace"
             :true-label="1"
