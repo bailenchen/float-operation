@@ -179,7 +179,11 @@ export default {
         productSetMeal: crmProductSetMealFileListAPI
       }[this.crmType]
       const params = {}
-      params[`${this.crmType}Id`] = this.id
+      if (this.crmType == 'productSetMeal') {
+        params.productId = this.id
+      } else {
+        params[`${this.crmType}Id`] = this.id
+      }
       request(params)
         .then(res => {
           this.loading = false

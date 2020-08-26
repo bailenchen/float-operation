@@ -72,7 +72,7 @@
                 <el-button
                   style="margin-left:10px;"
                   type="text"
-                  @click="addItem">+添加年级</el-button>
+                  @click="addItem">+添加套餐</el-button>
               </div>
 
             </div>
@@ -226,6 +226,7 @@ export default {
         'business_status',
         'grades',
         'coaching_methods',
+        'class_type',
         'follow_up_plan',
         'sign_up',
         'communication_mode'
@@ -1705,7 +1706,11 @@ export default {
         } else if (element.data.formType == 'map_address') {
           this.getCustomerAddressParams(params.entity, element)
         } else if (element.data.fieldType == 1) {
-          params.entity[element.key] = this.getRealParams(element) || ''
+          if (element.key == 'status') {
+            params.entity[element.key] = this.getRealParams(element)
+          } else {
+            params.entity[element.key] = this.getRealParams(element) || ''
+          }
         } else {
           element.data.value = this.getRealParams(element)
           params.field.push(element.data)
