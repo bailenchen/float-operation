@@ -1,7 +1,6 @@
 import axios from 'axios'
 // import Lockr from 'lockr'
 import config from '../config'
-
 /**
  * 软乎 cmd
  * 2001：拨打电话
@@ -17,17 +16,17 @@ class MyWs {
     this.requestHeaders = {}
     this.phoneLines = [] // 电话线路集合
     this.phoneClient = window.PhoneClient.getInstance()
-    this.setEnv()
   }
   webSokets
   callinTime
   timer
   callNumber
-
+  data
   /**
    * 配置变量
    */
-  setEnv() {
+  setEnv(data) {
+    this.data = data
     const that = this
     const reqArr = [this._getTokenByLogin(), this._getGatewaySignature()]
     Promise.all(reqArr).then(data => {
@@ -63,12 +62,12 @@ class MyWs {
           }
         }
       }
-      if (that.config.channel === 'webrtc') {
+      if (that.data.channel === 'webrtc') {
         // 软呼
         const envConfig = {
-          socketUrl: that.config.socketUrl,
-          timeout: that.config.timeout,
-          channel: that.config.channel,
+          socketUrl: that.data.socketUrl,
+          timeout: that.data.timeout,
+          channel: that.data.channel,
           account,
           password,
           domain,
@@ -77,13 +76,13 @@ class MyWs {
         that.phoneClient.setEnv(envConfig)
       } else {
         // 硬呼
-        const account = that.config.telephone
+        const account = that.data.telephone
         const envConfig = {
-          socketUrl: that.config.socketUrl,
-          timeout: that.config.timeout,
-          channel: that.config.channel,
+          socketUrl: that.data.socketUrl,
+          timeout: that.data.timeout,
+          channel: that.data.channel,
           account: account,
-          domain: that.config.domain,
+          domain: that.data.domain,
           skillGroupCode
         }
         that.phoneClient.setEnv(envConfig)
@@ -217,6 +216,7 @@ class MyWs {
           return false
         }
         callInfo.event = 'InComing'
+        this.callNumber = callInfo.remote
         this.onLineMessage(callInfo)
         // 被叫
         currentLine.direction = 1
@@ -242,6 +242,18 @@ class MyWs {
         currentLine.mute = callInfo.mute
         break
       case 'cleared': // 挂断事件
+        currentLine.end = callInfo.end
+        currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
+        currentLine.callStatus = 'cleared'
+        callInfo.event = 'HangUp'
+        this.onLineMessage(callInfo)
+        if (currentLine.duration > 0) {
+          callInfo.event = 'CallRecord'
+          this.onLineMessage(callInfo)
+        }
+
+        break
+      case 'refer': // 转接
         currentLine.end = callInfo.end
         currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
         currentLine.callStatus = 'cleared'
@@ -356,7 +368,7 @@ class MyWs {
 
   // hisUse 0 是默认硬呼 1 是软乎
   getHisUse() {
-    return this.config.channel === 'telephone' ? 1 : 0
+    return this.data.channel === 'telephone' ? 1 : 0
   }
 
   close() {
@@ -444,8 +456,10 @@ class MyWs {
    * @param callNumber 被转接的线路号码
    * @param targetNumber 转接的目标号码
    */
-  OnRefer(callNumber, targetNumber) {
-    const activeLine = this.getTargetLine(callNumber)
+  // OnRefer(callNumber, targetNumber) {
+  OnRefer(targetNumber) {
+    // const activeLine = this.getTargetLine(callNumber)
+    const activeLine = this.getTargetLine(this.callNumber)
     if (activeLine) {
       this.phoneClient.refer({
         callId: activeLine.callId,
@@ -501,8 +515,8 @@ class MyWs {
       axios.post(
         url,
         {
-          username: that.config.account,
-          password: that.config.password
+          username: that.data.account,
+          password: that.data.password
         }
       ).then(res => {
         resolve(res.data)
@@ -544,7 +558,7 @@ class MyWs {
       axios.post(
         `${url}?_=${new Date().getTime()}`,
         {
-          hardPhone: that.config.telephone,
+          hardPhone: that.data.telephone,
           deviceId: deviceId,
           loginTime: new Date().getTime()
         },

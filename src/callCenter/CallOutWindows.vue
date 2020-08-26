@@ -1,13 +1,18 @@
 <template>
-  <div
+  <!-- <div
     v-if="isShow"
     id="call"
     @click="showDviews"
     @mouseup="mouseleave1($event)"
+    @mousedown="mousedown1($event)"> -->
+  <div
+    v-if="isShow"
+    id="call"
+    @mouseup="mouseleave1($event)"
     @mousedown="mousedown1($event)">
     <!-- <img :src="closeImg" class="close" @click.stop="close">
     <img :src="timeUrl" class="time-piece"> -->
-    <time-piece is-handle/>
+    <time-piece is-refer is-handle/>
     <c-r-m-full-screen-detail
       :visible.sync="showDview"
       :model-data="modelData"
@@ -138,7 +143,7 @@ export default {
     height: 32px;
     position: fixed;
     cursor: pointer;
-    right: 190px;
+    right: 320px;
     top: 15px;
     text-align: center;
     z-index: 2000;

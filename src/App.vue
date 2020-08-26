@@ -11,6 +11,30 @@
       :is-show="showOutCall"
       :model-data="modelData"
       @close="showCall = false"/>
+    <!-- <call-out-windows
+      :model-data="modelData"
+      is-show
+      @close="showCall = false"/> -->
+    <!-- 转接 -->
+    <!-- <refer/> -->
+    <el-dialog
+      :visible.sync="dialogFormVisible"
+      class="refer"
+      width="30%"
+      title="转接">
+      <span>成员</span>
+      <xh-user-cell
+        radio
+        style="z-index:100000000000000000;"
+        class="xh-user-cell"
+        is-refer
+        placeholder="选择员工"
+        @value-change="userChange" />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmRefer()">确 定</el-button>
+      </div>
+    </el-dialog>
     <xr-import
       v-if="showFixImport"
       :process-status="crmImportStatus"
@@ -36,6 +60,8 @@ import CRMImport from '@/views/customermanagement/components/CRMImport'
 import { mapGetters } from 'vuex'
 import IncomingWindows from './callCenter/IncomingWindows'
 import CallOutWindows from './callCenter/CallOutWindows'
+import callCenter from './callCenter/callWebSokets'
+import XhUserCell from '@/components/CreateCom/XhUserCell'
 import cache from '@/utils/cache'
 
 
@@ -46,7 +72,8 @@ export default {
     XrImport,
     IncomingWindows,
     CallOutWindows,
-    CRMImport
+    CRMImport,
+    XhUserCell
   },
   mixins: [XrImportMixins],
   data() {
@@ -56,7 +83,9 @@ export default {
       showCall: false,
       modelData: {},
       previewImgs: [],
-      upgradeDialogShow: false
+      upgradeDialogShow: false,
+      dialogFormVisible: false,
+      referUser: [] // 转接的用户
     }
   },
   computed: {
@@ -85,8 +114,24 @@ export default {
     this.addBus()
     this.addDocumentVisibilityChange()
     this.setMinHeight()
+    this.$bus.on('showRefer', (data) => {
+      console.log(data)
+      this.dialogFormVisible = data
+    })
   },
   methods: {
+    confirmRefer() {
+      console.log(this.referUser)
+      if (this.referUser.hardPhone) {
+        callCenter.OnRefer(this.referUser.hardPhone)
+        this.dialogFormVisible = false
+      } else {
+        this.$message.error('没有转接号码')
+      }
+    },
+    userChange(data) {
+      this.referUser = data.value[0] ? data.value[0] : {}
+    },
     addDocumentVisibilityChange() {
       // 网页当前状态判断
       // hidden,
@@ -149,12 +194,20 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 #app {
   width: 100%;
   position: relative;
   height: 100%;
   min-width: 1200px;
   min-height: 605px;
+}
+.refer /deep/.user-container{
+     width:400px;
+     margin-left:20px;
+}
+.refer /deep/ .el-dialog__body{
+   display: flex;
+   align-items: center;
 }
 </style>

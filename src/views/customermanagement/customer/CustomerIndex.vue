@@ -212,7 +212,6 @@ import BusinessCheck from './components/BusinessCheck' // 相关商机
 import table from '../mixins/table'
 import CallCenter from '@/callCenter/CallCenter'
 
-
 export default {
   /** 客户管理 的 客户列表 */
   name: 'CustomerIndex',

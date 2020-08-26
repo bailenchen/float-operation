@@ -1451,6 +1451,7 @@ export default {
             .then(res => {
               this.callLoading = false
               this.callCreateDialog = false
+              this.callForm = { url: '', username: '', password: '', field: '', channel: 'telephone', hardPhone: '' }
               if (res.agent) {
                 this.$message.success(`修改成功，软呼坐席号：${res.agent}`)
               } else {

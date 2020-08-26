@@ -7,7 +7,7 @@ const winUrl = 'https://www.5kcrm.com/download/desktop/win/10.1.3/%E6%82%9F%E7%A
 const iOSUrl = 'https://apps.apple.com/cn/app/%E6%82%9F%E7%A9%BAcrm-10-0/id1489143707'
 const androidUrl = 'https://sj.qq.com/myapp/detail.htm?apkName=com.kakarote.crm10'
 
-const callCenterConfig = {
+var callCenterConfig = {
   socketUrl: 'wss://xagent.vocustcloud.com/phoneConnect', // 电话websocket连接url
   account: '18337132251', // 登录账号
   password: '132251', // 登录密码
@@ -16,7 +16,6 @@ const callCenterConfig = {
   skillGroupCode: [], // 技能组编号列表
   telephone: '500020' // 硬话机
 }
-
 /**
  *
  * @type {string}

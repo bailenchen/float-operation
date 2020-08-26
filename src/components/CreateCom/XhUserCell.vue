@@ -13,6 +13,7 @@
       v-bind="$attrs"
       :selected-data="dataValue"
       :radio="radio"
+      :is-refer="isRefer"
       @changeCheckout="checkUsers" />
     <flexbox
       v-if="!$slots.reference"
@@ -60,6 +61,11 @@ export default {
     radio: {
       type: Boolean,
       default: true
+    },
+    // 转接人员
+    isRefer: {
+      type: Boolean,
+      default: false
     },
     placeholder: {
       type: String,

@@ -1,6 +1,7 @@
 <template>
   <div class="time" style="display: flex" >
     <div v-if="showTime" class="time" style="display: flex">
+      <!-- <div v-if="!showTime" class="time" style="display: flex"> -->
       <div v-if="!showRing" style="display: flex" class="time_piece">
         <p class="time_piece--p1">通话中 :</p>
         <p class="time_piece--p2">{{ callinTime }}</p>
@@ -9,9 +10,13 @@
         <p class="time_piece--p1">振铃中 :</p>
         <p class="time_piece--p2">{{ callinTime }}</p>
       </div>
+      <el-button v-if="isRefer" type="danger" style="padding: 5px 15px" class="handle" @click="handUp">转接</el-button>
       <el-button v-if="isHandle" type="danger" style="padding: 5px 15px" class="handle" @click="handUp">挂断</el-button>
     </div>
-    <el-tag v-else type="danger" effect="dark" class="e-tab">空闲中</el-tag>
+    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">开启置忙</el-tag>
+    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">关闭置忙</el-tag>
+    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">置忙</el-tag>
+    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">空闲中</el-tag>
   </div>
 </template>
 
@@ -23,6 +28,10 @@ export default {
     isHandle: {
       type: Boolean,
       default: true
+    },
+    isRefer: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -63,6 +72,12 @@ export default {
     handUp() {
       callCenter.OnHungUp()
       // callCenter.clearWebSoketsInterval()
+    },
+    /**
+       * 转接
+       */
+    refer() {
+      this.$bus.emit('showRefer', true)
     }
   }
 }

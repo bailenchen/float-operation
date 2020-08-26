@@ -614,7 +614,18 @@ export function crmCallCheckAuth(data) {
     data: data
   })
 }
-
+/**
+ * 呼叫中心客服的权限
+ * @param {*} data
+ * id 客户IDs
+ */
+export function crmCallCheckAuthAll(data) {
+  return request({
+    url: 'call/checkAuthAll',
+    method: 'post',
+    data: data
+  })
+}
 /**
  * 客户标星
  * @param {*} data

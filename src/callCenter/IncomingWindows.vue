@@ -44,6 +44,7 @@ import { crmCallInNumberSearch } from '../api/businessIntelligence/callCenter'
 import CRMFullScreenDetail from '@/views/customermanagement/components/CRMFullScreenDetail'
 import CrmCreateView from '@/views/customermanagement/components/CRMCreateView'
 import Lockr from 'lockr'
+import config from '../config'
 
 export default {
   name: 'IncomingWindows',
@@ -90,11 +91,28 @@ export default {
           crmCallCheckAuth().then(res => {
             console.log(res.data, 'wwww')
             const data = res.data || {}
-            // if (data.auth) {
-            if (!data.auth) {
+            // if (!data.auth) {
+            if (data.auth) {
+              const data = {
+                // socketUrl: data.user.url, // 电话websocket连接url
+                // account: data.user.username, // 登录账号
+                // password: data.user.password, // 登录密码
+                // channel: data.user.channel, // 渠道
+                // domain:data.user.field, // 域信息
+                // skillGroupCode: [], // 技能组编号列表
+                // telephone: data.user.hardPhone // 硬话机
+                socketUrl: 'wss://xagent.vocustcloud.com/phoneConnect', // 电话websocket连接url
+                account: '18337132251', // 登录账号
+                password: '132251', // 登录密码
+                channel: 'telephone', // 渠道
+                domain: '1217320380889497600.ctrip', // 域信息
+                skillGroupCode: [], // 技能组编号列表
+                telephone: '500020' // 硬话机
+              }
+              callCenter.setEnv(data)
+              this.callCenterConnect()
               this.$store.commit('GET_IS_CALL', true)
               Lockr.set('wkCallData', data)
-              this.callCenterConnect()
             } else {
               Lockr.rm('wkCallData')
               this.$store.commit('GET_IS_CALL', false)
@@ -110,6 +128,7 @@ export default {
   },
   mounted() {
     this.addBus()
+    this.incoming() // 测试
   },
   methods: {
     addBus() {
@@ -213,6 +232,7 @@ export default {
      * 来电监听 (调用此方法会触发弹屏)
      */
     incoming() {
+      const that = this
       const isSoft = callCenter.getHisUse() == 1 // hisUse 0 是默认硬呼 1 是软乎
       const h = this.$createElement
       this.notify = this.$notify({
@@ -360,6 +380,26 @@ export default {
                 }
               }
             }, '挂断'),
+            h('el-button', {
+              type: 'primary',
+              class: 'el-button-primary',
+              style: {
+                backgroundColor: (this.showRing && this.isAnswer) ? '#909399' : '#f56c6c',
+                display: this.showHang ? 'none' : 'inline-block',
+                height: '27px',
+                paddingTop: '5px',
+                paddingBottom: '5px',
+                paddingLeft: '25px',
+                paddingRight: '25px',
+                borderRadius: '4px',
+                color: 'white'
+              },
+              on: {
+                click: () => {
+                  that.$bus.emit('showRefer', true)
+                }
+              }
+            }, '转接'),
             h('el-button', {
               type: 'primary',
               class: 'el-button-primary',

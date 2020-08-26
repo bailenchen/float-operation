@@ -47,6 +47,7 @@
 </template>
 <script type="text/javascript">
 import { usersList } from '@/api/common'
+import { crmCallCheckAuthAll } from '@/api/customermanagement/customer'
 import { objDeepCopy } from '@/utils'
 import PinyinMatch from 'pinyin-match'
 
@@ -59,6 +60,11 @@ export default {
       default: true
     },
     radio: {
+      type: Boolean,
+      default: false
+    },
+    // 转接人员
+    isRefer: {
       type: Boolean,
       default: false
     },
@@ -147,7 +153,9 @@ export default {
      * 请求
      */
     getRequest() {
-      if (this.infoRequest) {
+      if (this.isRefer) {
+        return crmCallCheckAuthAll
+      } else if (this.infoRequest) {
         return this.infoRequest
       } else if (this.infoType === 'default') {
         return usersList
