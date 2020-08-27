@@ -20,6 +20,7 @@ const app = {
     },
     showRing: false,
     showTimer: false,
+    showBusy: false,
     showCallOut: false,
     isCall: false, // 呼叫中心权限
     callinTime: '00:00:00'
@@ -56,6 +57,12 @@ const app = {
      */
     SHOW_TIMER: (state, showTimer) => {
       state.showTimer = showTimer
+    },
+    /**
+     * 是否展示置忙
+     */
+    SHOW_BUSY: (state, showBusy) => {
+      state.showBusy = showBusy
     },
     /**
      * 展示来电弹框

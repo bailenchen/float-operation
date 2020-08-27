@@ -120,14 +120,16 @@ export default {
     })
   },
   methods: {
+    // 确认选择转接人
     confirmRefer() {
       console.log(this.referUser)
-      if (this.referUser.hardPhone) {
-        callCenter.OnRefer(this.referUser.hardPhone)
-        this.dialogFormVisible = false
-      } else {
-        this.$message.error('没有转接号码')
-      }
+      callCenter.OnRefer(500022)
+      // if (this.referUser.hardPhone) {
+      //   callCenter.OnRefer(this.referUser.hardPhone)
+      //   this.dialogFormVisible = false
+      // } else {
+      //   this.$message.error('没有转接号码')
+      // }
     },
     userChange(data) {
       this.referUser = data.value[0] ? data.value[0] : {}

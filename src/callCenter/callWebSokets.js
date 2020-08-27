@@ -116,9 +116,16 @@ class MyWs {
    * 电话状态监听
    */
   phoneStatusListener(phoneStatus) {
+    console.log('电话状态', phoneStatus)
     // work:工作中 pause:暂停
   }
 
+  /**
+ *  电话状态设置（置忙）
+ */
+  setPhoneStatus(status) {
+    this.phoneClient.setPhoneStatus({ phoneStatus: status })
+  }
   /**
    * 电话事件监听
    */
@@ -129,7 +136,7 @@ class MyWs {
       return
     }
     let currentLine = that.phoneLines.find(x => x.callId === callInfo.callId)
-    console.log('data1', currentLine)
+    console.log('data1', currentLine, that.phoneLines)
     if (!currentLine) {
       callInfo.isAnswered = false
       callInfo.callTime = new Date().getTime()
@@ -199,15 +206,15 @@ class MyWs {
       case 'originated': // 拨号事件
         // 主叫
         currentLine.direction = 0
-
+        that.callNumber = callInfo.remote
         callInfo.event = 'OutGoing'
-        this.onLineMessage(callInfo)
+        that.onLineMessage(callInfo)
 
         break
       case 'ringing': // 振铃事件
 
         callInfo.event = 'RingBack'
-        this.onLineMessage(callInfo)
+        that.onLineMessage(callInfo)
 
         break
       case 'alerting': // 来电振铃事件
@@ -216,17 +223,18 @@ class MyWs {
           return false
         }
         callInfo.event = 'InComing'
-        this.callNumber = callInfo.remote
-        this.onLineMessage(callInfo)
+        that.callNumber = callInfo.remote
+        that.onLineMessage(callInfo)
         // 被叫
-        currentLine.direction = 1
+        currentLine.direction = 'InComing'
+        console.log('----phoneLines----', that.phoneLines)
         break
       case 'established': // 接通事件
         currentLine.isAnswered = true
         currentLine.begin = callInfo.begin
 
         callInfo.event = 'Answer'
-        this.onLineMessage(callInfo)
+        that.onLineMessage(callInfo)
 
         break
       case 'held': // 保持事件
@@ -246,10 +254,10 @@ class MyWs {
         currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
         currentLine.callStatus = 'cleared'
         callInfo.event = 'HangUp'
-        this.onLineMessage(callInfo)
+        that.onLineMessage(callInfo)
         if (currentLine.duration > 0) {
           callInfo.event = 'CallRecord'
-          this.onLineMessage(callInfo)
+          that.onLineMessage(callInfo)
         }
 
         break
@@ -258,10 +266,10 @@ class MyWs {
         currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
         currentLine.callStatus = 'cleared'
         callInfo.event = 'HangUp'
-        this.onLineMessage(callInfo)
+        that.onLineMessage(callInfo)
         if (currentLine.duration > 0) {
           callInfo.event = 'CallRecord'
-          this.onLineMessage(callInfo)
+          that.onLineMessage(callInfo)
         }
 
         break
@@ -458,10 +466,12 @@ class MyWs {
    */
   // OnRefer(callNumber, targetNumber) {
   OnRefer(targetNumber) {
+    const that = this
     // const activeLine = this.getTargetLine(callNumber)
-    const activeLine = this.getTargetLine(this.callNumber)
+    const activeLine = that.getTargetLine(that.callNumber)
+    console.log('-------------', that.phoneLines, that.callNumber, activeLine)
     if (activeLine) {
-      this.phoneClient.refer({
+      that.phoneClient.refer({
         callId: activeLine.callId,
         targetNum: targetNumber
       })

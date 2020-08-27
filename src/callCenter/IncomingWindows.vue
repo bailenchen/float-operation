@@ -89,27 +89,19 @@ export default {
       handler(val) {
         if (val) {
           crmCallCheckAuth().then(res => {
-            console.log(res.data, 'wwww')
             const data = res.data || {}
             // if (!data.auth) {
             if (data.auth) {
-              const data = {
-                // socketUrl: data.user.url, // 电话websocket连接url
-                // account: data.user.username, // 登录账号
-                // password: data.user.password, // 登录密码
-                // channel: data.user.channel, // 渠道
-                // domain:data.user.field, // 域信息
-                // skillGroupCode: [], // 技能组编号列表
-                // telephone: data.user.hardPhone // 硬话机
-                socketUrl: 'wss://xagent.vocustcloud.com/phoneConnect', // 电话websocket连接url
-                account: '18337132251', // 登录账号
-                password: '132251', // 登录密码
-                channel: 'telephone', // 渠道
-                domain: '1217320380889497600.ctrip', // 域信息
+              const call = {
+                socketUrl: config.callCenterConfig.socketUrl, // 电话websocket连接url
+                account: res.user.username, // 登录账号
+                password: res.user.password, // 登录密码
+                channel: res.user.channel, // 渠道
+                domain: config.callCenterConfig.domain, // 域信息
                 skillGroupCode: [], // 技能组编号列表
-                telephone: '500020' // 硬话机
+                telephone: res.user.hardPhone // 硬话机
               }
-              callCenter.setEnv(data)
+              callCenter.setEnv(call)
               this.callCenterConnect()
               this.$store.commit('GET_IS_CALL', true)
               Lockr.set('wkCallData', data)
@@ -128,7 +120,7 @@ export default {
   },
   mounted() {
     this.addBus()
-    this.incoming() // 测试
+    // this.incoming() // 测试
   },
   methods: {
     addBus() {
@@ -396,7 +388,9 @@ export default {
               },
               on: {
                 click: () => {
-                  that.$bus.emit('showRefer', true)
+                  if (!that.showHang) {
+                    that.$bus.emit('showRefer', true)
+                  }
                 }
               }
             }, '转接'),
@@ -636,6 +630,7 @@ export default {
           this.$store.commit('SHOW_RING', false)
           this.ringShow = false
           this.startTimePiece(true)
+          console.log('接通了')
           break
         }
         case 'HangUp':

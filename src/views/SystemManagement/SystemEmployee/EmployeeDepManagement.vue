@@ -477,7 +477,7 @@
       :modal-append-to-body="true"
       :append-to-body="true"
       :before-close="callHandleClose"
-      title="开启呼叫中心"
+      title="启用呼叫中心"
       width="60%">
       <el-form
         v-if="showForm"
@@ -787,10 +787,10 @@ export default {
       callloading: false,
       callCreateDialog: false,
       callList: [
-        { field: 'url', value: '电话连接url' },
+        // { field: 'url', value: '电话连接url' },
         { field: 'username', value: '登录账号' },
         { field: 'password', value: '登录密码' },
-        { field: 'field', value: '域' },
+        // { field: 'field', value: '域' },
         { field: 'channel', value: '渠道', type: 'select' },
         { field: 'hardPhone', value: '硬话机' }
       ],
@@ -811,18 +811,18 @@ export default {
         hardPhone: ''
       },
       callRules: {
-        url: [
-          { required: true, message: '电话连接url不能为空', trigger: ['blur', 'change'] }
-        ],
+        // url: [
+        //   { required: true, message: '电话连接url不能为空', trigger: ['blur', 'change'] }
+        // ],
         username: [
           { required: true, message: '登录账号不能为空', trigger: ['blur', 'change'] }
         ],
         password: [
           { required: true, message: '登录密码不能为空', trigger: ['blur', 'change'] }
         ],
-        field: [
-          { required: true, message: '域不能为空', trigger: ['blur', 'change'] }
-        ],
+        // field: [
+        //   { required: true, message: '域不能为空', trigger: ['blur', 'change'] }
+        // ],
         channel: [
           { required: true, message: '渠道不能为空', trigger: ['blur', 'change'] }
         ],

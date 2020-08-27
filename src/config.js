@@ -9,12 +9,12 @@ const androidUrl = 'https://sj.qq.com/myapp/detail.htm?apkName=com.kakarote.crm1
 
 var callCenterConfig = {
   socketUrl: 'wss://xagent.vocustcloud.com/phoneConnect', // 电话websocket连接url
-  account: '18337132251', // 登录账号
-  password: '132251', // 登录密码
-  channel: 'telephone', // 渠道
+  // account: '18337132251', // 登录账号
+  // password: '132251', // 登录密码
+  // channel: 'telephone', // 渠道
   domain: '1217320380889497600.ctrip', // 域信息
-  skillGroupCode: [], // 技能组编号列表
-  telephone: '500020' // 硬话机
+  skillGroupCode: [] // 技能组编号列表
+  // telephone: '500020' // 硬话机
 }
 /**
  *

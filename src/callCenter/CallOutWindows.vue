@@ -12,7 +12,7 @@
     @mousedown="mousedown1($event)">
     <!-- <img :src="closeImg" class="close" @click.stop="close">
     <img :src="timeUrl" class="time-piece"> -->
-    <time-piece is-refer is-handle/>
+    <time-piece is-refer is-handle />
     <c-r-m-full-screen-detail
       :visible.sync="showDview"
       :model-data="modelData"

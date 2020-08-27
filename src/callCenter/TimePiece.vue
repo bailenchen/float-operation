@@ -10,13 +10,13 @@
         <p class="time_piece--p1">振铃中 :</p>
         <p class="time_piece--p2">{{ callinTime }}</p>
       </div>
-      <el-button v-if="isRefer" type="danger" style="padding: 5px 15px" class="handle" @click="handUp">转接</el-button>
+      <el-button v-if="!showRing && isRefer" type="warning" style="padding: 5px 15px" class="handle" @click="refer">转接</el-button>
       <el-button v-if="isHandle" type="danger" style="padding: 5px 15px" class="handle" @click="handUp">挂断</el-button>
     </div>
-    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">开启置忙</el-tag>
-    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">关闭置忙</el-tag>
-    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">置忙</el-tag>
-    <el-tag v-if="!showTime" type="danger" effect="dark" class="e-tab">空闲中</el-tag>
+    <el-tag v-if=" !showTime &&!showBusy" type="warning" effect="dark" class="e-tab" @click="Busy(1)">开启置忙</el-tag>
+    <el-tag v-if="!showTime && showBusy" type="warning" effect="dark" class="e-tab" @click="Busy(2)">关闭置忙</el-tag>
+    <el-tag v-if=" !showTime && showBusy" type="danger" effect="dark" class="e-tab">置忙</el-tag>
+    <el-tag v-if="!showTime && !showBusy" type="danger" effect="dark" class="e-tab">空闲中</el-tag>
   </div>
 </template>
 
@@ -27,7 +27,7 @@ export default {
   props: {
     isHandle: {
       type: Boolean,
-      default: true
+      default: false
     },
     isRefer: {
       type: Boolean,
@@ -54,6 +54,10 @@ export default {
     // 展示通话
     showTime() {
       return this.$store.state.customer.showTimer
+    },
+    // 置忙
+    showBusy() {
+      return this.$store.state.customer.showBusy
     }
   },
   watch: {
@@ -66,18 +70,28 @@ export default {
   mounted() {
   },
   methods: {
+    // 置忙
+    Busy(i) {
+      if (i == 1) { // 开启置忙
+        callCenter.setPhoneStatus('pause')
+        this.$store.commit('SHOW_BUSY', true)
+      } else { // 关闭置忙
+        callCenter.setPhoneStatus('work')
+        this.$store.commit('SHOW_BUSY', false)
+      }
+    },
+    /**
+     * 转接
+     */
+    refer() {
+      this.$bus.emit('showRefer', true)
+    },
     /**
        * 挂断
        */
     handUp() {
       callCenter.OnHungUp()
       // callCenter.clearWebSoketsInterval()
-    },
-    /**
-       * 转接
-       */
-    refer() {
-      this.$bus.emit('showRefer', true)
     }
   }
 }
