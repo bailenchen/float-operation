@@ -226,7 +226,7 @@ class MyWs {
         that.callNumber = callInfo.remote
         that.onLineMessage(callInfo)
         // 被叫
-        currentLine.direction = 'InComing'
+        currentLine.direction = 1
         console.log('----phoneLines----', that.phoneLines)
         break
       case 'established': // 接通事件
