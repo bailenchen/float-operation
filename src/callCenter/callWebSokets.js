@@ -483,9 +483,9 @@ class MyWs {
    */
   OnHungUp(callNumber) {
     const currentLine = this.getTargetLine(this.callNumber)
-    console.log(99999988, this.callNumber)
-    console.log(9999999999, currentLine)
-    console.log('999', this.phoneLines)
+    console.log('挂断号码', this.callNumber)
+    console.log('挂断线路', currentLine)
+    console.log('---phoneLines---', this.phoneLines)
     if (currentLine) {
       this.phoneClient.hangUp({ callId: currentLine.callId })
       currentLine.callStatus = 'cleared'
