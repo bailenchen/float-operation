@@ -73,10 +73,15 @@
         class="h-item"
         span="200">
         <div class="h-title">{{ item.title }}</div>
-        <div class="h-value text-one-line"><i
-          v-if="item.showIcon"
-          :style="item.style"
-          :class="item.icon" />{{ item.value }}</div>
+        <div class="h-value text-one-line">
+          <i
+            v-if="item.showIcon"
+            :style="item.style"
+            :class="item.icon" />
+          <el-tooltip :content="item.value" class="item" effect="dark" placement="top">
+            <div>{{ item.value }}</div>
+          </el-tooltip>
+        </div>
       </flexbox-item>
     </flexbox>
     <slot />

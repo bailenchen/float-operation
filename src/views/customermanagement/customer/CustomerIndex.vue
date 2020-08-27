@@ -58,7 +58,7 @@
           type="selection"
           align="center"
           width="55"/>
-        <el-table-column
+        <!-- <el-table-column
           :resizable="false"
           prop="businessCheck"
           fixed
@@ -92,7 +92,7 @@
                 @click="businessCheckClick($event, scope)"/>
             </el-popover>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           v-if="Show"
           :resizable="false"
@@ -153,7 +153,7 @@
           </template>
         </el-table-column>
         <el-table-column/>
-        <el-table-column
+        <!-- <el-table-column
           label="关注"
           align="center"
           fixed="right"
@@ -166,7 +166,7 @@
                 @click="toggleStar(scope.row)" />
             </el-tooltip>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           :resizable="false"
           fixed="right"

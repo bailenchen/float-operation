@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-08-20 10:07:15
+ * @LastEditTime: 2020-08-27 10:07:56
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dz-72crm-qiwen\src\components\CreateCom\XhChannelCategory.vue
+-->
 <template>
   <el-cascader
     ref="elCascader"
@@ -7,8 +15,8 @@
     v-model="dataValue"
     :disabled="disabled"
     style="width: 100%;"
-    change-on-select
     @change="valueChange"/>
+    <!-- change-on-select -->
 </template>
 <script type="text/javascript">
 import arrayMixin from './arrayMixin'
