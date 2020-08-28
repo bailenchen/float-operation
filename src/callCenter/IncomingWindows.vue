@@ -91,7 +91,7 @@ export default {
           crmCallCheckAuth().then(res => {
             const data = res.data || {}
             // if (!data.auth) {
-            if (data.auth) {
+            if (data.auth && res.user.username && res.user.password && res.user.channel && res.user.hardPhone) {
               const call = {
                 socketUrl: config.callCenterConfig.socketUrl, // 电话websocket连接url
                 account: res.user.username, // 登录账号
@@ -190,8 +190,9 @@ export default {
               this.incomingName = '联系人'
               this.companyName = res.data.customerName // 联系人模块需要显示公司名称
             } else if (this.model === 'leads') {
-              this.incomingName = '线索客户'
-              this.customerName = res.data.name
+              this.incomingName = 'LEADS'
+              // this.customerName = res.data.name
+              this.customerName = res.data.leadsNumber
               this.companyName = ''
             } else {
               this.incomingName = '客户'
@@ -412,6 +413,7 @@ export default {
                   this.rowID = this.modelId
                   this.crmType = this.model
                   this.showDview = true
+                  console.log(888888, this.modelId, this.model)
                   this.$store.commit('SHOW_TIMER', true)
                   this.modelData = {
                     modelId: this.modelId,
@@ -522,7 +524,13 @@ export default {
         model: this.model,
         modelId: this.modelId
       }
-      crmCallSaveAPI(temp).then(res => {
+      const requestHeaders = callCenter.requestHeaders
+      const params = {
+        entity: temp,
+        header: requestHeaders
+      }
+
+      crmCallSaveAPI(params).then(res => {
         // 上传录音
         if (data.answer_time) {
           const url = `${WKConfig.getLocationOrigin()}/api/call/upload?id=${res.data.id}`
