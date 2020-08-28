@@ -3,7 +3,7 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      main-title="新增账户"
+      main-title="新建资金账户"
       title="资金账户"
       placeholder="请输入学员姓名/账户编号"
       @on-handle="listHeadHandle"
@@ -26,7 +26,7 @@
       </el-menu>
     </c-r-m-list-head>
     <div
-      v-empty="!crm.customer.index"
+      v-empty="!crm.capitalAccount.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -83,7 +83,7 @@
               <call-center
                 :scope="scope"
                 :show="scope.row.customerId === showCount"
-                crm-type="customer"
+                crm-type="capitalAccount"
                 @changeType="changeCRMType"/>
               <el-button
                 slot="reference"
@@ -179,7 +179,7 @@ import CallCenter from '@/callCenter/CallCenter'
 import menuMixins from '../menuMixins'
 
 export default {
-  /** 客户管理 的 学员列表 */
+  /** 客户管理 的 资金账户列表 */
   name: 'AccountIndex',
   components: {
     CRMAllDetail,
@@ -198,7 +198,7 @@ export default {
   mixins: [table, menuMixins],
   data() {
     return {
-      crmType: 'customer',
+      crmType: 'capitalAccount',
       showCount: 0,
       modelData: {}
     }
@@ -236,7 +236,7 @@ export default {
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (column.property === 'customerName') {
         return 'can-visit--underline'
-      } else if (column.property === 'businessCheck') {
+      } else if (column.property === 'name') {
         return 'can-visit'
       } else {
         return ''

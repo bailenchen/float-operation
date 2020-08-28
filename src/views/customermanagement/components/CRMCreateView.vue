@@ -46,6 +46,7 @@
                     :value="item.value"
                     :index="index"
                     :item="item"
+                    :leads-number="leadsNumber"
                     :relation="item.relation"
                     :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
                     :disabled="item.disabled"
@@ -130,6 +131,7 @@ import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
 import { crmLeadsSave } from '@/api/customermanagement/clue'
 import { crmCustomerSave } from '@/api/customermanagement/customer'
+import { crmAccountSave } from '@/api/customermanagement/account'
 import { crmContactsSave } from '@/api/customermanagement/contacts'
 import {
   crmBusinessSave,
@@ -317,7 +319,8 @@ export default {
       },
 
       formsList: [{}],
-      productSetMealPrice: 0
+      productSetMealPrice: 0,
+      leadsNumber: false
     }
   },
   computed: {
@@ -387,6 +390,9 @@ export default {
         this.formsList = this.action.editDetail.setting
         console.log(this.formsList, 'bbb')
       }
+    }
+    if (this.crmType == 'capitalAccount') {
+      this.leadsNumber = true
     }
   },
   mounted() {
@@ -710,6 +716,27 @@ export default {
             }]
           }
         }
+      } else if (this.crmType === 'capitalAccount') {
+        if (item.data.formType === 'student') {
+          let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'mobile')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = item.value[0].mobile || ''
+          }
+          findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'dept_id')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = [{
+              id: item.value[0].deptId,
+              name: item.value[0].deptIdName
+            }]
+          }
+          findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'owner_user_id')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = [{
+              userId: item.value[0].ownerUserId,
+              realname: item.value[0].ownerUserName
+            }]
+          }
+        }
       } else if (this.crmType === 'customer') {
         if (item.data.fieldName === 'introducer_type') {
           const findRes = this.crmForm.crmFields.find(o => o.data.fieldName === 'introducer_id')
@@ -862,6 +889,7 @@ export default {
 
       filedGetField(params)
         .then(res => {
+          debugger
           res.data = res.data.filter(o => {
             return o.hasOwnProperty('authLevel') ? o.authLevel != 1 : true
           })
@@ -877,6 +905,10 @@ export default {
           }
           if (this.crmType === 'visit') {
             this.formatVisitField(res)
+          }
+
+          if (this.crmType === 'capitalAccount') {
+            this.formatAccountField(res)
           }
 
           console.log('res.data: ', res.data)
@@ -925,6 +957,17 @@ export default {
         res.data[findIndex].formType = 'student'
       }
     },
+    /**
+     * 预处资金账户字段
+     * @param res
+     */
+    formatAccountField(res) {
+      let findIndex = -1
+      findIndex = res.data.findIndex(o => o.fieldName === 'leads_number')
+      if (findIndex !== -1) {
+        res.data[findIndex].formType = 'student'
+      }
+    },
 
     // 根据自定义字段获取自定义字段规则
     getcrmRulesAndModel(list) {
@@ -949,7 +992,6 @@ export default {
       let showStyleIndex = -1
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
-        console.log(item, 'nkl')
         showStyleIndex += 1
         if (this.crmType == 'productSetMeal') {
           if (item.fieldName == 'status') {
@@ -1129,7 +1171,6 @@ export default {
                   params.value = [params.value]
                 }
               }
-              console.log('params: ', params)
             } else {
               params['value'] = item.defaultValue
                 ? objDeepCopy(item.defaultValue)
@@ -1194,6 +1235,11 @@ export default {
         if (element.key == 'status') {
           element.value = 1
           element.data.value = 1
+        }
+        if (this.crmType == 'capitalAccount') {
+          if (element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id') {
+            element.disabled = true
+          }
         }
       }
     },
@@ -1598,7 +1644,6 @@ export default {
                 delete params.entity.termTime
               }
             }
-            console.log(params, 'params-----')
             this.submiteParams(params)
           }
         } else {
@@ -1695,6 +1740,8 @@ export default {
         return crmLeadsSave
       } else if (this.crmType == 'customer') {
         return crmCustomerSave
+      } else if (this.crmType == 'capitalAccount') {
+        return crmAccountSave
       } else if (this.crmType == 'contacts') {
         return crmContactsSave
       } else if (this.crmType == 'business') {
@@ -1860,6 +1907,8 @@ export default {
         return this.action.type == 'update' ? '编辑回款计划' : '新建回款计划'
       } else if (this.crmType == 'visit') {
         return this.action.type == 'update' ? '编辑回访' : '新建回访'
+      } else if (this.crmType == 'capitalAccount') {
+        return this.action.type == 'update' ? '编辑资金账户' : '新建资金账户'
       }
     },
     // 获取左边padding

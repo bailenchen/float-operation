@@ -365,7 +365,7 @@ export default {
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
-      if (this.crmType === 'student') {
+      if (this.crmType === 'student' || this.crmType == 'capitalAccount') {
         // 如果是查学员
         params.customerType = 2
       } else if (this.crmType === 'customer') {

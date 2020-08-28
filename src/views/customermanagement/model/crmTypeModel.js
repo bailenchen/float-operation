@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-20 10:07:15
- * @LastEditTime: 2020-08-20 13:40:30
+ * @LastEditTime: 2020-08-27 16:39:15
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\model\crmTypeModel.js
@@ -9,6 +9,7 @@
 export default {
   leads: 1,
   customer: 2,
+  capitalAccount: 22,
   contacts: 3,
   product: 4,
   productSetMeal: 21,
@@ -23,6 +24,7 @@ export default {
   keyToTypeData: {
     leads: 1,
     customer: 2,
+    capitalAccount: 22,
     contacts: 3,
     product: 4,
     productSetMeal: 21,
@@ -38,6 +40,7 @@ export default {
   typeToKeyData: {
     1: 'leads',
     2: 'customer',
+    22: 'capitalAccount',
     3: 'contacts',
     4: 'product',
     21: 'productSetMeal',
@@ -53,6 +56,7 @@ export default {
   typeToNameData: {
     1: '线索',
     2: '客户',
+    22: '资金账户',
     3: '联系人',
     4: '产品',
     21: '课程套餐',
@@ -68,6 +72,7 @@ export default {
   keyToNameData: {
     leads: '线索',
     customer: '客户',
+    capitalAccount: '资金账户',
     contacts: '联系人',
     product: '产品',
     productSetMeal: '课程套餐',

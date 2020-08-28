@@ -219,6 +219,8 @@ export default {
     crmIcon() {
       if (this.crmType == 'productSetMeal') {
         return require(`@/assets/img/crm/product.png`)
+      } else if (this.crmType == 'capitalAccount') {
+        return require(`@/assets/img/crm/customer.png`)
       }
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
@@ -243,6 +245,7 @@ export default {
         {
           leads: '线索',
           customer: 'LEADS',
+          capitalAccount: '资金账户',
           contacts: '联系人',
           product: '课程单品',
           productSetMeal: '课程套餐',

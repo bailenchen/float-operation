@@ -19,6 +19,7 @@ import {
   crmCustomerPoolExcelAllExport,
   crmCustomerStarAPI
 } from '@/api/customermanagement/customer'
+import { crmAccountIndex } from '@/api/customermanagement/account'
 import {
   crmAppletIndexAPI,
   CrmWeixinLeadsExportLeadsAPI
@@ -239,6 +240,8 @@ export default {
         return crmMarketingIndexAPI
       } else if (this.crmType === 'visit') {
         return crmReturnVisitIndexAPI
+      } else if (this.crmType === 'capitalAccount') {
+        return crmAccountIndex
       }
     },
     /** 获取字段 */
@@ -361,6 +364,12 @@ export default {
           this.showDview = true
         } else {
           this.showDview = false
+        }
+      } else if (this.crmType == 'capitalAccount') {
+        if (column.property === 'name') {
+          this.rowID = row.capitalId
+          this.rowType = 'capitalAccount'
+          this.showDview = true
         }
       } else if (this.crmType === 'contacts') {
         if (column.property === 'customerName') {

@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-08-20 10:07:15
+ * @LastEditTime: 2020-08-27 15:50:05
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\customer\CustomerAllIndex.vue
+-->
 <template>
   <keep-alive>
     <component

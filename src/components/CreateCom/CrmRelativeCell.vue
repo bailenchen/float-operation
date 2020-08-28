@@ -51,7 +51,11 @@ export default {
         return {}
       }
     },
-    relativeType: String
+    relativeType: String,
+    leadsNumber: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -125,9 +129,13 @@ export default {
       this.showSelectView = true
     },
     getShowName(data) {
+      console.log(this.leadsNumber, data)
       if (this.crmType === 'receivables') {
         return data.number
       } else if (['customer', 'student'].includes(this.crmType)) {
+        if (this.leadsNumber) {
+          return data.leadsNumber
+        }
         return data.customerName
       } else if (this.crmType === 'business') {
         return data.businessName
