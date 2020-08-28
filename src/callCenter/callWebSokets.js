@@ -25,8 +25,8 @@ class MyWs {
   /**
    * 配置变量
    */
-  setEnv(data) {
-    this.data = data
+  setEnv(d) {
+    this.data = d
     const that = this
     const reqArr = [this._getTokenByLogin(), this._getGatewaySignature()]
     Promise.all(reqArr).then(data => {
@@ -100,7 +100,7 @@ class MyWs {
   setListener() {
     const that = this
     this.phoneClient.setPhoneStatusListener({
-      handler: this.phoneStatusListener,
+      handler: that.phoneStatusListener,
       reset: true
     })
 
@@ -110,6 +110,7 @@ class MyWs {
       },
       reset: true
     })
+    console.log('wolaile-----------', this.phoneClient)
   }
 
   /**
@@ -148,43 +149,44 @@ class MyWs {
       callInfo.direction = 0
       currentLine = callInfo
       this.phoneLines.push(currentLine)
-      currentLine.callStatus = callInfo.callStatus
-      switch (callInfo.eventType) {
-        case 'seized': // 摘机事件
-          break
-        case 'PhoneEnum.CallStatus.ADDSTREAM':
-          break
-        case 'originated': // 拨号事件
-          // 主叫
-          currentLine.direction = 0
-          break
-        case 'ringing': // 振铃事件
-          break
-        case 'alerting': // 来电振铃事件
-          // 被叫
-          currentLine.direction = 1
-          break
-        case 'established': // 接通事件
-          currentLine.isAnswered = true
-          currentLine.begin = callInfo.begin
-          break
-        case 'held': // 保持事件
-          currentLine.hold = callInfo.held
-          break
-        case 'held_retrieved': // 取消保持事件
-          currentLine.hold = callInfo.held
-          break
-        case 'mute': // 静音
-          currentLine.mute = callInfo.mute
-          break
-        case 'mute_retrieved': // 取消静音
-          currentLine.mute = callInfo.mute
-          break
-        case 'cleared': // 挂断事件
-          currentLine.end = callInfo.end
-          currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
-          break
-      }
+      // this.phoneLines[0] = currentLine
+      // currentLine.callStatus = callInfo.callStatus
+      // switch (callInfo.eventType) {
+      //   case 'seized': // 摘机事件
+      //     break
+      //   case 'PhoneEnum.CallStatus.ADDSTREAM':
+      //     break
+      //   case 'originated': // 拨号事件
+      //     // 主叫
+      //     currentLine.direction = 0
+      //     break
+      //   case 'ringing': // 振铃事件
+      //     break
+      //   case 'alerting': // 来电振铃事件
+      //     // 被叫
+      //     currentLine.direction = 1
+      //     break
+      //   case 'established': // 接通事件
+      //     currentLine.isAnswered = true
+      //     currentLine.begin = callInfo.begin
+      //     break
+      //   case 'held': // 保持事件
+      //     currentLine.hold = callInfo.held
+      //     break
+      //   case 'held_retrieved': // 取消保持事件
+      //     currentLine.hold = callInfo.held
+      //     break
+      //   case 'mute': // 静音
+      //     currentLine.mute = callInfo.mute
+      //     break
+      //   case 'mute_retrieved': // 取消静音
+      //     currentLine.mute = callInfo.mute
+      //     break
+      //   case 'cleared': // 挂断事件
+      //     currentLine.end = callInfo.end
+      //     currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
+      //     break
+      // }
     }
     // callInfo.isAnswered = false
     // callInfo.callTime = new Date().getTime()
@@ -197,7 +199,7 @@ class MyWs {
     // currentLine = callInfo
 
     // this.phoneLines.push(currentLine)
-    // currentLine.callStatus = callInfo.callStatus
+    currentLine.callStatus = callInfo.callStatus
     switch (callInfo.eventType) {
       case 'seized': // 摘机事件
         break
@@ -231,6 +233,7 @@ class MyWs {
         break
       case 'established': // 接通事件
         currentLine.isAnswered = true
+        currentLine.callStatus = 'established'
         currentLine.begin = callInfo.begin
 
         callInfo.event = 'Answer'
