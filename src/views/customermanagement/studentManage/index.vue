@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-08-20 10:07:15
+ * @LastEditTime: 2020-08-27 16:38:44
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\studentManage\index.vue
+-->
 <template>
   <keep-alive>
     <component :is="componentName" />
@@ -24,15 +32,16 @@ export default {
   computed: {
     componentName() {
       const params = this.$route.params
-      return params.type === 'account' ? 'AccountIndex' : 'StudentIndex'
+      console.log(params, 'mk')
+      return params.type === 'capitalAccount' ? 'AccountIndex' : 'StudentIndex'
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (!to.params || !['student', 'account'].includes(to.params.type)) {
+    if (!to.params || !['customer', 'capitalAccount'].includes(to.params.type)) {
       next({
         name: 'StudentManageIndex',
         params: {
-          type: 'student'
+          type: 'customer'
         },
         replace: true
       })

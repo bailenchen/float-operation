@@ -17,6 +17,7 @@
 import { getMaxIndex } from '@/utils/index'
 import ClueDetail from '../clue/ClueDetail'
 import CustomerDetail from '../customer/CustomerDetail'
+import AccountDetail from '../studentManage/account/detail'
 import ContactsDetail from '../contacts/ContactsDetail'
 import BusinessDetail from '../business/BusinessDetail'
 import ContractDetail from '../contract/ContractDetail'
@@ -31,6 +32,7 @@ export default {
   components: {
     ClueDetail,
     CustomerDetail,
+    AccountDetail,
     ContactsDetail,
     BusinessDetail,
     ContractDetail,
@@ -101,6 +103,8 @@ export default {
         this.tabName = 'clue-detail'
       } else if (this.crmType == 'customer') {
         this.tabName = 'customer-detail'
+      } else if (this.crmType == 'capitalAccount') {
+        this.tabName = 'account-detail'
       } else if (this.crmType == 'contacts') {
         this.tabName = 'contacts-detail'
       } else if (this.crmType == 'business') {

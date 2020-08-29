@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { crmCustomerRead } from '@/api/customermanagement/customer'
+import { crmAccountRead } from '@/api/customermanagement/account'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../../components/CRMDetailHead'
@@ -175,13 +175,16 @@ export default {
       default: () => {
         return {}
       }
+    },
+    crmType: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       // 展示加载loading
       loading: false,
-      crmType: 'customer',
       headDetails: [
         { title: '学员姓名', value: '' },
         { title: '学员来源', value: '' },
@@ -346,14 +349,14 @@ export default {
       this.firstContactsId = ''
       this.loading = true
       const params = {
-        customerId: this.id
+        capitalId: this.id
       }
 
       if (this.poolId) {
         params.poolId = this.poolId
       }
 
-      crmCustomerRead(params)
+      crmAccountRead(params)
         .then(res => {
           this.loading = false
           this.detailData = res.data
@@ -417,7 +420,7 @@ export default {
      */
     detailHeadHandle(data) {
       if (data.type === 'edit') {
-        this.createCRMType = 'customer'
+        this.createCRMType = 'capitalAccount'
         this.createActionInfo = {
           type: 'update',
           id: this.id,

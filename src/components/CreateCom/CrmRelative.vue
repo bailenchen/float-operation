@@ -263,7 +263,7 @@ export default {
         return '关联线索模块'
       } else if (this.crmType == 'customer') {
         return '关联LEADS模块'
-      } else if (this.crmType == 'student') {
+      } else if (this.crmType == 'student' || this.crmType == 'capitalAccount') {
         return '关联学员'
       } else if (this.crmType == 'contacts') {
         return '关联联系人模块'
