@@ -178,7 +178,8 @@ export default {
       crmCallInNumberSearch(data)
         .then(res => {
           if (res.data !== '') {
-            this.model = res.data.model
+            // this.model = res.data.model
+            this.model = 'customer'
             if (!res.data.ownerUserName) {
               this.realname = ''
             } else {
@@ -193,6 +194,7 @@ export default {
               this.incomingName = 'LEADS'
               // this.customerName = res.data.name
               this.customerName = res.data.leadsNumber
+              this.modelId = res.data['customerId']
               this.companyName = ''
             } else {
               this.incomingName = '客户'
