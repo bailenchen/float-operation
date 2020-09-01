@@ -647,6 +647,7 @@ export default {
           // 挂断电话
           this.startTimePiece(false)
           this.$store.commit('SHOW_TIMER', false)
+          this.$bus.emit('showRefer', false)
           localStorage.removeItem('IntervalTime')
           this.showCall = false
           this.ringShow = true

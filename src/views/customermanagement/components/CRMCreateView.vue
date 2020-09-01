@@ -889,7 +889,6 @@ export default {
 
       filedGetField(params)
         .then(res => {
-          debugger
           res.data = res.data.filter(o => {
             return o.hasOwnProperty('authLevel') ? o.authLevel != 1 : true
           })
