@@ -391,7 +391,7 @@ export default {
               },
               on: {
                 click: () => {
-                  if (!that.showHang) {
+                  if (!this.showRing && !this.showHang) {
                     that.$bus.emit('showRefer', true)
                   }
                 }
@@ -632,7 +632,7 @@ export default {
           const newTime = new Date().getTime()
           this.isAnswer = false
           // if (this.notify && data.call_data.type === 1) { // -1设备空闲 0呼出，1呼入
-          if (this.notify && data.direction === 'incoming') { // -1设备空闲 0呼出，1呼入
+          if (this.notify && data.direction === 1) { // -1设备空闲 0呼出，1呼入
             this.notify.close()
             this.incoming()
           }
@@ -641,6 +641,9 @@ export default {
           this.ringShow = false
           this.startTimePiece(true)
           console.log('接通了')
+          if (callCenter.referCallNumber) {
+            this.$bus.emit('show', true)
+          }
           break
         }
         case 'HangUp':

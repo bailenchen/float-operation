@@ -21,6 +21,7 @@ class MyWs {
   callinTime
   timer
   callNumber
+  referCallNumber
   data
   /**
    * 配置变量
@@ -208,13 +209,14 @@ class MyWs {
       case 'originated': // 拨号事件
         // 主叫
         currentLine.direction = 0
-        that.callNumber = callInfo.remote
+        currentLine.callStatus = 'originated'
+        // that.callNumber = callInfo.remote
         callInfo.event = 'OutGoing'
         that.onLineMessage(callInfo)
 
         break
       case 'ringing': // 振铃事件
-
+        currentLine.callStatus = 'ringing'
         callInfo.event = 'RingBack'
         that.onLineMessage(callInfo)
 
@@ -225,6 +227,7 @@ class MyWs {
           return false
         }
         callInfo.event = 'InComing'
+        currentLine.callStatus = 'alerting'
         that.callNumber = callInfo.remote
         that.onLineMessage(callInfo)
         // 被叫
@@ -238,7 +241,6 @@ class MyWs {
 
         callInfo.event = 'Answer'
         that.onLineMessage(callInfo)
-
         break
       case 'held': // 保持事件
         currentLine.hold = callInfo.held
@@ -257,23 +259,25 @@ class MyWs {
         currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
         currentLine.callStatus = 'cleared'
         callInfo.event = 'HangUp'
-        that.onLineMessage(callInfo)
         if (currentLine.duration > 0) {
           callInfo.event = 'CallRecord'
           that.onLineMessage(callInfo)
         }
+        that.onLineMessage(callInfo)
+
+        // that.OnHungUp()
 
         break
       case 'refer': // 转接
-        currentLine.end = callInfo.end
-        currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
-        currentLine.callStatus = 'cleared'
-        callInfo.event = 'HangUp'
-        that.onLineMessage(callInfo)
-        if (currentLine.duration > 0) {
-          callInfo.event = 'CallRecord'
-          that.onLineMessage(callInfo)
-        }
+        // currentLine.end = callInfo.end
+        // currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
+        // currentLine.callStatus = 'cleared'
+        // callInfo.event = 'HangUp'
+        // that.onLineMessage(callInfo)
+        // if (currentLine.duration > 0) {
+        //   callInfo.event = 'CallRecord'
+        //   that.onLineMessage(callInfo)
+        // }
 
         break
       case 'PhoneEnum.CallStatus.GETUSERMEDIAFAILED': // 获取用户媒体失败
@@ -346,7 +350,7 @@ class MyWs {
   }
 
   getTargetLine(remote) {
-    return this.phoneLines.find(x => x.remote === remote && x.callStatus !== 'cleared')
+    return this.phoneLines.find(x => x.remote == remote && x.callStatus !== 'cleared')
   }
 
   open(f, error_func) {
@@ -443,10 +447,10 @@ class MyWs {
       console.log('ding1: ', this.phoneClient)
       this.phoneClient.makeCall({ dnis: callNumber, extraHeaders: ['X-UUI:123456789'] })
     } else if (currentLine && callNumber != currentLine.remote) {
-      // this.callNumber = callNumber
-      // console.log('ding2: ', this.callNumber)
-      // this.phoneClient.consult({ dnis: callNumber })
-      alert('当前正在通话')
+      // this.referCallNumber = callNumber
+      console.log('ding2: ', callNumber)
+      this.phoneClient.consult({ dnis: callNumber })
+      // alert('当前正在通话')
     } else {
       alert('该号码当前正在通话')
     }
@@ -479,6 +483,31 @@ class MyWs {
         targetNum: targetNumber
       })
     }
+  }
+
+  afterTransfer(targetNumber) {
+    const that = this
+    /** number2正常通话中*/
+    var activeLine = that.getTargetLine(targetNumber)
+    /* hold住number的线路*/
+    var holdLine = that.getTargetLine(that.callNumber)
+
+    console.log('------转-------', that.phoneLines, 'holdLine:' + holdLine, 'callNumber:' + that.callNumber, 'activeLine转接得线路:' + activeLine, 'targetNumber:' + targetNumber)
+
+    if (activeLine && holdLine) {
+      this.phoneClient.refer({
+        callId: holdLine.callId,
+        targetNum: that.callNumber,
+        targetId: activeLine.callId
+      })
+    }
+    // 挂断电话
+    // window._self.$store.commit('SHOW_TIMER', false)
+    // window._self.$bus.emit('show', false)
+    // localStorage.removeItem('IntervalTime')
+    // window._self.$store.commit('SHOW_RING', false)
+    that.onLineMessage({ event: 'HangUp' })
+    this.referCallNumber = ''
   }
   /**
    * 挂断

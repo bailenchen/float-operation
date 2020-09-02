@@ -32,7 +32,8 @@
         @value-change="userChange" />
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmRefer()">确 定</el-button>
+        <el-button v-if="showReferbtn" type="success" @click="afterRefer()">转 接</el-button>
+        <el-button v-if="!showReferbtn" type="primary" @click="confirmRefer()">确 定</el-button>
       </div>
     </el-dialog>
     <xr-import
@@ -85,6 +86,7 @@ export default {
       previewImgs: [],
       upgradeDialogShow: false,
       dialogFormVisible: false,
+      showReferbtn: false,
       referUser: [] // 转接的用户
     }
   },
@@ -117,19 +119,30 @@ export default {
     this.$bus.on('showRefer', (data) => {
       console.log(data)
       this.dialogFormVisible = data
+      this.showReferbtn = false
     })
+    this.$bus.on('show', (data) => {
+      console.log(data)
+      this.showReferbtn = data
+    })
+    window._self = this
   },
   methods: {
     // 确认选择转接人
     confirmRefer() {
-      console.log(this.referUser)
-      callCenter.OnRefer(1001)
-      // if (this.referUser.hardPhone) {
-      //   callCenter.OnRefer(this.referUser.hardPhone)
-      //   this.dialogFormVisible = false
-      // } else {
-      //   this.$message.error('没有转接号码')
-      // }
+      // callCenter.referCallNumber = 1001
+      // callCenter.OnDailout(1001)
+      if (this.referUser.hardPhone) {
+        callCenter.referCallNumber = this.referUser.hardPhone
+        callCenter.OnDailout(this.referUser.hardPhone)
+      } else {
+        this.$message.error('没有转接号码')
+      }
+    },
+    afterRefer() {
+      callCenter.afterTransfer(this.referUser.hardPhone)
+      // callCenter.afterTransfer(1001)
+      this.dialogFormVisible = false
     },
     userChange(data) {
       this.referUser = data.value[0] ? data.value[0] : {}
