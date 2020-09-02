@@ -25,9 +25,9 @@
       </div>
       <div v-else-if="showHang" :style="{zIndex:zIndex}" class="red-timePiece">已挂断</div>
       <el-card v-if="showDrop" :style="{zIndex: zIndex}" class="dropdown">
-        <li @click="showCreate('contacts')">添加联系人</li>
-        <li @click="showCreate('leads')">添加线索</li>
-        <li @click="showCreate('customer')">添加客户</li>
+        <!-- <li @click="showCreate('contacts')">添加联系人</li> -->
+        <li @click="showCreate('leads')">添加线LEADS</li>
+        <!-- <li @click="showCreate('customer')">添加客户</li> -->
       </el-card>
     </div>
   </div>
@@ -648,6 +648,7 @@ export default {
         }
         case 'HangUp':
           // 挂断电话
+          console.log('我来了')
           this.startTimePiece(false)
           this.$store.commit('SHOW_TIMER', false)
           this.$bus.emit('showRefer', false)

@@ -259,11 +259,11 @@ class MyWs {
         currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
         currentLine.callStatus = 'cleared'
         callInfo.event = 'HangUp'
+        that.onLineMessage(callInfo)
         if (currentLine.duration > 0) {
           callInfo.event = 'CallRecord'
           that.onLineMessage(callInfo)
         }
-        that.onLineMessage(callInfo)
 
         // that.OnHungUp()
 
