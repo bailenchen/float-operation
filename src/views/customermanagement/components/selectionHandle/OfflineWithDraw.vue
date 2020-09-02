@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-08-22 15:20:44
+ * @LastEditTime: 2020-09-01 16:33:17
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
@@ -88,14 +88,14 @@ export default {
         { label: '微信', value: 2 }
       ],
       title: {
-        offline: '线下充值',
-        withdraw: '提现'
+        offline: '线下资金收款',
+        refound: '资金退款'
       },
       form: {
         offline: {
 
         },
-        withdraw: {
+        refound: {
 
         }
       },
@@ -111,7 +111,7 @@ export default {
           { label: '备注：', prop: 'remarks', type: 'textarea' },
           { label: '审核人：', prop: 'examine', type: 'user' }
         ],
-        withdraw: [
+        refound: [
           { label: '支付方式：', prop: 'payWay', type: 'select' },
           { label: '用户账号：', prop: 'account', type: 'text' },
           { label: '现金金额（元）：', prop: 'money', type: 'text' },
@@ -138,7 +138,7 @@ export default {
             { required: true, message: '请上传交易凭证', trigger: 'blur' }
           ]
         },
-        withdraw: {
+        refound: {
           payWay: [
             { required: true, message: '请选择支付方式', trigger: ['blur', 'change'] }
           ],

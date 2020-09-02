@@ -150,6 +150,13 @@
                 @province="selectProvince($event,formItem)"
                 @city="selectCity($event,formItem)"
                 @area="selectArea($event,formItem)"/>
+              <crm-relative-cell
+                v-else-if="formItem.formType === 'customer'"
+                :value="filterArr"
+                relative-type="student"
+                @value-change="fieldValueChange"
+              />
+              <!-- :value="editForm[item.fieldName]" -->
               <el-input
                 v-else
                 v-model="formItem.value"
@@ -219,6 +226,11 @@ import {
   XhChannelCategory
 } from '@/components/CreateCom'
 import VDistpicker from '@/components/v-distpicker'
+
+
+import {
+  CrmRelativeCell
+} from '@/components/CreateCom'
 /**
  * fieldList: 高级筛选的字段
  *     type:  date || datetime || select || 其他 input
@@ -230,7 +242,8 @@ export default {
     XhStructureCell,
     XhProuctCate,
     VDistpicker,
-    XhChannelCategory
+    XhChannelCategory,
+    CrmRelativeCell
   },
   props: {
     dialogVisible: {
@@ -272,6 +285,10 @@ export default {
       saveDefault: false, // 设置为默认场景
       saveName: null, // 场景名称
 
+      studentData: {
+
+      },
+
       reqMap: [
         {
           formType: 'grades',
@@ -293,7 +310,9 @@ export default {
           formType: 'communication_mode',
           req: QueryCommunicationMode
         }
-      ]
+      ],
+
+      filterArr: []
     }
   },
   computed: {
@@ -324,6 +343,7 @@ export default {
               }
             })
           }
+          this.filterArr = []
           this.saveChecked = false
           this.saveDefault = false
           this.saveName = null
@@ -402,6 +422,11 @@ export default {
       } else {
         data.item.value = []
       }
+    },
+
+    fieldValueChange(data) {
+      this.filterArr = data.value
+      console.log(data)
     },
 
     /**
@@ -634,6 +659,12 @@ export default {
               return
             }
           }
+        } else if (o.formType == 'customer') {
+          console.log(o, '123')
+          if (!this.filterArr.length) {
+            this.$message.error('筛选内容不能为空！')
+            return
+          }
         } else if (o.value === '' || o.value === undefined || o.value === null) {
           if (o.condition != 'isNull' && o.condition != 'isNotNull') {
             this.$message.error('筛选内容不能为空')
@@ -694,6 +725,13 @@ export default {
           }
           obj[o.fieldName] = {
             value: value,
+            formType: o.formType,
+            name: o.fieldName
+          }
+        } else if (o.formType == 'customer') {
+          obj[o.fieldName] = {
+            condition: o.condition,
+            value: this.filterArr[0].customerId,
             formType: o.formType,
             name: o.fieldName
           }

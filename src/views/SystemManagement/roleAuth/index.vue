@@ -833,6 +833,8 @@ export default {
       return [
         'leads',
         'customer',
+        'capitalAccount',
+        'productSetMeal',
         'contacts',
         'business',
         'contract',

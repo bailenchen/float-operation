@@ -85,6 +85,7 @@ import { crmFileDelete, crmFileUpdate, downloadFileAPI } from '@/api/common'
 
 import { crmLeadsFileListAPI } from '@/api/customermanagement/clue'
 import { crmCustomerFileListAPI } from '@/api/customermanagement/customer'
+import { crmAccountFileListAPI } from '@/api/customermanagement/account'
 import { crmContactsFileListAPI } from '@/api/customermanagement/contacts'
 import { crmBusinessFileListAPI } from '@/api/customermanagement/business'
 import { crmContractFileListAPI } from '@/api/customermanagement/contract'
@@ -169,6 +170,7 @@ export default {
       const request = {
         leads: crmLeadsFileListAPI,
         customer: crmCustomerFileListAPI,
+        capitalAccount: crmAccountFileListAPI,
         contacts: crmContactsFileListAPI,
         business: crmBusinessFileListAPI,
         contract: crmContractFileListAPI,
@@ -181,6 +183,8 @@ export default {
       const params = {}
       if (this.crmType == 'productSetMeal') {
         params.productId = this.id
+      } else if (this.crmType == 'capitalAccount') {
+        params.capitalId = this.id
       } else {
         params[`${this.crmType}Id`] = this.id
       }

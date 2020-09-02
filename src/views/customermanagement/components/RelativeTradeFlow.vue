@@ -7,7 +7,7 @@
     <flexbox
       v-if="!isSeas"
       class="rc-head"
-      direction="row-reverse">
+      direction="reverse">
       <!-- <el-button
         class="xr-btn--orange rc-head-item"
         icon="el-icon-plus"
@@ -19,7 +19,7 @@
         :key="index"
         v-model="form[item.prop]"
         clearable
-        style="width:100%;"
+        style="width:135px;margin-right:10px;"
         placeholder="请选择">
         <el-option
           v-for="ite in item.options"
@@ -42,6 +42,15 @@
         :formatter="fieldFormatter"
         :label="item.label"
         show-overflow-tooltip/>
+      <el-table-column
+        label="操作"
+        align="center"
+        fixed="right"
+        width="60">
+        <template slot-scope="scope">
+          <el-button>编辑</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
@@ -105,7 +114,7 @@ export default {
       // 创建的相关信息
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {}},
 
-      from: {},
+      form: {},
       selectList: [
         {
           options: [
@@ -147,6 +156,9 @@ export default {
       this.getDetail()
     }
   },
+  created() {
+    this.getFieldList()
+  },
   mounted() {
     this.getDetail()
   },
@@ -181,28 +193,28 @@ export default {
     },
 
     getDetail() {
-      this.loading = true
-      const request = {
-        customer: crmCustomerQueryContract,
-        business: crmBusinessQueryContract
-      }[this.crmType]
-      const params = { pageType: 0 }
-      params[this.crmType + 'Id'] = this.id
-      request(params)
-        .then(res => {
-          if (this.fieldList.length == 0) {
-            this.getFieldList()
-          }
-          this.nopermission = false
-          this.loading = false
-          this.list = res.data
-        })
-        .catch(data => {
-          if (data.code == 102) {
-            this.nopermission = true
-          }
-          this.loading = false
-        })
+      // this.loading = true
+      // const request = {
+      //   customer: crmCustomerQueryContract,
+      //   business: crmBusinessQueryContract
+      // }[this.crmType]
+      // const params = { pageType: 0 }
+      // params[this.crmType + 'Id'] = this.id
+      // request(params)
+      //   .then(res => {
+      //     if (this.fieldList.length == 0) {
+      //       this.getFieldList()
+      //     }
+      //     this.nopermission = false
+      //     this.loading = false
+      //     this.list = res.data
+      //   })
+      //   .catch(data => {
+      //     if (data.code == 102) {
+      //       this.nopermission = true
+      //     }
+      //     this.loading = false
+      //   })
     },
 
     /**

@@ -1,16 +1,16 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-08-22 11:47:11
+ * @LastEditTime: 2020-09-01 16:29:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
 -->
 <template>
-  <el-dialog :visible="visible" title="在线充值" @close="handleCancel">
+  <el-dialog :visible="visible" title="线上资金收款" @close="handleCancel">
     <div class="main">
-      <el-form ref="form" :rules="rules" :model="form" label-width="100px">
-        <el-form-item label="充值金额（元）：" prop="money">
+      <el-form ref="form" :rules="rules" :model="form" label-width="150px">
+        <el-form-item label="资金收款金额（元）：" prop="money">
           <el-input v-model="form.money"/>
         </el-form-item>
       </el-form>
@@ -114,10 +114,10 @@ export default {
 }
 
 /deep/ .el-form-item__label {
-    width: 130px !important;
+    width: 152px !important;
 }
 
 /deep/ .el-form-item__content {
-    margin-left: 130px !important;
+    margin-left: 152px !important;
 }
 </style>

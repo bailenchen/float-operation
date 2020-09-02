@@ -10,7 +10,8 @@
     :no-listener-class="noListenerClass"
     class="d-view"
     @handle="detailHandle"
-    @hide-view="hiddenView"/>
+    @hide-view="hiddenView"
+    @refresh-list="refreshList"/>
 </template>
 
 <script type="text/javascript">
@@ -137,6 +138,10 @@ export default {
   methods: {
     hiddenView() {
       this.$emit('update:visible', false)
+    },
+
+    refreshList() {
+      this.$emit('refresh-list')
     },
 
     /**

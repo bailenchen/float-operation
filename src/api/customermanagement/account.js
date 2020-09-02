@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-28 10:40:28
- * @LastEditTime: 2020-08-28 11:09:33
+ * @LastEditTime: 2020-09-01 17:47:18
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\api\customermanagement\account.js
@@ -29,6 +29,56 @@ export function crmAccountIndex(data) {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
+  })
+}
+
+/**
+ * 资金账户导出
+ * @param {*} data
+ */
+export function crmAccountExcelExport(data) {
+  return request({
+    url: 'CrmCapitalAccount/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+// 全部导出
+export function crmAccountExcelAllExport(data) {
+  return request({
+    url: 'CrmCapitalAccount/allExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+
+// 删除
+export function crmAccountDelete(data) {
+  return request({
+    url: 'CrmCapitalAccount/deleteByIds',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
+ * 附件列表
+ * @param {*} data
+ *
+ */
+export function crmAccountFileListAPI(data) {
+  return request({
+    url: 'CrmCapitalAccount/queryFileList',
+    method: 'post',
+    data: data
   })
 }
 

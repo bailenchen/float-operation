@@ -34,7 +34,7 @@
               :size="24"
               :src="item.img"
               class="user-img" />
-            <span>{{ item.realname }}<span v-if="isRefer && item.hardPhone">({{ item.hardPhone }})</span></span>
+            <span>{{ item.realname }}（{{ item.username }}）<span v-if="isRefer && item.hardPhone">({{ item.hardPhone }})</span></span>
           </el-checkbox>
         </el-checkbox-group>
       </div>

@@ -146,7 +146,16 @@ export default {
         return 'SingleLineText'
       } else if (item.formType === 'textarea') {
         return 'MultiLineText'
-      } else if (item.formType === 'select') {
+      } else if (
+        item.formType === 'select' ||
+        item.formType == 'grades' ||
+        item.formType == 'leads_source' ||
+        item.formType == 'single_structure' ||
+        item.formType == 'single_user' ||
+        item.formType == 'coaching_methods' ||
+        item.formType == 'class_type' ||
+        item.formType == 'receivables_plan'
+      ) {
         return 'SelectForm'
       } else if (item.formType === 'checkbox') {
         return 'CheckboxForm'

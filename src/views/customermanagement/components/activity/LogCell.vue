@@ -25,7 +25,7 @@
           :class="activityIcon" />
         <span class="log-mark__label">{{ getActivityTypeName(item.activityType) + '-' + getRecordLogTypeName(item.type) }}</span>
       </span>
-      <el-dropdown
+      <!-- <el-dropdown
         v-if="canDelete"
         class="more-drop"
         trigger="click"
@@ -35,7 +35,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="delete">删除</el-dropdown-item>
         </el-dropdown-menu>
-      </el-dropdown>
+      </el-dropdown> -->
     </flexbox>
     <div class="fl-b">
       <div class="fl-b-content">{{ item.content }}</div>
@@ -68,7 +68,7 @@
           </div>
           <div class="cell-ft">
             <span class="des">（{{ file.size | getFileSize }}）</span>
-            <a @click="previewImg(item.file, index)">预览</a>
+            <!-- <a @click="previewImg(item.file, index)">预览</a> -->
             <a @click="downloadFile(file)">下载</a>
           </div>
         </flexbox>

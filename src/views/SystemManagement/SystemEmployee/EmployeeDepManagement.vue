@@ -231,6 +231,15 @@
             :value="item.id" />
         </el-select>
       </div>
+      <div
+        v-if="depSelect != 0"
+        class="nav-dialog-div">
+        <label>是否为所属中心：</label>
+        <el-radio-group v-model="centre">
+          <el-radio :label="2">否</el-radio>
+          <el-radio :label="1">是</el-radio>
+        </el-radio-group>
+      </div>
       <span
         slot="footer"
         class="dialog-footer">
@@ -618,6 +627,7 @@ export default {
       depCreateTitle: '新建',
       depCreateDialog: false, // 控制部门新增 编辑 数据
       depSelect: '',
+      centre: 2,
       // 上级部门
       superDepList: [],
       depCreateLabel: '',
@@ -1250,6 +1260,7 @@ export default {
         this.depCreateLabel = '新增部门'
         this.depCreateTitle = '新增部门'
         this.depSelect = id
+        this.centre = 2
         this.getStructuresListBySuperior({ id: id, type: 'save' })
         this.depCreateDialog = true
       }
@@ -1274,6 +1285,7 @@ export default {
       this.depCreateLabel = '新增部门'
       this.depCreateTitle = '新增部门'
       this.depSelect = data.id
+      this.centre = data.centre
       this.getStructuresListBySuperior({ id: data.id, type: 'save' })
       this.depCreateDialog = true
     },
@@ -1297,6 +1309,7 @@ export default {
       this.depCreateLabelValue = data.label
       this.treeEditId = data.id
       this.depSelect = data.pid
+      this.centre = data.centre
       this.depCreateTitle = '编辑部门'
       this.depCreateLabel = '编辑部门'
       this.getStructuresListBySuperior({ id: data.id, type: 'update' })
@@ -1339,7 +1352,7 @@ export default {
     // 新增或编辑确定按钮
     submitDialog() {
       if (this.depCreateLabel == '新增部门') {
-        depSave({ name: this.depCreateLabelValue, pid: this.depSelect }).then(
+        depSave({ name: this.depCreateLabelValue, pid: this.depSelect, centre: this.centre }).then(
           res => {
             this.getDepList() // 增加了新部门 刷新数据
             this.getDepTreeList()
@@ -1350,7 +1363,8 @@ export default {
         depEdit({
           name: this.depCreateLabelValue,
           deptId: this.treeEditId,
-          pid: this.depSelect
+          pid: this.depSelect,
+          centre: this.centre
         }).then(res => {
           this.$message.success('操作成功')
           this.getDepTreeList()

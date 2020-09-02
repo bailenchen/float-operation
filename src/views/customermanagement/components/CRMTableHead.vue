@@ -159,6 +159,10 @@ import {
   crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import {
+  crmAccountExcelExport,
+  crmAccountDelete
+} from '@/api/customermanagement/account'
+import {
   crmContactsDelete,
   crmContactsExcelExport
 } from '@/api/customermanagement/contacts'
@@ -426,6 +430,7 @@ export default {
         } else {
           request = {
             customer: crmCustomerExcelExport,
+            capitalAccount: crmAccountExcelExport,
             leads: crmLeadsExcelExport,
             contacts: crmContactsExcelExport,
             business: crmBusinessExcelExportAPI,
@@ -438,6 +443,8 @@ export default {
             .map((item) => {
               if (this.crmType == 'productSetMeal') {
                 return item.productId
+              } else if (this.crmType == 'capitalAccount') {
+                return item.capitalId
               } else {
                 return item[`${this.crmType}Id`]
               }
@@ -543,8 +550,8 @@ export default {
       } else if (type == 'offline_recharge') {
         this.moneyType = 'offline'
         this.isOfflineWithDraw = true
-      } else if (type == 'withdraw') {
-        this.moneyType = 'withdraw'
+      } else if (type == 'refound') {
+        this.moneyType = 'refound'
         this.isOfflineWithDraw = true
       }
     },
@@ -651,6 +658,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['productId']
           })
+        } else if (this.crmType == 'capitalAccount') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['capitalId']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -660,6 +671,7 @@ export default {
         const request = {
           leads: crmLeadsDelete,
           customer: this.isSeas ? crmCustomerPoolDeleteAPI : crmCustomerDelete,
+          capitalAccount: crmAccountDelete,
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
           contract: crmContractDelete,
@@ -674,6 +686,10 @@ export default {
         if (this.crmType == 'productSetMeal') {
           params = {
             productIds: ids.join(',')
+          }
+        } else if (this.crmType == 'capitalAccount') {
+          params = {
+            capitalIds: ids.join(',')
           }
         } else {
           params = {
@@ -841,18 +857,18 @@ export default {
           icon: 'transfer'
         },
         online_recharge: {
-          name: '在线充值',
+          name: '线上资金收款',
           type: 'online_recharge',
           icon: 'shelves'
         },
         offline_recharge: {
-          name: '线下充值',
+          name: '线下资金收款',
           type: 'offline_recharge',
           icon: 'sold-out'
         },
-        withdraw: {
-          name: '提现',
-          type: 'withdraw',
+        refound: {
+          name: '资金退款',
+          type: 'refound',
           icon: 'activation'
         }
       }
@@ -881,12 +897,6 @@ export default {
           ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
-            // 'online_recharge',
-            // 'offline_recharge',
-            // 'withdraw',
-            // 'export',
-            // 'delete'
-
             'assignHeadTeacher',
             'transfer',
             'put_seas',
@@ -899,6 +909,14 @@ export default {
             // 'delete_user'
           ])
         }
+      } else if (this.crmType == 'capitalAccount') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'online_recharge',
+          'offline_recharge',
+          'refound',
+          'export',
+          'delete'
+        ])
       } else if (this.crmType == 'contacts') {
         return this.forSelectionHandleItems(handleInfos, [
           'transfer',
@@ -1037,14 +1055,13 @@ export default {
         return this.crm[this.crmType].updateStatus
       } else if (type === 'assignHeadTeacher') {
         return this.crm[this.crmType].assignHeadTeacher
+      } else if (type == 'online_recharge') {
+        return this.crm[this.crmType].onlineCollection
+      } else if (type == 'offline_recharge') {
+        return this.crm[this.crmType].offlineCollection
+      } else if (type == 'refound') {
+        return this.crm[this.crmType].refund
       }
-      //  else if (type == 'online_recharge') {
-      //   return true
-      // } else if (type == 'offline_recharge') {
-      //   return true
-      // } else if (type == 'withdraw') {
-      //   return true
-      // }
 
       return true
     },

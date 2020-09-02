@@ -201,7 +201,8 @@
       :model-data="modelData"
       :id="rowID"
       class="d-view"
-      @handle="handleHandle"/>
+      @handle="handleHandle"
+      @refresh-list="refreshList"/>
   </div>
 </template>
 
@@ -296,6 +297,10 @@ export default {
       this.rowID = data.businessId
       this.rowType = 'business'
       this.showDview = true
+    },
+
+    refreshList() {
+      this.getList()
     },
 
     /**

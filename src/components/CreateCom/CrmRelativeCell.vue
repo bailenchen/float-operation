@@ -133,9 +133,6 @@ export default {
       if (this.crmType === 'receivables') {
         return data.number
       } else if (['customer', 'student'].includes(this.crmType)) {
-        if (this.leadsNumber) {
-          return data.leadsNumber
-        }
         return data.customerName
       } else if (this.crmType === 'business') {
         return data.businessName

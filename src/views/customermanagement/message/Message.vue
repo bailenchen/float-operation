@@ -201,6 +201,7 @@ export default {
         // } else {
         //   element.hidden = true
         // }
+        element.num = this.messageNum[element.infoType] || 0
         element.hidden = false
       }
 

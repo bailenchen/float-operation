@@ -158,7 +158,7 @@ export default {
 
       channelProps: {
         multiple: true,
-        checkStrictly: true,
+        // checkStrictly: true,
         value: 'id',
         label: 'name'
       }
@@ -358,7 +358,7 @@ export default {
       this.dialogForm.filteringPersonnel = data.value
     },
 
-    handleChangeChannel() {
+    handleChangeChannel(data) {
       console.log(arguments)
     },
     /**
