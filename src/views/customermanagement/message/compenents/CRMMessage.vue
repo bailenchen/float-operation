@@ -185,7 +185,8 @@
       :crm-type="rowType"
       :model-data="modelData"
       :id="rowID"
-      @handle="getList"/>
+      @handle="getList"
+      @refresh-list="refreshParentList"/>
   </div>
 </template>
 
@@ -426,6 +427,13 @@ export default {
           this.$store.dispatch('GetMessageNum')
         }
       }
+    },
+
+    /**
+     * 跟进后刷新列表
+     */
+    refreshParentList() {
+      this.getList()
     },
 
     /**

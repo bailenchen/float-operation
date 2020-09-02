@@ -301,8 +301,22 @@ export default {
      * 发布日志
      */
     sendLog(data) {
-      if (!data.content) {
-        this.$message.error('请选择常用语')
+      // if (!data.content) {
+      //   this.$message.error('请选择常用语')
+      //   return
+      // }
+      console.log(data, 'bbbbb')
+      if (!data.lastTime) {
+        this.$message.error('请选择跟进时间')
+        return
+      }
+      if (!data.category) {
+        this.$message.error('请选择跟进计划')
+        return
+      }
+
+      if (data.category == '承诺到访' && !data.promisedVisitTime) {
+        this.$message.error('请选择承诺时间')
         return
       }
 
@@ -332,6 +346,7 @@ export default {
           this.$refs.logAdd.resetInfo()
           this.refreshLogList()
           this.$store.dispatch('GetMessageNum')
+          this.$emit('refresh-list')
         })
         .catch(() => {
           this.sendLoading = false
@@ -342,6 +357,7 @@ export default {
      * 操作点击
      */
     handleClick(type) {
+      console.log(type, 'type')
       if (!type) return
       if (this.handleType == type) {
         this.handleType = ''
@@ -352,7 +368,7 @@ export default {
       if (type == 'log') {
         this.isTaskCreate = false
         this.$nextTick(() => {
-          this.$refs.logAdd.isUnfold = false
+          this.$refs.logAdd.isUnfold = true
         })
       } else if (type == 'task') {
         this.isTaskCreate = true

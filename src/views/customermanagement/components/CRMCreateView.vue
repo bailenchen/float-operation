@@ -718,7 +718,11 @@ export default {
         }
       } else if (this.crmType === 'capitalAccount') {
         if (item.data.formType === 'student') {
-          let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'mobile')
+          let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'leads_number')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = item.value[0].leadsNumber || ''
+          }
+          findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'mobile')
           if (findIndex !== -1) {
             this.crmForm.crmFields[findIndex].value = item.value[0].mobile || ''
           }
@@ -902,12 +906,8 @@ export default {
           if (this.crmType === 'customer') {
             this.formatLeadsField(res)
           }
-          if (this.crmType === 'visit') {
+          if (this.crmType === 'visit' || this.crmType === 'capitalAccount') {
             this.formatVisitField(res)
-          }
-
-          if (this.crmType === 'capitalAccount') {
-            this.formatAccountField(res)
           }
 
           console.log('res.data: ', res.data)
@@ -952,17 +952,6 @@ export default {
     formatVisitField(res) {
       let findIndex = -1
       findIndex = res.data.findIndex(o => o.fieldName === 'customer_id')
-      if (findIndex !== -1) {
-        res.data[findIndex].formType = 'student'
-      }
-    },
-    /**
-     * 预处资金账户字段
-     * @param res
-     */
-    formatAccountField(res) {
-      let findIndex = -1
-      findIndex = res.data.findIndex(o => o.fieldName === 'leads_number')
       if (findIndex !== -1) {
         res.data[findIndex].formType = 'student'
       }
@@ -1202,7 +1191,9 @@ export default {
         params.disabled = !this.getItemIsCanEdit(item) // 不能编辑 disabled true
 
         if (item.hasOwnProperty('authLevel') && item.authLevel == 2) {
-          params.disabled = true
+          if (this.action.type === 'update') {
+            params.disabled = true
+          }
         } else if (this.crmType === 'customer') {
           // 如果是LEADS
           if (this.action.type === 'update') {
@@ -1236,7 +1227,7 @@ export default {
           element.data.value = 1
         }
         if (this.crmType == 'capitalAccount') {
-          if (element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id') {
+          if (element.key == 'leads_number' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id') {
             element.disabled = true
           }
         }
@@ -1643,6 +1634,7 @@ export default {
                 delete params.entity.termTime
               }
             }
+            // console.log(params, 'debugger')
             this.submiteParams(params)
           }
         } else {

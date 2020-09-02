@@ -126,7 +126,8 @@ export default {
     getStructureList() {
       this.loading = true
       depList({
-        type: 'tree'
+        type: 'tree',
+        centre: 1
       })
         .then(res => {
           if (this.infoParams &&

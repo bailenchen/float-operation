@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-08-20 10:07:15
+ * @LastEditTime: 2020-08-31 14:15:21
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dz-72crm-qiwen\src\components\CreateCom\XhTextarea.vue
+-->
 <template>
   <el-input
     v-model="dataValue"
@@ -31,6 +39,8 @@ export default {
 .el-textarea /deep/ .el-textarea__inner {
   border: none;
   color: #333333;
+  height:80px !important;
+  overflow:auto;
 }
 .el-textarea /deep/ .el-textarea__inner:focus {
   outline: 0;

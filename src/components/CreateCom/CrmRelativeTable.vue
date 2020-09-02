@@ -28,12 +28,12 @@
           icon="el-icon-search"
           @click.native="searchInput"/>
       </el-input>
-      <el-button
+      <!-- <el-button
         v-if="canSave"
         class="xr-btn--orange"
         icon="el-icon-plus"
         type="primary"
-        @click="isCreate=true">新建</el-button>
+        @click="isCreate=true">新建</el-button> -->
     </flexbox>
     <el-table
       v-loading="loading"
@@ -303,6 +303,7 @@ export default {
       } else if (this.crmType === 'student') {
         return [
           { name: '学员姓名', field: 'customerName', formType: 'customer' },
+          { name: '学员编号', field: 'leadsNumber', formType: 'customer' },
           { name: '邮箱', field: 'email', formType: 'text' },
           { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
           { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },

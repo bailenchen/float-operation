@@ -200,7 +200,7 @@ export default {
         {
           type: 'log',
           label: '写跟进'
-        },
+        }
         // {
         //   type: 'task',
         //   label: '创建任务'
@@ -213,10 +213,10 @@ export default {
         //   type: 'business',
         //   label: '创建商机'
         // },
-        {
-          type: 'contract',
-          label: '创建合同'
-        }
+        // {
+        //   type: 'contract',
+        //   label: '创建合同'
+        // }
         // {
         //   type: 'receivables',
         //   label: '创建回款'

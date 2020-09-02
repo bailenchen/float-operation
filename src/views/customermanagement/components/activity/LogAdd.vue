@@ -28,12 +28,12 @@
       <i
         v-if="!isUnfold"
         class="wk wk-write" />
-      <span
+      <!-- <span
         :class="{empty: !!!content, unfold: !isUnfold}"
         class="content-box" >
         {{ content || '' }}
-      </span>
-      <!--<el-input
+      </span> -->
+      <el-input
         ref="textarea"
         v-model="content"
         :autosize="autosize"
@@ -42,7 +42,7 @@
         clearable
         resize="none"
         placeholder="请输入内容"
-        @focus="inputFocus" />-->
+        @focus="inputFocus" />
     </div>
     <add-image-list
       v-if="imgFiles.length > 0 && isUnfold"
@@ -201,8 +201,8 @@ export default {
       showRelativeType: '',
       batchId: guid(), // 批次ID
       fieldList: [
-        { fieldName: 'lastTime', placeholder: '跟进时间', com: 'XhDateTime', value: '' },
-        { fieldName: 'category', placeholder: '跟进计划', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: 'lastTime', placeholder: '*跟进时间', com: 'XhDateTime', value: '' },
+        { fieldName: 'category', placeholder: '*跟进计划', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'followUpResults', placeholder: '跟进结果', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'dealStatus', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'nextTime', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
@@ -292,12 +292,12 @@ export default {
     },
 
     handleFormChange(data) {
+      console.log(data, 'vvvvv')
       this.fieldList[data.index].value = data.value
-      // {  }
       if (this.fieldList[data.index].fieldName === 'category') {
         const item = {
           fieldName: 'promisedVisitTime',
-          placeholder: '承诺到访时间',
+          placeholder: '*承诺到访时间',
           com: 'XhDateTime',
           value: ''
         }
@@ -315,6 +315,7 @@ export default {
         } else {
           if (findIndex !== -1) {
             this.fieldList = this.defField
+            this.$set(this.fieldList[data.index], 'value', data.value)
             console.log(this.fieldList, 'nnnnn', this.defField)
             // this.fieldList.splice(-2, 1)
           }
