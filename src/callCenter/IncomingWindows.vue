@@ -26,7 +26,7 @@
       <div v-else-if="showHang" :style="{zIndex:zIndex}" class="red-timePiece">已挂断</div>
       <el-card v-if="showDrop" :style="{zIndex: zIndex}" class="dropdown">
         <!-- <li @click="showCreate('contacts')">添加联系人</li> -->
-        <li @click="showCreate('leads')">添加线LEADS</li>
+        <li @click="showCreate('customer')">添加LEADS</li>
         <!-- <li @click="showCreate('customer')">添加客户</li> -->
       </el-card>
     </div>
@@ -178,8 +178,8 @@ export default {
       crmCallInNumberSearch(data)
         .then(res => {
           if (res.data !== '') {
-            // this.model = res.data.model
-            this.model = 'customer'
+            this.model = res.data.model
+            // this.model = 'customer'
             if (!res.data.ownerUserName) {
               this.realname = ''
             } else {
@@ -192,6 +192,7 @@ export default {
               this.companyName = res.data.customerName // 联系人模块需要显示公司名称
             } else if (this.model === 'leads') {
               this.incomingName = 'LEADS'
+              this.model = 'customer'
               // this.customerName = res.data.name
               this.customerName = res.data.leadsNumber
               this.modelId = res.data['customerId']
@@ -295,7 +296,7 @@ export default {
                 fontWeight: 300
               }
             }, [
-              h('span', {}, `${this.incomingName}姓名:   `),
+              h('span', {}, `${this.incomingName}编号:   `),
               h('span', { style: { fontWeight: 500 }}, this.customerName)
             ]),
             h('p', {

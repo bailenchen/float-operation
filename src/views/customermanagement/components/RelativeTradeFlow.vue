@@ -69,8 +69,8 @@
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
-import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
-import { crmBusinessQueryContract } from '@/api/customermanagement/business'
+// import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
+// import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { separator } from '@/filters/vue-numeral-filter/filters'
 

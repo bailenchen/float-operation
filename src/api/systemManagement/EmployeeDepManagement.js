@@ -170,3 +170,14 @@ export function crmCallAuthorize(data) {
     }
   })
 }
+/**
+ * 开启呼叫中心信息
+ *
+ */
+export function userCallQueryInfoAPI(data) {
+  return request({
+    url: 'call/queryInfo',
+    method: 'post',
+    data: data
+  })
+}
