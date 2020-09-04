@@ -6,6 +6,7 @@
         v-src:background-image="item.url"
         v-for="(item, index) in data"
         :key="index"
+        :style="imgItemStyle"
         class="img-item"
         @mouseover="mouseImgOver(item, index)"
         @mouseleave="mouseImgLeave(item, index)">
@@ -14,8 +15,9 @@
           class="img-delete"
           @click="deleteItem(item, index)">×</div>
       </div>
-      <div class="img-item-add">
+      <div v-if="showAddButton" :style="imgItemAddStyle" class="img-item-add">
         <input
+          :style="imgItemIputStyle"
           type="file"
           class="img-item-iput"
           accept="image/*"
@@ -23,7 +25,7 @@
           @change="uploadFile">
       </div>
     </flexbox>
-    <el-button type="text" @click="deleteAll">全部删除</el-button>
+    <el-button v-if="showAllDelete" type="text" @click="deleteAll">全部删除</el-button>
   </section>
 </template>
 
@@ -34,12 +36,63 @@ export default {
   name: 'AddImageList',
   components: {},
   props: {
-    data: Array
+    data: Array,
+    width: {
+      type: Number,
+      default: 98
+    },
+    showAllDelete: {
+      type: Boolean,
+      default: true
+    },
+    max: Number,
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {}
   },
-  computed: {},
+  computed: {
+    showAddButton() {
+      if (this.disabled) {
+        return false
+      }
+      if (!this.max) {
+        return true
+      }
+
+      if (this.data && this.data.length >= this.max) {
+        return false
+      }
+
+
+      return true
+    },
+
+    imgItemStyle() {
+      return {
+        width: `${this.width}px`,
+        height: `${this.width}px`
+      }
+    },
+
+    imgItemAddStyle() {
+      return {
+        width: `${this.width}px`,
+        height: `${this.width}px`,
+        lineHeight: `${this.width}px`
+      }
+    },
+
+    imgItemIputStyle() {
+      return {
+        width: `${this.width}px`,
+        height: `${this.width}px`
+      }
+    }
+  },
   watch: {},
   mounted() {},
 
@@ -66,6 +119,7 @@ export default {
     },
 
     uploadFile(event) {
+      console.log(event, 'xxx')
       this.$emit('upload', event)
     }
   }

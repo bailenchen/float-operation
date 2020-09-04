@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-09-01 16:29:46
+ * @LastEditTime: 2020-09-03 14:01:58
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
@@ -15,16 +15,28 @@
         </el-form-item>
       </el-form>
     </div>
+    <el-dialog
+      :visible.sync="innerVisible"
+      width="30%"
+      title="线上资金收款"
+      append-to-body>
+      <div v-loading="loading" style="margin: 20px auto;width:150px;height:150px;">
+        <div
+          id="canvas"
+          class="publish-info-content" />
+      </div>
+    </el-dialog>
     <div slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
-      <el-button v-debounce="handleConfirm" type="primary">扫码付款</el-button>
-      <el-button v-debounce="handleConfirm" type="primary">付款码付款</el-button>
+      <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('scane')">扫码付款</el-button>
+      <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('code')">付款码付款</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
 // import { Loading } from 'element-ui'
+import QRCode from 'qrcodejs2'
 export default {
   name: 'OnlineRecharge',
   props: {
@@ -43,6 +55,9 @@ export default {
   },
   data() {
     return {
+      innerVisible: false,
+      loading: false,
+      qrcode: null,
       form: {
         money: ''
       },
@@ -55,6 +70,7 @@ export default {
   },
   watch: {
     visible(val) {
+      this.form.money = ''
     //   if (val && this.list.length === 0) {
     //     this.getList()
     //   }
@@ -69,6 +85,44 @@ export default {
     },
 
     /**
+    生成二维码
+     */
+    createCode(path) {
+      this.$nextTick(() => {
+        this.loading = false
+        if (this.qrcode) {
+          this.qrcode.clear()
+          this.qrcode.makeCode(path)
+        } else {
+          this.qrcode = new QRCode(document.getElementById('canvas'), {
+            text: path,
+            width: 150,
+            height: 150,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          })
+        }
+      })
+    },
+
+    /**
+     * 确定二次弹窗生成二维码
+     */
+    scanePay(type) {
+      if (!this.form.money) {
+        return
+      }
+      this.loading = true
+      this.innerVisible = true
+      // if (type == 'scane') {
+
+      // } else if (type == 'code') {
+
+      // }
+    },
+
+    /**
      * 确定
      */
     handleConfirm() {
@@ -76,7 +130,9 @@ export default {
       //   target: document.querySelector(`.el-dialog[aria-label="在线充值"]`)
       // })
       this.$refs.form.validate((valid) => {
-        alert(valid)
+        if (valid) {
+          console.log(this.form, 'xxxxx')
+        }
       })
     //   if (this.selectId) {
     //     const loading = Loading.service({
