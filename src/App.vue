@@ -33,7 +33,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button v-if="showReferbtn" type="success" @click="afterRefer()">转 接</el-button>
-        <el-button v-if="!showReferbtn" type="primary" @click="confirmRefer()">确 定</el-button>
+        <el-button v-if="!showReferbtn" type="primary" @click="confirmRefer()">呼 出</el-button>
       </div>
     </el-dialog>
     <xr-import

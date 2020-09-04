@@ -560,7 +560,8 @@ import {
   adminUsersUpdatePwd,
   adminUsersUsernameEditAPI,
   adminUsersManagerUsernameEditAPI,
-  usersEditStatus
+  usersEditStatus,
+  userCallQueryInfoAPI
 } from '@/api/systemManagement/EmployeeDepManagement'
 import {
   adminConfigsetIndex
@@ -813,10 +814,10 @@ export default {
         }
       },
       callForm: {
-        url: '',
+        // url: '',
         username: '',
         password: '',
-        field: '',
+        // field: '',
         channel: 'telephone',
         hardPhone: ''
       },
@@ -1517,6 +1518,24 @@ export default {
           break
       }
     },
+    // 获取开启过呼叫中心信息
+    getCallInfo() {
+      const id = this.selectionList[0].userId
+      userCallQueryInfoAPI({ userId: id })
+        .then(res => {
+          const form = {
+            username: res.data.username || '',
+            password: res.data.password || '',
+            channel: 'telephone',
+            hardPhone: res.data.hardPhone || ''
+          }
+          this.callForm = form
+          this.refs['calldialogRef'].resetFields()
+        })
+        .catch(() => {
+
+        })
+    },
     /** 操作 */
     selectionBarClick(type) {
       var ids = this.selectionList
@@ -1570,6 +1589,12 @@ export default {
       } else if (type === 'setCall' || type === 'stopCall') {
         var callSet = type === 'setCall' ? '启用呼叫中心' : '禁用呼叫中心'
         if (type === 'setCall') {
+          if (this.selectionList.length > 1) {
+            this.$message('每次开启只能选择一个员工')
+            return
+          }
+          this.callForm = {}
+          this.getCallInfo()
           this.callCreateDialog = true
           return
         }
