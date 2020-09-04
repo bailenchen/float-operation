@@ -91,10 +91,10 @@ export default {
     window.onload = () => {
       let callOutData = localStorage.getItem('callOutData')
       callOutData = JSON.parse(callOutData)
-      if (callOutData && !callOutData.inComing) {
-        this.$store.commit('SHOW_CALL_OUT', true)
-      } else {
+      if (callOutData && callOutData.inComing) {
         this.$store.commit('SHOW_CALL_OUT', false)
+      } else {
+        this.$store.commit('SHOW_CALL_OUT', true)
       }
     }
     // this.$nextTick(() => {

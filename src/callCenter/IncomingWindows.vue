@@ -417,7 +417,7 @@ export default {
                   this.crmType = this.model
                   this.showDview = true
                   console.log(888888, this.modelId, this.model)
-                  this.$store.commit('SHOW_TIMER', true)
+                  // this.$store.commit('SHOW_TIMER', true)
                   this.modelData = {
                     modelId: this.modelId,
                     model: this.model
@@ -657,6 +657,8 @@ export default {
           this.showCall = false
           this.ringShow = true
           this.$store.commit('SHOW_RING', false)
+          localStorage.removeItem('callOutData')
+          this.$store.commit('SHOW_CALL_OUT', true)
           this.isAnswer = true
           if (this.notify) {
             this.notify.close()
