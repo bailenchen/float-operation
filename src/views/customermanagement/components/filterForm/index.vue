@@ -530,6 +530,7 @@ export default {
      * @param formItem
      */
     fieldChange(formItem, index) {
+      console.log(formItem, 'mmmmmm')
       const obj = this.fieldList.find(item => {
         return item.fieldName === formItem.fieldName
       })

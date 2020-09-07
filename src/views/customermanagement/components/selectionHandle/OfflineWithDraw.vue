@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-09-01 16:33:17
+ * @LastEditTime: 2020-09-03 15:47:40
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
@@ -39,6 +39,16 @@
 
           <el-input v-if="item.type == 'text'" v-model="form[MoneyType][item.prop]"/>
 
+          <add-image-list
+            v-if="item.type == 'file'"
+            :width="50"
+            :max="maxFileCount"
+            :data="imgFile"
+            :show-all-delete="false"
+            style="padding: 0;margin: 0;"
+            @delete="deletePayImage"
+            @upload="uploadPayFile" />
+
           <xh-user-cell
             v-if="item.type == 'user'"
             :value="draftUser ? [draftUser] : []"
@@ -58,10 +68,13 @@
 <script>
 // import { Loading } from 'element-ui'
 import { XhUserCell } from '@/components/CreateCom'
+import AddImageList from '@/components/quickAdd/AddImageList'
+import { crmFileSave } from '@/api/common'
 export default {
   name: 'OfflineWithDraw',
   components: {
-    XhUserCell
+    XhUserCell,
+    AddImageList
   },
   props: {
     visible: {
@@ -83,6 +96,8 @@ export default {
   },
   data() {
     return {
+      maxFileCount: 1,
+      imgFile: [],
       options: [
         { label: '支付宝', value: 1 },
         { label: '微信', value: 2 }
@@ -155,6 +170,7 @@ export default {
   },
   watch: {
     visible(val) {
+      this.form[this.MoneyType] = {}
       if (!val) {
         this.$emit('reset-type')
       }
@@ -178,6 +194,41 @@ export default {
     },
 
     /**
+     * 附件操作
+     */
+    deletePayImage(item, index) {
+      this.imgFile.splice(index, 1)
+    },
+
+    uploadPayFile() {
+      var files = event.target.files
+      console.log(files, 'xxxxx')
+      if (files.length) {
+        for (let index = 0; index < files.length; index++) {
+          const file = files[index]
+          if (
+            file.type.indexOf('image') == -1 &&
+            this.showRelativeType == 'img'
+          ) {
+            this.$message.error('请上传正确的文件类型')
+            return
+          }
+        }
+        for (let index = 0; index < files.length; index++) {
+          const file = files[index]
+          crmFileSave({ file: file }).then(res => {
+            console.log(res, 'file')
+            this.imgFile.push(res.data)
+            // this.$set(this.form, 'applyCertificate', path)
+          }).catch(() => {
+            this.loading = false
+          })
+        }
+        event.target.value = ''
+      }
+    },
+
+    /**
      * 确定
      */
     handleConfirm() {
@@ -185,7 +236,9 @@ export default {
       //   target: document.querySelector(`.el-dialog[aria-label="在线充值"]`)
       // })
       this.$refs.form.validate((valid) => {
-        alert(valid)
+        if (valid) {
+          console.log(this.form[this.MoneyType], 'xxxxx')
+        }
       })
     //   if (this.selectId) {
     //     const loading = Loading.service({
@@ -218,9 +271,19 @@ export default {
 .main {
     height: 500px;
     overflow: auto;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 /deep/ .el-dialog {
     width: 600px;
+}
+
+/deep/ .el-dialog__body {
+  padding: 30px 0;
+}
+
+/deep/ .el-dialog__footer {
+  padding: 10px 25px 10px 10px !important
 }
 
 /deep/ .el-form-item__label {
