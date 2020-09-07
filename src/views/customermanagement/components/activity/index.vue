@@ -311,10 +311,13 @@ export default {
         return
       }
       if (!data.category) {
-        this.$message.error('请选择跟进计划')
+        this.$message.error('请选择LEADS状态')
         return
       }
-
+      if (!data.followUpResults) {
+        this.$message.error('请选择跟进结果')
+        return
+      }
       if (data.category == '承诺到访' && !data.promisedVisitTime) {
         this.$message.error('请选择承诺时间')
         return

@@ -745,13 +745,19 @@ export default {
         if (item.data.fieldName === 'introducer_type') {
           const findRes = this.crmForm.crmFields.find(o => o.data.fieldName === 'introducer_id')
           if (findRes) {
-            if (item.value) {
+            if (item.value == 1 || item.value == 2) {
               const str = item.value == 1 ? '（员工）' : '（学员）'
               findRes.data.name = '介绍人' + str
               findRes.data.formType = item.value == 1 ? 'single_user' : 'student'
               findRes.disabled = false
               findRes.radio = true
               findRes.value = []
+            } else if (item.value == 3) {
+              findRes.data.name = '介绍人'
+              findRes.data.formType = 'text'
+              findRes.disabled = true
+              findRes.value = ''
+              delete findRes.radio
             } else {
               findRes.data.name = '介绍人'
               findRes.data.formType = 'text'
@@ -1230,6 +1236,9 @@ export default {
           if (element.key == 'leads_number' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id') {
             element.disabled = true
           }
+        }
+        if (this.action.type == 'update' && this.crmType == 'customer' && (element.key == 'dept_id' || element.key == 'channel_id')) {
+          element.disabled = true
         }
       }
     },

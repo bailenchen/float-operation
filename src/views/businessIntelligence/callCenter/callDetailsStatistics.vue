@@ -90,7 +90,8 @@ import CustomerDetail from '@/views/customermanagement/customer/CustomerDetail'
 import ClueDetail from '@/views/customermanagement/clue/ClueDetail'
 import base from '../mixins/base'
 import Audios from '../components/audios'
-import { downloadFile } from '@/utils'
+// import { downloadFile } from '@/utils'
+import { downloadFileWithBuffer } from '@/utils'
 export default {
   /** 产品销售情况统计 */
   name: 'CallDetailsStatistics',
@@ -303,15 +304,24 @@ export default {
       音频下载
        */
     download(id, fileName) {
-      const data = {}
+      // const data = {}
       crmCallDownload({ id: id }).then(res => {
-        if (res.data && res.data.url) {
-          data.path = res.data.url // 创建下载的链接
-          data.name = fileName
-          downloadFile(data)
-        } else {
+        // if (res.data && res.data.url) {
+        //   data.path = res.data.url // 创建下载的链接
+        //   data.name = fileName
+        //   downloadFile(data)
+        // } else {
+        //   this.$message.error('没有录音文件')
+        //   return
+        // }
+        if (res.code && res.code === 500) {
           this.$message.error('没有录音文件')
           return
+        } else {
+          const blob = new Blob([res], {
+            type: ''
+          })
+          downloadFileWithBuffer(blob, fileName || '文件')
         }
       }).catch(() => {})
     },

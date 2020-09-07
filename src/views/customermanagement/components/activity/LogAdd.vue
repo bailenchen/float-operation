@@ -14,6 +14,7 @@
         class="form-item">
         <component
           :is="field.com"
+          :disabled="field.disabled"
           :index="index"
           :item="field"
           :placeholder="field.placeholder"
@@ -123,6 +124,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
 import {
   crmSettingRecordListAPI
@@ -201,9 +203,9 @@ export default {
       showRelativeType: '',
       batchId: guid(), // 批次ID
       fieldList: [
-        { fieldName: 'lastTime', placeholder: '*跟进时间', com: 'XhDateTime', value: '' },
-        { fieldName: 'category', placeholder: '*跟进计划', com: 'XhSelect', setting: [], value: '' },
-        { fieldName: 'followUpResults', placeholder: '跟进结果', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: 'lastTime', placeholder: '*跟进时间', com: 'XhDateTime', value: '', disabled: true },
+        { fieldName: 'category', placeholder: '*LEADS状态', com: 'XhSelect', setting: [], value: '' },
+        { fieldName: 'followUpResults', placeholder: '*跟进结果', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'dealStatus', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'nextTime', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
       ],
@@ -253,13 +255,17 @@ export default {
         if (item.setting && item.setting.length > 0) {
           item.value = item.setting[0].value
         } else {
-          item.value = ''
+          if (item.fieldName == 'lastTime') {
+            item.value = moment().format('YYYY-MM-DD HH:mm:ss')
+          } else {
+            item.value = ''
+          }
         }
       })
     },
 
     getOptions() {
-      // 跟进计划
+      // LEADS状态
       crmSettingRecordListAPI().then(res => {
         this.fieldList[1].setting = res.data.map(o => {
           return { name: o, value: o }
