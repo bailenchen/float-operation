@@ -35,7 +35,8 @@ export function crmCallDownload(data) {
   return request({
     url: 'call/download',
     method: 'post',
-    data: data
+    data: data,
+    responseType: 'blob'
   })
 }
 /**

@@ -43,7 +43,8 @@ import { crmCustomerCallRecordAPI } from '@/api/customermanagement/customer'
 
 import Audios from '../../businessIntelligence/components/audios'
 
-import { downloadFile } from '@/utils'
+// import { downloadFile } from '@/utils'
+import { downloadFileWithBuffer } from '@/utils'
 
 
 export default {
@@ -120,17 +121,35 @@ export default {
      * 音频下载
      */
     download(id, fileName) {
+      // crmCallDownload({ id: id }).then(res => {
       crmCallDownload({ id: id }).then(res => {
-        if (res.data && res.data.url) {
-          const data = {}
-          data.path = res.data.url // 创建下载的链接
-          data.name = fileName
-          downloadFile(data)
-        } else {
+        console.log(res)
+        // if (res.code !== 500) {
+        // // if (res.data && res.data.url) {
+        //   // const data = {}
+        //   // data.path = res.data.url // 创建下载的链接
+        //   // data.name = fileName
+        //   // downloadFile(data)
+        //   const blob = new Blob([res], {
+        //     type: ''
+        //   })
+        //   downloadFileWithBuffer(blob, fileName || '文件')
+        // } else {
+        //   this.$message.error('没有录音文件')
+        //   return
+        // }
+        if (res.code && res.code === 500) {
           this.$message.error('没有录音文件')
           return
+        } else {
+          const blob = new Blob([res], {
+            type: ''
+          })
+          downloadFileWithBuffer(blob, fileName || '文件')
         }
-      }).catch(() => {})
+      }).catch(() => {
+
+      })
     }
   }
 }
