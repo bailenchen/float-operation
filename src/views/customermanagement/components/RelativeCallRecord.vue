@@ -123,7 +123,6 @@ export default {
     download(id, fileName) {
       // crmCallDownload({ id: id }).then(res => {
       crmCallDownload({ id: id }).then(res => {
-        console.log(res)
         // if (res.code !== 500) {
         // // if (res.data && res.data.url) {
         //   // const data = {}

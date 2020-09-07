@@ -122,10 +122,15 @@ export default {
     },
     // 播放音频
     play() {
+      console.log(this.item.path)
       if (this.defaultTime === '0:00:00') {
         return false
       }
-      this.filePath()
+      this.audioUrl = this.item.path
+      if (this.audioUrl) {
+        this.$refs.audio.play()
+      }
+      // this.filePath()
     },
     // 暂停音频
     pause() {
