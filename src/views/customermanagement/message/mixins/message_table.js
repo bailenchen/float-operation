@@ -291,7 +291,22 @@ export default {
             width = 140
           }
         } else {
-          width = element.width
+          if (['leadsNumber', 'mobile', 'telephone', 'gradeName', 'followUpTime', 'nextTime', 'visitTime', 'promisedVisitTime', 'createTime', 'updateTime'].includes(element.fieldName)) {
+            width = {
+              leadsNumber: 140,
+              mobile: 135,
+              telephone: 135,
+              gradeName: 80,
+              followUpTime: 150,
+              nextTime: 150,
+              visitTime: 150,
+              promisedVisitTime: 150,
+              createTime: 150,
+              updateTime: 150
+            }[element.fieldName]
+          } else {
+            width = element.width
+          }
         }
 
         this.fieldList.push({

@@ -34,9 +34,9 @@
         width="200">
         <template slot-scope="scope">
           <flexbox>
-            <el-button
+            <!-- <el-button
               type="text"
-              @click.native="handleFile('preview', scope)">预览</el-button>
+              @click.native="handleFile('preview', scope)">预览</el-button> -->
             <el-button
               type="text"
               @click.native="handleFile('download', scope)">下载</el-button>

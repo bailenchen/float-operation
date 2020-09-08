@@ -46,7 +46,6 @@
         class="n-table--border"
         use-virtual
         stripe
-        border
         highlight-current-row
         style="width: 100%"
         @row-click="handleRowClick"
@@ -153,7 +152,7 @@
           </template>
         </el-table-column>
         <el-table-column/>
-        <!-- <el-table-column
+        <el-table-column
           label="关注"
           align="center"
           fixed="right"
@@ -166,7 +165,7 @@
                 @click="toggleStar(scope.row)" />
             </el-tooltip>
           </template>
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column
           :resizable="false"
           fixed="right"

@@ -19,7 +19,7 @@
           :item="field"
           :placeholder="field.placeholder"
           :value="field.value"
-          @value-change="handleFormChange" />
+          @value-change="handleFormChange($event, field.setting)" />
       </div>
       <common-words @select="commonWordsSelect" />
     </div>
@@ -133,6 +133,7 @@ import {
   QuerySignUpList,
   QueryFollowUpResults
 } from '@/api/systemManagement/params'
+import { QueryLeadsStatusFollowResult } from '@/api/systemManagement/params'
 
 import XhSelect from '@/components/CreateCom/XhSelect'
 import XhDateTime from '@/components/CreateCom/XhDateTime'
@@ -264,27 +265,45 @@ export default {
       })
     },
 
-    getOptions() {
-      // LEADS状态
-      crmSettingRecordListAPI().then(res => {
+    // 获取leads联动
+    getLeadsStatus() {
+      QueryLeadsStatusFollowResult({ type: 'mmmm' }).then(res => {
         this.fieldList[1].setting = res.data.map(o => {
-          return { name: o, value: o }
+          const list = o.children.map(item => {
+            return { name: item.name, value: item.name }
+          })
+          return { name: o.name, value: o.id, list: list }
         })
         if (res.data.length > 0) {
-          this.fieldList[1].value = this.fieldList[1].setting[0].value
+          this.fieldList[1].value = ''
         }
+        console.log(this.fieldList, '11111')
         this.$set(this.fieldList, 1, this.fieldList[1])
       }).catch(() => {})
-      // 跟进结果
-      QueryFollowUpResults().then(res => {
-        this.fieldList[2].setting = res.data.map(o => {
-          return { name: o.results, value: o.results }
-        })
-        if (res.data.length > 0) {
-          this.fieldList[2].value = this.fieldList[2].setting[0].value
-        }
-        this.$set(this.fieldList, 2, this.fieldList[2])
-      }).catch(() => {})
+    },
+
+    getOptions() {
+      this.getLeadsStatus()
+      // // LEADS状态
+      // crmSettingRecordListAPI().then(res => {
+      //   this.fieldList[1].setting = res.data.map(o => {
+      //     return { name: o, value: o }
+      //   })
+      //   if (res.data.length > 0) {
+      //     this.fieldList[1].value = this.fieldList[1].setting[0].value
+      //   }
+      //   this.$set(this.fieldList, 1, this.fieldList[1])
+      // }).catch(() => {})
+      // // 跟进结果
+      // QueryFollowUpResults().then(res => {
+      //   this.fieldList[2].setting = res.data.map(o => {
+      //     return { name: o.results, value: o.results }
+      //   })
+      //   if (res.data.length > 0) {
+      //     this.fieldList[2].value = this.fieldList[2].setting[0].value
+      //   }
+      //   this.$set(this.fieldList, 2, this.fieldList[2])
+      // }).catch(() => {})
       // 签约可能性
       QuerySignUpList().then(res => {
         this.fieldList[3].setting = res.data.map(o => {
@@ -297,33 +316,48 @@ export default {
       }).catch(() => {})
     },
 
-    handleFormChange(data) {
-      console.log(data, 'vvvvv')
+    handleFormChange(data, subitem) {
+      console.log(data, subitem, 'vvvvv')
       this.fieldList[data.index].value = data.value
-      if (this.fieldList[data.index].fieldName === 'category') {
-        const item = {
-          fieldName: 'promisedVisitTime',
-          placeholder: '*承诺到访时间',
-          com: 'XhDateTime',
-          value: ''
-        }
-        const findIndex = this.fieldList.findIndex(o => o.fieldName === 'promisedVisitTime')
-        if (data.value === '承诺到访') {
-          if (findIndex === -1) {
-            this.defField = objDeepCopy(this.fieldList)
-            console.log(this.fieldList, 'mmmm')
-            this.fieldList.length = 4
-            console.log(this.fieldList, 'jjjj', this.defField)
-            // this.fieldList.splice(-1, 0, item)
-            this.fieldList.push(item)
-            console.log(this.fieldList, 'xxx')
+      if (data.index == 1) {
+        this.concatList = subitem
+        this.$set(this.fieldList[2], 'setting', [])
+        this.$set(this.fieldList[2], 'value', '')
+        console.log(this.fieldList, 'ssss')
+        for (let index = 0; index < subitem.length; index++) {
+          const element = subitem[index]
+          if (data.value == element.value) {
+            this.$set(this.fieldList[2], 'setting', element.list)
+            return
           }
-        } else {
-          if (findIndex !== -1) {
-            this.fieldList = this.defField
-            this.$set(this.fieldList[data.index], 'value', data.value)
-            console.log(this.fieldList, 'nnnnn', this.defField)
+        }
+      } else {
+        console.log(this.fieldList, 'xxxxxxxx')
+        if (this.fieldList[data.index].fieldName === 'followUpResults') {
+          const item = {
+            fieldName: 'promisedVisitTime',
+            placeholder: '*承诺到访时间',
+            com: 'XhDateTime',
+            value: ''
+          }
+          const findIndex = this.fieldList.findIndex(o => o.fieldName === 'promisedVisitTime')
+          if (data.value === '承诺到访' && data.index == 2) {
+            if (findIndex === -1) {
+              this.defField = objDeepCopy(this.fieldList)
+              console.log(this.fieldList, 'mmmm')
+              this.fieldList.length = 4
+              console.log(this.fieldList, 'jjjj', this.defField)
+              // this.fieldList.splice(-1, 0, item)
+              this.fieldList.push(item)
+              console.log(this.fieldList, 'xxx')
+            }
+          } else {
+            if (findIndex !== -1) {
+              this.fieldList = this.defField
+              this.$set(this.fieldList[data.index], 'value', data.value)
+              console.log(this.fieldList, 'nnnnn', this.defField)
             // this.fieldList.splice(-2, 1)
+            }
           }
         }
       }
@@ -536,6 +570,15 @@ export default {
       const form = {}
       this.fieldList.forEach(o => {
         form[o.fieldName] = o.value
+        if (o.fieldName == 'category') {
+          for (let index = 0; index < o.setting.length; index++) {
+            const element = o.setting[index]
+            if (o.value == element.value) {
+              o.value = element.name
+              return
+            }
+          }
+        }
       })
       this.$emit('send', {
         id: this.id,

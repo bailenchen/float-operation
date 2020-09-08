@@ -89,7 +89,6 @@
       :cell-class-name="cellClassName"
       class="n-table--border"
       stripe
-      border
       highlight-current-row
       style="width: 100%"
       @row-click="handleRowClick"

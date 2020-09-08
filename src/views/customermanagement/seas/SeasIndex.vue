@@ -63,7 +63,6 @@
         class="n-table--border"
         use-virtual
         stripe
-        border
         highlight-current-row
         style="width: 100%"
         @row-click="handleRowClick"

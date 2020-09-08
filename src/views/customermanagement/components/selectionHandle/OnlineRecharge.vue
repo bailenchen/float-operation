@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-09-03 14:01:58
+ * @LastEditTime: 2020-09-07 19:07:21
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
@@ -63,7 +63,7 @@ export default {
       },
       rules: {
         money: [
-          { required: true, message: '请输入充值金额', trigger: 'blur' }
+          { required: true, message: '请输入收款金额', trigger: 'blur' }
         ]
       }
     }
@@ -115,11 +115,30 @@ export default {
       }
       this.loading = true
       this.innerVisible = true
-      // if (type == 'scane') {
-
-      // } else if (type == 'code') {
+      if (type == 'scane') {
+        this.scaneHandle()
+      }
+      //  else if (type == 'code') {
 
       // }
+    },
+
+    /**
+     * 扫码付款
+     */
+    scaneHandle() {
+      // const params = {
+
+      // }
+      const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
+      this.createCode(scane)
+    },
+
+    /**
+     *付款码付款
+     */
+    payCodeHandle() {
+
     },
 
     /**

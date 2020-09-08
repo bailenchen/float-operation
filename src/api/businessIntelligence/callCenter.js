@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-08-20 10:07:14
+ * @LastEditTime: 2020-09-08 11:42:31
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \dz-72crm-qiwen\src\api\businessIntelligence\callCenter.js
+ */
 import request from '@/utils/request'
 
 /**
@@ -36,6 +44,9 @@ export function crmCallDownload(data) {
     url: 'call/download',
     method: 'post',
     data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     responseType: 'blob'
   })
 }
