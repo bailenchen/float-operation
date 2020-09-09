@@ -1600,7 +1600,6 @@ export default {
     },
     // 保存数据
     saveField(saveAndCreate, isDraft = false) {
-      this.loading = true
       this.saveAndCreate = saveAndCreate
       this.$refs.crmForm.validate(valid => {
         const valMeal = this.crmType == 'productSetMeal' ? this.vv() : '' // 处理课程套餐验证的
@@ -1611,6 +1610,7 @@ export default {
               return
             }
           }
+          this.loading = true
           if (this.showExamine) {
             /** 验证审批数据 */
             if (isDraft) {

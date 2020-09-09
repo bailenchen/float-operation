@@ -127,11 +127,11 @@
 import moment from 'moment'
 import { crmFileDelete, crmFileRemoveByBatchId } from '@/api/common'
 import {
-  crmSettingRecordListAPI
+// crmSettingRecordListAPI
 } from '@/api/customermanagement/common'
 import {
-  QuerySignUpList,
-  QueryFollowUpResults
+  QuerySignUpList
+  // QueryFollowUpResults
 } from '@/api/systemManagement/params'
 import { QueryLeadsStatusFollowResult } from '@/api/systemManagement/params'
 

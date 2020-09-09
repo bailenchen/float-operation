@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-20 16:37:40
- * @LastEditTime: 2020-08-26 18:57:04
+ * @LastEditTime: 2020-09-09 09:53:45
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\components\CreateCom\XhSetMeal.vue
@@ -72,7 +72,7 @@ export default {
   },
   data() {
     const classTimes = (rule, value, callback) => {
-      this.form.purchaseFrequency = value.replace(/[^0-9]/g, '')
+      this.form.purchaseFrequency = String(value).replace(/[^0-9]/g, '')
       if (value === '') {
         callback(new Error('购买课次不能为空'))
       } else {
@@ -80,7 +80,7 @@ export default {
       }
     }
     const giveClassTimes = (rule, value, callback) => {
-      this.form.giveFrequency = value.replace(/[^0-9]/g, '')
+      this.form.giveFrequency = String(value).replace(/[^0-9]/g, '')
       callback()
     }
     return {
