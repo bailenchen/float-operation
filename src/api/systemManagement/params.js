@@ -20,6 +20,30 @@ export function AddChannelCategory(data) {
     data: data
   })
 }
+// LEADS状态&跟进结果设置
+export function QueryLeadsStatusFollowResult(data) {
+  return request({
+    url: 'CrmCustomerLeads/queryList',
+    method: 'post',
+    data: data
+  })
+}
+// 删除
+export function DelLeadsStatusFollowResult(data) {
+  return request({
+    url: 'CrmCustomerLeads/delectAddAdminChannelType',
+    method: 'post',
+    data: data
+  })
+}
+// 添加
+export function AddLeadsStatusFollowResult(data) {
+  return request({
+    url: 'CrmCustomerLeads/addAdminChannelType',
+    method: 'post',
+    data: data
+  })
+}
 
 // 删除渠道
 export function DeleteChannelCategory(data) {

@@ -742,25 +742,31 @@ export default {
           }
         }
       } else if (this.crmType === 'customer') {
-        if (item.data.fieldName === 'introducer_type') {
-          const findRes = this.crmForm.crmFields.find(o => o.data.fieldName === 'introducer_id')
-          if (findRes) {
-            if (item.value) {
-              const str = item.value == 1 ? '（员工）' : '（学员）'
-              findRes.data.name = '介绍人' + str
-              findRes.data.formType = item.value == 1 ? 'single_user' : 'student'
-              findRes.disabled = false
-              findRes.radio = true
-              findRes.value = []
-            } else {
-              findRes.data.name = '介绍人'
-              findRes.data.formType = 'text'
-              findRes.disabled = true
-              findRes.value = ''
-              delete findRes.radio
-            }
-          }
-        }
+        // if (item.data.fieldName === 'introducer_type') {
+        //   const findRes = this.crmForm.crmFields.find(o => o.data.fieldName === 'introducer_id')
+        //   if (findRes) {
+        //     if (item.value == 1 || item.value == 2) {
+        //       const str = item.value == 1 ? '（员工）' : '（学员）'
+        //       findRes.data.name = '介绍人' + str
+        //       findRes.data.formType = item.value == 1 ? 'single_user' : 'student'
+        //       findRes.disabled = false
+        //       findRes.radio = true
+        //       findRes.value = []
+        //     } else if (item.value == 3) {
+        //       findRes.data.name = '介绍人'
+        //       findRes.data.formType = 'text'
+        //       findRes.disabled = true
+        //       findRes.value = ''
+        //       delete findRes.radio
+        //     } else {
+        //       findRes.data.name = '介绍人'
+        //       findRes.data.formType = 'text'
+        //       findRes.disabled = true
+        //       findRes.value = ''
+        //       delete findRes.radio
+        //     }
+        //   }
+        // }
       } else if (this.crmType == 'productSetMeal') {
         if (item.data.formType === 'coaching_methods') {
           console.log(item, '123', this.crmForm.crmFields)
@@ -911,7 +917,16 @@ export default {
           }
 
           console.log('res.data: ', res.data)
-          this.getcrmRulesAndModel(res.data)
+          const list = res.data
+          if (this.crmType == 'customer') {
+            for (let index = 0; index < list.length; index++) {
+              const element = list[index]
+              if (element.fieldName == 'introducer_id') {
+                list.splice(index, 1)
+              }
+            }
+          }
+          this.getcrmRulesAndModel(list)
           this.loading = false
         })
         .catch(() => {
@@ -1230,6 +1245,9 @@ export default {
           if (element.key == 'leads_number' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id') {
             element.disabled = true
           }
+        }
+        if (this.action.type == 'update' && this.crmType == 'customer' && element.key == 'channel_id') {
+          element.disabled = true
         }
       }
     },

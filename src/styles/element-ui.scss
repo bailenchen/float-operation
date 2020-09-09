@@ -38,6 +38,11 @@
  //   color: #333333;
  // }
 
+ .el-date-table td div {
+   height: 23px !important;
+   padding: 0 !important;
+ }
+
  .el-input .el-input__inner {
    padding: 0 8px;
  }

@@ -129,7 +129,7 @@ const user = {
         adminIndexAuthList().then((response) => {
           const data = response.data
 
-          delete data.bi // 删除商业智能
+          // delete data.bi // 删除商业智能
 
           Lockr.set('authList', data)
           commit('SET_ALLAUTH', data)

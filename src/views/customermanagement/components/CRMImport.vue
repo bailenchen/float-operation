@@ -47,7 +47,7 @@
               @click="download">点击下载《{{ crmTypeName }}导入模板》</span></div>
             <div class="sections__tips">导入文件请勿超过2MB（约10,000条数据）</div>
           </div>
-          <div class="sections">
+          <!-- <div class="sections">
             <div class="sections__title">二、请选择数据重复时的处理方式（查重规则：【{{ fieldUniqueInfo }}】）</div>
             <div class="sections__tips">查重规则为：添加{{ crmTypeName }}时所需填写的所有唯一字段，当前设置唯一字段为：{{ fieldUniqueInfo }}</div>
             <div class="content">
@@ -61,9 +61,9 @@
                   :value="item.value"/>
               </el-select>
             </div>
-          </div>
+          </div> -->
           <div class="sections">
-            <div class="sections__title">三、请选择需要导入的文件</div>
+            <div class="sections__title">二、请选择需要导入的文件</div>
             <div class="content">
               <flexbox class="file-select">
                 <el-input
