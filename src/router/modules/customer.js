@@ -53,24 +53,24 @@ export default [
         icon: 'customer'
       }
     }]
+  },
+  {
+    ...layout({
+      // permissions: ['crm', 'contacts']
+    }),
+    children: [
+      {
+        path: 'student-manage/:type',
+        name: 'StudentManageIndex',
+        component: () => import('@/views/customermanagement/studentManage/index'),
+        meta: {
+          title: '学员管理',
+          icon: 'contacts',
+          activeMenu: '/crm/student-manage/:type'
+        }
+      }
+    ]
   }
-  // {
-  //   ...layout({
-  //     // permissions: ['crm', 'contacts']
-  //   }),
-  //   children: [
-  //     {
-  //       path: 'student-manage/:type',
-  //       name: 'StudentManageIndex',
-  //       component: () => import('@/views/customermanagement/studentManage/index'),
-  //       meta: {
-  //         title: '学员管理',
-  //         icon: 'contacts',
-  //         activeMenu: '/crm/student-manage/:type'
-  //       }
-  //     }
-  //   ]
-  // },
   // {
   //   ...layout({
   //     permissions: ['crm', 'contract']
