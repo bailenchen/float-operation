@@ -1089,6 +1089,10 @@ export default {
         return '全部名片线索'
       } else if (this.crmType === 'visit') {
         return '全部回访'
+      } else if (this.crmType == 'capitalAccount') {
+        return '全部学员'
+      } else if (this.crmType == 'productSetMeal') {
+        return '全部套餐'
       }
     }
   }

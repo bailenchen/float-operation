@@ -144,6 +144,9 @@ import {
   crmProductStatus,
   crmProductDeleteAPI
 } from '@/api/customermanagement/product'
+import {
+  crmProductSetMealDeleteAPI
+} from '@/api/customermanagement/meal'
 import { crmInvoiceDeleteIdsAPI } from '@/api/customermanagement/invoice'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
@@ -498,10 +501,18 @@ export default {
           marketing: crmMarketingDeleteAPI,
           visit: crmReturnVisitDeleteAPI,
           product: crmProductDeleteAPI,
+          productSetMeal: crmProductSetMealDeleteAPI,
           invoice: crmInvoiceDeleteIdsAPI
         }[this.crmType]
-        const params = {
-          [this.crmType + 'Ids']: this.id
+        let params = null
+        if (this.crmType == 'productSetMeal') {
+          params = {
+            productIds: this.id
+          }
+        } else {
+          params = {
+            [this.crmType + 'Ids']: this.id
+          }
         }
         if (this.isSeas) {
           params.poolId = this.poolId
@@ -680,6 +691,8 @@ export default {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'product') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete', 'start', 'disable'])
+      } else if (this.crmType == 'productSetMeal') {
+        return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'marketing') {
         return this.forSelectionHandleItems(handleInfos, [
           'state_start',
