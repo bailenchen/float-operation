@@ -36,6 +36,9 @@ export function crmCallDownload(data) {
     url: 'call/download',
     method: 'post',
     data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
     responseType: 'blob'
   })
 }
