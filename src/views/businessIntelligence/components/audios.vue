@@ -33,6 +33,8 @@
 </template>
 
 <script>
+// import { downloadFileAPI } from '@/api/common'
+import { crmCallDownload } from '@/api/businessIntelligence/callCenter'
 import { conversionFileToUrl } from '@/utils'
 // 将整数转换成 时：分：秒的格式
 function realFormatSecond(second) {
@@ -126,23 +128,27 @@ export default {
       if (this.defaultTime === '0:00:00') {
         return false
       }
-      if (!this.item.path) {
-        return
-      }
-      const blob = new Blob([this.item.path], {
-        type: 'audio/ogg'
-      })
+      crmCallDownload({ id: this.item.callRecordId }).then(res => {
+        if (res.code && res.code === 500) {
+          this.$message.error('没有录音文件')
+          return
+        } else {
+          console.log(res)
+          const blob = new Blob([res.data], {
+            type: 'audio/x-wav'
+          })
+          this.audioUrl = URL.createObjectURL(blob)
+          this.defaultTime = ''
+          // this.audioUrl = 'https://audio04.dmhmusic.com/71_53_T10056627847_128_4_1_0_sdk-cpm/cn/0412/M00/33/D1/ChAKEV9V75-APywOAEXkqkt4Th4774.mp3?xcode=cce7931994df0d326efa1251ab18d6180137a5b'
+          if (this.audioUrl) {
+            this.$nextTick(() => {
+              this.$refs.audio.play()
+            })
+          }
+        }
+      }).catch(() => {
 
-      this.audioUrl = URL.createObjectURL(blob)
-      // this.audioUrl = this.item.path
-      this.defaultTime = ''
-      // this.audioUrl = 'https://audio04.dmhmusic.com/71_53_T10056627847_128_4_1_0_sdk-cpm/cn/0412/M00/33/D1/ChAKEV9V75-APywOAEXkqkt4Th4774.mp3?xcode=cce7931994df0d326efa1251ab18d6180137a5b'
-      if (this.audioUrl) {
-        this.$nextTick(() => {
-          this.$refs.audio.play()
-        })
-      }
-      // this.filePath()
+      })
     },
     // 暂停音频
     pause() {
