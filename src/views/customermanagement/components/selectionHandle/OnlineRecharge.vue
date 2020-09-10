@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-09-07 19:07:21
+ * @LastEditTime: 2020-09-09 15:13:28
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
@@ -37,6 +37,7 @@
 <script>
 // import { Loading } from 'element-ui'
 import QRCode from 'qrcodejs2'
+import { crmAccountScanePay } from '@/api/customermanagement/account'
 export default {
   name: 'OnlineRecharge',
   props: {
@@ -130,8 +131,14 @@ export default {
       // const params = {
 
       // }
-      const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
-      this.createCode(scane)
+      crmAccountScanePay().then(res => {
+        // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
+        this.createCode(res.data)
+        this.loading = false
+        console.log(res, '*****')
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**
