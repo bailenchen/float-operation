@@ -139,7 +139,7 @@ export default {
         })
       } else {
         const temp = [
-          { type: 'create-child', name: '新建跟进结果' },
+          // { type: 'create-child', name: '新建跟进结果' },
           { type: 'edit', name: '编辑跟进结果' },
           { type: 'delete', name: '删除跟进结果' }
         ]

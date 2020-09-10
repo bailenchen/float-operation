@@ -448,11 +448,28 @@ export default {
         willDel.splice(index, 1)
         console.log(willDel)
         this.formsList = willDel
+        console.log(this.formsList, 'del')
+        this.delMealPrice(this.formsList)
         this.$refs.ff.forEach((item, inde) => {
           item.refreshData(this.formsList[inde])
         })
-        console.log(this.formsList)
-        // this.formsList.splice(index, 1)
+      }
+    },
+
+    // 删除套餐时重新计算价格
+    delMealPrice(list) {
+      let sump = 0
+      for (let index = 0; index < list.length; index++) {
+        const element = list[index]
+        sump += Number(element.purchaseFrequency)
+      }
+
+      for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+        const element = this.crmForm.crmFields[index]
+        if (element.key == 'price') {
+          element.value = this.productSetMealPrice * sump
+          element.data.value = this.productSetMealPrice * sump
+        }
       }
     },
 

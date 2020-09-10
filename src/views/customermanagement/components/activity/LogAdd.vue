@@ -569,15 +569,16 @@ export default {
     sendClick() {
       const form = {}
       this.fieldList.forEach(o => {
-        form[o.fieldName] = o.value
         if (o.fieldName == 'category') {
           for (let index = 0; index < o.setting.length; index++) {
             const element = o.setting[index]
             if (o.value == element.value) {
               o.value = element.name
-              return
+              form[o.fieldName] = o.value
             }
           }
+        } else {
+          form[o.fieldName] = o.value
         }
       })
       this.$emit('send', {

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-20 16:37:40
- * @LastEditTime: 2020-09-09 09:53:45
+ * @LastEditTime: 2020-09-10 09:18:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\components\CreateCom\XhSetMeal.vue
@@ -103,7 +103,7 @@ export default {
           { required: true, message: '套餐不能为空', trigger: ['blur', 'change'] }
         ],
         purchaseFrequency: [
-          { required: true, validator: classTimes, trigger: ['blur', 'change'] }
+          { required: true, validator: classTimes, trigger: ['change'] }
         ],
         giveFrequency: [
           { required: false, validator: giveClassTimes, trigger: ['blur', 'change'] }
