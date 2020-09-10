@@ -260,10 +260,10 @@ class MyWs {
         currentLine.callStatus = 'cleared'
         callInfo.event = 'HangUp'
         that.onLineMessage(callInfo)
-        if (currentLine.duration > 0) {
-          callInfo.event = 'CallRecord'
-          that.onLineMessage(callInfo)
-        }
+        // if (currentLine.duration > 0) {
+        callInfo.event = 'CallRecord'
+        that.onLineMessage(callInfo)
+        // }
 
         // that.OnHungUp()
 
