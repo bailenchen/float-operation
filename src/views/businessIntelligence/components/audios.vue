@@ -31,11 +31,10 @@
     </div>
   </div>
 </template>
-
 <script>
 // import { downloadFileAPI } from '@/api/common'
-import { crmCallDownload } from '@/api/businessIntelligence/callCenter'
-import { conversionFileToUrl } from '@/utils'
+// import { crmCallDownload } from '@/api/businessIntelligence/callCenter'
+// import { conversionFileToUrl } from '@/utils'
 // 将整数转换成 时：分：秒的格式
 function realFormatSecond(second) {
   var secondType = typeof second
@@ -105,19 +104,19 @@ export default {
   },
   methods: {
     /** 获取文件路径 */
-    filePath() {
-      if (!this.audioUrl) {
-        conversionFileToUrl(this.item.filePath).then(res => {
-          this.audioUrl = res
-          this.defaultTime = ''
-          this.$nextTick(() => {
-            this.$refs.audio.play()
-          })
-        })
-      } else {
-        this.$refs.audio.play()
-      }
-    },
+    // filePath() {
+    //   if (!this.audioUrl) {
+    //     conversionFileToUrl(this.item.filePath).then(res => {
+    //       this.audioUrl = res
+    //       this.defaultTime = ''
+    //       this.$nextTick(() => {
+    //         this.$refs.audio.play()
+    //       })
+    //     })
+    //   } else {
+    //     this.$refs.audio.play()
+    //   }
+    // },
     // 控制音频的播放与暂停
     startPlayOrPause() {
       return this.audio.playing ? this.pause() : this.play()
@@ -128,27 +127,43 @@ export default {
       if (this.defaultTime === '0:00:00') {
         return false
       }
-      crmCallDownload({ id: this.item.callRecordId }).then(res => {
-        if (res.code && res.code === 500) {
-          this.$message.error('没有录音文件')
-          return
-        } else {
-          console.log(res)
-          const blob = new Blob([res.data], {
-            type: 'audio/x-wav'
-          })
-          this.audioUrl = URL.createObjectURL(blob)
+      // const demoUrl = 'http://192.168.1.65:8084' + '/' + this.item.path
+      const demoUrl = `${WKConfig.getLocationOrigin()}/${this.item.path}`
+      console.log(demoUrl)
+      window.ReportApi.fetchAndDecodeData(demoUrl)
+        .then(data => {
+          var url = URL.createObjectURL(data)
+          this.audioUrl = url
           this.defaultTime = ''
-          // this.audioUrl = 'https://audio04.dmhmusic.com/71_53_T10056627847_128_4_1_0_sdk-cpm/cn/0412/M00/33/D1/ChAKEV9V75-APywOAEXkqkt4Th4774.mp3?xcode=cce7931994df0d326efa1251ab18d6180137a5b'
-          if (this.audioUrl) {
-            this.$nextTick(() => {
-              this.$refs.audio.play()
-            })
-          }
-        }
-      }).catch(() => {
+          this.$nextTick(() => {
+            this.$refs.audio.play()
+          })
+          URL.revokeObjectURL(data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      // crmCallDownload({ id: this.item.callRecordId }).then(res => {
+      //   if (res.code && res.code === 500) {
+      //     this.$message.error('没有录音文件')
+      //     return
+      //   } else {
+      //     console.log(res)
+      //     const blob = new Blob([res.data], {
+      //       type: 'audio/x-wav'
+      //     })
+      //     this.audioUrl = URL.createObjectURL(blob)
+      //     this.defaultTime = ''
+      //     // this.audioUrl = 'https://audio04.dmhmusic.com/71_53_T10056627847_128_4_1_0_sdk-cpm/cn/0412/M00/33/D1/ChAKEV9V75-APywOAEXkqkt4Th4774.mp3?xcode=cce7931994df0d326efa1251ab18d6180137a5b'
+      //     if (this.audioUrl) {
+      //       this.$nextTick(() => {
+      //         this.$refs.audio.play()
+      //       })
+      //     }
+      //   }
+      // }).catch(() => {
 
-      })
+      // })
     },
     // 暂停音频
     pause() {
