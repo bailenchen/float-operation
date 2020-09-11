@@ -166,7 +166,7 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           :resizable="false"
           fixed="right"
           width="40">
@@ -177,7 +177,7 @@
               :crm-type="crmType"
               @change="setSave"/>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="p-contianer">
         <el-pagination
