@@ -54,7 +54,7 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="200">
+          width="250">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -71,7 +71,12 @@
             <el-button
               type="text"
               size="small"
+              style="margin-right:5px;"
               @click="handleClick('delete', scope)">删除</el-button>
+            <field-do
+              :is-seas="true"
+              :pool-id="scope.row.poolId"
+              @change="setSave"/>
           </template>
         </el-table-column>
       </el-table>
@@ -118,6 +123,7 @@ import XrHeader from '@/components/xr-header'
 import PoolAdd from './components/PoolAdd'
 import PoolDetail from './components/PoolDetail'
 import PoolTransfer from './components/PoolTransfer'
+import fieldDo from '../bizParam/components/fieldDo'
 
 export default {
   /** 系统管理 的 LEADS规则公海设置 */
@@ -127,7 +133,8 @@ export default {
     XrHeader,
     PoolAdd,
     PoolDetail,
-    PoolTransfer
+    PoolTransfer,
+    fieldDo
   },
   mixins: [],
   data() {
@@ -174,6 +181,10 @@ export default {
      */
     handleCurrentChange(val) {
       this.currentPage = val
+      this.getList()
+    },
+
+    setSave() {
       this.getList()
     },
 

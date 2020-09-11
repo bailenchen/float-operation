@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-09-09 15:13:28
+ * @LastEditTime: 2020-09-10 11:10:31
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
@@ -19,7 +19,8 @@
       :visible.sync="innerVisible"
       width="30%"
       title="线上资金收款"
-      append-to-body>
+      append-to-body
+      @close="innerHandleCancel">
       <div v-loading="loading" style="margin: 20px auto;width:150px;height:150px;">
         <div
           id="canvas"
@@ -66,7 +67,8 @@ export default {
         money: [
           { required: true, message: '请输入收款金额', trigger: 'blur' }
         ]
-      }
+      },
+      start: 0
     }
   },
   watch: {
@@ -83,6 +85,11 @@ export default {
      */
     handleCancel() {
       this.$emit('update:visible', false)
+    },
+
+    innerHandleCancel() {
+      clearInterval(this.timer)
+      console.log('guanbi')
     },
 
     /**
@@ -135,10 +142,27 @@ export default {
         // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
         this.createCode(res.data)
         this.loading = false
+        clearInterval(this.timer)
+        this.timer = setInterval(() => {
+          this.start++
+          this.queryPayStatus(this.start)
+        }, 1500)
         console.log(res, '*****')
       }).catch(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 轮询发起查询支付状态
+     */
+    queryPayStatus(index) {
+      if (index == 6) {
+        clearInterval(this.timer)
+        console.log('支付结果')
+      } else {
+        console.log('正在查询支付')
+      }
     },
 
     /**

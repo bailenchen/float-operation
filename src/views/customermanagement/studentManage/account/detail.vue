@@ -187,10 +187,9 @@ export default {
       loading: false,
       headDetails: [
         { title: '学员姓名', value: '' },
-        { title: '学员来源', value: '' },
-        { title: '第一联系人电话', value: '' },
-        { title: '教学顾问', value: '' },
-        { title: '创建时间', value: '' }
+        { title: '账户金额（元）', value: '' },
+        { title: '第一联系人手机号', value: '' },
+        { title: '教育顾问', value: '' }
       ],
       tabCurrentName: 'Activity',
       // 编辑操作
@@ -202,27 +201,27 @@ export default {
         {
           type: 'log',
           label: '写跟进'
-        },
-        {
-          type: 'task',
-          label: '创建任务'
-        },
-        {
-          type: 'contacts',
-          label: '创建联系人'
-        },
-        {
-          type: 'business',
-          label: '创建商机'
-        },
-        {
-          type: 'contract',
-          label: '创建合同'
-        },
-        {
-          type: 'receivables',
-          label: '创建回款'
         }
+        // {
+        //   type: 'task',
+        //   label: '创建任务'
+        // },
+        // {
+        //   type: 'contacts',
+        //   label: '创建联系人'
+        // },
+        // {
+        //   type: 'business',
+        //   label: '创建商机'
+        // },
+        // {
+        //   type: 'contract',
+        //   label: '创建合同'
+        // },
+        // {
+        //   type: 'receivables',
+        //   label: '创建回款'
+        // }
       ],
       // 展示重要信息
       showImportInfo: true,
@@ -363,30 +362,10 @@ export default {
           this.firstContactsId = this.detailData.contactsId
 
           // 负责人
-          this.headDetails[0].value = res.data.客户级别
-          const dealItem = this.headDetails[1]
-          dealItem.showIcon = true
-          if (res.data.dealStatus == 1) {
-            dealItem.icon = 'wk wk-success deal-suc'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#20b559',
-              marginRight: '3px'
-            }
-            dealItem.value = '已成交'
-          } else {
-            dealItem.icon = 'wk wk-close deal-un'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#f95a5a',
-              marginRight: '3px'
-            }
-            dealItem.value = '未成交'
-          }
-
-          this.headDetails[2].title = this.isSeasDetail ? '' : '负责人'
-          this.headDetails[2].value = res.data.ownerUserName
-          this.headDetails[3].value = res.data.updateTime
+          this.headDetails[0].value = res.data.customerName
+          this.headDetails[1].value = res.data.price
+          this.headDetails[2].value = res.data.mobile
+          this.headDetails[3].value = res.data.ownerUserName
         })
         .catch(() => {
           this.loading = false

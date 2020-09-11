@@ -224,7 +224,10 @@ export default {
         return require(`@/assets/img/crm/product.png`)
       } else if (this.crmType == 'capitalAccount') {
         return require(`@/assets/img/crm/customer.png`)
+      } else if (this.crmType == 'water') {
+        return require(`@/assets/img/crm/contract.png`)
       }
+
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
     showTimer() {
@@ -248,7 +251,7 @@ export default {
         {
           leads: '线索',
           customer: 'LEADS',
-          capitalAccount: '资金账户',
+          capitalAccount: '账户编号',
           contacts: '联系人',
           product: '课程单品',
           productSetMeal: '课程套餐',
@@ -257,7 +260,8 @@ export default {
           receivables: '回款',
           marketing: '活动',
           visit: '回访',
-          invoice: '发票'
+          invoice: '发票',
+          water: '交易流水号'
         }[this.crmType] || ''
       )
     },
@@ -274,6 +278,8 @@ export default {
         return this.detail.visitNumber
       } else if (this.crmType === 'invoice') {
         return this.detail.invoiceApplyNumber
+      } else if (this.crmType === 'capitalAccount') {
+        return this.detail.accountNumber
       }
       return this.detail.name
     },
@@ -285,6 +291,7 @@ export default {
         this.crmType === 'customer' ||
          this.crmType === 'marketing' ||
          this.crmType === 'visit' ||
+         this.crmType === 'water' ||
         this.isSeas
       ) {
         return false
@@ -308,6 +315,8 @@ export default {
           this.detail.checkStatus != 8 &&
           this.crm[this.crmType].update
         )
+      } else if (this.crmType === 'water') {
+        return false
       }
 
       return this.isSeas ? false : this.crm[this.crmType].update
@@ -345,6 +354,9 @@ export default {
      * 权限内的更多按钮
      */
     permissionMoreTypes() {
+      if (this.crmType == 'water') {
+        return false
+      }
       return this.moreTypes.filter(item => {
         return this.whetherTypeShowByPermision(item.type)
       })
@@ -842,6 +854,9 @@ export default {
       font-size: 13px;
       color: #333;
       padding-bottom: 2px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
     }
   }
 }

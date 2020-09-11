@@ -267,7 +267,7 @@ export default {
 
     // 获取leads联动
     getLeadsStatus() {
-      QueryLeadsStatusFollowResult({ type: 'mmmm' }).then(res => {
+      QueryLeadsStatusFollowResult({ type: 'mmmm', customerId: this.id }).then(res => {
         this.fieldList[1].setting = res.data.map(o => {
           const list = o.children.map(item => {
             return { name: item.name, value: item.name }

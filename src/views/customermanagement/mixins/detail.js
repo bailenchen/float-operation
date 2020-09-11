@@ -36,6 +36,9 @@ export default {
       if (this.detailData && this.detailData.dataAuth === 0) {
         return false
       }
+      if (this.crmType == 'water') {
+        return true
+      }
 
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].read
     },

@@ -44,6 +44,7 @@ import SubjectSet from './components/subjectSet' // 科目设置
 import RemindSet from './components/remindSet' // 学员回访提醒设置/LEADS承诺到访提醒设置
 import CommunicationSet from './components/communicationSet' // 学员回访沟通方式设置
 import SerialNumberSet from './components/SerialNumberSet' // 编号规则设置
+import FieldListSet from './components/FieldListSet' // 编号规则设置
 
 export default {
   name: 'BizParam',
@@ -64,7 +65,8 @@ export default {
     // FollowLogResultSet,
     FollowCommonWords,
     CommunicationSet,
-    LeadsStatusFollowResultSet
+    LeadsStatusFollowResultSet,
+    FieldListSet
   },
 
   data() {
@@ -85,7 +87,8 @@ export default {
         { label: '签约可能性设置', key: 'SignedPossibilitySet' },
         { label: '科目设置', key: 'SubjectSet' },
         { label: 'LEADS承诺到访提醒设置', key: 'leadsVisit' },
-        { label: '编号规则设置', key: 'SerialNumberSet' }
+        { label: '编号规则设置', key: 'SerialNumberSet' },
+        { label: '自定义列表设置', key: 'FieldListSet' }
       ],
       menuIndex: 'ChannelCategorySet',
       types: '' // 区分拥有客户 和 锁定客户

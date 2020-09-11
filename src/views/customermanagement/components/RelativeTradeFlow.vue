@@ -8,12 +8,6 @@
       v-if="!isSeas"
       class="rc-head"
       direction="reverse">
-      <!-- <el-button
-        class="xr-btn--orange rc-head-item"
-        icon="el-icon-plus"
-        type="primary"
-        @click="createClick">新建合同</el-button> -->
-
       <el-select
         v-for="(item,index) in selectList"
         :key="index"
@@ -40,27 +34,48 @@
         :key="index"
         :prop="item.prop"
         :formatter="fieldFormatter"
+        :width="item.width"
         :label="item.label"
         show-overflow-tooltip/>
       <el-table-column
         label="操作"
         align="center"
         fixed="right"
-        width="60">
+        width="80">
         <template slot-scope="scope">
-          <el-button>编辑</el-button>
+          <el-button @click="editHandle(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <div class="p-contianer">
+      <el-pagination
+        :current-page="currentPage"
+        :page-sizes="pageSizes"
+        :page-size.sync="pageSize"
+        :total="total"
+        :pager-count="5"
+        class="p-bar"
+        background
+        layout="prev, pager, next, sizes, total, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"/>
+    </div>
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :id="contractId"
-      crm-type="contract"
+      crm-type="moneyType"
       @handle="detailHandle"/>
-    <c-r-m-create-view
+    <!-- <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
       crm-type="contract"
+      @save-success="createSaveSuccess"
+      @hiden-view="isCreate=false"/> -->
+
+    <edit-transaction
+      v-if="isCreate"
+      :money-type="moneyType"
+      :action="rowData"
       @save-success="createSaveSuccess"
       @hiden-view="isCreate=false"/>
   </div>
@@ -68,17 +83,20 @@
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
+import Lockr from 'lockr'
 import CRMCreateView from './CRMCreateView'
-// import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
+import EditTransaction from '@/views/customermanagement/studentManage/account/components/EditTransaction'
+import { crmAccountWater } from '@/api/customermanagement/account'
 // import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
-import { separator } from '@/filters/vue-numeral-filter/filters'
+// import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'RelativeTradeFlow', // 交易流水
   components: {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue'),
-    CRMCreateView
+    CRMCreateView,
+    EditTransaction
   },
   mixins: [loading, CheckStatusMixin],
   props: {
@@ -105,11 +123,13 @@ export default {
   data() {
     return {
       nopermission: false,
+      moneyType: '',
       list: [],
       fieldList: [],
       tableHeight: '400px',
       showFullDetail: false,
       isCreate: false, // 控制新建
+      rowData: null,
       contractId: '', // 查看全屏联系人详情的 ID
       // 创建的相关信息
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {}},
@@ -146,7 +166,13 @@ export default {
           ],
           prop: 'c'
         }
-      ]
+      ],
+
+      // 分页
+      currentPage: 1,
+      pageSize: Lockr.get('crmPageSizes') || 15,
+      pageSizes: [15, 30, 60, 100],
+      total: 0
     }
   },
   computed: {},
@@ -167,54 +193,71 @@ export default {
   methods: {
     getFieldList() {
       this.fieldList.push({
-        prop: 'contractName',
-        width: '200',
+        prop: 'leadsNumber',
+        width: '130',
         label: '学员编号'
       })
-      this.fieldList.push({ prop: 'num', width: '200', label: '交易流水号' })
+      this.fieldList.push({ prop: 'serialNumber', width: '130', label: '交易流水号' })
       this.fieldList.push({
-        prop: 'customerName',
-        width: '200',
+        prop: 'transactionType',
+        width: '100',
         label: '交易类型'
       })
-      this.fieldList.push({ prop: 'money', width: '200', label: '支付方式' })
+      this.fieldList.push({ prop: 'payment', width: '100', label: '支付方式' })
       this.fieldList.push({
-        prop: 'startTime',
-        width: '200',
+        prop: 'price',
+        width: '100',
         label: '金额（元）'
       })
 
-      this.fieldList.push({ prop: 'endTime', width: '200', label: '交易凭证' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '交易时间' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '扣款/打款时间' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '审批状态' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '备注' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '创建人' })
+      this.fieldList.push({ prop: 'receipt', width: '100', label: '交易凭证' })
+      this.fieldList.push({ prop: 'createTime', width: '100', label: '交易时间' })
+      this.fieldList.push({ prop: 'updateTime', width: '100', label: '扣款/打款时间' })
+      this.fieldList.push({ prop: 'status', width: '100', label: '审批状态' })
+      this.fieldList.push({ prop: 'remark', width: '100', label: '备注' })
+      this.fieldList.push({ prop: 'createUserName', width: '100', label: '创建人' })
+    },
+
+    editHandle(row) {
+      if (row.payment == 1) {
+        this.moneyType = 'offline'
+      } else if (row.payment == 2) {
+        this.moneyType = 'refound'
+      }
+      this.rowData = row
+      this.rowData.customerName = this.detail.customerName
+      this.isCreate = true
     },
 
     getDetail() {
-      // this.loading = true
+      this.loading = true
+      const params = {
+        page: this.currentPage,
+        limit: this.pageSize,
+        type: 22
+      }
       // const request = {
       //   customer: crmCustomerQueryContract,
       //   business: crmBusinessQueryContract
       // }[this.crmType]
       // const params = { pageType: 0 }
       // params[this.crmType + 'Id'] = this.id
-      // request(params)
-      //   .then(res => {
-      //     if (this.fieldList.length == 0) {
-      //       this.getFieldList()
-      //     }
-      //     this.nopermission = false
-      //     this.loading = false
-      //     this.list = res.data
-      //   })
-      //   .catch(data => {
-      //     if (data.code == 102) {
-      //       this.nopermission = true
-      //     }
-      //     this.loading = false
-      //   })
+      crmAccountWater(params)
+        .then(res => {
+          if (this.fieldList.length == 0) {
+            this.getFieldList()
+          }
+          this.total = res.data.totalRow
+          this.nopermission = false
+          this.loading = false
+          this.list = res.data.list
+        })
+        .catch(data => {
+          if (data.code == 102) {
+            this.nopermission = true
+          }
+          this.loading = false
+        })
     },
 
     /**
@@ -222,10 +265,24 @@ export default {
      */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      if (column.property === 'checkStatus') {
-        return this.getStatusName(row.checkStatus)
-      } else if (column.property == 'money') {
-        return separator(row[column.property] || 0)
+      if (column.property === 'status') {
+        return {
+          0: '待审核',
+          1: '通过',
+          2: '拒绝',
+          3: '删除',
+          4: '撤回'
+        }[row[column.property]]
+      } else if (column.property === 'transactionType') {
+        return {
+          1: '线下',
+          2: '线上'
+        }[row[column.property]]
+      } else if (column.property === 'payment') {
+        return {
+          1: '线下资金收款',
+          2: '资金退款'
+        }[row[column.property]]
       }
       return row[column.property]
     },
@@ -234,8 +291,8 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
-      if (column.property == 'contractName') {
-        this.contractId = row.contractId
+      if (column.property == 'leadsNumber') {
+        this.contractId = row.waterId
         this.showFullDetail = true
       }
     },
@@ -244,28 +301,14 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'contractName') {
+      if (column.property === 'leadsNumber') {
         return 'can-visit--underline'
       } else {
         return ''
       }
     },
 
-    /**
-     * 新建
-     */
-    createClick() {
-      // 客户 和 商机 下新建合同
-      if (this.crmType == 'business') {
-        this.createActionInfo.data['customer'] = this.detail
-        this.createActionInfo.data['business'] = this.detail
-      } else if (this.crmType == 'customer') {
-        this.createActionInfo.data['customer'] = this.detail
-      }
-      this.isCreate = true
-    },
     createSaveSuccess() {
-      this.$bus.emit('crm-tab-num-update')
       this.getDetail()
     },
 
@@ -277,6 +320,19 @@ export default {
         this.$bus.emit('crm-tab-num-update')
         this.getDetail()
       }
+    },
+
+    // 更改当前页数
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.getDetail()
+    },
+
+    // 更改每页展示数量
+    handleSizeChange(val) {
+      Lockr.set('crmPageSizes', val)
+      this.pageSize = val
+      this.getDetail()
     }
   }
 }

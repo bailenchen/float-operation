@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-28 10:40:28
- * @LastEditTime: 2020-09-09 14:27:00
+ * @LastEditTime: 2020-09-11 11:17:52
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\api\customermanagement\account.js
@@ -95,6 +95,33 @@ export function crmAccountRead(data) {
 export function crmAccountScanePay(data) {
   return request({
     url: 'CrmCapitalAccountWater/unionorder',
+    method: 'post',
+    data: data
+  })
+}
+
+// crm 资金流水
+export function crmAccountWater(data) {
+  return request({
+    url: 'CrmCapitalAccountWater/queryPageList',
+    method: 'post',
+    data: data
+  })
+}
+
+// crm 编辑资金流水
+export function crmEditAccountWater(data) {
+  return request({
+    url: 'CrmCapitalAccountWater/saveAndUpdate',
+    method: 'post',
+    data: data
+  })
+}
+
+// crm 编辑资金流水 详情
+export function crmAccountWaterDetail(data) {
+  return request({
+    url: 'CrmCapitalAccountWater/queryById',
     method: 'post',
     data: data
   })

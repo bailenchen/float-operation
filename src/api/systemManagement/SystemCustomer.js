@@ -331,3 +331,15 @@ export function sysConfigNumberSetAPI(data) {
     data: data
   })
 }
+
+/**
+ * 列表字段排序 查询
+ * @param {*} data
+ */
+export function sysConfigFieldListQueryAPI(data) {
+  return request({
+    url: 'field/queryCrmListHead',
+    method: 'post',
+    data: data
+  })
+}
