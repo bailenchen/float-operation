@@ -137,13 +137,13 @@ export default {
     }
   },
   data() {
-    const validMoney = (rule, value, callback) => {
-      if (!(this.form[this.moneyType]['examine'] && this.form[this.moneyType]['examine'].length)) {
-        callback(new Error('请选择收款人'))
-      } else {
-        callback()
-      }
-    }
+    // const validMoney = (rule, value, callback) => {
+    //   if (!(this.form[this.moneyType]['examine'] && this.form[this.moneyType]['examine'].length)) {
+    //     callback(new Error('请选择收款人'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       loading: false,
       maxFileCount: 1,
@@ -242,9 +242,10 @@ export default {
       form.status = this.action.status
       form.createUserName = this.action.customerName
       console.log(form, this.form, 'bbbbbbbbbbbb')
-    } else if (this.moneyType == 'refound') {
-
     }
+    //  else if (this.moneyType == 'refound') {
+
+    // }
   },
   mounted() {
     document.body.appendChild(this.$el)

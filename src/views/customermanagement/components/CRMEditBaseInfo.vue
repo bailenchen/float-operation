@@ -434,6 +434,8 @@ export default {
         return ''
       }
 
+      array = array.filter(item => item != null)
+
       return array
         .map(item => {
           return field ? item[field] : item

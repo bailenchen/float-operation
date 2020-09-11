@@ -77,7 +77,7 @@ import RelativeFiles from '../../components/RelativeFiles' // 相关附件
 import ExamineInfo from '@/components/Examine/ExamineInfo'
 
 import detail from '../../mixins/detail'
-import { separator } from '@/filters/vue-numeral-filter/filters'
+// import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   // 客户管理 的 合同详情
