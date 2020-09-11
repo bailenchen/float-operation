@@ -1,24 +1,24 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-09-03 15:47:40
+ * @LastEditTime: 2020-09-11 11:05:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
 -->
 <template>
-  <el-dialog :visible="visible" :title="title[MoneyType]" @close="handleCancel">
+  <el-dialog :visible="visible" :title="title[moneyType]" @close="handleCancel">
     <div class="main">
-      <el-form ref="form" :rules="rules[MoneyType]" :model="form[MoneyType]" label-width="100px">
+      <el-form ref="form" :rules="rules[moneyType]" :model="form[moneyType]" label-width="100px">
         <el-form-item
-          v-for="(item,index) in formList[MoneyType]"
+          v-for="(item,index) in formList[moneyType]"
           :key="index"
           :label="item.label"
           :prop="item.prop">
 
           <el-select
             v-if="item.type == 'select'"
-            v-model="form[MoneyType][item.prop]"
+            v-model="form[moneyType][item.prop]"
             clearable
             style="width:100%;"
             placeholder="请选择">
@@ -31,13 +31,13 @@
 
           <el-date-picker
             v-if="item.type == 'date'"
-            v-model="form[MoneyType][item.prop]"
+            v-model="form[moneyType][item.prop]"
             value-format="yyyy-MM-dd HH:mm:ss"
             type="datetime"
             style="width:100%;"
             placeholder="选择日期时间"/>
 
-          <el-input v-if="item.type == 'text'" v-model="form[MoneyType][item.prop]"/>
+          <el-input v-if="item.type == 'text'" v-model="form[moneyType][item.prop]"/>
 
           <add-image-list
             v-if="item.type == 'file'"
@@ -54,7 +54,7 @@
             :value="draftUser ? [draftUser] : []"
             @value-change="fieldValueChange"/>
 
-          <el-input v-if="item.type == 'textarea'" v-model="form[MoneyType][item.prop]" type="textarea"/>
+          <el-input v-if="item.type == 'textarea'" v-model="form[moneyType][item.prop]" type="textarea"/>
         </el-form-item>
       </el-form>
     </div>
@@ -89,7 +89,7 @@ export default {
         return []
       }
     },
-    MoneyType: {
+    moneyType: {
       type: String,
       default: ''
     }
@@ -170,7 +170,8 @@ export default {
   },
   watch: {
     visible(val) {
-      this.form[this.MoneyType] = {}
+      debugger
+      this.form[this.moneyType] = {}
       if (!val) {
         this.$emit('reset-type')
       }
@@ -237,7 +238,7 @@ export default {
       // })
       this.$refs.form.validate((valid) => {
         if (valid) {
-          console.log(this.form[this.MoneyType], 'xxxxx')
+          console.log(this.form[this.moneyType], 'xxxxx')
         }
       })
     //   if (this.selectId) {

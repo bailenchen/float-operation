@@ -384,7 +384,7 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType == 'capitalAccount') {
-        if (column.property === 'name') {
+        if (column.property === 'name' || column.property == 'accountNumber') {
           this.rowID = row.capitalId
           this.rowType = 'capitalAccount'
           this.showDview = true

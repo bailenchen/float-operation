@@ -21,6 +21,7 @@ import CustomerDetail from '../customer/CustomerDetail'
 import ContactsDetail from '../contacts/ContactsDetail'
 import BusinessDetail from '../business/BusinessDetail'
 import ContractDetail from '../contract/ContractDetail'
+import WaterDetail from '../studentManage/account/WaterDetail'
 import ProductDetail from '../product/ProductDetail'
 import MoneyDetail from '../money/MoneyDetail'
 import ExamineDetail from '@/views/OAManagement/examine/components/examineDetail'
@@ -39,6 +40,7 @@ export default {
     ContactsDetail,
     BusinessDetail,
     ContractDetail,
+    WaterDetail,
     ProductDetail,
     MoneyDetail,
     ExamineDetail,
@@ -91,6 +93,8 @@ export default {
         return 'business-detail'
       } else if (this.crmType == 'contract') {
         return 'contract-detail'
+      } else if (this.crmType == 'moneyType') {
+        return 'water-detail'
       } else if (this.crmType == 'product') {
         return 'product-detail'
       } else if (this.crmType == 'receivables') {

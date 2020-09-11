@@ -52,7 +52,7 @@
           :crm-type="crmType"
           :save-scene="false"
           @filter="handleFilter"/>
-        <el-button
+          <!-- <el-button
           :disabled="!canMark"
           class="el-button--margin"
           icon="wk wk-tag"
@@ -61,7 +61,7 @@
           plain
           @click="allMarkReadClick">
           全部标记已处理
-        </el-button>
+        </el-button> -->
       </div>
       <flexbox
         v-else
