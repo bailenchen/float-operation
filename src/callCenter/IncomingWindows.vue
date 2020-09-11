@@ -518,7 +518,7 @@ export default {
         // hangType: 0,
         // model: this.model,
         // modelId: this.modelId
-        type: data.direction == 'incoming' ? 1 : 0,
+        type: data.direction,
         state: this.connectedState,
         starttime: data.time,
         answertime: data.begin,
