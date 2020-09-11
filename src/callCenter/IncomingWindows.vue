@@ -64,7 +64,8 @@ export default {
       showDrop: false,
       customerType: '',
       notify: null,
-      isSoftCallIn: false // 是软乎呼入 2007
+      isSoftCallIn: false, // 是软乎呼入 2007
+      connectedState: 0
     }
   },
   computed: {
@@ -518,7 +519,7 @@ export default {
         // model: this.model,
         // modelId: this.modelId
         type: data.direction == 'incoming' ? 1 : 0,
-        state: 2,
+        state: this.connectedState,
         starttime: data.time,
         answertime: data.begin,
         endtime: data.end,
@@ -595,6 +596,7 @@ export default {
           this.rowID = callOutData.id
           this.crmType = callOutData.type
           this.$emit('sendMsg', this.modelData)
+          this.connectedState = 0
           break
         }
         // 振铃中
@@ -607,6 +609,7 @@ export default {
           const newTime = new Date().getTime()
           localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
           this.startTimePiece(true)
+          this.connectedState = 1
           break
         }
         // 来电呼入
@@ -619,6 +622,7 @@ export default {
           this.startTimePiece(true)
           this.getMember(data.remote, 6)
           const newTime = new Date().getTime()
+          this.connectedState = 3
           localStorage.setItem('IntervalTime', newTime) // 通话计时器开始时间: 记录通话开始或者振铃开始的时间
           if (this.notify) {
             // 有弹框是关闭第一个弹框, 初始化控制弹框所有变量的数据
@@ -642,6 +646,7 @@ export default {
           this.ringShow = false
           this.startTimePiece(true)
           console.log('接通了')
+          this.connectedState = 2
           if (callCenter.referCallNumber) {
             this.$bus.emit('show', true)
           }
