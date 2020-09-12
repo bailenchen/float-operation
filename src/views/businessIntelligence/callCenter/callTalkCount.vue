@@ -24,7 +24,6 @@
           :formatter="timeFormatter"
           :prop="item.field"
           :label="item.name"
-          :width="item.width"
           align="center"
           header-align="center"
           show-overflow-tooltip/>
