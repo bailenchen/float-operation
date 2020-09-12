@@ -127,9 +127,13 @@ export default {
       if (this.defaultTime === '0:00:00') {
         return false
       }
+      if (!this.item.path) {
+        this.$message.error('没有录音文件')
+        return
+      }
       // const demoUrl = 'http://192.168.1.65:8084' + '/' + this.item.path
-      const demoUrl = `${WKConfig.getLocationOrigin()}/${this.item.path}`
-      console.log(demoUrl)
+      // const demoUrl = `${WKConfig.getLocationOrigin()}/${this.item.path}`
+      const demoUrl = this.item.path
       window.ReportApi.fetchAndDecodeData(demoUrl)
         .then(data => {
           var url = URL.createObjectURL(data)
