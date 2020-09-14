@@ -189,13 +189,8 @@ export default {
     /** 获取部门业绩完成信息 */
     getProductDatalist(params) {
       this.pageData = params // 储存页面的筛选条件
-      const data = {
-        ...params,
-        talkTime: this.talkTime,
-        talkTimeCondition: this.talkTimeCondition,
-        page: 1 // 每次筛选都从第一页开始展示
-      }
-      this.getList(data)
+
+      this.getList()
     },
     /** 处理展示数据 */
     handleShowInfo() {
@@ -363,9 +358,16 @@ export default {
     /**
        * 获取分页列表
        */
-    getList(params) {
+    getList() {
       this.loading = true
-      crmCallIndex(params)
+      const data = {
+        ...this.pageData,
+        talkTime: this.talkTime,
+        talkTimeCondition: this.talkTimeCondition,
+        limit: this.pageSize,
+        page: this.currentPage // 每次筛选都从第一页开始展示
+      }
+      crmCallIndex(data)
         .then(res => {
           this.list = res.data.list
           this.total = res.data.totalRow

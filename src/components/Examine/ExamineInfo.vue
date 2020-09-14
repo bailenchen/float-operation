@@ -205,6 +205,7 @@ export default {
         crm_receivables: crmExamineFlowStepList,
         crm_invoice: crmExamineFlowStepList,
         oa_examine: oaExamineFlowStepList
+        // crm_dispute: crmExamineFlowStepList
       }[this.examineType]
 
       request({

@@ -189,11 +189,11 @@ export default {
       return temp
     }
   },
-  created() {
-    this.getPoolList()
-  },
   deactivated: function() {
     this.$refs.elMenu.activeIndex = 'seas'
+  },
+  created() {
+    this.getPoolList()
   },
   methods: {
     /**
@@ -211,6 +211,8 @@ export default {
         .then(res => {
           this.poolList = res.data || []
           this.poolId = this.poolList.length > 0 ? this.poolList[0].poolId : ''
+          this.getFieldList()
+          console.log(this.poolId, 'li')
         })
         .catch(() => {
         })

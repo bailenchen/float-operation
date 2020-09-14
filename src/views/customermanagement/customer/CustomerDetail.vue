@@ -38,6 +38,17 @@
             </el-tooltip>
           </template>
         </c-r-m-detail-head>
+
+
+        <examine-info
+          v-if="detailData.examineRecordId"
+          :id="id"
+          :record-id="detailData.examineRecordId"
+          :owner-user-id="detailData.ownerUserId"
+          class="examine-info"
+          examine-type="crm_dispute"
+          @on-handle="examineHandle"/>
+
         <flexbox
           class="d-container-bd"
           align="stretch">
@@ -121,6 +132,7 @@ import RelativeVisit from '../components/RelativeVisit' // 回访
 import RelativeInvoice from '../components/RelativeInvoice' // 发票
 import RelativeCallRecord from '../components/RelativeCallRecord' // 呼叫记录
 import RelativeAccount from '../components/RelativeAccount' // 资金账户
+import ExamineInfo from '@/components/Examine/ExamineInfo'
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
@@ -145,7 +157,8 @@ export default {
     CRMCreateView,
     RelativeInvoice,
     RelativeCallRecord,
-    RelativeAccount
+    RelativeAccount,
+    ExamineInfo
   },
   mixins: [detail],
   props: {
@@ -414,6 +427,17 @@ export default {
       }
 
       this.$emit('handle', data)
+    },
+
+    /**
+     * 审核操作
+     */
+    examineHandle(data) {
+      // 1 审核通过 2 审核拒绝 4 已撤回
+      if (data.type == 1) {
+        this.getDetial()
+      }
+      this.$emit('handle', { type: 'examine' })
     }
   }
 }

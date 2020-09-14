@@ -129,6 +129,11 @@
       :selection-list="selectionList"
       @handle="handleCallBack"
       @reset-type="moneyType = ''" />
+
+    <dispute-examine
+      :visible.sync="isDispute"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
   </div>
 </template>
 
@@ -213,6 +218,7 @@ import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 转移到�
 import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中心
 import OnlineRecharge from './selectionHandle/OnlineRecharge' // 在线充值
 import OfflineWithDraw from './selectionHandle/OfflineWithDraw' // 线下充值和提现
+import DisputeExamine from './selectionHandle/DisputeExamine'
 import { Loading } from 'element-ui'
 
 export default {
@@ -232,7 +238,8 @@ export default {
     ChangePoolHandle,
     ChangeDeptHandle,
     OnlineRecharge,
-    OfflineWithDraw
+    OfflineWithDraw,
+    DisputeExamine
   },
   props: {
     title: {
@@ -286,6 +293,7 @@ export default {
       changeDeptShow: false, // 变更中心
       isShowOnline: false, // 在线充值
       isOfflineWithDraw: false, // 线下充值和提现
+      isDispute: false,
       moneyType: ''
     }
   },
@@ -553,6 +561,8 @@ export default {
       } else if (type == 'refound') {
         this.moneyType = 'refound'
         this.isOfflineWithDraw = true
+      } else if (type == 'dispute') {
+        this.isDispute = true
       }
     },
     confirmHandle(type) {
@@ -870,6 +880,11 @@ export default {
           name: '资金退款',
           type: 'refound',
           icon: 'activation'
+        },
+        dispute: {
+          name: '争议',
+          type: 'dispute',
+          icon: 'transfer'
         }
       }
       if (this.crmType == 'leads') {
@@ -904,7 +919,8 @@ export default {
             'export',
             'delete',
             'lock',
-            'unlock'
+            'unlock',
+            'dispute'
             // 'add_user',
             // 'delete_user'
           ])
@@ -1061,6 +1077,14 @@ export default {
         return this.crm[this.crmType].offlineCollection
       } else if (type == 'refound') {
         return this.crm[this.crmType].refund
+      } else if (type == 'dispute') {
+        if (this.crm[this.crmType].dispute) {
+          if (this.selectionList.length == 1) {
+            return true
+          } else {
+            return false
+          }
+        }
       }
 
       return true

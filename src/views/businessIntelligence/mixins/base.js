@@ -30,7 +30,7 @@ export default {
       ],
       currentPage: 1,
       pageSizes: [15, 30, 45, 60],
-      pageSize: 0,
+      pageSize: 15,
       total: 0,
 
       // echart 操作项
@@ -83,14 +83,14 @@ export default {
 
     // 页面展示条数
     handleSizeChange(val) {
-      this.pageData.limit = val
-      this.getList(this.pageData)
+      this.pageSize = val
+      this.getList()
     },
 
     // 分页切换
     handleCurrentChange(val) {
-      this.pageData.page = val
-      this.getList(this.pageData)
+      this.currentPage = val
+      this.getList()
     },
 
     /**

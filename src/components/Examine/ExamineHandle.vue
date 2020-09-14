@@ -161,6 +161,7 @@ export default {
           // 刷新待办
           if (
             this.examineType == 'crm_contract' ||
+            this.examineType == 'crm_dispute' ||
             this.examineType == 'crm_invoice' ||
             this.examineType == 'crm_receivables'
           ) {
@@ -183,6 +184,7 @@ export default {
         crm_invoice: crmExamineFlowAuditExamine,
         crm_receivables: crmExamineFlowAuditExamine,
         oa_examine: oaExamineFlowAuditExamine
+        // crm_dispute: crmExamineFlowRecordList
       }[this.examineType]
     },
     // 通过 拒绝操作
@@ -214,6 +216,7 @@ export default {
           // 刷新待办
           if (
             this.examineType == 'crm_contract' ||
+            this.examineType == 'crm_dispute' ||
             this.examineType == 'crm_invoice' ||
             this.examineType == 'crm_receivables'
           ) {

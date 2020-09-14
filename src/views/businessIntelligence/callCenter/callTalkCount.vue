@@ -7,7 +7,7 @@
       module-type="product"
       title="员工通话记录分析"
       @load="loading=true"
-      @change="getList"/>
+      @change="getFilter"/>
     <div class="content">
       <el-table
         id="crm-table"
@@ -191,11 +191,20 @@ export default {
       //   return {color: '#3E84E9', cursor: 'pointer'}
       // }
     },
-    /** 获取部门呼叫中心完成信息 */
-    getList(params) {
-      this.loading = true
 
-      crmCallAnalysis(params)
+    getFilter(params) {
+      this.pageData = params
+      this.getList()
+    },
+    /** 获取部门呼叫中心完成信息 */
+    getList() {
+      this.loading = true
+      const data = {
+        ...this.pageData,
+        limit: this.pageSize,
+        page: this.currentPage // 每次筛选都从第一页开始展示
+      }
+      crmCallAnalysis(data)
         .then(res => {
           this.list = res.data.list
           this.total = res.data.totalRow

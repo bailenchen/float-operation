@@ -118,6 +118,7 @@ export default {
         crm_contract: crmCreateExamineFlow,
         crm_invoice: crmCreateExamineFlow,
         crm_receivables: crmCreateExamineFlow
+        // crm_dispute: crmExamineFlowRecordList
       }[this.types]
 
       const params = {}

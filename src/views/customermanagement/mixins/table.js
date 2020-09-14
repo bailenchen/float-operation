@@ -128,16 +128,16 @@ export default {
     // document.getElementById('crm-table').addEventListener('click', e => {
     //   e.stopPropagation()
     // })
-    if (this.crmType === 'applet') {
-      this.getFieldList()
-    } else if (this.crmType === 'marketing') {
-      if (this.crm[this.crmType].index) {
-        this.getList()
+    if (!this.isSeas) {
+      if (this.crmType === 'applet') {
+        this.getFieldList()
+      } else if (this.crmType === 'marketing') {
+        if (this.crm[this.crmType].index) {
+          this.getList()
+        }
+      } else if (this.crm[this.crmType].index) {
+        this.loading = true
       }
-    } else if (this.isSeas && this.crm.pool.index) {
-      this.getFieldList()
-    } else if (this.crm[this.crmType].index) {
-      this.loading = true
     }
   },
 
