@@ -331,8 +331,6 @@ export default {
      * 查看详情
      */
     checkCRMDetail(type, id, dataIndex, data) {
-      console.log(data.content, type)
-
       if (type === 'schedule') {
         this.relationID = id
         if (data.content) {

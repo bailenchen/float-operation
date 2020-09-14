@@ -200,3 +200,28 @@ export function UpdateAllFollowUpLeads(data) {
     data: data
   })
 }
+
+/**
+ * 待审核争议
+ * @param data
+ */
+export function crmMessageCheckDisputedAPI(data) {
+  return request({
+    url: 'CrmBackLog/toBeDisputed',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 争议标记为已处理
+ * @param data
+ */
+export function crmMessageHandleDisputedStatusAPI(data) {
+  return request({
+    url: 'CrmBackLog/handleStatuses',
+    method: 'post',
+    data: data
+  })
+}
+

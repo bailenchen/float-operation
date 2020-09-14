@@ -491,3 +491,16 @@ export function QueryHeadmaster(data) {
     data: data
   })
 }
+
+
+/**
+ * 审批历史中下载附件
+ */
+export function downloadAdjunct(data) {
+  return request({
+    url: 'file/downFiles',
+    method: 'post',
+    responseType: 'blob',
+    data: data
+  })
+}

@@ -11,6 +11,7 @@ const app = {
     messageNum: {
       todayCustomer: 0, // 今日需跟进LEADS
       followCustomer: 0, // 承诺到访LEADS
+      checkDisputed: 10, // 待审核的争议
       // followLeads: 0,
       // checkContract: 0,
       // checkReceivables: 0,

@@ -63,6 +63,7 @@
           全部标记已处理
         </el-button> -->
       </div>
+      <!-- 勾选展示 -->
       <flexbox
         v-else
         class="selection-bar">
@@ -195,7 +196,8 @@ import { filterIndexfields } from '@/api/customermanagement/common'
 import {
   crmMessageHandleStatusAPI,
   UpdateAllTodayCustomer,
-  UpdateAllFollowUpLeads
+  UpdateAllFollowUpLeads,
+  crmMessageHandleDisputedStatusAPI
 } from '@/api/customermanagement/message'
 import message_table from '../mixins/message_table'
 import filterForm from '@/views/customermanagement/components/filterForm'
@@ -285,7 +287,8 @@ export default {
     showSelection() {
       return [
         'todayCustomer',
-        'followCustomer'
+        'followCustomer',
+        'disputed'
       ].includes(this.infoType)
     },
 
@@ -293,7 +296,8 @@ export default {
     showFilterView() {
       return [
         'todayCustomer',
-        'followCustomer'
+        'followCustomer',
+        'disputed'
       ].includes(this.infoType)
     },
 
@@ -318,7 +322,8 @@ export default {
       return [
         'todayCustomer',
         'followCustomer',
-        'returnVisitRemind'
+        'returnVisitRemind',
+        'disputed'
       ].includes(this.infoType)
     },
 
@@ -380,17 +385,14 @@ export default {
         if (this.showSubType && this.showOptions) {
           return this.optionsType == 1 && this.isSubType == 1
         }
-
         if (this.showSubType) {
           return this.isSubType == 1
         }
-
         if (this.showOptions) {
           return this.optionsType == 1
         }
         return false
       }
-
       return true
     }
   },
@@ -408,7 +410,6 @@ export default {
     if (this.showOptions && this.options.length > 0) {
       this.optionsType = this.options[0].value
     }
-
     this.initTableHead()
   },
 
@@ -467,7 +468,8 @@ export default {
           .then(() => {
             const request = {
               todayCustomer: crmMessageHandleStatusAPI,
-              followCustomer: crmMessageHandleStatusAPI
+              followCustomer: crmMessageHandleStatusAPI,
+              disputed: crmMessageHandleDisputedStatusAPI
             }[this.infoType]
             request({
               customerIds: this.selectionList

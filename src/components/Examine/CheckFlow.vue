@@ -1,15 +1,8 @@
 <template>
-  <div
-    v-loading="loading"
-    v-empty="list"
-    xs-empty-icon="none"
-    xs-empty-text="暂无记录">
-    <flexbox
-      class="flow-head">
+  <div v-loading="loading" v-empty="list" xs-empty-icon="none" xs-empty-text="暂无记录">
+    <flexbox class="flow-head">
       <div class="flow-head-name">审批流程</div>
-      <i
-        class="el-icon-close flow-head-close"
-        @click="close" />
+      <i class="el-icon-close flow-head-close" @click="close" />
     </flexbox>
     <div class="flow-body">
       <flexbox
@@ -17,10 +10,9 @@
         :key="index"
         class="cf-flow-item"
         align="stretch"
-        justify="flex-start">
-        <img
-          :src="getStatusImageIcon(item.examineStatus)"
-          class="cf-flow-item-img" >
+        justify="flex-start"
+      >
+        <img :src="getStatusImageIcon(item.examineStatus)" class="cf-flow-item-img" >
         <div>
           <flexbox class="cf-flow-item-head">
             <div class="cf-flow-item-des">{{ item.orderId|stepName }}</div>
@@ -28,26 +20,35 @@
           </flexbox>
           <flexbox class="cf-flow-item-info">
             <div class="cf-flow-item-name">{{ item.realname }}</div>
-            <div><span>{{ getStatusName(item.examineStatus) }}</span>了此申请</div>
+            <div>
+              <span>{{ getStatusName(item.examineStatus) }}</span>了此申请1
+            </div>
           </flexbox>
-          <div
-            v-if="item.remarks"
-            class="cf-flow-item-content">{{ item.remarks }}
-            <div class="cf-flow-item-content-arrow"/>
+          <div v-if="item.name" class="adjunct">
+            附件：{{ item.name }}
+            <el-button type="text" @click="downloadHandle(item.batchId)">下载</el-button>
+          </div>
+          <div v-if="item.remarks" class="cf-flow-item-content">
+            {{ item.remarks }}
+            <div class="cf-flow-item-content-arrow" />
           </div>
         </div>
-        <div class="cf-flow-item-line"/>
+        <div class="cf-flow-item-line" />
       </flexbox>
     </div>
   </div>
 </template>
 
 <script>
-import { crmExamineFlowRecordList } from '@/api/customermanagement/common' // 审批记录
+import {
+  crmExamineFlowRecordList,
+  downloadAdjunct
+} from '@/api/customermanagement/common' // 审批记录
 import { oaExamineFlowRecordList } from '@/api/oamanagement/examine'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 import Nzhcn from 'nzh/cn'
+import { downloadExcelWithResData } from '@/utils/index'
 
 export default {
   /** 客户管理 的 合同详情  查看审批流程*/
@@ -83,9 +84,7 @@ export default {
       }
     }
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     getDetail() {
       if (this.id) {
@@ -101,7 +100,7 @@ export default {
         request({
           recordId: this.id
         })
-          .then(res => {
+          .then((res) => {
             this.loading = false
             this.list = res.data
             // this.$emit('value-change', {
@@ -113,6 +112,15 @@ export default {
             this.loading = false
           })
       }
+    },
+
+    downloadHandle(batchId) {
+      downloadAdjunct({ 'batchId': batchId })
+        .then(res => {
+          downloadExcelWithResData(res)
+        }, err => {
+          console.log(err)
+        })
     },
 
     close() {
@@ -202,6 +210,15 @@ export default {
       top: -4px;
       left: 25px;
     }
+  }
+}
+
+// 附件
+.adjunct {
+  margin-top: 4px;
+  .download {
+    cursor: pointer;
+    color: #2362fb;
   }
 }
 </style>

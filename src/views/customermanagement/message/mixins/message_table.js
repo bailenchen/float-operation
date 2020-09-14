@@ -13,7 +13,8 @@ import {
   crmMessagEndContractAPI,
   crmMessagRemindreceivablesplanAPI,
   crmMessagRemindCustomerAPI,
-  crmMessagVisitRemindAPI
+  crmMessagVisitRemindAPI,
+  crmMessageCheckDisputedAPI
 } from '@/api/customermanagement/message'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
@@ -53,6 +54,8 @@ export default {
     })
 
     this.$bus.on('examine-handle-bus', () => {
+      console.log('监听了examine-handle-bus事件')
+
       this.getList()
     })
 
@@ -178,7 +181,9 @@ export default {
         limit: this.pageSize,
         isSub: this.isSubType
       }
-
+      if (this.infoType === 'disputed') {
+        params.type = 23
+      }
       if (this.showOptions) {
         params.type = this.optionsType
       }
@@ -212,7 +217,8 @@ export default {
         'remindReceivablesPlan': crmMessagRemindreceivablesplanAPI,
         'endContract': crmMessagEndContractAPI,
         'putInPoolRemind': crmMessagRemindCustomerAPI,
-        'returnVisitRemind': crmMessagVisitRemindAPI
+        'returnVisitRemind': crmMessagVisitRemindAPI,
+        'disputed': crmMessageCheckDisputedAPI
       }[this.infoType]
     },
 

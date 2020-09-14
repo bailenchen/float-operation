@@ -1,15 +1,11 @@
 <template>
   <div style="height:100%;">
     <flexbox class="message-header">
-      <img
-        src="@/assets/img/crm/todo.png"
-        class="title-icon">
+      <img src="@/assets/img/crm/todo.png" class="title-icon" >
       <span class="title">待办事项</span>
     </flexbox>
     <div class="message-body">
-      <div
-        v-loading="loading"
-        class="message-content">
+      <div v-loading="loading" class="message-content">
         <div class="message-body-side">
           <xr-menu-item
             v-for="(item, index) in showLeftSides"
@@ -19,7 +15,8 @@
             :icon-color="item.color"
             :icon-class="item.iconClass"
             :select="leftType==item.infoType"
-            @click.native="sideClick(item)"/>
+            @click.native="sideClick(item)"
+          />
         </div>
         <div class="message-body-content">
           <c-r-m-message
@@ -32,7 +29,8 @@
             :info-tips="item.tips"
             :show="leftType==item.infoType"
             :icon-data="item"
-            @on-handle="messageHandle"/>
+            @on-handle="messageHandle"
+          />
         </div>
       </div>
     </div>
@@ -77,6 +75,16 @@ export default {
           infoType: 'followCustomer',
           num: 0,
           tips: '承诺到访的LEADS',
+          hidden: true
+        },
+        {
+          name: '待审核的争议',
+          crmType: 'customer',
+          color: '#704AFD',
+          iconClass: 'wk wk-leads',
+          infoType: 'disputed',
+          num: 0,
+          tips: '待审核的争议',
           hidden: true
         }
         // {
@@ -157,7 +165,7 @@ export default {
     ...mapGetters(['messageNum']),
 
     showLeftSides() {
-      return this.leftSides.filter(item => {
+      return this.leftSides.filter((item) => {
         return !item.hidden
       })
     }
@@ -174,7 +182,7 @@ export default {
     this.loading = true
     this.$store
       .dispatch('GetMessageNum')
-      .then(res => {
+      .then((res) => {
         this.loading = false
         this.refreshNum()
       })
@@ -290,5 +298,4 @@ export default {
   border: 1px solid #e6e6e6;
   border-radius: $xr-border-radius-base;
 }
-
 </style>

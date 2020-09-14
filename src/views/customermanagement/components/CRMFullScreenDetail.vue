@@ -111,6 +111,8 @@ export default {
         return 'VisitDetail'
       } else if (this.crmType == 'invoice') {
         return 'InvoiceDetail'
+      } else if (this.crmType == 'leadsCustomer') {
+        return CustomerDetail
       }
       return ''
     }
