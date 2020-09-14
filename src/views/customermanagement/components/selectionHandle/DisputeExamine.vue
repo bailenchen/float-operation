@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-22 10:51:58
- * @LastEditTime: 2020-09-12 16:42:02
+ * @LastEditTime: 2020-09-14 11:23:51
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
@@ -23,7 +23,7 @@
             <i style="font-style:normal;color:red;">* </i> 争议内容
           </div>
           <el-input
-            v-model="content"
+            v-model="remarks"
             type="textarea"
             placeholder="请输入内容"
             maxlength="800"
@@ -73,10 +73,12 @@
 </template>
 
 <script>
-// import { Loading } from 'element-ui'
 import { XhUserCell } from '@/components/CreateCom'
 import Sections from '../../components/Sections'
 import { crmFileSave } from '@/api/common'
+import { crmCustomerDisputeSaveAPI } from '@/api/customermanagement/customer'
+import { Loading } from 'element-ui'
+
 export default {
   name: 'DisputeExamine',
   components: {
@@ -99,10 +101,10 @@ export default {
   },
   data() {
     return {
-      content: '',
+      remarks: '',
       examineUser: [],
       fileName: '',
-      batchId: null
+      examineBatchId: null
     }
   },
   watch: {
@@ -122,7 +124,7 @@ export default {
     // 字段的值更新
     fieldValueChange(data) {
       if (data.value.length) {
-        this.examineUser = data.value[0]
+        this.examineUser = data.value
       } else {
         this.examineUser = []
       }
@@ -145,7 +147,7 @@ export default {
       crmFileSave(params)
         .then(res => {
           this.fileName = res.name
-          this.batchId = res.batchId
+          this.examineBatchId = res.batchId
         })
         .catch(() => {})
     },
@@ -159,10 +161,32 @@ export default {
      * 确定
      */
     handleConfirm() {
-      if (!this.content) {
+      if (!this.remarks) {
         this.$message.error('请输入争议内容')
         return
       }
+      const params = {
+        examineBatchId: this.examineBatchId,
+        remarks: this.remarks,
+        customerId: this.selectionList.length ? this.selectionList[0].customerId : null,
+        checkUserId: this.examineUser.length ? this.examineUser[0].userId : null
+      }
+      const loading = Loading.service({
+        target: document.querySelector(`.el-dialog[aria-label="新建争议"]`)
+      })
+      crmCustomerDisputeSaveAPI(params).then(res => {
+        this.$message({
+          type: 'success',
+          message: '操作成功'
+        })
+        loading.close()
+        this.$emit('handle', {
+          type: 'dispute'
+        })
+        this.handleCancel()
+      }).catch(() => {
+        loading.close()
+      })
       // const loading = Loading.service({
       //   target: document.querySelector(`.el-dialog[aria-label="在线充值"]`)
       // })

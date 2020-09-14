@@ -183,8 +183,8 @@ export default {
         crm_contract: crmExamineFlowAuditExamine,
         crm_invoice: crmExamineFlowAuditExamine,
         crm_receivables: crmExamineFlowAuditExamine,
-        oa_examine: oaExamineFlowAuditExamine
-        // crm_dispute: crmExamineFlowRecordList
+        oa_examine: oaExamineFlowAuditExamine,
+        crm_dispute: crmExamineFlowAuditExamine
       }[this.examineType]
     },
     // 通过 拒绝操作

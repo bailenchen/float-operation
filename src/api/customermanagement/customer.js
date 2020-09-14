@@ -690,3 +690,18 @@ export function crmCustomerCallRecordAPI(data) {
     data: data
   })
 }
+
+/**
+ * 新建争议
+ * @param {*} data
+ */
+export function crmCustomerDisputeSaveAPI(data) {
+  return request({
+    url: 'CrmCustomer/disputeApproval',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: data
+  })
+}
