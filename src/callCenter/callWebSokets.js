@@ -23,6 +23,7 @@ class MyWs {
   callNumber
   referCallNumber
   data
+  direction
   /**
    * 配置变量
    */
@@ -209,6 +210,7 @@ class MyWs {
       case 'originated': // 拨号事件
         // 主叫
         currentLine.direction = 0
+        that.direction = 0
         currentLine.callStatus = 'originated'
         // that.callNumber = callInfo.remote
         callInfo.event = 'OutGoing'
@@ -232,6 +234,7 @@ class MyWs {
         that.onLineMessage(callInfo)
         // 被叫
         currentLine.direction = 1
+        that.direction = 1
         console.log('----phoneLines----', that.phoneLines)
         break
       case 'established': // 接通事件
@@ -259,6 +262,7 @@ class MyWs {
         currentLine.duration = currentLine.isAnswered ? parseInt(currentLine.end - currentLine.begin) : 0
         currentLine.callStatus = 'cleared'
         callInfo.event = 'HangUp'
+        callInfo.direction = this.direction
         that.onLineMessage(callInfo)
         // if (currentLine.duration > 0) {
         callInfo.event = 'CallRecord'
