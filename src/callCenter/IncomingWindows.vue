@@ -520,6 +520,7 @@ export default {
         // modelId: this.modelId
         type: data.direction,
         state: this.connectedState,
+        callId: data.callId,
         starttime: data.time,
         answertime: data.begin,
         endtime: data.end,
