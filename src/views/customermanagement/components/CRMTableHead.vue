@@ -200,6 +200,7 @@ import {
 import {
   crmReturnVisitDeleteAPI
 } from '@/api/customermanagement/visit'
+import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 
 
 import filterForm from './filterForm'
@@ -294,7 +295,8 @@ export default {
       isShowOnline: false, // 在线充值
       isOfflineWithDraw: false, // 线下充值和提现
       isDispute: false,
-      moneyType: ''
+      moneyType: '',
+      examineInfo: {} // 审核争议信息
     }
   },
   computed: {
@@ -414,6 +416,8 @@ export default {
     },
     /** 操作 */
     selectionBarClick(type) {
+      console.log('点击')
+      console.log(type)
       if (type == 'transfer') {
         // 转移
         this.transferDialogShow = true
@@ -562,7 +566,16 @@ export default {
         this.moneyType = 'refound'
         this.isOfflineWithDraw = true
       } else if (type == 'dispute') {
-        this.isDispute = true
+        // 点击争议
+        const data = { categoryType: 4 }
+        crmCreateExamineFlow(data)
+          .then(res => {
+            console.log('争议接口')
+            console.log(res)
+            this.examineInfo = res.data
+            this.isDispute = true
+          })
+          .catch()
       }
     },
     confirmHandle(type) {
@@ -572,7 +585,7 @@ export default {
           return item.customerId
         })
         crmCustomerLock({
-          status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
+          status: type === 'lock' ? '9' : '10', // 1是正常 2 是锁定 9正常 10锁定
           ids: customerId.join(',')
         })
           .then(res => {

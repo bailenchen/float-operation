@@ -54,6 +54,7 @@ export default [
       }
     }]
   },
+
   {
     ...layout({
       // permissions: ['crm', 'contacts']

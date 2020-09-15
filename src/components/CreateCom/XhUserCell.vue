@@ -42,7 +42,6 @@
       slot="reference"
       name="reference" />
   </el-popover>
-
 </template>
 <script type="text/javascript">
 import XhUser from './XhUser'

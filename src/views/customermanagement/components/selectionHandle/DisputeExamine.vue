@@ -41,6 +41,7 @@
         </flexbox>
       </sections>
       <sections
+        v-if="examineInfo.examineType==1"
         title="审核信息"
         class="b-cells"
         content-height="auto">
@@ -56,6 +57,34 @@
             :value="examineUser"
             class="set-width"
             @value-change="fieldValueChange"/>
+        </flexbox>
+      </sections>
+      <sections
+        title="审核信息"
+        class="b-cells"
+        content-height="auto">
+        <flexbox
+          :gutter="0"
+          align="stretch"
+          wrap="wrap"
+          style="padding: 10px 16px 0;">
+          <div class="label1" style="margin-right:5px;">
+            <el-popover
+              v-for="(item, index) in examineInfo.examineSteps"
+              :key="index"
+              :disabled="item.userList.length==0"
+              :content="item.userList|contentFilters"
+              placement="bottom"
+              trigger="hover">
+              <div
+                slot="reference"
+                class="fixed-examine-item">
+                <img src="@/assets/img/examine_head.png" >
+                <div class="detail">{{ item|detail }}</div>
+                <div class="step">{{ (index+1)|step }}</div>
+              </div>
+            </el-popover>
+          </div>
         </flexbox>
       </sections>
     </div>
@@ -78,12 +107,36 @@ import Sections from '../../components/Sections'
 import { crmFileSave } from '@/api/common'
 import { crmCustomerDisputeSaveAPI } from '@/api/customermanagement/customer'
 import { Loading } from 'element-ui'
+import Nzhcn from 'nzh/cn'
 
 export default {
   name: 'DisputeExamine',
   components: {
     XhUserCell,
     Sections
+  },
+  filters: {
+    detail: function(data) {
+      if (data.stepType == 2) {
+        return data.userList.length + '人或签'
+      } else if (data.stepType == 3) {
+        return data.userList.length + '人会签'
+      } else if (data.stepType == 1) {
+        return '负责人主管'
+      } else if (data.stepType == 4) {
+        return '上一级审批人主管'
+      }
+    },
+    step: function(index) {
+      return '第' + Nzhcn.encodeS(index) + '级'
+    },
+    contentFilters: function(array) {
+      return array
+        .map(item => {
+          return item.realname
+        })
+        .join('、')
+    }
   },
   props: {
     visible: {
@@ -97,6 +150,13 @@ export default {
       default: () => {
         return []
       }
+    },
+    // 待审批争议信息
+    examineInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
@@ -104,7 +164,11 @@ export default {
       remarks: '',
       examineUser: [],
       fileName: '',
-      examineBatchId: null
+      examineBatchId: null,
+      crmType: 'dispute',
+      action: {
+        id: ''
+      }
     }
   },
   watch: {
@@ -114,6 +178,11 @@ export default {
     }
   },
   methods: {
+    // 审批信息值更新
+    // examineValueChange(data) {
+    //   console.log('审批信息值更新')
+    //   this.examineInfo = data
+    // },
     /**
      * 取消选择
      */
@@ -286,5 +355,44 @@ export default {
 .control-item .icon {
     font-size: 12px;
     margin-right: 5px;
+}
+
+.face {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: skyblue;
+}
+
+// 审核信息 里的审核类型
+.examine-type {
+  font-size: 12px;
+  color: white;
+  background-color: #fd715a;
+  padding: 0 8px;
+  margin-left: 5px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 8px;
+  transform: scale(0.8, 0.8);
+}
+
+.label1 {
+  text-align: center;
+  display: flex;
+  .fixed-examine-item {
+    padding: 10px 20px;
+    .detail{
+      color: #777777;
+      font-size: 12px;
+      padding: 2px 0;
+      -webkit-transform: scale(0.8, 0.8);
+      transform: scale(0.8, 0.8);
+    }
+    .step {
+      color: #333333;
+      font-size: 12px;
+    }
+  }
 }
 </style>

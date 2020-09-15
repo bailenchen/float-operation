@@ -145,7 +145,7 @@
             </template>-->
             <template v-if="item.prop == 'status'">
               <i
-                v-if="scope.row.status == 2"
+                v-if="scope.row.status == 9"
                 class="wk wk-circle-password customer-lock"/>
             </template>
             <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
@@ -261,6 +261,8 @@ export default {
         })
       }
 
+      console.log('菜单')
+      console.log(temp)
       return temp
     }
   },
