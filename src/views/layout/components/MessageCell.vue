@@ -53,6 +53,11 @@ export default {
           color: '#6995FF',
           type: 'customer'
         },
+        leadsCustomer: {
+          icon: 'wk wk-customer',
+          color: '#6995FF',
+          type: 'leadsCustomer'
+        },
         contacts: {
           icon: 'wk wk-contacts',
           color: '#6995FF',
@@ -129,6 +134,8 @@ export default {
           key = 'receivables'
         } else if ([14, 15, 23, 29, 32].includes(this.data.type)) {
           key = 'customer'
+        } else if ([38, 39, 40].includes(this.data.type)) {
+          key = 'leadsCustomer'
         } else if ([16, 17].includes(this.data.type)) {
           key = 'contacts'
         } else if ([18, 19].includes(this.data.type)) {
@@ -183,7 +190,10 @@ export default {
         34: `${this.data.realname}回复了您评论的日志`,
         35: `${this.data.realname}拒绝您的`,
         36: `${this.data.realname}您的`,
-        37: `${this.data.realname}提交了`
+        37: `${this.data.realname}提交了`,
+        38: `${this.data.realname} LEADS待审核审批提醒`,
+        39: `${this.data.realname} LEADS拒绝通知`,
+        40: `${this.data.realname} LEADS通过通知`
       }[this.data.type]
     },
 
@@ -247,7 +257,10 @@ export default {
         34: `：“${this.data.content}”，请及时查看`,
         35: `，拒绝理由：“${this.data.content}”，请及时处理`,
         36: `发票已经审核通过，请及时查看`,
-        37: `发票审批，请及时处理`
+        37: `发票审批，请及时处理`,
+        38: `争议待审批，请及时处理`,
+        39: `争议拒绝`,
+        40: `争议通过`
       }[this.data.type]
     }
   },
