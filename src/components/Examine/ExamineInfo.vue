@@ -40,11 +40,11 @@
           class="xr-btn--red"
           icon="wk wk-close"
           @click="examineHandle(2)">拒绝</el-button>
-        <el-button
+          <!-- <el-button
           v-if="examineInfo.isRecheck == 1"
           class="xr-btn--primary"
           icon="wk wk-reset"
-          @click="examineHandle(4)">撤回</el-button>
+          @click="examineHandle(4)">撤回1</el-button> -->
       </div>
     </flexbox>
 

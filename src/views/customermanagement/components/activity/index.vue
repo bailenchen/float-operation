@@ -165,7 +165,6 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import { objDeepCopy } from '@/utils'
 import XrSystemIconMixin from '@/mixins/XrSystemIcon'
 import ActivityTypeMixin from './ActivityType'
-import createLogVue from '../../../workLog/components/createLog.vue'
 
 export default {
   name: 'Activity', // 活动

@@ -40,8 +40,9 @@
           </div>
         </flexbox>
       </sections>
+      <!-- 授权审批 -->
       <sections
-        v-if="examineInfo.examineType==1"
+        v-if="examineInfo.examineType==2"
         title="审核信息"
         class="b-cells"
         content-height="auto">
@@ -59,7 +60,9 @@
             @value-change="fieldValueChange"/>
         </flexbox>
       </sections>
+      <!-- 固定审批 -->
       <sections
+        v-else
         title="审核信息"
         class="b-cells"
         content-height="auto">

@@ -260,9 +260,6 @@ export default {
           icon: require('@/assets/img/crm/seas_not.png')
         })
       }
-
-      console.log('菜单')
-      console.log(temp)
       return temp
     }
   },

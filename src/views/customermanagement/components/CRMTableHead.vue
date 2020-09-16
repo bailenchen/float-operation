@@ -133,6 +133,7 @@
     <dispute-examine
       :visible.sync="isDispute"
       :selection-list="selectionList"
+      :examine-info="examineInfo"
       @handle="handleCallBack" />
   </div>
 </template>
