@@ -376,7 +376,8 @@ export default {
           return // 列表查看商机不展示详情
         }
         // if (column.property === 'leadsNumber') {
-        if (['leadsNumber', 'customerName'].includes(column.property)) {
+        // , 'customerName'
+        if (['leadsNumber'].includes(column.property)) {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true

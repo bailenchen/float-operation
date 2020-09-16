@@ -178,6 +178,16 @@ export default {
     // 跟进类型
     followTypes: Array,
     // 模块ID
+
+
+
+
+
+
+
+
+
+
     id: [String, Number],
     // 没有值就是全部类型 有值就是当个类型
     crmType: {
@@ -359,6 +369,7 @@ export default {
             // this.fieldList.splice(-2, 1)
             }
           }
+          console.log(this.fieldList, 'mmmmmmmmmm')
         }
       }
     },
@@ -569,7 +580,8 @@ export default {
     sendClick() {
       const form = {}
       this.fieldList.forEach(o => {
-        if (o.fieldName == 'category') {
+        console.log(o, 'hhhhh99999')
+        if (o.fieldName == 'category' && typeof o.value == 'number') {
           for (let index = 0; index < o.setting.length; index++) {
             const element = o.setting[index]
             if (o.value == element.value) {

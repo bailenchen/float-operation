@@ -280,7 +280,7 @@ export default {
             typeName: row.typeName,
             isFilter: row.isFilter,
             status: row.status,
-            channelId: this.getCheckedArr(row.channelId.split(',').map(o => Number(o)))
+            channelId: row.channelId ? this.getCheckedArr(row.channelId.split(',').map(o => Number(o))) : ''
           }
           if (row.userId) {
             this.dialogForm.filteringPersonnel = [{
@@ -369,10 +369,10 @@ export default {
         this.$message.error('渠道类型名称不能为空')
         return
       }
-      if (isEmpty(this.dialogForm.channelId)) {
-        this.$message.error('包含渠道不能为空')
-        return
-      }
+      // if (isEmpty(this.dialogForm.channelId)) {
+      //   this.$message.error('包含渠道不能为空')
+      //   return
+      // }
       if (this.dialogForm.isFilter === 1 &&
         isEmpty(this.dialogForm.filteringPersonnel)) {
         this.$message.error('请选择过滤人员')
@@ -384,7 +384,7 @@ export default {
       const params = {
         ...this.dialogForm,
         filteringPersonnel: userId,
-        channelId: this.dialogForm.channelId.map(o => o[o.length - 1]).join(',')
+        channelId: this.dialogForm.channelId.map(o => o[o.length - 1]).join(',') || ''
       }
       AddChannelType(params).then(() => {
         this.loading = false

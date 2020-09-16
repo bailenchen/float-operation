@@ -427,10 +427,51 @@ export default {
       }
       if (removeIndex == -1) {
         this.checkedUserDepList.push(item)
+        if (this.activeTabName == 'dep' && item.children) {
+          const ids = this.checkedUserDepList.filter(item => item.type === 'dep').map(item => item.id)
+          this.loopChildren(item.children, ids, this.checkedUserDepList)
+        }
       } else if (removeIndex != -1) {
         this.checkedUserDepList.splice(removeIndex, 1)
+
+        if (this.activeTabName == 'dep' && item.children) {
+          const childIds = []
+          this.getChildrenIds(item.children, childIds)
+          this.checkedUserDepList.forEach(subItem => {
+            if (subItem.type === 'dep') {
+              if (childIds.includes(subItem.id)) {
+                subItem.isRemove = true
+              }
+            }
+          })
+
+          this.checkedUserDepList = this.checkedUserDepList.filter(item => !item.isRemove)
+        }
       }
     },
+
+    getChildrenIds(children, ids) {
+      children.forEach(item => {
+        ids.push(item.id)
+        if (item.children) {
+          this.getChildrenIds(item.children, ids)
+        }
+      })
+    },
+
+    loopChildren(children, ids, array) {
+      children.forEach(item => {
+        if (!ids.includes(item.id)) {
+          item.type = 'dep'
+          array.push(item)
+        }
+
+        if (item.children) {
+          this.loopChildren(item.children, ids, array)
+        }
+      })
+    },
+
     // 获取事项标记信息
     getItemCheckInfo(item, type) {
       if (this.checkedUserDepList.length == 0) {

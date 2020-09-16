@@ -179,6 +179,7 @@ import {
   XhReceivablesPlan // 回款计划期数
 } from '@/components/CreateCom'
 import DetailImg from '../product/components/DetailImg'
+// import createLogVue from '../../workLog/components/createLog.vue'
 
 export default {
   name: 'CrmCreateView', // 所有新建效果的view
@@ -966,6 +967,11 @@ export default {
             res.data.splice(findIndex, 1)
           }
         })
+      }
+
+      findIndex = res.data.findIndex(o => o.fieldName === 'introducer_name')
+      if (!this.action.introduce && findIndex !== -1) {
+        res.data.splice(findIndex, 1)
       }
       // 转介绍LEADS没有渠道来源
       findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
