@@ -96,6 +96,10 @@ export default {
   computed: {},
   watch: {
     crmType: function(type) {
+      console.log('监听到', type)
+      console.log(this.crmType)
+
+
       if (this.isStudent) {
         this.tabName = 'StudentDetail'
         return
@@ -148,6 +152,10 @@ export default {
      * 详情操作
      */
     detailHandle(data) {
+      console.log('详情操作')
+      console.log(data)
+
+
       if (data.type === 'alloc' || data.type === 'get' || data.type === 'transfer' || data.type === 'transform' || data.type === 'delete' || data.type === 'put_seas') {
         this.hiddenView()
       }

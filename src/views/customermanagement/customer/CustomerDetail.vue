@@ -271,6 +271,8 @@ export default {
         }
         tempsTabs.push(item)
       })
+      console.log('tab页', tempsTabs)
+
       return tempsTabs
     },
     /**
@@ -363,6 +365,8 @@ export default {
 
       crmCustomerRead(params)
         .then(res => {
+          console.log('返回数据')
+
           this.loading = false
           this.detailData = res.data
           this.firstContactsId = this.detailData.contactsId

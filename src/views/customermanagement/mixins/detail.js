@@ -53,6 +53,8 @@ export default {
       if (this.canShowDetail) {
         this.detailData = null
         this.tabsNumber = {}
+        console.log('监听到id,请求数据')
+
         this.getDetial()
         this.getTabsNum()
       }
@@ -124,6 +126,8 @@ export default {
       if (!this.showTabsNumber) {
         return
       }
+      // console.log('决定tab', this.crmType)
+
       const request = {
         leads: crmLeadsNumAPI,
         // customer: crmCustomerNumAPI,

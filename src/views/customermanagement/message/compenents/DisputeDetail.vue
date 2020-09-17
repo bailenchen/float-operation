@@ -13,7 +13,7 @@
       </div>
       <div class="header-name">{{ categoryName }}</div>
     </flexbox>
-    <div class="detail-body" v-if="disputeInfoZero">
+    <div v-if="disputeInfoZero" class="detail-body">
       <!-- 正义内容 -->
       <div class="b-cell-b">
         <div class="b-cell-name">争议内容</div>
@@ -51,7 +51,7 @@
         @on-handle="examineHandle" /> -->
 
       <examine-info
-        
+
         :id="id"
         :record-id="recordId"
         :owner-user-id="ownerUserId"
@@ -64,10 +64,7 @@
 </template>
 
 <script>
-import { downloadAdjunct } from '@/api/customermanagement/common'
-
-import { crmCustomerRead } from '@/api/customermanagement/customer'
-import { crmExamineFlowRecordList } from '@/api/customermanagement/common'
+import { downloadAdjunct, crmExamineFlowRecordList } from '@/api/customermanagement/common'
 
 import SlideView from '@/components/SlideView'
 import ExamineInfo from '@/components/Examine/ExamineInfo'
@@ -142,7 +139,7 @@ export default {
         ownerUserId: this.ownerUserId
       }
       console.log('获取数据111')
-      console.log(params);
+      console.log(params)
 
       crmExamineFlowRecordList(params)
         .then(res => {

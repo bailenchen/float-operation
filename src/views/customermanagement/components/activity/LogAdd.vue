@@ -12,13 +12,21 @@
         :key="index"
         :class="field.com"
         class="form-item">
-        <component
+        <!-- <component
           :is="field.com"
           :disabled="field.disabled"
           :index="index"
           :item="field"
           :placeholder="field.placeholder"
           :value="field.value"
+          @value-change="handleFormChange($event, field.setting)" /> -->
+        <component
+          :is="field.com"
+          :disabled="field.disabled"
+          :index="index"
+          :item="field"
+          :placeholder="field.placeholder"
+          :value="cumputedValue(field)"
           @value-change="handleFormChange($event, field.setting)" />
       </div>
       <common-words @select="commonWordsSelect" />
@@ -220,11 +228,15 @@ export default {
         { fieldName: 'dealStatus', placeholder: '签约可能性', com: 'XhSelect', setting: [], value: '' },
         { fieldName: 'nextTime', placeholder: '下次跟进时间', com: 'XhDateTime', value: '' }
       ],
+      LEADSStatusFirst: null,
       defField: null,
       form: {}
     }
   },
   computed: {
+    // fieldValue() {
+    //   console.log('value计算')
+    // },
     autosize() {
       if (this.isUnfold) {
         return { minRows: 3, maxRows: 6 }
@@ -258,6 +270,28 @@ export default {
 
   beforeDestroy() {},
   methods: {
+    cumputedValue(field) {
+      console.log(field)
+      if (field.placeholder == '*LEADS状态') {
+        this.LEADSStatusFirst = field.setting[0].list
+      }
+      if (field.placeholder == '*跟进结果') {
+        console.log('事件名称')
+
+        console.log(this.fieldList[2])
+        console.log(this.LEADSStatusFirst)
+
+
+        this.$set(this.fieldList[2], 'setting', this.LEADSStatusFirst)
+        // return this.LEADSStatusFirst
+      }
+      if (field.setting && field.setting[0]) {
+        console.log(field.setting)
+
+        return field.setting[0].value
+      }
+      return field.value
+    },
     /**
      * 跟进类型初始值
      */
@@ -338,6 +372,8 @@ export default {
           const element = subitem[index]
           if (data.value == element.value) {
             this.$set(this.fieldList[2], 'setting', element.list)
+            console.log('修改好了')
+
             return
           }
         }

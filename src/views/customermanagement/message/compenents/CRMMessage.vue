@@ -440,17 +440,8 @@ export default {
 
   methods: {
     // 隐藏详情
-    hiddenView() {
-      // console.log('隐藏详情')
-      this.showDview = false
-    },
-    // 
     hiddenDisputeView() {
       this.showDisputedDview = false
-    },
-    // 争议详情
-    detailHandleCallBack() {
-      console.log('争议详情返回')
     },
     /**
      * 初始化表头数据
