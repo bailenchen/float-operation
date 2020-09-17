@@ -360,6 +360,8 @@ export default {
     /** 列表操作 */
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
+      console.log('点击行');
+      console.log(this.crmType);
       if (column.type === 'selection') {
         return // 多选布局不能点击
       }

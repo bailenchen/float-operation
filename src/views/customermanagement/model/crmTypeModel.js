@@ -54,8 +54,8 @@ export default {
   },
 
   typeToNameData: {
-    1: '线索',
-    2: '客户',
+    // 1: '线索',
+    2: '线索',
     22: '资金账户',
     3: '联系人',
     4: '产品',
@@ -94,6 +94,8 @@ export default {
   },
 
   convertTypeToName: function(type) {
+    console.log('数据层')
+    console.log(type)
     if (typeof type === 'string') {
       type = parseInt(type)
     }

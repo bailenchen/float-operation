@@ -301,6 +301,7 @@ export default {
     }
   },
   computed: {
+    // ...mapState('user', ['crm']),
     ...mapGetters(['crm']),
     iconClass() {
       return this.showScene ? 'arrow-up' : 'arrow-down'
@@ -586,7 +587,7 @@ export default {
           return item.customerId
         })
         crmCustomerLock({
-          status: type === 'lock' ? '9' : '10', // 1是正常 2 是锁定 9正常 10锁定
+          status: type === 'lock' ? '9' : '10', // 1是正常 2 是锁定 9锁定  10正常
           ids: customerId.join(',')
         })
           .then(res => {
@@ -925,19 +926,37 @@ export default {
             'delete'
           ])
         } else {
-          return this.forSelectionHandleItems(handleInfos, [
+          console.log('从store中取出权限，当有这个权限时展示')
+          console.log(this.crm.customer)
+          const items = [
             'assignHeadTeacher',
             'transfer',
             'put_seas',
-            // 'deal_status',
             'export',
             'delete',
             'lock',
-            'unlock',
-            'dispute'
-            // 'add_user',
-            // 'delete_user'
-          ])
+            'unlock'
+          ]
+
+          if (this.crm.customer.dispute === true) {
+            items.push('dispute')
+          }
+
+          return this.forSelectionHandleItems(handleInfos, items)
+
+          // return this.forSelectionHandleItems(handleInfos, [
+          //   'assignHeadTeacher',
+          //   'transfer',
+          //   'put_seas',
+          //   // 'deal_status',
+          //   'export',
+          //   'delete',
+          //   'lock',
+          //   'unlock',
+          //   // 'dispute'
+          //   // 'add_user',
+          //   // 'delete_user'
+          // ])
         }
       } else if (this.crmType == 'capitalAccount') {
         return this.forSelectionHandleItems(handleInfos, [

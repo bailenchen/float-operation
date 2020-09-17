@@ -47,7 +47,6 @@
           @click="examineHandle(4)">撤回1</el-button> -->
       </div>
     </flexbox>
-
     <!-- 授权 -->
     <flexbox
       v-if="examineInfo.examineType == 2"
@@ -214,6 +213,8 @@ export default {
       })
         .then(res => {
           this.loading = false
+          console.log('审核信息')
+          console.log(res)
           this.examineInfo = res.data
           this.$emit('value-change', {
             config: res.data.examineType, // 审批类型

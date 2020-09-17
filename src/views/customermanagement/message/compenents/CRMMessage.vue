@@ -69,12 +69,14 @@
         class="selection-bar">
         <div class="selected—title">已选中<span class="selected—count">{{ selectionList.length }}</span>项</div>
         <flexbox class="selection-items-box">
-          <el-button
-            v-for="(item, index) in selectionButtonList"
-            :icon="item.icon"
-            :key="index"
-            type="primary"
-            @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
+          <div v-if="infoType!=='todayCustomer'">
+            <el-button
+              v-for="(item, index) in selectionButtonList"
+              :icon="item.icon"
+              :key="index"
+              type="primary"
+              @click.native="selectionBarClick(item.type)">{{ item.name }}</el-button>
+          </div>
         </flexbox>
       </flexbox>
     </div>
@@ -152,7 +154,7 @@
           </template>
           <template v-else-if="item.prop == 'status' && crmType === 'customer'">
             <i
-              v-if="scope.row.status == 2"
+              v-if="scope.row.status == 9"
               class="wk wk-circle-password customer-lock"/>
           </template>
           <template v-else-if="item.prop == 'checkStatus'">
@@ -187,6 +189,24 @@
       :id="rowID"
       @handle="getList"
       @refresh-list="refreshParentList"/>
+
+
+    <!-- 争议详情页面 -->
+    <dispute-detail
+      v-if="showDisputedDview"
+      :record-id="recID"
+      :owner-user-id="ownId"
+      :id="rowID"
+      @hide-view="hiddenDisputeView" />
+
+      <!-- <dispute-detail
+      v-if="showDview"
+      :id="rowID"
+      :detail-index="0"
+      :no-listener-class="['examine-content']"
+      class="d-view"
+      @hide-view="showDview=false"
+      @on-examine-handle="detailHandleCallBack" /> -->
   </div>
 </template>
 
@@ -204,6 +224,7 @@ import filterForm from '@/views/customermanagement/components/filterForm'
 import filterContent from '@/views/customermanagement/components/filterForm/filterContent'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
 import CallCenter from '@/callCenter/CallCenter'
+import DisputeDetail from './DisputeDetail'
 
 export default {
   /** 客户管理 的待审核系统 */
@@ -213,7 +234,8 @@ export default {
     filterForm,
     filterContent,
     CRMAllDetail,
-    CallCenter
+    CallCenter,
+    DisputeDetail
   },
 
   filters: {
@@ -276,8 +298,11 @@ export default {
       ], // 操作按钮列表
       /** 控制详情展示 */
       rowID: '', // 行信息
+      recID: '',
+      ownId: '',
       rowType: '', // 详情类型
-      showDview: false,
+      showDview: false, // 详情显示与否
+      showDisputedDview: false, // 争议显示与否
       showCount: -1, // 储存客户id作为展示的标识
       modelData: {} // 储存电话信息作为详情展示通话的依据
     }
@@ -414,6 +439,19 @@ export default {
   },
 
   methods: {
+    // 隐藏详情
+    hiddenView() {
+      // console.log('隐藏详情')
+      this.showDview = false
+    },
+    // 
+    hiddenDisputeView() {
+      this.showDisputedDview = false
+    },
+    // 争议详情
+    detailHandleCallBack() {
+      console.log('争议详情返回')
+    },
     /**
      * 初始化表头数据
      */
@@ -557,6 +595,7 @@ export default {
        * pover 显示时触发
        */
     showData(val) {
+      console.log('点击111')
       if (
         this.infoType == 'todayCustomer' ||
         this.infoType == 'followCustomer' ||
@@ -573,6 +612,9 @@ export default {
        * @param val
        */
     changeCRMType(val) {
+      console.log('查看详情')
+
+
       this.rowType = val.type
       this.rowID = val.id
 

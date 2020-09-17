@@ -365,6 +365,9 @@ export default {
      * 确定
      */
     handleConfirm() {
+      // console.log(this.dialogForm.typeName)
+      console.log('确定')
+      // return
       if (isEmpty(this.dialogForm.typeName)) {
         this.$message.error('渠道类型名称不能为空')
         return
@@ -384,7 +387,7 @@ export default {
       const params = {
         ...this.dialogForm,
         filteringPersonnel: userId,
-        channelId: this.dialogForm.channelId.map(o => o[o.length - 1]).join(',') || ''
+        channelId: this.dialogForm.channelId === '' ? '' : this.dialogForm.channelId.map(o => o[o.length - 1]).join(',')
       }
       AddChannelType(params).then(() => {
         this.loading = false

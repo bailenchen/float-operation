@@ -281,6 +281,8 @@ export default {
       } else if (this.crmType === 'capitalAccount') {
         return this.detail.accountNumber
       }
+      console.log('name是')
+      console.log(this.detail.name)
       return this.detail.name
     },
     // 展示转移
@@ -450,7 +452,8 @@ export default {
     confirmHandle(type) {
       if (type === 'lock' || type === 'unlock') {
         crmCustomerLock({
-          status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
+          // status: type === 'lock' ? '2' : '1', // 1是正常 2 是锁定
+          status: type === 'lock' ? '9' : '10', // 1是正常 2 是锁定
           ids: this.id
         })
           .then(res => {

@@ -21,12 +21,16 @@
           <flexbox class="cf-flow-item-info">
             <div class="cf-flow-item-name">{{ item.realname }}</div>
             <div>
-              <span>{{ getStatusName(item.examineStatus) }}</span>了此申请1
+              <span>{{ getStatusName(item.examineStatus) }}</span>了此申请
             </div>
           </flexbox>
           <div v-if="item.name" class="adjunct">
             附件：{{ item.name }}
             <el-button type="text" @click="downloadHandle(item.batchId)">下载</el-button>
+          </div>
+          <div v-if="item.reddsss" class="cf-flow-item-content">
+            {{ item.reddsss }}
+            <div class="cf-flow-item-content-arrow" />
           </div>
           <div v-if="item.remarks" class="cf-flow-item-content">
             {{ item.remarks }}

@@ -73,6 +73,8 @@ export default {
      * @param {*} event
      */
     handleRowClick(row, column, event) {
+      console.log(111111)
+      console.log(this.crmType);
       if (this.crmType === 'leads') {
         if (column.property === 'leadsName') {
           this.rowID = row.leadsId
@@ -85,7 +87,20 @@ export default {
         if (['leadsNumber', 'customerName'].includes(column.property)) {
           this.rowID = row.customerId
           this.rowType = 'customer'
-          this.showDview = true
+          this.recID = row.examineRecordId
+          console.log('行数据')
+          console.log(row)
+          this.ownId = row.ownerUserId
+          console.log('类型');
+          console.log(this.infoType);
+          if (this.infoType === 'disputed') {
+            console.log('显示争议');
+            this.showDisputedDview = true
+
+            
+          } else {
+            this.showDview = true
+          }
         } else {
           this.showDview = false
         }
