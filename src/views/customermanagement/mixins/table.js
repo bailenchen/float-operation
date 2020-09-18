@@ -379,11 +379,12 @@ export default {
         }
         // if (column.property === 'leadsNumber') {
         // , 'customerName'
-        if (['leadsNumber'].includes(column.property)) {
+        if (['leadsNumber', 'customerName'].includes(column.property)) {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true
         } else {
+          // console.log('b')
           this.showDview = false
         }
       } else if (this.crmType == 'capitalAccount') {

@@ -50,7 +50,7 @@
         type="textarea"
         clearable
         resize="none"
-        placeholder="请输入内容"
+        placeholder="请输入内容1234"
         @focus="inputFocus" />
     </div>
     <add-image-list

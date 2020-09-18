@@ -102,7 +102,7 @@
             :src="getStatusImageIcon(item.examineStatus)"
             class="check-item-img">
           <div class="check-item-name">{{ item|detailName }}</div>
-          <div class="check-item-status">{{ getStatusName(item.examineStatus) }}</div>
+          <div class="check-item-status">{{ item.userList[0].realname }} {{ getStatusName(item.examineStatus) }}</div>
           <i
             v-if="examineInfo.steps.length -1 != index"
             class="el-icon-arrow-right check-item-arrow"/>
@@ -139,6 +139,8 @@ export default {
   },
   filters: {
     detailName: function(data) {
+      console.log('item数据')
+      console.log(data)
       if (data.stepType == 2) {
         return data.userList.length + '人或签'
       } else if (data.stepType == 3) {

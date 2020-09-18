@@ -51,7 +51,6 @@
         @on-handle="examineHandle" /> -->
 
       <examine-info
-
         :id="id"
         :record-id="recordId"
         :owner-user-id="ownerUserId"
@@ -245,5 +244,9 @@ export default {
       margin-left: 14px;
     }
   }
+}
+
+.examine-info {
+  border: 1px solid #E4E4E4;
 }
 </style>

@@ -80,8 +80,8 @@ export default {
         {
           name: '待审核的争议',
           crmType: 'customer',
-          color: '#704AFD',
-          iconClass: 'wk wk-leads',
+          color: '#fD5B4A',
+          iconClass: 'wk wk-approval-18',
           infoType: 'disputed',
           num: 0,
           tips: '待审核的争议',

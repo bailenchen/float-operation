@@ -55,7 +55,7 @@ export default {
 
   typeToNameData: {
     // 1: '线索',
-    2: '线索',
+    2: 'LEADS',
     22: '资金账户',
     3: '联系人',
     4: '产品',
