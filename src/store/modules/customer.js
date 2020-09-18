@@ -22,7 +22,7 @@ const app = {
     showRing: false,
     showTimer: false,
     showBusy: false,
-    showCallOut: false,
+    showCallOut: true,
     isCall: false, // 呼叫中心权限
     callinTime: '00:00:00'
   },
