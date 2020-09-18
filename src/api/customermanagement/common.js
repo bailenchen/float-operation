@@ -484,9 +484,17 @@ export function RecordTplDownloadExcelAPI(data) {
 /**
  * 查询教育顾问
  */
+// export function QueryHeadmaster(data) {
+//   return request({
+//     url: 'system/user/queryHeadmaster',
+//     method: 'post',
+//     data: data
+//   })
+// }
+
 export function QueryHeadmaster(data) {
   return request({
-    url: 'system/user/queryHeadmaster',
+    url: 'system/user/queryHeadmasterByApply',
     method: 'post',
     data: data
   })

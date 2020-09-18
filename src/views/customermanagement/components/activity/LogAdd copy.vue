@@ -20,35 +20,14 @@
           :placeholder="field.placeholder"
           :value="field.value"
           @value-change="handleFormChange($event, field.setting)" /> -->
-        <el-date-picker
-          v-if="field.com === 'XhDateTime'"
-          v-model="field.value"
-          :placeholder="field.placeholder || '选择日期'"
+        <component
+          :is="field.com"
           :disabled="field.disabled"
-          clearable
-          style="width: 100%;"
-          type="datetime"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          @change="handleFormChange({
-            index,
-            value: field.value
-        }, field.setting)"/>
-        <el-select
-          v-else
-          v-model="field.value"
-          :placeholder="field.placeholder || '请选择'"
-          clearable
-          style="width: 100%;"
-          @change="handleFormChange({
-            index,
-            value: field.value
-        }, field.setting)">
-          <el-option
-            v-for="(item, index) in field.setting"
-            :key="index"
-            :label="item.name"
-            :value="item.value"/>
-        </el-select>
+          :index="index"
+          :item="field"
+          :placeholder="field.placeholder"
+          :value="cumputedValue(field)"
+          @value-change="handleFormChange($event, field.setting)" />
       </div>
       <common-words @select="commonWordsSelect" />
     </div>
@@ -207,6 +186,16 @@ export default {
     // 跟进类型
     followTypes: Array,
     // 模块ID
+
+
+
+
+
+
+
+
+
+
     id: [String, Number],
     // 没有值就是全部类型 有值就是当个类型
     crmType: {
@@ -281,33 +270,18 @@ export default {
 
   beforeDestroy() {},
   methods: {
-    // 跟进结果初始值
-    followInit(value) {
-      console.log(this.fieldList[1].setting[0].list)
-      this.$set(this.fieldList[2], 'setting', this.fieldList[1].setting[0].list)
-      return this.fieldList[1].setting[0].list[0].value
-    },
-    // 二级联动
-    handleChange(data, list) {
-      console.log('联动')
-      console.log(data)
-      console.log(list)
-
-      for (let i = 0; i < list.length; i++) {
-        const element = list[i]
-        if (element.value == data.value) {
-          this.$set(this.fieldList[2], 'setting', element.list)
-          this.followInit(element.list[0].value)
-        }
-      }
-    },
     cumputedValue(field) {
       console.log(field)
       if (field.placeholder == '*LEADS状态') {
         this.LEADSStatusFirst = field.setting[0].list
       }
       if (field.placeholder == '*跟进结果') {
+        console.log('事件名称')
+
+        console.log(this.fieldList[2])
         console.log(this.LEADSStatusFirst)
+
+
         this.$set(this.fieldList[2], 'setting', this.LEADSStatusFirst)
         // return this.LEADSStatusFirst
       }
@@ -322,11 +296,8 @@ export default {
      * 跟进类型初始值
      */
     getDefalutFollowType() {
-      console.log('初始值')
-      console.log(this.fieldList)
       this.fieldList.forEach(item => {
         if (item.setting && item.setting.length > 0) {
-          console.log('初始值11')
           item.value = item.setting[0].value
         } else {
           if (item.fieldName == 'lastTime') {
@@ -348,18 +319,7 @@ export default {
           return { name: o.name, value: o.id, list: list }
         })
         if (res.data.length > 0) {
-          const firstSetting = this.fieldList[1].setting[0]
-          this.fieldList[1].value = firstSetting.value
-          if (firstSetting.list && firstSetting.list.length > 0) {
-            this.fieldList[2].value = firstSetting.list[0].value
-            console.log('矫正')
-            console.log(firstSetting.list)
-            this.fieldList[2].setting = firstSetting.list
-            if (this.fieldList[2].value === '承诺到访') {
-              this.fieldList[4].fieldName = 'promisedVisitTime'
-              this.fieldList[4].placeholder = '*承诺到访时间'
-            }
-          }
+          this.fieldList[1].value = ''
         }
         console.log(this.fieldList, '11111')
         this.$set(this.fieldList, 1, this.fieldList[1])
@@ -404,16 +364,16 @@ export default {
       console.log(data, subitem, 'vvvvv')
       this.fieldList[data.index].value = data.value
       if (data.index == 1) {
-        // this.concatList = subitem
-        // this.$set(this.fieldList[2], 'setting', [])
-        this.fieldList[2].value = ''
-        // this.$set(this.fieldList[2], 'value', '')
+        this.concatList = subitem
+        this.$set(this.fieldList[2], 'setting', [])
+        this.$set(this.fieldList[2], 'value', '')
         console.log(this.fieldList, 'ssss')
         for (let index = 0; index < subitem.length; index++) {
           const element = subitem[index]
           if (data.value == element.value) {
-            // this.$set(this.fieldList[2], 'setting', element.list)
-            this.fieldList[2].setting = element.list
+            this.$set(this.fieldList[2], 'setting', element.list)
+            console.log('修改好了')
+
             return
           }
         }
@@ -427,7 +387,6 @@ export default {
             value: ''
           }
           const findIndex = this.fieldList.findIndex(o => o.fieldName === 'promisedVisitTime')
-          console.log('是否找到', findIndex)
           if (data.value === '承诺到访' && data.index == 2) {
             if (findIndex === -1) {
               this.defField = objDeepCopy(this.fieldList)
@@ -440,9 +399,7 @@ export default {
             }
           } else {
             if (findIndex !== -1) {
-              this.fieldList[4].fieldName = 'nextTime'
-              this.fieldList[4].placeholder = '*下次跟进访时间'
-
+              this.fieldList = this.defField
               this.$set(this.fieldList[data.index], 'value', data.value)
               console.log(this.fieldList, 'nnnnn', this.defField)
             // this.fieldList.splice(-2, 1)
@@ -672,13 +629,6 @@ export default {
           form[o.fieldName] = o.value
         }
       })
-      console.log(form)
-      if (form.promisedVisitTime == '' || form.nextTime == '') {
-        console.log('请选择时间')
-        this.$message.error('请选择时间')
-        return
-      }
-
       this.$emit('send', {
         id: this.id,
         content: this.content,

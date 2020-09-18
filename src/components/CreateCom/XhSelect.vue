@@ -77,6 +77,10 @@ export default {
   },
   computed: {},
   watch: {
+    value(val) {
+      console.log('监听value')
+      console.log(val)
+    },
     item: {
       handler(val, oldValue) {
         if (val && (val.setting || val.data.setting)) {
