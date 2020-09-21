@@ -170,7 +170,6 @@ export default {
   },
   watch: {
     visible(val) {
-      debugger
       this.form[this.moneyType] = {}
       if (!val) {
         this.$emit('reset-type')

@@ -379,7 +379,7 @@ export default {
         }
         // if (column.property === 'leadsNumber') {
         // , 'customerName'
-        if (['leadsNumber', 'customerName'].includes(column.property)) {
+        if (['leadsNumber', 'customerName'].includes(column.property) && !this.isSeas) {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true

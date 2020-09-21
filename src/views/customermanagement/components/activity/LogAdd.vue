@@ -441,7 +441,7 @@ export default {
           } else {
             if (findIndex !== -1) {
               this.fieldList[4].fieldName = 'nextTime'
-              this.fieldList[4].placeholder = '*下次跟进访时间'
+              this.fieldList[4].placeholder = '下次跟进时间'
 
               this.$set(this.fieldList[data.index], 'value', data.value)
               console.log(this.fieldList, 'nnnnn', this.defField)
@@ -673,9 +673,8 @@ export default {
         }
       })
       console.log(form)
-      if (form.promisedVisitTime == '' || form.nextTime == '') {
-        console.log('请选择时间')
-        this.$message.error('请选择时间')
+      if (this.fieldList[4].placeholder === '*承诺到访时间' && form.promisedVisitTime == '') {
+        this.$message.error('请选择承诺到访时间')
         return
       }
 
