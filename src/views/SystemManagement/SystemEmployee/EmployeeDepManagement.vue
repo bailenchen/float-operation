@@ -1626,6 +1626,7 @@ export default {
                 this.$message.success('修改成功')
               }
               this.getUserList()
+              window.location.reload()
             })
             .catch(() => {
               this.loading = false
