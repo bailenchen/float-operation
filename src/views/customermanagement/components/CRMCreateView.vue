@@ -297,6 +297,10 @@ export default {
     phone: {
       type: String,
       default: ''
+    },
+    // 资金账户ID
+    capitalId: {
+      type: Number
     }
   },
   data() {
@@ -1701,14 +1705,22 @@ export default {
     /** 上传 */
     submiteParams(params) {
       var crmRequest = this.getSubmiteRequest()
+      console.log('crmRequest的请求', crmRequest)
+      console.log(this.action)
+      console.log(this.crmType)
       if (this.action.type == 'update') {
         const key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType
         if (this.crmType == 'productSetMeal') {
           params.entity['productId'] = this.action.id
+        } else if (this.crmType == 'capitalAccount') {
+          console.log('添加capital_id')
+          console.log(this.action.id)
+          params.entity.capital_id = this.action.id
         } else {
           params.entity[key + 'Id'] = this.action.id
         }
         params.entity.batchId = this.action.batchId
+        // 针对保存
       }
 
       // 相关添加时候的多余提交信息

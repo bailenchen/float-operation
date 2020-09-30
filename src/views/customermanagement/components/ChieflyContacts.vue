@@ -203,6 +203,11 @@ export default {
      */
     getBaseInfo() {
       this.loading = true
+      // console.log('ASA', this.crmType)
+      // console.log(crmTypeModel[this.crmType])
+
+      // const types = this.crmType === 'capitalAccount' ? 23 : crmTypeModel[this.crmType]
+      // console.log(types)
       const params = {
         types: crmTypeModel[this.crmType],
         id: this.id
@@ -213,8 +218,10 @@ export default {
         params.poolId = this.poolId
       }
 
+      console.log('参数', params)
       filedGetInformation(params)
         .then(res => {
+          console.log('aaa1')
           this.list = res.data
           this.loading = false
         })

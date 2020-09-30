@@ -113,5 +113,12 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
+  },
+
+  externals: {
+    // 拒绝Vue被打包进来
+    // 'vue': 'Vue',
+    // 'axios': 'axios',
+    // 'element-ui': 'element-ui'
   }
 }

@@ -95,6 +95,7 @@
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
+      :capital_id="capitalId"
       :crm-type="createCRMType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false" />
@@ -191,10 +192,12 @@ export default {
         { title: '第一联系人手机号', value: '' },
         { title: '教育顾问', value: '' }
       ],
-      tabCurrentName: 'Activity',
+      // tabCurrentName: 'Activity',
+      tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
       createActionInfo: null,
       createCRMType: '',
+      capitalId: '', // 资金账户ID
       isCreate: false,
       // 活动操作
       activityHandle: [
@@ -232,7 +235,7 @@ export default {
   computed: {
     tabNames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '活动', name: 'Activity' })
+      // tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.customer && this.crm.customer.read) {
         tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
       }
@@ -360,6 +363,10 @@ export default {
           this.loading = false
           this.detailData = res.data
           this.firstContactsId = this.detailData.contactsId
+          console.log('请求回来')
+          console.log(res)
+          this.capitalId = res.data.capitalId
+          console.log(this.capitalId)
 
           // 负责人
           this.headDetails[0].value = res.data.customerName
@@ -411,6 +418,7 @@ export default {
       }
 
       if (data.type === 'edit' || data.type === 'deal_status') {
+        console.log('这里11')
         this.getDetial()
       }
 

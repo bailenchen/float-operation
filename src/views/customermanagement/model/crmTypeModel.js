@@ -20,6 +20,7 @@ export default {
   pool: 9,
   visit: 17,
   invoice: 18,
+  water: 23,
 
   keyToTypeData: {
     leads: 1,

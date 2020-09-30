@@ -354,6 +354,12 @@ export default {
           this.loading = false
         })
       } else {
+        console.log('ASA', this.crmType)
+        console.log(crmTypeModel[this.crmType])
+
+        const types = this.crmType === 'capitalAccount' ? 23 : crmTypeModel[this.crmType]
+        console.log(types)
+
         const params = {
           types: crmTypeModel[this.crmType],
           id: this.id
@@ -366,6 +372,7 @@ export default {
 
         filedGetInformation(params)
           .then(res => {
+            // console.log('azsx')
             const baseList = []
             const systemList = []
             res.data.forEach(item => {

@@ -79,6 +79,7 @@ export default {
   mixins: [XrImportMixins],
   data() {
     return {
+      test: '测试打包速度',
       showPreviewImg: false,
       previewIndex: 0,
       showCall: false,

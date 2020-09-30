@@ -14,7 +14,8 @@
         v-model="form[item.prop]"
         clearable
         style="width:135px;margin-right:10px;"
-        placeholder="请选择">
+        placeholder="请选择"
+        @change="changeSearchHandle">
         <el-option
           v-for="ite in item.options"
           :key="ite.value"
@@ -229,13 +230,14 @@ export default {
       this.isCreate = true
     },
 
-    getDetail() {
+    getDetail(search) {
       this.loading = true
       const params = {
         page: this.currentPage,
         limit: this.pageSize,
         type: 22
       }
+      search ? params.search = search : null
       // const request = {
       //   customer: crmCustomerQueryContract,
       //   business: crmBusinessQueryContract
@@ -333,6 +335,14 @@ export default {
       Lockr.set('crmPageSizes', val)
       this.pageSize = val
       this.getDetail()
+    },
+
+    // 改变交易流水查询条件
+    changeSearchHandle(val) {
+      console.log('改变交易流水查询条件')
+      // console.log(val)
+      console.log(this.form)
+      // this.getDetail(val)
     }
   }
 }

@@ -250,6 +250,7 @@ export default {
 
         filedGetInformation(params)
           .then(res => {
+            console.log('as')
             const baseList = []
             const systemList = []
             res.data.forEach(item => {

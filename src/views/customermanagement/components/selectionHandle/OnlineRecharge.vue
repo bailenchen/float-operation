@@ -29,7 +29,7 @@
     </el-dialog>
     <div slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
-      <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('scane')">扫码付款</el-button>
+      <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('scane')">扫码付款11</el-button>
       <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('code')">付款码付款</el-button>
     </div>
   </el-dialog>
@@ -138,8 +138,16 @@ export default {
       // const params = {
 
       // }
-      crmAccountScanePay().then(res => {
+      // console.log('金额', this.form.money)
+      // console.log('id', this.selectionList[0].capitalId)
+      const params = {
+        traxamt: this.form.money,
+        capitalId: this.selectionList[0].capitalId
+      }
+
+      crmAccountScanePay(params).then(res => {
         // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
+        console.log('=shuju11', res)
         this.createCode(res.data)
         this.loading = false
         clearInterval(this.timer)
