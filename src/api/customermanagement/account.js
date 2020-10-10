@@ -114,7 +114,10 @@ export function crmEditAccountWater(data) {
   return request({
     url: 'CrmCapitalAccountWater/saveAndUpdate',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 

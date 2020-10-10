@@ -22,6 +22,10 @@
           :label="ite.label"
           :value="ite.value"/>
       </el-select>
+      <time-select
+        :width="160"
+        :default-type="1"
+        @change="timeTypeChange"/>
     </flexbox>
     <el-table
       :data="list"
@@ -91,13 +95,15 @@ import { crmAccountWater } from '@/api/customermanagement/account'
 // import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 // import { separator } from '@/filters/vue-numeral-filter/filters'
+import TimeSelect from '@/views/customermanagement/studentManage/account/components/TimeSelect'
 
 export default {
   name: 'RelativeTradeFlow', // 交易流水
   components: {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue'),
     CRMCreateView,
-    EditTransaction
+    EditTransaction,
+    TimeSelect
   },
   mixins: [loading, CheckStatusMixin],
   props: {
@@ -139,38 +145,42 @@ export default {
       selectList: [
         {
           options: [
-            { label: '全部交易类型', value: 1 },
-            { label: '交易类型为充值', value: 2 },
-            { label: '交易类型为提现', value: 3 }
+            { label: '全部交易类型', value: '' },
+            { label: '交易类型为充值', value: 1 },
+            { label: '交易类型为提现', value: 2 }
           ],
-          prop: 'a'
+          // prop: 'a'
+          prop: 'transactionType'
         },
         {
           options: [
-            { label: '全部交易方式', value: 1 },
-            { label: '现金交易方式', value: 2 },
-            { label: '刷卡交易方式', value: 3 },
-            { label: '支票交易方式', value: 4 },
-            { label: '微信交易方式', value: 5 },
-            { label: '支付宝交易方式', value: 6 },
-            { label: '转账交易方式', value: 7 }
+            { label: '全部交易方式', value: '' },
+            { label: '现金交易方式', value: 1 },
+            { label: '刷卡交易方式', value: 2 },
+            { label: '支票交易方式', value: 3 },
+            { label: '微信交易方式', value: 4 },
+            { label: '支付宝交易方式', value: 5 },
+            { label: '转账交易方式', value: 6 }
           ],
-          prop: 'b'
-        },
-        {
-          options: [
-            { label: '全部', value: 1 },
-            { label: '最近7天', value: 2 },
-            { label: '最近30天', value: 3 },
-            { label: '最近60天', value: 4 },
-            { label: '自定义', value: 5 }
-          ],
-          prop: 'c'
+          // prop: 'b'
+          prop: 'payment'
         }
+        // {
+        //   options: [
+        //     { label: '全部', value: 1 },
+        //     { label: '最近7天', value: 2 },
+        //     { label: '最近30天', value: 3 },
+        //     { label: '最近60天', value: 4 },
+        //     { label: '自定义', value: 5 }
+        //   ],
+        //   prop: 'c'
+        // }
       ],
-
-      // 分页
-      currentPage: 1,
+      dataType: '', // 日期 为空表示全部
+      isDataCustom: false,
+      startTime: '',
+      endTime: '',
+      currentPage: 1, // 分页
       pageSize: Lockr.get('crmPageSizes') || 15,
       pageSizes: [15, 30, 60, 100],
       total: 0
@@ -220,19 +230,28 @@ export default {
     },
 
     editHandle(row) {
+      console.log('编辑资金流水')
+      console.log(row)
+      console.log(this.moneyType)
+      // 模拟数据
+      if (!row.payment) {
+        row.payment = 1
+      }
       if (row.payment == 1) {
         this.moneyType = 'offline'
       } else if (row.payment == 2) {
         this.moneyType = 'refound'
       }
       this.rowData = row
-      this.rowData.customerName = this.detail.customerName
+      // this.rowData.customerName = this.detail.customerName
+      // this.rowData.customerName =
       this.isCreate = true
     },
 
     getDetail(search) {
       this.loading = true
       const params = {
+        search: this.id,
         page: this.currentPage,
         limit: this.pageSize,
         type: 22
@@ -338,11 +357,50 @@ export default {
     },
 
     // 改变交易流水查询条件
-    changeSearchHandle(val) {
+    changeSearchHandle() {
       console.log('改变交易流水查询条件')
-      // console.log(val)
-      console.log(this.form)
+      const params = {
+        search: this.id,
+        page: this.currentPage,
+        limit: this.pageSize,
+        type: 22
+      }
+      if (this.isDataCustom) {
+        params.startTime = this.startTime
+        params.endTime = this.endTime
+      } else {
+        params.dataType = this.dataType
+      }
+      // console.log(this.form)
+      for (const k in this.form) {
+        if (!this.form.hasOwnProperty(k)) break
+        console.log(k, this.form[k])
+        params[k] = this.form[k]
+      }
+
+      console.log(params)
+
+      crmAccountWater(params).then(res => {
+        console.log(res)
+      }).catch()
       // this.getDetail(val)
+    },
+
+    // 选择时间
+    timeTypeChange(val) {
+      console.log('选择时间')
+      console.log(val)
+      if (val.type === 'default') {
+        this.isDataCustom = false
+        this.dataType = val.value
+      } else {
+        this.isDataCustom = true
+        // val.value
+        this.startTime = val.startTime
+        this.endTime = val.endTime
+      }
+
+      this.changeSearchHandle()
     }
   }
 }

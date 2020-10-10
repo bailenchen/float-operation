@@ -1628,6 +1628,8 @@ export default {
     // 保存数据
     saveField(saveAndCreate, isDraft = false) {
       this.saveAndCreate = saveAndCreate
+      console.log('保存')
+      // return
       this.$refs.crmForm.validate(valid => {
         const valMeal = this.crmType == 'productSetMeal' ? this.vv() : '' // 处理课程套餐验证的
         // valMeal.collectionData
@@ -1680,6 +1682,8 @@ export default {
               }
             }
             // console.log(params, 'debugger')
+            console.log('周这里，调研submiteParams')
+            console.log(params)
             this.submiteParams(params)
           }
         } else {
@@ -1708,6 +1712,7 @@ export default {
       console.log('crmRequest的请求', crmRequest)
       console.log(this.action)
       console.log(this.crmType)
+      // return
       if (this.action.type == 'update') {
         const key = this.crmType == 'receivables_plan' ? 'plan' : this.crmType
         if (this.crmType == 'productSetMeal') {

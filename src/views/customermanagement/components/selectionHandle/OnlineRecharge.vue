@@ -29,7 +29,7 @@
     </el-dialog>
     <div slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
-      <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('scane')">扫码付款11</el-button>
+      <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('scane')">扫码付款</el-button>
       <el-button v-debounce="handleConfirm" type="primary" @click="scanePay('code')">付款码付款</el-button>
     </div>
   </el-dialog>
@@ -90,6 +90,10 @@ export default {
     innerHandleCancel() {
       clearInterval(this.timer)
       console.log('guanbi')
+      // this.$message({
+      //   type: 'error',
+      //   message: '支付失败'
+      // })
     },
 
     /**
@@ -125,10 +129,10 @@ export default {
       this.innerVisible = true
       if (type == 'scane') {
         this.scaneHandle()
+      } else if (type == 'code') {
+        // 付款码
+        this.payCodeHandle()
       }
-      //  else if (type == 'code') {
-
-      // }
     },
 
     /**
@@ -177,7 +181,25 @@ export default {
      *付款码付款
      */
     payCodeHandle() {
+      const params = {
+        traxamt: this.form.money,
+        capitalId: this.selectionList[0].capitalId
+      }
 
+      crmAccountScanePay(params).then(res => {
+        // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
+        console.log('付款码请求回调', res)
+        this.createCode(res.data)
+        this.loading = false
+        // clearInterval(this.timer)
+        // this.timer = setInterval(() => {
+        //   this.start++
+        //   this.queryPayStatus(this.start)
+        // }, 1500)
+        console.log(res, '*****')
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     /**

@@ -48,7 +48,8 @@
             <el-input
               v-if="item.type == 'text'"
               :disabled="item.disable"
-              v-model="form[moneyType][item.prop]"/>
+              v-model="form[moneyType][item.prop]"
+              @input="updateInputVal($event)"/>
 
             <add-image-list
               v-if="item.type == 'file'"
@@ -70,7 +71,8 @@
               v-if="item.type == 'textarea'"
               :disabled="item.disable"
               v-model="form[moneyType][item.prop]"
-              type="textarea"/>
+              type="textarea"
+              @input="updateInputVal($event)"/>
 
           </el-form-item>
         </el-form>
@@ -256,6 +258,10 @@ export default {
     }
   },
   methods: {
+    // 解决element输入框嵌套太深无法输入内容bug
+    updateInputVal: function() {
+      this.$forceUpdate()	// 刷新
+    },
 
     hidenView() {
       this.$emit('hiden-view')
@@ -319,7 +325,21 @@ export default {
     // 提交编辑数据
     sumitData() {
       this.loading = true
-      crmEditAccountWater(this.form[this.moneyType]).then(res => {
+
+
+      // var obj = {}
+      // for (const k in this.form[this.moneyType]) {
+      //   if (!this.form[this.moneyType].hasOwnProperty(k)) break
+      //   obj[k] = this.form[this.moneyType][k]
+      // }
+
+      var parms = {
+        entity: this.form[this.moneyType]
+      }
+      console.log(parms)
+      console.log('保存')
+      // return
+      crmEditAccountWater(parms).then(res => {
         this.loading = false
         this.$message({
           type: 'success',
