@@ -119,7 +119,16 @@ export default {
     },
 
     uploadFile(event) {
-      console.log(event, 'xxx')
+      var type = event.target.value.match(/^(.*)(\.)(.{1,8})$/)[3].toUpperCase()
+      console.log(event.target.value, type)
+      if (type != 'JPEG' && type != 'PNG' && type != 'JPG' && type != 'EMP' && type != 'JIF' && type != 'RAW') {
+        this.$message({
+          message: '上传图片类型错误',
+          type: 'error'
+        })
+        // console.log('上传图片类型错误')
+        return false
+      }
       this.$emit('upload', event)
     }
   }
@@ -178,6 +187,7 @@ export default {
       width: 98px;
       opacity: 0;
       cursor: pointer;
+      z-index: 10;
     }
   }
   .img-item-add:before {

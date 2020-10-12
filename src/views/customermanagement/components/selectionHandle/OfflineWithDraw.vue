@@ -37,7 +37,7 @@
             style="width:100%;"
             placeholder="选择日期时间"/>
 
-          <el-input v-if="item.type == 'text'" v-model="form[moneyType][item.prop]"/>
+          <el-input v-if="item.type == 'text'" v-model="form[moneyType][item.prop]" @input="inputUpdate()"/>
 
           <add-image-list
             v-if="item.type == 'file'"
@@ -95,6 +95,18 @@ export default {
     }
   },
   data() {
+    var validateMoney = (rule, value, callback) => {
+      // if (value === '') {
+      //   callback(new Error('请输入金额'))
+      // } else {
+      var a = /^[0-9]*(\.[0-9]{1,2})?$/
+      if (!a.test(value)) {
+        callback(new Error('请输入正确的金额'))
+      } else {
+        callback()
+      }
+      // }
+    }
     return {
       maxFileCount: 1,
       imgFile: [],
@@ -107,30 +119,28 @@ export default {
         refound: '资金退款'
       },
       form: {
-        offline: {
-
-        },
-        refound: {
-
-        }
+        offline: {},
+        refound: {}
       },
       formList: {
         offline: [
-          { label: '支付方式：', prop: 'payWay', type: 'select' },
+          { label: '支付方式123：', prop: 'payWay', type: 'select' },
           { label: '用户账号：', prop: 'account', type: 'text' },
           { label: '充值金额（元）：', prop: 'money', type: 'text' },
           { label: '交易流水号：', prop: 'num', type: 'text' },
           { label: '交易凭证：', prop: 'file', type: 'file' },
           { label: '扣款时间：', prop: 'deduction', type: 'date' },
           { label: '交易时间：', prop: 'trade', type: 'date' },
+          { label: '收款人：', prop: 'chamberlain', type: 'text' },
           { label: '备注：', prop: 'remarks', type: 'textarea' },
           { label: '审核人：', prop: 'examine', type: 'user' }
         ],
         refound: [
           { label: '支付方式：', prop: 'payWay', type: 'select' },
           { label: '用户账号：', prop: 'account', type: 'text' },
-          { label: '现金金额（元）：', prop: 'money', type: 'text' },
+          { label: '退款金额（元）：', prop: 'money', type: 'text' },
           { label: '交易时间：', prop: 'trade', type: 'date' },
+          { label: '退款人：', prop: 'chamberlain', type: 'text' },
           { label: '备注：', prop: 'remarks', type: 'textarea' },
           { label: '审核人：', prop: 'examine', type: 'user' }
         ]
@@ -144,14 +154,27 @@ export default {
             { required: true, message: '请输入用户账号', trigger: 'blur' }
           ],
           money: [
-            { required: true, message: '请输入充值金额', trigger: 'blur' }
+            { required: true, message: '请输入金额', trigger: 'blur' },
+            { validator: validateMoney, trigger: 'blur' }
           ],
           num: [
             { required: true, message: '请输入交易流水号', trigger: 'blur' }
           ],
-          file: [
-            { required: true, message: '请上传交易凭证', trigger: 'blur' }
+          deduction: [
+            { required: true, message: '请选择扣款时间', trigger: 'blur' }
+          ],
+          trade: [
+            { required: true, message: '请选择交易时间', trigger: 'blur' }
+          ],
+          chamberlain: [
+            { required: true, message: '请输入收款人', trigger: 'blur' }
+          ],
+          remarks: [
+            { max: 5, message: '不能多于800个字符', trigger: 'blur' }
           ]
+          // examine: [
+          //   { required: true, message: '请选择审核人', trigger: 'blur' }
+          // ]
         },
         refound: {
           payWay: [
@@ -161,8 +184,21 @@ export default {
             { required: true, message: '请输入用户账号', trigger: 'blur' }
           ],
           money: [
-            { required: true, message: '请输入现金金额', trigger: 'blur' }
+            { required: true, message: '请输入金额', trigger: 'blur' },
+            { validator: validateMoney, trigger: 'blur' }
+          ],
+          trade: [
+            { required: true, message: '请选择交易时间', trigger: 'blur' }
+          ],
+          chamberlain: [
+            { required: true, message: '请输入收款人', trigger: 'blur' }
+          ],
+          remarks: [
+            { max: 5, message: '不能多于800个字符', trigger: 'blur' }
           ]
+          // examine: [
+          //   { required: true, message: '请选择审核人', trigger: 'blur' }
+          // ]
         }
       },
       draftUser: null
@@ -171,12 +207,22 @@ export default {
   watch: {
     visible(val) {
       this.form[this.moneyType] = {}
+
+      var name = JSON.parse(localStorage.getItem('loginUserInfo')).realname
+      console.log(name)
+      this.form.offline.chamberlain = name
+      this.form.refound.chamberlain = name
+
       if (!val) {
         this.$emit('reset-type')
       }
     }
   },
   methods: {
+    // 处理element input组件嵌套过深bug
+    inputUpdate() {
+      this.$forceUpdate() // 强制重新渲染
+    },
     /**
      * 取消选择
      */
@@ -218,7 +264,17 @@ export default {
           const file = files[index]
           crmFileSave({ file: file }).then(res => {
             console.log(res, 'file')
-            this.imgFile.push(res.data)
+
+            var data = {}
+            for (const k in res) {
+              if (!res.hasOwnProperty(k)) break
+              if (k == 'code') continue
+              data[k] = res[k]
+            }
+            console.log('拼接的数据', data)
+
+
+            this.imgFile.push(data)
             // this.$set(this.form, 'applyCertificate', path)
           }).catch(() => {
             this.loading = false
@@ -237,32 +293,11 @@ export default {
       // })
       this.$refs.form.validate((valid) => {
         if (valid) {
-          console.log(this.form[this.moneyType], 'xxxxx')
+          // 图片类型已在AddImageList组件中校验过
+
+          console.log('验证通过，拼接参数发送请求')
         }
       })
-    //   if (this.selectId) {
-    //     const loading = Loading.service({
-    //       target: document.querySelector(`.el-dialog[aria-label="放入公海"]`)
-    //     })
-    //     crmCustomerPutInPool({
-    //       ids: this.selectionList.map(function(item, index, array) {
-    //         return item.customerId
-    //       }).join(','),
-    //       poolId: this.selectId
-    //     })
-    //       .then(res => {
-    //         this.$message({
-    //           type: 'success',
-    //           message: '操作成功'
-    //         })
-    //         loading.close()
-    //         this.$emit('handle', { type: 'put_seas' })
-    //         this.handleCancel()
-    //       })
-    //       .catch(() => {
-    //         loading.close()
-    //       })
-    //   }
     }
   }
 }
