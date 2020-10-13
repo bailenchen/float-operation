@@ -36,6 +36,20 @@
                 :value="item.value"/>
             </el-select>
 
+            <el-select
+              v-if="item.type == 'payment'"
+              v-model="form[moneyType][item.prop]"
+              :disabled="item.disable"
+              clearable
+              style="width:100%;"
+              placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"/>
+            </el-select>
+
             <el-date-picker
               v-if="item.type == 'date'"
               v-model="form[moneyType][item.prop]"
@@ -53,6 +67,7 @@
 
             <add-image-list
               v-if="item.type == 'file'"
+              v-show="show"
               :width="50"
               :max="maxFileCount"
               :data="imgFile"
@@ -147,12 +162,17 @@ export default {
     //   }
     // }
     return {
+      show: false,
       loading: false,
       maxFileCount: 1,
       imgFile: [],
       options: [
-        { label: '支付宝', value: 1 },
-        { label: '微信', value: 2 }
+        { label: '现金交易', value: 1 },
+        { label: '刷卡交易', value: 2 },
+        { label: '支票交易', value: 3 },
+        { label: '微信交易', value: 4 },
+        { label: '支付宝交易', value: 5 },
+        { label: '转账交易', value: 6 }
       ],
       title: {
         offline: '线下资金收款',
@@ -168,14 +188,14 @@ export default {
       },
       formList: {
         offline: [
-          { label: '支付方式：', prop: 'payment', type: 'select', disable: true },
-          { label: '用户账号：', prop: 'accountNumber', type: 'text', disable: false },
+          { label: '支付方式：', prop: 'payment', type: 'text', disable: true },
+          { label: '用户账号：', prop: 'userAccount', type: 'text', disable: false },
           { label: '资金收款金额（元）：', prop: 'price', type: 'text', disable: true },
           { label: '交易流水号：', prop: 'serialNumber', type: 'text', disable: false },
-          { label: '扣款时间：', prop: 'updateTime', type: 'date', disable: true },
-          { label: '交易时间：', prop: 'createTime', type: 'date', disable: true },
+          { label: '扣款时间：', prop: 'deductionTime', type: 'date', disable: true },
+          { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false },
-          { label: '收款人：', prop: 'createUserName', type: 'text', disable: true },
+          { label: '收款人：', prop: 'character', type: 'text', disable: true },
           { label: '交易凭证：', prop: 'receipt', type: 'file', disable: false }
         ],
         refound: [
@@ -228,20 +248,22 @@ export default {
   created() {
     console.log(this.moneyType)
     const form = this.form[this.moneyType]
-    form.waterId = this.action.waterId
-    form.accountNumber = this.action.accountNumber
-    form.leadsNumber = this.action.leadsNumber
-    form.payment = this.action.payment
-    form.price = this.action.price
-    form.remark = this.action.remark
-    if (this.moneyType == 'offline') {
-      form.serialNumber = this.action.serialNumber
+    form.waterId = this.action.waterId // 流水ID
+    form.userAccount = this.action.userAccount // 用户账号
+    form.leadsNumber = this.action.leadsNumber // 学员编号
+    form.payment = this.action.payment // 交易方式
+    form.price = this.action.price // 价格
+    form.remark = this.action.remark // 备注
+
+    if (this.moneyType == 'offline') { // 线下
+      form.serialNumber = this.action.serialNumber // serialNumber
       form.transactionType = this.action.transactionType
-      form.receipt = this.action.receipt
-      form.createTime = this.action.createTime
-      form.updateTime = this.action.updateTime
-      form.status = this.action.status
-      form.createUserName = this.action.customerName
+      // form.receipt = this.action.receipt // 凭证
+      // form.createTime = this.action.createTime
+      form.deductionTime = this.action.deductionTime
+      form.transactionTime = this.action.transactionTime
+      // form.status = this.action.status
+      // form.createUserName = this.action.customerName
       console.log(form, this.form, 'bbbbbbbbbbbb')
     }
     //  else if (this.moneyType == 'refound') {

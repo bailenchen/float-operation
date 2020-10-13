@@ -36,6 +36,7 @@
                     <div class="form-label">
                       {{ item.data.name }}
                       <span style="color:#999;">
+                        <!-- <span style="color:#f00;"> -->
                         {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
                       </span>
                     </div>
@@ -52,6 +53,7 @@
                     :disabled="item.disabled"
                     :receivables-id="editId"
                     :info-params="getInfoParams(item)"
+                    :use-delete="item.useDelete"
                     @value-change="fieldValueChange" />
 
                 </el-form-item>
@@ -739,6 +741,7 @@ export default {
           }
         }
       } else if (this.crmType === 'capitalAccount') {
+        console.log('新建资金账户， 选择学员')
         if (item.data.formType === 'student') {
           let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'leads_number')
           if (findIndex !== -1) {
@@ -938,6 +941,7 @@ export default {
             this.formatVisitField(res)
           }
 
+          console.log('类型与数据', this.crmType)
           console.log('res.data: ', res.data)
           const list = res.data
           if (this.crmType == 'customer') {
@@ -948,6 +952,11 @@ export default {
               }
             }
           }
+
+          // if (this.crmType == 'capitalAccount') {
+
+          // }
+
           this.getcrmRulesAndModel(list)
           this.loading = false
         })
@@ -1269,8 +1278,13 @@ export default {
           element.data.value = 1
         }
         if (this.crmType == 'capitalAccount') {
+          console.log('是资金账号，设置字段是否可编辑')
           if (element.key == 'leads_number' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id') {
             element.disabled = true
+          }
+          if (element.key == 'dept_id' || element.key == 'owner_user_id') {
+            element.useDelete = false
+            console.log('设置不能删除')
           }
         }
         if (this.action.type == 'update' && this.crmType == 'customer' && element.key == 'channel_id') {
@@ -1437,7 +1451,8 @@ export default {
       }
       // 验证必填
       if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
-        if (['leads_source', 'category'].includes(item.formType)) {
+        console.log('item.formType', item.formType)
+        if (['leads_source', 'category', 'student'].includes(item.formType)) {
           tempList.push({
             required: true,
             message: item.name + '不能为空',

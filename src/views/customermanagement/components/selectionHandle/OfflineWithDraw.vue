@@ -54,8 +54,64 @@
             :value="draftUser ? [draftUser] : []"
             @value-change="fieldValueChange"/>
 
+          <xh-user-cell
+            v-if="item.type == 'character'"
+            :value="characterUser ? [characterUser] : []"
+            @value-change="characterChange"/>
+
           <el-input v-if="item.type == 'textarea'" v-model="form[moneyType][item.prop]" type="textarea"/>
         </el-form-item>
+
+        <!-- 授权审批 -->
+        <sections
+          v-if="examineInfo.examineType==2"
+          title="审核信息"
+          class="b-cells"
+          content-height="auto">
+          <flexbox
+            :gutter="0"
+            align="stretch"
+            wrap="wrap"
+            style="padding: 10px 16px 0;">
+            <div class="label" style="margin-right:5px;">
+              审核人
+            </div>
+            <xh-user-cell
+              :value="examineUser"
+              class="set-width"
+              @value-change="fieldValueChange"/>
+          </flexbox>
+        </sections>
+        <!-- 固定审批 -->
+        <sections
+          v-else
+          title="审核信息"
+          class="b-cells"
+          content-height="auto">
+          <flexbox
+            :gutter="0"
+            align="stretch"
+            wrap="wrap"
+            style="padding: 10px 16px 0;">
+            <div class="label1" style="margin-right:5px;">
+              <el-popover
+                v-for="(item, index) in examineInfo.examineSteps"
+                :key="index"
+                :disabled="item.userList.length==0"
+                :content="item.userList|contentFilters"
+                placement="bottom"
+                trigger="hover">
+                <div
+                  slot="reference"
+                  class="fixed-examine-item">
+                  <img src="@/assets/img/examine_head.png" >
+                  <div class="detail">{{ item|detail }}</div>
+                  <div class="step">{{ (index+1)|step }}</div>
+                </div>
+              </el-popover>
+            </div>
+          </flexbox>
+        </sections>
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
@@ -66,15 +122,48 @@
 </template>
 
 <script>
-// import { Loading } from 'element-ui'
+// API
+import { crmFileSave } from '@/api/common'
+import { crmEditAccountWater } from '@/api/customermanagement/account'
+
+// 组件
 import { XhUserCell } from '@/components/CreateCom'
 import AddImageList from '@/components/quickAdd/AddImageList'
-import { crmFileSave } from '@/api/common'
+import Sections from '../../components/Sections'
+
+// 第三方
+import Nzhcn from 'nzh/cn'
+
+
 export default {
   name: 'OfflineWithDraw',
   components: {
     XhUserCell,
-    AddImageList
+    AddImageList,
+    Sections
+  },
+  filters: {
+    detail: function(data) {
+      if (data.stepType == 2) {
+        return data.userList.length + '人或签'
+      } else if (data.stepType == 3) {
+        return data.userList.length + '人会签'
+      } else if (data.stepType == 1) {
+        return '负责人主管'
+      } else if (data.stepType == 4) {
+        return '上一级审批人主管'
+      }
+    },
+    step: function(index) {
+      return '第' + Nzhcn.encodeS(index) + '级'
+    },
+    contentFilters: function(array) {
+      return array
+        .map(item => {
+          return item.realname
+        })
+        .join('、')
+    }
   },
   props: {
     visible: {
@@ -108,32 +197,82 @@ export default {
       // }
     }
     return {
+      examineInfo: { // 审批
+        examineType: 1, // 审批方式 固定或授权
+        examineSteps: [
+          {
+            checkUserId: ',16363,16397,',
+            createTime: '2020-10-13 17:13:27',
+            examineId: 28022,
+            remarks: null,
+            stepId: 58,
+            stepNum: 1,
+            stepType: 2,
+            userList: [
+              {
+                callCenter: null,
+                createTime: '2020-07-24 09:14:00',
+                deptId: 16672,
+                deptName: '宝山中心',
+                email: null,
+                img: null,
+                isJob: null,
+                isTeacher: 0,
+                lastLoginIp: '192.168.1.40',
+                lastLoginTime: '2020-10-13 09:27:12',
+                mobile: '15539551220',
+                num: '264027304140483',
+                parentId: 16360,
+                parentName: 'admin',
+                password: 'aa1e6382fbe5621092df5abe58213aee',
+                post: null,
+                realname: 'XPF',
+                salt: '652cc7ddf2614f72bcd8a9709019196b',
+                sex: 1,
+                status: 1,
+                userId: 16363,
+                username: '15539551220'
+
+              }
+            ]
+          }
+        ]
+      },
+      examineUser: [],
       maxFileCount: 1,
       imgFile: [],
       options: [
-        { label: '支付宝', value: 1 },
-        { label: '微信', value: 2 }
+        { label: '现金交易', value: 1 },
+        { label: '刷卡交易', value: 2 },
+        { label: '支票交易', value: 3 },
+        { label: '微信交易', value: 4 },
+        { label: '支付宝交易', value: 5 },
+        { label: '转账交易', value: 6 }
       ],
       title: {
         offline: '线下资金收款',
         refound: '资金退款'
       },
       form: {
-        offline: {},
-        refound: {}
+        offline: {
+          transactionType: 3
+        },
+        refound: {
+          transactionType: 2
+        }
       },
       formList: {
         offline: [
-          { label: '支付方式123：', prop: 'payWay', type: 'select' },
-          { label: '用户账号：', prop: 'account', type: 'text' },
-          { label: '充值金额（元）：', prop: 'money', type: 'text' },
-          { label: '交易流水号：', prop: 'num', type: 'text' },
-          { label: '交易凭证：', prop: 'file', type: 'file' },
-          { label: '扣款时间：', prop: 'deduction', type: 'date' },
-          { label: '交易时间：', prop: 'trade', type: 'date' },
-          { label: '收款人：', prop: 'chamberlain', type: 'text' },
-          { label: '备注：', prop: 'remarks', type: 'textarea' },
-          { label: '审核人：', prop: 'examine', type: 'user' }
+          { label: '支付方式：', prop: 'payment', type: 'select' },
+          { label: '用户账号：', prop: 'userAccount', type: 'text' },
+          { label: '充值金额（元）：', prop: 'price', type: 'text' },
+          { label: '交易流水号：', prop: 'serialNumber', type: 'text' },
+          { label: '交易凭证：', prop: 'receipt', type: 'file' },
+          { label: '扣款时间：', prop: 'deductionTime', type: 'date' },
+          { label: '交易时间：', prop: 'transactionTime', type: 'date' },
+          { label: '收款人：', prop: 'characterId', type: 'character' },
+          { label: '备注：', prop: 'remark', type: 'textarea' }
+          // { label: '审核人：', prop: 'checkUserId', type: 'user' }
         ],
         refound: [
           { label: '支付方式：', prop: 'payWay', type: 'select' },
@@ -141,35 +280,35 @@ export default {
           { label: '退款金额（元）：', prop: 'money', type: 'text' },
           { label: '交易时间：', prop: 'trade', type: 'date' },
           { label: '退款人：', prop: 'chamberlain', type: 'text' },
-          { label: '备注：', prop: 'remarks', type: 'textarea' },
-          { label: '审核人：', prop: 'examine', type: 'user' }
+          { label: '备注：', prop: 'remarks', type: 'textarea' }
+          // { label: '审核人：', prop: 'examine', type: 'user' }
         ]
       },
       rules: {
         offline: {
-          payWay: [
+          payment: [
             { required: true, message: '请选择支付方式', trigger: ['blur', 'change'] }
           ],
-          account: [
+          userAccount: [
             { required: true, message: '请输入用户账号', trigger: 'blur' }
           ],
-          money: [
+          price: [
             { required: true, message: '请输入金额', trigger: 'blur' },
             { validator: validateMoney, trigger: 'blur' }
           ],
-          num: [
+          serialNumber: [
             { required: true, message: '请输入交易流水号', trigger: 'blur' }
           ],
-          deduction: [
+          deductionTime: [
             { required: true, message: '请选择扣款时间', trigger: 'blur' }
           ],
-          trade: [
+          transactionTime: [
             { required: true, message: '请选择交易时间', trigger: 'blur' }
           ],
-          chamberlain: [
-            { required: true, message: '请输入收款人', trigger: 'blur' }
-          ],
-          remarks: [
+          // characterId: [
+          //   { required: true, message: '请输入收款人', trigger: 'blur' }
+          // ],
+          remark: [
             { max: 5, message: '不能多于800个字符', trigger: 'blur' }
           ]
           // examine: [
@@ -201,7 +340,8 @@ export default {
           // ]
         }
       },
-      draftUser: null
+      draftUser: null, // 审核人
+      characterUser: null // 收/退款人
     }
   },
   watch: {
@@ -210,13 +350,17 @@ export default {
 
       var name = JSON.parse(localStorage.getItem('loginUserInfo')).realname
       console.log(name)
-      this.form.offline.chamberlain = name
-      this.form.refound.chamberlain = name
+      this.form.offline.characterId = name
+      this.form.refound.characterId = name
 
       if (!val) {
         this.$emit('reset-type')
       }
     }
+  },
+  created() {
+    var a = JSON.parse(localStorage.getItem('loginUserInfo'))
+    this.characterUser = a
   },
   methods: {
     // 处理element input组件嵌套过深bug
@@ -236,6 +380,15 @@ export default {
         this.draftUser = data.value[0]
       } else {
         this.draftUser = null
+      }
+    },
+
+    // 字段的值更新
+    characterChange(data) {
+      if (data.value.length) {
+        this.characterUser = data.value[0]
+      } else {
+        this.characterUser = null
       }
     },
 
@@ -294,8 +447,32 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           // 图片类型已在AddImageList组件中校验过
-
           console.log('验证通过，拼接参数发送请求')
+          // var parms = {}
+          var parms = {
+            entity: this.form[this.moneyType]
+          }
+
+
+          parms.entity.characterId = this.characterUser.userId // 收退款人ID
+          parms.entity.createUserName = this.characterUser.realname // 线下收款/退款 创建人名称
+          parms.entity.leadsNumber = this.selectionList[0].leadsNumber // 学员编号
+          parms.entity.accountNumber = this.selectionList[0].accountNumber // 账户编号
+          parms.entity.capitalId = this.selectionList[0].capitalId // 资金账号ID
+          parms.entity.examineBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
+          parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
+          parms.transactionType =
+
+
+          console.log(parms)
+          crmEditAccountWater(parms).then(res => {
+            if (res.code === 0) {
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              })
+            }
+          }).catch(() => {})
         }
       })
     }
@@ -328,5 +505,38 @@ export default {
 
 /deep/ .el-form-item__content {
     margin-left: 130px !important;
+}
+
+
+// 审核信息 里的审核类型
+.examine-type {
+  font-size: 12px;
+  color: white;
+  background-color: #fd715a;
+  padding: 0 8px;
+  margin-left: 5px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 8px;
+  transform: scale(0.8, 0.8);
+}
+
+.label1 {
+  text-align: center;
+  display: flex;
+  .fixed-examine-item {
+    padding: 10px 20px;
+    .detail{
+      color: #777777;
+      font-size: 12px;
+      padding: 2px 0;
+      -webkit-transform: scale(0.8, 0.8);
+      transform: scale(0.8, 0.8);
+    }
+    .step {
+      color: #333333;
+      font-size: 12px;
+    }
+  }
 }
 </style>

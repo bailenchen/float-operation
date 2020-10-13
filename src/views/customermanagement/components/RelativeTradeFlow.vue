@@ -43,7 +43,7 @@
         :label="item.label"
         show-overflow-tooltip/>
       <el-table-column
-        label="操作"
+        label="操作123"
         align="center"
         fixed="right"
         width="80">
@@ -232,16 +232,18 @@ export default {
     editHandle(row) {
       console.log('编辑资金流水')
       console.log(row)
-      console.log(this.moneyType)
+
       // 模拟数据
-      if (!row.payment) {
-        row.payment = 1
-      }
-      if (row.payment == 1) {
-        this.moneyType = 'offline'
-      } else if (row.payment == 2) {
+      // if (!row.payment) {
+      //   row.payment = 1
+      // }
+      // console.log();
+      if (row.transactionType == '资金退款') {
         this.moneyType = 'refound'
+      } else if (row.transactionType == '线下资金收款') {
+        this.moneyType = 'offline'
       }
+      console.log(this.moneyType)
       this.rowData = row
       // this.rowData.customerName = this.detail.customerName
       // this.rowData.customerName =
@@ -313,6 +315,7 @@ export default {
      */
     handleRowClick(row, column, event) {
       if (column.property == 'leadsNumber') {
+        console.log('低价这里')
         this.contractId = row.waterId
         this.showFullDetail = true
       }

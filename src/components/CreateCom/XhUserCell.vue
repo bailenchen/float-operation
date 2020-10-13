@@ -77,6 +77,10 @@ export default {
     max: {
       type: Number,
       default: 2
+    },
+    useDelete: { // 是否使用删除功能
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -115,6 +119,10 @@ export default {
      * 删除
      */
     deleteuser(index) {
+      if (!this.useDelete) {
+        console.log('不使用删除功能')
+        return
+      }
       this.dataValue.splice(index, 1)
       this.$emit('value-change', {
         item: this.item,
