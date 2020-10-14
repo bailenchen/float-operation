@@ -174,6 +174,7 @@ export default {
       }
 
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
+        console.log('DSAD')
         params.data = this.filterObj
       }
       if (this.getOtherParams && typeof this.getOtherParams === 'function') {
@@ -182,6 +183,9 @@ export default {
           ...this.getOtherParams()
         }
       }
+
+      console.log('传递给后端的数据', params)
+
       crmIndexRequest(params)
         .then(res => {
           if (this.crmType === 'customer') {
@@ -568,6 +572,7 @@ export default {
       var removeHeight = Object.keys(this.filterObj).length > 0 ? 295 : 235
       this.tableHeight = offsetHei - removeHeight
       this.currentPage = 1
+      console.log('进行筛选')
       this.getList()
     },
     /** 场景操作 */

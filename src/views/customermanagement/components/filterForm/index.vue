@@ -121,11 +121,12 @@
                   :label="item.name"
                   :value="item.statusId"/>
               </el-select>
+
               <xh-user-cell
-                v-else-if="['single_user', 'user'].includes(formItem.formType)"
+                v-else-if="['single_user', 'user', 'ownerUser'].includes(formItem.formType)"
                 :item="formItem"
-                :info-params="infoParams"
                 :value="formItem.value"
+                :info-request="queryOwnerUserAPI"
                 @value-change="arrayValueChange"/>
               <xh-structure-cell
                 v-else-if="['single_structure'].includes(formItem.formType)"
@@ -218,6 +219,10 @@ import {
   crmSettingRecordListAPI
 } from '@/api/systemManagement/SystemCustomer'
 
+import { queryOwnerUserAPI } from '@/api/common'
+
+
+
 import { objDeepCopy } from '@/utils'
 import {
   XhUserCell,
@@ -284,7 +289,7 @@ export default {
       saveChecked: false, // 展示场景
       saveDefault: false, // 设置为默认场景
       saveName: null, // 场景名称
-
+      queryOwnerUserAPI: queryOwnerUserAPI,
       studentData: {
 
       },
@@ -457,7 +462,8 @@ export default {
         formType == 'sign_up' ||
         formType == 'grades' ||
         formType == 'follow_up_plan' ||
-        formType == 'communication_mode'
+        formType == 'communication_mode' ||
+        formType == 'ownerUser'
       ) {
         return [
           { value: 'is', label: '等于', disabled: false },
@@ -534,6 +540,9 @@ export default {
       const obj = this.fieldList.find(item => {
         return item.fieldName === formItem.fieldName
       })
+
+      console.log('sasaa1', obj)
+
       if (obj) {
         formItem.formType = obj.formType
         formItem.name = obj.name
@@ -570,8 +579,10 @@ export default {
           formItem.formType === 'single_user' ||
           formItem.formType === 'single_structure' ||
           formItem.formType === 'category' ||
-          formItem.formType === 'leads_source'
+          formItem.formType === 'leads_source' ||
+          formItem.formType === 'ownerUser'
         ) {
+          console.log('创建人拼装1')
           formItem.value = []
         } else if (
           formItem.formType === 'checkbox'
@@ -594,8 +605,10 @@ export default {
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
           formItem.formType == 'follow_up_plan' ||
-          formItem.formType == 'communication_mode'
+          formItem.formType == 'communication_mode' ||
+          formItem.formType == 'ownerUser'
         ) {
+          console.log('创建人拼装2')
           formItem.condition = 'is'
         } else {
           formItem.condition = 'contains'
@@ -605,6 +618,8 @@ export default {
       const arr = this.form.filter(item => {
         return item.fieldName === formItem.fieldName
       })
+      console.log(this.form)
+      console.log(arr)
       if (arr.length > 1) this.showErrors = true
       else this.showErrors = false
     },
@@ -689,7 +704,7 @@ export default {
             formType: o.formType,
             name: o.fieldName
           }
-        } else if (['single_user', 'user'].includes(o.formType)) {
+        } else if (['single_user', 'user', 'ownerUser'].includes(o.formType)) {
           obj[o.fieldName] = {
             condition: o.condition,
             value: o.value[0].userId,
@@ -752,6 +767,7 @@ export default {
         saveDefault: this.saveDefault,
         saveName: this.saveName
       }
+      console.log('高级筛选', data)
       this.$emit('filter', data)
     },
     /**

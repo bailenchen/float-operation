@@ -350,6 +350,7 @@ export default {
     },
     // 获取高级筛选字段数据
     getFilterFieldInfo() {
+      console.log('获取高级筛选字段数据')
       const params = {}
       if (this.isSeas) {
         params.poolId = this.poolId
@@ -357,6 +358,7 @@ export default {
         params.label = crmTypeModel[this.crmType]
       }
 
+      console.log(this.isSeas)
       const request = this.isSeas ? filterIndexPoolfields : filterIndexfields
 
       request(params)
@@ -381,6 +383,7 @@ export default {
           })
           .catch(() => {})
       }
+      console.log('头，向上发送事件', form.obj)
       this.$emit('filter', form.obj)
     },
     // 删除

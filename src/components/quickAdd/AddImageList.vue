@@ -121,7 +121,7 @@ export default {
     uploadFile(event) {
       var type = event.target.value.match(/^(.*)(\.)(.{1,8})$/)[3].toUpperCase()
       console.log(event.target.value, type)
-      if (type != 'JPEG' && type != 'PNG' && type != 'JPG' && type != 'EMP' && type != 'JIF' && type != 'RAW') {
+      if (type != 'JPEG' && type != 'PNG' && type != 'JPG' && type != 'EMP' && type != 'GIF' && type != 'RAW') {
         this.$message({
           message: '上传图片类型错误',
           type: 'error'

@@ -17,6 +17,7 @@
             'checkStatus'
         ].includes(item.formType)">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getCheckName(item) }}</span>
         <span v-else-if="item.formType === 'dealStatus'">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getDealStatus(item.value) }}</span>
+        <span v-else-if="item.formType === 'ownerUser'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
         <span v-else-if="item.formType === 'user'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
         <span v-else-if="item.formType === 'single_structure'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].name + '”' }}</span>
         <span v-else-if="['category', 'leads_source'].includes(item.formType) && item.value.length > 0">{{ item.name +'&nbsp;“' + item.valueContent + '”' }}</span>

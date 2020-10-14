@@ -196,6 +196,16 @@ export default {
       }
       // }
     }
+
+    var validatcharacter = (rule, value, callback) => {
+      console.log('characterUser', this.characterUser)
+      if (!this.characterUser) {
+        callback(new Error('请选择员工'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       examineInfo: { // 审批
         examineType: 1, // 审批方式 固定或授权
@@ -255,10 +265,10 @@ export default {
       },
       form: {
         offline: {
-          transactionType: 3
+          // transactionType: 3
         },
         refound: {
-          transactionType: 2
+          // transactionType: 2
         }
       },
       formList: {
@@ -275,12 +285,12 @@ export default {
           // { label: '审核人：', prop: 'checkUserId', type: 'user' }
         ],
         refound: [
-          { label: '支付方式：', prop: 'payWay', type: 'select' },
-          { label: '用户账号：', prop: 'account', type: 'text' },
-          { label: '退款金额（元）：', prop: 'money', type: 'text' },
-          { label: '交易时间：', prop: 'trade', type: 'date' },
-          { label: '退款人：', prop: 'chamberlain', type: 'text' },
-          { label: '备注：', prop: 'remarks', type: 'textarea' }
+          { label: '支付方式：', prop: 'payment', type: 'select' },
+          { label: '用户账号：', prop: 'userAccount', type: 'text' },
+          { label: '退款金额（元）：', prop: 'price', type: 'text' },
+          { label: '交易时间：', prop: 'transactionTime', type: 'date' },
+          { label: '退款人：', prop: 'characterId', type: 'character' },
+          { label: '备注：', prop: 'remark', type: 'textarea' }
           // { label: '审核人：', prop: 'examine', type: 'user' }
         ]
       },
@@ -289,15 +299,9 @@ export default {
           payment: [
             { required: true, message: '请选择支付方式', trigger: ['blur', 'change'] }
           ],
-          userAccount: [
-            { required: true, message: '请输入用户账号', trigger: 'blur' }
-          ],
           price: [
             { required: true, message: '请输入金额', trigger: 'blur' },
             { validator: validateMoney, trigger: 'blur' }
-          ],
-          serialNumber: [
-            { required: true, message: '请输入交易流水号', trigger: 'blur' }
           ],
           deductionTime: [
             { required: true, message: '请选择扣款时间', trigger: 'blur' }
@@ -305,17 +309,43 @@ export default {
           transactionTime: [
             { required: true, message: '请选择交易时间', trigger: 'blur' }
           ],
-          // characterId: [
-          //   { required: true, message: '请输入收款人', trigger: 'blur' }
-          // ],
+          characterId: [
+            { required: true, message: '请输入收款人', trigger: 'blur' },
+            { validator: validatcharacter, trigger: 'blur' }
+          ],
           remark: [
-            { max: 5, message: '不能多于800个字符', trigger: 'blur' }
+            { max: 800, message: '不能多于800个字符', trigger: 'blur' }
           ]
           // examine: [
           //   { required: true, message: '请选择审核人', trigger: 'blur' }
           // ]
         },
+
         refound: {
+          payment: [
+            { required: true, message: '请选择支付方式', trigger: ['blur', 'change'] }
+          ],
+          price: [
+            { required: true, message: '请输入金额', trigger: 'blur' },
+            { validator: validateMoney, trigger: 'blur' }
+          ],
+          transactionTime: [
+            { required: true, message: '请选择交易时间', trigger: 'blur' }
+          ],
+          characterId: [
+            { required: true, message: '请输入收款人', trigger: 'blur' },
+            { validator: validatcharacter, trigger: 'blur' }
+          ],
+          remark: [
+            { max: 800, message: '不能多于800个字符', trigger: 'blur' }
+          ]
+          // examine: [
+          //   { required: true, message: '请选择审核人', trigger: 'blur' }
+          // ]
+        },
+
+
+        refound1: {
           payWay: [
             { required: true, message: '请选择支付方式', trigger: ['blur', 'change'] }
           ],
@@ -353,6 +383,20 @@ export default {
       this.form.offline.characterId = name
       this.form.refound.characterId = name
 
+      if (this.moneyType == 'offline') {
+        this.form[this.moneyType].transactionType = 3
+      } else if (this.moneyType == 'refound') {
+        this.form[this.moneyType].transactionType = 2
+      }
+
+
+      this.form.offline.deductionTime = this.timeFormat()
+      this.form.offline.transactionTime = this.timeFormat()
+
+      this.form.refound.transactionTime = this.timeFormat()
+
+      // this.form.refound.characterId = name
+
       if (!val) {
         this.$emit('reset-type')
       }
@@ -366,6 +410,33 @@ export default {
     // 处理element input组件嵌套过深bug
     inputUpdate() {
       this.$forceUpdate() // 强制重新渲染
+    },
+    timeFormat() {
+      // console.log('时间格式化')
+      function _timeFormat(options) {
+        const time = options.time ? options.time : new Date()
+        const template = options.template
+          ? options.template
+          : '{0}年{1}月{2}日 {3}时{4}分{5}秒'
+        const arr = [
+          time.getFullYear(),
+          zero(time.getMonth() + 1),
+          zero(time.getDate()),
+          zero(time.getHours()),
+          zero(time.getMinutes()),
+          zero(time.getSeconds())
+        ]
+        return template.replace(/\{(\d)\}/g, (text, capture) => {
+          return arr[capture] || '00'
+        })
+        function zero(num) {
+          return num < 10 ? '0' + num : num
+        }
+      }
+
+      return _timeFormat({
+        template: '{0}-{1}-{2} {3}:{4}:{5}'
+      })
     },
     /**
      * 取消选择
@@ -459,12 +530,15 @@ export default {
           parms.entity.leadsNumber = this.selectionList[0].leadsNumber // 学员编号
           parms.entity.accountNumber = this.selectionList[0].accountNumber // 账户编号
           parms.entity.capitalId = this.selectionList[0].capitalId // 资金账号ID
-          parms.entity.examineBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
-          parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
-          parms.transactionType =
 
+          if (this.imgFile[0]) {
+            parms.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
+            parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
+          }
 
+          console.log(this.form[this.moneyType])
           console.log(parms)
+          // return
           crmEditAccountWater(parms).then(res => {
             if (res.code === 0) {
               this.$message({

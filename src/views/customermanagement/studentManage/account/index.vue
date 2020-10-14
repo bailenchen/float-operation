@@ -66,8 +66,7 @@
           label=""
           width="55">
           <template
-            slot="header"
-            slot-scope="slot">
+            slot="header">
             <i
               class="el-icon-phone"
               style="cursor: not-allowed; opacity: 0.5;color: #2486E4"/>
@@ -137,8 +136,7 @@
           fixed="right"
           width="40">
           <template
-            slot="header"
-            slot-scope="slot">
+            slot="header">
             <field-set
               :crm-type="crmType"
               @change="setSave"/>

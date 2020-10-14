@@ -65,16 +65,26 @@
               v-model="form[moneyType][item.prop]"
               @input="updateInputVal($event)"/>
 
-            <add-image-list
-              v-if="item.type == 'file'"
-              v-show="show"
-              :width="50"
-              :max="maxFileCount"
-              :data="imgFile"
-              :show-all-delete="false"
-              style="padding: 0;margin: 0;"
-              @delete="deletePayImage"
-              @upload="uploadPayFile" />
+
+
+            <div v-if="item.type == 'file'" class="img">
+              <div v-show="!show">
+                {{ fileName }}
+                <el-button type="text" @click="downloadFile">下载</el-button>
+                <el-button type="text" @click="delFile">删除</el-button>
+              </div>
+              <add-image-list
+                v-show="show"
+                :width="50"
+                :max="maxFileCount"
+                :data="imgFile"
+                :show-all-delete="false"
+                style="padding: 0;margin: 0;"
+                @delete="deletePayImage"
+                @upload="uploadPayFile" />
+
+
+            </div>
 
             <!-- <xh-user-cell
               v-if="item.type == 'user'"
@@ -108,12 +118,17 @@
 </template>
 
 <script>
+// API
+import { crmFileSave } from '@/api/common'
+import { crmEditAccountWater } from '@/api/customermanagement/account'
+import { downloadAdjunct } from '@/api/customermanagement/common'
 
 import { XhUserCell, XhInput } from '@/components/CreateCom'
 import AddImageList from '@/components/quickAdd/AddImageList'
 import CreateView from '@/components/CreateView'
-import { crmFileSave } from '@/api/common'
-import { crmEditAccountWater } from '@/api/customermanagement/account'
+
+// 方法
+import { downloadExcelWithResData } from '@/utils/index'
 
 export default {
   name: 'EditTransaction', // 编辑交易流水
@@ -200,10 +215,10 @@ export default {
         ],
         refound: [
           { label: '支付方式：', prop: 'payment', type: 'select', disable: true },
-          { label: '用户账号：', prop: 'accountNumber', type: 'text', disable: false },
+          { label: '用户账号：', prop: 'userAccount', type: 'text', disable: false },
           { label: '资金收款金额（元）：', prop: 'price', type: 'text', disable: true },
-          { label: '交易时间：', prop: 'createTime', type: 'date', disable: true },
-          { label: '退款人：', prop: 'createUserName', type: 'text', disable: true },
+          { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
+          { label: '退款人：', prop: 'character', type: 'text', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false }
         ]
       },
@@ -234,7 +249,9 @@ export default {
           ]
         }
       },
-      draftUser: null
+      draftUser: null,
+      fileName: '', // 已上传附件名
+      fieldBatchId: '' // 已上传附件标识
     }
   },
   watch: {
@@ -255,20 +272,24 @@ export default {
     form.price = this.action.price // 价格
     form.remark = this.action.remark // 备注
 
+
+
     if (this.moneyType == 'offline') { // 线下
       form.serialNumber = this.action.serialNumber // serialNumber
       form.transactionType = this.action.transactionType
-      // form.receipt = this.action.receipt // 凭证
-      // form.createTime = this.action.createTime
       form.deductionTime = this.action.deductionTime
       form.transactionTime = this.action.transactionTime
-      // form.status = this.action.status
-      // form.createUserName = this.action.customerName
-      console.log(form, this.form, 'bbbbbbbbbbbb')
-    }
-    //  else if (this.moneyType == 'refound') {
 
-    // }
+      form.character = this.action.characterName
+
+      this.fileName = this.action.receipt
+      this.fieldBatchId = this.action.waterBatchId
+    } else if (this.moneyType == 'refound') {
+      form.serialNumber = this.action.serialNumber // serialNumber
+      form.transactionType = this.action.transactionType
+      form.transactionTime = this.action.transactionTime
+      form.character = this.action.characterName
+    }
   },
   mounted() {
     document.body.appendChild(this.$el)
@@ -283,6 +304,20 @@ export default {
     // 解决element输入框嵌套太深无法输入内容bug
     updateInputVal: function() {
       this.$forceUpdate()	// 刷新
+    },
+    downloadFile() {
+      console.log('下载')
+      downloadAdjunct({ 'batchId': this.fieldBatchId })
+        .then(res => {
+          console.log(res)
+          downloadExcelWithResData(res)
+        }, err => {
+          console.log(err)
+        })
+    },
+    delFile() {
+      console.log('删除')
+      this.show = true
     },
 
     hidenView() {
@@ -326,7 +361,18 @@ export default {
           const file = files[index]
           crmFileSave({ file: file }).then(res => {
             console.log(res, 'file')
-            this.imgFile.push(res.data)
+            // this.imgFile.push(res.data)
+            var data = {}
+            for (const k in res) {
+              if (!res.hasOwnProperty(k)) break
+              if (k == 'code') continue
+              data[k] = res[k]
+            }
+            console.log('拼接的数据', data)
+
+
+            this.imgFile.push(data)
+
             // this.$set(this.form, 'applyCertificate', path)
           }).catch(() => {
             this.loading = false
@@ -346,7 +392,7 @@ export default {
 
     // 提交编辑数据
     sumitData() {
-      this.loading = true
+      // this.loading = true
 
 
       // var obj = {}
@@ -355,8 +401,22 @@ export default {
       //   obj[k] = this.form[this.moneyType][k]
       // }
 
+      console.log(this.form[this.moneyType])
+
       var parms = {
-        entity: this.form[this.moneyType]
+        // entity: this.form[this.moneyType]
+
+        entity: {
+          waterId: this.form[this.moneyType].waterId,
+          userAccount: this.form[this.moneyType].userAccount,
+          serialNumber: this.form[this.moneyType].serialNumber,
+          remark: this.form[this.moneyType].remark
+        }
+      }
+
+      if (this.imgFile[0]) {
+        parms.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
+        parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
       }
       console.log(parms)
       console.log('保存')
@@ -490,4 +550,7 @@ export default {
   margin-left: 0;
 }
 
+.img {
+  clear: both;
+}
 </style>

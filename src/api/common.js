@@ -13,6 +13,20 @@ export function usersList(data) {
 }
 
 /**
+ *
+ * @param {*} data
+ */
+export function queryOwnerUserAPI(data) {
+  return request({
+    url: 'system/user/queryHeadmasterByApply',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+/**
  * type
  * @param {*} data
  */

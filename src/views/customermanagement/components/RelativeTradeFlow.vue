@@ -233,11 +233,7 @@ export default {
       console.log('编辑资金流水')
       console.log(row)
 
-      // 模拟数据
-      // if (!row.payment) {
-      //   row.payment = 1
-      // }
-      // console.log();
+
       if (row.transactionType == '资金退款') {
         this.moneyType = 'refound'
       } else if (row.transactionType == '线下资金收款') {
@@ -297,15 +293,19 @@ export default {
           4: '撤回'
         }[row[column.property]]
       } else if (column.property === 'transactionType') {
-        return {
-          1: '线下',
-          2: '线上'
-        }[row[column.property]]
+        // console.log('格式胡这里哦', column.property)
+        // console.log(row[column.property])
+        // return {
+        //   1: '线下',
+        //   2: '线上'
+        // }[row[column.property]]
       } else if (column.property === 'payment') {
-        return {
-          1: '线下资金收款',
-          2: '资金退款'
-        }[row[column.property]]
+        // return {
+        //   1: '线下资金收款',
+        //   2: '资金退款'
+        // }[row[column.property]]
+        // console.log('支付方式', column.property)
+        // console.log(row[column.property])
       }
       return row[column.property]
     },
