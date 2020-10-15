@@ -351,12 +351,15 @@ export default {
   },
   watch: {
     visible(val) {
-      var form = {}
+      const form = {}
       form[this.moneyType] = {}
+      // var name = JSON.parse(localStorage.getItem('loginUserInfo')).realname
 
+      // form.offline.characterId = name
+      // form.refound.characterId = name
+      // var a = JSON.parse(localStorage.getItem('loginUserInfo'))
       this.characterUser = JSON.parse(localStorage.getItem('loginUserInfo'))
       // console.log('每次关闭因此', this.characterUser)
-
 
 
       if (this.moneyType == 'offline') {
@@ -365,18 +368,20 @@ export default {
         form[this.moneyType].transactionType = 2
       }
 
-      form[this.moneyType].deductionTime = this.timeFormat()
-      form[this.moneyType].transactionTime = this.timeFormat()
 
+      // form.offline.deductionTime = this.timeFormat()
+      form.offline.deductionTime = '2020-10-15 17:21:00'
+      // form.offline.transactionTime = new Date()
+
+      // form.refound.transactionTime = this.timeFormat()
       this.form = form
+
+
       if (!val) {
         this.$emit('reset-type')
       }
     }
   },
-
-
-
   created() {
     var a = JSON.parse(localStorage.getItem('loginUserInfo'))
     this.characterUser = a

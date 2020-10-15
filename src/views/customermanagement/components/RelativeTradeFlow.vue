@@ -238,6 +238,8 @@ export default {
         this.moneyType = 'refound'
       } else if (row.transactionType == '线下资金收款') {
         this.moneyType = 'offline'
+      } else if (row.transactionType == '线上资金收款') {
+        this.moneyType = 'online'
       }
       console.log(this.moneyType)
       this.rowData = row

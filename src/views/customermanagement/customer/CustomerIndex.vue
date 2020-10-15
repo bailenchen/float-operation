@@ -148,6 +148,9 @@
                 v-if="scope.row.status == 9"
                 class="wk wk-circle-password customer-lock"/>
             </template>
+            <template v-if="item.prop == 'customerType'">
+              <img v-if="scope.row.customerType == 2" class="student-img" src="@/assets/img/student.jpg" alt="">
+            </template>
             <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
           </template>
         </el-table-column>
@@ -234,7 +237,8 @@ export default {
     return {
       crmType: 'customer',
       showCount: 0,
-      modelData: {}
+      modelData: {},
+      studentImg: '@/assets/img/student1.jpg'
     }
   },
   computed: {
@@ -374,4 +378,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/table.scss';
+
+// .el-tooltip {
+
+// }
+.student-img {
+  // margin-top: 3px;
+  display: inline-block;
+}
 </style>

@@ -8,11 +8,12 @@ const iOSUrl = 'https://apps.apple.com/cn/app/%E6%82%9F%E7%A9%BAcrm-10-0/id14891
 const androidUrl = 'https://sj.qq.com/myapp/detail.htm?apkName=com.kakarote.crm10'
 
 var callCenterConfig = {
+  // socketUrl: 'wss://xagent.vocustcloud.com/phoneConnect', // 电话websocket连接url
   socketUrl: 'wss://xagent.vocustcloud.com/phoneConnect', // 电话websocket连接url
   // account: '18337132251', // 登录账号
   // password: '132251', // 登录密码
   // channel: 'telephone', // 渠道
-  domain: '1217320380889497600.ctrip', // 域信息
+  domain: '1301395827943612416.ctrip', // 域信息
   skillGroupCode: [] // 技能组编号列表
   // telephone: '500020' // 硬话机
 }

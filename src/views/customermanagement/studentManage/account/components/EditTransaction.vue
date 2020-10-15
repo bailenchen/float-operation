@@ -194,6 +194,7 @@ export default {
         refound: '资金退款'
       },
       form: {
+        online: {},
         offline: {
           price: ''
         },
@@ -202,6 +203,17 @@ export default {
         }
       },
       formList: {
+        online: [
+          { label: '支付方式：', prop: 'payment', type: 'text', disable: true },
+          { label: '用户账号：', prop: 'userAccount', type: 'text', disable: false },
+          { label: '资金收款金额（元）：', prop: 'price', type: 'text', disable: true },
+          { label: '交易流水号：', prop: 'serialNumber', type: 'text', disable: false },
+          { label: '扣款时间：', prop: 'deductionTime', type: 'date', disable: true },
+          { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
+          { label: '备注：', prop: 'remark', type: 'textarea', disable: false },
+          { label: '收款人：', prop: 'character', type: 'text', disable: true },
+          { label: '交易凭证：', prop: 'receipt', type: 'file', disable: false }
+        ],
         offline: [
           { label: '支付方式：', prop: 'payment', type: 'text', disable: true },
           { label: '用户账号：', prop: 'userAccount', type: 'text', disable: false },

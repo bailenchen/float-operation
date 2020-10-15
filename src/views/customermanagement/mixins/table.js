@@ -284,6 +284,7 @@ export default {
         const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
         request(params)
           .then(res => {
+            console.log('请求的自动', res)
             const fieldList = []
             const moneyFields = []
             for (let index = 0; index < res.data.length; index++) {
