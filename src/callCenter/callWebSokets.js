@@ -43,6 +43,7 @@ class MyWs {
       return that._getUserBasicInfo()
     }).then(data => {
       const { agent } = data
+      console.log(data)
       if (!agent) {
         alert('客服信息为空')
         return false

@@ -125,7 +125,7 @@
 // API
 import { crmFileSave } from '@/api/common'
 import { crmEditAccountWater } from '@/api/customermanagement/account'
-
+import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 // 组件
 import { XhUserCell } from '@/components/CreateCom'
 import AddImageList from '@/components/quickAdd/AddImageList'
@@ -355,9 +355,6 @@ export default {
       form[this.moneyType] = {}
 
       this.characterUser = JSON.parse(localStorage.getItem('loginUserInfo'))
-      // console.log('每次关闭因此', this.characterUser)
-
-
 
       if (this.moneyType == 'offline') {
         form[this.moneyType].transactionType = 3
@@ -375,11 +372,16 @@ export default {
     }
   },
 
-
-
   created() {
-    var a = JSON.parse(localStorage.getItem('loginUserInfo'))
-    this.characterUser = a
+    // var a = JSON.parse(localStorage.getItem('loginUserInfo'))
+    this.characterUser = JSON.parse(localStorage.getItem('loginUserInfo'))
+    console.log('发送请求')
+    crmCreateExamineFlow({ categoryType: 5 }).then(res => {
+      console.log('资金流水审批', res)
+      this.examineInfo = res.data
+    }).catch(() => {
+
+    })
   },
   methods: {
     // 处理element input组件嵌套过深bug
@@ -413,6 +415,9 @@ export default {
         template: '{0}-{1}-{2} {3}:{4}:{5}'
       })
     },
+
+
+
     /**
      * 取消选择
      */
@@ -433,6 +438,7 @@ export default {
     characterChange(data) {
       if (data.value.length) {
         this.characterUser = data.value[0]
+        this.form[this.moneyType].characterId = this.characterUser.username
       } else {
         this.characterUser = null
       }
@@ -587,5 +593,9 @@ export default {
       font-size: 12px;
     }
   }
+}
+
+.set-width {
+  width: calc(100% - 45px);
 }
 </style>
