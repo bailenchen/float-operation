@@ -45,7 +45,7 @@ class MyWs {
       const { agent } = data
       console.log(data)
       if (!agent) {
-        alert('客服信息为空')
+        alert('呼叫中心账号/密码/硬话机错误')
         return false
       }
 

@@ -4,7 +4,7 @@
       :search.sync="search"
       :crm-type="crmType"
       title="LEADS管理"
-      placeholder="请输入LEADS编号/学员名称/第一联系人电话"
+      placeholder="请输入LEADS编号/学员名称/第一、第二联系人电话"
       main-title="新建LEADS"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
