@@ -247,8 +247,9 @@ export default {
     margin-top: 15px;
   }
   .sc-container {
-    width: 330px;
-    margin: -16px 0 0 -150px;
+    width: 428px;
+    // margin: -16px 0 0 -150px;
+    transform: translate(-50%, -50%);
     position: absolute;
     left: 50%;
     top: 50%;
@@ -259,6 +260,10 @@ export default {
       background-color: $xr-color-primary;
       border-color: $xr-color-primary;
       color: white;
+    }
+
+    /deep/ .el-input__inner {
+      width: 375px;
     }
   }
 
