@@ -247,7 +247,8 @@ export default {
     margin-top: 15px;
   }
   .sc-container {
-    width: 428px;
+    // width: 330px;
+   width: 369px;
     // margin: -16px 0 0 -150px;
     transform: translate(-50%, -50%);
     position: absolute;
@@ -263,7 +264,7 @@ export default {
     }
 
     /deep/ .el-input__inner {
-      width: 375px;
+      width: 316px;
     }
   }
 

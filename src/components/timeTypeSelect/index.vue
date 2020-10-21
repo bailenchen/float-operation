@@ -27,14 +27,14 @@
         class="type-content-custom">
         <el-date-picker
           v-model="startTime"
-          type="date"
-          value-format="yyyy.MM.dd"
-          placeholder="选择日期"/>
+          :type="bType ? 'datetime' : 'date'"
+          :value-format="bType ? 'yyyy.MM.dd HH:mm:ss' : 'yyyy.MM.dd'"
+          placeholder="选择时间"/>
         <el-date-picker
           v-model="endTime"
-          type="date"
-          value-format="yyyy.MM.dd"
-          placeholder="选择日期"/>
+          :type="bType ? 'datetime' : 'date'"
+          :value-format="bType ? 'yyyy.MM.dd HH:mm:ss' : 'yyyy.MM.dd'"
+          placeholder="选择时间"/>
         <el-button @click="customSureClick">确定</el-button>
       </div>
     </div>
@@ -61,6 +61,10 @@ export default {
     width: {
       type: Number,
       default: 200
+    },
+    bType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -111,6 +115,7 @@ export default {
     } else {
       this.$emit('change', { type: 'default', value: this.selectType.value })
     }
+    console.log(this.bType, '456123')
   },
   methods: {
     getDefaultTypeValue(type) {

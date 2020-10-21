@@ -4,6 +4,7 @@
     class="main-container">
     <filtrate-handle-view
       class="filtrate-bar"
+      b-type="call"
       module-type="product"
       title="员工通话记录分析"
       @load="loading=true"

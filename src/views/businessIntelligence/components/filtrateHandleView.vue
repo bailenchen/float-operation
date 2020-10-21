@@ -8,6 +8,7 @@
     </flexbox>
     <time-type-select
       v-if="!showYearSelect"
+      :b-type="bType"
       @change="timeTypeChange"/>
     <!-- 展示年筛选 -->
     <el-date-picker
@@ -170,6 +171,10 @@ export default {
     showProductSelect: {
       default: false,
       type: Boolean
+    },
+    bType: {
+      type: String,
+      default: ''
     }
   },
   data() {

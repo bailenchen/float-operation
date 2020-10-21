@@ -5,6 +5,7 @@
     <filtrate-handle-view
       class="filtrate-bar"
       title="员工通话记录"
+      b-type="call"
       module-type="product"
       @load="loading=true"
       @change="getProductDatalist">

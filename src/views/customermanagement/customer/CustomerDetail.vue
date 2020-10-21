@@ -409,12 +409,16 @@ export default {
      * @param {*} data
      */
     detailHeadHandle(data) {
+      console.log(this.detailData, 'nkllllll')
       if (data.type === 'edit') {
         this.createCRMType = 'customer'
         this.createActionInfo = {
           type: 'update',
           id: this.id,
           batchId: this.detailData.batchId
+        }
+        if (this.detailData && this.detailData.channelId == 0) {
+          this.createActionInfo.introduce = true
         }
         this.isCreate = true
       } else if (
