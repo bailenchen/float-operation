@@ -4,7 +4,7 @@
       :search.sync="search"
       :crm-type="crmType"
       title="LEADS管理"
-      placeholder="请输入LEADS编号/学员名称/第一、第二联系人电话"
+      placeholder="请输入LEADS编号/学员名称/第一联系人电话/第二联系人电话"
       main-title="新建LEADS"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
@@ -145,10 +145,10 @@
             </template>-->
             <template v-if="item.prop == 'status'">
               <i
-                v-if="scope.row.status == 9"
+                v-if="scope.row.status == 10"
                 class="wk wk-circle-password customer-lock"/>
             </template>
-            <template v-if="item.prop == 'customerType'">
+            <template v-else-if="item.prop == 'customerType'">
               <img v-if="scope.row.customerType == 2" class="student-img" src="@/assets/img/student.jpg" alt="">
             </template>
             <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
@@ -229,7 +229,8 @@ export default {
     },
 
     dealName(statu) {
-      return statu == 1 ? '已成交' : '未成交'
+      return statu == 10 ? '已成交' : '未成交'
+      // return ''
     }
   },
   mixins: [table],

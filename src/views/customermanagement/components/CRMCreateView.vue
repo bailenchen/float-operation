@@ -1723,7 +1723,7 @@ export default {
     /** 上传 */
     submiteParams(params) {
       var crmRequest = this.getSubmiteRequest()
-      console.log('crmRequest的请求', crmRequest)
+      // console.log('crmRequest的请求', crmRequest)
       console.log(this.action)
       console.log(this.crmType)
       // return
@@ -1737,6 +1737,13 @@ export default {
           params.entity.capital_id = this.action.id
         } else {
           params.entity[key + 'Id'] = this.action.id
+        }
+
+        for (var i = 0; i < this.crmForm.crmFields.length; i++) {
+          var element = this.crmForm.crmFields[i]
+          if (element.key == 'introducer_type') {
+            params.entity.introducer_type = element.value
+          }
         }
         params.entity.batchId = this.action.batchId
         // 针对保存
@@ -1759,7 +1766,8 @@ export default {
         }
       }
       console.log('save: ', params)
-      // this.loading = false
+      this.loading = false
+      // return
       crmRequest(params)
         .then(res => {
           this.loading = false
@@ -1825,6 +1833,7 @@ export default {
     },
     /** 拼接上传传输 */
     getSubmiteParams(array) {
+      console.log('c传递的数组', array)
       var params = { entity: {}, field: [] }
       for (let index = 0; index < array.length; index++) {
         const element = array[index]
@@ -1838,11 +1847,16 @@ export default {
           } else {
             params.entity[element.key] = this.getRealParams(element) || ''
           }
+        } else if (element.data.key == 'introducer_type') {
+          console.log(111)
         } else {
+          console.log('saasa11')
           element.data.value = this.getRealParams(element)
+          console.log('data', element.data)
           params.field.push(element.data)
         }
       }
+
 
       if (this.showImageHandle) {
         // 图片信息
@@ -1853,6 +1867,7 @@ export default {
           return item.fileId
         }).join(',') : ''
       }
+      console.log('entity', params)
       return params
     },
     getProductParams(params, element) {

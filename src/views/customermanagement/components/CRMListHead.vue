@@ -248,7 +248,7 @@ export default {
   }
   .sc-container {
     // width: 330px;
-   width: 369px;
+    width: 428px;
     // margin: -16px 0 0 -150px;
     transform: translate(-50%, -50%);
     position: absolute;
@@ -258,13 +258,14 @@ export default {
 
   .el-input {
     /deep/ .el-input-group__append {
+      left: -1px;
       background-color: $xr-color-primary;
       border-color: $xr-color-primary;
       color: white;
     }
 
     /deep/ .el-input__inner {
-      width: 316px;
+      width: 375px;
     }
   }
 
