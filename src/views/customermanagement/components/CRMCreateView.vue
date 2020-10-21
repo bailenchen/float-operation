@@ -971,7 +971,7 @@ export default {
      */
     formatLeadsField(res) {
       // 普通LEADS没有教育顾问，介绍人
-      const arr = ['owner_user_id', 'introducer_type', 'introducer_id']
+      const arr = ['owner_user_id', 'introducer_type', 'introducer_name', 'introducer_id']
       let findIndex = -1
       if (this.action && this.action.type !== 'update') {
         arr.forEach(key => {
@@ -981,7 +981,6 @@ export default {
           }
         })
       }
-
       findIndex = res.data.findIndex(o => o.fieldName === 'introducer_name')
       if (!this.action.introduce && findIndex !== -1) {
         res.data.splice(findIndex, 1)
