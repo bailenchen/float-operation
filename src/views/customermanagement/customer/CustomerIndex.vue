@@ -145,7 +145,7 @@
             </template>-->
             <template v-if="item.prop == 'status'">
               <i
-                v-if="scope.row.status == 10"
+                v-if="scope.row.status == 9"
                 class="wk wk-circle-password customer-lock"/>
             </template>
             <template v-else-if="item.prop == 'customerType'">
@@ -384,7 +384,9 @@ export default {
 
 // }
 .student-img {
-  // margin-top: 3px;
-  display: inline-block;
+  margin-top: 2px;
+  // display: inline-block;
+  display: block;
+  border-radius: 50%;
 }
 </style>

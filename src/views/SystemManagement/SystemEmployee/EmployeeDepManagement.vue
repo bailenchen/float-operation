@@ -2,7 +2,7 @@
   <div class="employee-dep-management">
     <xr-header
       :content.sync="searchInput"
-      placeholder="请输入员工名称/登录名"
+      placeholder="请输入员工名称/登录名/硬话机号"
       show-search
       icon-class="wk wk-s-seas"
       icon-color="#26D4DA"
@@ -652,7 +652,8 @@ export default {
         { field: 'deptName', value: '部门', type: 'select', width: '100' },
         { field: 'post', value: '岗位', width: '150' },
         { field: 'parentName', value: '直属上级', type: 'select', width: '150' },
-        { field: 'roleName', value: '角色', type: 'selectCheckout', width: '150' }
+        { field: 'roleName', value: '角色', type: 'selectCheckout', width: '150' },
+        { field: 'hardPhone', value: '硬话机', width: '150' }
       ],
       selectionList: [], // 批量勾选数据
       tableData: [],

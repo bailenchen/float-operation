@@ -324,21 +324,62 @@ export default {
        */
     timeFormatter(row, column, cellValue, index) {
       switch (column.label) {
-        case '外呼接通率': return (cellValue || '0') * 100 + '%'
-        case '接通率': return (cellValue || '0') * 100 + '%'
+        case '外呼接通率': return this.floatToPercent(cellValue)
+        case '接通率': return this.floatToPercent(cellValue)
         case '总通话时长': return this.MillisecondToDate(cellValue)
         case '外呼通话平均时长': return this.MillisecondToDate(cellValue)
         case '外呼通话时长': return this.MillisecondToDate(cellValue)
-        case '呼入通话总时长': return this.MillisecondToDate(cellValue)
+        case '呼入通话总时长': return this.MillisecondToDate(cellValue, '呼入通话总时长')
         case '呼入通话平均时长': return this.MillisecondToDate(cellValue)
-        case '呼入接通率': return (cellValue || '0') * 100 + '%'
+        case '呼入接通率': return this.floatToPercent(cellValue)
         default: return cellValue
+      }
+    },
+    /**
+     * JS小数转百分比
+     */
+    floatToPercent(string) {
+      if (!string) {
+        return '0%'
+      }
+      const formated = Number(string * 100).toFixed(2)
+      return `${formated}%`
+    },
+
+    MillisecondToDate(msd, text) {
+      let time
+      if (msd != null && msd != '') {
+        console.log('sdad1', msd, text)
+        time = parseFloat(msd)
+      } else {
+        console.log('sdad2')
+        return `0秒`
+      }
+      if (time == 0) {
+        return `0秒`
+      }
+      if (time < 60) {
+        console.log('time', time)
+        const formated = Number(time).toFixed(2)
+        return `${formated}秒`
+      } else if (time < 3600) {
+        // const mm = Math.floor(time / 60)
+        // const ss = time - (mm * 60)
+        // const ss1 = ss.toFixed(2)
+        // console.log(ss1)
+        // return `${mm}分${ss1}秒`
+        const mm = Math.floor(time / 60)
+        return mm + '分' + Math.floor(time - (mm * 60)) + '秒'
+      } else {
+        const hh = Math.floor(time / 3600)
+        const mm = Math.floor((time - (hh * 3600)) / 60)
+        return hh + '小时' + mm + '分'
       }
     },
     /**
        * 时间转换
        */
-    MillisecondToDate(msd) {
+    MillisecondToDate1(msd) {
       let time
       if (msd != null && msd != '') {
         time = parseFloat(msd)

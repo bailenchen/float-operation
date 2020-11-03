@@ -309,11 +309,13 @@ export default {
   },
   watch: {
     id: function(val) {
+      console.log('监听id', val)
       if (!this.filedList) {
         this.getBaseInfo(true)
       }
     },
     filedList() {
+      console.log('监听filedList')
       this.list = this.filedList
     }
 
@@ -333,6 +335,7 @@ export default {
     if (this.filedList) {
       this.list = this.filedList
     } else {
+      console.log('mounted周期')
       this.getBaseInfo(true)
     }
   },

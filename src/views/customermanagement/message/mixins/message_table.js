@@ -176,6 +176,8 @@ export default {
           this.showDview = false
         }
       }
+
+      console.log('SCDSJK', this.crmType)
     },
 
     /** 获取列表数据 */

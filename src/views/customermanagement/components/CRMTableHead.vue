@@ -34,6 +34,12 @@
         class="filter-button"
         icon="wk wk-screening"
         @click="showFilterClick">高级筛选</el-button>
+      <el-button
+        v-if="showFilterView"
+        type="primary"
+        class="filter-button"
+        icon="wk wk-screening"
+        @click="globalSearch">全局检索</el-button>
       <filter-form
         v-if="showFilterView"
         :field-list="fieldList"
@@ -135,6 +141,9 @@
       :selection-list="selectionList"
       :examine-info="examineInfo"
       @handle="handleCallBack" />
+
+    <!-- 全局搜索 -->
+    <global-search :visible.sync="globalSearchShow" />
   </div>
 </template>
 
@@ -222,6 +231,7 @@ import OnlineRecharge from './selectionHandle/OnlineRecharge' // 在线充值
 import OfflineWithDraw from './selectionHandle/OfflineWithDraw' // 线下充值和提现
 import DisputeExamine from './selectionHandle/DisputeExamine'
 import { Loading } from 'element-ui'
+import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 
 export default {
   name: 'CRMTableHead', // 客户管理下 重要提醒 回款计划提醒
@@ -241,7 +251,8 @@ export default {
     ChangeDeptHandle,
     OnlineRecharge,
     OfflineWithDraw,
-    DisputeExamine
+    DisputeExamine,
+    GlobalSearch
   },
   props: {
     title: {
@@ -297,7 +308,8 @@ export default {
       isOfflineWithDraw: false, // 线下充值和提现
       isDispute: false,
       moneyType: '',
-      examineInfo: {} // 审核争议信息
+      examineInfo: {}, // 审核争议信息
+      globalSearchShow: false // 全局检索显隐
     }
   },
   computed: {
@@ -1154,6 +1166,12 @@ export default {
       } else if (this.crmType == 'productSetMeal') {
         return '全部套餐'
       }
+    },
+
+    // 全局检索
+    globalSearch() {
+      console.log('全局检索')
+      this.globalSearchShow = true
     }
   }
 }

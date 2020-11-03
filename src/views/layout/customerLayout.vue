@@ -84,42 +84,42 @@ export default {
           label: 'LEADS'
         })
       }
-      if (this.crm.contacts && this.crm.contacts.save) {
-        addItems.push({
-          icon: 'contacts',
-          index: 'contacts',
-          label: '联系人'
-        })
-      }
-      if (this.crm.business && this.crm.business.save) {
-        addItems.push({
-          icon: 'business',
-          index: 'business',
-          label: '商机'
-        })
-      }
+      // if (this.crm.contacts && this.crm.contacts.save) {
+      //   addItems.push({
+      //     icon: 'contacts',
+      //     index: 'contacts',
+      //     label: '联系人'
+      //   })
+      // }
+      // if (this.crm.business && this.crm.business.save) {
+      //   addItems.push({
+      //     icon: 'business',
+      //     index: 'business',
+      //     label: '商机'
+      //   })
+      // }
 
-      if (this.crm.contract && this.crm.contract.save) {
-        addItems.push({
-          icon: 'contract',
-          index: 'contract',
-          label: '合同'
-        })
-      }
-      if (this.crm.receivables && this.crm.receivables.save) {
-        addItems.push({
-          icon: 'receivables',
-          index: 'money',
-          label: '回款'
-        })
-      }
-      if (this.crm.product && this.crm.product.save) {
-        addItems.push({
-          icon: 'product',
-          index: 'product',
-          label: '产品'
-        })
-      }
+      // if (this.crm.contract && this.crm.contract.save) {
+      //   addItems.push({
+      //     icon: 'contract',
+      //     index: 'contract',
+      //     label: '合同'
+      //   })
+      // }
+      // if (this.crm.receivables && this.crm.receivables.save) {
+      //   addItems.push({
+      //     icon: 'receivables',
+      //     index: 'money',
+      //     label: '回款'
+      //   })
+      // }
+      // if (this.crm.product && this.crm.product.save) {
+      //   addItems.push({
+      //     icon: 'product',
+      //     index: 'product',
+      //     label: '产品'
+      //   })
+      // }
       return addItems
     },
     quickAddOffset() {
