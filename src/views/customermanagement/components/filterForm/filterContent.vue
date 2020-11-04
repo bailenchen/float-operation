@@ -16,7 +16,7 @@
             'sign_up',
             'checkStatus'
         ].includes(item.formType)">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getCheckName(item) }}</span>
-        <span v-else-if="item.formType === 'dealStatus'">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getStatus(item.value) }}</span>
+        <span v-else-if="item.formType === 'dealStatus'">{{ item.name +'&nbsp;“' + optionsNames[item.condition]+ '”'+'&nbsp;'+ getStatus(item.value, item.fieldName) }}</span>
         <span v-else-if="item.formType === 'ownerUser'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
         <span v-else-if="item.formType === 'user'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
         <span v-else-if="item.formType === 'single_structure'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].name + '”' }}</span>
@@ -127,8 +127,15 @@ export default {
     /**
      * 成交状态名称
      */
-    getStatus(type) {
+    getStatus(type, fieldName) {
       // console.log('type', type)
+      if (fieldName == 'customer_type') {
+        if (type == 2) {
+          return '是'
+        } else if (type == 1) {
+          return '否'
+        }
+      }
       if (type == 9) {
         return '是'
       } else if (type == 10) {

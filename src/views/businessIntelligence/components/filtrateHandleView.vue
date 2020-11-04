@@ -388,6 +388,7 @@ export default {
           params.type = this.timeTypeValue.value
         }
       }
+      console.log('发送时间', params)
       this.$emit('change', params)
     }
   }

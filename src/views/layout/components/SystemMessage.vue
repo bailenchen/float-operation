@@ -331,6 +331,7 @@ export default {
      * 查看详情
      */
     checkCRMDetail(type, id, dataIndex, data) {
+      console.log('查看详情', type, id, dataIndex, data)
       if (type === 'schedule') {
         this.relationID = id
         if (data.content) {
@@ -360,6 +361,7 @@ export default {
      * 读取消息
      */
     readMessageClick(messageId, index) {
+      console.log('systemMessageReadAPI', messageId)
       systemMessageReadAPI({ messageId })
         .then(res => {
           this.list[index].isRead = 1

@@ -919,6 +919,7 @@ export default {
       }
       // // 进行编辑操作
       if (this.action.type == 'update') {
+        console.log('周这里')
         params.id = this.action.id
       }
 
@@ -1644,7 +1645,7 @@ export default {
       this.saveAndCreate = saveAndCreate
       console.log('保存')
       // return
-      this.$refs.crmForm.validate(valid => {
+      this.$refs.crmForm.validate((valid, obj) => {
         const valMeal = this.crmType == 'productSetMeal' ? this.vv() : '' // 处理课程套餐验证的
         // valMeal.collectionData
         if (valid) {
@@ -1671,6 +1672,7 @@ export default {
             } else {
               this.$refs.examineInfo.validateField((result) => {
                 if (result) {
+                  console.log('这里')
                   var params = this.getSubmiteParams(this.crmForm.crmFields)
                   if (this.examineInfo.examineType === 2) {
                     params['checkUserId'] = this.examineInfo.value[0].userId
@@ -1682,7 +1684,9 @@ export default {
               })
             }
           } else {
+            // console.log('ZASAAAAAAAAAAA')
             var params = this.getSubmiteParams(this.crmForm.crmFields)
+            console.log('AAA111111', params)
             if (isDraft) {
               params.entity.checkStatus = 5
             }
@@ -1695,13 +1699,71 @@ export default {
                 delete params.entity.termTime
               }
             }
-            // console.log(params, 'debugger')
-            console.log('周这里，调研submiteParams')
             console.log(params)
             this.submiteParams(params)
           }
         } else {
           this.loading = false
+          // console.log('validObj', obj)
+          // console.log(Object.keys(obj))
+          // 只有一个报错，并且是mobile
+          if (Object.keys(obj).length === 1) {
+            var index = Object.keys(obj)[0].split('.')[1]
+            if (this.crmForm.crmFields[index].key === 'mobile') {
+              if (this.crmType == 'productSetMeal') {
+                if (!valMeal.isPass) {
+                  return
+                }
+              }
+              this.loading = true
+              if (this.showExamine) {
+                /** 验证审批数据 */
+                if (isDraft) {
+                  // 不验证数据
+                  var params = this.getSubmiteParams(this.crmForm.crmFields)
+                  if (
+                    this.examineInfo.examineType === 2 &&
+                this.examineInfo.hasOwnProperty('value') &&
+                this.examineInfo.value.length
+                  ) {
+                    params['checkUserId'] = this.examineInfo.value[0].userId
+                  }
+                  params.entity.checkStatus = 5
+                  this.submiteParams(params)
+                } else {
+                  this.$refs.examineInfo.validateField((result) => {
+                    if (result) {
+                      var params = this.getSubmiteParams(this.crmForm.crmFields)
+                      if (this.examineInfo.examineType === 2) {
+                        params['checkUserId'] = this.examineInfo.value[0].userId
+                      }
+                      this.submiteParams(params)
+                    } else {
+                      this.loading = false
+                    }
+                  })
+                }
+              } else {
+                var params = this.getSubmiteParams(this.crmForm.crmFields)
+                if (isDraft) {
+                  params.entity.checkStatus = 5
+                }
+                // 增加套餐参数提交
+                if (this.crmType == 'productSetMeal') {
+                  params['list'] = valMeal.collectionData
+                  if (params.entity.termTime && params.entity.termTime.length) {
+                    params.entity['start_purchase_cycle'] = params.entity.termTime[0]
+                    params.entity['end_purchase_cycle'] = params.entity.termTime[1]
+                    delete params.entity.termTime
+                  }
+                }
+                console.log(params)
+                this.submiteParams(params)
+              }
+
+              return
+            }
+          }
           // 提示第一个error
           if (this.$refs.crmForm.fields) {
             for (
@@ -1711,6 +1773,7 @@ export default {
             ) {
               const ruleField = this.$refs.crmForm.fields[index]
               if (ruleField.validateState == 'error') {
+                console.log('ruleField', ruleField)
                 this.$message.error(ruleField.validateMessage)
                 break
               }
@@ -1735,6 +1798,9 @@ export default {
           console.log('添加capital_id')
           console.log(this.action.id)
           params.entity.capital_id = this.action.id
+        } else if (this.crmType == 'customer') {
+          params.entity.email = 2
+          params.entity.customerId = this.action.id
         } else {
           params.entity[key + 'Id'] = this.action.id
         }
@@ -1764,6 +1830,10 @@ export default {
         if (this.action.introduce) {
           params.entity.channel_id = 0
         }
+      }
+
+      if (this.crmType == 'customer' && this.action.type == 'save') {
+        params.entity.email = 1
       }
       console.log('save: ', params)
       this.loading = false
@@ -1850,7 +1920,7 @@ export default {
         } else if (element.data.key == 'introducer_type') {
           console.log(111)
         } else {
-          console.log('saasa11')
+          console.log('saasa11', element)
           element.data.value = this.getRealParams(element)
           console.log('data', element.data)
           params.field.push(element.data)

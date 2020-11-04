@@ -112,6 +112,11 @@ export default {
           icon: 'wk wk-invoice',
           color: '#6995FF',
           type: 'invoice'
+        },
+        customer1: {
+          icon: 'wk wk-customer',
+          color: '#6995FF',
+          type: 'customer'
         }
       }
 
@@ -134,7 +139,7 @@ export default {
           key = 'receivables'
         } else if ([14, 15, 23, 29, 32].includes(this.data.type)) {
           key = 'customer'
-        } else if ([38, 39, 40].includes(this.data.type)) {
+        } else if ([38, 39, 40, 41].includes(this.data.type)) {
           key = 'leadsCustomer'
         } else if ([16, 17].includes(this.data.type)) {
           key = 'contacts'
@@ -193,7 +198,8 @@ export default {
         37: `${this.data.realname}提交了`,
         38: `${this.data.realname} LEADS待审核审批提醒`,
         39: `${this.data.realname} LEADS拒绝通知`,
-        40: `${this.data.realname} LEADS通过通知`
+        40: `${this.data.realname} LEADS通过通知`,
+        41: ``
       }[this.data.type]
     },
 
@@ -260,7 +266,8 @@ export default {
         37: `发票审批，请及时处理`,
         38: `争议待审批，请及时处理`,
         39: `争议拒绝`,
-        40: `争议通过`
+        40: `争议通过`,
+        41: `在【${this.data.content}】重新激活，请注意`
       }[this.data.type]
     }
   },
