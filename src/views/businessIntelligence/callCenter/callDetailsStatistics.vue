@@ -314,7 +314,7 @@ export default {
           this.$message.error('没有录音文件')
           return
         } else {
-          const blob = new Blob([res], {
+          const blob = new Blob([res.data], {
             type: ''
           })
           downloadFileWithBuffer(blob, fileName || '文件')
