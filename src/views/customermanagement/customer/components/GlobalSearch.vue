@@ -157,17 +157,17 @@ export default {
     },
 
     getList() {
-      var reg = /^1\d{10}$/g
-      if (!this.searchContent) {
-        return
-      }
-      if (!reg.test(this.searchContent)) {
-        this.$message({
-          message: '手机号格式有误',
-          type: 'error'
-        })
-        return
-      }
+      // var reg = /^1\d{10}$/g
+      // if (!this.searchContent) {
+      //   return
+      // }
+      // if (!reg.test(this.searchContent)) {
+      //   this.$message({
+      //     message: '手机号格式有误',
+      //     type: 'error'
+      //   })
+      //   return
+      // }
 
       const params = {
         customerType: 1,
@@ -175,7 +175,8 @@ export default {
         page: 1,
         search: this.searchContent,
         type: 2,
-        overall: ''
+        overall: '',
+        accurate: 'search'
       }
 
       this.loading = true
