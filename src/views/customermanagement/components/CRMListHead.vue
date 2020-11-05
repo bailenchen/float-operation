@@ -119,7 +119,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['crm']),
+    ...mapGetters(['crm', 'userInfo']),
     canSave() {
       if (this.isSeas || this.isStudent) {
         return false
@@ -187,12 +187,22 @@ export default {
         this.createCRMType = this.crmType
         this.createActionInfo = { type: 'save' }
         if (this.crmType === 'customer' && action === 'introduce') {
-          this.createActionInfo = { type: 'save', introduce: true }
+          this.createActionInfo = {
+            type: 'save',
+            introduce: true,
+            userInfo: {
+              userId: this.userInfo.userId,
+              realname: this.userInfo.realname
+            }
+          }
           // 如果是学员
           if (this.isStudent) {
             this.createActionInfo.isStudent = true
           }
         }
+        console.log('传递给creat组件一个userID')
+
+
         this.isCreate = !this.isCreate
       }
     },

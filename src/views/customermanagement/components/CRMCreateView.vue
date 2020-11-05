@@ -52,6 +52,7 @@
                     :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
                     :disabled="item.disabled"
                     :receivables-id="editId"
+
                     :info-params="getInfoParams(item)"
                     :use-delete="item.useDelete"
                     @value-change="fieldValueChange" />
@@ -145,6 +146,8 @@ import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
 import { crmReturnVisitSaveAPI } from '@/api/customermanagement/visit'
 import { crmproductSetMealCalPrice, crmProductSetMealSave } from '@/api/customermanagement/meal'
+
+import { usersList } from '@/api/common'
 
 import {
   regexIsCRMNumber,
@@ -327,7 +330,8 @@ export default {
 
       formsList: [{}],
       productSetMealPrice: 0,
-      leadsNumber: false
+      leadsNumber: false,
+      userList: null // 系统用户列表
     }
   },
   computed: {
@@ -400,6 +404,19 @@ export default {
     }
     if (this.crmType == 'capitalAccount') {
       this.leadsNumber = true
+    }
+
+    if (this.crmType == 'customer' && this.action.userInfo) {
+      console.log('当前登录用户', this.action.userInfo)
+      usersList({ pageType: 0 }).then(res => {
+        console.log(res)
+        this.userList = res.data
+        this.crmForm.crmFields.forEach(item => {
+          if (item.key == 'leads_registrant_id') {
+            item.value = [this.action.userInfo]
+          }
+        })
+      }).catch(() => {})
     }
   },
   mounted() {
@@ -923,6 +940,8 @@ export default {
         params.id = this.action.id
       }
 
+      console.log('参数', params)
+
       filedGetField(params)
         .then(res => {
           res.data = res.data.filter(o => {
@@ -971,6 +990,7 @@ export default {
      * @param res
      */
     formatLeadsField(res) {
+      console.log('leads字段', res)
       // 普通LEADS没有教育顾问，介绍人
       const arr = ['owner_user_id', 'introducer_type', 'introducer_name', 'introducer_id']
       let findIndex = -1
@@ -986,6 +1006,13 @@ export default {
       if (!this.action.introduce && findIndex !== -1) {
         res.data.splice(findIndex, 1)
       }
+      // 普通LEADS删除leads登记人
+      findIndex = res.data.findIndex(o => o.fieldName === 'leads_registrant_id')
+      if (!this.action.introduce && findIndex !== -1) {
+        res.data.splice(findIndex, 1)
+      }
+      console.log('aaaaaaaaaaaaaa', res.data)
+
       // 转介绍LEADS没有渠道来源
       findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
       if (findIndex !== -1) {
