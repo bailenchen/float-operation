@@ -46,7 +46,8 @@
   </div>
 </template>
 <script type="text/javascript">
-import { usersList } from '@/api/common'
+// import { usersList } from '@/api/common'
+import { queryUserListAPI } from '@/api/common'
 import { crmCallCheckAuthAll } from '@/api/customermanagement/customer'
 import { objDeepCopy } from '@/utils'
 import PinyinMatch from 'pinyin-match'
@@ -92,6 +93,10 @@ export default {
   data() {
     return {
       list: [],
+      // allList: null,
+      startIndex: 0,
+      endIndex: 10,
+      loadDomNum: 10, // 滚动后每次加载10条DOM
       selectIds: [], // 选择项
       loading: false, // 加载动画
       searchInput: '',
@@ -104,6 +109,16 @@ export default {
       return this.list.filter(item => {
         return PinyinMatch.match(item.realname, this.searchInput)
       })
+
+      // if (this.searchInput) {
+      //   return this.allList.filter(item => {
+      //     return PinyinMatch.match(item.realname, this.searchInput)
+      //   })
+      // } else {
+      //   return this.list.filter(item => {
+      //     return PinyinMatch.match(item.realname, this.searchInput)
+      //   })
+      // }
     },
 
     max() {
@@ -140,6 +155,8 @@ export default {
       this.loading = true
       this.getRequest()(this.getParams())
         .then(res => {
+          // this.allList = res.data
+          // this.list = this.allList.slice(this.startIndex, this.endIndex)
           this.list = res.data
           this.checkItems(this.selectedData)
           this.loading = false
@@ -158,14 +175,14 @@ export default {
       } else if (this.infoRequest) {
         return this.infoRequest
       } else if (this.infoType === 'default') {
-        return usersList
+        return queryUserListAPI
       } else if (
         this.infoType === 'crm_contract' ||
         this.infoType === 'crm_invoice' ||
         this.infoType === 'crm_receivables' ||
         this.infoType === 'oa_examine'
       ) {
-        return usersList
+        return queryUserListAPI
       }
     },
 
@@ -241,6 +258,15 @@ export default {
     clearAll() {
       this.selectItems = []
       this.$emit('changeCheckout', [], [])
+    },
+    load() {
+      var arr = this.list
+      if (this.allList) {
+        arr = [...arr, ...this.allList.slice(this.startIndex, this.endIndex)]
+        this.startIndex = this.endIndex
+        this.endIndex += this.loadDomNum
+        this.list = arr
+      }
     }
   }
 }

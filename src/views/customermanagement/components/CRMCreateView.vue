@@ -147,7 +147,7 @@ import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
 import { crmReturnVisitSaveAPI } from '@/api/customermanagement/visit'
 import { crmproductSetMealCalPrice, crmProductSetMealSave } from '@/api/customermanagement/meal'
 
-import { usersList } from '@/api/common'
+import { queryUserListAPI } from '@/api/common'
 
 import {
   regexIsCRMNumber,
@@ -404,19 +404,6 @@ export default {
     }
     if (this.crmType == 'capitalAccount') {
       this.leadsNumber = true
-    }
-
-    if (this.crmType == 'customer' && this.action.userInfo) {
-      console.log('当前登录用户', this.action.userInfo)
-      usersList({ pageType: 0 }).then(res => {
-        console.log(res)
-        this.userList = res.data
-        this.crmForm.crmFields.forEach(item => {
-          if (item.key == 'leads_registrant_id') {
-            item.value = [this.action.userInfo]
-          }
-        })
-      }).catch(() => {})
     }
   },
   mounted() {
@@ -978,6 +965,23 @@ export default {
           // }
 
           this.getcrmRulesAndModel(list)
+
+          if (this.crmType == 'customer' && this.action.userInfo) {
+            console.log('当前登录用户', this.action.userInfo)
+            queryUserListAPI().then(res => {
+              console.log(res)
+              this.userList = res.data
+              this.crmForm.crmFields.forEach(item => {
+                // console.log('---', item)
+                if (item.key == 'leads_registrant_id') {
+                  item.value = [this.action.userInfo]
+                }
+              })
+              console.log('aaaaaaaaaaaaaaaa', this.userList)
+              console.log('BBBBBBBBBBBB', this.crmForm)
+            }).catch(() => {})
+          }
+
           this.loading = false
         })
         .catch(() => {
@@ -1011,7 +1015,16 @@ export default {
       if (!this.action.introduce && findIndex !== -1) {
         res.data.splice(findIndex, 1)
       }
-      console.log('aaaaaaaaaaaaaa', res.data)
+
+      // res.data.forEach(item => {
+      //   console.log('---', item)
+      //   if (item.fieldName == 'leads_registrant_id') {
+      //     console.log('1597--', item)
+      //     item.value = [this.action.userInfo]
+      //   }
+      // })
+
+      console.log('预处理leads', this.action.userInfo, res.data)
 
       // 转介绍LEADS没有渠道来源
       findIndex = res.data.findIndex(o => o.fieldName === 'channel_id')
@@ -1021,6 +1034,12 @@ export default {
           res.data.splice(findIndex, 1)
         }
       }
+
+      // this.crmForm.crmFields.forEach(item => {
+      //     if (item.key == 'leads_registrant_id') {
+      //       item.value = [this.action.userInfo]
+      //     }
+      //   })
     },
 
     /**

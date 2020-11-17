@@ -12,6 +12,13 @@ export function usersList(data) {
   })
 }
 
+export function queryUserListAPI() {
+  return request({
+    url: 'system/user/queryUserListActivation',
+    method: 'post'
+  })
+}
+
 /**
  *
  * @param {*} data

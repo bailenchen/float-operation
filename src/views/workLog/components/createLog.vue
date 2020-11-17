@@ -119,6 +119,8 @@
           </div>
         </el-popover>
 
+        <span @click="abc=!abc">点击</span>
+
         <div class="control-item">
           <span class="cursor-default">发送给：</span>
           <span
@@ -225,6 +227,7 @@ export default {
   },
   data() {
     return {
+      abc: false,
       form: {},
       // 关联简报
       isRelevanceReport: true,
