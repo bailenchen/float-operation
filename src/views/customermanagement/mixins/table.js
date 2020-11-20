@@ -20,6 +20,10 @@ import {
   crmCustomerStarAPI
 } from '@/api/customermanagement/customer'
 import {
+  crmInsideUserIndex,
+  CrmInsideUserExcelAllExport
+} from '@/api/customermanagement/address'
+import {
   crmAccountExcelAllExport
 } from '@/api/customermanagement/account'
 import { crmAccountIndex } from '@/api/customermanagement/account'
@@ -249,6 +253,8 @@ export default {
         return crmReturnVisitIndexAPI
       } else if (this.crmType === 'capitalAccount') {
         return crmAccountIndex
+      } else if (this.crmType === 'insideUser') {
+        return crmInsideUserIndex
       }
     },
     /** 获取字段 */
@@ -540,7 +546,8 @@ export default {
           contract: crmContractExcelAllExportAPI,
           receivables: crmReceivablesExcelAllExportAPI,
           product: crmProductExcelAllExport,
-          productSetMeal: crmProductSetMealExcelAllExport
+          productSetMeal: crmProductSetMealExcelAllExport,
+          insideUser: CrmInsideUserExcelAllExport
         }[this.crmType]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })

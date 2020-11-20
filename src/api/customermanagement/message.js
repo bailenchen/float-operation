@@ -77,6 +77,21 @@ export function crmMessageFollowCustomerAPI(data) {
 }
 
 /**
+ * 分配给我的客户客户
+ * @param {*} data
+ */
+export function crmMessageAllotCustomerAPI(data) {
+  return request({
+    url: 'CrmBackLog/allotCustomer',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
  * 即将到期合同
  * @param {*} data
  */

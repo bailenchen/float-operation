@@ -35,7 +35,7 @@
         icon="wk wk-screening"
         @click="showFilterClick">高级筛选</el-button>
       <el-button
-        v-if="showFilterView"
+        v-if="showFilterView && crmType != 'insideUser'"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
@@ -142,6 +142,11 @@
       :examine-info="examineInfo"
       @handle="handleCallBack" />
 
+    <mode-follow
+      :visible.sync="isFollow"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
+
     <!-- 全局搜索 -->
     <global-search :visible.sync="globalSearchShow" />
   </div>
@@ -210,6 +215,10 @@ import {
 import {
   crmReturnVisitDeleteAPI
 } from '@/api/customermanagement/visit'
+import {
+  crmInsideUserDelete,
+  CrmInsideUserExcelExport
+} from '@/api/customermanagement/address'
 import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 
 
@@ -230,6 +239,7 @@ import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中�
 import OnlineRecharge from './selectionHandle/OnlineRecharge' // 在线充值
 import OfflineWithDraw from './selectionHandle/OfflineWithDraw' // 线下充值和提现
 import DisputeExamine from './selectionHandle/DisputeExamine'
+import ModeFollow from './selectionHandle/ModeFollow'
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 
@@ -252,6 +262,7 @@ export default {
     OnlineRecharge,
     OfflineWithDraw,
     DisputeExamine,
+    ModeFollow,
     GlobalSearch
   },
   props: {
@@ -309,7 +320,8 @@ export default {
       isDispute: false,
       moneyType: '',
       examineInfo: {}, // 审核争议信息
-      globalSearchShow: false // 全局检索显隐
+      globalSearchShow: false, // 全局检索显隐
+      isFollow: false // 修改跟进
     }
   },
   computed: {
@@ -466,7 +478,8 @@ export default {
             contract: crmContractExcelExportAPI,
             receivables: crmReceivablesExcelExportAPI,
             product: crmProductExcelExport,
-            productSetMeal: crmProductSetMealExcelExport
+            productSetMeal: crmProductSetMealExcelExport,
+            insideUser: CrmInsideUserExcelExport
           }[this.crmType]
           params.ids = this.selectionList
             .map((item) => {
@@ -474,6 +487,8 @@ export default {
                 return item.productId
               } else if (this.crmType == 'capitalAccount') {
                 return item.capitalId
+              } else if (this.crmType == 'insideUser') {
+                return item.insideId
               } else {
                 return item[`${this.crmType}Id`]
               }
@@ -593,6 +608,8 @@ export default {
             this.isDispute = true
           })
           .catch()
+      } else if (type == 'follow') {
+        this.isFollow = true
       }
     },
     confirmHandle(type) {
@@ -702,6 +719,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['capitalId']
           })
+        } else if (this.crmType == 'insideUser') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['insideId']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -720,7 +741,8 @@ export default {
           marketing: crmMarketingDeleteAPI,
           visit: crmReturnVisitDeleteAPI,
           product: crmProductDeleteAPI,
-          productSetMeal: crmProductSetMealDeleteAPI
+          productSetMeal: crmProductSetMealDeleteAPI,
+          insideUser: crmInsideUserDelete
         }[this.crmType]
         var params = null
         if (this.crmType == 'productSetMeal') {
@@ -730,6 +752,10 @@ export default {
         } else if (this.crmType == 'capitalAccount') {
           params = {
             capitalIds: ids.join(',')
+          }
+        } else if (this.crmType == 'insideUser') {
+          params = {
+            insideIds: ids.join(',')
           }
         } else {
           params = {
@@ -915,6 +941,11 @@ export default {
           name: '争议',
           type: 'dispute',
           icon: 'transfer'
+        },
+        follow: {
+          name: '修改跟进',
+          type: 'follow',
+          icon: 'transfer'
         }
       }
       if (this.crmType == 'leads') {
@@ -1042,6 +1073,12 @@ export default {
         return this.forSelectionHandleItems(handleInfos, [
           'delete'
         ])
+      } else if (this.crmType == 'insideUser') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'follow',
+          'export',
+          'delete'
+        ])
       }
     },
     forSelectionHandleItems(handleInfos, array) {
@@ -1133,6 +1170,12 @@ export default {
             return false
           }
         }
+      } else if (type == 'follow') {
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].activity
+        } else {
+          return false
+        }
       }
 
       return true
@@ -1165,6 +1208,8 @@ export default {
         return '全部学员'
       } else if (this.crmType == 'productSetMeal') {
         return '全部套餐'
+      } else if (this.crmType == 'insideUser') {
+        return '全部通讯录'
       }
     },
 

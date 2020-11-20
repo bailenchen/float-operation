@@ -5,7 +5,7 @@
       <p v-for="(item, index) in list" :key="index" style="padding: 10px 20px">
         <el-button class="el-button--primary" @click="callDailout(item.modelId, item.model, item.phoneNumber)">呼出
         </el-button>
-        <span>{{ item.phoneNumber }} ( {{ item.name }} )</span>
+        <span>{{ handleTel(item) }} ( {{ item.name }} )</span>
       </p>
     </div>
     <p v-else style="padding: 10px 20px">
@@ -49,7 +49,7 @@ export default {
           this.loading = true
           crmCallQueryPhoneNumber({
             model: this.crmType,
-            modelId: this.scope.row[`${this.crmType}Id`]
+            modelId: this.crmType == 'insideUser' ? this.scope.row['insideId'] : this.scope.row[`${this.crmType}Id`]
           }).then(res => {
             this.list = res.data
             this.loading = false
@@ -69,6 +69,14 @@ export default {
   mounted() {
   },
   methods: {
+    // 处理手机中间几位号为*
+    handleTel(item) {
+      if (this.scope.row.mobile && this.scope.row.mobile.includes('*')) {
+        return this.scope.row.mobile
+      } else {
+        return item.phoneNumber
+      }
+    },
     callCheckClick(e, scope) {
       this.list.forEach(item => {
         this.$set(item, 'callShow', false)
@@ -94,6 +102,11 @@ export default {
       } else if (model === 'customer') {
         data.id = id
         data.type = 'customer'
+        this.$emit('changeType', data)
+        this.$bus.emit('call-message', data)
+      } else if (model === 'insideUser') {
+        data.id = id
+        data.type = 'insideUser'
         this.$emit('changeType', data)
         this.$bus.emit('call-message', data)
       } else {

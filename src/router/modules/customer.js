@@ -53,7 +53,7 @@ export default [
         icon: 'customer'
       }
     }]
-  }
+  },
 
 
 
@@ -127,6 +127,19 @@ export default [
   //     }
   //   }]
   // },
+  {
+    ...layout({
+      permissions: ['crm', 'insideUser']
+    }),
+    children: [{
+      path: 'inner-address',
+      component: () => import('@/views/customermanagement/internalAddress/AddressIndex'),
+      meta: {
+        title: '内部通讯录',
+        icon: 'grid'
+      }
+    }]
+  }
 
   // {
   //   ...layout({

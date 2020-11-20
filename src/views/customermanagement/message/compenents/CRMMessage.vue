@@ -96,12 +96,12 @@
       style="width: 100%"
       @row-click="handleRowClick"
       @selection-change="handleSelectionChange">
-      <el-table-column
+      <!-- <el-table-column
         v-if="showSelection"
         show-overflow-tooltip
         type="selection"
         align="center"
-        width="55"/>
+        width="55"/> -->
       <el-table-column
         v-if="showCall"
         :resizable="false"
@@ -218,6 +218,7 @@ import {
   UpdateAllTodayCustomer,
   UpdateAllFollowUpLeads,
   crmMessageHandleDisputedStatusAPI
+  // crmMessageFollowCustomerAPI
 } from '@/api/customermanagement/message'
 import message_table from '../mixins/message_table'
 import filterForm from '@/views/customermanagement/components/filterForm'
@@ -290,11 +291,11 @@ export default {
       /** 勾选数据操作 */
       selectionList: [], // 勾选的数据
       selectionButtonList: [
-        {
-          name: '已处理',
-          type: 'follow',
-          icon: 'wk wk-edit'
-        }
+        // {
+        //   name: '已处理',
+        //   type: 'follow',
+        //   icon: 'wk wk-edit'
+        // }
       ], // 操作按钮列表
       /** 控制详情展示 */
       rowID: '', // 行信息
@@ -312,7 +313,9 @@ export default {
     showSelection() {
       return [
         'todayCustomer',
+        'allotCustomer',
         'followCustomer',
+        'putInPoolRemind',
         'disputed'
       ].includes(this.infoType)
     },
@@ -321,7 +324,9 @@ export default {
     showFilterView() {
       return [
         'todayCustomer',
+        'allotCustomer',
         'followCustomer',
+        'putInPoolRemind',
         'disputed'
       ].includes(this.infoType)
     },
@@ -344,22 +349,28 @@ export default {
 
     // 展示我的/下属筛选
     showSubType() {
+      console.log(this.infoType, 'bjjjjj')
       return [
         'todayCustomer',
         'followCustomer',
         'returnVisitRemind',
+        'putInPoolRemind',
         'disputed'
       ].includes(this.infoType)
     },
 
     // 下拉数据
     options() {
+      console.log(this.infoType, 'nkkkkkk')
       if (this.infoType === 'todayCustomer') {
         return [
           { name: '今日需联系', value: 1 },
           { name: '已逾期', value: 2 },
           { name: '已处理', value: 3 }
         ]
+      }
+      if (this.infoType == 'allotCustomer') {
+        return [{ name: '待跟进', value: 1 }, { name: '已跟进', value: 2 }]
       }
       return []
       // if (this.infoType == 'todayCustomer') {
@@ -394,6 +405,7 @@ export default {
     showCall() {
       if (
         this.infoType == 'todayCustomer' ||
+        this.infoType == 'allotCustomer' ||
         this.infoType == 'followLeads' ||
         this.infoType == 'putInPoolRemind' ||
         this.infoType == 'followCustomer') {
@@ -424,6 +436,7 @@ export default {
 
   watch: {
     show() {
+      console.log('111111')
       if (this.showOptions && this.options.length > 0) {
         this.optionsType = this.options[0].value
       }
@@ -498,6 +511,7 @@ export default {
             const request = {
               todayCustomer: crmMessageHandleStatusAPI,
               followCustomer: crmMessageHandleStatusAPI,
+              // allotCustomer: crmMessageFollowCustomerAPI,
               disputed: crmMessageHandleDisputedStatusAPI
             }[this.infoType]
             request({
@@ -589,6 +603,7 @@ export default {
       console.log('点击111')
       if (
         this.infoType == 'todayCustomer' ||
+        this.infoType == 'allotCustomer' ||
         this.infoType == 'followCustomer' ||
         this.infoType == 'putInPoolRemind') {
         this.showCount = val.customerId
@@ -640,6 +655,7 @@ export default {
     showCallCenter(row) {
       if (
         this.infoType == 'todayCustomer' ||
+        this.infoType == 'allotCustomer' ||
         this.infoType == 'followCustomer' ||
         this.infoType == 'putInPoolRemind') {
         if (row.customerId === this.showCount) {

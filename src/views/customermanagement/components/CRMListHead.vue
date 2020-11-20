@@ -131,6 +131,8 @@ export default {
     titleIcon() {
       if (this.crmType == 'productSetMeal') {
         return require(`@/assets/img/crm/product.png`)
+      } else if (this.crmType == 'insideUser') {
+        return require(`@/assets/img/crm/product.png`)
       }
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },

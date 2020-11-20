@@ -9,7 +9,7 @@ import {
   crmMessageCheckContractAPI,
   crmMessageCheckReceivablesAPI,
   crmMessageFollowLeadsAPI,
-  // crmMessageFollowCustomerAPI,
+  crmMessageAllotCustomerAPI,
   crmMessagEndContractAPI,
   crmMessagRemindreceivablesplanAPI,
   crmMessagRemindCustomerAPI,
@@ -43,7 +43,8 @@ export default {
       // }
       // return true
       return [
-        'todayCustomer'
+        'todayCustomer',
+        'allotCustomer'
       ].includes(this.infoType)
     }
   },
@@ -220,7 +221,7 @@ export default {
         'todayCustomer': crmMessageTodayCustomerAPI,
         'followCustomer': crmMessagePromiseAPI,
         'followLeads': crmMessageFollowLeadsAPI,
-        // 'followCustomer': crmMessageFollowCustomerAPI,
+        'allotCustomer': crmMessageAllotCustomerAPI,
         'checkContract': crmMessageCheckContractAPI,
         'checkReceivables': crmMessageCheckReceivablesAPI,
         'remindReceivablesPlan': crmMessagRemindreceivablesplanAPI,
