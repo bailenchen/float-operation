@@ -136,7 +136,7 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          :sortable="item.prop != 'poolDay' ? 'custom' : false"
+          :sortable="!(item.prop == 'poolDay' || item.prop == 'seaDays') ? 'custom' : false"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <!--<template v-if="item.prop == 'dealStatus'">

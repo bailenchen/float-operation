@@ -304,7 +304,25 @@ export default {
                   width = 140
                 }
               } else {
-                if (['leadsNumber', 'mobile', 'telephone', 'gradeName', 'followUpTime', 'nextTime', 'visitTime', 'promisedVisitTime', 'createTime', 'updateTime'].includes(element.fieldName)) {
+                if ([
+                  'leadsNumber',
+                  'mobile',
+                  'telephone',
+                  'gradeName',
+                  'followUpTime',
+                  'nextTime',
+                  'visitTime',
+                  'promisedVisitTime',
+                  'channelIdName',
+                  'leadsStatus',
+                  'createTime',
+                  'customerType',
+                  'followUpText',
+                  'signUpPossibility',
+                  'introducerTypeName',
+                  'leadsRegistrantName',
+                  'seaDays',
+                  'updateTime'].includes(element.fieldName)) {
                   width = {
                     leadsNumber: 140,
                     mobile: 135,
@@ -315,7 +333,15 @@ export default {
                     visitTime: 150,
                     promisedVisitTime: 150,
                     createTime: 150,
-                    updateTime: 150
+                    updateTime: 150,
+                    channelIdName: 120,
+                    leadsStatus: 115,
+                    customerType: 80,
+                    followUpText: 130,
+                    signUpPossibility: 120,
+                    introducerTypeName: 110,
+                    leadsRegistrantName: 120,
+                    seaDays: 135
                   }[element.fieldName]
                 } else {
                   width = element.width
