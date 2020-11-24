@@ -80,8 +80,9 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
+      const keytype = this.crmType === 'student' ? 'customer' : this.crmType
       crmIndexFieldRecord({
-        types: crmTypeModel[this.crmType],
+        types: crmTypeModel[keytype],
         actionId: this.id
       })
         .then(res => {

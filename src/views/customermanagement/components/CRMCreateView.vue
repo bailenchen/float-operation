@@ -1074,6 +1074,7 @@ export default {
           value: []
         })
       }
+      console.log(list, 'list---')
       let showStyleIndex = -1
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
@@ -1180,9 +1181,10 @@ export default {
           params['data'] = item
           params['disabled'] = false // 是否可交互
           params['showblock'] = false // 展示整行效果
-          if (index % 2 == 0) {
-            showStyleIndex = -1
-          }
+          // if (index % 2 == 0) {
+          //   showStyleIndex = -1
+          // }
+          params['styleIndex'] = showStyleIndex
 
           // 相关添加 并且商机存在 获取产品
           // if (this.action.type == 'relative') {

@@ -12,7 +12,7 @@
       <div class="main-item">
         <div class="follow-label">跟进状态：</div>
         <div class="form">
-          <el-select v-model="followUpResults" placeholder="请选择">
+          <el-select v-model="followUpResults" clearable placeholder="请选择">
             <el-option
               v-for="item in statusList"
               :key="item.value"
@@ -123,13 +123,6 @@ export default {
      * 确定
      */
     handleConfirm() {
-      if (!this.followUpResults) {
-        this.$message.error('请选择跟进状态')
-        return
-      } else if (!this.followUpText) {
-        this.$message.error('请输入跟进内容')
-        return
-      }
       const params = {
         insideId: this.selectionList[0].insideId,
         followUpResults: this.followUpResults,

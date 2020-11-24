@@ -435,7 +435,8 @@ export default {
      */
     getFilterFieldInfo() {
       const params = {}
-      params.label = crmTypeModel[this.crmType]
+      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
+      params.label = crmTypeModel[keytype]
 
       const request = filterIndexfields
 
@@ -449,9 +450,10 @@ export default {
     handleFilter(form) {
       this.filterObj = form
       this.showFilter = false
+      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
       if (form.saveChecked) {
         crmSceneSave({
-          type: crmTypeModel[this.crmType],
+          type: crmTypeModel[keytype],
           isDefault: form.saveDefault ? 1 : 0,
           name: form.saveName,
           data: JSON.stringify(form.obj)

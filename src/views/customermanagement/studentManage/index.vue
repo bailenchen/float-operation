@@ -37,11 +37,11 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (!to.params || !['customer', 'capitalAccount'].includes(to.params.type)) {
+    if (!to.params || !['student', 'capitalAccount'].includes(to.params.type)) {
       next({
         name: 'StudentManageIndex',
         params: {
-          type: 'customer'
+          type: 'student'
         },
         replace: true
       })

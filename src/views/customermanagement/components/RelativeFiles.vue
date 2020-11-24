@@ -167,6 +167,7 @@ export default {
   methods: {
     getDetail() {
       this.loading = true
+      const keytype = this.crmType === 'student' ? 'customer' : this.crmType
       const request = {
         leads: crmLeadsFileListAPI,
         customer: crmCustomerFileListAPI,
@@ -179,14 +180,14 @@ export default {
         visit: crmReturnVisitFileAPI,
         invoice: crmInvoiceFileListAPI,
         productSetMeal: crmProductSetMealFileListAPI
-      }[this.crmType]
+      }[keytype]
       const params = {}
-      if (this.crmType == 'productSetMeal') {
+      if (keytype == 'productSetMeal') {
         params.productId = this.id
-      } else if (this.crmType == 'capitalAccount') {
+      } else if (keytype == 'capitalAccount') {
         params.capitalId = this.id
       } else {
-        params[`${this.crmType}Id`] = this.id
+        params[`${keytype}Id`] = this.id
       }
       request(params)
         .then(res => {

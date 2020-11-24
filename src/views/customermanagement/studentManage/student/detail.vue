@@ -24,7 +24,7 @@
           :head-details="headDetails"
           :id="id"
           :crm-type="crmType"
-          is-student
+          :click-field="clickField"
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
@@ -176,13 +176,17 @@ export default {
       default: () => {
         return {}
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       // 展示加载loading
       loading: false,
-      crmType: 'customer',
+      crmType: 'student',
       headDetails: [
         { title: '学员编号', value: '', field: 'leadsNumber' },
         { title: 'LEADS来源', value: '', field: 'channelIdName' },

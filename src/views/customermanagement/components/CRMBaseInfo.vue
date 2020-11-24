@@ -238,8 +238,9 @@ export default {
           this.loading = false
         })
       } else {
+        const keytype = this.crmType == 'student' ? 'customer' : this.crmType
         const params = {
-          types: crmTypeModel[this.crmType],
+          types: crmTypeModel[keytype],
           id: this.id
         }
 
@@ -247,6 +248,7 @@ export default {
         if (this.poolId) {
           params.poolId = this.poolId
         }
+
 
         filedGetInformation(params)
           .then(res => {

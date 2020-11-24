@@ -61,8 +61,9 @@ export default {
   },
   methods: {
     getSceneList() {
+      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
       crmSceneIndex({
-        type: crmTypeModel[this.crmType]
+        type: crmTypeModel[keytype]
       })
         .then(res => {
           const defaultScenes = res.data.filter(function(item, index) {

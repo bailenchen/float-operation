@@ -8,6 +8,7 @@
     :listener-ids="listenerIDs"
     :no-listener-ids="noListenerIDs"
     :no-listener-class="noListenerClass"
+    :click-field="clickField"
     class="d-view"
     @handle="detailHandle"
     @hide-view="hiddenView"
@@ -47,12 +48,12 @@ export default {
   props: {
     /** 模块ID */
     id: [String, Number],
-    isStudent: {
-      type: Boolean,
-      default: false
-    },
     /** 没有值就是全部类型 有值就是当个类型 */
     crmType: {
+      type: String,
+      default: ''
+    },
+    clickField: {
       type: String,
       default: ''
     },
@@ -99,15 +100,12 @@ export default {
       console.log('监听到', type)
       console.log(this.crmType)
 
-
-      if (this.isStudent) {
-        this.tabName = 'StudentDetail'
-        return
-      }
       if (this.crmType == 'leads') {
         this.tabName = 'clue-detail'
       } else if (this.crmType == 'customer') {
         this.tabName = 'customer-detail'
+      } else if (this.crmType == 'student') {
+        this.tabName = 'StudentDetail'
       } else if (this.crmType == 'capitalAccount') {
         this.tabName = 'account-detail'
       } else if (this.crmType == 'contacts') {
@@ -128,6 +126,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.crmType, '-----')
     if (this.visible) {
       document.body.appendChild(this.$el)
       this.$el.style.zIndex = getMaxIndex()

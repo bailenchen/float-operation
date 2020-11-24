@@ -208,8 +208,9 @@ export default {
 
       // const types = this.crmType === 'capitalAccount' ? 23 : crmTypeModel[this.crmType]
       // console.log(types)
+      const keytype = this.crmType === 'student' ? 'customer' : this.crmType
       const params = {
-        types: crmTypeModel[this.crmType],
+        types: crmTypeModel[keytype],
         id: this.id
       }
 

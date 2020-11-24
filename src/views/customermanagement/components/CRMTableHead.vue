@@ -280,10 +280,6 @@ export default {
       type: Boolean,
       default: false
     },
-    isStudent: {
-      type: Boolean,
-      default: false
-    },
     poolId: [String, Number]
   },
   data() {
@@ -379,7 +375,8 @@ export default {
       if (this.isSeas) {
         params.poolId = this.poolId
       } else {
-        params.label = crmTypeModel[this.crmType]
+        const keytype = this.crmType === 'student' ? 'customer' : this.crmType
+        params.label = crmTypeModel[keytype]
       }
 
       console.log(this.isSeas)
@@ -425,8 +422,9 @@ export default {
       if (data.type == 'set') {
         this.showSceneSet = true
       } else if (data.type == 'add') {
+        const keytype = this.crmType == 'student' ? 'customer' : this.crmType
         filterIndexfields({
-          label: crmTypeModel[this.crmType]
+          label: crmTypeModel[keytype]
         })
           .then(res => {
             this.fieldList = res.data
@@ -964,13 +962,6 @@ export default {
             'delete',
             'change_seas'
           ])
-        } else if (this.isStudent) {
-          return this.forSelectionHandleItems(handleInfos, [
-            'change_dept',
-            'transfer',
-            'export',
-            'delete'
-          ])
         } else {
           console.log('从store中取出权限，当有这个权限时展示')
           console.log(this.crm.customer)
@@ -1004,6 +995,13 @@ export default {
           //   // 'delete_user'
           // ])
         }
+      } else if (this.crmType == 'student') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'change_dept',
+          'transfer',
+          'export',
+          'delete'
+        ])
       } else if (this.crmType == 'capitalAccount') {
         return this.forSelectionHandleItems(handleInfos, [
           'online_recharge',
@@ -1189,7 +1187,7 @@ export default {
       if (this.crmType == 'leads') {
         return '全部线索'
       } else if (this.crmType == 'customer') {
-        return this.isStudent ? '全部学员' : '全部LEADS'
+        return '全部LEADS'
       } else if (this.crmType == 'contacts') {
         return '全部联系人'
       } else if (this.crmType == 'business') {
@@ -1210,6 +1208,8 @@ export default {
         return '全部套餐'
       } else if (this.crmType == 'insideUser') {
         return '全部通讯录'
+      } else if (this.crmType == 'student') {
+        return '全部学员'
       }
     },
 

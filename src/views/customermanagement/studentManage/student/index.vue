@@ -27,7 +27,7 @@
       </el-menu>
     </c-r-m-list-head>
     <div
-      v-empty="!crm.customer.index"
+      v-empty="!crm.student.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -166,8 +166,8 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :model-data="modelData"
+      :click-field="clickField"
       :id="rowID"
-      is-student
       class="d-view"
       @handle="handleHandle"/>
   </div>
@@ -202,10 +202,10 @@ export default {
   mixins: [table, menuMixins],
   data() {
     return {
-      crmType: 'customer',
+      crmType: 'student',
       showCount: 0,
       modelData: {},
-      isStudent: true
+      clickField: ''
     }
   },
   computed: {

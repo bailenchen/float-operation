@@ -342,8 +342,9 @@ export default {
     },
     /** 添加编辑场景 */
     addAndEditScene(type, data) {
+      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
       filterIndexfields({
-        label: crmTypeModel[this.crmType]
+        label: crmTypeModel[keytype]
       })
         .then(res => {
           this.fieldList = res.data

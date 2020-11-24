@@ -64,7 +64,7 @@
 
         <!-- 授权审批 -->
         <sections
-          v-if="examineInfo.examineType==2"
+          v-if="examineInfo && examineInfo.examineType==2"
           title="审核信息"
           class="b-cells"
           content-height="auto">
@@ -93,7 +93,7 @@
             align="stretch"
             wrap="wrap"
             style="padding: 10px 16px 0;">
-            <div class="label1" style="margin-right:5px;">
+            <div v-if="examineInfo" class="label1" style="margin-right:5px;">
               <el-popover
                 v-for="(item, index) in examineInfo.examineSteps"
                 :key="index"

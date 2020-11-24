@@ -448,9 +448,10 @@ export default {
      */
     getLogList() {
       this.loading = true
+      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
       const params = {
         page: this.page,
-        crmType: crmTypeModel[this.crmType], // 9是公海
+        crmType: crmTypeModel[keytype], // 9是公海
         activityType: this.activityType.command,
         activityTypeId: this.id
       }

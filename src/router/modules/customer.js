@@ -42,8 +42,8 @@ export default [
   },
   {
     ...layout({
-      // permissions: ['crm', 'customer']
-      permissionList: [['crm', 'customer'], ['crm', 'pool']]
+      permissions: ['crm', 'customer']
+      // permissionList: [['crm', 'customer'], ['crm', 'pool']]
     }),
     children: [{
       path: 'customer',
@@ -58,75 +58,75 @@ export default [
 
 
 
-  // {
-  //   ...layout({
-  //     // permissions: ['crm', 'contacts']
-  //   }),
-  //   children: [
-  //     {
-  //       path: 'student-manage/:type',
-  //       name: 'StudentManageIndex',
-  //       component: () => import('@/views/customermanagement/studentManage/index'),
-  //       meta: {
-  //         title: '学员管理',
-  //         icon: 'contacts',
-  //         activeMenu: '/crm/student-manage/:type'
-  //       }
-  //     }
-  //   ]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'contract']
-  //   }),
-  //   children: [{
-  //     path: 'contract',
-  //     component: () => import('@/views/customermanagement/contract/ContractIndex'),
-  //     meta: {
-  //       title: '合同管理',
-  //       icon: 'contract'
-  //     }
-  //   }]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'product']
-  //   }),
-  //   children: [{
-  //     path: 'course',
-  //     component: () => import('@/views/customermanagement/product/ProductIndex'),
-  //     meta: {
-  //       title: '课程单品',
-  //       icon: 'product'
-  //     }
-  //   }]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'product']
-  //   }),
-  //   children: [{
-  //     path: 'course-package',
-  //     component: () => import('@/views/customermanagement/coursePackage/CoursePackageIndex'),
-  //     meta: {
-  //       title: '课程套餐',
-  //       icon: 'product'
-  //     }
-  //   }]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'visit']
-  //   }),
-  //   children: [{
-  //     path: 'visit',
-  //     component: () => import('@/views/customermanagement/visit/VisitIndex'),
-  //     meta: {
-  //       title: '学员回访',
-  //       icon: 'house'
-  //     }
-  //   }]
-  // },
+  {
+    ...layout({
+      permissions: ['crm', 'student']
+    }),
+    children: [
+      {
+        path: 'student-manage/:type',
+        name: 'StudentManageIndex',
+        component: () => import('@/views/customermanagement/studentManage/index'),
+        meta: {
+          title: '学员管理',
+          icon: 'contacts',
+          activeMenu: '/crm/student-manage/:type'
+        }
+      }
+    ]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'contract']
+    }),
+    children: [{
+      path: 'contract',
+      component: () => import('@/views/customermanagement/contract/ContractIndex'),
+      meta: {
+        title: '合同管理',
+        icon: 'contract'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'product']
+    }),
+    children: [{
+      path: 'course',
+      component: () => import('@/views/customermanagement/product/ProductIndex'),
+      meta: {
+        title: '课程单品',
+        icon: 'product'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'product']
+    }),
+    children: [{
+      path: 'course-package',
+      component: () => import('@/views/customermanagement/coursePackage/CoursePackageIndex'),
+      meta: {
+        title: '课程套餐',
+        icon: 'product'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'visit']
+    }),
+    children: [{
+      path: 'visit',
+      component: () => import('@/views/customermanagement/visit/VisitIndex'),
+      meta: {
+        title: '学员回访',
+        icon: 'house'
+      }
+    }]
+  },
   {
     ...layout({
       permissions: ['crm', 'insideUser']

@@ -121,6 +121,7 @@ export default {
      */
     getBaseInfo() {
       this.loading = true
+      console.log('789123')
       filedGetInformation({
         types: crmTypeModel['contacts'],
         id: this.id

@@ -111,12 +111,13 @@ export default {
       this.loading = this.fields.length == 0
       let request = null
       const params = {}
+      const keytype = this.crmType === 'student' ? 'customer' : this.crmType
       if (this.isSeas) {
         request = crmPoolFieldConfigIndex
         params.poolId = this.poolId
       } else {
         request = crmFieldConfigIndex
-        params.label = crmTypeModel[this.crmType]
+        params.label = crmTypeModel[keytype]
       }
 
       request(params)
@@ -196,8 +197,9 @@ export default {
           request = crmPoolFieldConfig
           params.poolId = this.poolId
         } else {
+          const keytype = this.crmType === 'student' ? 'customer' : this.crmType
           request = crmFieldConfig
-          params.label = crmTypeModel[this.crmType]
+          params.label = crmTypeModel[keytype]
         }
 
         request(params)

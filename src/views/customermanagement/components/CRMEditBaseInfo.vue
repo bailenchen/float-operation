@@ -360,11 +360,9 @@ export default {
         console.log('ASA', this.crmType)
         console.log(crmTypeModel[this.crmType])
 
-        const types = this.crmType === 'capitalAccount' ? 23 : crmTypeModel[this.crmType]
-        console.log(types)
-
+        const keytype = this.crmType === 'student' ? 'customer' : this.crmType
         const params = {
-          types: crmTypeModel[this.crmType],
+          types: crmTypeModel[keytype],
           id: this.id
         }
 
@@ -372,6 +370,7 @@ export default {
         if (this.poolId) {
           params.poolId = this.poolId
         }
+
 
         filedGetInformation(params)
           .then(res => {
@@ -777,8 +776,9 @@ export default {
     // 获取自定义字段
     getEditFieldData() {
       // 获取自定义字段的更新时间
+      const keytype = this.crmType === 'student' ? 'customer' : this.crmType
       var params = {
-        label: crmTypeModel[this.crmType],
+        label: crmTypeModel[keytype],
         id: this.id
       }
 
