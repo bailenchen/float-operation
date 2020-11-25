@@ -240,3 +240,40 @@ export function crmMessageHandleDisputedStatusAPI(data) {
   })
 }
 
+
+/**
+ * 待审核合同业绩分配表头
+ * @param {*} data
+ */
+export function crmContractAllocHeaderAPI(data) {
+  return request({
+    url: 'field/queryListHead',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 待审核合同业绩分配列表
+ * @param {*} data
+ */
+export function crmContractAllocListAPI(data) {
+  return request({
+    url: 'CrmBackLog/performanceDistribution',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 待审核合同业绩分配 -- 审批
+ * @param {*} data
+ */
+export function crmExamineContractAllocListAPI(data) {
+  return request({
+    url: 'CrmBackLog/updatePerformanceDistribution',
+    method: 'post',
+    data: data
+  })
+}
+

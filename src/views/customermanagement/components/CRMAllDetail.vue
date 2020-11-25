@@ -126,7 +126,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.crmType, '-----')
     if (this.visible) {
       document.body.appendChild(this.$el)
       this.$el.style.zIndex = getMaxIndex()

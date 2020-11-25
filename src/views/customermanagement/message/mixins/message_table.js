@@ -14,7 +14,8 @@ import {
   crmMessagRemindreceivablesplanAPI,
   crmMessagRemindCustomerAPI,
   crmMessagVisitRemindAPI,
-  crmMessageCheckDisputedAPI
+  crmMessageCheckDisputedAPI,
+  crmContractAllocListAPI
 } from '@/api/customermanagement/message'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
@@ -44,7 +45,9 @@ export default {
       // return true
       return [
         'todayCustomer',
-        'allotCustomer'
+        'allotCustomer',
+        'checkContract',
+        'performanceDistributions'
       ].includes(this.infoType)
     }
   },
@@ -228,7 +231,8 @@ export default {
         'endContract': crmMessagEndContractAPI,
         'putInPoolRemind': crmMessagRemindCustomerAPI,
         'returnVisitRemind': crmMessagVisitRemindAPI,
-        'disputed': crmMessageCheckDisputedAPI
+        'disputed': crmMessageCheckDisputedAPI,
+        'performanceDistributions': crmContractAllocListAPI
       }[this.infoType]
     },
 
@@ -282,8 +286,10 @@ export default {
         return
       }
 
+      const keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
+
       filedGetTableField({
-        label: crmTypeModel[this.crmType]
+        label: keytype
       })
         .then(res => {
           this.handelFieldList(res.data)

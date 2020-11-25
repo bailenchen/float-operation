@@ -402,7 +402,6 @@ class MyWs {
     //  f(JSON.parse(e.data))
     // }
     this.onLineMessage = f
-    console.log('888', this.onLineMessage)
   }
   send(data) {
     // this.webSokets.send(JSON.stringify(data))

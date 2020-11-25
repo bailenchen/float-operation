@@ -157,6 +157,9 @@
               v-if="scope.row.status == 9"
               class="wk wk-circle-password customer-lock"/>
           </template>
+          <template v-else-if="item.prop == 'customerType'">
+            <img v-if="scope.row.customerType == 2" class="student-img" src="@/assets/img/student.jpg" alt="">
+          </template>
           <template v-else-if="item.prop == 'checkStatus'">
             <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
             <span>{{ getStatusName(scope.row.checkStatus) }}</span>
@@ -167,6 +170,18 @@
         </template>
       </el-table-column>
       <el-table-column :resizable="false"/>
+      <el-table-column
+        v-if="infoType == 'performanceDistributions'"
+        :resizable="false"
+        label="审核"
+        align="center"
+        fixed="right"
+        width="150">
+        <template slot-scope="scope">
+          <el-button type="success" size="mini" @click="handleExamine(scope.row, 1)">通过</el-button>
+          <el-button type="danger" size="mini" @click="handleExamine(scope.row, 2)">拒绝</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -217,7 +232,8 @@ import {
   crmMessageHandleStatusAPI,
   UpdateAllTodayCustomer,
   UpdateAllFollowUpLeads,
-  crmMessageHandleDisputedStatusAPI
+  crmMessageHandleDisputedStatusAPI,
+  crmExamineContractAllocListAPI
   // crmMessageFollowCustomerAPI
 } from '@/api/customermanagement/message'
 import message_table from '../mixins/message_table'
@@ -327,7 +343,9 @@ export default {
         'allotCustomer',
         'followCustomer',
         'putInPoolRemind',
-        'disputed'
+        'disputed',
+        'checkContract',
+        'performanceDistributions'
       ].includes(this.infoType)
     },
 
@@ -349,7 +367,6 @@ export default {
 
     // 展示我的/下属筛选
     showSubType() {
-      console.log(this.infoType, 'bjjjjj')
       return [
         'todayCustomer',
         'followCustomer',
@@ -361,7 +378,6 @@ export default {
 
     // 下拉数据
     options() {
-      console.log(this.infoType, 'nkkkkkk')
       if (this.infoType === 'todayCustomer') {
         return [
           { name: '今日需联系', value: 1 },
@@ -371,6 +387,8 @@ export default {
       }
       if (this.infoType == 'allotCustomer') {
         return [{ name: '待跟进', value: 1 }, { name: '已跟进', value: 2 }]
+      } else if (this.infoType == 'checkContract' || this.infoType == 'performanceDistributions') {
+        return [{ name: '待审核', value: 1 }, { name: '已审核', value: 2 }]
       }
       return []
       // if (this.infoType == 'todayCustomer') {
@@ -577,6 +595,23 @@ export default {
     },
 
     /**
+     * 通过与拒绝
+     */
+    handleExamine(row, way) {
+      const params = {
+        contractAllotId: row.contractAllotId,
+        checkStatus: way
+      }
+      crmExamineContractAllocListAPI(params).then(res => {
+        this.$message.success('操作成功')
+        this.$store.dispatch('GetMessageNum')
+        this.getList()
+      }).catch(() => {
+
+      })
+    },
+
+    /**
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
@@ -600,7 +635,6 @@ export default {
        * pover 显示时触发
        */
     showData(val) {
-      console.log('点击111')
       if (
         this.infoType == 'todayCustomer' ||
         this.infoType == 'allotCustomer' ||

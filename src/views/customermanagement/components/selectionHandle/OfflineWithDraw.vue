@@ -9,6 +9,7 @@
 <template>
   <el-dialog :visible="visible" :title="title[moneyType]" @close="handleCancel">
     <div class="main">
+      <div style="height: 20px;"/>
       <el-form ref="form" :rules="rules[moneyType]" :model="form[moneyType]" label-width="100px">
         <el-form-item
           v-for="(item,index) in formList[moneyType]"
@@ -72,8 +73,8 @@
             :gutter="0"
             align="stretch"
             wrap="wrap"
-            style="padding: 10px 16px 0;">
-            <div class="label" style="margin-right:5px;">
+            style="padding: 10px 28px 0;">
+            <div class="label" style="margin-right:5px;margin-bottom: 5px;">
               审核人
             </div>
             <xh-user-cell
@@ -92,7 +93,7 @@
             :gutter="0"
             align="stretch"
             wrap="wrap"
-            style="padding: 10px 16px 0;">
+            style="padding: 10px 28px 0;">
             <div v-if="examineInfo" class="label1" style="margin-right:5px;">
               <el-popover
                 v-for="(item, index) in examineInfo.examineSteps"
@@ -113,6 +114,7 @@
           </flexbox>
         </sections>
       </el-form>
+      <div style="height: 30px;"/>
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
@@ -133,6 +135,7 @@ import Sections from '../../components/Sections'
 
 // 第三方
 import Nzhcn from 'nzh/cn'
+import { mapGetters } from 'vuex'
 
 
 export default {
@@ -198,7 +201,6 @@ export default {
     }
 
     var validatcharacter = (rule, value, callback) => {
-      console.log('characterUser', this.characterUser)
       if (!this.characterUser) {
         callback(new Error('请选择员工'))
       } else {
@@ -311,8 +313,8 @@ export default {
             { required: true, message: '请选择交易时间', trigger: 'blur' }
           ],
           characterId: [
-            { required: true, message: '请输入收款人', trigger: 'blur' },
-            { validator: validatcharacter, trigger: 'blur' }
+            // { required: true, message: '请输入收款人', trigger: 'blur' },
+            { required: true, validator: validatcharacter, trigger: 'blur' }
           ],
           remark: [
             { max: 800, message: '不能多于800个字符', trigger: 'blur' }
@@ -334,8 +336,8 @@ export default {
             { required: true, message: '请选择交易时间', trigger: 'blur' }
           ],
           characterId: [
-            { required: true, message: '请输入收款人', trigger: 'blur' },
-            { validator: validatcharacter, trigger: 'blur' }
+            // { required: true, message: '请输入收款人', trigger: 'blur' },
+            { required: true, validator: validatcharacter, trigger: 'blur' }
           ],
           remark: [
             { max: 800, message: '不能多于800个字符', trigger: 'blur' }
@@ -349,12 +351,16 @@ export default {
       characterUser: null // 收/退款人
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   watch: {
     visible(val) {
       var form = {}
       form[this.moneyType] = {}
 
-      this.characterUser = JSON.parse(localStorage.getItem('loginUserInfo'))
+      this.characterUser = this.userInfo
+      form[this.moneyType].characterId = this.userInfo.userId
 
       if (this.moneyType == 'offline') {
         form[this.moneyType].transactionType = 3
@@ -374,10 +380,8 @@ export default {
 
   created() {
     // var a = JSON.parse(localStorage.getItem('loginUserInfo'))
-    this.characterUser = JSON.parse(localStorage.getItem('loginUserInfo'))
-    console.log('发送请求')
+    this.characterUser = this.userInfo
     crmCreateExamineFlow({ categoryType: 5 }).then(res => {
-      console.log('资金流水审批', res)
       this.examineInfo = res.data
     }).catch(() => {
 
@@ -389,7 +393,6 @@ export default {
       this.$forceUpdate() // 强制重新渲染
     },
     timeFormat() {
-      // console.log('时间格式化')
       function _timeFormat(options) {
         const time = options.time ? options.time : new Date()
         const template = options.template
@@ -438,7 +441,7 @@ export default {
     characterChange(data) {
       if (data.value.length) {
         this.characterUser = data.value[0]
-        this.form[this.moneyType].characterId = this.characterUser.username
+        this.form[this.moneyType].characterId = this.characterUser.userId
       } else {
         this.characterUser = null
       }
@@ -453,7 +456,6 @@ export default {
 
     uploadPayFile() {
       var files = event.target.files
-      console.log(files, 'xxxxx')
       if (files.length) {
         for (let index = 0; index < files.length; index++) {
           const file = files[index]
@@ -468,15 +470,12 @@ export default {
         for (let index = 0; index < files.length; index++) {
           const file = files[index]
           crmFileSave({ file: file }).then(res => {
-            console.log(res, 'file')
-
             var data = {}
             for (const k in res) {
               if (!res.hasOwnProperty(k)) break
               if (k == 'code') continue
               data[k] = res[k]
             }
-            console.log('拼接的数据', data)
 
 
             this.imgFile.push(data)
@@ -499,8 +498,6 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           // 图片类型已在AddImageList组件中校验过
-          console.log('验证通过，拼接参数发送请求')
-          // var parms = {}
           var parms = {
             entity: this.form[this.moneyType]
           }
@@ -517,15 +514,14 @@ export default {
             parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
           }
 
-          console.log(this.form[this.moneyType])
-          console.log(parms)
-          // return
           crmEditAccountWater(parms).then(res => {
             if (res.code === 0) {
               this.$message({
                 message: '添加成功',
                 type: 'success'
               })
+              this.handleCancel()
+              this.$emit('handle', this.moneyType)
             }
           }).catch(() => {})
         }
@@ -537,20 +533,28 @@ export default {
 <style lang='scss' scoped>
 .main {
     height: 500px;
-    overflow: auto;
-    padding-left: 20px;
-    padding-right: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 /deep/ .el-dialog {
     width: 600px;
 }
 
 /deep/ .el-dialog__body {
-  padding: 30px 0;
+  padding: 0 20px;
+}
+
+/deep/ .el-dialog__header {
+  padding-left: 36px;
 }
 
 /deep/ .el-dialog__footer {
   padding: 10px 25px 10px 10px !important
+}
+
+/deep/ .el-form-item {
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 /deep/ .el-form-item__label {

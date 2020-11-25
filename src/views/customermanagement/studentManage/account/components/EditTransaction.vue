@@ -275,7 +275,6 @@ export default {
     }
   },
   created() {
-    console.log(this.moneyType)
     const form = this.form[this.moneyType]
     form.waterId = this.action.waterId // 流水ID
     form.userAccount = this.action.userAccount // 用户账号
@@ -318,17 +317,14 @@ export default {
       this.$forceUpdate()	// 刷新
     },
     downloadFile() {
-      console.log('下载')
       downloadAdjunct({ 'batchId': this.fieldBatchId })
         .then(res => {
-          console.log(res)
           downloadExcelWithResData(res)
         }, err => {
           console.log(err)
         })
     },
     delFile() {
-      console.log('删除')
       this.show = true
     },
 
@@ -340,7 +336,6 @@ export default {
       if (data.value.length) {
         this.form[this.moneyType]['examine'] = data.value
         // this.draftUser = data.value[0]
-        console.log(this.form, 'xxx')
       } else {
         // this.draftUser = null
         this.form[this.moneyType]['examine'] = []
@@ -357,7 +352,6 @@ export default {
 
     uploadPayFile() {
       var files = event.target.files
-      console.log(files, 'xxxxx')
       if (files.length) {
         for (let index = 0; index < files.length; index++) {
           const file = files[index]
@@ -372,16 +366,12 @@ export default {
         for (let index = 0; index < files.length; index++) {
           const file = files[index]
           crmFileSave({ file: file }).then(res => {
-            console.log(res, 'file')
-            // this.imgFile.push(res.data)
             var data = {}
             for (const k in res) {
               if (!res.hasOwnProperty(k)) break
               if (k == 'code') continue
               data[k] = res[k]
             }
-            console.log('拼接的数据', data)
-
 
             this.imgFile.push(data)
 
@@ -413,11 +403,7 @@ export default {
       //   obj[k] = this.form[this.moneyType][k]
       // }
 
-      console.log(this.form[this.moneyType])
-
       var parms = {
-        // entity: this.form[this.moneyType]
-
         entity: {
           waterId: this.form[this.moneyType].waterId,
           userAccount: this.form[this.moneyType].userAccount,
@@ -430,17 +416,14 @@ export default {
         parms.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
         parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
       }
-      console.log(parms)
-      console.log('保存')
-      // return
       crmEditAccountWater(parms).then(res => {
         this.loading = false
         this.$message({
           type: 'success',
           message: '操作成功'
         })
+        this.hidenView()
         this.$emit('save-success')
-        console.log(res, 'vvvvvv')
       }).catch(() => {
         this.loading = false
       })

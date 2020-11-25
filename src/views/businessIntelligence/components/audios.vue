@@ -123,7 +123,6 @@ export default {
     },
     // 播放音频
     play() {
-      console.log(this.item.path, 888)
       if (this.defaultTime === '0:00:00') {
         return false
       }

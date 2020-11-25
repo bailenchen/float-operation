@@ -106,17 +106,27 @@ export default {
           num: 0,
           tips: '',
           hidden: true
+        },
+        {
+          name: '待审核合同',
+          crmType: 'contract',
+          color: '#FD5B4A',
+          iconClass: 'wk wk-contract',
+          infoType: 'checkContract',
+          num: 0,
+          tips: '',
+          hidden: true
+        },
+        {
+          name: '待审核的业绩分配',
+          crmType: 'globalAlloc',
+          color: '#FD5B4A',
+          iconClass: 'wk wk-contract',
+          infoType: 'performanceDistributions',
+          num: 0,
+          tips: '',
+          hidden: true
         }
-        // {
-        //   name: '待审核合同',
-        //   crmType: 'contract',
-        //   color: '#FD5B4A',
-        //   iconClass: 'wk wk-contract',
-        //   infoType: 'checkContract',
-        //   num: 0,
-        //   tips: '',
-        //   hidden: true
-        // },
         // {
         //   name: '待审核回款',
         //   crmType: 'receivables',
