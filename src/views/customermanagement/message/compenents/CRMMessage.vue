@@ -91,6 +91,7 @@
       :height="tableHeight"
       :cell-class-name="cellClassName"
       class="n-table--border"
+      use-virtual
       stripe
       highlight-current-row
       style="width: 100%"
@@ -105,6 +106,7 @@
       <el-table-column
         v-if="showCall"
         :resizable="false"
+        cell-class-name="handle-span"
         prop="call"
         fixed
         label=""
@@ -131,6 +133,7 @@
               @changeType="changeCRMType"/>
             <el-button
               slot="reference"
+              ref="telbtn"
               :style="{'opacity' :scope.$index >= 0 ? 1 : 0}"
               type="primary"
               icon="el-icon-phone"
@@ -463,6 +466,15 @@ export default {
   },
 
   mounted() {
+    this.$nextTick(() => {
+      const callOutData = JSON.parse(localStorage.getItem('callOutData'))
+      if (callOutData) {
+        this.modelData = {
+          modelId: callOutData.id,
+          model: callOutData.type
+        }
+      }
+    })
     if (this.showOptions && this.options.length > 0) {
       this.optionsType = this.options[0].value
     }
@@ -565,8 +577,9 @@ export default {
      * 获取高级筛选字段数据后展示
      */
     getFilterFieldInfo() {
+      const keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
       filterIndexfields({
-        label: crmTypeModel[this.crmType]
+        label: keytype
       })
         .then(res => {
           this.filterFieldList = res.data || []
@@ -676,6 +689,7 @@ export default {
      * 解决povper重复的bug
     */
     callCheckClick(e, scope) {
+      console.log('123456')
       this.list.forEach(item => {
         this.$set(item, 'callShow', false)
       })

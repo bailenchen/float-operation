@@ -110,7 +110,7 @@ export default [
       component: () => import('@/views/customermanagement/coursePackage/CoursePackageIndex'),
       meta: {
         title: '课程套餐',
-        icon: 'product'
+        icon: 'associated'
       }
     }]
   },

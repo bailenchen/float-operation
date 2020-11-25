@@ -210,7 +210,10 @@ export default {
         .then(res => {
           this.list = res.data.list
           this.total = res.data.totalRow
-
+          // 解决无法点击电话按钮bug
+          this.$nextTick(() => {
+            this.$refs.telbtn.$parent.$el.style.display = 'inline-block'
+          })
           this.loading = false
         })
         .catch(() => {
