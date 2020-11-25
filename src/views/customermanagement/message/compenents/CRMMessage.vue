@@ -106,7 +106,6 @@
       <el-table-column
         v-if="showCall"
         :resizable="false"
-        cell-class-name="handle-span"
         prop="call"
         fixed
         label=""

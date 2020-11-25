@@ -212,7 +212,9 @@ export default {
           this.total = res.data.totalRow
           // 解决无法点击电话按钮bug
           this.$nextTick(() => {
-            this.$refs.telbtn.$parent.$el.style.display = 'inline-block'
+            if (this.$refs.telbtn) {
+              this.$refs.telbtn.$parent.$el.style.display = 'inline-block'
+            }
           })
           this.loading = false
         })
