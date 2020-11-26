@@ -115,7 +115,8 @@ export default {
           customerRecord: 35,
           contacts: 16,
           leads: 18,
-          product: 20
+          product: 20,
+          insideUser: 42
         }[this.crmType]
       })
         .then(res => {

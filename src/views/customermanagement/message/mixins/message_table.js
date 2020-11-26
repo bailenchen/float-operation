@@ -9,12 +9,13 @@ import {
   crmMessageCheckContractAPI,
   crmMessageCheckReceivablesAPI,
   crmMessageFollowLeadsAPI,
-  // crmMessageFollowCustomerAPI,
+  crmMessageAllotCustomerAPI,
   crmMessagEndContractAPI,
   crmMessagRemindreceivablesplanAPI,
   crmMessagRemindCustomerAPI,
   crmMessagVisitRemindAPI,
-  crmMessageCheckDisputedAPI
+  crmMessageCheckDisputedAPI,
+  crmContractAllocListAPI
 } from '@/api/customermanagement/message'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
@@ -43,7 +44,10 @@ export default {
       // }
       // return true
       return [
-        'todayCustomer'
+        'todayCustomer',
+        'allotCustomer',
+        'checkContract',
+        'performanceDistributions'
       ].includes(this.infoType)
     }
   },
@@ -206,7 +210,12 @@ export default {
         .then(res => {
           this.list = res.data.list
           this.total = res.data.totalRow
-
+          // 解决无法点击电话按钮bug
+          this.$nextTick(() => {
+            if (this.$refs.telbtn) {
+              this.$refs.telbtn.$parent.$el.style.display = 'inline-block'
+            }
+          })
           this.loading = false
         })
         .catch(() => {
@@ -220,14 +229,15 @@ export default {
         'todayCustomer': crmMessageTodayCustomerAPI,
         'followCustomer': crmMessagePromiseAPI,
         'followLeads': crmMessageFollowLeadsAPI,
-        // 'followCustomer': crmMessageFollowCustomerAPI,
+        'allotCustomer': crmMessageAllotCustomerAPI,
         'checkContract': crmMessageCheckContractAPI,
         'checkReceivables': crmMessageCheckReceivablesAPI,
         'remindReceivablesPlan': crmMessagRemindreceivablesplanAPI,
         'endContract': crmMessagEndContractAPI,
         'putInPoolRemind': crmMessagRemindCustomerAPI,
         'returnVisitRemind': crmMessagVisitRemindAPI,
-        'disputed': crmMessageCheckDisputedAPI
+        'disputed': crmMessageCheckDisputedAPI,
+        'performanceDistributions': crmContractAllocListAPI
       }[this.infoType]
     },
 
@@ -281,8 +291,10 @@ export default {
         return
       }
 
+      const keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
+
       filedGetTableField({
-        label: crmTypeModel[this.crmType]
+        label: keytype
       })
         .then(res => {
           this.handelFieldList(res.data)

@@ -72,6 +72,7 @@ export default {
   },
   filters: {
     formatedInfo(data, field) {
+      console.log(data, field, 'vbbbbb')
       if (field == 'sex') {
         return { 1: '男', 2: '女' }[data.sex]
       } else if (['isTeacher', 'isJob'].includes(field)) {
@@ -98,8 +99,8 @@ export default {
         { field: 'deptName', value: '部门', type: 'select' },
         { field: 'isTeacher', value: '是否为教员' },
         { field: 'isJob', value: '是否为兼职' },
-        { field: 'grades', value: '年级' },
-        { field: 'subjects', value: '科目' },
+        // { field: 'grades', value: '年级' },
+        // { field: 'subjects', value: '科目' },
         { field: 'post', value: '岗位' },
         { field: 'parentName', value: '直属上级', type: 'select' },
         { field: 'roleName', value: '角色', type: 'selectCheckout' }

@@ -386,7 +386,7 @@ export default {
       console.log(params)
 
       crmAccountWater(params).then(res => {
-        console.log(res)
+        this.list = res.data.list
       }).catch()
       // this.getDetail(val)
     },

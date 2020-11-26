@@ -36,9 +36,9 @@
           <div
             class="stru-name"
             @click="enterChildren(item)">{{ item.name }}</div>
-          <div
+            <!-- <div
             v-if="item.children"
-            class="el-icon-arrow-right stru-enter"/>
+            class="el-icon-arrow-right stru-enter"/> -->
         </flexbox>
       </div>
     </div>

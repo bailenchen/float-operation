@@ -75,7 +75,7 @@
               </flexbox>
             </div>
           </div>
-          <div v-if="!isSeas && crmType !== 'customer'" class="sections">
+          <div v-if="!isSeas && crmType !== 'customer' && crmType !== 'insideUser'" class="sections">
             <div class="sections__title">四、请选择负责人（负责人为必填字段，若不填写，则会导致导入失败）</div>
             <div class="content">
               <div class="user-cell">
@@ -182,6 +182,10 @@ import {
   crmCustomerPoolNameListAPI,
   crmCustomerPoolExcelImport
 } from '@/api/customermanagement/customer'
+import {
+  CrmInsideUserExcelImport,
+  CrmInsideUserDownloadExcelAPI
+} from '@/api/customermanagement/address'
 import {
   crmLeadsExcelImport,
   crmLeadsDownloadExcelAPI
@@ -441,7 +445,8 @@ export default {
         customer: this.isSeas ? crmCustomerPoolExcelImport : crmCustomerExcelImport,
         leads: crmLeadsExcelImport,
         contacts: crmContactsExcelImport,
-        product: crmProductExcelImport
+        product: crmProductExcelImport,
+        insideUser: CrmInsideUserExcelImport
       }
       const crmRecordMap = {
         customer: RecordExcelImport
@@ -537,7 +542,8 @@ export default {
         customer: crmCustomerDownloadExcelAPI,
         leads: crmLeadsDownloadExcelAPI,
         contacts: crmContactsDownloadExcelAPI,
-        product: crmProductDownloadExcelAPI
+        product: crmProductDownloadExcelAPI,
+        insideUser: CrmInsideUserDownloadExcelAPI
       }
       const crmRecordMap = {
         customer: RecordTplDownloadExcelAPI

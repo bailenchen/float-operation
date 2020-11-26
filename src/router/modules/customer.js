@@ -42,8 +42,8 @@ export default [
   },
   {
     ...layout({
-      // permissions: ['crm', 'customer']
-      permissionList: [['crm', 'customer'], ['crm', 'pool']]
+      permissions: ['crm', 'customer']
+      // permissionList: [['crm', 'customer'], ['crm', 'pool']]
     }),
     children: [{
       path: 'customer',
@@ -60,7 +60,7 @@ export default [
 
   {
     ...layout({
-      // permissions: ['crm', 'contacts']
+      permissions: ['crm', 'student']
     }),
     children: [
       {
@@ -110,7 +110,7 @@ export default [
       component: () => import('@/views/customermanagement/coursePackage/CoursePackageIndex'),
       meta: {
         title: '课程套餐',
-        icon: 'product'
+        icon: 'associated'
       }
     }]
   },
@@ -124,6 +124,19 @@ export default [
       meta: {
         title: '学员回访',
         icon: 'house'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'insideUser']
+    }),
+    children: [{
+      path: 'inner-address',
+      component: () => import('@/views/customermanagement/internalAddress/AddressIndex'),
+      meta: {
+        title: '内部通讯录',
+        icon: 'grid'
       }
     }]
   },

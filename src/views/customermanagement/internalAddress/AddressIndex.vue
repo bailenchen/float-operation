@@ -3,38 +3,19 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      is-student
-      main-title="新增学员"
-      title="学员管理"
-      placeholder="请输入学员编号/姓名/第一联系人电话"
+      title="内部通讯录"
+      placeholder="请输入工号/姓名/手机号码"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
-      @on-export="exportInfos">
-      <el-menu
-        slot="icon"
-        ref="elMenu"
-        :default-active="crmType"
-        mode="horizontal"
-        active-text-color="#2362FB"
-        @select="menuSelect" >
-        <el-menu-item
-          v-for="(item, index) in menuItems"
-          :key="index"
-          :index="item.path">
-          <img :src="item.icon">
-          <span>{{ item.title }}</span>
-        </el-menu-item>
-      </el-menu>
-    </c-r-m-list-head>
+      @on-export="exportInfos" />
     <div
-      v-empty="!crm.student.index"
+      v-empty="!crm.insideUser.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
       <c-r-m-table-head
         ref="crmTableHead"
         :crm-type="crmType"
-        is-student
         @filter="handleFilter"
         @handle="handleHandle"
         @scene="handleScene"/>
@@ -48,7 +29,6 @@
         class="n-table--border"
         use-virtual
         stripe
-        border
         highlight-current-row
         style="width: 100%"
         @row-click="handleRowClick"
@@ -80,12 +60,12 @@
               width="500"
               popper-class="no-padding-popover"
               trigger="click"
-              @show="showData(scope.row.customerId)"
+              @show="showData(scope.row.insideId)"
               @hiden="showCount = -1">
               <call-center
                 :scope="scope"
-                :show="scope.row.customerId === showCount"
-                crm-type="customer"
+                :show="scope.row.insideId === showCount"
+                crm-type="insideUser"
                 @changeType="changeCRMType"/>
               <el-button
                 slot="reference"
@@ -107,20 +87,23 @@
           :sortable="item.prop != 'poolDay' ? 'custom' : false"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <template v-if="item.prop == 'dealStatus'">
+            <!--<template v-if="item.prop == 'dealStatus'">
               <i :class="scope.row[item.prop] | dealIcon"/>
               <span>{{ scope.row[item.prop] | dealName }}</span>
-            </template>
-            <template v-else-if="item.prop == 'status'">
+            </template>-->
+            <template v-if="item.prop == 'status'">
               <i
-                v-if="scope.row.status == 2"
+                v-if="scope.row.status == 9"
                 class="wk wk-circle-password customer-lock"/>
+            </template>
+            <template v-else-if="item.prop == 'customerType'">
+              <img v-if="scope.row.customerType == 2" class="student-img" src="@/assets/img/student.jpg" alt="">
             </template>
             <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
           </template>
         </el-table-column>
         <el-table-column/>
-        <el-table-column
+        <!-- <el-table-column
           label="关注"
           align="center"
           fixed="right"
@@ -133,8 +116,8 @@
                 @click="toggleStar(scope.row)" />
             </el-tooltip>
           </template>
-        </el-table-column>
-        <el-table-column
+        </el-table-column> -->
+        <!-- <el-table-column
           :resizable="false"
           fixed="right"
           width="40">
@@ -145,7 +128,7 @@
               :crm-type="crmType"
               @change="setSave"/>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="p-contianer">
         <el-pagination
@@ -166,28 +149,24 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :model-data="modelData"
-      :click-field="clickField"
       :id="rowID"
       class="d-view"
-      @handle="handleHandle"/>
+      @handle="handleHandle"
+      @refresh-list="refreshList"/>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
-// import BusinessCheck from './components/BusinessCheck' // 相关商机
-import table from '../../mixins/table'
+import table from '../mixins/table'
 import CallCenter from '@/callCenter/CallCenter'
-import menuMixins from '../menuMixins'
-
 
 export default {
-  /** 客户管理 的 学员列表 */
-  name: 'StudentIndex',
+  /** 内部通讯录 的 客户列表 */
+  name: 'AddressIndex',
   components: {
     CRMAllDetail,
-    // BusinessCheck,
     CallCenter
   },
   filters: {
@@ -196,22 +175,24 @@ export default {
     },
 
     dealName(statu) {
-      return statu == 1 ? '已成交' : '未成交'
+      return statu == 10 ? '已成交' : '未成交'
+      // return ''
     }
   },
-  mixins: [table, menuMixins],
+  mixins: [table],
   data() {
     return {
-      crmType: 'student',
+      crmType: 'insideUser',
       showCount: 0,
       modelData: {},
-      clickField: ''
+      studentImg: '@/assets/img/student1.jpg'
     }
   },
   computed: {
     ...mapGetters(['CRMConfig']),
     Show() {
       return this.$store.state.customer.isCall
+      // return true
     }
   },
   mounted() {
@@ -232,13 +213,12 @@ export default {
     getOtherParams() {
       // customerType: 1、LEADS；2、学员
       return {
-        customerType: 2
+        customerType: 1
       }
     },
-    relativeBusinessClick(data) {
-      this.rowID = data.businessId
-      this.rowType = 'business'
-      this.showDview = true
+
+    refreshList() {
+      this.getList()
     },
 
     /**
@@ -252,21 +232,6 @@ export default {
       } else {
         return ''
       }
-    },
-    // 商机信息查看
-    businessCheckClick(e, scope) {
-      if (scope.row.businessCount == 0) {
-        return
-      }
-
-      const popoverEl = e.target.parentNode
-      this.$set(scope.row, 'show', !scope.row.show)
-      popoverEl.__vue__.showPopper = !scope.row.show
-    },
-    businessClose(e, scope) {
-      const popoverEl = e.parentNode
-      popoverEl.__vue__.showPopper = false
-      this.$set(scope.row, 'show', false)
     },
     /**
        * pover 显示时触发
@@ -313,5 +278,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/table';
+@import '../styles/table.scss';
+
+.student-img {
+  margin-top: 2px;
+  // display: inline-block;
+  display: block;
+  border-radius: 50%;
+}
 </style>

@@ -181,10 +181,6 @@ export default {
       type: Boolean,
       default: false
     },
-    isStudent: {
-      type: Boolean,
-      default: false
-    },
     /** 联系人人下 新建商机 需要联系人里的客户信息  合同下需要客户和商机信息 合同作废需要合同状态*/
     detail: {
       type: Object,
@@ -204,6 +200,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -224,7 +224,7 @@ export default {
         return require(`@/assets/img/crm/product.png`)
       } else if (this.crmType == 'capitalAccount') {
         return require(`@/assets/img/crm/customer.png`)
-      } else if (this.crmType == 'water') {
+      } else if (this.crmType == 'water' || this.crmType == 'student') {
         return require(`@/assets/img/crm/contract.png`)
       }
 
@@ -246,11 +246,11 @@ export default {
       }
     },
     typeName() {
-      if (this.isStudent) return '学员'
       return (
         {
           leads: '线索',
           customer: 'LEADS',
+          student: '学员',
           capitalAccount: '账户编号',
           contacts: '联系人',
           product: '课程单品',
@@ -266,6 +266,7 @@ export default {
       )
     },
     name() {
+      console.log('name是', this.crmType, this.clickField)
       if (this.crmType === 'receivables') {
         return this.detail.number
       } else if (this.crmType === 'customer') {
@@ -280,8 +281,9 @@ export default {
         return this.detail.invoiceApplyNumber
       } else if (this.crmType === 'capitalAccount') {
         return this.detail.accountNumber
+      } else if (this.crmType == 'student') {
+        return this.detail[this.clickField]
       }
-      console.log('name是')
       console.log(this.detail.name)
       return this.detail.name
     },
@@ -682,11 +684,6 @@ export default {
             'get',
             'delete'
           ])
-        } else if (this.isStudent) {
-          return this.forSelectionHandleItems(handleInfos, [
-            'change_dept',
-            'delete'
-          ])
         } else {
           return this.forSelectionHandleItems(handleInfos, [
             'transfer',
@@ -696,6 +693,11 @@ export default {
             'delete'
           ])
         }
+      } else if (this.crmType == 'student') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'change_dept',
+          'delete'
+        ])
       } else if (this.crmType == 'contacts') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'business') {

@@ -12,18 +12,26 @@
 export default {
   computed: {
     menuItems() {
-      return [
-        {
-          title: '学员',
-          path: 'customer',
-          icon: require('@/assets/img/crm/customer.png')
-        },
-        {
-          title: '资金账户',
-          path: 'capitalAccount',
-          icon: require('@/assets/img/crm/customer.png')
-        }
-      ]
+      const list = []
+      if (this.crm.student) {
+        list.push(
+          {
+            title: '学员',
+            path: 'student',
+            icon: require('@/assets/img/crm/customer.png')
+          }
+        )
+      }
+      if (this.crm.capitalAccount) {
+        list.push(
+          {
+            title: '资金账户',
+            path: 'capitalAccount',
+            icon: require('@/assets/img/crm/customer.png')
+          }
+        )
+      }
+      return list
     }
   },
   methods: {

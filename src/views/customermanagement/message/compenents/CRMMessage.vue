@@ -91,17 +91,18 @@
       :height="tableHeight"
       :cell-class-name="cellClassName"
       class="n-table--border"
+      use-virtual
       stripe
       highlight-current-row
       style="width: 100%"
       @row-click="handleRowClick"
       @selection-change="handleSelectionChange">
-      <el-table-column
+      <!-- <el-table-column
         v-if="showSelection"
         show-overflow-tooltip
         type="selection"
         align="center"
-        width="55"/>
+        width="55"/> -->
       <el-table-column
         v-if="showCall"
         :resizable="false"
@@ -131,6 +132,7 @@
               @changeType="changeCRMType"/>
             <el-button
               slot="reference"
+              ref="telbtn"
               :style="{'opacity' :scope.$index >= 0 ? 1 : 0}"
               type="primary"
               icon="el-icon-phone"
@@ -157,6 +159,9 @@
               v-if="scope.row.status == 9"
               class="wk wk-circle-password customer-lock"/>
           </template>
+          <template v-else-if="item.prop == 'customerType'">
+            <img v-if="scope.row.customerType == 2" class="student-img" src="@/assets/img/student.jpg" alt="">
+          </template>
           <template v-else-if="item.prop == 'checkStatus'">
             <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
             <span>{{ getStatusName(scope.row.checkStatus) }}</span>
@@ -167,6 +172,18 @@
         </template>
       </el-table-column>
       <el-table-column :resizable="false"/>
+      <el-table-column
+        v-if="infoType == 'performanceDistributions'"
+        :resizable="false"
+        label="审核"
+        align="center"
+        fixed="right"
+        width="150">
+        <template slot-scope="scope">
+          <el-button type="success" size="mini" @click="handleExamine(scope.row, 1)">通过</el-button>
+          <el-button type="danger" size="mini" @click="handleExamine(scope.row, 2)">拒绝</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -217,7 +234,9 @@ import {
   crmMessageHandleStatusAPI,
   UpdateAllTodayCustomer,
   UpdateAllFollowUpLeads,
-  crmMessageHandleDisputedStatusAPI
+  crmMessageHandleDisputedStatusAPI,
+  crmExamineContractAllocListAPI
+  // crmMessageFollowCustomerAPI
 } from '@/api/customermanagement/message'
 import message_table from '../mixins/message_table'
 import filterForm from '@/views/customermanagement/components/filterForm'
@@ -290,11 +309,11 @@ export default {
       /** 勾选数据操作 */
       selectionList: [], // 勾选的数据
       selectionButtonList: [
-        {
-          name: '已处理',
-          type: 'follow',
-          icon: 'wk wk-edit'
-        }
+        // {
+        //   name: '已处理',
+        //   type: 'follow',
+        //   icon: 'wk wk-edit'
+        // }
       ], // 操作按钮列表
       /** 控制详情展示 */
       rowID: '', // 行信息
@@ -312,7 +331,9 @@ export default {
     showSelection() {
       return [
         'todayCustomer',
+        'allotCustomer',
         'followCustomer',
+        'putInPoolRemind',
         'disputed'
       ].includes(this.infoType)
     },
@@ -321,8 +342,12 @@ export default {
     showFilterView() {
       return [
         'todayCustomer',
+        'allotCustomer',
         'followCustomer',
-        'disputed'
+        'putInPoolRemind',
+        'disputed',
+        'checkContract',
+        'performanceDistributions'
       ].includes(this.infoType)
     },
 
@@ -348,6 +373,7 @@ export default {
         'todayCustomer',
         'followCustomer',
         'returnVisitRemind',
+        'putInPoolRemind',
         'disputed'
       ].includes(this.infoType)
     },
@@ -360,6 +386,11 @@ export default {
           { name: '已逾期', value: 2 },
           { name: '已处理', value: 3 }
         ]
+      }
+      if (this.infoType == 'allotCustomer') {
+        return [{ name: '待跟进', value: 1 }, { name: '已跟进', value: 2 }]
+      } else if (this.infoType == 'checkContract' || this.infoType == 'performanceDistributions') {
+        return [{ name: '待审核', value: 1 }, { name: '已审核', value: 2 }]
       }
       return []
       // if (this.infoType == 'todayCustomer') {
@@ -394,6 +425,7 @@ export default {
     showCall() {
       if (
         this.infoType == 'todayCustomer' ||
+        this.infoType == 'allotCustomer' ||
         this.infoType == 'followLeads' ||
         this.infoType == 'putInPoolRemind' ||
         this.infoType == 'followCustomer') {
@@ -424,6 +456,7 @@ export default {
 
   watch: {
     show() {
+      console.log('111111')
       if (this.showOptions && this.options.length > 0) {
         this.optionsType = this.options[0].value
       }
@@ -432,6 +465,15 @@ export default {
   },
 
   mounted() {
+    this.$nextTick(() => {
+      const callOutData = JSON.parse(localStorage.getItem('callOutData'))
+      if (callOutData) {
+        this.modelData = {
+          modelId: callOutData.id,
+          model: callOutData.type
+        }
+      }
+    })
     if (this.showOptions && this.options.length > 0) {
       this.optionsType = this.options[0].value
     }
@@ -498,6 +540,7 @@ export default {
             const request = {
               todayCustomer: crmMessageHandleStatusAPI,
               followCustomer: crmMessageHandleStatusAPI,
+              // allotCustomer: crmMessageFollowCustomerAPI,
               disputed: crmMessageHandleDisputedStatusAPI
             }[this.infoType]
             request({
@@ -533,8 +576,9 @@ export default {
      * 获取高级筛选字段数据后展示
      */
     getFilterFieldInfo() {
+      const keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
       filterIndexfields({
-        label: crmTypeModel[this.crmType]
+        label: keytype
       })
         .then(res => {
           this.filterFieldList = res.data || []
@@ -563,6 +607,23 @@ export default {
     },
 
     /**
+     * 通过与拒绝
+     */
+    handleExamine(row, way) {
+      const params = {
+        contractAllotId: row.contractAllotId,
+        checkStatus: way
+      }
+      crmExamineContractAllocListAPI(params).then(res => {
+        this.$message.success('操作成功')
+        this.$store.dispatch('GetMessageNum')
+        this.getList()
+      }).catch(() => {
+
+      })
+    },
+
+    /**
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
@@ -586,9 +647,9 @@ export default {
        * pover 显示时触发
        */
     showData(val) {
-      console.log('点击111')
       if (
         this.infoType == 'todayCustomer' ||
+        this.infoType == 'allotCustomer' ||
         this.infoType == 'followCustomer' ||
         this.infoType == 'putInPoolRemind') {
         this.showCount = val.customerId
@@ -627,6 +688,7 @@ export default {
      * 解决povper重复的bug
     */
     callCheckClick(e, scope) {
+      console.log('123456')
       this.list.forEach(item => {
         this.$set(item, 'callShow', false)
       })
@@ -640,6 +702,7 @@ export default {
     showCallCenter(row) {
       if (
         this.infoType == 'todayCustomer' ||
+        this.infoType == 'allotCustomer' ||
         this.infoType == 'followCustomer' ||
         this.infoType == 'putInPoolRemind') {
         if (row.customerId === this.showCount) {

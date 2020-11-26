@@ -21,6 +21,7 @@ export default {
   visit: 17,
   invoice: 18,
   water: 23,
+  insideUser: 26,
 
   keyToTypeData: {
     leads: 1,
@@ -35,7 +36,8 @@ export default {
     receivables_plan: 8,
     pool: 9,
     visit: 17,
-    invoice: 18
+    invoice: 18,
+    insideUser: 26
   },
 
   typeToKeyData: {
@@ -51,7 +53,8 @@ export default {
     8: 'receivables_plan',
     9: 'pool',
     17: 'visit',
-    18: 'invoice'
+    18: 'invoice',
+    26: 'insideUser'
   },
 
   typeToNameData: {
@@ -67,7 +70,8 @@ export default {
     8: '回款计划',
     9: '公海',
     17: '回访',
-    18: '发票'
+    18: '发票',
+    26: '内部通讯录'
   },
 
   keyToNameData: {
@@ -83,7 +87,8 @@ export default {
     receivables_plan: '回款计划',
     pool: '公海',
     visit: '回访',
-    invoice: '发票'
+    invoice: '发票',
+    insideUser: '内部通讯录'
   },
 
   convertKeyToType: function(key) {

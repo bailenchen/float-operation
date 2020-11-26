@@ -77,6 +77,21 @@ export function crmMessageFollowCustomerAPI(data) {
 }
 
 /**
+ * 分配给我的客户客户
+ * @param {*} data
+ */
+export function crmMessageAllotCustomerAPI(data) {
+  return request({
+    url: 'CrmBackLog/allotCustomer',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
  * 即将到期合同
  * @param {*} data
  */
@@ -220,6 +235,43 @@ export function crmMessageCheckDisputedAPI(data) {
 export function crmMessageHandleDisputedStatusAPI(data) {
   return request({
     url: 'CrmBackLog/handleStatuses',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
+ * 待审核合同业绩分配表头
+ * @param {*} data
+ */
+export function crmContractAllocHeaderAPI(data) {
+  return request({
+    url: 'field/queryListHead',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 待审核合同业绩分配列表
+ * @param {*} data
+ */
+export function crmContractAllocListAPI(data) {
+  return request({
+    url: 'CrmBackLog/performanceDistribution',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 待审核合同业绩分配 -- 审批
+ * @param {*} data
+ */
+export function crmExamineContractAllocListAPI(data) {
+  return request({
+    url: 'CrmBackLog/updatePerformanceDistribution',
     method: 'post',
     data: data
   })

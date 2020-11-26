@@ -86,37 +86,47 @@ export default {
           num: 0,
           tips: '待审核的争议',
           hidden: true
+        },
+        {
+          name: '分配给我的LEADS',
+          crmType: 'customer',
+          color: '#19B5F6',
+          iconClass: 'wk wk-s-seas',
+          infoType: 'allotCustomer',
+          num: 0,
+          tips: '转移、分配之后未跟进的LEADS，默认显示自己负责的LEADS',
+          hidden: true
+        },
+        {
+          name: '待进入公海的LEADS',
+          crmType: 'customer',
+          color: '#26D4DA',
+          iconClass: 'wk wk-seas',
+          infoType: 'putInPoolRemind',
+          num: 0,
+          tips: '',
+          hidden: true
+        },
+        {
+          name: '待审核合同',
+          crmType: 'contract',
+          color: '#FD5B4A',
+          iconClass: 'wk wk-contract',
+          infoType: 'checkContract',
+          num: 0,
+          tips: '',
+          hidden: true
+        },
+        {
+          name: '待审核的业绩分配',
+          crmType: 'globalAlloc',
+          color: '#FD5B4A',
+          iconClass: 'wk wk-contract',
+          infoType: 'performanceDistributions',
+          num: 0,
+          tips: '',
+          hidden: true
         }
-        // {
-        //   name: '分配给我的客户',
-        //   crmType: 'customer',
-        //   color: '#19B5F6',
-        //   iconClass: 'wk wk-s-seas',
-        //   infoType: 'followCustomer',
-        //   num: 0,
-        //   tips: '转移、领取、分配之后未跟进的客户，默认显示自己负责的客户',
-        //   hidden: true
-        // },
-        // {
-        //   name: '待进入公海的客户',
-        //   crmType: 'customer',
-        //   color: '#26D4DA',
-        //   iconClass: 'wk wk-seas',
-        //   infoType: 'putInPoolRemind',
-        //   num: 0,
-        //   tips: '',
-        //   hidden: true
-        // },
-        // {
-        //   name: '待审核合同',
-        //   crmType: 'contract',
-        //   color: '#FD5B4A',
-        //   iconClass: 'wk wk-contract',
-        //   infoType: 'checkContract',
-        //   num: 0,
-        //   tips: '',
-        //   hidden: true
-        // },
         // {
         //   name: '待审核回款',
         //   crmType: 'receivables',

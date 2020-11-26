@@ -119,12 +119,13 @@ export default {
 
     getDetail() {
       this.loading = true
+      const keytype = this.crmType === 'student' ? 'customer' : this.crmType
       const request = {
         customer: crmCustomerQueryContract,
         business: crmBusinessQueryContract
-      }[this.crmType]
+      }[keytype]
       const params = { pageType: 0 }
-      params[this.crmType + 'Id'] = this.id
+      params[keytype + 'Id'] = this.id
       request(params)
         .then(res => {
           if (this.fieldList.length == 0) {

@@ -171,6 +171,7 @@ export default {
     },
     // 获取左边padding
     getPaddingLeft(item, index) {
+      console.log(index, 'address-book-index')
       return index % 2 == 0 ? '0' : '40px'
     },
     // 获取左边padding

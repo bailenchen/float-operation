@@ -20,6 +20,10 @@ import {
   crmCustomerStarAPI
 } from '@/api/customermanagement/customer'
 import {
+  crmInsideUserIndex,
+  CrmInsideUserExcelAllExport
+} from '@/api/customermanagement/address'
+import {
   crmAccountExcelAllExport
 } from '@/api/customermanagement/account'
 import { crmAccountIndex } from '@/api/customermanagement/account'
@@ -146,11 +150,12 @@ export default {
     getList() {
       this.loading = true
       var crmIndexRequest = this.getIndexRequest()
+      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
       let params = {
         page: this.currentPage,
         limit: this.pageSize,
         search: this.search,
-        type: this.isSeas ? crmTypeModel.pool : crmTypeModel[this.crmType] // 9是公海
+        type: this.isSeas ? crmTypeModel.pool : crmTypeModel[keytype] // 9是公海
       }
       if (this.sortData.order) {
         params.sortField = this.sortData.prop
@@ -225,7 +230,7 @@ export default {
         return crmLeadsIndex
       } else if (this.crmType === 'applet') {
         return crmAppletIndexAPI
-      } else if (this.crmType === 'customer') {
+      } else if (this.crmType === 'customer' || this.crmType == 'student') {
         if (this.isSeas) {
           return crmCustomerPool
         } else {
@@ -249,6 +254,8 @@ export default {
         return crmReturnVisitIndexAPI
       } else if (this.crmType === 'capitalAccount') {
         return crmAccountIndex
+      } else if (this.crmType === 'insideUser') {
+        return crmInsideUserIndex
       }
     },
     /** 获取字段 */
@@ -274,11 +281,7 @@ export default {
             params.poolId = this.poolId
           }
         } else {
-          params.label = crmTypeModel[this.crmType]
-        }
-        // 如果是学员
-        if (this.isStudent) {
-          params.label = 19
+          params.label = this.crmType == 'student' ? 19 : crmTypeModel[this.crmType]
         }
 
         const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
@@ -298,7 +301,25 @@ export default {
                   width = 140
                 }
               } else {
-                if (['leadsNumber', 'mobile', 'telephone', 'gradeName', 'followUpTime', 'nextTime', 'visitTime', 'promisedVisitTime', 'createTime', 'updateTime'].includes(element.fieldName)) {
+                if ([
+                  'leadsNumber',
+                  'mobile',
+                  'telephone',
+                  'gradeName',
+                  'followUpTime',
+                  'nextTime',
+                  'visitTime',
+                  'promisedVisitTime',
+                  'channelIdName',
+                  'leadsStatus',
+                  'createTime',
+                  'customerType',
+                  'followUpText',
+                  'signUpPossibility',
+                  'introducerTypeName',
+                  'leadsRegistrantName',
+                  'seaDays',
+                  'updateTime'].includes(element.fieldName)) {
                   width = {
                     leadsNumber: 140,
                     mobile: 135,
@@ -309,7 +330,15 @@ export default {
                     visitTime: 150,
                     promisedVisitTime: 150,
                     createTime: 150,
-                    updateTime: 150
+                    updateTime: 150,
+                    channelIdName: 120,
+                    leadsStatus: 115,
+                    customerType: 80,
+                    followUpText: 130,
+                    signUpPossibility: 120,
+                    introducerTypeName: 110,
+                    leadsRegistrantName: 120,
+                    seaDays: 135
                   }[element.fieldName]
                 } else {
                   width = element.width
@@ -390,6 +419,15 @@ export default {
           this.showDview = true
         } else {
           // console.log('b')
+          this.showDview = false
+        }
+      } else if (this.crmType === 'student') {
+        if (['leadsNumber', 'customerName'].includes(column.property) && !this.isSeas) {
+          this.rowID = row.customerId
+          this.clickField = column.property
+          this.rowType = 'student'
+          this.showDview = true
+        } else {
           this.showDview = false
         }
       } else if (this.crmType == 'capitalAccount') {
@@ -530,6 +568,7 @@ export default {
         request = crmCustomerPoolExcelAllExport
         params.poolId = this.poolId
       } else {
+        const keytype = this.crmType === 'student' ? 'customer' : this.crmType
         request = {
           customer: crmCustomerExcelAllExport,
           capitalAccount: crmAccountExcelAllExport,
@@ -540,8 +579,9 @@ export default {
           contract: crmContractExcelAllExportAPI,
           receivables: crmReceivablesExcelAllExportAPI,
           product: crmProductExcelAllExport,
-          productSetMeal: crmProductSetMealExcelAllExport
-        }[this.crmType]
+          productSetMeal: crmProductSetMealExcelAllExport,
+          insideUser: CrmInsideUserExcelAllExport
+        }[keytype]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
       request(params)

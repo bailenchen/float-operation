@@ -155,8 +155,8 @@ export default {
       crmType: 'productSetMeal',
       headDetails: [
         { title: '课程类型', value: '' },
-        { title: '辅导方式', value: '' },
-        { title: '年级', value: '' },
+        // { title: '辅导方式', value: '' },
+        // { title: '年级', value: '' },
         { title: '购买价格（元）', value: '' },
         { title: '购买周期', value: '' }
       ],
@@ -207,10 +207,10 @@ export default {
           this.detailData = res.data
 
           this.headDetails[0].value = res.data.courseType
-          this.headDetails[1].value = res.data.coachType
-          this.headDetails[2].value = res.data.gradeName
-          this.headDetails[3].value = separator(res.data.price || 0)
-          this.headDetails[4].value = res.data.startPurchaseCycle + '-' + res.data.endPurchaseCycle
+          // this.headDetails[1].value = res.data.coachType
+          // this.headDetails[2].value = res.data.gradeName
+          this.headDetails[1].value = separator(res.data.price || 0)
+          this.headDetails[2].value = res.data.startPurchaseCycle + '-' + res.data.endPurchaseCycle
         })
         .catch(() => {
           this.loading = false
