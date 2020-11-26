@@ -91,7 +91,6 @@
       :height="tableHeight"
       :cell-class-name="cellClassName"
       class="n-table--border"
-      use-virtual
       stripe
       highlight-current-row
       style="width: 100%"
@@ -456,7 +455,6 @@ export default {
 
   watch: {
     show() {
-      console.log('111111')
       if (this.showOptions && this.options.length > 0) {
         this.optionsType = this.options[0].value
       }
@@ -465,15 +463,6 @@ export default {
   },
 
   mounted() {
-    this.$nextTick(() => {
-      const callOutData = JSON.parse(localStorage.getItem('callOutData'))
-      if (callOutData) {
-        this.modelData = {
-          modelId: callOutData.id,
-          model: callOutData.type
-        }
-      }
-    })
     if (this.showOptions && this.options.length > 0) {
       this.optionsType = this.options[0].value
     }
