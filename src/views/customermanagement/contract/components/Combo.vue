@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { crmProductIndex } from '@/api/customermanagement/product'
+// import { crmProductIndex } from '@/api/customermanagement/product'
 
 export default {
   props: {
@@ -134,6 +134,7 @@ export default {
       subjectList: [],
       purchaseLesson: 0, // 全部套餐标准课次之和
       grooveLesson: 0 // 全部套餐常规赠送课次之和
+      // presenterCount: 0 // 常规赠送与累计赠送之和
     }
   },
   watch: {
@@ -144,12 +145,6 @@ export default {
       },
       deep: true
     }
-  },
-  created() {
-    // 获取科目
-    // QueryAdminSubject().then(res => {
-    //   this.subjectList = res.data
-    // }).catch(() => {})
   },
   mounted() {
     // this.getOrderNumber()
@@ -164,14 +159,14 @@ export default {
       // }
       this.purchaseLesson = 0
       this.grooveLesson = 0
+      this.drainage = false
       var arr = []
-      var drainage = false
       for (let i = 0; i < this.action.productSetMeal.length; i++) {
         const productSetMeal = this.action.productSetMeal[i]
         console.log('大套餐', productSetMeal)
         this.purchaseLesson += Number(productSetMeal.purchaseFrequency)
         if (productSetMeal.courseType == '引流课') {
-          drainage = true
+          this.drainage = true
         }
 
         for (let j = 0; j < productSetMeal.details.length; j++) {
@@ -189,7 +184,6 @@ export default {
             grooveLesson: 0, // 常规赠送课次
             planeLesson: 0, // 已排课课次
             completeLesson: 0, // 已完成课次
-            // price: productSetMeal.price, // 大套餐价格
             price: productSetMeal.purchaseFrequency * this.action.univalence, // 大套餐价格
             univalence: this.action.univalence, // 单价
 
@@ -203,54 +197,20 @@ export default {
         }
       }
       this.tableData = arr
+      this.sendData()
+      this.getOrderNumber()
+    },
+
+    sendData() {
       this.$emit('structure-data', {
         tableData: this.tableData,
         purchaseLesson: this.purchaseLesson,
         grooveLesson: this.grooveLesson,
         totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson),
-        drainage
+        drainage: this.drainage
       })
-      this.getOrderNumber()
     },
-    structureData1() {
-      const params = {
-        type: 4,
-        searchJson: this.action.searchJson
-      }
-      console.log('请求参数AA1', params)
-      crmProductIndex(params).then(res => {
-        // 获取课次单价
-        this.univalence = res.data.list[0].price
-        console.log('产品', this.action.productSetMeal, this.action.productSetMeal.length)
-        var arr = []
-        for (let i = 0; i < this.action.productSetMeal.length; i++) {
-          const productSetMeal = this.action.productSetMeal[i]
-          console.log('大套餐', productSetMeal)
-          for (let j = 0; j < productSetMeal.details.length; j++) {
-            const product = productSetMeal.details[j]
-            console.log('小套餐', product)
-            this.maxIndex++
-            var obj = {
-              productType: productSetMeal.name,
-              productName: product.detailsName,
-              subject: '',
-              comboNormLesson: product.purchaseFrequency, // 套餐标准课次
-              normLesson: product.giveFrequency, // 套餐标准赠送课次
-              purchaseLesson: 0, // 购买课次
-              grooveLesson: product.giveFrequency, // 常规赠送课次
-              planeLesson: 0, // 已排课课次
-              completeLesson: 0, // 已完成课次
-              price: productSetMeal.price,
-              univalence: this.univalence, // 单价
-              combo_number: productSetMeal.productId, // 大套餐编号
-              dataIndex: this.maxIndex// 标识
-            }
-            arr.push(obj)
-          }
-        }
-        this.tableData = arr
-      }).catch(() => {})
-    },
+
     // 获取相同编号的数组
     getOrderNumber() {
       if (!this.tableData) {
@@ -262,17 +222,12 @@ export default {
       this.tableData.forEach((element, index) => {
         element.rowIndex = index
         if (OrderObj[element.combo_number]) {
-          // OrderObj[element.combo_number].push(index)
           OrderObj[element.combo_number].push({
             index: index,
             combo_number: element.combo_number
           })
-          // if(OrderObj[element.combo_number][element.productName]) {
-          //   OrderObj[element.combo_number][element.productName].push()
-          // }
         } else {
           OrderObj[element.combo_number] = []
-          // OrderObj[element.combo_number].push(index)
           OrderObj[element.combo_number].push({
             index: index,
             combo_number: element.combo_number
@@ -454,13 +409,14 @@ export default {
       }
 
       this[name] = lesson
+      this.sendData()
+      // this.$emit('structure-data', {
+      //   tableData: this.tableData,
+      //   purchaseLesson: this.purchaseLesson,
+      //   grooveLesson: this.grooveLesson,
+      //   totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson)
 
-      this.$emit('structure-data', {
-        tableData: this.tableData,
-        purchaseLesson: this.purchaseLesson,
-        grooveLesson: this.grooveLesson,
-        totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson)
-      })
+      // })
     },
 
     changeLesson(row, name1, name2) {
