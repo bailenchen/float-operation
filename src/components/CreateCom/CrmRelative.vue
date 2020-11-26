@@ -73,7 +73,8 @@ export default {
           'leads',
           'business',
           'contract',
-          'product'
+          'product',
+          'combo'
         ]
       }
     },
@@ -152,6 +153,10 @@ export default {
       product: {
         name: '产品',
         type: 'product'
+      },
+      productSetMeal: {
+        name: '套餐',
+        type: 'productSetMeal'
       },
       invoiceTitle: {
         name: '发票抬头',
@@ -271,6 +276,8 @@ export default {
         return '关联商机模块'
       } else if (this.crmType == 'product') {
         return '关联产品模块'
+      } else if (this.crmType == 'productSetMeal') {
+        return '关联套餐模块'
       } else if (this.crmType == 'contract') {
         return '关联合同模块'
       } else if (this.crmType == 'invoiceTitle') {

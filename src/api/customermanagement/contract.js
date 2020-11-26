@@ -255,3 +255,15 @@ export function crmContractQueryVisitAPI(data) {
     data: data
   })
 }
+
+/**
+ * 获取可赠送课次
+ * @param {*} data
+ */
+export function QueryGiveAPI(data) {
+  return request({
+    url: 'CrmContract/queryGive',
+    method: 'post',
+    data: data
+  })
+}

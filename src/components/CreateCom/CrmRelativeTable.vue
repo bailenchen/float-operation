@@ -87,6 +87,7 @@ import { crmContactsIndex } from '@/api/customermanagement/contacts'
 import { crmBusinessIndex } from '@/api/customermanagement/business'
 import { crmContractIndex } from '@/api/customermanagement/contract'
 import { crmProductSaleIndexAPI } from '@/api/customermanagement/product'
+import { crmproductSetMealIndex } from '@/api/customermanagement/meal'
 import { crmSceneIndex } from '@/api/customermanagement/common'
 // 客户下商机和联系人
 import {
@@ -200,19 +201,22 @@ export default {
         this.getFieldList()
       }
     },
-    action: function(val) {
-      // if (this.action != val) {
-      this.sceneId = ''
-      this.list = [] // 表数据
-      this.fieldList = [] // 表头数据
-      this.currentPage = 1 // 当前页数
-      this.totalPage = 1 // 总页数
-      if (!this.isRelationShow && this.showScene) {
-        this.getSceneList()
-      } else {
-        this.getFieldList()
-      }
-      // }
+    action: {
+      handler(val) {
+        // console.log('相关表格中', val)
+        // if (this.action != val) {
+        this.sceneId = ''
+        this.list = [] // 表数据
+        this.fieldList = [] // 表头数据
+        this.currentPage = 1 // 当前页数
+        this.totalPage = 1 // 总页数
+        if (!this.isRelationShow && this.showScene) {
+          this.getSceneList()
+        } else {
+          this.getFieldList()
+        }
+      },
+      deep: true
     },
     show: {
       handler(val) {
@@ -345,6 +349,15 @@ export default {
           { name: '价格', field: 'price', formType: 'text' },
           { name: '产品类别', field: 'categoryName', formType: 'text' }
         ]
+      } else if (this.crmType === 'productSetMeal') {
+        return [
+          { name: '课程套餐名称', field: 'name', formType: 'text' },
+          { name: '课程类型', field: 'courseType', formType: 'text' },
+          { name: '购买周期', field: 'purchaseCycle', formType: 'text' },
+          { name: '购买课次', field: 'purchaseFrequency', formType: 'text' },
+          { name: '赠送课程', field: 'giveFrequency', formType: 'text' },
+          { name: '使用周期', field: 'purchaseCycle', formType: 'text' }
+        ]
       } else if (this.crmType === 'invoiceTitle') {
         return [
           { field: 'titleType', formType: 'text', name: '抬头类型' },
@@ -372,6 +385,8 @@ export default {
       } else if (this.crmType === 'customer') {
         // 如果是查LEADS
         params.customerType = 1
+      } else if (this.crmType === 'productSetMeal') {
+        params.searchJson = this.action.searchJson
       }
       // 注入关联ID
       if (this.isRelationShow) {
@@ -470,7 +485,8 @@ export default {
         contacts: crmContactsIndex,
         business: crmBusinessIndex,
         contract: crmContractIndex,
-        product: crmProductSaleIndexAPI
+        product: crmProductSaleIndexAPI,
+        productSetMeal: crmproductSetMealIndex
       }[this.crmType]
     },
     fieldFormatter(row, column, cellValue) {

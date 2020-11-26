@@ -2,7 +2,7 @@
   <el-popover
     v-model="showPopover"
     :disabled="disabled"
-    placement="bottom"
+    placement="left-end"
     width="700"
     popper-class="no-padding-popover"
     trigger="click">

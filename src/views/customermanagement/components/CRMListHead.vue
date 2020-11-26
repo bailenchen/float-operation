@@ -24,6 +24,12 @@
         type="primary"
         @click="createClick('introduce')">新建转介绍LEADS</el-button>
       <el-button
+        v-if="canSave && crmType === 'contract'"
+        class="xr-btn--orange"
+        icon="el-icon-plus"
+        type="primary"
+        @click="createClick('present')">新建额外赠送合同</el-button>
+      <el-button
         v-if="canSave"
         class="xr-btn--orange"
         icon="el-icon-plus"
@@ -201,6 +207,12 @@ export default {
           }
         }
         console.log('传递给creat组件一个userID')
+        if (this.crmType === 'contract' && action === 'present') {
+          this.createActionInfo = {
+            type: 'save',
+            present: true
+          }
+        }
 
 
         this.isCreate = !this.isCreate

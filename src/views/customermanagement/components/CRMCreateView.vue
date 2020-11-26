@@ -52,9 +52,10 @@
                     :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
                     :disabled="item.disabled"
                     :receivables-id="editId"
-
+                    :is-add-combo="isAddCombo"
                     :info-params="getInfoParams(item)"
                     :use-delete="item.useDelete"
+                    :action="actionCombo"
                     @value-change="fieldValueChange" />
 
                 </el-form-item>
@@ -331,13 +332,32 @@ export default {
       formsList: [{}],
       productSetMealPrice: 0,
       leadsNumber: false,
-      userList: null // 系统用户列表
+      userList: null, // 系统用户列表
+      actionCombo: {
+        searchJson: {
+          coachType: '',
+          gradeId: ''
+        },
+        customerId: ''
+      }
     }
   },
   computed: {
     ...mapGetters([
       'userInfo'
     ]),
+    isAddCombo() {
+      // 选择年级和辅导方式
+      var num = 0
+      this.crmForm.crmFields.forEach(item => {
+        if (item.data.fieldName == 'coach_type' && item.value) {
+          num++
+        } else if (item.data.fieldName == 'grade_id' && item.value) {
+          num++
+        }
+      })
+      return num === 2
+    },
     /** 合同 回款 下展示审批人信息 */
     showExamine() {
       if (this.crmType === 'contract' || this.crmType === 'receivables') {
@@ -389,6 +409,17 @@ export default {
         }
       }
     }
+    // 'crmForm.crmFields': function(val) {
+    //   console.log('crmForm改变', val)
+
+    //   this.crmForm.crmFields.forEach(item => {
+    //     if (item.data.fieldName == 'coach_type') {
+    //       this.actionCombo.searchJson.coachType = item.value
+    //     } else if (item.data.fieldName == 'grade_id') {
+    //       this.actionCombo.searchJson.gradeId = item.value
+    //     }
+    //   })
+    // }
   },
   created() {
     this.debouncedSaveField = debounce(300, this.saveField)
@@ -506,7 +537,9 @@ export default {
     fieldValueChange(data) {
       console.log(data, '-----')
       var item = this.crmForm.crmFields[data.index]
+      console.log('item', item)
       item.value = data.value
+
       // 商机下处理商机状态
       if (this.crmType == 'business') {
         if (item.data.formType == 'business_type') {
@@ -554,7 +587,11 @@ export default {
           }
         }
       } else if (this.crmType == 'contract') { // 合同更改
+        console.log('hettong')
         if (item.data.formType == 'customer') {
+          console.log('修改学员', item)
+          this.actionCombo.customerId = item.value[0] ? item.value[0].customerId : ''
+
           let contractForCount = 0
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
@@ -562,14 +599,30 @@ export default {
             const handleFields = [
               'business_id',
               'contacts_id',
-              'company_user_id'
+              'company_user_id',
+
+              'source', // 来源
+              'headmasterUserName', // 班主任
+              'dept_id', // 所属中心
+              'leadsNumber' // 学员编号
+              // 'totalclassTime', // 总课次
+              // 'contractsAttr' // 合同属性
             ]
 
             // 添加请求关联
             const addRelation = ['business_id', 'contacts_id']
 
             // 需要disabled
-            const addDisabled = ['business_id', 'contacts_id']
+            const addDisabled = [
+              'business_id',
+              'contacts_id',
+              'source',
+              'headmasterUserName',
+              'dept_id',
+              'totalclassTime',
+              'leadsNumber'
+              // 'contractsAttr'
+            ]
 
             // 复制
             const getValueObj = {
@@ -594,8 +647,27 @@ export default {
                     userId: data.ownerUserId
                   }
                 ]
+              },
+              source: data => {
+                return data.channelIdName ? data.channelIdName : ''
+              },
+              headmasterUserName: data => {
+                return ''
+                // return data.channelIdName ? data.channelIdName : ''
+              },
+              dept_id: data => {
+                return data.deptIdName ? data.deptIdName : ''
+              },
+              // totalclassTime: data => {
+              //   return data.channelIdName ? data.channelIdName : ''
+              // }
+              leadsNumber: data => {
+                return data.leadsNumber ? data.leadsNumber : ''
               }
+
             }
+
+            console.log('元素', element)
 
             if (handleFields.includes(element.key)) {
               if (item.value.length > 0) {
@@ -612,6 +684,7 @@ export default {
                 if (getValueObj[element.key]) {
                   element.value = getValueObj[element.key](customerItem)
                 }
+                element.disabled = !!addDisabled.includes(element.key)
               } else {
                 // 禁用
                 element.disabled = !!addDisabled.includes(element.key)
@@ -656,16 +729,33 @@ export default {
               .catch(() => {})
           }
         } else if (item.data.formType == 'product') {
-          for (
-            let index = 0;
-            index < this.crmForm.crmFields.length;
-            index++
-          ) {
-            const element = this.crmForm.crmFields[index]
-            if (element.key === 'money') {
-              element['value'] = item.value.totalPrice || ''
-            }
+          // 先使用后端返回的product作为字段，以后改为productSetMeal
+          // for (
+          //   let index = 0;
+          //   index < this.crmForm.crmFields.length;
+          //   index++
+          // ) {
+          //   const element = this.crmForm.crmFields[index]
+          //   if (element.key === 'money') {
+          //     element['value'] = item.value.totalPrice || ''
+          //   }
+          // }
+
+          item.value = {
+            data: data.value.product,
+            totalPrice: data.value.totalPrice
           }
+          // item.data.value = data.value
+          console.log('改变套餐字段', item.value)
+          this.crmForm.crmFields[1].value = data.value.totalclassTime
+          if (data.value.drainage) {
+            this.crmForm.crmFields[0].value = '引流'
+          }
+        } else if (item.data.fieldName == 'coach_type') {
+          this.actionCombo.searchJson.coachType = item.value
+        } else if (item.data.fieldName == 'grade_id') {
+          console.log('选择年级')
+          this.actionCombo.searchJson.gradeId = item.value
         }
       } else if (this.crmType == 'receivables') {
         // 新建回款 选择客户 要将id交于 合同
@@ -950,6 +1040,48 @@ export default {
 
           console.log('类型与数据', this.crmType)
           console.log('res.data: ', res.data)
+
+          // 合同添加字段
+          if (this.crmType == 'contract') {
+            res.data.unshift({
+              name: '来源',
+              value: '',
+              fieldName: 'source',
+              formType: 'text'
+            })
+            res.data.unshift({
+              name: '班主任',
+              value: '',
+              fieldName: 'headmasterUserName',
+              formType: 'text'
+            })
+            res.data.unshift({
+              name: '所属中心',
+              value: '',
+              fieldName: 'dept_id',
+              formType: 'text'
+            })
+            res.data.unshift({
+              name: '学员编号',
+              value: '',
+              fieldName: 'leadsNumber',
+              formType: 'text'
+            })
+            res.data.unshift({
+              name: '总课次',
+              value: '',
+              fieldName: 'totalclassTime',
+              formType: 'text'
+            })
+            res.data.unshift({
+              name: '合同属性',
+              value: '',
+              fieldName: 'contractsAttr',
+              setting: ['新签', '续签'],
+              formType: 'select'
+            })
+          }
+
           const list = res.data
           if (this.crmType == 'customer') {
             for (let index = 0; index < list.length; index++) {
@@ -960,9 +1092,7 @@ export default {
             }
           }
 
-          // if (this.crmType == 'capitalAccount') {
 
-          // }
 
           this.getcrmRulesAndModel(list)
 
@@ -1285,8 +1415,14 @@ export default {
           params['data'] = item
           params['styleIndex'] = showStyleIndex
         }
-        params.disabled = !this.getItemIsCanEdit(item) // 不能编辑 disabled true
+        // 新建合同合同属性默认为新签
+        if (this.action.type == 'save' || this.action.type == 'contract') {
+          if (item.fieldName == 'contractsAttr') {
+            params['value'] = '新签'
+          }
+        }
 
+        params.disabled = !this.getItemIsCanEdit(item) // 不能编辑 disabled true
         if (item.hasOwnProperty('authLevel') && item.authLevel == 2) {
           if (this.action.type === 'update') {
             params.disabled = true
@@ -1314,6 +1450,19 @@ export default {
           if (item.fieldName === 'author') {
             params.value = [{ ...this.userInfo }]
           }
+        } else if (this.crmType == 'contract') {
+          var arr = [
+            'source',
+            'headmasterUserName',
+            'dept_id',
+            'totalclassTime',
+            'leadsNumber'
+          ]
+          if (!this.action.present) {
+            arr.push('contractsAttr')
+          }
+
+          params.disabled = arr.includes(item.fieldName)
         }
         this.crmForm.crmFields.push(params)
       }
@@ -1720,6 +1869,11 @@ export default {
                 if (result) {
                   console.log('这里')
                   var params = this.getSubmiteParams(this.crmForm.crmFields)
+                  console.log('params可能是false1', params)
+                  if (params === false) {
+                    this.loading = false
+                    return
+                  }
                   if (this.examineInfo.examineType === 2) {
                     params['checkUserId'] = this.examineInfo.value[0].userId
                   }
@@ -1745,7 +1899,7 @@ export default {
                 delete params.entity.termTime
               }
             }
-            console.log(params)
+            console.log('aaa-11-', params)
             this.submiteParams(params)
           }
         } else {
@@ -1780,6 +1934,11 @@ export default {
                   this.$refs.examineInfo.validateField((result) => {
                     if (result) {
                       var params = this.getSubmiteParams(this.crmForm.crmFields)
+                      console.log('params可能是false', params)
+                      if (params === false) {
+                        this.loading = false
+                        return
+                      }
                       if (this.examineInfo.examineType === 2) {
                         params['checkUserId'] = this.examineInfo.value[0].userId
                       }
@@ -1831,6 +1990,8 @@ export default {
     },
     /** 上传 */
     submiteParams(params) {
+      var a = { ...params }
+      console.log('submiteParams', a)
       var crmRequest = this.getSubmiteRequest()
       // console.log('crmRequest的请求', crmRequest)
       console.log(this.action)
@@ -1881,8 +2042,54 @@ export default {
       if (this.crmType == 'customer' && this.action.type == 'save') {
         params.entity.email = 1
       }
-      console.log('save: ', params)
-      this.loading = false
+
+      if (this.crmType == 'contract') {
+        params.entity.countCourseSum = params.field[1].value
+        switch (params.field[0].value) {
+          case '续签':
+            params.entity.isNew = 0
+            break
+          case '新签':
+            params.entity.isNew = 1
+            break
+          case '引流':
+            params.entity.isNew = 2
+            break
+        }
+        // 删除只用于展示的字段
+        for (let i = 0; i < params.field.length; i++) {
+          const element = params.field[i]
+          var res = [
+            'contractsAttr',
+            'totalclassTime',
+            'leadsNumber',
+            'dept_id',
+            'headmasterUserName',
+            'source'
+          ].includes(element.fieldName)
+          if (res) {
+            params.field.splice(i--, 1)
+          }
+        }
+        // toHump(name)
+        for (const k in params.entity) {
+          toHump(params.entity, k)
+        }
+      }
+
+      function toHump(obj, k) {
+        var reg = /\_(\w)/g
+        if (reg.test(k)) {
+          var a = k.replace(/\_(\w)/g, function(all, letter) {
+            return letter.toUpperCase()
+          })
+          obj[a] = obj[k]
+          delete obj[k]
+        }
+      }
+
+      console.log('请求参数: ', params)
+      // this.loading = false
       // return
       crmRequest(params)
         .then(res => {
@@ -1954,7 +2161,11 @@ export default {
       for (let index = 0; index < array.length; index++) {
         const element = array[index]
         if (element.data.formType == 'product') {
-          this.getProductParams(params, element)
+          var res = this.getProductParams(params, element)
+          console.log('科目校验是否通过', res)
+          if (res === false) {
+            return false
+          }
         } else if (element.data.formType == 'map_address') {
           this.getCustomerAddressParams(params.entity, element)
         } else if (element.data.fieldType == 1) {
@@ -1987,23 +2198,64 @@ export default {
       return params
     },
     getProductParams(params, element) {
+      console.log('拼接产品参数', params, element)
+      // if (element.value) {
+      //   params['product'] = element.value.product ? element.value.product.map(item => {
+      //     item.salesPrice = item.salesPrice == '' ? 0 : item.salesPrice
+      //     item.num = item.num == '' ? 0 : item.num
+      //     item.discount = item.discount == '' ? 0 : item.discount
+      //     return item
+      //   }) : []
+      //   params.entity['totalPrice'] = element.value.totalPrice
+      //     ? element.value.totalPrice
+      //     : 0
+      //   params.entity['discountRate'] = element.value.discountRate
+      //     ? element.value.discountRate
+      //     : 0
+      // } else {
+      //   params['product'] = []
+      //   params.entity['totalPrice'] = ''
+      //   params.entity['discountRate'] = ''
+      // }
       if (element.value) {
-        params['product'] = element.value.product ? element.value.product.map(item => {
-          item.salesPrice = item.salesPrice == '' ? 0 : item.salesPrice
-          item.num = item.num == '' ? 0 : item.num
-          item.discount = item.discount == '' ? 0 : item.discount
-          return item
-        }) : []
-        params.entity['totalPrice'] = element.value.totalPrice
+        var arr = []
+        // params['product'] = element.value.data
+        console.log('值', element.value)
+        for (let i = 0; i < element.value.data.length; i++) {
+          const item = element.value.data[i]
+          if (!item.subject) {
+            this.$message.error('请选择科目')
+            return false
+          }
+          if (item.type == 2) {
+            arr.push({
+              'type': 2, // 表示累计赠送
+              'productId': item.subject, // 科目Id
+              'courseSum': item.presentLesson, // 购买课次(type为赠送的话，为累计赠送课次）
+              'price': item.univalence, // 产品单价
+              'subtotal': (item.presentLesson * item.univalence * 100) / 100, // 小计（折扣后价格）
+              'salesPrice': (item.presentLesson * item.univalence * 100) / 100 // 销售价格
+            })
+          } else {
+            arr.push({
+              'productId': item.subject, // 科目Id
+              'mealProductId': item.combo_number, // 礼包Id
+              'giftProductId': item.detailsId, // 套餐Id
+              'courseSum': item.purchaseLesson, // 购买课次(type为赠送的话，为累计赠送课次）
+              'presenterCourseSum': item.grooveLesson, // 赠送课次
+              'price': item.univalence, // 产品单价
+              'subtotal': item.price, // 小计（折扣后价格）
+              'salesPrice': item.price // 销售价格
+            })
+          }
+        }
+        params['product'] = arr
+        params.entity['money'] = element.value.totalPrice
           ? element.value.totalPrice
-          : 0
-        params.entity['discountRate'] = element.value.discountRate
-          ? element.value.discountRate
           : 0
       } else {
         params['product'] = []
-        params.entity['totalPrice'] = ''
-        params.entity['discountRate'] = ''
+        params.entity['money'] = ''
       }
     },
     // 获取客户位置参数
