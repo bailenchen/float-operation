@@ -52,10 +52,9 @@
                     :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
                     :disabled="item.disabled"
                     :receivables-id="editId"
-                    :is-add-combo="isAddCombo"
                     :info-params="getInfoParams(item)"
                     :use-delete="item.useDelete"
-                    :action="actionCombo"
+                    :action="typeToAction"
                     @value-change="fieldValueChange" />
 
                 </el-form-item>
@@ -134,7 +133,7 @@ import CreateSections from '@/components/CreateSections'
 import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
 import { crmLeadsSave } from '@/api/customermanagement/clue'
-import { crmCustomerSave } from '@/api/customermanagement/customer'
+import { crmCustomerSave, crmCustomerRead } from '@/api/customermanagement/customer'
 import { crmAccountSave } from '@/api/customermanagement/account'
 import { crmContactsSave } from '@/api/customermanagement/contacts'
 import {
@@ -186,6 +185,8 @@ import {
 } from '@/components/CreateCom'
 import DetailImg from '../product/components/DetailImg'
 // import createLogVue from '../../workLog/components/createLog.vue'
+import Present from '@/views/customermanagement/contract/components/Present'
+
 
 export default {
   name: 'CrmCreateView', // 所有新建效果的view
@@ -211,7 +212,8 @@ export default {
     XhCustomerAddress,
     XhReceivablesPlan,
     DetailImg,
-    XhChannelCategory
+    XhChannelCategory,
+    Present
   },
   filters: {
     /** 根据type 找到组件 */
@@ -276,6 +278,8 @@ export default {
         return 'XhCustomerAddress'
       } else if (formType == 'receivables_plan') {
         return 'XhReceivablesPlan'
+      } else if (formType == 'present') {
+        return 'Present'
       }
     }
   },
@@ -339,6 +343,9 @@ export default {
           gradeId: ''
         },
         customerId: ''
+      },
+      actionPresent: {
+        countCourseSum: ''
       }
     }
   },
@@ -346,17 +353,13 @@ export default {
     ...mapGetters([
       'userInfo'
     ]),
-    isAddCombo() {
-      // 选择年级和辅导方式
-      var num = 0
-      this.crmForm.crmFields.forEach(item => {
-        if (item.data.fieldName == 'coach_type' && item.value) {
-          num++
-        } else if (item.data.fieldName == 'grade_id' && item.value) {
-          num++
+    typeToAction() {
+      if (this.crmType == 'contract') {
+        if (this.action.present) {
+          return this.actionPresent
         }
-      })
-      return num === 2
+        return this.actionCombo
+      }
     },
     /** 合同 回款 下展示审批人信息 */
     showExamine() {
@@ -652,15 +655,12 @@ export default {
                 return data.channelIdName ? data.channelIdName : ''
               },
               headmasterUserName: data => {
-                return ''
-                // return data.channelIdName ? data.channelIdName : ''
+                // return ''
+                return data.headmasterUserName ? data.headmasterUserName : ''
               },
               dept_id: data => {
                 return data.deptIdName ? data.deptIdName : ''
               },
-              // totalclassTime: data => {
-              //   return data.channelIdName ? data.channelIdName : ''
-              // }
               leadsNumber: data => {
                 return data.leadsNumber ? data.leadsNumber : ''
               }
@@ -757,6 +757,50 @@ export default {
         } else if (item.data.fieldName == 'grade_id') {
           console.log('选择年级')
           this.actionCombo.searchJson.gradeId = item.value
+        } else if (item.data.fieldName == 'contractId') {
+          this.actionPresent.countCourseSum = item.value[0].countCourseSum
+          crmCustomerRead({ customerId: item.value[0].customerId }).then(res => {
+            for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+              const element = this.crmForm.crmFields[index]
+              // 需要处理 需关联客户信息或客户下信息
+              const handleFields = [
+                'source', // 来源
+                'headmasterUserName', // 班主任
+                'dept_id', // 所属中心
+                'leadsNumber' // 学员编号
+              ]
+              // 复制
+              const getValueObj = {
+                source: data => {
+                  return data.channelIdName ? data.channelIdName : ''
+                },
+                headmasterUserName: data => {
+                  return data.headmasterUserName ? data.headmasterUserName : ''
+                },
+                dept_id: data => {
+                  return data.deptIdName ? data.deptIdName : ''
+                },
+                leadsNumber: data => {
+                  return data.leadsNumber ? data.leadsNumber : ''
+                }
+              }
+              // 增加关联信息
+              const customerItem = res.data
+              if (handleFields.includes(element.key)) {
+                // 填充值
+                if (getValueObj[element.key]) {
+                  element.value = getValueObj[element.key](customerItem)
+                }
+              }
+            }
+          }).catch(() => {})
+        } else if (item.data.fieldName == 'present') {
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key == 'totalclassTime') {
+              element.value = data.value.lessons
+            }
+          }
         }
       } else if (this.crmType == 'receivables') {
         // 新建回款 选择客户 要将id交于 合同
@@ -1081,6 +1125,24 @@ export default {
               setting: ['新签', '续签'],
               formType: 'select'
             })
+            if (this.action.present) {
+              res.data.unshift({
+                name: '关联合同',
+                value: '',
+                fieldName: 'contractId',
+                formType: 'contract'
+              })
+              res.data.push({
+                name: '赠送课程',
+                value: '',
+                fieldName: 'present',
+                formType: 'present'
+              })
+              res.data = res.data.filter(item => {
+                return item.fieldName != 'customer_id' && item.fieldName != 'product'
+              })
+              // console.log('过滤除掉用户', arr)
+            }
           }
 
           const list = res.data
@@ -2047,7 +2109,21 @@ export default {
       }
 
       if (this.crmType == 'contract') {
+        console.log('字段', params.field)
+        // 获取相关字段
+        for (let i = 0; i < params.field.length; i++) {
+          const element = params.field[i]
+          if (this.action.present) {
+            params.entity.contract_type = 2
+            if (element.fieldName == 'contractId') {
+              params.entity.relevance_contract_id = element.value[0].contractId
+            }
+          } else {
+            // 1
+          }
+        }
         params.entity.countCourseSum = params.field[1].value
+
         switch (params.field[0].value) {
           case '续签':
             params.entity.isNew = 0
@@ -2059,6 +2135,10 @@ export default {
             params.entity.isNew = 2
             break
         }
+        // if (this.action.present) {
+        //   params.entity.contract_type = 2
+        //   // params.entity.relevance_contract_id = 1
+        // }
         // 删除只用于展示的字段
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
@@ -2068,13 +2148,15 @@ export default {
             'leadsNumber',
             'dept_id',
             'headmasterUserName',
-            'source'
+            'source',
+            'contractId',
+            'present'
           ].includes(element.fieldName)
           if (res) {
             params.field.splice(i--, 1)
           }
         }
-        // toHump(name)
+
         for (const k in params.entity) {
           toHump(params.entity, k)
         }
@@ -2092,8 +2174,8 @@ export default {
       }
 
       console.log('请求参数: ', params)
-      this.loading = false
-      return
+      // this.loading = false
+      // return
       crmRequest(params)
         .then(res => {
           this.loading = false
@@ -2179,6 +2261,9 @@ export default {
           }
         } else if (element.data.key == 'introducer_type') {
           console.log(111)
+        } else if (element.key == 'present') {
+          console.log('额外')
+          this.getPresentParams(params, element)
         } else {
           console.log('saasa11', element)
           element.data.value = this.getRealParams(element)
@@ -2199,6 +2284,28 @@ export default {
       }
       console.log('entity', params)
       return params
+    },
+    getPresentParams(params, element) {
+      console.log('拼接产品参数', params, element)
+      if (element.value) {
+        var arr = []
+        console.log('值', element.value)
+        for (let i = 0; i < element.value.product.length; i++) {
+          const item = element.value.product[i]
+          arr.push({
+            'type': 3, // 表示额外赠送
+            'productId': item.subject, // 科目Id
+            'courseSum': item.grooveLesson, // 购买课次(type为赠送的话，为累计赠送课次）
+            'discount': item.discount,
+            'price': 0, // 产品单价
+            'subtotal': 0,
+            'salesPrice': 0
+          })
+        }
+        params['product'] = arr
+      } else {
+        params['product'] = []
+      }
     },
     getProductParams(params, element) {
       console.log('拼接产品参数', params, element)
