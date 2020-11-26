@@ -236,7 +236,7 @@ export default {
     tabNames() {
       var tempsTabs = []
       // tempsTabs.push({ label: '活动', name: 'Activity' })
-      if (this.crm.customer && this.crm.customer.read) {
+      if (this.crm.capitalAccount && this.crm.capitalAccount.read) {
         tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
       }
       // if (this.crm.contacts && this.crm.contacts.index) {

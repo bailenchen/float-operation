@@ -179,8 +179,13 @@
         fixed="right"
         width="150">
         <template slot-scope="scope">
-          <el-button type="success" size="mini" @click="handleExamine(scope.row, 1)">通过</el-button>
-          <el-button type="danger" size="mini" @click="handleExamine(scope.row, 2)">拒绝</el-button>
+          <div v-if="!scope.row.checkStatus">
+            <el-button type="success" size="mini" @click="handleExamine(scope.row, 1)">通过</el-button>
+            <el-button type="danger" size="mini" @click="handleExamine(scope.row, 2)">拒绝</el-button>
+          </div>
+          <div>
+            {{ scope.row.checkStatus }}
+          </div>
         </template>
       </el-table-column>
     </el-table>
