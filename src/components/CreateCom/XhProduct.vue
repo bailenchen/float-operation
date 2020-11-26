@@ -53,11 +53,6 @@
           </template>
         </el-table-column>
 
-        <!-- <el-table-column
-          prop="presentLesson"
-          label="累计赠送课次"
-          width="180"/> -->
-
         <el-table-column prop="presentLesson" label="累计赠送课次" width="" align="center">
           <template slot-scope="scope">
             <el-input v-model="scope.row.presentLesson" @change="changeLesson"/>
@@ -88,13 +83,11 @@
               circle
               @click="minusPresentHandle(scope.row.dataIndex)"
             />
-            <!-- <el-button type="primary" icon="el-icon-plus" circle @click="plusSubjectHandle(scope.row.combo_number, scope.row.dataIndex)" />
-            <el-button v-show="minusShow(scope.row.combo_number, scope.row.productName)" type="danger" icon="el-icon-minus" circle @click="minusSubjectHandle(scope.row.dataIndex)" /> -->
           </template>
         </el-table-column>
       </el-table>
       <div v-show="presentRules">
-        累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。实际剩余可赠送课次：<span class="red">{{ presenterCount }}</span>
+        累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。实际剩余可赠送课次：<span class="red">{{ surplusPresenter }}</span>
       </div>
     </div>
     <flexbox class="handle-footer">
@@ -153,18 +146,14 @@ export default {
       presentDataIndex: 0,
       purchaseLesson: 0, // 所有套餐总课次
       presentRules: '', // 赠送规则文案
-      presenterCount: 0, // 实际累计可赠送课次
+      // presenterCount: 0, // 实际累计可赠送课次
+      surplusPresenter: 0, // 实际累计可赠送课次
       comboComponentData: null,
       isAddCombo: false,
       drainage: false // 引流课
     }
   },
   computed: {
-    // isAddCombo() {
-    //   if (this.action.customerId && this.action.searchJson.coachType && this.action.searchJson.gradeId) {
-    //     return true
-    //   }
-    // },
     showPresent() {
       if (this.subjectList && this.univalence) {
         return true
@@ -189,14 +178,6 @@ export default {
           })
         })
         this.selectComobo = arr
-        // for (let i = 0; i < this.selectComobo.length; i++) {
-        //   const element = this.selectComobo[i]
-        //   console.log('选中的套餐', element)
-        //   if (element.data.courseType == '引流课') {
-        //     this.drainage = true
-        //     break
-        //   }
-        // }
         if (this.univalence == '' || !this.subjectList) {
           console.log('没有价格或科目')
           return
@@ -216,7 +197,7 @@ export default {
         this.present = null
         this.purchaseLesson = 0
         this.presentRules = ''
-        this.presenterCount = 0
+        this.surplusPresenter = 0
         this.totalPrice = 0
         this.drainage = false
         if (val.searchJson.coachType && val.searchJson.gradeId) {
@@ -474,10 +455,12 @@ export default {
       this.sendData = {
         index: this.index,
         value: {
-          product: obj.tableData,
+          product: this.comboComponentData.tableData,
           totalPrice: this.totalPrice,
           drainage: this.drainage,
-          totalclassTime: obj.totalclassTime
+          totalclassTime: this.comboComponentData.totalclassTime,
+          buyCount: this.comboComponentData.purchaseLesson,
+          presenterCount: this.comboComponentData.grooveLesson
         },
         data: {
           fieldName: 'productSetMeal'
@@ -507,14 +490,12 @@ export default {
             type: 2
           }
         ]
-        this.presenterCount = (res.data.presenterCount - this.comboComponentData.grooveLesson) > 0 ? res.data.presenterCount - this.comboComponentData.grooveLesson : 0
-
+        this.surplusPresenter = (res.data.presenterCount - this.comboComponentData.grooveLesson) > 0 ? res.data.presenterCount - this.comboComponentData.grooveLesson : 0
         this.presentRules = {
           coachType: this.action.searchJson.coachType,
           classes: res.data.classes,
           give: res.data.give
         }
-        // this.presentRules = `购买辅导方式为${this.action.searchJson.coachType}的，购买${res.data.classes}节课，可赠送${res.data.give}节课。当前剩余可赠送课次：<span class="red">${this.presenterCount}</sapn>`
       }).catch(() => {})
     },
     totalPriceHandle(totalPrice) {
@@ -530,7 +511,7 @@ export default {
         const element = this.present[i]
         lesson += Number(element.presentLesson)
         var _lesson = Number(element.presentLesson)
-        if (lesson > this.presenterCount) {
+        if (lesson > this.surplusPresenter) {
           element.presentLesson = 0
           lesson -= _lesson
           this.$message.warning('累计赠送课次不能大于剩余可赠送课次')
@@ -541,32 +522,12 @@ export default {
           return true
         }
       })
-      // for (let i = 0; i < arr.length; i++) {
-      //   const element = arr[i];
-      //   if
 
-      // }
-      // arr.map(item => {
-      //   return item.presentLesson > 1
-      // })
       console.log('大于1的数组', arr)
 
       this.sendData.value.product = [...this.sendData.value.product, ...arr]
-      // this.sendData = {
-      //   index: this.index,
-      //   value: {
-      //     product: obj.tableData,
-      //     totalPrice: this.totalPrice
-      //     // lessonNum: obj.lessonNum
-      //   },
-      //   data: {
-      //     fieldName: 'productSetMeal'
-      //   }
-      // }
-
+      this.sendData.value.presenterCount = this.comboComponentData.grooveLesson + lesson
       this.$emit('value-change', this.sendData)
-
-      // this.$emit('')
     }
   }
 }

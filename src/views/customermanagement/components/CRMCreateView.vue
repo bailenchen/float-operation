@@ -743,11 +743,12 @@ export default {
 
           item.value = {
             data: data.value.product,
-            totalPrice: data.value.totalPrice
+            totalPrice: data.value.totalPrice,
+            buyCount: data.value.buyCount,
+            presenterCount: data.value.presenterCount
           }
-          // item.data.value = data.value
           console.log('改变套餐字段', item.value)
-          this.crmForm.crmFields[1].value = data.value.totalclassTime
+          this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
           if (data.value.drainage) {
             this.crmForm.crmFields[0].value = '引流'
           }
@@ -2091,8 +2092,8 @@ export default {
       }
 
       console.log('请求参数: ', params)
-      // this.loading = false
-      // return
+      this.loading = false
+      return
       crmRequest(params)
         .then(res => {
           this.loading = false
@@ -2255,9 +2256,13 @@ export default {
         params.entity['money'] = element.value.totalPrice
           ? element.value.totalPrice
           : 0
+        params.entity.buyCount = element.value.buyCount
+        params.entity.presenterCount = element.value.presenterCount
       } else {
         params['product'] = []
         params.entity['money'] = ''
+        params.entity.buyCount = 0
+        params.entity.presenterCount = 0
       }
     },
     // 获取客户位置参数
@@ -2348,6 +2353,9 @@ export default {
       } else if (this.crmType == 'productSetMeal') {
         return this.action.type == 'update' ? '编辑课程套餐' : '新建课程套餐'
       } else if (this.crmType == 'contract') {
+        if (this.action.present && this.action.type !== 'update') {
+          return '新建额外赠送合同'
+        }
         return this.action.type == 'update' ? '编辑合同' : '新建合同'
       } else if (this.crmType == 'receivables') {
         return this.action.type == 'update' ? '编辑回款' : '新建回款'
