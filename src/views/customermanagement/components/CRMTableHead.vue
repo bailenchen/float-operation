@@ -147,6 +147,11 @@
       :selection-list="selectionList"
       @handle="handleCallBack" />
 
+    <mark-alloc
+      :visible.sync="markAllocShow"
+      :selection-list="selectionList"
+      @handle="handleCallBack" />
+
     <!-- 全局搜索 -->
     <global-search :visible.sync="globalSearchShow" />
   </div>
@@ -238,8 +243,9 @@ import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 转移到�
 import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中心
 import OnlineRecharge from './selectionHandle/OnlineRecharge' // 在线充值
 import OfflineWithDraw from './selectionHandle/OfflineWithDraw' // 线下充值和提现
-import DisputeExamine from './selectionHandle/DisputeExamine'
-import ModeFollow from './selectionHandle/ModeFollow'
+import DisputeExamine from './selectionHandle/DisputeExamine' // 争议审批
+import ModeFollow from './selectionHandle/ModeFollow' // 修改跟进
+import MarkAlloc from './selectionHandle/MarkAlloc' // 业绩分配
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 
@@ -263,6 +269,7 @@ export default {
     OfflineWithDraw,
     DisputeExamine,
     ModeFollow,
+    MarkAlloc,
     GlobalSearch
   },
   props: {
@@ -317,7 +324,8 @@ export default {
       moneyType: '',
       examineInfo: {}, // 审核争议信息
       globalSearchShow: false, // 全局检索显隐
-      isFollow: false // 修改跟进
+      isFollow: false, // 修改跟进
+      markAllocShow: false // 业绩分配
     }
   },
   computed: {
@@ -608,6 +616,8 @@ export default {
           .catch()
       } else if (type == 'follow') {
         this.isFollow = true
+      } else if (type == 'mark_alloc') {
+        this.markAllocShow = true
       }
     },
     confirmHandle(type) {
@@ -1200,9 +1210,17 @@ export default {
       } else if (type == 'confirm_give_up') {
         return this.crm[this.crmType].affirmabandon
       } else if (type == 'mark_alloc') {
-        return this.crm[this.crmType].distributionOfEarnings
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].distributionOfEarnings
+        } else {
+          return false
+        }
       } else if (type == 'update_contract') {
-        return this.crm[this.crmType].update
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].update
+        } else {
+          return false
+        }
       }
 
       return true

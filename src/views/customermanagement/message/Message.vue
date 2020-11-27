@@ -126,6 +126,16 @@ export default {
           num: 0,
           tips: '',
           hidden: true
+        },
+        {
+          name: '待审核退款',
+          crmType: 'refound',
+          color: '#FFB940',
+          iconClass: 'wk wk-receivables',
+          infoType: 'refundNumber',
+          num: 0,
+          tips: '',
+          hidden: true
         }
         // {
         //   name: '待审核回款',

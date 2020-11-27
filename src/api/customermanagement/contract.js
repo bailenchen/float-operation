@@ -267,3 +267,30 @@ export function QueryGiveAPI(data) {
     data: data
   })
 }
+
+/**
+ * 业绩分配
+ * @param {*} data
+ */
+export function markAllocSaveAPI(data) {
+  return request({
+    url: 'CrmContract/allotPerformance',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 查询业绩分配
+ * @param {*} data
+ */
+export function queryMarkAllocSaveAPI(data) {
+  return request({
+    url: 'CrmContract/queryallotPerformance',
+    method: 'post',
+    data: data
+  })
+}

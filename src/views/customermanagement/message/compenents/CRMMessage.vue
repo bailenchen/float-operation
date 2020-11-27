@@ -351,7 +351,8 @@ export default {
         'putInPoolRemind',
         'disputed',
         'checkContract',
-        'performanceDistributions'
+        'performanceDistributions',
+        'refundNumber'
       ].includes(this.infoType)
     },
 
@@ -393,7 +394,7 @@ export default {
       }
       if (this.infoType == 'allotCustomer') {
         return [{ name: '待跟进', value: 1 }, { name: '已跟进', value: 2 }]
-      } else if (this.infoType == 'checkContract' || this.infoType == 'performanceDistributions') {
+      } else if (this.infoType == 'checkContract' || this.infoType == 'performanceDistributions' || this.infoType == 'refundNumber') {
         return [{ name: '待审核', value: 1 }, { name: '已审核', value: 2 }]
       }
       return []
@@ -570,7 +571,10 @@ export default {
      * 获取高级筛选字段数据后展示
      */
     getFilterFieldInfo() {
-      const keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
+      let keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
+      if (this.crmType == 'refound') {
+        keytype = 23
+      }
       filterIndexfields({
         label: keytype
       })
