@@ -944,6 +944,26 @@ export default {
           name: '修改跟进',
           type: 'follow',
           icon: 'transfer'
+        },
+        give_up: {
+          name: '放弃/取消放弃',
+          type: 'give_up',
+          icon: 'unlock'
+        },
+        confirm_give_up: {
+          name: '确认放弃',
+          type: 'confirm_give_up',
+          icon: 'lock'
+        },
+        mark_alloc: {
+          name: '业绩分配',
+          type: 'mark_alloc',
+          icon: 'alloc'
+        },
+        update_contract: {
+          name: '合同变更',
+          type: 'update_contract',
+          icon: 'transfer'
         }
       }
       if (this.crmType == 'leads') {
@@ -1026,11 +1046,12 @@ export default {
         ])
       } else if (this.crmType == 'contract') {
         return this.forSelectionHandleItems(handleInfos, [
-          'transfer',
           'export',
           'delete',
-          'add_user',
-          'delete_user'
+          'give_up',
+          'confirm_give_up',
+          'mark_alloc',
+          'update_contract'
         ])
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'export', 'delete'])
@@ -1174,6 +1195,14 @@ export default {
         } else {
           return false
         }
+      } else if (type == 'give_up') {
+        return this.crm[this.crmType].abandon
+      } else if (type == 'confirm_give_up') {
+        return this.crm[this.crmType].affirmabandon
+      } else if (type == 'mark_alloc') {
+        return this.crm[this.crmType].distributionOfEarnings
+      } else if (type == 'update_contract') {
+        return this.crm[this.crmType].update
       }
 
       return true
