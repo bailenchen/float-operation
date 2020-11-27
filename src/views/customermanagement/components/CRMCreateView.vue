@@ -2113,32 +2113,31 @@ export default {
         // 获取相关字段
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
-          if (this.action.present) {
-            params.entity.contract_type = 2
-            if (element.fieldName == 'contractId') {
-              params.entity.relevance_contract_id = element.value[0].contractId
+          if (element.fieldName == 'contractsAttr') {
+            switch (element.value) {
+              case '续签':
+                params.entity.isNew = 0
+                break
+              case '新签':
+                params.entity.isNew = 1
+                break
+              case '引流':
+                params.entity.isNew = 2
+                break
             }
-          } else {
-            // 1
+          } else if (element.fieldName == 'totalclassTime') {
+            params.entity.countCourseSum = element.value
+          } else if (element.fieldName == 'contractId') {
+            params.entity.contract_type = 2
+            params.entity.relevance_contract_id = element.value[0].contractId
           }
+          // if (this.action.present) {
+          //   params.entity.contract_type = 2
+          //   if (element.fieldName == 'contractId') {
+          //     params.entity.relevance_contract_id = element.value[0].contractId
+          //   }
+          // }
         }
-        params.entity.countCourseSum = params.field[1].value
-
-        switch (params.field[0].value) {
-          case '续签':
-            params.entity.isNew = 0
-            break
-          case '新签':
-            params.entity.isNew = 1
-            break
-          case '引流':
-            params.entity.isNew = 2
-            break
-        }
-        // if (this.action.present) {
-        //   params.entity.contract_type = 2
-        //   // params.entity.relevance_contract_id = 1
-        // }
         // 删除只用于展示的字段
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
@@ -2293,10 +2292,10 @@ export default {
         for (let i = 0; i < element.value.product.length; i++) {
           const item = element.value.product[i]
           arr.push({
-            'type': 3, // 表示额外赠送
+            'type': 2, // 表示额外赠送
             'productId': item.subject, // 科目Id
             'courseSum': item.grooveLesson, // 购买课次(type为赠送的话，为累计赠送课次）
-            'discount': item.discount,
+            'discountRate': item.discount,
             'price': 0, // 产品单价
             'subtotal': 0,
             'salesPrice': 0
