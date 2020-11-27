@@ -35,10 +35,12 @@
             @change="checkChange(item, index)"/>
           <div
             class="stru-name"
-            @click="enterChildren(item)">{{ item.name }}</div>
-            <!-- <div
-            v-if="item.children"
-            class="el-icon-arrow-right stru-enter"/> -->
+            @click="enterChildren(item)">
+            {{ item.name }}
+            <div
+              v-if="item.children"
+              class="el-icon-arrow-right stru-enter"/>
+          </div>
         </flexbox>
       </div>
     </div>
@@ -294,9 +296,12 @@ export default {
   }
   .stru-name {
     flex: 1;
-  }
-  .stru-enter {
-    margin-right: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .stru-enter {
+      margin-right: 8px;
+    }
   }
 }
 

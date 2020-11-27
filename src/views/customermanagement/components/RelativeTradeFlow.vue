@@ -220,6 +220,11 @@ export default {
         width: '100',
         label: '金额（元）'
       })
+      this.fieldList.push({
+        prop: 'remainingAmount',
+        width: '120',
+        label: '剩余金额（元）'
+      })
 
       this.fieldList.push({ prop: 'receipt', width: '100', label: '交易凭证' })
       this.fieldList.push({ prop: 'createTime', width: '100', label: '交易时间' })
@@ -327,10 +332,18 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
+      console.log(row, 'xxxx')
       if (column.property === 'leadsNumber') {
-        return 'can-visit--underline'
-      } else {
-        return ''
+        if (row.transactionType === '资金退款') {
+          return 'under-line red-font'
+        } else if (row.transactionType === '线下资金收款') {
+          return 'under-line blue-font'
+        }
+      }
+      if (row.transactionType === '资金退款') {
+        return 'red-font'
+      } else if (row.transactionType === '线下资金收款') {
+        return 'blue-font'
       }
     },
 
