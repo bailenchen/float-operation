@@ -313,6 +313,12 @@ export default {
         // }[row[column.property]]
         // console.log('支付方式', column.property)
         // console.log(row[column.property])
+      } else if (column.property === 'price') {
+        if (row.transactionType === '资金退款') {
+          return `-${row[column.property]}`
+        } else if (row.transactionType === '线下资金收款') {
+          return `+${row[column.property]}`
+        }
       }
       return row[column.property]
     },

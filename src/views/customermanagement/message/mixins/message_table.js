@@ -15,7 +15,8 @@ import {
   crmMessagRemindCustomerAPI,
   crmMessagVisitRemindAPI,
   crmMessageCheckDisputedAPI,
-  crmContractAllocListAPI
+  crmContractAllocListAPI,
+  crmRefoundListAPI
 } from '@/api/customermanagement/message'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
@@ -47,7 +48,8 @@ export default {
         'todayCustomer',
         'allotCustomer',
         'checkContract',
-        'performanceDistributions'
+        'performanceDistributions',
+        'refundNumber'
       ].includes(this.infoType)
     }
   },
@@ -237,7 +239,8 @@ export default {
         'putInPoolRemind': crmMessagRemindCustomerAPI,
         'returnVisitRemind': crmMessagVisitRemindAPI,
         'disputed': crmMessageCheckDisputedAPI,
-        'performanceDistributions': crmContractAllocListAPI
+        'performanceDistributions': crmContractAllocListAPI,
+        'refundNumber': crmRefoundListAPI
       }[this.infoType]
     },
 
@@ -291,7 +294,10 @@ export default {
         return
       }
 
-      const keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
+      let keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
+      if (this.crmType == 'refound') {
+        keytype = 23
+      }
 
       filedGetTableField({
         label: keytype
