@@ -23,6 +23,7 @@ import AccountDetail from '../studentManage/account/detail'
 import ContactsDetail from '../contacts/ContactsDetail'
 import BusinessDetail from '../business/BusinessDetail'
 import ContractDetail from '../contract/ContractDetail'
+import WaterDetail from '../studentManage/account/WaterDetail'
 import ProductDetail from '../product/ProductDetail'
 import MoneyDetail from '../money/MoneyDetail'
 import VisitDetail from '../visit/VisitDetail'
@@ -42,7 +43,8 @@ export default {
     MoneyDetail,
     VisitDetail,
     InvoiceDetail,
-    StudentDetail
+    StudentDetail,
+    WaterDetail
   },
   inheritAttrs: false,
   props: {
@@ -119,9 +121,11 @@ export default {
       } else if (this.crmType == 'receivables') {
         this.tabName = 'money-detail'
       } else if (this.crmType == 'visit') {
-        this.tabName = 'VisitDetail'
+        this.tabName = 'visit-detail'
       } else if (this.crmType == 'invoice') {
-        this.tabName = 'InvoiceDetail'
+        this.tabName = 'invoice-detail'
+      } else if (this.crmType == 'moneyType') {
+        this.tabName = 'water-detail'
       }
     }
   },

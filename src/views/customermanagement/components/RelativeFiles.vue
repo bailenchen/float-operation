@@ -85,7 +85,7 @@ import { crmFileDelete, crmFileUpdate, downloadFileAPI } from '@/api/common'
 
 import { crmLeadsFileListAPI } from '@/api/customermanagement/clue'
 import { crmCustomerFileListAPI } from '@/api/customermanagement/customer'
-import { crmAccountFileListAPI } from '@/api/customermanagement/account'
+import { crmAccountFileListAPI, crmWaterFileListAPI } from '@/api/customermanagement/account'
 import { crmContactsFileListAPI } from '@/api/customermanagement/contacts'
 import { crmBusinessFileListAPI } from '@/api/customermanagement/business'
 import { crmContractFileListAPI } from '@/api/customermanagement/contract'
@@ -166,6 +166,7 @@ export default {
   deactivated: function() {},
   methods: {
     getDetail() {
+      console.log(keytype, 'xxxx')
       this.loading = true
       const keytype = this.crmType === 'student' ? 'customer' : this.crmType
       const request = {
@@ -179,7 +180,8 @@ export default {
         receivables: crmReceivablesFileListAPI,
         visit: crmReturnVisitFileAPI,
         invoice: crmInvoiceFileListAPI,
-        productSetMeal: crmProductSetMealFileListAPI
+        productSetMeal: crmProductSetMealFileListAPI,
+        water: crmWaterFileListAPI
       }[keytype]
       const params = {}
       if (keytype == 'productSetMeal') {

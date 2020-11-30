@@ -204,8 +204,7 @@ export default {
     return {
       crmType: 'student',
       showCount: 0,
-      modelData: {},
-      clickField: ''
+      modelData: {}
     }
   },
   computed: {

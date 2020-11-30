@@ -210,7 +210,7 @@ export default {
           // this.headDetails[1].value = res.data.coachType
           // this.headDetails[2].value = res.data.gradeName
           this.headDetails[1].value = separator(res.data.price || 0)
-          this.headDetails[2].value = res.data.startPurchaseCycle + '-' + res.data.endPurchaseCycle
+          this.headDetails[2].value = res.data.startPurchaseCycle && res.data.endPurchaseCycle ? res.data.startPurchaseCycle + '-' + res.data.endPurchaseCycle : ''
         })
         .catch(() => {
           this.loading = false

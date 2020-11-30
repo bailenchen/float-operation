@@ -1539,7 +1539,7 @@ export default {
         }
         if (this.crmType == 'capitalAccount') {
           console.log('是资金账号，设置字段是否可编辑')
-          if (element.key == 'leads_number' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id') {
+          if (element.key == 'leads_number' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id' || (element.key == 'customer_id' && this.action.type == 'update')) {
             element.disabled = true
           }
           if (element.key == 'dept_id' || element.key == 'owner_user_id') {

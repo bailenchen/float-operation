@@ -82,6 +82,19 @@ export function crmAccountFileListAPI(data) {
   })
 }
 
+/**
+ * 流水附件列表
+ * @param {*} data
+ *
+ */
+export function crmWaterFileListAPI(data) {
+  return request({
+    url: 'CrmCapitalAccount/queryFileList',
+    method: 'post',
+    data: data
+  })
+}
+
 // crm 资金客户 详情
 export function crmAccountRead(data) {
   return request({

@@ -266,7 +266,6 @@ export default {
       )
     },
     name() {
-      console.log('name是', this.crmType, this.clickField)
       if (this.crmType === 'receivables') {
         return this.detail.number
       } else if (this.crmType === 'customer') {
@@ -280,8 +279,10 @@ export default {
       } else if (this.crmType === 'invoice') {
         return this.detail.invoiceApplyNumber
       } else if (this.crmType === 'capitalAccount') {
-        return this.detail.accountNumber
+        return this.detail[this.clickField]
       } else if (this.crmType == 'student') {
+        return this.detail[this.clickField]
+      } else if (this.crmType === 'water') {
         return this.detail[this.clickField]
       }
       console.log(this.detail.name)

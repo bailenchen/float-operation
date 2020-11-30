@@ -56,6 +56,19 @@ export default {
     }
   },
   data() {
+    const validMoney = (rule, value, callback) => {
+      const reg = /^((0{1}\.\d{1,2})|([1-9]\d*\.{1}\d{1,2})|([1-9]+\d*))$/
+      console.log()
+      if (!this.form.money) {
+        callback('资金收款金额不能为空')
+      } else if (!reg.test(this.form.money)) {
+        callback('金额数不能为0和负数或小数点后保留两位')
+      } else if (this.form.money == 0.00) {
+        callback('金额数不能为0和负数或小数点后保留两位')
+      } else {
+        callback()
+      }
+    }
     return {
       innerVisible: false,
       loading: false,
@@ -65,7 +78,7 @@ export default {
       },
       rules: {
         money: [
-          { required: true, message: '请输入收款金额', trigger: 'blur' }
+          { required: true, validator: validMoney, trigger: 'blur' }
         ]
       },
       start: 0
@@ -122,17 +135,18 @@ export default {
      * 确定二次弹窗生成二维码
      */
     scanePay(type) {
-      if (!this.form.money) {
-        return
-      }
-      this.loading = true
-      this.innerVisible = true
-      if (type == 'scane') {
-        this.scaneHandle()
-      } else if (type == 'code') {
-        // 付款码
-        this.payCodeHandle()
-      }
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.innerVisible = true
+          if (type == 'scane') {
+            this.scaneHandle()
+          } else if (type == 'code') {
+            // 付款码
+            this.payCodeHandle()
+          }
+        }
+      })
     },
 
     /**

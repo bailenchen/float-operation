@@ -8,6 +8,7 @@
       :crm-type="crmType"
       :model-data="modelData"
       :id="id"
+      :click-field="clickField"
       class="d-view"
       @handle="detailHandle"
       @hide-view="hiddenView"/>
@@ -73,6 +74,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -82,7 +87,7 @@ export default {
   },
   computed: {
     tabName() {
-      if (this.isStudent) return 'StudentDetail'
+      console.log(this.crmType, 'kkkkk')
       if (this.crmType == 'leads') {
         return 'clue-detail'
       } else if (this.crmType == 'customer') {
@@ -112,7 +117,9 @@ export default {
       } else if (this.crmType == 'invoice') {
         return 'InvoiceDetail'
       } else if (this.crmType == 'leadsCustomer') {
-        return CustomerDetail
+        return 'CustomerDetail'
+      } else if (this.crmType == 'student') {
+        return 'StudentDetail'
       }
       return ''
     }

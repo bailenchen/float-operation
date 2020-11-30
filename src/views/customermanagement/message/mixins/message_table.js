@@ -31,7 +31,9 @@ export default {
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
-      total: 0
+      total: 0,
+
+      clickField: ''
     }
   },
 
@@ -181,6 +183,19 @@ export default {
         } else {
           this.showDview = false
         }
+      } else if (this.crmType == 'refound') {
+        if (column.property == 'leadsNumber') {
+          this.rowID = row.customerId
+          this.clickField = column.property
+          this.rowType = 'student'
+          this.showDview = true
+        } else if (column.property == 'serialNumber') {
+          this.rowID = row.waterId
+          this.clickField = column.property
+          this.rowType = 'moneyType'
+          this.showDview = true
+        }
+        console.log(column.property, 'bbbjjjj')
       }
 
       console.log('SCDSJK', this.crmType)

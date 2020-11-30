@@ -32,7 +32,6 @@ export default {
   computed: {
     componentName() {
       const params = this.$route.params
-      console.log(params, 'mk')
       return params.type === 'capitalAccount' ? 'AccountIndex' : 'StudentIndex'
     }
   },
