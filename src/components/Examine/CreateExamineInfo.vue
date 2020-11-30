@@ -116,6 +116,7 @@ export default {
       const reqeust = {
         oa_examine: oaCreateExamineFlow,
         crm_contract: crmCreateExamineFlow,
+        crm_present_contract: crmCreateExamineFlow,
         crm_invoice: crmCreateExamineFlow,
         crm_receivables: crmCreateExamineFlow
         // crm_dispute: crmExamineFlowRecordList
@@ -124,12 +125,15 @@ export default {
       const params = {}
       if (this.types == 'oa_examine') {
         params.categoryId = this.typesId
+      } else if (this.types == 'crm_contract' && this.typesId) {
+        params.categoryType = this.typesId
       } else {
         params.id = this.typesId
         params.categoryType = {
           crm_contract: 1,
           crm_receivables: 2,
-          crm_invoice: 3
+          crm_invoice: 3,
+          crm_present_contract: 6
         }[this.types] // 1 合同 2 回款 3 发票
       }
       reqeust(params)

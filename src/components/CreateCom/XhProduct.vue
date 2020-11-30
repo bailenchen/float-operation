@@ -33,7 +33,12 @@
         @click="selectComoboHandle(item, index)"
       >{{ item.data.name }}</el-button>
     </div>
-    <combo :action="comboAction" @structure-data="structureDataHandle" @change-price="totalPriceHandle"/>
+    实际可赠送课次：<span class="red">{{ surplusPresenter }}</span>
+    <combo
+      :action="comboAction"
+      :accumulation="accumulation"
+      @structure-data="structureDataHandle"
+      @change-price="totalPriceHandle"/>
     <!-- 累计赠送课程 -->
     <div>
       累计赠送课程
@@ -87,7 +92,7 @@
         </el-table-column>
       </el-table>
       <div v-show="presentRules">
-        累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。实际剩余可赠送课次：<span class="red">{{ surplusPresenter }}</span>
+        累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。
       </div>
     </div>
     <flexbox class="handle-footer">
@@ -142,15 +147,19 @@ export default {
       selectComobo: null, // 套餐数组
       present: null, // 赠送table相关数据
       sendData: null,
-      accumulation: 0, // 累计赠送
+      accumulation: {
+        data: [],
+        lesson: 0
+      }, // 累计赠送相关数据
       presentDataIndex: 0,
       purchaseLesson: 0, // 所有套餐总课次
       presentRules: '', // 赠送规则文案
       // presenterCount: 0, // 实际累计可赠送课次
-      surplusPresenter: 0, // 实际累计可赠送课次
+      surplusPresenter: 0, // 剩余可赠送课次
       comboComponentData: null,
       isAddCombo: false,
       drainage: false // 引流课
+      // originalPresenter: 0// 真实累计课次
     }
   },
   computed: {
@@ -393,6 +402,7 @@ export default {
       this.comboAction = {
         univalence: this.univalence,
         subjectList: this.subjectList,
+        originalPresenter: this.originalPresenter,
         productSetMeal: arr
       }
     },
@@ -498,8 +508,12 @@ export default {
         }
       }).catch(() => {})
     },
-    totalPriceHandle(totalPrice) {
-      this.totalPrice = totalPrice
+    totalPriceHandle(obj) {
+      this.totalPrice = obj.totalPrice
+      this.present.forEach(item => {
+        console.log('修改累计单价', obj)
+        item.univalence = obj.univalence
+      })
     },
     selectSubjectHandle(val) {
       // 如果赠送课次是0不处理
@@ -523,11 +537,17 @@ export default {
         }
       })
 
-      console.log('大于1的数组', arr)
 
-      this.sendData.value.product = [...this.sendData.value.product, ...arr]
-      this.sendData.value.presenterCount = this.comboComponentData.grooveLesson + lesson
-      this.$emit('value-change', this.sendData)
+      console.log('大于1的数组', arr)
+      this.accumulation = {
+        data: arr,
+        lesson
+      }
+      // 把累计课次之和和大于1的数组发送给combo组件
+
+      // this.sendData.value.product = [...this.sendData.value.product, ...arr]
+      // this.sendData.value.presenterCount = this.comboComponentData.grooveLesson + lesson
+      // this.$emit('value-change', this.sendData)
     }
   }
 }

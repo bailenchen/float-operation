@@ -304,7 +304,14 @@ export default {
         formType: 'select',
         isNull: 0,
         name: '关联对象',
-        setting: [{ name: '合同', value: 1 }, { name: '回款', value: 2 }, { name: '发票', value: 3 }, { name: '争议', value: 4 }, { name: '资金流水', value: 5 }],
+        setting: [
+          { name: '合同', value: 1 },
+          { name: '回款', value: 2 },
+          { name: '发票', value: 3 },
+          { name: '争议', value: 4 },
+          { name: '资金流水', value: 5 },
+          { name: '额外赠送合同', value: 6 }
+        ],
         value: this.handle.data ? this.handle.data.categoryType : 1
       })
 

@@ -28,7 +28,7 @@
             </el-select>
           </template>
           <template v-else-if="item.prop == 'price'">
-            <el-input v-model="scope.row.price" type="number" @change="changePrice(scope.row)" @blur="changePriceOnBlur(scope.row.price)"/>
+            <el-input v-model="scope.row.price" type="number" @change="changePrice(scope.row)"/>
           </template>
           <template v-else-if="item.prop == 'purchaseLesson'">
             <el-input v-model="scope.row.purchaseLesson" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
@@ -62,7 +62,8 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    accumulation: Object
   },
   data() {
     return {
@@ -133,7 +134,8 @@ export default {
       hoverOrderArr: [],
       subjectList: [],
       purchaseLesson: 0, // 全部套餐标准课次之和
-      grooveLesson: 0 // 全部套餐常规赠送课次之和
+      grooveLesson: 0, // 全部套餐常规赠送课次之和
+      totalPrice: 0 // 总价
       // presenterCount: 0 // 常规赠送与累计赠送之和
     }
   },
@@ -144,6 +146,12 @@ export default {
         this.structureData()
       },
       deep: true
+    },
+    accumulation: {
+      handler(val) {
+        console.log('累计赠送', val)
+        this.calculateUnivalence()
+      }
     }
   },
   mounted() {
@@ -151,6 +159,7 @@ export default {
     // this.maxIndex = this.tableData.length
   },
   methods: {
+    // 拼接表格数据
     structureData() {
       console.log('拼接数据')
       // if (!this.action.productSetMeal.length) {
@@ -160,6 +169,7 @@ export default {
       this.purchaseLesson = 0
       this.grooveLesson = 0
       this.drainage = false
+      this.totalPrice = 0
       var arr = []
       for (let i = 0; i < this.action.productSetMeal.length; i++) {
         const productSetMeal = this.action.productSetMeal[i]
@@ -195,12 +205,29 @@ export default {
           }
           arr.push(obj)
         }
+        this.totalPrice += productSetMeal.purchaseFrequency * this.action.univalence
       }
       this.tableData = arr
       this.sendData()
       this.getOrderNumber()
     },
+    // 计算单价
+    calculateUnivalence() {
+      var totalLesson = this.purchaseLesson + this.grooveLesson + this.accumulation.lesson
+      this.univalence = (this.totalPrice / totalLesson).toFixed(2)
+      console.log('总课次', this.totalPrice, totalLesson, this.univalence)
+      this.tableData.forEach(item => {
+        item.univalence = this.univalence
+      })
+      // return univalence
+      console.log('修改单价，发送事件')
+      this.$emit('change-price', {
+        totalPrice: this.totalPrice,
+        univalence: this.univalence
+      })
+    },
 
+    // 向父组件发送数据
     sendData() {
       this.$emit('structure-data', {
         tableData: this.tableData,
@@ -284,6 +311,7 @@ export default {
         }
       }
     },
+
     // 合并单元格
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       // 第0、9列，按照本类的第一行中的数据显示，剩余行为0
@@ -338,6 +366,7 @@ export default {
         }
       }
     },
+    // 增加一行数据
     plusSubjectHandle(combo_number, dataIndex) {
       this.maxIndex++
       for (let index = 0; index < this.tableData.length; index++) {
@@ -354,6 +383,7 @@ export default {
       }
       this.getOrderNumber()
     },
+    // 减少一行数据
     minusSubjectHandle(dataIndex) {
       for (let index = 0; index < this.tableData.length; index++) {
         const element = this.tableData[index]
@@ -363,6 +393,7 @@ export default {
         }
       }
     },
+    // 计算减号显隐
     minusShow(combo_number, productName) {
       var arr = []
       this.tableData.forEach(item => {
@@ -372,60 +403,50 @@ export default {
       })
       return arr.length > 1
     },
+    // 改变购买价格
     changePrice(row) {
-      console.log('输入中价格改变', row)
-      this.LoopComputePrice(row)
+      var totalPrice = 0
+      var obj = {}
 
-      var money = 0
-      // var obj = {}
-      for (let j = 0; j < this.OrderLeve1Arr.length; j++) {
-        const item = this.OrderLeve1Arr[j]
-        var a = this.tableData[item[0].index].price
-        console.log('修改后的价格', a)
-        money = (money * 100 + Number(a) * 100) / 100
-      }
-      console.log('最终价格', money)
-
-      this.$emit('change-price', money)
-    },
-    LoopComputePrice(row, name) {
-      // 计算该大套餐对应每个科目的单价，修改每一个科目对应的大套餐总价
-      var lesson = 0
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
         if (element.combo_number === row.combo_number) {
           element.price = row.price
-          // 计算该大套餐对应的每一条数据的购买课次+赠送课次
-          // lesson += Number(element.purchaseLesson) + Number(element.grooveLesson)
-          lesson += Number(element[name])
         }
-      }
-      console.log('计算好的总课次', lesson)
-      for (let i = 0; i < this.tableData.length; i++) {
-        const element = this.tableData[i]
-        if (element.combo_number === row.combo_number) {
-          element.univalence = (row.price / lesson).toFixed(2)
-        }
+        obj[element.combo_number ] = element.price
       }
 
-      this[name] = lesson
-      this.sendData()
-      // this.$emit('structure-data', {
-      //   tableData: this.tableData,
-      //   purchaseLesson: this.purchaseLesson,
-      //   grooveLesson: this.grooveLesson,
-      //   totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson)
+      for (const k in obj) {
+        if (!obj.hasOwnProperty(k)) break
+        totalPrice += Number(obj[k])
+      }
+      obj = null
+      this.totalPrice = totalPrice
+      console.log('总价', totalPrice)
 
+
+      // var univalence =
+      this.calculateUnivalence()
+
+      // this.$emit('change-price', {
+      //   totalPrice: this.totalPrice,
+      //   univalence
       // })
     },
 
+
+    // 改变课程
     changeLesson(row, name1, name2) {
       var lesson = 0
+      var lessons = 0
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
+
         if (element.detailsId === row.detailsId) {
-          lesson += Number(element.name1)
-          var _lesson = Number(element.name1)
+          console.log('name:', element, name1, element[name1])
+          lesson += Number(element[name1])
+          console.log('该小套餐的课次和', lesson)
+          var _lesson = Number(element[name1])
           if (lesson > element[name2]) {
             element.name1 = 0
             lesson -= _lesson
@@ -433,9 +454,14 @@ export default {
             this.$message.warning(text)
           }
         }
+        lessons += Number(element[name1])
       }
-      this.LoopComputePrice(row, name1)
+      this[name1] = lessons
+      console.log('购买课次之和', lessons, this[name1])
+      this.calculateUnivalence()
     }
+
+
   }
 }
 </script>

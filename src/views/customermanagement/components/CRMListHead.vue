@@ -212,7 +212,8 @@ export default {
         if (this.crmType === 'contract' && action === 'present') {
           this.createActionInfo = {
             type: 'save',
-            present: true
+            present: true,
+            id: 6
           }
         }
 
