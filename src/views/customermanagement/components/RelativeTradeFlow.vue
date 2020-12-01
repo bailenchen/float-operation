@@ -219,6 +219,7 @@ export default {
         width: '100',
         label: '交易类型'
       })
+      this.fieldList.push({ prop: 'userAccount', width: '130', label: '用户账号' })
       this.fieldList.push({ prop: 'payment', width: '100', label: '支付方式' })
       this.fieldList.push({
         prop: 'price',

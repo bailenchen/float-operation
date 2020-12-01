@@ -219,7 +219,6 @@ export default {
     /** 根据type 找到组件 */
     typeToComponentName(formType) {
       if (formType == 'termTime') {
-        console.log('xxx')
         return 'XhTerm'
       }
       if (
@@ -538,9 +537,7 @@ export default {
 
     // 字段的值更新
     fieldValueChange(data) {
-      console.log(data, '-----')
       var item = this.crmForm.crmFields[data.index]
-      console.log('item', item)
       item.value = data.value
 
       // 商机下处理商机状态
@@ -1028,7 +1025,6 @@ export default {
                 element.data.value = this.productSetMealPrice
               }
             }
-            console.log(element, '456')
           }
         } else {
           this.resetPurchasePrice()
@@ -1156,7 +1152,6 @@ export default {
           }
 
 
-
           this.getcrmRulesAndModel(list)
 
           if (this.crmType == 'customer' && this.action.userInfo) {
@@ -1267,7 +1262,6 @@ export default {
           value: []
         })
       }
-      console.log(list, 'list---')
       let showStyleIndex = -1
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
@@ -1280,7 +1274,11 @@ export default {
             ]
           }
           if (this.action.type == 'update' && item.fieldName == 'termTime') {
-            item.value = [this.action.editDetail.startPurchaseCycle, this.action.editDetail.endPurchaseCycle]
+            if (this.action.editDetail.startPurchaseCycle && this.action.editDetail.endPurchaseCycle) {
+              item.value = [this.action.editDetail.startPurchaseCycle, this.action.editDetail.endPurchaseCycle]
+            } else {
+              item.value = []
+            }
           }
         }
 
@@ -1534,8 +1532,13 @@ export default {
       for (let index = 0; index < this.crmForm.crmFields.length; index++) {
         const element = this.crmForm.crmFields[index]
         if (element.key == 'status') {
-          element.value = 1
-          element.data.value = 1
+          if (this.action.type != 'update') {
+            element.value = 1
+            element.data.value = 1
+          } else {
+            element.value = this.action.editDetail.status
+            element.data.value = this.action.editDetail.status
+          }
         }
         if (this.crmType == 'capitalAccount') {
           console.log('是资金账号，设置字段是否可编辑')

@@ -153,6 +153,16 @@ export function crmFileDelete(data) {
   })
 }
 
+/** 暂时客户管理里面也有 */
+// 附件删除接口
+export function crmFileVerdDelete(data) {
+  return request({
+    url: 'file/removeByBathId',
+    method: 'post',
+    data: data
+  })
+}
+
 // 根据批次ID删除文件
 export function crmFileRemoveByBatchId(data) {
   return request({
