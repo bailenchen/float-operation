@@ -294,3 +294,15 @@ export function queryMarkAllocSaveAPI(data) {
     data: data
   })
 }
+
+/**
+ * 查询合同充值列表
+ * @param {*} data
+ */
+export function queryRechargeListAPI(data) {
+  return request({
+    url: 'CrmContract/queryContractCapital',
+    method: 'post',
+    data: data
+  })
+}

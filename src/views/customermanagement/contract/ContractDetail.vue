@@ -87,6 +87,8 @@ import RelativeReturnMoney from '../components/RelativeReturnMoney' // 相关回
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeVisit from '../components/RelativeVisit' // 回访
 import ExamineInfo from '@/components/Examine/ExamineInfo'
+import ContractRecharge from '../components/ContractRecharge' // 合同充值
+import ReturnRechargeMoney from '../components/ReturnRechargeMoney' // 合同充值返还
 
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
@@ -107,7 +109,9 @@ export default {
     RelativeFiles,
     RelativeVisit,
     ExamineInfo,
-    CRMCreateView
+    CRMCreateView,
+    ContractRecharge,
+    ReturnRechargeMoney
   },
   mixins: [detail],
   props: {
@@ -172,18 +176,20 @@ export default {
         tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
       }
 
-      tempsTabs.push({ label: '活动', name: 'Activity' })
+      tempsTabs.push({ label: '合同充值', name: 'ContractRecharge' })
 
-      if (this.crm.product && this.crm.product.index) {
-        tempsTabs.push({ label: this.getTabName('产品', this.tabsNumber.productCount), name: 'RelativeProduct' })
-      }
-      if (this.crm.receivables && this.crm.receivables.index) {
-        tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
-      }
-      if (this.crm.visit && this.crm.visit.index) {
-        tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
-      }
-      tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
+      // tempsTabs.push({ label: '合同充值返还', name: 'ReturnRechargeMoney' })
+
+      // if (this.crm.product && this.crm.product.index) {
+      //   tempsTabs.push({ label: this.getTabName('产品', this.tabsNumber.productCount), name: 'RelativeProduct' })
+      // }
+      // if (this.crm.receivables && this.crm.receivables.index) {
+      //   tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
+      // }
+      // if (this.crm.visit && this.crm.visit.index) {
+      //   tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
+      // }
+      // tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
       tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
