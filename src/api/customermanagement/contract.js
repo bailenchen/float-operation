@@ -306,3 +306,16 @@ export function queryRechargeListAPI(data) {
     data: data
   })
 }
+
+/**
+ * 合同 放弃\取消
+ * @param {*} data
+ *
+ */
+export function CrmContractAffirmContractStatusAPI(data) {
+  return request({
+    url: 'CrmContract/affirmContractStatus',
+    method: 'post',
+    data: data
+  })
+}
