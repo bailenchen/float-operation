@@ -646,7 +646,9 @@ export default {
         'transform',
         'delete',
         'put_seas',
-        'exit-team'
+        'exit-team',
+        'give_up',
+        'confirm_give_up'
       ].includes(data.type)) {
         this.showDview = false
       }

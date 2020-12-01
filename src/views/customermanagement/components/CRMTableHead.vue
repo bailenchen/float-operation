@@ -209,7 +209,8 @@ import {
 } from '@/api/customermanagement/business'
 import {
   crmContractDelete,
-  crmContractExcelExportAPI
+  crmContractExcelExportAPI,
+  CrmContractAffirmContractStatusAPI
 } from '@/api/customermanagement/contract'
 import {
   crmReceivablesDelete,
@@ -550,7 +551,9 @@ export default {
         type == 'transformLead' ||
         type == 'state_start' ||
         type == 'state_disable' ||
-        type == 'get'
+        type == 'get' ||
+        type == 'give_up' ||
+        type == 'confirm_give_up'
       ) {
         var message = ''
         if (type == 'transform') {
@@ -573,9 +576,28 @@ export default {
           message = '确定要领取该LEADS吗?'
         } else if (type === 'transformLead') {
           message = '确定将这些名片线索转化为线索吗?'
+        } else if (type === 'give_up') {
+          if (this.selectionList[0].contractStatus == 2) {
+            message = '取消放弃么?'
+          } else if (this.selectionList[0].contractStatus == 3) {
+            this.$message.error('合同已经完成,无法操作')
+            return
+          } else {
+            message = '确定放弃么?'
+          }
+        } else if (type === 'confirm_give_up') {
+          if (this.selectionList[0].contractStatus == 1) {
+            this.$message.error('当前合同为正常状态,无法操作')
+            return
+          } else if (this.selectionList[0].contractStatus == 3) {
+            this.$message.error('合同已经完成,无法操作')
+            return
+          } else {
+            message = '确定确认放弃吗?'
+          }
         }
         this.$confirm(message, '提示', {
-          confirmButtonText: '确定',
+          confirmButtonText: type === 'confirm_give_up' ? '提交家长确认' : '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
@@ -852,6 +874,46 @@ export default {
         }).catch(() => {
           this.loading = false
         })
+        return
+      } else if (type === 'give_up') {
+        var ids = this.selectionList.map(function(item, index, array) {
+          return item.contractId
+        }).join(',')
+        const params = {
+          contractId: ids
+        }
+        if (this.selectionList[0].contractStatus == 1) {
+          params['contractStatus'] = 2
+        } else if (this.selectionList[0].contractStatus == 2) {
+          params['contractStatus'] = 1
+        }
+        this.loading = true
+        CrmContractAffirmContractStatusAPI(params)
+          .then(res => {
+            this.loading = false
+            this.$message.success('操作成功')
+            this.$emit('handle', { type: type })
+          }).catch(() => {
+            this.loading = false
+          })
+        return
+      } else if (type === 'confirm_give_up') {
+        var ids = this.selectionList.map(function(item, index, array) {
+          return item.contractId
+        }).join(',')
+        const params = {
+          contractId: ids,
+          contractStatus: 3
+        }
+        this.loading = true
+        CrmContractAffirmContractStatusAPI(params)
+          .then(res => {
+            this.loading = false
+            this.$message.success('操作成功')
+            this.$emit('handle', { type: type })
+          }).catch(() => {
+            this.loading = false
+          })
         return
       }
     },
@@ -1246,9 +1308,17 @@ export default {
           return false
         }
       } else if (type == 'give_up') {
-        return this.crm[this.crmType].abandon
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].abandon
+        } else {
+          return false
+        }
       } else if (type == 'confirm_give_up') {
-        return this.crm[this.crmType].affirmabandon
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].affirmabandon
+        } else {
+          return false
+        }
       } else if (type == 'mark_alloc') {
         if (this.selectionList.length == 1) {
           return this.crm[this.crmType].distributionOfEarnings
