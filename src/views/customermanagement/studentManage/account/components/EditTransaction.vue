@@ -119,7 +119,7 @@
 
 <script>
 // API
-import { crmFileSave } from '@/api/common'
+import { crmFileSave, crmFileVerdDelete } from '@/api/common'
 import { crmEditAccountWater } from '@/api/customermanagement/account'
 import { downloadAdjunct } from '@/api/customermanagement/common'
 
@@ -284,7 +284,6 @@ export default {
     form.remark = this.action.remark // 备注
 
 
-
     if (this.moneyType == 'offline') { // 线下
       form.serialNumber = this.action.serialNumber // serialNumber
       form.transactionType = this.action.transactionType
@@ -292,8 +291,12 @@ export default {
       form.transactionTime = this.action.transactionTime
 
       form.character = this.action.characterName
-
       this.fileName = this.action.receipt
+      if (this.fileName) {
+        this.show = false
+      } else {
+        this.show = true
+      }
       this.fieldBatchId = this.action.waterBatchId
     } else if (this.moneyType == 'refound') {
       form.serialNumber = this.action.serialNumber // serialNumber
@@ -325,7 +328,15 @@ export default {
         })
     },
     delFile() {
-      this.show = true
+      crmFileVerdDelete({
+        id: this.fieldBatchId
+      })
+        .then(res => {
+          this.show = true
+          this.fileName = null
+          this.$message.success('删除成功')
+        })
+        .catch(() => {})
     },
 
     hidenView() {

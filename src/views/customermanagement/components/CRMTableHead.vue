@@ -1214,11 +1214,23 @@ export default {
       } else if (type === 'assignHeadTeacher') {
         return this.crm[this.crmType].assignHeadTeacher
       } else if (type == 'online_recharge') {
-        return this.crm[this.crmType].onlineCollection
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].onlineCollection
+        } else {
+          return false
+        }
       } else if (type == 'offline_recharge') {
-        return this.crm[this.crmType].offlineCollection
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].offlineCollection
+        } else {
+          return false
+        }
       } else if (type == 'refound') {
-        return this.crm[this.crmType].refund
+        if (this.selectionList.length == 1) {
+          return this.crm[this.crmType].refund
+        } else {
+          return false
+        }
       } else if (type == 'dispute') {
         if (this.crm[this.crmType].dispute) {
           if (this.selectionList.length == 1) {

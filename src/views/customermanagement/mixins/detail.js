@@ -37,7 +37,7 @@ export default {
         return false
       }
       if (this.crmType == 'water') {
-        return true
+        return this.crm.capitalAccount && this.crm.capitalAccount.read
       }
 
       return this.crm && this.crm[this.crmType] && this.crm[this.crmType].read

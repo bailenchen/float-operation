@@ -117,7 +117,7 @@
           </template>
         </el-table-column>
         <el-table-column/>
-        <el-table-column
+        <!-- <el-table-column
           label="关注"
           align="center"
           fixed="right"
@@ -130,7 +130,7 @@
                 @click="toggleStar(scope.row)" />
             </el-tooltip>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           :resizable="false"
           fixed="right"
@@ -162,6 +162,7 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :model-data="modelData"
+      :click-field="clickField"
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
@@ -232,10 +233,8 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'accountNumber') {
+      if (column.property === 'accountNumber' || column.property === 'customerName' || column.property === 'leadsNumber') {
         return 'can-visit--underline'
-      } else if (column.property === 'name') {
-        return 'can-visit'
       } else {
         return ''
       }

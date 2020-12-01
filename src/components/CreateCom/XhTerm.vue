@@ -29,7 +29,6 @@ export default {
   components: {},
   mixins: [arrayMixin],
   mounted() {
-    console.log(this.dataValue, this.value, '++++++++-')
     if (this.value && this.value.toString().length == 10) {
       // 编辑的时候 值是时间戳
       this.dataValue = moment(getDateFromTimestamp(this.value)).format(

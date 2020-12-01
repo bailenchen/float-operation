@@ -23,6 +23,7 @@
           :head-details="headDetails"
           :id="id"
           :crm-type="crmType"
+          :click-field="clickField"
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
@@ -113,6 +114,10 @@ export default {
       default: () => {
         return ['el-table__body']
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -211,10 +216,7 @@ export default {
           this.detailData = res.data
 
           this.headDetails[0].value = res.data.leadsNumber
-          this.headDetails[1].value = {
-            1: '线下',
-            2: '线上'
-          }[res.data.transactionType]
+          this.headDetails[1].value = res.data.transactionTypeName
           this.headDetails[2].value = {
             1: '线下资金收款',
             2: '资金退款'

@@ -207,6 +207,7 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :model-data="modelData"
+      :click-field="clickField"
       :id="rowID"
       @handle="getList"
       @refresh-list="refreshParentList"/>
@@ -629,6 +630,7 @@ export default {
         (column.property === 'name' && this.crmType != 'contract') ||
         column.property === 'number' ||
         column.property === 'leadsName' ||
+        column.property === 'serialNumber' ||
         column.property === 'leadsNumber' ||
         column.property === 'customerName' ||
         column.property === 'businessName' ||

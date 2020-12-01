@@ -104,7 +104,9 @@ export default {
       /** 勾选行 */
       selectionList: [], // 勾选数据 用于全局导出
       // 金额字段
-      moneyFields: []
+      moneyFields: [],
+
+      clickField: '' // 点击列表字段名称
     }
   },
 
@@ -395,7 +397,7 @@ export default {
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
       console.log('点击行')
-      console.log(this.crmType)
+      console.log(this.crmType, column.property)
       if (column.type === 'selection') {
         return // 多选布局不能点击
       }
@@ -431,9 +433,20 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType == 'capitalAccount') {
-        if (column.property === 'name' || column.property == 'accountNumber') {
+        if (column.property == 'accountNumber') {
           this.rowID = row.capitalId
+          this.clickField = column.property
           this.rowType = 'capitalAccount'
+          this.showDview = true
+        } else if (column.property == 'customerName') {
+          this.rowID = row.customerId
+          this.clickField = column.property
+          this.rowType = 'student'
+          this.showDview = true
+        } else if (column.property == 'leadsNumber') {
+          this.rowID = row.customerId
+          this.clickField = column.property
+          this.rowType = 'student'
           this.showDview = true
         }
       } else if (this.crmType === 'contacts') {

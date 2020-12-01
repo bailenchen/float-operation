@@ -189,6 +189,7 @@ export default {
       }
     },
     createClick(action = '') {
+      console.log(this.crmType, 'ggggg')
       if (this.createFun) {
         this.createFun()
       } else {

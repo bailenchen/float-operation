@@ -43,7 +43,7 @@
         :label="item.label"
         show-overflow-tooltip/>
       <el-table-column
-        label="操作123"
+        label="操作"
         align="center"
         fixed="right"
         width="80">
@@ -68,7 +68,8 @@
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :id="contractId"
-      crm-type="moneyType"
+      :click-field="clickField"
+      :crm-type="detailType"
       @handle="detailHandle"/>
     <!-- <c-r-m-create-view
       v-if="isCreate"
@@ -183,7 +184,11 @@ export default {
       currentPage: 1, // 分页
       pageSize: Lockr.get('crmPageSizes') || 15,
       pageSizes: [15, 30, 60, 100],
-      total: 0
+      total: 0,
+
+      detailType: '',
+
+      clickField: ''
     }
   },
   computed: {},
@@ -214,6 +219,7 @@ export default {
         width: '100',
         label: '交易类型'
       })
+      this.fieldList.push({ prop: 'userAccount', width: '130', label: '用户账号' })
       this.fieldList.push({ prop: 'payment', width: '100', label: '支付方式' })
       this.fieldList.push({
         prop: 'price',
@@ -231,7 +237,7 @@ export default {
       this.fieldList.push({ prop: 'updateTime', width: '100', label: '扣款/打款时间' })
       this.fieldList.push({ prop: 'status', width: '100', label: '审批状态' })
       this.fieldList.push({ prop: 'remark', width: '100', label: '备注' })
-      this.fieldList.push({ prop: 'createUserName', width: '100', label: '创建人' })
+      this.fieldList.push({ prop: 'characterName', width: '100', label: '收款/退款人' })
     },
 
     editHandle(row) {
@@ -320,7 +326,7 @@ export default {
           return `+${row[column.property]}`
         }
       }
-      return row[column.property]
+      return row[column.property] || '--'
     },
 
     /**
@@ -328,7 +334,13 @@ export default {
      */
     handleRowClick(row, column, event) {
       if (column.property == 'leadsNumber') {
-        console.log('低价这里')
+        this.detailType = 'student'
+        this.clickField = column.property
+        this.contractId = this.detail.customerId
+        this.showFullDetail = true
+      } else if (column.property == 'serialNumber') {
+        this.detailType = 'moneyType'
+        this.clickField = column.property
         this.contractId = row.waterId
         this.showFullDetail = true
       }
@@ -338,8 +350,7 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      console.log(row, 'xxxx')
-      if (column.property === 'leadsNumber') {
+      if (column.property === 'leadsNumber' || column.property == 'serialNumber') {
         if (row.transactionType === '资金退款') {
           return 'under-line red-font'
         } else if (row.transactionType === '线下资金收款') {
