@@ -37,6 +37,7 @@
     <combo
       :action="comboAction"
       :value="comboValue"
+      :subject-list="subjectList"
       :accumulation="accumulation"
       @structure-data="structureDataHandle"
       @change-price="totalPriceHandle"/>
@@ -48,7 +49,7 @@
         style="width: 100%">
         <el-table-column prop="subject" label="科目" width="" align="center">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.subject" placeholder="请选择" @change="selectSubjectHandle">
+            <el-select v-model="scope.row.subject" :disabled="!!value.products" placeholder="请选择" @change="selectSubjectHandle">
               <el-option
                 v-for="(item, index) in subjectList"
                 :key="index"
@@ -61,7 +62,7 @@
 
         <el-table-column prop="presentLesson" label="累计赠送课次" width="" align="center">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.presentLesson" @change="changeLesson"/>
+            <el-input v-model="scope.row.presentLesson" :disabled="!!value.products" @change="changeLesson" />
           </template>
         </el-table-column>
 
@@ -74,7 +75,7 @@
         <el-table-column
           prop="univalence"
           label="单节课价格"/>
-        <el-table-column prop="" label="操作" width="100" align="center">
+        <el-table-column v-if="!value.products" prop="" label="操作" width="100" align="center">
           <template slot-scope="scope">
             <el-button
               type="primary"
@@ -97,7 +98,17 @@
       </div>
     </div>
     <flexbox class="handle-footer">
-      <div class="total-info">
+      <div v-if="value.products" class="total-info">
+        剩余金额：
+        <el-input
+          v-wk-number
+          v-model="surplusPrice"
+          style="width: 120px"
+          placeholder="请输入"
+          type="number"
+          disabled/>&nbsp;元
+      </div>
+      <div v-else class="total-info">
         总金额：
         <el-input
           v-wk-number
@@ -139,6 +150,7 @@ export default {
       showSelectView: false, // 内容
       productList: [],
       totalPrice: 0,
+      surplusPrice: 0,
       discountRate: '',
       selectedData: { productSetMeal: [] },
       comboAction: null,
@@ -224,10 +236,10 @@ export default {
     // 获取科目
     QueryAdminSubject().then(res => {
       this.subjectList = res.data
-      this.comboValue = {
-        productList: this.value.productList,
-        subjectList: this.subjectList
-      }
+      // this.comboValue = {
+      //   productList: this.value.productList
+      // }
+      this.structurePresentByValue()
     }).catch(() => {})
   },
   mounted() {
@@ -247,36 +259,7 @@ export default {
       console.log('选中的套餐', data)
       if (data.data) {
         this.productList = data.data
-
-        // const newSelects = []
-        // data.data.forEach(element => {
-        //   const obj = this.productList.find(item => {
-        //     return item.productId == element.productId
-        //   })
-        //   if (obj) {
-        //     newSelects.push(obj)
-        //   } else {
-        //     newSelects.push(this.getShowItem(element))
-        //   }
-        // })
-        // this.productList = newSelects
-        // this.calculateToal()
       }
-      // if (data.data) {
-      //   const newSelects = []
-      //   data.data.forEach(element => {
-      //     const obj = this.productList.find(item => {
-      //       return item.productId == element.productId
-      //     })
-      //     if (obj) {
-      //       newSelects.push(obj)
-      //     } else {
-      //       newSelects.push(this.getShowItem(element))
-      //     }
-      //   })
-      //   this.productList = newSelects
-      //   this.calculateToal()
-      // }
     },
     getShowItem(data) {
       const item = {}
@@ -443,6 +426,7 @@ export default {
           var obj = { ...element }
           obj.subject = ''
           obj.presentLesson = 0
+          obj.univalence = ''
           obj.dataIndex = this.presentDataIndex
           this.present.splice(index + 1, 0, obj)
           break
@@ -458,6 +442,73 @@ export default {
           break
         }
       }
+    },
+    getBigMealName(id) {
+      var name = ''
+      this.value.products.mealProducts.forEach(item => {
+        if (item.productId === id) {
+          name = item.name
+        }
+      })
+      return name
+    },
+    getMealName(id) {
+      var name = ''
+      this.value.products.giftProducts.forEach(item => {
+        if (item.detailsId === id) {
+          name = item.detailsName
+        }
+      })
+      return name
+    },
+    structurePresentByValue() {
+      var arr = []
+      var arr2 = []
+      var completeLesson = 0
+      this.value.products.productList.forEach(item => {
+        console.log('aaa--', item)
+        completeLesson += item.finishCourse
+        if (item.type === 1) {
+          var obj = {
+            productType: this.getBigMealName(item.mealProductId),
+            productName: this.getMealName(item.giftProductId),
+            subject: item.productId,
+            comboNormLesson: 0, // 计算出来
+            normLesson: 0, // 计算出来
+            purchaseLesson: item.courseSum, // 购买课次
+            grooveLesson: 0, // 常规赠送课次
+            planeLesson: item.alreadyCourse, // 已排课课次
+            completeLesson: item.finishCourse, // 已完成课次
+            price: item.salesPrice, // 大套餐价格
+            univalence: item.price, // 单价
+            combo_number: item.mealProductId
+          }
+          arr.push(obj)
+        }
+
+        if (item.type === 2) {
+          var obj = {
+            subject: item.productId,
+            presentLesson: item.courseSum,
+            planeLesson: item.alreadyCourse,
+            completeLesson: item.finishCourse,
+            univalence: item.price
+          }
+          arr2.push(obj)
+        }
+      })
+      console.log('过滤的', arr)
+      console.log('已完成', completeLesson)
+      this.comboValue = {
+        productList: arr
+      }
+      this.present = arr2
+      // this.totalPrice = this.value.totalPrice
+      this.surplusPrice = this.value.totalPrice - completeLesson * arr[0].univalence
+
+
+
+      this.value.products.productList.forEach(item => {})
     },
     structureDataHandle(obj) {
       console.log('combo组件发送的数据', obj)
@@ -517,10 +568,14 @@ export default {
     },
     totalPriceHandle(obj) {
       this.totalPrice = obj.totalPrice
-      this.present.forEach(item => {
-        console.log('修改累计单价', obj)
-        item.univalence = obj.univalence
+      var arr = this.present.filter(item => {
+        if (item.presentLesson > 0) {
+          item.univalence = obj.univalence
+          return true
+        }
       })
+      this.sendData.value.product = [...this.comboComponentData.tableData, ...arr]
+      this.$emit('value-change', this.sendData)
     },
     selectSubjectHandle(val) {
       // 如果赠送课次是0不处理

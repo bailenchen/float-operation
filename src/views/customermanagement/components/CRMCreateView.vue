@@ -1245,6 +1245,161 @@ export default {
           }
 
 
+          if (this.crmType == 'contract' && this.action.attr == 'change') {
+            filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
+              console.log(111)
+
+              // var obj = {
+              //   contractsAttr: this.action.detail.isNew
+              // }
+
+
+
+              var _list = [...list]
+              let showStyleIndex = -1
+              for (let index = 0; index < _list.length; index++) {
+                const item = _list[index]
+                showStyleIndex += 1
+                console.log('循环')
+                var params = {}
+                params['value'] = item.value
+                params['key'] = item.fieldName
+                params['data'] = item
+                params['disabled'] = true // 是否可交互
+                // params['showblock'] = true // 展示整行效果
+                params['styleIndex'] = showStyleIndex
+                if (item.fieldName == 'contractsAttr') {
+                  item['value'] = this.action.detail.isNew
+                  params['value'] = this.action.detail.isNew
+                }
+                if (item.fieldName == 'totalclassTime') {
+                  item['value'] = this.action.detail.buyCount
+                  params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'totalclassTime') {
+                  item['value'] = this.action.detail.buyCount
+                  params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'leadsNumber') {
+                  // item['value'] = res.data.customer.buyCount
+                  // params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'dept_id') {
+                  item['value'] = res.data.customer.deptIdName
+                  params['value'] = res.data.customer.deptIdName
+                }
+                if (item.fieldName == 'headmasterUserName') {
+                  item['value'] = res.data.customer.headmasterUserName
+                  params['value'] = res.data.customer.headmasterUserName
+                }
+                if (item.fieldName == 'source') {
+                  item['value'] = res.data.customer.channelIdName
+                  params['value'] = res.data.customer.channelIdName
+                }
+                if (item.fieldName == 'customer_id') {
+                  item['value'] = [{
+                    customerId: res.data.customer.customerId,
+                    customerName: res.data.customer.customerName
+                  }]
+                  params['value'] = [{
+                    customerId: res.data.customer.customerId,
+                    customerName: res.data.customer.customerName
+                  }]
+                }
+
+                if (item.fieldName == 'coach_type') {
+                  item['value'] = res.data.contract.coachType
+                  params['value'] = res.data.contract.coachType
+                }
+                if (item.fieldName == 'channel') {
+                  item['value'] = res.data.contract.channel
+                  params['value'] = res.data.contract.channel
+                }
+                if (item.fieldName == 'grade_id') {
+                  item['value'] = res.data.contract.gradeId
+                  params['value'] = res.data.contract.gradeId
+                }
+                if (item.fieldName == 'order_date') {
+                  item['value'] = res.data.contract.orderDate
+                  params['value'] = res.data.contract.orderDate
+                }
+                if (item.fieldName == 'file_batch_id') {
+                  item['value'] = [
+                    {
+                      batchId: '15d65525aeaa419abf426c79c5058308',
+                      code: 0,
+                      fileId: 459,
+                      name: '011.png',
+                      size: '110KB',
+                      url: '/file/downFile?fileId=164cf40ab5904430ac508270ceb8855b'
+                    }
+                  ]
+                  params['value'] = [
+                    {
+                      batchId: '15d65525aeaa419abf426c79c5058308',
+                      code: 0,
+                      fileId: 459,
+                      name: '011.png',
+                      size: '110KB',
+                      url: '/file/downFile?fileId=164cf40ab5904430ac508270ceb8855b'
+                    }
+                  ]
+                }
+
+
+                if (item.fieldName == 'signing_user_id') {
+                  item['value'] = [{
+                    customerId: res.data.customer.createUserId,
+                    customerName: this.action.detail.createUserName
+                  }]
+                  params['value'] = [{
+                    customerId: res.data.customer.createUserId,
+                    customerName: this.action.detail.createUserName
+                  }]
+                }
+
+                if (item.fieldName == 'remark') {
+                  item['value'] = res.data.contract.remark
+                  params['value'] = res.data.contract.remark
+                }
+
+
+
+
+                if (item.fieldName == 'product') {
+                  item['value'] = {
+                    // productList: res.data.contract.productList,
+                    // giftProducts: res.data.contract.giftProducts,
+                    products: {
+                      mealProducts: res.data.contract.mealProducts,
+                      productList: res.data.contract.productList,
+                      giftProducts: res.data.contract.giftProducts
+                    },
+                    totalPrice: res.data.contract.money
+                  }
+                  params['value'] = {
+                    // productList: res.data.contract.productList,
+                    // giftProducts: res.data.contract.giftProducts,
+                    products: {
+                      mealProducts: res.data.contract.mealProducts,
+                      productList: res.data.contract.productList,
+                      giftProducts: res.data.contract.giftProducts
+                    },
+                    totalPrice: res.data.contract.money
+                  }
+                  // return
+                }
+
+                //
+
+                // customer
+                this.oldForm.crmFields.push(params)
+              }
+            }).catch(() => {})
+          }
+
+
+
           this.getcrmRulesAndModel(list)
 
           if (this.crmType == 'customer' && this.action.userInfo) {
@@ -2288,8 +2443,8 @@ export default {
       }
 
       console.log('请求参数: ', params)
-      // this.loading = false
-      // return
+      this.loading = false
+      return
       crmRequest(params)
         .then(res => {
           this.loading = false
