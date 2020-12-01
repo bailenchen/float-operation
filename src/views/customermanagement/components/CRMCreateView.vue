@@ -13,6 +13,62 @@
           @click="hidenView" />
       </flexbox>
       <div class="crm-create-flex">
+        <span v-if="action.attr=='change'" class="attr-title" >原始合同</span>
+        <create-sections v-if="action.attr=='change'" title="基本信息">
+          <flexbox
+            direction="column"
+            align="stretch">
+            <div class="crm-create-body">
+              <el-form
+                ref="oldForm"
+                :model="oldForm"
+                label-position="top"
+                class="crm-create-box">
+                <el-form-item
+                  v-for="(item, index) in oldForm.crmFields"
+                  :key="item.key"
+                  :prop="'crmFields.' + index + '.value'"
+                  :class="{ 'crm-create-block-item': item.showblock, 'crm-create-item': !item.showblock }"
+                  :style="{'padding-left': getPaddingLeft(item, index), 'padding-right': getPaddingRight(item, index)}">
+                  <div
+                    slot="label"
+                    style="display: inline-block;">
+                    <div class="form-label">
+                      {{ item.data.name }}
+                      <span style="color:#999;">
+                        <!-- <span style="color:#f00;"> -->
+                        {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
+                      </span>
+                    </div>
+                  </div>
+                  <!-- 员工 和部门 为多选（radio=false）  relation 相关合同商机使用-->
+                  <!-- <component
+                    :is="item.data.formType | typeToComponentName"
+                    :value="item.value"
+                    :disabled="item.disabled"
+                  /> -->
+                  <component
+                    :is="item.data.formType | typeToComponentName"
+                    :value="item.value"
+                    :index="index"
+                    :item="item"
+                    :leads-number="leadsNumber"
+                    :relation="item.relation"
+                    :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
+                    :disabled="item.disabled"
+                    :receivables-id="editId"
+                    :info-params="getInfoParams(item)"
+                    :use-delete="item.useDelete"
+                    :action="typeToAction"
+                    @value-change="fieldValueChange" />
+
+                </el-form-item>
+              </el-form>
+            </div>
+          </flexbox>
+        </create-sections>
+
+        <span v-if="action.attr=='change'" class="attr-title" >变更后合同</span>
         <create-sections title="基本信息">
           <flexbox
             direction="column"
@@ -131,7 +187,7 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
-import { filedGetField, filedValidates } from '@/api/customermanagement/common'
+import { filedGetField, filedValidates, filedGetInformation } from '@/api/customermanagement/common'
 import { crmLeadsSave } from '@/api/customermanagement/clue'
 import { crmCustomerSave, crmCustomerRead } from '@/api/customermanagement/customer'
 import { crmAccountSave } from '@/api/customermanagement/account'
@@ -325,6 +381,10 @@ export default {
       crmForm: {
         crmFields: []
       },
+      oldForm: {
+        crmFields: []
+      },
+      // oldFields: [],
       // 审批信息
       examineInfo: {},
       // 图片信息
@@ -395,7 +455,6 @@ export default {
   },
   watch: {
     crmType: function(value) {
-      this.title = this.getTitle()
       this.crmRules = {}
       this.crmForm = {
         crmFields: []
@@ -438,6 +497,11 @@ export default {
     }
     if (this.crmType == 'capitalAccount') {
       this.leadsNumber = true
+    }
+    if (this.action.attr == 'change') {
+      filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
+        console.log(111)
+      }).catch(() => {})
     }
   },
   mounted() {
@@ -1058,9 +1122,12 @@ export default {
       }
       // // 进行编辑操作
       if (this.action.type == 'update') {
-        console.log('周这里')
         params.id = this.action.id
       }
+
+      // if (this.action.attr == 'change') {
+      //   params.id = this.action.detail.contractId
+      // }
 
       console.log('参数', params)
 
@@ -1118,13 +1185,39 @@ export default {
               fieldName: 'totalclassTime',
               formType: 'text'
             })
-            res.data.unshift({
+            var obj = {
               name: '合同属性',
               value: '',
               fieldName: 'contractsAttr',
-              setting: ['新签', '续签'],
+              // setting: ['新签', '续签'],
+              setting: [
+                {
+                  name: '续签',
+                  value: 0
+                },
+                {
+                  name: '新签',
+                  value: 1
+                },
+                {
+                  name: '引流',
+                  value: 2
+                }],
               formType: 'select'
-            })
+            }
+            if (this.action.present) {
+              obj.setting = [
+                {
+                  name: '续签',
+                  value: 0
+                },
+                {
+                  name: '新签',
+                  value: 1
+                }
+              ]
+            }
+            res.data.unshift(obj)
             if (this.action.present) {
               res.data.unshift({
                 name: '关联合同',
@@ -1153,6 +1246,148 @@ export default {
                 list.splice(index, 1)
               }
             }
+          }
+
+
+          if (this.crmType == 'contract' && this.action.attr == 'change') {
+            filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
+              console.log(111)
+
+              // var obj = {
+              //   contractsAttr: this.action.detail.isNew
+              // }
+
+
+
+              var _list = [...list]
+              let showStyleIndex = -1
+              for (let index = 0; index < _list.length; index++) {
+                const item = _list[index]
+                showStyleIndex += 1
+                console.log('循环')
+                var params = {}
+                params['value'] = item.value
+                params['key'] = item.fieldName
+                params['data'] = item
+                params['disabled'] = true // 是否可交互
+                // params['showblock'] = true // 展示整行效果
+                params['styleIndex'] = showStyleIndex
+                if (item.fieldName == 'contractsAttr') {
+                  item['value'] = this.action.detail.isNew
+                  params['value'] = this.action.detail.isNew
+                }
+                if (item.fieldName == 'totalclassTime') {
+                  item['value'] = this.action.detail.buyCount
+                  params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'totalclassTime') {
+                  item['value'] = this.action.detail.buyCount
+                  params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'leadsNumber') {
+                  // item['value'] = res.data.customer.buyCount
+                  // params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'dept_id') {
+                  item['value'] = res.data.customer.deptIdName
+                  params['value'] = res.data.customer.deptIdName
+                }
+                if (item.fieldName == 'headmasterUserName') {
+                  item['value'] = res.data.customer.headmasterUserName
+                  params['value'] = res.data.customer.headmasterUserName
+                }
+                if (item.fieldName == 'source') {
+                  item['value'] = res.data.customer.channelIdName
+                  params['value'] = res.data.customer.channelIdName
+                }
+                if (item.fieldName == 'customer_id') {
+                  item['value'] = [{
+                    customerId: res.data.customer.customerId,
+                    customerName: res.data.customer.customerName
+                  }]
+                  params['value'] = [{
+                    customerId: res.data.customer.customerId,
+                    customerName: res.data.customer.customerName
+                  }]
+                }
+
+                if (item.fieldName == 'coach_type') {
+                  item['value'] = res.data.contract.coachType
+                  params['value'] = res.data.contract.coachType
+                }
+                if (item.fieldName == 'channel') {
+                  item['value'] = res.data.contract.channel
+                  params['value'] = res.data.contract.channel
+                }
+                if (item.fieldName == 'grade_id') {
+                  item['value'] = res.data.contract.gradeId
+                  params['value'] = res.data.contract.gradeId
+                }
+                if (item.fieldName == 'order_date') {
+                  item['value'] = res.data.contract.orderDate
+                  params['value'] = res.data.contract.orderDate
+                }
+                if (item.fieldName == 'file_batch_id') {
+                  item['value'] = [
+                    {
+                      batchId: '15d65525aeaa419abf426c79c5058308',
+                      code: 0,
+                      fileId: 459,
+                      name: '011.png',
+                      size: '110KB',
+                      url: '/file/downFile?fileId=164cf40ab5904430ac508270ceb8855b'
+                    }
+                  ]
+                  params['value'] = [
+                    {
+                      batchId: '15d65525aeaa419abf426c79c5058308',
+                      code: 0,
+                      fileId: 459,
+                      name: '011.png',
+                      size: '110KB',
+                      url: '/file/downFile?fileId=164cf40ab5904430ac508270ceb8855b'
+                    }
+                  ]
+                }
+
+
+                if (item.fieldName == 'signing_user_id') {
+                  item['value'] = [{
+                    customerId: res.data.customer.createUserId,
+                    customerName: this.action.detail.createUserName
+                  }]
+                  params['value'] = [{
+                    customerId: res.data.customer.createUserId,
+                    customerName: this.action.detail.createUserName
+                  }]
+                }
+
+                if (item.fieldName == 'remark') {
+                  item['value'] = res.data.contract.remark
+                  params['value'] = res.data.contract.remark
+                }
+
+
+
+
+                if (item.fieldName == 'product') {
+                  item['value'] = {
+                    productList: res.data.contract.productList,
+                    giftProducts: res.data.contract.giftProducts
+                  }
+                  params['value'] = {
+                    productList: res.data.contract.productList,
+                    giftProducts: res.data.contract.giftProducts
+                  }
+                  // return
+                }
+
+                //
+
+                // customer
+                this.oldForm.crmFields.push(params)
+              }
+            }).catch(() => {})
           }
 
 
@@ -1289,7 +1524,7 @@ export default {
          */
 
         this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
-
+        console.log('ITEM', item)
         /**
          * 表单数据
          */
@@ -1328,6 +1563,7 @@ export default {
         } else if (item.formType == 'product') {
           // 关联产品信息比较多 用字典接收
           var params = {}
+          console.log('产品字段', item)
           params['value'] = item.value
           params['key'] = item.fieldName
           params['data'] = item
@@ -1429,6 +1665,7 @@ export default {
           }
         } else {
           var params = {}
+
           if (
             item.formType == 'user' ||
             item.formType == 'single_user' ||
@@ -1451,6 +1688,14 @@ export default {
                   params.value = [params.value]
                 }
               }
+            } else if (this.action.attr == 'change') {
+              // console.log('更改', item)
+              // var oldParams = {}
+              // oldParams['value'] = item.value
+              // oldParams['key'] = item.fieldName
+              // oldParams['data'] = item
+              // oldParams['disabled'] = false // 是否可交互
+              // oldParams['showblock'] = true // 展示整行效果
             } else {
               params['value'] = item.defaultValue
                 ? objDeepCopy(item.defaultValue)
@@ -1463,6 +1708,7 @@ export default {
               params['value'] = item.defaultValue || ''
             }
           }
+
 
           // 新建 合同 回款计划  回款的时间默认填充当天
           if (this.action.type == 'save' || this.action.type == 'relative') {
@@ -1530,6 +1776,7 @@ export default {
           params.disabled = arr.includes(item.fieldName)
         }
         this.crmForm.crmFields.push(params)
+        // this.oldForm.crmFields.push(oldParams)
       }
       for (let index = 0; index < this.crmForm.crmFields.length; index++) {
         const element = this.crmForm.crmFields[index]
@@ -1551,6 +1798,13 @@ export default {
           element.disabled = true
         }
       }
+      // var old = [...this.crmForm.crmFields]
+      // old.forEach(item => {
+      //   item.disabled = true
+      //   item.
+      //   if(item.)
+      // })
+      // this.oldForm.crmFields = old
     },
     /**
      * 获取关联项的值 和 关联信息
@@ -2462,6 +2716,9 @@ export default {
         if (this.action.present && this.action.type !== 'update') {
           return '新建额外赠送合同'
         }
+        if (this.action.attr == 'change') {
+          return '变更合同'
+        }
         return this.action.type == 'update' ? '编辑合同' : '新建合同'
       } else if (this.crmType == 'receivables') {
         return this.action.type == 'update' ? '编辑回款' : '新建回款'
@@ -2623,4 +2880,9 @@ export default {
       display: inline;
     }
   }
+  .attr-title {
+    padding-left: 10px;
+    font-weight: bold;
+  }
+
 </style>

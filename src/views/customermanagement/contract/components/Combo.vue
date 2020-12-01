@@ -63,6 +63,7 @@ export default {
         return {}
       }
     },
+    value: Object,
     accumulation: Object
   },
   data() {
@@ -140,12 +141,30 @@ export default {
     }
   },
   watch: {
+    value: {
+      handler(val) {
+        console.log('val', val)
+        if (val && val.productList) {
+          console.log('使用value的值代替table', val)
+          this.tableData = val.productList
+        }
+        // if (val.productList) {
+        //   console.log('使用value的值代替table', val)
+        //   this.tableData = val.productList
+        // }
+
+        // this.structureData()
+      },
+      deep: true,
+      immediate: true
+    },
     action: {
       handler(val) {
         // if (val.searchJson.gradeId && val.searchJson.coachType && val.productSetMeal.length) { this.structureData() }
         this.structureData()
       },
       deep: true
+
     },
     accumulation: {
       handler(val) {

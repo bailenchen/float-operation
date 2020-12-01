@@ -36,6 +36,7 @@
     实际可赠送课次：<span class="red">{{ surplusPresenter }}</span>
     <combo
       :action="comboAction"
+      :value="comboValue"
       :accumulation="accumulation"
       @structure-data="structureDataHandle"
       @change-price="totalPriceHandle"/>
@@ -158,7 +159,8 @@ export default {
       surplusPresenter: 0, // 剩余可赠送课次
       comboComponentData: null,
       isAddCombo: false,
-      drainage: false // 引流课
+      drainage: false, // 引流课
+      comboValue: null
       // originalPresenter: 0// 真实累计课次
     }
   },
@@ -218,9 +220,14 @@ export default {
 
   },
   created() {
+    console.log('传入的value', this.value)
     // 获取科目
     QueryAdminSubject().then(res => {
       this.subjectList = res.data
+      this.comboValue = {
+        productList: this.value.productList,
+        subjectList: this.subjectList
+      }
     }).catch(() => {})
   },
   mounted() {

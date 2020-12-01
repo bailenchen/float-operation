@@ -152,6 +152,18 @@
       :selection-list="selectionList"
       @handle="handleCallBack" />
 
+    <!-- <update-contract
+      v-if="isUpdate"
+      :action="createActionInfo"
+      @hiden-view="hideView"
+    /> -->
+    <c-r-m-create-view
+      v-if="isUpdate"
+      :crm-type="createCRMType"
+      :action="createActionInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
     <!-- 全局搜索 -->
     <global-search :visible.sync="globalSearchShow" />
   </div>
@@ -246,8 +258,10 @@ import OfflineWithDraw from './selectionHandle/OfflineWithDraw' // 线下充值�
 import DisputeExamine from './selectionHandle/DisputeExamine' // 争议审批
 import ModeFollow from './selectionHandle/ModeFollow' // 修改跟进
 import MarkAlloc from './selectionHandle/MarkAlloc' // 业绩分配
+import UpdateContract from './selectionHandle/UpdateContract' // 合同变更
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
+import CRMCreateView from './CRMCreateView'
 
 export default {
   name: 'CRMTableHead', // 客户管理下 重要提醒 回款计划提醒
@@ -270,7 +284,9 @@ export default {
     DisputeExamine,
     ModeFollow,
     MarkAlloc,
-    GlobalSearch
+    UpdateContract,
+    GlobalSearch,
+    CRMCreateView
   },
   props: {
     title: {
@@ -325,7 +341,11 @@ export default {
       examineInfo: {}, // 审核争议信息
       globalSearchShow: false, // 全局检索显隐
       isFollow: false, // 修改跟进
-      markAllocShow: false // 业绩分配
+      markAllocShow: false, // 业绩分配
+      upContractShow: false, // 合同变更
+      isUpdate: false,
+      createCRMType: 'contract',
+      createActionInfo: { type: 'save' } // 创建的相关信息
     }
   },
   computed: {
@@ -618,6 +638,14 @@ export default {
         this.isFollow = true
       } else if (type == 'mark_alloc') {
         this.markAllocShow = true
+      } else if (type == 'update_contract') {
+        this.isUpdate = true
+
+        this.createActionInfo = {
+          type: 'save',
+          attr: 'change',
+          detail: this.selectionList[0]
+        }
       }
     },
     confirmHandle(type) {
@@ -1264,6 +1292,13 @@ export default {
     globalSearch() {
       console.log('全局检索')
       this.globalSearchShow = true
+    },
+    // 保存成功
+    createSaveSuccess() {
+      console.log('保存成功')
+    },
+    hideView() {
+      this.isUpdate = false
     }
   }
 }
