@@ -644,6 +644,7 @@ export default {
         this.createActionInfo = {
           type: 'save',
           attr: 'change',
+          id: 7,
           detail: this.selectionList[0]
         }
       }

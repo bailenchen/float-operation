@@ -28,13 +28,13 @@
             </el-select>
           </template>
           <template v-else-if="item.prop == 'price'">
-            <el-input v-model="scope.row.price" :disabled="!!value" type="number" @change="changePrice(scope.row)"/>
+            <el-input v-model="scope.row.price" :disabled="!!value" type="number" min="0" @change="changePrice(scope.row)"/>
           </template>
           <template v-else-if="item.prop == 'purchaseLesson'">
-            <el-input v-model="scope.row.purchaseLesson" :disabled="!!value" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
+            <el-input v-model="scope.row.purchaseLesson" :disabled="!!value" min="0" type="number" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
           </template>
           <template v-else-if="item.prop == 'grooveLesson'">
-            <el-input v-model="scope.row.grooveLesson" :disabled="!!value || scope.row.normLesson===0" @change="changeLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
+            <el-input v-model="scope.row.grooveLesson" :disabled="!!value || scope.row.normLesson===0" min="0" type="number" @change="changeLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
           </template>
           <template v-else>
             {{ scope.row[item.prop] }}
@@ -267,7 +267,8 @@ export default {
       console.log('修改单价，发送事件')
       this.$emit('change-price', {
         totalPrice: this.totalPrice,
-        univalence: this.univalence
+        univalence: this.univalence,
+        totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson)
       })
     },
 
@@ -475,6 +476,9 @@ export default {
     changeLesson(row, name1, name2) {
       var lesson = 0
       var lessons = 0
+      if (row[name1]) {
+
+      }
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
 

@@ -42,11 +42,6 @@
                     </div>
                   </div>
                   <!-- 员工 和部门 为多选（radio=false）  relation 相关合同商机使用-->
-                  <!-- <component
-                    :is="item.data.formType | typeToComponentName"
-                    :value="item.value"
-                    :disabled="item.disabled"
-                  /> -->
                   <component
                     :is="item.data.formType | typeToComponentName"
                     :value="item.value"
@@ -61,7 +56,6 @@
                     :use-delete="item.useDelete"
                     :action="typeToAction"
                     @value-change="fieldValueChange" />
-
                 </el-form-item>
               </el-form>
             </div>
@@ -498,6 +492,7 @@ export default {
       this.leadsNumber = true
     }
     if (this.action.attr == 'change') {
+      this.actionCombo.attr = 'change'
       filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
         console.log(111)
       }).catch(() => {})
@@ -806,8 +801,10 @@ export default {
             data: data.value.product,
             totalPrice: data.value.totalPrice,
             buyCount: data.value.buyCount,
-            presenterCount: data.value.presenterCount
+            presenterCount: data.value.presenterCount,
+            refundMonry: data.value.refundMonry
           }
+          this.actionCombo.surplusPrice = data.value.surplusPrice
           console.log('改变套餐字段', item.value)
           this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
           if (data.value.drainage) {
@@ -1346,7 +1343,6 @@ export default {
                   ]
                 }
 
-
                 if (item.fieldName == 'signing_user_id') {
                   item['value'] = [{
                     customerId: res.data.customer.createUserId,
@@ -1363,13 +1359,8 @@ export default {
                   params['value'] = res.data.contract.remark
                 }
 
-
-
-
                 if (item.fieldName == 'product') {
                   item['value'] = {
-                    // productList: res.data.contract.productList,
-                    // giftProducts: res.data.contract.giftProducts,
                     products: {
                       mealProducts: res.data.contract.mealProducts,
                       productList: res.data.contract.productList,
@@ -1378,8 +1369,6 @@ export default {
                     totalPrice: res.data.contract.money
                   }
                   params['value'] = {
-                    // productList: res.data.contract.productList,
-                    // giftProducts: res.data.contract.giftProducts,
                     products: {
                       mealProducts: res.data.contract.mealProducts,
                       productList: res.data.contract.productList,
@@ -1387,18 +1376,11 @@ export default {
                     },
                     totalPrice: res.data.contract.money
                   }
-                  // return
                 }
-
-                //
-
-                // customer
                 this.oldForm.crmFields.push(params)
               }
             }).catch(() => {})
           }
-
-
 
           this.getcrmRulesAndModel(list)
 
@@ -1535,7 +1517,6 @@ export default {
          */
 
         this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
-        console.log('ITEM', item)
         /**
          * 表单数据
          */
@@ -2379,7 +2360,10 @@ export default {
       }
 
       if (this.crmType == 'contract') {
-        console.log('字段', params.field)
+        if (this.action.attr && this.action.attr == 'change') {
+          params.entity.relevanceContractId = this.action.detail.contractId
+        }
+        console.log('字段1', params.field)
         // 获取相关字段
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
@@ -2401,12 +2385,6 @@ export default {
             params.entity.contract_type = 2
             params.entity.relevance_contract_id = element.value[0].contractId
           }
-          // if (this.action.present) {
-          //   params.entity.contract_type = 2
-          //   if (element.fieldName == 'contractId') {
-          //     params.entity.relevance_contract_id = element.value[0].contractId
-          //   }
-          // }
         }
         // 删除只用于展示的字段
         for (let i = 0; i < params.field.length; i++) {
@@ -2443,8 +2421,8 @@ export default {
       }
 
       console.log('请求参数: ', params)
-      this.loading = false
-      return
+      // this.loading = false
+      // return
       crmRequest(params)
         .then(res => {
           this.loading = false
@@ -2634,6 +2612,9 @@ export default {
           : 0
         params.entity.buyCount = element.value.buyCount
         params.entity.presenterCount = element.value.presenterCount
+        if (element.value.refundMonry) {
+          params.entity.refundMonry = element.value.refundMonry
+        }
       } else {
         params['product'] = []
         params.entity['money'] = ''
@@ -2653,6 +2634,7 @@ export default {
     },
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
+      console.log('关联了什么', element)
       if (
         element.key == 'customer_id' ||
         element.key == 'contacts_id' ||
