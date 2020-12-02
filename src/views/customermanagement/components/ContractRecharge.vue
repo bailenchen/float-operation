@@ -167,7 +167,17 @@ export default {
     fieldFormatter(row, column) {
       // 如果需要格式化
       if (column.property === 'checkStatus') {
-        return this.getStatusName(row.checkStatus)
+        return {
+          0: '待审核',
+          1: '通过',
+          2: '拒绝',
+          3: '审核中',
+          4: '撤回',
+          5: '未提交',
+          6: '创建',
+          7: '已删除',
+          8: '作废'
+        }[row.checkStatus]
       } else if (column.property == 'money') {
         return separator(row[column.property] || 0)
       } else if (column.property == 'payment') {
