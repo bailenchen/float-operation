@@ -31,12 +31,12 @@
 
       <div class="approval-flow__hd--right">
         <el-button
-          v-if="examineInfo.isCheck == 1"
+          v-if="examineInfo.isCheck == 1 && moduleType != 'receive'"
           class="xr-btn--green"
           icon="wk wk-success"
           @click="examineHandle(1)">通过</el-button>
         <el-button
-          v-if="examineInfo.isCheck == 1"
+          v-if="examineInfo.isCheck == 1 && moduleType != 'receive'"
           class="xr-btn--red"
           icon="wk wk-close"
           @click="examineHandle(2)">拒绝</el-button>
@@ -160,6 +160,10 @@ export default {
   mixins: [CheckStatusMixin],
   props: {
     examineType: {
+      type: String,
+      default: ''
+    },
+    moduleType: {
       type: String,
       default: ''
     },

@@ -215,6 +215,7 @@ export default {
   },
   mounted() {
     if (this.filedList) {
+      console.log(this.filedList, '******')
       this.list = this.filedList
     } else {
       this.getBaseInfo(true)

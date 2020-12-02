@@ -4,18 +4,24 @@
 export default {
   computed: {
     menuItems() {
-      return [
+      const list = []
+      if (this.crm.receive) {
+        list.push(
+          {
+            title: '合同充值',
+            path: 'receive',
+            icon: require('@/assets/img/crm/customer.png')
+          },
+        )
+      }
+      list.push(
         {
-          title: '收款',
-          path: 'payee',
-          icon: require('@/assets/img/crm/customer.png')
-        },
-        {
-          title: '退款',
-          path: 'refund',
+          title: '合同充值返还',
+          path: 'customer',
           icon: require('@/assets/img/crm/customer.png')
         }
-      ]
+      )
+      return list
     }
   },
   methods: {

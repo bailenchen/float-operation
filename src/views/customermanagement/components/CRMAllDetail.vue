@@ -29,6 +29,7 @@ import MoneyDetail from '../money/MoneyDetail'
 import VisitDetail from '../visit/VisitDetail'
 import InvoiceDetail from '../invoice/InvoiceDetail'
 import StudentDetail from '../studentManage/student/detail'
+import ReceiveDetail from '../financeManage/receive/detail'
 
 export default {
   name: 'CRMAllDetail', // 详情
@@ -44,7 +45,8 @@ export default {
     VisitDetail,
     InvoiceDetail,
     StudentDetail,
-    WaterDetail
+    WaterDetail,
+    ReceiveDetail
   },
   inheritAttrs: false,
   props: {
@@ -99,9 +101,6 @@ export default {
   computed: {},
   watch: {
     crmType: function(type) {
-      console.log('监听到', type)
-      console.log(this.crmType)
-
       if (this.crmType == 'leads') {
         this.tabName = 'clue-detail'
       } else if (this.crmType == 'customer') {
@@ -115,6 +114,7 @@ export default {
       } else if (this.crmType == 'business') {
         this.tabName = 'business-detail'
       } else if (this.crmType == 'contract') {
+        console.log('\\\\\\')
         this.tabName = 'contract-detail'
       } else if (this.crmType == 'product') {
         this.tabName = 'product-detail'
@@ -126,6 +126,8 @@ export default {
         this.tabName = 'invoice-detail'
       } else if (this.crmType == 'moneyType') {
         this.tabName = 'water-detail'
+      } else if (this.crmType == 'receive') {
+        this.tabName = 'receive-detail'
       }
     }
   },

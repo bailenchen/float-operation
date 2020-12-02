@@ -23,6 +23,7 @@
           :head-details="headDetails"
           :id="id"
           :crm-type="crmType"
+          :click-field="clickField"
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
@@ -136,6 +137,10 @@ export default {
       default: () => {
         return ['el-table__body']
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -151,7 +156,7 @@ export default {
         { title: '付款金额（元）', value: '' },
         { title: '签约人', value: '' }
       ],
-      tabCurrentName: 'Activity',
+      tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
       isCreate: false,
       // 活动操作
@@ -233,6 +238,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.clickField, '789')
     if (this.crm.contract && this.crm.contract.read) {
       this.tabCurrentName = 'CRMEditBaseInfo'
     }
