@@ -310,7 +310,8 @@ export default {
           { name: '发票', value: 3 },
           { name: '争议', value: 4 },
           { name: '资金流水', value: 5 },
-          { name: '额外赠送合同', value: 6 }
+          { name: '额外赠送合同', value: 6 },
+          { name: '合同变更', value: 7 }
         ],
         value: this.handle.data ? this.handle.data.categoryType : 1
       })

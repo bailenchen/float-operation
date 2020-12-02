@@ -18,9 +18,9 @@
         align="center">
         <template slot-scope="scope">
           <template v-if="item.prop == 'subject'">
-            <el-select v-model="scope.row.subject" placeholder="请选择">
+            <el-select v-model="scope.row.subject" :disabled="!!value" placeholder="请选择">
               <el-option
-                v-for="subjectItem in action.subjectList"
+                v-for="subjectItem in subjectList"
                 :key="subjectItem.value"
                 :label="subjectItem.subjectName"
                 :value="subjectItem.id"
@@ -28,13 +28,13 @@
             </el-select>
           </template>
           <template v-else-if="item.prop == 'price'">
-            <el-input v-model="scope.row.price" type="number" @change="changePrice(scope.row)"/>
+            <el-input v-model="scope.row.price" :disabled="!!value" type="number" min="0" @change="changePrice(scope.row)"/>
           </template>
           <template v-else-if="item.prop == 'purchaseLesson'">
-            <el-input v-model="scope.row.purchaseLesson" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
+            <el-input v-model="scope.row.purchaseLesson" :disabled="!!value" min="0" type="number" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
           </template>
           <template v-else-if="item.prop == 'grooveLesson'">
-            <el-input v-model="scope.row.grooveLesson" :disabled="scope.row.normLesson===0" @change="changeLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
+            <el-input v-model="scope.row.grooveLesson" :disabled="!!value || scope.row.normLesson===0" min="0" type="number" @change="changeLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
           </template>
           <template v-else>
             {{ scope.row[item.prop] }}
@@ -42,7 +42,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="" label="操作" width="100" align="center">
+      <el-table-column v-if="!value" prop="" label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-plus" circle @click="plusSubjectHandle(scope.row.combo_number, scope.row.dataIndex)" />
           <el-button v-show="minusShow(scope.row.combo_number, scope.row.productName)" type="danger" icon="el-icon-minus" circle @click="minusSubjectHandle(scope.row.dataIndex)" />
@@ -64,6 +64,7 @@ export default {
       }
     },
     value: Object,
+    subjectList: Array,
     accumulation: Object
   },
   data() {
@@ -133,7 +134,7 @@ export default {
       OrderLeve1Arr: [], // 大套餐
       OrderLeve2Arr: [], // 小套餐
       hoverOrderArr: [],
-      subjectList: [],
+      // subjectList: [],
       purchaseLesson: 0, // 全部套餐标准课次之和
       grooveLesson: 0, // 全部套餐常规赠送课次之和
       totalPrice: 0 // 总价
@@ -146,7 +147,8 @@ export default {
         console.log('val', val)
         if (val && val.productList) {
           console.log('使用value的值代替table', val)
-          this.tableData = val.productList
+          this.structureDataByValue()
+          // this.tableData = val.productList
         }
         // if (val.productList) {
         //   console.log('使用value的值代替table', val)
@@ -178,6 +180,29 @@ export default {
     // this.maxIndex = this.tableData.length
   },
   methods: {
+    structureDataByValue() {
+      // var arr = []
+      // this.value.productList.forEach(item => {
+      //   var obj = {
+      //     productType: item.mealProductId,
+      //     productName: item.giftProductId,
+      //     subject: item.productId,
+      //     comboNormLesson: '', // 套餐标准课次
+      //     normLesson: '', // 套餐标准赠送课次
+      //     purchaseLesson: item.courseSum, // 购买课次
+      //     grooveLesson: item.presenterCourseSum, // 常规赠送课次
+      //     planeLesson: item.alreadyCourse, // 已排课课次
+      //     completeLesson: item.finishCourse, // 已完成课次
+      //     price: item.salesPrice, // 大套餐价格
+      //     univalence: item.price, // 单价
+      //     combo_number: item.mealProductId // 大套餐ID
+      //     // dataIndex: this.maxIndex // 标识
+      //   }
+      //   arr.push(obj)
+      // })
+      this.tableData = this.value.productList
+      this.getOrderNumber()
+    },
     // 拼接表格数据
     structureData() {
       console.log('拼接数据')
@@ -242,7 +267,8 @@ export default {
       console.log('修改单价，发送事件')
       this.$emit('change-price', {
         totalPrice: this.totalPrice,
-        univalence: this.univalence
+        univalence: this.univalence,
+        totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson)
       })
     },
 
@@ -442,15 +468,7 @@ export default {
       obj = null
       this.totalPrice = totalPrice
       console.log('总价', totalPrice)
-
-
-      // var univalence =
       this.calculateUnivalence()
-
-      // this.$emit('change-price', {
-      //   totalPrice: this.totalPrice,
-      //   univalence
-      // })
     },
 
 
@@ -458,6 +476,9 @@ export default {
     changeLesson(row, name1, name2) {
       var lesson = 0
       var lessons = 0
+      if (row[name1]) {
+
+      }
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
 
