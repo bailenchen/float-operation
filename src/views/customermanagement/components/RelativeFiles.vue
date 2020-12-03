@@ -94,6 +94,7 @@ import { crmReceivablesFileListAPI } from '@/api/customermanagement/money'
 import { crmReturnVisitFileAPI } from '@/api/customermanagement/visit'
 import { crmInvoiceFileListAPI } from '@/api/customermanagement/invoice'
 import { crmProductSetMealFileListAPI } from '@/api/customermanagement/meal'
+import { crmReceiveFileListAPI } from '@/api/customermanagement/receive'
 
 import { fileSize, canPreviewFile, wkPreviewFile, downloadFileWithBuffer } from '@/utils'
 import { debounce } from 'throttle-debounce'
@@ -181,13 +182,16 @@ export default {
         visit: crmReturnVisitFileAPI,
         invoice: crmInvoiceFileListAPI,
         productSetMeal: crmProductSetMealFileListAPI,
-        water: crmWaterFileListAPI
+        water: crmWaterFileListAPI,
+        receive: crmReceiveFileListAPI
       }[keytype]
       const params = {}
       if (keytype == 'productSetMeal') {
         params.productId = this.id
       } else if (keytype == 'capitalAccount') {
         params.capitalId = this.id
+      } else if (keytype == 'receive') {
+        params.contractCapitalId = this.id
       } else {
         params[`${keytype}Id`] = this.id
       }

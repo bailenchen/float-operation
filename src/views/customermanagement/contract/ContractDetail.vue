@@ -23,6 +23,7 @@
           :head-details="headDetails"
           :id="id"
           :crm-type="crmType"
+          :click-field="clickField"
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
@@ -50,7 +51,50 @@
               :label="item.label"
               :name="item.name"
               lazy>
+              <c-r-m-base-info
+                v-if="item.name === 'CRMBaseInfo'"
+                :detail="detailData"
+                :id="id"
+                :filed-list="baseDetailList">
+                <!-- 课程信息 -->
+                <div slot="first" style="padding-left: 15px;margin-bottom:20px;">
+                  <div class="section-header" style="padding-left:0;margin-bottom:10px;">
+                    <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
+                    <div class="section-title">课程信息</div>
+                  </div>
+                  <combo
+                    :action="comboAction"
+                    :value="comboValue"
+                    :subject-list="subList"
+                    :accumulation="accumulation"
+                    style="width: 100%;"/>
+                </div>
+                <!-- 累计赠送课程  业绩分配信息 -->
+                <div v-for="(item, index) in list" slot="first" :key="index" style="padding-left: 15px;margin-bottom:20px;">
+                  <div class="section-header" style="padding-left:0;">
+                    <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
+                    <div class="section-title">{{ item.name }}</div>
+                  </div>
+                  <el-table
+                    :data="item.data"
+                    stripe
+                    style="width: 100%;border: 1px solid #E6E6E6;margin-top: 10px;">
+                    <el-table-column
+                      v-for="(items, index) in item.fieldlist"
+                      :key="index"
+                      :prop="items.prop"
+                      :label="items.label"
+                      :formatter="fieldFormatter"
+                      show-overflow-tooltip/>
+                  </el-table>
+                  <div v-if="item.name == '累计赠送课程'" class="table-desc">
+                    <div class="left-txt">累计赠送规则：购买辅导方式为1对3的，购买10节课，可赠送1节课</div>
+                    <div class="right-txt">最终价格：{{ totalPrice }}元</div>
+                  </div>
+                </div>
+              </c-r-m-base-info>
               <component
+                v-else
                 :is="item.name"
                 :detail="detailData"
                 :type-list="logTyps"
@@ -75,11 +119,14 @@
 
 <script>
 import { crmContractRead } from '@/api/customermanagement/contract'
+import { filedGetInformation } from '@/api/customermanagement/common'
+import { QueryAdminSubject } from '@/api/systemManagement/params'
+import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import Activity from '../components/activity' // 活动
-import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 商机基本信息
+import CRMBaseInfo from '../components/CRMBaseInfo' // 商机基本信息
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 import RelativeTeam from '../components/RelativeTeam' // 团队成员
 import RelativeProduct from '../components/RelativeProduct' // 团队成员
@@ -90,6 +137,7 @@ import ExamineInfo from '@/components/Examine/ExamineInfo'
 import ContractRecharge from '../components/ContractRecharge' // 合同充值
 import ReturnRechargeMoney from '../components/ReturnRechargeMoney' // 合同充值返还
 
+import Combo from '@/views/customermanagement/contract/components/Combo'
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 import { separator } from '@/filters/vue-numeral-filter/filters'
@@ -101,7 +149,7 @@ export default {
     SlideView,
     CRMDetailHead,
     Activity,
-    CRMEditBaseInfo,
+    CRMBaseInfo,
     RelativeHandle,
     RelativeTeam,
     RelativeProduct,
@@ -111,7 +159,8 @@ export default {
     ExamineInfo,
     CRMCreateView,
     ContractRecharge,
-    ReturnRechargeMoney
+    ReturnRechargeMoney,
+    Combo
   },
   mixins: [detail],
   props: {
@@ -136,6 +185,10 @@ export default {
       default: () => {
         return ['el-table__body']
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -151,7 +204,11 @@ export default {
         { title: '付款金额（元）', value: '' },
         { title: '签约人', value: '' }
       ],
+<<<<<<< HEAD
       tabCurrentName: 'CRMEditBaseInfo',
+=======
+      tabCurrentName: 'CRMBaseInfo',
+>>>>>>> d8d7c370bc3c3fc25795743043f3ac50bf8b034d
       // 编辑操作
       isCreate: false,
       // 活动操作
@@ -166,14 +223,52 @@ export default {
           type: 'receivables',
           label: '创建回款'
         }
-      ]
+      ],
+      baseDetailList: [], // 基本信息列表
+
+      // 课程信息
+      comboAction: null,
+      comboValue: null,
+      subList: [],
+      accumulation: {
+        data: [],
+        lesson: 0
+      },
+
+      list: [
+        {
+          name: '累计赠送课程',
+          data: [],
+          fieldlist: [
+            { prop: 'subjectName', label: '科目' },
+            { prop: 'courseSum', label: '累计赠送课次' },
+            { prop: 'alreadyCourse', label: '已排课课次' },
+            { prop: 'finishCourse', label: '已完成课次' },
+            { prop: 'price', label: '单节课价格' }
+          ]
+        },
+        {
+          name: '业绩分配信息',
+          data: [],
+          fieldlist: [
+            { prop: 'createUserName', label: '业绩享受人' },
+            { prop: 'performanceRatio', label: '业绩比例（%）' },
+            { prop: 'newStudentRatio', label: '新签学员比例' },
+            { prop: 'memberUserName', label: '添加人' },
+            { prop: 'checkStatus', label: '审批状态' },
+            { prop: 'createTime', label: '添加时间' }
+          ]
+        }
+      ],
+      subjectList: {}, // 科目列表
+      totalPrice: 0
     }
   },
   computed: {
     tabNames() {
       var tempsTabs = []
       if (this.crm.contract && this.crm.contract.read) {
-        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
       }
 
       tempsTabs.push({ label: '合同充值', name: 'ContractRecharge' })
@@ -234,7 +329,7 @@ export default {
   },
   mounted() {
     if (this.crm.contract && this.crm.contract.read) {
-      this.tabCurrentName = 'CRMEditBaseInfo'
+      this.tabCurrentName = 'CRMBaseInfo'
     }
   },
   methods: {
@@ -250,6 +345,8 @@ export default {
           this.loading = false
           // 创建回款计划的时候使用
           this.detailData = res.data
+          this.getSubject()
+          this.getBaseInfo(res.data)
 
           this.headDetails[0].value = res.data.num
           this.headDetails[1].value = res.data.customerName
@@ -262,6 +359,130 @@ export default {
           this.loading = false
           this.hideView()
         })
+    },
+
+    getSubject() {
+      // 获取科目
+      QueryAdminSubject().then(res => {
+        this.subList = res.data
+        const list = res.data
+        list.forEach(item => {
+          this.subjectList[item.id] = item.subjectName
+        })
+      }).catch(() => {})
+    },
+
+    // 获取基本信息
+    getBaseInfo(data) {
+      this.baseDetailList = [
+        {
+          name: '基本信息',
+          list: [
+            {
+              name: '订单编号',
+              formType: 'text',
+              value: data.num
+            },
+            {
+              name: '辅导方式',
+              formType: 'text',
+              value: data.coachType
+            },
+            {
+              name: '合同属性',
+              formType: 'text',
+              value: {
+                0: '否',
+                1: '是'
+              }[data.isNew]
+            },
+            {
+              name: '学员姓名',
+              formType: 'text',
+              value: data.customerName
+            },
+            {
+              name: '签约时间',
+              formType: 'text',
+              value: data.orderDate
+            }
+
+          ]
+        }
+      ]
+
+      const params = {
+        types: crmTypeModel[this.crmType],
+        id: this.id
+      }
+      filedGetInformation(params).then(res => {
+        const productList = res.data.contract.productList
+
+        // 大套餐
+        const mealKeyVal = {}
+        res.data.contract.mealProducts.forEach(item => {
+          mealKeyVal[item.productId] = item.name
+        })
+        // 小套餐
+        const giftKeyVal = {}
+        res.data.contract.giftProducts.forEach(item => {
+          giftKeyVal[item.detailsId] = item.detailsName
+        })
+
+        const mealList = []
+        const giftList = []
+        productList.forEach(item => {
+          if (item.type == 1) {
+            var obj = {
+              productType: mealKeyVal[item.mealProductId],
+              productName: giftKeyVal[item.giftProductId],
+              subject: item.productId,
+              comboNormLesson: 0, // 计算出来
+              normLesson: 0, // 计算出来
+              purchaseLesson: item.courseSum, // 购买课次
+              grooveLesson: 0, // 常规赠送课次
+              planeLesson: item.alreadyCourse, // 已排课课次
+              completeLesson: item.finishCourse, // 已完成课次
+              price: item.salesPrice, // 大套餐价格
+              univalence: item.price, // 单价
+              combo_number: item.mealProductId
+            }
+            mealList.push(obj)
+          } else if (item.type == 2) {
+            giftList.push(item)
+          }
+        })
+
+        this.comboValue = {
+          productList: mealList
+        }
+
+        this.list[0].data = giftList.map(item => {
+          item.subjectName = this.subjectList[item.productId]
+          this.totalPrice += parseFloat(item.price)
+          return item
+        })
+        this.list[1].data = res.data.contract.allotList
+      }).catch(() => {})
+    },
+
+    /** 格式化字段 */
+    fieldFormatter(row, column, cellValue) {
+      // 如果需要格式化
+      if (column.property === 'checkStatus') {
+        return {
+          0: '待审核',
+          1: '通过',
+          2: '拒绝',
+          3: '审核中',
+          4: '撤回',
+          5: '未提交',
+          6: '创建',
+          7: '已删除',
+          8: '作废'
+        }[row.checkStatus]
+      }
+      return row[column.property]
     },
 
     /**
@@ -299,5 +520,12 @@ export default {
 @import '../styles/crmdetail.scss';
 .is-invalid {
   color: #ccc;
+}
+
+.table-desc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
 }
 </style>

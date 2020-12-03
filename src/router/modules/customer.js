@@ -143,7 +143,7 @@ export default [
 
   {
     ...layout({
-      // permissions: ['crm', 'contacts']
+      permissions: ['crm', 'receive']
     }),
     children: [
       {
@@ -152,7 +152,8 @@ export default [
         component: () => import('@/views/customermanagement/financeManage/index'),
         meta: {
           title: '收款/退款',
-          icon: 'contacts'
+          icon: 'contacts',
+          activeMenu: '/crm/finance-manage/:type'
         }
       }
     ]

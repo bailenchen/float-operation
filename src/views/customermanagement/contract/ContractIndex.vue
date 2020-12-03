@@ -95,6 +95,7 @@
     <c-r-m-all-detail
       :visible.sync="showDview"
       :crm-type="rowType"
+      :click-field="clickField"
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>

@@ -179,8 +179,8 @@ import CallCenter from '@/callCenter/CallCenter'
 import menuMixins from '../menuMixins'
 
 export default {
-  /** 客户管理 的 学员列表 */
-  name: 'AccountIndex',
+  /** 客户管理 的 退款列表 */
+  name: 'RefoundIndex',
   components: {
     CRMAllDetail,
     // BusinessCheck,

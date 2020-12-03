@@ -26,6 +26,7 @@
           :id="id"
           :pool-id="poolId"
           :crm-type="crmType"
+          :click-field="clickField"
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
@@ -38,6 +39,16 @@
             </el-tooltip>
           </template>
         </c-r-m-detail-head>
+
+        <examine-info
+          v-if="detailData.examineRecordId"
+          :id="id"
+          :record-id="detailData.examineRecordId"
+          :owner-user-id="detailData.ownerUserId"
+          module-type="receive"
+          class="examine-info"
+          examine-type="crm_contract"/>
+
         <flexbox
           class="d-container-bd"
           align="stretch">
@@ -59,6 +70,7 @@
                 :pool-id="poolId"
                 :handle="activityHandle"
                 :is-seas="isSeasDetail"
+                :filed-list="fieldList"
                 :crm-type="crmType"
                 :contacts-id.sync="firstContactsId"
                 @on-handle="detailHeadHandle" />
@@ -102,13 +114,13 @@
 </template>
 
 <script>
-import { crmCustomerRead } from '@/api/customermanagement/customer'
+import { crmReceiveRead } from '@/api/customermanagement/receive'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../../components/CRMDetailHead'
 import Activity from '../../components/activity/index' // 活动
 import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系人
-import CRMEditBaseInfo from '../../components/CRMEditBaseInfo' // 基本信息
+import CRMBaseInfo from '../../components/CRMBaseInfo' // 基本信息
 import RelativeContacts from '../../components/RelativeContacts' // 相关联系人
 import RelativeBusiness from '../../components/RelativeBusiness' // 相关商机
 import RelativeContract from '../../components/RelativeContract' // 相关合同
@@ -120,18 +132,20 @@ import RelativeVisit from '../../components/RelativeVisit' // 回访
 import RelativeInvoice from '../../components/RelativeInvoice' // 发票
 import RelativeCallRecord from '../../components/RelativeCallRecord' // 呼叫记录
 
+import ExamineInfo from '@/components/Examine/ExamineInfo'
+
 import CRMCreateView from '../../components/CRMCreateView' // 新建页面
 import detail from '../../mixins/detail'
 
 export default {
-  // 客户管理 的 客户详情
-  name: 'CustomerDetail',
+  // 客户管理 的 合同充值详情
+  name: 'ReceiveDetail',
   components: {
     SlideView,
     Activity,
     ChieflyContacts,
     CRMDetailHead,
-    CRMEditBaseInfo,
+    CRMBaseInfo,
     RelativeContacts,
     RelativeBusiness,
     RelativeContract,
@@ -142,7 +156,8 @@ export default {
     RelativeVisit,
     CRMCreateView,
     RelativeInvoice,
-    RelativeCallRecord
+    RelativeCallRecord,
+    ExamineInfo
   },
   mixins: [detail],
   props: {
@@ -175,21 +190,24 @@ export default {
       default: () => {
         return {}
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       // 展示加载loading
       loading: false,
-      crmType: 'customer',
+      crmType: 'receive',
       headDetails: [
         { title: '学员姓名', value: '' },
-        { title: '学员来源', value: '' },
-        { title: '第一联系人电话', value: '' },
-        { title: '教学顾问', value: '' },
-        { title: '创建时间', value: '' }
+        { title: '合同充值日期', value: '' },
+        { title: '金额（元）', value: '' },
+        { title: '课程顾问', value: '' }
       ],
-      tabCurrentName: 'Activity',
+      tabCurrentName: 'CRMBaseInfo',
       // 编辑操作
       createActionInfo: null,
       createCRMType: '',
@@ -224,15 +242,17 @@ export default {
       // 展示重要信息
       showImportInfo: true,
       // 首要联系人信息
-      firstContactsId: ''
+      firstContactsId: '',
+
+      fieldList: [] // 基本信息字段
     }
   },
   computed: {
     tabNames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '活动', name: 'Activity' })
+      // tempsTabs.push({ label: '活动', name: 'Activity' })
       if (this.crm.customer && this.crm.customer.read) {
-        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
+        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
       }
       // if (this.crm.contacts && this.crm.contacts.index) {
       //   tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
@@ -244,9 +264,9 @@ export default {
       //   tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
       // }
 
-      if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
-      }
+      // if (this.crm.contract && this.crm.contract.index) {
+      //   tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
+      // }
       // if (this.crm.receivables && this.crm.receivables.index) {
       //   tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
       // }
@@ -258,9 +278,9 @@ export default {
       //   tempsTabs.push({ label: this.getTabName('发票', this.tabsNumber.invoiceCount), name: 'RelativeInvoice' })
       // }
 
-      if (this.tabsNumber && this.tabsNumber.hasOwnProperty('callRecordCount')) {
-        tempsTabs.push({ label: this.getTabName('呼叫记录', this.tabsNumber.callRecordCount), name: 'RelativeCallRecord' })
-      }
+      // if (this.tabsNumber && this.tabsNumber.hasOwnProperty('callRecordCount')) {
+      //   tempsTabs.push({ label: this.getTabName('呼叫记录', this.tabsNumber.callRecordCount), name: 'RelativeCallRecord' })
+      // }
       tempsTabs.push({ label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' })
       tempsTabs.push({ label: '操作记录', name: 'RelativeHandle' })
       return tempsTabs
@@ -346,49 +366,87 @@ export default {
       this.firstContactsId = ''
       this.loading = true
       const params = {
-        customerId: this.id
+        contractCapitalId: this.id
       }
 
-      if (this.poolId) {
-        params.poolId = this.poolId
-      }
-
-      crmCustomerRead(params)
+      crmReceiveRead(params)
         .then(res => {
           this.loading = false
           this.detailData = res.data
+          this.getBaseInfo(res.data)
           this.firstContactsId = this.detailData.contactsId
 
-          // 负责人
-          this.headDetails[0].value = res.data.客户级别
-          const dealItem = this.headDetails[1]
-          dealItem.showIcon = true
-          if (res.data.dealStatus == 1) {
-            dealItem.icon = 'wk wk-success deal-suc'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#20b559',
-              marginRight: '3px'
-            }
-            dealItem.value = '已成交'
-          } else {
-            dealItem.icon = 'wk wk-close deal-un'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#f95a5a',
-              marginRight: '3px'
-            }
-            dealItem.value = '未成交'
-          }
-
-          this.headDetails[2].title = this.isSeasDetail ? '' : '负责人'
-          this.headDetails[2].value = res.data.ownerUserName
-          this.headDetails[3].value = res.data.updateTime
+          this.headDetails[0].value = res.data.customerName
+          this.headDetails[1].value = res.data.transactionTime
+          this.headDetails[2].value = res.data.money
+          this.headDetails[3].value = res.data.ownerUserName
         })
         .catch(() => {
           this.loading = false
           this.hideView()
         })
+    },
+
+    getBaseInfo(data) {
+      this.fieldList = [
+        {
+          name: '基本信息',
+          list: [
+            {
+              name: '合同充值编号',
+              formType: 'text',
+              value: data.number
+            },
+            {
+              name: '学员姓名',
+              formType: 'text',
+              value: data.customerName
+            },
+            {
+              name: '付款日期',
+              formType: 'date',
+              value: data.transactionTime
+            },
+            {
+              name: '合同充值金额（元）',
+              formType: 'text',
+              value: data.money
+            },
+            {
+              name: '付款方式',
+              formType: 'transactionTime',
+              value: {
+                '1': '现金交易',
+                '2': '刷卡交易',
+                '3': '支票交易',
+                '4': '微信交易',
+                '5': '支付宝交易',
+                '6': '转账交易'
+              }[data.payment]
+            },
+            {
+              name: '课程顾问',
+              formType: 'text',
+              value: data.ownerUserName
+            },
+            {
+              name: '更新时间',
+              formType: 'date',
+              value: data.updateTime
+            },
+            {
+              name: '创建时间',
+              formType: 'date',
+              value: data.createTime
+            },
+            {
+              name: '创建人',
+              formType: 'text',
+              value: data.createUserName
+            }
+          ]
+        }
+      ]
     },
 
     /**

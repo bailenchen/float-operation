@@ -35,7 +35,7 @@
         icon="wk wk-screening"
         @click="showFilterClick">高级筛选</el-button>
       <el-button
-        v-if="showFilterView && crmType != 'insideUser'"
+        v-if="showFilterView && crmType != 'insideUser' && crmType != 'receive'"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"
@@ -237,6 +237,10 @@ import {
   crmInsideUserDelete,
   CrmInsideUserExcelExport
 } from '@/api/customermanagement/address'
+import {
+  crmReceiveExcelExport,
+  crmReceiveDeleteAPI
+} from '@/api/customermanagement/receive'
 import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 
 
@@ -506,7 +510,8 @@ export default {
             receivables: crmReceivablesExcelExportAPI,
             product: crmProductExcelExport,
             productSetMeal: crmProductSetMealExcelExport,
-            insideUser: CrmInsideUserExcelExport
+            insideUser: CrmInsideUserExcelExport,
+            receive: crmReceiveExcelExport
           }[this.crmType]
           params.ids = this.selectionList
             .map((item) => {
@@ -516,6 +521,8 @@ export default {
                 return item.capitalId
               } else if (this.crmType == 'insideUser') {
                 return item.insideId
+              } else if (this.crmType == 'receive') {
+                return item.contractCapitalId
               } else {
                 return item[`${this.crmType}Id`]
               }
@@ -782,6 +789,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['insideId']
           })
+        } else if (this.crmType == 'receive') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['contractCapitalId']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -801,7 +812,8 @@ export default {
           visit: crmReturnVisitDeleteAPI,
           product: crmProductDeleteAPI,
           productSetMeal: crmProductSetMealDeleteAPI,
-          insideUser: crmInsideUserDelete
+          insideUser: crmInsideUserDelete,
+          receive: crmReceiveDeleteAPI
         }[this.crmType]
         var params = null
         if (this.crmType == 'productSetMeal') {
@@ -815,6 +827,10 @@ export default {
         } else if (this.crmType == 'insideUser') {
           params = {
             insideIds: ids.join(',')
+          }
+        } else if (this.crmType == 'receive') {
+          params = {
+            ids: ids
           }
         } else {
           params = {
@@ -1199,6 +1215,11 @@ export default {
           'export',
           'delete'
         ])
+      } else if (this.crmType == 'receive') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'export',
+          'delete'
+        ])
       }
     },
     forSelectionHandleItems(handleInfos, array) {
@@ -1368,12 +1389,13 @@ export default {
         return '全部通讯录'
       } else if (this.crmType == 'student') {
         return '全部学员'
+      } else if (this.crmType == 'receive') {
+        return '全部合同充值'
       }
     },
 
     // 全局检索
     globalSearch() {
-      console.log('全局检索')
       this.globalSearchShow = true
     },
     // 保存成功
