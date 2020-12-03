@@ -22,6 +22,7 @@ export default {
   invoice: 18,
   water: 23,
   insideUser: 26,
+  receive: 27,
 
   keyToTypeData: {
     leads: 1,
@@ -37,7 +38,8 @@ export default {
     pool: 9,
     visit: 17,
     invoice: 18,
-    insideUser: 26
+    insideUser: 26,
+    receive: 27
   },
 
   typeToKeyData: {
@@ -54,7 +56,8 @@ export default {
     9: 'pool',
     17: 'visit',
     18: 'invoice',
-    26: 'insideUser'
+    26: 'insideUser',
+    27: 'receive'
   },
 
   typeToNameData: {
@@ -71,7 +74,8 @@ export default {
     9: '公海',
     17: '回访',
     18: '发票',
-    26: '内部通讯录'
+    26: '内部通讯录',
+    27: '合同充值'
   },
 
   keyToNameData: {
@@ -88,7 +92,8 @@ export default {
     pool: '公海',
     visit: '回访',
     invoice: '发票',
-    insideUser: '内部通讯录'
+    insideUser: '内部通讯录',
+    receive: '合同充值'
   },
 
   convertKeyToType: function(key) {
@@ -100,8 +105,6 @@ export default {
   },
 
   convertTypeToName: function(type) {
-    console.log('数据层')
-    console.log(type)
     if (typeof type === 'string') {
       type = parseInt(type)
     }

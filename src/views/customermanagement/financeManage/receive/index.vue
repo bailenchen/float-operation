@@ -3,9 +3,8 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      main-title="新增收款"
       title="收款管理"
-      placeholder="请输入学员姓名/收款编号"
+      placeholder="请输入学员姓名/合同充值编号"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos">
@@ -26,7 +25,7 @@
       </el-menu>
     </c-r-m-list-head>
     <div
-      v-empty="!crm.customer.index"
+      v-empty="!crm.receive.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -164,6 +163,7 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :model-data="modelData"
+      :click-field="clickField"
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
@@ -179,8 +179,8 @@ import CallCenter from '@/callCenter/CallCenter'
 import menuMixins from '../menuMixins'
 
 export default {
-  /** 客户管理 的 学员列表 */
-  name: 'StudentIndex',
+  /** 客户管理 的 合同充值列表 */
+  name: 'ReceiveIndex',
   components: {
     CRMAllDetail,
     // BusinessCheck,
@@ -198,7 +198,7 @@ export default {
   mixins: [table, menuMixins],
   data() {
     return {
-      crmType: 'customer',
+      crmType: 'receive',
       showCount: 0,
       modelData: {}
     }
@@ -234,9 +234,9 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'customerName') {
+      if (column.property === 'number') {
         return 'can-visit--underline'
-      } else if (column.property === 'businessCheck') {
+      } else if (column.property === 'leadsNumber' || column.property === 'customerName' || column.property === 'contractNum') {
         return 'can-visit'
       } else {
         return ''

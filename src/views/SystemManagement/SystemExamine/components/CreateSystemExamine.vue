@@ -395,7 +395,7 @@ export default {
           { name: '争议', value: 4 },
           { name: '资金流水', value: 5 },
           { name: '额外赠送合同', value: 6 },
-          { name: '合同变更审批', value: 7 },
+          { name: '合同变更', value: 7 },
           { name: '常规充值返还审批', value: 8 },
           { name: '特殊充值返还审批', value: 9 },
           { name: '充值审批', value: 10 },

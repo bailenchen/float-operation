@@ -147,6 +147,9 @@ import {
 import {
   crmProductSetMealDeleteAPI
 } from '@/api/customermanagement/meal'
+import {
+  crmReceiveDeleteAPI
+} from '@/api/customermanagement/receive'
 import { crmInvoiceDeleteIdsAPI } from '@/api/customermanagement/invoice'
 import TransferHandle from './selectionHandle/TransferHandle' // 转移
 import AllocHandle from './selectionHandle/AllocHandle' // 公海分配操作
@@ -224,7 +227,7 @@ export default {
         return require(`@/assets/img/crm/product.png`)
       } else if (this.crmType == 'capitalAccount') {
         return require(`@/assets/img/crm/customer.png`)
-      } else if (this.crmType == 'water' || this.crmType == 'student') {
+      } else if (this.crmType == 'water' || this.crmType == 'student' || this.crmType == 'receive') {
         return require(`@/assets/img/crm/contract.png`)
       }
 
@@ -261,7 +264,8 @@ export default {
           marketing: '活动',
           visit: '回访',
           invoice: '发票',
-          water: '交易流水号'
+          water: '交易流水号',
+          receive: '合同充值编号'
         }[this.crmType] || ''
       )
     },
@@ -284,6 +288,12 @@ export default {
         return this.detail[this.clickField]
       } else if (this.crmType === 'water') {
         return this.detail[this.clickField]
+      } else if (this.crmType == 'contract') {
+        return this.detail[this.clickField]
+      } else if (this.crmType == 'receive') {
+        console.log(this.detail)
+        return '123'
+        // return this.detail[this.clickField]
       }
       console.log(this.detail.name)
       return this.detail.name
@@ -520,12 +530,17 @@ export default {
           visit: crmReturnVisitDeleteAPI,
           product: crmProductDeleteAPI,
           productSetMeal: crmProductSetMealDeleteAPI,
-          invoice: crmInvoiceDeleteIdsAPI
+          invoice: crmInvoiceDeleteIdsAPI,
+          receive: crmReceiveDeleteAPI
         }[this.crmType]
         let params = null
         if (this.crmType == 'productSetMeal') {
           params = {
             productIds: this.id
+          }
+        } else if (this.crmType == 'receive') {
+          params = {
+            ids: this.id
           }
         } else {
           params = {
@@ -722,6 +737,10 @@ export default {
           'delete'
         ])
       } else if (this.crmType == 'invoice') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'delete'
+        ])
+      } else if (this.crmType == 'receive') {
         return this.forSelectionHandleItems(handleInfos, [
           'delete'
         ])

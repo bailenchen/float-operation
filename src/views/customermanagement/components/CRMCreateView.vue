@@ -42,11 +42,6 @@
                     </div>
                   </div>
                   <!-- 员工 和部门 为多选（radio=false）  relation 相关合同商机使用-->
-                  <!-- <component
-                    :is="item.data.formType | typeToComponentName"
-                    :value="item.value"
-                    :disabled="item.disabled"
-                  /> -->
                   <component
                     :is="item.data.formType | typeToComponentName"
                     :value="item.value"
@@ -56,12 +51,12 @@
                     :relation="item.relation"
                     :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
                     :disabled="item.disabled"
+                    :is-delete="false"
                     :receivables-id="editId"
                     :info-params="getInfoParams(item)"
                     :use-delete="item.useDelete"
                     :action="typeToAction"
                     @value-change="fieldValueChange" />
-
                 </el-form-item>
               </el-form>
             </div>
@@ -498,6 +493,7 @@ export default {
       this.leadsNumber = true
     }
     if (this.action.attr == 'change') {
+      this.actionCombo.attr = 'change'
       filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
         console.log(111)
       }).catch(() => {})
@@ -601,8 +597,16 @@ export default {
 
     // 字段的值更新
     fieldValueChange(data) {
+      console.log('字段更新', data)
+      if (this.crmType == 'contract' && this.action.attr) {
+        if (data.value.issurplus) {
+          this.actionCombo.surplusPrice = data.value.surplusPrice
+          return
+        }
+      }
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
+      console.log('字段更新1', item)
 
       // 商机下处理商机状态
       if (this.crmType == 'business') {
@@ -790,6 +794,7 @@ export default {
               .catch(() => {})
           }
         } else if (item.data.formType == 'product') {
+        // } else if (item.data.fieldName == 'productSetMeal') {
           // 先使用后端返回的product作为字段，以后改为productSetMeal
           // for (
           //   let index = 0;
@@ -806,9 +811,11 @@ export default {
             data: data.value.product,
             totalPrice: data.value.totalPrice,
             buyCount: data.value.buyCount,
-            presenterCount: data.value.presenterCount
+            presenterCount: data.value.presenterCount,
+            refundMonry: data.value.refundMonry
           }
-          console.log('改变套餐字段', item.value)
+
+          console.log('改变套餐字段1', item.value)
           this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
           if (data.value.drainage) {
             this.crmForm.crmFields[0].value = '引流'
@@ -1125,7 +1132,7 @@ export default {
       //   params.id = this.action.detail.contractId
       // }
 
-      console.log('参数', params)
+      console.log('参数111', params)
 
       filedGetField(params)
         .then(res => {
@@ -1185,7 +1192,6 @@ export default {
               name: '合同属性',
               value: '',
               fieldName: 'contractsAttr',
-              // setting: ['新签', '续签'],
               setting: [
                 {
                   name: '续签',
@@ -1214,6 +1220,28 @@ export default {
               ]
             }
             res.data.unshift(obj)
+
+            if (this.action.attr) {
+              res.data.unshift({
+                name: '是否为内退',
+                value: 0,
+                fieldName: 'is_early_retirement',
+                formType: 'select',
+                show: false,
+                setting: [
+                  {
+                    name: '否',
+                    value: 0
+                  },
+                  {
+                    name: '是',
+                    value: 1
+                  }
+                ]
+              })
+            }
+
+
             if (this.action.present) {
               res.data.unshift({
                 name: '关联合同',
@@ -1230,11 +1258,136 @@ export default {
               res.data = res.data.filter(item => {
                 return item.fieldName != 'customer_id' && item.fieldName != 'product'
               })
-              // console.log('过滤除掉用户', arr)
             }
           }
 
-          const list = res.data
+          var list = res.data
+
+          if (this.crmType == 'contract' && this.action.attr == 'change') {
+            var _list = objDeepCopy(list)
+            filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
+              this.loading = false
+              let showStyleIndex = -1
+              for (let index = 0; index < _list.length; index++) {
+                const item = _list[index]
+                if (item.fieldName == 'is_early_retirement') {
+                  continue
+                }
+                showStyleIndex += 1
+                console.log('循环')
+                var params = {}
+                params['value'] = item.value
+                params['key'] = item.fieldName
+                params['data'] = item
+                params['disabled'] = true // 是否可交互
+                // params['showblock'] = true // 展示整行效果
+                params['styleIndex'] = showStyleIndex
+                if (item.fieldName == 'contractsAttr') {
+                  item['value'] = this.action.detail.isNew
+                  params['value'] = this.action.detail.isNew
+                }
+                if (item.fieldName == 'totalclassTime') {
+                  item['value'] = this.action.detail.buyCount
+                  params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'totalclassTime') {
+                  item['value'] = this.action.detail.buyCount
+                  params['value'] = this.action.detail.buyCount
+                }
+                if (item.fieldName == 'leadsNumber') {
+                  item['value'] = res.data.customer.leadsNumber
+                  params['value'] = res.data.customer.leadsNumber
+                }
+                if (item.fieldName == 'dept_id') {
+                  item['value'] = res.data.customer.deptIdName
+                  params['value'] = res.data.customer.deptIdName
+                }
+                if (item.fieldName == 'headmasterUserName') {
+                  item['value'] = res.data.customer.headmasterUserName
+                  params['value'] = res.data.customer.headmasterUserName
+                }
+                if (item.fieldName == 'source') {
+                  item['value'] = res.data.customer.channelIdName
+                  params['value'] = res.data.customer.channelIdName
+                }
+                if (item.fieldName == 'customer_id') {
+                  item['value'] = [{
+                    customerId: res.data.customer.customerId,
+                    customerName: res.data.customer.customerName
+                  }]
+                  params['value'] = [{
+                    customerId: res.data.customer.customerId,
+                    customerName: res.data.customer.customerName
+                  }]
+                }
+
+                if (item.fieldName == 'coach_type') {
+                  item['value'] = res.data.contract.coachType
+                  params['value'] = res.data.contract.coachType
+                }
+                if (item.fieldName == 'channel') {
+                  item['value'] = res.data.contract.channel
+                  params['value'] = res.data.contract.channel
+                }
+                if (item.fieldName == 'grade_id') {
+                  item['value'] = res.data.contract.gradeId
+                  params['value'] = res.data.contract.gradeId
+                }
+                if (item.fieldName == 'order_date') {
+                  item['value'] = res.data.contract.orderDate
+                  params['value'] = res.data.contract.orderDate
+                }
+                if (item.fieldName == 'file_batch_id') {
+                  res.data.recordList.forEach(item => {
+                    if (item.fieldName == 'file_batch_id') {
+                      item['value'] = item.value
+                      params['value'] = item.value
+                    }
+                  })
+                }
+
+                if (item.fieldName == 'signing_user_id') {
+                  item['value'] = [{
+                    customerId: res.data.customer.createUserId,
+                    customerName: this.action.detail.createUserName
+                  }]
+                  params['value'] = [{
+                    customerId: res.data.customer.createUserId,
+                    customerName: this.action.detail.createUserName
+                  }]
+                }
+
+                if (item.fieldName == 'remark') {
+                  item['value'] = res.data.contract.remark
+                  params['value'] = res.data.contract.remark
+                }
+
+                if (item.fieldName == 'product') {
+                  item['value'] = {
+                    products: {
+                      mealProducts: res.data.contract.mealProducts,
+                      productList: res.data.contract.productList,
+                      giftProducts: res.data.contract.giftProducts
+                    },
+                    totalPrice: res.data.contract.money
+                  }
+                  params['value'] = {
+                    products: {
+                      mealProducts: res.data.contract.mealProducts,
+                      productList: res.data.contract.productList,
+                      giftProducts: res.data.contract.giftProducts
+                    },
+                    totalPrice: res.data.contract.money
+                  }
+                }
+                this.oldForm.crmFields.push(params)
+              }
+            }).catch(() => {})
+          }
+
+          console.log('字段列表', list)
+
+          // const list = res.data
           if (this.crmType == 'customer') {
             for (let index = 0; index < list.length; index++) {
               const element = list[index]
@@ -1243,7 +1396,6 @@ export default {
               }
             }
           }
-
 
           this.getcrmRulesAndModel(list)
 
@@ -1261,6 +1413,10 @@ export default {
               console.log('aaaaaaaaaaaaaaaa', this.userList)
               console.log('BBBBBBBBBBBB', this.crmForm)
             }).catch(() => {})
+          }
+
+          if (!this.action.attr) {
+            this.loading = false
           }
 
           this.loading = false
@@ -1380,7 +1536,6 @@ export default {
          */
 
         this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
-        console.log('ITEM', item)
         /**
          * 表单数据
          */
@@ -2224,7 +2379,10 @@ export default {
       }
 
       if (this.crmType == 'contract') {
-        console.log('字段', params.field)
+        if (this.action.attr && this.action.attr == 'change') {
+          params.entity.relevanceContractId = this.action.detail.contractId
+        }
+        console.log('字段1', params.field)
         // 获取相关字段
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
@@ -2246,12 +2404,6 @@ export default {
             params.entity.contract_type = 2
             params.entity.relevance_contract_id = element.value[0].contractId
           }
-          // if (this.action.present) {
-          //   params.entity.contract_type = 2
-          //   if (element.fieldName == 'contractId') {
-          //     params.entity.relevance_contract_id = element.value[0].contractId
-          //   }
-          // }
         }
         // 删除只用于展示的字段
         for (let i = 0; i < params.field.length; i++) {
@@ -2264,7 +2416,8 @@ export default {
             'headmasterUserName',
             'source',
             'contractId',
-            'present'
+            'present',
+            'is_early_retirement'
           ].includes(element.fieldName)
           if (res) {
             params.field.splice(i--, 1)
@@ -2479,6 +2632,9 @@ export default {
           : 0
         params.entity.buyCount = element.value.buyCount
         params.entity.presenterCount = element.value.presenterCount
+        if (element.value.refundMonry) {
+          params.entity.refundMonry = element.value.refundMonry
+        }
       } else {
         params['product'] = []
         params.entity['money'] = ''
@@ -2498,6 +2654,7 @@ export default {
     },
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
+      console.log('关联了什么', element)
       if (
         element.key == 'customer_id' ||
         element.key == 'contacts_id' ||

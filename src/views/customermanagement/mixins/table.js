@@ -68,6 +68,10 @@ import {
 import {
   crmReturnVisitIndexAPI
 } from '@/api/customermanagement/visit'
+import {
+  crmReceiveIndex,
+  crmReceiveExcelAllExport
+} from '@/api/customermanagement/receive'
 
 
 import Lockr from 'lockr'
@@ -258,6 +262,8 @@ export default {
         return crmAccountIndex
       } else if (this.crmType === 'insideUser') {
         return crmInsideUserIndex
+      } else if (this.crmType == 'receive') {
+        return crmReceiveIndex
       }
     },
     /** 获取字段 */
@@ -396,8 +402,6 @@ export default {
     /** 列表操作 */
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {
-      console.log('点击行')
-      console.log(this.crmType, column.property)
       if (column.type === 'selection') {
         return // 多选布局不能点击
       }
@@ -489,6 +493,7 @@ export default {
         } else if (column.property === 'num') {
           this.rowID = row.contractId
           this.rowType = 'contract'
+          this.clickField = column.property
           this.showDview = true
         } else {
           this.showDview = false
@@ -551,6 +556,23 @@ export default {
         } else {
           this.showDview = false
         }
+      } else if (this.crmType == 'receive') {
+        if (column.property === 'number') {
+          this.rowID = row.contractCapitalId
+          this.rowType = 'receive'
+          // this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'leadsNumber' || column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'student'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'contractNum') {
+          this.rowID = row.contractId
+          this.rowType = 'contract'
+          this.clickField = 'num'
+          this.showDview = true
+        }
       }
 
       if (this.showDview) {
@@ -593,7 +615,8 @@ export default {
           receivables: crmReceivablesExcelAllExportAPI,
           product: crmProductExcelAllExport,
           productSetMeal: crmProductSetMealExcelAllExport,
-          insideUser: CrmInsideUserExcelAllExport
+          insideUser: CrmInsideUserExcelAllExport,
+          receive: crmReceiveExcelAllExport
         }[keytype]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })

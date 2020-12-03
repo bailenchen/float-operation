@@ -107,6 +107,8 @@
             </flexbox>
           </flexbox-item>
         </flexbox>
+        <!-- 合同详细资料展示 -->
+        <slot name="first" />
       </sections>
       <slot />
     </div>
@@ -206,6 +208,7 @@ export default {
 
   },
   created() {
+    console.log(this.filedList, '******')
     this.$bus.on('crm-detail-update', (data) => {
       this.getBaseInfo(false)
     })
