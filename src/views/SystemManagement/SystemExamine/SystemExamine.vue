@@ -196,8 +196,6 @@ export default {
         }
         // 1 合同 2 回款
       } else if (column.property === 'categoryType') {
-        console.log('axaxs', row[column.property])
-
         return {
           1: '合同',
           2: '回款',
