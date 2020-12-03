@@ -817,9 +817,14 @@ export default {
 
           console.log('改变套餐字段1', item.value)
           this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
-          if (data.value.drainage) {
-            this.crmForm.crmFields[0].value = '引流'
-          }
+          // if (data.value.drainage) {
+          //   this.crmForm.crmFields[0].value = '引流'
+          // }
+          this.crmForm.crmFields.forEach(item => {
+            if (item.key == 'contractsAttr') {
+              item.value = data.value.isNew
+            }
+          })
         } else if (item.data.fieldName == 'coach_type') {
           this.actionCombo.searchJson.coachType = item.value
         } else if (item.data.fieldName == 'grade_id') {

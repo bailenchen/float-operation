@@ -279,7 +279,8 @@ export default {
         purchaseLesson: this.purchaseLesson,
         grooveLesson: this.grooveLesson,
         totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson),
-        drainage: this.drainage
+        drainage: this.drainage,
+        totalPrice: this.totalPrice
       })
     },
 

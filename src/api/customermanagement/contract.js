@@ -319,3 +319,17 @@ export function CrmContractAffirmContractStatusAPI(data) {
     data: data
   })
 }
+
+/**
+ * 合同 放弃\取消
+ * @param {*} data
+ *
+ */
+export function queryIsNewByCustomerIdAPI(data) {
+  return request({
+    url: 'CrmContract/queryIsNewByCustomerId',
+    method: 'post',
+    data: data
+  })
+}
+

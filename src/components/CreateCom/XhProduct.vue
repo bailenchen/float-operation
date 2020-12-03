@@ -137,7 +137,7 @@ import CrmRelative from '@/components/CreateCom/CrmRelative'
 import Combo from '@/views/customermanagement/contract/components/Combo'
 import { crmProductIndex } from '@/api/customermanagement/product'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
-import { QueryGiveAPI } from '@/api/customermanagement/contract'
+import { QueryGiveAPI, queryIsNewByCustomerIdAPI } from '@/api/customermanagement/contract'
 
 export default {
   name: 'XhProduct', // 关联产品
@@ -183,7 +183,8 @@ export default {
       surplusPresenter: 0, // 剩余可赠送课次
       comboComponentData: null,
       isAddCombo: false,
-      drainage: false, // 引流课
+      renew: 1, // 续签或新签
+      isNew: 1, // 0:续签 1:新签 2:引流
       comboValue: null,
       priceText: '总金额'
       // originalPresenter: 0// 真实累计课次
@@ -225,6 +226,12 @@ export default {
     action: {
       handler(val) {
         console.log('辅导方式、年级、学员变化', val)
+        if (val.customerId) {
+          queryIsNewByCustomerIdAPI({ customerId: val.customerId }).then(res => {
+            this.renew = res.data
+            // this.isNew = res.data
+          }).catch(() => {})
+        }
         // 置空
         this.selectComobo = null
         if (this.comboAction) {
@@ -235,7 +242,7 @@ export default {
         this.presentRules = ''
         this.surplusPresenter = 0
         this.totalPrice = 0
-        this.drainage = false
+        this.isNew = 1
         if (val.searchJson.coachType && val.searchJson.gradeId) {
           this.getUnivalence()
         }
@@ -460,7 +467,11 @@ export default {
       this.present = null
       this.comboComponentData = obj
       this.purchaseLesson = obj.purchaseLesson
-      this.drainage = obj.drainage
+      this.isNew = obj.drainage ? 2 : this.renew
+      this.totalPrice = obj.totalPrice
+      this.priceValue = this.totalPrice
+
+
       if (obj.tableData.length > 0) {
         this.jointpresentData()
       }
@@ -472,7 +483,7 @@ export default {
           totalPrice: this.totalPrice, // 套餐价格
           refundMonry: this.priceValue, // 充值返还金额
           surplusPrice: this.action.surplusPrice,
-          drainage: this.drainage,
+          isNew: this.isNew,
           totalclassTime: this.comboComponentData.totalclassTime,
           buyCount: this.comboComponentData.purchaseLesson,
           presenterCount: this.comboComponentData.grooveLesson
