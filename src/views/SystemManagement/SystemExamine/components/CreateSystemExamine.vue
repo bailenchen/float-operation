@@ -25,31 +25,83 @@
             :model="crmForm"
             label-position="top"
             class="crm-create-box">
-            <el-form-item
-              v-for="(item, index) in crmForm.crmFields"
-              :key="item.key"
-              :prop="'crmFields.' + index + '.value'"
-              :class="{ 'crm-create-block-item': item.showblock, 'crm-create-item': !item.showblock }"
-              :rules="crmRules[item.key]"
-              :style="{'padding-left': getPaddingLeft(item, index), 'padding-right': getPaddingRight(item, index)}">
-              <div
-                slot="label"
-                style="display: inline-block;">
-                <div class="form-label">
-                  {{ item.data.name }}
-                  <span style="color:#999;">
-                    {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
-                  </span>
+            <template v-for="(item, index) in crmForm.crmFields">
+              <el-form-item
+                v-if="item.data.formType!='contractAmount' && item.data.formType!='discount'"
+                :key="item.key"
+                :prop="'crmFields.' + index + '.value'"
+                :class="{ 'crm-create-block-item': item.showblock, 'crm-create-item': !item.showblock }"
+                :rules="crmRules[item.key]"
+                :style="{'padding-left': getPaddingLeft(item, index), 'padding-right': getPaddingRight(item, index)}">
+                <div
+                  slot="label"
+                  style="display: inline-block;">
+                  <div class="form-label">
+                    <span>{{ item.data.name }}</span>
+                    <span style="color:#999;">
+                      {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <component
-                :is="item.data.formType | typeToComponentName"
-                :value="item.value"
-                :index="index"
-                :item="item"
-                :radio="false"
-                @value-change="fieldValueChange"/>
-            </el-form-item>
+                <component
+                  :is="item.data.formType | typeToComponentName"
+                  :value="item.value"
+                  :index="index"
+                  :item="item"
+                  :radio="false"
+                  @value-change="fieldValueChange"/>
+              </el-form-item>
+
+              <el-form-item
+                v-else-if="item.data.formType=='discount' && showDiscount"
+                :key="item.key"
+                :prop="'crmFields.' + index + '.value'"
+                :rules="crmRules[item.key]"
+                style="'padding-left:0; padding-right:0"
+                class= "crm-create-block-item">
+                <div
+                  slot="label"
+                  style="display: inline-block;">
+                  <div class="form-label">
+                    <span>{{ item.data.name }}</span>
+                    <span style="color:#999;">
+                      {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
+                    </span>
+                  </div>
+                </div>
+                <xh-discount
+                  :value="item.value"
+                  :index="index"
+                  :item="item"
+                  :radio="false"
+                  @value-change="fieldValueChange"/>
+              </el-form-item>
+              <el-form-item
+                v-else-if="item.data.formType=='contractAmount' && showContractAmount"
+                :key="item.key"
+                :prop="'crmFields.' + index + '.value'"
+                :rules="crmRules[item.key]"
+                style="'padding-left:0; padding-right:0"
+                class= "crm-create-block-item">
+                <div
+                  slot="label"
+                  style="display: inline-block;">
+                  <div class="form-label">
+                    <span>{{ item.data.name }}</span>
+                    <span style="color:#999;">
+                      {{ item.data.inputTips ? '（'+item.data.inputTips+'）':'' }}
+                    </span>
+                  </div>
+                </div>
+                <xh-contract-amount
+                  :value="item.value"
+                  :index="index"
+                  :item="item"
+                  :radio="false"
+                  @value-change="fieldValueChange"/>
+              </el-form-item>
+            </template>
+
           </el-form>
         </div>
         <div
@@ -140,7 +192,9 @@ import {
   XhTextarea,
   XhSelect,
   XhUserCell,
-  XhStrucUserCell
+  XhStrucUserCell,
+  XhDiscount,
+  XhContractAmount
 } from '@/components/CreateCom'
 import Nzhcn from 'nzh/cn'
 
@@ -152,7 +206,9 @@ export default {
     XhTextarea,
     XhSelect,
     XhUserCell,
-    XhStrucUserCell
+    XhStrucUserCell,
+    XhDiscount,
+    XhContractAmount
   },
   filters: {
     /** 根据type 找到组件 */
@@ -166,6 +222,11 @@ export default {
       } else if (formType == 'structure') {
         return 'XhStrucUserCell'
       }
+      // else if (formType == 'discount') {
+      //   return 'XhDiscount'
+      // } else if (formType == 'contractAmount') {
+      //   return 'XhContractAmount'
+      // }
     },
     numberToZh: function(value) {
       return Nzhcn.encodeS(value)
@@ -212,6 +273,22 @@ export default {
     }
   },
   computed: {
+    showDiscount() {
+      const relative = this.crmForm.crmFields[1].value
+      if (relative == 6) {
+        return true
+      } else {
+        return false
+      }
+    },
+    showContractAmount() {
+      const relative = this.crmForm.crmFields[1].value
+      if (relative == 1) {
+        return true
+      } else {
+        return false
+      }
+    },
     title() {
       if (this.handle.type === 'examineflow') {
         if (this.handle.action === 'save') {
@@ -279,6 +356,13 @@ export default {
     fieldValueChange(data) {
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
+      if (item.key == 'categoryType') {
+        this.crmForm.crmFields.forEach(ele => {
+          if (ele.key == 'discount' || ele.key == 'contractAmount') {
+            ele.value = {}
+          }
+        })
+      }
       // 无事件的处理 后期可换成input实现
       // if (item.data.formType == 'structure') {
       //   this.$refs.crmForm.validateField('crmFields.' + data.index + '.value')
@@ -310,10 +394,36 @@ export default {
           { name: '发票', value: 3 },
           { name: '争议', value: 4 },
           { name: '资金流水', value: 5 },
-          { name: '额外赠送合同', value: 6 }
+          { name: '额外赠送合同', value: 6 },
+          { name: '合同变更审批', value: 7 },
+          { name: '常规充值返还审批', value: 8 },
+          { name: '特殊充值返还审批', value: 9 },
+          { name: '充值审批', value: 10 },
+          { name: '提现审批', value: 11 },
+          { name: '转中心审批', value: 12 }
         ],
         value: this.handle.data ? this.handle.data.categoryType : 1
       })
+
+      field.push({
+        field: 'discount',
+        formType: 'discount',
+        isNull: 1,
+        name: '折扣（%）',
+        setting: [],
+        inputTips: '',
+        value: this.handle.data ? { minDiscount: this.handle.data.minDiscount, maxDiscount: this.handle.data.maxDiscount } : {}
+      })
+      field.push({
+        field: 'contractAmount',
+        formType: 'contractAmount',
+        isNull: 1,
+        name: '合同支付金额（元）',
+        setting: [],
+        inputTips: '',
+        value: this.handle.data ? { minPay: this.handle.data.minPay, maxPay: this.handle.data.maxPay } : {}
+      })
+
 
       field.push({
         field: 'dept',
@@ -354,9 +464,27 @@ export default {
             trigger: ['blur', 'change']
           })
         }
+        if (item.field == 'discount') {
+          var validate = (rule, value, callback) => {
+            if ((!value.maxDiscount || !value.minDiscount) && this.showDiscount) {
+              return callback(new Error('折扣不能为空'))
+            } else {
+              callback()
+            }
+          }
+          tempList.push({ validator: validate, trigger: 'blur' })
+        } else if (item.field == 'contractAmount') {
+          var validate = (rule, value, callback) => {
+            if ((!value.maxPay || !value.minPay) && this.showContractAmount) {
+              return callback(new Error('合同支付金额不能为空'))
+            } else {
+              callback()
+            }
+          }
+          tempList.push({ validator: validate, trigger: 'blur' })
+        }
 
         this.crmRules[item.field] = tempList
-
         /** 表单数据 */
         var params = {}
         params['value'] = item.value
@@ -426,6 +554,14 @@ export default {
           params['deptIds'] = element.value['strucs'].map(function(item) {
             return item.id
           })
+        } else if (element.key === 'discount') {
+          if (this.showDiscount) {
+            params = { ...params, ...element.value }
+          }
+        } else if (element.key === 'contractAmount') {
+          if (this.showContractAmount) {
+            params = { ...params, ...element.value }
+          }
         } else {
           params[element.key] = element.value
         }

@@ -198,7 +198,7 @@ export default {
       } else if (column.property === 'categoryType') {
         console.log('axaxs', row[column.property])
 
-        return { 1: '合同', 2: '回款', 3: '发票', 4: '争议', 5: '资金流水', 6: '额外赠送合同' }[row[column.property]]
+        return { 1: '合同', 2: '回款', 3: '发票', 4: '争议', 5: '资金流水', 6: '额外赠送合同', 7: '合同变更' }[row[column.property]]
       } else if (column.property === 'userIds') {
         const structures = row['deptIds'] || []
         let strName = structures
