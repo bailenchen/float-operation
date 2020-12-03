@@ -27,6 +27,7 @@
         <i class="wukong wukong-file f-img" />
         <div class="f-name">{{ item | fileName }}</div>
         <div
+          v-if="isDelete"
           class="close-button"
           @click="deleteFile(item, index)">×</div>
       </flexbox>
@@ -48,7 +49,12 @@ export default {
     }
   },
   mixins: [arrayMixin],
-  props: {},
+  props: {
+    isDelete: { // 是否显示删除按钮
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       batchId: '' // 批次ID

@@ -476,9 +476,9 @@ export default {
     changeLesson(row, name1, name2) {
       var lesson = 0
       var lessons = 0
-      if (row[name1]) {
+      // if (row[name1]) {
 
-      }
+      // }
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
 
@@ -490,7 +490,8 @@ export default {
           if (lesson > element[name2]) {
             element.name1 = 0
             lesson -= _lesson
-            var text = name1 == `purchaseLesson` ? `购买课次不能大于套餐标准课次` : `常规赠送课次不能大于套餐标准赠送课次`
+            element[name1] = 0
+            var text = name1 == `purchaseLesson` ? `购买课次不能大于套餐标准课次1` : `常规赠送课次不能大于套餐标准赠送课次`
             this.$message.warning(text)
           }
         }

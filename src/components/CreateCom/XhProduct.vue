@@ -443,6 +443,7 @@ export default {
       this.sendData = {
         index: this.index,
         value: {
+          issurplus: true,
           surplusPrice: this.surplusPrice
         },
         data: {
@@ -455,7 +456,7 @@ export default {
       this.value.products.productList.forEach(item => {})
     },
     structureDataHandle(obj) {
-      console.log('combo组件发送的数据', obj)
+      console.log('combo组件发送的数据1', obj)
       this.present = null
       this.comboComponentData = obj
       this.purchaseLesson = obj.purchaseLesson

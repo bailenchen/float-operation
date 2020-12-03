@@ -151,7 +151,7 @@ export default {
         { title: '付款金额（元）', value: '' },
         { title: '签约人', value: '' }
       ],
-      tabCurrentName: 'Activity',
+      tabCurrentName: 'CRMEditBaseInfo',
       // 编辑操作
       isCreate: false,
       // 活动操作
