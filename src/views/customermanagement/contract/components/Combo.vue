@@ -18,7 +18,7 @@
         align="center">
         <template slot-scope="scope">
           <template v-if="item.prop == 'subject'">
-            <el-select v-model="scope.row.subject" :disabled="!!value" placeholder="请选择">
+            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择">
               <el-option
                 v-for="subjectItem in subjectList"
                 :key="subjectItem.value"
@@ -28,13 +28,13 @@
             </el-select>
           </template>
           <template v-else-if="item.prop == 'price'">
-            <el-input v-model="scope.row.price" :disabled="!!value" type="number" min="0" @change="changePrice(scope.row)"/>
+            <el-input v-model="scope.row.price" :disabled="isDisabled" type="number" min="0" @change="changePrice(scope.row)"/>
           </template>
           <template v-else-if="item.prop == 'purchaseLesson'">
-            <el-input v-model="scope.row.purchaseLesson" :disabled="!!value" min="0" type="number" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
+            <el-input v-model="scope.row.purchaseLesson" :disabled="isDisabled" min="0" type="number" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
           </template>
           <template v-else-if="item.prop == 'grooveLesson'">
-            <el-input v-model="scope.row.grooveLesson" :disabled="!!value || scope.row.normLesson===0" min="0" type="number" @change="changeLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
+            <el-input v-model="scope.row.grooveLesson" :disabled="isDisabled || scope.row.normLesson===0" min="0" type="number" @change="changeLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
           </template>
           <template v-else>
             {{ scope.row[item.prop] }}
@@ -62,6 +62,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     },
     value: Object,
     subjectList: Array,
@@ -148,14 +152,7 @@ export default {
         if (val && val.productList) {
           console.log('使用value的值代替table', val)
           this.structureDataByValue()
-          // this.tableData = val.productList
         }
-        // if (val.productList) {
-        //   console.log('使用value的值代替table', val)
-        //   this.tableData = val.productList
-        // }
-
-        // this.structureData()
       },
       deep: true,
       immediate: true
@@ -181,35 +178,12 @@ export default {
   },
   methods: {
     structureDataByValue() {
-      // var arr = []
-      // this.value.productList.forEach(item => {
-      //   var obj = {
-      //     productType: item.mealProductId,
-      //     productName: item.giftProductId,
-      //     subject: item.productId,
-      //     comboNormLesson: '', // 套餐标准课次
-      //     normLesson: '', // 套餐标准赠送课次
-      //     purchaseLesson: item.courseSum, // 购买课次
-      //     grooveLesson: item.presenterCourseSum, // 常规赠送课次
-      //     planeLesson: item.alreadyCourse, // 已排课课次
-      //     completeLesson: item.finishCourse, // 已完成课次
-      //     price: item.salesPrice, // 大套餐价格
-      //     univalence: item.price, // 单价
-      //     combo_number: item.mealProductId // 大套餐ID
-      //     // dataIndex: this.maxIndex // 标识
-      //   }
-      //   arr.push(obj)
-      // })
       this.tableData = this.value.productList
       this.getOrderNumber()
     },
     // 拼接表格数据
     structureData() {
       console.log('拼接数据')
-      // if (!this.action.productSetMeal.length) {
-      //   this.purchaseLesson = 0
-      //   this.grooveLesson = 0
-      // }
       this.purchaseLesson = 0
       this.grooveLesson = 0
       this.drainage = false

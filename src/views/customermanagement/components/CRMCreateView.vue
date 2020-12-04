@@ -143,6 +143,7 @@
           <create-examine-info
             ref="examineInfo"
             :types="'crm_' + crmType"
+            :other-types="otherTypes"
             :types-id="action.id"
             @value-change="examineValueChange" />
         </create-sections>
@@ -400,7 +401,8 @@ export default {
       },
       actionPresent: {
         countCourseSum: ''
-      }
+      },
+      otherTypes: '' // 用于审批流区分合同、额外赠送合同、合同变更
     }
   },
   computed: {
@@ -492,11 +494,17 @@ export default {
     if (this.crmType == 'capitalAccount') {
       this.leadsNumber = true
     }
-    if (this.action.attr == 'change') {
-      this.actionCombo.attr = 'change'
-      filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
-        console.log(111)
-      }).catch(() => {})
+    // if (this.action.attr == 'change') {
+    //   this.actionCombo.attr = 'change'
+    //   filedGetInformation({ types: 7, id: this.action.detail.contractId }).then(res => {
+    //     console.log(111)
+    //   }).catch(() => {})
+    // }
+    if (this.action.present) {
+      this.otherTypes = 'present'
+    }
+    if (this.action.attr && this.action.attr == 'change') {
+      this.otherTypes = 'change'
     }
   },
   mounted() {
@@ -1133,10 +1141,6 @@ export default {
         params.id = this.action.id
       }
 
-      // if (this.action.attr == 'change') {
-      //   params.id = this.action.detail.contractId
-      // }
-
       console.log('参数111', params)
 
       filedGetField(params)
@@ -1269,6 +1273,7 @@ export default {
           var list = res.data
 
           if (this.crmType == 'contract' && this.action.attr == 'change') {
+            this.actionCombo.type = 'change'
             var _list = objDeepCopy(list)
             filedGetInformation({ types: 6, id: this.action.detail.contractId }).then(res => {
               this.loading = false
@@ -1279,7 +1284,6 @@ export default {
                   continue
                 }
                 showStyleIndex += 1
-                console.log('循环')
                 var params = {}
                 params['value'] = item.value
                 params['key'] = item.fieldName
@@ -1704,14 +1708,6 @@ export default {
                   params.value = [params.value]
                 }
               }
-            } else if (this.action.attr == 'change') {
-              // console.log('更改', item)
-              // var oldParams = {}
-              // oldParams['value'] = item.value
-              // oldParams['key'] = item.fieldName
-              // oldParams['data'] = item
-              // oldParams['disabled'] = false // 是否可交互
-              // oldParams['showblock'] = true // 展示整行效果
             } else {
               params['value'] = item.defaultValue
                 ? objDeepCopy(item.defaultValue)
@@ -1792,7 +1788,6 @@ export default {
           params.disabled = arr.includes(item.fieldName)
         }
         this.crmForm.crmFields.push(params)
-        // this.oldForm.crmFields.push(oldParams)
       }
       for (let index = 0; index < this.crmForm.crmFields.length; index++) {
         const element = this.crmForm.crmFields[index]
@@ -1818,14 +1813,61 @@ export default {
         if (this.action.type == 'update' && this.crmType == 'customer' && element.key == 'channel_id') {
           element.disabled = true
         }
+
+        // 合同编辑
+        if (this.action.type == 'update' && this.crmType == 'contract') {
+          if (element.key == 'contractsAttr') {
+            element.value = this.action.information.contract.isNew
+          }
+          if (element.key == 'totalclassTime') {
+            element.value = this.action.information.contract.buyCount
+          }
+          if (element.key == 'leadsNumber') {
+            element.value = this.action.information.customer.leadsNumber
+          }
+          if (element.key == 'dept_id') {
+            element.value = this.action.information.customer.deptIdName
+          }
+          if (element.key == 'headmasterUserName') {
+            element.value = this.action.information.customer.headmasterUserIdName
+          }
+          if (element.key == 'source') {
+            element.value = this.action.information.customer.channelIdName
+          }
+          if (element.key == 'coach_type') {
+            this.actionCombo.searchJson.coachType = this.action.information.contract.coachType
+          }
+          if (element.key == 'grade_id') {
+            this.actionCombo.searchJson.gradeId = this.action.information.contract.gradeId
+          }
+          if (element.key == 'file_batch_id') {
+            this.action.information.recordList.forEach(item => {
+              if (item.fieldName == 'file_batch_id') {
+                element.value = item.value
+              }
+            })
+          }
+
+          if (element.key == 'customer_id') {
+            element.value = [{
+              customerId: this.action.information.customer.customerId,
+              customerName: this.action.information.customer.customerName
+            }]
+            this.actionCombo.customerId = this.action.information.customer.customerId
+          }
+          if (element.key == 'product') {
+            element.value = {
+              products: {
+                mealProducts: this.action.information.contract.mealProducts,
+                productList: this.action.information.contract.productList,
+                giftProducts: this.action.information.contract.giftProducts
+              },
+              totalPrice: this.action.information.contract.money
+            }
+          }
+        }
+        // 额外合同编辑
       }
-      // var old = [...this.crmForm.crmFields]
-      // old.forEach(item => {
-      //   item.disabled = true
-      //   item.
-      //   if(item.)
-      // })
-      // this.oldForm.crmFields = old
     },
     /**
      * 获取关联项的值 和 关联信息

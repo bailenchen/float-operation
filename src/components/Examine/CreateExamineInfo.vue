@@ -125,15 +125,16 @@ export default {
       const params = {}
       if (this.types == 'oa_examine') {
         params.categoryId = this.typesId
-      } else if (this.types == 'crm_contract' && this.typesId) {
-        params.categoryType = this.typesId
+      } else if (this.types == 'crm_contract' && this.otherTypes == 'present') {
+        params.categoryType = 6
+      } else if (this.types == 'crm_contract' && this.otherTypes == 'change') {
+        params.categoryType = 7
       } else {
         params.id = this.typesId
         params.categoryType = {
           crm_contract: 1,
           crm_receivables: 2,
-          crm_invoice: 3,
-          crm_present_contract: 6
+          crm_invoice: 3
         }[this.types] // 1 合同 2 回款 3 发票
       }
       reqeust(params)

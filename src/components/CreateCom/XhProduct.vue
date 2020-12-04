@@ -37,6 +37,7 @@
     <combo
       :action="comboAction"
       :value="comboValue"
+      :is-disabled="isDisabled"
       :subject-list="subjectList"
       :accumulation="accumulation"
       @structure-data="structureDataHandle"
@@ -49,7 +50,7 @@
         style="width: 100%">
         <el-table-column prop="subject" label="科目" width="" align="center">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.subject" :disabled="!!value.products" placeholder="请选择" @change="selectSubjectHandle">
+            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择" @change="selectSubjectHandle">
               <el-option
                 v-for="(item, index) in subjectList"
                 :key="index"
@@ -62,7 +63,7 @@
 
         <el-table-column prop="presentLesson" label="累计赠送课次" width="" align="center">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.presentLesson" :disabled="!!value.products" @change="changeLesson" />
+            <el-input v-model="scope.row.presentLesson" :disabled="isDisabled" @change="changeLesson" />
           </template>
         </el-table-column>
 
@@ -75,7 +76,7 @@
         <el-table-column
           prop="univalence"
           label="单节课价格"/>
-        <el-table-column v-if="!value.products" prop="" label="操作" width="100" align="center">
+        <el-table-column v-if="!isDisabled" prop="" label="操作" width="100" align="center">
           <template slot-scope="scope">
             <el-button
               type="primary"
@@ -108,26 +109,6 @@
           type="number"
           disabled/>&nbsp;元
       </div>
-      <!-- <div v-if="value.products" class="total-info">
-        剩余金额：
-        <el-input
-          v-wk-number
-          v-model="surplusPrice"
-          style="width: 120px"
-          placeholder="请输入"
-          type="number"
-          disabled/>&nbsp;元
-      </div>
-      <div v-else class="total-info">
-        总金额：
-        <el-input
-          v-wk-number
-          v-model="totalPrice"
-          style="width: 120px"
-          placeholder="请输入"
-          type="number"
-          disabled/>&nbsp;元
-      </div> -->
     </flexbox>
   </div>
 </template>
@@ -171,7 +152,8 @@ export default {
       // maxIndex: 0,
       selectComobo: null, // 套餐数组
       present: null, // 赠送table相关数据
-      sendData: null,
+      // sendData: null,
+      productData: null,
       accumulation: {
         data: [],
         lesson: 0
@@ -191,13 +173,15 @@ export default {
     }
   },
   computed: {
-    showPresent() {
-      if (this.subjectList && this.univalence) {
-        return true
-      }
-    },
     minusShow() {
       return this.present.length > 1
+    },
+    isDisabled() {
+      // 变更，且有值
+      if (this.action.type && this.value.products) {
+        return true
+      }
+      return false
     }
   },
   watch: {
@@ -225,7 +209,7 @@ export default {
     },
     action: {
       handler(val) {
-        console.log('辅导方式、年级、学员变化', val)
+        console.log('辅导方式、年级、学员变化1', val)
         if (val.customerId) {
           queryIsNewByCustomerIdAPI({ customerId: val.customerId }).then(res => {
             this.renew = res.data
@@ -247,21 +231,19 @@ export default {
           this.getUnivalence()
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
 
   },
   created() {
     console.log('传入的value1', this.value)
-    if (this.action.attr && this.action.attr == 'change') {
+    if (this.action.type && this.action.type == 'change') {
       this.priceText = '最终价格'
     }
     // 获取科目
     QueryAdminSubject().then(res => {
       this.subjectList = res.data
-      // this.comboValue = {
-      //   productList: this.value.productList
-      // }
       if (this.value.products) {
         this.structurePresentByValue()
       }
@@ -320,10 +302,7 @@ export default {
 
       this.totalPrice = totalPrice
       this.priceValue = this.totalPrice
-      if (this.action.attr && this.action.attr == 'change') {
-        this.finalPrice = this.totalPrice - this.action.surplusPrice
-        this.priceValue = this.finalPrice
-      }
+
       console.log('新的数组', arr, totalPrice, this.totalPrice)
 
       this.comboAction = {
@@ -331,6 +310,13 @@ export default {
         subjectList: this.subjectList,
         originalPresenter: this.originalPresenter,
         productSetMeal: arr
+      }
+
+      if (this.action.attr && this.action.attr == 'change') {
+        console.log('计算最终价格')
+        this.finalPrice = this.totalPrice - this.action.surplusPrice
+        this.priceValue = this.finalPrice
+        this.comboAction.type = 'change'
       }
     },
     selectComoboHandle(item, index) {
@@ -399,7 +385,7 @@ export default {
       return name
     },
     structurePresentByValue() {
-      this.priceText = '剩余金额'
+      this.priceText = this.action.attr ? '剩余金额' : '总金额'
       var arr = []
       var arr2 = []
       var completeLesson = 0
@@ -441,26 +427,37 @@ export default {
         productList: arr
       }
       this.present = arr2
-      // this.totalPrice = this.value.totalPrice
+
+      this.totalPrice = this.value.totalPrice
+      this.priceValue = this.totalPrice
+
+      // this.comboAction = {
+      //   type: 'change'
+      // }
+      this.type = 'change'
+
       // 计算剩余金额
       // completeLesson = 10
-      this.surplusPrice = this.value.totalPrice - completeLesson * arr[0].univalence
-      this.priceValue = this.surplusPrice
+      if (this.action.attr) {
+        this.surplusPrice = this.value.totalPrice - completeLesson * arr[0].univalence
+        this.priceValue = this.surplusPrice
 
-      this.sendData = {
-        index: this.index,
-        value: {
+        // this.sendData = {
+        //   index: this.index,
+        //   value: {
+        //     issurplus: true,
+        //     surplusPrice: this.surplusPrice
+        //   },
+        //   data: {
+        //     fieldName: 'productSetMeal'
+        //   }
+        // }
+        // this.$emit('value-change', this.sendData)
+        this.sendData({
           issurplus: true,
           surplusPrice: this.surplusPrice
-        },
-        data: {
-          fieldName: 'productSetMeal'
-        }
+        })
       }
-
-      this.$emit('value-change', this.sendData)
-
-      this.value.products.productList.forEach(item => {})
     },
     structureDataHandle(obj) {
       console.log('combo组件发送的数据1', obj)
@@ -476,24 +473,26 @@ export default {
         this.jointpresentData()
       }
 
-      this.sendData = {
-        index: this.index,
-        value: {
-          product: this.comboComponentData.tableData,
-          totalPrice: this.totalPrice, // 套餐价格
-          refundMonry: this.priceValue, // 充值返还金额
-          surplusPrice: this.action.surplusPrice,
-          isNew: this.isNew,
-          totalclassTime: this.comboComponentData.totalclassTime,
-          buyCount: this.comboComponentData.purchaseLesson,
-          presenterCount: this.comboComponentData.grooveLesson
-        },
-        data: {
-          fieldName: 'productSetMeal'
-        }
-      }
+      this.sendData()
 
-      this.$emit('value-change', this.sendData)
+      // this.sendData = {
+      //   index: this.index,
+      //   value: {
+      //     product: this.comboComponentData.tableData,
+      //     totalPrice: this.totalPrice, // 套餐价格
+      //     refundMonry: this.priceValue, // 充值返还金额
+      //     surplusPrice: this.action.surplusPrice,
+      //     isNew: this.isNew,
+      //     totalclassTime: this.comboComponentData.totalclassTime,
+      //     buyCount: this.comboComponentData.purchaseLesson,
+      //     presenterCount: this.comboComponentData.grooveLesson
+      //   },
+      //   data: {
+      //     fieldName: 'productSetMeal'
+      //   }
+      // }
+
+      // this.$emit('value-change', this.sendData)
     },
     jointpresentData() {
       console.log('生成累计赠送1')
@@ -541,10 +540,44 @@ export default {
           return true
         }
       })
-      this.sendData.value.surplusPrice = this.action.surplusPrice
-      this.sendData.value.buyCount = lessons + obj.totalclassTime
-      this.sendData.value.product = [...this.comboComponentData.tableData, ...arr]
-      this.$emit('value-change', this.sendData)
+      // this.sendData.value.surplusPrice = this.action.surplusPrice
+      // this.sendData.value.buyCount = lessons + obj.totalclassTime
+      // this.sendData.value.product = [...this.comboComponentData.tableData, ...arr]
+      // this.$emit('value-change', this.sendData)
+      this.sendData({
+        surplusPrice: this.action.surplusPrice,
+        buyCount: lessons + obj.totalclassTime,
+        product: [...this.comboComponentData.tableData, ...arr]
+      })
+    },
+
+    // 向父组件发送数据
+    sendData(obj) {
+      this.productData = {
+        index: this.index,
+        value: {
+          product: this.comboComponentData.tableData, // 列表
+          totalPrice: this.totalPrice, // 套餐价格
+          refundMonry: this.priceValue, // 充值返还金额
+          issurplus: false,
+          surplusPrice: this.action.surplusPrice, // 剩余金额
+          isNew: this.isNew, // 合同属性
+          totalclassTime: this.comboComponentData.totalclassTime, // 总课次
+          buyCount: this.comboComponentData.purchaseLesson, // 购买课次
+          presenterCount: this.comboComponentData.grooveLesson // 赠送课次
+        },
+        data: {
+          fieldName: 'productSetMeal'
+        }
+      }
+      if (obj) {
+        for (const k in obj) {
+          if (!obj.hasOwnProperty(k)) break
+          this.productData.value[k] = obj[k]
+        }
+      }
+
+      this.$emit('value-change', this.productData)
     },
     selectSubjectHandle(val) {
       // 如果赠送课次是0不处理

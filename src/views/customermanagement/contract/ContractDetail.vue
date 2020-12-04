@@ -110,7 +110,7 @@
 
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: id, batchId: detailData.batchId}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId, information}"
       :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -257,7 +257,8 @@ export default {
         }
       ],
       subjectList: {}, // 科目列表
-      totalPrice: 0
+      totalPrice: 0,
+      information: null // 合同详情
     }
   },
   computed: {
@@ -333,6 +334,7 @@ export default {
      * 详情
      */
     getDetial() {
+      console.log('获取详情')
       this.loading = true
       crmContractRead({
         contractId: this.id
@@ -412,6 +414,7 @@ export default {
         id: this.id
       }
       filedGetInformation(params).then(res => {
+        this.information = res.data
         const productList = res.data.contract.productList
 
         // 大套餐

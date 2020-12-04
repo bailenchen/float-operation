@@ -321,7 +321,7 @@ export function CrmContractAffirmContractStatusAPI(data) {
 }
 
 /**
- * 合同 放弃\取消
+ * 合同 续签/新签
  * @param {*} data
  *
  */
