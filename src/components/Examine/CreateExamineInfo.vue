@@ -118,7 +118,8 @@ export default {
         crm_contract: crmCreateExamineFlow,
         crm_present_contract: crmCreateExamineFlow,
         crm_invoice: crmCreateExamineFlow,
-        crm_receivables: crmCreateExamineFlow
+        crm_receivables: crmCreateExamineFlow,
+        crm_capitalAccount: crmCreateExamineFlow
         // crm_dispute: crmExamineFlowRecordList
       }[this.types]
 
@@ -133,7 +134,8 @@ export default {
           crm_contract: 1,
           crm_receivables: 2,
           crm_invoice: 3,
-          crm_present_contract: 6
+          crm_present_contract: 6,
+          crm_capitalAccount: 5
         }[this.types] // 1 合同 2 回款 3 发票
       }
       reqeust(params)
