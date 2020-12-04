@@ -128,7 +128,7 @@ export default {
           hidden: true
         },
         {
-          name: '待审核退款',
+          name: '待审核资金退款',
           crmType: 'refound',
           color: '#FFB940',
           iconClass: 'wk wk-receivables',

@@ -62,56 +62,19 @@
           <el-input v-if="item.type == 'textarea'" v-model="form[moneyType][item.prop]" type="textarea"/>
         </el-form-item>
 
-        <!-- 授权审批 -->
-        <sections
-          v-if="examineInfo && examineInfo.examineType==2"
-          title="审核信息"
-          class="b-cells"
-          content-height="auto">
-          <flexbox
-            :gutter="0"
-            align="stretch"
-            wrap="wrap"
-            style="padding: 10px 16px 0;">
-            <div class="label" style="margin-right:5px;">
-              审核人
-            </div>
-            <xh-user-cell
-              :value="examineUser"
-              class="set-width"
-              @value-change="fieldValueChange"/>
-          </flexbox>
-        </sections>
-        <!-- 固定审批 -->
-        <sections
-          v-else
-          title="审核信息"
-          class="b-cells"
-          content-height="auto">
-          <flexbox
-            :gutter="0"
-            align="stretch"
-            wrap="wrap"
-            style="padding: 10px 16px 0;">
-            <div v-if="examineInfo" class="label1" style="margin-right:5px;">
-              <el-popover
-                v-for="(item, index) in examineInfo.examineSteps"
-                :key="index"
-                :disabled="item.userList.length==0"
-                :content="item.userList|contentFilters"
-                placement="bottom"
-                trigger="hover">
-                <div
-                  slot="reference"
-                  class="fixed-examine-item">
-                  <img src="@/assets/img/examine_head.png" >
-                  <div class="detail">{{ item|detail }}</div>
-                  <div class="step">{{ (index+1)|step }}</div>
-                </div>
-              </el-popover>
-            </div>
-          </flexbox>
-        </sections>
+        <create-sections
+          v-if="showExamine"
+          title="审核信息">
+          <div
+            v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
+            slot="header"
+            class="examine-type">{{ examineInfo.examineType===1 ? '固定审批流' : '授权审批人' }}</div>
+          <create-examine-info
+            ref="examineInfo"
+            :types-id="id"
+            types="crm_capitalAccount"
+            @value-change="examineValueChange" />
+        </create-sections>
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
@@ -127,43 +90,20 @@ import { crmFileSave } from '@/api/common'
 import { crmEditAccountWater } from '@/api/customermanagement/account'
 
 // 组件
+import CreateSections from '@/components/CreateSections'
+import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { XhUserCell } from '@/components/CreateCom'
 import AddImageList from '@/components/quickAdd/AddImageList'
 import Sections from '../../components/Sections'
-
-// 第三方
-import Nzhcn from 'nzh/cn'
-
 
 export default {
   name: 'OfflineWithDraw',
   components: {
     XhUserCell,
+    CreateSections,
+    CreateExamineInfo,
     AddImageList,
     Sections
-  },
-  filters: {
-    detail: function(data) {
-      if (data.stepType == 2) {
-        return data.userList.length + '人或签'
-      } else if (data.stepType == 3) {
-        return data.userList.length + '人会签'
-      } else if (data.stepType == 1) {
-        return '负责人主管'
-      } else if (data.stepType == 4) {
-        return '上一级审批人主管'
-      }
-    },
-    step: function(index) {
-      return '第' + Nzhcn.encodeS(index) + '级'
-    },
-    contentFilters: function(array) {
-      return array
-        .map(item => {
-          return item.realname
-        })
-        .join('、')
-    }
   },
   props: {
     visible: {
@@ -207,47 +147,6 @@ export default {
     }
 
     return {
-      examineInfo: { // 审批
-        examineType: 1, // 审批方式 固定或授权
-        examineSteps: [
-          {
-            checkUserId: ',16363,16397,',
-            createTime: '2020-10-13 17:13:27',
-            examineId: 28022,
-            remarks: null,
-            stepId: 58,
-            stepNum: 1,
-            stepType: 2,
-            userList: [
-              {
-                callCenter: null,
-                createTime: '2020-07-24 09:14:00',
-                deptId: 16672,
-                deptName: '宝山中心',
-                email: null,
-                img: null,
-                isJob: null,
-                isTeacher: 0,
-                lastLoginIp: '192.168.1.40',
-                lastLoginTime: '2020-10-13 09:27:12',
-                mobile: '15539551220',
-                num: '264027304140483',
-                parentId: 16360,
-                parentName: 'admin',
-                password: 'aa1e6382fbe5621092df5abe58213aee',
-                post: null,
-                realname: 'XPF',
-                salt: '652cc7ddf2614f72bcd8a9709019196b',
-                sex: 1,
-                status: 1,
-                userId: 16363,
-                username: '15539551220'
-
-              }
-            ]
-          }
-        ]
-      },
       examineUser: [],
       maxFileCount: 1,
       imgFile: [],
@@ -346,7 +245,8 @@ export default {
         }
       },
       draftUser: null, // 审核人
-      characterUser: null // 收/退款人
+      characterUser: null, // 收/退款人
+      examineInfo: {}
     }
   },
   watch: {
@@ -383,8 +283,7 @@ export default {
     }
   },
   created() {
-    var a = JSON.parse(localStorage.getItem('loginUserInfo'))
-    this.characterUser = a
+    this.characterUser = this.userInfo
   },
   methods: {
     // 处理element input组件嵌套过深bug
@@ -423,6 +322,11 @@ export default {
      */
     handleCancel() {
       this.$emit('update:visible', false)
+    },
+
+    // 审批信息值更新
+    examineValueChange(data) {
+      this.examineInfo = data
     },
 
     // 字段的值更新
@@ -511,6 +415,10 @@ export default {
           parms.entity.accountNumber = this.selectionList[0].accountNumber // 账户编号
           parms.entity.capitalId = this.selectionList[0].capitalId // 资金账号ID
 
+          if (this.examineInfo.examineType == 2) {
+            parms.checkUserId = this.examineInfo.createUserId
+          }
+
           if (this.imgFile[0]) {
             parms.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
             parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
@@ -575,22 +483,22 @@ export default {
   transform: scale(0.8, 0.8);
 }
 
-.label1 {
-  text-align: center;
-  display: flex;
-  .fixed-examine-item {
-    padding: 10px 20px;
-    .detail{
-      color: #777777;
-      font-size: 12px;
-      padding: 2px 0;
-      -webkit-transform: scale(0.8, 0.8);
-      transform: scale(0.8, 0.8);
-    }
-    .step {
-      color: #333333;
-      font-size: 12px;
-    }
-  }
-}
+// .label1 {
+//   text-align: center;
+//   display: flex;
+//   .fixed-examine-item {
+//     padding: 10px 20px;
+//     .detail{
+//       color: #777777;
+//       font-size: 12px;
+//       padding: 2px 0;
+//       -webkit-transform: scale(0.8, 0.8);
+//       transform: scale(0.8, 0.8);
+//     }
+//     .step {
+//       color: #333333;
+//       font-size: 12px;
+//     }
+//   }
+// }
 </style>

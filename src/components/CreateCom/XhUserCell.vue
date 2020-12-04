@@ -14,6 +14,7 @@
       :selected-data="dataValue"
       :radio="radio"
       :is-refer="isRefer"
+      :info-type="infoType"
       @changeCheckout="checkUsers" />
     <flexbox
       v-if="!$slots.reference"
@@ -81,6 +82,10 @@ export default {
     useDelete: { // 是否使用删除功能
       type: Boolean,
       default: true
+    },
+    infoType: {
+      type: String,
+      default: ''
     }
   },
   data() {

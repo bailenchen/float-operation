@@ -368,7 +368,6 @@ export default {
             return
           }
         }
-
         item.type = this.getTypeFromFormType(item.formType)
       }
 
@@ -431,7 +430,11 @@ export default {
           leads_source: 24,
           grades: 25,
           single_user: 26,
-          single_structure: 27
+          single_structure: 27,
+          communication_mode: 28,
+          coaching_methods: 29,
+          class_type: 30,
+          provinces: 31
         }[formType] || '0'
       )
     },

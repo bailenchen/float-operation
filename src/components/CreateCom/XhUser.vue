@@ -178,6 +178,7 @@ export default {
         return queryUserListAPI
       } else if (
         this.infoType === 'crm_contract' ||
+        this.infoType === 'crm_capitalAccount' ||
         this.infoType === 'crm_invoice' ||
         this.infoType === 'crm_receivables' ||
         this.infoType === 'oa_examine'
@@ -196,6 +197,7 @@ export default {
         return params
       } else if (
         this.infoType === 'crm_contract' ||
+        this.infoType === 'crm_capitalAccount' ||
         this.infoType === 'crm_invoice' ||
         this.infoType === 'crm_receivables' ||
         this.infoType === 'oa_examine'

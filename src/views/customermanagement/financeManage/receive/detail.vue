@@ -72,38 +72,12 @@
                 :is-seas="isSeasDetail"
                 :filed-list="fieldList"
                 :crm-type="crmType"
-                :contacts-id.sync="firstContactsId"
                 @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
-          <transition name="slide-fade">
-            <el-tabs
-              v-show="showImportInfo"
-              value="chiefly-contacts"
-              type="border-card"
-              class="d-container-bd--right">
-              <el-tab-pane
-                label="重要信息"
-                name="chiefly-contacts"
-                lazy>
-                <chiefly-contacts
-                  :contacts-id="firstContactsId"
-                  :id="id"
-                  :pool-id="poolId"
-                  :crm-type="crmType"
-                  :is-seas="isSeasDetail"
-                  @add="addChieflyContacts" />
-              </el-tab-pane>
-            </el-tabs>
-          </transition>
         </flexbox>
       </flexbox>
     </div>
-    <el-button
-      class="firse-button"
-      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i
-        :class="{ 'is-reverse': !showImportInfo }"
-        class="el-icon-arrow-right el-icon--right" /></el-button>
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
@@ -119,7 +93,6 @@ import { crmReceiveRead } from '@/api/customermanagement/receive'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../../components/CRMDetailHead'
 import Activity from '../../components/activity/index' // 活动
-import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系人
 import CRMBaseInfo from '../../components/CRMBaseInfo' // 基本信息
 import RelativeContacts from '../../components/RelativeContacts' // 相关联系人
 import RelativeBusiness from '../../components/RelativeBusiness' // 相关商机
@@ -143,7 +116,6 @@ export default {
   components: {
     SlideView,
     Activity,
-    ChieflyContacts,
     CRMDetailHead,
     CRMBaseInfo,
     RelativeContacts,
@@ -239,10 +211,6 @@ export default {
           label: '创建回款'
         }
       ],
-      // 展示重要信息
-      showImportInfo: true,
-      // 首要联系人信息
-      firstContactsId: '',
 
       fieldList: [] // 基本信息字段
     }
@@ -363,7 +331,6 @@ export default {
      * 详情
      */
     getDetial() {
-      this.firstContactsId = ''
       this.loading = true
       const params = {
         contractCapitalId: this.id
@@ -374,7 +341,6 @@ export default {
           this.loading = false
           this.detailData = res.data
           this.getBaseInfo(res.data)
-          this.firstContactsId = this.detailData.contactsId
 
           this.headDetails[0].value = res.data.customerName
           this.headDetails[1].value = res.data.transactionTime
@@ -454,19 +420,6 @@ export default {
      */
     hideView() {
       this.$emit('hide-view')
-    },
-
-    /**
-     * 首要联系人添加
-     */
-    addChieflyContacts() {
-      this.createCRMType = 'contacts'
-      this.createActionInfo = {
-        type: 'relative',
-        crmType: this.crmType,
-        data: { customer: this.detailData }
-      }
-      this.isCreate = true
     },
 
     /**
