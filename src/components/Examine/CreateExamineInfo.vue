@@ -88,6 +88,10 @@ export default {
       type: String,
       default: ''
     },
+    otherTypes: {
+      type: String,
+      default: ''
+    },
     // 办公审批 传ID
     typesId: {
       type: [String, Number],
@@ -137,7 +141,6 @@ export default {
           crm_receivables: 2,
           crm_invoice: 3,
           crm_capitalAccount: 5
-
         }[this.types] // 1 合同 2 回款 3 发票
       }
       reqeust(params)
