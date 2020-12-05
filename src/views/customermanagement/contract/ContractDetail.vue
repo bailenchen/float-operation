@@ -67,6 +67,7 @@
                     :value="comboValue"
                     :subject-list="subList"
                     :accumulation="accumulation"
+                    :is-disabled="isDisabled"
                     style="width: 100%;"/>
                 </div>
                 <!-- 累计赠送课程  业绩分配信息 -->
@@ -201,7 +202,7 @@ export default {
         { title: '学员名称', value: '' },
         { title: '合同金额（元）', value: '' },
         { title: '签约时间', value: '' },
-        { title: '付款金额（元）', value: '' },
+        { title: '合同充值金额（元）', value: '' },
         { title: '签约人', value: '' }
       ],
       tabCurrentName: 'CRMBaseInfo',
@@ -223,6 +224,7 @@ export default {
       baseDetailList: [], // 基本信息列表
 
       // 课程信息
+      isDisabled: true,
       comboAction: null,
       comboValue: null,
       subList: [],
@@ -249,7 +251,7 @@ export default {
           fieldlist: [
             { prop: 'createUserName', label: '业绩享受人' },
             { prop: 'performanceRatio', label: '业绩比例（%）' },
-            { prop: 'newStudentRatio', label: '新签学员比例' },
+            { prop: 'newStudentRatio', label: '新签学员比例（%）' },
             { prop: 'memberUserName', label: '添加人' },
             { prop: 'checkStatus', label: '审批状态' },
             { prop: 'createTime', label: '添加时间' }
@@ -391,7 +393,8 @@ export default {
               formType: 'text',
               value: {
                 0: '否',
-                1: '是'
+                1: '是',
+                2: '引流'
               }[data.isNew]
             },
             {

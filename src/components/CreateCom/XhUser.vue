@@ -176,15 +176,16 @@ export default {
         return this.infoRequest
       } else if (this.infoType === 'default') {
         return queryUserListAPI
-      } else if (
-        this.infoType === 'crm_contract' ||
-        this.infoType === 'crm_capitalAccount' ||
-        this.infoType === 'crm_invoice' ||
-        this.infoType === 'crm_receivables' ||
-        this.infoType === 'oa_examine'
-      ) {
+      } else {
         return queryUserListAPI
       }
+      // if (
+      //   this.infoType === 'crm_contract' ||
+      //   this.infoType === 'crm_capitalAccount' ||
+      //   this.infoType === 'crm_invoice' ||
+      //   this.infoType === 'crm_receivables' ||
+      //   this.infoType === 'oa_examine'
+      // )
     },
 
     getParams() {
@@ -195,16 +196,17 @@ export default {
       if (this.infoType === 'default') {
         params.pageType = 0
         return params
-      } else if (
-        this.infoType === 'crm_contract' ||
-        this.infoType === 'crm_capitalAccount' ||
-        this.infoType === 'crm_invoice' ||
-        this.infoType === 'crm_receivables' ||
-        this.infoType === 'oa_examine'
-      ) {
+      } else {
         params.pageType = 0
         return params
       }
+      // if (
+      //   this.infoType === 'crm_contract' ||
+      //   this.infoType === 'crm_capitalAccount' ||
+      //   this.infoType === 'crm_invoice' ||
+      //   this.infoType === 'crm_receivables' ||
+      //   this.infoType === 'oa_examine'
+      // )
     },
 
     /**

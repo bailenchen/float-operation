@@ -386,6 +386,33 @@ export default {
       // 如果需要格式化
       if (column.property === 'isTransform') {
         return ['否', '是'][cellValue] || '--'
+      } else if (column.property === 'contractType') {
+        return {
+          1: '普通合同',
+          2: '额外赠送合同'
+        }[row[column.property]]
+      } else if (column.property === 'isEarlyRetirement') {
+        return {
+          0: '否',
+          1: '是'
+        }[row[column.property]]
+      } else if (column.property === 'isNew') {
+        return {
+          0: '否',
+          1: '是',
+          2: '引流'
+        }[row[column.property]]
+      } else if (column.property === 'contractStatus') {
+        return {
+          1: '申请中',
+          2: '放弃',
+          3: '合同完成',
+          4: '合同变更中',
+          5: '执行中',
+          6: '执行中',
+          7: '合同充值返还',
+          8: '确认放弃'
+        }[row[column.property]]
       }
       return row[column.property] === '' || row[column.property] === null ? '--' : row[column.property]
     },
@@ -478,21 +505,19 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType === 'contract') {
-        if (column.property === 'customerName') {
-          this.rowID = row.customerId
-          this.rowType = 'customer'
-          this.showDview = true
-        } else if (column.property === 'businessName') {
-          this.rowID = row.businessId
-          this.rowType = 'business'
-          this.showDview = true
-        } else if (column.property === 'contactsName') {
-          this.rowID = row.contactsId
-          this.rowType = 'contacts'
-          this.showDview = true
-        } else if (column.property === 'num') {
+        if (column.property === 'num' || column.property === 'relevanceContractNum') {
           this.rowID = row.contractId
           this.rowType = 'contract'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'customer'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'leadsNumber') {
+          this.rowID = row.customerId
+          this.rowType = 'student'
           this.clickField = column.property
           this.showDview = true
         } else {
