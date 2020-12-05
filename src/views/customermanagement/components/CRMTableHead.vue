@@ -1348,6 +1348,7 @@ export default {
           return false
         }
       } else if (type == 'update_contract') {
+        console.log(this.crmType, 'bbjjj')
         if (this.selectionList.length == 1) {
           return this.crm[this.crmType].update
         } else {

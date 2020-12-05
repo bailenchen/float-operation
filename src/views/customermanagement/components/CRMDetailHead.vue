@@ -33,6 +33,13 @@
           @click.native="handleTypeClick('edit')">编辑</el-button>
 
         <el-button
+          v-if="crmType == 'contract'"
+          class="head-handle-button"
+          type="primary"
+          icon="wk wk-transfer"
+          @click="contractChange">合同变更</el-button>
+
+        <el-button
           v-if="showDealStatus"
           class="head-handle-button"
           type="primary"
@@ -114,6 +121,14 @@
       :visible.sync="changeDeptShow"
       :selection-list="[detail]"
       @handle="handleCallBack" />
+
+    <c-r-m-create-view
+      v-if="isUpdate"
+      :crm-type="createCRMType"
+      :action="createActionInfo"
+      @save-success="handleCallBack"
+      @hiden-view="hideView"/>
+
   </div>
 </template>
 <script type="text/javascript">
@@ -159,6 +174,8 @@ import PutPoolHandle from './selectionHandle/PutPoolHandle' // 放入公海
 import ChangePoolHandle from './selectionHandle/ChangePoolHandle' // 变更公海
 import ChangeDeptHandle from './selectionHandle/ChangeDeptHandle' // 变更中心
 
+import CRMCreateView from './CRMCreateView'
+
 export default {
   name: 'CRMDetailHead',
   components: {
@@ -168,7 +185,8 @@ export default {
     DealStatusHandle,
     PutPoolHandle,
     ChangePoolHandle,
-    ChangeDeptHandle
+    ChangeDeptHandle,
+    CRMCreateView
   },
   props: {
     /** 模块ID */
@@ -217,7 +235,12 @@ export default {
       dealStatusShow: false, // 成交状态修改框
       putPoolShow: false, // 客户放入公海
       changePoolShow: false, // LEADS转移公海
-      changeDeptShow: false // 学员变更中心
+      changeDeptShow: false, // 学员变更中心
+
+      // 合同变更
+      isUpdate: false,
+      createCRMType: 'contract',
+      createActionInfo: { type: 'save' } // 创建的相关信息
     }
   },
   computed: {
@@ -303,6 +326,7 @@ export default {
       if (
         this.crmType === 'receivables' ||
         this.crmType === 'product' ||
+        this.crmType === 'contract' ||
         this.crmType === 'customer' ||
          this.crmType === 'marketing' ||
          this.crmType === 'visit' ||
@@ -312,25 +336,10 @@ export default {
         return false
       }
 
-      if (this.crmType === 'contract') {
-        return (
-          this.detail &&
-          this.detail.checkStatus != 8 &&
-          this.crm[this.crmType].transfer
-        )
-      }
-
       return this.crm[this.crmType].transfer
     },
     showEdit() {
-      if (this.crmType === 'contract') {
-        //  8 已作废
-        return (
-          this.detail &&
-          this.detail.checkStatus != 8 &&
-          this.crm[this.crmType].update
-        )
-      } else if (this.crmType === 'water') {
+      if (this.crmType === 'water' || this.crmType == 'contract') {
         return false
       }
 
@@ -590,6 +599,22 @@ export default {
     // 子组件 回调的 结果
     handleCallBack(data) {
       this.$emit('handle', { type: data.type })
+    },
+
+    // 合同变更
+    contractChange() {
+      this.isUpdate = true
+
+      this.createActionInfo = {
+        type: 'save',
+        attr: 'change',
+        id: 7,
+        detail: this.detail
+      }
+    },
+
+    hideView() {
+      this.isUpdate = false
     },
 
     /** 更多操作 */

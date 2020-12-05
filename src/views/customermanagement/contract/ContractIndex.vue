@@ -88,7 +88,7 @@
           layout="prev, pager, next, sizes, total, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
-        <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 | separator }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 | separator }} / 未回款金额：{{ moneyPageData.unReceivedMoney || 0 | separator }}</span>
+          <!-- <span class="money-bar">合同总金额：{{ moneyPageData.contractMoney || 0 | separator }} / 已回款金额：{{ moneyPageData.receivedMoney || 0 | separator }} / 未回款金额：{{ moneyPageData.unReceivedMoney || 0 | separator }}</span> -->
       </div>
     </div>
     <!-- 相关详情页面 -->
@@ -159,16 +159,15 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'num') {
-        return 'can-visit--underline can-visit--bold'
-      } else if (
+      if (
+        column.property === 'num' ||
         column.property === 'customerName' ||
-        column.property === 'businessName' ||
-        column.property === 'contactsName'
+        column.property === 'leadsNumber' ||
+        column.property === 'relevanceContractNum'
       ) {
         return 'can-visit--underline'
       } else if (column.property === 'money') {
-        return 'xr-money'
+        return 'xr-money can-visit--bold'
       } else if (column.property === 'receivedMoney') {
         return 'xr-money green'
       } else if (column.property === 'unreceivedMoney') {
