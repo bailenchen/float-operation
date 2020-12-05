@@ -190,6 +190,12 @@ export default {
     clickField: {
       type: String,
       default: ''
+    },
+    baseList: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {
@@ -372,45 +378,53 @@ export default {
       }).catch(() => {})
     },
 
+    // 处理基本信息展示字段
+    handleFieldVal(name, val) {
+      if (['checkStatus', 'contractType', 'isEarlyRetirement', 'isNew', 'contractStatus'].includes(name)) {
+        return {
+          'contractType': { 1: '购买', 2: '赠送' },
+          'isEarlyRetirement': { 0: '否', 1: '是' },
+          'isNew': { 0: '续签', 1: '新签', 2: '引流' },
+          'checkStatus': {
+            0: '待审核',
+            1: '通过',
+            2: '拒绝',
+            3: '审核中',
+            4: '撤回',
+            5: '未提交',
+            6: '创建',
+            7: '已删除',
+            8: '作废'
+          },
+          'contractStatus': {
+            1: '申请中',
+            2: '放弃',
+            3: '合同完成',
+            4: '合同变更中',
+            5: '执行中',
+            6: '执行中',
+            7: '合同充值返还',
+            8: '确认放弃'
+          }
+        }[name][val]
+      } else {
+        return val
+      }
+    },
+
     // 获取基本信息
     getBaseInfo(data) {
       this.baseDetailList = [
-        {
-          name: '基本信息',
-          list: [
-            {
-              name: '订单编号',
-              formType: 'text',
-              value: data.num
-            },
-            {
-              name: '辅导方式',
-              formType: 'text',
-              value: data.coachType
-            },
-            {
-              name: '合同属性',
-              formType: 'text',
-              value: {
-                0: '否',
-                1: '是',
-                2: '引流'
-              }[data.isNew]
-            },
-            {
-              name: '学员姓名',
-              formType: 'text',
-              value: data.customerName
-            },
-            {
-              name: '签约时间',
-              formType: 'text',
-              value: data.orderDate
-            }
-
-          ]
-        }
+        { name: '基本信息', list: [] }
       ]
+      for (let index = 0; index < this.baseList.length; index++) {
+        const element = this.baseList[index]
+        this.baseDetailList[0].list.push({
+          name: element.name,
+          formType: 'text',
+          value: this.handleFieldVal(element.fieldName, data[element.fieldName])
+        })
+      }
 
       const params = {
         types: crmTypeModel[this.crmType],

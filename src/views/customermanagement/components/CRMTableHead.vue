@@ -35,7 +35,7 @@
         icon="wk wk-screening"
         @click="showFilterClick">高级筛选</el-button>
       <el-button
-        v-if="showFilterView && crmType != 'insideUser' && crmType != 'receive'"
+        v-if="crmType == 'customer'"
         type="primary"
         class="filter-button"
         icon="wk wk-screening"

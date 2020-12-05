@@ -478,7 +478,15 @@ export default {
             if ((!value.maxPay || !value.minPay) && this.showContractAmount) {
               return callback(new Error('合同支付金额不能为空'))
             } else {
-              callback()
+              const reg = /^0\.([1-9]|\d[1-9])$|^[1-9]\d{0,8}\.\d{0,2}$|^[1-9]\d{0,8}$/g
+              const min = reg.test(value.minPay) ? true : (value.minPay.includes('-') ? false : Number(value.minPay) == 0)
+              const max = reg.test(value.maxPay) ? true : (value.maxPay.includes('-') ? false : Number(value.maxPay) == 0)
+              console.log(min, max, reg.test(value.maxPay), reg.test(value.minPay), 'minmax')
+              if (!min || !max) {
+                return callback(new Error('合同支付金额不能为负数保留两位小数'))
+              } else {
+                callback()
+              }
             }
           }
           tempList.push({ validator: validate, trigger: 'blur' })
