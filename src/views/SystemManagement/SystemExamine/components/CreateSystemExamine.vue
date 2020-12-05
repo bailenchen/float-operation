@@ -283,7 +283,7 @@ export default {
     },
     showContractAmount() {
       const relative = this.crmForm.crmFields[1].value
-      if (relative == 1) {
+      if (relative == 1 || relative == 7) {
         return true
       } else {
         return false
