@@ -79,7 +79,6 @@ export default {
           prop: 'productType',
           width: 100
         },
-
         {
           label: '套餐',
           prop: 'productName',
@@ -138,7 +137,6 @@ export default {
       OrderLeve1Arr: [], // 大套餐
       OrderLeve2Arr: [], // 小套餐
       hoverOrderArr: [],
-      // subjectList: [],
       purchaseLesson: 0, // 全部套餐标准课次之和
       grooveLesson: 0, // 全部套餐常规赠送课次之和
       totalPrice: 0 // 总价
@@ -179,6 +177,8 @@ export default {
   methods: {
     structureDataByValue() {
       this.tableData = this.value.productList
+      console.log('想产品组件发送数据111')
+      this.sendData()
       this.getOrderNumber()
     },
     // 拼接表格数据
@@ -187,7 +187,8 @@ export default {
       this.purchaseLesson = 0
       this.grooveLesson = 0
       this.drainage = false
-      this.totalPrice = 0
+      this.univalence = this.action.univalence
+      var totalPrice = 0
       var arr = []
       for (let i = 0; i < this.action.productSetMeal.length; i++) {
         const productSetMeal = this.action.productSetMeal[i]
@@ -221,9 +222,11 @@ export default {
             originalPurchaseLesson: product.purchaseFrequency, // 小套餐购买课次
             originalGrooveLesson: product.grooveLesson // 小套餐赠送课次
           }
+          totalPrice += this.action.univalence * obj.purchaseLesson
           arr.push(obj)
         }
-        this.totalPrice += productSetMeal.purchaseFrequency * this.action.univalence
+        // this.totalPrice += productSetMeal.purchaseFrequency * this.action.univalence
+        this.totalPrice = totalPrice
       }
       this.tableData = arr
       this.sendData()
@@ -449,14 +452,12 @@ export default {
 
     // 改变课程
     changeLesson(row, name1, name2) {
-      var lesson = 0
-      var lessons = 0
-      // if (row[name1]) {
+      var lesson = 0 // 小套餐课次和
 
-      // }
+      var buyCounts = 0 // 合同购买课次和
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
-
+        console.log('tableData:', element)
         if (element.detailsId === row.detailsId) {
           console.log('name:', element, name1, element[name1])
           lesson += Number(element[name1])
@@ -466,15 +467,43 @@ export default {
             element.name1 = 0
             lesson -= _lesson
             element[name1] = 0
-            var text = name1 == `purchaseLesson` ? `购买课次不能大于套餐标准课次1` : `常规赠送课次不能大于套餐标准赠送课次`
+            var text = name1 == `purchaseLesson` ? `购买课次不能大于套餐标准课次` : `常规赠送课次不能大于套餐标准赠送课次`
             this.$message.warning(text)
           }
         }
-        lessons += Number(element[name1])
+        buyCounts += Number(element[name1])
       }
-      this[name1] = lessons
-      console.log('购买课次之和', lessons, this[name1])
-      this.calculateUnivalence()
+      this[name1] = buyCounts
+      console.log('购买课次之和', buyCounts, this[name1])
+
+
+      if (name1 == 'purchaseLesson') {
+        // 计算大套餐购买价格
+        var mealLessons = 0 // 大套餐课次
+        for (let i = 0; i < this.tableData.length; i++) {
+          const element = this.tableData[i]
+          if (element.combo_number === row.combo_number) {
+            mealLessons += Number(element[name1])
+          }
+        }
+        console.log('该大套餐的课次和', mealLessons)
+
+        for (let i = 0; i < this.tableData.length; i++) {
+          const element = this.tableData[i]
+          if (element.combo_number === row.combo_number) {
+            var mealPrice = this.univalence * mealLessons
+            element.price = mealPrice
+          }
+        }
+        this.changePrice(row)
+        // this.$emit('change-price', {
+        //   totalPrice: this.totalPrice,
+        //   univalence: this.univalence,
+        //   totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson)
+        // })
+      } else if (name1 == 'grooveLesson') {
+        this.calculateUnivalence()
+      }
     }
 
 

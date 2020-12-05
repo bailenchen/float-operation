@@ -92,6 +92,8 @@ export default {
       type: String,
       default: ''
     },
+    money: Number, // 合同金额
+    discount: Number, // 合同折扣
     // 办公审批 传ID
     typesId: {
       type: [String, Number],
@@ -112,6 +114,12 @@ export default {
     }
   },
   computed: {},
+  watch: {
+    money(val) {
+      console.log('新的合同金额', val)
+      this.getDetail()
+    }
+  },
   mounted() {
     this.getDetail()
   },
@@ -142,6 +150,9 @@ export default {
           crm_invoice: 3,
           crm_capitalAccount: 5
         }[this.types] // 1 合同 2 回款 3 发票
+      }
+      if (this.types == 'crm_contract') {
+        params.money = this.money
       }
       reqeust(params)
         .then(res => {

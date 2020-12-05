@@ -144,6 +144,8 @@
             ref="examineInfo"
             :types="'crm_' + crmType"
             :other-types="otherTypes"
+            :money="contractMoney"
+            :discount="contractDiscount "
             :types-id="action.id"
             @value-change="examineValueChange" />
         </create-sections>
@@ -402,7 +404,9 @@ export default {
       actionPresent: {
         countCourseSum: ''
       },
-      otherTypes: '' // 用于审批流区分合同、额外赠送合同、合同变更
+      otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
+      contractMoney: 0, // 合同金额
+      contractDiscount: 0 // 合同折扣
     }
   },
   computed: {
@@ -822,6 +826,9 @@ export default {
             presenterCount: data.value.presenterCount,
             refundMonry: data.value.refundMonry
           }
+
+          this.contractMoney = data.value.totalPrice
+
 
           console.log('改变套餐字段1', item.value)
           this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
@@ -1856,7 +1863,13 @@ export default {
             this.actionCombo.customerId = this.action.information.customer.customerId
           }
           if (element.key == 'product') {
+            // element.value = {
+            //   isEdit: true,
+            //   meal: this.action.information.contract.mealProducts
+            // }
             element.value = {
+              isEdit: true,
+              meal: this.action.information.contract.mealProducts,
               products: {
                 mealProducts: this.action.information.contract.mealProducts,
                 productList: this.action.information.contract.productList,
@@ -2249,7 +2262,6 @@ export default {
             } else {
               this.$refs.examineInfo.validateField((result) => {
                 if (result) {
-                  console.log('这里')
                   var params = this.getSubmiteParams(this.crmForm.crmFields)
                   console.log('params可能是false1', params)
                   if (params === false) {
@@ -2266,7 +2278,6 @@ export default {
               })
             }
           } else {
-            // console.log('ZASAAAAAAAAAAA')
             var params = this.getSubmiteParams(this.crmForm.crmFields)
             console.log('AAA111111', params)
             if (isDraft) {

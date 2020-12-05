@@ -246,20 +246,23 @@ export default {
       this.subjectList = res.data
       if (this.value.products) {
         this.structurePresentByValue()
+      } else if (this.value.isEdit) {
+        this.productList = this.value.meal
       }
     }).catch(() => {})
   },
   mounted() {
-    this.refreshProductList()
+    // this.refreshProductList()
   },
   methods: {
     /**
      * 刷新数据
      */
     refreshProductList() {
-      this.productList = this.dataValue.product || []
-      this.totalPrice = this.dataValue.totalPrice || 0
-      this.discountRate = this.dataValue.discountRate || ''
+      console.log('刷新数据111')
+      // this.productList = this.dataValue.product || []
+      // this.totalPrice = this.dataValue.totalPrice || 0
+      // this.discountRate = this.dataValue.discountRate || ''
     },
     /** 选中 */
     selectInfos(data) {
