@@ -261,7 +261,10 @@ export function crmContractAllocListAPI(data) {
   return request({
     url: 'CrmBackLog/performanceDistribution',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 
@@ -285,7 +288,10 @@ export function crmRefoundListAPI(data) {
   return request({
     url: 'CrmBackLog/fundAudit',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
   })
 }
 

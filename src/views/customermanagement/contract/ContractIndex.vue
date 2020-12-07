@@ -4,7 +4,7 @@
       :search.sync="search"
       :crm-type="crmType"
       title="合同管理"
-      placeholder="请输入客户名称/合同编号/合同名称"
+      placeholder="请输入合同编号/姓名/第一联系人电话"
       main-title="新建合同"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
@@ -96,6 +96,7 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :click-field="clickField"
+      :base-list="baseList"
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
@@ -118,7 +119,8 @@ export default {
   data() {
     return {
       crmType: 'contract',
-      moneyData: null // 合同列表金额
+      moneyData: null, // 合同列表金额
+      baseList: []
     }
   },
   computed: {

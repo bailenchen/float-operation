@@ -298,6 +298,9 @@ export default {
             console.log('请求的自动', res)
             const fieldList = []
             const moneyFields = []
+            if (this.crmType == 'contract') {
+              this.baseList = res.data
+            }
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
 
@@ -388,8 +391,8 @@ export default {
         return ['否', '是'][cellValue] || '--'
       } else if (column.property === 'contractType') {
         return {
-          1: '普通合同',
-          2: '额外赠送合同'
+          1: '购买',
+          2: '赠送'
         }[row[column.property]]
       } else if (column.property === 'isEarlyRetirement') {
         return {
@@ -398,8 +401,8 @@ export default {
         }[row[column.property]]
       } else if (column.property === 'isNew') {
         return {
-          0: '否',
-          1: '是',
+          0: '续签',
+          1: '新签',
           2: '引流'
         }[row[column.property]]
       } else if (column.property === 'contractStatus') {
@@ -505,7 +508,7 @@ export default {
           this.showDview = false
         }
       } else if (this.crmType === 'contract') {
-        if (column.property === 'num' || column.property === 'relevanceContractNum') {
+        if (column.property === 'num') {
           this.rowID = row.contractId
           this.rowType = 'contract'
           this.clickField = column.property
@@ -518,6 +521,11 @@ export default {
         } else if (column.property === 'leadsNumber') {
           this.rowID = row.customerId
           this.rowType = 'student'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'relevanceContractNum') {
+          this.rowID = row.relevanceContractId
+          this.rowType = 'contract'
           this.clickField = column.property
           this.showDview = true
         } else {

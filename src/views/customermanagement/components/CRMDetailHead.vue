@@ -33,7 +33,7 @@
           @click.native="handleTypeClick('edit')">编辑</el-button>
 
         <el-button
-          v-if="crmType == 'contract'"
+          v-if="crmType == 'contract' && crm.contract.update"
           class="head-handle-button"
           type="primary"
           icon="wk wk-transfer"
@@ -339,7 +339,15 @@ export default {
       return this.crm[this.crmType].transfer
     },
     showEdit() {
-      if (this.crmType === 'water' || this.crmType == 'contract') {
+      if (this.crmType === 'contract') {
+        //  8 已作废
+        return (
+          this.detail &&
+          this.detail.checkStatus != 8 &&
+          this.crm[this.crmType].update
+        )
+      }
+      if (this.crmType === 'water') {
         return false
       }
 

@@ -40,16 +40,13 @@
           :controls="false" />
         <span>节课，</span>
         <span>不参与累计赠送套餐</span>
-        <el-select
-          v-model="packageType"
-          placeholder="请选择"
-          class="package-select">
-          <el-option
-            v-for="item in packageList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value" />
-        </el-select>
+        <crm-relative-cell
+          :value="item.relativeList"
+          :radio="false"
+          relative-type="productSetMeal"
+          style="display:inline-block;width:300px;"
+          @value-change="arrayValueChange($event, index, item)"
+        />
         <i
           class="el-icon-remove delete-icon"
           @click="deleteItem(item, index)"/>
@@ -72,9 +69,15 @@ import {
   AddAdminGive,
   QueryCoach
 } from '@/api/systemManagement/params'
+import {
+  CrmRelativeCell
+} from '@/components/CreateCom'
 
 export default {
   name: 'PresentRulesSet',
+  components: {
+    CrmRelativeCell
+  },
   data() {
     return {
       loading: false, // 展示加载中效果
@@ -115,7 +118,10 @@ export default {
       QueryAdminGive().then(res => {
         this.loading = false
         this.deleteList = []
-        this.list = res.data
+        this.list = res.data.map(item => {
+          item.relativeList = item.setMeal
+          return item
+        })
       }).catch(() => {
         this.loading = false
       })
@@ -145,6 +151,11 @@ export default {
       return true
     },
 
+    arrayValueChange(data, index, item) {
+      this.$set(this.list[index], 'relativeList', data.value)
+      console.log(this.list)
+    },
+
     handleSave() {
       this.loading = true
       const flag = this.checkForm()
@@ -154,7 +165,17 @@ export default {
       }
       const data = this.list.map((o, i) => {
         const item = { ...o }
+        const idList = []
+        if (o.relativeList) {
+          for (let index = 0; index < o.relativeList.length; index++) {
+            const element = o.relativeList[index]
+            idList.push(element.productId)
+          }
+        }
+        item.setMeal = idList
+
         delete item.name
+        delete item.relativeList
         return item
       })
       const deleteItem = this.deleteList.map(o => { return { id: o.id } })
