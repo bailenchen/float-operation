@@ -224,6 +224,15 @@ export default {
       this.$emit('close')
     },
     checkCrmTypeInfos(data) {
+      if (this.radio) {
+        for (const key in this.currentSelectedData) {
+          const value = this.currentSelectedData[key] || []
+          if (key != data.type && value.length > 0) {
+            this.$refs['crm' + key][0].clearAll()
+            this.$set(this.currentSelectedData, key, [])
+          }
+        }
+      }
       this.currentSelectedData[data.type] = data.data
     },
 
@@ -245,6 +254,7 @@ export default {
           })
         }
       } else {
+        console.log('changeCheckout', { data: this.currentSelectedData })
         this.$emit('changeCheckout', { data: this.currentSelectedData })
       }
 

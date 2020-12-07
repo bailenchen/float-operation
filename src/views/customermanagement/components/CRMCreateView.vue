@@ -98,6 +98,7 @@
                     :value="item.value"
                     :index="index"
                     :item="item"
+                    :show-types="item.showTypes"
                     :leads-number="leadsNumber"
                     :relation="item.relation"
                     :radio="['single_user', 'single_structure'].includes(item.data.formType) || item.radio"
@@ -670,11 +671,34 @@ export default {
         console.log('hettong')
         if (item.data.formType == 'customer') {
           console.log('修改学员', item)
+
+          const valueData = data.value || {}
+          let customerData = null
+          for (let index = 0; index < item.showTypes.length; index++) {
+            const key = item.showTypes[index]
+            const dataList = valueData[key] || []
+            if (dataList && dataList.length) {
+              customerData = dataList
+            }
+          }
+          item.value = customerData
+
           this.actionCombo.customerId = item.value[0] ? item.value[0].customerId : ''
 
           let contractForCount = 0
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
+            if (element.key == 'contractId') {
+              element.disabled = false
+              element.relation = {
+                type: 'presentContract',
+                searchJson: {
+                  customerId: item.value[0].customerId,
+                  checkStatus: 1,
+                  contractType: 1
+                }
+              }
+            }
             // 需要处理 需关联客户信息或客户下信息
             const handleFields = [
               'business_id',
@@ -685,8 +709,6 @@ export default {
               'headmasterUserName', // 班主任
               'dept_id', // 所属中心
               'leadsNumber' // 学员编号
-              // 'totalclassTime', // 总课次
-              // 'contractsAttr' // 合同属性
             ]
 
             // 添加请求关联
@@ -831,11 +853,14 @@ export default {
 
 
           console.log('改变套餐字段1', item.value)
-          this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
+          // this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
           // if (data.value.drainage) {
           //   this.crmForm.crmFields[0].value = '引流'
           // }
           this.crmForm.crmFields.forEach(item => {
+            if (item.key == 'totalclassTime') {
+              item.value = data.value.totalclassTime
+            }
             if (item.key == 'contractsAttr') {
               item.value = data.value.isNew
             }
@@ -1208,6 +1233,7 @@ export default {
               name: '合同属性',
               value: '',
               fieldName: 'contractsAttr',
+              isNull: 1,
               setting: [
                 {
                   name: '续签',
@@ -1263,7 +1289,8 @@ export default {
                 name: '关联合同',
                 value: '',
                 fieldName: 'contractId',
-                formType: 'contract'
+                formType: 'contract',
+                isNull: 1
               })
               res.data.push({
                 name: '赠送课程',
@@ -1272,7 +1299,7 @@ export default {
                 formType: 'present'
               })
               res.data = res.data.filter(item => {
-                return item.fieldName != 'customer_id' && item.fieldName != 'product'
+                return item.fieldName != 'product'
               })
             }
           }
@@ -1567,6 +1594,11 @@ export default {
           var params = {}
           params['key'] = item.fieldName
           params['data'] = item
+
+          if (this.crmType == 'contract' && item.fieldName == 'customer_id') {
+            params.crmType = 'contract'
+            params.showTypes = ['customer', 'student']
+          }
           // 获取 value relative 信息
           this.getParamsValueAndRelativeInfo(params, item, list)
           params['styleIndex'] = showStyleIndex
@@ -1598,6 +1630,11 @@ export default {
           params['showblock'] = true // 展示整行效果
           if (index % 2 == 0) {
             showStyleIndex = -1
+          }
+
+          // 合同中清空后端设置的产品默认值
+          if (this.crmType == 'contract' && this.action.type == 'save') {
+            params['value'] = {}
           }
 
           // 相关添加 并且商机存在 获取产品
@@ -1746,11 +1783,11 @@ export default {
           params['styleIndex'] = showStyleIndex
         }
         // 新建合同合同属性默认为新签
-        if (this.action.type == 'save' || this.action.type == 'contract') {
-          if (item.fieldName == 'contractsAttr') {
-            params['value'] = '新签'
-          }
-        }
+        // if (this.action.type == 'save' || this.action.type == 'contract') {
+        //   if (item.fieldName == 'contractsAttr') {
+        //     params['value'] = '新签'
+        //   }
+        // }
 
         params.disabled = !this.getItemIsCanEdit(item) // 不能编辑 disabled true
         if (item.hasOwnProperty('authLevel') && item.authLevel == 2) {
@@ -1786,7 +1823,8 @@ export default {
             'headmasterUserName',
             'dept_id',
             'totalclassTime',
-            'leadsNumber'
+            'leadsNumber',
+            'contractId'
           ]
           if (!this.action.present) {
             arr.push('contractsAttr')
@@ -1898,6 +1936,15 @@ export default {
           params['value'] = item.value || ''
         } else {
           params['value'] = item.value || []
+          // console.log('获取相关item', item)
+          // if (item.formType == 'customer' && this.crmType == 'contract') {
+          //   params['value'] = {}
+          // }
+          // if (item.formType == 'contract') {
+          //   if (this.action.type == 'save' && item.fieldName == 'product') {
+          //     params['value'] = ''
+          //   }
+          // }
         }
       }
       if (this.action.type == 'relative' || this.action.type == 'update') {
@@ -2652,7 +2699,8 @@ export default {
       //   params.entity['totalPrice'] = ''
       //   params.entity['discountRate'] = ''
       // }
-      if (element.value) {
+      // if (element.value) {
+      if (Object.keys(element.value).length) {
         var arr = []
         // params['product'] = element.value.data
         console.log('值', element.value)
@@ -2694,10 +2742,13 @@ export default {
           params.entity.refundMonry = element.value.refundMonry
         }
       } else {
-        params['product'] = []
-        params.entity['money'] = ''
-        params.entity.buyCount = 0
-        params.entity.presenterCount = 0
+        this.$message.error('请添加套餐')
+        return false
+
+        // params['product'] = []
+        // params.entity['money'] = ''
+        // params.entity.buyCount = 0
+        // params.entity.presenterCount = 0
       }
     },
     // 获取客户位置参数

@@ -387,9 +387,13 @@ export default {
         params.customerType = 1
       } else if (this.crmType === 'productSetMeal') {
         params.searchJson = this.action.searchJson
+      } else if (this.crmType === 'contract') { // 额外赠送合同
+        console.log('sdaa', this.action.searchJson)
+        params.searchJson = this.action.searchJson
       }
       // 注入关联ID
       if (this.isRelationShow) {
+        console.log('读取action', this.action)
         // this.action.data.moduleType 下的 this.crmType 的列表
         if (this.action.data.moduleType) {
           crmIndexRequest = {

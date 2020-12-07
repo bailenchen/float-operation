@@ -10,6 +10,7 @@
       v-if="!disabled&&showSelectView"
       ref="crmrelative"
       :crm-type="crmType"
+      :show-types="showTypes"
       :action="relationAction"
       :selected-data="selectedData"
       @close="showPopover=false"
@@ -55,6 +56,12 @@ export default {
     leadsNumber: {
       type: Boolean,
       default: false
+    },
+    showTypes: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {
@@ -72,20 +79,25 @@ export default {
     },
     selectedData() {
       const crmObj = {}
-      crmObj[this.crmType] = this.dataValue
+      // 应该是bug，props中并没有接收crmType
+      // crmObj[this.crmType] = this.dataValue
+      // console.log('crmObj', crmObj)
       return crmObj
     },
     crmType() {
       if (this.relativeType) {
         return this.relativeType
       }
-      return this.item.data.formType
+      // return this.item.data.formType
+      return this.item.crmType == 'contract' ? '' : this.item.data.formType
     }
   },
   watch: {
     relation: function(val) {
       if (val.moduleType) {
         this.relationAction = { type: 'condition', data: val }
+      } else if (val.type == 'presentContract') {
+        this.relationAction = val
       } else {
         this.relationAction = { type: 'default' }
       }
@@ -138,6 +150,10 @@ export default {
         return data.businessName
       } else if (this.crmType === 'contract') {
         return data.contractNum || data.num
+      }
+
+      if (this.crmType == '') {
+        return data.customerName
       }
       return data.name
     }

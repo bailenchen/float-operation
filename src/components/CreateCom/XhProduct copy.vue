@@ -33,10 +33,9 @@
         @click="selectComoboHandle(item, index)"
       >{{ item.data.name }}</el-button>
     </div>
-    <p v-if="!value.products">当前可赠送课次：<span class="red">{{ currentGive }}</span></p>
+    <p v-if="!value.products">实际可赠送课次：<span class="red">{{ surplusPresenter }}</span></p>
     <combo
       :action="comboAction"
-      :give-action="action"
       :value="comboValue"
       :is-disabled="isDisabled"
       :subject-list="subjectList"
@@ -64,7 +63,7 @@
 
         <el-table-column prop="presentLesson" label="累计赠送课次" width="" align="center">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.presentLesson" :disabled="isDisabled" @change="changeLesson(scope.row)" />
+            <el-input v-model="scope.row.presentLesson" :disabled="isDisabled" @change="changeLesson" />
           </template>
         </el-table-column>
 
@@ -96,7 +95,7 @@
         </el-table-column>
       </el-table>
       <div v-show="presentRules">
-        累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。累计可赠送课次：{{ surplusGive }}
+        累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。
       </div>
     </div>
     <flexbox class="handle-footer">
@@ -153,6 +152,7 @@ export default {
       // maxIndex: 0,
       selectComobo: null, // 套餐数组
       present: null, // 赠送table相关数据
+      // sendData: null,
       productData: null,
       accumulation: {
         data: [],
@@ -162,15 +162,14 @@ export default {
       purchaseLesson: 0, // 所有套餐总课次
       presentRules: '', // 赠送规则文案
       // presenterCount: 0, // 实际累计可赠送课次
-      currentGive: 0, // 当前可赠送课次
-      surplusGive: 0, // 剩余可赠送课次
+      surplusPresenter: 0, // 剩余可赠送课次
       comboComponentData: null,
       isAddCombo: false,
       renew: 1, // 续签或新签
       isNew: 1, // 0:续签 1:新签 2:引流
       comboValue: null,
       priceText: '总金额'
-
+      // originalPresenter: 0// 真实累计课次
     }
   },
   computed: {
@@ -446,6 +445,17 @@ export default {
         this.surplusPrice = this.value.totalPrice - completeLesson * arr[0].univalence
         this.priceValue = this.surplusPrice
 
+        // this.sendData = {
+        //   index: this.index,
+        //   value: {
+        //     issurplus: true,
+        //     surplusPrice: this.surplusPrice
+        //   },
+        //   data: {
+        //     fieldName: 'productSetMeal'
+        //   }
+        // }
+        // this.$emit('value-change', this.sendData)
         this.sendData({
           issurplus: true,
           surplusPrice: this.surplusPrice
@@ -461,58 +471,60 @@ export default {
       this.totalPrice = obj.totalPrice
       this.priceValue = this.totalPrice
 
-      this.currentGive = obj.currentGive // 当前可赠送课次
-      this.surplusGive = obj.surplusGive
-      this.presentRules = obj.presentRules
 
       if (obj.tableData.length > 0) {
         this.jointpresentData()
       }
 
       this.sendData()
+
+      // this.sendData = {
+      //   index: this.index,
+      //   value: {
+      //     product: this.comboComponentData.tableData,
+      //     totalPrice: this.totalPrice, // 套餐价格
+      //     refundMonry: this.priceValue, // 充值返还金额
+      //     surplusPrice: this.action.surplusPrice,
+      //     isNew: this.isNew,
+      //     totalclassTime: this.comboComponentData.totalclassTime,
+      //     buyCount: this.comboComponentData.purchaseLesson,
+      //     presenterCount: this.comboComponentData.grooveLesson
+      //   },
+      //   data: {
+      //     fieldName: 'productSetMeal'
+      //   }
+      // }
+
+      // this.$emit('value-change', this.sendData)
     },
     jointpresentData() {
       console.log('生成累计赠送1')
       if (!this.action.customerId) {
         return
       }
-
-      this.present = [
-        {
-          subject: '',
-          presentLesson: 0,
-          planeLesson: 0,
-          completeLesson: 0,
-          // univalence: this.univalence,
-          univalence: '',
-          dataIndex: this.presentDataIndex,
-          type: 2
+      QueryGiveAPI({
+        customerId: this.action.customerId,
+        buyCount: this.purchaseLesson,
+        coachType: this.action.searchJson.coachType
+      }).then(res => {
+        this.present = [
+          {
+            subject: '',
+            presentLesson: 0,
+            planeLesson: 0,
+            completeLesson: 0,
+            univalence: this.univalence,
+            dataIndex: this.presentDataIndex,
+            type: 2
+          }
+        ]
+        this.surplusPresenter = (res.data.presenterCount - this.comboComponentData.grooveLesson) > 0 ? res.data.presenterCount - this.comboComponentData.grooveLesson : 0
+        this.presentRules = {
+          coachType: this.action.searchJson.coachType,
+          classes: res.data.classes,
+          give: res.data.give
         }
-      ]
-
-      // QueryGiveAPI({
-      //   customerId: this.action.customerId,
-      //   buyCount: this.purchaseLesson,
-      //   coachType: this.action.searchJson.coachType
-      // }).then(res => {
-      //   this.present = [
-      //     {
-      //       subject: '',
-      //       presentLesson: 0,
-      //       planeLesson: 0,
-      //       completeLesson: 0,
-      //       univalence: this.univalence,
-      //       dataIndex: this.presentDataIndex,
-      //       type: 2
-      //     }
-      //   ]
-      //   this.surplusPresenter = (res.data.presenterCount - this.comboComponentData.grooveLesson) > 0 ? res.data.presenterCount - this.comboComponentData.grooveLesson : 0
-      //   this.presentRules = {
-      //     coachType: this.action.searchJson.coachType,
-      //     classes: res.data.classes,
-      //     give: res.data.give
-      //   }
-      // }).catch(() => {})
+      }).catch(() => {})
     },
     totalPriceHandle(obj) {
       this.totalPrice = obj.totalPrice
@@ -523,41 +535,23 @@ export default {
         this.priceValue = this.finalPrice
       }
 
-      // 购买课程变化了，发送接口，从新生成
-      var emitObj = {
+      var lessons = 0 // 累计赠送课次和
+      var arr = this.present.filter(item => {
+        if (item.presentLesson > 0) {
+          item.univalence = obj.univalence
+          lessons += Number(item.presentLesson)
+          return true
+        }
+      })
+
+      // 购买课程变化了，发送接口
+
+      this.sendData({
         surplusPrice: this.action.surplusPrice,
         buyCount: obj.buyCount,
-        totalclassTime: obj.totalclassTime, // 套餐总课次(购买+赠送)+累计赠送
-        product: this.comboComponentData.tableData
-      }
-
-      // 不是累计导致的计算单价
-      if (!obj.isAccumulationChange) {
-        this.surplusGive = obj.surplusGive
-        // 清空present
-        this.jointpresentData()
-      } else {
-        console.log('周这里')
-        var lessons = 0 // 累计赠送课次和
-        var arr = this.present.filter(item => {
-          if (item.presentLesson > 0) {
-            item.univalence = obj.univalence
-            lessons += Number(item.presentLesson)
-            return true
-          }
-        })
-        emitObj.totalclassTime += lessons
-        emitObj.product = [...this.comboComponentData.tableData, ...arr]
-      }
-
-      console.log('asa', emitObj)
-      this.sendData(emitObj)
-      // this.sendData({
-      //   surplusPrice: this.action.surplusPrice,
-      //   buyCount: obj.buyCount,
-      //   totalclassTime: obj.totalclassTime + lessons, // 套餐总课次(购买+赠送)+累计赠送
-      //   product: [...this.comboComponentData.tableData, ...arr]
-      // })
+        totalclassTime: obj.totalclassTime + lessons, // 套餐总课次(购买+赠送)+累计赠送
+        product: [...this.comboComponentData.tableData, ...arr]
+      })
     },
 
     // 向父组件发送数据
@@ -593,15 +587,12 @@ export default {
       console.log('赠送中选择了科目', val)
     },
     changeLesson(row) {
-      if (row.presentLesson == 0) {
-        row.univalence = ''
-      }
       var lesson = 0
       for (let i = 0; i < this.present.length; i++) {
         const element = this.present[i]
         lesson += Number(element.presentLesson)
         var _lesson = Number(element.presentLesson)
-        if (lesson > this.surplusGive) {
+        if (lesson > this.surplusPresenter) {
           element.presentLesson = 0
           lesson -= _lesson
           this.$message.warning('累计赠送课次不能大于剩余可赠送课次')
