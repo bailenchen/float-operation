@@ -24,6 +24,7 @@
           :radio="radio"
           :crm-type="item.type"
           :selected-data="currentSelectedData"
+          :real-sel-data="selectedData"
           :action="action"
           @changeCheckout="checkCrmTypeInfos" />
       </div>

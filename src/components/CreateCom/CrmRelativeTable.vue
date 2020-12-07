@@ -124,6 +124,14 @@ export default {
         return {}
       }
     },
+    realSelData: {
+      type: Object,
+      default() {
+        return {
+          productSetMeal: []
+        }
+      }
+    },
     /**
      * default 默认  condition 固定条件筛选
      * relative: 相关 添加
@@ -237,7 +245,6 @@ export default {
       this.checkItemsWithSelectedData()
     }
   },
-  mounted() {},
   methods: {
     /**
      * 刷新列表
@@ -445,7 +452,10 @@ export default {
     },
     // 标记选择数据
     checkItemsWithSelectedData() {
-      const type = this.crmType === 'student' ? 'customer' : this.crmType
+      let type = this.crmType === 'student' ? 'customer' : this.crmType
+      if (this.crmType == 'productSetMeal') {
+        type = 'product'
+      }
       const selectedArray = this.selectedData[this.crmType] ? this.selectedData[this.crmType].map(item => {
         item.has = false
         return item
@@ -468,7 +478,6 @@ export default {
           this.otherItems.push(selectedItem)
         }
       })
-
       this.$nextTick(() => {
         this.$refs.relativeTable.clearSelection()
         selectedRows.forEach(row => {

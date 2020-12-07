@@ -10,6 +10,7 @@
       v-if="!disabled&&showSelectView"
       ref="crmrelative"
       :crm-type="crmType"
+      :radio="radio"
       :action="relationAction"
       :selected-data="selectedData"
       @close="showPopover=false"
@@ -21,12 +22,15 @@
       class="user-container xh-form-border"
       @click.native="contentClick">
       <div
-        v-for="(aitem, aindex) in dataValue"
+        v-for="(aitem, aindex) in showDataValue"
         :key="aindex"
         class="user-item"
         @click.stop="deleteinfo(aindex)">{{ getShowName(aitem) }}
         <i class="delete-icon el-icon-close"/>
       </div>
+      <i v-if="dataValue.length > max" class="el-icon-more" />
+      <i
+        :class="['el-icon-arrow-up', { 'is-reverse' : showPopover}]"/>
       <div
         v-if="dataValue.length == 0"
         class="add-item">+添加</div>
@@ -44,6 +48,10 @@ export default {
   },
   mixins: [arrayMixin],
   props: {
+    radio: {
+      type: Boolean,
+      default: true
+    },
     relation: {
       // 相关ID
       type: Object,
@@ -55,17 +63,26 @@ export default {
     leadsNumber: {
       type: Boolean,
       default: false
+    },
+    max: {
+      type: Number,
+      default: 2
     }
   },
   data() {
     return {
       showPopover: false, // 展示popover
       showSelectView: false, // 内容
-      radio: true, // 是否单选
       relationAction: { type: 'default' }
     }
   },
   computed: {
+    showDataValue() {
+      if (this.dataValue.length > this.max) {
+        return this.dataValue.slice(0, this.max)
+      }
+      return this.dataValue
+    },
     // 如果有相关ID  展示相关效果 例如客户下的商机和合同
     isRelationShow() {
       return this.item && this.item.data && this.item.data.relation_id
@@ -97,6 +114,10 @@ export default {
     } else {
       this.relationAction = { type: 'default' }
     }
+
+    // if (this.relativeType == 'productSetMeal') {
+    //   this.radio = false
+    // }
   },
   methods: {
     /** 选中 */
@@ -160,6 +181,9 @@ export default {
     border-radius: 3px;
     margin: 3px;
     cursor: pointer;
+    // white-space: nowrap;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
   }
   .add-item {
     padding: 5px;
@@ -193,5 +217,35 @@ export default {
 
 .user-container.is_valid:hover {
   border-color: #c0c4cc;
+}
+
+.el-icon-more {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background-color: #F3F7FF;
+  color: #666;
+  border-radius: $xr-border-radius-base;
+  &:hover {
+    background-color: $xr-color-primary;
+    color: white;
+  }
+}
+
+.el-icon-arrow-up {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  transition: transform .3s;
+  color: #c0c4cc;
+  font-size: 14px;
+  transition: transform .3s;
+  transform: rotate(180deg);
+  cursor: pointer;
+}
+.el-icon-arrow-up.is-reverse {
+  transform: rotate(0deg);
 }
 </style>

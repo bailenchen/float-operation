@@ -33,7 +33,7 @@
           @click.native="handleTypeClick('edit')">编辑</el-button>
 
         <el-button
-          v-if="crmType == 'contract'"
+          v-if="crmType == 'contract' && crm.contract.update"
           class="head-handle-button"
           type="primary"
           icon="wk wk-transfer"
