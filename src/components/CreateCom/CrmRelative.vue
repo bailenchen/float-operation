@@ -24,7 +24,6 @@
           :radio="radio"
           :crm-type="item.type"
           :selected-data="currentSelectedData"
-          :real-sel-data="selectedData"
           :action="action"
           @changeCheckout="checkCrmTypeInfos" />
       </div>
@@ -173,6 +172,7 @@ export default {
         this.leftSides.push(leftItems[element])
       }
     }
+    console.log(this.selectedData, 'customer、student')
     this.currentSelectedData = objDeepCopy(this.selectedData)
   },
   methods: {
@@ -180,6 +180,7 @@ export default {
      * 目前选择值
      */
     handleCurrentSelectData(data) {
+      console.log(data, 'togg156')
       if (data && Object.keys(data).length) {
         this.currentSelectedData = objDeepCopy(data)
       } else {

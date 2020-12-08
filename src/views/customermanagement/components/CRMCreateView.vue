@@ -671,7 +671,7 @@ export default {
         console.log('hettong')
         if (item.data.formType == 'customer') {
           console.log('修改学员', item)
-
+          console.log(data, 'bhjjjj*----')
           const valueData = data.value || {}
           let customerData = null
           for (let index = 0; index < item.showTypes.length; index++) {
@@ -1356,11 +1356,13 @@ export default {
                 if (item.fieldName == 'customer_id') {
                   item['value'] = [{
                     customerId: res.data.customer.customerId,
-                    customerName: res.data.customer.customerName
+                    customerName: res.data.customer.customerName,
+                    customerType: res.data.customer.customerType
                   }]
                   params['value'] = [{
                     customerId: res.data.customer.customerId,
-                    customerName: res.data.customer.customerName
+                    customerName: res.data.customer.customerName,
+                    customerType: res.data.customer.customerType
                   }]
                 }
 
@@ -1896,7 +1898,8 @@ export default {
           if (element.key == 'customer_id') {
             element.value = [{
               customerId: this.action.information.customer.customerId,
-              customerName: this.action.information.customer.customerName
+              customerName: this.action.information.customer.customerName,
+              customerType: this.action.information.customer.customerType
             }]
             this.actionCombo.customerId = this.action.information.customer.customerId
           }

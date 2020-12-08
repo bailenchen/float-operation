@@ -124,14 +124,6 @@ export default {
         return {}
       }
     },
-    realSelData: {
-      type: Object,
-      default() {
-        return {
-          productSetMeal: []
-        }
-      }
-    },
     /**
      * default 默认  condition 固定条件筛选
      * relative: 相关 添加

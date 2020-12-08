@@ -36,7 +36,7 @@
         v-if="dataValue.length == 0"
         class="add-item">+添加</div>
     </flexbox>
-  </crm-relative></el-popover>
+  </el-popover>
 </template>
 <script type="text/javascript">
 import CrmRelative from './CrmRelative'
@@ -95,17 +95,21 @@ export default {
       return this.item && this.item.data && this.item.data.relation_id
     },
     selectedData() {
-      const crmObj = {}
-      // 应该是bug，props中并没有接收crmType
-      // crmObj[this.crmType] = this.dataValue
-      // console.log('crmObj', crmObj)
+      let crmObj = {}
+      if (this.item.crmType == 'contract') {
+        crmObj = {
+          customer: this.item.value && this.item.value.length && this.item.value[0].customerType == 1 ? this.item.value : [],
+          student: this.item.value && this.item.value.length && this.item.value[0].customerType == 2 ? this.item.value : []
+        }
+      } else {
+        crmObj[this.crmType] = this.dataValue
+      }
       return crmObj
     },
     crmType() {
       if (this.relativeType) {
         return this.relativeType
       }
-      // return this.item.data.formType
       return this.item.crmType == 'contract' ? '' : this.item.data.formType
     }
   },
@@ -126,6 +130,7 @@ export default {
     } else {
       this.relationAction = { type: 'default' }
     }
+    console.log(this.showTypes, '*---------')
 
     // if (this.relativeType == 'productSetMeal') {
     //   this.radio = false
@@ -159,6 +164,7 @@ export default {
       })
     },
     contentClick() {
+      console.log(this.selectedData, 'njkkkk', this.dataValue)
       this.showSelectView = true
     },
     getShowName(data) {
