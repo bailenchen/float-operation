@@ -10,35 +10,32 @@
       v-if="!disabled&&showSelectView"
       ref="crmrelative"
       :crm-type="crmType"
-      :show-types="showTypes" :radio="radio"
-      <<<<<<<
-      head
-        ="=&quot;=====&quot;"
-    >>>>>>> d412a3209ed5b18112f559ab102c3e3d8e7429ae
-    :action="relationAction"
-    :selected-data="selectedData"
-    @close="showPopover=false"
-    @changeCheckout="checkInfos"/>
-      <flexbox
-        slot="reference"
-        :class="[disabled ? 'is_disabled' : 'is_valid']"
-        wrap="wrap"
-        class="user-container xh-form-border"
-        @click.native="contentClick">
-        <div
-          v-for="(aitem, aindex) in showDataValue"
-          :key="aindex"
-          class="user-item"
-          @click.stop="deleteinfo(aindex)">{{ getShowName(aitem) }}
-          <i class="delete-icon el-icon-close"/>
-        </div>
-        <i v-if="dataValue.length > max" class="el-icon-more" />
-        <i
-          :class="['el-icon-arrow-up', { 'is-reverse' : showPopover}]"/>
-        <div
-          v-if="dataValue.length == 0"
-          class="add-item">+添加</div>
-      </flexbox>
+      :show-types="showTypes"
+      :radio="radio"
+      :action="relationAction"
+      :selected-data="selectedData"
+      @close="showPopover=false"
+      @changeCheckout="checkInfos"/>
+    <flexbox
+      slot="reference"
+      :class="[disabled ? 'is_disabled' : 'is_valid']"
+      wrap="wrap"
+      class="user-container xh-form-border"
+      @click.native="contentClick">
+      <div
+        v-for="(aitem, aindex) in showDataValue"
+        :key="aindex"
+        class="user-item"
+        @click.stop="deleteinfo(aindex)">{{ getShowName(aitem) }}
+        <i class="delete-icon el-icon-close"/>
+      </div>
+      <i v-if="dataValue.length > max" class="el-icon-more" />
+      <i
+        :class="['el-icon-arrow-up', { 'is-reverse' : showPopover}]"/>
+      <div
+        v-if="dataValue.length == 0"
+        class="add-item">+添加</div>
+    </flexbox>
   </crm-relative></el-popover>
 </template>
 <script type="text/javascript">
