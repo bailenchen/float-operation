@@ -537,6 +537,11 @@ export default {
 
     // 改变购买课次
     changePurchaseLesson(row) {
+      if (!(/(^[1-9]\d*$)/.test(row.purchaseLesson))) {
+        this.$message.warning('只能输入正整数！')
+        row.purchaseLesson = 0
+      }
+
       var lesson = 0 // 小套餐购买课次和
       var buyCounts = 0 // 合同购买课次和
       for (let i = 0; i < this.tableData.length; i++) {
@@ -582,6 +587,10 @@ export default {
 
     // 改变赠送课次
     changeGrooveLesson(row) {
+      if (!(/(^[1-9]\d*$)/.test(row.grooveLesson))) {
+        this.$message.warning('只能输入正整数！')
+        row.grooveLesson = 0
+      }
       var lesson = 0 // 小套餐赠送课次和
       var grooveCount = 0 // 全部套餐赠送课次和
       for (let i = 0; i < this.tableData.length; i++) {

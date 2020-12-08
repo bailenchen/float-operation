@@ -298,7 +298,7 @@ export default {
       } else if (this.crmType === 'customer') {
         return [
           { name: 'LEADS名称', field: 'customerName', formType: 'customer' },
-          { name: '邮箱', field: 'email', formType: 'text' },
+          // { name: '邮箱', field: 'email', formType: 'text' },
           { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
           { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
           { name: '创建时间 ', field: 'createTime', formType: 'datetime' }
@@ -307,7 +307,7 @@ export default {
         return [
           { name: '学员姓名', field: 'customerName', formType: 'customer' },
           { name: '学员编号', field: 'leadsNumber', formType: 'customer' },
-          { name: '邮箱', field: 'email', formType: 'text' },
+          // { name: '邮箱', field: 'email', formType: 'text' },
           { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
           { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
           { name: '创建时间 ', field: 'createTime', formType: 'datetime' }

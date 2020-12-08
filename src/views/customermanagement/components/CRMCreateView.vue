@@ -188,14 +188,14 @@ import CreateSections from '@/components/CreateSections'
 import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { filedGetField, filedValidates, filedGetInformation } from '@/api/customermanagement/common'
 import { crmLeadsSave } from '@/api/customermanagement/clue'
-import { crmCustomerSave, crmCustomerRead } from '@/api/customermanagement/customer'
+import { crmCustomerSave } from '@/api/customermanagement/customer'
 import { crmAccountSave } from '@/api/customermanagement/account'
 import { crmContactsSave } from '@/api/customermanagement/contacts'
 import {
   crmBusinessSave,
   crmBusinessProduct // 商机下产品
 } from '@/api/customermanagement/business'
-import { crmContractSave } from '@/api/customermanagement/contract'
+import { crmContractSave, crmContractRead } from '@/api/customermanagement/contract'
 import { crmProductSave } from '@/api/customermanagement/product'
 import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
@@ -713,6 +713,7 @@ export default {
               'leadsNumber' // 学员编号
             ]
 
+
             // 添加请求关联
             const addRelation = ['business_id', 'contacts_id']
 
@@ -727,6 +728,11 @@ export default {
               'leadsNumber'
               // 'contractsAttr'
             ]
+
+            if (this.action.present) {
+              handleFields.push('grade_id')
+              addDisabled.push('grade_id')
+            }
 
             // 复制
             const getValueObj = {
@@ -764,8 +770,10 @@ export default {
               },
               leadsNumber: data => {
                 return data.leadsNumber ? data.leadsNumber : ''
+              },
+              grade_id: data => {
+                return data.gradeId ? data.gradeId : ''
               }
-
             }
 
             console.log('元素', element)
@@ -855,10 +863,6 @@ export default {
 
 
           console.log('改变套餐字段1', item.value)
-          // this.crmForm.crmFields[1].value = data.value.buyCount + data.value.presenterCount
-          // if (data.value.drainage) {
-          //   this.crmForm.crmFields[0].value = '引流'
-          // }
           this.crmForm.crmFields.forEach(item => {
             if (item.key == 'totalclassTime') {
               item.value = data.value.totalclassTime
@@ -874,41 +878,31 @@ export default {
           this.actionCombo.searchJson.gradeId = item.value
         } else if (item.data.fieldName == 'contractId') {
           this.actionPresent.countCourseSum = item.value[0].countCourseSum
-          crmCustomerRead({ customerId: item.value[0].customerId }).then(res => {
-            for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-              const element = this.crmForm.crmFields[index]
-              // 需要处理 需关联客户信息或客户下信息
-              const handleFields = [
-                'source', // 来源
-                'headmasterUserName', // 班主任
-                'dept_id', // 所属中心
-                'leadsNumber' // 学员编号
-              ]
-              // 复制
-              const getValueObj = {
-                source: data => {
-                  return data.channelIdName ? data.channelIdName : ''
-                },
-                headmasterUserName: data => {
-                  return data.headmasterUserName ? data.headmasterUserName : ''
-                },
-                dept_id: data => {
-                  return data.deptIdName ? data.deptIdName : ''
-                },
-                leadsNumber: data => {
-                  return data.leadsNumber ? data.leadsNumber : ''
-                }
-              }
-              // 增加关联信息
-              const customerItem = res.data
-              if (handleFields.includes(element.key)) {
-                // 填充值
-                if (getValueObj[element.key]) {
-                  element.value = getValueObj[element.key](customerItem)
-                }
+          console.log('zAAAAAAAA--', item.value)
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            // 需要处理 需关联客户信息或客户下信息
+            const handleFields = [
+              'coach_type'
+            ]
+            const addDisabled = [
+              'coach_type'
+            ]
+
+            // 复制
+            const getValueObj = {
+              coach_type: data => {
+                return data.coachType ? data.coachType : ''
               }
             }
-          }).catch(() => {})
+            if (handleFields.includes(element.key)) {
+              // 填充值
+              if (getValueObj[element.key]) {
+                element.value = getValueObj[element.key](item.value[0])
+              }
+              element.disabled = !!addDisabled.includes(element.key)
+            }
+          }
         } else if (item.data.fieldName == 'present') {
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
@@ -1233,7 +1227,7 @@ export default {
             })
             var obj = {
               name: '合同属性',
-              value: '',
+              value: 1,
               fieldName: 'contractsAttr',
               isNull: 1,
               setting: [
@@ -1307,6 +1301,15 @@ export default {
           }
 
           var list = res.data
+
+          // 调整字段顺序
+          for (let i = 0; i < list.length; i++) {
+            const element = list[i]
+            if (element.fieldName == 'customer_id') {
+              list.splice(i, 1)
+              list.unshift(element)
+            }
+          }
 
           if (this.crmType == 'contract' && this.action.attr == 'change') {
             this.actionCombo.type = 'change'
@@ -1446,16 +1449,26 @@ export default {
 
           this.getcrmRulesAndModel(list)
 
-          if (this.crmType == 'customer' && this.action.userInfo) {
+          // if (this.crmType == 'customer' && this.action.userInfo) {
+          if (this.action.userInfo) {
             console.log('当前登录用户', this.action.userInfo)
             queryUserListAPI().then(res => {
               console.log(res)
               this.userList = res.data
               this.crmForm.crmFields.forEach(item => {
-                // console.log('---', item)
-                if (item.key == 'leads_registrant_id') {
+              // console.log('---', item)
+
+                var isFill = [
+                  'leads_registrant_id',
+                  'signing_user_id'
+                ].includes(item.key)
+                if (isFill) {
                   item.value = [this.action.userInfo]
                 }
+
+                // if (item.key == 'leads_registrant_id') {
+                //   item.value = [this.action.userInfo]
+                // }
               })
               console.log('aaaaaaaaaaaaaaaa', this.userList)
               console.log('BBBBBBBBBBBB', this.crmForm)
@@ -1623,6 +1636,16 @@ export default {
             params['value'] = []
           }
           params['styleIndex'] = showStyleIndex
+        } else if (item.formType == 'present') {
+          var params = {}
+          params['value'] = item.value
+          params['key'] = item.fieldName
+          params['data'] = item
+          params['disabled'] = false // 是否可交互
+          params['showblock'] = true // 展示整行效果
+          if (index % 2 == 0) {
+            showStyleIndex = -1
+          }
         } else if (item.formType == 'product') {
           // 关联产品信息比较多 用字典接收
           var params = {}
@@ -1787,11 +1810,11 @@ export default {
           params['styleIndex'] = showStyleIndex
         }
         // 新建合同合同属性默认为新签
-        // if (this.action.type == 'save' || this.action.type == 'contract') {
-        //   if (item.fieldName == 'contractsAttr') {
-        //     params['value'] = '新签'
-        //   }
-        // }
+        if (this.action.type == 'save' || this.action.type == 'contract') {
+          if (item.fieldName == 'contractsAttr') {
+            params['value'] = 1
+          }
+        }
 
         params.disabled = !this.getItemIsCanEdit(item) // 不能编辑 disabled true
         if (item.hasOwnProperty('authLevel') && item.authLevel == 2) {

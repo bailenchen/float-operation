@@ -210,12 +210,25 @@ export default {
           }
         }
         console.log('传递给creat组件一个userID')
-        if (this.crmType === 'contract' && action === 'present') {
-          this.createActionInfo = {
-            type: 'save',
-            present: true
+        if (this.crmType === 'contract') {
+          this.createActionInfo.userInfo = {
+            userId: this.userInfo.userId,
+            realname: this.userInfo.realname
+          }
+          if (action === 'present') {
+            this.createActionInfo.present = true
           }
         }
+        // if (this.crmType === 'contract' && action === 'present') {
+        //   this.createActionInfo = {
+        //     type: 'save',
+        //     present: true,
+        //     userInfo: {
+        //       userId: this.userInfo.userId,
+        //       realname: this.userInfo.realname
+        //     }
+        //   }
+        // }
 
 
         this.isCreate = !this.isCreate
