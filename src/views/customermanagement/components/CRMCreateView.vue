@@ -683,7 +683,9 @@ export default {
           }
           item.value = customerData
 
-          this.actionCombo.customerId = item.value[0] ? item.value[0].customerId : ''
+          console.log('数组长度', Object.prototype.toString.call(item.value))
+
+          this.actionCombo.customerId = item.value.length ? item.value[0].customerId : ''
 
           let contractForCount = 0
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
@@ -2707,6 +2709,16 @@ export default {
         var arr = []
         // params['product'] = element.value.data
         console.log('值', element.value)
+
+        var mealType = element.value.data[0].mealType
+        var res = element.value.data.every(item => {
+          return item.mealType == mealType
+        })
+        if (!res) {
+          this.$message.error('套餐课程类型必须相同')
+          return false
+        }
+
         for (let i = 0; i < element.value.data.length; i++) {
           const item = element.value.data[i]
           if (!item.subject) {
