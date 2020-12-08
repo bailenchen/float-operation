@@ -142,7 +142,9 @@ export default {
       grooveLesson: 0, // 全部套餐常规赠送课次之和
       totalPrice: 0, // 总价
       maxGive: 0, // 最大赠送课次
-      surplusGive: 0 // 剩余可赠送课次，用于限制累计赠送课次
+      surplusGive: 0, // 剩余可赠送课次，用于限制累计赠送课次
+      drainage: false,
+      setMeal: [] // 累计赠送请求参数
     }
   },
   watch: {
@@ -196,8 +198,8 @@ export default {
       var parms = {
         customerId: this.giveAction.customerId,
         buyCount: this.purchaseLesson,
-        coachType: this.giveAction.searchJson.coachType
-        // setMeal: this.getMealId()
+        coachType: this.giveAction.searchJson.coachType,
+        setMeal: this.setMeal
       }
       QueryGiveAPI(parms).then(res => {
         if (res.data) {
@@ -217,7 +219,15 @@ export default {
 
         console.log('最大次数', this.maxGive)
         this.sendData()
-      }).catch(() => {})
+      }).catch(() => {
+        console.log('模拟数据，异常了继续向下走')
+        this.presentRules = {
+          coachType: '一对一',
+          classes: 10,
+          give: 4
+        }
+        this.sendData()
+      })
     },
     // 拼接表格数据
     structureData() {
@@ -231,6 +241,10 @@ export default {
       for (let i = 0; i < this.action.productSetMeal.length; i++) {
         const productSetMeal = this.action.productSetMeal[i]
         console.log('大套餐', productSetMeal)
+        this.setMeal.push({
+          setMealId: productSetMeal.productId,
+          buyCount: productSetMeal.purchaseFrequency
+        })
         this.purchaseLesson += Number(productSetMeal.purchaseFrequency)
         if (productSetMeal.courseType == '引流课') {
           this.drainage = true
@@ -258,12 +272,12 @@ export default {
             dataIndex: this.maxIndex, // 标识
             detailsId: product.detailsId, // 小套餐ID
             originalPurchaseLesson: product.purchaseFrequency, // 小套餐购买课次
-            originalGrooveLesson: product.giveFrequency // 小套餐赠送课次
+            originalGrooveLesson: product.giveFrequency, // 小套餐赠送课次
+            mealType: productSetMeal.courseType// 大套餐类型：引流、特价、正价
           }
           totalPrice += this.action.univalence * obj.purchaseLesson
           arr.push(obj)
         }
-        // this.totalPrice += productSetMeal.purchaseFrequency * this.action.univalence
         this.totalPrice = totalPrice
       }
       this.tableData = arr

@@ -381,9 +381,13 @@ export default {
       if (this.crmType == 'capitalAccount') {
         // 如果是查学员
         params.customerType = 2
-      } else if (this.crmType === 'customer' || this.crmType === 'student') {
+      // } else if (this.crmType === 'customer' || this.crmType === 'student') {
+      } else if (this.crmType === 'customer') {
         // 如果是查LEADS
         params.customerType = 1
+      } else if (this.crmType === 'student') {
+        // 如果是查学员
+        params.customerType = 2
       } else if (this.crmType === 'productSetMeal') {
         params.searchJson = this.action.searchJson
       } else if (this.crmType === 'contract') { // 额外赠送合同
