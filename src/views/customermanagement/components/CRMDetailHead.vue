@@ -752,7 +752,7 @@ export default {
       } else if (this.crmType == 'business') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'contract') {
-        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete', 'cancel'])
+        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'product') {
@@ -826,10 +826,10 @@ export default {
         return this.crm[this.crmType].dealStatus
       } else if (type == 'cancel') {
         // 合同作废
-        if (this.crm[this.crmType].discard && this.detail.checkStatus === 1) {
-          return true
-        }
-        return false
+        // if (this.crm[this.crmType].discard && this.detail.checkStatus === 1) {
+        //   return true
+        // }
+        // return false
       } else if (type == 'state_start' || type == 'state_disable') {
         // 活动停用/启用
         return this.crm[this.crmType].updateStatus

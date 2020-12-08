@@ -70,9 +70,9 @@
                 placeholder="请选择筛选条件">
                 <el-option
                   v-for="item in formItem.setting"
-                  :key="item"
-                  :label="item"
-                  :value="item"/>
+                  :key="handleSelect(formItem) ? item.value : item"
+                  :label="handleSelect(formItem) ? item.name : item"
+                  :value="handleSelect(formItem) ? item.value : item"/>
               </el-select>
               <el-select
                 v-else-if="formItem.formType === 'checkbox'"
@@ -92,7 +92,7 @@
                   'communication_mode',
                   'sign_up',
                   'checkStatus',
-                  'dealStatus'
+                  'dealStatus',
                 ].includes(formItem.formType)"
                 v-model="formItem.value"
                 placeholder="请选择筛选条件">
@@ -402,6 +402,15 @@ export default {
       formItem.address.area = data.value
     },
 
+    // 判断formType为select的不同数据格式时的处理
+    handleSelect(item) {
+      if (['contract_type', 'is_early_retirement', 'is_new', 'contract_status'].includes(item.fieldName)) {
+        return true
+      } else {
+        return false
+      }
+    },
+
     /**
      * 商机组状态
      */
@@ -536,7 +545,7 @@ export default {
      * @param formItem
      */
     fieldChange(formItem, index) {
-      console.log(formItem, 'mmmmmm')
+      console.log(this.crmType)
       const obj = this.fieldList.find(item => {
         return item.fieldName === formItem.fieldName
       })

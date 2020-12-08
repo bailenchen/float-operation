@@ -21,6 +21,7 @@
         <span v-else-if="item.formType === 'user'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
         <span v-else-if="item.formType === 'single_structure'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].name + '”' }}</span>
         <span v-else-if="['category', 'leads_source'].includes(item.formType) && item.value.length > 0">{{ item.name +'&nbsp;“' + item.valueContent + '”' }}</span>
+        <span v-else-if="item.formType == 'select' && (['contract_type', 'is_early_retirement', 'is_new', 'contract_status'].includes(item.fieldName))">{{ item.name +'&nbsp;'+ optionsNames[item.condition] +'“' + handleSelectName(item.fieldName, item.value) + '”' }}</span>
         <span v-else>{{ item.name + '&nbsp;' + optionsNames[item.condition] + '“' + item.value + '”' }}</span>
         <i
           class="el-icon-close icon"
@@ -68,11 +69,13 @@ export default {
   computed: {},
   watch: {
     obj: function(val) {
+      console.log(this.obj, '******')
       this.showObj = val
     }
   },
   mounted() {
     this.showObj = this.obj
+    console.log(this.showObj, '999999')
   },
   methods: {
     /**
@@ -106,6 +109,37 @@ export default {
         }
       })
       return value
+    },
+
+    // 合同中类型为select的name处理
+    handleSelectName(name, value) {
+      console.log(name, value, 'njkkkk')
+      return {
+        'contract_type': { 1: '购买', 2: '赠送' },
+        'is_early-retirement': { 0: '否', 1: '是' },
+        'is_new': { 0: '续签', 1: '新签', 2: '引流' },
+        'checkStatus': {
+          0: '待审核',
+          1: '通过',
+          2: '拒绝',
+          3: '审核中',
+          4: '撤回',
+          5: '未提交',
+          6: '创建',
+          7: '已删除',
+          8: '作废'
+        },
+        'contract_status': {
+          1: '申请中',
+          2: '放弃',
+          3: '合同完成',
+          4: '合同变更中',
+          5: '执行中',
+          6: '执行中',
+          7: '合同充值返还',
+          8: '确认放弃'
+        }
+      }[name][value]
     },
 
     /**

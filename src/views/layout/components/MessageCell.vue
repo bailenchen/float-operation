@@ -117,6 +117,16 @@ export default {
           icon: 'wk wk-customer',
           color: '#6995FF',
           type: 'customer'
+        },
+        insideUser: {
+          icon: 'wk wk-grid',
+          color: '#6995FF',
+          type: 'insideUser'
+        },
+        capitalAccount: {
+          icon: 'wk wk-receivables',
+          color: '#6995FF',
+          type: 'capitalAccount'
         }
       }
 
@@ -151,6 +161,10 @@ export default {
           key = 'business'
         } else if ([35, 36, 37].includes(this.data.type)) {
           key = 'invoice'
+        } else if ([42].includes(this.data.type)) {
+          key = 'insideUser'
+        } else if ([43, 44, 45].includes(this.data.type)) {
+          key = 'capitalAccount'
         }
       }
 
@@ -199,7 +213,11 @@ export default {
         38: `${this.data.realname} LEADS待审核审批提醒`,
         39: `${this.data.realname} LEADS拒绝通知`,
         40: `${this.data.realname} LEADS通过通知`,
-        41: ``
+        41: ``,
+        42: `${this.data.realname}导入了内部通讯录`,
+        43: `${this.data.realname} 资金待审核审批提醒`,
+        44: `${this.data.realname} 资金拒绝通知`,
+        45: `${this.data.realname} 资金通过通知`
       }[this.data.type]
     },
 
@@ -267,7 +285,11 @@ export default {
         38: `争议待审批，请及时处理`,
         39: `争议拒绝`,
         40: `争议通过`,
-        41: `在【${this.data.content}】重新激活，请注意`
+        41: `在【${this.data.content}】重新激活，请注意`,
+        42: `请及时查看`,
+        43: `资金待审批，请及时处理`,
+        44: `资金审批拒绝`,
+        45: `资金审批通过`
       }[this.data.type]
     }
   },
