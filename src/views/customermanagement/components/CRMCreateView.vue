@@ -610,7 +610,7 @@ export default {
 
     // 字段的值更新
     fieldValueChange(data) {
-      console.log('字段更新', data)
+      console.log('字段更新', data, this.crmType, this.action.type)
       if (this.crmType == 'contract' && this.action.attr) {
         if (data.value.issurplus) {
           this.actionCombo.surplusPrice = data.value.surplusPrice
@@ -619,7 +619,6 @@ export default {
       }
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
-      console.log('字段更新1', item)
 
       // 商机下处理商机状态
       if (this.crmType == 'business') {
@@ -683,9 +682,9 @@ export default {
           }
           item.value = customerData
 
-          console.log('数组长度', Object.prototype.toString.call(item.value))
+          console.log('数组长度', Object.prototype.toString.call(item.value), item.value)
 
-          this.actionCombo.customerId = item.value.length ? item.value[0].customerId : ''
+          this.actionCombo.customerId = item.value && item.value.length ? item.value[0].customerId : ''
 
           let contractForCount = 0
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
@@ -779,7 +778,7 @@ export default {
             console.log('元素', element)
 
             if (handleFields.includes(element.key)) {
-              if (item.value.length > 0) {
+              if (item.value && item.value.length > 0) {
                 element.disabled = false
 
                 // 增加关联信息
@@ -911,6 +910,7 @@ export default {
             }
           }
         }
+        console.log('object')
       } else if (this.crmType == 'receivables') {
         // 新建回款 选择客户 要将id交于 合同
         if (item.data.formType == 'customer') {
