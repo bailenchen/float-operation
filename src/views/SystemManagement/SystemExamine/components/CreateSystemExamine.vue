@@ -469,7 +469,20 @@ export default {
             if ((!value.maxDiscount || !value.minDiscount) && this.showDiscount) {
               return callback(new Error('折扣不能为空'))
             } else {
-              callback()
+              const reg = /^([0-9]{1,2}|100)$/
+              const min = reg.test(value.minDiscount)
+              const max = reg.test(value.maxDiscount)
+              if (!min) {
+                return callback(new Error('折扣只能为0-100的整数'))
+              } else if (!max) {
+                return callback(new Error('折扣只能为0-100的整数'))
+              } else {
+                if (Number(value.minDiscount) >= Number(value.maxDiscount)) {
+                  return callback(new Error('起始折扣需小于结束折扣'))
+                } else {
+                  callback()
+                }
+              }
             }
           }
           tempList.push({ validator: validate, trigger: 'blur' })
@@ -478,14 +491,19 @@ export default {
             if ((!value.maxPay || !value.minPay) && this.showContractAmount) {
               return callback(new Error('合同支付金额不能为空'))
             } else {
-              const reg = /^0\.([1-9]|\d[1-9])$|^[1-9]\d{0,8}\.\d{0,2}$|^[1-9]\d{0,8}$/g
-              const min = reg.test(value.minPay) ? true : (value.minPay.includes('-') ? false : Number(value.minPay) == 0)
-              const max = reg.test(value.maxPay) ? true : (value.maxPay.includes('-') ? false : Number(value.maxPay) == 0)
-              console.log(min, max, reg.test(value.maxPay), reg.test(value.minPay), 'minmax')
-              if (!min || !max) {
+              const min = this.validMoney(value.minPay)
+              const max = this.validMoney(value.maxPay)
+              console.log(min, max, 'minmax')
+              if (!min) {
+                return callback(new Error('合同支付金额不能为负数保留两位小数'))
+              } else if (!max) {
                 return callback(new Error('合同支付金额不能为负数保留两位小数'))
               } else {
-                callback()
+                if (Number(value.minPay) >= Number(value.maxPay)) {
+                  return callback(new Error('合同支付金额起始金额不能大于或等于结束金额'))
+                } else {
+                  callback()
+                }
               }
             }
           }
@@ -502,6 +520,24 @@ export default {
           params['showblock'] = true // 展示整行效果
         }
         this.crmForm.crmFields.push(params)
+      }
+    },
+
+    validMoney(money) {
+      console.log(typeof money, 'nkl')
+      if (Number(money) == 0) {
+        return true
+      } else if (money.includes('-')) {
+        return false
+      } else if (money.includes('.')) {
+        const float = money.split('.')
+        if (float[1].length > 2) {
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return true
       }
     },
     // 保存数据
