@@ -30,6 +30,17 @@ class MyWs {
   setEnv(d) {
     this.data = d
     const that = this
+    if (window.timer) {
+      clearInterval(window.timer)
+    }
+    window.timer = setInterval(() => {
+      Promise.all([this._getGatewaySignature()])
+        .then(result => {
+          that.requestHeaders['singnature'] = result[0].signature
+          that.requestHeaders['appkey'] = result[0].appCode
+          that.requestHeaders['timestamp'] = result[0].timestamp
+        })
+    }, 3000)
     const reqArr = [this._getTokenByLogin(), this._getGatewaySignature()]
     Promise.all(reqArr).then(data => {
       const { token } = data[0] || {}
