@@ -40,7 +40,7 @@ class MyWs {
           that.requestHeaders['appkey'] = result[0].appCode
           that.requestHeaders['timestamp'] = result[0].timestamp
         })
-    }, 3000)
+    }, 3600000)
     const reqArr = [this._getTokenByLogin(), this._getGatewaySignature()]
     Promise.all(reqArr).then(data => {
       const { token } = data[0] || {}
