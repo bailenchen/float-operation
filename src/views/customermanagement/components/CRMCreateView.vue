@@ -611,6 +611,7 @@ export default {
     // 字段的值更新
     fieldValueChange(data) {
       console.log('字段更新', data, this.crmType, this.action.type)
+      // 合同变更获取原合同剩余金额
       if (this.crmType == 'contract' && this.action.attr) {
         if (data.value.issurplus) {
           this.actionCombo.surplusPrice = data.value.surplusPrice
@@ -619,6 +620,7 @@ export default {
       }
       var item = this.crmForm.crmFields[data.index]
       item.value = data.value
+      console.log('item.value', item, item.value)
 
       // 商机下处理商机状态
       if (this.crmType == 'business') {
@@ -671,17 +673,31 @@ export default {
         if (item.data.formType == 'customer') {
           console.log('修改学员', item)
           console.log(data, 'bhjjjj*----')
-          const valueData = data.value || {}
-          let customerData = []
-          for (let index = 0; index < item.showTypes.length; index++) {
-            const key = item.showTypes[index]
-            const dataList = valueData[key] || []
-            if (dataList && dataList.length) {
-              customerData = dataList
-              console.log(customerData, 'bjjjjj123')
+
+          if (!this.action.present) {
+            const valueData = data.value || {}
+            let customerData = []
+            for (let index = 0; index < item.showTypes.length; index++) {
+              const key = item.showTypes[index]
+              const dataList = valueData[key] || []
+              if (dataList && dataList.length) {
+                customerData = dataList
+                console.log(customerData, 'bjjjjj123')
+              }
             }
+            item.value = customerData
           }
-          item.value = customerData
+          // const valueData = data.value || {}
+          // let customerData = []
+          // for (let index = 0; index < item.showTypes.length; index++) {
+          //   const key = item.showTypes[index]
+          //   const dataList = valueData[key] || []
+          //   if (dataList && dataList.length) {
+          //     customerData = dataList
+          //     console.log(customerData, 'bjjjjj123')
+          //   }
+          // }
+          // item.value = customerData
 
           console.log('数组长度', Object.prototype.toString.call(item.value), item.value)
 
@@ -690,15 +706,22 @@ export default {
           let contractForCount = 0
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
+            console.log('学员的值', item.value)
             if (element.key == 'contractId') {
-              element.disabled = false
-              element.relation = {
-                type: 'presentContract',
-                searchJson: {
-                  customerId: item.value[0].customerId,
-                  checkStatus: 1,
-                  contractType: 1
+              if (item.value.length) {
+                element.disabled = false
+                element.relation = {
+                  type: 'presentContract',
+                  searchJson: {
+                  // customerId: item.value[0].customerId,
+                    customerId: item.value[0].customerId,
+                    checkStatus: 1,
+                    contractType: 1
+                  }
                 }
+              } else {
+                element.disabled = true
+                element.relation = {}
               }
             }
             // 需要处理 需关联客户信息或客户下信息
@@ -726,6 +749,7 @@ export default {
               'dept_id',
               'totalclassTime',
               'leadsNumber'
+              // 'contractId'
               // 'contractsAttr'
             ]
 
@@ -736,6 +760,20 @@ export default {
 
             // 复制
             const getValueObj = {
+              // customerId: data => {
+              //   if (!data.customerId) {
+              //     return []
+              //   }
+              //   return {
+              //     type: 'presentContract',
+              //     searchJson: {
+              //     // customerId: item.value[0].customerId,
+              //       customerId: data.customerId,
+              //       checkStatus: 1,
+              //       contractType: 1
+              //     }
+              //   }
+              // },
               contacts_id: data => {
                 if (!data.contactsId) {
                   return []
@@ -776,7 +814,7 @@ export default {
               }
             }
 
-            console.log('元素', handleFields, element)
+            // console.log('元素', handleFields, element)
 
             if (handleFields.includes(element.key)) {
               if (item.value && item.value.length > 0) {
@@ -802,7 +840,7 @@ export default {
                   element['relation'] = {}
                 }
 
-                element.value = []
+                element.value = ''
               }
 
               contractForCount++
@@ -1662,8 +1700,15 @@ export default {
           params['data'] = item
 
           if (this.crmType == 'contract' && item.fieldName == 'customer_id') {
-            params.crmType = 'contract'
-            params.showTypes = ['customer', 'student']
+            if (!this.action.present) {
+              params.crmType = 'contract'
+              params.showTypes = ['customer', 'student']
+            } else {
+              console.log('增加额外赠送合同')
+              params.crmType = 'presentContract'
+              // params.showTypes = ['student']
+            }
+            // params.showTypes = this.action.present ? ['student'] : ['customer', 'student']
           }
           // 获取 value relative 信息
           this.getParamsValueAndRelativeInfo(params, item, list)

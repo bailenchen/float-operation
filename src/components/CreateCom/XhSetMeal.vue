@@ -95,6 +95,7 @@ export default {
         { label: '套餐' + (this.index + 1), prop: 'detailsName', showblock: false, type: 'text', placeholder: '请输入套餐' },
         { label: '购买课次', prop: 'purchaseFrequency', showblock: false, type: 'text', placeholder: '请输入购买课次' },
         { label: '赠送课次', prop: 'giveFrequency', showblock: false, type: 'text', placeholder: '请输入赠送课次' },
+        { label: '是否参与累计赠送', prop: 'isGive', showblock: false, type: 'text', placeholder: '请选择是否参数累计赠送' },
         { label: '使用周期', prop: 'term', showblock: false, type: 'date' }
       ],
 
