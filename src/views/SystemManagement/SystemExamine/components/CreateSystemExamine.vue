@@ -493,7 +493,6 @@ export default {
             } else {
               const min = this.validMoney(value.minPay)
               const max = this.validMoney(value.maxPay)
-              console.log(min, max, 'minmax')
               if (!min) {
                 return callback(new Error('合同支付金额不能为负数保留两位小数'))
               } else if (!max) {
@@ -501,6 +500,8 @@ export default {
               } else {
                 if (Number(value.minPay) >= Number(value.maxPay)) {
                   return callback(new Error('合同支付金额起始金额不能大于或等于结束金额'))
+                } else if (String(parseInt(value.minPay)).length > 8 || String(parseInt(value.maxPay)).length > 8) {
+                  return callback(new Error('合同支付金额最多为8位'))
                 } else {
                   callback()
                 }

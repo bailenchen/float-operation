@@ -195,7 +195,7 @@ import {
   crmBusinessSave,
   crmBusinessProduct // 商机下产品
 } from '@/api/customermanagement/business'
-import { crmContractSave, crmContractRead } from '@/api/customermanagement/contract'
+import { crmContractSave } from '@/api/customermanagement/contract'
 import { crmProductSave } from '@/api/customermanagement/product'
 import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
@@ -1042,8 +1042,8 @@ export default {
         //   }
         // }
       } else if (this.crmType == 'productSetMeal') {
+        console.log(item, '123', this.crmForm.crmFields)
         if (item.data.formType === 'coaching_methods') {
-          console.log(item, '123', this.crmForm.crmFields)
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
             if (element.key == 'grade_id' && element.value && item.value) {
@@ -1067,6 +1067,49 @@ export default {
                 this.productSetMealPrices(params)
               }
             }
+          }
+        } else if (item.data.formType == 'class_type') {
+          // 课程类型为引流课时显示购买课程价格字段，否则不显示
+          let isHasPrice = false
+          let fieldIndex = null
+          let canDel = false
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (element.key == 'course_type' && element.value == '引流课') {
+              isHasPrice = true
+            } else if (element.key == 'price') {
+              canDel = true
+              fieldIndex = element.styleIndex
+            }
+          }
+          if (isHasPrice) {
+            this.crmForm.crmFields.push(
+              {
+                data: {
+                  authLevel: 3,
+                  defaultValue: '100.00',
+                  fieldId: 1229864,
+                  fieldName: 'price',
+                  fieldType: 1,
+                  formType: 'number',
+                  inputTips: '',
+                  isNull: 0,
+                  isUnique: 0,
+                  label: 21,
+                  name: '购买价格（元）',
+                  options: null,
+                  setting: Array(0),
+                  type: 5,
+                  value: ''
+                },
+                disabled: false,
+                key: 'price',
+                styleIndex: this.crmForm.crmFields.length,
+                value: '100.00'
+              }
+            )
+          } else if (canDel) {
+            this.crmForm.crmFields.splice(fieldIndex, 1)
           }
         }
       }
@@ -1572,6 +1615,9 @@ export default {
           value: []
         })
       }
+      // 课程类型为引流课时显示购买课程价格字段，否则不显示 标识字段
+      let hasPrice = false
+
       let showStyleIndex = -1
       for (let index = 0; index < list.length; index++) {
         const item = list[index]
@@ -1582,6 +1628,8 @@ export default {
               { value: 1, name: '上架' },
               { value: 0, name: '下架' }
             ]
+          } else if (item.fieldName == 'course_type' && item.value == '引流课') {
+            hasPrice = true
           }
           if (this.action.type == 'update' && item.fieldName == 'termTime') {
             if (this.action.editDetail.startPurchaseCycle && this.action.editDetail.endPurchaseCycle) {
@@ -1947,6 +1995,35 @@ export default {
           }
         }
         // 额外合同编辑
+      }
+
+      // hasPrice为true显示购买价格字段
+      if (hasPrice && this.crmType == 'productSetMeal') {
+        this.crmForm.crmFields.push(
+          {
+            data: {
+              authLevel: 3,
+              defaultValue: '100.00',
+              fieldId: 1229864,
+              fieldName: 'price',
+              fieldType: 1,
+              formType: 'number',
+              inputTips: '',
+              isNull: 0,
+              isUnique: 0,
+              label: 21,
+              name: '购买价格（元）',
+              options: null,
+              setting: Array(0),
+              type: 5,
+              value: ''
+            },
+            disabled: false,
+            key: 'price',
+            styleIndex: this.crmForm.crmFields.length,
+            value: this.action.editDetail.price
+          }
+        )
       }
     },
     /**
