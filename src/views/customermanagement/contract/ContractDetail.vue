@@ -68,6 +68,7 @@
                     :subject-list="subList"
                     :accumulation="accumulation"
                     :is-disabled="isDisabled"
+                    class="course-table"
                     style="width: 100%;"/>
                 </div>
                 <!-- 累计赠送课程  业绩分配信息 -->
@@ -543,5 +544,9 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
+}
+
+/deep/ .course-table .el-table__header-wrapper .gutter {
+  display: inline-block !important;
 }
 </style>

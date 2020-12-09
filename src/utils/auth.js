@@ -9,6 +9,9 @@ export function removeAuth() {
     cache.rmAxiosCache()
     store.commit('SET_ALLAUTH', null)
     delete axios.defaults.headers['Admin-Token']
+    if (window.timer) {
+      clearInterval(window.timer)
+    }
     resolve(true)
   })
 }
