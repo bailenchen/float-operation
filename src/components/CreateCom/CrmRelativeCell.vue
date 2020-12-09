@@ -101,6 +101,11 @@ export default {
           customer: this.item.value && this.item.value.length && this.item.value[0].customerType == 1 ? this.item.value : [],
           student: this.item.value && this.item.value.length && this.item.value[0].customerType == 2 ? this.item.value : []
         }
+      // } else if (this.item.crmType == 'presentContract') {
+      //   crmObj = {
+
+      //     student: this.item.value && this.item.value.length && this.item.value[0].customerType == 2 ? this.item.value : []
+      //   }
       } else {
         crmObj[this.crmType] = this.dataValue
       }
@@ -109,8 +114,13 @@ export default {
     crmType() {
       if (this.relativeType) {
         return this.relativeType
+      } else if (this.item.crmType == 'contract') {
+        return ''
+      } else if (this.item.crmType == 'presentContract' && this.item.key == 'customer_id') {
+        return 'student'
       }
-      return this.item.crmType == 'contract' ? '' : this.item.data.formType
+      return this.item.data.formType
+      // return this.item.crmType == 'contract' ? '' : this.item.data.formType
     }
   },
   watch: {
