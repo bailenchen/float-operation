@@ -29,11 +29,11 @@
         @click.stop="deleteinfo(aindex)">{{ getShowName(aitem) }}
         <i class="delete-icon el-icon-close"/>
       </div>
-      <i v-if="dataValue && dataValue.length > max" class="el-icon-more" />
+      <i v-if="dataValue.length > max" class="el-icon-more" />
       <i
         :class="['el-icon-arrow-up', { 'is-reverse' : showPopover}]"/>
       <div
-        v-if="dataValue == null || dataValue.length == 0"
+        v-if="dataValue.length == 0"
         class="add-item">+添加</div>
     </flexbox>
   </el-popover>
@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     showDataValue() {
-      if (this.dataValue && this.dataValue.length > this.max) {
+      if (this.dataValue.length > this.max) {
         return this.dataValue.slice(0, this.max)
       }
       return this.dataValue
@@ -147,10 +147,10 @@ export default {
         // 如果单选告知删除
         this.$refs.crmrelative.clearAll()
       }
-      if (this.dataValue && this.dataValue.length === 1) {
+      if (this.dataValue.length === 1) {
         this.dataValue = []
       } else {
-        this.dataValue && this.dataValue.length ? this.dataValue.splice(index, 1) : []
+        this.dataValue.splice(index, 1)
       }
 
       this.$emit('value-change', {

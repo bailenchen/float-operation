@@ -672,19 +672,20 @@ export default {
           console.log('修改学员', item)
           console.log(data, 'bhjjjj*----')
           const valueData = data.value || {}
-          let customerData = null
+          let customerData = []
           for (let index = 0; index < item.showTypes.length; index++) {
             const key = item.showTypes[index]
             const dataList = valueData[key] || []
             if (dataList && dataList.length) {
               customerData = dataList
+              console.log(customerData, 'bjjjjj123')
             }
           }
           item.value = customerData
 
           console.log('数组长度', Object.prototype.toString.call(item.value), item.value)
 
-          this.actionCombo.customerId = item.value && item.value.length ? item.value[0].customerId : ''
+          this.actionCombo.customerId = item.value.length ? item.value[0].customerId : ''
 
           let contractForCount = 0
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
@@ -775,7 +776,7 @@ export default {
               }
             }
 
-            console.log('元素', element)
+            console.log('元素', handleFields, element)
 
             if (handleFields.includes(element.key)) {
               if (item.value && item.value.length > 0) {
