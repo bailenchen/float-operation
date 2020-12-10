@@ -343,3 +343,33 @@ export function sysConfigFieldListQueryAPI(data) {
     data: data
   })
 }
+
+/**
+ * 数据字典列表 查询
+ * @param {*} data
+ */
+export function sysConfigDataDictaryListQueryAPI(data) {
+  return request({
+    url: 'adminDictionary/queryPage',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 数据字典列表 保存
+ * @param {*} data
+ */
+export function sysConfigDataDictarySaveAPI(data) {
+  return request({
+    url: 'adminDictionary/saveOrUpdate',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
