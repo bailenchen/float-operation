@@ -1089,7 +1089,7 @@ export default {
                 gradeId: element.value,
                 coachType: item.value
               }
-              this.productSetMealPrices(params)
+              // this.productSetMealPrices(params)
             }
           }
         } else if (item.data.formType === 'grades') {
@@ -1102,7 +1102,7 @@ export default {
                   coachType: element.value
                 }
                 console.log(this, 'this789')
-                this.productSetMealPrices(params)
+                // this.productSetMealPrices(params)
               }
             }
           }
@@ -1170,22 +1170,22 @@ export default {
 
     // 套餐字段更新
     fieldChange(data) {
-      if (data.type == 'purchaseFrequency') {
-        const list = this.getMealData()
-        let sum = 0
-        for (let index = 0; index < list.length; index++) {
-          const element = list[index]
-          sum += Number(element.purchaseFrequency)
-        }
-        // 课次 X 购买价格
-        for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-          const element = this.crmForm.crmFields[index]
-          if (element.key == 'price') {
-            element.value = this.productSetMealPrice * sum
-            element.data.value = this.productSetMealPrice * sum
-          }
-        }
-      }
+      // if (data.type == 'purchaseFrequency') {
+      //   const list = this.getMealData()
+      //   let sum = 0
+      //   for (let index = 0; index < list.length; index++) {
+      //     const element = list[index]
+      //     sum += Number(element.purchaseFrequency)
+      //   }
+      //   // 课次 X 购买价格
+      //   for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+      //     const element = this.crmForm.crmFields[index]
+      //     if (element.key == 'price') {
+      //       element.value = this.productSetMealPrice * sum
+      //       element.data.value = this.productSetMealPrice * sum
+      //     }
+      //   }
+      // }
     },
 
     getMealData() {
@@ -2448,6 +2448,9 @@ export default {
     saveDraftField() {
       this.debouncedSaveField(false, true)
     },
+    handle(msg) {
+      this.$message.error(msg)
+    },
     // 保存数据
     saveField(saveAndCreate, isDraft = false) {
       this.saveAndCreate = saveAndCreate
@@ -2462,11 +2465,10 @@ export default {
               return
             }
             const { key } = this.validPrice()
-            if (key == 'warning') {
-              return this.$message.error('折扣比例需在0-100整数范围内')
-            } else if (key == 'price') {
-              return this.$message.error('购买价格最多可保留两位小数')
-            }
+            return this.$message.error({
+              'warning': '折扣比例需在0-100整数范围内',
+              'price': '购买价格最多可保留两位小数'
+            }[key])
           }
           this.loading = true
           if (this.showExamine) {
