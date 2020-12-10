@@ -88,6 +88,7 @@
               <el-select
                 v-else-if="[
                   'grades',
+                  'coaching_methods',
                   'follow_up_plan',
                   'communication_mode',
                   'sign_up',
@@ -152,7 +153,7 @@
                 @city="selectCity($event,formItem)"
                 @area="selectArea($event,formItem)"/>
               <crm-relative-cell
-                v-else-if="formItem.formType === 'customer'"
+                v-else-if="formItem.formType === 'customer' && crmType != 'contract'"
                 :value="filterArr"
                 relative-type="student"
                 @value-change="fieldValueChange"
@@ -213,7 +214,8 @@
 import {
   QueryAdminGrade,
   QuerySignUpList,
-  QueryCommunicationMode
+  QueryCommunicationMode,
+  QueryCoachingMethods
 } from '@/api/systemManagement/params'
 import {
   crmSettingRecordListAPI
@@ -314,6 +316,12 @@ export default {
         {
           formType: 'communication_mode',
           req: QueryCommunicationMode
+        },
+        {
+          formType: 'coaching_methods',
+          req: QueryCoachingMethods,
+          labelField: 'name',
+          valueField: 'name'
         }
       ],
 
@@ -388,6 +396,7 @@ export default {
         this.form[index].setting = obj.setting
         this.$set(this.fieldList, index, this.fieldList[index])
       }).catch(() => {})
+      console.log(this.fieldList, 'lost')
     },
     /**
      * 位置更改
@@ -470,6 +479,7 @@ export default {
         formType == 'dealStatus' ||
         formType == 'sign_up' ||
         formType == 'grades' ||
+        formType == 'coaching_methods' ||
         formType == 'follow_up_plan' ||
         formType == 'communication_mode' ||
         formType == 'ownerUser'
@@ -567,6 +577,7 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
+          formItem.formType == 'coaching_methods' ||
           formItem.formType == 'follow_up_plan' ||
           formItem.formType == 'communication_mode'
         ) {
@@ -613,6 +624,7 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
+          formItem.formType == 'coaching_methods' ||
           formItem.formType == 'follow_up_plan' ||
           formItem.formType == 'communication_mode' ||
           formItem.formType == 'ownerUser'
@@ -684,8 +696,7 @@ export default {
               return
             }
           }
-        } else if (o.formType == 'customer') {
-          console.log(o, '123')
+        } else if (o.formType == 'customer' && this.crmType != 'contract') {
           if (!this.filterArr.length) {
             this.$message.error('筛选内容不能为空！')
             return
@@ -753,7 +764,7 @@ export default {
             formType: o.formType,
             name: o.fieldName
           }
-        } else if (o.formType == 'customer') {
+        } else if (o.formType == 'customer' && this.crmType != 'contract') {
           obj[o.fieldName] = {
             condition: o.condition,
             value: this.filterArr[0].customerId,

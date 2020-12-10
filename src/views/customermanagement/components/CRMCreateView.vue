@@ -2424,6 +2424,26 @@ export default {
       // return (this.action.type === 'update' && item.authLevel == 3) || this.action.type !== 'update'
     },
 
+    // 课程套餐中处理购买价格保留两位小数
+    validPrice() {
+      for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+        const element = this.crmForm.crmFields[index]
+        if (element.key == 'warning_line' && element.value != '') {
+          const reg = /^([0-9]{1,2}|100)$/
+          if (!reg.test(element.value)) {
+            return { key: 'warning' }
+          }
+        } else if (element.key == 'price' && element.value != '') {
+          const reg = /^(([0-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/
+          const val = reg.test(element.value)
+          if (!val) {
+            return { key: 'price' }
+          }
+        }
+      }
+      return { key: 'pass' }
+    },
+
     // 保存草稿
     saveDraftField() {
       this.debouncedSaveField(false, true)
@@ -2440,6 +2460,12 @@ export default {
           if (this.crmType == 'productSetMeal') {
             if (!valMeal.isPass) {
               return
+            }
+            const { key } = this.validPrice()
+            if (key == 'warning') {
+              return this.$message.error('折扣比例需在0-100整数范围内')
+            } else if (key == 'price') {
+              return this.$message.error('购买价格最多可保留两位小数')
             }
           }
           this.loading = true
