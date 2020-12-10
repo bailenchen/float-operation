@@ -33,6 +33,10 @@
           end-placeholder="结束日期"
           @change="valueChange"/>
 
+        <div v-if="item.type == 'radio'" class="el-input">
+          <el-radio v-model="form[item.prop] " :label="1">参与</el-radio>
+          <el-radio v-model="form[item.prop] " :label="0">不参与</el-radio>
+        </div>
       </el-form-item>
     </el-form>
   </div>
@@ -89,13 +93,15 @@ export default {
         purchaseFrequency: '',
         giveFrequency: '',
         start_life_cycle: '',
-        end_life_cycle: ''
+        end_life_cycle: '',
+        isGive: 1
       },
+      // isGive: '1',
       formField: [
         { label: '套餐' + (this.index + 1), prop: 'detailsName', showblock: false, type: 'text', placeholder: '请输入套餐' },
         { label: '购买课次', prop: 'purchaseFrequency', showblock: false, type: 'text', placeholder: '请输入购买课次' },
         { label: '赠送课次', prop: 'giveFrequency', showblock: false, type: 'text', placeholder: '请输入赠送课次' },
-        { label: '是否参与累计赠送', prop: 'isGive', showblock: false, type: 'text', placeholder: '请选择是否参数累计赠送' },
+        { label: '是否参与累计赠送', prop: 'isGive', showblock: false, type: 'radio' },
         { label: '使用周期', prop: 'term', showblock: false, type: 'date' }
       ],
 
@@ -108,6 +114,9 @@ export default {
         ],
         giveFrequency: [
           { required: false, validator: giveClassTimes, trigger: ['blur', 'change'] }
+        ],
+        isGive: [
+          { required: true, trigger: ['change'] }
         ]
       },
 
@@ -123,6 +132,8 @@ export default {
       this.term = this.item.startLifeCycle && this.item.endLifeCycle ? [this.item.startLifeCycle, this.item.endLifeCycle] : []
       this.form['start_life_cycle'] = this.item.startLifeCycle || ''
       this.form['end_life_cycle'] = this.item.endLifeCycle || ''
+      console.log('this.item.isGive', this.item.isGive)
+      this.form['isGive'] = this.item.isGive == undefined ? 1 : this.item.isGive
     }
   },
   methods: {

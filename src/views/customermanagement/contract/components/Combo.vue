@@ -27,14 +27,14 @@
               />
             </el-select>
           </template>
-          <template v-else-if="item.prop == 'price'">
+          <!-- <template v-else-if="item.prop == 'price'">
             <el-input v-model="scope.row.price" :disabled="isDisabled" type="number" min="0" @change="changePrice(scope.row)"/>
-          </template>
+          </template> -->
           <template v-else-if="item.prop == 'purchaseLesson'">
             <el-input v-model="scope.row.purchaseLesson" :disabled="isDisabled" min="0" type="number" @change="changePurchaseLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
           </template>
           <template v-else-if="item.prop == 'grooveLesson'">
-            <el-input v-model="scope.row.grooveLesson" :disabled="isDisabled || scope.row.normLesson===0" min="0" type="number" @change="changeGrooveLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
+            <el-input v-model="scope.row.grooveLesson" :disabled="grooveLessonDisabled(scope.row)" min="0" type="number" @change="changeGrooveLesson(scope.row, `grooveLesson`,`originalGrooveLesson`)"/>
           </template>
           <template v-else>
             {{ scope.row[item.prop] }}
@@ -121,12 +121,22 @@ export default {
           width: 100
         },
         {
-          label: '购买价格',
+          label: '购买原价',
           prop: 'price',
           width: 100
         },
         {
-          label: '单节课价格',
+          label: '折扣比例',
+          prop: 'discount',
+          width: 100
+        },
+        {
+          label: '折后价格',
+          prop: 'salePrice',
+          width: 100
+        },
+        {
+          label: '均价',
           prop: 'univalence',
           width: 100
         }
@@ -134,11 +144,13 @@ export default {
       maxIndex: 0,
       univalence: 0,
       tableData: null,
-      rowIndex: '-1',
+      // rowIndex: '-1',
+      // hoverOrderArr: [],
       OrderLeve1Arr: [], // 大套餐
       OrderLeve2Arr: [], // 小套餐
-      hoverOrderArr: [],
+      OrderLeve3Arr: [], // 引流课
       purchaseLesson: 0, // 全部套餐标准课次之和
+      purchaseInGive: 0, // 参与累计的购买课次之和
       grooveLesson: 0, // 全部套餐常规赠送课次之和
       totalPrice: 0, // 总价
       maxGive: 0, // 最大赠送课次
@@ -197,9 +209,9 @@ export default {
 
       var parms = {
         customerId: this.giveAction.customerId,
-        buyCount: this.purchaseLesson,
-        coachType: this.giveAction.searchJson.coachType,
-        setMeal: this.setMeal
+        buyCount: this.purchaseInGive,
+        coachType: this.giveAction.searchJson.coachType
+        // setMeal: this.setMeal
       }
       QueryGiveAPI(parms).then(res => {
         if (res.data) {
@@ -233,6 +245,7 @@ export default {
     structureData() {
       console.log('拼接数据')
       this.purchaseLesson = 0
+      this.purchaseInGive = 0
       this.grooveLesson = 0
       this.drainage = false
       this.univalence = this.action.univalence
@@ -241,18 +254,17 @@ export default {
       for (let i = 0; i < this.action.productSetMeal.length; i++) {
         const productSetMeal = this.action.productSetMeal[i]
         console.log('大套餐', productSetMeal)
-        this.setMeal.push({
-          setMealId: productSetMeal.productId,
-          buyCount: productSetMeal.purchaseFrequency
-        })
+
         this.purchaseLesson += Number(productSetMeal.purchaseFrequency)
-        if (productSetMeal.courseType == '引流课') {
-          this.drainage = true
-        }
+
 
         for (let j = 0; j < productSetMeal.details.length; j++) {
           const product = productSetMeal.details[j]
           console.log('小套餐', product)
+          if (product.isGive) {
+            this.purchaseInGive += product.purchaseFrequency
+          }
+
           // grooveLesson += Number(product.purchaseFrequency)
           this.maxIndex++
           var obj = {
@@ -265,8 +277,11 @@ export default {
             grooveLesson: 0, // 常规赠送课次
             planeLesson: 0, // 已排课课次
             completeLesson: 0, // 已完成课次
-            price: productSetMeal.purchaseFrequency * this.action.univalence, // 大套餐价格
-            univalence: this.action.univalence, // 单价
+            // price: productSetMeal.purchaseFrequency * this.action.univalence, // 大套餐价格
+            price: product.purchaseFrequency * this.action.univalence, // 小套餐原价
+            discount: productSetMeal.warningLine,
+            salePrice: product.purchaseFrequency * this.action.univalence * productSetMeal.warningLine / 100,
+            univalence: (product.purchaseFrequency * this.action.univalence * productSetMeal.warningLine / 100 / product.purchaseFrequency).toFixed(2), // 均价
 
             combo_number: productSetMeal.productId, // 大套餐ID
             dataIndex: this.maxIndex, // 标识
@@ -274,6 +289,13 @@ export default {
             originalPurchaseLesson: product.purchaseFrequency, // 小套餐购买课次
             originalGrooveLesson: product.giveFrequency, // 小套餐赠送课次
             mealType: productSetMeal.courseType// 大套餐类型：引流、特价、正价
+          }
+          if (productSetMeal.courseType == '引流课') {
+            this.drainage = true
+            obj.drainage = true
+            obj.price = productSetMeal.price
+            obj.salePrice = productSetMeal.price * productSetMeal.warningLine / 100
+            obj.univalence = (productSetMeal.price * productSetMeal.warningLine / 100 / productSetMeal.purchaseFrequency).toFixed(2) // 均价
           }
           totalPrice += this.action.univalence * obj.purchaseLesson
           arr.push(obj)
@@ -348,9 +370,27 @@ export default {
         return
       }
       this.OrderLeve1Arr = []
+      this.OrderLeve3Arr = []
       const OrderObj = {}
+      const OrderObj2 = {}
       this.tableData.forEach((element, index) => {
         element.rowIndex = index
+        // 引流套餐
+        if (element.drainage) {
+          if (OrderObj2[element.combo_number]) {
+            OrderObj2[element.combo_number].push({
+              index: index,
+              combo_number: element.combo_number
+            })
+          } else {
+            OrderObj2[element.combo_number] = []
+            OrderObj2[element.combo_number].push({
+              index: index,
+              combo_number: element.combo_number
+            })
+          }
+        }
+
         if (OrderObj[element.combo_number]) {
           OrderObj[element.combo_number].push({
             index: index,
@@ -361,7 +401,6 @@ export default {
           OrderObj[element.combo_number].push({
             index: index,
             combo_number: element.combo_number
-
           })
         }
       })
@@ -370,6 +409,12 @@ export default {
       for (const k in OrderObj) {
         if (OrderObj[k].length > 1) {
           this.OrderLeve1Arr.push(OrderObj[k])
+        }
+      }
+
+      for (const k in OrderObj2) {
+        if (OrderObj2[k].length > 1) {
+          this.OrderLeve3Arr.push(OrderObj2[k])
         }
       }
 
@@ -420,7 +465,7 @@ export default {
       // 第0、9列，按照本类的第一行中的数据显示，剩余行为0
       if (
         columnIndex === 0 ||
-        columnIndex === 9
+        columnIndex === 10
       ) {
         for (let i = 0; i < this.OrderLeve1Arr.length; i++) {
           const element = this.OrderLeve1Arr[i]
@@ -443,10 +488,42 @@ export default {
         }
       }
 
+      if (this.OrderLeve3Arr.length) {
+        if (
+          columnIndex === 9 ||
+          columnIndex === 11 ||
+          columnIndex === 12
+        ) {
+          for (let i = 0; i < this.OrderLeve3Arr.length; i++) {
+            const element = this.OrderLeve3Arr[i]
+            for (let j = 0; j < element.length; j++) {
+              const item = element[j]
+              if (rowIndex == item.index) {
+                if (j == 0) {
+                  return {
+                    rowspan: element.length,
+                    colspan: 1
+                  }
+                } else {
+                  return {
+                    rowspan: 0,
+                    colspan: 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+
       if (
         columnIndex === 1 ||
         columnIndex === 3 ||
-        columnIndex === 4
+        columnIndex === 4 ||
+        columnIndex === 9 ||
+        columnIndex === 11 ||
+        columnIndex === 12
       ) {
         for (let i = 0; i < this.OrderLeve2Arr.length; i++) {
           const element = this.OrderLeve2Arr[i]
@@ -480,6 +557,8 @@ export default {
           obj.purchaseLesson = 0
           obj.grooveLesson = 0
           obj.univalence = 0
+          obj.price = 0 // 小套餐原价
+          obj.salePrice = 0
           this.tableData.splice(index + 1, 0, obj)
           break
         }
@@ -495,6 +574,7 @@ export default {
           break
         }
       }
+      this.getOrderNumber()
     },
     // 计算减号显隐
     minusShow(combo_number, productName) {
@@ -534,9 +614,45 @@ export default {
       //   this.calculateUnivalence()
       // }
     },
-
-    // 改变购买课次
     changePurchaseLesson(row) {
+      if (!(/(^[1-9]\d*$)/.test(row.purchaseLesson))) {
+        this.$message.warning('只能输入正整数！')
+        row.purchaseLesson = 0
+      }
+      // 循环小套餐，达到标准课次，常规赠送可以编辑
+      var lesson = 0 // 小套餐购买课次和
+      for (let i = 0; i < this.OrderLeve2Arr.length; i++) {
+        const item = this.OrderLeve2Arr[i]
+        for (let j = 0; j < item.length; j++) {
+          const element = item[j].item
+          if (element.detailsId === row.detailsId) {
+            lesson += Number(element.purchaseLesson)
+          }
+        }
+      }
+      console.log('改小套购买和', lesson)
+
+      for (let i = 0; i < this.tableData.length; i++) {
+        const element = this.tableData[i]
+        console.log('tableData:', element)
+        if (element.detailsId === row.detailsId) {
+          element.disabled = !(lesson === row.originalPurchaseLesson && row.originalGrooveLesson)
+          element.grooveLesson = 0
+
+          this.$set(this.tableData, i, element)
+          // 常规赠送改变了，调用方法
+          this.changeGrooveLesson(row)
+        }
+      }
+
+      // 达到该小套餐标准，且有常规赠送
+    },
+    grooveLessonDisabled(row) {
+      console.log('常规禁用行数据', row)
+      return this.isDisabled || row.disabled || row.normLesson === 0
+    },
+    // 改变购买课次
+    changePurchaseLesson1(row) {
       if (!(/(^[1-9]\d*$)/.test(row.purchaseLesson))) {
         this.$message.warning('只能输入正整数！')
         row.purchaseLesson = 0
@@ -587,7 +703,7 @@ export default {
 
     // 改变赠送课次
     changeGrooveLesson(row) {
-      if (!(/(^[1-9]\d*$)/.test(row.grooveLesson))) {
+      if (!(/(^[0-9]\d*$)/.test(row.grooveLesson))) {
         this.$message.warning('只能输入正整数！')
         row.grooveLesson = 0
       }
