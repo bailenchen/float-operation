@@ -3,9 +3,9 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      main-title="新增退款"
+      main-title="新建合同充值返还"
       title="退款管理"
-      placeholder="请输入学员姓名/退款编号"
+      placeholder="请输入学员姓名/合同充值返还编号"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos">

@@ -119,6 +119,12 @@ import RelativeVisit from '../../components/RelativeVisit' // 回访
 import RelativeInvoice from '../../components/RelativeInvoice' // 发票
 import RelativeCallRecord from '../../components/RelativeCallRecord' // 呼叫记录
 import RelativeAccount from '../../components/RelativeAccount' // 资金账户
+import ContractRecharge from '../../components/ContractRecharge' // 合同充值
+import ReturnRechargeMoney from '../../components/ReturnRechargeMoney' // 合同充值返还
+import ChangeLog from '../../components/ChangeLog' // 校区班主任变更记录
+import RelativeParentRegistration from '../../components/RelativeParentRegistration' // 家长会登记
+import RelativeScoreRegistration from '../../components/RelativeScoreRegistration' // 学生考试成绩登记
+
 
 import CRMCreateView from '../../components/CRMCreateView' // 新建页面
 import detail from '../../mixins/detail'
@@ -143,7 +149,12 @@ export default {
     CRMCreateView,
     RelativeInvoice,
     RelativeCallRecord,
-    RelativeAccount
+    RelativeAccount,
+    ContractRecharge,
+    ReturnRechargeMoney,
+    ChangeLog,
+    RelativeParentRegistration,
+    RelativeScoreRegistration
   },
   mixins: [detail],
   props: {
@@ -240,9 +251,16 @@ export default {
         { label: '详细资料', name: 'CRMEditBaseInfo', permission: 'crm.customer.read' },
         { label: '合同', name: 'RelativeContract', permission: 'crm.contract.index', numField: 'contractCount' },
         { label: '资金账户', name: 'RelativeAccount', permission: 'crm.contract.index' },
+        { label: '合同充值', name: 'ContractRecharge' },
+        { label: '合同充值返还', name: 'ReturnRechargeMoney' },
+        { label: '学员回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
+        { label: '校区班主任变更记录', name: 'ChangeLog' },
+        { label: '家长会登记', name: 'RelativeParentRegistration' },
+        { label: '学生考试成绩登记', name: 'RelativeScoreRegistration' },
+
+
         // { label: '收款', name: 'RelativeReturnMoney' },
         // { label: '退费', name: 'RelativeInvoice' },
-        // { label: '回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
         { label: '呼叫记录', name: 'RelativeCallRecord', numField: 'callRecordCount' },
         { label: '附件', name: 'RelativeFiles', numField: 'fileCount' },
         { label: '操作记录', name: 'RelativeHandle' }
