@@ -170,7 +170,8 @@ export default {
       isNew: 1, // 0:续签 1:新签 2:引流
       comboValue: null,
       priceText: '总金额',
-      giveObj: null // 累计的信息
+      giveObj: null, // 累计的信息
+      completeLesson: 0 // 已完成课次
     }
   },
   computed: {
@@ -412,12 +413,12 @@ export default {
       this.priceText = this.action.attr ? '剩余金额' : '总金额'
       var arr = []
       var arr2 = []
-      var completeLesson = 0
+      var surplusPrice = 0
       var dataIndex = 1
       var dataIndexofPresent = 0
       this.value.products.productList.forEach(item => {
         console.log('aaa--', item)
-        completeLesson += item.finishCourse
+        surplusPrice += item.finishCourse * item.univalence
         if (item.type === 1) {
           var obj = {
             productType: this.getBigMealName(item.mealProductId),
@@ -463,33 +464,29 @@ export default {
           arr2.push(obj)
         }
       })
-      console.log('过滤的', arr)
-      console.log('已完成', completeLesson)
+      this.surplusPriceObj = {
+        issurplus: true,
+        surplusPrice
+      }
+
       this.comboValue = {
         productList: arr
       }
 
       this.present = arr2
-      console.log('通过value拼接present', arr2, this.present)
 
       this.totalPrice = this.value.totalPrice
       this.priceValue = this.totalPrice
 
-      // this.comboAction = {
-      //   type: 'change'
-      // }
       this.type = 'change'
-
-      // 计算剩余金额
-      // completeLesson = 10
-      if (this.action.attr) {
-        this.surplusPrice = this.value.totalPrice - completeLesson * arr[0].univalence
-        this.priceValue = this.surplusPrice
-
-        this.sendData({
-          issurplus: true,
-          surplusPrice: this.surplusPrice
-        })
+    },
+    calculateSurplusPrice() {
+      console.log('计算剩余金额')
+      this.surplusPrice = this.value.totalPrice - this.completeLesson * arr[0].univalence
+      this.priceValue = this.surplusPrice
+      return {
+        issurplus: true,
+        surplusPrice: this.surplusPrice
       }
     },
     structureDataHandle(obj) {
@@ -525,6 +522,10 @@ export default {
         }
       }
 
+      if (this.action.type && this.action.type == 'change') {
+        obj = { ...obj, ...this.surplusPriceObj }
+      }
+
       this.sendData(obj)
     },
     jointpresentData() {
@@ -544,33 +545,8 @@ export default {
           dataIndex: this.presentDataIndex,
           type: 2,
           mealType: this.giveObj.mealType
-
         }
       ]
-
-      // QueryGiveAPI({
-      //   customerId: this.action.customerId,
-      //   buyCount: this.purchaseLesson,
-      //   coachType: this.action.searchJson.coachType
-      // }).then(res => {
-      //   this.present = [
-      //     {
-      //       subject: '',
-      //       presentLesson: 0,
-      //       planeLesson: 0,
-      //       completeLesson: 0,
-      //       univalence: this.univalence,
-      //       dataIndex: this.presentDataIndex,
-      //       type: 2
-      //     }
-      //   ]
-      //   this.surplusPresenter = (res.data.presenterCount - this.comboComponentData.grooveLesson) > 0 ? res.data.presenterCount - this.comboComponentData.grooveLesson : 0
-      //   this.presentRules = {
-      //     coachType: this.action.searchJson.coachType,
-      //     classes: res.data.classes,
-      //     give: res.data.give
-      //   }
-      // }).catch(() => {})
     },
     totalPriceHandle(obj) {
       this.totalPrice = obj.totalPrice
@@ -620,6 +596,7 @@ export default {
 
     // 向父组件发送数据
     sendData(obj) {
+      console.log('sendData中', obj)
       this.productData = {
         index: this.index,
         value: {
@@ -647,6 +624,7 @@ export default {
       if (obj) {
         for (const k in obj) {
           if (!obj.hasOwnProperty(k)) break
+          console.log('key', k)
           this.productData.value[k] = obj[k]
         }
       }
