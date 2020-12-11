@@ -2465,10 +2465,12 @@ export default {
               return
             }
             const { key } = this.validPrice()
-            return this.$message.error({
-              'warning': '折扣比例需在0-100整数范围内',
-              'price': '购买价格最多可保留两位小数'
-            }[key])
+            if (['warning', 'price'].includes(key)) {
+              return this.$message.error({
+                'warning': '折扣比例需在0-100整数范围内',
+                'price': '购买价格最多可保留两位小数'
+              }[key])
+            }
           }
           this.loading = true
           if (this.showExamine) {
