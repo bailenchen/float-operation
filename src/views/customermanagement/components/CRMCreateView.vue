@@ -1416,13 +1416,10 @@ export default {
                   item['value'] = this.action.detail.isNew
                   params['value'] = this.action.detail.isNew
                 }
+
                 if (item.fieldName == 'totalclassTime') {
-                  item['value'] = this.action.detail.buyCount
-                  params['value'] = this.action.detail.buyCount
-                }
-                if (item.fieldName == 'totalclassTime') {
-                  item['value'] = this.action.detail.buyCount
-                  params['value'] = this.action.detail.buyCount
+                  item['value'] = this.action.detail.countCourseSum
+                  params['value'] = this.action.detail.countCourseSum
                 }
                 if (item.fieldName == 'leadsNumber') {
                   item['value'] = res.data.customer.leadsNumber
@@ -1986,7 +1983,7 @@ export default {
             element.value = this.action.information.contract.isNew
           }
           if (element.key == 'totalclassTime') {
-            element.value = this.action.information.contract.buyCount
+            element.value = this.action.information.contract.countCourseSum
           }
           if (element.key == 'leadsNumber') {
             element.value = this.action.information.customer.leadsNumber
@@ -2900,11 +2897,13 @@ export default {
           if (item.type == 2) {
             arr.push({
               'type': 2, // 表示累计赠送
+              'mealProductId': item.mealProductId, // 礼包Id
+              'giftProductId': item.giftProductId, // 套餐Id
               'productId': item.subject, // 科目Id
               'courseSum': item.presentLesson, // 购买课次(type为赠送的话，为累计赠送课次）
-              'price': item.univalence, // 产品单价
-              'subtotal': (item.presentLesson * item.univalence * 100) / 100, // 小计（折扣后价格）
-              'salesPrice': (item.presentLesson * item.univalence * 100) / 100 // 销售价格
+              // 'subtotal': item.price, // 原价
+              // 'salesPrice': item.salePrice, // 折后价格
+              'price': item.univalence // 均价
             })
           } else {
             arr.push({
@@ -2913,9 +2912,9 @@ export default {
               'giftProductId': item.detailsId, // 套餐Id
               'courseSum': item.purchaseLesson, // 购买课次(type为赠送的话，为累计赠送课次）
               'presenterCourseSum': item.grooveLesson, // 赠送课次
-              'price': item.univalence, // 产品单价
-              'subtotal': item.price, // 小计（折扣后价格）
-              'salesPrice': item.price // 销售价格
+              'subtotal': item.price, // 原价
+              'salesPrice': item.salePrice, // 折后价格
+              'price': item.univalence // 均价
             })
           }
         }
