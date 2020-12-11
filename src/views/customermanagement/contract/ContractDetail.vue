@@ -65,6 +65,7 @@
                   <combo
                     :action="comboAction"
                     :value="comboValue"
+                    :give-action="giveAction"
                     :subject-list="subList"
                     :accumulation="accumulation"
                     :is-disabled="isDisabled"
@@ -267,7 +268,14 @@ export default {
       ],
       subjectList: {}, // 科目列表
       totalPrice: 0,
-      information: null // 合同详情
+      information: null, // 合同详情
+      giveAction: {
+        customerId: '',
+        searchJson: {
+          coachType: '',
+          gradeId: ''
+        }
+      }
     }
   },
   computed: {
