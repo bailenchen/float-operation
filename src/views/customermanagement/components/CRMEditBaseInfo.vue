@@ -567,6 +567,13 @@ export default {
         return item.value ? item.value.signUpName : ''
       }
 
+      if (item.name == '是否参与累计赠送') {
+        return {
+          0: '不参与',
+          1: '参与'
+        }[item.value == null ? 0 : item.value]
+      }
+
       return item.value
     },
 
