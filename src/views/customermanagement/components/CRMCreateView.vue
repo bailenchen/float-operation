@@ -1082,30 +1082,30 @@ export default {
       } else if (this.crmType == 'productSetMeal') {
         console.log(item, '123', this.crmForm.crmFields)
         if (item.data.formType === 'coaching_methods') {
-          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-            const element = this.crmForm.crmFields[index]
-            if (element.key == 'grade_id' && element.value && item.value) {
-              const params = {
-                gradeId: element.value,
-                coachType: item.value
-              }
-              // this.productSetMealPrices(params)
-            }
-          }
+          // for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+          //   const element = this.crmForm.crmFields[index]
+          //   if (element.key == 'grade_id' && element.value && item.value) {
+          //     const params = {
+          //       gradeId: element.value,
+          //       coachType: item.value
+          //     }
+          //     this.productSetMealPrices(params)
+          //   }
+          // }
         } else if (item.data.formType === 'grades') {
-          if (item.data.formType === 'grades') {
-            for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-              const element = this.crmForm.crmFields[index]
-              if (element.key == 'coach_type' && element.value && item.value) {
-                const params = {
-                  gradeId: item.value,
-                  coachType: element.value
-                }
-                console.log(this, 'this789')
-                // this.productSetMealPrices(params)
-              }
-            }
-          }
+          // if (item.data.formType === 'grades') {
+          //   for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+          //     const element = this.crmForm.crmFields[index]
+          //     if (element.key == 'coach_type' && element.value && item.value) {
+          //       const params = {
+          //         gradeId: item.value,
+          //         coachType: element.value
+          //       }
+          //       console.log(this, 'this789')
+          //       this.productSetMealPrices(params)
+          //     }
+          //   }
+          // }
         } else if (item.data.formType == 'class_type') {
           // 课程类型为引流课时显示购买课程价格字段，否则不显示
           let isHasPrice = false
