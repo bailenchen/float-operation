@@ -279,7 +279,7 @@ export default {
 
       tempsTabs.push({ label: '合同充值', name: 'ContractRecharge' })
 
-      // tempsTabs.push({ label: '合同充值返还', name: 'ReturnRechargeMoney' })
+      tempsTabs.push({ label: '合同充值返还', name: 'ReturnRechargeMoney' })
 
       // if (this.crm.product && this.crm.product.index) {
       //   tempsTabs.push({ label: this.getTabName('产品', this.tabsNumber.productCount), name: 'RelativeProduct' })

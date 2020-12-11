@@ -13,6 +13,10 @@
         icon="el-icon-plus"
         type="primary"
         @click="createClick">新建合同</el-button>
+      <el-button
+        class="xr-btn--orange rc-head-item"
+        icon="el-icon-plus"
+        type="primary">新建额外赠送合同</el-button>
     </flexbox>
     <el-table
       :data="list"
