@@ -2037,6 +2037,7 @@ export default {
             //   isEdit: true,
             //   meal: this.action.information.contract.mealProducts
             // }
+
             element.value = {
               isEdit: true,
               meal: this.action.information.contract.mealProducts,

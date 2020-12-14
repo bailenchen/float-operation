@@ -421,8 +421,8 @@ export default {
       var dataIndexofPresent = 0
       this.value.products.productList.forEach(item => {
         console.log('aaa--', item)
-        // surplusPrice += item.finishCourse * item.univalence
         expenditure += 1 * item.price
+        // expenditure += item.finishCourse * item.price
         console.log('已消耗金额', expenditure)
         if (item.type === 1) {
           var obj = {
@@ -435,7 +435,7 @@ export default {
             grooveLesson: item.presenterCourseSum, // 常规赠送课次
             planeLesson: item.alreadyCourse, // 已排课课次
             completeLesson: item.finishCourse, // 已完成课次
-            price: item.salesPrice, // 原价
+            price: item.subtotal, // 原价
             discount: this.getAttrOfBigMeal(item.mealProductId, 'warningLine'), // 折扣比例
             salePrice: item.salesPrice, // 折后价格
             univalence: item.price, // 均价
