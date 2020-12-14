@@ -54,6 +54,7 @@
         <div class="alloc-label">分配班主任：</div>
         <xh-user-cell
           :value="classList"
+          :disabled="selectionList.length && selectionList[0].headmasterUserName ? true : false"
           class="handle-item-content"
           placeholder="点击选择"
           @value-change="userChage"/>
@@ -94,7 +95,7 @@ export default {
   data() {
     return {
       list: [
-        { userList: [], performanceRatio: null, newStudentRatio: null }
+        { userList: [], performanceRatio: '', newStudentRatio: '' }
       ],
       rateList: [
         { label: 100, value: 100 },
@@ -107,8 +108,15 @@ export default {
   watch: {
     visible(val) {
       if (this.selectionList.length && val) {
-        this.list = [{ userList: [], performanceRatio: null, newStudentRatio: null }]
-        this.classList = []
+        this.list = [{ userList: [], performanceRatio: '', newStudentRatio: '' }]
+        if (this.selectionList[0].headmasterUserName) {
+          this.classList = [{
+            userId: this.selectionList[0].headmasterUserId,
+            realname: this.selectionList[0].headmasterUserName
+          }]
+        } else {
+          this.classList = []
+        }
         this.queryAlloc()
       }
     }
@@ -174,24 +182,39 @@ export default {
      */
     handleConfirm() {
       const lists = []
+      let perNum = 0
+      let newNum = 0
+      const memList = []
       const newList = objDeepCopy(this.list)
       for (let index = 0; index < newList.length; index++) {
         const element = newList[index]
         if (!element.userList.length) {
           return this.$message.error('请选择成员')
         }
-        if (!(element.performanceRatio == 0 || element.performanceRatio == 100 || element.performanceRatio == 50)) {
+        if (element.performanceRatio === '') {
           return this.$message.error('请选择业绩比例')
         }
-        if (!(element.newStudentRatio == 0 || element.newStudentRatio == 100 || element.newStudentRatio == 50)) {
+        if (element.newStudentRatio === '') {
           return this.$message.error('请选择新签学员数比例')
         }
+        perNum += Number(element.performanceRatio)
+        newNum += Number(element.newStudentRatio)
         lists.push({
           contractAllotId: element.contractAllotId,
           memberUserId: element.userList[0].userId,
           performanceRatio: element.performanceRatio,
           newStudentRatio: element.newStudentRatio
         })
+        memList.push(element.userList[0].userId)
+      }
+
+      const mlength = Array.from(new Set(memList))
+      if (mlength.length !== memList.length) {
+        return this.$message.error('成员不能重复')
+      }
+
+      if (perNum > 100 || newNum > 100) {
+        return this.$message.error('所有业绩比例之和、新签学员数比例之和均不得超过100%')
       }
       const params = {
         contractId: this.selectionList[0].contractId,

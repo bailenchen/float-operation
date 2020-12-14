@@ -1347,7 +1347,7 @@ export default {
           return false
         }
       } else if (type == 'mark_alloc') {
-        if (this.selectionList.length == 1) {
+        if (this.selectionList.length == 1 && this.selectionList[0].isNew != 0 && this.selectionList[0].channel != '特殊关系') {
           return this.crm[this.crmType].distributionOfEarnings
         } else {
           return false
