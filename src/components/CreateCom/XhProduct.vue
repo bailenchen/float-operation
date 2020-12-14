@@ -169,9 +169,10 @@ export default {
       renew: 1, // 续签或新签
       isNew: 1, // 0:续签 1:新签 2:引流
       comboValue: null,
-      priceText: '总金额',
+      priceText: '最终价格',
       giveObj: null, // 累计的信息
-      completeLesson: 0 // 已完成课次
+      completeLesson: 0, // 已完成课次
+      surplusPriceObj: null
     }
   },
   computed: {
@@ -215,7 +216,6 @@ export default {
         if (val.customerId) {
           queryIsNewByCustomerIdAPI({ customerId: val.customerId }).then(res => {
             this.renew = res.data
-            // this.isNew = res.data
           }).catch(() => {})
         }
         // 置空
@@ -240,9 +240,9 @@ export default {
   },
   created() {
     console.log('传入的value1', this.value)
-    if (this.action.type && this.action.type == 'change') {
-      this.priceText = '最终价格'
-    }
+    // if (this.action.type && this.action.type == 'change') {
+    //   this.priceText = '最终价格'
+    // }
     // 获取科目
     QueryAdminSubject().then(res => {
       this.subjectList = res.data
@@ -261,7 +261,6 @@ export default {
      * 刷新数据
      */
     refreshProductList() {
-      console.log('刷新数据111')
       // this.productList = this.dataValue.product || []
       // this.totalPrice = this.dataValue.totalPrice || 0
       // this.discountRate = this.dataValue.discountRate || ''
@@ -410,15 +409,17 @@ export default {
       return val
     },
     structurePresentByValue() {
-      this.priceText = this.action.attr ? '剩余金额' : '总金额'
+      this.priceText = this.action.type && this.action.type == 'old-change' ? '剩余金额' : '最终价格'
       var arr = []
       var arr2 = []
-      var surplusPrice = 0
+      var expenditure = 0 // 已花费金额
       var dataIndex = 1
       var dataIndexofPresent = 0
       this.value.products.productList.forEach(item => {
         console.log('aaa--', item)
-        surplusPrice += item.finishCourse * item.univalence
+        // surplusPrice += item.finishCourse * item.univalence
+        expenditure += 1 * item.price
+        console.log('已消耗金额', expenditure)
         if (item.type === 1) {
           var obj = {
             productType: this.getBigMealName(item.mealProductId),
@@ -464,35 +465,31 @@ export default {
           arr2.push(obj)
         }
       })
-      this.surplusPriceObj = {
-        issurplus: true,
-        surplusPrice
-      }
-
-      this.comboValue = {
-        productList: arr
-      }
 
       this.present = arr2
 
       this.totalPrice = this.value.totalPrice
       this.priceValue = this.totalPrice
 
+      // 合同变更-原合同
+      if (this.action.type && this.action.type == 'old-change') {
+        console.log('旧合同')
+        // this.priceText = '剩余金额'
+        this.surplusPriceObj = {
+          issurplus: true,
+          surplusPrice: (this.value.totalPrice * 100 - expenditure * 100) / 100
+        }
+      }
+
+
       this.type = 'change'
-    },
-    calculateSurplusPrice() {
-      console.log('计算剩余金额')
-      this.surplusPrice = this.value.totalPrice - this.completeLesson * arr[0].univalence
-      this.priceValue = this.surplusPrice
-      return {
-        issurplus: true,
-        surplusPrice: this.surplusPrice
+
+      this.comboValue = {
+        productList: arr
       }
     },
+
     structureDataHandle(obj) {
-      // if (Object.keys(this.value).length) {
-      //   return
-      // }
       console.log('combo组件发送的数据1', obj)
 
       this.comboComponentData = obj
@@ -511,22 +508,32 @@ export default {
         this.jointpresentData()
       }
 
+      // var emitObj = {}
+
       if (this.present) {
         var lesson = 0
         this.present.forEach(item => {
           lesson += Number(item.presentLesson)
         })
-        var obj = {
+        var emitObj = {
           product: [...this.comboComponentData.tableData, ...this.present],
           totalclassTime: this.comboComponentData.totalclassTime + lesson
         }
       }
 
-      if (this.action.type && this.action.type == 'change') {
-        obj = { ...obj, ...this.surplusPriceObj }
+      // if (this.action.type && this.action.type == 'change') {
+      //   obj = { ...obj, ...this.surplusPriceObj }
+      // }
+      if (this.action.type && this.action.type == 'old-change') {
+        emitObj = { ...emitObj, ...this.surplusPriceObj }
+        this.priceValue = this.surplusPriceObj.surplusPrice
       }
 
-      this.sendData(obj)
+      if (this.action.type && this.action.type == 'change') {
+        emitObj.refundMonry = this.totalPrice - this.action.surplusPrice
+      }
+
+      this.sendData(emitObj)
     },
     jointpresentData() {
       if (!this.action.customerId) {
@@ -552,7 +559,6 @@ export default {
       this.totalPrice = obj.totalPrice
       this.priceValue = this.totalPrice
       if (this.action.attr && this.action.attr == 'change') {
-        console.log('改变了大套餐价格')
         this.finalPrice = this.totalPrice - this.action.surplusPrice
         this.priceValue = this.finalPrice
       }
@@ -571,7 +577,6 @@ export default {
         // 清空present
         this.jointpresentData()
       } else {
-        console.log('周这里')
         var lessons = 0 // 累计赠送课次和
         var arr = this.present.filter(item => {
           if (item.presentLesson > 0) {
@@ -586,12 +591,6 @@ export default {
 
       console.log('asa', emitObj)
       this.sendData(emitObj)
-      // this.sendData({
-      //   surplusPrice: this.action.surplusPrice,
-      //   buyCount: obj.buyCount,
-      //   totalclassTime: obj.totalclassTime + lessons, // 套餐总课次(购买+赠送)+累计赠送
-      //   product: [...this.comboComponentData.tableData, ...arr]
-      // })
     },
 
     // 向父组件发送数据

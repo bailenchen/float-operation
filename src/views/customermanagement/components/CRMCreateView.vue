@@ -55,7 +55,7 @@
                     :receivables-id="editId"
                     :info-params="getInfoParams(item)"
                     :use-delete="item.useDelete"
-                    :action="typeToAction"
+                    :action="oldActionCombo"
                     @value-change="fieldValueChange" />
                 </el-form-item>
               </el-form>
@@ -401,6 +401,14 @@ export default {
           gradeId: ''
         },
         customerId: ''
+      },
+      oldActionCombo: {
+        searchJson: {
+          coachType: '',
+          gradeId: ''
+        },
+        customerId: '',
+        type: 'old-change'
       },
       actionPresent: {
         countCourseSum: ''
@@ -2037,6 +2045,33 @@ export default {
           }
         }
         // 额外合同编辑
+
+        // 合同变更
+        if (this.action.attr && this.action.attr == 'change') {
+          if (element.key == 'customer_id') {
+            element.value = [
+              {
+                customerId: this.action.detail.customerId,
+                customerName: this.action.detail.customerName
+                // customerType: this.action.detail.customerType
+              }
+            ]
+            element.disabled = true
+            this.actionCombo.customerId = this.action.detail.customerId
+          }
+          if (element.key == 'leadsNumber') {
+            element.value = this.action.detail.leadsNumber
+          }
+          if (element.key == 'dept_id') {
+            element.value = this.action.detail.deptIdName
+          }
+          if (element.key == 'headmasterUserName') {
+            element.value = this.action.detail.headmasterUserIdName
+          }
+          if (element.key == 'source') {
+            element.value = this.action.detail.channelIdName
+          }
+        }
       }
 
       // hasPrice为true显示购买价格字段
@@ -2724,8 +2759,8 @@ export default {
       }
 
       console.log('请求参数: ', params)
-      // this.loading = false
-      // return
+      this.loading = false
+      return
       crmRequest(params)
         .then(res => {
           this.loading = false

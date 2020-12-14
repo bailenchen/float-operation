@@ -18,7 +18,7 @@
         align="center">
         <template slot-scope="scope">
           <template v-if="item.prop == 'subject'">
-            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择">
+            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择" @change="changeSubject(scope.row)">
               <el-option
                 v-for="subjectItem in subjectList"
                 :key="subjectItem.value"
@@ -332,6 +332,7 @@ export default {
     // 计算单价
     // calculateUnivalence(row, lesson, isAccumulationChange = false) {
     calculateUnivalence(options) {
+      console.log('调用calculateUnivalence')
       // 购买课程改变不会影响单价
       // 循环该小套餐，拿到购买课次、常规赠送、累计赠送和折后价格
       // 是否加入累计课次
@@ -346,6 +347,7 @@ export default {
           // 根据累计获取小套餐id,，计算该小套餐均价
           if (element.detailsId === this.accumulation.data[0].giftProductId) {
             var lesson = this.accumulation.lesson + Number(element.purchaseLesson) + Number(element.grooveLesson)
+            console.log('小套餐总课次', lesson)
             element.univalence = (element.salePrice / lesson).toFixed(2)
             avgPrice = element.univalence
           }
@@ -356,7 +358,7 @@ export default {
           console.log('计算均价', options.row)
           // 修改均价
           if (element.detailsId === options.row.detailsId) {
-            element.univalence = (element.salePrice / options.lesson).toFixed(2)
+            element.univalence = options.lesson ? (element.salePrice / options.lesson).toFixed(2) : 0
           }
           // 修改参与累计赠送的小套餐的价格
           if (element.detailsId === this.giveObj.giftProductId) {
@@ -735,6 +737,12 @@ export default {
           const element = item[j].item
           if (element.detailsId === row.detailsId) {
             lesson += Number(element.purchaseLesson)
+            var _lesson = Number(element.purchaseLesson)
+            if (lesson > element.comboNormLesson) {
+              element.purchaseLesson = 0
+              lesson -= _lesson
+              this.$message.warning('购买课次不能大于套餐标准课次')
+            }
           }
         }
       }
@@ -865,6 +873,12 @@ export default {
       // this.calculateUnivalence(row, purchaseLesson + giveLesson)
       var lesson = purchaseLesson + giveLesson
       this.calculateUnivalence({ row, lesson })
+    },
+
+    // 改变科目
+    changeSubject(row) {
+      console.log('row信息', row)
+      // if(giveObj.giftProductId===row.)
     }
   }
 }

@@ -355,7 +355,7 @@ export default {
   },
   computed: {
     // ...mapState('user', ['crm']),
-    ...mapGetters(['crm']),
+    ...mapGetters(['crm', 'userInfo']),
     iconClass() {
       return this.showScene ? 'arrow-up' : 'arrow-down'
     },
@@ -669,12 +669,17 @@ export default {
         this.markAllocShow = true
       } else if (type == 'update_contract') {
         this.isUpdate = true
+        console.log('这是什么？')
 
         this.createActionInfo = {
           type: 'save',
           attr: 'change',
           id: 7,
-          detail: this.selectionList[0]
+          detail: this.selectionList[0],
+          userInfo: {
+            userId: this.userInfo.userId,
+            realname: this.userInfo.realname
+          }
         }
       }
     },

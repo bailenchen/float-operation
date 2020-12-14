@@ -38,9 +38,9 @@
           :precision="0"
           :min="0"
           :controls="false" />
-        <span>节课，</span>
-        <span>不参与累计赠送套餐</span>
-        <crm-relative-cell
+        <span>节课</span>
+        <!-- <span>不参与累计赠送套餐</span> -->
+        <!-- <crm-relative-cell
           :value="item.relativeList"
           :radio="false"
           relative-type="productSetMeal"
@@ -49,7 +49,7 @@
         />
         <i
           class="el-icon-remove delete-icon"
-          @click="deleteItem(item, index)"/>
+          @click="deleteItem(item, index)"/> -->
       </div>
       <el-button
         type="text"
