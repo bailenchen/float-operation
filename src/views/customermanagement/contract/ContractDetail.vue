@@ -446,32 +446,39 @@ export default {
         // 大套餐
         const mealKeyVal = {}
         res.data.contract.mealProducts.forEach(item => {
-          mealKeyVal[item.productId] = item.name
+          mealKeyVal[item.productId] = item
         })
         // 小套餐
         const giftKeyVal = {}
         res.data.contract.giftProducts.forEach(item => {
-          giftKeyVal[item.detailsId] = item.detailsName
+          giftKeyVal[item.detailsId] = item
         })
+
+        this.totalPrice = res.data.contract.unreceivedMoney
 
         const mealList = []
         const giftList = []
         productList.forEach(item => {
           if (item.type == 1) {
             var obj = {
-              productType: mealKeyVal[item.mealProductId],
-              productName: giftKeyVal[item.giftProductId],
+              productType: mealKeyVal[item.mealProductId].name,
+              productName: giftKeyVal[item.giftProductId].detailsName,
               subject: item.productId,
-              comboNormLesson: 0, // 计算出来
-              normLesson: 0, // 计算出来
+              comboNormLesson: giftKeyVal[item.giftProductId].purchaseFrequency, // 套餐标准课次
+              normLesson: giftKeyVal[item.giftProductId].giveFrequency, // 套餐标准赠送课次
               purchaseLesson: item.courseSum, // 购买课次
               grooveLesson: 0, // 常规赠送课次
-              planeLesson: item.alreadyCourse, // 已排课课次
-              completeLesson: item.finishCourse, // 已完成课次
-              price: item.salesPrice, // 大套餐价格
+              planeLesson: 0, // 已排课课次
+              completeLesson: 0, // 已完成课次
+              price: item.subtotal, // 大套餐价格
               univalence: item.price, // 单价
+              salePrice: item.salesPrice,
+
+              discount: mealKeyVal[item.mealProductId].warningLine,
+
               combo_number: item.mealProductId
             }
+
             mealList.push(obj)
           } else if (item.type == 2) {
             giftList.push(item)
@@ -484,7 +491,6 @@ export default {
 
         this.list[0].data = giftList.map(item => {
           item.subjectName = this.subjectList[item.productId]
-          this.totalPrice += parseFloat(item.price)
           return item
         })
         this.list[1].data = res.data.contract.allotList
