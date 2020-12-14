@@ -56,6 +56,7 @@
                 v-for="(item, index) in subjectList"
                 :key="index"
                 :label="item.subjectName"
+                :disabled="item.disabled"
                 :value="item.id"
               />
             </el-select>
@@ -120,6 +121,7 @@ import Combo from '@/views/customermanagement/contract/components/Combo'
 import { crmProductIndex } from '@/api/customermanagement/product'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
 import { queryIsNewByCustomerIdAPI } from '@/api/customermanagement/contract'
+import { objDeepCopy } from '../../utils'
 
 export default {
   name: 'XhProduct', // 关联产品
@@ -149,7 +151,8 @@ export default {
       selectedData: { productSetMeal: [] },
       comboAction: null,
       univalence: 0, // 单价
-      subjectList: null, // 科目列表
+      subjectListOfCombo: null, // 科目列表
+      subjectList: null,
       // maxIndex: 0,
       selectComobo: null, // 套餐数组
       present: null, // 赠送table相关数据
@@ -246,6 +249,7 @@ export default {
     // 获取科目
     QueryAdminSubject().then(res => {
       this.subjectList = res.data
+      this.subjectListOfCombo = objDeepCopy(res.data)
       if (this.value.products) {
         this.structurePresentByValue()
       } else if (this.value.isEdit) {
@@ -311,7 +315,7 @@ export default {
 
       this.comboAction = {
         univalence: this.univalence,
-        subjectList: this.subjectList,
+        // subjectList: this.subjectList,
         originalPresenter: this.originalPresenter,
         productSetMeal: arr
       }
@@ -339,7 +343,7 @@ export default {
 
       this.comboAction = {
         univalence: this.univalence,
-        subjectList: this.subjectList,
+        // subjectList: this.subjectList,
         productSetMeal: arr
       }
     },
@@ -503,6 +507,26 @@ export default {
       this.presentRules = obj.presentRules
       this.giveObj = obj.giveObj
 
+      // 限制累计的科目
+      if (obj.giveObj.disableds) {
+        console.log('限制累计的科目')
+        // var arr = this.subjectList
+        for (let index = 0; index < this.subjectList.length; index++) {
+          const element = this.subjectList[index]
+          var res = obj.giveObj.disableds.includes(element.id)
+          console.log('结果1', res)
+          element.disabled = !!res
+          // if (res) {
+          //   element.disabled = true
+          //   this.$set(this.subjectList, index, element)
+          // } else {
+          //   element.disabled = false
+          // }
+          this.$set(this.subjectList, index, element)
+        }
+        // this.subjectList = arr
+      }
+
       if (obj.tableData.length > 0 && !Object.keys(this.value).length) {
         this.present = null
         this.jointpresentData()
@@ -521,9 +545,6 @@ export default {
         }
       }
 
-      // if (this.action.type && this.action.type == 'change') {
-      //   obj = { ...obj, ...this.surplusPriceObj }
-      // }
       if (this.action.type && this.action.type == 'old-change') {
         emitObj = { ...emitObj, ...this.surplusPriceObj }
         this.priceValue = this.surplusPriceObj.surplusPrice

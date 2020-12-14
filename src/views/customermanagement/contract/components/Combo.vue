@@ -54,6 +54,7 @@
 
 <script>
 import { QueryGiveAPI } from '@/api/customermanagement/contract'
+import { objDeepCopy } from '@/utils'
 
 export default {
   props: {
@@ -878,7 +879,28 @@ export default {
     // 改变科目
     changeSubject(row) {
       console.log('row信息', row)
-      // if(giveObj.giftProductId===row.)
+      var _arr = objDeepCopy(this.subjectList)
+      var arr = []
+      for (let i = 0; i < this.tableData.length; i++) {
+        const element = this.tableData[i]
+        if (this.giveObj.giftProductId === row.detailsId && element.subject != '') {
+          for (let j = 0; j < _arr.length; j++) {
+            const item = _arr[j]
+            // console.log('相等', element, item)
+            if (element.subject == item.id) {
+              _arr.splice(j, 1)
+              j--
+            }
+          }
+        }
+      }
+      console.log('剩余的科目', _arr)
+      for (let index = 0; index < _arr.length; index++) {
+        const element = _arr[index]
+        arr.push(element.id)
+      }
+      this.giveObj.disableds = arr
+      this.sendData(this.giveObj)
     }
   }
 }
