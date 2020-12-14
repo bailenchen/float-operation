@@ -2037,6 +2037,7 @@ export default {
             //   isEdit: true,
             //   meal: this.action.information.contract.mealProducts
             // }
+
             element.value = {
               isEdit: true,
               meal: this.action.information.contract.mealProducts,
@@ -2769,8 +2770,8 @@ export default {
       }
 
       console.log('请求参数: ', params)
-      this.loading = false
-      return
+      // this.loading = false
+      // return
       crmRequest(params)
         .then(res => {
           this.loading = false

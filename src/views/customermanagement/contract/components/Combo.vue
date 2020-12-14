@@ -54,6 +54,7 @@
 
 <script>
 import { QueryGiveAPI } from '@/api/customermanagement/contract'
+import { objDeepCopy } from '@/utils'
 
 export default {
   props: {
@@ -156,7 +157,8 @@ export default {
       maxGive: 0, // 最大赠送课次
       surplusGive: 0, // 剩余可赠送课次，用于限制累计赠送课次
       drainage: false,
-      giveObj: null // 累计的信息，用于确定累计赠送的大套餐和小套餐ID
+      giveObj: null, // 累计的信息，用于确定累计赠送的大套餐和小套餐ID
+      subjectsOfDidabled: []
     }
   },
   watch: {
@@ -183,6 +185,13 @@ export default {
       handler(val) {
         console.log('累计赠送', val)
         this.calculateUnivalence({ isAccumulationChange: true })
+      }
+    },
+    subjectList: {
+      handler(val) {
+        val.forEach(item => {
+          this.subjectsOfDidabled.push(item.id)
+        })
       }
     }
   },
@@ -223,6 +232,7 @@ export default {
         giftProductId: arr[arr.length - 1].detailsId, // 小套餐Id
         mealType: arr[arr.length - 1].mealType // 课程类型
       }
+      this.restrictSubject()
     },
     getMaxGive() {
       console.log('获取最大可赠送课次')
@@ -235,7 +245,6 @@ export default {
       QueryGiveAPI(parms).then(res => {
         if (res.data) {
           this.maxGive = res.data.give
-          // 重置maxGive时也需要重置surplusGive
           this.surplusGive = this.maxGive
           this.presentRules = {
             coachType: this.giveAction.searchJson.coachType,
@@ -248,17 +257,9 @@ export default {
           this.surplusGive = this.maxGive
           this.presentRules = ''
         }
-
         console.log('最大次数', this.maxGive)
         this.sendData()
       }).catch(() => {
-        // console.log('模拟数据，异常了继续向下走')
-        // this.presentRules = {
-        //   coachType: '一对一',
-        //   classes: 10,
-        //   give: 4
-        // }
-        // this.sendData()
       })
     },
     // 拼接表格数据
@@ -878,7 +879,30 @@ export default {
     // 改变科目
     changeSubject(row) {
       console.log('row信息', row)
-      // if(giveObj.giftProductId===row.)
+      if (this.giveObj.giftProductId != row.detailsId) {
+        return
+      }
+      this.restrictSubject()
+      this.sendData(this.giveObj)
+    },
+
+    // 限制科目
+    restrictSubject() {
+      var _arr = objDeepCopy(this.subjectsOfDidabled)
+      for (let i = 0; i < this.tableData.length; i++) {
+        const element = this.tableData[i]
+        if (this.giveObj.giftProductId === element.detailsId && element.subject != '') {
+          for (let j = 0; j < _arr.length; j++) {
+            const item = _arr[j]
+            if (element.subject == item) {
+              _arr.splice(j, 1)
+              j--
+            }
+          }
+        }
+      }
+      console.log('剩余的科目', _arr)
+      this.giveObj.disableds = _arr
     }
   }
 }
