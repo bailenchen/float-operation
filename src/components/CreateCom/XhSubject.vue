@@ -24,7 +24,9 @@
         <el-input
           v-if="item.type == 'ctx'"
           v-model="bitem.form[item.prop]"
-          type="textarea"/>
+          type="textarea"
+          maxlength="800"
+          show-word-limit/>
 
         <el-select v-if="item.type == 'sel'" v-model="bitem.form[item.prop]" style="width: 100%;" placeholder="请选择">
           <el-option
@@ -43,12 +45,14 @@
     <el-button
       style="margin-left:10px;"
       type="text"
-      @click="addItem">+添加套餐</el-button>
+      @click="addItem">+添加内容</el-button>
 
   </div>
 </template>
 
 <script>
+import { QueryAdminSubject } from '@/api/systemManagement/params'
+
 export default {
   name: 'XhSubject',
   props: {
@@ -74,9 +78,7 @@ export default {
           giveFrequency: ''
         }
       }],
-      options: [
-        { label: '数学', value: '数学' }
-      ],
+      options: [],
 
       rules: {
         detailsName: [
@@ -92,6 +94,7 @@ export default {
     }
   },
   created() {
+    this.getSubjects()
     // if (this.action == 'update') {
     //   this.form.detailsName = this.item.detailsName
     //   this.form.purchaseFrequency = this.item.purchaseFrequency
@@ -104,6 +107,17 @@ export default {
     // }
   },
   methods: {
+    getSubjects() {
+      QueryAdminSubject().then(res => {
+        this.options = res.data.map(item => {
+          item['label'] = item.subjectName
+          item['value'] = item.id
+          return item
+        })
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     // 添加科目
     addItem() {
       this.formsList.push({
