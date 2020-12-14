@@ -9,6 +9,7 @@
 export { default as XhInput } from './XhInput'
 export { default as XhTerm } from './XhTerm'
 export { default as XhSetMeal } from './XhSetMeal'
+export { default as XhSubject } from './XhSubject'
 export { default as XhTextarea } from './XhTextarea'
 export { default as XhSelect } from './XhSelect'
 export { default as XhMultipleSelect } from './XhMultipleSelect'

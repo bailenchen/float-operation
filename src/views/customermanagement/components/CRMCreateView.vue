@@ -131,6 +131,9 @@
                   @click="addItem">+添加套餐</el-button>
               </div>
 
+              <!-- 科目 -->
+              <!-- <xh-subject v-if="crmType == 'receivables'" ref="subject"/> -->
+
             </div>
           </flexbox>
         </create-sections>
@@ -225,6 +228,7 @@ import {
   XhMultipleSelect,
   XhTerm,
   XhSetMeal,
+  XhSubject,
   XhDate,
   XhDateTime,
   XhUserCell,
@@ -255,6 +259,7 @@ export default {
     XhMultipleSelect,
     XhTerm,
     XhSetMeal,
+    XhSubject,
     XhDate,
     XhDateTime,
     XhUserCell,
@@ -2487,10 +2492,15 @@ export default {
     saveField(saveAndCreate, isDraft = false) {
       this.saveAndCreate = saveAndCreate
       console.log('保存')
-      // return
       this.$refs.crmForm.validate((valid, obj) => {
         const valMeal = this.crmType == 'productSetMeal' ? this.vv() : '' // 处理课程套餐验证的
         // valMeal.collectionData
+        // if (this.crmType == 'receivables') { // 临时放置学科验证
+        //   const validSubject = this.$refs.subject.validAllSubjects()
+        //   if (!validSubject) {
+        //     return
+        //   }
+        // }
         if (valid) {
           if (this.crmType == 'productSetMeal') {
             if (!valMeal.isPass) {
