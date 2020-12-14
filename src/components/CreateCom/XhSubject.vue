@@ -14,20 +14,19 @@
         :class="{ 'crm-create-block-item': item.showblock, 'crm-create-item': !item.showblock }"
         :style="{'padding-left': getPaddingLeft(item, index), 'padding-right': getPaddingRight(item, index)}"
         :key="index"
-        :label="item.label"
+        :label="item.type == 'sel' ? item.label + (Number(bindex) + 1) : item.label"
         :prop="item.prop">
+
         <el-input
           v-if="item.type == 'text'"
-          v-model="form[item.prop]"
-          @change="updateVal($event,item.prop)"/>
+          v-model="bitem.form[item.prop]"/>
 
         <el-input
           v-if="item.type == 'ctx'"
-          v-model="form[item.prop]"
-          type="textarea"
-          @change="updateVal($event,item.prop)"/>
+          v-model="bitem.form[item.prop]"
+          type="textarea"/>
 
-        <el-select v-if="item.type == 'sel'" v-model="form[item.prop]" style="width: 100%;" placeholder="请选择">
+        <el-select v-if="item.type == 'sel'" v-model="bitem.form[item.prop]" style="width: 100%;" placeholder="请选择">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -39,12 +38,13 @@
       <i
         v-if="formsList.length > 1"
         class="el-icon-remove"
-        @click="deleteItem(bitem, bindex)"/>
+        @click="deleteItem(bindex)"/>
     </el-form>
     <el-button
       style="margin-left:10px;"
       type="text"
       @click="addItem">+添加套餐</el-button>
+
   </div>
 </template>
 
@@ -52,7 +52,6 @@
 export default {
   name: 'XhSubject',
   props: {
-    index: Number,
     action: String,
     item: {
       type: Object,
@@ -62,119 +61,95 @@ export default {
     }
   },
   data() {
-    const classTimes = (rule, value, callback) => {
-      this.form.purchaseFrequency = String(value).replace(/[^0-9]/g, '')
-      if (value === '') {
-        callback(new Error('购买课次不能为空'))
-      } else {
-        callback()
-      }
-    }
-    const giveClassTimes = (rule, value, callback) => {
-      this.form.giveFrequency = String(value).replace(/[^0-9]/g, '')
-      callback()
-    }
     return {
       formsList: [{
         formField: [
-          { label: '科目' + (this.index + 1), prop: 'detailsName', showblock: false, type: 'sel' },
+          { label: '科目', prop: 'detailsName', showblock: false, type: 'sel' },
           { label: '成绩', prop: 'purchaseFrequency', showblock: false, type: 'text' },
           { label: '备注', prop: 'giveFrequency', showblock: false, type: 'ctx' }
-        ]
+        ],
+        form: {
+          detailsName: '',
+          purchaseFrequency: '',
+          giveFrequency: ''
+        }
       }],
-      form: {
-        detailsName: '',
-        purchaseFrequency: '',
-        giveFrequency: ''
-      },
-
-      options: [],
+      options: [
+        { label: '数学', value: '数学' }
+      ],
 
       rules: {
         detailsName: [
           { required: true, message: '套餐不能为空', trigger: ['blur', 'change'] }
         ],
         purchaseFrequency: [
-          { required: true, validator: classTimes, trigger: ['change'] }
+          { required: true, message: '成绩不能为空', trigger: ['change'] }
         ],
         giveFrequency: [
-          { required: false, validator: giveClassTimes, trigger: ['blur', 'change'] }
+          { required: false, trigger: ['blur', 'change'] }
         ]
       }
     }
   },
   created() {
-    if (this.action == 'update') {
-      this.form.detailsName = this.item.detailsName
-      this.form.purchaseFrequency = this.item.purchaseFrequency
-      this.form.giveFrequency = this.item.giveFrequency
-      this.form.detailsId = this.item.detailsId
-      this.term = this.item.startLifeCycle && this.item.endLifeCycle ? [this.item.startLifeCycle, this.item.endLifeCycle] : []
-      this.form['start_life_cycle'] = this.item.startLifeCycle || ''
-      this.form['end_life_cycle'] = this.item.endLifeCycle || ''
-      console.log('this.item.isGive', this.item.isGive)
-    }
+    // if (this.action == 'update') {
+    //   this.form.detailsName = this.item.detailsName
+    //   this.form.purchaseFrequency = this.item.purchaseFrequency
+    //   this.form.giveFrequency = this.item.giveFrequency
+    //   this.form.detailsId = this.item.detailsId
+    //   this.term = this.item.startLifeCycle && this.item.endLifeCycle ? [this.item.startLifeCycle, this.item.endLifeCycle] : []
+    //   this.form['start_life_cycle'] = this.item.startLifeCycle || ''
+    //   this.form['end_life_cycle'] = this.item.endLifeCycle || ''
+    //   console.log('this.item.isGive', this.item.isGive)
+    // }
   },
   methods: {
     // 添加科目
     addItem() {
       this.formsList.push({
         formField: [
-          { label: '科目' + (this.index + 1), prop: 'detailsName', showblock: false, type: 'sel' },
+          { label: '科目', prop: 'detailsName', showblock: false, type: 'sel' },
           { label: '成绩', prop: 'purchaseFrequency', showblock: false, type: 'text' },
           { label: '备注', prop: 'giveFrequency', showblock: false, type: 'ctx' }
-        ]
+        ],
+        form: {
+          detailsName: '',
+          purchaseFrequency: '',
+          giveFrequency: ''
+        }
       })
     },
 
     // 删除科目
-    deleteItem() {
-      console.log('object')
+    deleteItem(index) {
+      this.formsList.splice(index, 1)
     },
 
-    /**
-     * 验证
-     */
-    parentValid() {
-      let result = null
-      this.$refs.ruleForm.validate(item => {
-        if (item) {
-          result = true
-          return true
-        } else {
-          result = false
-          return false
-        }
+    // 外部获取内部数据
+    getFormList() {
+      const list = []
+      this.formsList.forEach(({ form }) => {
+        list.push(form)
       })
-      return result
+      return list
     },
 
-    // 删除时校正数据
-    refreshData(data) {
-      this.form = data
-    },
-
-    /**
-     * 父组件得到数据
-     */
-    getForm() {
-      return this.form
-    },
-
-    updateVal(data, type) {
-      this.$emit('value-update', { value: data, type: type, index: this.index })
-    },
-
-    valueChange(data) {
-      if (data.length) {
-        this.form['start_life_cycle'] = data[0]
-        this.form['end_life_cycle'] = data[1]
+    // 验证所有的科目
+    validAllSubjects() {
+      const allData = []
+      this.$refs.ruleForm.forEach(item => {
+        item.validate(valid => {
+          allData.push(valid)
+        })
+      })
+      if (allData.includes(false)) {
+        return false
       } else {
-        this.form['start_life_cycle'] = ''
-        this.form['end_life_cycle'] = ''
+        return true
       }
-      console.log(data, this.form, '+----------')
     },
+
+
     // 获取左边padding
     getPaddingLeft(item, index) {
       console.log(index, 'address-book-index')
