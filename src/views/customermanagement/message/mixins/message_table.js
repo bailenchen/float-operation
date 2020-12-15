@@ -128,10 +128,12 @@ export default {
         } else {
           this.showDview = false
         }
-      } else if (this.crmType === 'contract') {
+      } else if (this.crmType === 'contract' || this.crmType == 'globalAlloc') {
+        console.log(column.property, row, 'bbbjjjjj')
         if (column.property === 'customerName') {
           this.rowID = row.customerId
-          this.rowType = 'customer'
+          this.rowType = 'student'
+          this.clickField = column.property
           this.showDview = true
         } else if (column.property === 'businessName') {
           this.rowID = row.businessId
@@ -144,6 +146,12 @@ export default {
         } else if (column.property === 'num') {
           this.rowID = row.contractId
           this.rowType = 'contract'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'leadsNumber') {
+          this.rowID = row.customerId
+          this.rowType = 'student'
+          this.clickField = column.property
           this.showDview = true
         } else {
           this.showDview = false
