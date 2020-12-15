@@ -390,7 +390,8 @@ export default {
           coachType: '',
           gradeId: ''
         },
-        customerId: ''
+        customerId: '',
+        type: 'save'
       },
       oldActionCombo: {
         searchJson: {
@@ -837,7 +838,8 @@ export default {
             totalPrice: data.value.totalPrice,
             buyCount: data.value.buyCount,
             presenterCount: data.value.presenterCount,
-            refundMonry: data.value.refundMonry
+            refundMonry: data.value.refundMonry,
+            ruleDetails: data.value.ruleDetails
           }
 
           this.contractMoney = data.value.totalPrice
@@ -2545,17 +2547,18 @@ export default {
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
           if (element.fieldName == 'contractsAttr') {
-            switch (element.value) {
-              case '续签':
-                params.entity.isNew = 0
-                break
-              case '新签':
-                params.entity.isNew = 1
-                break
-              case '引流':
-                params.entity.isNew = 2
-                break
-            }
+            // switch (element.value) {
+            //   case '续签':
+            //     params.entity.isNew = 0
+            //     break
+            //   case '新签':
+            //     params.entity.isNew = 1
+            //     break
+            //   case '引流':
+            //     params.entity.isNew = 2
+            //     break
+            // }
+            params.entity.isNew = element.value
           } else if (element.fieldName == 'totalclassTime') {
             params.entity.countCourseSum = element.value
           } else if (element.fieldName == 'contractId') {
@@ -2803,6 +2806,7 @@ export default {
           : 0
         params.entity.buyCount = element.value.buyCount
         params.entity.presenterCount = element.value.presenterCount
+        params.entity.ruleDetails = element.value.ruleDetails
         if (element.value.refundMonry) {
           params.entity.refundMonry = element.value.refundMonry
         }
