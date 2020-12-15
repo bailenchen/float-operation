@@ -91,7 +91,7 @@
                       show-overflow-tooltip/>
                   </el-table>
                   <div v-if="item.name == '累计赠送课程'" class="table-desc">
-                    <div class="left-txt">累计赠送规则：购买辅导方式为1对3的，购买10节课，可赠送1节课</div>
+                    <div class="left-txt"><span v-if="presentDesc">累计赠送规则：</span>{{ presentDesc }}</div>
                     <div class="right-txt">最终价格：{{ totalPrice }}元</div>
                   </div>
                 </div>
@@ -275,7 +275,9 @@ export default {
           coachType: '',
           gradeId: ''
         }
-      }
+      },
+
+      presentDesc: ''
     }
   },
   computed: {
@@ -442,6 +444,8 @@ export default {
       filedGetInformation(params).then(res => {
         this.information = res.data
         const productList = res.data.contract.productList
+
+        this.presentDesc = res.data.contract.ruleDetails
 
         // 大套餐
         const mealKeyVal = {}
