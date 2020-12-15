@@ -14,7 +14,7 @@
           :radio="false"
           :show="showPopover"
           :selected-data="selectedData"
-          :action="action"
+          :action="queryMealAction"
           crm-type="productSetMeal"
           @close="showPopover=false"
           @changeCheckout="selectInfos"/>
@@ -65,7 +65,7 @@
 
         <el-table-column prop="presentLesson" label="累计赠送课次" width="" align="center">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.presentLesson" :disabled="isDisabled" @change="changeLesson(scope.row)" />
+            <el-input v-model="scope.row.presentLesson" :disabled="isDisabled" type="number" @change="changeLesson(scope.row)" />
           </template>
         </el-table-column>
 
@@ -175,7 +175,12 @@ export default {
       priceText: '最终价格',
       giveObj: null, // 累计的信息
       completeLesson: 0, // 已完成课次
-      surplusPriceObj: null
+      surplusPriceObj: null,
+      queryMealAction: {
+        searchJson: {
+          status: 1
+        }
+      }
     }
   },
   computed: {
@@ -215,7 +220,8 @@ export default {
     },
     action: {
       handler(val) {
-        console.log('辅导方式、年级、学员变化1', val)
+        console.log('辅导方式、年级、学员变化', val)
+        this.productList = []
         if (val.customerId) {
           queryIsNewByCustomerIdAPI({ customerId: val.customerId }).then(res => {
             this.renew = res.data
@@ -527,7 +533,9 @@ export default {
         // this.subjectList = arr
       }
 
-      if (obj.tableData.length > 0 && !Object.keys(this.value).length) {
+      // if (obj.tableData.length > 0 && !Object.keys(this.value).length) {
+      // 除了编辑，其他重新生成累计赠送表格
+      if (obj.tableData.length > 0 && this.action.type != 'update') {
         this.present = null
         this.jointpresentData()
       }
@@ -557,9 +565,10 @@ export default {
       this.sendData(emitObj)
     },
     jointpresentData() {
-      if (!this.action.customerId) {
-        return
-      }
+      // if (!this.action.customerId) {
+      //   return
+      // }
+      console.log('生成累计赠送')
 
       this.present = [
         {
@@ -629,7 +638,8 @@ export default {
           isNew: this.isNew, // 合同属性
           totalclassTime: this.comboComponentData.totalclassTime, // 总课次
           buyCount: this.comboComponentData.purchaseLesson, // 购买课次
-          presenterCount: this.comboComponentData.grooveLesson // 赠送课次
+          presenterCount: this.comboComponentData.grooveLesson, // 赠送课次
+          ruleDetails: `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。`
         },
         data: {
           fieldName: 'productSetMeal'
@@ -656,6 +666,10 @@ export default {
       console.log('赠送中选择了科目', val)
     },
     changeLesson(row) {
+      if (!(/(^[0-9]\d*$)/.test(row.presentLesson))) {
+        this.$message.warning('只能输入正整数！')
+        row.presentLesson = 0
+      }
       if (row.presentLesson == 0) {
         row.univalence = ''
       }
