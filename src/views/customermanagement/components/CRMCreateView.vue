@@ -72,6 +72,7 @@
               <el-form
                 ref="crmForm"
                 :model="crmForm"
+                :class="{ 'bottom': crmType == 'productSetMeal' || crmType == 'receivables' }"
                 label-position="top"
                 class="crm-create-box">
                 <el-form-item
@@ -112,27 +113,14 @@
                 </el-form-item>
               </el-form>
 
-              <div v-if="crmType == 'productSetMeal'" class="form-muilt">
-                <div v-for="(bitem, bindex) in formsList" :key="bindex" class="forms-many">
-                  <xh-set-meal
-                    ref="ff"
-                    :item="bitem"
-                    :action="action.type"
-                    :index="bindex"
-                    @value-update="fieldChange"/>
-                  <i
-                    v-if="formsList.length > 1"
-                    class="el-icon-remove"
-                    @click="deleteItem(bitem, bindex)"/>
-                </div>
-                <el-button
-                  style="margin-left:10px;"
-                  type="text"
-                  @click="addItem">+添加套餐</el-button>
-              </div>
-
-              <!-- 科目 -->
-              <!-- <xh-subject v-if="crmType == 'receivables'" ref="subject"/> -->
+              <!-- 套餐与科目 -->
+              <xh-meal-subject
+                v-if="crmType == 'productSetMeal' || crmType == 'receivables'"
+                ref="mealsubject"
+                :action="action.type"
+                :detail-list="formsList"
+                :crm-type="crmType"
+              />
 
             </div>
           </flexbox>
@@ -203,7 +191,7 @@ import { crmProductSave } from '@/api/customermanagement/product'
 import { crmReceivablesSave } from '@/api/customermanagement/money'
 import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
 import { crmReturnVisitSaveAPI } from '@/api/customermanagement/visit'
-import { crmproductSetMealCalPrice, crmProductSetMealSave } from '@/api/customermanagement/meal'
+import { crmProductSetMealSave } from '@/api/customermanagement/meal'
 
 import { queryUserListAPI } from '@/api/common'
 
@@ -227,8 +215,7 @@ import {
   XhSelect,
   XhMultipleSelect,
   XhTerm,
-  XhSetMeal,
-  XhSubject,
+  XhMealSubject,
   XhDate,
   XhDateTime,
   XhUserCell,
@@ -258,8 +245,7 @@ export default {
     XhSelect,
     XhMultipleSelect,
     XhTerm,
-    XhSetMeal,
-    XhSubject,
+    XhMealSubject,
     XhDate,
     XhDateTime,
     XhUserCell,
@@ -397,7 +383,6 @@ export default {
       },
 
       formsList: [{}],
-      productSetMealPrice: 0,
       leadsNumber: false,
       userList: null, // 系统用户列表
       actionCombo: {
@@ -504,9 +489,7 @@ export default {
     this.getField()
     if (this.action.type == 'update') {
       if (this.crmType == 'productSetMeal') {
-        this.productSetMealPrice = this.action.editDetail.singleprice
         this.formsList = this.action.editDetail.setting
-        console.log(this.formsList, 'bbb')
       }
     }
     if (this.crmType == 'capitalAccount') {
@@ -547,59 +530,6 @@ export default {
         this.imageData.mainFileList = data
       } else if (type === 'detailFile') {
         this.imageData.detailFileList = data
-      }
-    },
-
-    vv() {
-      let isPass = true
-      const collectionData = []
-      this.$refs.ff.forEach((item, index) => {
-        const valid = item.parentValid()
-        if (!valid) {
-          isPass = false
-        } else {
-          collectionData.push(item.getForm())
-        }
-      })
-
-      return { isPass, collectionData }
-    },
-
-    addItem() {
-      this.formsList.push({})
-    },
-
-    /**
-     * 删除事项操作
-     */
-    deleteItem(item, index) {
-      if (this.formsList.length > 1) {
-        const willDel = this.getMealData()
-        willDel.splice(index, 1)
-        console.log(willDel)
-        this.formsList = willDel
-        console.log(this.formsList, 'del')
-        this.delMealPrice(this.formsList)
-        this.$refs.ff.forEach((item, inde) => {
-          item.refreshData(this.formsList[inde])
-        })
-      }
-    },
-
-    // 删除套餐时重新计算价格
-    delMealPrice(list) {
-      let sump = 0
-      for (let index = 0; index < list.length; index++) {
-        const element = list[index]
-        sump += Number(element.purchaseFrequency)
-      }
-
-      for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-        const element = this.crmForm.crmFields[index]
-        if (element.key == 'price') {
-          element.value = this.productSetMealPrice * sump
-          element.data.value = this.productSetMealPrice * sump
-        }
       }
     },
 
@@ -1093,33 +1023,7 @@ export default {
         //   }
         // }
       } else if (this.crmType == 'productSetMeal') {
-        console.log(item, '123', this.crmForm.crmFields)
-        if (item.data.formType === 'coaching_methods') {
-          // for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-          //   const element = this.crmForm.crmFields[index]
-          //   if (element.key == 'grade_id' && element.value && item.value) {
-          //     const params = {
-          //       gradeId: element.value,
-          //       coachType: item.value
-          //     }
-          //     this.productSetMealPrices(params)
-          //   }
-          // }
-        } else if (item.data.formType === 'grades') {
-          // if (item.data.formType === 'grades') {
-          //   for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-          //     const element = this.crmForm.crmFields[index]
-          //     if (element.key == 'coach_type' && element.value && item.value) {
-          //       const params = {
-          //         gradeId: item.value,
-          //         coachType: element.value
-          //       }
-          //       console.log(this, 'this789')
-          //       this.productSetMealPrices(params)
-          //     }
-          //   }
-          // }
-        } else if (item.data.formType == 'class_type') {
+        if (item.data.formType == 'class_type') {
           // 课程类型为引流课时显示购买课程价格字段，否则不显示
           let isHasPrice = false
           let fieldIndex = null
@@ -1181,77 +1085,6 @@ export default {
       }
     },
 
-    // 套餐字段更新
-    fieldChange(data) {
-      // if (data.type == 'purchaseFrequency') {
-      //   const list = this.getMealData()
-      //   let sum = 0
-      //   for (let index = 0; index < list.length; index++) {
-      //     const element = list[index]
-      //     sum += Number(element.purchaseFrequency)
-      //   }
-      //   // 课次 X 购买价格
-      //   for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-      //     const element = this.crmForm.crmFields[index]
-      //     if (element.key == 'price') {
-      //       element.value = this.productSetMealPrice * sum
-      //       element.data.value = this.productSetMealPrice * sum
-      //     }
-      //   }
-      // }
-    },
-
-    getMealData() {
-      const collectData = []
-      this.$refs.ff.forEach((item, index) => {
-        collectData.push(item.getForm())
-      })
-      return collectData
-    },
-
-    // 课程套餐购买价格计算
-    productSetMealPrices(params) {
-      crmproductSetMealCalPrice(params).then(res => {
-        if (res.data) {
-          this.productSetMealPrice = res.data.price
-          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-            const element = this.crmForm.crmFields[index]
-            if (element.key == 'price') {
-              const mlist = this.getMealData()
-              let times = 0
-              mlist.forEach(item => {
-                if (item.purchaseFrequency) {
-                  times += Number(item.purchaseFrequency)
-                }
-              })
-              if (times) {
-                element.value = this.productSetMealPrice * times
-                element.data.value = this.productSetMealPrice * times
-              } else {
-                element.value = this.productSetMealPrice
-                element.data.value = this.productSetMealPrice
-              }
-            }
-          }
-        } else {
-          this.resetPurchasePrice()
-        }
-      }).catch(() => {
-        this.resetPurchasePrice()
-      })
-    },
-
-    // 没有获取到单价时重置购买价格
-    resetPurchasePrice() {
-      for (let index = 0; index < this.crmForm.crmFields.length; index++) {
-        const element = this.crmForm.crmFields[index]
-        if (element.key == 'price') {
-          element.value = ''
-          element.data.value = ''
-          this.productSetMealPrice = 0
-        }
-      }
-    },
     // 获取自定义字段
     getField() {
       this.loading = true
@@ -2494,19 +2327,15 @@ export default {
       this.saveAndCreate = saveAndCreate
       console.log('保存')
       this.$refs.crmForm.validate((valid, obj) => {
-        const valMeal = this.crmType == 'productSetMeal' ? this.vv() : '' // 处理课程套餐验证的
-        // valMeal.collectionData
-        // if (this.crmType == 'receivables') { // 临时放置学科验证
-        //   const validSubject = this.$refs.subject.validAllSubjects()
-        //   if (!validSubject) {
-        //     return
-        //   }
-        // }
+        let msresult = null
+        if (this.crmType == 'receivables' || this.crmType == 'productSetMeal') {
+          msresult = this.$refs.mealsubject.validAllSubjects()
+          if (!msresult) {
+            return
+          }
+        }
         if (valid) {
           if (this.crmType == 'productSetMeal') {
-            if (!valMeal.isPass) {
-              return
-            }
             const { key } = this.validPrice()
             if (['warning', 'price'].includes(key)) {
               return this.$message.error({
@@ -2556,7 +2385,7 @@ export default {
             }
             // 增加套餐参数提交
             if (this.crmType == 'productSetMeal') {
-              params['list'] = valMeal.collectionData
+              params['list'] = this.$refs.mealsubject.getFormList()
               if (params.entity.termTime && params.entity.termTime.length) {
                 params.entity['start_purchase_cycle'] = params.entity.termTime[0]
                 params.entity['end_purchase_cycle'] = params.entity.termTime[1]
@@ -2575,7 +2404,7 @@ export default {
             var index = Object.keys(obj)[0].split('.')[1]
             if (this.crmForm.crmFields[index].key === 'mobile') {
               if (this.crmType == 'productSetMeal') {
-                if (!valMeal.isPass) {
+                if (!msresult) {
                   return
                 }
               }
@@ -2619,7 +2448,7 @@ export default {
                 }
                 // 增加套餐参数提交
                 if (this.crmType == 'productSetMeal') {
-                  params['list'] = valMeal.collectionData
+                  params['list'] = this.$refs.mealsubject.getFormList()
                   if (params.entity.termTime && params.entity.termTime.length) {
                     params.entity['start_purchase_cycle'] = params.entity.termTime[0]
                     params.entity['end_purchase_cycle'] = params.entity.termTime[1]
@@ -3155,6 +2984,10 @@ export default {
   padding: 0 10px 15px;
 }
 
+.bottom {
+  padding: 0 10px !important;
+}
+
 .crm-create-item {
   flex: 0 0 50%;
   flex-shrink: 0;
@@ -3224,28 +3057,9 @@ export default {
   transform: scale(0.8, 0.8);
 }
 
-  .el-icon-remove {
-    color: #ff6767;
-    cursor: pointer;
-    margin-left: 2px;
-    display: none;
-  }
-
-  .forms-many {
-    position: relative;
-  }
-
-  .forms-many:hover {
-    .el-icon-remove {
-      position: absolute;
-      left: 48%;
-      top: 46%;
-      display: inline;
-    }
-  }
-  .attr-title {
-    padding-left: 10px;
-    font-weight: bold;
-  }
+.attr-title {
+  padding-left: 10px;
+  font-weight: bold;
+}
 
 </style>
