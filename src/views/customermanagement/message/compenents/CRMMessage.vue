@@ -166,7 +166,7 @@
             <span>{{ getStatusName(scope.row.checkStatus) }}</span>
           </template>
           <template v-else>
-            {{ scope.row[item.prop] }}
+            {{ transformData(item.prop, scope.row[item.prop]) }}
           </template>
         </template>
       </el-table-column>
@@ -494,6 +494,38 @@ export default {
           this.$store.dispatch('GetMessageNum')
         }
       }
+    },
+
+    transformData(name, value) {
+      if (name === 'contractType') {
+        return {
+          1: '购买',
+          2: '赠送'
+        }[value]
+      } else if (name === 'isEarlyRetirement') {
+        return {
+          0: '否',
+          1: '是'
+        }[value]
+      } else if (name === 'isNew') {
+        return {
+          0: '续签',
+          1: '新签',
+          2: '引流'
+        }[value]
+      } else if (name === 'contractStatus') {
+        return {
+          1: '申请中',
+          2: '放弃',
+          3: '合同完成',
+          4: '合同变更中',
+          5: '执行中',
+          6: '执行中',
+          7: '合同充值返还',
+          8: '确认放弃'
+        }[value]
+      }
+      return value
     },
 
     /**
