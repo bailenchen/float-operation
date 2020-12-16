@@ -397,7 +397,8 @@ export default {
       } else if (column.property === 'isEarlyRetirement') {
         return {
           0: '否',
-          1: '是'
+          1: '是',
+          null: ''
         }[row[column.property]]
       } else if (column.property === 'isNew') {
         return {

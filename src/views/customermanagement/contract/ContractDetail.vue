@@ -394,7 +394,7 @@ export default {
       if (['checkStatus', 'contractType', 'isEarlyRetirement', 'isNew', 'contractStatus'].includes(name)) {
         return {
           'contractType': { 1: '购买', 2: '赠送' },
-          'isEarlyRetirement': { 0: '否', 1: '是' },
+          'isEarlyRetirement': { 0: '否', 1: '是', null: '' },
           'isNew': { 0: '续签', 1: '新签', 2: '引流' },
           'checkStatus': {
             0: '待审核',
