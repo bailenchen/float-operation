@@ -27,9 +27,6 @@
               />
             </el-select>
           </template>
-          <!-- <template v-else-if="item.prop == 'price'">
-            <el-input v-model="scope.row.price" :disabled="isDisabled" type="number" min="0" @change="changePrice(scope.row)"/>
-          </template> -->
           <template v-else-if="item.prop == 'purchaseLesson'">
             <el-input v-model="scope.row.purchaseLesson" :disabled="isDisabled" min="0" type="number" @change="changePurchaseLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
           </template>
@@ -337,37 +334,26 @@ export default {
 
     // 区分引流和其他课程，计算总价
     calculateTotalPrice() {
-      var otherMeal = []
-      var drainageMeal = {}
+      var priceObject = {}
 
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
         if (element.mealType == '引流课') {
-          if (!drainageMeal[`mealId_${element.combo_number}`]) {
-            drainageMeal[`mealId_${element.combo_number}`] = element.salePrice
+          if (!priceObject[`mealId_${element.combo_number}`]) {
+            priceObject[`mealId_${element.combo_number}`] = element.salePrice
           }
         } else {
-          otherMeal.push(element)
+          if (!priceObject[`detailsId_${element.detailsId}`]) {
+            priceObject[`detailsId${element.detailsId}`] = element.salePrice
+          }
         }
       }
 
-      // console.log('引流和其他类型', drainageMeal, otherMeal)
-
-      // 分别计算引流和其他
-      var drainagePrice = 0
-      for (const k in drainageMeal) {
-        console.log('key:', k)
-        drainagePrice += drainageMeal[k]
+      var totalPrice = 0
+      for (const k in priceObject) {
+        totalPrice += priceObject[k]
       }
-      // console.log('引流价格', drainagePrice)
-
-      var otherPrice = 0
-      for (let i = 0; i < otherMeal.length; i++) {
-        const element = otherMeal[i]
-        otherPrice += element.salePrice
-      }
-      // console.log('其他价格', otherPrice)
-      this.totalPrice = drainagePrice + otherPrice
+      this.totalPrice = totalPrice
     },
 
     getDrainageMealInfo(id, isAccumulationChange = false) {

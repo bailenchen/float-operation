@@ -46,10 +46,10 @@
           relative-type="productSetMeal"
           style="display:inline-block;width:300px;"
           @value-change="arrayValueChange($event, index, item)"
-        />
+        /> -->
         <i
           class="el-icon-remove delete-icon"
-          @click="deleteItem(item, index)"/> -->
+          @click="deleteItem(item, index)"/>
       </div>
       <el-button
         type="text"

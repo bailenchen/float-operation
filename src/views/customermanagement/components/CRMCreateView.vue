@@ -391,7 +391,7 @@ export default {
           gradeId: ''
         },
         customerId: '',
-        type: 'save'
+        attr: 'save' // save 新建，update 更新
       },
       oldActionCombo: {
         searchJson: {
@@ -402,7 +402,9 @@ export default {
         type: 'old-change'
       },
       actionPresent: {
-        countCourseSum: ''
+        countCourseSum: 0, // 主合同总课次
+        buyCount: 0 // 主合同总购买课次
+
       },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
@@ -653,6 +655,7 @@ export default {
             console.log('学员的值', item.value)
             if (element.key == 'contractId') {
               if (item.value.length) {
+                element.value = []
                 element.disabled = false
                 element.relation = {
                   type: 'presentContract',
@@ -704,20 +707,6 @@ export default {
 
             // 复制
             const getValueObj = {
-              // customerId: data => {
-              //   if (!data.customerId) {
-              //     return []
-              //   }
-              //   return {
-              //     type: 'presentContract',
-              //     searchJson: {
-              //     // customerId: item.value[0].customerId,
-              //       customerId: data.customerId,
-              //       checkStatus: 1,
-              //       contractType: 1
-              //     }
-              //   }
-              // },
               contacts_id: data => {
                 if (!data.contactsId) {
                   return []
@@ -855,12 +844,25 @@ export default {
             }
           })
         } else if (item.data.fieldName == 'coach_type') {
+          console.log('辅导方式的值', item.value)
           this.actionCombo.searchJson.coachType = item.value
         } else if (item.data.fieldName == 'grade_id') {
-          console.log('选择年级')
+          console.log('选择年级', item.value)
           this.actionCombo.searchJson.gradeId = item.value
         } else if (item.data.fieldName == 'contractId') {
-          this.actionPresent.countCourseSum = item.value[0].countCourseSum
+          // this.actionPresent.countCourseSum = item.value[0].countCourseSum
+
+          var countCourseSum = 0
+          var buyCount = 0
+          item.value.forEach(item => {
+            countCourseSum += item.countCourseSum
+            buyCount += item.buyCount
+          })
+
+          this.actionPresent = {
+            countCourseSum,
+            buyCount
+          }
           console.log('zAAAAAAAA--', item.value)
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
@@ -1216,7 +1218,8 @@ export default {
                 value: '',
                 fieldName: 'contractId',
                 formType: 'contract',
-                isNull: 1
+                isNull: 1,
+                radio: false
               })
               res.data.push({
                 name: '赠送课程',
@@ -1544,17 +1547,24 @@ export default {
           params['key'] = item.fieldName
           params['data'] = item
 
-          if (this.crmType == 'contract' && item.fieldName == 'customer_id') {
-            if (!this.action.present) {
-              params.crmType = 'contract'
-              params.showTypes = ['customer', 'student']
-            } else {
-              console.log('增加额外赠送合同')
-              params.crmType = 'presentContract'
-              // params.showTypes = ['student']
+          // if (this.crmType == 'contract' && item.fieldName == 'customer_id') {
+          if (this.crmType == 'contract') {
+            if (item.fieldName == 'customer_id') {
+              if (!this.action.present) {
+                params.crmType = 'contract'
+                params.showTypes = ['customer', 'student']
+              } else {
+                console.log('增加额外赠送合同')
+                params.crmType = 'presentContract'
+              }
             }
-            // params.showTypes = this.action.present ? ['student'] : ['customer', 'student']
+            // 额外赠送合同，关联合同字段多选
+            if (this.action.present && item.fieldName == 'contractId') {
+              params.radio = false
+            }
           }
+
+
           // 获取 value relative 信息
           this.getParamsValueAndRelativeInfo(params, item, list)
           params['styleIndex'] = showStyleIndex
@@ -1827,6 +1837,7 @@ export default {
 
         // 合同编辑
         if (this.action.type == 'update' && this.crmType == 'contract') {
+          this.actionCombo.attr = 'update'
           if (element.key == 'contractsAttr') {
             element.value = this.action.information.contract.isNew
           }
@@ -2359,6 +2370,12 @@ export default {
               ) {
                 params['checkUserId'] = this.examineInfo.value[0].userId
               }
+              console.log('params参数', params)
+
+              if (params === false) {
+                this.loading = false
+                return
+              }
               params.entity.checkStatus = 5
               this.submiteParams(params)
             } else {
@@ -2688,12 +2705,11 @@ export default {
             params.entity[element.key] = this.getRealParams(element) || ''
           }
         } else if (element.data.key == 'introducer_type') {
-          console.log(111)
+          // console.log(111)
         } else if (element.key == 'present') {
-          console.log('额外')
+          // console.log('额外')
           this.getPresentParams(params, element)
         } else {
-          console.log('saasa11', element)
           element.data.value = this.getRealParams(element)
           console.log('data', element.data)
           params.field.push(element.data)
@@ -2760,6 +2776,12 @@ export default {
         var arr = []
         // params['product'] = element.value.data
         console.log('值', element.value)
+
+        // 没有购买
+        if (element.value.buyCount == 0) {
+          this.$message.error('购买课次不能为0')
+          return false
+        }
 
         var mealType = element.value.data[0].mealType
         var res = element.value.data.every(item => {
@@ -2832,7 +2854,6 @@ export default {
     },
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
-      console.log('关联了什么', element)
       if (
         element.key == 'customer_id' ||
         element.key == 'contacts_id' ||
