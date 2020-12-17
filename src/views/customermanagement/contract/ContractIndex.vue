@@ -50,12 +50,22 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          sortable="custom"
+          :sortable="item.prop != 'relevanceContractNum'"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <template v-if="item.prop == 'checkStatus'">
               <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
               <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+            </template>
+            <template v-else-if="item.prop == 'relevanceContractNum'">
+              <span v-if="scope.row['relevanceContractNum']">
+                <span
+                  v-for="(sitem, sindex) in scope.row['relevanceContractNum']"
+                  :key="sindex"
+                  style="margin-right:10px;"
+                  @click.stop="enterDetail(sitem)">{{ sitem.num }}</span>
+              </span>
+              <span v-else/>
             </template>
             <template v-else>
               {{ fieldFormatter(scope.row, scope.column) }}
@@ -177,6 +187,13 @@ export default {
       } else {
         return ''
       }
+    },
+
+    enterDetail(item) {
+      this.rowID = item.contractId
+      this.rowType = 'contract'
+      this.clickField = 'num'
+      this.showDview = true
     },
 
     headerCellClassName({ row, column, rowIndex, columnIndex }) {

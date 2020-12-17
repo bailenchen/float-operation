@@ -524,11 +524,6 @@ export default {
           this.rowType = 'student'
           this.clickField = column.property
           this.showDview = true
-        } else if (column.property === 'relevanceContractNum') {
-          this.rowID = row.relevanceContractId
-          this.rowType = 'contract'
-          this.clickField = column.property
-          this.showDview = true
         } else {
           this.showDview = false
         }
