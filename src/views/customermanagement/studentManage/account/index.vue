@@ -58,7 +58,7 @@
           type="selection"
           align="center"
           width="55"/>
-        <el-table-column
+        <!-- <el-table-column
           v-if="Show"
           :resizable="false"
           prop="call"
@@ -93,7 +93,7 @@
                 @click.stop="callCheckClick($event,scope,scope.$index)"/>
             </el-popover>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           v-for="(item, index) in fieldList"
           :key="index"
