@@ -1354,7 +1354,7 @@ export default {
         }
       } else if (type == 'update_contract') {
         console.log(this.crmType, 'bbjjj')
-        if (this.selectionList.length == 1) {
+        if (this.selectionList.length == 1 && this.selectionList[0].checkStatus == 1) {
           return this.crm[this.crmType].update
         } else {
           return false

@@ -505,7 +505,8 @@ export default {
       } else if (name === 'isEarlyRetirement') {
         return {
           0: '否',
-          1: '是'
+          1: '是',
+          null: ''
         }[value]
       } else if (name === 'isNew') {
         return {
