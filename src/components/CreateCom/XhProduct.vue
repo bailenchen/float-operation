@@ -181,6 +181,7 @@ export default {
           status: 1
         }
       }
+
     }
   },
   computed: {
@@ -293,11 +294,15 @@ export default {
       crmProductIndex(params).then(res => {
         // 获取课次单价
         this.univalence = res.data.list[0] ? res.data.list[0].price : ''
+        // 有单品，有学员才能显示添加按钮
+        if (this.univalence !== '' && this.action.customerId) {
+          this.isAddCombo = true
+        } else {
+          this.isAddCombo = false
+        }
+
         if (!this.univalence) {
           this.$message.error('该年级与辅导方式没有对应单品')
-        }
-        if (this.action.customerId) {
-          this.isAddCombo = true
         }
       })
     },
@@ -514,13 +519,13 @@ export default {
       this.giveObj = obj.giveObj
 
       // 限制累计的科目
-      if (obj.giveObj.disableds) {
+      if (obj.giveObj && obj.giveObj.disableds) {
         console.log('限制累计的科目')
         // var arr = this.subjectList
         for (let index = 0; index < this.subjectList.length; index++) {
           const element = this.subjectList[index]
           var res = obj.giveObj.disableds.includes(element.id)
-          console.log('结果1', res)
+          console.log('结果', res)
           element.disabled = !!res
           // if (res) {
           //   element.disabled = true
@@ -534,8 +539,8 @@ export default {
       }
 
       // if (obj.tableData.length > 0 && !Object.keys(this.value).length) {
-      // 除了编辑，其他重新生成累计赠送表格
-      if (obj.tableData.length > 0 && this.action.type != 'update') {
+      // 新建，重新生成累计赠送表格
+      if (obj.tableData.length > 0 && this.action.attr == 'save') {
         this.present = null
         this.jointpresentData()
       }

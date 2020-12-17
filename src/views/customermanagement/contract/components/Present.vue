@@ -155,7 +155,7 @@ export default {
 
 
       // 计算折扣
-      var discount = (this.action.countCourseSum / (this.action.countCourseSum + this.lessons) * 100).toFixed(2)
+      var discount = (this.action.buyCount / (this.action.countCourseSum + this.lessons) * 100).toFixed(2)
       console.log('折扣', discount)
       this.tableData.forEach(item => {
         item.discount = discount
