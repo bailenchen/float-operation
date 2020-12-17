@@ -96,7 +96,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-show="presentRules">
+      <!-- <div v-show="presentRules"> -->
+      <div v-if="presentRules">
         累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。累计可赠送课次：{{ surplusGive }}
       </div>
     </div>
@@ -350,6 +351,7 @@ export default {
         }
       })
       console.log('新的数组', arr, totalPrice)
+
       this.totalPrice = totalPrice
 
       this.comboAction = {
@@ -383,6 +385,19 @@ export default {
           this.present.splice(index, 1)
           break
         }
+      }
+
+      var lesson = 0
+      var arr = this.present.filter(item => {
+        if (item.presentLesson > 0) {
+          lesson += Number(item.presentLesson)
+          return true
+        }
+      })
+
+      this.accumulation = {
+        data: arr,
+        lesson
       }
     },
     getBigMealName(id) {
@@ -537,10 +552,12 @@ export default {
       }
 
       // 新建，重新生成累计赠送表格
-      if (obj.tableData.length > 0 && this.action.attr == 'save') {
-        this.present = null
-        this.jointpresentData()
-      }
+      // if (obj.tableData.length > 0 && this.action.attr == 'save') {
+      // if (this.action.attr == 'save') {
+      // 每次都需要重新生成累计表格
+      this.present = null
+      this.jointpresentData()
+      // }
 
       if (this.present) {
         var lesson = 0
@@ -552,11 +569,11 @@ export default {
         })
 
         var emitObj = {
-          // product: [...this.comboComponentData.tableData, ...this.present],
           product: [...this.comboComponentData.tableData, ...arr],
           totalclassTime: this.comboComponentData.totalclassTime + lesson,
           presenterCount: this.comboComponentData.grooveLesson + lesson
         }
+        emitObj.ruleDetails = obj.presentRules ? `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。` : ''
       }
 
       if (this.action.type && this.action.type == 'old-change') {
@@ -648,7 +665,8 @@ export default {
           totalclassTime: this.comboComponentData.totalclassTime, // 总课次
           buyCount: this.comboComponentData.purchaseLesson, // 购买课次
           presenterCount: this.comboComponentData.grooveLesson, // 赠送课次(常规赠送+累计赠送)
-          ruleDetails: `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。`
+          // ruleDetails: `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。`
+          ruleDetails: ''
         },
         data: {
           fieldName: 'productSetMeal'
