@@ -1118,7 +1118,7 @@ export default {
           if (this.crmType === 'customer') {
             this.formatLeadsField(res)
           }
-          if (this.crmType === 'visit' || this.crmType === 'capitalAccount') {
+          if (this.crmType === 'visit') {
             this.formatVisitField(res)
           }
 
