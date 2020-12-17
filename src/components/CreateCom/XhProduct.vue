@@ -518,6 +518,11 @@ export default {
       this.presentRules = obj.presentRules
       this.giveObj = obj.giveObj
 
+      // 没有，累计赠送，阻止后续代码
+      // if (!obj.giveObj) {
+      //   this.sendData(emitObj)
+      // }
+
       // 限制累计的科目
       if (obj.giveObj && obj.giveObj.disableds) {
         console.log('限制累计的科目')
@@ -527,18 +532,10 @@ export default {
           var res = obj.giveObj.disableds.includes(element.id)
           console.log('结果', res)
           element.disabled = !!res
-          // if (res) {
-          //   element.disabled = true
-          //   this.$set(this.subjectList, index, element)
-          // } else {
-          //   element.disabled = false
-          // }
           this.$set(this.subjectList, index, element)
         }
-        // this.subjectList = arr
       }
 
-      // if (obj.tableData.length > 0 && !Object.keys(this.value).length) {
       // 新建，重新生成累计赠送表格
       if (obj.tableData.length > 0 && this.action.attr == 'save') {
         this.present = null
@@ -578,21 +575,23 @@ export default {
       //   return
       // }
       console.log('生成累计赠送')
-
-      this.present = [
-        {
-          subject: '',
-          mealProductId: this.giveObj.mealProductId,
-          giftProductId: this.giveObj.giftProductId,
-          presentLesson: 0,
-          planeLesson: 0,
-          completeLesson: 0,
-          univalence: '',
-          dataIndex: this.presentDataIndex,
-          type: 2,
-          mealType: this.giveObj.mealType
-        }
-      ]
+      // 有giveObj，生成表格
+      if (this.giveObj) {
+        this.present = [
+          {
+            subject: '',
+            mealProductId: this.giveObj.mealProductId,
+            giftProductId: this.giveObj.giftProductId,
+            presentLesson: 0,
+            planeLesson: 0,
+            completeLesson: 0,
+            univalence: '',
+            dataIndex: this.presentDataIndex,
+            type: 2,
+            mealType: this.giveObj.mealType
+          }
+        ]
+      }
     },
     totalPriceHandle(obj) {
       this.totalPrice = obj.totalPrice
