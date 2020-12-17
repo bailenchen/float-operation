@@ -98,7 +98,6 @@ export default {
             this.statusList.push({ name: element, value: element })
           }
         }
-        console.log(res, '99999')
       }).catch(() => {
 
       })

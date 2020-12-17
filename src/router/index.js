@@ -8,6 +8,7 @@ Vue.use(Router)
 
 // import workbenchRouter from './modules/workbench'
 import crmRouter from './modules/customer'
+import educationRouter from './modules/education'
 import projectRouter from './modules/project/index'
 import managerRouter from './modules/manager'
 import personRouter from './modules/person'
@@ -69,6 +70,7 @@ export default router
 
 export const asyncRouterMap = [
   { type: 'crm', router: crmRouter },
+  { type: 'education', router: educationRouter },
   { type: 'taskExamine', router: taskExamineRouter },
   { type: 'workLog', router: workLogRouter },
   { type: 'addressBook', router: addressBookRouter },

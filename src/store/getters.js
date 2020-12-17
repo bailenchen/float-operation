@@ -19,6 +19,7 @@ const getters = {
   // 权限
   allAuth: state => state.user.allAuth,
   crm: state => state.user.crm,
+  education: state => state.user.education,
   bi: state => state.user.bi,
   manage: state => state.user.manage,
   oa: state => state.user.oa,
@@ -27,6 +28,7 @@ const getters = {
   // 路由
   addRouters: state => state.permission.addRouters,
   crmRouters: state => state.permission.crmRouters,
+  educationRouters: state => state.permission.educationRouters,
   taskExamineRouters: state => state.permission.taskExamineRouters,
   workLogRouters: state => state.permission.workLogRouters,
   addressBookRouters: state => state.permission.addressBookRouters,

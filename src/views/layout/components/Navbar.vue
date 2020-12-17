@@ -148,6 +148,7 @@ export default {
       'lang',
       'logo',
       'crm',
+      'education',
       'bi',
       'manage',
       'oa',
@@ -193,6 +194,16 @@ export default {
           title: '综合管理',
           type: 1,
           path: '/crm',
+          icon: 'wk wk-customer',
+          fontSize: '17px'
+        })
+      }
+
+      if (this.crm) {
+        tempsItems.push({
+          title: '教务管理',
+          type: 1,
+          path: '/education',
           icon: 'wk wk-customer',
           fontSize: '17px'
         })

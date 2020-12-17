@@ -120,7 +120,7 @@
           </template>
         </el-table-column>
         <el-table-column/>
-        <el-table-column
+        <!-- <el-table-column
           label="关注"
           align="center"
           fixed="right"
@@ -133,7 +133,7 @@
                 @click="toggleStar(scope.row)" />
             </el-tooltip>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           :resizable="false"
           fixed="right"
