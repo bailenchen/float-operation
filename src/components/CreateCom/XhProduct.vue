@@ -239,8 +239,11 @@ export default {
         this.surplusPresenter = 0
         this.totalPrice = 0
         this.isNew = 1
-        if (val.searchJson.coachType && val.searchJson.gradeId) {
+        // 辅导方式、年级、学员都有才请求单品、展示添加套餐按钮
+        if (val.customerId && val.searchJson.coachType && val.searchJson.gradeId) {
           this.getUnivalence()
+        } else {
+          this.isAddCombo = false
         }
       },
       deep: true,
@@ -294,14 +297,11 @@ export default {
       crmProductIndex(params).then(res => {
         // 获取课次单价
         this.univalence = res.data.list[0] ? res.data.list[0].price : ''
-        // 有单品，有学员才能显示添加按钮
-        if (this.univalence !== '' && this.action.customerId) {
+        // 有单品才能显示添加按钮
+        if (this.univalence !== '') {
           this.isAddCombo = true
         } else {
           this.isAddCombo = false
-        }
-
-        if (!this.univalence) {
           this.$message.error('该年级与辅导方式没有对应单品')
         }
       })
@@ -545,16 +545,20 @@ export default {
         this.jointpresentData()
       }
 
-      // var emitObj = {}
-
       if (this.present) {
         var lesson = 0
-        this.present.forEach(item => {
+        var arr = this.present.filter(item => {
           lesson += Number(item.presentLesson)
+          if (item.presentLesson > 0) {
+            return true
+          }
         })
+
         var emitObj = {
-          product: [...this.comboComponentData.tableData, ...this.present],
-          totalclassTime: this.comboComponentData.totalclassTime + lesson
+          // product: [...this.comboComponentData.tableData, ...this.present],
+          product: [...this.comboComponentData.tableData, ...arr],
+          totalclassTime: this.comboComponentData.totalclassTime + lesson,
+          presenterCount: this.comboComponentData.grooveLesson + lesson
         }
       }
 
@@ -621,6 +625,7 @@ export default {
           }
         })
         emitObj.totalclassTime += lessons
+        emitObj.presenterCount = this.comboComponentData.grooveLesson + lessons
         emitObj.product = [...this.comboComponentData.tableData, ...arr]
       }
 
@@ -643,7 +648,7 @@ export default {
           isNew: this.isNew, // 合同属性
           totalclassTime: this.comboComponentData.totalclassTime, // 总课次
           buyCount: this.comboComponentData.purchaseLesson, // 购买课次
-          presenterCount: this.comboComponentData.grooveLesson, // 赠送课次
+          presenterCount: this.comboComponentData.grooveLesson, // 赠送课次(常规赠送+累计赠送)
           ruleDetails: `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。`
         },
         data: {

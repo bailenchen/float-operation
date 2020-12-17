@@ -137,7 +137,7 @@
             :types="'crm_' + crmType"
             :other-types="otherTypes"
             :money="contractMoney"
-            :discount="contractDiscount "
+            :discount="contractDiscount"
             :types-id="action.id"
             @value-change="examineValueChange" />
         </create-sections>
@@ -404,11 +404,10 @@ export default {
       actionPresent: {
         countCourseSum: 0, // 主合同总课次
         buyCount: 0 // 主合同总购买课次
-
       },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
-      contractDiscount: 0 // 合同折扣
+      contractDiscount: 100 // 合同折扣
     }
   },
   computed: {
@@ -417,7 +416,7 @@ export default {
     ]),
     typeToAction() {
       if (this.crmType == 'contract') {
-        if (this.action.present) {
+        if (this.action.present || this.action.contractType == 2) {
           return this.actionPresent
         }
         return this.actionCombo
@@ -498,13 +497,7 @@ export default {
     if (this.crmType == 'capitalAccount') {
       this.leadsNumber = true
     }
-    // if (this.action.attr == 'change') {
-    //   this.actionCombo.attr = 'change'
-    //   filedGetInformation({ types: 7, id: this.action.detail.contractId }).then(res => {
-    //     console.log(111)
-    //   }).catch(() => {})
-    // }
-    if (this.action.present) {
+    if (this.action.present || this.action.contractType == 2) {
       this.otherTypes = 'present'
     }
     if (this.action.attr && this.action.attr == 'change') {
@@ -620,7 +613,7 @@ export default {
           console.log('修改学员', item)
           console.log(data, 'bhjjjj*----')
 
-          if (!this.action.present) {
+          if (!this.action.present || !this.action.contractType == 2) {
             const valueData = data.value || {}
             let customerData = []
             for (let index = 0; index < item.showTypes.length; index++) {
@@ -700,7 +693,7 @@ export default {
               // 'contractsAttr'
             ]
 
-            if (this.action.present) {
+            if (this.action.present || this.action.contractType == 2) {
               handleFields.push('grade_id')
               addDisabled.push('grade_id')
             }
@@ -847,16 +840,15 @@ export default {
           console.log('辅导方式的值', item.value)
           this.actionCombo.searchJson.coachType = item.value
         } else if (item.data.fieldName == 'grade_id') {
-          console.log('选择年级', item.value)
+          console.log('选择年级1', item.value)
           this.actionCombo.searchJson.gradeId = item.value
         } else if (item.data.fieldName == 'contractId') {
-          // this.actionPresent.countCourseSum = item.value[0].countCourseSum
-
           var countCourseSum = 0
           var buyCount = 0
           item.value.forEach(item => {
             countCourseSum += item.countCourseSum
             buyCount += item.buyCount
+            console.log('总课次与购买课次', item.countCourseSum, item.buyCount)
           })
 
           this.actionPresent = {
@@ -895,6 +887,7 @@ export default {
               element.value = data.value.lessons
             }
           }
+          this.contractDiscount = item.value.product[0].discount
         }
         console.log('object')
       } else if (this.crmType == 'receivables') {
@@ -1177,7 +1170,7 @@ export default {
                 }],
               formType: 'select'
             }
-            if (this.action.present) {
+            if (this.action.present || this.action.contractType == 2) {
               obj.setting = [
                 {
                   name: '续签',
@@ -1212,7 +1205,7 @@ export default {
             }
 
 
-            if (this.action.present) {
+            if (this.action.present || this.action.contractType == 2) {
               res.data.unshift({
                 name: '关联合同',
                 value: '',
@@ -1550,7 +1543,7 @@ export default {
           // if (this.crmType == 'contract' && item.fieldName == 'customer_id') {
           if (this.crmType == 'contract') {
             if (item.fieldName == 'customer_id') {
-              if (!this.action.present) {
+              if (!this.action.present || !this.action.contractType == 2) {
                 params.crmType = 'contract'
                 params.showTypes = ['customer', 'student']
               } else {
@@ -1559,7 +1552,8 @@ export default {
               }
             }
             // 额外赠送合同，关联合同字段多选
-            if (this.action.present && item.fieldName == 'contractId') {
+            // if (this.action.present && item.fieldName == 'contractId') {
+            if ((this.action.present || this.action.contractType == 2) && item.fieldName == 'contractId') {
               params.radio = false
             }
           }
@@ -1802,7 +1796,11 @@ export default {
             'leadsNumber',
             'contractId'
           ]
-          if (!this.action.present) {
+          console.log('编辑111')
+          // 普通合同禁用contractsAttr
+          console.log(!this.action.present, this.action.contractType != 2)
+          // if (!this.action.present) {
+          if (this.action.contractType != 2) {
             arr.push('contractsAttr')
           }
 
@@ -1897,6 +1895,21 @@ export default {
           }
         }
         // 额外合同编辑
+        if (this.crmType == 'contract' && this.action.type == 'update' && this.action.contractType == 2) {
+          console.log('额外合同编辑')
+          if (element.key == 'contractId') {
+            element.value = [
+              {
+                // num:
+              }
+            ]
+          }
+          if (element.key == 'present') {
+            element.value = this.action.information.contract.productList
+            console.log('赠送组件的值', element)
+          }
+        }
+
 
         // 合同变更
         if (this.action.attr && this.action.attr == 'change') {
@@ -2564,17 +2577,6 @@ export default {
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
           if (element.fieldName == 'contractsAttr') {
-            // switch (element.value) {
-            //   case '续签':
-            //     params.entity.isNew = 0
-            //     break
-            //   case '新签':
-            //     params.entity.isNew = 1
-            //     break
-            //   case '引流':
-            //     params.entity.isNew = 2
-            //     break
-            // }
             params.entity.isNew = element.value
           } else if (element.fieldName == 'totalclassTime') {
             params.entity.countCourseSum = element.value
@@ -2835,11 +2837,6 @@ export default {
       } else {
         this.$message.error('请添加套餐')
         return false
-
-        // params['product'] = []
-        // params.entity['money'] = ''
-        // params.entity.buyCount = 0
-        // params.entity.presenterCount = 0
       }
     },
     // 获取客户位置参数
@@ -2930,8 +2927,12 @@ export default {
       } else if (this.crmType == 'productSetMeal') {
         return this.action.type == 'update' ? '编辑课程套餐' : '新建课程套餐'
       } else if (this.crmType == 'contract') {
-        if (this.action.present && this.action.type !== 'update') {
+        // if (this.action.present && this.action.type !== 'update') {
+        if ((this.action.present || this.action.contractType == 2) && this.action.type !== 'update') {
           return '新建额外赠送合同'
+        }
+        if ((this.action.present || this.action.contractType == 2) && this.action.type == 'update') {
+          return '编辑额外赠送合同'
         }
         if (this.action.attr == 'change') {
           return '变更合同'

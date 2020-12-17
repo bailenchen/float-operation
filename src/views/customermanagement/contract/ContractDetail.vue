@@ -113,7 +113,7 @@
 
     <c-r-m-create-view
       v-if="isCreate"
-      :action="{type: 'update', id: id, batchId: detailData.batchId, information}"
+      :action="{type: 'update', id: id, batchId: detailData.batchId, information, contractType}"
       :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -144,6 +144,7 @@ import Combo from '@/views/customermanagement/contract/components/Combo'
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 import { separator } from '@/filters/vue-numeral-filter/filters'
+import LoginLogVue from '../../SystemManagement/SystemLog/LoginLog.vue'
 
 export default {
   // 客户管理 的 合同详情
@@ -269,6 +270,7 @@ export default {
       subjectList: {}, // 科目列表
       totalPrice: 0,
       information: null, // 合同详情
+      contractType: '', // 合同类型1：普通合同，2：额外赠送合同
       giveAction: {
         customerId: '',
         searchJson: {
@@ -362,6 +364,7 @@ export default {
           this.loading = false
           // 创建回款计划的时候使用
           this.detailData = res.data
+          this.contractType = res.data.contractType
           this.getSubject()
           this.getBaseInfo(res.data)
 

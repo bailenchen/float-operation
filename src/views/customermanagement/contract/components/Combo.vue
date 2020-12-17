@@ -149,7 +149,8 @@ export default {
       OrderLeve3Arr: [], // 引流课
       purchaseLesson: 0, // 全部套餐标准课次之和
       purchaseInGive: 0, // 参与累计的购买课次之和
-      grooveLesson: 0, // 全部套餐常规赠送课次之和（包括不参与累计赠送的）
+      grooveLesson: 0, // 全部赠送（参与累计赠送的）
+      allGiveLesson: 0, // 全部赠送（包括不参与累计赠送和不参与累计的）
       totalPrice: 0, // 总价
       maxGive: 0, // 最大赠送课次
       surplusGive: 0, // 剩余可赠送课次，用于限制累计赠送课次
@@ -201,7 +202,8 @@ export default {
           this.drainage = true
         }
         this.purchaseLesson += item.purchaseLesson
-        this.grooveLesson += item.grooveLesson
+        // this.grooveLesson += item.grooveLesson
+        this.allGiveLesson += item.grooveLesson
         this.totalPrice = (this.totalPrice * 100 + item.salePrice * 100) / 100
       })
 
@@ -242,7 +244,8 @@ export default {
       }
       QueryGiveAPI(parms).then(res => {
         if (res.data) {
-          this.maxGive = res.data.give
+          console.log('后端返回数据', res.data)
+          this.maxGive = res.data.presenterCount
           this.surplusGive = this.maxGive
           this.presentRules = {
             coachType: this.giveAction.searchJson.coachType,
@@ -437,7 +440,7 @@ export default {
         totalPrice: this.totalPrice,
         univalence: avgPrice,
         buyCount: this.purchaseLesson,
-        totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson),
+        totalclassTime: Number(this.purchaseLesson) + Number(this.allGiveLesson),
         isAccumulationChange: options.isAccumulationChange, // 累计导致的计算单价为true
         surplusGive: this.surplusGive
       }
@@ -452,7 +455,7 @@ export default {
         tableData: this.tableData,
         purchaseLesson: this.purchaseLesson, // 套餐购买课次和
         grooveLesson: this.grooveLesson, // 套餐赠送课次和
-        totalclassTime: Number(this.purchaseLesson) + Number(this.grooveLesson), // 总课次
+        totalclassTime: Number(this.purchaseLesson) + Number(this.allGiveLesson), // 总课次
         drainage: this.drainage, // 是否为引流
         totalPrice: this.totalPrice, // 总价
         currentGive: this.maxGive, // 当前可赠送课次
@@ -521,8 +524,10 @@ export default {
 
       this.OrderLeve2Arr = []
       const OrderObj1 = {}
+      // const OrderObj3 = {}
       this.tableData.forEach((element, index) => {
         // 把小套餐相同的放在一个数组
+
         // 先判断有没有大套餐
         if (OrderObj1[element.combo_number]) {
           // 判断有没有小套餐
@@ -552,12 +557,11 @@ export default {
       })
 
       for (const key in OrderObj1) {
-        if (Object.keys(OrderObj1[key]).length > 1) {
-          for (const k in OrderObj1[key]) {
-          // if (!OrderObj1[key].hasOwnProperty(k)) break
-            this.OrderLeve2Arr.push(OrderObj1[key][k])
-          }
+        // if (Object.keys(OrderObj1[key]).length > 1) {
+        for (const k in OrderObj1[key]) {
+          this.OrderLeve2Arr.push(OrderObj1[key][k])
         }
+        // }
       }
     },
 
@@ -790,7 +794,8 @@ export default {
       var giveLesson = 0 // 小套餐赠送课次和
       var purchaseLesson = 0 // 小套餐购买课次和
       var grooveCount = 0 // (参与赠送的)全部套餐赠送课次和
-      var notInGrooveCount = 0 // 不参与累计赠送的常规赠送之和
+      var allGiveLesson = 0 // 全部赠送，包括参与累计和不参与累计
+      // var notInGrooveCount = 0 // 不参与累计赠送的常规赠送之和
       for (let i = 0; i < this.tableData.length; i++) {
         const element = this.tableData[i]
         console.log('tableData:', element)
@@ -815,13 +820,18 @@ export default {
             this.$message.warning(`赠送课次之和不能大于实际可赠与课次`)
             break
           }
-        } else {
-          notInGrooveCount += Number(element.grooveLesson)
         }
+        console.log('置为0后', element.grooveLesson)
+        allGiveLesson += Number(element.grooveLesson)
+        // else {
+        //   notInGrooveCount += Number(element.grooveLesson)
+        // }
       }
-      this.grooveLesson = grooveCount + notInGrooveCount
+      // this.grooveLesson = grooveCount + notInGrooveCount
+      this.grooveLesson = grooveCount
+      this.allGiveLesson = allGiveLesson
       this.surplusGive = this.maxGive - grooveCount
-      console.log('全部套餐赠送课次和', grooveCount, notInGrooveCount, this.grooveLesson)
+      console.log('全部套餐赠送课次和', grooveCount, allGiveLesson)
 
       // this.calculateUnivalence(row, purchaseLesson + giveLesson)
       var lesson = purchaseLesson + giveLesson
