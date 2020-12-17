@@ -144,7 +144,7 @@ import Combo from '@/views/customermanagement/contract/components/Combo'
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 import { separator } from '@/filters/vue-numeral-filter/filters'
-import LoginLogVue from '../../SystemManagement/SystemLog/LoginLog.vue'
+// import LoginLogVue from '../../SystemManagement/SystemLog/LoginLog.vue'
 
 export default {
   // 客户管理 的 合同详情
