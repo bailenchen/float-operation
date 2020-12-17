@@ -93,7 +93,10 @@ export default {
       default: ''
     },
     money: Number, // 合同金额
-    discount: Number, // 合同折扣
+    discount: { // 合同折扣
+      type: [String, Number],
+      default: 100
+    },
     // 办公审批 传ID
     typesId: {
       type: [String, Number],
@@ -118,6 +121,10 @@ export default {
     money(val) {
       console.log('新的合同金额', val)
       this.getDetail()
+    },
+    discount(val) {
+      console.log('新的合同折扣', val)
+      this.getDetail()
     }
   },
   mounted() {
@@ -140,8 +147,10 @@ export default {
         params.categoryId = this.typesId
       } else if (this.types == 'crm_contract' && this.otherTypes == 'present') {
         params.categoryType = 6
+        params.discount = this.discount // 折扣
       } else if (this.types == 'crm_contract' && this.otherTypes == 'change') {
         params.categoryType = 7
+        params.money = this.money
       } else {
         params.id = this.typesId
         params.categoryType = {
@@ -150,10 +159,13 @@ export default {
           crm_invoice: 3,
           crm_capitalAccount: 5
         }[this.types] // 1 合同 2 回款 3 发票
+        if (this.types == 'crm_contract') {
+          params.money = this.money
+        }
       }
-      if (this.types == 'crm_contract') {
-        params.money = this.money
-      }
+
+      console.log('审批流请求参数', params)
+
       reqeust(params)
         .then(res => {
           this.examineInfo = res.data || {}

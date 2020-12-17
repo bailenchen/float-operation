@@ -44,10 +44,12 @@
       border
       highlight-current-row
       style="width: 100%"
+      @select="disabledBycoachType"
       @select-all="selectAll"
       @selection-change="handleSelectionChange"
       @row-click="handleRowClick">
       <el-table-column
+        :selectable="checkboxSelect"
         show-overflow-tooltip
         type="selection"
         align="center"
@@ -152,7 +154,8 @@ export default {
       totalPage: 1, // 总页数
 
       otherItems: [],
-      selectedItem: [] // 勾选的数据 点击确定 传递给父组件
+      selectedItem: [], // 勾选的数据 点击确定 传递给父组件
+      coachType: '' // 关联合同，需要辅导方式
     }
   },
   computed: {
@@ -330,13 +333,14 @@ export default {
         ]
       } else if (this.crmType === 'contract') {
         return [
-          {
-            name: '合同名称',
-            field: this.isRelationShow ? 'contractName' : 'name',
-            formType: 'text'
-          },
+          // {
+          //   name: '合同名称',
+          //   field: this.isRelationShow ? 'contractName' : 'name',
+          //   formType: 'text'
+          // },
           { name: '合同编号', field: 'num', formType: 'text' },
           { name: '客户名称', field: 'customerName', formType: 'text' },
+          { name: '辅导类型', field: 'coachType', formType: 'text' },
           { name: '合同金额', field: 'money', formType: 'text' },
           { name: '开始日期', field: 'startTime', formType: 'text' },
           { name: '结束日期', field: 'endTime', formType: 'text' }
@@ -433,6 +437,7 @@ export default {
       crmIndexRequest(params)
         .then(res => {
           this.list = res.data.list
+
           /**
            *  如果已选择的有数据
            */
@@ -445,6 +450,16 @@ export default {
 
           this.totalPage = Math.ceil(res.data.totalRow / 10)
           this.loading = false
+
+          // 确定了辅导方式
+          console.log('确定了辅导方式1?', this.coachType)
+          if (this.coachType) {
+            this.list.forEach(item => {
+              if (item.coachType != this.coachType) {
+                item.selectDisabled = true
+              }
+            })
+          }
         })
         .catch(() => {
           this.loading = false
@@ -514,8 +529,64 @@ export default {
     /** 列表操作 */
     // 当某一行被点击时会触发该事件
     handleRowClick(row, column, event) {},
+
+    // 禁用
+    checkboxSelect(row, index) {
+      if (this.list[index].selectDisabled) {
+        return false
+      }
+      return true
+    },
+    disabledBycoachType(val) {
+      console.log('勾选1', val)
+      if (this.action.type == 'presentContract') {
+        if (val.length) {
+          this.coachType = val[0].coachType
+          console.log('辅导方式', this.coachType)
+          this.list.forEach(item => {
+            if (item.coachType != this.coachType) {
+              item.selectDisabled = true
+            }
+          })
+        } else {
+          this.coachType = ''
+          this.list.forEach(item => {
+            item.selectDisabled = false
+          })
+        }
+      }
+    },
     // 当选择项发生变化时会触发该事件
     handleSelectionChange(val) {
+      if (this.action.type == 'presentContract') {
+        // console.log('勾选', val)
+        // // this.coachType = val[0].coachType
+        // if (!this.coachType) {
+        //   this.coachType = val[0].coachType
+        // }
+        // if (this.coachType) {
+        //   this.list.forEach(item => {
+        //     if (item.coachType != this.coachType) {
+        //       item.selectDisabled = true
+        //     }
+        //   })
+        // }
+        // if (val.length) {
+        //   this.coachType = val[0].coachType
+        //   console.log('辅导方式', this.coachType)
+        //   this.list.forEach(item => {
+        //     if (item.coachType != this.coachType) {
+        //       item.selectDisabled = true
+        //     }
+        //   })
+        // } else {
+        //   this.coachType = ''
+        //   this.list.forEach(item => {
+        //     item.selectDisabled = false
+        //   })
+        // }
+      }
+
       if (this.radio) {
         // this.$refs.relativeTable.clearSelection();
         val.forEach((row, index) => {

@@ -217,6 +217,7 @@ export default {
           }
           if (action === 'present') {
             this.createActionInfo.present = true
+            this.createActionInfo.contractType = 2
           }
         }
         // if (this.crmType === 'contract' && action === 'present') {
