@@ -113,6 +113,15 @@ export function crmAccountScanePay(data) {
   })
 }
 
+// crm 资金客户 付款码付款
+export function crmAccountCodePay(data) {
+  return request({
+    url: 'CrmCapitalAccountWater/scanningMachinePayment',
+    method: 'post',
+    data: data
+  })
+}
+
 // crm 资金流水
 export function crmAccountWater(data) {
   return request({

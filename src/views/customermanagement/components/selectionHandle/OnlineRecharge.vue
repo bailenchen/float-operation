@@ -38,7 +38,7 @@
 <script>
 // import { Loading } from 'element-ui'
 import QRCode from 'qrcodejs2'
-import { crmAccountScanePay } from '@/api/customermanagement/account'
+import { crmAccountScanePay, crmAccountCodePay } from '@/api/customermanagement/account'
 export default {
   name: 'OnlineRecharge',
   props: {
@@ -200,7 +200,7 @@ export default {
         capitalId: this.selectionList[0].capitalId
       }
 
-      crmAccountScanePay(params).then(res => {
+      crmAccountCodePay(params).then(res => {
         // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
         console.log('付款码请求回调', res)
         this.createCode(res.data)
