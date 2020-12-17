@@ -969,7 +969,7 @@ export default {
         }
       } else if (this.crmType === 'capitalAccount') {
         console.log('新建资金账户， 选择学员')
-        if (item.data.formType === 'student') {
+        if (item.data.formType === 'customer') {
           let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'leads_number')
           if (findIndex !== -1) {
             this.crmForm.crmFields[findIndex].value = item.value[0].leadsNumber || ''
