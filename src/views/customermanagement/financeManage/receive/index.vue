@@ -118,20 +118,6 @@
         </el-table-column>
         <el-table-column/>
         <el-table-column
-          label="关注"
-          align="center"
-          fixed="right"
-          width="60">
-          <template slot-scope="scope">
-            <el-tooltip :content="scope.row.star == 0 ? '添加关注' : '取消关注'" effect="dark" placement="top">
-              <i
-                :class="{active: scope.row.star != 0}"
-                class="wk wk-focus-on focus-icon"
-                @click="toggleStar(scope.row)" />
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column
           :resizable="false"
           fixed="right"
           width="40">

@@ -409,7 +409,7 @@ export default {
           parms.entity.accountNumber = this.selectionList[0].accountNumber // 账户编号
           parms.entity.capitalId = this.selectionList[0].capitalId // 资金账号ID
           if (this.examineInfo.examineType == 2) {
-            parms.checkUserId = this.examineInfo.createUserId
+            parms.checkUserId = this.examineInfo.value[0].userId
           }
 
           if (this.imgFile[0]) {
