@@ -418,6 +418,31 @@ export default {
           8: '确认放弃'
         }[row[column.property]]
       }
+
+      if (this.crmType == 'receive') {
+        if (column.property === 'payment') {
+          return {
+            1: '现金交易',
+            2: '刷卡交易',
+            3: '支票交易',
+            4: '微信交易',
+            5: '支付宝交易',
+            6: '转账交易'
+          }[row[column.property]]
+        } else if (column.property === 'checkStatus') {
+          return {
+            0: '待审核',
+            1: '通过',
+            2: '拒绝',
+            3: '审核中',
+            4: '撤回',
+            5: '未提交',
+            6: '创建 ',
+            7: '已删除',
+            8: '作废'
+          }[row[column.property]]
+        }
+      }
       return row[column.property] === '' || row[column.property] === null ? '--' : row[column.property]
     },
     /** */
