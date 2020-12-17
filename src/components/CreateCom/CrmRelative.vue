@@ -181,6 +181,7 @@ export default {
      */
     handleCurrentSelectData(data) {
       console.log(data, 'togg156')
+      console.log(data && Object.keys(data).length)
       if (data && Object.keys(data).length) {
         this.currentSelectedData = objDeepCopy(data)
       } else {

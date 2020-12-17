@@ -205,6 +205,10 @@ export default {
         // this.grooveLesson += item.grooveLesson
         this.allGiveLesson += item.grooveLesson
         this.totalPrice = (this.totalPrice * 100 + item.salePrice * 100) / 100
+        // 参与累计赠送的常规赠和
+        if (item.isGive == 1) {
+          this.grooveLesson += Number(item.grooveLesson)
+        }
       })
 
       // this.sendData()
@@ -246,7 +250,8 @@ export default {
         if (res.data) {
           console.log('后端返回数据', res.data)
           this.maxGive = res.data.presenterCount
-          this.surplusGive = this.maxGive
+          // this.surplusGive = this.maxGive
+          this.surplusGive = this.maxGive - this.grooveLesson
           this.presentRules = {
             coachType: this.giveAction.searchJson.coachType,
             classes: res.data.classes,
@@ -255,7 +260,8 @@ export default {
           this.getLastPresentProduct()
         } else {
           this.maxGive = 0
-          this.surplusGive = this.maxGive
+          // this.surplusGive = this.maxGive
+          this.surplusGive = this.maxGive - this.grooveLesson
           this.presentRules = ''
         }
         console.log('最大次数', this.maxGive)
@@ -271,6 +277,12 @@ export default {
       this.grooveLesson = 0
       this.drainage = false
       this.univalence = this.action.univalence
+      this.giveObj = null
+      this.currentGive = 0
+      this.surplusGive = 0
+      this.presentRules = null
+      this.totalPrice = 0
+      this.maxGive = 0
 
       var arr = []
       for (let i = 0; i < this.action.productSetMeal.length; i++) {
@@ -324,15 +336,15 @@ export default {
         }
       }
       this.tableData = arr
+      if (arr.length) {
+        // this.tableData = arr
+        this.calculateTotalPrice()
 
-
-
-      // this.totalPrice = totalPrice
-      this.calculateTotalPrice()
-
-      this.getOrderNumber()
-      this.getMaxGive()
-      // this.sendData()
+        this.getOrderNumber()
+        this.getMaxGive()
+      } else {
+        this.sendData()
+      }
     },
 
     // 区分引流和其他课程，计算总价
@@ -830,7 +842,7 @@ export default {
       // this.grooveLesson = grooveCount + notInGrooveCount
       this.grooveLesson = grooveCount
       this.allGiveLesson = allGiveLesson
-      this.surplusGive = this.maxGive - grooveCount
+      this.surplusGive = this.maxGive - grooveCount < 0 ? 0 : this.maxGive - grooveCount
       console.log('全部套餐赠送课次和', grooveCount, allGiveLesson)
 
       // this.calculateUnivalence(row, purchaseLesson + giveLesson)

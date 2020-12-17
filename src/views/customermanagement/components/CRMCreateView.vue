@@ -2350,6 +2350,10 @@ export default {
             if (isDraft) {
               // 不验证数据
               var params = this.getSubmiteParams(this.crmForm.crmFields)
+              if (params === false) {
+                this.loading = false
+                return
+              }
               if (
                 this.examineInfo.examineType === 2 &&
                 this.examineInfo.hasOwnProperty('value') &&
@@ -2359,10 +2363,7 @@ export default {
               }
               console.log('params参数', params)
 
-              if (params === false) {
-                this.loading = false
-                return
-              }
+
               params.entity.checkStatus = 5
               this.submiteParams(params)
             } else {
