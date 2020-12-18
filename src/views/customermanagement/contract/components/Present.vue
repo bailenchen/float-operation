@@ -52,12 +52,13 @@ export default {
         return {}
       }
     },
-    value: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    }
+    value: ''
+    // value: {
+    //   type: Array,
+    //   default: () => {
+    //     return []
+    //   }
+    // }
   },
   data() {
     return {
@@ -89,22 +90,32 @@ export default {
         }
       ],
       dataIndex: 0,
-      tableData: [
-        {
-          subject: '',
-          grooveLesson: 0,
-          planeLesson: 0,
-          completeLesson: 0,
-          discount: 0,
-          dataIndex: 0
-        }
-      ],
+      // tableData: [
+      //   {
+      //     subject: '',
+      //     grooveLesson: 0,
+      //     planeLesson: 0,
+      //     completeLesson: 0,
+      //     discount: 0,
+      //     dataIndex: 0
+      //   }
+      // ],
+      tableData: [],
       subjectList: null,
       lessons: 0, // 该额外赠送合同总课次
       OrderLeve1Arr: []
     }
   },
   watch: {
+    action: {
+      handler(val) {
+        console.log('val', val)
+        if (val) {
+          console.log('使用value的值代替table', val)
+          this.structureData()
+        }
+      }
+    },
     value: {
       handler(val) {
         console.log('val', val)
@@ -126,6 +137,19 @@ export default {
     this.dataIndex = this.tableData.length
   },
   methods: {
+    structureData() {
+      var arr = []
+      var obj = {
+        subject: '',
+        grooveLesson: 0,
+        planeLesson: 0,
+        completeLesson: 0,
+        discount: '',
+        dataIndex: this.dataIndex
+      }
+      arr.push(obj)
+      this.tableData = arr
+    },
     structureDataByValue() {
       var arr = []
       var dataIndex = 0
@@ -170,6 +194,22 @@ export default {
           break
         }
       }
+
+      var lesson = 0
+      var arr = this.tableData.filter(item => {
+        if (item.grooveLesson > 0) {
+          lesson += Number(item.grooveLesson)
+          return true
+        }
+      })
+      this.lessons = lesson
+
+      // 重新计算折扣
+      var discount = (this.action.buyCount / (this.action.countCourseSum + this.lessons) * 100).toFixed(2)
+      console.log('折扣', discount)
+      this.tableData.forEach(item => {
+        item.discount = discount
+      })
       this.sendData()
     },
 
