@@ -177,6 +177,71 @@ export default {
     },
     /** 获取字段 */
     getFieldList(force) {
+      let fieldList
+      // 教室管理
+      fieldList = [
+        { prop: 'weixinName', label: '教室编号', width: '115px' },
+        { prop: 'weixinName', label: '中心', width: '115px' },
+        { prop: 'weixinName', label: '教室名称', width: '115px' },
+        { prop: 'weixinName', label: '开通时间', width: '115px' },
+        { prop: 'weixinName', label: '添加人', width: '115px' },
+        { prop: 'weixinName', label: '教室状态', width: '115px' },
+        { prop: 'weixinName', label: '关联老师', width: '115px' },
+        { prop: 'weixinName', label: '最后修改人', width: '115px' },
+        { prop: 'weixinName', label: '最后修改时间', width: '115px' }
+      ]
+      // 班级管理
+      fieldList = [
+        { prop: 'weixinName', label: '中心', width: '115px' },
+        { prop: 'weixinName', label: '班级类型', width: '115px' },
+        { prop: 'weixinName', label: '班级名称', width: '115px' },
+        { prop: 'weixinName', label: '教室名称', width: '115px' },
+        { prop: 'weixinName', label: '年级', width: '115px' },
+        { prop: 'weixinName', label: '科目', width: '115px' },
+        { prop: 'weixinName', label: '学科老师', width: '115px' },
+        { prop: 'weixinName', label: '满班人数', width: '115px' },
+        { prop: 'weixinName', label: '已排次数', width: '115px' },
+        { prop: 'weixinName', label: '班级状态', width: '115px' },
+        { prop: 'weixinName', label: '已排未上课次', width: '115px' },
+        { prop: 'weixinName', label: '最后排课时间', width: '115px' },
+        { prop: 'weixinName', label: '备注', width: '115px' },
+        { prop: 'weixinName', label: '是否排课', width: '115px' }
+      ]
+      // 班级排课表
+      fieldList = [
+        { prop: 'weixinName', label: '中心', width: '115px' },
+        { prop: 'weixinName', label: '班级类型', width: '115px' },
+        { prop: 'weixinName', label: '班级名称', width: '115px' },
+        { prop: 'weixinName', label: '教室', width: '115px' },
+        { prop: 'weixinName', label: '年级', width: '115px' },
+        { prop: 'weixinName', label: '科目', width: '115px' },
+        { prop: 'weixinName', label: '学科老师', width: '115px' },
+        { prop: 'weixinName', label: '状态', width: '115px' },
+        { prop: 'weixinName', label: '上课时间', width: '115px' },
+        { prop: 'weixinName', label: '时间段', width: '115px' },
+        { prop: 'weixinName', label: '排课人数', width: '115px' },
+        { prop: 'weixinName', label: '实际上课人数', width: '115px' },
+        { prop: 'weixinName', label: '最大上课人数', width: '115px' }
+      ]
+      // 学员排课表
+      fieldList = [
+        { prop: 'weixinName', label: '校区', width: '115px' },
+        { prop: 'weixinName', label: '合同编号', width: '115px' },
+        { prop: 'weixinName', label: '学员编号', width: '115px' },
+        { prop: 'weixinName', label: '学员姓名', width: '115px' },
+        { prop: 'weixinName', label: '辅导方式', width: '115px' },
+        { prop: 'weixinName', label: '班级类型', width: '115px' },
+        { prop: 'weixinName', label: '班级名称', width: '115px' },
+        { prop: 'weixinName', label: '教室', width: '115px' },
+        { prop: 'weixinName', label: '年级', width: '115px' },
+        { prop: 'weixinName', label: '科目', width: '115px' },
+        { prop: 'weixinName', label: '学科老师', width: '115px' },
+        { prop: 'weixinName', label: '上课日期', width: '115px' },
+        { prop: 'weixinName', label: '上课时段', width: '115px' },
+        { prop: 'weixinName', label: '总课次/已确认', width: '115px' },
+        { prop: 'weixinName', label: '考勤', width: '115px' },
+        { prop: 'weixinName', label: '课时确认', width: '115px' }
+      ]
       if (this.fieldList.length == 0 || force) {
         this.loading = true
 
