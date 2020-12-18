@@ -73,8 +73,21 @@
                     class="course-table"
                     style="width: 100%;"/>
                 </div>
-                <!-- 累计赠送课程  业绩分配信息 -->
-                <div v-for="(item, index) in list" slot="first" :key="index" style="padding-left: 15px;margin-bottom:20px;">
+                <!-- 累计赠送课程 -->
+                <div v-if="detailData.contractType == 2" slot="first" style="padding-left: 15px;margin-bottom:20px;">
+                  <div class="section-header" style="padding-left:0;margin-bottom:10px;">
+                    <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
+                    <div class="section-title">累计赠送课程</div>
+                  </div>
+                  <present
+                    :action="presentAction"
+                    :value="presentValue"
+                    :is-disabled="isDisabled"
+                    class="course-table"
+                    style="width: 100%;"/>
+                </div>
+                <!-- 业绩分配信息 -->
+                <div v-for="(item, index) in list" slot="first" :key="index" :class="{'top': detailData.contractType == 1}" style="padding-left: 15px;margin-bottom:20px;">
                   <div class="section-header" style="padding-left:0;">
                     <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
                     <div class="section-title">{{ item.name }}</div>
@@ -91,10 +104,6 @@
                       :formatter="fieldFormatter"
                       show-overflow-tooltip/>
                   </el-table>
-                  <div v-if="item.name == '累计赠送课程'" class="table-desc">
-                    <div class="left-txt"><span v-if="presentDesc">累计赠送规则：</span>{{ presentDesc }}</div>
-                    <div class="right-txt">最终价格：{{ totalPrice }}元</div>
-                  </div>
                 </div>
               </c-r-m-base-info>
               <component
@@ -142,6 +151,7 @@ import ContractRecharge from '../components/ContractRecharge' // 合同充值
 import ReturnRechargeMoney from '../components/ReturnRechargeMoney' // 合同充值返还
 
 import Combo from '@/views/customermanagement/contract/components/Combo'
+import Present from '@/views/customermanagement/contract/components/Present'
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 import { separator } from '@/filters/vue-numeral-filter/filters'
@@ -165,7 +175,8 @@ export default {
     CRMCreateView,
     ContractRecharge,
     ReturnRechargeMoney,
-    Combo
+    Combo,
+    Present
   },
   mixins: [detail],
   props: {
@@ -243,18 +254,25 @@ export default {
         lesson: 0
       },
 
+      // 赠送
+      presentAction: {
+        countCourseSum: '',
+        buyCount: ''
+      },
+      presentValue: null,
+
       list: [
-        {
-          name: '累计赠送课程',
-          data: [],
-          fieldlist: [
-            { prop: 'subjectName', label: '科目' },
-            { prop: 'courseSum', label: '累计赠送课次' },
-            { prop: 'alreadyCourse', label: '已排课课次' },
-            { prop: 'finishCourse', label: '已完成课次' },
-            { prop: 'price', label: '单节课价格' }
-          ]
-        },
+        // {
+        //   name: '累计赠送课程',
+        //   data: [],
+        //   fieldlist: [
+        //     { prop: 'subjectName', label: '科目' },
+        //     { prop: 'courseSum', label: '累计赠送课次' },
+        //     { prop: 'alreadyCourse', label: '已排课课次' },
+        //     { prop: 'finishCourse', label: '已完成课次' },
+        //     { prop: 'price', label: '单节课价格' }
+        //   ]
+        // },
         {
           name: '业绩分配信息',
           data: [],
@@ -268,19 +286,18 @@ export default {
           ]
         }
       ],
-      subjectList: {}, // 科目列表
-      totalPrice: 0,
+      subjectList: [], // 科目列表
       information: null, // 合同详情
       contractType: '', // 合同类型1：普通合同，2：额外赠送合同
       giveAction: {
         customerId: '',
+        type: 'old-change',
+        attr: 'update',
         searchJson: {
           coachType: '',
           gradeId: ''
         }
-      },
-
-      presentDesc: ''
+      }
     }
   },
   computed: {
@@ -450,7 +467,10 @@ export default {
         this.information = res.data
         const productList = res.data.contract.productList
 
-        this.presentDesc = res.data.contract.ruleDetails
+        const customer = res.data.contract
+        this.giveAction.customerId = customer.customerId
+        this.giveAction.searchJson.coachType = customer.coachType
+        this.giveAction.searchJson.gradeId = customer.gradeId
 
         // 大套餐
         const mealKeyVal = {}
@@ -463,10 +483,10 @@ export default {
           giftKeyVal[item.detailsId] = item
         })
 
-        this.totalPrice = res.data.contract.unreceivedMoney
-
         const mealList = []
         const giftList = []
+        const buyPresent = []
+        let presentDataIndex = 0
         productList.forEach(item => {
           if (item.type == 1) {
             var obj = {
@@ -476,9 +496,9 @@ export default {
               comboNormLesson: giftKeyVal[item.giftProductId].purchaseFrequency, // 套餐标准课次
               normLesson: giftKeyVal[item.giftProductId].giveFrequency, // 套餐标准赠送课次
               purchaseLesson: item.courseSum, // 购买课次
-              grooveLesson: 0, // 常规赠送课次
-              planeLesson: 0, // 已排课课次
-              completeLesson: 0, // 已完成课次
+              grooveLesson: item.presenterCourseSum, // 常规赠送课次
+              planeLesson: item.alreadyCourse, // 已排课课次
+              completeLesson: item.finishCourse, // 已完成课次
               price: item.subtotal, // 大套餐价格
               univalence: item.price, // 单价
               salePrice: item.salesPrice,
@@ -490,19 +510,35 @@ export default {
 
             mealList.push(obj)
           } else if (item.type == 2) {
+            var ob = {
+              subject: item.productId, // 科目
+              mealProductId: item.mealProductId, // 大套餐
+              giftProductId: item.giftProductId, // 小套餐
+              presentLesson: item.presenterCourseSum, // 赠送
+              planeLesson: item.alreadyCourse, // 排课
+              completeLesson: item.finishCourse, // 已完成
+              univalence: item.price, // 均价
+              dataIndex: presentDataIndex++, // 标识
+              type: 2, // 类型。标识累计赠送
+              mealType: null // 对应大套餐类型
+            }
+            buyPresent.push(ob)
             giftList.push(item)
           }
         })
 
         this.comboValue = {
-          productList: mealList
+          productList: mealList,
+          presentList: buyPresent
         }
 
-        this.list[0].data = giftList.map(item => {
-          item.subjectName = this.subjectList[item.productId]
-          return item
-        })
-        this.list[1].data = res.data.contract.allotList
+        this.presentValue = giftList
+
+        // this.list[0].data = giftList.map(item => {
+        //   item.subjectName = this.subjectList[item.productId]
+        //   return item
+        // })
+        this.list[0].data = res.data.contract.allotList
       }).catch(() => {})
     },
 
@@ -562,14 +598,14 @@ export default {
   color: #ccc;
 }
 
-.table-desc {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
+.top {
+  margin-top:50px;
 }
 
-/deep/ .course-table .el-table__header-wrapper .gutter {
-  display: inline-block !important;
+/deep/ .course-table {
+  line-height: 40px !important;
+   .el-table__header-wrapper .gutter {
+    display: inline-block !important;
+  }
 }
 </style>
