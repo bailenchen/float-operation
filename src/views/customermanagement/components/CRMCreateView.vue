@@ -119,6 +119,7 @@
                 v-if="crmType == 'productSetMeal' || crmType == 'receivables'"
                 ref="mealsubject"
                 :action="action.type"
+                :is-flow="isFlow"
                 :detail-list="formsList"
                 :crm-type="crmType"
               />
@@ -409,7 +410,8 @@ export default {
       },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
-      contractDiscount: 100 // 合同折扣
+      contractDiscount: 100, // 合同折扣
+      isFlow: false
     }
   },
   computed: {
@@ -493,6 +495,7 @@ export default {
     this.getField()
     if (this.action.type == 'update') {
       if (this.crmType == 'productSetMeal') {
+        this.isFlow = this.action.editDetail.courseType == '引流课'
         this.formsList = this.action.editDetail.setting
       }
     }
@@ -1025,8 +1028,10 @@ export default {
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
             if (element.key == 'course_type' && element.value == '引流课') {
+              this.isFlow = true
               isHasPrice = true
             } else if (element.key == 'price') {
+              this.isFlow = false
               canDel = true
               fieldIndex = element.styleIndex
             }
