@@ -1770,9 +1770,8 @@ export default {
             'leadsNumber',
             'contractId'
           ]
-          console.log('编辑111')
           // 普通合同禁用contractsAttr
-          console.log(!this.action.present, this.action.contractType != 2)
+          // console.log(!this.action.present, this.action.contractType != 2)
           // if (!this.action.present) {
           if (this.action.contractType != 2) {
             arr.push('contractsAttr')

@@ -92,7 +92,10 @@ export default {
       type: String,
       default: ''
     },
-    money: Number, // 合同金额
+    money: { // 合同金额
+      type: [String, Number],
+      default: 0
+    },
     discount: { // 合同折扣
       type: [String, Number],
       default: 100
@@ -119,7 +122,7 @@ export default {
   computed: {},
   watch: {
     money(val) {
-      console.log('新的合同金额', val)
+      console.log('新的合同金额1', val)
       this.getDetail()
     },
     discount(val) {

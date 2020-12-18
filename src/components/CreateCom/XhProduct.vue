@@ -33,7 +33,7 @@
         @click="selectComoboHandle(item, index)"
       >{{ item.data.name }}</el-button>
     </div>
-    <p v-if="!value.products">当前可赠送课次：<span class="red">{{ currentGive }}</span></p>
+    <!-- <p v-if="!value.products">当前可赠送课次：<span class="red">{{ currentGive }}</span></p> -->
     <combo
       :action="comboAction"
       :give-action="action"
@@ -41,12 +41,12 @@
       :is-disabled="isDisabled"
       :subject-list="subjectList"
       :accumulation="accumulation"
-      @structure-data="structureDataHandle"
+      @structure-data="structureSend"
       @change-price="totalPriceHandle"/>
     <!-- 累计赠送课程 -->
     <div>
-      累计赠送课程
-      <el-table
+      <!-- 累计赠送课程 -->
+      <!-- <el-table
         :data="present"
         style="width: 100%">
         <el-table-column prop="subject" label="科目" width="" align="center">
@@ -95,13 +95,14 @@
             />
           </template>
         </el-table-column>
-      </el-table>
+      </el-table> -->
       <!-- <div v-show="presentRules"> -->
-      <div v-if="presentRules">
+      <!-- <div v-if="presentRules">
         累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。累计可赠送课次：{{ surplusGive }}
-      </div>
+      </div> -->
     </div>
-    <flexbox class="handle-footer">
+
+    <!-- <flexbox class="handle-footer">
       <div class="total-info">
         {{ priceText }}：
         <el-input
@@ -112,7 +113,7 @@
           type="number"
           disabled/>&nbsp;元
       </div>
-    </flexbox>
+    </flexbox> -->
   </div>
 </template>
 <script type="text/javascript">
@@ -424,6 +425,9 @@ export default {
       this.value.products.mealProducts.forEach(item => {
         if (item.productId == id) {
           val = item[attr]
+          // if (attr == 'courseType') {
+          //   val = item[attr] == '引流课'
+          // }
         }
       })
       return val
@@ -472,7 +476,8 @@ export default {
             originalPurchaseLesson: this.getAttrOfMeal(item.giftProductId, 'purchaseFrequency'), // 小套餐购买课次
             originalGrooveLesson: this.getAttrOfMeal(item.giftProductId, 'giveFrequency'), // 小套餐赠送课次
             mealType: this.getAttrOfBigMeal(item.mealProductId, 'courseType'), // 大套餐类型：引流、特价、正价
-            isGive: this.getAttrOfMeal(item.giftProductId, 'isGive')
+            isGive: this.getAttrOfMeal(item.giftProductId, 'isGive'),
+            drainage: this.getAttrOfBigMeal(item.mealProductId, 'courseType') == '引流课'
           }
           dataIndex++
           arr.push(obj)
@@ -515,8 +520,18 @@ export default {
       this.type = 'change'
 
       this.comboValue = {
-        productList: arr
+        productList: arr,
+        presentList: arr2,
+        totalPrice: this.value.totalPrice
       }
+    },
+
+    // 拼接数据
+    structureSend(obj) {
+      console.log('combo组件发送的数据', obj)
+      this.comboComponentData = obj
+      this.isNew = obj.drainage ? 2 : this.renew
+      this.sendData()
     },
 
     structureDataHandle(obj) {
@@ -611,6 +626,7 @@ export default {
       }
     },
     totalPriceHandle(obj) {
+      console.log('单价时间')
       this.totalPrice = obj.totalPrice
       this.priceValue = this.totalPrice
       if (this.action.attr && this.action.attr == 'change') {
@@ -621,10 +637,11 @@ export default {
       // 购买课程变化了，发送接口，从新生成
       var emitObj = {
         surplusPrice: this.action.surplusPrice,
-        buyCount: obj.buyCount,
+        buyCount: obj.purchaseLesson,
         totalclassTime: obj.totalclassTime, // 套餐总课次(购买+赠送)+累计赠送
         product: this.comboComponentData.tableData
       }
+      console.log('上一次的', emitObj)
 
       // 不是累计导致的计算单价
       if (!obj.isAccumulationChange) {
@@ -655,18 +672,17 @@ export default {
       this.productData = {
         index: this.index,
         value: {
-          product: this.comboComponentData.tableData, // 列表
-          totalPrice: this.totalPrice, // 套餐价格
-          // refundMonry: this.priceValue, // 充值返还金额
+          product: this.comboComponentData.tableData, // 列表 √
+          totalPrice: this.comboComponentData.totalPrice, // 套餐价格 √
           refundMonry: 0, // 充值返还金额
           issurplus: false,
           surplusPrice: this.action.surplusPrice, // 剩余金额
-          isNew: this.isNew, // 合同属性
-          totalclassTime: this.comboComponentData.totalclassTime, // 总课次
-          buyCount: this.comboComponentData.purchaseLesson, // 购买课次
-          presenterCount: this.comboComponentData.grooveLesson, // 赠送课次(常规赠送+累计赠送)
+          isNew: this.isNew, // 合同属性 √
+          totalclassTime: this.comboComponentData.totalclassTime, // 总课次 √
+          buyCount: this.comboComponentData.purchaseLesson, // 购买课次 √
+          presenterCount: this.comboComponentData.presenterCount, // 赠送课次(常规赠送+累计赠送) √
           // ruleDetails: `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。`
-          ruleDetails: ''
+          ruleDetails: this.comboComponentData.presentRules // √
         },
         data: {
           fieldName: 'productSetMeal'
@@ -685,6 +701,8 @@ export default {
           this.productData.value[k] = obj[k]
         }
       }
+
+      console.log('产品组件发送的数据', this.productData)
 
       this.$emit('value-change', this.productData)
     },
