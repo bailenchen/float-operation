@@ -128,6 +128,11 @@ export default {
     discount(val) {
       console.log('新的合同折扣', val)
       this.getDetail()
+    },
+    types(val) {
+      if (val) {
+        this.getDetail()
+      }
     }
   },
   mounted() {
@@ -141,7 +146,8 @@ export default {
         crm_present_contract: crmCreateExamineFlow,
         crm_invoice: crmCreateExamineFlow,
         crm_receivables: crmCreateExamineFlow,
-        crm_capitalAccount: crmCreateExamineFlow
+        offline: crmCreateExamineFlow,
+        refound: crmCreateExamineFlow
         // crm_dispute: crmExamineFlowRecordList
       }[this.types]
 
@@ -160,7 +166,8 @@ export default {
           crm_contract: 1,
           crm_receivables: 2,
           crm_invoice: 3,
-          crm_capitalAccount: 5
+          offline: 10,
+          refound: 11
         }[this.types] // 1 合同 2 回款 3 发票
         if (this.types == 'crm_contract') {
           params.money = this.money

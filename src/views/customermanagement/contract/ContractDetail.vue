@@ -55,6 +55,7 @@
                 v-if="item.name === 'CRMBaseInfo'"
                 :detail="detailData"
                 :id="id"
+                :base-list="baseList"
                 :filed-list="baseDetailList">
                 <!-- 课程信息 -->
                 <div v-if="detailData.contractType == 1" slot="first" style="padding-left: 15px;margin-bottom:20px;">
@@ -258,10 +259,10 @@ export default {
           name: '业绩分配信息',
           data: [],
           fieldlist: [
-            { prop: 'createUserName', label: '业绩享受人' },
+            { prop: 'memberUserName', label: '业绩享受人' },
             { prop: 'performanceRatio', label: '业绩比例（%）' },
             { prop: 'newStudentRatio', label: '新签学员比例（%）' },
-            { prop: 'memberUserName', label: '添加人' },
+            { prop: 'createUserName', label: '添加人' },
             { prop: 'checkStatus', label: '审批状态' },
             { prop: 'createTime', label: '添加时间' }
           ]
@@ -416,7 +417,7 @@ export default {
             3: '合同完成',
             4: '合同变更中',
             5: '执行中',
-            6: '执行中',
+            6: '草稿',
             7: '合同充值返还',
             8: '确认放弃'
           }
@@ -431,12 +432,13 @@ export default {
       this.baseDetailList = [
         { name: '基本信息', list: [] }
       ]
+      const isChange = data.contractType == 1 && data.relevanceContractId && data.relevanceContractId.length
       for (let index = 0; index < this.baseList.length; index++) {
         const element = this.baseList[index]
         this.baseDetailList[0].list.push({
-          name: element.name,
-          formType: 'text',
-          value: this.handleFieldVal(element.fieldName, data[element.fieldName])
+          name: isChange && element.fieldName == 'relevanceContractNum' ? '原合同编号' : element.name,
+          formType: element.fieldName == 'relevanceContractNum' ? 'relativenum' : 'text',
+          value: element.fieldName == 'relevanceContractNum' ? data.relevanceContractId : this.handleFieldVal(element.fieldName, data[element.fieldName])
         })
       }
 

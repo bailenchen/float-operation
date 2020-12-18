@@ -203,7 +203,12 @@ export default {
           4: '争议',
           5: '资金流水',
           6: '额外赠送合同',
-          7: '合同变更'
+          7: '合同变更',
+          8: '常规充值返还审批',
+          9: '特殊充值返还审批',
+          10: '充值审批',
+          11: '提现审批',
+          12: '转中心审批'
         }[row[column.property]]
       } else if (column.property === 'userIds') {
         const structures = row['deptIds'] || []

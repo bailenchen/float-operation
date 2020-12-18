@@ -393,7 +393,7 @@ export default {
           { name: '回款', value: 2 },
           { name: '发票', value: 3 },
           { name: '争议', value: 4 },
-          { name: '资金流水', value: 5 },
+          // { name: '资金流水', value: 5 },
           { name: '额外赠送合同', value: 6 },
           { name: '合同变更', value: 7 },
           { name: '常规充值返还审批', value: 8 },
@@ -431,7 +431,8 @@ export default {
         isNull: 0,
         name: '应用部门',
         setting: [],
-        inputTips: '默认全公司',
+        inputTips: '',
+        // inputTips: '默认全公司',
         value: {
           users: this.handle.data ? this.handle.data.userIds : [],
           strucs: this.handle.data ? this.handle.data.deptIds : []

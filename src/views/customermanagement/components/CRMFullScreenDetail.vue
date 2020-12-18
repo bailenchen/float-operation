@@ -9,6 +9,7 @@
       :model-data="modelData"
       :id="id"
       :click-field="clickField"
+      :base-list="baseList"
       class="d-view"
       @handle="detailHandle"
       @hide-view="hiddenView"/>
@@ -78,6 +79,12 @@ export default {
     clickField: {
       type: String,
       default: ''
+    },
+    baseList: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {

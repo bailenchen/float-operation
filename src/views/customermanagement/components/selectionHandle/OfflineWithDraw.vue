@@ -72,8 +72,8 @@
           <create-examine-info
             ref="examineInfo"
             :types-id="id"
+            :types="moneyType"
             class="examine-form"
-            types="crm_capitalAccount"
             @value-change="examineValueChange" />
         </create-sections>
       </el-form>
@@ -411,6 +411,11 @@ export default {
           if (this.examineInfo.examineType == 2) {
             parms.checkUserId = this.examineInfo.value[0].userId
           }
+
+          parms.categoryType = {
+            offline: 10,
+            refound: 11
+          }[this.moneyType]
 
           if (this.imgFile[0]) {
             parms.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识

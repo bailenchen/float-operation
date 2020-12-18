@@ -98,6 +98,18 @@
               <div class="b-cell-value">{{ getStatusName(item.value) }}</div>
             </flexbox>
 
+            <!-- 特殊处理关联合同编号 -->
+            <flexbox
+              v-else-if="item.formType === 'relativenum'"
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div
+                v-for="(sitem,sindex) in item.value || []"
+                :key="sindex"
+                class="b-cell-value num-name" @click="enterRelativeDetail(sitem)">{{ sitem.num }}</div>
+            </flexbox>
+
             <flexbox
               v-else
               align="stretch"
@@ -122,6 +134,7 @@
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :id="fullDetailId"
+      :base-list="baseList"
       :crm-type="fullDetailType"/>
   </div>
 </template>
@@ -181,7 +194,13 @@ export default {
       default: ''
     },
     // 固定字段的数据
-    filedList: Array
+    filedList: Array,
+    baseList: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   },
   data() {
     return {
@@ -228,6 +247,12 @@ export default {
   },
   deactivated: function() {},
   methods: {
+    // 进入关联详情
+    enterRelativeDetail(item) {
+      this.showFullDetail = true
+      this.fullDetailId = item.contractId
+      this.fullDetailType = 'contract'
+    },
     /**
      * 获取基础信息
      */
@@ -416,6 +441,11 @@ export default {
 
 .can-check {
   color: $xr-color-primary !important;
+  cursor: pointer;
+}
+
+.num-name {
+  color: #2362FB !important;
   cursor: pointer;
 }
 
