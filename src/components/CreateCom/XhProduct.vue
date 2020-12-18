@@ -679,7 +679,7 @@ export default {
         value: {
           product: this.comboComponentData.tableData, // 列表 √
           totalPrice: this.comboComponentData.totalPrice, // 套餐价格 √
-          refundMonry: 0, // 充值返还金额
+          refundMonry: this.comboComponentData.refundMonry, // 充值返还金额
           issurplus: this.comboComponentData.issurplus,
           // surplusPrice: this.action.surplusPrice, // 剩余金额
           surplusPrice: 0,

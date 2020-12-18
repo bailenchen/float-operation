@@ -51,6 +51,12 @@ export default {
       default: () => {
         return {}
       }
+    },
+    value: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data() {
@@ -98,6 +104,20 @@ export default {
       OrderLeve1Arr: []
     }
   },
+  watch: {
+    value: {
+      handler(val) {
+        console.log('val', val)
+        if (val) {
+          console.log('使用value的值代替table', val)
+          this.structureDataByValue()
+        }
+      },
+      deep: true,
+      immediate: true
+    }
+
+  },
   created() {
     // 获取科目
     QueryAdminSubject().then(res => {
@@ -106,6 +126,26 @@ export default {
     this.dataIndex = this.tableData.length
   },
   methods: {
+    structureDataByValue() {
+      var arr = []
+      var dataIndex = 0
+      this.value.forEach(item => {
+        var obj = {
+          subject: item.productId,
+          grooveLesson: item.courseSum,
+          planeLesson: item.alreadyCourse,
+          completeLesson: item.finishCourse,
+          discount: item.discountRate,
+          dataIndex
+        }
+        dataIndex++
+        arr.push(obj)
+      })
+
+      this.dataIndex = dataIndex
+
+      this.tableData = arr
+    },
     plusSubjectHandle(dataIndex) {
       console.log('添加', dataIndex)
       this.dataIndex++

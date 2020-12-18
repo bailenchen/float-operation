@@ -227,7 +227,7 @@ export default {
       priceValue: 0, // 总金额、剩余金额、最终价格
       totalPrice: 0, // 总金额
       surplusPrice: 0, // 剩余金额
-      finalPrice: 0, // 最终价格
+      refundMonry: 0, // 充值返回金额
       maxGive: 0, // 最大赠送课次
       surplusGive: 0, // 剩余可赠送课次，用于限制累计赠送课次
       drainage: false,
@@ -243,6 +243,8 @@ export default {
   computed: {
     showOperation() {
       if (this.action && this.action.type && this.action.type == 'old-change') {
+        return false
+      } else if (this.isDisabled) {
         return false
       }
       return true
@@ -479,6 +481,7 @@ export default {
         if (this.giveAction && this.giveAction.type == 'change') {
           console.log('新合同计算最终价格', this.totalPrice, this.action.surplusPrice)
           this.priceValue = this.totalPrice - this.action.surplusPrice
+          this.refundMonry = this.priceValue
         }
 
         this.getOrderNumber()
@@ -670,7 +673,8 @@ export default {
         // surplusGive: this.surplusGive, // 剩余可赠送课次
         presentRules: this.presentRules ? `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。` : '', // 赠送规则
         issurplus: this.issurplus,
-        surplusPrice: this.surplusPrice
+        surplusPrice: this.surplusPrice,
+        refundMonry: this.refundMonry
         // giveObj: this.giveObj // 累计的信息
       }
       console.log(obj)

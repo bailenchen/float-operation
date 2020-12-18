@@ -1871,11 +1871,7 @@ export default {
         if (this.crmType == 'contract' && this.action.type == 'update' && this.action.contractType == 2) {
           console.log('额外合同编辑')
           if (element.key == 'contractId') {
-            element.value = [
-              {
-                // num:
-              }
-            ]
+            element.value = this.action.information.contract.relevanceContractId
           }
           if (element.key == 'present') {
             element.value = this.action.information.contract.productList
