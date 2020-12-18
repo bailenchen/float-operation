@@ -675,8 +675,9 @@ export default {
           product: this.comboComponentData.tableData, // 列表 √
           totalPrice: this.comboComponentData.totalPrice, // 套餐价格 √
           refundMonry: 0, // 充值返还金额
-          issurplus: false,
-          surplusPrice: this.action.surplusPrice, // 剩余金额
+          issurplus: this.comboComponentData.issurplus,
+          // surplusPrice: this.action.surplusPrice, // 剩余金额
+          surplusPrice: 0,
           isNew: this.isNew, // 合同属性 √
           totalclassTime: this.comboComponentData.totalclassTime, // 总课次 √
           buyCount: this.comboComponentData.purchaseLesson, // 购买课次 √
@@ -687,6 +688,10 @@ export default {
         data: {
           fieldName: 'productSetMeal'
         }
+      }
+
+      if (this.action.type && this.action.type == 'old-change') {
+        this.productData.value.surplusPrice = this.comboComponentData.surplusPrice
       }
 
       if (this.action.type && this.action.type == 'change') {

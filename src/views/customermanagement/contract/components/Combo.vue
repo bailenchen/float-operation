@@ -235,7 +235,8 @@ export default {
       subjectsOfDidabled: [],
       subjectListOfGive: [], // 累计赠送的科目
       presentRules: null,
-      priceText: '最终价格'
+      priceText: '最终价格',
+      issurplus: false
     }
   },
 
@@ -323,11 +324,9 @@ export default {
           price += item.completeLesson * item.univalence
         })
 
-        console.log('医用金额1', price)
-
-
         this.surplusPrice = this.value.totalPrice - price
         this.priceValue = this.surplusPrice
+        this.issurplus = true
         this.sendData()
         return
       }
@@ -475,6 +474,12 @@ export default {
       if (arr.length) {
         this.calculateTotalPrice()
         this.priceValue = this.totalPrice
+
+        // 合同变更-新合同计算最终价格
+        if (this.giveAction && this.giveAction.type == 'change') {
+          console.log('新合同计算最终价格')
+          this.priceValue = this.totalPrice - this.action.surplusPrice
+        }
 
         this.getOrderNumber()
         this.getMaxGive()
@@ -743,7 +748,9 @@ export default {
         totalPrice: this.totalPrice, // 总价
         // currentGive: this.maxGive, // 当前可赠送课次
         // surplusGive: this.surplusGive, // 剩余可赠送课次
-        presentRules: this.presentRules ? `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。` : '' // 赠送规则
+        presentRules: this.presentRules ? `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。` : '', // 赠送规则
+        issurplus: this.issurplus,
+        surplusPrice: this.surplusPrice
         // giveObj: this.giveObj // 累计的信息
       }
       console.log(obj)
