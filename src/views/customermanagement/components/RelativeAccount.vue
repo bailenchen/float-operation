@@ -4,48 +4,17 @@
     class="rc-cont"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限">
-    <flexbox
-      v-if="!isSeas"
-      class="rc-head"
-      direction="row-reverse">
-      <el-button
-        class="xr-btn--orange rc-head-item"
-        icon="el-icon-plus"
-        type="primary"
-        @click="createClick">新建合同</el-button>
-    </flexbox>
-    <el-table
-      :data="list"
-      :height="tableHeight"
-      :cell-class-name="cellClassName"
-      stripe
-      style="width: 100%;border: 1px solid #E6E6E6;"
-      @row-click="handleRowClick">
-      <el-table-column
-        v-for="(item, index) in fieldList"
-        :key="index"
-        :prop="item.prop"
-        :formatter="fieldFormatter"
-        :label="item.label"
-        show-overflow-tooltip/>
-    </el-table>
-    <c-r-m-full-screen-detail
-      :visible.sync="showFullDetail"
-      :id="contractId"
-      crm-type="contract"
-      @handle="detailHandle"/>
-    <c-r-m-create-view
-      v-if="isCreate"
-      :action="createActionInfo"
-      crm-type="contract"
-      @save-success="createSaveSuccess"
-      @hiden-view="isCreate=false"/>
+    <c-r-m-edit-base-info
+      :detail="detail"
+      :id="detail.capitalId"
+      crm-type="capitalAccount"/>
   </div>
 </template>
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
+import CRMEditBaseInfo from './CRMEditBaseInfo' // 基本信息
 import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
@@ -55,7 +24,8 @@ export default {
   name: 'RelativeContract', // 相关联系人  可能再很多地方展示 放到客户管理目录下
   components: {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue'),
-    CRMCreateView
+    CRMCreateView,
+    CRMEditBaseInfo
   },
   mixins: [loading, CheckStatusMixin],
   props: {
@@ -95,12 +65,12 @@ export default {
   computed: {},
   watch: {
     id: function(val) {
-      this.list = []
-      this.getDetail()
+      // this.list = []
+      // this.getDetail()
     }
   },
   mounted() {
-    this.getDetail()
+    // this.getDetail()
   },
   activated: function() {},
   deactivated: function() {},

@@ -101,7 +101,7 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          :sortable="item.prop != 'poolDay' ? 'custom' : false"
+          :sortable="isSort(item)"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <template v-if="item.prop == 'dealStatus'">
@@ -223,6 +223,14 @@ export default {
     this.$refs.elMenu.activeIndex = this.crmType
   },
   methods: {
+    isSort(item) {
+      if (item.prop == 'poolDay' || item.prop == 'deptIdName') {
+        return false
+      } else {
+        return true
+      }
+    },
+
     relativeBusinessClick(data) {
       this.rowID = data.businessId
       this.rowType = 'business'

@@ -104,32 +104,25 @@ export default {
     }
   },
   mounted() {
+    console.log(this.crmType, 'kkkkkkkkkkkk')
+
     this.getDetail()
   },
   activated: function() {},
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({
-        prop: 'contractName',
-        width: '200',
-        label: '合同名称'
-      })
       this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
+      this.fieldList.push({ prop: 'isnew', width: '200', label: '合同属性' })
+      this.fieldList.push({ prop: 'coachType', width: '200', label: '辅导方式' })
+      this.fieldList.push({ prop: 'orderDate', width: '200', label: '签约时间' })
       this.fieldList.push({
         prop: 'customerName',
         width: '200',
-        label: '客户名称'
+        label: '学员姓名'
       })
-      this.fieldList.push({ prop: 'money', width: '200', label: '合同金额' })
-      this.fieldList.push({
-        prop: 'startTime',
-        width: '200',
-        label: '开始日期'
-      })
-
-      this.fieldList.push({ prop: 'endTime', width: '200', label: '结束日期' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '状态' })
+      this.fieldList.push({ prop: 'channelName', width: '200', label: 'LEADS来源' })
+      this.fieldList.push({ prop: 'deptIdName', width: '200', label: '所属中心' })
     },
 
     getDetail() {
