@@ -49,7 +49,7 @@
           @change="valueChange($event,item.prop, bindex)"/>
 
         <div v-if="item.type == 'radio'" class="el-input">
-          <el-radio v-model="bitem.form[item.prop]" :label="1">参与</el-radio>
+          <el-radio v-if="!isFlow" v-model="bitem.form[item.prop]" :label="1">参与</el-radio>
           <el-radio v-model="bitem.form[item.prop]" :label="0">不参与</el-radio>
         </div>
 
@@ -83,6 +83,10 @@ export default {
       default() {
         return []
       }
+    },
+    isFlow: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -147,6 +151,11 @@ export default {
       }[this.crmType]
     }
   },
+  watch: {
+    isFlow(val) {
+      this.isForceJoin(val)
+    }
+  },
   created() {
     this.formsList = []
     if (this.action == 'save') {
@@ -178,6 +187,15 @@ export default {
     }
   },
   methods: {
+    // 是引流课的话就强制参加
+    isForceJoin(val) {
+      for (let index = 0; index < this.formsList.length; index++) {
+        const element = this.formsList[index]
+        if (val) {
+          element.form.isGive = 0
+        }
+      }
+    },
     // 获取学科下拉数据
     getSubjects() {
       QueryAdminSubject().then(res => {
@@ -221,7 +239,7 @@ export default {
             giveFrequency: '',
             start_life_cycle: '',
             end_life_cycle: '',
-            isGive: 1
+            isGive: this.isFlow ? 0 : 1
           }
         }
       }
