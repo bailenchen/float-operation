@@ -477,7 +477,7 @@ export default {
 
         // 合同变更-新合同计算最终价格
         if (this.giveAction && this.giveAction.type == 'change') {
-          console.log('新合同计算最终价格')
+          console.log('新合同计算最终价格', this.totalPrice, this.action.surplusPrice)
           this.priceValue = this.totalPrice - this.action.surplusPrice
         }
 
@@ -580,8 +580,8 @@ export default {
     },
 
     // 计算均价
-    calculateUnivalence1(options) {
-      console.log('修改的哪一行', options.row)
+    calculateUnivalence(options) {
+      // console.log('修改的哪一行', options.row)
       // 修正累计赠送大小套餐id
       if (options.row.type && options.row.type == 2) {
         var obj = objDeepCopy(options.row)
@@ -593,7 +593,7 @@ export default {
       if (options.isAccumulationChange) {
         options.lesson += this.mealLesson(options.row)
         console.log('包含累计赠送的课次', options)
-        var avgPrice = this.calculateUnivalence2(options)
+        var avgPrice = this.calculateMealUnivalence(options)
         this.presentData.forEach(item => {
           if (item.presentLesson) {
             item.univalence = avgPrice
@@ -603,12 +603,12 @@ export default {
         // 全部修改完毕，向父组件返值
         this.sendData()
       } else { // 只计算套餐价格
-        this.calculateUnivalence2(options)
+        this.calculateMealUnivalence(options)
         this.sendData()
       }
     },
     // 套餐计算均价
-    calculateUnivalence2(options) {
+    calculateMealUnivalence(options) {
       var avgPrice = ''
       if (options.row.mealType == '引流课') {
         // this.getDrainageMealInfo(options.row.combo_number)
@@ -654,86 +654,6 @@ export default {
       }
       return avgPrice
     },
-
-    // 计算单价
-    calculateUnivalence(options) {
-      console.log('调用calculateUnivalence')
-      var avgPrice = ''
-      if (options.isAccumulationChange) {
-        if (this.accumulation.data[0] && this.accumulation.data[0].mealType == '引流课') {
-          avgPrice = this.getDrainageMealInfo(this.accumulation.data[0].mealProductId, true)
-        } else {
-          var lesson = 0 // 小套餐课次之和
-          for (let i = 0; i < this.tableData.length; i++) {
-            const element = this.tableData[i]
-            // 根据累计获取小套餐id,计算该小套餐课次和
-            // if (element.detailsId === this.accumulation.data[0].giftProductId) {
-            if (element.detailsId === this.giveObj.giftProductId) {
-              lesson += Number(element.purchaseLesson) + Number(element.grooveLesson)
-            }
-          }
-
-          lesson += this.accumulation.lesson
-          for (let i = 0; i < this.tableData.length; i++) {
-            const element = this.tableData[i]
-            // if (element.detailsId === this.accumulation.data[0].giftProductId) {
-            if (element.detailsId === this.giveObj.giftProductId) {
-              avgPrice = element.univalence = lesson ? (element.salePrice / lesson).toFixed(2) : 0
-            }
-          }
-        }
-      } else {
-        if (options.row.mealType == '引流课') {
-          this.getDrainageMealInfo(options.row.combo_number)
-        } else {
-          for (let i = 0; i < this.tableData.length; i++) {
-            const element = this.tableData[i]
-            console.log('计算均价', options.row, options.lesson)
-            // 修改均价
-            if (element.detailsId === options.row.detailsId) {
-              element.univalence = options.lesson ? (element.salePrice / options.lesson).toFixed(2) : 0
-            }
-            // 修改参与累计赠送的小套餐的价格
-            // if (element.detailsId === this.giveObj.giftProductId) {
-            //   console.log('修改参与d', element.salePrice, element.purchaseLesson, element.grooveLesson)
-            //   var lesson = Number(element.purchaseLesson) + Number(element.grooveLesson)
-            //   element.univalence = (element.salePrice / lesson).toFixed(2)
-            // }
-          }
-        }
-      }
-
-
-      console.log('修改单价，发送事件')
-      // var obj = {
-      //   totalPrice: this.totalPrice,
-      //   univalence: avgPrice,
-      //   purchaseLesson: this.purchaseLesson, // 套餐购买课次和
-      //   totalclassTime: Number(this.purchaseLesson) + Number(this.allGiveLesson),
-      //   isAccumulationChange: options.isAccumulationChange, // 累计导致的计算单价为true
-      //   surplusGive: this.surplusGive
-      // }
-
-      var obj = {
-        tableData: this.tableData,
-        purchaseLesson: this.purchaseLesson, // 套餐购买课次和
-        grooveLesson: this.grooveLesson, // 套餐赠送课次和
-        totalclassTime: Number(this.purchaseLesson) + Number(this.allGiveLesson), // 总课次
-        drainage: this.drainage, // 是否为引流
-        totalPrice: this.totalPrice, // 总价
-        currentGive: this.maxGive, // 当前可赠送课次
-        surplusGive: this.surplusGive, // 剩余可赠送课次
-        presentRules: this.presentRules, // 赠送规则
-        giveObj: this.giveObj, // 累计的信息
-        isAccumulationChange: options.isAccumulationChange, // 累计导致的计算单价为true
-        univalence: avgPrice
-      }
-
-
-      // console.log(obj)
-      this.$emit('change-price', obj)
-    },
-
     // 向父组件发送数据
     sendData() {
       console.log('combo向父组件发送数据')
@@ -1047,6 +967,11 @@ export default {
       })
 
       // 重新计算均价
+      this.calculateUnivalence({
+        row: arr[0], //
+        lesson,
+        isAccumulationChange: true
+      })
     },
 
 
@@ -1187,7 +1112,7 @@ export default {
 
       // this.calculateUnivalence(row, purchaseLesson + giveLesson)
       var lesson = purchaseLesson + giveLesson
-      this.calculateUnivalence1({ row, lesson })
+      this.calculateUnivalence({ row, lesson })
 
       // 重新生成累计赠送
       if (this.giveObj) {
@@ -1223,7 +1148,7 @@ export default {
       console.log('大于1的数组', arr)
       this.accumulativeLesson = lesson
       // 计算均价
-      this.calculateUnivalence1({
+      this.calculateUnivalence({
         row: arr[0], //
         lesson,
         isAccumulationChange: true

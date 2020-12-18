@@ -333,12 +333,17 @@ export default {
         productSetMeal: arr
       }
 
-      if (this.action.attr && this.action.attr == 'change') {
-        console.log('计算最终价格')
-        this.finalPrice = this.totalPrice - this.action.surplusPrice
-        this.priceValue = this.finalPrice
-        this.comboAction.type = 'change'
+      // 合同变更-新合同
+      if (this.action.type == 'change') {
+        this.comboAction.surplusPrice = this.action.surplusPrice
       }
+
+      // if (this.action.attr && this.action.attr == 'change') {
+      //   console.log('计算最终价格')
+      //   this.finalPrice = this.totalPrice - this.action.surplusPrice
+      //   this.priceValue = this.finalPrice
+      //   this.comboAction.type = 'change'
+      // }
     },
     selectComoboHandle(item, index) {
       console.log('选择', index, this.selectComobo[index])
