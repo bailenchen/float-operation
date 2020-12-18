@@ -52,7 +52,8 @@ export default {
         return {}
       }
     },
-    value: ''
+    // value: [String, Array, Object]
+    oldValue: Array
     // value: {
     //   type: Array,
     //   default: () => {
@@ -109,18 +110,18 @@ export default {
   watch: {
     action: {
       handler(val) {
-        console.log('val', val)
+        console.log('监听action', val)
         if (val) {
-          console.log('使用value的值代替table', val)
+          console.log('AAA-', val)
           this.structureData()
         }
-      }
+      },
+      deep: true
     },
-    value: {
+    oldValue: {
       handler(val) {
-        console.log('val', val)
-        if (val) {
-          console.log('使用value的值代替table', val)
+        console.log('oldValue', val)
+        if (val && this.action.type == 'update') {
           this.structureDataByValue()
         }
       },
@@ -138,6 +139,11 @@ export default {
   },
   methods: {
     structureData() {
+      console.log('ASDAA11', this.action.buyCount == 0)
+      if (this.action.buyCount == 0) {
+        this.tableData = []
+        return
+      }
       var arr = []
       var obj = {
         subject: '',
@@ -153,7 +159,7 @@ export default {
     structureDataByValue() {
       var arr = []
       var dataIndex = 0
-      this.value.forEach(item => {
+      this.oldValue.forEach(item => {
         var obj = {
           subject: item.productId,
           grooveLesson: item.courseSum,

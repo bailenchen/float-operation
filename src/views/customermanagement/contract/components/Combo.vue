@@ -397,7 +397,7 @@ export default {
         }
         if (this.giveAction && this.giveAction.attr && this.giveAction.attr == 'update') {
           console.log('最大与赠送', this.maxGive, this.grooveLesson)
-          this.surplusGive = this.maxGive - this.grooveLesson
+          this.surplusGive = this.maxGive - this.grooveLesson > 0 ? this.maxGive - this.grooveLesson : 0
         }
         console.log('最大次数', this.maxGive)
         this.sendData()
@@ -917,10 +917,14 @@ export default {
           lesson += Number(element.purchaseLesson)
         }
       }
-      if (lesson != deleInfo.comboNormLesson) {
-        for (let index = 0; index < this.tableData.length; index++) {
-          this.changePurchaseLesson(deleInfo)
-        }
+      // if (lesson != deleInfo.comboNormLesson) {
+      //   for (let index = 0; index < this.tableData.length; index++) {
+      //     this.changePurchaseLesson(deleInfo)
+      //   }
+      // }
+
+      for (let index = 0; index < this.tableData.length; index++) {
+        this.changePurchaseLesson(deleInfo)
       }
     },
     // 计算减号显隐
@@ -1009,6 +1013,9 @@ export default {
       }
       this.calculateTotalPrice()
       this.priceValue = this.totalPrice
+      if (this.giveAction && this.giveAction.type == 'change') {
+        this.priceValue = this.totalPrice - this.action.surplusPrice
+      }
 
       this.calculateUnivalence({ row, lesson })
     },

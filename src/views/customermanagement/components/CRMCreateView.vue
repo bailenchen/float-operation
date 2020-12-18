@@ -97,6 +97,7 @@
                   <component
                     :is="item.data.formType | typeToComponentName"
                     :value="item.value"
+                    :old-value="item.oldValue"
                     :index="index"
                     :item="item"
                     :show-types="item.showTypes"
@@ -403,7 +404,8 @@ export default {
       },
       actionPresent: {
         countCourseSum: 0, // 主合同总课次
-        buyCount: 0 // 主合同总购买课次
+        buyCount: 0, // 主合同总购买课次
+        type: 'save' // 新建
       },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
@@ -662,6 +664,20 @@ export default {
               } else {
                 element.disabled = true
                 element.relation = {}
+                element.value = []
+
+                this.actionPresent.countCourseSum = 0
+                this.actionPresent.buyCount = 0
+
+                // for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+                //   console.log('清空辅导方式')
+                //   if (element.key == 'coach_type') {
+                //     element.value = ''
+                //   }
+                // }
+                // if (element.key == 'coach_type') {
+                //   element.value = ''
+                // }
               }
             }
             // 需要处理 需关联客户信息或客户下信息
@@ -675,7 +691,6 @@ export default {
               'dept_id', // 所属中心
               'leadsNumber' // 学员编号
             ]
-
 
             // 添加请求关联
             const addRelation = ['business_id', 'contacts_id']
@@ -851,10 +866,14 @@ export default {
             console.log('总课次与购买课次', item.countCourseSum, item.buyCount)
           })
 
-          this.actionPresent = {
-            countCourseSum,
-            buyCount
-          }
+          // this.actionPresent = {
+          //   countCourseSum,
+          //   buyCount
+          // }
+          this.actionPresent.countCourseSum = countCourseSum
+          this.actionPresent.buyCount = buyCount
+
+
           console.log('zAAAAAAAA--', item.value)
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
@@ -869,7 +888,11 @@ export default {
             // 复制
             const getValueObj = {
               coach_type: data => {
-                return data.coachType ? data.coachType : ''
+                console.log('data1111', data)
+                if (data && data.coachType) {
+                  return data.coachType
+                }
+                return ''
               }
             }
             if (handleFields.includes(element.key)) {
@@ -1777,6 +1800,12 @@ export default {
             arr.push('contractsAttr')
           }
 
+          // 额外合同
+          if (this.action.contractType == 2) {
+            arr.push('coach_type')
+            arr.push('grade_id')
+          }
+
           params.disabled = arr.includes(item.fieldName)
         }
         this.crmForm.crmFields.push(params)
@@ -1872,9 +1901,22 @@ export default {
           console.log('额外合同编辑')
           if (element.key == 'contractId') {
             element.value = this.action.information.contract.relevanceContractId
+
+            var countCourseSum = 0
+            var buyCount = 0
+            element.value.forEach(item => {
+              countCourseSum += item.countCourseSum
+              buyCount += item.buyCount
+            })
+
+            this.actionPresent = {
+              countCourseSum, // 主合同总课次
+              buyCount, // 主合同总购买课次
+              type: 'update' // 新建
+            }
           }
           if (element.key == 'present') {
-            element.value = this.action.information.contract.productList
+            element.oldValue = this.action.information.contract.productList
             console.log('赠送组件的值', element)
           }
         }
@@ -1904,6 +1946,29 @@ export default {
           }
           if (element.key == 'source') {
             element.value = this.action.detail.channelIdName
+          }
+        }
+
+        // 从学员创建合同
+        console.log('从学员创建合同', this.action)
+        if (this.action && this.action.crmType == 'customer') {
+          if (element.key == 'contractsAttr') {
+            element.value = 1
+          }
+          if (element.key == 'totalclassTime') {
+            element.value = this.action.data.customer.countCourseSum
+          }
+          if (element.key == 'leadsNumber') {
+            element.value = this.action.data.customer.leadsNumber
+          }
+          if (element.key == 'dept_id') {
+            element.value = this.action.data.customer.deptIdName
+          }
+          if (element.key == 'headmasterUserName') {
+            element.value = this.action.data.customer.headmasterUserIdName
+          }
+          if (element.key == 'source') {
+            element.value = this.action.data.customer.channelIdName
           }
         }
       }
