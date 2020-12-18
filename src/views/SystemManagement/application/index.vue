@@ -236,6 +236,10 @@ export default {
           email: {
             disable: require('@/assets/img/system/app/email_disable.png'),
             enable: require('@/assets/img/system/app/email_enable.png')
+          },
+          educational: {
+            disable: require('@/assets/img/system/app/email_disable.png'),
+            enable: require('@/assets/img/system/app/email_enable.png')
           }
         }[moduleType][status == 1 ? 'enable' : 'disable']
       }
