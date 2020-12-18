@@ -1257,7 +1257,25 @@ export default {
         if (this.isSeas) {
           return this.crm.pool.delete
         }
-        return this.crm[this.crmType].delete
+        if (this.crmType == 'capitalAccount') {
+          const regordRes = []
+          for (let index = 0; index < this.selectionList.length; index++) {
+            const element = this.selectionList[index]
+            if ((element.price == null || parseFloat(element.price) == 0) &&
+            (element.surplus == null || parseFloat(element.surplus) == 0)) {
+              regordRes.push(true)
+            } else {
+              regordRes.push(false)
+            }
+          }
+          if (regordRes.includes(false)) {
+            return false
+          } else {
+            return this.crm[this.crmType].delete
+          }
+        } else {
+          return this.crm[this.crmType].delete
+        }
       } else if (type == 'put_seas') {
         // 放入公海(客户)
         return this.crm[this.crmType].putinpool
