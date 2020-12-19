@@ -376,7 +376,7 @@ export default {
           this.headDetails[1].value = res.data.customerName
           this.headDetails[2].value = separator(res.data.money || 0)
           this.headDetails[3].value = res.data.orderDate
-          this.headDetails[4].value = separator(res.data.receivablesMoney || 0)
+          this.headDetails[4].value = separator(res.data.money || 0)
           this.headDetails[5].value = res.data.ownerUserName
         })
         .catch(() => {
