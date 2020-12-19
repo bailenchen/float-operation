@@ -73,6 +73,10 @@
                     :is-disabled="isDisabled"
                     class="course-table"
                     style="width: 100%;"/>
+                  <div class="table-desc">
+                    <div class="left-txt"/>
+                    <div class="right-txt">最终价格：{{ totalPrice }}元</div>
+                  </div>
                 </div>
                 <!-- 累计赠送课程 -->
                 <div v-if="detailData.contractType == 2" slot="first" style="padding-left: 15px;margin-bottom:20px;">
@@ -88,7 +92,7 @@
                     style="width: 100%;"/>
                 </div>
                 <!-- 业绩分配信息 -->
-                <div v-if="detailData.contractType == 1" slot="first" :class="{'top': detailData.contractType == 1}" style="padding-left: 15px;margin-bottom:20px;">
+                <div v-if="detailData.contractType == 1" slot="first" style="padding-left: 15px;margin-bottom:20px;">
                   <div class="section-header" style="padding-left:0;">
                     <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
                     <div class="section-title">业绩分配信息</div>
@@ -255,6 +259,7 @@ export default {
         lesson: 0
       },
       isDetail: true,
+      totalPrice: '',
 
       // 赠送
       presentAction: {
@@ -453,7 +458,7 @@ export default {
         this.information = res.data
         const productList = res.data.contract.productList
 
-        const totalPrice = res.data.contract.unreceivedMoney
+        this.totalPrice = res.data.contract.contractType == 1 && res.data.contract.relevanceContractId.length ? res.data.contract.refundMonry : res.data.contract.money
 
         const customer = res.data.contract
         this.giveAction.customerId = customer.customerId
@@ -517,8 +522,7 @@ export default {
 
         this.comboValue = {
           productList: mealList,
-          presentList: buyPresent,
-          totalPrice: totalPrice
+          presentList: buyPresent
         }
 
         this.presentValue = giftList
@@ -587,8 +591,11 @@ export default {
   color: #ccc;
 }
 
-.top {
-  margin-top:50px;
+.table-desc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
 }
 
 /deep/ .course-table {
