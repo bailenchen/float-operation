@@ -30,9 +30,9 @@
       <el-table-column
         v-for="(item, index) in fieldList"
         :key="index"
-        :prop="item.prop"
+        :prop="item.fieldName"
         :formatter="fieldFormatter"
-        :label="item.label"
+        :label="item.name"
         show-overflow-tooltip/>
     </el-table>
     <c-r-m-full-screen-detail
@@ -52,6 +52,9 @@
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
+import {
+  filedGetTableField
+} from '@/api/customermanagement/common'
 import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
@@ -105,26 +108,21 @@ export default {
       this.getDetail()
     }
   },
+  created() {
+    this.getFieldList()
+  },
   mounted() {
-    console.log(this.crmType, 'kkkkkkkkkkkk')
-
     this.getDetail()
   },
   activated: function() {},
   deactivated: function() {},
   methods: {
     getFieldList() {
-      this.fieldList.push({ prop: 'num', width: '200', label: '合同编号' })
-      this.fieldList.push({ prop: 'isnew', width: '200', label: '合同属性' })
-      this.fieldList.push({ prop: 'coachType', width: '200', label: '辅导方式' })
-      this.fieldList.push({ prop: 'orderDate', width: '200', label: '签约时间' })
-      this.fieldList.push({
-        prop: 'customerName',
-        width: '200',
-        label: '学员姓名'
+      filedGetTableField({ label: 6 }).then(res => {
+        this.fieldList = res.data
+      }).catch((err) => {
+        console.log(err)
       })
-      this.fieldList.push({ prop: 'channelName', width: '200', label: 'LEADS来源' })
-      this.fieldList.push({ prop: 'deptIdName', width: '200', label: '所属中心' })
     },
 
     getDetail() {
@@ -138,9 +136,6 @@ export default {
       params[keytype + 'Id'] = this.id
       request(params)
         .then(res => {
-          if (this.fieldList.length == 0) {
-            this.getFieldList()
-          }
           this.nopermission = false
           this.loading = false
           this.list = res.data

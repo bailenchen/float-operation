@@ -68,6 +68,7 @@
                     :value="comboValue"
                     :give-action="giveAction"
                     :subject-list="subList"
+                    :is-detail="isDetail"
                     :accumulation="accumulation"
                     :is-disabled="isDisabled"
                     class="course-table"
@@ -253,6 +254,7 @@ export default {
         data: [],
         lesson: 0
       },
+      isDetail: true,
 
       // 赠送
       presentAction: {
