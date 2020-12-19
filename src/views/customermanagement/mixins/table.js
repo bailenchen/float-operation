@@ -443,6 +443,12 @@ export default {
           }[row[column.property]]
         }
       }
+
+      if (this.crmType == 'contract') {
+        if (column.property === 'orderDate') {
+          return row[column.property].slice(0, 10)
+        }
+      }
       return row[column.property] === '' || row[column.property] === null ? '--' : row[column.property]
     },
     /** */

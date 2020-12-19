@@ -388,6 +388,9 @@ export default {
     /** 格式化字段 */
     fieldFormatter(row, column) {
       // 如果需要格式化
+      if (column.property === 'orderDate') {
+        return row[column.property].slice(0, 10)
+      }
       return row[column.property] === '' || row[column.property] === null ? '--' : row[column.property]
     },
 
