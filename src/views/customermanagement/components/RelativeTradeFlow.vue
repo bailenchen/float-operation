@@ -48,7 +48,8 @@
         fixed="right"
         width="80">
         <template slot-scope="scope">
-          <el-button @click="editHandle(scope.row)">编辑</el-button>
+          <el-button v-if="!scope.row.transactionType" disabled>编辑</el-button>
+          <el-button v-if="scope.row.transactionType" @click="editHandle(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -320,9 +321,10 @@ export default {
         // console.log('支付方式', column.property)
         // console.log(row[column.property])
       } else if (column.property === 'price') {
-        if (row.transactionType === '资金退款') {
+        if (row.bigDealType === 2) {
+          console.log(row, 'xxxxx')
           return `-${row[column.property]}`
-        } else if (row.transactionType === '线下资金收款') {
+        } else if (row.bigDealType === 1) {
           return `+${row[column.property]}`
         }
       }
@@ -351,15 +353,15 @@ export default {
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (column.property === 'leadsNumber' || column.property == 'serialNumber') {
-        if (row.transactionType === '资金退款') {
+        if (row.bigDealType === 2) {
           return 'under-line red-font'
-        } else if (row.transactionType === '线下资金收款') {
+        } else if (row.bigDealType === 1) {
           return 'under-line blue-font'
         }
       }
-      if (row.transactionType === '资金退款') {
+      if (row.bigDealType === 2) {
         return 'red-font'
-      } else if (row.transactionType === '线下资金收款') {
+      } else if (row.bigDealType === 1) {
         return 'blue-font'
       }
     },
