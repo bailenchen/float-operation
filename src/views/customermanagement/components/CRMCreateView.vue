@@ -1313,12 +1313,12 @@ export default {
 
                 if (item.fieldName == 'signing_user_id') {
                   item['value'] = [{
-                    customerId: res.data.customer.createUserId,
-                    customerName: this.action.detail.createUserName
+                    userId: res.data.customer.createUserId,
+                    realname: this.action.detail.createUserName
                   }]
                   params['value'] = [{
-                    customerId: res.data.customer.createUserId,
-                    customerName: this.action.detail.createUserName
+                    userId: res.data.customer.createUserId,
+                    realname: this.action.detail.createUserName
                   }]
                 }
 

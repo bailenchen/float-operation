@@ -1105,9 +1105,11 @@ export default {
         }
         if (element.isGive == 1) {
           grooveCount += Number(element.grooveLesson)
+          var _lesson = Number(element.grooveLesson)
           // 赠送课次大于大于最大赠送课次
           if (grooveCount > this.maxGive) {
             row.grooveLesson = 0
+            grooveCount -= _lesson
             console.log('grooveCount:', grooveCount)
             this.$message.warning(`赠送课次之和不能大于实际可赠与课次`)
             break
