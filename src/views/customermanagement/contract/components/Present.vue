@@ -30,7 +30,7 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="操作" width="100" align="center">
+      <el-table-column v-if="showOperation" prop="" label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-plus" circle @click="plusSubjectHandle(scope.row.dataIndex)" />
           <el-button v-show="tableData.length>1" type="danger" icon="el-icon-minus" circle @click="minusSubjectHandle(scope.row.dataIndex)" />
@@ -53,7 +53,11 @@ export default {
       }
     },
     // value: [String, Array, Object]
-    oldValue: Array
+    oldValue: Array,
+    isDisabled: {
+      type: Boolean,
+      default: false
+    }
     // value: {
     //   type: Array,
     //   default: () => {
@@ -107,6 +111,14 @@ export default {
       OrderLeve1Arr: []
     }
   },
+  computed: {
+    showOperation() {
+      if (this.isDisabled) {
+        return false
+      }
+      return true
+    }
+  },
   watch: {
     action: {
       handler(val) {
@@ -142,6 +154,7 @@ export default {
       console.log('ASDAA11', this.action.buyCount == 0)
       if (this.action.buyCount == 0) {
         this.tableData = []
+        this.sendData()
         return
       }
       var arr = []

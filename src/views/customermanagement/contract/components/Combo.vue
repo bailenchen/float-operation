@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <p>当前可赠送课次：<span class="red">{{ maxGive }}</span></p>
+    <p v-if="showOperation">当前可赠送课次：<span class="red">{{ maxGive }}</span></p>
     <!-- 套餐表 -->
     <!-- <el-table
       v-if="tableData" -->
@@ -106,7 +106,7 @@
     <div v-if="presentRules">
       累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。累计可赠送课次：{{ surplusGive }}
     </div>
-    <div class="total-info">
+    <div v-if="!isDisabled" class="total-info">
       {{ priceText }}：
       <el-input
         v-wk-number
@@ -138,7 +138,11 @@ export default {
     },
     value: Object,
     subjectList: Array,
-    accumulation: Object
+    accumulation: Object,
+    isDetail: { // 详情中使用
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -1168,10 +1172,13 @@ export default {
 
     // 改变科目
     changeSubject(row) {
-      console.log('row信息', row)
+      console.log('row信息1', row)
       if (this.giveObj.giftProductId != row.detailsId) {
         return
       }
+      this.presentData.forEach(item => {
+        item.subject = ''
+      })
       // this.restrictSubject()
       this.createSubject()
       this.sendData(this.giveObj)

@@ -476,17 +476,6 @@ export default {
         }
       }
     }
-    // 'crmForm.crmFields': function(val) {
-    //   console.log('crmForm改变', val)
-
-    //   this.crmForm.crmFields.forEach(item => {
-    //     if (item.data.fieldName == 'coach_type') {
-    //       this.actionCombo.searchJson.coachType = item.value
-    //     } else if (item.data.fieldName == 'grade_id') {
-    //       this.actionCombo.searchJson.gradeId = item.value
-    //     }
-    //   })
-    // }
   },
   created() {
     this.debouncedSaveField = debounce(300, this.saveField)
@@ -913,7 +902,7 @@ export default {
               element.value = data.value.lessons
             }
           }
-          this.contractDiscount = item.value.product[0].discount
+          this.contractDiscount = item.value.product[0] ? item.value.product[0].discount : 100
         }
         console.log('object')
       } else if (this.crmType == 'receivables') {
@@ -1214,6 +1203,7 @@ export default {
                 fieldName: 'contractId',
                 formType: 'contract',
                 isNull: 1,
+                authLevel: 3,
                 radio: false
               })
               res.data.push({
@@ -1478,6 +1468,7 @@ export default {
 
     // 根据自定义字段获取自定义字段规则
     getcrmRulesAndModel(list) {
+      console.log('getcrmRulesAndModel', list)
       if (this.crmType == 'productSetMeal') {
         list.push({
           authLevel: 3,
@@ -1524,6 +1515,8 @@ export default {
         /**
          * 规则数据
          */
+
+        console.log('otem', item)
 
         this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
         /**
@@ -1884,11 +1877,6 @@ export default {
             this.actionCombo.customerId = this.action.information.customer.customerId
           }
           if (element.key == 'product') {
-            // element.value = {
-            //   isEdit: true,
-            //   meal: this.action.information.contract.mealProducts
-            // }
-
             element.value = {
               isEdit: true,
               meal: this.action.information.contract.mealProducts,
@@ -1923,6 +1911,7 @@ export default {
           if (element.key == 'present') {
             element.oldValue = this.action.information.contract.productList
             console.log('赠送组件的值', element)
+            this.contractDiscount = element.oldValue[0].discountRate
           }
         }
 
@@ -1955,8 +1944,12 @@ export default {
         }
 
         // 从学员创建合同
-        console.log('从学员创建合同', this.action)
+        console.log('从leads创建合同', this.action)
         if (this.action && this.action.crmType == 'customer') {
+          if (element.key == 'customer_id') {
+            element.disabled = true
+            this.actionCombo.customerId = element.value[0].customerId
+          }
           if (element.key == 'contractsAttr') {
             element.value = 1
           }
@@ -2170,9 +2163,11 @@ export default {
      */
     getItemRulesArrayFromItem(item) {
       var tempList = []
+      console.log('是否可编辑', this.getItemIsCanEdit(item))
       if (!this.getItemIsCanEdit(item)) {
         return tempList
       }
+      console.log('生成验证规则', item)
       // 验证必填
       if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
         console.log('item.formType', item.formType)
@@ -2609,6 +2604,7 @@ export default {
       }
 
       if (this.crmType == 'contract') {
+        console.log('属性', this.action)
         if (this.action.attr && this.action.attr == 'change') {
           params.entity.relevanceContractId = this.action.detail.contractId
         }
@@ -2622,7 +2618,12 @@ export default {
             params.entity.countCourseSum = element.value
           } else if (element.fieldName == 'contractId') {
             params.entity.contract_type = 2
-            params.entity.relevance_contract_id = element.value[0].contractId
+            var arr = []
+            element.value.forEach(item => {
+              console.log('shuju', item)
+              arr.push(item.contractId)
+            })
+            params.entity.relevance_contract_id = arr.join(',')
           }
         }
         // 删除只用于展示的字段
@@ -2644,21 +2645,21 @@ export default {
           }
         }
 
-        for (const k in params.entity) {
-          toHump(params.entity, k)
-        }
+        // for (const k in params.entity) {
+        //   toHump(params.entity, k)
+        // }
       }
 
-      function toHump(obj, k) {
-        var reg = /\_(\w)/g
-        if (reg.test(k)) {
-          var a = k.replace(/\_(\w)/g, function(all, letter) {
-            return letter.toUpperCase()
-          })
-          obj[a] = obj[k]
-          delete obj[k]
-        }
-      }
+      // function toHump(obj, k) {
+      //   var reg = /\_(\w)/g
+      //   if (reg.test(k)) {
+      //     var a = k.replace(/\_(\w)/g, function(all, letter) {
+      //       return letter.toUpperCase()
+      //     })
+      //     obj[a] = obj[k]
+      //     delete obj[k]
+      //   }
+      // }
 
       console.log('请求参数: ', params)
       // this.loading = false
@@ -2734,7 +2735,7 @@ export default {
         const element = array[index]
         if (element.data.formType == 'product') {
           var res = this.getProductParams(params, element)
-          console.log('科目校验是否通过', res)
+          console.log('产品校验是否通过', res)
           if (res === false) {
             return false
           }
@@ -2744,6 +2745,7 @@ export default {
           if (element.key == 'status') {
             params.entity[element.key] = this.getRealParams(element)
           } else {
+            console.log('相关')
             params.entity[element.key] = this.getRealParams(element) || ''
           }
         } else if (element.data.key == 'introducer_type') {
@@ -2751,6 +2753,10 @@ export default {
         } else if (element.key == 'present') {
           // console.log('额外')
           this.getPresentParams(params, element)
+          console.log('额外赠送校验是否通过', res)
+          if (res === false) {
+            return false
+          }
         } else {
           element.data.value = this.getRealParams(element)
           console.log('data', element.data)
@@ -2790,7 +2796,9 @@ export default {
         }
         params['product'] = arr
       } else {
-        params['product'] = []
+        // params['product'] = []
+        this.$message.error('请添加课程')
+        return false
       }
     },
     getProductParams(params, element) {
@@ -2891,6 +2899,7 @@ export default {
     },
     // 关联客户 联系人等数据要特殊处理
     getRealParams(element) {
+      console.log('相关拼接', element)
       if (
         element.key == 'customer_id' ||
         element.key == 'contacts_id' ||
