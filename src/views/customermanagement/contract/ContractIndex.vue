@@ -62,8 +62,11 @@
                 <span
                   v-for="(sitem, sindex) in scope.row['relevanceContractNum']"
                   :key="sindex"
-                  style="margin-right:10px;"
-                  @click.stop="enterDetail(sitem)">{{ sitem.num }}</span>
+                  @click.stop="enterDetail(sitem)">{{ sitem.num }}
+                  <span
+                    v-if="sindex != scope.row['relevanceContractNum'].length - 1"
+                    style="margin-right:10px;">,</span>
+                </span>
               </span>
               <span v-else/>
             </template>

@@ -158,6 +158,19 @@
               v-if="scope.row.status == 9"
               class="wk wk-circle-password customer-lock"/>
           </template>
+          <template v-else-if="item.prop == 'relevanceContractNum'">
+            <span v-if="scope.row['relevanceContractNum']">
+              <span
+                v-for="(sitem, sindex) in scope.row['relevanceContractNum']"
+                :key="sindex"
+                @click.stop="enterDetail(sitem)">{{ sitem.num }}
+                <span
+                  v-if="sindex != scope.row['relevanceContractNum'].length - 1"
+                  style="margin-right:10px;">,</span>
+              </span>
+            </span>
+            <span v-else/>
+          </template>
           <template v-else-if="item.prop == 'customerType'">
             <img v-if="scope.row.customerType == 2" class="student-img" src="@/assets/img/student.jpg" alt="">
           </template>
@@ -208,6 +221,7 @@
       :crm-type="rowType"
       :model-data="modelData"
       :click-field="clickField"
+      :base-list="baseList"
       :id="rowID"
       @handle="getList"
       @refresh-list="refreshParentList"/>
@@ -328,7 +342,9 @@ export default {
       showDview: false, // 详情显示与否
       showDisputedDview: false, // 争议显示与否
       showCount: -1, // 储存客户id作为展示的标识
-      modelData: {} // 储存电话信息作为详情展示通话的依据
+      modelData: {}, // 储存电话信息作为详情展示通话的依据
+
+      baseList: [] // 传递列表头
     }
   },
   computed: {
@@ -494,6 +510,13 @@ export default {
           this.$store.dispatch('GetMessageNum')
         }
       }
+    },
+
+    enterDetail(item) {
+      this.rowID = item.contractId
+      this.rowType = 'contract'
+      this.clickField = 'num'
+      this.showDview = true
     },
 
     transformData(name, value) {
@@ -669,6 +692,7 @@ export default {
         column.property === 'businessName' ||
         column.property === 'contactsName' ||
         column.property === 'num' ||
+        column.property === 'relevanceContractNum' ||
         column.property === 'visitNumber'
       ) {
         return 'can-visit--underline'

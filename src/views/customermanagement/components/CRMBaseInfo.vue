@@ -107,7 +107,11 @@
               <div
                 v-for="(sitem,sindex) in item.value || []"
                 :key="sindex"
-                class="b-cell-value num-name" @click="enterRelativeDetail(sitem)">{{ sitem.num }}</div>
+                class="b-cell-value num-name" @click="enterRelativeDetail(sitem)">{{ sitem.num }}
+                <span
+                  v-if="sindex != item.value.length - 1"
+                  style="margin-right:10px;">,</span>
+              </div>
             </flexbox>
 
             <flexbox

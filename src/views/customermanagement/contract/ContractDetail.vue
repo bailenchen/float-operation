@@ -87,17 +87,17 @@
                     style="width: 100%;"/>
                 </div>
                 <!-- 业绩分配信息 -->
-                <div v-for="(item, index) in list" slot="first" :key="index" :class="{'top': detailData.contractType == 1}" style="padding-left: 15px;margin-bottom:20px;">
+                <div v-if="detailData.contractType == 1" slot="first" :class="{'top': detailData.contractType == 1}" style="padding-left: 15px;margin-bottom:20px;">
                   <div class="section-header" style="padding-left:0;">
                     <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
-                    <div class="section-title">{{ item.name }}</div>
+                    <div class="section-title">业绩分配信息</div>
                   </div>
                   <el-table
-                    :data="item.data"
+                    :data="allocList"
                     stripe
                     style="width: 100%;border: 1px solid #E6E6E6;margin-top: 10px;">
                     <el-table-column
-                      v-for="(items, index) in item.fieldlist"
+                      v-for="(items, index) in fieldlist"
                       :key="index"
                       :prop="items.prop"
                       :label="items.label"
@@ -261,30 +261,14 @@ export default {
       },
       presentValue: null,
 
-      list: [
-        // {
-        //   name: '累计赠送课程',
-        //   data: [],
-        //   fieldlist: [
-        //     { prop: 'subjectName', label: '科目' },
-        //     { prop: 'courseSum', label: '累计赠送课次' },
-        //     { prop: 'alreadyCourse', label: '已排课课次' },
-        //     { prop: 'finishCourse', label: '已完成课次' },
-        //     { prop: 'price', label: '单节课价格' }
-        //   ]
-        // },
-        {
-          name: '业绩分配信息',
-          data: [],
-          fieldlist: [
-            { prop: 'memberUserName', label: '业绩享受人' },
-            { prop: 'performanceRatio', label: '业绩比例（%）' },
-            { prop: 'newStudentRatio', label: '新签学员比例（%）' },
-            { prop: 'createUserName', label: '添加人' },
-            { prop: 'checkStatus', label: '审批状态' },
-            { prop: 'createTime', label: '添加时间' }
-          ]
-        }
+      allocList: [],
+      fieldlist: [
+        { prop: 'memberUserName', label: '业绩享受人' },
+        { prop: 'performanceRatio', label: '业绩比例（%）' },
+        { prop: 'newStudentRatio', label: '新签学员比例（%）' },
+        { prop: 'createUserName', label: '添加人' },
+        { prop: 'checkStatus', label: '审批状态' },
+        { prop: 'createTime', label: '添加时间' }
       ],
       subjectList: [], // 科目列表
       information: null, // 合同详情
@@ -467,6 +451,8 @@ export default {
         this.information = res.data
         const productList = res.data.contract.productList
 
+        const totalPrice = res.data.contract.unreceivedMoney
+
         const customer = res.data.contract
         this.giveAction.customerId = customer.customerId
         this.giveAction.searchJson.coachType = customer.coachType
@@ -502,7 +488,7 @@ export default {
               price: item.subtotal, // 大套餐价格
               univalence: item.price, // 单价
               salePrice: item.salesPrice,
-
+              drainage: mealKeyVal[item.mealProductId].courseType == '引流课',
               discount: mealKeyVal[item.mealProductId].warningLine,
 
               combo_number: item.mealProductId
@@ -514,7 +500,7 @@ export default {
               subject: item.productId, // 科目
               mealProductId: item.mealProductId, // 大套餐
               giftProductId: item.giftProductId, // 小套餐
-              presentLesson: item.presenterCourseSum, // 赠送
+              presentLesson: item.courseSum, // 赠送
               planeLesson: item.alreadyCourse, // 排课
               completeLesson: item.finishCourse, // 已完成
               univalence: item.price, // 均价
@@ -529,7 +515,8 @@ export default {
 
         this.comboValue = {
           productList: mealList,
-          presentList: buyPresent
+          presentList: buyPresent,
+          totalPrice: totalPrice
         }
 
         this.presentValue = giftList
@@ -538,7 +525,7 @@ export default {
         //   item.subjectName = this.subjectList[item.productId]
         //   return item
         // })
-        this.list[0].data = res.data.contract.allotList
+        this.allocList = res.data.contract.allotList
       }).catch(() => {})
     },
 
