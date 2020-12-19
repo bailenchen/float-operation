@@ -77,7 +77,7 @@
                 <div v-if="detailData.contractType == 2" slot="first" style="padding-left: 15px;margin-bottom:20px;">
                   <div class="section-header" style="padding-left:0;margin-bottom:10px;">
                     <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
-                    <div class="section-title">累计赠送课程</div>
+                    <div class="section-title">额外赠送课程</div>
                   </div>
                   <present
                     :action="presentAction"

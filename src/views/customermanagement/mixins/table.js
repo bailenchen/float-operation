@@ -614,7 +614,7 @@ export default {
         if (column.property === 'number') {
           this.rowID = row.contractCapitalId
           this.rowType = 'receive'
-          // this.clickField = column.property
+          this.clickField = column.property
           this.showDview = true
         } else if (column.property === 'leadsNumber' || column.property === 'customerName') {
           this.rowID = row.customerId

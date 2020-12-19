@@ -151,7 +151,7 @@ export default [
         name: 'FinanceManageIndex',
         component: () => import('@/views/customermanagement/financeManage/index'),
         meta: {
-          title: '收款/退款',
+          title: '合同充值/返还',
           icon: 'contacts',
           activeMenu: '/crm/finance-manage/:type'
         }

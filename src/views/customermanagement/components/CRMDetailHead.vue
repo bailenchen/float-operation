@@ -8,13 +8,16 @@
         class="t-section__hd">
       <div class="t-section__bd">
         <div class="type-name">{{ typeName }}</div>
-        <p class="name"><el-tooltip
-          :disabled="!name"
-          :content="name"
-          effect="dark"
-          placement="top-start">
-          <span>{{ name }}</span>
-        </el-tooltip><slot name="name" /></p>
+        <p class="name">
+          <el-tooltip
+            :disabled="!name"
+            :content="name"
+            effect="dark"
+            placement="top-start">
+            <span>{{ name }}</span>
+          </el-tooltip>
+          <slot name="name" />
+        </p>
       </div>
       <time-piece v-if="showTimer && isCall"/>
       <div class="t-section__ft">
@@ -314,9 +317,7 @@ export default {
       } else if (this.crmType == 'contract') {
         return this.detail[this.clickField]
       } else if (this.crmType == 'receive') {
-        console.log(this.detail)
-        return '123'
-        // return this.detail[this.clickField]
+        return this.detail[this.clickField]
       }
       console.log(this.detail.name)
       return this.detail.name
