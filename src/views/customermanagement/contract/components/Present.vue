@@ -23,14 +23,14 @@
             </el-select>
           </template>
           <template v-else-if="item.prop == 'grooveLesson'">
-            <el-input v-model="scope.row.grooveLesson" type="number" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
+            <el-input v-model="scope.row.grooveLesson" type="number" min="0" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
           </template>
           <template v-else>
             {{ scope.row[item.prop] }}
           </template>
         </template>
       </el-table-column>
-      <el-table-column v-if="showOperation" prop="" label="操作" width="100" align="center">
+      <el-table-column v-if="showOperation" prop="" label="操作1" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-plus" circle @click="plusSubjectHandle(scope.row.dataIndex)" />
           <el-button v-show="tableData.length>1" type="danger" icon="el-icon-minus" circle @click="minusSubjectHandle(scope.row.dataIndex)" />
@@ -188,6 +188,7 @@ export default {
       this.dataIndex = dataIndex
 
       this.tableData = arr
+      this.sendData()
     },
     plusSubjectHandle(dataIndex) {
       console.log('添加', dataIndex)
@@ -215,7 +216,7 @@ export default {
       }
 
       var lesson = 0
-      var arr = this.tableData.filter(item => {
+      this.tableData.filter(item => {
         if (item.grooveLesson > 0) {
           lesson += Number(item.grooveLesson)
           return true

@@ -342,9 +342,9 @@ export default {
           { name: '合同编号', field: 'num', formType: 'text' },
           { name: '客户名称', field: 'customerName', formType: 'text' },
           { name: '辅导类型', field: 'coachType', formType: 'text' },
-          { name: '合同金额', field: 'money', formType: 'text' },
-          { name: '开始日期', field: 'startTime', formType: 'text' },
-          { name: '结束日期', field: 'endTime', formType: 'text' }
+          { name: '合同金额', field: 'money', formType: 'text' }
+          // { name: '开始日期', field: 'startTime', formType: 'text' },
+          // { name: '结束日期', field: 'endTime', formType: 'text' }
         ]
       } else if (this.crmType === 'product') {
         return [
