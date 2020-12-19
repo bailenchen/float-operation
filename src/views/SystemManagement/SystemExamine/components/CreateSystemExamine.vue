@@ -398,8 +398,8 @@ export default {
           { name: '合同变更', value: 7 },
           { name: '常规充值返还审批', value: 8 },
           { name: '特殊充值返还审批', value: 9 },
-          { name: '充值审批', value: 10 },
-          { name: '提现审批', value: 11 },
+          { name: '线下资金收款', value: 10 },
+          { name: '资金退款', value: 11 },
           { name: '转中心审批', value: 12 }
         ],
         value: this.handle.data ? this.handle.data.categoryType : 1

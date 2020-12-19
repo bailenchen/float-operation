@@ -206,8 +206,8 @@ export default {
           7: '合同变更',
           8: '常规充值返还审批',
           9: '特殊充值返还审批',
-          10: '充值审批',
-          11: '提现审批',
+          10: '线下资金收款',
+          11: '资金退款',
           12: '转中心审批'
         }[row[column.property]]
       } else if (column.property === 'userIds') {
