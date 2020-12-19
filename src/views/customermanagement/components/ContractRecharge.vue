@@ -121,7 +121,7 @@ export default {
       this.fieldList.push({ prop: 'money', width: '100', label: '合同充值金额（元）' })
       this.fieldList.push({ prop: 'receipt', width: '100', label: '交易凭证' })
       this.fieldList.push({ prop: 'payment', width: '100', label: '合同充值方式' })
-      this.fieldList.push({ prop: 'ownerUserName', width: '100', label: '课程顾问' })
+      this.fieldList.push({ prop: 'ownerUserName', width: '100', label: '教育顾问' })
       this.fieldList.push({ prop: 'checkStatus', width: '100', label: '审批状态' })
       this.fieldList.push({ prop: 'updateTime', width: '100', label: '更新时间' })
       this.fieldList.push({ prop: 'createTime', width: '100', label: '创建时间' })
