@@ -106,7 +106,7 @@
     <div v-if="presentRules">
       累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。累计可赠送课次：{{ surplusGive }}
     </div>
-    <div v-if="!isDisabled" class="total-info">
+    <div v-if="!isDetail" class="total-info">
       {{ priceText }}：
       <el-input
         v-wk-number

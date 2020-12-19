@@ -1515,9 +1515,6 @@ export default {
         /**
          * 规则数据
          */
-
-        console.log('otem', item)
-
         this.crmRules[item.fieldName] = this.getItemRulesArrayFromItem(item)
         /**
          * 表单数据
@@ -1944,7 +1941,7 @@ export default {
         }
 
         // 从学员创建合同
-        console.log('从leads创建合同', this.action)
+        // console.log('从leads创建合同', this.action)
         if (this.action && this.action.crmType == 'customer') {
           if (element.key == 'customer_id') {
             element.disabled = true
@@ -2163,11 +2160,9 @@ export default {
      */
     getItemRulesArrayFromItem(item) {
       var tempList = []
-      console.log('是否可编辑', this.getItemIsCanEdit(item))
       if (!this.getItemIsCanEdit(item)) {
         return tempList
       }
-      console.log('生成验证规则', item)
       // 验证必填
       if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
         console.log('item.formType', item.formType)
@@ -2624,6 +2619,8 @@ export default {
               arr.push(item.contractId)
             })
             params.entity.relevance_contract_id = arr.join(',')
+          } else if (element.fieldName == 'is_early_retirement') {
+            params.entity.isEarlyRetirement = element.value
           }
         }
         // 删除只用于展示的字段
