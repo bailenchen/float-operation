@@ -468,6 +468,7 @@ export default {
             normLesson: this.getAttrOfMeal(item.giftProductId, 'giveFrequency'),
             purchaseLesson: item.courseSum, // 购买课次
             grooveLesson: item.presenterCourseSum, // 常规赠送课次
+            // grooveLesson: this.action.attr=="update"0, // 常规赠送课次
             planeLesson: item.alreadyCourse, // 已排课课次
             completeLesson: item.finishCourse, // 已完成课次
             price: item.subtotal, // 原价
@@ -484,6 +485,11 @@ export default {
             isGive: this.getAttrOfMeal(item.giftProductId, 'isGive'),
             drainage: this.getAttrOfBigMeal(item.mealProductId, 'courseType') == '引流课'
           }
+
+          if (this.action.attr && this.action.attr == 'update') {
+            obj.grooveLesson = 0
+          }
+
           dataIndex++
           arr.push(obj)
         }

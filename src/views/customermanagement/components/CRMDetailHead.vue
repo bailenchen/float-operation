@@ -247,7 +247,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['crm']),
+    ...mapGetters(['crm', 'userInfo']),
     crmIcon() {
       if (this.crmType == 'productSetMeal') {
         return require(`@/assets/img/crm/product.png`)
@@ -618,7 +618,11 @@ export default {
         type: 'save',
         attr: 'change',
         id: 7,
-        detail: this.detail
+        detail: this.detail,
+        userInfo: {
+          userId: this.userInfo.userId,
+          realname: this.userInfo.realname
+        }
       }
     },
 
