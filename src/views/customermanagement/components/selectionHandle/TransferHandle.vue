@@ -12,6 +12,7 @@
         <div class="handle-item-name">转移教育顾问为：</div>
         <xh-user-cell
           :value="usersList"
+          :dept-id="selectionList[0].deptId"
           :info-request="QueryHeadmaster"
           class="handle-item-content"
           placeholder="点击选择"
@@ -68,7 +69,7 @@ import { crmLeadsTransfer } from '@/api/customermanagement/clue'
 import { crmProductTransfer } from '@/api/customermanagement/product'
 import { crmReceivablesTransfer } from '@/api/customermanagement/money'
 import { crmInvoiceTransfer } from '@/api/customermanagement/invoice'
-import { QueryHeadmaster } from '@/api/customermanagement/common' // 教育顾问
+import { queryStudentOwnerUserAPI } from '@/api/customermanagement/common' // 教育顾问
 
 export default {
   /** 客户管理 的 勾选后的 转移 操作*/
@@ -109,7 +110,7 @@ export default {
   },
   computed: {
     QueryHeadmaster() {
-      return QueryHeadmaster
+      return queryStudentOwnerUserAPI
     },
     // 是否展示移除操作类型
     showRemoveType() {

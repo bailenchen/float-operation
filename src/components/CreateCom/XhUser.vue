@@ -88,7 +88,8 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    deptId: Number
   },
   data() {
     return {
@@ -198,6 +199,9 @@ export default {
         return params
       } else {
         params.pageType = 0
+        if (this.deptId) {
+          params.deptId = this.deptId
+        }
         return params
       }
       // if (

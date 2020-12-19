@@ -502,6 +502,19 @@ export function QueryHeadmaster(data) {
 
 
 /**
+ * 学员中的转移教育顾问
+ * @param {*} data
+ */
+export function queryStudentOwnerUserAPI(data) {
+  return request({
+    url: 'system/user/transferUser',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
  * 审批历史中下载附件
  */
 export function downloadAdjunct(data) {

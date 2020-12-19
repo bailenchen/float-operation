@@ -13,6 +13,7 @@
       v-bind="$attrs"
       :selected-data="dataValue"
       :radio="radio"
+      :dept-id="deptId"
       :is-refer="isRefer"
       :info-type="infoType"
       @changeCheckout="checkUsers" />
@@ -86,7 +87,8 @@ export default {
     infoType: {
       type: String,
       default: ''
-    }
+    },
+    deptId: Number
   },
   data() {
     return {
