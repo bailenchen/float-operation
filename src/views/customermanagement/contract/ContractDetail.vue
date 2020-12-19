@@ -229,7 +229,7 @@ export default {
         { title: '合同金额（元）', value: '' },
         { title: '签约时间', value: '' },
         { title: '合同充值金额（元）', value: '' },
-        { title: '签约人', value: '' }
+        { title: '签单人', value: '' }
       ],
       tabCurrentName: 'CRMBaseInfo',
       // 编辑操作
@@ -382,7 +382,7 @@ export default {
           this.headDetails[2].value = separator(res.data.money || 0)
           this.headDetails[3].value = res.data.orderDate
           this.headDetails[4].value = separator(res.data.money || 0)
-          this.headDetails[5].value = res.data.ownerUserName
+          this.headDetails[5].value = res.data.signingUserName
         })
         .catch(() => {
           this.loading = false

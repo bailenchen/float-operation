@@ -12,7 +12,7 @@
         <div class="handle-item-name">转移教育顾问为：</div>
         <xh-user-cell
           :value="usersList"
-          :dept-id="selectionList[0].deptId"
+          :dept-id="selectionList.length ? selectionList[0].deptId : null"
           :info-request="QueryHeadmaster"
           class="handle-item-content"
           placeholder="点击选择"
