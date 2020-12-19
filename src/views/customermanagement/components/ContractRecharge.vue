@@ -115,7 +115,7 @@ export default {
       })
 
       this.fieldList.push({ prop: 'serialNumber', width: '100', label: '交易流水号' })
-      this.fieldList.push({ prop: 'transactionTime ', width: '100', label: '资金收款时间' })
+      this.fieldList.push({ prop: 'transactionTime', width: '100', label: '资金收款时间' })
       this.fieldList.push({ prop: 'waterPrice', width: '100', label: '资金收款金额' })
       this.fieldList.push({ prop: 'createTime', width: '100', label: '合同充值时间' })
       this.fieldList.push({ prop: 'money', width: '100', label: '合同充值金额（元）' })
