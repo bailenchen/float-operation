@@ -236,7 +236,7 @@ export default {
       this.fieldList.push({ prop: 'receipt', width: '100', label: '交易凭证' })
       this.fieldList.push({ prop: 'createTime', width: '100', label: '交易时间' })
       this.fieldList.push({ prop: 'updateTime', width: '100', label: '扣款/打款时间' })
-      this.fieldList.push({ prop: 'status', width: '100', label: '审批状态' })
+      this.fieldList.push({ prop: 'checkStatus', width: '100', label: '审批状态' })
       this.fieldList.push({ prop: 'remark', width: '100', label: '备注' })
       this.fieldList.push({ prop: 'characterName', width: '100', label: '收款/退款人' })
     },
@@ -246,11 +246,11 @@ export default {
       console.log(row)
 
 
-      if (row.transactionType == '资金退款') {
+      if (row.bigDealType == 2) {
         this.moneyType = 'refound'
-      } else if (row.transactionType == '线下资金收款') {
+      } else if (row.bigDealType == 1) {
         this.moneyType = 'offline'
-      } else if (row.transactionType == '线上资金收款') {
+      } else if (row.bigDealType == 1) {
         this.moneyType = 'online'
       }
       console.log(this.moneyType)
@@ -298,13 +298,17 @@ export default {
      */
     fieldFormatter(row, column) {
       // 如果需要格式化
-      if (column.property === 'status') {
+      if (column.property === 'checkStatus') {
         return {
           0: '待审核',
           1: '通过',
           2: '拒绝',
-          3: '删除',
-          4: '撤回'
+          3: '审核中',
+          4: '撤回',
+          5: '未提交',
+          6: '创建',
+          7: '已删除',
+          8: '作废'
         }[row[column.property]]
       } else if (column.property === 'transactionType') {
         // console.log('格式胡这里哦', column.property)
