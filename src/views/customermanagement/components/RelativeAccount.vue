@@ -4,10 +4,28 @@
     class="rc-cont"
     xs-empty-icon="nopermission"
     xs-empty-text="暂无权限">
+    <flexbox
+      v-if="!detail.capitalId"
+      class="rc-head"
+      direction="row-reverse">
+      <el-button
+        class="xr-btn--orange rc-head-item"
+        icon="el-icon-plus"
+        type="primary"
+        @click="createClick">新建资金账户</el-button>
+    </flexbox>
     <c-r-m-edit-base-info
+      v-if="detail.capitalId"
       :detail="detail"
       :id="detail.capitalId"
       crm-type="capitalAccount"/>
+
+    <c-r-m-create-view
+      v-if="isCreate"
+      :action="createActionInfo"
+      crm-type="capitalAccount"
+      @save-success="createSaveSuccess"
+      @hiden-view="isCreate=false"/>
   </div>
 </template>
 
@@ -151,11 +169,10 @@ export default {
      * 新建
      */
     createClick() {
-      // 客户 和 商机 下新建合同
-      if (this.crmType == 'business') {
+      // leads 和 学员 下新建资金账户
+      if (this.crmType == 'customer') {
         this.createActionInfo.data['customer'] = this.detail
-        this.createActionInfo.data['business'] = this.detail
-      } else if (this.crmType == 'customer') {
+      } else if (this.crmType == 'student') {
         this.createActionInfo.data['customer'] = this.detail
       }
       this.isCreate = true

@@ -478,6 +478,7 @@ export default {
     }
   },
   created() {
+    console.log(this.action, 'action------')
     this.debouncedSaveField = debounce(300, this.saveField)
     // 获取title展示名称
     this.title = this.getTitle()
@@ -1956,8 +1957,17 @@ export default {
           if (element.key == 'leadsNumber') {
             element.value = this.action.data.customer.leadsNumber
           }
-          if (element.key == 'dept_id') {
-            element.value = this.action.data.customer.deptIdName
+          if (this.crmType == 'capitalAccount' && this.action.type == 'relative') {
+            if (element.key == 'dept_id') {
+              element.value = [{
+                id: this.action.data.customer.deptId,
+                name: this.action.data.customer.deptIdName
+              }]
+            }
+          } else {
+            if (element.key == 'dept_id') {
+              element.value = this.action.data.customer.deptIdName
+            }
           }
           if (element.key == 'headmasterUserName') {
             element.value = this.action.data.customer.headmasterUserIdName
