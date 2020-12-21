@@ -424,6 +424,7 @@ export default {
       if (obj) {
         this.giveObj = obj.lastPresent
         this.presentRules = obj.presentRules
+        this.presentRules.coachType = this.giveAction.searchJson.coachType
         console.log('giveObj1', this.giveObj)
         console.log('presentRules1', this.presentRules)
       }
@@ -613,6 +614,7 @@ export default {
       if (obj) {
         this.giveObj = obj.lastPresent
         this.presentRules = obj.presentRules
+        this.presentRules.coachType = this.giveAction.searchJson.coachType
         console.log('giveObj1', this.giveObj)
         console.log('presentRules1', this.presentRules)
       }
