@@ -86,6 +86,7 @@ export default {
       // this.list = []
       // this.getDetail()
     }
+
   },
   mounted() {
     // this.getDetail()
@@ -178,18 +179,7 @@ export default {
       this.isCreate = true
     },
     createSaveSuccess() {
-      this.$bus.emit('crm-tab-num-update')
-      this.getDetail()
-    },
-
-    /**
-     * 详情操作
-     */
-    detailHandle(data) {
-      if (data.type === 'delete') {
-        this.$bus.emit('crm-tab-num-update')
-        this.getDetail()
-      }
+      this.$emit('refresh-detail')
     }
   }
 }

@@ -72,6 +72,7 @@
                 :is-seas="isSeasDetail"
                 :crm-type="crmType"
                 :contacts-id.sync="firstContactsId"
+                @refresh-detail="getOnlyDetail"
                 @on-handle="detailHeadHandle"
                 @refresh-list="refreshList" />
             </el-tab-pane>
@@ -349,6 +350,9 @@ export default {
   },
   mounted() {},
   methods: {
+    getOnlyDetail() {
+      this.getDetial()
+    },
     /**
      * 详情
      */
@@ -409,7 +413,6 @@ export default {
      * @param {*} data
      */
     detailHeadHandle(data) {
-      console.log(this.detailData, 'nkllllll')
       if (data.type === 'edit') {
         this.createCRMType = 'customer'
         this.createActionInfo = {

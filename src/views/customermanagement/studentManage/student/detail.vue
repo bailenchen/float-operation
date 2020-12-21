@@ -60,6 +60,7 @@
                 :is-seas="isSeasDetail"
                 :crm-type="crmType"
                 :contacts-id.sync="firstContactsId"
+                @refresh-detail="getOnlyDetail"
                 @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
@@ -354,6 +355,9 @@ export default {
   },
   mounted() {},
   methods: {
+    getOnlyDetail() {
+      this.getDetial()
+    },
     /**
      * 详情
      */

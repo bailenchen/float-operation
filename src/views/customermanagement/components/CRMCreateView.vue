@@ -2074,6 +2074,15 @@ export default {
                 id: this.action.data.customer.deptId,
                 name: this.action.data.customer.deptIdName
               }]
+            } else if (element.key == 'leads_number') {
+              element.value = this.action.data.customer.leadsNumber
+            } else if (element.key == 'mobile') {
+              element.value = this.action.data.customer.mobile
+            } else if (element.key == 'owner_user_id') {
+              element.value = [{
+                realname: this.action.data.customer.ownerUserName,
+                userId: this.action.data.customer.ownerUserId
+              }]
             }
           } else {
             if (element.key == 'dept_id') {
