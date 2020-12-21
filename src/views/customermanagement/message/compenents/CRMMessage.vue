@@ -221,7 +221,6 @@
       :crm-type="rowType"
       :model-data="modelData"
       :click-field="clickField"
-      :base-list="baseList"
       :id="rowID"
       @handle="getList"
       @refresh-list="refreshParentList"/>
@@ -342,9 +341,7 @@ export default {
       showDview: false, // 详情显示与否
       showDisputedDview: false, // 争议显示与否
       showCount: -1, // 储存客户id作为展示的标识
-      modelData: {}, // 储存电话信息作为详情展示通话的依据
-
-      baseList: [] // 传递列表头
+      modelData: {} // 储存电话信息作为详情展示通话的依据
     }
   },
   computed: {

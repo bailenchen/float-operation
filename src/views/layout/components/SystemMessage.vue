@@ -90,7 +90,6 @@
     <!-- CRM详情 -->
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
-      :base-list="baseList"
       :crm-type="relationCrmType"
       :id="relationID" />
 
@@ -194,8 +193,7 @@ export default {
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
-      relationCrmType: '', // 相关类型
-      baseList: []
+      relationCrmType: '' // 相关类型
     }
   },
   computed: {
@@ -347,20 +345,7 @@ export default {
       }
       this.relationID = id
       this.relationCrmType = type
-      if (type == 'contract') {
-        this.contractDetailHead()
-      } else {
-        this.showFullDetail = true
-      }
-    },
-
-    contractDetailHead() {
-      filedGetTableField({ label: 6 }).then(res => {
-        this.baseList = res.data
-        this.showFullDetail = true
-      }).catch((err) => {
-        console.log(err)
-      })
+      this.showFullDetail = true
     },
 
     /**

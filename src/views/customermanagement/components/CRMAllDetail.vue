@@ -9,7 +9,6 @@
     :no-listener-ids="noListenerIDs"
     :no-listener-class="noListenerClass"
     :click-field="clickField"
-    :base-list="baseList"
     class="d-view"
     @handle="detailHandle"
     @hide-view="hiddenView"
@@ -91,12 +90,6 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    },
-    baseList: {
-      type: Array,
-      default() {
-        return []
       }
     }
   },
