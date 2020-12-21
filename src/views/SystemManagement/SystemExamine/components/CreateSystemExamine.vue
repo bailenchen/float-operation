@@ -275,6 +275,7 @@ export default {
   computed: {
     showDiscount() {
       const relative = this.crmForm.crmFields[1].value
+      console.log('relative', relative)
       if (relative == 6) {
         return true
       } else {
@@ -283,7 +284,8 @@ export default {
     },
     showContractAmount() {
       const relative = this.crmForm.crmFields[1].value
-      if (relative == 1 || relative == 7) {
+      // if (relative == 1 || relative == 7) {
+      if (relative == 1) {
         return true
       } else {
         return false
