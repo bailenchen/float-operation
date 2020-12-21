@@ -136,6 +136,7 @@
 </template>
 <script type="text/javascript">
 import { mapGetters } from 'vuex'
+import { filedGetInformation } from '@/api/customermanagement/common'
 import {
   crmLeadsTransform,
   crmLeadsDelete
@@ -612,18 +613,22 @@ export default {
 
     // 合同变更
     contractChange() {
-      this.isUpdate = true
+      var params = { types: 6, id: this.id }
+      filedGetInformation(params).then(res => {
+        this.isUpdate = true
 
-      this.createActionInfo = {
-        type: 'save',
-        attr: 'change',
-        id: 7,
-        detail: this.detail,
-        userInfo: {
-          userId: this.userInfo.userId,
-          realname: this.userInfo.realname
+        this.createActionInfo = {
+          type: 'save',
+          attr: 'change',
+          id: 7,
+          detail: this.detail,
+          information: res.data,
+          userInfo: {
+            userId: this.userInfo.userId,
+            realname: this.userInfo.realname
+          }
         }
-      }
+      }).catch(() => {})
     },
 
     hideView() {

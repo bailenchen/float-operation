@@ -126,9 +126,16 @@
       </flexbox>
     </div>
 
-    <c-r-m-create-view
+    <!-- <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId, information, contractType}"
+      :crm-type="crmType"
+      @save-success="editSaveSuccess"
+      @hiden-view="isCreate=false"/> -->
+
+    <c-r-m-create-view
+      v-if="isCreate"
+      :action="createActionInfo"
       :crm-type="crmType"
       @save-success="editSaveSuccess"
       @hiden-view="isCreate=false"/>
@@ -160,7 +167,6 @@ import Present from '@/views/customermanagement/contract/components/Present'
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
 import { separator } from '@/filters/vue-numeral-filter/filters'
-// import LoginLogVue from '../../SystemManagement/SystemLog/LoginLog.vue'
 
 export default {
   // 客户管理 的 合同详情
@@ -288,6 +294,10 @@ export default {
           coachType: '',
           gradeId: ''
         }
+      },
+      createActionInfo: {
+        type: 'update'
+        // type: 'save'
       }
     }
   },
@@ -354,12 +364,33 @@ export default {
       }]
     }
   },
+  created() {
+    this.createActionInfo.id = this.id
+  },
   mounted() {
     if (this.crm.contract && this.crm.contract.read) {
       this.tabCurrentName = 'CRMBaseInfo'
     }
   },
   methods: {
+    getRelevanceContractDetial() {
+      const params1 = {
+        types: crmTypeModel[this.crmType],
+        id: this.information.contract.relevanceContractId[0].contractId
+      }
+      const params2 = {
+        types: crmTypeModel[this.crmType],
+        id: this.id
+      }
+      filedGetInformation(params1).then(res => {
+        console.log('获取关联合同信息', res.data)
+        this.createActionInfo.oldInformation = res.data
+        filedGetInformation(params2).then(res => {
+          this.createActionInfo.information = res.data
+          this.isCreate = true
+        }).catch(() => {})
+      }).catch(() => {})
+    },
     /**
      * 详情
      */
@@ -373,7 +404,12 @@ export default {
           this.loading = false
           // 创建回款计划的时候使用
           this.detailData = res.data
-          this.contractType = res.data.contractType
+          this.createActionInfo.batchId = res.data.batchId
+          this.contractType = res.data.contractType == 1 && res.data.relevanceContractId.length ? 3 : res.data.contractType // 区分普通合同和变更的合同
+          this.createActionInfo.contractType = this.contractType
+          if (this.contractType == 3) {
+            this.createActionInfo.attr = 'change'
+          }
           this.getSubject()
           this.getBaseInfo(res.data)
 
@@ -456,6 +492,7 @@ export default {
       }
       filedGetInformation(params).then(res => {
         this.information = res.data
+        this.createActionInfo.information = res.data
         const productList = res.data.contract.productList
 
         this.totalPrice = res.data.contract.contractType == 1 && res.data.contract.relevanceContractId.length ? res.data.contract.refundMonry : res.data.contract.money

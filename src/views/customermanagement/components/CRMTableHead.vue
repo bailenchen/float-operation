@@ -175,7 +175,8 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import {
   filterIndexfields,
   filterIndexPoolfields,
-  crmSceneSave
+  crmSceneSave,
+  filedGetInformation
 } from '@/api/customermanagement/common'
 import {
   crmWeixinDeleteAPI,
@@ -668,19 +669,22 @@ export default {
       } else if (type == 'mark_alloc') {
         this.markAllocShow = true
       } else if (type == 'update_contract') {
-        this.isUpdate = true
-        console.log('这是什么？')
+        var params = { types: 6, id: this.selectionList[0].contractId }
+        filedGetInformation(params).then(res => {
+          this.isUpdate = true
 
-        this.createActionInfo = {
-          type: 'save',
-          attr: 'change',
-          id: 7,
-          detail: this.selectionList[0],
-          userInfo: {
-            userId: this.userInfo.userId,
-            realname: this.userInfo.realname
+          this.createActionInfo = {
+            type: 'save',
+            attr: 'change',
+            id: 7,
+            detail: this.selectionList[0],
+            information: res.data,
+            userInfo: {
+              userId: this.userInfo.userId,
+              realname: this.userInfo.realname
+            }
           }
-        }
+        }).catch(() => {})
       }
     },
     confirmHandle(type) {

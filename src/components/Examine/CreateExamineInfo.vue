@@ -122,7 +122,7 @@ export default {
   computed: {},
   watch: {
     money(val) {
-      console.log('新的合同金额1', val)
+      // console.log('新的合同金额1', val)
       this.getDetail()
     },
     discount(val) {
@@ -174,7 +174,7 @@ export default {
         }
       }
 
-      console.log('审批流请求参数', params)
+      // console.log('审批流请求参数', params)
 
       reqeust(params)
         .then(res => {
