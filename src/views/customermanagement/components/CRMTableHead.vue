@@ -1560,8 +1560,9 @@ export default {
       this.globalSearchShow = true
     },
     // 保存成功
-    createSaveSuccess() {
+    createSaveSuccess(data) {
       console.log('保存成功')
+      this.$emit('handle', { type: data.type })
     },
     hideView(type) {
       if (type == 'insert_class') {
