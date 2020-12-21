@@ -95,6 +95,19 @@ export default {
         // this.loading = true
         this.getFieldList()
       }
+      this.list = [
+        {
+          a: '教室编号',
+          b: '中心',
+          c: '教室名称',
+          d: '开通时间',
+          e: '添加人',
+          f: '教室状态',
+          g: '关联老师',
+          h: '最后修改人',
+          i: '最后修改时间'
+        }
+      ]
     }
   },
 

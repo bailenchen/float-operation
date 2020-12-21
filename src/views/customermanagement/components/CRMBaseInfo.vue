@@ -138,7 +138,6 @@
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
       :id="fullDetailId"
-      :base-list="baseList"
       :crm-type="fullDetailType"/>
   </div>
 </template>
@@ -198,13 +197,7 @@ export default {
       default: ''
     },
     // 固定字段的数据
-    filedList: Array,
-    baseList: {
-      type: Array,
-      default() {
-        return []
-      }
-    }
+    filedList: Array
   },
   data() {
     return {
@@ -231,7 +224,6 @@ export default {
 
   },
   created() {
-    console.log(this.filedList, '******')
     this.$bus.on('crm-detail-update', (data) => {
       this.getBaseInfo(false)
     })

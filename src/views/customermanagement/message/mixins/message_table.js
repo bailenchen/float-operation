@@ -337,9 +337,6 @@ export default {
     },
 
     handelFieldList(list) {
-      if (this.crmType == 'contract') {
-        this.baseList = list
-      }
       for (let index = 0; index < list.length; index++) {
         const element = list[index]
         var width = 0

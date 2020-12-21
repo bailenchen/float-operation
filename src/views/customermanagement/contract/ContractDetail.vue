@@ -55,7 +55,6 @@
                 v-if="item.name === 'CRMBaseInfo'"
                 :detail="detailData"
                 :id="id"
-                :base-list="baseList"
                 :filed-list="baseDetailList">
                 <!-- 课程信息 -->
                 <div v-if="detailData.contractType == 1" slot="first" style="padding-left: 15px;margin-bottom:20px;">
@@ -145,6 +144,9 @@
 <script>
 import { crmContractRead } from '@/api/customermanagement/contract'
 import { filedGetInformation } from '@/api/customermanagement/common'
+import {
+  filedGetTableField
+} from '@/api/customermanagement/common'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
@@ -216,12 +218,6 @@ export default {
     clickField: {
       type: String,
       default: ''
-    },
-    baseList: {
-      type: Array,
-      default() {
-        return []
-      }
     }
   },
   data() {
@@ -473,20 +469,29 @@ export default {
       }
     },
 
+    getFieldHead(data) {
+      filedGetTableField({ label: 6 }).then(res => {
+        const listhead = res.data
+        const list = [{ name: '基本信息', list: [] }]
+        const isChange = data.contractType == 1 && data.relevanceContractId && data.relevanceContractId.length
+        for (let index = 0; index < listhead.length; index++) {
+          const element = listhead[index]
+          list[0].list.push({
+            name: isChange && element.fieldName == 'relevanceContractNum' ? '原合同编号' : element.name,
+            formType: element.fieldName == 'relevanceContractNum' ? 'relativenum' : 'text',
+            value: element.fieldName == 'relevanceContractNum' ? data.relevanceContractId : this.handleFieldVal(element.fieldName, data[element.fieldName])
+          })
+        }
+
+        this.baseDetailList = list
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+
     // 获取基本信息
     getBaseInfo(data) {
-      this.baseDetailList = [
-        { name: '基本信息', list: [] }
-      ]
-      const isChange = data.contractType == 1 && data.relevanceContractId && data.relevanceContractId.length
-      for (let index = 0; index < this.baseList.length; index++) {
-        const element = this.baseList[index]
-        this.baseDetailList[0].list.push({
-          name: isChange && element.fieldName == 'relevanceContractNum' ? '原合同编号' : element.name,
-          formType: element.fieldName == 'relevanceContractNum' ? 'relativenum' : 'text',
-          value: element.fieldName == 'relevanceContractNum' ? data.relevanceContractId : this.handleFieldVal(element.fieldName, data[element.fieldName])
-        })
-      }
+      this.getFieldHead(data)
 
       const params = {
         types: crmTypeModel[this.crmType],

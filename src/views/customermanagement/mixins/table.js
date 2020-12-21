@@ -298,9 +298,6 @@ export default {
             console.log('请求的自动', res)
             const fieldList = []
             const moneyFields = []
-            if (this.crmType == 'contract') {
-              this.baseList = res.data
-            }
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
 
