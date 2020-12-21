@@ -171,7 +171,9 @@ export default {
           5: '执行中',
           6: '草稿',
           7: '合同充值返还',
-          8: '确认放弃'
+          8: '确认放弃',
+          9: '家长审核中',
+          10: '家长拒绝'
         }[row[column.property]]
       } else if (column.property === 'checkStatus') {
         return this.getStatusName(row.checkStatus)
