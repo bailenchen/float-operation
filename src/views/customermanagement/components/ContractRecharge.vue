@@ -107,7 +107,7 @@ export default {
         width: '80',
         label: '学员姓名'
       })
-      this.fieldList.push({ prop: 'deptName', width: '150', label: '所属中心' })
+      this.fieldList.push({ prop: 'deptIdName', width: '150', label: '所属中心' })
       this.fieldList.push({
         prop: 'contractNum',
         width: '120',
