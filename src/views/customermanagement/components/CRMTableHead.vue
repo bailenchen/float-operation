@@ -166,6 +166,34 @@
 
     <!-- 全局搜索 -->
     <global-search :visible.sync="globalSearchShow" />
+
+    <!-- 换挡 -->
+    <shift-handle
+      v-if="isShift"
+      :selection-list="selectionList"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 插班 -->
+    <insert-class
+      v-if="isInsert"
+      :selection-list="selectionList"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 排课 -->
+    <rank-course
+      v-if="isRank"
+      :selection-list="selectionList"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 确认课时 -->
+    <confirm-class-time
+      v-if="isConfirm"
+      :selection-list="selectionList"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
   </div>
 </template>
 
@@ -265,6 +293,10 @@ import DisputeExamine from './selectionHandle/DisputeExamine' // 争议审批
 import ModeFollow from './selectionHandle/ModeFollow' // 修改跟进
 import MarkAlloc from './selectionHandle/MarkAlloc' // 业绩分配
 import UpdateContract from './selectionHandle/UpdateContract' // 合同变更
+import InsertClass from '@/views/EducationManage/components/InsertClass' // 学员插班
+import ConfirmClassTime from '@/views/EducationManage/components/ConfirmClassTime' // 课时确认
+import RankCourse from '@/views/EducationManage/components/RankCourse' // 排课
+import ShiftHandle from '@/views/EducationManage/components/ShiftHandle' // 换挡
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 import CRMCreateView from './CRMCreateView'
@@ -292,7 +324,11 @@ export default {
     MarkAlloc,
     UpdateContract,
     GlobalSearch,
-    CRMCreateView
+    CRMCreateView,
+    InsertClass,
+    ConfirmClassTime,
+    RankCourse,
+    ShiftHandle
   },
   props: {
     title: {
@@ -351,12 +387,16 @@ export default {
       upContractShow: false, // 合同变更
       isUpdate: false,
       createCRMType: 'contract',
+      isInsert: false, // 学员插班
+      isRank: false, // 排课
+      isConfirm: false, // 确认课时
+      isShift: false, // 换挡
       createActionInfo: { type: 'save' } // 创建的相关信息
     }
   },
   computed: {
     // ...mapState('user', ['crm']),
-    ...mapGetters(['crm', 'userInfo']),
+    ...mapGetters(['crm', 'education', 'userInfo']),
     iconClass() {
       return this.showScene ? 'arrow-up' : 'arrow-down'
     },
@@ -687,6 +727,14 @@ export default {
             }
           }
         }).catch(() => {})
+      } else if (type == 'insert_class') {
+        this.isInsert = true
+      } else if (type == 'schedule') {
+        this.isRank = true
+      } else if (type == 'confirm') {
+        this.isConfirm = true
+      } else if (type == 'shift') {
+        this.isShift = true
       }
     },
     confirmHandle(type) {
@@ -1286,7 +1334,7 @@ export default {
           'confirm',
           'delete'
         ])
-      } else if (this.crmType == 'studentchedule') {
+      } else if (this.crmType == 'studentschedule') {
         return this.forSelectionHandleItems(handleInfos, [
           'leave',
           'delete'
@@ -1346,6 +1394,8 @@ export default {
           } else {
             return this.crm[this.crmType].delete
           }
+        } else if (this.crmType == 'classroom' || this.crmType == 'class' || this.crmType == 'classschedule' || this.crmType == 'studentschedule') {
+          return this.education[this.crmType].delete
         } else {
           return this.crm[this.crmType].delete
         }
@@ -1450,6 +1500,20 @@ export default {
         } else {
           return false
         }
+      } else if (type == 'mode') {
+        return this.education[this.crmType].update
+      } else if (type == 'schedule') {
+        return this.education[this.crmType].course
+      } else if (type == 'close') {
+        return this.education[this.crmType].close
+      } else if (type == 'insert_class') {
+        return this.education[this.crmType].insert
+      } else if (type == 'confirm') {
+        return this.education[this.crmType].confirm
+      } else if (type == 'shift') {
+        return this.education[this.crmType].shifts
+      } else if (type == 'leave') {
+        return this.education[this.crmType].leave
       }
 
       return true
@@ -1499,8 +1563,21 @@ export default {
     createSaveSuccess() {
       console.log('保存成功')
     },
-    hideView() {
-      this.isUpdate = false
+    hideView(type) {
+      if (type == 'insert_class') {
+        this.isInsert = false
+      } else if (type == 'schedule') {
+        this.isRank = false
+      } else if (type == 'confirm') {
+        this.isConfirm = false
+      } else if (type == 'shift') {
+        this.isShift = false
+      } else {
+        this.isUpdate = false
+      }
+    },
+    saveSuccess() {
+      console.log('插班成功')
     }
   }
 }

@@ -109,7 +109,6 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :click-field="clickField"
-      :base-list="baseList"
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
@@ -132,8 +131,7 @@ export default {
   data() {
     return {
       crmType: 'contract',
-      moneyData: null, // 合同列表金额
-      baseList: []
+      moneyData: null // 合同列表金额
     }
   },
   computed: {
