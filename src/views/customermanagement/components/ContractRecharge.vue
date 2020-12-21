@@ -129,9 +129,13 @@ export default {
 
     getDetail() {
       this.loading = true
+      var crmType = 'contract'
+      // const request = {
+      //   contract: queryRechargeListAPI
+      // }[this.crmType]
       const request = {
         contract: queryRechargeListAPI
-      }[this.crmType]
+      }[crmType]
       const params = {}
       params[this.crmType + 'Id'] = this.id
       request(params)
