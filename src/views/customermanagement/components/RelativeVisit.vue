@@ -129,7 +129,7 @@ export default {
     getDetail() {
       this.loading = true
       const request = {
-        customer: crmCustomerQueryVisitAPI,
+        student: crmCustomerQueryVisitAPI,
         contract: crmContractQueryVisitAPI
       }[this.crmType]
       const params = { pageType: 0 }

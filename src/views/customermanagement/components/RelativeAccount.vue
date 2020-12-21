@@ -39,7 +39,7 @@ import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
-  name: 'RelativeContract', // 相关联系人  可能再很多地方展示 放到客户管理目录下
+  name: 'RelativeAccount', // 相关资金账户
   components: {
     CRMFullScreenDetail: () => import('./CRMFullScreenDetail.vue'),
     CRMCreateView,

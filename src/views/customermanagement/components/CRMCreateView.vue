@@ -180,7 +180,7 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
 import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
-import { filedGetField, filedValidates, filedGetInformation } from '@/api/customermanagement/common'
+import { filedGetField, filedValidates } from '@/api/customermanagement/common'
 import { crmLeadsSave } from '@/api/customermanagement/clue'
 import { crmCustomerSave } from '@/api/customermanagement/customer'
 import { crmAccountSave } from '@/api/customermanagement/account'
@@ -1801,13 +1801,10 @@ export default {
           // 如果是LEADS
           if (this.action.type === 'update') {
             params.disabled = [
-              // 'dept_id',
               'owner_user_id'
-              // 'channel_id'
             ].includes(item.fieldName)
           } else {
             params.disabled = [
-              // 'dept_id',
               'introducer_id'
             ].includes(item.fieldName)
           }

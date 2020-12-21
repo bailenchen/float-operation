@@ -122,11 +122,13 @@ export default {
   computed: {},
   watch: {
     money(val) {
-      // console.log('新的合同金额1', val)
-      this.getDetail()
+      if (this.typesId != 7) {
+        // console.log('新的合同金额1', val)
+        this.getDetail()
+      }
     },
     discount(val) {
-      console.log('新的合同折扣', val)
+      // console.log('新的合同折扣', val)
       this.getDetail()
     },
     types(val) {
@@ -159,7 +161,7 @@ export default {
         params.discount = this.discount // 折扣
       } else if (this.types == 'crm_contract' && this.otherTypes == 'change') {
         params.categoryType = 7
-        params.money = this.money
+        // params.money = this.money
       } else {
         params.id = this.typesId
         params.categoryType = {
