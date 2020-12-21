@@ -6,11 +6,12 @@
       title="教室管理"
       placeholder="请输入教室名称/教室状态"
       main-title="添加教室"
+      @create-room="createClick"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos"/>
     <div
-      v-empty="!crm.product.index"
+      v-empty="!education.classroom.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -72,25 +73,48 @@
           @current-change="handleCurrentChange"/>
       </div>
     </div>
+
+    <create-classroom
+      v-if="showHandleView"
+      :handle="rowInfo"
+      @save="getDataList"
+      @hiden-view="showHandleView=false" />
   </div>
 </template>
 
 <script>
-
+import CreateClassroom from './components/CreateClassroom'
 import table from '../mixins/table'
 
 export default {
   /** 教务管理 的 教室列表 */
   name: 'ClassroomIndex',
+  components: {
+    CreateClassroom
+  },
   mixins: [table],
   data() {
     return {
-      crmType: 'product'
+      crmType: 'classroom',
+      showHandleView: false,
+      rowInfo: null
     }
   },
   mounted() {},
   methods: {
+    // 重新获取列表
+    getDataList() {
 
+    },
+
+    createClick() {
+      console.log('object')
+      this.rowInfo = {
+        action: 'add', // save 创建  update 编辑
+        data: null // 编辑数据
+      }
+      this.showHandleView = true
+    }
   }
 }
 </script>

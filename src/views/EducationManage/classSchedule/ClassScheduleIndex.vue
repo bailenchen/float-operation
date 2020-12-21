@@ -10,7 +10,7 @@
       @on-search="crmSearch"
       @on-export="exportInfos"/>
     <div
-      v-empty="!crm.product.index"
+      v-empty="!education.classschedule.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -85,7 +85,7 @@ export default {
   mixins: [table],
   data() {
     return {
-      crmType: 'product'
+      crmType: 'classschedule'
     }
   },
   mounted() {},

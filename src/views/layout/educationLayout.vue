@@ -58,8 +58,6 @@ export default {
     this.getcrmMessagNum()
   },
 
-  mounted() {},
-
   methods: {
     navClick(index) {},
 

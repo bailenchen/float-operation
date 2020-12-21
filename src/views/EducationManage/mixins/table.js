@@ -6,8 +6,6 @@ import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CRMListHead from '../../customermanagement/components/CRMListHead'
 import CRMTableHead from '../../customermanagement/components/CRMTableHead'
 import {
-  filedGetTableField,
-  filedGetPoolTableField,
   crmFieldColumnWidth,
   crmPoolFieldColumnWidth
 } from '@/api/customermanagement/common'
@@ -85,16 +83,18 @@ export default {
   mixins: [CheckStatusMixin],
 
   computed: {
-    ...mapGetters(['crm'])
+    ...mapGetters(['education'])
   },
   mounted() {
     /** 控制table的高度 */
     window.onresize = () => {
       this.updateTableHeight()
     }
-
-    if (this.crm[this.crmType].index) {
-      this.loading = true
+    if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
+      if (this.education[this.crmType].index) {
+        // this.loading = true
+        this.getFieldList()
+      }
     }
   },
 
@@ -175,121 +175,138 @@ export default {
         return 'xxx'
       }
     },
+    genListHead(obj) {
+      const list = []
+      for (const key in obj) {
+        list.push({
+          prop: key,
+          label: obj[key]
+        })
+      }
+      return list
+    },
     /** 获取字段 */
     getFieldList(force) {
-      let fieldList
-      // 教室管理
-      fieldList = [
-        { prop: 'weixinName', label: '教室编号', width: '115px' },
-        { prop: 'weixinName', label: '中心', width: '115px' },
-        { prop: 'weixinName', label: '教室名称', width: '115px' },
-        { prop: 'weixinName', label: '开通时间', width: '115px' },
-        { prop: 'weixinName', label: '添加人', width: '115px' },
-        { prop: 'weixinName', label: '教室状态', width: '115px' },
-        { prop: 'weixinName', label: '关联老师', width: '115px' },
-        { prop: 'weixinName', label: '最后修改人', width: '115px' },
-        { prop: 'weixinName', label: '最后修改时间', width: '115px' }
-      ]
-      // 班级管理
-      fieldList = [
-        { prop: 'weixinName', label: '中心', width: '115px' },
-        { prop: 'weixinName', label: '班级类型', width: '115px' },
-        { prop: 'weixinName', label: '班级名称', width: '115px' },
-        { prop: 'weixinName', label: '教室名称', width: '115px' },
-        { prop: 'weixinName', label: '年级', width: '115px' },
-        { prop: 'weixinName', label: '科目', width: '115px' },
-        { prop: 'weixinName', label: '学科老师', width: '115px' },
-        { prop: 'weixinName', label: '满班人数', width: '115px' },
-        { prop: 'weixinName', label: '已排次数', width: '115px' },
-        { prop: 'weixinName', label: '班级状态', width: '115px' },
-        { prop: 'weixinName', label: '已排未上课次', width: '115px' },
-        { prop: 'weixinName', label: '最后排课时间', width: '115px' },
-        { prop: 'weixinName', label: '备注', width: '115px' },
-        { prop: 'weixinName', label: '是否排课', width: '115px' }
-      ]
-      // 班级排课表
-      fieldList = [
-        { prop: 'weixinName', label: '中心', width: '115px' },
-        { prop: 'weixinName', label: '班级类型', width: '115px' },
-        { prop: 'weixinName', label: '班级名称', width: '115px' },
-        { prop: 'weixinName', label: '教室', width: '115px' },
-        { prop: 'weixinName', label: '年级', width: '115px' },
-        { prop: 'weixinName', label: '科目', width: '115px' },
-        { prop: 'weixinName', label: '学科老师', width: '115px' },
-        { prop: 'weixinName', label: '状态', width: '115px' },
-        { prop: 'weixinName', label: '上课时间', width: '115px' },
-        { prop: 'weixinName', label: '时间段', width: '115px' },
-        { prop: 'weixinName', label: '排课人数', width: '115px' },
-        { prop: 'weixinName', label: '实际上课人数', width: '115px' },
-        { prop: 'weixinName', label: '最大上课人数', width: '115px' }
-      ]
-      // 学员排课表
-      fieldList = [
-        { prop: 'weixinName', label: '校区', width: '115px' },
-        { prop: 'weixinName', label: '合同编号', width: '115px' },
-        { prop: 'weixinName', label: '学员编号', width: '115px' },
-        { prop: 'weixinName', label: '学员姓名', width: '115px' },
-        { prop: 'weixinName', label: '辅导方式', width: '115px' },
-        { prop: 'weixinName', label: '班级类型', width: '115px' },
-        { prop: 'weixinName', label: '班级名称', width: '115px' },
-        { prop: 'weixinName', label: '教室', width: '115px' },
-        { prop: 'weixinName', label: '年级', width: '115px' },
-        { prop: 'weixinName', label: '科目', width: '115px' },
-        { prop: 'weixinName', label: '学科老师', width: '115px' },
-        { prop: 'weixinName', label: '上课日期', width: '115px' },
-        { prop: 'weixinName', label: '上课时段', width: '115px' },
-        { prop: 'weixinName', label: '总课次/已确认', width: '115px' },
-        { prop: 'weixinName', label: '考勤', width: '115px' },
-        { prop: 'weixinName', label: '课时确认', width: '115px' }
-      ]
-      if (this.fieldList.length == 0 || force) {
-        this.loading = true
-
-        const params = {}
-        if (this.isSeas) {
-          if (this.poolId) {
-            params.poolId = this.poolId
-          }
-        } else {
-          params.label = this.crmType == 'student' ? 19 : crmTypeModel[this.crmType]
+      const fieldObj = {
+        // 教室管理
+        classroom: {
+          a: '教室编号',
+          b: '中心',
+          c: '教室名称',
+          d: '开通时间',
+          e: '添加人',
+          f: '教室状态',
+          g: '关联老师',
+          h: '最后修改人',
+          i: '最后修改时间'
+        },
+        // 班级管理
+        class: {
+          a: '中心',
+          b: '班级类型',
+          c: '班级名称',
+          d: '教室名称',
+          e: '年级',
+          f: '科目',
+          g: '学科老师',
+          h: '已排次数',
+          i: '班级状态',
+          j: '已排未上课次',
+          k: '最后排课时间,',
+          l: '备注',
+          m: '是否排课'
+        },
+        // 班级排课表
+        classschedule: {
+          a: '中心',
+          b: '班级类型',
+          c: '班级名称',
+          d: '教室名称',
+          e: '年级',
+          f: '科目',
+          g: '学科老师',
+          h: '状态',
+          i: '上课时间',
+          j: '时间段',
+          k: '排课人数,',
+          l: '实际上课人数',
+          m: '最大上课人数'
+        },
+        // 学员排课表
+        studentschedule: {
+          a: '校区',
+          b: '合同编号',
+          c: '学员编号',
+          d: '学员姓名',
+          e: '辅导方式',
+          f: '班级类型',
+          g: '班级名称',
+          h: '教室',
+          i: '年级',
+          j: '科目',
+          k: '学科老师,',
+          l: '上课日期',
+          m: '上课时段',
+          n: '总课次/已确认',
+          x: '考勤',
+          y: '课时确认'
         }
+      }[this.crmType]
 
-        const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
-        request(params)
-          .then(res => {
-            const fieldList = []
-            for (let index = 0; index < res.data.length; index++) {
-              const element = res.data[index]
-
-              var width = 0
-              if (!element.width) {
-                if (element.name && element.name.length <= 6) {
-                  width = element.name.length * 15 + 45
-                } else {
-                  width = 140
-                }
-              } else {
-                width = element.width
-              }
-
-              fieldList.push({
-                prop: element.fieldName,
-                label: element.name,
-                width: width
-              })
-            }
-
-            this.fieldList = fieldList
-            // 获取好字段开始请求数据
-            this.getList()
-          })
-          .catch(() => {
-            this.loading = false
-          })
+      if (['classroom', 'class', 'classschedule', 'studentschedule'].includes(this.crmType)) {
+        this.fieldList = this.genListHead(fieldObj)
       } else {
-        // 获取好字段开始请求数据
-        this.getList()
+        return
       }
+
+      // if (this.fieldList.length == 0 || force) {
+      //   this.loading = true
+
+      //   const params = {}
+      //   if (this.isSeas) {
+      //     if (this.poolId) {
+      //       params.poolId = this.poolId
+      //     }
+      //   } else {
+      //     params.label = this.crmType == 'student' ? 19 : crmTypeModel[this.crmType]
+      //   }
+
+      //   const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
+      //   request(params)
+      //     .then(res => {
+      //       const fieldList = []
+      //       for (let index = 0; index < res.data.length; index++) {
+      //         const element = res.data[index]
+
+      //         var width = 0
+      //         if (!element.width) {
+      //           if (element.name && element.name.length <= 6) {
+      //             width = element.name.length * 15 + 45
+      //           } else {
+      //             width = 140
+      //           }
+      //         } else {
+      //           width = element.width
+      //         }
+
+      //         fieldList.push({
+      //           prop: element.fieldName,
+      //           label: element.name,
+      //           width: width
+      //         })
+      //       }
+
+      //       this.fieldList = fieldList
+      //       // 获取好字段开始请求数据
+      //       this.getList()
+      //     })
+      //     .catch(() => {
+      //       this.loading = false
+      //     })
+      // } else {
+      //   // 获取好字段开始请求数据
+      //   this.getList()
+      // }
     },
     /** 格式化字段 */
     fieldFormatter(row, column, cellValue) {

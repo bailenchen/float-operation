@@ -199,12 +199,12 @@ export default {
         })
       }
 
-      if (this.crm) {
+      if (this.education) {
         tempsItems.push({
           title: '教务管理',
-          type: 1,
+          type: 9,
           path: '/education',
-          icon: 'wk wk-customer',
+          icon: 'wk wk-approval-15',
           fontSize: '17px'
         })
       }

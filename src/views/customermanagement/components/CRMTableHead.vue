@@ -366,6 +366,8 @@ export default {
     showSceneView() {
       if (this.isSeas || ['marketing', 'applet'].includes(this.crmType)) {
         return false
+      } else if (['teacherschedule'].includes(this.crmType)) {
+        return false
       } else {
         return true
       }
@@ -1086,6 +1088,41 @@ export default {
           name: '合同变更',
           type: 'update_contract',
           icon: 'transfer'
+        },
+        mode: {
+          name: '修改',
+          type: 'mode',
+          icon: 'transfer'
+        },
+        schedule: {
+          name: '排课',
+          type: 'schedule',
+          icon: 'transfer'
+        },
+        close: {
+          name: '关闭',
+          type: 'close',
+          icon: 'remove'
+        },
+        insert_class: {
+          name: '学员插班',
+          type: 'insert_class',
+          icon: 'transfer'
+        },
+        shift: {
+          name: '换挡',
+          type: 'shift',
+          icon: 'transfer'
+        },
+        confirm: {
+          name: '课时确认',
+          type: 'confirm',
+          icon: 'transfer'
+        },
+        leave: {
+          name: '请假',
+          type: 'leave',
+          icon: 'transfer'
         }
       }
       if (this.crmType == 'leads') {
@@ -1223,6 +1260,31 @@ export default {
       } else if (this.crmType == 'receive') {
         return this.forSelectionHandleItems(handleInfos, [
           'export',
+          'delete'
+        ])
+      } else if (this.crmType == 'classroom') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'mode',
+          'delete'
+        ])
+      } else if (this.crmType == 'class') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'mode',
+          'delete',
+          'schedule',
+          'close',
+          'insert_class'
+        ])
+      } else if (this.crmType == 'classschedule') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'shift',
+          'insert_class',
+          'confirm',
+          'delete'
+        ])
+      } else if (this.crmType == 'studentchedule') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'leave',
           'delete'
         ])
       }

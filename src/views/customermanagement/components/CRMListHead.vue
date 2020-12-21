@@ -125,10 +125,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['crm', 'userInfo']),
+    ...mapGetters(['crm', 'education', 'userInfo']),
     canSave() {
       if (this.isSeas || this.isStudent) {
         return false
+      }
+
+      if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
+        return this.education[this.crmType].save
       }
 
       return this.crm[this.crmType].save
@@ -138,6 +142,8 @@ export default {
       if (this.crmType == 'productSetMeal') {
         return require(`@/assets/img/crm/product.png`)
       } else if (this.crmType == 'insideUser') {
+        return require(`@/assets/img/crm/product.png`)
+      } else if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
         return require(`@/assets/img/crm/product.png`)
       }
       return require(`@/assets/img/crm/${this.crmType}.png`)
@@ -161,6 +167,10 @@ export default {
       this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
     }
     if (this.crm[this.crmType] && this.crm[this.crmType].excelexport) {
+      this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
+    }
+
+    if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType) && this.education[this.crmType].excelexport) {
       this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
     }
 
@@ -220,6 +230,14 @@ export default {
             this.createActionInfo.contractType = 2
           }
         }
+
+        if (this.crmType == 'classroom') {
+          this.$emit('create-room')
+        } else if (this.crmType == 'class') {
+          this.$emit('create-class')
+        } else {
+          this.isCreate = !this.isCreate
+        }
         // if (this.crmType === 'contract' && action === 'present') {
         //   this.createActionInfo = {
         //     type: 'save',
@@ -230,9 +248,6 @@ export default {
         //     }
         //   }
         // }
-
-
-        this.isCreate = !this.isCreate
       }
     },
     inputChange() {

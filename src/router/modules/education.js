@@ -6,7 +6,7 @@ const layout = function(meta = {}) {
     path: '/education',
     component: Layout,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
       ...meta
     }
   }
@@ -15,7 +15,7 @@ const layout = function(meta = {}) {
 export default [
   {
     ...layout({
-    //   permissions: ['crm']
+      permissions: ['educational']
     }),
     children: [
       {
@@ -23,15 +23,14 @@ export default [
         component: () => import('@/views/EducationManage/classroom/ClassroomIndex'),
         meta: {
           title: '教室管理',
-          icon: 'message',
-          num: 0
+          icon: 'message'
         }
       }
     ]
   },
   {
     ...layout({
-    //   permissions: ['crm']
+      permissions: ['educational', 'class']
     }),
     children: [
       {
@@ -39,15 +38,14 @@ export default [
         component: () => import('@/views/EducationManage/class/ClassIndex'),
         meta: {
           title: '班级管理',
-          icon: 'message',
-          num: 0
+          icon: 'message'
         }
       }
     ]
   },
   {
     ...layout({
-    //   permissions: ['crm']
+      permissions: ['educational', 'classschedule']
     }),
     children: [
       {
@@ -55,15 +53,14 @@ export default [
         component: () => import('@/views/EducationManage/classSchedule/ClassScheduleIndex'),
         meta: {
           title: '班级排课表',
-          icon: 'message',
-          num: 0
+          icon: 'message'
         }
       }
     ]
   },
   {
     ...layout({
-    //   permissions: ['crm']
+      permissions: ['educational', 'studentschedule']
     }),
     children: [
       {
@@ -71,15 +68,14 @@ export default [
         component: () => import('@/views/EducationManage/studentSchedule/StudentScheduleIndex'),
         meta: {
           title: '学员排课表',
-          icon: 'message',
-          num: 0
+          icon: 'message'
         }
       }
     ]
   },
   {
     ...layout({
-    //   permissions: ['crm']
+      permissions: ['educational', 'teacherschedule']
     }),
     children: [
       {
@@ -87,8 +83,7 @@ export default [
         component: () => import('@/views/EducationManage/teacherSchedule/TeacherScheduleIndex'),
         meta: {
           title: '教师排课表',
-          icon: 'message',
-          num: 0
+          icon: 'message'
         }
       }
     ]

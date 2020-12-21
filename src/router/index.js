@@ -70,7 +70,7 @@ export default router
 
 export const asyncRouterMap = [
   { type: 'crm', router: crmRouter },
-  { type: 'education', router: educationRouter },
+  { type: 'educational', router: educationRouter },
   { type: 'taskExamine', router: taskExamineRouter },
   { type: 'workLog', router: workLogRouter },
   { type: 'addressBook', router: addressBookRouter },

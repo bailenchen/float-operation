@@ -29,7 +29,7 @@ const user = {
     // 权限信息
     allAuth: null, // 总权限信息 默认空 调整动态路由
     crm: {}, // 客户管理
-    education: {}, // 客户管理
+    education: {}, // 教务管理
     bi: {}, // 商业智能
     manage: {}, // 管理后台
     oa: {}, // 办公
@@ -57,8 +57,8 @@ const user = {
     SET_CRM: (state, crm) => {
       state.crm = crm
     },
-    SET_EDUCATION: (state, crm) => {
-      state.crm = crm
+    SET_EDUCATION: (state, education) => {
+      state.education = education
     },
     SET_BI: (state, bi) => {
       state.bi = bi
@@ -98,7 +98,7 @@ const user = {
       // 权限
       state.allAuth = data.auth
       state.crm = data.auth.crm
-      state.education = data.auth.crm
+      state.education = data.auth.education
       state.bi = data.auth.bi
       state.manage = data.auth.manage
       state.oa = data.auth.oa
@@ -135,11 +135,10 @@ const user = {
           const data = response.data
 
           // delete data.bi // 删除商业智能
-
           Lockr.set('authList', data)
           commit('SET_ALLAUTH', data)
           commit('SET_CRM', data.crm)
-          commit('SET_EDUCATION', data.crm)
+          commit('SET_EDUCATION', data.educational)
           commit('SET_BI', data.bi)
           commit('SET_MANAGE', data.manage)
           commit('SET_OA', data.oa)

@@ -58,7 +58,6 @@ import {
 import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
-import { separator } from '@/filters/vue-numeral-filter/filters'
 
 export default {
   name: 'RelativeContract', // 相关联系人  可能再很多地方展示 放到客户管理目录下
@@ -152,11 +151,33 @@ export default {
      * 格式化字段
      */
     fieldFormatter(row, column) {
-      // 如果需要格式化
-      if (column.property === 'checkStatus') {
+      if (column.property === 'contractType') {
+        return {
+          1: '购买',
+          2: '赠送'
+        }[row[column.property]]
+      } else if (column.property === 'isEarlyRetirement') {
+        return {
+          0: '否',
+          1: '是',
+          null: ''
+        }[row[column.property]]
+      } else if (column.property === 'contractStatus') {
+        return {
+          1: '申请中',
+          2: '放弃',
+          3: '合同完成',
+          4: '合同变更中',
+          5: '执行中',
+          6: '草稿',
+          7: '合同充值返还',
+          8: '确认放弃'
+        }[row[column.property]]
+      } else if (column.property === 'checkStatus') {
         return this.getStatusName(row.checkStatus)
-      } else if (column.property == 'money') {
-        return separator(row[column.property] || 0)
+      }
+      if (column.property === 'orderDate') {
+        return row[column.property].slice(0, 10)
       }
       return row[column.property]
     },

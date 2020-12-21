@@ -51,12 +51,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['crm'])
+    ...mapGetters(['crm', 'education'])
   },
   watch: {},
   mounted() {
-    if (this.crm[this.crmType].index) {
-      this.getSceneList()
+    if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
+      if (this.education[this.crmType].index) {
+        this.getSceneList()
+      }
+    } else {
+      if (this.crm[this.crmType].index) {
+        this.getSceneList()
+      }
     }
   },
   methods: {

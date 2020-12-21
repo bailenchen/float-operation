@@ -6,11 +6,12 @@
       title="班级管理"
       placeholder="请输入中心/班级名称/教师名称"
       main-title="添加班级"
+      @create-class="createClick"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos"/>
     <div
-      v-empty="!crm.product.index"
+      v-empty="!education.class.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -72,25 +73,48 @@
           @current-change="handleCurrentChange"/>
       </div>
     </div>
+
+    <create-class
+      v-if="showHandleView"
+      :handle="rowInfo"
+      @save="getDataList"
+      @hiden-view="showHandleView=false" />
   </div>
 </template>
 
 <script>
-
+import CreateClass from './components/CreateClass'
 import table from '../mixins/table'
 
 export default {
   /** 教务管理 的 班级管理列表 */
   name: 'ClassIndex',
+  components: {
+    CreateClass
+  },
   mixins: [table],
   data() {
     return {
-      crmType: 'product'
+      crmType: 'class',
+      showHandleView: false,
+      rowInfo: null
     }
   },
   mounted() {},
   methods: {
+    // 重新获取列表
+    getDataList() {
 
+    },
+
+    createClick() {
+      console.log('object')
+      this.rowInfo = {
+        action: 'add', // save 创建  update 编辑
+        data: null // 编辑数据
+      }
+      this.showHandleView = true
+    }
   }
 }
 </script>
