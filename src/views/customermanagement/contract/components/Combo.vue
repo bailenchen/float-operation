@@ -421,15 +421,20 @@ export default {
 
       // 判断后端有没有返回值
       // 两种情况：1 后端没有返回值，2 后端返回值，但是选择的都是不参加累计的
-      if (obj) {
-        this.giveObj = obj.lastPresent
-        this.presentRules = obj.presentRules
-        this.presentRules.coachType = this.giveAction.searchJson.coachType
-        console.log('giveObj1', this.giveObj)
-        console.log('presentRules1', this.presentRules)
-      }
+      // if (obj) {
+      //   this.giveObj = obj.lastPresent
+      //   this.presentRules = obj.presentRules
+      //   this.presentRules.coachType = this.giveAction.searchJson.coachType
+      // }
+      this.giveObj = obj ? obj.lastPresent : null
+      this.presentRules = null
+      this.maxGive = 0
+      this.surplusGive = 0
 
       if (this.giveObj) {
+        this.presentRules = obj.presentRules
+        this.presentRules.coachType = this.giveAction.searchJson.coachType
+
         this.createSubject()
         this.jointpresentData(this.giveObj)
         this.maxGive = this.presentRules.presenterCount
@@ -611,15 +616,16 @@ export default {
       this.changePrice(row, lesson)
 
       var obj = await this.getMaxGive(this.purchaseInGive)
-      if (obj) {
-        this.giveObj = obj.lastPresent
-        this.presentRules = obj.presentRules
-        this.presentRules.coachType = this.giveAction.searchJson.coachType
-        console.log('giveObj1', this.giveObj)
-        console.log('presentRules1', this.presentRules)
-      }
+      this.giveObj = obj ? obj.lastPresent : null
+      this.presentRules = null
+      this.maxGive = 0
+      this.surplusGive = 0
+
       if (this.giveObj) {
         // this.createSubject()
+        this.presentRules = obj.presentRules
+        this.presentRules.coachType = this.giveAction.searchJson.coachType
+
         this.jointpresentData(this.giveObj)
         this.maxGive = this.presentRules.presenterCount
         this.surplusGive = this.maxGive
