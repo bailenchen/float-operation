@@ -90,6 +90,7 @@
     <!-- CRM详情 -->
     <c-r-m-full-screen-detail
       :visible.sync="showFullDetail"
+      :base-list="baseList"
       :crm-type="relationCrmType"
       :id="relationID" />
 
@@ -110,6 +111,9 @@ import {
   systemMessageReadAllAPI,
   systemMessageClearAPI,
   systemMessageDeleteByIdAPI } from '@/api/common'
+import {
+  filedGetTableField
+} from '@/api/customermanagement/common'
 import {
   crmDownImportErrorAPI
 } from '@/api/customermanagement/common'
@@ -190,7 +194,8 @@ export default {
       // CRM详情
       showFullDetail: false, // 查看相关客户管理详情
       relationID: '', // 相关ID参数
-      relationCrmType: '' // 相关类型
+      relationCrmType: '', // 相关类型
+      baseList: []
     }
   },
   computed: {
@@ -342,7 +347,20 @@ export default {
       }
       this.relationID = id
       this.relationCrmType = type
-      this.showFullDetail = true
+      if (type == 'contract') {
+        this.contractDetailHead()
+      } else {
+        this.showFullDetail = true
+      }
+    },
+
+    contractDetailHead() {
+      filedGetTableField({ label: 6 }).then(res => {
+        this.baseList = res.data
+        this.showFullDetail = true
+      }).catch((err) => {
+        console.log(err)
+      })
     },
 
     /**
