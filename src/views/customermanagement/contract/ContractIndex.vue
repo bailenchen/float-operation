@@ -54,8 +54,8 @@
           show-overflow-tooltip>
           <template slot-scope="scope">
             <template v-if="item.prop == 'checkStatus'">
-              <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/>
-              <span>{{ getStatusName(scope.row.checkStatus) }}</span>
+              <!-- <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/> -->
+              <span>{{ getStatusNames(scope.row.checkStatus) }}</span>
             </template>
             <template v-else-if="item.prop == 'relevanceContractNum'">
               <span v-if="scope.row['relevanceContractNum']">
@@ -190,6 +190,22 @@ export default {
       } else {
         return ''
       }
+    },
+
+    getStatusNames(status) {
+      return {
+        0: '待审核',
+        1: '通过',
+        2: '拒绝',
+        3: '审核中',
+        4: '撤回',
+        5: '未提交',
+        6: '创建 ',
+        7: '已删除',
+        8: '作废',
+        9: '家长审核中',
+        10: '家长拒绝'
+      }[status]
     },
 
     enterDetail(item) {
