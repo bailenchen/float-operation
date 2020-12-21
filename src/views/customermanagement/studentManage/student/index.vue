@@ -119,7 +119,7 @@
             <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
           </template>
         </el-table-column>
-        <el-table-column/>
+        <!-- <el-table-column/> -->
         <!-- <el-table-column
           label="关注"
           align="center"
@@ -134,7 +134,7 @@
             </el-tooltip>
           </template>
         </el-table-column> -->
-        <el-table-column
+        <!-- <el-table-column
           :resizable="false"
           fixed="right"
           width="40">
@@ -145,7 +145,7 @@
               :crm-type="crmType"
               @change="setSave"/>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="p-contianer">
         <el-pagination
@@ -210,6 +210,7 @@ export default {
   computed: {
     ...mapGetters(['CRMConfig']),
     Show() {
+      console.log('dsa111', this.$store.state.customer.isCall)
       return this.$store.state.customer.isCall
     }
   },
