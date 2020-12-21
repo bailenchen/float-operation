@@ -23,7 +23,7 @@ export default [
         component: () => import('@/views/EducationManage/classroom/ClassroomIndex'),
         meta: {
           title: '教室管理',
-          icon: 'message'
+          icon: 'customer'
         }
       }
     ]
@@ -38,7 +38,7 @@ export default [
         component: () => import('@/views/EducationManage/class/ClassIndex'),
         meta: {
           title: '班级管理',
-          icon: 'message'
+          icon: 'todo'
         }
       }
     ]
@@ -53,7 +53,7 @@ export default [
         component: () => import('@/views/EducationManage/classSchedule/ClassScheduleIndex'),
         meta: {
           title: '班级排课表',
-          icon: 'message'
+          icon: 'record'
         }
       }
     ]
@@ -68,7 +68,7 @@ export default [
         component: () => import('@/views/EducationManage/studentSchedule/StudentScheduleIndex'),
         meta: {
           title: '学员排课表',
-          icon: 'message'
+          icon: 'employees'
         }
       }
     ]
@@ -83,7 +83,7 @@ export default [
         component: () => import('@/views/EducationManage/teacherSchedule/TeacherScheduleIndex'),
         meta: {
           title: '教师排课表',
-          icon: 'message'
+          icon: 'contacts'
         }
       }
     ]
