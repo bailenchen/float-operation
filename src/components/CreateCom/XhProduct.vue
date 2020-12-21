@@ -13,19 +13,19 @@
           ref="crmrelative"
           :radio="false"
           :show="showPopover"
-          :selected-data="selectedData"
-          :action="queryMealAction"
+          :selected-data="{ productSetMeal: productList }"
+          :action="{searchJson: {status: 1}}"
           crm-type="productSetMeal"
           @close="showPopover=false"
           @changeCheckout="selectInfos"/>
         <el-button
           slot="reference"
           type="primary"
-          @click="addComboHandle">添加套餐</el-button>
+          @click="showSelectView = true">添加套餐</el-button>
       </el-popover>
     </div>
     <!-- 套餐名称按钮 -->
-    <div class="combo-group">
+    <div v-if="selectComobo" class="combo-group">
       <el-button
         v-for="(item, index) in selectComobo"
         :class="{select: item.select}"
@@ -33,97 +33,25 @@
         @click="selectComoboHandle(item, index)"
       >{{ item.data.name }}</el-button>
     </div>
-    <!-- <p v-if="!value.products">当前可赠送课次：<span class="red">{{ currentGive }}</span></p> -->
     <combo
       :action="comboAction"
       :give-action="action"
       :value="comboValue"
       :is-disabled="isDisabled"
       :subject-list="subjectList"
-      :accumulation="accumulation"
       @structure-data="structureSend"
-      @change-price="totalPriceHandle"/>
-    <!-- 累计赠送课程 -->
-    <div>
-      <!-- 累计赠送课程 -->
-      <!-- <el-table
-        :data="present"
-        style="width: 100%">
-        <el-table-column prop="subject" label="科目" width="" align="center">
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择" @change="selectSubjectHandle">
-              <el-option
-                v-for="(item, index) in subjectList"
-                :key="index"
-                :label="item.subjectName"
-                :disabled="item.disabled"
-                :value="item.id"
-              />
-            </el-select>
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="presentLesson" label="累计赠送课次" width="" align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.presentLesson" :disabled="isDisabled" type="number" @change="changeLesson(scope.row)" />
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="planeLesson"
-          label="已排课课次"/>
-        <el-table-column
-          prop="completeLesson"
-          label="已完成课次"/>
-        <el-table-column
-          prop="univalence"
-          label="均价"/>
-        <el-table-column v-if="!isDisabled" prop="" label="操作" width="100" align="center">
-          <template slot-scope="scope">
-            <el-button
-              type="primary"
-              icon="el-icon-plus"
-              circle
-              @click="plusPresentHandle(scope.row.dataIndex)"
-            />
-            <el-button
-              v-show="minusShow"
-              type="danger"
-              icon="el-icon-minus"
-              circle
-              @click="minusPresentHandle(scope.row.dataIndex)"
-            />
-          </template>
-        </el-table-column>
-      </el-table> -->
-      <!-- <div v-show="presentRules"> -->
-      <!-- <div v-if="presentRules">
-        累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。累计可赠送课次：{{ surplusGive }}
-      </div> -->
-    </div>
-
-    <!-- <flexbox class="handle-footer">
-      <div class="total-info">
-        {{ priceText }}：
-        <el-input
-          v-wk-number
-          v-model="priceValue"
-          style="width: 120px"
-          placeholder="请输入"
-          type="number"
-          disabled/>&nbsp;元
-      </div>
-    </flexbox> -->
+    />
   </div>
 </template>
-<script type="text/javascript">
-import objMixin from './objMixin'
-import CrmRelative from '@/components/CreateCom/CrmRelative'
-import Combo from '@/views/customermanagement/contract/components/Combo'
+
+<script>
+import { queryIsNewByCustomerIdAPI } from '@/api/customermanagement/contract'
 import { crmProductIndex } from '@/api/customermanagement/product'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
-import { queryIsNewByCustomerIdAPI } from '@/api/customermanagement/contract'
-import { objDeepCopy } from '../../utils'
+
+
+import CrmRelative from '@/components/CreateCom/CrmRelative'
+import Combo from '@/views/customermanagement/contract/components/Combo'
 
 export default {
   name: 'XhProduct', // 关联产品
@@ -131,116 +59,68 @@ export default {
     CrmRelative,
     Combo
   },
-  mixins: [objMixin],
   props: {
     action: {
       type: Object,
       default: () => {
         return {}
       }
-    }
+    },
+    oldValue: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    value: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    /** 索引值 用于更新数据 */
+    index: Number
   },
   data() {
     return {
+      isAddCombo: false, // 是否展示添加按钮
       showPopover: false, // 展示产品框
-      showSelectView: false, // 内容
-      productList: [],
-      priceValue: 0, // 总金额、剩余金额、最终价格
-      totalPrice: 0, // 总金额
-      surplusPrice: 0, // 剩余金额
-      finalPrice: 0, // 最终价格
-      discountRate: '',
-      selectedData: { productSetMeal: [] },
-      comboAction: null,
-      univalence: 0, // 单价
-      subjectListOfCombo: null, // 科目列表
-      subjectList: null,
-      // maxIndex: 0,
-      selectComobo: null, // 套餐数组
-      present: null, // 赠送table相关数据
-      productData: null,
-      accumulation: {
-        data: [],
-        lesson: 0
-      }, // 累计赠送相关数据
-      presentDataIndex: 0,
-      purchaseLesson: 0, // 所有套餐总课次
-      presentRules: '', // 赠送规则文案
-      // presenterCount: 0, // 实际累计可赠送课次
-      currentGive: 0, // 当前可赠送课次
-      surplusGive: 0, // 剩余可赠送课次
-      comboComponentData: null,
-      isAddCombo: false,
+      showSelectView: false, // 是否展示关联模块
       renew: 1, // 续签或新签
       isNew: 1, // 0:续签 1:新签 2:引流
-      comboValue: null,
-      priceText: '最终价格',
-      giveObj: null, // 累计的信息
-      completeLesson: 0, // 已完成课次
-      surplusPriceObj: null,
-      queryMealAction: {
-        searchJson: {
-          status: 1
-        }
-      }
-
+      selectComobo: null, // 套餐数组
+      comboAction: { // 传递给combo的数据
+        univalence: '', // 单品单价
+        productSetMeal: [] // 大套餐
+      },
+      comboValue: null, // 编辑时传递给combo
+      subjectList: null, // 科目列表1
+      productList: null // 关联套餐选中的值
     }
   },
   computed: {
-    minusShow() {
-      return this.present.length > 1
-    },
     isDisabled() {
       // 变更，且有值
-      if (this.action.type && this.value.products) {
+      // if (this.action.type && this.oldValue.products) {
+      if (this.action.type && this.action.type == 'old-change') {
         return true
       }
       return false
     }
   },
   watch: {
-    dataValue: function(value) {
-      this.refreshProductList()
-    },
-    productList() {
-      this.selectedData = { productSetMeal: this.productList || [] }
-      if (this.selectedData.productSetMeal.length > 0) {
-        var arr = []
-        this.selectedData.productSetMeal.forEach(item => {
-          arr.push({
-            select: true,
-            data: item
-          })
-        })
-        this.selectComobo = arr
-        if (this.univalence == '' || !this.subjectList) {
-          console.log('没有价格或科目')
-          return
-        }
-        this.jointData()
-      }
-      console.log('this.comboAction', this.comboAction)
-    },
     action: {
       handler(val) {
-        console.log('辅导方式、年级、学员变化', val)
-        this.productList = []
+        // console.log('辅导方式、年级、学员变化', val)
+        // 清空之前的数据
+
+        // 有学员，查询新签还是续签
         if (val.customerId) {
           queryIsNewByCustomerIdAPI({ customerId: val.customerId }).then(res => {
             this.renew = res.data
           }).catch(() => {})
         }
-        // 置空
-        this.selectComobo = null
-        if (this.comboAction) {
-          this.comboAction.productSetMeal = []
-        }
-        this.present = null
-        this.purchaseLesson = 0
-        this.presentRules = ''
-        this.surplusPresenter = 0
-        this.totalPrice = 0
-        this.isNew = 1
+
         // 辅导方式、年级、学员都有才请求单品、展示添加套餐按钮
         if (val.customerId && val.searchJson.coachType && val.searchJson.gradeId) {
           this.getUnivalence()
@@ -250,47 +130,60 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    oldValue: {
+      handler(val) {
+        // console.log('编辑', val)
+        if (this.action.type == 'old-change') {
+          // console.log('合同变更-old-change', val)
+          this.structureByValue()
+        } else if (this.action.type == 'change') {
+          // console.log('合同变更-change', val)
+          return
+        } else {
+          // console.log('编辑123', val)
+          // this.getUnivalence()
+          // 辅导方式、年级、学员都有才请求单品、展示添加套餐按钮
+          if (val.customerId && val.searchJson.coachType && val.searchJson.gradeId) {
+            this.getUnivalence()
+          }
+        }
+      },
+      deep: true,
+      immediate: true
     }
 
   },
-  created() {
-    console.log('传入的value1', this.value)
-    // if (this.action.type && this.action.type == 'change') {
-    //   this.priceText = '最终价格'
-    // }
-    // 获取科目
-    QueryAdminSubject().then(res => {
-      this.subjectList = res.data
-      this.subjectListOfCombo = objDeepCopy(res.data)
-      if (this.value.products) {
-        this.structurePresentByValue()
-      } else if (this.value.isEdit) {
-        this.productList = this.value.meal
-      }
-    }).catch(() => {})
-  },
-  mounted() {
-    // this.refreshProductList()
-  },
+
   methods: {
-    /**
-     * 刷新数据
-     */
-    refreshProductList() {
-      // this.productList = this.dataValue.product || []
-      // this.totalPrice = this.dataValue.totalPrice || 0
-      // this.discountRate = this.dataValue.discountRate || ''
-    },
     /** 选中 */
     selectInfos(data) {
       console.log('选中的套餐', data)
       if (data.data) {
         this.productList = data.data
+        var arr = []
+        data.data.forEach(item => {
+          var obj = {
+            data: item,
+            select: true
+          }
+          arr.push(obj)
+        })
+
+        console.log('套餐按钮', arr)
+        this.selectComobo = arr
+
+        // 请求科目
+        QueryAdminSubject().then(res => {
+          this.subjectList = res.data
+
+          // 生成combo
+          this.comboAction.univalence = this.univalence
+          this.comboAction.productSetMeal = data.data
+        }).catch(() => {})
       }
     },
-    addComboHandle() {
-      this.showSelectView = true
-    },
+
     getUnivalence() {
       const params = {
         type: 4,
@@ -306,163 +199,87 @@ export default {
           this.isAddCombo = false
           this.$message.error('该年级与辅导方式没有对应单品')
         }
-      })
-    },
-    jointData() {
-      console.log('jointData')
 
-      var arr = []
-      var totalPrice = 0
-      this.selectComobo.forEach(item => {
-        if (item.select) {
-          totalPrice = (totalPrice * 100 + Number(item.data.price) * 100) / 100
-          console.log('jointDat中', item.data)
-          arr.push(item.data)
+        // 请求科目生成comboValue
+        if (this.oldValue.products) {
+          // console.log('编辑模式')
+          this.structureByValue()
         }
       })
-
-      this.totalPrice = totalPrice
-      this.priceValue = this.totalPrice
-
-      console.log('新的数组', arr, totalPrice, this.totalPrice)
-
-      this.comboAction = {
-        univalence: this.univalence,
-        // subjectList: this.subjectList,
-        originalPresenter: this.originalPresenter,
-        productSetMeal: arr
-      }
-
-      // 合同变更-新合同
-      if (this.action.type == 'change') {
-        this.comboAction.surplusPrice = this.action.surplusPrice
-      }
-
-      // if (this.action.attr && this.action.attr == 'change') {
-      //   console.log('计算最终价格')
-      //   this.finalPrice = this.totalPrice - this.action.surplusPrice
-      //   this.priceValue = this.finalPrice
-      //   this.comboAction.type = 'change'
-      // }
     },
+
+    // 套餐按钮激活/禁用
     selectComoboHandle(item, index) {
-      console.log('选择', index, this.selectComobo[index])
+      // console.log('选择', index, this.selectComobo[index])
       item.select = !item.select
+
       var arr = []
-      var totalPrice = 0
       this.selectComobo.forEach(item => {
         if (item.select) {
-          totalPrice = (totalPrice * 100 + Number(item.data.price) * 100) / 100
           arr.push(item.data)
         }
       })
-      console.log('新的数组', arr, totalPrice)
 
-      this.totalPrice = totalPrice
+      console.log('选择d', arr)
+
 
       this.comboAction = {
         univalence: this.univalence,
-        // subjectList: this.subjectList,
         productSetMeal: arr
       }
     },
-    plusPresentHandle(dataIndex) {
-      console.log('增加赠送')
-      // this.tableData.splice(index + 1, 0, obj)
-      this.presentDataIndex++
-      for (let index = 0; index < this.present.length; index++) {
-        const element = this.present[index]
-        if (element.dataIndex === dataIndex) {
-          var obj = { ...element }
-          obj.subject = ''
-          obj.presentLesson = 0
-          obj.univalence = ''
-          obj.dataIndex = this.presentDataIndex
-          this.present.splice(index + 1, 0, obj)
-          break
-        }
-      }
-    },
-    minusPresentHandle(dataIndex) {
-      console.log('减少赠送')
-      for (let index = 0; index < this.present.length; index++) {
-        const element = this.present[index]
-        if (element.dataIndex === dataIndex) {
-          this.present.splice(index, 1)
-          break
-        }
-      }
 
-      var lesson = 0
-      var arr = this.present.filter(item => {
-        if (item.presentLesson > 0) {
-          lesson += Number(item.presentLesson)
-          return true
-        }
-      })
+    // 处理combo发送的数据
+    structureSend(obj) {
+      // console.log('处理combo发送的数据')
+      this.comboComponentData = obj
+      this.isNew = obj.drainage ? 2 : this.renew
+      this.btnDisabled = !obj.tableData.length
+      this.btnDisabled = false
+      this.sendData()
+    },
 
-      this.accumulation = {
-        data: arr,
-        lesson
+    // 向父组件发送数据
+    sendData(obj) {
+      // console.log('sendData中', obj)
+      this.productData = {
+        index: this.index,
+        value: {
+          product: this.comboComponentData.tableData, // 列表
+          totalPrice: this.comboComponentData.totalPrice, // 套餐价格
+          refundMonry: this.comboComponentData.refundMonry, // 充值返还金额
+          issurplus: this.comboComponentData.issurplus,
+          // surplusPrice: this.action.surplusPrice, // 剩余金额
+          // surplusPrice: 0,
+          surplusPrice: this.comboComponentData.surplusPrice,
+          isNew: this.isNew, // 合同属性
+          totalclassTime: this.comboComponentData.totalclassTime, // 总课次
+          buyCount: this.comboComponentData.purchaseLesson, // 购买课次
+          presenterCount: this.comboComponentData.presenterCount, // 赠送课次(常规赠送+累计赠送)
+          ruleDetails: this.comboComponentData.presentRules //
+        },
+        data: {
+          fieldName: 'productSetMeal'
+        }
       }
+      console.log('productData', this.productData)
+
+      this.$emit('value-change', this.productData)
     },
-    getBigMealName(id) {
-      var name = ''
-      this.value.products.mealProducts.forEach(item => {
-        if (item.productId === id) {
-          name = item.name
-        }
-      })
-      return name
-    },
-    getMealName(id) {
-      var name = ''
-      this.value.products.giftProducts.forEach(item => {
-        if (item.detailsId === id) {
-          name = item.detailsName
-        }
-      })
-      return name
-    },
-    // 关联大套餐获取属性
-    getAttrOfBigMeal(id, attr) {
-      var val = null
-      this.value.products.mealProducts.forEach(item => {
-        if (item.productId == id) {
-          val = item[attr]
-          // if (attr == 'courseType') {
-          //   val = item[attr] == '引流课'
-          // }
-        }
-      })
-      return val
-    },
-    // 关联小套餐获取属性
-    getAttrOfMeal(id, attr) {
-      var val = null
-      this.value.products.giftProducts.forEach(item => {
-        if (item.detailsId == id) {
-          val = item[attr]
-        }
-      })
-      return val
-    },
-    structurePresentByValue() {
-      this.priceText = this.action.type && this.action.type == 'old-change' ? '剩余金额' : '最终价格'
-      var arr = []
-      var arr2 = []
-      var expenditure = 0 // 已花费金额
+
+    // 生成combo的value
+    structureByValue() {
+      var productList = []
+      var presentList = []
+
       var dataIndex = 1
       var dataIndexofPresent = 0
-      this.value.products.productList.forEach(item => {
-        console.log('aaa--', item)
-        expenditure += 1 * item.price
-        // expenditure += item.finishCourse * item.price
-        console.log('已消耗金额', expenditure)
+
+      this.oldValue.products.productList.forEach(item => {
         if (item.type === 1) {
           var obj = {
-            productType: this.getBigMealName(item.mealProductId),
-            productName: this.getMealName(item.giftProductId),
+            productType: this.getAttrOfBigMeal(item.mealProductId, 'name'),
+            productName: this.getAttrOfMeal(item.giftProductId, 'detailsName'),
             subject: item.productId,
             comboNormLesson: this.getAttrOfMeal(item.giftProductId, 'purchaseFrequency'),
             normLesson: this.getAttrOfMeal(item.giftProductId, 'giveFrequency'),
@@ -491,7 +308,7 @@ export default {
           }
 
           dataIndex++
-          arr.push(obj)
+          productList.push(obj)
         }
 
         if (item.type === 2) {
@@ -508,257 +325,56 @@ export default {
             mealType: this.getAttrOfBigMeal(item.mealProductId, 'courseType') // 大套餐类型：引流、特价、正价
           }
           dataIndexofPresent++
-          arr2.push(obj)
+          presentList.push(obj)
         }
       })
 
-      this.present = arr2
-
-      this.totalPrice = this.value.totalPrice
-      this.priceValue = this.totalPrice
+      // 请求科目
+      QueryAdminSubject().then(res => {
+        this.subjectList = res.data
+        // 生成comboValue
+        this.comboValue = {
+          productList,
+          presentList,
+          totalPrice: this.oldValue.totalPrice,
+          univalence: this.univalence
+        }
+      }).catch(() => {})
 
       // 合同变更-原合同
       if (this.action.type && this.action.type == 'old-change') {
-        console.log('旧合同')
-        // this.priceText = '剩余金额'
-        this.surplusPriceObj = {
-          issurplus: true,
-          surplusPrice: (this.value.totalPrice * 100 - expenditure * 100) / 100
-        }
-      }
-
-
-      this.type = 'change'
-
-      this.comboValue = {
-        productList: arr,
-        presentList: arr2,
-        totalPrice: this.value.totalPrice
+        console.log(111)
       }
     },
 
-    // 拼接数据
-    structureSend(obj) {
-      console.log('combo组件发送的数据', obj)
-      this.comboComponentData = obj
-      this.isNew = obj.drainage ? 2 : this.renew
-      this.sendData()
-    },
-
-    structureDataHandle(obj) {
-      console.log('combo组件发送的数据1', obj)
-
-      this.comboComponentData = obj
-      this.purchaseLesson = obj.purchaseLesson
-      this.isNew = obj.drainage ? 2 : this.renew
-      this.totalPrice = obj.totalPrice
-      this.priceValue = this.totalPrice
-
-      this.currentGive = obj.currentGive // 当前可赠送课次
-      this.surplusGive = obj.surplusGive
-      this.presentRules = obj.presentRules
-      this.giveObj = obj.giveObj
-
-      // 没有，累计赠送，阻止后续代码
-      // if (!obj.giveObj) {
-      //   this.sendData(emitObj)
-      // }
-
-      // 限制累计的科目
-      if (obj.giveObj && obj.giveObj.disableds) {
-        console.log('限制累计的科目')
-        // var arr = this.subjectList
-        for (let index = 0; index < this.subjectList.length; index++) {
-          const element = this.subjectList[index]
-          var res = obj.giveObj.disableds.includes(element.id)
-          console.log('结果', res)
-          element.disabled = !!res
-          this.$set(this.subjectList, index, element)
-        }
-      }
-
-      // 新建，重新生成累计赠送表格
-      // if (obj.tableData.length > 0 && this.action.attr == 'save') {
-      // if (this.action.attr == 'save') {
-      // 每次都需要重新生成累计表格
-      this.present = null
-      this.jointpresentData()
-      // }
-
-      if (this.present) {
-        var lesson = 0
-        var arr = this.present.filter(item => {
-          lesson += Number(item.presentLesson)
-          if (item.presentLesson > 0) {
-            return true
-          }
-        })
-
-        var emitObj = {
-          product: [...this.comboComponentData.tableData, ...arr],
-          totalclassTime: this.comboComponentData.totalclassTime + lesson,
-          presenterCount: this.comboComponentData.grooveLesson + lesson
-        }
-        emitObj.ruleDetails = obj.presentRules ? `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。` : ''
-      }
-
-      if (this.action.type && this.action.type == 'old-change') {
-        emitObj = { ...emitObj, ...this.surplusPriceObj }
-        this.priceValue = this.surplusPriceObj.surplusPrice
-      }
-
-      if (this.action.type && this.action.type == 'change') {
-        emitObj.refundMonry = this.totalPrice - this.action.surplusPrice
-      }
-
-      this.sendData(emitObj)
-    },
-    jointpresentData() {
-      // if (!this.action.customerId) {
-      //   return
-      // }
-      console.log('生成累计赠送')
-      // 有giveObj，生成表格
-      if (this.giveObj) {
-        this.present = [
-          {
-            subject: '',
-            mealProductId: this.giveObj.mealProductId,
-            giftProductId: this.giveObj.giftProductId,
-            presentLesson: 0,
-            planeLesson: 0,
-            completeLesson: 0,
-            univalence: '',
-            dataIndex: this.presentDataIndex,
-            type: 2,
-            mealType: this.giveObj.mealType
-          }
-        ]
-      }
-    },
-    totalPriceHandle(obj) {
-      console.log('单价时间')
-      this.totalPrice = obj.totalPrice
-      this.priceValue = this.totalPrice
-      if (this.action.attr && this.action.attr == 'change') {
-        this.finalPrice = this.totalPrice - this.action.surplusPrice
-        this.priceValue = this.finalPrice
-      }
-
-      // 购买课程变化了，发送接口，从新生成
-      var emitObj = {
-        surplusPrice: this.action.surplusPrice,
-        buyCount: obj.purchaseLesson,
-        totalclassTime: obj.totalclassTime, // 套餐总课次(购买+赠送)+累计赠送
-        product: this.comboComponentData.tableData
-      }
-      console.log('上一次的', emitObj)
-
-      // 不是累计导致的计算单价
-      if (!obj.isAccumulationChange) {
-        this.surplusGive = obj.surplusGive
-        // 清空present
-        this.jointpresentData()
-      } else {
-        var lessons = 0 // 累计赠送课次和
-        var arr = this.present.filter(item => {
-          if (item.presentLesson > 0) {
-            item.univalence = obj.univalence
-            lessons += Number(item.presentLesson)
-            return true
-          }
-        })
-        emitObj.totalclassTime += lessons
-        emitObj.presenterCount = this.comboComponentData.grooveLesson + lessons
-        emitObj.product = [...this.comboComponentData.tableData, ...arr]
-      }
-
-      console.log('asa', emitObj)
-      this.sendData(emitObj)
-    },
-
-    // 向父组件发送数据
-    sendData(obj) {
-      console.log('sendData中', obj)
-      this.productData = {
-        index: this.index,
-        value: {
-          product: this.comboComponentData.tableData, // 列表 √
-          totalPrice: this.comboComponentData.totalPrice, // 套餐价格 √
-          refundMonry: this.comboComponentData.refundMonry, // 充值返还金额
-          issurplus: this.comboComponentData.issurplus,
-          // surplusPrice: this.action.surplusPrice, // 剩余金额
-          surplusPrice: 0,
-          isNew: this.isNew, // 合同属性 √
-          totalclassTime: this.comboComponentData.totalclassTime, // 总课次 √
-          buyCount: this.comboComponentData.purchaseLesson, // 购买课次 √
-          presenterCount: this.comboComponentData.presenterCount, // 赠送课次(常规赠送+累计赠送) √
-          // ruleDetails: `购买辅导方式为${this.presentRules.coachType}的，购买${this.presentRules.classes}节课，可赠送${this.presentRules.give}节课。`
-          ruleDetails: this.comboComponentData.presentRules // √
-        },
-        data: {
-          fieldName: 'productSetMeal'
-        }
-      }
-
-      if (this.action.type && this.action.type == 'old-change') {
-        this.productData.value.surplusPrice = this.comboComponentData.surplusPrice
-      }
-
-      if (this.action.type && this.action.type == 'change') {
-        this.productData.refundMonry = this.priceValue
-      }
-
-
-      if (obj) {
-        for (const k in obj) {
-          if (!obj.hasOwnProperty(k)) break
-          console.log('key', k)
-          this.productData.value[k] = obj[k]
-        }
-      }
-
-      console.log('产品组件发送的数据', this.productData)
-
-      this.$emit('value-change', this.productData)
-    },
-    selectSubjectHandle(val) {
-      // 如果赠送课次是0不处理
-      console.log('赠送中选择了科目', val)
-    },
-    changeLesson(row) {
-      if (!(/(^[0-9]\d*$)/.test(row.presentLesson))) {
-        this.$message.warning('只能输入正整数！')
-        row.presentLesson = 0
-      }
-      if (row.presentLesson == 0) {
-        row.univalence = ''
-      }
-      var lesson = 0
-      for (let i = 0; i < this.present.length; i++) {
-        const element = this.present[i]
-        lesson += Number(element.presentLesson)
-        var _lesson = Number(element.presentLesson)
-        if (lesson > this.surplusGive) {
-          element.presentLesson = 0
-          lesson -= _lesson
-          this.$message.warning('累计赠送课次不能大于剩余可赠送课次')
-        }
-      }
-      var arr = this.present.filter(item => {
-        if (item.presentLesson > 0) {
-          return true
+    // 关联大套餐获取属性
+    getAttrOfBigMeal(id, attr) {
+      var val = null
+      this.oldValue.products.mealProducts.forEach(item => {
+        if (item.productId == id) {
+          val = item[attr]
         }
       })
-      console.log('大于1的数组', arr)
-      this.accumulation = {
-        data: arr,
-        lesson
-      }
+      return val
+    },
+    // 关联小套餐获取属性
+    getAttrOfMeal(id, attr) {
+      var val = null
+      this.oldValue.products.giftProducts.forEach(item => {
+        if (item.detailsId == id) {
+          val = item[attr]
+        }
+      })
+      return val
     }
+
+
+
+
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .handel-header {
   overflow: hidden;
@@ -804,3 +420,4 @@ export default {
   color: #f00;
 }
 </style>
+
