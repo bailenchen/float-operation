@@ -417,7 +417,7 @@ export default {
           this.headDetails[1].value = res.data.customerName
           this.headDetails[2].value = separator(res.data.money || 0)
           this.headDetails[3].value = res.data.orderDate
-          this.headDetails[4].value = this.detailData.contractType == 1 && this.detailData.relevanceContractId && this.detailData.relevanceContractId.length ? separator(res.data.refundMonry || 0) : separator(res.data.money || 0)
+          this.headDetails[4].value = this.detailData.contractType == 1 && this.detailData.relevanceContractId && this.detailData.relevanceContractId.length ? Number(res.data.refundMonry) < 0 ? separator(0) : separator(res.data.refundMonry || 0) : separator(res.data.money || 0)
           this.headDetails[5].value = res.data.signingUserName
         })
         .catch(() => {
