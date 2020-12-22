@@ -210,7 +210,8 @@ export default {
         crm_receivables: crmExamineFlowStepList,
         crm_invoice: crmExamineFlowStepList,
         oa_examine: oaExamineFlowStepList,
-        crm_dispute: crmExamineFlowStepList
+        crm_dispute: crmExamineFlowStepList,
+        crm_student: crmExamineFlowStepList
         // crm_capitalAccount:
       }[this.examineType]
 

@@ -17,13 +17,6 @@
           @value-change="deptChange"/>
       </flexbox>
     </div>
-
-    <create-examine-info
-      ref="examineInfo"
-      :types-id="id"
-      types="changeDept"
-      @value-change="examineValueChange" />
-
     <span
       slot="footer"
       class="dialog-footer">
@@ -37,14 +30,14 @@
 
 <script>
 import { XhStructureCell } from '@/components/CreateCom'
-import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
+import { crmChangeCenterAPI } from '@/api/customermanagement/student'
+
 
 
 export default {
   name: 'ChangeDeptHandle',
   components: {
-    XhStructureCell,
-    CreateExamineInfo
+    XhStructureCell
   },
   mixins: [],
   props: {
@@ -70,25 +63,12 @@ export default {
       crmType: 'student'
     }
   },
-  computed: {},
-  watch: {
-    // list: {
-    //   handler() {
-    //     this.selectList = []
-    //   },
-    //   immediate: true
-    // },
-    visible(val) {
-    }
-  },
-  mounted() {
-  },
   methods: {
     /** 中心更改 */
     deptChange(data) {
+      console.log(data, 'nkkk')
       this.selectList = data.value
     },
-    examineValueChange() {},
     /**
      * 取消选择
      */
@@ -100,11 +80,16 @@ export default {
      * 确定
      */
     handleConfirm() {
-      if (this.selectList.length > 0) {
-        console.log('save: ', this.selectList)
+      if (!this.selectList.length) {
+        return this.$message.error('请选择变更中心')
+      }
+      crmChangeCenterAPI({ deptId: this.selectList[0].id, customerId: this.selectionList[0].customerId }).then(res => {
         this.$message.success('操作成功')
         this.handleCancel()
-      }
+        this.$emit('handle', { type: 'change_dept' })
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }

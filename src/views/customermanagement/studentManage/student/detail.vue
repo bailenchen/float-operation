@@ -37,6 +37,16 @@
             </el-tooltip>
           </template>
         </c-r-m-detail-head>
+
+        <examine-info
+          v-if="detailData.examineRecordDeptId"
+          :id="id"
+          :record-id="detailData.examineRecordDeptId"
+          :owner-user-id="detailData.ownerUserId"
+          class="examine-info"
+          examine-type="crm_student"
+          @on-handle="examineHandle"/>
+
         <flexbox
           class="d-container-bd"
           align="stretch">
@@ -106,6 +116,7 @@ import { crmCustomerRead } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../../components/CRMDetailHead'
+import ExamineInfo from '@/components/Examine/ExamineInfo'
 import Activity from '../../components/activity' // 活动
 import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系人
 import CRMEditBaseInfo from '../../components/CRMEditBaseInfo' // 基本信息
@@ -138,6 +149,7 @@ export default {
     Activity,
     ChieflyContacts,
     CRMDetailHead,
+    ExamineInfo,
     CRMEditBaseInfo,
     RelativeContacts,
     RelativeBusiness,
@@ -434,6 +446,16 @@ export default {
       }
 
       this.$emit('handle', data)
+    },
+    /**
+     * 审核操作
+     */
+    examineHandle(data) {
+      // 1 审核通过 2 审核拒绝 4 已撤回
+      if (data.type == 1) {
+        this.getDetial()
+      }
+      this.$emit('handle', { type: 'examine' })
     }
   }
 }
