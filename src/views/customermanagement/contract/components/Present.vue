@@ -13,7 +13,7 @@
         align="center">
         <template slot-scope="scope">
           <template v-if="item.prop == 'subject'">
-            <el-select v-model="scope.row.subject" placeholder="请选择">
+            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择">
               <el-option
                 v-for="subjectItem in subjectList"
                 :key="subjectItem.value"
@@ -23,7 +23,7 @@
             </el-select>
           </template>
           <template v-else-if="item.prop == 'grooveLesson'">
-            <el-input v-model="scope.row.grooveLesson" type="number" min="0" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
+            <el-input v-model="scope.row.grooveLesson" :disabled="isDisabled" type="number" min="0" @change="changeLesson(scope.row, `purchaseLesson`, `originalPurchaseLesson`)"/>
           </template>
           <template v-else>
             {{ scope.row[item.prop] }}
@@ -52,18 +52,11 @@ export default {
         return {}
       }
     },
-    // value: [String, Array, Object]
     oldValue: Array,
     isDisabled: {
       type: Boolean,
       default: false
     }
-    // value: {
-    //   type: Array,
-    //   default: () => {
-    //     return []
-    //   }
-    // }
   },
   data() {
     return {
@@ -95,16 +88,6 @@ export default {
         }
       ],
       dataIndex: 0,
-      // tableData: [
-      //   {
-      //     subject: '',
-      //     grooveLesson: 0,
-      //     planeLesson: 0,
-      //     completeLesson: 0,
-      //     discount: 0,
-      //     dataIndex: 0
-      //   }
-      // ],
       tableData: [],
       subjectList: null,
       lessons: 0, // 该额外赠送合同总课次

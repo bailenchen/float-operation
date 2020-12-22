@@ -37,7 +37,7 @@
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
-      crm-type="contract"
+      crm-type="refundMoney"
       @save-success="createSaveSuccess"
       @hiden-view="isCreate=false"/>
   </div>
@@ -135,7 +135,8 @@ export default {
       this.loading = true
       console.log(this.crmType, '*----')
       const request = {
-        contract: queryRechargeListAPI
+        contract: queryRechargeListAPI,
+        student: queryRechargeListAPI
       }[this.crmType]
       const params = {}
       params[this.crmType + 'Id'] = this.id

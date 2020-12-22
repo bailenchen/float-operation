@@ -23,6 +23,7 @@ export default {
   water: 23,
   insideUser: 26,
   receive: 27,
+  refundMoney: 29,
   classroom: 30,
 
   keyToTypeData: {
@@ -41,6 +42,7 @@ export default {
     invoice: 18,
     insideUser: 26,
     receive: 27,
+    refundMoney: 29,
     classroom: 30
   },
 
@@ -60,6 +62,7 @@ export default {
     18: 'invoice',
     26: 'insideUser',
     27: 'receive',
+    29: 'refundMoney',
     30: 'classroom'
   },
 
@@ -79,6 +82,7 @@ export default {
     18: '发票',
     26: '内部通讯录',
     27: '合同充值',
+    29: '合同充值返还',
     30: '教室管理'
   },
 
@@ -98,6 +102,7 @@ export default {
     invoice: '发票',
     insideUser: '内部通讯录',
     receive: '合同充值',
+    refundMoney: '合同充值返还',
     classroom: '教室管理'
   },
 

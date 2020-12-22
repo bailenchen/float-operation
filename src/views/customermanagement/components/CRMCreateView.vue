@@ -227,6 +227,7 @@ import {
   CrmRelativeCell,
   XhProuctCate,
   XhProduct,
+  XhDetail,
   XhBusinessStatus,
   XhCustomerAddress,
   XhChannelCategory,
@@ -257,6 +258,7 @@ export default {
     CrmRelativeCell,
     XhProuctCate,
     XhProduct,
+    XhDetail,
     XhBusinessStatus,
     XhCustomerAddress,
     XhReceivablesPlan,
@@ -328,6 +330,8 @@ export default {
         return 'XhReceivablesPlan'
       } else if (formType == 'present') {
         return 'Present'
+      } else if (formType == 'detail') {
+        return 'XhDetail'
       }
     }
   },
@@ -861,13 +865,8 @@ export default {
             console.log('总课次与购买课次', item.countCourseSum, item.buyCount)
           })
 
-          // this.actionPresent = {
-          //   countCourseSum,
-          //   buyCount
-          // }
           this.actionPresent.countCourseSum = countCourseSum
           this.actionPresent.buyCount = buyCount
-
 
           console.log('zAAAAAAAA--', item.value)
 
@@ -1071,6 +1070,58 @@ export default {
             )
           } else if (canDel) {
             this.crmForm.crmFields.splice(fieldIndex, 1)
+          }
+        }
+      } else if (this.crmType == 'refundMoney') {
+        console.log('新建充值返还， 选择学员', item)
+        if (item.data.formType === 'student') {
+          // 教育顾问 所属中心赋值，合同编号放开
+          // 需要处理 需关联客户信息或客户下信息
+          const handleFields = [
+            'dept_id',
+            'owner_user_id'
+          ]
+          // 赋值
+          const getValueObj = {
+            dept_id: data => {
+              return data.deptIdName ? data.deptIdName : ''
+            },
+            owner_user_id: data => {
+              return data.ownerUserName ? data.ownerUserName : ''
+            }
+          }
+
+          // 添加请求关联
+          const addRelation = ['contract_id']
+          const getRelationObj = {
+            contract_id: (data, element) => {
+              console.log('添加关联信息')
+              element.relation = {
+                earchJson: { customerId: data.customerId, checkStatus: 1, contractType: 5 }
+              }
+            }
+          }
+
+
+
+          const customerItem = item.value[0]
+          console.log('学院信息', customerItem)
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (handleFields.includes(element.key)) {
+              // 填充值
+              if (getValueObj[element.key]) {
+                element.value = getValueObj[element.key](customerItem)
+              }
+            }
+
+            // 取消禁用，增加属性
+            if (addRelation.includes(element.key)) {
+              element.disabled = false
+              if (getRelationObj[element.key]) {
+                getRelationObj[element.key](customerItem, element)
+              }
+            }
           }
         }
       }
@@ -1378,6 +1429,21 @@ export default {
             }
           }
 
+          if (this.crmType == 'refundMoney') {
+            res.data.unshift({
+              name: '所属中心',
+              value: '',
+              fieldName: 'dept_id',
+              formType: 'text'
+            })
+            res.data.unshift({
+              name: '教育顾问',
+              value: '',
+              fieldName: 'owner_user_id',
+              formType: 'text'
+            })
+          }
+
           var list = res.data
 
           // 调整字段顺序
@@ -1528,6 +1594,26 @@ export default {
           value: []
         })
       }
+
+      // if (this.crmType == 'refundMoney') {
+      //   list.push({
+      //     authLevel: 3,
+      //     defaultValue: '',
+      //     fieldName: 'payment_id',
+      //     fieldType: 1,
+      //     formType: 'detail',
+      //     inputTips: null,
+      //     isNull: 1,
+      //     isUnique: 0,
+      //     label: 29,
+      //     name: '合同充值编号',
+      //     options: null,
+      //     setting: [],
+      //     type: 15,
+      //     value: ''
+      //   })
+      // }
+
       // 课程类型为引流课时显示购买课程价格字段，否则不显示 标识字段
       let hasPrice = false
 
@@ -1839,6 +1925,14 @@ export default {
             arr.push('grade_id')
           }
 
+          params.disabled = arr.includes(item.fieldName)
+        } else if (this.crmType == 'refundMoney') {
+          var arr = [
+            'owner_user_id',
+            'dept_id',
+            'money',
+            'contract_id'
+          ]
           params.disabled = arr.includes(item.fieldName)
         }
         this.crmForm.crmFields.push(params)
@@ -3106,6 +3200,8 @@ export default {
         return this.action.type == 'update' ? '编辑回访' : '新建回访'
       } else if (this.crmType == 'capitalAccount') {
         return this.action.type == 'update' ? '编辑资金账户' : '新建资金账户'
+      } else if (this.crmType == 'refundMoney') {
+        return this.action.type == 'update' ? '编辑合同充值返还' : '新建合同充值返还'
       }
     },
     // 获取左边padding

@@ -398,6 +398,8 @@ export default {
       } else if (this.crmType === 'contract') { // 额外赠送合同
         console.log('sdaa', this.action.searchJson)
         params.searchJson = this.action.searchJson
+      } else if (this.crmType === 'refundMoney') { // 合同充值返还
+        console.log('合同充值返还', this.action.searchJson)
       }
       // 注入关联ID
       if (this.isRelationShow) {
