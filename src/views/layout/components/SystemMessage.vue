@@ -111,9 +111,6 @@ import {
   systemMessageClearAPI,
   systemMessageDeleteByIdAPI } from '@/api/common'
 import {
-  filedGetTableField
-} from '@/api/customermanagement/common'
-import {
   crmDownImportErrorAPI
 } from '@/api/customermanagement/common'
 import TodayListDetail from '@/views/calendar/components/TodayListDetail'

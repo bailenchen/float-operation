@@ -23,6 +23,7 @@ export default {
   water: 23,
   insideUser: 26,
   receive: 27,
+  classroom: 30,
 
   keyToTypeData: {
     leads: 1,
@@ -39,7 +40,8 @@ export default {
     visit: 17,
     invoice: 18,
     insideUser: 26,
-    receive: 27
+    receive: 27,
+    classroom: 30
   },
 
   typeToKeyData: {
@@ -57,7 +59,8 @@ export default {
     17: 'visit',
     18: 'invoice',
     26: 'insideUser',
-    27: 'receive'
+    27: 'receive',
+    30: 'classroom'
   },
 
   typeToNameData: {
@@ -75,7 +78,8 @@ export default {
     17: '回访',
     18: '发票',
     26: '内部通讯录',
-    27: '合同充值'
+    27: '合同充值',
+    30: '教室管理'
   },
 
   keyToNameData: {
@@ -93,7 +97,8 @@ export default {
     visit: '回访',
     invoice: '发票',
     insideUser: '内部通讯录',
-    receive: '合同充值'
+    receive: '合同充值',
+    classroom: '教室管理'
   },
 
   convertKeyToType: function(key) {

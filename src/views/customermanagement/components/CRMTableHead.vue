@@ -194,6 +194,13 @@
       :selection-list="selectionList"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
+
+    <create-classroom
+      v-if="isClassroom"
+      :selection-list="selectionList"
+      type="edit"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
   </div>
 </template>
 
@@ -270,6 +277,9 @@ import {
   crmReceiveExcelExport,
   crmReceiveDeleteAPI
 } from '@/api/customermanagement/receive'
+import {
+  crmClassroomDelete
+} from '@/api/educationmanage/classroom'
 import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 
 
@@ -297,6 +307,7 @@ import InsertClass from '@/views/EducationManage/components/InsertClass' // 学�
 import ConfirmClassTime from '@/views/EducationManage/components/ConfirmClassTime' // 课时确认
 import RankCourse from '@/views/EducationManage/components/RankCourse' // 排课
 import ShiftHandle from '@/views/EducationManage/components/ShiftHandle' // 换挡
+import CreateClassroom from '@/views/EducationManage/classroom/components/CreateClassroom' // 换挡
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 import CRMCreateView from './CRMCreateView'
@@ -328,7 +339,8 @@ export default {
     InsertClass,
     ConfirmClassTime,
     RankCourse,
-    ShiftHandle
+    ShiftHandle,
+    CreateClassroom
   },
   props: {
     title: {
@@ -391,6 +403,7 @@ export default {
       isRank: false, // 排课
       isConfirm: false, // 确认课时
       isShift: false, // 换挡
+      isClassroom: false, // 编辑教室
       createActionInfo: { type: 'save' } // 创建的相关信息
     }
   },
@@ -735,6 +748,8 @@ export default {
         this.isConfirm = true
       } else if (type == 'shift') {
         this.isShift = true
+      } else if (type == 'mode') {
+        this.isClassroom = true
       }
     },
     confirmHandle(type) {
@@ -852,6 +867,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['contractCapitalId']
           })
+        } else if (this.crmType == 'classroom') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['classroomId']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -872,7 +891,8 @@ export default {
           product: crmProductDeleteAPI,
           productSetMeal: crmProductSetMealDeleteAPI,
           insideUser: crmInsideUserDelete,
-          receive: crmReceiveDeleteAPI
+          receive: crmReceiveDeleteAPI,
+          classroom: crmClassroomDelete
         }[this.crmType]
         var params = null
         if (this.crmType == 'productSetMeal') {
@@ -890,6 +910,10 @@ export default {
         } else if (this.crmType == 'receive') {
           params = {
             ids: ids
+          }
+        } else if (this.crmType == 'classroom') {
+          params = {
+            classroomIds: ids.join(',')
           }
         } else {
           params = {
@@ -1552,6 +1576,8 @@ export default {
         return '全部学员'
       } else if (this.crmType == 'receive') {
         return '全部合同充值'
+      } else if (this.crmType == 'classroom') {
+        return '全部教室'
       }
     },
 
@@ -1573,6 +1599,8 @@ export default {
         this.isConfirm = false
       } else if (type == 'shift') {
         this.isShift = false
+      } else if (type == 'mode') {
+        this.isClassroom = false
       } else {
         this.isUpdate = false
       }

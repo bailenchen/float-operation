@@ -31,13 +31,26 @@
               :prop="item.prop"
               :key="indexs" class="crm-create-item">
               <el-input
-                v-if="item.type == 'text' || item.type == 'number'"
-                :disabled="item.prop == 'pId'"
-                v-model="form[item.prop]"/>
+                v-if="item.type == 'text'"
+                v-model="form[item.prop]"
+                disabled/>
 
               <el-select v-if="item.type == 'select'" v-model="form[item.prop]" placeholder="请选择" style="width:100%">
                 <el-option v-for="(ites, inds) in optionList" :label="ites.label" :key="inds" :value="ites.value"/>
               </el-select>
+
+              <xh-structure-cell
+                v-if="item.type == 'dept'"
+                :value="deptSelectValue"
+                radio
+                class="xh-structure-cell"
+                @value-change="structureChange" />
+
+              <xh-user-cell
+                v-if="item.type == 'user'"
+                :radio="radio"
+                :value="teacherList"
+                @value-change="userChange"/>
 
             </el-form-item>
           </el-form>
@@ -61,87 +74,137 @@
 <script>
 import CreateView from '@/components/CreateView'
 import {
-  sysConfigDataDictarySaveAPI
-} from '@/api/systemManagement/SystemCustomer'
+  XhStructureCell,
+  XhUserCell
+} from '@/components/CreateCom'
+import {
+  crmClassroomSave
+} from '@/api/educationmanage/classroom'
 
 export default {
-  name: 'CreateDictionary',
+  name: 'CreateClassroom',
   components: {
-    CreateView
+    CreateView,
+    XhStructureCell, // 所属中心组件
+    XhUserCell // 员工组件
   },
   props: {
     handle: {
       type: Object,
       default: () => {
         return {
-          action: 'add', // save 创建  update 编辑
+          action: '', // save 创建  update 编辑
           data: null // 编辑数据
         }
       }
-    }
+    },
+    selectionList: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    type: String
   },
   data() {
     return {
       loading: false,
+      radio: false,
       datalist: [
-        { prop: 'dictionaryField', label: '分类标志', type: 'text' },
-        { prop: 'dictionaryName', label: '值', type: 'text' },
-        { prop: 'standby', label: '备用', type: 'text' },
-        { prop: 'pId', label: '父ID', type: 'text' },
-        { prop: 'isHidden', label: '是否显示', type: 'select' },
-        { prop: 'colour', label: '颜色', type: 'text' }
+        { prop: 'deptId', label: '中心', type: 'dept' },
+        { prop: 'relatedTeachers', label: '关联老师', type: 'user' },
+        { prop: 'classroomName', label: '教室名称', type: 'text' },
+        { prop: 'status', label: '教室状态', type: 'select' }
       ],
       optionList: [
-        { label: '是', value: 0 },
-        { label: '否', value: 1 }
+        { label: '正常', value: 1 }
       ],
       rule: {
-        dictionaryField: [
-          { required: true, message: '请输入分类标志', trigger: 'blur' }
+        deptId: [
+          { required: true, message: '请选择中心', trigger: 'blur' }
         ],
-        dictionaryName: [
-          { required: true, message: '请输入值', trigger: 'blur' }
+        relatedTeachers: [
+          { required: true, message: '请选择关联老师', trigger: 'blur' }
         ],
-        isHidden: [
-          { required: true, message: '请选择是否显示', trigger: 'change' }
+        classroomName: [
+          { required: true, message: '教室名称为必填', trigger: 'change' }
+        ],
+        status: [
+          { required: true, message: '请选择教室状态', trigger: 'change' }
         ]
       },
+      deptSelectValue: [],
+      teacherList: [],
       form: {
-        dictionaryField: '',
-        dictionaryName: '',
-        standby: '',
-        pId: '',
-        isHidden: '',
-        colour: ''
+        deptId: '',
+        relatedTeachers: '',
+        classroomName: '',
+        status: 1
       }
     }
   },
   computed: {
     title() {
-      return {
-        'add': '添加教室',
-        'edit': '编辑教室'
-      }[this.handle.action]
+      if (this.handle.action == 'add') {
+        return '添加教室'
+      }
+      if (this.type == 'edit') {
+        return '编辑教室'
+      }
     }
   },
   created() {
-    this.form.pId = {
-      'add': 0,
-      'edit': this.handle.data.pId
-    }[this.handle.action]
-    if (this.handle.action == 'edit') {
-      this.form.dictionaryId = this.handle.data.dictionaryId
-      this.form.dictionaryField = this.handle.data.dictionaryField
-      this.form.dictionaryName = this.handle.data.dictionaryName
-      this.form.standby = this.handle.data.standby
-      this.form.pId = this.handle.data.pId
-      this.form.isHidden = this.handle.data.isHidden
-      this.form.colour = this.handle.data.colour
+    if (this.type == 'edit') {
+      console.log(this.selectionList, '123')
+      const detail = this.selectionList[0]
+      this.deptSelectValue = [{
+        id: detail.deptId,
+        name: detail.deptName
+      }]
+      // this.teacherList =
+      this.form = {
+        deptId: detail.deptId,
+        relatedTeachers: detail.relatedTeachers,
+        classroomName: detail.classroomName,
+        status: detail.status,
+        classroomId: detail.classroomId
+      }
     }
+    // if (this.handle.action == 'edit') {
+
+    // }
   },
   methods: {
     hidenView() {
-      this.$emit('hiden-view')
+      if (this.type) {
+        this.$emit('hiden-view', 'mode')
+      } else {
+        this.$emit('hiden-view')
+      }
+    },
+
+    /**
+     * 中心选择
+     */
+    structureChange(data) {
+      console.log(data, 'vvvvv')
+      this.form.deptId = data.value.length ? data.value[0].id : ''
+      this.deptSelectValue = data.value || []
+    },
+
+    /**
+     * 关联老师
+     */
+    userChange(data) {
+      const ids = ['']
+      const names = []
+      data.value.forEach(item => {
+        ids.push(item.userId)
+        names.push(item.realname)
+      })
+      this.form.relatedTeachers = String(ids)
+      this.form.classroomName = String(names)
+      this.teacherList = data.value || []
     },
 
     /**
@@ -151,11 +214,18 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.loading = true
-          const params = this.form
-          sysConfigDataDictarySaveAPI(params).then(res => {
+          const params = {
+            entity: this.form
+          }
+          crmClassroomSave(params).then(res => {
             this.loading = false
-            this.$emit('hiden-view')
-            this.$emit('save')
+
+            this.hidenView()
+            if (this.type) {
+              this.$emit('save-success', { type: 'mode' })
+            } else {
+              this.$emit('save')
+            }
           }).catch(() => {
             this.loading = false
           })

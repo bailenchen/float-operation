@@ -58,7 +58,7 @@
               <span>{{ getStatusNames(scope.row.checkStatus) }}</span>
             </template>
             <template v-else-if="item.prop == 'contractStatus'">
-              <span class="cstatus-btn" @click="downBook(scope.row)">{{ getContractStatus(scope.row.contractStatus) }}</span>
+              <span>{{ getContractStatus(scope.row.contractStatus) }}</span>
             </template>
             <template v-else-if="item.prop == 'relevanceContractNum'">
               <span v-if="scope.row['relevanceContractNum']">
@@ -78,7 +78,12 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" width="90" align="center" label="操作">
+        <el-table-column fixed="right" width="110" align="center" label="电子合同确认">
+          <template slot-scope="scope">
+            <el-button @click="downBook(scope.row)">签署地址</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" width="90" align="center" label="电子合同">
           <template slot-scope="scope">
             <el-button @click="downHandle(scope.row)">下载</el-button>
           </template>

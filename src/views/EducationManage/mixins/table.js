@@ -5,6 +5,8 @@ import {
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 import CRMListHead from '../../customermanagement/components/CRMListHead'
 import CRMTableHead from '../../customermanagement/components/CRMTableHead'
+
+import { crmClassroomIndex, crmClassroomExcelAllExport } from '@/api/educationmanage/classroom'
 import {
   crmFieldColumnWidth,
   crmPoolFieldColumnWidth
@@ -116,32 +118,19 @@ export default {
     getList() {
       this.loading = true
       var crmIndexRequest = this.getIndexRequest()
-      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
       let params = {
         page: this.currentPage,
         limit: this.pageSize,
         search: this.search,
-        type: this.isSeas ? crmTypeModel.pool : crmTypeModel[keytype] // 9是公海
+        type: crmTypeModel[this.crmType] // 9是公海
       }
       if (this.sortData.order) {
         params.sortField = this.sortData.prop
         params.order = this.sortData.order == 'ascending' ? 2 : 1
       }
-      if (this.crmType === 'applet') {
-        params.type = this.appletType
-      }
+
       if (this.sceneId) {
         params.sceneId = this.sceneId
-      }
-
-      // 活动关联对象
-      if (this.marketingCrmType) {
-        params.crmType = this.marketingCrmType
-      }
-
-      // 公海切换
-      if (this.poolId) {
-        params.poolId = this.poolId
       }
 
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
@@ -157,14 +146,7 @@ export default {
 
       crmIndexRequest(params)
         .then(res => {
-          if (this.crmType === 'customer') {
-            this.list = res.data.list.map(element => {
-              element.show = false // 控制列表商机展示
-              return element
-            })
-          } else {
-            this.list = res.data.list
-          }
+          this.list = res.data.list
 
           if (res.data.totalRow && Math.ceil(res.data.totalRow / this.pageSize) < this.currentPage && this.currentPage > 1) {
             this.currentPage = this.currentPage - 1
@@ -184,8 +166,8 @@ export default {
     },
     /** 获取列表请求 */
     getIndexRequest() {
-      if (this.crmType == 'xx') {
-        return 'xxx'
+      if (this.crmType == 'classroom') {
+        return crmClassroomIndex
       }
     },
     genListHead(obj) {
@@ -203,15 +185,15 @@ export default {
       const fieldObj = {
         // 教室管理
         classroom: {
-          a: '教室编号',
-          b: '中心',
-          c: '教室名称',
-          d: '开通时间',
-          e: '添加人',
-          f: '教室状态',
-          g: '关联老师',
-          h: '最后修改人',
-          i: '最后修改时间'
+          classroomNumber: '教室编号',
+          deptName: '中心',
+          classroomName: '教室名称',
+          createTime: '开通时间',
+          createUserName: '添加人',
+          statusType: '教室状态',
+          relatedTeachers: '关联老师',
+          updateUserName: '最后修改人',
+          updateTime: '最后修改时间'
         },
         // 班级管理
         class: {
@@ -271,55 +253,7 @@ export default {
       } else {
         return
       }
-
-      // if (this.fieldList.length == 0 || force) {
-      //   this.loading = true
-
-      //   const params = {}
-      //   if (this.isSeas) {
-      //     if (this.poolId) {
-      //       params.poolId = this.poolId
-      //     }
-      //   } else {
-      //     params.label = this.crmType == 'student' ? 19 : crmTypeModel[this.crmType]
-      //   }
-
-      //   const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
-      //   request(params)
-      //     .then(res => {
-      //       const fieldList = []
-      //       for (let index = 0; index < res.data.length; index++) {
-      //         const element = res.data[index]
-
-      //         var width = 0
-      //         if (!element.width) {
-      //           if (element.name && element.name.length <= 6) {
-      //             width = element.name.length * 15 + 45
-      //           } else {
-      //             width = 140
-      //           }
-      //         } else {
-      //           width = element.width
-      //         }
-
-      //         fieldList.push({
-      //           prop: element.fieldName,
-      //           label: element.name,
-      //           width: width
-      //         })
-      //       }
-
-      //       this.fieldList = fieldList
-      //       // 获取好字段开始请求数据
-      //       this.getList()
-      //     })
-      //     .catch(() => {
-      //       this.loading = false
-      //     })
-      // } else {
-      //   // 获取好字段开始请求数据
-      //   this.getList()
-      // }
+      this.getList()
     },
     /** 格式化字段 */
     fieldFormatter(row, column, cellValue) {
@@ -379,7 +313,8 @@ export default {
           product: crmProductExcelAllExport,
           productSetMeal: crmProductSetMealExcelAllExport,
           insideUser: CrmInsideUserExcelAllExport,
-          receive: crmReceiveExcelAllExport
+          receive: crmReceiveExcelAllExport,
+          classroom: crmClassroomExcelAllExport
         }[keytype]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })

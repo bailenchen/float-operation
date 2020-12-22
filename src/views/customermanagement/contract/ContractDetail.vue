@@ -85,7 +85,7 @@
                   </div>
                   <present
                     :action="presentAction"
-                    :value="presentValue"
+                    :old-value="presentValue"
                     :is-disabled="isDisabled"
                     class="course-table"
                     style="width: 100%;"/>
@@ -265,10 +265,9 @@ export default {
 
       // 赠送
       presentAction: {
-        countCourseSum: '',
-        buyCount: ''
+        type: 'update'
       },
-      presentValue: null,
+      presentValue: [],
 
       allocList: [],
       fieldlist: [

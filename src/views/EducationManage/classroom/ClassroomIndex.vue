@@ -84,6 +84,7 @@
 
 <script>
 import CreateClassroom from './components/CreateClassroom'
+
 import table from '../mixins/table'
 
 export default {

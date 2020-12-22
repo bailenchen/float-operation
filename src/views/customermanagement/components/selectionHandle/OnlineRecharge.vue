@@ -203,7 +203,7 @@ export default {
       crmAccountCodePay(params).then(res => {
         // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
         console.log('付款码请求回调', res)
-        this.createCode(res.data)
+        this.createCode(res.orderNumber)
         this.loading = false
         // clearInterval(this.timer)
         // this.timer = setInterval(() => {
