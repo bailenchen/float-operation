@@ -336,3 +336,13 @@ export function queryIsNewByCustomerIdAPI(data) {
   })
 }
 
+
+// crm 下载
+export function crmAccountWaterDown(data) {
+  return request({
+    url: 'CrmContract/documents',
+    method: 'post',
+    data: data
+  })
+}
+

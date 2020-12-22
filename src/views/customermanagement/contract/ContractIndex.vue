@@ -57,6 +57,9 @@
               <!-- <span :style="getStatusStyle(scope.row.checkStatus)" class="status-mark"/> -->
               <span>{{ getStatusNames(scope.row.checkStatus) }}</span>
             </template>
+            <template v-else-if="item.prop == 'contractStatus'">
+              <span class="cstatus-btn" @click="downBook(scope.row)">{{ getContractStatus(scope.row.contractStatus) }}</span>
+            </template>
             <template v-else-if="item.prop == 'relevanceContractNum'">
               <span v-if="scope.row['relevanceContractNum']">
                 <span
@@ -73,6 +76,11 @@
             <template v-else>
               {{ fieldFormatter(scope.row, scope.column) }}
             </template>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" width="90" align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button @click="downHandle(scope.row)">下载</el-button>
           </template>
         </el-table-column>
         <el-table-column/>
@@ -112,11 +120,36 @@
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
+
+    <el-dialog :visible.sync="outerVisible" title="电子合同确认">
+      <div class="btn-wrap">
+        <el-input v-model="url"/>
+        <el-button type="primary" style="margin: 0 15px;" @click="createCode">扫码</el-button>
+        <div :data-clipboard-text="url" class="copy-link copyBtn" @click="copyLink">复制链接</div>
+      </div>
+      <el-dialog
+        :visible.sync="innerVisible"
+        width="30%"
+        title=""
+        append-to-body>
+        <div v-loading="load" style="margin: 20px auto;width:150px;height:150px;">
+          <div
+            id="canvas"
+            class="publish-info-content" />
+        </div>
+      </el-dialog>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="outerVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
+import { crmAccountWaterDown } from '@/api/customermanagement/contract'
+import Clipboard from 'clipboard'
+import QRCode from 'qrcodejs2'
 
 import table from '../mixins/table'
 import { floatAdd } from '@/utils'
@@ -131,7 +164,17 @@ export default {
   data() {
     return {
       crmType: 'contract',
-      moneyData: null // 合同列表金额
+      moneyData: null, // 合同列表金额
+      outerVisible: false,
+      innerVisible: false,
+      url: '',
+
+      load: false,
+      qrcode: null,
+      row: null,
+
+      // 复制
+      clipboard: null
     }
   },
   computed: {
@@ -206,6 +249,83 @@ export default {
       }[status]
     },
 
+    getContractStatus(status) {
+      return {
+        1: '申请中',
+        2: '放弃',
+        3: '合同完成',
+        4: '合同变更中',
+        5: '执行中',
+        6: '草稿',
+        7: '合同充值返还',
+        8: '确认放弃'
+      }[status]
+    },
+
+    // 下载电子合同
+    downHandle(row) {
+      if (!row.flowId) {
+        return this.$message.error('该合同暂时没有可以下载的电子审批')
+      }
+      crmAccountWaterDown({ flowId: row.flowId }).then(res => {
+        if (res.data.code == '0') {
+          var downloadElement = document.createElement('a')
+          downloadElement.href = res.data.fileUrl
+          document.body.appendChild(downloadElement)
+          downloadElement.click() // 点击下载
+          document.body.removeChild(downloadElement) // 下载完成移除元素
+        } else {
+          return this.$message.error(res.data.msg)
+        }
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+
+    downBook(row) {
+      this.row = row
+      this.url = this.row.url
+      if (!this.url) {
+        return this.$message.error('该合同暂时没有电子合同确认书')
+      }
+      this.outerVisible = true
+    },
+
+    createCode() {
+      this.innerVisible = true
+      this.$nextTick(() => {
+        this.loading = false
+        if (this.qrcode) {
+          this.qrcode.clear()
+          this.qrcode.makeCode(this.row.url)
+        } else {
+          this.qrcode = new QRCode(document.getElementById('canvas'), {
+            text: this.row.url,
+            width: 150,
+            height: 150,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          })
+        }
+      })
+    },
+
+    copyLink() {
+      if (!this.clipboard) {
+        this.clipboard = new Clipboard('.copyBtn')
+        this.clipboard.on('success', e => {
+          this.$message.success('复制成功')
+          e.clearSelection()
+        })
+
+        this.clipboard.on('error', e => {
+          this.$message.success('复制失败')
+        })
+      }
+    },
+
     enterDetail(item) {
       this.rowID = item.contractId
       this.rowType = 'contract'
@@ -225,4 +345,30 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/table.scss';
+.cstatus-btn {
+  color: #2362FB;
+  cursor: pointer;
+}
+
+.btn-wrap {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.copy-link {
+  // width: 110px;
+  line-height: 30px;
+  white-space: nowrap;
+  padding-left: 15px;
+  padding-right: 15px;
+  text-align: center;
+  background: rgb(242, 242, 242);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/deep/ .el-dialog {
+  width: 450px;
+}
 </style>
