@@ -238,7 +238,7 @@ export default {
       this.fieldList.push({ prop: 'updateTime', width: '100', label: '扣款/打款时间' })
       this.fieldList.push({ prop: 'checkStatus', width: '100', label: '审批状态' })
       this.fieldList.push({ prop: 'remark', width: '100', label: '备注' })
-      this.fieldList.push({ prop: 'characterName', width: '100', label: '收款/退款人' })
+      this.fieldList.push({ prop: 'characterName', width: '100', label: '收款/退款申请人' })
     },
 
     editHandle(row) {

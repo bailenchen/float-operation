@@ -183,16 +183,17 @@ export default {
           { label: '交易凭证：', prop: 'receipt', type: 'file' },
           { label: '扣款时间：', prop: 'deductionTime', type: 'date' },
           { label: '交易时间：', prop: 'transactionTime', type: 'date' },
-          { label: '收款人：', prop: 'characterId', type: 'character' },
+          { label: '收款申请人：', prop: 'characterId', type: 'character' },
           { label: '备注：', prop: 'remark', type: 'textarea' }
           // { label: '审核人：', prop: 'checkUserId', type: 'user' }
         ],
         refound: [
           { label: '支付方式：', prop: 'payment', type: 'select' },
           { label: '用户账号：', prop: 'userAccount', type: 'text' },
+          { label: '收款人：', prop: 'payeeName', type: 'text' },
           { label: '退款金额（元）：', prop: 'price', type: 'text' },
           { label: '交易时间：', prop: 'transactionTime', type: 'date' },
-          { label: '退款人：', prop: 'characterId', type: 'character' },
+          { label: '退款申请人：', prop: 'characterId', type: 'character' },
           { label: '备注：', prop: 'remark', type: 'textarea' }
           // { label: '审核人：', prop: 'examine', type: 'user' }
         ]

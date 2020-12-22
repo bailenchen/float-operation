@@ -465,7 +465,11 @@ export default {
           }
         }[name][val]
       } else {
-        return val
+        if (name == 'orderDate' && val) {
+          return val.slice(0, 10)
+        } else {
+          return val
+        }
       }
     },
 
