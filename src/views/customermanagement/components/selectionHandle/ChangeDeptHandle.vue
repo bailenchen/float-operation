@@ -17,6 +17,13 @@
           @value-change="deptChange"/>
       </flexbox>
     </div>
+
+    <create-examine-info
+      ref="examineInfo"
+      :types-id="id"
+      types="changeDept"
+      @value-change="examineValueChange" />
+
     <span
       slot="footer"
       class="dialog-footer">
@@ -30,11 +37,14 @@
 
 <script>
 import { XhStructureCell } from '@/components/CreateCom'
+import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
+
 
 export default {
   name: 'ChangeDeptHandle',
   components: {
-    XhStructureCell
+    XhStructureCell,
+    CreateExamineInfo
   },
   mixins: [],
   props: {
@@ -56,7 +66,8 @@ export default {
     return {
       infoParams: { hiddenLargePid: true },
       selectList: [],
-      list: []
+      list: [],
+      crmType: 'student'
     }
   },
   computed: {},
@@ -77,7 +88,7 @@ export default {
     deptChange(data) {
       this.selectList = data.value
     },
-
+    examineValueChange() {},
     /**
      * 取消选择
      */

@@ -55,7 +55,7 @@
         <template slot-scope="scope">
           <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择">
             <el-option
-              v-for="(item, index) in subjectListOfGive"
+              v-for="(item, index) in subjectList"
               :key="index"
               :label="item.subjectName"
               :disabled="item.disabled"
@@ -361,7 +361,8 @@ export default {
       if (this.giveAction && this.giveAction.type && this.giveAction.type == 'change') {
         // console.log('chang，计算两份合同的差价', this.totalPrice, this.giveAction.surplusPrice)
         this.refundMonry = this.totalPrice - this.giveAction.surplusPrice
-        this.priceValue = this.refundMonry
+        console.log('不显示差价')
+        this.priceValue = this.totalPrice
       }
       this.havePresent()
     },
@@ -409,8 +410,7 @@ export default {
       if (this.giveAction && this.giveAction.type && this.giveAction.type == 'change') {
         // console.log('chang，计算两份合同的差价', this.totalPrice, this.giveAction.surplusPrice)
         this.refundMonry = this.totalPrice - this.giveAction.surplusPrice
-        console.log(this.refundMonry)
-        this.priceValue = this.refundMonry
+        this.priceValue = this.totalPrice
       }
       this.havePresent()
     },
@@ -435,7 +435,7 @@ export default {
         this.presentRules = obj.presentRules
         this.presentRules.coachType = this.giveAction.searchJson.coachType
 
-        this.createSubject()
+        // this.createSubject()
         this.jointpresentData(this.giveObj)
         this.maxGive = this.presentRules.presenterCount
         this.surplusGive = this.maxGive
@@ -956,11 +956,11 @@ export default {
       // this.restrictSubject()
 
       // old-change使用sublistList
-      if (this.giveAction && this.giveAction.type && this.giveAction.type == 'old-change') {
-        this.subjectListOfGive = this.subjectList
-      } else {
-        this.createSubject()
-      }
+      // if (this.giveAction && this.giveAction.type && this.giveAction.type == 'old-change') {
+      //   this.subjectListOfGive = this.subjectList
+      // } else {
+      //   this.createSubject()
+      // }
 
       this.sendData()
     },

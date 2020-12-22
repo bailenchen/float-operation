@@ -149,9 +149,12 @@ export default {
         crm_invoice: crmCreateExamineFlow,
         crm_receivables: crmCreateExamineFlow,
         offline: crmCreateExamineFlow,
-        refound: crmCreateExamineFlow
+        refound: crmCreateExamineFlow,
+        changeDept: crmCreateExamineFlow // 转中心
         // crm_dispute: crmExamineFlowRecordList
       }[this.types]
+
+      console.log('reqeust11', reqeust)
 
       const params = {}
       if (this.types == 'oa_examine') {
@@ -169,7 +172,8 @@ export default {
           crm_receivables: 2,
           crm_invoice: 3,
           offline: 10,
-          refound: 11
+          refound: 11,
+          changeDept: 12
         }[this.types] // 1 合同 2 回款 3 发票
         if (this.types == 'crm_contract') {
           params.money = this.money
