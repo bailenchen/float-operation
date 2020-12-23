@@ -49,7 +49,7 @@
     </flexbox>
     <!-- 授权 -->
     <flexbox
-      v-if="examineInfo.examineType == 2"
+      v-if="examineInfo.examineType == 2 || examineInfo.examineType == 3"
       class="check-items">
       <flexbox
         v-for="(item, index) in examineInfo.steps"

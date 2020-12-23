@@ -33,7 +33,7 @@
       </flexbox>
     </div>
     <div
-      v-if="status == 1 && detail.examineType == 2"
+      v-if="status == 1 && detail.examineType == 2 || detail.examineType == 3"
       class="title">意见</div>
     <el-input
       v-model="content"
@@ -184,7 +184,8 @@ export default {
         crm_invoice: crmExamineFlowAuditExamine,
         crm_receivables: crmExamineFlowAuditExamine,
         oa_examine: oaExamineFlowAuditExamine,
-        crm_dispute: crmExamineFlowAuditExamine
+        crm_dispute: crmExamineFlowAuditExamine,
+        crm_student: crmExamineFlowAuditExamine
       }[this.examineType]
     },
     // 通过 拒绝操作
@@ -218,6 +219,7 @@ export default {
             this.examineType == 'crm_contract' ||
             this.examineType == 'crm_dispute' ||
             this.examineType == 'crm_invoice' ||
+            this.examineType == 'crm_student' ||
             this.examineType == 'crm_receivables'
           ) {
             this.$store.dispatch('GetMessageNum')

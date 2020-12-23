@@ -60,6 +60,9 @@
             <template v-else-if="item.prop == 'contractStatus'">
               <span>{{ getContractStatus(scope.row.contractStatus) }}</span>
             </template>
+            <template v-else-if="item.prop == 'contractCapitalMoney'">
+              <span>{{ scope.row.contractType == 1 && scope.row.relevanceContractId && scope.row.relevanceContractId.length ? '' : scope.row.contractCapitalMoney }}</span>
+            </template>
             <template v-else-if="item.prop == 'relevanceContractNum'">
               <span v-if="scope.row['relevanceContractNum']">
                 <span

@@ -172,8 +172,7 @@ export default {
           crm_receivables: 2,
           crm_invoice: 3,
           offline: 10,
-          refound: 11,
-          changeDept: 12
+          refound: 11
         }[this.types] // 1 合同 2 回款 3 发票
         if (this.types == 'crm_contract') {
           params.money = this.money

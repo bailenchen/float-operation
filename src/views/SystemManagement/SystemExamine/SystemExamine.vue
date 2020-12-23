@@ -204,11 +204,10 @@ export default {
           5: '资金流水',
           6: '额外赠送合同',
           7: '合同变更',
-          8: '常规充值返还审批',
-          9: '特殊充值返还审批',
+          12: '常规充值返还审批',
+          13: '特殊充值返还审批',
           10: '线下资金收款',
-          11: '资金退款',
-          12: '转中心审批'
+          11: '资金退款'
         }[row[column.property]]
       } else if (column.property === 'userIds') {
         const structures = row['deptIds'] || []
