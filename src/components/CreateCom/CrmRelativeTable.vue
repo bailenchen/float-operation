@@ -206,7 +206,7 @@ export default {
     },
     action: {
       handler(val) {
-        // console.log('相关表格中', val)
+        console.log('相关表格中', val)
         // if (this.action != val) {
         this.sceneId = ''
         this.list = [] // 表数据
@@ -403,7 +403,8 @@ export default {
       }
       // 注入关联ID
       if (this.isRelationShow) {
-        console.log('读取action', this.action)
+        console.log('读取action', this.action, this.crmType)
+        console.log('sa1111', this.action.data.moduleType[this.crmType])
         // this.action.data.moduleType 下的 this.crmType 的列表
         if (this.action.data.moduleType) {
           crmIndexRequest = {
@@ -541,7 +542,6 @@ export default {
       return true
     },
     disabledBycoachType(val) {
-      console.log('勾选1', val)
       if (this.action.type == 'presentContract') {
         if (val.length) {
           this.coachType = val[0].coachType

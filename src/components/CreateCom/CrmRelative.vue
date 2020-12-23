@@ -161,9 +161,14 @@ export default {
       invoiceTitle: {
         name: '发票抬头',
         type: 'invoiceTitle'
+      },
+      refundMoney: {
+        name: '合同充值返还',
+        type: 'refundMoney'
       }
     }
     if (this.crmType) {
+      console.log('this.crmType', this.crmType)
       this.leftType = this.crmType
       this.leftSides.push(leftItems[this.crmType])
     } else {
@@ -172,8 +177,10 @@ export default {
         this.leftSides.push(leftItems[element])
       }
     }
+
     console.log(this.selectedData, 'customer、student')
     this.currentSelectedData = objDeepCopy(this.selectedData)
+    // debugger
   },
   methods: {
     /**
