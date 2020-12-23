@@ -110,6 +110,7 @@
                     :info-params="getInfoParams(item)"
                     :use-delete="item.useDelete"
                     :action="typeToAction"
+                    :relative-type="item.relativeType"
                     @value-change="fieldValueChange" />
 
                 </el-form-item>
@@ -228,15 +229,15 @@ import {
   XhProuctCate,
   XhProduct,
   XhDetail,
+  XhDictionary,
   XhBusinessStatus,
   XhCustomerAddress,
   XhChannelCategory,
   XhReceivablesPlan // 回款计划期数
 } from '@/components/CreateCom'
 import DetailImg from '../product/components/DetailImg'
-// import createLogVue from '../../workLog/components/createLog.vue'
 import Present from '@/views/customermanagement/contract/components/Present'
-
+import RefundCombo from '@/views/customermanagement/components/RefundCombo'
 
 export default {
   name: 'CrmCreateView', // 所有新建效果的view
@@ -264,7 +265,9 @@ export default {
     XhReceivablesPlan,
     DetailImg,
     XhChannelCategory,
-    Present
+    Present,
+    RefundCombo,
+    XhDictionary
   },
   filters: {
     /** 根据type 找到组件 */
@@ -332,6 +335,11 @@ export default {
         return 'Present'
       } else if (formType == 'detail') {
         return 'XhDetail'
+      } else if (formType == 'provinces') { // 需要请求数据字典
+        return 'XhDictionary'
+      } else if (formType == 'refundCombo') {
+        console.log('RefundCombo组件')
+        return 'RefundCombo'
       }
     }
   },
@@ -413,6 +421,7 @@ export default {
         buyCount: 0, // 主合同总购买课次
         type: 'save' // 新建
       },
+      actionRefundCombo: { contracId: '' },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
       contractDiscount: 100, // 合同折扣
@@ -430,6 +439,8 @@ export default {
           return this.actionPresent
         }
         return this.actionCombo
+      } else if (this.crmType == 'refundMoney') {
+        return this.actionRefundCombo
       }
     },
     /** 合同 回款 下展示审批人信息 */
@@ -1073,7 +1084,6 @@ export default {
           }
         }
       } else if (this.crmType == 'refundMoney') {
-        console.log('新建充值返还， 选择学员', item)
         if (item.data.formType === 'student') {
           // 教育顾问 所属中心赋值，合同编号放开
           // 需要处理 需关联客户信息或客户下信息
@@ -1097,15 +1107,13 @@ export default {
             contract_id: (data, element) => {
               console.log('添加关联信息')
               element.relation = {
-                earchJson: { customerId: data.customerId, checkStatus: 1, contractType: 5 }
+                moduleType: 'refundMoney',
+                searchJson: { customerId: data.customerId, checkStatus: 1, contractType: 5 }
               }
             }
           }
 
-
-
           const customerItem = item.value[0]
-          console.log('学院信息', customerItem)
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
             if (handleFields.includes(element.key)) {
@@ -1123,6 +1131,17 @@ export default {
               }
             }
           }
+        }
+        console.log('字段111', item)
+        if (item.data.formType === 'contract') {
+          this.actionRefundCombo.contracId = item.value[0].contractId
+        }
+        if (item.data.formType === 'refundCombo') {
+          this.crmForm.crmFields.forEach(_item => {
+            if (_item.key == 'money') {
+              _item.value = item.value
+            }
+          })
         }
       }
 
@@ -1595,24 +1614,24 @@ export default {
         })
       }
 
-      // if (this.crmType == 'refundMoney') {
-      //   list.push({
-      //     authLevel: 3,
-      //     defaultValue: '',
-      //     fieldName: 'payment_id',
-      //     fieldType: 1,
-      //     formType: 'detail',
-      //     inputTips: null,
-      //     isNull: 1,
-      //     isUnique: 0,
-      //     label: 29,
-      //     name: '合同充值编号',
-      //     options: null,
-      //     setting: [],
-      //     type: 15,
-      //     value: ''
-      //   })
-      // }
+      if (this.crmType == 'refundMoney') {
+        list.push({
+          authLevel: 3,
+          defaultValue: '',
+          fieldName: 'refundCombo',
+          fieldType: 1,
+          formType: 'refundCombo',
+          inputTips: null,
+          isNull: 0,
+          isUnique: 0,
+          label: 29,
+          name: '已购课程',
+          options: null,
+          setting: [],
+          type: 15,
+          value: ''
+        })
+      }
 
       // 课程类型为引流课时显示购买课程价格字段，否则不显示 标识字段
       let hasPrice = false
@@ -1927,6 +1946,19 @@ export default {
 
           params.disabled = arr.includes(item.fieldName)
         } else if (this.crmType == 'refundMoney') {
+          if (item.fieldName == 'refund_time') {
+            params['value'] = moment().format('YYYY-MM-DD')
+          }
+          if (item.fieldName == 'refund_type') {
+            params['setting'] = [
+              { name: '常规充值返还', value: 1 },
+              { name: '特殊充值返还', value: 2 }
+            ]
+          }
+
+
+
+
           var arr = [
             'owner_user_id',
             'dept_id',
@@ -1934,6 +1966,13 @@ export default {
             'contract_id'
           ]
           params.disabled = arr.includes(item.fieldName)
+
+          if (item.fieldName == 'refundCombo') {
+            params['showblock'] = true // 展示整行效果
+            if (index % 2 == 0) {
+              showStyleIndex = -1
+            }
+          }
         }
         this.crmForm.crmFields.push(params)
       }

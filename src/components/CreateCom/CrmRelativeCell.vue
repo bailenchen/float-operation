@@ -113,19 +113,26 @@ export default {
     },
     crmType() {
       if (this.relativeType) {
+        console.log('这里123', this.relativeType)
         return this.relativeType
       } else if (this.item.crmType == 'contract') {
         return ''
       } else if (this.item.crmType == 'presentContract' && this.item.key == 'customer_id') {
         return 'student'
       }
+      console.log('这里', this.item.data.formType)
       return this.item.data.formType
       // return this.item.crmType == 'contract' ? '' : this.item.data.formType
     }
   },
   watch: {
     relation: function(val) {
+      console.log('relation', val)
       if (val.moduleType) {
+        if (val.moduleType == 'refundMoney') {
+          this.relationAction = val
+          return
+        }
         this.relationAction = { type: 'condition', data: val }
       } else if (val.type == 'presentContract') {
         this.relationAction = val

@@ -314,3 +314,15 @@ export function readUpdateNoticeAPI(data) {
     data: data
   })
 }
+
+/**
+ * 添加/编辑时需要请求数据字典配置的字段
+ * @param {*} data
+ */
+export function queryDictionaryField(data) {
+  return request({
+    url: 'adminDictionary/queryList',
+    method: 'post',
+    data: data
+  })
+}
