@@ -255,7 +255,7 @@ export default {
     margin-bottom: 20px;
 }
 /deep/ .el-dialog {
-    width: 700px;
+    width: 700px !important;
 }
 
 /deep/ .el-textarea__inner {

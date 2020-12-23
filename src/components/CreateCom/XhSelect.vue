@@ -19,7 +19,8 @@ import {
   QueryAdminGrade,
   QuerySignUpList,
   QueryCommunicationMode,
-  QueryCoachingMethods
+  QueryCoachingMethods,
+  QueryAdminSubject
 } from '@/api/systemManagement/params'
 import { crmProductSetMealClassType } from '@/api/customermanagement/meal'
 import {
@@ -40,6 +41,12 @@ export default {
     return {
       option: [],
       reqMap: [
+        {
+          formType: 'subject',
+          req: QueryAdminSubject,
+          labelField: 'subjectName',
+          valueField: 'id'
+        },
         {
           formType: 'grades',
           req: QueryAdminGrade,

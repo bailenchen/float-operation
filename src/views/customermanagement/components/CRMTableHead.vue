@@ -195,8 +195,17 @@
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
 
+    <!-- 创建教室 -->
     <create-classroom
       v-if="isClassroom"
+      :selection-list="selectionList"
+      type="edit"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 创建班级 -->
+    <create-class
+      v-if="isClass"
       :selection-list="selectionList"
       type="edit"
       @save-success="createSaveSuccess"
@@ -280,6 +289,9 @@ import {
 import {
   crmClassroomDelete
 } from '@/api/educationmanage/classroom'
+import {
+  crmClassDelete
+} from '@/api/educationmanage/class'
 import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 
 
@@ -307,7 +319,8 @@ import InsertClass from '@/views/EducationManage/components/InsertClass' // 学�
 import ConfirmClassTime from '@/views/EducationManage/components/ConfirmClassTime' // 课时确认
 import RankCourse from '@/views/EducationManage/components/RankCourse' // 排课
 import ShiftHandle from '@/views/EducationManage/components/ShiftHandle' // 换挡
-import CreateClassroom from '@/views/EducationManage/classroom/components/CreateClassroom' // 换挡
+import CreateClassroom from '@/views/EducationManage/classroom/components/CreateClassroom' // 创建教室
+import CreateClass from '@/views/EducationManage/class/components/CreateClass' // 创建班级
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 import CRMCreateView from './CRMCreateView'
@@ -340,7 +353,8 @@ export default {
     ConfirmClassTime,
     RankCourse,
     ShiftHandle,
-    CreateClassroom
+    CreateClassroom,
+    CreateClass
   },
   props: {
     title: {
@@ -404,6 +418,7 @@ export default {
       isConfirm: false, // 确认课时
       isShift: false, // 换挡
       isClassroom: false, // 编辑教室
+      isClass: false, // 编辑班级
       createActionInfo: { type: 'save' } // 创建的相关信息
     }
   },
@@ -750,6 +765,8 @@ export default {
         this.isShift = true
       } else if (type == 'mode') {
         this.isClassroom = true
+      } else if (type == 'mode_class') {
+        this.isClass = true
       }
     },
     confirmHandle(type) {
@@ -871,6 +888,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['classroomId']
           })
+        } else if (this.crmType == 'class') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['classId']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -892,7 +913,8 @@ export default {
           productSetMeal: crmProductSetMealDeleteAPI,
           insideUser: crmInsideUserDelete,
           receive: crmReceiveDeleteAPI,
-          classroom: crmClassroomDelete
+          classroom: crmClassroomDelete,
+          class: crmClassDelete
         }[this.crmType]
         var params = null
         if (this.crmType == 'productSetMeal') {
@@ -914,6 +936,10 @@ export default {
         } else if (this.crmType == 'classroom') {
           params = {
             classroomIds: ids.join(',')
+          }
+        } else if (this.crmType == 'class') {
+          params = {
+            classIds: ids.join(',')
           }
         } else {
           params = {
@@ -1170,6 +1196,11 @@ export default {
           type: 'mode',
           icon: 'transfer'
         },
+        mode_class: {
+          name: '修改',
+          type: 'mode_class',
+          icon: 'transfer'
+        },
         schedule: {
           name: '排课',
           type: 'schedule',
@@ -1345,7 +1376,7 @@ export default {
         ])
       } else if (this.crmType == 'class') {
         return this.forSelectionHandleItems(handleInfos, [
-          'mode',
+          'mode_class',
           'delete',
           'schedule',
           'close',
@@ -1578,6 +1609,8 @@ export default {
         return '全部合同充值'
       } else if (this.crmType == 'classroom') {
         return '全部教室'
+      } else if (this.crmType == 'class') {
+        return '全部班级'
       }
     },
 
@@ -1601,6 +1634,8 @@ export default {
         this.isShift = false
       } else if (type == 'mode') {
         this.isClassroom = false
+      } else if (type == 'mode_class') {
+        this.isClass = false
       } else {
         this.isUpdate = false
       }

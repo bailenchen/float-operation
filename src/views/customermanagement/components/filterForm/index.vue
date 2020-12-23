@@ -94,6 +94,7 @@
                   'sign_up',
                   'checkStatus',
                   'dealStatus',
+                  'subject'
                 ].includes(formItem.formType)"
                 v-model="formItem.value"
                 placeholder="请选择筛选条件">
@@ -215,7 +216,8 @@ import {
   QueryAdminGrade,
   QuerySignUpList,
   QueryCommunicationMode,
-  QueryCoachingMethods
+  QueryCoachingMethods,
+  QueryAdminSubject
 } from '@/api/systemManagement/params'
 import {
   crmSettingRecordListAPI
@@ -322,6 +324,12 @@ export default {
           req: QueryCoachingMethods,
           labelField: 'name',
           valueField: 'name'
+        },
+        {
+          formType: 'subject',
+          req: QueryAdminSubject,
+          labelField: 'subjectName',
+          valueField: 'id'
         }
       ],
 
@@ -413,7 +421,7 @@ export default {
 
     // 判断formType为select的不同数据格式时的处理
     handleSelect(item) {
-      if (['contract_type', 'is_early_retirement', 'is_new', 'contract_status'].includes(item.fieldName)) {
+      if (['contract_type', 'is_early_retirement', 'is_new', 'contract_status', 'status'].includes(item.fieldName)) {
         return true
       } else {
         return false
@@ -479,6 +487,7 @@ export default {
         formType == 'dealStatus' ||
         formType == 'sign_up' ||
         formType == 'grades' ||
+        formType == 'subject' ||
         formType == 'coaching_methods' ||
         formType == 'follow_up_plan' ||
         formType == 'communication_mode' ||
@@ -577,6 +586,7 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
+          formItem.formType == 'subject' ||
           formItem.formType == 'coaching_methods' ||
           formItem.formType == 'follow_up_plan' ||
           formItem.formType == 'communication_mode'
@@ -624,6 +634,7 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
+          formItem.formType == 'subject' ||
           formItem.formType == 'coaching_methods' ||
           formItem.formType == 'follow_up_plan' ||
           formItem.formType == 'communication_mode' ||

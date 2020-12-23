@@ -32,8 +32,7 @@
               :key="indexs" class="crm-create-item">
               <el-input
                 v-if="item.type == 'text'"
-                v-model="form[item.prop]"
-                disabled/>
+                v-model="form[item.prop]"/>
 
               <el-select v-if="item.type == 'select'" v-model="form[item.prop]" placeholder="请选择" style="width:100%">
                 <el-option v-for="(ites, inds) in optionList" :label="ites.label" :key="inds" :value="ites.value"/>
@@ -161,18 +160,19 @@ export default {
         id: detail.deptId,
         name: detail.deptName
       }]
-      // this.teacherList =
+      this.teacherList = detail.adminUsers
+      const ids = ['']
+      this.teacherList.forEach(item => {
+        ids.push(item.userId)
+      })
       this.form = {
         deptId: detail.deptId,
-        relatedTeachers: detail.relatedTeachers,
+        relatedTeachers: String(ids),
         classroomName: detail.classroomName,
         status: detail.status,
         classroomId: detail.classroomId
       }
     }
-    // if (this.handle.action == 'edit') {
-
-    // }
   },
   methods: {
     hidenView() {
@@ -187,7 +187,6 @@ export default {
      * 中心选择
      */
     structureChange(data) {
-      console.log(data, 'vvvvv')
       this.form.deptId = data.value.length ? data.value[0].id : ''
       this.deptSelectValue = data.value || []
     },

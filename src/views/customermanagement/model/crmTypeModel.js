@@ -25,6 +25,7 @@ export default {
   receive: 27,
   refundMoney: 29,
   classroom: 30,
+  class: 31,
 
   keyToTypeData: {
     leads: 1,
@@ -43,7 +44,8 @@ export default {
     insideUser: 26,
     receive: 27,
     refundMoney: 29,
-    classroom: 30
+    classroom: 30,
+    class: 31
   },
 
   typeToKeyData: {
@@ -63,7 +65,8 @@ export default {
     26: 'insideUser',
     27: 'receive',
     29: 'refundMoney',
-    30: 'classroom'
+    30: 'classroom',
+    31: 'class'
   },
 
   typeToNameData: {
@@ -83,7 +86,8 @@ export default {
     26: '内部通讯录',
     27: '合同充值',
     29: '合同充值返还',
-    30: '教室管理'
+    30: '教室管理',
+    31: '班级管理'
   },
 
   keyToNameData: {
@@ -103,7 +107,8 @@ export default {
     insideUser: '内部通讯录',
     receive: '合同充值',
     refundMoney: '合同充值返还',
-    classroom: '教室管理'
+    classroom: '教室管理',
+    class: '班级管理'
   },
 
   convertKeyToType: function(key) {
