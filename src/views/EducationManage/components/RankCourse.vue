@@ -7,7 +7,7 @@
       align="stretch"
       class="crm-create-container">
       <flexbox class="crm-create-header">
-        <div style="flex:1;font-size:17px;color:#333;font-weight: bold;">排课</div>
+        <div style="flex:1;font-size:17px;color:#333;font-weight: bold;">班级排课</div>
         <i
           class="el-icon-close close"
           @click="hidenView" />
@@ -16,11 +16,100 @@
         class="crm-create-flex"
         direction="column"
         align="stretch">
-        <div
-          class="crm-create-body">
-          <div>123</div>
+        <create-sections title="基本信息">
+          <div class="crm-create-body">
+            <div>123</div>
 
-        </div>
+          </div>
+        </create-sections>
+        <create-sections title="上课时间段">
+          <div class="crm-create-body">
+            <div class="content create-sections-content">
+              <div class="time-wrap">
+                <flexbox
+                  class="crm-create-flex row-set"
+                  direction="row"
+                  align="center">
+                  <span>上课时间段：</span>
+                  <div class="time-select">
+                    <el-time-select
+                      v-model="startTime"
+                      :picker-options="{
+                        start: '08:00',
+                        step: '00:60',
+                        end: '19:00'
+                      }"
+                      placeholder="起始时间"
+                      @change="changeTime"/>
+                    至
+                    <el-time-select
+                      v-model="endTime"
+                      :picker-options="{
+                        start: '08:00',
+                        step: '00:60',
+                        end: maxEndTime,
+                        minTime: startTime,
+                      }"
+                      placeholder="结束时间"/>
+                  </div>
+                </flexbox>
+                <flexbox
+                  class="crm-create-flex row-set"
+                  direction="row"
+                  align="center">
+                  <span>上课日期：</span>
+                  <el-input v-model="date" style="width:45%;margin-right:10px;" placeholder="请输入内容"/>
+                  <el-button type="primary" size="mini" @click="selectDate">添加日期</el-button>
+                  <el-button type="primary" size="mini" @click="reset">重置</el-button>
+                </flexbox>
+                <flexbox
+                  class="crm-create-flex row-set"
+                  direction="row"
+                  wrap="wrap"
+                  align="center">
+                  <span>提交排课日期：</span>
+                  <el-button
+                    v-for="(item, index) in 5"
+                    :key="index"
+                    :type="index == activeWeek ? 'primary' : ''"
+                    size="mini"
+                    @click="selectWeek(index)">
+                    连排{{ 4 * (index + 1) }}周
+                  </el-button>
+                </flexbox>
+                <flexbox
+                  class="crm-create-flex row-set"
+                  direction="row"
+                  wrap="wrap"
+                  align="center">
+                  <span>自定义连排周数：</span>
+                  <el-select v-model="weeks" clearable placeholder="请选择">
+                    <el-option
+                      v-for="item in weekList"
+                      :key="item"
+                      :label="item"
+                      :value="item"/>
+                  </el-select>&nbsp;&nbsp;周&nbsp;&nbsp;
+                  <el-button type="primary" size="mini" @click="clearWeek">清除连排</el-button>
+                </flexbox>
+                <flexbox
+                  class="crm-create-flex time-rank"
+                  direction="row"
+                  wrap="wrap"
+                  justify="flex-start"
+                  align="left">
+                  <div v-for="(item,index) in dateList" :key="index" class="date-item" style="width: 33%">
+                    {{ item }}
+                    <i
+                      v-if="dateList.length > 1"
+                      class="el-icon-remove"
+                      @click="deleteDate(item, index)"/>
+                  </div>
+                </flexbox>
+              </div>
+            </div>
+          </div>
+        </create-sections>
       </flexbox>
       <div
         class="handle-bar">
@@ -33,19 +122,45 @@
           @click.native="submitForm">保存</el-button>
       </div>
     </flexbox>
+
+    <el-dialog :visible.sync="dateVisible" append-to-body title="添加日期">
+      <div class="date-wrap">
+        <el-date-picker
+          v-model="addSingleDate"
+          type="date"
+          value-format="yyyy-MM-dd"
+          style="margin-right:10px;"
+          placeholder="选择日期"/>
+
+        <el-date-picker
+          v-model="addDateRange"
+          type="daterange"
+          range-separator="至"
+          value-format="yyyy-MM-dd"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"/>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dateVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmSelDate">确 定</el-button>
+      </div>
+    </el-dialog>
   </create-view>
 </template>
 
 <script>
 import CreateView from '@/components/CreateView'
-import {
-  sysConfigDataDictarySaveAPI
-} from '@/api/systemManagement/SystemCustomer'
+import CreateSections from '@/components/CreateSections'
+import { getDateStr } from '@/utils/dateDiff'
+// import {
+//   sysConfigDataDictarySaveAPI
+// } from '@/api/systemManagement/SystemCustomer'
 
 export default {
   name: 'RankCourse',
   components: {
-    CreateView
+    CreateView,
+    CreateSections
   },
   props: {
     // 操作数据
@@ -58,12 +173,40 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: false,
 
+      // 时间段
+      startTime: '08:00',
+      endTime: '10:00',
+
+      date: '',
+      // 添加日期
+      dateVisible: false,
+      addSingleDate: '',
+      addDateRange: [],
+      storeDate: [], // 存储日期
+
+      activeWeek: null,
+      weekList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      weeks: null,
+
+      // 排课列表
+      dateList: []
     }
   },
   computed: {
-
+    maxEndTime() {
+      const maxt = parseInt(this.startTime) + 2
+      const maxv = String(maxt).length == 2 ? `${maxt}:00` : `0${maxt}:00`
+      return maxv
+    }
+  },
+  watch: {
+    weeks(val) {
+      if (val) {
+        this.activeWeek = null
+      }
+    }
   },
   created() {
 
@@ -71,6 +214,60 @@ export default {
   methods: {
     hidenView() {
       this.$emit('hiden-view', 'schedule')
+    },
+
+    changeTime() {
+      this.endTime = ''
+    },
+
+    // 选择连排
+    selectWeek(index) {
+      this.activeWeek = index
+      this.weeks = null
+      console.log(index)
+    },
+
+    // 清除连排
+    clearWeek() {
+      this.activeWeek = null
+      this.weeks = null
+    },
+
+    // 删除日期
+    deleteDate() {
+
+    },
+
+    // 选择日期
+    selectDate() {
+      this.addSingleDate = ''
+      this.addDateRange = []
+      this.dateVisible = true
+    },
+
+    // 确定选择的日期
+    confirmSelDate() {
+      // 将日期段转化为单个日期
+      let comDate = []
+      if (this.addDateRange.length) {
+        const everyDay = getDateStr(this.addDateRange[0], this.addDateRange[1], 0).split(',') // 没有开始日期和结束日期 .split(',')
+        comDate = [...comDate, ...everyDay]
+      }
+      if (this.addSingleDate) {
+        comDate.push(this.addSingleDate)
+      }
+      // 过滤重复的日期
+      this.storeDate = Array.from(new Set([...this.storeDate, ...comDate]))
+      this.dateList = this.storeDate
+      console.log(this.dateList, 'bbbbbb')
+      this.dateVisible = false
+    },
+
+    // 重置
+    reset() {
+      this.date = ''
+      this.activeWeek = null
+      this.weeks = null
     },
 
     /**
@@ -211,23 +408,14 @@ export default {
   margin: 5px 0;
 }
 
-/* 事项布局 */
-.input-item {
-  margin-bottom: 10px;
-
-  .el-input {
-    width: 300px;
-  }
-
-  .el-icon-remove {
-    color: #ff6767;
-    cursor: pointer;
-    margin-left: 2px;
-    display: none;
-  }
+.el-icon-remove {
+  color: #ff6767;
+  cursor: pointer;
+  margin-left: 2px;
+  display: none;
 }
 
-.input-item:hover {
+.date-item:hover {
   .el-icon-remove {
     display: inline;
   }
@@ -236,6 +424,24 @@ export default {
 .require-item {
   color: #f56c6c;
   font-style: normal;
+}
+
+.time-wrap {
+  padding: 10px 10px 15px;
+}
+
+.row-set {
+  line-height: 50px;
+}
+
+.time-rank {
+  line-height: 40px;
+}
+
+.date-wrap {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 </style>
 
