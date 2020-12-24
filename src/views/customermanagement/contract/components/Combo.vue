@@ -258,7 +258,9 @@ export default {
     },
     value: {
       handler(val, oldVal) {
-        this.structureDataByValue()
+        if (val) {
+          this.structureDataByValue()
+        }
       },
       deep: true,
       immediate: true

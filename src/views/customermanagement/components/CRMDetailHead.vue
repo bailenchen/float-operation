@@ -346,7 +346,7 @@ export default {
         return (
           this.detail &&
           this.detail.checkStatus != 8 &&
-          this.crm[this.crmType].update
+          this.crm[this.crmType].redact
         )
       }
       if (this.crmType === 'water') {
