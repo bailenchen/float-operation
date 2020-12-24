@@ -61,7 +61,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <!--<div class="p-contianer">
+        <div class="p-contianer">
           <el-pagination
             :current-page="currentPage"
             :page-sizes="pageSizes"
@@ -72,7 +72,7 @@
             layout="prev, pager, next, sizes, total, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"/>
-        </div>-->
+        </div>
       </flexbox-item>
     </flexbox>
 
@@ -98,9 +98,7 @@ export default {
   data() {
     return {
       loading: false, // 展示加载中效果
-
-      // tableHeight: document.documentElement.clientHeight - 330, // 表的高度,
-      tableHeight: document.documentElement.clientHeight - 280, // 表的高度,
+      tableHeight: document.documentElement.clientHeight - 400, // 表的高度,
 
       currentPage: 1,
       pageSize: 10,
@@ -138,13 +136,19 @@ export default {
       if (val) {
         params = {
           ...this.formInline,
-          limit: 15,
-          page: 1
+          limit: this.pageSize,
+          page: this.currentPage
+        }
+      } else {
+        params = {
+          limit: this.pageSize,
+          page: this.currentPage
         }
       }
       sysConfigDataDictaryListQueryAPI(params).then(res => {
         this.loading = false
         this.tableData = res.data.list
+        this.total = res.data.totalRow
       }).catch(() => {
         this.loading = false
       })
