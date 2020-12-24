@@ -129,7 +129,7 @@ export default {
     this.form.pId = {
       'add': 0,
       'edit': this.handle.data.pId,
-      'child': this.handle.data.pId
+      'child': this.handle.data.dictionaryId
     }[this.handle.action]
     if (this.handle.action == 'edit') {
       this.form.dictionaryId = this.handle.data.dictionaryId

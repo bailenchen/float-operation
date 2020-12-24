@@ -1189,7 +1189,7 @@ export default {
                   })
                 : []
             } else {
-              detail[element.field] = this.dialogData[element.field] || ''
+              detail[element.field] = element.field == 'isTeacher' || element.field == 'isJob' ? this.dialogData[element.field] : this.dialogData[element.field] || ''
             }
           }
         }

@@ -273,10 +273,10 @@ export default {
 
       allocList: [],
       fieldlist: [
-        { prop: 'memberUserName', label: '业绩享受人' },
+        { prop: 'createUserName', label: '业绩享受人' },
         { prop: 'performanceRatio', label: '业绩比例（%）' },
         { prop: 'newStudentRatio', label: '新签学员比例（%）' },
-        { prop: 'createUserName', label: '添加人' },
+        { prop: 'memberUserName', label: '添加人' },
         { prop: 'checkStatus', label: '审批状态' },
         { prop: 'createTime', label: '添加时间' }
       ],
