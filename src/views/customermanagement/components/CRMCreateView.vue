@@ -228,6 +228,7 @@ import {
   CrmRelativeCell,
   XhProuctCate,
   XhProduct,
+  XhCause,
   XhDetail,
   XhDictionary,
   XhBusinessStatus,
@@ -267,7 +268,8 @@ export default {
     XhChannelCategory,
     Present,
     RefundCombo,
-    XhDictionary
+    XhDictionary,
+    XhCause
   },
   filters: {
     /** 根据type 找到组件 */
@@ -338,8 +340,9 @@ export default {
       } else if (formType == 'provinces') { // 需要请求数据字典
         return 'XhDictionary'
       } else if (formType == 'refundCombo') {
-        console.log('RefundCombo组件')
         return 'RefundCombo'
+      } else if (formType == 'cause') {
+        return 'XhCause'
       }
     }
   },
@@ -1615,17 +1618,43 @@ export default {
       }
 
       if (this.crmType == 'refundMoney') {
+        // list.push({
+        //   authLevel: 3,
+        //   defaultValue: '',
+        //   fieldName: 'cause',
+        //   fieldType: 1,
+        //   formType: 'select',
+        //   inputTips: null,
+        //   isNull: 0,
+        //   isUnique: 0,
+        //   label: 29,
+        //   name: '主客原因',
+        //   options: null,
+        //   setting: [
+        //     '搬家移民出国',
+        //     '高三结课',
+        //     '不参加上海中高考（中考为三校生)',
+        //     '身体原因（孩子生病，不能继续上课）',
+        //     '新签时咨询老师过渡承诺',
+        //     '离职老师的恶意诋毁',
+        //     '距离问题',
+        //     '没有按照约定的时间开班',
+        //     '其他'
+        //   ],
+        //   type: 15,
+        //   value: ''
+        // })
         list.push({
           authLevel: 3,
           defaultValue: '',
-          fieldName: 'refundCombo',
+          fieldName: 'cause',
           fieldType: 1,
-          formType: 'select',
+          formType: 'cause',
           inputTips: null,
-          isNull: 0,
+          isNull: 1,
           isUnique: 0,
           label: 29,
-          name: '主/客原因',
+          name: '主/客观原因',
           options: null,
           setting: [],
           type: 15,
@@ -1746,7 +1775,7 @@ export default {
         } else if (item.formType == 'product') {
           // 关联产品信息比较多 用字典接收
           var params = {}
-          console.log('产品字段', item)
+          // console.log('产品字段', item)
           params['value'] = item.value
           params['key'] = item.fieldName
           params['data'] = item

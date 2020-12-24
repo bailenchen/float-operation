@@ -63,14 +63,10 @@
                       <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
                       <div class="section-title">课程信息</div>
                     </div>
-                    <combo
-                      :action="comboAction"
+                    <combo-on-show
                       :value="comboValue"
-                      :give-action="giveAction"
                       :subject-list="subList"
-                      :is-detail="isDetail"
-                      :accumulation="accumulation"
-                      :is-disabled="isDisabled"
+                      :present-rules="presentRules"
                       class="course-table"
                       style="width: 100%;"/>
                     <div class="table-desc">
@@ -166,7 +162,7 @@ import ExamineInfo from '@/components/Examine/ExamineInfo'
 import ContractRecharge from '../components/ContractRecharge' // 合同充值
 import ReturnRechargeMoney from '../components/ReturnRechargeMoney' // 合同充值返还
 
-import Combo from '@/views/customermanagement/contract/components/Combo'
+import ComboOnShow from '@/views/customermanagement/contract/components/ComboOnShow'
 import Present from '@/views/customermanagement/contract/components/Present'
 import CRMCreateView from '../components/CRMCreateView' // 新建页面
 import detail from '../mixins/detail'
@@ -190,7 +186,7 @@ export default {
     CRMCreateView,
     ContractRecharge,
     ReturnRechargeMoney,
-    Combo,
+    ComboOnShow,
     Present
   },
   mixins: [detail],
@@ -255,14 +251,8 @@ export default {
 
       // 课程信息
       isDisabled: true,
-      comboAction: null,
       comboValue: null,
       subList: [],
-      accumulation: {
-        data: [],
-        lesson: 0
-      },
-      isDetail: true,
       totalPrice: '',
 
       // 赠送
@@ -282,19 +272,19 @@ export default {
       ],
       subjectList: [], // 科目列表
       information: null, // 合同详情
-      contractType: '', // 合同类型1：普通合同，2：额外赠送合同
-      giveAction: {
-        customerId: '',
-        type: 'old-change',
-        attr: 'update',
-        searchJson: {
-          coachType: '',
-          gradeId: ''
-        }
-      },
+      contractType: '', // 合同类型1：普通合同，2：额外赠送合同 3：变更合同
+      presentRules: '',
+      // giveAction: {
+      //   customerId: '',
+      //   type: 'old-change',
+      //   attr: 'update',
+      //   searchJson: {
+      //     coachType: '',
+      //     gradeId: ''
+      //   }
+      // },
       createActionInfo: {
         type: 'update'
-        // type: 'save'
       }
     }
   },
@@ -508,11 +498,12 @@ export default {
         const productList = res.data.contract.productList
 
         this.totalPrice = res.data.contract.money
+        this.presentRules = res.data.contract.ruleDetails
 
-        const customer = res.data.contract
-        this.giveAction.customerId = customer.customerId
-        this.giveAction.searchJson.coachType = customer.coachType
-        this.giveAction.searchJson.gradeId = customer.gradeId
+        // const customer = res.data.contract
+        // this.giveAction.customerId = customer.customerId
+        // this.giveAction.searchJson.coachType = customer.coachType
+        // this.giveAction.searchJson.gradeId = customer.gradeId
 
         // 大套餐
         const mealKeyVal = {}

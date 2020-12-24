@@ -12,13 +12,13 @@
         class="xr-btn--orange rc-head-item"
         icon="el-icon-plus"
         type="primary"
-
         @click="createClick">新建合同</el-button>
       <el-button
         v-if="crmType == 'student'"
         class="xr-btn--orange rc-head-item"
         icon="el-icon-plus"
-        type="primary">新建额外赠送合同</el-button>
+        type="primary"
+        @click="createClick">新建额外赠送合同</el-button>
     </flexbox>
     <el-table
       :data="list"
@@ -58,6 +58,7 @@ import {
 import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'RelativeContract', // 相关联系人  可能再很多地方展示 放到客户管理目录下
@@ -100,7 +101,9 @@ export default {
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {}}
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   watch: {
     id: function(val) {
       this.list = []
@@ -213,8 +216,12 @@ export default {
       if (this.crmType == 'business') {
         this.createActionInfo.data['customer'] = this.detail
         this.createActionInfo.data['business'] = this.detail
-      } else if (this.crmType == 'customer') {
+      } else if (this.crmType == 'customer' || this.crmType == 'student') {
         this.createActionInfo.data['customer'] = this.detail
+        this.createActionInfo.userInfo = {
+          userId: this.userInfo.userId,
+          realname: this.userInfo.realname
+        }
       }
       this.isCreate = true
     },
