@@ -240,6 +240,14 @@
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
       </div>
+      <div
+        v-if="depSelect != 0"
+        class="nav-dialog-div">
+        <label>部门编号：</label>
+        <el-input
+          v-model="deptNumber"
+          placeholder="请输入部门编号" />
+      </div>
       <span
         slot="footer"
         class="dialog-footer">
@@ -629,6 +637,7 @@ export default {
       depCreateDialog: false, // 控制部门新增 编辑 数据
       depSelect: '',
       centre: 2,
+      deptNumber: '',
       // 上级部门
       superDepList: [],
       depCreateLabel: '',
@@ -1288,6 +1297,7 @@ export default {
       this.depCreateTitle = '新增部门'
       this.depSelect = data.id
       this.centre = data.centre
+      this.deptNumber = data.deptNumber
       this.getStructuresListBySuperior({ id: data.id, type: 'save' })
       this.depCreateDialog = true
     },
@@ -1312,6 +1322,7 @@ export default {
       this.treeEditId = data.id
       this.depSelect = data.pid
       this.centre = data.centre
+      this.deptNumber = data.deptNumber
       this.depCreateTitle = '编辑部门'
       this.depCreateLabel = '编辑部门'
       this.getStructuresListBySuperior({ id: data.id, type: 'update' })
@@ -1354,7 +1365,7 @@ export default {
     // 新增或编辑确定按钮
     submitDialog() {
       if (this.depCreateLabel == '新增部门') {
-        depSave({ name: this.depCreateLabelValue, pid: this.depSelect, centre: this.centre }).then(
+        depSave({ name: this.depCreateLabelValue, pid: this.depSelect, centre: this.centre, deptNumber: this.deptNumber }).then(
           res => {
             this.getDepList() // 增加了新部门 刷新数据
             this.getDepTreeList()
@@ -1366,7 +1377,8 @@ export default {
           name: this.depCreateLabelValue,
           deptId: this.treeEditId,
           pid: this.depSelect,
-          centre: this.centre
+          centre: this.centre,
+          deptNumber: this.deptNumber
         }).then(res => {
           this.$message.success('操作成功')
           this.getDepTreeList()
