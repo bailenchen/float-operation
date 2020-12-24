@@ -113,6 +113,7 @@ export default {
       handler(val) {
         // console.log('辅导方式、年级、学员变化', val)
         // 清空之前的数据
+        this.init()
 
         // 有学员，查询新签还是续签
         if (val.customerId) {
@@ -156,6 +157,21 @@ export default {
   },
 
   methods: {
+    init() {
+      this.isAddCombo = false // 是否展示添加按钮
+      this.showPopover = false // 展示产品框
+      this.showSelectView = false // 是否展示关联模块
+      this.renew = 1 // 续签或新签
+      this.isNew = 1 // 0:续签 1:新签 2:引流
+      this.selectComobo = null // 套餐数组
+      this.comboAction = { // 传递给combo的数据
+        univalence: '', // 单品单价
+        productSetMeal: [] // 大套餐
+      }
+      this.comboValue = null // 编辑时传递给combo
+      this.subjectList = null // 科目列表1
+      this.productList = null // 关联套餐选中的值
+    },
     /** 选中 */
     selectInfos(data) {
       console.log('选中的套餐', data)

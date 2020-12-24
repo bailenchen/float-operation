@@ -1620,6 +1620,22 @@ export default {
           defaultValue: '',
           fieldName: 'refundCombo',
           fieldType: 1,
+          formType: 'select',
+          inputTips: null,
+          isNull: 0,
+          isUnique: 0,
+          label: 29,
+          name: '主/客原因',
+          options: null,
+          setting: [],
+          type: 15,
+          value: ''
+        })
+        list.push({
+          authLevel: 3,
+          defaultValue: '',
+          fieldName: 'refundCombo',
+          fieldType: 1,
           formType: 'refundCombo',
           inputTips: null,
           isNull: 0,
