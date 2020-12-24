@@ -290,7 +290,8 @@ import {
   crmClassroomDelete
 } from '@/api/educationmanage/classroom'
 import {
-  crmClassDelete
+  crmClassDelete,
+  crmClassClose
 } from '@/api/educationmanage/class'
 import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 
@@ -631,7 +632,8 @@ export default {
         type == 'state_disable' ||
         type == 'get' ||
         type == 'give_up' ||
-        type == 'confirm_give_up'
+        type == 'confirm_give_up' ||
+        type == 'close'
       ) {
         var message = ''
         if (type == 'transform') {
@@ -673,6 +675,8 @@ export default {
           } else {
             message = '确定确认放弃吗?'
           }
+        } else if (type == 'close') {
+          message = '确认关闭吗?'
         }
         this.$confirm(message, '提示', {
           confirmButtonText: type === 'confirm_give_up' ? '提交家长确认' : '确定',
@@ -1008,10 +1012,10 @@ export default {
         const params = {
           contractId: ids
         }
-        if (this.selectionList[0].contractStatus == 1) {
+        if (this.selectionList[0].contractStatus == 2) {
+          params['contractStatus'] = 5
+        } else {
           params['contractStatus'] = 2
-        } else if (this.selectionList[0].contractStatus == 2) {
-          params['contractStatus'] = 1
         }
         this.loading = true
         CrmContractAffirmContractStatusAPI(params)
@@ -1029,7 +1033,7 @@ export default {
         }).join(',')
         const params = {
           contractId: ids,
-          contractStatus: 3
+          contractStatus: 8
         }
         this.loading = true
         CrmContractAffirmContractStatusAPI(params)
@@ -1041,6 +1045,21 @@ export default {
             this.loading = false
           })
         return
+      } else if (type == 'close') {
+        var ids = this.selectionList.map(function(item, index, array) {
+          return item.classId
+        }).join(',')
+        const params = {
+          classIds: ids,
+          status: 2
+        }
+        crmClassClose(params).then(res => {
+          this.loading = false
+          this.$message.success('操作成功')
+          this.$emit('handle', { type: type })
+        }).catch(() => {
+          this.loading = false
+        })
       }
     },
     /** 获取展示items */
