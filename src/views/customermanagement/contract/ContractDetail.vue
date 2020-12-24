@@ -57,57 +57,59 @@
                 :id="id"
                 :filed-list="baseDetailList">
                 <!-- 课程信息 -->
-                <div v-if="detailData.contractType == 1" slot="first" style="padding-left: 15px;margin-bottom:20px;">
-                  <div class="section-header" style="padding-left:0;margin-bottom:10px;">
-                    <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
-                    <div class="section-title">课程信息</div>
+                <div slot="first" style="padding-left: 15px;margin-bottom:20px;">
+                  <div v-if="detailData.contractType == 1" >
+                    <div class="section-header" style="padding-left:0;margin-bottom:10px;">
+                      <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
+                      <div class="section-title">课程信息</div>
+                    </div>
+                    <combo
+                      :action="comboAction"
+                      :value="comboValue"
+                      :give-action="giveAction"
+                      :subject-list="subList"
+                      :is-detail="isDetail"
+                      :accumulation="accumulation"
+                      :is-disabled="isDisabled"
+                      class="course-table"
+                      style="width: 100%;"/>
+                    <div class="table-desc">
+                      <div class="left-txt"/>
+                      <div class="right-txt">最终价格：{{ totalPrice }}元</div>
+                    </div>
                   </div>
-                  <combo
-                    :action="comboAction"
-                    :value="comboValue"
-                    :give-action="giveAction"
-                    :subject-list="subList"
-                    :is-detail="isDetail"
-                    :accumulation="accumulation"
-                    :is-disabled="isDisabled"
-                    class="course-table"
-                    style="width: 100%;"/>
-                  <div class="table-desc">
-                    <div class="left-txt"/>
-                    <div class="right-txt">最终价格：{{ totalPrice }}元</div>
+                  <!-- 累计赠送课程 -->
+                  <div v-if="detailData.contractType == 2">
+                    <div class="section-header" style="padding-left:0;margin-bottom:10px;">
+                      <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
+                      <div class="section-title">额外赠送课程</div>
+                    </div>
+                    <present
+                      :action="presentAction"
+                      :old-value="presentValue"
+                      :is-disabled="isDisabled"
+                      class="course-table"
+                      style="width: 100%;"/>
                   </div>
-                </div>
-                <!-- 累计赠送课程 -->
-                <div v-if="detailData.contractType == 2" slot="first" style="padding-left: 15px;margin-bottom:20px;">
-                  <div class="section-header" style="padding-left:0;margin-bottom:10px;">
-                    <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
-                    <div class="section-title">额外赠送课程</div>
+                  <!-- 业绩分配信息 -->
+                  <div v-if="detailData.contractType == 1">
+                    <div class="section-header" style="padding-left:0;">
+                      <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
+                      <div class="section-title">业绩分配信息</div>
+                    </div>
+                    <el-table
+                      :data="allocList"
+                      stripe
+                      style="width: 100%;border: 1px solid #E6E6E6;margin-top: 10px;">
+                      <el-table-column
+                        v-for="(items, index) in fieldlist"
+                        :key="index"
+                        :prop="items.prop"
+                        :label="items.label"
+                        :formatter="fieldFormatter"
+                        show-overflow-tooltip/>
+                    </el-table>
                   </div>
-                  <present
-                    :action="presentAction"
-                    :old-value="presentValue"
-                    :is-disabled="isDisabled"
-                    class="course-table"
-                    style="width: 100%;"/>
-                </div>
-                <!-- 业绩分配信息 -->
-                <div v-if="detailData.contractType == 1" slot="first" style="padding-left: 15px;margin-bottom:20px;">
-                  <div class="section-header" style="padding-left:0;">
-                    <div class="section-mark" style="border-left-color: rgb(35, 98, 251);"/>
-                    <div class="section-title">业绩分配信息</div>
-                  </div>
-                  <el-table
-                    :data="allocList"
-                    stripe
-                    style="width: 100%;border: 1px solid #E6E6E6;margin-top: 10px;">
-                    <el-table-column
-                      v-for="(items, index) in fieldlist"
-                      :key="index"
-                      :prop="items.prop"
-                      :label="items.label"
-                      :formatter="fieldFormatter"
-                      show-overflow-tooltip/>
-                  </el-table>
                 </div>
               </c-r-m-base-info>
               <component
