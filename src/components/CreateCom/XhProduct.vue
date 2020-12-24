@@ -89,12 +89,13 @@ export default {
       renew: 1, // 续签或新签
       isNew: 1, // 0:续签 1:新签 2:引流
       selectComobo: null, // 套餐数组
+      univalence: '', // 单品单价
       comboAction: { // 传递给combo的数据
         univalence: '', // 单品单价
         productSetMeal: [] // 大套餐
       },
       comboValue: null, // 编辑时传递给combo
-      subjectList: null, // 科目列表1
+      subjectList: null, // 科目列表
       productList: null // 关联套餐选中的值
     }
   },
@@ -138,8 +139,11 @@ export default {
         if (this.action.type == 'old-change') {
           // console.log('合同变更-old-change', val)
           this.structureByValue()
+        // } else if (this.action.type == 'change' && this.action.attr == 'update') {
+        //   console.log('合同变更-编辑1-change', val)
+        //   this.getUnivalence()
         } else if (this.action.type == 'change') {
-          // console.log('合同变更-change', val)
+          console.log('合同变更-change', val)
           return
         } else {
           // console.log('编辑123', val)
@@ -164,6 +168,7 @@ export default {
       this.renew = 1 // 续签或新签
       this.isNew = 1 // 0:续签 1:新签 2:引流
       this.selectComobo = null // 套餐数组
+      this.univalence = ''
       this.comboAction = { // 传递给combo的数据
         univalence: '', // 单品单价
         productSetMeal: [] // 大套餐

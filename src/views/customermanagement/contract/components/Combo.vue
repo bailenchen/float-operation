@@ -258,12 +258,9 @@ export default {
     },
     value: {
       handler(val, oldVal) {
-        if (val) {
-          this.structureDataByValue()
-        }
-      },
-      deep: true,
-      immediate: true
+        // console.log('新旧val', val, oldVal)
+        this.structureDataByValue()
+      }
     }
   },
   methods: {
@@ -312,7 +309,7 @@ export default {
           const product = productSetMeal.details[j]
           // console.log('小套餐', product)
           if (product.isGive) {
-            this.purchaseInGive += product.purchaseFrequency
+            this.purchaseInGive += Number(product.purchaseFrequency)
           }
 
           this.maxIndex++
@@ -385,7 +382,7 @@ export default {
         // 参与累计赠送的常规赠和
         if (item.isGive == 1) {
           this.grooveLesson += Number(item.grooveLesson)
-          this.purchaseInGive += item.purchaseLesson
+          this.purchaseInGive += Number(item.purchaseLesson)
         }
       })
 
@@ -425,11 +422,6 @@ export default {
 
       // 判断后端有没有返回值
       // 两种情况：1 后端没有返回值，2 后端返回值，但是选择的都是不参加累计的
-      // if (obj) {
-      //   this.giveObj = obj.lastPresent
-      //   this.presentRules = obj.presentRules
-      //   this.presentRules.coachType = this.giveAction.searchJson.coachType
-      // }
       this.giveObj = obj ? obj.lastPresent : null
       this.presentRules = null
       this.maxGive = 0
@@ -639,7 +631,7 @@ export default {
 
     // 改变价格
     changePrice(row, lesson, calculateUnivalence = true) {
-      // console.log('改变价格row信息', row)
+      console.log('改变价格row信息', row)
       if (row.mealType != '引流课') {
         var totalPrice = 0
         var obj = {}
@@ -648,7 +640,8 @@ export default {
           const element = this.tableData[i]
           // 修改原价、折后价
           if (element.detailsId === row.detailsId) {
-            var univalence = this.action ? this.action.univalence : this.value.univalence
+            // var univalence = this.action ? this.action.univalence : this.value.univalence
+            var univalence = this.action.univalence !== '' ? this.action.univalence : this.value.univalence
             element.price = lesson * univalence
             element.salePrice = element.price * element.discount / 100
           }
@@ -667,11 +660,9 @@ export default {
       this.calculateTotalPrice()
       this.priceValue = this.totalPrice
       if (this.giveAction && this.giveAction.type == 'change') {
-        this.priceValue = this.totalPrice - this.action.surplusPrice
+        // this.priceValue = this.totalPrice - this.giveAction.surplusPrice
+        this.refundMonry = this.totalPrice - this.giveAction.surplusPrice
       }
-
-      // 计算完总价，改变常规
-
       // this.calculateUnivalence({ row, lesson })
     },
 
