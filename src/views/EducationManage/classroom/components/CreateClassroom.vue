@@ -187,6 +187,7 @@ export default {
      * 中心选择
      */
     structureChange(data) {
+      this.deptNumber = data.value.length ? data.value[0].deptNumber : ''
       this.form.deptId = data.value.length ? data.value[0].id : ''
       this.deptSelectValue = data.value || []
     },
@@ -202,7 +203,7 @@ export default {
         names.push(item.realname)
       })
       this.form.relatedTeachers = String(ids)
-      this.form.classroomName = String(names)
+      this.form.classroomName = `${this.deptNumber}-${String(names)}`
       this.teacherList = data.value || []
     },
 

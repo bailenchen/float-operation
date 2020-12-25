@@ -7,6 +7,7 @@ import CRMListHead from '../../customermanagement/components/CRMListHead'
 import CRMTableHead from '../../customermanagement/components/CRMTableHead'
 
 import { crmClassroomIndex, crmClassroomExcelAllExport } from '@/api/educationmanage/classroom'
+import { crmClassIndex, crmClassExcelAllExport } from '@/api/educationmanage/class'
 import {
   crmFieldColumnWidth,
   crmPoolFieldColumnWidth
@@ -118,7 +119,7 @@ export default {
     getList() {
       this.loading = true
       var crmIndexRequest = this.getIndexRequest()
-      let params = {
+      const params = {
         page: this.currentPage,
         limit: this.pageSize,
         search: this.search,
@@ -136,12 +137,6 @@ export default {
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         console.log('DSAD')
         params.data = this.filterObj
-      }
-      if (this.getOtherParams && typeof this.getOtherParams === 'function') {
-        params = {
-          ...params,
-          ...this.getOtherParams()
-        }
       }
 
       crmIndexRequest(params)
@@ -168,6 +163,8 @@ export default {
     getIndexRequest() {
       if (this.crmType == 'classroom') {
         return crmClassroomIndex
+      } else if (this.crmType == 'class') {
+        return crmClassIndex
       }
     },
     genListHead(obj) {
@@ -197,19 +194,20 @@ export default {
         },
         // 班级管理
         class: {
-          a: '中心',
-          b: '班级类型',
-          c: '班级名称',
-          d: '教室名称',
-          e: '年级',
-          f: '科目',
-          g: '学科老师',
-          h: '已排次数',
-          i: '班级状态',
-          j: '已排未上课次',
-          k: '最后排课时间,',
-          l: '备注',
-          m: '是否排课'
+          deptName: '中心',
+          coachType: '班级类型',
+          className: '班级名称',
+          classroomName: '教室名称',
+          gradeName: '年级',
+          subjectName: '科目',
+          subjectTeacherName: '学科老师',
+          totalNumber: '满班人数',
+          usageTimes: '已排次数',
+          statusType: '班级状态',
+          notOn: '已排未上课次',
+          updateTime: '最后排课时间,',
+          remarks: '备注',
+          isCourse: '是否排课'
         },
         // 班级排课表
         classschedule: {
@@ -253,7 +251,7 @@ export default {
       } else {
         return
       }
-      this.getList()
+      // this.getList()
     },
     /** 格式化字段 */
     fieldFormatter(row, column, cellValue) {
@@ -314,7 +312,8 @@ export default {
           productSetMeal: crmProductSetMealExcelAllExport,
           insideUser: CrmInsideUserExcelAllExport,
           receive: crmReceiveExcelAllExport,
-          classroom: crmClassroomExcelAllExport
+          classroom: crmClassroomExcelAllExport,
+          class: crmClassExcelAllExport
         }[keytype]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
@@ -342,6 +341,7 @@ export default {
     },
     /** 筛选操作 */
     handleFilter(data) {
+      console.log(data, 'mmmmm')
       this.filterObj = data
       var offsetHei = document.documentElement.clientHeight
       var removeHeight = Object.keys(this.filterObj).length > 0 ? 295 : 235

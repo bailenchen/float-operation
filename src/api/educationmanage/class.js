@@ -33,6 +33,15 @@ export function crmClassDelete(data) {
   })
 }
 
+// 班级管理 关闭
+export function crmClassClose(data) {
+  return request({
+    url: 'educationalClass/closeByIds',
+    method: 'post',
+    data: data
+  })
+}
+
 
 // 班级管理 全部导出
 export function crmClassExcelAllExport(data) {

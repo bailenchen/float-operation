@@ -59,6 +59,12 @@ Vue.use(require('vue-moment'))
 import moment from 'moment'
 moment.locale('zh_cn')
 
+// 日期组件
+import VCalendar from 'v-calendar'
+Vue.use(VCalendar, {
+  componentPrefix: 'vc' // Use <vc-calendar /> instead of <v-calendar />
+})
+
 // 限制数据数值
 import inputLimit from './directives/input-limit'
 Vue.use(inputLimit)
