@@ -15,15 +15,31 @@
         :width="item.width"
         align="center"/>
     </el-table>
+
+    <!-- <el-button v-if="tableData" type="text" @click="dialogVisible = true">填写资金退款</el-button> -->
+    <el-button type="text" @click="isOfflineWithDraw = true">填写资金退款</el-button>
+
+    <offline-with-draw
+      :visible.sync="isOfflineWithDraw"
+      :selection-list="selectionList"
+      :money="money"
+      :is-save="true"
+      money-type="refound"
+      @save="handleCallBack"
+    />
   </div>
 </template>
 
 <script>
 import { filedGetInformation } from '@/api/customermanagement/common'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
+import OfflineWithDraw from '@/views/customermanagement/components/selectionHandle/OfflineWithDraw'
 
 export default {
   name: 'RefundCombo',
+  components: {
+    OfflineWithDraw
+  },
   props: {
     /** 索引值 用于更新数据 */
     index: Number,
@@ -35,6 +51,21 @@ export default {
     }
   },
   data() {
+    var validateMoney = (rule, value, callback) => {
+      var a = /^[0-9]*(\.[0-9]{1,2})?$/
+      if (!a.test(value)) {
+        callback(new Error('请输入正确的金额'))
+      } else {
+        callback()
+      }
+    }
+    var validatcharacter = (rule, value, callback) => {
+      if (!this.characterUser) {
+        callback(new Error('请选择员工'))
+      } else {
+        callback()
+      }
+    }
     return {
       fields: [
         {
@@ -117,7 +148,18 @@ export default {
       OrderLeve1Arr: [], // 大套餐
       OrderLeve2Arr: [], // 小套餐
       OrderLeve3Arr: [], // 引流课
-      loading: false
+      loading: false,
+      dialogVisible: false,
+      isOfflineWithDraw: false,
+      characterUser: null, // 收/退款人
+      selectionList: [{
+        leadsNumber: '',
+        accountNumber: '',
+        capitalId: ''
+      }],
+      money: '',
+      product: null, // 表格数据
+      capital: null // 资金退款信息
     }
   },
   watch: {
@@ -140,22 +182,74 @@ export default {
     }).catch(() => {})
   },
   methods: {
+    handleCallBack(val) {
+      console.log('回调', val)
+      const capital = {
+        'payment': val.refound.payment,
+        'account': val.refound.userAccount ? val.refound.userAccount : '',
+        'refundMoney': val.refound.price,
+        'refundUserId': val.refound.characterId,
+        'dealTime': val.refound.deductionTime
+      }
+      console.log('capital', capital)
+      this.capital = capital
+      this.$emit('value-change', {
+        index: this.index,
+        value: {
+          product: this.product,
+          capital: this.capital,
+          money: this.money
+        }
+      })
+      this.isOfflineWithDraw = false
+    },
+    handleClose() {
+      console.log('关闭')
+    },
+    characterChange() {
+      console.log('人员')
+    },
     getData() {
       this.loading = true
       const params = { types: 6, id: this.action.contracId }
+      // const params = { types: 6, id: 449 }
       filedGetInformation(params).then(res => {
         this.loading = false
         this.structureTable(res.data.contract)
         this.calculateMoney(res.data.contract)
+        this.structureProduct(res.data.contract.productList)
       }).catch(() => {})
     },
+
+    structureProduct(productList) {
+      const arr = []
+      productList.forEach(item => {
+        const obj = {
+          'rId': item.rId,
+          'refundProductCount': item.surplusCount,
+          'refundMoney': item.price * item.surplusCount
+        }
+        arr.push(obj)
+      })
+      this.product = arr
+      this.$emit('value-change', {
+        index: this.index,
+        value: {
+          product: this.product,
+          capital: this.capital,
+          money: this.money
+        }
+      })
+    },
+
     calculateMoney(dataObj) {
       var money = 0
       dataObj.productList.forEach(item => {
         money += item.surplusCount * item.price
       })
       console.log('应退金额', money)
-      this.$emit('value-change', { index: this.index, value: money })
+      this.money = money
+      // this.$emit('value-change', { index: this.index, value: money })
     },
     structureTable(dataObj) {
       console.log('拼接表格')
@@ -442,6 +536,24 @@ export default {
        &:first-child .cell {
          padding-left: 10px !important;
        }
+      }
+    }
+  }
+
+  /deep/ .el-form-item {
+    margin-bottom: 22px!important;
+    .el-form-item__label {
+      text-align: left;
+      width: 130px !important;
+      vertical-align: middle;
+      float: left;
+      font-size: 13px;
+      color: #666;
+      line-height: 40px;
+      padding: 0 12px 0 0;
+      box-sizing: border-box;
+      &::before {
+        position: relative;
       }
     }
   }

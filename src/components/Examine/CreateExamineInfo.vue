@@ -150,7 +150,9 @@ export default {
         crm_receivables: crmCreateExamineFlow,
         offline: crmCreateExamineFlow,
         refound: crmCreateExamineFlow,
-        changeDept: crmCreateExamineFlow // 转中心
+        changeDept: crmCreateExamineFlow, // 转中心
+        refundMoney_convention: crmCreateExamineFlow, // 常规充值返还
+        refundMoney_special: crmCreateExamineFlow // 特殊充值返还
         // crm_dispute: crmExamineFlowRecordList
       }[this.types]
 
@@ -164,7 +166,10 @@ export default {
         params.discount = this.discount // 折扣
       } else if (this.types == 'crm_contract' && this.otherTypes == 'change') {
         params.categoryType = 7
-        // params.money = this.money
+      } else if (this.types == 'refundMoney_convention') { // 常规充值返还审批
+        params.categoryType = 12
+      } else if (this.types == 'refundMoney_special') { // 特殊充值返还审批
+        params.categoryType = 13
       } else {
         params.id = this.typesId
         params.categoryType = {

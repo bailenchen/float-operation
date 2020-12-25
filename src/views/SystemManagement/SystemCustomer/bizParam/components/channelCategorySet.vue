@@ -4,7 +4,7 @@
       <span>渠道设置</span>
     </div>
     <div class="product-setting">
-      <div class="tips">注：1、渠道最多设置2级</div>
+      <div class="tips">注：1、渠道最多设置2级。。</div>
       <div class="tips">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2、未进行添加渠道类型的渠道，该渠道的LEADS将自动分配至过滤人员（最早创建时间渠道类型中过滤人 员）下</div>
       <div
         style="margin-top: 5px"

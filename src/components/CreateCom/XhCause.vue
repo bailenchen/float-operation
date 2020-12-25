@@ -1,12 +1,16 @@
 <template>
   <div>
-
-    <el-select v-show="isImpersonality" v-model="impersonality" placeholder="请选择" style="width: 100%;">
+    <el-select
+      v-show="isImpersonality"
+      v-model="impersonality"
+      placeholder="请选择"
+      style="width: 100%;"
+      @change="impersonalityChange">
       <el-option
         v-for="(item,index) in options"
         :key="index"
-        :label="item.label"
-        :value="item.value"
+
+        :value="item.label"
       />
     </el-select>
 
@@ -26,6 +30,16 @@
 <script>
 export default {
   name: 'XhCause',
+  props: {
+    // action: {
+    //   type: Object,
+    //   default: () => {
+    //     return {}
+    //   }
+    // }
+    index: Number,
+    cause: Number
+  },
   data() {
     return {
       options: [
@@ -73,9 +87,23 @@ export default {
       subjectivity: '' // 主观
     }
   },
+  watch: {
+    cause: {
+      handler(val) {
+        console.log(val)
+        this.isImpersonality = val == 1
+        this.$emit('value-change', { index: this.index, value: '' })
+      }
+    }
+  },
   methods: {
     valueChange(val) {
       console.log('val', val)
+      this.$emit('value-change', { index: this.index, value: val })
+    },
+    impersonalityChange(val) {
+      console.log('选择的值', val)
+      this.$emit('value-change', { index: this.index, value: val })
     }
   }
 }

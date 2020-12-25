@@ -151,3 +151,13 @@ export function crmAccountWaterDetail(data) {
     data: data
   })
 }
+
+
+// crm 合同充值 添加/编辑
+export function CrmRefundSaveOrUpdate(data) {
+  return request({
+    url: 'CrmRefund/saveOrUpdate',
+    method: 'post',
+    data: data
+  })
+}

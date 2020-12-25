@@ -94,8 +94,6 @@ export default {
           const data = val.setting ? val : val.data
           const formType = data.formType
           var settingList = data.setting
-          console.log('data', data)
-          console.log('settingList11', settingList)
           if (settingList.length > 0 && typeof settingList[0] == 'string') {
             var array = []
             for (let index = 0; index < settingList.length; index++) {

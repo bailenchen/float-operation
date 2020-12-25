@@ -42,7 +42,7 @@
         :width="item.width"
         :label="item.label"
         show-overflow-tooltip/>
-      <el-table-column
+        <!-- <el-table-column
         label="操作"
         align="center"
         fixed="right"
@@ -51,7 +51,7 @@
           <el-button v-if="!scope.row.transactionType" disabled>编辑</el-button>
           <el-button v-if="scope.row.transactionType" @click="editHandle(scope.row)">编辑</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <div class="p-contianer">
       <el-pagination

@@ -110,6 +110,7 @@
                     :info-params="getInfoParams(item)"
                     :use-delete="item.useDelete"
                     :action="typeToAction"
+                    :cause="cause"
                     :relative-type="item.relativeType"
                     @value-change="fieldValueChange" />
 
@@ -136,9 +137,17 @@
             v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
             slot="header"
             class="examine-type">{{ examineInfo.examineType===1 ? '固定审批流' : '授权审批人' }}</div>
-          <create-examine-info
+          <!-- <create-examine-info
             ref="examineInfo"
             :types="'crm_' + crmType"
+            :other-types="otherTypes"
+            :money="contractMoney"
+            :discount="contractDiscount"
+            :types-id="action.id"
+            @value-change="examineValueChange" /> -->
+          <create-examine-info
+            ref="examineInfo"
+            :types="examineType(crmType)"
             :other-types="otherTypes"
             :money="contractMoney"
             :discount="contractDiscount"
@@ -184,7 +193,7 @@ import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
 import { crmLeadsSave } from '@/api/customermanagement/clue'
 import { crmCustomerSave } from '@/api/customermanagement/customer'
-import { crmAccountSave } from '@/api/customermanagement/account'
+import { crmAccountSave, crmRefundSaveOrUpdate } from '@/api/customermanagement/account'
 import { crmContactsSave } from '@/api/customermanagement/contacts'
 import {
   crmBusinessSave,
@@ -428,8 +437,9 @@ export default {
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
       contractDiscount: 100, // 合同折扣
-      isFlow: false
-      // surplusPrice: 0 // 合同变更中原合同剩余金额
+      isFlow: false,
+      cause: 1, // 返还原因 1: 客观 2: 主观
+      refundType: 1 // 合同充值返还类型 1:常规充值返还审批 2:特殊充值返还审批
     }
   },
   computed: {
@@ -448,7 +458,7 @@ export default {
     },
     /** 合同 回款 下展示审批人信息 */
     showExamine() {
-      if (this.crmType === 'contract' || this.crmType === 'receivables') {
+      if (this.crmType === 'contract' || this.crmType === 'receivables' || this.crmType === 'refundMoney') {
         if (this.examineInfo) {
           return this.examineInfo.status !== 0
         }
@@ -529,6 +539,13 @@ export default {
     }
   },
   methods: {
+    examineType(crmType) {
+      if (crmType == 'refundMoney') {
+        console.log(111)
+        return this.refundType == 1 ? 'refundMoney_convention' : 'refundMoney_special'
+      }
+      return `crm_${this.crmType}`
+    },
     // 审批信息值更新
     examineValueChange(data) {
       this.examineInfo = data
@@ -671,7 +688,8 @@ export default {
                   // customerId: item.value[0].customerId,
                     customerId: item.value[0].customerId,
                     checkStatus: 1,
-                    contractType: 1
+                    contractType: 1,
+                    contractStatus: 5
                   }
                 }
               } else {
@@ -1111,7 +1129,12 @@ export default {
               console.log('添加关联信息')
               element.relation = {
                 moduleType: 'refundMoney',
-                searchJson: { customerId: data.customerId, checkStatus: 1, contractType: 5 }
+                searchJson: {
+                  customerId: data.customerId,
+                  checkStatus: 1,
+                  contractType: 1,
+                  contractStatus: 5
+                }
               }
             }
           }
@@ -1142,9 +1165,12 @@ export default {
         if (item.data.formType === 'refundCombo') {
           this.crmForm.crmFields.forEach(_item => {
             if (_item.key == 'money') {
-              _item.value = item.value
+              _item.value = item.value.money
             }
           })
+        }
+        if (item.key === 'refund_cause_type') {
+          this.cause = item.value == '主观原因' ? 2 : 1
         }
       }
 
@@ -1647,7 +1673,7 @@ export default {
         list.push({
           authLevel: 3,
           defaultValue: '',
-          fieldName: 'cause',
+          fieldName: 'refundCauseDetails',
           fieldType: 1,
           formType: 'cause',
           inputTips: null,
@@ -1662,19 +1688,19 @@ export default {
         })
         list.push({
           authLevel: 3,
-          defaultValue: '',
           fieldName: 'refundCombo',
-          fieldType: 1,
           formType: 'refundCombo',
-          inputTips: null,
-          isNull: 0,
-          isUnique: 0,
-          label: 29,
-          name: '已购课程',
-          options: null,
-          setting: [],
-          type: 15,
-          value: ''
+          name: '已购课程'
+
+          // inputTips: null,
+          // isNull: 0,
+          // isUnique: 0,
+          // label: 29,
+          // name: '已购课程',
+          // options: null,
+          // setting: [],
+          // type: 15,
+          // value: ''
         })
       }
 
@@ -1999,10 +2025,12 @@ export default {
               { name: '常规充值返还', value: 1 },
               { name: '特殊充值返还', value: 2 }
             ]
+            params['value'] = 1
           }
 
-
-
+          if (item.fieldName == 'refund_cause_type') {
+            params['value'] = '客观原因'
+          }
 
           var arr = [
             'owner_user_id',
@@ -2949,25 +2977,36 @@ export default {
             params.field.splice(i--, 1)
           }
         }
-
-        // for (const k in params.entity) {
-        //   toHump(params.entity, k)
-        // }
       }
 
-      // function toHump(obj, k) {
-      //   var reg = /\_(\w)/g
-      //   if (reg.test(k)) {
-      //     var a = k.replace(/\_(\w)/g, function(all, letter) {
-      //       return letter.toUpperCase()
-      //     })
-      //     obj[a] = obj[k]
-      //     delete obj[k]
-      //   }
-      // }
+      // 充值返还
+      if (this.crmType == 'refundMoney') {
+        console.log('字段', params.field)
+        for (let i = 0; i < params.field.length; i++) {
+          const element = params.field[i]
+          if (element.fieldName == 'refundCombo') {
+            params.entity.product = element.value.product
+            params.entity.capital = element.value.capital
+          }
+        }
+        // 删除只用于展示的字段
+        for (let i = 0; i < params.field.length; i++) {
+          const element = params.field[i]
+          var res = [
+            'owner_user_id',
+            'dept_id',
+            'refundCombo'
+          ].includes(element.fieldName)
+          if (res) {
+            params.field.splice(i--, 1)
+          }
+        }
+      }
+
+
 
       console.log('请求参数: ', params)
-      // this.loading = false
+      this.loading = false
       // return
       crmRequest(params)
         .then(res => {
@@ -3030,6 +3069,8 @@ export default {
         return crmReceivablesPlanSave
       } else if (this.crmType == 'visit') {
         return crmReturnVisitSaveAPI
+      } else if (this.crmType == 'refundMoney') {
+        return crmRefundSaveOrUpdate
       }
     },
     /** 拼接上传传输 */

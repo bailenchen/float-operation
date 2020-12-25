@@ -7,7 +7,7 @@
  * @FilePath: \dz-72crm-qiwen\src\views\customermanagement\components\selectionHandle\OnlineRecharge.vue
 -->
 <template>
-  <el-dialog :visible="visible" :title="title[moneyType]" @close="handleCancel">
+  <el-dialog :visible="visible" :title="title[moneyType]" :modal-append-to-body="false" @close="handleCancel">
     <div class="main">
       <div style="height: 20px;"/>
       <el-form ref="form" :rules="rules[moneyType]" :model="form[moneyType]" label-width="100px">
@@ -38,7 +38,7 @@
             style="width:100%;"
             placeholder="选择日期时间"/>
 
-          <el-input v-if="item.type == 'text'" v-model="form[moneyType][item.prop]" @input="inputUpdate()"/>
+          <el-input v-if="item.type == 'text'" :disabled="disabled(item)" v-model="form[moneyType][item.prop]" @input="inputUpdate()"/>
 
           <add-image-list
             v-if="item.type == 'file'"
@@ -60,7 +60,7 @@
             :value="characterUser ? [characterUser] : []"
             @value-change="characterChange"/>
 
-          <el-input v-if="item.type == 'textarea'" v-model="form[moneyType][item.prop]" type="textarea"/>
+          <el-input v-if="item.type == 'textarea'" :maxlength="800" :autosize="{ minRows: 3}" v-model="form[moneyType][item.prop]" show-word-limit resize="none" type="textarea"/>
         </el-form-item>
 
         <create-sections
@@ -81,7 +81,8 @@
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
-      <el-button v-debounce="handleConfirm" type="primary">提交审核</el-button>
+      <el-button v-if="isSave" type="primary" @click="handleSave">保存</el-button>
+      <el-button v-debounce="handleConfirm" v-else type="primary">提交审核</el-button>
     </div>
   </el-dialog>
 </template>
@@ -125,7 +126,12 @@ export default {
     moneyType: {
       type: String,
       default: ''
-    }
+    },
+    isSave: {
+      type: Boolean,
+      default: false
+    },
+    money: [Number, String]
   },
   data() {
     var validateMoney = (rule, value, callback) => {
@@ -273,6 +279,10 @@ export default {
       form[this.moneyType].deductionTime = this.timeFormat()
       form[this.moneyType].transactionTime = this.timeFormat()
 
+      if (this.isSave) {
+        form[this.moneyType].price = this.money
+      }
+
       this.form = form
       if (!val) {
         this.$emit('reset-type')
@@ -315,7 +325,24 @@ export default {
       })
     },
 
-
+    /**
+     * 保存
+     */
+    handleSave() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.$emit('save', this.form)
+        }
+      })
+    },
+    disabled(item) {
+      console.log('item111', item)
+      if (this.isSave && item.prop == 'price') {
+        console.log()
+        return true
+      }
+      return false
+    },
 
     /**
      * 取消选择

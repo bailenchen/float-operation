@@ -55,7 +55,7 @@ import CRMCreateView from './CRMCreateView'
 import {
   filedGetTableField
 } from '@/api/customermanagement/common'
-import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
+import { crmCustomerQueryContract, crmCustomerIndex } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { mapGetters } from 'vuex'
@@ -212,6 +212,11 @@ export default {
      * 新建
      */
     createClick() {
+      // leads判断是否已到访
+      if (this.crmType == 'customer' && this.detail.followUpResults != '已到访') {
+        this.$message.warning('请先跟进至已到访')
+        return
+      }
       // 客户 和 商机 下新建合同
       if (this.crmType == 'business') {
         this.createActionInfo.data['customer'] = this.detail
@@ -223,6 +228,7 @@ export default {
           realname: this.userInfo.realname
         }
       }
+
       this.isCreate = true
     },
     createSaveSuccess() {

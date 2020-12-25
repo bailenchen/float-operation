@@ -5,7 +5,7 @@
         v-for="(item,index) in options"
         :key="index"
         :label="item.dictionaryName"
-        :value="item.dictionaryName"
+        :value="item.dictionaryId"
       />
     </el-select>
   </div>
