@@ -12,6 +12,7 @@ import {
   crmFieldColumnWidth,
   crmPoolFieldColumnWidth
 } from '@/api/customermanagement/common'
+import { queryDictionaryField } from '@/api/common'
 import {
   crmCustomerIndex,
   crmCustomerPool,
@@ -72,6 +73,9 @@ import {
   crmReceiveIndex,
   crmReceiveExcelAllExport
 } from '@/api/customermanagement/receive'
+import {
+  crmRefundQueryPageListAPI
+} from '@/api/customermanagement/refund'
 
 
 import Lockr from 'lockr'
@@ -110,7 +114,8 @@ export default {
       // 金额字段
       moneyFields: [],
 
-      clickField: '' // 点击列表字段名称
+      clickField: '', // 点击列表字段名称
+      dictionaries: null // 数据字典
     }
   },
 
@@ -264,6 +269,8 @@ export default {
         return crmInsideUserIndex
       } else if (this.crmType == 'receive') {
         return crmReceiveIndex
+      } else if (this.crmType == 'refund') {
+        return crmRefundQueryPageListAPI
       }
     },
     /** 获取字段 */
@@ -295,9 +302,9 @@ export default {
         const request = this.isSeas ? filedGetPoolTableField : filedGetTableField
         request(params)
           .then(res => {
-            console.log('请求的自动', res)
             const fieldList = []
             const moneyFields = []
+            const dictionaryArr = []
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
 
@@ -358,17 +365,42 @@ export default {
                 moneyFields.push(element.fieldName || '')
               }
 
+
+              if (element.formType == 'provinces') {
+                dictionaryArr.push(element)
+              }
+
               fieldList.push({
                 prop: element.fieldName,
+                provinces: element.formType == 'provinces', // 数据字典
                 label: element.name,
                 width: width
               })
             }
 
+            // this.dictionaries =
+            this.getDictionaries(dictionaryArr)
+
+            // 请求数据字典
+            // for (let index = 0; index < fieldList.length; index++) {
+            //   const element = fieldList[index]
+            //   const obj = {}
+            //   if (element.provinces) {
+            //     const params = {
+            //       dictionaryField: element.prop
+            //     }
+            //     queryDictionaryField(params).then(res => {
+            //       console.log('数据字典结果', res, this)
+            //       obj[element.prop] = res.data
+            //     }).catch(() => {})
+            //   }
+            // }
+
+
             this.moneyFields = moneyFields
             this.fieldList = fieldList
             // 获取好字段开始请求数据
-            this.getList()
+            // this.getList()
           })
           .catch(() => {
             this.loading = false
@@ -378,6 +410,37 @@ export default {
         this.getList()
       }
     },
+
+    getDictionaries(arr) {
+      console.log('字典数组', arr)
+      // var num = 0
+      // const obj = {}
+      const promiseArr = []
+      for (let index = 0; index < arr.length; index++) {
+        const element = arr[index]
+        const params = {
+          dictionaryField: element.fieldName
+        }
+        // let name = `promise${index}`
+        const fn = queryDictionaryField(params).then(res => {
+          return {
+            [element.fieldName]: res.data
+          }
+        }).catch(() => {})
+        promiseArr.push(fn)
+      }
+
+      Promise.all(promiseArr).then(res => {
+        const dictionaries = {}
+        res.forEach((item, index) => {
+          dictionaries[arr[index].fieldName] = item[arr[index].fieldName]
+        })
+        console.log('拆分好的字典', dictionaries)
+        this.dictionaries = dictionaries
+        this.getList()
+      }).catch(() => {})
+    },
+
     /** 格式化字段 */
     fieldFormatter(row, column, cellValue) {
       if (this.moneyFields.includes(column.property)) {
@@ -426,6 +489,39 @@ export default {
             5: '支付宝交易',
             6: '转账交易'
           }[row[column.property]]
+        } else if (column.property === 'checkStatus') {
+          return {
+            0: '待审核',
+            1: '通过',
+            2: '拒绝',
+            3: '审核中',
+            4: '撤回',
+            5: '未提交',
+            6: '创建 ',
+            7: '已删除',
+            8: '作废',
+            9: '家长审核中',
+            10: '家长拒绝'
+          }[row[column.property]]
+        }
+      }
+
+      if (this.crmType == 'refund') {
+        if (column.property === 'refundType') {
+          return {
+            1: '常规充值返还',
+            2: '特殊充值返还'
+          }[row[column.property]]
+        } else if (column.property === 'refundWayId') {
+          let res = ''
+          for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
+            const element = this.dictionaries.refundWayId[index]
+            if (row[column.property] == element.dictionaryId) {
+              res = element.dictionaryName
+              break
+            }
+          }
+          return res
         } else if (column.property === 'checkStatus') {
           return {
             0: '待审核',
@@ -630,6 +726,13 @@ export default {
           this.rowID = row.contractId
           this.rowType = 'contract'
           this.clickField = 'num'
+          this.showDview = true
+        }
+      } else if (this.crmType == 'refund') {
+        if (column.property === 'num') {
+          this.rowID = row.refundId
+          this.rowType = 'refund'
+          this.clickField = column.property
           this.showDview = true
         }
       }

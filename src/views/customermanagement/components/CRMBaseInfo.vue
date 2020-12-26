@@ -276,9 +276,144 @@ export default {
 
         filedGetInformation(params)
           .then(res => {
-            console.log('as')
             const baseList = []
             const systemList = []
+            console.log('数据', res.data)
+
+            // 充值返还
+            console.log('充值返还1', this.crmType == 'refund')
+            if (this.crmType == 'refund') {
+              const baseList = [
+                {
+                  name: '合同充值返编号',
+                  formType: 'text',
+                  value: res.data.refund.num
+                },
+                {
+                  name: '学员编号',
+                  formType: 'text',
+                  value: res.data.refund.leadsNumber
+                },
+                {
+                  name: '学员姓名',
+                  formType: 'text',
+                  value: res.data.refund.customerName
+                },
+                {
+                  name: '所属中心',
+                  formType: 'text',
+                  value: res.data.refund.deptIdName
+                },
+                {
+                  name: '合同充值返还日期',
+                  formType: 'date',
+                  value: res.data.refund.refundTime
+                },
+                {
+                  name: '合同充值返还金额（元）',
+                  formType: 'text',
+                  value: res.data.refund.money
+                },
+                {
+                  name: '合同充值返还方式',
+                  formType: 'transactionTime',
+                  value: {
+                    '1': '请求数据字典',
+                    '2': '请求数据字典',
+                    '3': '请求数据字典',
+                    '4': '请求数据字典',
+                    '5': '请求数据字典',
+                    '6': '请求数据字典'
+                  }[res.data.refund.refundWayId]
+                },
+                {
+                  name: '合同充值返还类型',
+                  formType: 'text',
+                  value: {
+                    1: '常规充值返还',
+                    2: '特殊充值返还'
+                  }[res.data.refund.refundType]
+                },
+                {
+                  name: '教育顾问',
+                  formType: 'text',
+                  value: res.data.refund.ownerUserName
+                },
+                {
+                  name: '备注',
+                  formType: 'text',
+                  value: res.data.refund.remarks
+                },
+                {
+                  name: '审批状态',
+                  formType: 'date',
+                  value: {
+                    0: '待审核',
+                    1: '通过',
+                    2: '拒绝',
+                    3: '审核中',
+                    4: '撤回',
+                    5: '未提交',
+                    6: '创建 ',
+                    7: '已删除',
+                    8: '作废',
+                    9: '家长审核中',
+                    10: '家长拒绝'
+
+                  }[res.data.refund.checkStatus]
+                }
+              ]
+              const capitalList = [
+                {
+                  name: '支付方式',
+                  formType: 'text',
+                  value: {
+                    1: '现金交易',
+                    2: '刷卡交易',
+                    3: '支票交易',
+                    4: '微信交易',
+                    5: '支付宝交易',
+                    6: '转账交易'
+                  }[res.data.refund.capital.payment]
+                },
+                {
+                  name: '用户账户',
+                  formType: 'text',
+                  value: res.data.refund.capital.account
+                },
+                {
+                  name: '资金退款金额（元）',
+                  formType: 'text',
+                  value: res.data.refund.capital.refundMoney
+                },
+                {
+                  name: '交易时间',
+                  formType: 'date',
+                  value: res.data.refund.capital.dealTime
+                },
+                {
+                  name: '退款人',
+                  formType: 'text',
+                  value: res.data.refund.capital.refundUserName
+                },
+                {
+                  name: '备注',
+                  formType: 'text',
+                  value: res.data.refund.capital.remarks
+                }
+
+              ]
+              this.list = [{
+                name: '基本信息',
+                list: baseList
+              }, {
+                name: '资金退款',
+                list: capitalList
+              }]
+              this.loading = false
+              return
+            }
+
             res.data.forEach(item => {
               if (item.formType === 'floatnumber') {
                 item.value = separator(item.value)

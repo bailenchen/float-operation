@@ -254,7 +254,7 @@ export default {
         return require(`@/assets/img/crm/product.png`)
       } else if (this.crmType == 'capitalAccount') {
         return require(`@/assets/img/crm/customer.png`)
-      } else if (this.crmType == 'water' || this.crmType == 'student' || this.crmType == 'receive') {
+      } else if (this.crmType == 'water' || this.crmType == 'student' || this.crmType == 'receive' || this.crmType == 'refund') {
         return require(`@/assets/img/crm/contract.png`)
       }
 
@@ -292,7 +292,8 @@ export default {
           visit: '回访',
           invoice: '发票',
           water: '交易流水号',
-          receive: '合同充值编号'
+          receive: '合同充值编号',
+          refund: '合同充值返还编号'
         }[this.crmType] || ''
       )
     },
@@ -318,6 +319,8 @@ export default {
       } else if (this.crmType == 'contract') {
         return this.detail[this.clickField]
       } else if (this.crmType == 'receive') {
+        return this.detail[this.clickField]
+      } else if (this.crmType == 'refund') {
         return this.detail[this.clickField]
       }
       console.log(this.detail.name)

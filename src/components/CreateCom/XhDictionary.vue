@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-select v-model="value" placeholder="请选择" @change="handleChange">
+    <el-select v-model="value" placeholder="请选择" style="width: 100%;" @change="handleChange">
       <el-option
         v-for="(item,index) in options"
         :key="index"
@@ -20,6 +20,7 @@ export default {
     index: Number,
     /** 包含数据源 */
     item: Object,
+    dictionaryField: String,
     disabled: {
       type: Boolean,
       default: false
@@ -33,7 +34,8 @@ export default {
   },
   created() {
     const params = {
-      dictionaryField: 'refund_way_id'
+      // dictionaryField: 'refund_way_id'
+      dictionaryField: this.dictionaryField
     }
     queryDictionaryField(params).then(res => {
       console.log('res', res)
@@ -42,9 +44,7 @@ export default {
   },
   methods: {
     handleChange(value) {
-      console.log('选中的值', value)
       this.value = value
-
       this.$emit('value-change', {
         index: this.index,
         value

@@ -17,7 +17,7 @@ export default {
       list.push(
         {
           title: '合同充值返还',
-          path: 'customer',
+          path: 'refund',
           icon: require('@/assets/img/crm/customer.png')
         }
       )

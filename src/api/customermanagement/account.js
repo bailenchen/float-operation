@@ -153,11 +153,26 @@ export function crmAccountWaterDetail(data) {
 }
 
 
-// crm 合同充值 添加/编辑
-export function CrmRefundSaveOrUpdate(data) {
-  return request({
-    url: 'CrmRefund/saveOrUpdate',
-    method: 'post',
-    data: data
-  })
-}
+// // crm 合同充值 添加/编辑
+// export function crmRefundSaveOrUpdate(data) {
+//   return request({
+//     url: 'CrmRefund/saveOrUpdate',
+//     method: 'post',
+//     data: data,
+//     headers: {
+//       'Content-Type': 'application/json;charset=UTF-8'
+//     }
+//   })
+// }
+
+// // crm 合同充值 添加/编辑
+// export function crmRefundQueryPageList(data) {
+//   return request({
+//     url: 'CrmRefund/queryPageList',
+//     method: 'post',
+//     data: data,
+//     headers: {
+//       'Content-Type': 'application/json;charset=UTF-8'
+//     }
+//   })
+// }

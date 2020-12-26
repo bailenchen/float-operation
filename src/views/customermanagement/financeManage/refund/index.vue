@@ -118,20 +118,7 @@
           </template>
         </el-table-column>
         <el-table-column/>
-        <el-table-column
-          label="关注"
-          align="center"
-          fixed="right"
-          width="60">
-          <template slot-scope="scope">
-            <el-tooltip :content="scope.row.star == 0 ? '添加关注' : '取消关注'" effect="dark" placement="top">
-              <i
-                :class="{active: scope.row.star != 0}"
-                class="wk wk-focus-on focus-icon"
-                @click="toggleStar(scope.row)" />
-            </el-tooltip>
-          </template>
-        </el-table-column>
+
         <el-table-column
           :resizable="false"
           fixed="right"
@@ -164,6 +151,7 @@
       :visible.sync="showDview"
       :crm-type="rowType"
       :model-data="modelData"
+      :click-field="clickField"
       :id="rowID"
       class="d-view"
       @handle="handleHandle"/>
@@ -187,18 +175,18 @@ export default {
     CallCenter
   },
   filters: {
-    dealIcon(statu) {
-      return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
-    },
+    // dealIcon(statu) {
+    //   return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    // },
 
-    dealName(statu) {
-      return statu == 1 ? '已成交' : '未成交'
+    refundTypeName(statu) {
+      return statu == 1 ? '常规充值返还' : '特殊充值返还'
     }
   },
   mixins: [table, menuMixins],
   data() {
     return {
-      crmType: 'customer',
+      crmType: 'refund',
       showCount: 0,
       modelData: {}
     }
@@ -235,6 +223,8 @@ export default {
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (column.property === 'customerName') {
+        return 'can-visit--underline'
+      } else if (column.property === 'num') {
         return 'can-visit--underline'
       } else if (column.property === 'businessCheck') {
         return 'can-visit'

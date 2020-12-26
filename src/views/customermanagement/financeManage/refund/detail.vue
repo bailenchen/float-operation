@@ -6,7 +6,7 @@
     :no-listener-class="noListenerClass"
     :body-style="{padding: 0, height: '100%'}"
     xs-empty-icon="nopermission"
-    xs-empty-text="暂无权限"
+    xs-empty-text="暂无权限1"
     @afterEnter="viewAfterEnter"
     @close="hideView">
     <div
@@ -26,6 +26,7 @@
           :id="id"
           :pool-id="poolId"
           :crm-type="crmType"
+          :click-field="clickField"
           @handle="detailHeadHandle"
           @close="hideView">
           <template slot="name">
@@ -59,39 +60,17 @@
                 :pool-id="poolId"
                 :handle="activityHandle"
                 :is-seas="isSeasDetail"
+
                 :crm-type="crmType"
                 :contacts-id.sync="firstContactsId"
                 @on-handle="detailHeadHandle" />
             </el-tab-pane>
           </el-tabs>
-          <transition name="slide-fade">
-            <el-tabs
-              v-show="showImportInfo"
-              value="chiefly-contacts"
-              type="border-card"
-              class="d-container-bd--right">
-              <el-tab-pane
-                label="重要信息"
-                name="chiefly-contacts"
-                lazy>
-                <chiefly-contacts
-                  :contacts-id="firstContactsId"
-                  :id="id"
-                  :pool-id="poolId"
-                  :crm-type="crmType"
-                  :is-seas="isSeasDetail"
-                  @add="addChieflyContacts" />
-              </el-tab-pane>
-            </el-tabs>
-          </transition>
+
         </flexbox>
       </flexbox>
     </div>
-    <el-button
-      class="firse-button"
-      @click="showImportInfo= !showImportInfo">重<br>要<br>信<br>息<br><i
-        :class="{ 'is-reverse': !showImportInfo }"
-        class="el-icon-arrow-right el-icon--right" /></el-button>
+
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
@@ -102,13 +81,13 @@
 </template>
 
 <script>
-import { crmCustomerRead } from '@/api/customermanagement/customer'
-
+// import { crmCustomerRead } from '@/api/customermanagement/customer'
+import { crmRefundReadAPI } from '@/api/customermanagement/refund'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../../components/CRMDetailHead'
 import Activity from '../../components/activity/index' // 活动
 import ChieflyContacts from '../../components/ChieflyContacts' // 首要联系人
-import CRMEditBaseInfo from '../../components/CRMEditBaseInfo' // 基本信息
+import CRMBaseInfo from '../../components/CRMBaseInfo' // 基本信息
 import RelativeContacts from '../../components/RelativeContacts' // 相关联系人
 import RelativeBusiness from '../../components/RelativeBusiness' // 相关商机
 import RelativeContract from '../../components/RelativeContract' // 相关合同
@@ -124,14 +103,13 @@ import CRMCreateView from '../../components/CRMCreateView' // 新建页面
 import detail from '../../mixins/detail'
 
 export default {
-  // 客户管理 的 客户详情
-  name: 'AccountDetail',
+  name: 'RefundDetail',
   components: {
     SlideView,
     Activity,
     ChieflyContacts,
     CRMDetailHead,
-    CRMEditBaseInfo,
+    CRMBaseInfo,
     RelativeContacts,
     RelativeBusiness,
     RelativeContract,
@@ -175,21 +153,24 @@ export default {
       default: () => {
         return {}
       }
+    },
+    clickField: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       // 展示加载loading
       loading: false,
-      crmType: 'customer',
+      crmType: 'refund',
       headDetails: [
         { title: '学员姓名', value: '' },
-        { title: '学员来源', value: '' },
-        { title: '第一联系人电话', value: '' },
-        { title: '教学顾问', value: '' },
-        { title: '创建时间', value: '' }
+        { title: '合同充值返还日期', value: '' },
+        { title: '合同充值返还金额（元）', value: '' },
+        { title: '课程顾问', value: '' }
       ],
-      tabCurrentName: 'Activity',
+      tabCurrentName: 'CRMBaseInfo',
       // 编辑操作
       createActionInfo: null,
       createCRMType: '',
@@ -230,33 +211,9 @@ export default {
   computed: {
     tabNames() {
       var tempsTabs = []
-      tempsTabs.push({ label: '活动', name: 'Activity' })
-      if (this.crm.customer && this.crm.customer.read) {
-        tempsTabs.push({ label: '详细资料', name: 'CRMEditBaseInfo' })
+      if (this.crm.refund && this.crm.refund.read) {
+        tempsTabs.push({ label: '详细资料', name: 'CRMBaseInfo' })
       }
-      // if (this.crm.contacts && this.crm.contacts.index) {
-      //   tempsTabs.push({ label: this.getTabName('联系人', this.tabsNumber.contactCount), name: 'RelativeContacts' })
-      // }
-
-      // tempsTabs.push({ label: this.getTabName('团队成员', this.tabsNumber.memberCount), name: 'RelativeTeam' })
-
-      // if (this.crm.business && this.crm.business.index) {
-      //   tempsTabs.push({ label: this.getTabName('商机', this.tabsNumber.businessCount), name: 'RelativeBusiness' })
-      // }
-
-      if (this.crm.contract && this.crm.contract.index) {
-        tempsTabs.push({ label: this.getTabName('合同', this.tabsNumber.contractCount), name: 'RelativeContract' })
-      }
-      // if (this.crm.receivables && this.crm.receivables.index) {
-      //   tempsTabs.push({ label: this.getTabName('回款', this.tabsNumber.receivablesCount), name: 'RelativeReturnMoney' })
-      // }
-      // if (this.crm.visit && this.crm.visit.index) {
-      //   tempsTabs.push({ label: this.getTabName('回访', this.tabsNumber.returnVisitCount), name: 'RelativeVisit' })
-      // }
-      //
-      // if (this.crm.invoice && this.crm.invoice.index) {
-      //   tempsTabs.push({ label: this.getTabName('发票', this.tabsNumber.invoiceCount), name: 'RelativeInvoice' })
-      // }
 
       if (this.tabsNumber && this.tabsNumber.hasOwnProperty('callRecordCount')) {
         tempsTabs.push({ label: this.getTabName('呼叫记录', this.tabsNumber.callRecordCount), name: 'RelativeCallRecord' })
@@ -346,49 +303,116 @@ export default {
       this.firstContactsId = ''
       this.loading = true
       const params = {
-        customerId: this.id
+        refundId: this.id
       }
 
       if (this.poolId) {
         params.poolId = this.poolId
       }
 
-      crmCustomerRead(params)
+      crmRefundReadAPI(params)
         .then(res => {
           this.loading = false
           this.detailData = res.data
-          this.firstContactsId = this.detailData.contactsId
+          // this.getBaseInfo(res.data)
 
-          // 负责人
-          this.headDetails[0].value = res.data.客户级别
-          const dealItem = this.headDetails[1]
-          dealItem.showIcon = true
-          if (res.data.dealStatus == 1) {
-            dealItem.icon = 'wk wk-success deal-suc'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#20b559',
-              marginRight: '3px'
-            }
-            dealItem.value = '已成交'
-          } else {
-            dealItem.icon = 'wk wk-close deal-un'
-            dealItem.style = {
-              fontSize: '14px',
-              color: '#f95a5a',
-              marginRight: '3px'
-            }
-            dealItem.value = '未成交'
-          }
-
-          this.headDetails[2].title = this.isSeasDetail ? '' : '负责人'
-          this.headDetails[2].value = res.data.ownerUserName
-          this.headDetails[3].value = res.data.updateTime
+          this.headDetails[0].value = res.data.customerName
+          this.headDetails[1].value = res.data.refundTime
+          this.headDetails[2].value = res.data.money
+          this.headDetails[3].value = res.data.ownerUserName
         })
         .catch(() => {
           this.loading = false
           this.hideView()
         })
+    },
+
+    getBaseInfo(data) {
+      this.fieldList = [
+        {
+          name: '基本信息',
+          list: [
+            {
+              name: '合同充值返编号',
+              formType: 'text',
+              value: data.num
+            },
+            {
+              name: '学员编号',
+              formType: 'text',
+              value: data.leadsNumber
+            },
+            {
+              name: '学员姓名',
+              formType: 'text',
+              value: data.customerName
+            },
+            {
+              name: '所属中心',
+              formType: 'text',
+              value: data.deptIdName
+            },
+            {
+              name: '合同充值返还日期',
+              formType: 'date',
+              value: data.refundTime
+            },
+            {
+              name: '合同充值返还金额（元）',
+              formType: 'text',
+              value: data.money
+            },
+            {
+              name: '合同充值返还方式',
+              formType: 'transactionTime',
+              value: {
+                '1': '现金交易',
+                '2': '刷卡交易',
+                '3': '支票交易',
+                '4': '微信交易',
+                '5': '支付宝交易',
+                '6': '转账交易'
+              }[data.refundWayId]
+            },
+            {
+              name: '合同充值返还类型',
+              formType: 'text',
+              value: {
+                1: '常规充值返还',
+                2: '特殊充值返还'
+              }[data.refundType]
+            },
+            {
+              name: '教育顾问',
+              formType: 'text',
+              value: data.ownerUserName
+            },
+            {
+              name: '备注',
+              formType: 'text',
+              value: data.remarks
+            },
+            {
+              name: '审批状态',
+              formType: 'date',
+              value: {
+                0: '待审核',
+                1: '通过',
+                2: '拒绝',
+                3: '审核中',
+                4: '撤回',
+                5: '未提交',
+                6: '创建 ',
+                7: '已删除',
+                8: '作废',
+                9: '家长审核中',
+                10: '家长拒绝'
+
+              }[data.checkStatus]
+            }
+          ]
+        }
+      ]
     },
 
     /**

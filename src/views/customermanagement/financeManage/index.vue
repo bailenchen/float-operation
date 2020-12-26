@@ -28,7 +28,7 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (!to.params || !['receive', 'customer'].includes(to.params.type)) {
+    if (!to.params || !['receive', 'refund'].includes(to.params.type)) {
       next({
         name: 'FinanceManageIndex',
         params: {

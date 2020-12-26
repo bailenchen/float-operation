@@ -23,7 +23,8 @@ export default {
   water: 23,
   insideUser: 26,
   receive: 27,
-  refundMoney: 29,
+  // refundMoney: 29,
+  refund: 29,
   classroom: 30,
   class: 31,
 
@@ -43,7 +44,8 @@ export default {
     invoice: 18,
     insideUser: 26,
     receive: 27,
-    refundMoney: 29,
+    // refundMoney: 29,
+    refund: 29,
     classroom: 30,
     class: 31
   },
@@ -64,7 +66,8 @@ export default {
     18: 'invoice',
     26: 'insideUser',
     27: 'receive',
-    29: 'refundMoney',
+    // 29: 'refundMoney',
+    29: 'refund',
     30: 'classroom',
     31: 'class'
   },
@@ -106,7 +109,8 @@ export default {
     invoice: '发票',
     insideUser: '内部通讯录',
     receive: '合同充值',
-    refundMoney: '合同充值返还',
+    // refundMoney: '合同充值返还',
+    refund: '合同充值返还',
     classroom: '教室管理',
     class: '班级管理'
   },

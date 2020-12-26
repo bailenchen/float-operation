@@ -37,7 +37,7 @@
     <c-r-m-create-view
       v-if="isCreate"
       :action="createActionInfo"
-      crm-type="refundMoney"
+      crm-type="refund"
       @save-success="createSaveSuccess"
       @hiden-view="isCreate=false"/>
   </div>
