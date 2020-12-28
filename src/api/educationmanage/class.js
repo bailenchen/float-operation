@@ -55,3 +55,24 @@ export function crmClassExcelAllExport(data) {
     }
   })
 }
+
+// 班级管理 排课-添加学员--获取合同
+export function crmClassContractIndext(data) {
+  return request({
+    url: 'educationalClass/queryList',
+    method: 'post',
+    data: data
+  })
+}
+
+// 班级管理 排课保存
+export function crmClassRankCourse(data) {
+  return request({
+    url: 'educationalClass/courseClass',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

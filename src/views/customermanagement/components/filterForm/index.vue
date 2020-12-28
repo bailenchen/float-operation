@@ -323,7 +323,7 @@ export default {
           formType: 'coaching_methods',
           req: QueryCoachingMethods,
           labelField: 'name',
-          valueField: 'name'
+          valueField: 'dictionaryId'
         },
         {
           formType: 'subject',

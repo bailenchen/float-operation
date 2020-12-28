@@ -52,7 +52,8 @@
           show-overflow-tooltip>
           <template slot-scope="scope">
             <template>
-              {{ fieldFormatter(scope.row, scope.column) }}
+              <span v-if="item.prop == 'classConfirmationName'" style="color:red;">{{ scope.row[item.prop] }}</span>
+              <span v-else>{{ fieldFormatter(scope.row, scope.column) }}</span>
             </template>
           </template>
         </el-table-column>

@@ -1,4 +1,4 @@
-/** crm自定义列表 公共逻辑 */
+/** 教务模块列表 公共逻辑 */
 import {
   mapGetters
 } from 'vuex'
@@ -8,48 +8,10 @@ import CRMTableHead from '../../customermanagement/components/CRMTableHead'
 
 import { crmClassroomIndex, crmClassroomExcelAllExport } from '@/api/educationmanage/classroom'
 import { crmClassIndex, crmClassExcelAllExport } from '@/api/educationmanage/class'
+import { crmClassSchduleIndex, crmClassSchduleExcelAllExport } from '@/api/educationmanage/classSchedule'
 import {
-  crmFieldColumnWidth,
-  crmPoolFieldColumnWidth
+  crmFieldColumnWidth
 } from '@/api/customermanagement/common'
-import {
-  crmCustomerExcelAllExport,
-  crmCustomerPoolExcelAllExport
-} from '@/api/customermanagement/customer'
-import {
-  CrmInsideUserExcelAllExport
-} from '@/api/customermanagement/address'
-import {
-  crmAccountExcelAllExport
-} from '@/api/customermanagement/account'
-import {
-  CrmWeixinLeadsExportLeadsAPI
-} from '@/api/customermanagement/applet'
-import {
-  crmLeadsExcelAllExport
-} from '@/api/customermanagement/clue'
-import {
-  crmContactsExcelAllExport
-} from '@/api/customermanagement/contacts'
-import {
-  crmBusinessExcelAllExportAPI
-} from '@/api/customermanagement/business'
-import {
-  crmContractExcelAllExportAPI
-} from '@/api/customermanagement/contract'
-import {
-  crmProductExcelAllExport
-} from '@/api/customermanagement/product'
-import {
-  crmProductSetMealExcelAllExport
-} from '@/api/customermanagement/meal'
-import {
-  crmReceivablesExcelAllExportAPI
-} from '@/api/customermanagement/money'
-import {
-  crmReceiveExcelAllExport
-} from '@/api/customermanagement/receive'
-
 
 import Lockr from 'lockr'
 import { Loading } from 'element-ui'
@@ -88,29 +50,17 @@ export default {
   computed: {
     ...mapGetters(['education'])
   },
+  created() {
+    if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
+      if (this.education[this.crmType].index) {
+        this.getFieldList()
+      }
+    }
+  },
   mounted() {
     /** 控制table的高度 */
     window.onresize = () => {
       this.updateTableHeight()
-    }
-    if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
-      if (this.education[this.crmType].index) {
-        // this.loading = true
-        this.getFieldList()
-      }
-      this.list = [
-        {
-          a: '教室编号',
-          b: '中心',
-          c: '教室名称',
-          d: '开通时间',
-          e: '添加人',
-          f: '教室状态',
-          g: '关联老师',
-          h: '最后修改人',
-          i: '最后修改时间'
-        }
-      ]
     }
   },
 
@@ -123,7 +73,7 @@ export default {
         page: this.currentPage,
         limit: this.pageSize,
         search: this.search,
-        type: crmTypeModel[this.crmType] // 9是公海
+        type: crmTypeModel[this.crmType]
       }
       if (this.sortData.order) {
         params.sortField = this.sortData.prop
@@ -165,6 +115,8 @@ export default {
         return crmClassroomIndex
       } else if (this.crmType == 'class') {
         return crmClassIndex
+      } else if (this.crmType == 'classschedule') {
+        return crmClassSchduleIndex
       }
     },
     genListHead(obj) {
@@ -178,7 +130,7 @@ export default {
       return list
     },
     /** 获取字段 */
-    getFieldList(force) {
+    getFieldList() {
       const fieldObj = {
         // 教室管理
         classroom: {
@@ -211,19 +163,19 @@ export default {
         },
         // 班级排课表
         classschedule: {
-          a: '中心',
-          b: '班级类型',
-          c: '班级名称',
-          d: '教室名称',
-          e: '年级',
-          f: '科目',
-          g: '学科老师',
-          h: '状态',
-          i: '上课时间',
-          j: '时间段',
-          k: '排课人数,',
-          l: '实际上课人数',
-          m: '最大上课人数'
+          deptName: '中心',
+          coachType: '班级类型',
+          className: '班级名称',
+          classroomName: '教室名称',
+          gradeName: '年级',
+          subjectName: '科目',
+          subjectTeacherName: '学科老师',
+          classConfirmationName: '状态',
+          classTime: '上课时间',
+          timeSlot: '时间段',
+          actualNumber: '排课人数,',
+          rowNumber: '实际上课人数',
+          totalNumber: '最大上课人数'
         },
         // 学员排课表
         studentschedule: {
@@ -251,7 +203,6 @@ export default {
       } else {
         return
       }
-      // this.getList()
     },
     /** 格式化字段 */
     fieldFormatter(row, column, cellValue) {
@@ -275,7 +226,7 @@ export default {
       }
     },
     /**
-     * 导出 线索 客户 联系人 产品
+     * 导出
      * @param {*} data
      */
     // 导出操作
@@ -283,39 +234,17 @@ export default {
       var params = {
         search: this.search
       }
-      if (this.crmType == 'applet') {
-        params.type = this.appletType
-      }
       if (this.sceneId) {
         params.sceneId = this.sceneId
       }
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
         params.data = this.filterObj
       }
-      let request
-      // 公海的请求
-      if (this.isSeas) {
-        request = crmCustomerPoolExcelAllExport
-        params.poolId = this.poolId
-      } else {
-        const keytype = this.crmType === 'student' ? 'customer' : this.crmType
-        request = {
-          customer: crmCustomerExcelAllExport,
-          capitalAccount: crmAccountExcelAllExport,
-          leads: crmLeadsExcelAllExport,
-          contacts: crmContactsExcelAllExport,
-          applet: CrmWeixinLeadsExportLeadsAPI,
-          business: crmBusinessExcelAllExportAPI,
-          contract: crmContractExcelAllExportAPI,
-          receivables: crmReceivablesExcelAllExportAPI,
-          product: crmProductExcelAllExport,
-          productSetMeal: crmProductSetMealExcelAllExport,
-          insideUser: CrmInsideUserExcelAllExport,
-          receive: crmReceiveExcelAllExport,
-          classroom: crmClassroomExcelAllExport,
-          class: crmClassExcelAllExport
-        }[keytype]
-      }
+      const request = {
+        classroom: crmClassroomExcelAllExport,
+        class: crmClassExcelAllExport,
+        classschedule: crmClassSchduleExcelAllExport
+      }[this.crmType]
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
       request(params)
         .then(res => {
@@ -341,7 +270,6 @@ export default {
     },
     /** 筛选操作 */
     handleFilter(data) {
-      console.log(data, 'mmmmm')
       this.filterObj = data
       var offsetHei = document.documentElement.clientHeight
       var removeHeight = Object.keys(this.filterObj).length > 0 ? 295 : 235
@@ -354,7 +282,7 @@ export default {
       this.sceneId = data.id
       this.sceneName = data.name
       this.currentPage = 1
-      this.getFieldList()
+      this.getList()
     },
     /** 勾选操作 */
     handleHandle() {
@@ -396,16 +324,8 @@ export default {
           width: newWidth
         }
 
-        if (this.isSeas) {
-          if (!this.poolId) {
-            return
-          }
-          request = crmPoolFieldColumnWidth
-          params.poolId = this.poolId
-        } else {
-          request = crmFieldColumnWidth
-          params.types = `crm_${this.crmType}`
-        }
+        request = crmFieldColumnWidth
+        params.types = `crm_${this.crmType}`
 
         request(params)
           .then(res => {

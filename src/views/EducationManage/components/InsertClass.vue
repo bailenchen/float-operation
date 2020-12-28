@@ -16,11 +16,113 @@
         class="crm-create-flex"
         direction="column"
         align="stretch">
-        <div
-          class="crm-create-body">
-          <div>123</div>
+        <create-sections title="班级基本信息">
+          <div class="crm-create-body">
+            <div class="content create-sections-content">
+              <flexbox
+                :gutter="0"
+                align="stretch"
+                wrap="wrap"
+                style="padding: 10px 8px 0;">
+                <flexbox-item
+                  v-for="(item, index) in baseInfoList"
+                  :span="false ? 12 : 0.25"
+                  :key="index">
+                  <flexbox
+                    align="stretch"
+                    direction="column"
+                    class="b-cell-b">
+                    <div class="b-cell-name">{{ item.name }}</div>
+                    <div class="b-cell-value">{{ item.value }}</div>
+                  </flexbox>
+                </flexbox-item>
+              </flexbox>
+            </div>
 
-        </div>
+          </div>
+        </create-sections>
+        <create-sections title="上课时间段">
+          <div class="crm-create-body" style="margin-top:10px;">
+            <div class="content create-sections-content">
+              <el-table
+                id="crm-table"
+                :row-height="40"
+                :data="list"
+                :height="350"
+                class="n-table--border"
+                use-virtual
+                stripe
+                border
+                highlight-current-row
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  show-overflow-tooltip
+                  type="selection"
+                  align="center"
+                  width="55"/>
+                <el-table-column
+                  v-for="(item, index) in timeLists"
+                  :key="index"
+                  :fixed="index==0"
+                  :prop="item.prop"
+                  :label="item.label"
+                  :width="item.width"
+                  align="center"
+                  show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
+                    <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
+                    <span v-else>{{ scope.row[item.prop] }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column/>
+              </el-table>
+            </div>
+
+          </div>
+        </create-sections>
+        <create-sections title="学员名称" class="student-wrap">
+          <el-button type="primary" size="mini" class="add-customer">添加学员</el-button>
+          <div class="crm-create-body" style="margin-top:10px;">
+            <div class="content create-sections-content">
+              <el-table
+                id="crm-table"
+                :row-height="40"
+                :data="list"
+                :height="350"
+                class="n-table--border"
+                use-virtual
+                stripe
+                border
+                highlight-current-row
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  show-overflow-tooltip
+                  type="selection"
+                  align="center"
+                  width="55"/>
+                <el-table-column
+                  v-for="(item, index) in fieldLists"
+                  :key="index"
+                  :fixed="index==0"
+                  :prop="item.prop"
+                  :label="item.label"
+                  :width="item.width"
+                  align="center"
+                  show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
+                    <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
+                    <span v-else>{{ scope.row[item.prop] }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column/>
+              </el-table>
+            </div>
+          </div>
+        </create-sections>
       </flexbox>
       <div
         class="handle-bar">
@@ -38,14 +140,16 @@
 
 <script>
 import CreateView from '@/components/CreateView'
-import {
-  sysConfigDataDictarySaveAPI
-} from '@/api/systemManagement/SystemCustomer'
+import CreateSections from '@/components/CreateSections'
+// import {
+//   sysConfigDataDictarySaveAPI
+// } from '@/api/systemManagement/SystemCustomer'
 
 export default {
   name: 'InsertClass',
   components: {
-    CreateView
+    CreateView,
+    CreateSections
   },
   props: {
     // 操作数据
@@ -58,19 +162,69 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: false,
 
+      fieldObj: {
+        deptName: '中心',
+        className: '班级名称',
+        subjectTeacherName: '学科老师',
+        coachType: '上课时间',
+        classroomName: '教室',
+        subjectName: '科目',
+        gradeName: '年级',
+        gradeNames: '上课时段',
+        totalNumber: '次数',
+        classType: '班级类型',
+        remarks: '备注'
+      },
+      baseInfoList: [],
+
+      // 上课时段
+      timeLists: [
+        { prop: 'num', label: '序号' },
+        { prop: '', label: '日期/时间' },
+        { prop: '', label: '上课学员' },
+        { prop: '', label: '实际学员/最大人数' }
+      ],
+
+      // 学员合同表
+      list: [{ num: '123465' }],
+      fieldLists: [
+        { prop: 'num', label: '合同编号' },
+        { prop: '', label: '合同属性' },
+        { prop: '', label: '合同类型' },
+        { prop: '', label: '签约日期' },
+        { prop: '', label: '是否赠送' },
+        { prop: '', label: '科目' },
+        { prop: '', label: '课次' },
+        { prop: '', label: '已排课次' },
+        { prop: '', label: '未排课次' },
+        { prop: '', label: '已完成课次' }
+      ]
     }
   },
   computed: {
 
   },
   created() {
-
+    for (const key in this.fieldObj) {
+      if (Object.hasOwnProperty.call(this.fieldObj, key)) {
+        const element = this.fieldObj[key]
+        this.baseInfoList.push({
+          name: element,
+          value: this.selectionList[0][key]
+        })
+      }
+    }
   },
   methods: {
     hidenView() {
       this.$emit('hiden-view', 'insert_class')
+    },
+
+    // 勾选
+    handleSelectionChange(data) {
+      console.log(data)
     },
 
     /**
@@ -114,39 +268,17 @@ export default {
   padding: 0 20px;
 }
 
+.crm-create-flex {
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex: 1;
+}
+
 .crm-create-item {
   flex: 0 0 50%;
   flex-shrink: 0;
   padding-bottom: 10px;
-}
-
-.el-form-item /deep/ .el-form-item__label {
-  line-height: normal;
-  font-size: 13px;
-  color: #333333;
-  position: relative;
-  padding-left: 8px;
-  padding-bottom: 0;
-}
-
-.el-form /deep/ .el-form-item {
-  margin-bottom: 0px;
-}
-
-.el-form /deep/ .el-form-item.is-required .el-form-item__label:before {
-  content: '*';
-  color: #f56c6c;
-  margin-right: 4px;
-  position: absolute;
-  left: 0;
-  top: 5px;
-}
-
-.form-label {
-  margin: 5px 0;
-  font-size: 13px;
-  word-wrap: break-word;
-  word-break: break-all;
 }
 
 .create-name {
@@ -177,8 +309,29 @@ export default {
   padding-bottom: 10px;
 }
 
+.b-cell-b {
+  width: auto;
+  padding: 8px 0;
+  .b-cell-name {
+    width: 100px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    flex-shrink: 0;
+    color: #777;
+  }
+  .b-cell-value {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.2;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+}
+
 .handle-bar {
-  position: absolute;
+  position: relative;
   bottom: 0;
   right: 0;
   .handle-button {
@@ -188,13 +341,6 @@ export default {
   }
 }
 
-.justify-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-}
-
 .content-body {
   height: calc(100% - 30px);
   // min-height: 250px;
@@ -202,40 +348,17 @@ export default {
   overflow-y: auto;
 }
 
-.el-form-item /deep/ .el-form-item__label {
-  line-height: normal;
-  font-size: 13px;
-  color: #333333;
+.student-wrap {
   position: relative;
-  padding-left: 8px;
-  margin: 5px 0;
-}
-
-/* 事项布局 */
-.input-item {
-  margin-bottom: 10px;
-
-  .el-input {
-    width: 300px;
-  }
-
-  .el-icon-remove {
-    color: #ff6767;
-    cursor: pointer;
-    margin-left: 2px;
-    display: none;
+  .add-customer {
+    position: absolute;
+    top: 0;
+    right: 20px;
   }
 }
 
-.input-item:hover {
-  .el-icon-remove {
-    display: inline;
-  }
-}
-
-.require-item {
-  color: #f56c6c;
-  font-style: normal;
+/deep/ .el-table--border {
+  border: 1px solid #EBEEF5;
 }
 </style>
 

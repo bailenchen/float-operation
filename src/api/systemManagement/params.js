@@ -106,7 +106,7 @@ export function QueryAdminGrade(data) {
 // 查询辅导方式下拉列表
 export function QueryCoachingMethods(data) {
   return request({
-    url: 'CrmProduct/selectCoachingMethods',
+    url: 'CrmProduct/selectCoachingMethodsNew',
     method: 'post'
   })
 }

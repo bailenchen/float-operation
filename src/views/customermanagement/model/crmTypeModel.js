@@ -26,6 +26,8 @@ export default {
   refundMoney: 29,
   classroom: 30,
   class: 31,
+  classschedule: 32,
+  studentschedule: 33,
 
   keyToTypeData: {
     leads: 1,
@@ -45,7 +47,9 @@ export default {
     receive: 27,
     refundMoney: 29,
     classroom: 30,
-    class: 31
+    class: 31,
+    classschedule: 32,
+    studentschedule: 33
   },
 
   typeToKeyData: {
@@ -66,7 +70,9 @@ export default {
     27: 'receive',
     29: 'refundMoney',
     30: 'classroom',
-    31: 'class'
+    31: 'class',
+    32: 'classschedule',
+    33: 'studentschedule'
   },
 
   typeToNameData: {
@@ -87,7 +93,9 @@ export default {
     27: '合同充值',
     29: '合同充值返还',
     30: '教室管理',
-    31: '班级管理'
+    31: '班级管理',
+    32: '班级排课表',
+    33: '学员排课表'
   },
 
   keyToNameData: {
@@ -108,7 +116,9 @@ export default {
     receive: '合同充值',
     refundMoney: '合同充值返还',
     classroom: '教室管理',
-    class: '班级管理'
+    class: '班级管理',
+    classschedule: '班级排课表',
+    studentschedule: '学员排课表'
   },
 
   convertKeyToType: function(key) {
