@@ -53,7 +53,6 @@ export default {
       if (this.canShowDetail) {
         this.detailData = null
         this.tabsNumber = {}
-        console.log('监听到id,请求数据')
 
         this.getDetial()
         this.getTabsNum()

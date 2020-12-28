@@ -111,6 +111,7 @@
                     :use-delete="item.useDelete"
                     :action="typeToAction"
                     :cause="cause"
+                    :dictionary-field="item.dictionaryField"
                     :relative-type="item.relativeType"
                     @value-change="fieldValueChange" />
 
@@ -193,7 +194,8 @@ import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 import { filedGetField, filedValidates } from '@/api/customermanagement/common'
 import { crmLeadsSave } from '@/api/customermanagement/clue'
 import { crmCustomerSave } from '@/api/customermanagement/customer'
-import { crmAccountSave, crmRefundSaveOrUpdate } from '@/api/customermanagement/account'
+import { crmAccountSave } from '@/api/customermanagement/account'
+import { crmRefundSaveOrUpdateAPI } from '@/api/customermanagement/refund'
 import { crmContactsSave } from '@/api/customermanagement/contacts'
 import {
   crmBusinessSave,
@@ -452,13 +454,13 @@ export default {
           return this.actionPresent
         }
         return this.actionCombo
-      } else if (this.crmType == 'refundMoney') {
+      } else if (this.crmType == 'refund') {
         return this.actionRefundCombo
       }
     },
     /** 合同 回款 下展示审批人信息 */
     showExamine() {
-      if (this.crmType === 'contract' || this.crmType === 'receivables' || this.crmType === 'refundMoney') {
+      if (this.crmType === 'contract' || this.crmType === 'receivables' || this.crmType === 'refund') {
         if (this.examineInfo) {
           return this.examineInfo.status !== 0
         }
@@ -540,7 +542,7 @@ export default {
   },
   methods: {
     examineType(crmType) {
-      if (crmType == 'refundMoney') {
+      if (crmType == 'refund') {
         console.log(111)
         return this.refundType == 1 ? 'refundMoney_convention' : 'refundMoney_special'
       }
@@ -1104,7 +1106,7 @@ export default {
             this.crmForm.crmFields.splice(fieldIndex, 1)
           }
         }
-      } else if (this.crmType == 'refundMoney') {
+      } else if (this.crmType == 'refund') {
         if (item.data.formType === 'student') {
           // 教育顾问 所属中心赋值，合同编号放开
           // 需要处理 需关联客户信息或客户下信息
@@ -1477,7 +1479,7 @@ export default {
             }
           }
 
-          if (this.crmType == 'refundMoney') {
+          if (this.crmType == 'refund') {
             res.data.unshift({
               name: '所属中心',
               value: '',
@@ -1643,33 +1645,7 @@ export default {
         })
       }
 
-      if (this.crmType == 'refundMoney') {
-        // list.push({
-        //   authLevel: 3,
-        //   defaultValue: '',
-        //   fieldName: 'cause',
-        //   fieldType: 1,
-        //   formType: 'select',
-        //   inputTips: null,
-        //   isNull: 0,
-        //   isUnique: 0,
-        //   label: 29,
-        //   name: '主客原因',
-        //   options: null,
-        //   setting: [
-        //     '搬家移民出国',
-        //     '高三结课',
-        //     '不参加上海中高考（中考为三校生)',
-        //     '身体原因（孩子生病，不能继续上课）',
-        //     '新签时咨询老师过渡承诺',
-        //     '离职老师的恶意诋毁',
-        //     '距离问题',
-        //     '没有按照约定的时间开班',
-        //     '其他'
-        //   ],
-        //   type: 15,
-        //   value: ''
-        // })
+      if (this.crmType == 'refund') {
         list.push({
           authLevel: 3,
           defaultValue: '',
@@ -1691,16 +1667,6 @@ export default {
           fieldName: 'refundCombo',
           formType: 'refundCombo',
           name: '已购课程'
-
-          // inputTips: null,
-          // isNull: 0,
-          // isUnique: 0,
-          // label: 29,
-          // name: '已购课程',
-          // options: null,
-          // setting: [],
-          // type: 15,
-          // value: ''
         })
       }
 
@@ -2016,7 +1982,7 @@ export default {
           }
 
           params.disabled = arr.includes(item.fieldName)
-        } else if (this.crmType == 'refundMoney') {
+        } else if (this.crmType == 'refund') {
           if (item.fieldName == 'refund_time') {
             params['value'] = moment().format('YYYY-MM-DD')
           }
@@ -2039,6 +2005,9 @@ export default {
             'contract_id'
           ]
           params.disabled = arr.includes(item.fieldName)
+          if (item.formType == 'provinces') {
+            params.dictionaryField = item.fieldName
+          }
 
           if (item.fieldName == 'refundCombo') {
             params['showblock'] = true // 展示整行效果
@@ -2881,6 +2850,7 @@ export default {
       var a = { ...params }
       console.log('submiteParams', a)
       var crmRequest = this.getSubmiteRequest()
+      console.log('crmRequest', crmRequest)
       // console.log('crmRequest的请求', crmRequest)
       console.log(this.action)
       console.log(this.crmType)
@@ -2980,13 +2950,13 @@ export default {
       }
 
       // 充值返还
-      if (this.crmType == 'refundMoney') {
+      if (this.crmType == 'refund') {
         console.log('字段', params.field)
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
           if (element.fieldName == 'refundCombo') {
-            params.entity.product = element.value.product
-            params.entity.capital = element.value.capital
+            params.product = element.value.product
+            params.capital = element.value.capital
           }
         }
         // 删除只用于展示的字段
@@ -3047,6 +3017,7 @@ export default {
     },
     /** 获取上传url */
     getSubmiteRequest() {
+      console.log('获取上传url', this.crmType)
       if (this.crmType == 'leads') {
         return crmLeadsSave
       } else if (this.crmType == 'customer') {
@@ -3069,8 +3040,8 @@ export default {
         return crmReceivablesPlanSave
       } else if (this.crmType == 'visit') {
         return crmReturnVisitSaveAPI
-      } else if (this.crmType == 'refundMoney') {
-        return crmRefundSaveOrUpdate
+      } else if (this.crmType == 'refund') {
+        return crmRefundSaveOrUpdateAPI
       }
     },
     /** 拼接上传传输 */
@@ -3325,7 +3296,7 @@ export default {
         return this.action.type == 'update' ? '编辑回访' : '新建回访'
       } else if (this.crmType == 'capitalAccount') {
         return this.action.type == 'update' ? '编辑资金账户' : '新建资金账户'
-      } else if (this.crmType == 'refundMoney') {
+      } else if (this.crmType == 'refund') {
         return this.action.type == 'update' ? '编辑合同充值返还' : '新建合同充值返还'
       }
     },

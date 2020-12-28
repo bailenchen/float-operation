@@ -30,6 +30,7 @@ import VisitDetail from '../visit/VisitDetail'
 import InvoiceDetail from '../invoice/InvoiceDetail'
 import StudentDetail from '../studentManage/student/detail'
 import ReceiveDetail from '../financeManage/receive/detail'
+import RefundDetail from '../financeManage/refund/detail'
 
 export default {
   name: 'CRMAllDetail', // 详情
@@ -46,7 +47,8 @@ export default {
     InvoiceDetail,
     StudentDetail,
     WaterDetail,
-    ReceiveDetail
+    ReceiveDetail,
+    RefundDetail
   },
   inheritAttrs: false,
   props: {
@@ -128,6 +130,8 @@ export default {
         this.tabName = 'water-detail'
       } else if (this.crmType == 'receive') {
         this.tabName = 'receive-detail'
+      } else if (this.crmType == 'refund') {
+        this.tabName = 'refund-detail'
       }
     }
   },

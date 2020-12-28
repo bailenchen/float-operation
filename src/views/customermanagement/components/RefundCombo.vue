@@ -16,8 +16,7 @@
         align="center"/>
     </el-table>
 
-    <!-- <el-button v-if="tableData" type="text" @click="dialogVisible = true">填写资金退款</el-button> -->
-    <el-button type="text" @click="isOfflineWithDraw = true">填写资金退款</el-button>
+    <el-button v-if="tableData" type="text" @click="isOfflineWithDraw = true">填写资金退款</el-button>
 
     <offline-with-draw
       :visible.sync="isOfflineWithDraw"
@@ -51,21 +50,6 @@ export default {
     }
   },
   data() {
-    var validateMoney = (rule, value, callback) => {
-      var a = /^[0-9]*(\.[0-9]{1,2})?$/
-      if (!a.test(value)) {
-        callback(new Error('请输入正确的金额'))
-      } else {
-        callback()
-      }
-    }
-    var validatcharacter = (rule, value, callback) => {
-      if (!this.characterUser) {
-        callback(new Error('请选择员工'))
-      } else {
-        callback()
-      }
-    }
     return {
       fields: [
         {
@@ -183,7 +167,6 @@ export default {
   },
   methods: {
     handleCallBack(val) {
-      console.log('回调', val)
       const capital = {
         'payment': val.refound.payment,
         'account': val.refound.userAccount ? val.refound.userAccount : '',
@@ -203,16 +186,9 @@ export default {
       })
       this.isOfflineWithDraw = false
     },
-    handleClose() {
-      console.log('关闭')
-    },
-    characterChange() {
-      console.log('人员')
-    },
     getData() {
       this.loading = true
       const params = { types: 6, id: this.action.contracId }
-      // const params = { types: 6, id: 449 }
       filedGetInformation(params).then(res => {
         this.loading = false
         this.structureTable(res.data.contract)
@@ -536,24 +512,6 @@ export default {
        &:first-child .cell {
          padding-left: 10px !important;
        }
-      }
-    }
-  }
-
-  /deep/ .el-form-item {
-    margin-bottom: 22px!important;
-    .el-form-item__label {
-      text-align: left;
-      width: 130px !important;
-      vertical-align: middle;
-      float: left;
-      font-size: 13px;
-      color: #666;
-      line-height: 40px;
-      padding: 0 12px 0 0;
-      box-sizing: border-box;
-      &::before {
-        position: relative;
       }
     }
   }
