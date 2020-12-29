@@ -93,7 +93,6 @@ export default {
      */
     detailHeadHandle(data) {
       if (data.type === 'edit' && this.contractType != 3) {
-        console.log('顶部头 操作11')
         this.isCreate = true
       } else if (data.type === 'cancel') {
         this.getDetial()
@@ -104,7 +103,6 @@ export default {
       }
 
       if (data.type === 'edit' && this.contractType == 3) {
-        console.log('合同变更的编辑')
         this.getRelevanceContractDetial()
       } else if (data.type === 'edit') {
         this.getDetial()

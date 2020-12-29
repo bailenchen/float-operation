@@ -234,14 +234,6 @@
       :id="rowID"
       @hide-view="hiddenDisputeView" />
 
-      <!-- <dispute-detail
-      v-if="showDview"
-      :id="rowID"
-      :detail-index="0"
-      :no-listener-class="['examine-content']"
-      class="d-view"
-      @hide-view="showDview=false"
-      @on-examine-handle="detailHandleCallBack" /> -->
   </div>
 </template>
 
@@ -547,6 +539,26 @@ export default {
           9: '家长审核中',
           10: '家长拒绝'
         }[value]
+      }
+
+      // 待审核的充值返还
+      if (this.crmType == 'refund') {
+        if (name === 'refundType') {
+          return {
+            1: '常规充值返还',
+            2: '特殊充值返还'
+          }[value]
+        } else if (name === 'refundWayId') {
+          let res = ''
+          for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
+            const element = this.dictionaries.refundWayId[index]
+            if (value == element.dictionaryId) {
+              res = element.dictionaryName
+              break
+            }
+          }
+          return res
+        }
       }
       return value
     },

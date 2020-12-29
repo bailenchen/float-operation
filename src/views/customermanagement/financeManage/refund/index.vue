@@ -222,9 +222,7 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'customerName') {
-        return 'can-visit--underline'
-      } else if (column.property === 'num') {
+      if (column.property === 'customerName' || column.property === 'num' || column.property === 'capitalNumber') {
         return 'can-visit--underline'
       } else if (column.property === 'businessCheck') {
         return 'can-visit'

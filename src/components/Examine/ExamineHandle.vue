@@ -185,7 +185,8 @@ export default {
         crm_receivables: crmExamineFlowAuditExamine,
         oa_examine: oaExamineFlowAuditExamine,
         crm_dispute: crmExamineFlowAuditExamine,
-        crm_student: crmExamineFlowAuditExamine
+        crm_student: crmExamineFlowAuditExamine,
+        crm_refund: crmExamineFlowAuditExamine
       }[this.examineType]
     },
     // 通过 拒绝操作

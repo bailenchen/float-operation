@@ -278,10 +278,8 @@ export default {
           .then(res => {
             const baseList = []
             const systemList = []
-            console.log('数据', res.data)
 
             // 充值返还
-            console.log('充值返还1', this.crmType == 'refund')
             if (this.crmType == 'refund') {
               const baseList = [
                 {
@@ -317,14 +315,7 @@ export default {
                 {
                   name: '合同充值返还方式',
                   formType: 'transactionTime',
-                  value: {
-                    '1': '请求数据字典',
-                    '2': '请求数据字典',
-                    '3': '请求数据字典',
-                    '4': '请求数据字典',
-                    '5': '请求数据字典',
-                    '6': '请求数据字典'
-                  }[res.data.refund.refundWayId]
+                  value: res.data.refund.refundWayName
                 },
                 {
                   name: '合同充值返还类型',
@@ -359,50 +350,54 @@ export default {
                     8: '作废',
                     9: '家长审核中',
                     10: '家长拒绝'
-
                   }[res.data.refund.checkStatus]
                 }
               ]
-              const capitalList = [
-                {
-                  name: '支付方式',
-                  formType: 'text',
-                  value: {
-                    1: '现金交易',
-                    2: '刷卡交易',
-                    3: '支票交易',
-                    4: '微信交易',
-                    5: '支付宝交易',
-                    6: '转账交易'
-                  }[res.data.refund.capital.payment]
-                },
-                {
-                  name: '用户账户',
-                  formType: 'text',
-                  value: res.data.refund.capital.account
-                },
-                {
-                  name: '资金退款金额（元）',
-                  formType: 'text',
-                  value: res.data.refund.capital.refundMoney
-                },
-                {
-                  name: '交易时间',
-                  formType: 'date',
-                  value: res.data.refund.capital.dealTime
-                },
-                {
-                  name: '退款人',
-                  formType: 'text',
-                  value: res.data.refund.capital.refundUserName
-                },
-                {
-                  name: '备注',
-                  formType: 'text',
-                  value: res.data.refund.capital.remarks
-                }
 
-              ]
+              let capitalList = []
+              if (res.data.refund.capital) {
+                capitalList = [
+                  {
+                    name: '支付方式',
+                    formType: 'text',
+                    value: {
+                      1: '现金交易',
+                      2: '刷卡交易',
+                      3: '支票交易',
+                      4: '微信交易',
+                      5: '支付宝交易',
+                      6: '转账交易'
+                    }[res.data.refund.capital.payment]
+                  },
+                  {
+                    name: '用户账户',
+                    formType: 'text',
+                    value: res.data.refund.capital.account
+                  },
+                  {
+                    name: '资金退款金额（元）',
+                    formType: 'text',
+                    value: res.data.refund.capital.refundMoney
+                  },
+                  {
+                    name: '交易时间',
+                    formType: 'date',
+                    value: res.data.refund.capital.dealTime
+                  },
+                  {
+                    name: '退款人',
+                    formType: 'text',
+                    value: res.data.refund.capital.refundUserName
+                  },
+                  {
+                    name: '备注',
+                    formType: 'text',
+                    value: res.data.refund.capital.remarks
+                  }
+
+                ]
+              }
+
               this.list = [{
                 name: '基本信息',
                 list: baseList

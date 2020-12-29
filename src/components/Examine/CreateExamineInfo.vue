@@ -24,6 +24,7 @@
           @value-change="fieldValueChange"/>
       </el-form-item>
     </el-form>
+
     <flexbox
       v-else-if="examineInfo.examineType == 1"
       class="fixed-examine"
@@ -155,8 +156,6 @@ export default {
         refundMoney_special: crmCreateExamineFlow // 特殊充值返还
         // crm_dispute: crmExamineFlowRecordList
       }[this.types]
-
-      console.log('reqeust11', reqeust)
 
       const params = {}
       if (this.types == 'oa_examine') {

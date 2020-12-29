@@ -183,7 +183,8 @@ export default {
         invoice: crmInvoiceFileListAPI,
         productSetMeal: crmProductSetMealFileListAPI,
         water: crmWaterFileListAPI,
-        receive: crmReceiveFileListAPI
+        receive: crmReceiveFileListAPI,
+        refund: crmReceiveFileListAPI
       }[keytype]
       const params = {}
       if (keytype == 'productSetMeal') {

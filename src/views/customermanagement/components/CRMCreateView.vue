@@ -111,6 +111,7 @@
                     :use-delete="item.useDelete"
                     :action="typeToAction"
                     :cause="cause"
+                    :refund-money="refundMoney"
                     :dictionary-field="item.dictionaryField"
                     :relative-type="item.relativeType"
                     @value-change="fieldValueChange" />
@@ -435,13 +436,14 @@ export default {
         buyCount: 0, // 主合同总购买课次
         type: 'save' // 新建
       },
-      actionRefundCombo: { contracId: '' },
+      actionRefundCombo: { contracId: '', type: 'save' },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
       contractDiscount: 100, // 合同折扣
       isFlow: false,
       cause: 1, // 返还原因 1: 客观 2: 主观
-      refundType: 1 // 合同充值返还类型 1:常规充值返还审批 2:特殊充值返还审批
+      refundType: 1, // 合同充值返还类型 1:常规充值返还审批 2:特殊充值返还审批
+      refundMoney: ''
     }
   },
   computed: {
@@ -470,7 +472,7 @@ export default {
     },
     // 草稿按钮
     showDraft() {
-      if (this.crmType === 'contract' || this.crmType === 'receivables') {
+      if (this.crmType === 'contract' || this.crmType === 'receivables' || this.crmType === 'refund') {
         return true
       }
       return false
@@ -543,7 +545,6 @@ export default {
   methods: {
     examineType(crmType) {
       if (crmType == 'refund') {
-        console.log(111)
         return this.refundType == 1 ? 'refundMoney_convention' : 'refundMoney_special'
       }
       return `crm_${this.crmType}`
@@ -1165,10 +1166,24 @@ export default {
           this.actionRefundCombo.contracId = item.value[0].contractId
         }
         if (item.data.formType === 'refundCombo') {
+          if (this.refundType == 2) return
           this.crmForm.crmFields.forEach(_item => {
             if (_item.key == 'money') {
               _item.value = item.value.money
             }
+          })
+        }
+        if (item.key === 'money') {
+          console.log('修改')
+          this.refundMoney = item.value
+          // this.actionRefundCombo.money = item.value
+        }
+        if (item.key === 'refund_type') {
+          this.crmForm.crmFields.forEach(_item => {
+            if (_item.key == 'money') {
+              _item.disabled = item.value != 2
+            }
+            this.refundType = item.value
           })
         }
         if (item.key === 'refund_cause_type') {
@@ -1538,13 +1553,7 @@ export default {
                 if (isFill) {
                   item.value = [this.action.userInfo]
                 }
-
-                // if (item.key == 'leads_registrant_id') {
-                //   item.value = [this.action.userInfo]
-                // }
               })
-              // console.log('aaaaaaaaaaaaaaaa', this.userList)
-              // console.log('BBBBBBBBBBBB', this.crmForm)
             }).catch(() => {})
           }
 
@@ -2015,6 +2024,82 @@ export default {
               showStyleIndex = -1
             }
           }
+
+          // 从学员新建
+          if (this.action.data) {
+            if (item.fieldName == 'customer_id') {
+              params['value'] = [this.action.data.customer]
+              params.disabled = true
+            }
+            if (item.fieldName == 'owner_user_id') {
+              params['value'] = this.action.data.customer.ownerUserName
+            }
+            if (item.fieldName == 'dept_id') {
+              params['value'] = this.action.data.customer.deptIdName
+            }
+            if (item.fieldName == 'contract_id') {
+              params.relation = {
+                moduleType: 'refundMoney',
+                searchJson: {
+                  customerId: this.action.data.customer.customerId,
+                  checkStatus: 1,
+                  contractType: 1,
+                  contractStatus: 5
+                }
+              }
+              params.disabled = false
+            }
+          }
+
+          // 编辑
+          if (this.action.type === 'update') {
+            this.actionRefundCombo.contracId = this.action.information.refund.contractId
+            if (item.fieldName == 'owner_user_id') {
+              params['value'] = this.action.information.customer.ownerUserName
+            }
+            if (item.fieldName == 'dept_id') {
+              params['value'] = this.action.information.customer.deptIdName
+            }
+            if (item.fieldName == 'contract_id') {
+              params['value'] = [{
+                num: this.action.information.refund.num,
+                contractId: this.action.information.refund.contractId
+              }]
+              params['disabled'] = false
+              // console.log('合同的值', params)
+
+              params.relation = {
+                moduleType: 'refundMoney',
+                searchJson: {
+                  customerId: this.action.information.customer.customerId,
+                  checkStatus: 1,
+                  contractType: 1,
+                  contractStatus: 5
+                }
+              }
+            }
+
+            if (item.fieldName == 'refund_time') {
+              params['value'] = item.value
+            }
+
+            if (item.fieldName == 'refund_type') {
+              params['value'] = item.value
+              this.refundType = item.value
+            }
+            if (item.fieldName == 'refundCauseDetails') {
+              params['value'] = this.action.information.refund.refundCauseDetails
+            }
+            if (item.fieldName == 'refundCombo') {
+              params['oldValue'] = {
+                productList: this.action.information.refund.productList,
+                giftProducts: this.action.information.refund.giftProducts,
+                mealProducts: this.action.information.refund.mealProducts,
+                capital: this.action.information.refund.capital,
+                money: this.action.information.refund.money
+              }
+            }
+          }
         }
         this.crmForm.crmFields.push(params)
       }
@@ -2087,16 +2172,6 @@ export default {
             this.actionCombo.customerId = this.action.information.customer.customerId
           }
           if (element.key == 'product') {
-            // element.value = {
-            //   isEdit: true,
-            //   meal: this.action.information.contract.mealProducts,
-            //   products: {
-            //     mealProducts: this.action.information.contract.mealProducts,
-            //     productList: this.action.information.contract.productList,
-            //     giftProducts: this.action.information.contract.giftProducts
-            //   },
-            //   totalPrice: this.action.information.contract.money
-            // }
             element.oldValue = {
               isEdit: true,
               meal: this.action.information.contract.mealProducts,
@@ -2268,7 +2343,15 @@ export default {
             element.value = this.action.data.customer.channelIdName
           }
         }
+
+        // 充值返还编辑
+        if (this.action.type == 'update' && this.crmType == 'refund') {
+          if (element.key == 'money') {
+            element.disabled = this.action.information.refund.refundType == 1
+          }
+        }
       }
+
 
       // hasPrice为true显示购买价格字段
       if (hasPrice && this.crmType == 'productSetMeal') {
@@ -2467,7 +2550,6 @@ export default {
       }
       // 验证必填
       if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
-        console.log('item.formType', item.formType)
         if (['leads_source', 'category', 'student'].includes(item.formType)) {
           tempList.push({
             required: true,

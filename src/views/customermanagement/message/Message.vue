@@ -128,11 +128,31 @@ export default {
           hidden: true
         },
         {
+          name: '待审核资金收款',
+          crmType: 'refound',
+          color: '#FFB940',
+          iconClass: 'wk wk-receivables',
+          infoType: 'checkWater',
+          num: 0,
+          tips: '',
+          hidden: true
+        },
+        {
           name: '待审核资金退款',
           crmType: 'refound',
           color: '#FFB940',
           iconClass: 'wk wk-receivables',
           infoType: 'refundNumber',
+          num: 0,
+          tips: '',
+          hidden: true
+        },
+        {
+          name: '待审核的充值返还',
+          crmType: 'refund',
+          color: '#FD5B4A',
+          iconClass: 'wk wk-receivables',
+          infoType: 'checkRefund',
           num: 0,
           tips: '',
           hidden: true

@@ -31,14 +31,12 @@
 export default {
   name: 'XhCause',
   props: {
-    // action: {
-    //   type: Object,
-    //   default: () => {
-    //     return {}
-    //   }
-    // }
     index: Number,
-    cause: Number
+    cause: Number,
+    value: {
+      type: [String, Number],
+      default: ''
+    }
   },
   data() {
     return {
@@ -94,6 +92,16 @@ export default {
         this.isImpersonality = val == 1
         this.$emit('value-change', { index: this.index, value: '' })
       }
+    },
+    value: {
+      handler(val) {
+        if (this.isImpersonality) {
+          this.impersonality = val
+        } else {
+          this.subjectivity = val
+        }
+      },
+      immediate: true
     }
   },
   methods: {

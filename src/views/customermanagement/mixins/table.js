@@ -74,7 +74,8 @@ import {
   crmReceiveExcelAllExport
 } from '@/api/customermanagement/receive'
 import {
-  crmRefundQueryPageListAPI
+  crmRefundQueryPageListAPI,
+  crmRefundExcelAllExport
 } from '@/api/customermanagement/refund'
 
 
@@ -378,25 +379,7 @@ export default {
               })
             }
 
-            // this.dictionaries =
             this.getDictionaries(dictionaryArr)
-
-            // 请求数据字典
-            // for (let index = 0; index < fieldList.length; index++) {
-            //   const element = fieldList[index]
-            //   const obj = {}
-            //   if (element.provinces) {
-            //     const params = {
-            //       dictionaryField: element.prop
-            //     }
-            //     queryDictionaryField(params).then(res => {
-            //       console.log('数据字典结果', res, this)
-            //       obj[element.prop] = res.data
-            //     }).catch(() => {})
-            //   }
-            // }
-
-
             this.moneyFields = moneyFields
             this.fieldList = fieldList
             // 获取好字段开始请求数据
@@ -512,6 +495,8 @@ export default {
             1: '常规充值返还',
             2: '特殊充值返还'
           }[row[column.property]]
+        } else if (column.property === 'capitalNumber') {
+          return row[column.property][0].number
         } else if (column.property === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
@@ -574,14 +559,11 @@ export default {
         if (column.property === 'businessCheck' && row.businessCount > 0) {
           return // 列表查看商机不展示详情
         }
-        // if (column.property === 'leadsNumber') {
-        // , 'customerName'
         if (['leadsNumber', 'customerName'].includes(column.property) && !this.isSeas) {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true
         } else {
-          // console.log('b')
           this.showDview = false
         }
       } else if (this.crmType === 'student') {
@@ -734,6 +716,16 @@ export default {
           this.rowType = 'refund'
           this.clickField = column.property
           this.showDview = true
+        } else if (column.property === 'capitalNumber') {
+          this.rowID = row.capitalNumber[0].contractCapitalId
+          this.rowType = 'receive'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'student'
+          this.clickField = column.property
+          this.showDview = true
         }
       }
 
@@ -778,10 +770,12 @@ export default {
           product: crmProductExcelAllExport,
           productSetMeal: crmProductSetMealExcelAllExport,
           insideUser: CrmInsideUserExcelAllExport,
-          receive: crmReceiveExcelAllExport
+          receive: crmReceiveExcelAllExport,
+          refund: crmRefundExcelAllExport
         }[keytype]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
+      console.log('导出参数', params)
       request(params)
         .then(res => {
           var blob = new Blob([res.data], {

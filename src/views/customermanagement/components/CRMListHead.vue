@@ -166,6 +166,7 @@ export default {
     if (this.crm[this.crmType] && this.crm[this.crmType].excelimport) {
       this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
     }
+    console.log('菜单', this.crmType, this.crm, this.crm[this.crmType])
     if (this.crm[this.crmType] && this.crm[this.crmType].excelexport) {
       this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
     }
@@ -199,7 +200,6 @@ export default {
       }
     },
     createClick(action = '') {
-      console.log(this.crmType, 'ggggg')
       if (this.createFun) {
         this.createFun()
       } else {

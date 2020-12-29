@@ -199,7 +199,7 @@ export default {
       if (this.crmType == 'business') {
         this.createActionInfo.data['customer'] = this.detail
         this.createActionInfo.data['business'] = this.detail
-      } else if (this.crmType == 'customer') {
+      } else if (this.crmType == 'student') {
         this.createActionInfo.data['customer'] = this.detail
       }
       this.isCreate = true
