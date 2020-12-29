@@ -1,12 +1,12 @@
 <template>
   <div class="xh-stru">
     <div class="xh-stru__hd">
-      部门
+      {{ cellType === 'classroom' ? '教室' : '部门' }}
     </div>
     <div class="xh-stru__bd">
       <el-input
         v-model="searchInput"
-        placeholder="搜索部门名称"
+        :placeholder="placeholder"
         size="small"
         prefix-icon="el-icon-search"
         class="search-input"/>
@@ -36,7 +36,7 @@
           <div
             class="stru-name"
             @click="enterChildren(item)">
-            {{ item.name }}
+            {{ cellType === 'classroom' ? item.classroomName : item.name }}
             <div
               v-if="item.children"
               class="el-icon-arrow-right stru-enter"/>
@@ -52,6 +52,7 @@
 </template>
 <script type="text/javascript">
 import { depList } from '@/api/common'
+import { crmClassroomSelectList } from '@/api/educationmanage/classSchedule'
 import PinyinMatch from 'pinyin-match'
 
 export default {
@@ -85,6 +86,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    cellType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -99,8 +104,15 @@ export default {
   computed: {
     showDataList() {
       return this.dataList.filter(item => {
-        return PinyinMatch.match(item.name, this.searchInput)
+        if (this.cellType === 'classroom') {
+          return PinyinMatch.match(item.classroomName, this.searchInput)
+        } else {
+          return PinyinMatch.match(item.name, this.searchInput)
+        }
       })
+    },
+    placeholder() {
+      return this.cellType === 'classroom' ? '搜索教室名称' : '搜索部门名称'
     }
   },
   watch: {
@@ -127,27 +139,38 @@ export default {
      */
     getStructureList() {
       this.loading = true
-      depList({
-        type: 'tree',
-        centre: 1
-      })
-        .then(res => {
-          if (this.infoParams &&
-            this.infoParams.hiddenLargePid &&
-            res.data.length > 0 &&
-            res.data[0].children
-          ) {
-            res.data = res.data[0].children
-          }
+      if (this.cellType === 'classroom') {
+        crmClassroomSelectList().then(res => {
           const allList = this.handelCheck(this.addIsCheckProp(res.data))
           this.dataList = allList
           this.breadcrumbList.push({ label: '全部', data: allList })
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      } else {
+        depList({
+          type: 'tree',
+          centre: 1
+        })
+          .then(res => {
+            if (this.infoParams &&
+            this.infoParams.hiddenLargePid &&
+            res.data.length > 0 &&
+            res.data[0].children
+            ) {
+              res.data = res.data[0].children
+            }
+            const allList = this.handelCheck(this.addIsCheckProp(res.data))
+            this.dataList = allList
+            this.breadcrumbList.push({ label: '全部', data: allList })
 
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
+            this.loading = false
+          })
+          .catch(() => {
+            this.loading = false
+          })
+      }
     },
 
     /**
@@ -170,8 +193,13 @@ export default {
       var removeIndex = -1
       for (let index = 0; index < this.selectItems.length; index++) {
         const element = this.selectItems[index]
-        if (item.id == element.id) {
+        if (item.id == element.id && this.cellType !== 'classroom') {
           removeIndex = index
+        }
+        if (this.cellType === 'classroom') {
+          if (item.classroomId == element.classroomId) {
+            removeIndex = index
+          }
         }
       }
       if (removeIndex == -1 && item.isCheck) {
@@ -183,8 +211,13 @@ export default {
       // 单选逻辑
       if (this.radio) {
         if (item.isCheck) {
+          const _this = this
           this.dataList = this.dataList.map(function(element, index, array) {
-            if (element.id == item.id) {
+            if (_this.cellType === 'classroom') {
+              if (item.classroomId == element.classroomId) {
+                removeIndex = index
+              }
+            } else if (element.id == item.id && _this.cellType !== 'classroom') {
               element.disabled = false
             } else {
               element.disabled = true
@@ -211,7 +244,6 @@ export default {
         // 如果有勾选其他为false
         disabled = this.selectItems.length > 0
       }
-
       list = list.map((item, index, array) => {
         item.isCheck = this.selectItemsHasItem(item)
         if (this.radio && item.isCheck) {
@@ -230,9 +262,15 @@ export default {
       var hasItem = false
       for (let index = 0; index < this.selectItems.length; index++) {
         const element = this.selectItems[index]
-        if (item.id == element.id) {
+        if (item.id == element.id && this.cellType !== 'classroom') {
           hasItem = true
           break
+        }
+        if (this.cellType === 'classroom') {
+          if (item.classroomId == element.classroomId) {
+            hasItem = true
+            break
+          }
         }
       }
       return hasItem

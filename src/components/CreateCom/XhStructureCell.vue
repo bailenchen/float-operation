@@ -11,6 +11,7 @@
       ref="structure"
       :show="showPopover"
       :radio="radio"
+      :cell-type="cellType"
       :selected-data="dataValue"
       :info-params="infoParams"
       @changeCheckout="checkStructure"/>
@@ -23,8 +24,8 @@
         <div
           v-for="(item, index) in showDataValue"
           :key="index"
-          class="user-item"
-          @click.stop="deletestru(item,index)">{{ item.name }}
+          class="user-item text-one-line"
+          @click.stop="deletestru(item,index)">{{ cellType === 'classroom' ? item.classroomName : item.name }}
           <i class="delete-icon el-icon-close"/>
         </div>
         <i v-if="dataValue.length > max" class="el-icon-more" />
@@ -70,6 +71,10 @@ export default {
     useDelete: { // 是否使用删除功能
       type: Boolean,
       default: true
+    },
+    cellType: {
+      type: String,
+      default: ''
     }
   },
   data() {

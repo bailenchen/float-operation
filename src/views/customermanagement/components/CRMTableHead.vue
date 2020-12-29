@@ -293,6 +293,9 @@ import {
   crmClassDelete,
   crmClassClose
 } from '@/api/educationmanage/class'
+import {
+  crmClassSchduleDelete
+} from '@/api/educationmanage/classSchedule'
 import { crmCreateExamineFlow } from '@/api/customermanagement/common'
 
 
@@ -896,6 +899,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['classId']
           })
+        } else if (this.crmType == 'classschedule') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['timeId']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -918,7 +925,8 @@ export default {
           insideUser: crmInsideUserDelete,
           receive: crmReceiveDeleteAPI,
           classroom: crmClassroomDelete,
-          class: crmClassDelete
+          class: crmClassDelete,
+          classschedule: crmClassSchduleDelete
         }[this.crmType]
         var params = null
         if (this.crmType == 'productSetMeal') {
@@ -944,6 +952,10 @@ export default {
         } else if (this.crmType == 'class') {
           params = {
             classIds: ids.join(',')
+          }
+        } else if (this.crmType == 'classschedule') {
+          params = {
+            timeIds: ids.join(',')
           }
         } else {
           params = {
@@ -1588,6 +1600,12 @@ export default {
         return this.education[this.crmType].shifts
       } else if (type == 'leave') {
         return this.education[this.crmType].leave
+      } else if (type == 'mode_class') {
+        if (this.selectionList.length == 1 && this.selectionList[0].isCourse === '是') {
+          return this.education[this.crmType].update
+        } else {
+          return false
+        }
       }
 
       return true
@@ -1630,6 +1648,8 @@ export default {
         return '全部教室'
       } else if (this.crmType == 'class') {
         return '全部班级'
+      } else if (this.crmType == 'classschedule') {
+        return '全部班级排课表'
       }
     },
 

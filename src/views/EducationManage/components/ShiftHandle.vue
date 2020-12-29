@@ -57,25 +57,8 @@
                         placeholder="选择日期"/>
 
                       <div v-else-if="item.type === 'time'" class="time-select">
-                        <el-time-select
-                          v-model="startTime"
-                          :picker-options="{
-                            start: '08:00',
-                            step: '00:60',
-                            end: '19:00'
-                          }"
-                          placeholder="起始时间"
-                          @change="changeTime"/>
-                        <!-- <span>至</span> -->
-                        <el-time-select
-                          v-model="endTime"
-                          :picker-options="{
-                            start: '08:00',
-                            step: '00:60',
-                            end: maxEndTime,
-                            minTime: startTime,
-                          }"
-                          placeholder="结束时间"/>
+                        <period
+                          :value="during"/>
                       </div>
 
                       <span v-else>{{ base[item.prop] }}</span>
@@ -112,30 +95,35 @@
                   align="center"
                   show-overflow-tooltip>
                   <template slot-scope="scope">
-                    <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
-                    <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
+                    <span v-if="item.prop == 'deptSelectValue'">
+                      <xh-structure-cell
+                        :value="scope.row['deptSelectValue']"
+                        :radio="radio"
+                        cell-type="classroom"
+                        placeholder="选择教室"
+                        class="xh-structure-cell"
+                        @value-change="structureChange($event, scope.$index)" />
+                    </span>
+                    <span v-else-if="item.prop == 'teacherList'">
+                      <xh-user-cell
+                        :radio="radio"
+                        :value="scope.row['teacherList']"
+                        @value-change="userChange($event, scope.$index)"/>
+                    </span>
+                    <span v-else-if="item.prop == 'time'">
+                      <el-date-picker
+                        v-model="scope.row['time']"
+                        value-format="yyyy-MM-dd"
+                        type="date"
+                        style="width:100%;"
+                        placeholder="选择日期"/>
+                    </span>
+                    <span v-else-if="item.prop == 'during'">
+                      <period
+                        :value="scope.row['during']"
+                        @update-time="updateTime($event, scope.$index)"/>
+                    </span>
                     <span v-else>{{ scope.row[item.prop] }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column width="90" align="center" label="教室（变更后）">
-                  <template slot-scope="scope">
-                    <el-button size="mini">请假</el-button>
-                    <!-- <el-input v-model="item."/> -->
-                  </template>
-                </el-table-column>
-                <el-table-column width="90" align="center" label="学科老师（变更后）">
-                  <template slot-scope="scope">
-                    <el-button size="mini">请假</el-button>
-                  </template>
-                </el-table-column>
-                <el-table-column width="90" align="center" label="上课时间（变更后）">
-                  <template slot-scope="scope">
-                    <el-button size="mini">请假</el-button>
-                  </template>
-                </el-table-column>
-                <el-table-column width="90" align="center" label="时间段（变更后）">
-                  <template slot-scope="scope">
-                    <el-button size="mini">请假</el-button>
                   </template>
                 </el-table-column>
                 <el-table-column/>
@@ -146,7 +134,7 @@
         </create-sections>
         <create-sections title="班级学员信息">
           <div class="crm-create-body">
-            <div class="content create-sections-content">
+            <div class="content create-sections-content" style="margin-top:10px;">
               <el-table
                 id="crm-table"
                 :row-height="40"
@@ -202,9 +190,13 @@ import {
   XhUserCell
 } from '@/components/CreateCom'
 
+import Period from './Period'
+
 import {
   crmClassSchduleDetail,
-  crmClassSchduleShift } from '@/api/educationmanage/classSchedule'
+  crmClassSchduleShift,
+  crmClassSchduleShiftSave
+} from '@/api/educationmanage/classSchedule'
 
 export default {
   name: 'ShiftHandle',
@@ -212,7 +204,8 @@ export default {
     CreateView,
     CreateSections,
     XhStructureCell,
-    XhUserCell
+    XhUserCell,
+    Period
   },
   props: {
     // 操作数据
@@ -240,9 +233,10 @@ export default {
         { prop: 'classType', label: '班级类型' },
         { prop: 'remarks', label: '备注' }
       ],
-      // 时间段
-      startTime: '08:00',
-      endTime: '10:00',
+      during: {
+        startTime: '08:00',
+        endTime: '10:00'
+      },
       teacherList: [],
       deptSelectValue: [],
       base: {},
@@ -259,7 +253,12 @@ export default {
         { prop: '', label: '状态' },
         { prop: 'classTime', label: '上课时间' },
         { prop: 'timeSlot', label: '时间段' },
-        { prop: 'number', label: '上课学员上课人数' }
+        { prop: 'customerName', label: '上课学员' },
+        { prop: 'number', label: '上课人数' },
+        { prop: 'deptSelectValue', label: '教室（变更后）', width: 160 },
+        { prop: 'teacherList', label: '学科老师（变更后）', width: 160 },
+        { prop: 'time', label: '上课时间（变更后）', width: 160 },
+        { prop: 'during', label: '时间段（变更后）', width: 200 }
       ],
 
       classInfoLists: [
@@ -271,14 +270,9 @@ export default {
         { prop: 'endCourse', label: '结课课次' },
         { prop: 'alreadyCourse', label: '已排课次' }
       ],
-      showShift: false
-    }
-  },
-  computed: {
-    maxEndTime() {
-      const maxt = parseInt(this.startTime) + 2
-      const maxv = String(maxt).length == 2 ? `${maxt}:00` : `0${maxt}:00`
-      return maxv
+      showShift: false,
+      // 勾选将换挡数据
+      checkList: []
     }
   },
   created() {
@@ -294,6 +288,10 @@ export default {
         this.classTime = data['classTime'].slice(0, 10) || ''
         this.startTime = data['timeSlotStart'].slice(0, 5)
         this.endTime = data['timeSlotEnd'].slice(0, 5)
+        this.deptSelectValue = [{
+          classroomId: data['classroomId'],
+          classroomName: data['classroomName']
+        }]
         this.teacherList = [{
           userId: data['subjectTeacherId'],
           realname: data['subjectTeacherName']
@@ -312,8 +310,24 @@ export default {
     // 查询换挡列表
     queryShift() {
       if (!this.showShift) {
+        const data = this.selectionList[0]
         crmClassSchduleShift({ classId: this.selectionList[0].classId }).then(res => {
-          this.list = res.data
+          this.list = res.data.map(item => {
+            item.time = data['classTime'].slice(0, 10) || ''
+            item.during = {
+              startTime: item.timeSlot.slice(0, 5),
+              endTime: item.timeSlot.slice(9, -3)
+            }
+            item.deptSelectValue = [{
+              classroomId: data['classroomId'],
+              classroomName: data['classroomName']
+            }]
+            item.teacherList = [{
+              userId: data['subjectTeacherId'],
+              realname: data['subjectTeacherName']
+            }]
+            return item
+          })
           this.showShift = true
         }).catch(err => {
           console.log(err)
@@ -321,33 +335,34 @@ export default {
       }
     },
 
+    changeDate(data, index) {
+      this.$set(this.list[index], 'time', data)
+    },
+
+    updateTime(data, index) {
+      this.$set(this.list[index], 'during', data)
+    },
+
     /**
      * 教室选择
      */
-    structureChange(data) {
-      console.log(data, 'BBBBBBBBBBBBBBBBBB')
-      // this.deptNumber = data.value.length ? data.value[0].deptNumber : ''
-      // this.form.deptId = data.value.length ? data.value[0].id : ''
-      this.deptSelectValue = data.value || []
+    structureChange(data, index) {
+      if (arguments.length == 2) {
+        this.$set(this.list[index], 'deptSelectValue', data.value || [])
+      } else {
+        this.deptSelectValue = data.value || []
+      }
     },
 
     /**
      * 关联老师
      */
-    userChange(data) {
-      // const ids = ['']
-      // const names = []
-      // data.value.forEach(item => {
-      //   ids.push(item.userId)
-      //   names.push(item.realname)
-      // })
-      // this.form.relatedTeachers = String(ids)
-      // this.form.classroomName = `${this.deptNumber}-${String(names)}`
-      // this.teacherList = data.value || []
-    },
-
-    changeTime() {
-      this.endTime = ''
+    userChange(data, index) {
+      if (arguments.length == 2) {
+        this.$set(this.list[index], 'teacherList', data.value || [])
+      } else {
+        this.teacherList = data.value || []
+      }
     },
 
     hidenView() {
@@ -356,14 +371,42 @@ export default {
 
     // 勾选
     handleSelectionChange(data) {
-      console.log(data)
+      this.checkList = data
     },
 
     /**
      * 保存
      */
     submitForm() {
-
+      const { timeId } = this.selectionList[0]
+      const shiftList = []
+      for (let index = 0; index < this.checkList.length; index++) {
+        const element = this.checkList[index]
+        shiftList.push({
+          timeId: element.timeId,
+          classTime: element.time,
+          timeSlot: `${element.during.startTime}:00-${element.during.endTime}:00`,
+          classroomId: element.deptSelectValue[0].classroomId,
+          subjectTeacherId: element.teacherList[0].userId
+        })
+      }
+      const params = {
+        entity: {
+          timeId,
+          classTime: this.classTime,
+          timeSlot: `${this.during.startTime}:00-${this.during.endTime}:00`,
+          classroomId: this.deptSelectValue[0].classroomId,
+          subjectTeacherId: this.teacherList[0].userId
+        },
+        list: shiftList
+      }
+      crmClassSchduleShiftSave(params).then(res => {
+        this.hidenView()
+        this.$message.success('操作成功')
+        this.$emit('save-success', { type: 'shift' })
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 }

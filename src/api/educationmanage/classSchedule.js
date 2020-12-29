@@ -69,3 +69,15 @@ export function crmClassSchduleExcelAllExport(data) {
     }
   })
 }
+
+// 班级排课表 换挡保存
+export function crmClassSchduleShiftSave(data) {
+  return request({
+    url: 'educationalClasstime/shifts',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
