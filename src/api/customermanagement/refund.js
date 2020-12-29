@@ -42,13 +42,9 @@ export function crmRefundDeleteAPI(data) {
   return request({
     url: 'CrmRefund/deleteByIds',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
   })
 }
-
 
 // 批量导出
 export function crmRefundExcelExport(data) {

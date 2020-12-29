@@ -278,7 +278,6 @@ export default {
           .then(res => {
             const baseList = []
             const systemList = []
-            console.log('数据', res.data)
 
             // 充值返还
             if (this.crmType == 'refund') {
@@ -354,46 +353,51 @@ export default {
                   }[res.data.refund.checkStatus]
                 }
               ]
-              const capitalList = [
-                {
-                  name: '支付方式',
-                  formType: 'text',
-                  value: {
-                    1: '现金交易',
-                    2: '刷卡交易',
-                    3: '支票交易',
-                    4: '微信交易',
-                    5: '支付宝交易',
-                    6: '转账交易'
-                  }[res.data.refund.capital.payment]
-                },
-                {
-                  name: '用户账户',
-                  formType: 'text',
-                  value: res.data.refund.capital.account
-                },
-                {
-                  name: '资金退款金额（元）',
-                  formType: 'text',
-                  value: res.data.refund.capital.refundMoney
-                },
-                {
-                  name: '交易时间',
-                  formType: 'date',
-                  value: res.data.refund.capital.dealTime
-                },
-                {
-                  name: '退款人',
-                  formType: 'text',
-                  value: res.data.refund.capital.refundUserName
-                },
-                {
-                  name: '备注',
-                  formType: 'text',
-                  value: res.data.refund.capital.remarks
-                }
 
-              ]
+              let capitalList = []
+              if (res.data.refund.capital) {
+                capitalList = [
+                  {
+                    name: '支付方式',
+                    formType: 'text',
+                    value: {
+                      1: '现金交易',
+                      2: '刷卡交易',
+                      3: '支票交易',
+                      4: '微信交易',
+                      5: '支付宝交易',
+                      6: '转账交易'
+                    }[res.data.refund.capital.payment]
+                  },
+                  {
+                    name: '用户账户',
+                    formType: 'text',
+                    value: res.data.refund.capital.account
+                  },
+                  {
+                    name: '资金退款金额（元）',
+                    formType: 'text',
+                    value: res.data.refund.capital.refundMoney
+                  },
+                  {
+                    name: '交易时间',
+                    formType: 'date',
+                    value: res.data.refund.capital.dealTime
+                  },
+                  {
+                    name: '退款人',
+                    formType: 'text',
+                    value: res.data.refund.capital.refundUserName
+                  },
+                  {
+                    name: '备注',
+                    formType: 'text',
+                    value: res.data.refund.capital.remarks
+                  }
+
+                ]
+              }
+
               this.list = [{
                 name: '基本信息',
                 list: baseList

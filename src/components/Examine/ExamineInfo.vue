@@ -139,8 +139,6 @@ export default {
   },
   filters: {
     detailName: function(data) {
-      console.log('item数据')
-      console.log(data)
       if (data.stepType == 2) {
         return data.userList.length + '人或签'
       } else if (data.stepType == 3) {
@@ -222,8 +220,6 @@ export default {
       })
         .then(res => {
           this.loading = false
-          console.log('审核信息')
-          console.log(res)
           this.examineInfo = res.data
           this.$emit('value-change', {
             config: res.data.examineType, // 审批类型

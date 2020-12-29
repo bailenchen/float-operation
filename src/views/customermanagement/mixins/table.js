@@ -495,6 +495,8 @@ export default {
             1: '常规充值返还',
             2: '特殊充值返还'
           }[row[column.property]]
+        } else if (column.property === 'capitalNumber') {
+          return row[column.property][0].number
         } else if (column.property === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
@@ -557,14 +559,11 @@ export default {
         if (column.property === 'businessCheck' && row.businessCount > 0) {
           return // 列表查看商机不展示详情
         }
-        // if (column.property === 'leadsNumber') {
-        // , 'customerName'
         if (['leadsNumber', 'customerName'].includes(column.property) && !this.isSeas) {
           this.rowID = row.customerId
           this.rowType = 'customer'
           this.showDview = true
         } else {
-          // console.log('b')
           this.showDview = false
         }
       } else if (this.crmType === 'student') {
@@ -715,6 +714,16 @@ export default {
         if (column.property === 'num') {
           this.rowID = row.refundId
           this.rowType = 'refund'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'capitalNumber') {
+          this.rowID = row.capitalNumber[0].contractCapitalId
+          this.rowType = 'receive'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'customerName') {
+          this.rowID = row.customerId
+          this.rowType = 'student'
           this.clickField = column.property
           this.showDview = true
         }

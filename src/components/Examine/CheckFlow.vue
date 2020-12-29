@@ -99,7 +99,8 @@ export default {
           crm_invoice: crmExamineFlowRecordList,
           oa_examine: oaExamineFlowRecordList,
           crm_dispute: crmExamineFlowRecordList,
-          crm_student: crmExamineFlowRecordList
+          crm_student: crmExamineFlowRecordList,
+          crm_refund: crmExamineFlowRecordList
         }[this.examineType]
 
         request({

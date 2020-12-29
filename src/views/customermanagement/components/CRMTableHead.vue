@@ -608,8 +608,6 @@ export default {
             })
             .join(',')
         }
-
-        console.log('导出请求参数', params, this.crmType)
         // return
 
         request(params)
@@ -965,8 +963,6 @@ export default {
         if (this.isSeas) {
           params.poolId = this.poolId
         }
-
-        console.log('请求参数', params, request)
         // return
         this.loading = true
         request(params)

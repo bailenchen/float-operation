@@ -2025,6 +2025,32 @@ export default {
             }
           }
 
+          // 从学员新建
+          if (this.action.data) {
+            if (item.fieldName == 'customer_id') {
+              params['value'] = [this.action.data.customer]
+              params.disabled = true
+            }
+            if (item.fieldName == 'owner_user_id') {
+              params['value'] = this.action.data.customer.ownerUserName
+            }
+            if (item.fieldName == 'dept_id') {
+              params['value'] = this.action.data.customer.deptIdName
+            }
+            if (item.fieldName == 'contract_id') {
+              params.relation = {
+                moduleType: 'refundMoney',
+                searchJson: {
+                  customerId: this.action.data.customer.customerId,
+                  checkStatus: 1,
+                  contractType: 1,
+                  contractStatus: 5
+                }
+              }
+              params.disabled = false
+            }
+          }
+
           // 编辑
           if (this.action.type === 'update') {
             this.actionRefundCombo.contracId = this.action.information.refund.contractId
@@ -2040,7 +2066,7 @@ export default {
                 contractId: this.action.information.refund.contractId
               }]
               params['disabled'] = false
-              console.log('合同的值', params)
+              // console.log('合同的值', params)
 
               params.relation = {
                 moduleType: 'refundMoney',
