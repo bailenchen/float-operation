@@ -281,7 +281,6 @@ export default {
             console.log('数据', res.data)
 
             // 充值返还
-            console.log('充值返还1', this.crmType == 'refund')
             if (this.crmType == 'refund') {
               const baseList = [
                 {
@@ -317,14 +316,7 @@ export default {
                 {
                   name: '合同充值返还方式',
                   formType: 'transactionTime',
-                  value: {
-                    '1': '请求数据字典',
-                    '2': '请求数据字典',
-                    '3': '请求数据字典',
-                    '4': '请求数据字典',
-                    '5': '请求数据字典',
-                    '6': '请求数据字典'
-                  }[res.data.refund.refundWayId]
+                  value: res.data.refund.refundWayName
                 },
                 {
                   name: '合同充值返还类型',
@@ -359,7 +351,6 @@ export default {
                     8: '作废',
                     9: '家长审核中',
                     10: '家长拒绝'
-
                   }[res.data.refund.checkStatus]
                 }
               ]

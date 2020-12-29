@@ -55,7 +55,7 @@ import CRMCreateView from './CRMCreateView'
 import {
   filedGetTableField
 } from '@/api/customermanagement/common'
-import { crmCustomerQueryContract, crmCustomerIndex } from '@/api/customermanagement/customer'
+import { crmCustomerQueryContract } from '@/api/customermanagement/customer'
 import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { mapGetters } from 'vuex'

@@ -287,6 +287,12 @@ import {
   crmReceiveDeleteAPI
 } from '@/api/customermanagement/receive'
 import {
+  crmRefundExcelExport,
+  crmRefundDeleteAPI
+} from '@/api/customermanagement/refund'
+
+
+import {
   crmClassroomDelete
 } from '@/api/educationmanage/classroom'
 import {
@@ -583,7 +589,8 @@ export default {
             product: crmProductExcelExport,
             productSetMeal: crmProductSetMealExcelExport,
             insideUser: CrmInsideUserExcelExport,
-            receive: crmReceiveExcelExport
+            receive: crmReceiveExcelExport,
+            refund: crmRefundExcelExport
           }[this.crmType]
           params.ids = this.selectionList
             .map((item) => {
@@ -601,6 +608,9 @@ export default {
             })
             .join(',')
         }
+
+        console.log('导出请求参数', params, this.crmType)
+        // return
 
         request(params)
           .then(res => {
@@ -774,6 +784,7 @@ export default {
       }
     },
     confirmHandle(type) {
+      console.log('type', type)
       if (type === 'lock' || type === 'unlock') {
         this.loading = true
         var customerId = this.selectionList.map(function(item, index, array) {
@@ -917,6 +928,7 @@ export default {
           productSetMeal: crmProductSetMealDeleteAPI,
           insideUser: crmInsideUserDelete,
           receive: crmReceiveDeleteAPI,
+          refund: crmRefundDeleteAPI,
           classroom: crmClassroomDelete,
           class: crmClassDelete
         }[this.crmType]
@@ -953,6 +965,9 @@ export default {
         if (this.isSeas) {
           params.poolId = this.poolId
         }
+
+        console.log('请求参数', params, request)
+        // return
         this.loading = true
         request(params)
           .then(res => {
@@ -1384,6 +1399,11 @@ export default {
           'delete'
         ])
       } else if (this.crmType == 'receive') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'export',
+          'delete'
+        ])
+      } else if (this.crmType == 'refund') {
         return this.forSelectionHandleItems(handleInfos, [
           'export',
           'delete'

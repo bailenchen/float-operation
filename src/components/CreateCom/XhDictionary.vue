@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-select v-model="value" placeholder="请选择" style="width: 100%;" @change="handleChange">
+    <el-select v-model="dataValue" placeholder="请选择" style="width: 100%;" @change="handleChange">
       <el-option
         v-for="(item,index) in options"
         :key="index"
@@ -24,12 +24,24 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    value: {
+      type: [String, Number],
+      default: ''
     }
   },
   data() {
     return {
       options: [],
-      value: ''
+      dataValue: ''
+    }
+  },
+  watch: {
+    value: {
+      handler(val) {
+        this.dataValue = val
+      },
+      immediate: true
     }
   },
   created() {
@@ -44,7 +56,7 @@ export default {
   },
   methods: {
     handleChange(value) {
-      this.value = value
+      // this.value = value
       this.$emit('value-change', {
         index: this.index,
         value

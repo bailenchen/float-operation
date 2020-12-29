@@ -22,6 +22,7 @@
       :visible.sync="isOfflineWithDraw"
       :selection-list="selectionList"
       :money="money"
+      :fill-data="fillData"
       :is-save="true"
       money-type="refound"
       @save="handleCallBack"
@@ -33,6 +34,8 @@
 import { filedGetInformation } from '@/api/customermanagement/common'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
 import OfflineWithDraw from '@/views/customermanagement/components/selectionHandle/OfflineWithDraw'
+import { mapGetters } from 'vuex'
+// import moment from 'moment'
 
 export default {
   name: 'RefundCombo',
@@ -47,7 +50,14 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    oldValue: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    refundMoney: [Number, String]
   },
   data() {
     return {
@@ -143,21 +153,49 @@ export default {
       }],
       money: '',
       product: null, // 表格数据
-      capital: null // 资金退款信息
+      capital: null, // 资金退款信息
+      fillData: null
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   watch: {
     action: {
       handler(val) {
-        if (val.contracId) {
+        debugger
+        console.log('监听refundcombo的action', val)
+        if (!val.contracId) {
+          this.tableData = null
+          this.sendData(false)
+          return
+        }
+
+        // 只有contracId
+        if (val.contracId && val.money == undefined) {
           this.getData()
           return
         }
-        // 数据为空
-        this.tableData = null
+
+        console.log('有contracId和money')
+        debugger
+        this.money = val.money
+        this.sendData()
       },
-      deep: true,
+      deep: true
+      // immediate: true
+    },
+    oldValue: {
+      handler(val) {
+        if (Object.keys(val).length) {
+          this.structureTableByVal(val)
+        }
+      },
       immediate: true
+    },
+    refundMoney: function(val) {
+      this.money = val
+      this.sendData()
     }
   },
   created() {
@@ -165,26 +203,36 @@ export default {
       this.subjectList = res.data
     }).catch(() => {})
   },
+
   methods: {
     handleCallBack(val) {
+      this.fillData = val
       const capital = {
         'payment': val.refound.payment,
         'account': val.refound.userAccount ? val.refound.userAccount : '',
+        'payeeName': val.refound.payeeName ? val.refound.payeeName : '',
         'refundMoney': val.refound.price,
+        'dealTime': val.refound.transactionTime,
         'refundUserId': val.refound.characterId,
-        'dealTime': val.refound.deductionTime
+        'remarks': val.refound.remark
       }
       console.log('capital', capital)
       this.capital = capital
-      this.$emit('value-change', {
+      this.sendData()
+      this.isOfflineWithDraw = false
+    },
+    sendData(del = false) {
+      const obj = {
         index: this.index,
         value: {
           product: this.product,
-          capital: this.capital,
-          money: this.money
+          capital: this.capital
         }
-      })
-      this.isOfflineWithDraw = false
+      }
+
+      obj.value.money = this.oldValue.money ? this.oldValue.money : this.money
+      obj.value = del ? '' : obj.value
+      this.$emit('value-change', obj)
     },
     getData() {
       this.loading = true
@@ -208,14 +256,7 @@ export default {
         arr.push(obj)
       })
       this.product = arr
-      this.$emit('value-change', {
-        index: this.index,
-        value: {
-          product: this.product,
-          capital: this.capital,
-          money: this.money
-        }
-      })
+      this.sendData()
     },
 
     calculateMoney(dataObj) {
@@ -225,10 +266,37 @@ export default {
       })
       console.log('应退金额', money)
       this.money = money
-      // this.$emit('value-change', { index: this.index, value: money })
+    },
+    structureTableByVal(dataObj) {
+      console.log('aa', dataObj)
+
+      QueryAdminSubject().then(res => {
+        this.subjectList = res.data
+        this.money = dataObj.money
+
+        this.capital = dataObj.capital
+        if (this.capital) {
+          this.fillData = {
+            refound: {
+              'payment': Number(this.capital.payment),
+              'userAccount': this.capital.account ? this.capital.account : '',
+              'payeeName': this.capital.payeeName ? this.capital.payeeName : '',
+              'price': this.capital.refundMoney,
+              'transactionTime': this.capital.dealTime,
+              'characterId': this.capital.refundUserId,
+              'characterName': this.capital.refundUserName,
+              'remark': this.capital.remarks
+            }
+          }
+        }
+        console.log('调用structureTable', dataObj)
+        this.structureTable(dataObj)
+        // this.calculateMoney(dataObj)
+        this.structureProduct(dataObj.productList)
+      }).catch(() => {})
     },
     structureTable(dataObj) {
-      console.log('拼接表格')
+      console.log('saa', dataObj)
       var arr = []
       dataObj.productList.forEach(item => {
         console.log('name--', this.getAttrOfBigMeal(dataObj, item.mealProductId, 'name'))
@@ -513,6 +581,14 @@ export default {
          padding-left: 10px !important;
        }
       }
+    }
+  }
+
+  /deep/ .el-form-item {
+    margin-bottom: 22px!important;
+    .el-form-item__label {
+      float: left;
+      line-height: 40px;
     }
   }
 }

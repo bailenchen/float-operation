@@ -13,11 +13,13 @@ const app = {
       followCustomer: 0, // 承诺到访LEADS
       checkDisputed: 10, // 待审核的争议
       allotCustomer: 0, // 分配给我的客户
-      // followLeads: 0,
-      // checkContract: 0,
-      // checkReceivables: 0,
-      // remindReceivablesPlan: 0,
-      // endContract: 0,
+      disputed: 0, // 待审核的争议
+      checkContract: 0, // 待审核合同
+      putInPoolRemind: 0, // 待进入公海的LEADS
+      performanceDistributions: 0, // 待审核的业绩分配
+      checkWater: 0, // 待审核的资金收款
+      refundNumber: 0, // 待审核资金退款
+      checkRefund: 0, // 待审核的充值返还
       totalNum: 0
     },
     showRing: false,

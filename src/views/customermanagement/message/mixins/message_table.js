@@ -18,6 +18,8 @@ import {
   crmContractAllocListAPI,
   crmRefoundListAPI
 } from '@/api/customermanagement/message'
+import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
+import { queryDictionaryField } from '@/api/common'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
@@ -204,6 +206,19 @@ export default {
           this.showDview = true
         }
         console.log(column.property, 'bbbjjjj')
+      } else if (this.crmType == 'refund') {
+        if (column.property == 'leadsNumber') {
+          this.rowID = row.customerId
+          this.clickField = column.property
+          this.rowType = 'student'
+          this.showDview = true
+        } else if (column.property === 'num') {
+          this.rowID = row.refundId
+          this.rowType = 'refund'
+          this.clickField = column.property
+          this.showDview = true
+        }
+        console.log(column.property, 'bbbjjjj')
       }
 
       console.log('SCDSJK', this.crmType)
@@ -263,7 +278,8 @@ export default {
         'returnVisitRemind': crmMessagVisitRemindAPI,
         'disputed': crmMessageCheckDisputedAPI,
         'performanceDistributions': crmContractAllocListAPI,
-        'refundNumber': crmRefoundListAPI
+        'refundNumber': crmRefoundListAPI,
+        'checkRefund': crmRefundQueryPageListAPI
       }[this.infoType]
     },
 
@@ -329,7 +345,7 @@ export default {
           this.handelFieldList(res.data)
 
           // 获取好字段开始请求数据
-          this.getList()
+          // this.getList()
         })
         .catch(() => {
           this.loading = false
@@ -337,6 +353,7 @@ export default {
     },
 
     handelFieldList(list) {
+      const dictionaryArr = []
       for (let index = 0; index < list.length; index++) {
         const element = list[index]
         var width = 0
@@ -365,12 +382,18 @@ export default {
           }
         }
 
+        if (element.formType == 'provinces') {
+          dictionaryArr.push(element)
+        }
+
         this.fieldList.push({
           prop: element.fieldName,
           label: element.name,
           width: width
         })
       }
+
+      this.getDictionaries(dictionaryArr)
 
       // // 待进入公海的客户 添加距进入公海天数字段
       // if (this.infoType == 'putInPoolRemind') {
@@ -380,6 +403,32 @@ export default {
       //     width: 140
       //   })
       // }
+    },
+
+    getDictionaries(arr) {
+      const promiseArr = []
+      for (let index = 0; index < arr.length; index++) {
+        const element = arr[index]
+        const params = {
+          dictionaryField: element.fieldName
+        }
+        const fn = queryDictionaryField(params).then(res => {
+          return {
+            [element.fieldName]: res.data
+          }
+        }).catch(() => {})
+        promiseArr.push(fn)
+      }
+
+      Promise.all(promiseArr).then(res => {
+        const dictionaries = {}
+        res.forEach((item, index) => {
+          dictionaries[arr[index].fieldName] = item[arr[index].fieldName]
+        })
+        // console.log('dictionaries', dictionaries)
+        this.dictionaries = dictionaries
+        this.getList()
+      }).catch(() => {})
     },
 
     /** 格式化字段 */

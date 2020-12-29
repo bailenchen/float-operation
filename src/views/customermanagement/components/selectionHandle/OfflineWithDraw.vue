@@ -131,13 +131,16 @@ export default {
       type: Boolean,
       default: false
     },
-    money: [Number, String]
+    money: [Number, String],
+    fillData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
   data() {
     var validateMoney = (rule, value, callback) => {
-      // if (value === '') {
-      //   callback(new Error('请输入金额'))
-      // } else {
       var a = /^[0-9]*(\.[0-9]{1,2})?$/
       if (!a.test(value)) {
         callback(new Error('请输入正确的金额'))
@@ -264,6 +267,22 @@ export default {
   },
   watch: {
     visible(val) {
+      if (this.fillData) {
+        const form = {}
+        form[this.moneyType] = {}
+        for (const k in this.fillData[this.moneyType]) {
+          if (!this.fillData[this.moneyType].hasOwnProperty(k)) break
+          form[this.moneyType][k] = this.fillData[this.moneyType][k]
+        }
+        this.characterUser = {
+          realname: this.fillData[this.moneyType].characterName,
+          userId: this.fillData[this.moneyType].characterId,
+          username: ''
+        }
+        this.form = form
+        return
+      }
+
       var form = {}
       form[this.moneyType] = {}
 
@@ -331,12 +350,17 @@ export default {
     handleSave() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.$emit('save', this.form)
+          const obj = {
+            ...this.form
+
+          }
+          obj[this.moneyType].characterName = this.characterUser.realname
+          console.log('发送的obj', obj)
+          this.$emit('save', obj)
         }
       })
     },
     disabled(item) {
-      console.log('item111', item)
       if (this.isSave && item.prop == 'price') {
         console.log()
         return true

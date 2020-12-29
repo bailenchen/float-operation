@@ -74,7 +74,8 @@ import {
   crmReceiveExcelAllExport
 } from '@/api/customermanagement/receive'
 import {
-  crmRefundQueryPageListAPI
+  crmRefundQueryPageListAPI,
+  crmRefundExcelAllExport
 } from '@/api/customermanagement/refund'
 
 
@@ -378,25 +379,7 @@ export default {
               })
             }
 
-            // this.dictionaries =
             this.getDictionaries(dictionaryArr)
-
-            // 请求数据字典
-            // for (let index = 0; index < fieldList.length; index++) {
-            //   const element = fieldList[index]
-            //   const obj = {}
-            //   if (element.provinces) {
-            //     const params = {
-            //       dictionaryField: element.prop
-            //     }
-            //     queryDictionaryField(params).then(res => {
-            //       console.log('数据字典结果', res, this)
-            //       obj[element.prop] = res.data
-            //     }).catch(() => {})
-            //   }
-            // }
-
-
             this.moneyFields = moneyFields
             this.fieldList = fieldList
             // 获取好字段开始请求数据
@@ -778,10 +761,12 @@ export default {
           product: crmProductExcelAllExport,
           productSetMeal: crmProductSetMealExcelAllExport,
           insideUser: CrmInsideUserExcelAllExport,
-          receive: crmReceiveExcelAllExport
+          receive: crmReceiveExcelAllExport,
+          refund: crmRefundExcelAllExport
         }[keytype]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
+      console.log('导出参数', params)
       request(params)
         .then(res => {
           var blob = new Blob([res.data], {

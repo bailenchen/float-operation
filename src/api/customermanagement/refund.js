@@ -37,4 +37,39 @@ export function crmRefundReadAPI(data) {
 }
 
 
+// 删除
+export function crmRefundDeleteAPI(data) {
+  return request({
+    url: 'CrmRefund/deleteByIds',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+
+// 批量导出
+export function crmRefundExcelExport(data) {
+  return request({
+    url: 'CrmRefund/batchExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+// 全部导出
+export function crmRefundExcelAllExport(data) {
+  return request({
+    url: 'CrmRefund/allExportExcel',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 
