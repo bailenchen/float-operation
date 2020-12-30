@@ -49,6 +49,9 @@
 // import { usersList } from '@/api/common'
 import { queryUserListAPI } from '@/api/common'
 import { crmCallCheckAuthAll } from '@/api/customermanagement/customer'
+import {
+  crmClassQueryTeacher
+} from '@/api/educationmanage/class'
 import { objDeepCopy } from '@/utils'
 import PinyinMatch from 'pinyin-match'
 
@@ -89,7 +92,8 @@ export default {
         return {}
       }
     },
-    deptId: Number
+    deptId: Number,
+    teacherId: String
   },
   data() {
     return {
@@ -141,6 +145,11 @@ export default {
           this.checkItems(this.selectedData)
         }
       }
+    },
+    teacherId(val) {
+      if (val) {
+        this.getUserList()
+      }
     }
   },
   mounted() {
@@ -153,6 +162,7 @@ export default {
      * 获取数据
      */
     getUserList() {
+      if (this.infoType === 'relativeteacher' && !this.teacherId) return
       this.loading = true
       this.getRequest()(this.getParams())
         .then(res => {
@@ -177,6 +187,8 @@ export default {
         return this.infoRequest
       } else if (this.infoType === 'default') {
         return queryUserListAPI
+      } else if (this.infoType === 'relativeteacher') {
+        return crmClassQueryTeacher
       } else {
         return queryUserListAPI
       }
@@ -196,6 +208,9 @@ export default {
           : {}
       if (this.infoType === 'default') {
         params.pageType = 0
+        return params
+      } else if (this.infoType === 'relativeteacher') {
+        params.relatedTeachers = this.teacherId
         return params
       } else {
         params.pageType = 0

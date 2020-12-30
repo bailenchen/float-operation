@@ -40,11 +40,11 @@
                 type="textarea" />
 
               <el-select
-                v-if="item.type== 'select'"
+                v-if="item.type== 'select' || item.type== 'sub'"
                 v-model="form[item.prop]"
                 placeholder="请选择"
                 style="width:100%;"
-                @change="fieldChange">
+                @change="fieldChange($event, item.prop)">
                 <el-option
                   v-for="item in option[item.prop]"
                   :key="item.value"
@@ -59,10 +59,21 @@
                 class="xh-structure-cell"
                 @value-change="structureChange" />
 
+              <xh-structure-cell
+                v-if="item.type === 'classroom'"
+                :value="classRoom"
+                :radio="radio"
+                cell-type="classroom"
+                placeholder="选择教室"
+                class="xh-structure-cell"
+                @value-change="classroomChange" />
+
               <xh-user-cell
                 v-if="item.type == 'user'"
                 :radio="radio"
+                :teacher-id="teacherId"
                 :value="teacherList"
+                info-type="relativeteacher"
                 @value-change="userChange"/>
 
 
@@ -92,12 +103,11 @@ import {
   XhUserCell
 } from '@/components/CreateCom'
 import {
-  QueryAdminGrade, // 年级
   QueryCoachingMethods // 辅导方式
 } from '@/api/systemManagement/params'
-import {
-  crmClassroomSave
-} from '@/api/educationmanage/classroom'
+
+import { crmClassTypeSelectList } from '@/api/educationmanage/classSchedule'
+import { crmClassSave, crmClassQuerySubjectGrade } from '@/api/educationmanage/class'
 
 export default {
   name: 'CreateClass',
@@ -129,19 +139,19 @@ export default {
       loading: false,
       radio: false,
       datalist: [
-        { prop: 'deptId', label: '中心', type: 'dept' },
-        { prop: 'gradeId', label: '年级', type: 'select' },
+        { prop: 'deptId', label: '校区', type: 'dept' },
         { prop: 'coachType', label: '辅导方式', type: 'select' },
         { prop: 'classType', label: '班级类型', type: 'select' },
+        { prop: 'classroomId', label: '教室', type: 'classroom' },
         { prop: 'subjectTeacherId', label: '学科老师', type: 'user' },
-        { prop: 'classroomId', label: '教室', type: 'select' },
-        { prop: 'subjectId', label: '科目', type: 'select' },
+        { prop: 'gradeId', label: '年级', type: 'select' },
+        { prop: 'subjectId', label: '科目', type: 'sub' },
         { prop: 'className', label: '班级名称', type: 'text' },
-        { prop: 'remrks', label: '备注', type: 'tear' }
+        { prop: 'remarks', label: '备注', type: 'tear' }
       ],
       rule: {
         deptId: [
-          { required: true, message: '请选择中心', trigger: ['blur', 'change'] }
+          { required: true, message: '请选择校区', trigger: ['blur', 'change'] }
         ],
         gradeId: [
           { required: true, message: '请选择年级', trigger: ['blur', 'change'] }
@@ -166,9 +176,19 @@ export default {
         ]
       },
       deptSelectValue: [],
+      classRoom: [],
       teacherList: [],
+      teacherId: '',
       form: {
-        deptId: ''
+        deptId: '',
+        gradeId: null,
+        coachType: null,
+        subjectId: null,
+        subjectTeacherId: null,
+        classroomId: null,
+        classType: null,
+        className: '',
+        remarks: ''
       },
 
       // 下拉选项
@@ -176,8 +196,14 @@ export default {
         gradeId: [],
         coachType: [],
         subjectId: [],
-        classroomId: []
-      }
+        classroomId: [],
+        classType: []
+      },
+
+      // name
+      deptName: '',
+      gradeName: '',
+      subjectName: ''
     }
   },
   computed: {
@@ -191,20 +217,47 @@ export default {
     }
   },
   created() {
-    this.getGradeSelect()
+    // this.getSubject()
+    // this.getGradeSelect()
     this.getWaySelect()
     if (this.type == 'edit') {
-      const detail = this.selectionList[0]
+      const {
+        deptId,
+        deptName,
+        gradeId,
+        coachType,
+        subjectId,
+        subjectTeacherId,
+        subjectTeacherName,
+        classroomId,
+        classroomName,
+        classType,
+        className,
+        remarks
+      } = this.selectionList[0]
       this.deptSelectValue = [{
-        id: detail.deptId,
-        name: detail.deptName
+        id: deptId,
+        name: deptName
       }]
+      this.classRoom = [{
+        classroomId: classroomId,
+        classroomName: classroomName
+      }]
+      this.teacherList = [{
+        userId: subjectTeacherId,
+        realname: subjectTeacherName
+      }]
+      this.querySubjectGrade(subjectTeacherId)
       this.form = {
-        // deptId: detail.deptId,
-        // relatedTeachers: detail.relatedTeachers,
-        // classroomName: detail.classroomName,
-        // status: detail.status,
-        // classroomId: detail.classroomId
+        deptId: deptId,
+        gradeId: gradeId,
+        coachType: coachType,
+        subjectId: subjectId,
+        subjectTeacherId: subjectTeacherId,
+        classroomId: classroomId,
+        classType: classType,
+        className: className,
+        remarks: remarks
       }
     }
   },
@@ -224,38 +277,75 @@ export default {
       console.log(data, 'vvvvv')
       this.form.deptId = data.value.length ? data.value[0].id : ''
       this.deptSelectValue = data.value || []
+      this.deptName = data.value.length ? data.value[0].deptNumber : ''
+      this.paddingClassName()
+    },
+    // 教室选择
+    classroomChange(data) {
+      console.log(data, 'vvvvv')
+      this.form.classroomId = data.value.length ? data.value[0].classroomId : ''
+      this.classRoom = data.value || []
+      this.teacherId = data.value.length ? data.value[0].relatedTeachers : ''
     },
 
     /**
      * 关联老师
      */
     userChange(data) {
-      const ids = ['']
-      const names = []
-      data.value.forEach(item => {
-        ids.push(item.userId)
-        names.push(item.realname)
-      })
-      this.form.relatedTeachers = String(ids)
-      this.form.classroomName = String(names)
-      this.teacherList = data.value || []
+      this.form.subjectTeacherId = data.value.length ? data.value[0].userId : ''
+      if (this.form.subjectTeacherId) {
+        this.querySubjectGrade(this.form.subjectTeacherId)
+      }
     },
 
-    fieldChange(data) {
-      console.log(data, 'xxxx')
-    },
-
-    // 获取年级
-    getGradeSelect() {
-      QueryAdminGrade().then(res => {
-        this.option.gradeId = res.data.map(item => {
+    // 同时获取学科与年级
+    querySubjectGrade(id) {
+      crmClassQuerySubjectGrade({ userId: id }).then(res => {
+        const { grades, subjects } = res.data
+        this.option.gradeId = grades.map(item => {
           item.label = item.gradeName
           item.value = item.id
           return item
         })
-      }).catch((err) => {
-        console.log(err)
-      })
+        this.option.subjectId = subjects.map(item => {
+          item.label = item.subjectName
+          item.value = item.id
+          return item
+        })
+        console.log(res, 'sg')
+      }).catch(() => {})
+    },
+
+    fieldChange(data, name) {
+      if (name == 'coachType') {
+        this.queryClassType(data)
+      } else if (name == 'subjectId') {
+        this.option.subjectId.forEach(item => {
+          if (item.value == data) {
+            this.subjectName = item.label
+          }
+        })
+        this.paddingClassName()
+      } else if (name == 'gradeId') {
+        this.option.gradeId.forEach(item => {
+          if (item.value == data) {
+            this.gradeName = item.label
+          }
+        })
+        this.paddingClassName()
+      }
+    },
+
+    // 班级名称填充
+    paddingClassName() {
+      if (this.form.deptId && this.form.gradeId && this.form.subjectId) {
+        this.form.className = `${this.deptName}-${this.gradeName}-${this.subjectName}-${this.rand(1000, 9999)}`
+      }
+    },
+
+    // 随机四位数
+    rand(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min
     },
 
     // 获取辅导方式
@@ -263,12 +353,28 @@ export default {
       QueryCoachingMethods().then(res => {
         this.option.coachType = res.data.map(item => {
           item.label = item.name
-          item.value = item.name
+          item.value = item.dictionaryId
           return item
         })
       }).catch((err) => {
         console.log(err)
       })
+    },
+
+
+    // 根据辅导方式查询班级类型
+    queryClassType(id) {
+      const params = {
+        pId: id
+      }
+      crmClassTypeSelectList(params).then(res => {
+        this.form.classType = null
+        this.option['classType'] = res.data.map(item => {
+          item.label = item.name
+          item.value = item.dictionaryId
+          return item
+        }) || []
+      }).catch(() => {})
     },
 
     /**
@@ -279,12 +385,15 @@ export default {
         if (valid) {
           this.loading = true
           const params = {
-            entity: this.form
+            entity: {
+              ...this.form
+            }
           }
-          crmClassroomSave(params).then(res => {
+          crmClassSave(params).then(res => {
             this.loading = false
 
             this.hidenView()
+            this.$message.success('操作成功')
             if (this.type) {
               this.$emit('save-success', { type: 'mode_class' })
             } else {

@@ -221,6 +221,7 @@ export default {
             this.loading = false
 
             this.hidenView()
+            this.$message.success('操作成功')
             if (this.type) {
               this.$emit('save-success', { type: 'mode' })
             } else {

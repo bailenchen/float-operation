@@ -16,6 +16,7 @@
       :dept-id="deptId"
       :is-refer="isRefer"
       :info-type="infoType"
+      :teacher-id="teacherId"
       @changeCheckout="checkUsers" />
     <flexbox
       v-if="!$slots.reference"
@@ -88,7 +89,8 @@ export default {
       type: String,
       default: ''
     },
-    deptId: Number
+    deptId: Number,
+    teacherId: String
   },
   data() {
     return {

@@ -164,7 +164,7 @@ export default {
         // 班级排课表
         classschedule: {
           deptName: '中心',
-          coachType: '班级类型',
+          classType: '班级类型',
           className: '班级名称',
           classroomName: '教室名称',
           gradeName: '年级',

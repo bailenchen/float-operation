@@ -76,3 +76,22 @@ export function crmClassRankCourse(data) {
     }
   })
 }
+
+// 班级管理 关联老师
+export function crmClassQueryTeacher(data) {
+  return request({
+    url: 'educationalClass/selectTeacher',
+    method: 'post',
+    data: data
+  })
+}
+
+
+// 班级管理 通过老师查学科与年级
+export function crmClassQuerySubjectGrade(data) {
+  return request({
+    url: 'system/user/queryUserInfoOne',
+    method: 'post',
+    data: data
+  })
+}

@@ -104,7 +104,7 @@ export default {
   methods: {
     // 重新获取列表
     getDataList() {
-
+      this.getList()
     },
 
     createClick() {
