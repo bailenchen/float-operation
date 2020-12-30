@@ -152,6 +152,15 @@ export function crmAccountWaterDetail(data) {
   })
 }
 
+// crm 收款时轮询-查支付状态
+export function crmAccountQueryPayStatus(data) {
+  return request({
+    url: 'CrmCapitalAccountWater/selectLoop',
+    method: 'post',
+    data: data
+  })
+}
+
 
 // // crm 合同充值 添加/编辑
 // export function crmRefundSaveOrUpdate(data) {
