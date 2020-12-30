@@ -81,6 +81,11 @@
             </template>
           </template>
         </el-table-column>
+        <el-table-column fixed="right" width="90" align="center" label="合同预览">
+          <template slot-scope="scope">
+            <el-button @click="previewCOntract(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" width="110" align="center" label="电子合同确认">
           <template slot-scope="scope">
             <el-button @click="downBook(scope.row)">签署地址</el-button>
@@ -298,6 +303,13 @@ export default {
         return this.$message.error('该合同暂时没有电子合同确认书')
       }
       this.outerVisible = true
+    },
+
+    // 预览合同
+    previewCOntract(row) {
+      if (row.queryUrl) {
+        window.open(row.queryUrl)
+      }
     },
 
     createCode() {

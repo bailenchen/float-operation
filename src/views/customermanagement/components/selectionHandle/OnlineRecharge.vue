@@ -21,10 +21,16 @@
       title="线上资金收款"
       append-to-body
       @close="innerHandleCancel">
+
       <div v-loading="loading" style="margin: 20px auto;width:150px;height:150px;">
         <div
+          v-if="!isSucc"
           id="canvas"
           class="publish-info-content" />
+        <div v-if="isSucc" class="succ-wrap">
+          <i class="el-icon-success" />
+          <div style="margin-top:10px;">支付成功</div>
+        </div>
       </div>
     </el-dialog>
     <div slot="footer" class="dialog-footer">
@@ -38,7 +44,7 @@
 <script>
 // import { Loading } from 'element-ui'
 import QRCode from 'qrcodejs2'
-import { crmAccountScanePay, crmAccountCodePay } from '@/api/customermanagement/account'
+import { crmAccountScanePay, crmAccountCodePay, crmAccountQueryPayStatus } from '@/api/customermanagement/account'
 export default {
   name: 'OnlineRecharge',
   props: {
@@ -81,7 +87,9 @@ export default {
           { required: true, validator: validMoney, trigger: 'blur' }
         ]
       },
-      start: 0
+      start: 0,
+      timer: null,
+      isSucc: false
     }
   },
   watch: {
@@ -102,11 +110,6 @@ export default {
 
     innerHandleCancel() {
       clearInterval(this.timer)
-      console.log('guanbi')
-      // this.$message({
-      //   type: 'error',
-      //   message: '支付失败'
-      // })
     },
 
     /**
@@ -149,31 +152,30 @@ export default {
       })
     },
 
+    // 随机四位数
+    rand(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min
+    },
+
     /**
      * 扫码付款
      */
     scaneHandle() {
-      // const params = {
-
-      // }
-      // console.log('金额', this.form.money)
-      // console.log('id', this.selectionList[0].capitalId)
+      const req = `${Date.now()}${this.rand(1000, 9999)}`
       const params = {
         traxamt: this.form.money,
-        capitalId: this.selectionList[0].capitalId
+        capitalId: this.selectionList[0].capitalId,
+        reqsn: req
       }
 
       crmAccountScanePay(params).then(res => {
-        // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
-        console.log('=shuju11', res)
         this.createCode(res.data)
         this.loading = false
         clearInterval(this.timer)
         this.timer = setInterval(() => {
           this.start++
-          this.queryPayStatus(this.start)
+          this.queryPayStatus(req)
         }, 1500)
-        console.log(res, '*****')
       }).catch(() => {
         this.loading = false
       })
@@ -182,35 +184,43 @@ export default {
     /**
      * 轮询发起查询支付状态
      */
-    queryPayStatus(index) {
-      if (index == 6) {
+    queryPayStatus(req) {
+      crmAccountQueryPayStatus({ reqsn: req }).then(res => {
+        if (res.data == 1) {
+          clearInterval(this.timer)
+          this.isSucc = true
+        }
+      }).catch((err) => {
         clearInterval(this.timer)
-        console.log('支付结果')
-      } else {
-        console.log('正在查询支付')
-      }
+        console.log(err)
+      })
+      // if (index == 6) {
+      //   clearInterval(this.timer)
+      //   console.log('支付结果')
+      // } else {
+      //   console.log('正在查询支付')
+      // }
     },
 
     /**
      *付款码付款
      */
     payCodeHandle() {
+      const req = `${Date.now()}${this.rand(1000, 9999)}`
       const params = {
         traxamt: this.form.money,
-        capitalId: this.selectionList[0].capitalId
+        capitalId: this.selectionList[0].capitalId,
+        reqsn: req
       }
 
       crmAccountCodePay(params).then(res => {
-        // const scane = `${WKConfig.getLocationOrigin()}/api/CrmCapitalAccountWater/unionorder`
-        console.log('付款码请求回调', res)
         this.createCode(res.orderNumber)
         this.loading = false
-        // clearInterval(this.timer)
-        // this.timer = setInterval(() => {
-        //   this.start++
-        //   this.queryPayStatus(this.start)
-        // }, 1500)
-        console.log(res, '*****')
+        clearInterval(this.timer)
+        this.timer = setInterval(() => {
+          this.start++
+          this.queryPayStatus(req)
+        }, 1500)
       }).catch(() => {
         this.loading = false
       })
@@ -269,5 +279,20 @@ export default {
 
 /deep/ .el-form-item__content {
     margin-left: 152px !important;
+}
+
+.el-icon-success {
+    font-size: 50px;
+    background-color: #fff;
+    border-radius: 50%;
+    color: #2362fb;
+}
+
+.succ-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 15px;
 }
 </style>
