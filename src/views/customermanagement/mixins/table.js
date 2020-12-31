@@ -137,6 +137,9 @@ export default {
     }
   },
   mounted() {
+    if (this.crmType == 'student' || this.crmType == 'customer') {
+      this.pageSizes = [15, 30, 60, 100, 500]
+    }
     /** 控制table的高度 */
     window.onresize = () => {
       this.updateTableHeight()
