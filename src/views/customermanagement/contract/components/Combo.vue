@@ -1,7 +1,6 @@
 <template>
   <div class="wrap">
-    <p v-if="showOperation">当前可赠送课次：<span class="red">{{ maxGive }}</span></p>
-
+    <!-- <p v-if="showOperation">当前可赠送课次：<span class="red">{{ maxGive }}</span></p> -->
     <el-table
       :span-method="objectSpanMethod"
       :data="tableData"
@@ -98,9 +97,9 @@
         </template>
       </el-table-column>
     </el-table>
-    <div v-if="presentRules">
+    <!-- <div v-if="presentRules">
       累计赠送规则：购买辅导方式为{{ presentRules.coachType }}的，购买{{ presentRules.classes }}节课，可赠送{{ presentRules.give }}节课。累计可赠送课次：{{ surplusGive }}
-    </div>
+    </div> -->
     <div v-if="!isDetail" class="total-info">
       {{ priceText }}：
       <el-input
@@ -158,16 +157,16 @@ export default {
           prop: 'subject',
           width: 100
         },
-        {
-          label: '套餐标准课次',
-          prop: 'comboNormLesson',
-          width: 100
-        },
-        {
-          label: '套餐标准赠送课次',
-          prop: 'normLesson',
-          width: 100
-        },
+        // {
+        //   label: '套餐标准课次',
+        //   prop: 'comboNormLesson',
+        //   width: 100
+        // },
+        // {
+        //   label: '套餐标准赠送课次',
+        //   prop: 'normLesson',
+        //   width: 100
+        // },
         {
           label: '购买课次',
           prop: 'purchaseLesson',
@@ -572,12 +571,12 @@ export default {
           const element = item[j].item
           if (element.detailsId === row.detailsId) {
             lesson += Number(element.purchaseLesson)
-            var _lesson = Number(element.purchaseLesson)
-            if (lesson > element.comboNormLesson) {
-              element.purchaseLesson = 0
-              lesson -= _lesson
-              this.$message.warning('购买课次不能大于套餐标准课次')
-            }
+            // var _lesson = Number(element.purchaseLesson)
+            // if (lesson > element.comboNormLesson) {
+            //   element.purchaseLesson = 0
+            //   lesson -= _lesson
+            //   this.$message.warning('购买课次不能大于套餐标准课次')
+            // }
           }
         }
       }
@@ -593,10 +592,10 @@ export default {
         if (element.detailsId === row.detailsId) {
           element.grooveLesson = 0
           // 小套餐的购买和==套餐标准课次，且标准赠送不为0，可编辑，否则禁用
-          element.disabled = !(lesson === row.comboNormLesson && row.normLesson)
-          this.$set(this.tableData, i, element)
+          // element.disabled = !(lesson === row.comboNormLesson && row.normLesson)
 
-          // this.changeGrooveLesson(row)
+          element.disabled = !((lesson >= row.comboNormLesson) && row.normLesson)
+          this.$set(this.tableData, i, element)
         }
         buyCounts += Number(element.purchaseLesson)
         if (element.isGive) {
@@ -1130,7 +1129,7 @@ export default {
       // 第0、9列，按照本类的第一行中的数据显示，剩余行为0
       if (
         columnIndex === 0 ||
-        columnIndex === 10
+        columnIndex === 8
       ) {
         for (let i = 0; i < this.OrderLeve1Arr.length; i++) {
           const element = this.OrderLeve1Arr[i]
@@ -1155,9 +1154,9 @@ export default {
 
       if (this.OrderLeve3Arr.length) {
         if (
+          columnIndex === 7 ||
           columnIndex === 9 ||
-          columnIndex === 11 ||
-          columnIndex === 12
+          columnIndex === 10
         ) {
           for (let i = 0; i < this.OrderLeve3Arr.length; i++) {
             const element = this.OrderLeve3Arr[i]
@@ -1184,11 +1183,9 @@ export default {
 
       if (
         columnIndex === 1 ||
-        columnIndex === 3 ||
-        columnIndex === 4 ||
+        columnIndex === 7 ||
         columnIndex === 9 ||
-        columnIndex === 11 ||
-        columnIndex === 12
+        columnIndex === 10
       ) {
         for (let i = 0; i < this.OrderLeve2Arr.length; i++) {
           const element = this.OrderLeve2Arr[i]

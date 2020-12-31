@@ -72,9 +72,9 @@
         prop="univalence"
         label="均价"/>
     </el-table>
-    <div v-if="presentRules">
+    <!-- <div v-if="presentRules">
       累计赠送规则：{{ presentRules }}
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -106,16 +106,16 @@ export default {
           prop: 'subject',
           width: 100
         },
-        {
-          label: '套餐标准课次',
-          prop: 'comboNormLesson',
-          width: 100
-        },
-        {
-          label: '套餐标准赠送课次',
-          prop: 'normLesson',
-          width: 100
-        },
+        // {
+        //   label: '套餐标准课次',
+        //   prop: 'comboNormLesson',
+        //   width: 100
+        // },
+        // {
+        //   label: '套餐标准赠送课次',
+        //   prop: 'normLesson',
+        //   width: 100
+        // },
         {
           label: '购买课次',
           prop: 'purchaseLesson',
@@ -291,7 +291,7 @@ export default {
       // 第0、9列，按照本类的第一行中的数据显示，剩余行为0
       if (
         columnIndex === 0 ||
-        columnIndex === 10
+        columnIndex === 8
       ) {
         for (let i = 0; i < this.OrderLeve1Arr.length; i++) {
           const element = this.OrderLeve1Arr[i]
@@ -316,9 +316,9 @@ export default {
 
       if (this.OrderLeve3Arr.length) {
         if (
+          columnIndex === 7 ||
           columnIndex === 9 ||
-          columnIndex === 11 ||
-          columnIndex === 12
+          columnIndex === 10
         ) {
           for (let i = 0; i < this.OrderLeve3Arr.length; i++) {
             const element = this.OrderLeve3Arr[i]
@@ -345,11 +345,9 @@ export default {
 
       if (
         columnIndex === 1 ||
-        columnIndex === 3 ||
-        columnIndex === 4 ||
+        columnIndex === 7 ||
         columnIndex === 9 ||
-        columnIndex === 11 ||
-        columnIndex === 12
+        columnIndex === 10
       ) {
         for (let i = 0; i < this.OrderLeve2Arr.length; i++) {
           const element = this.OrderLeve2Arr[i]

@@ -104,6 +104,21 @@
       </div>
 
 
+      <!-- <create-sections
+        title="审核信息">
+        <div
+          v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
+          slot="header"
+          class="examine-type">{{ examineInfo.examineType===1 ? '固定审批流' : '授权审批人' }}</div>
+        <create-examine-info
+          ref="examineInfo"
+          :types-id="id"
+          :types="moneyType"
+          class="examine-form"
+          @value-change="examineValueChange" />
+      </create-sections> -->
+
+
       <div class="handle-bar">
         <el-button
           class="handle-button"
@@ -126,17 +141,21 @@ import { downloadAdjunct } from '@/api/customermanagement/common'
 import { XhUserCell, XhInput } from '@/components/CreateCom'
 import AddImageList from '@/components/quickAdd/AddImageList'
 import CreateView from '@/components/CreateView'
+import CreateSections from '@/components/CreateSections'
+import CreateExamineInfo from '@/components/Examine/CreateExamineInfo'
 
 // 方法
 import { downloadExcelWithResData } from '@/utils/index'
 
 export default {
-  name: 'EditTransaction', // 编辑交易流水
+  name: 'EditTransaction',
   components: {
     XhInput,
     XhUserCell,
     AddImageList,
-    CreateView
+    CreateView,
+    CreateSections,
+    CreateExamineInfo
   },
   props: {
     visible: {
@@ -263,7 +282,13 @@ export default {
       },
       draftUser: null,
       fileName: '', // 已上传附件名
-      fieldBatchId: '' // 已上传附件标识
+      fieldBatchId: '', // 已上传附件标识
+      examineInfo: {}
+    }
+  }, // 编辑交易流水
+  computed: {
+    showExamine() {
+      return true
     }
   },
   watch: {
@@ -396,6 +421,14 @@ export default {
     },
 
     saveField() {
+      // 验证审批流
+      /*  if (this.examineInfo.examineType == 2) {
+        if (!this.examineInfo.value.length) {
+          this.$message.error('审批人不能为空')
+          return
+        }
+      } */
+
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.sumitData()
@@ -414,7 +447,7 @@ export default {
       //   obj[k] = this.form[this.moneyType][k]
       // }
 
-      var parms = {
+      var params = {
         entity: {
           waterId: this.form[this.moneyType].waterId,
           userAccount: this.form[this.moneyType].userAccount,
@@ -422,12 +455,17 @@ export default {
           remark: this.form[this.moneyType].remark
         }
       }
+      if (this.examineInfo.examineType == 2) {
+        params['checkUserId'] = this.examineInfo.value[0].userId
+      }
 
       if (this.imgFile[0]) {
-        parms.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
-        parms.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
+        params.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
+        params.entity.receipt = this.imgFile[0].name // 交易凭证附件名称
       }
-      crmEditAccountWater(parms).then(res => {
+      console.log('请求参数', params)
+      // return
+      crmEditAccountWater(params).then(res => {
         this.loading = false
         this.$message({
           type: 'success',
@@ -448,6 +486,11 @@ export default {
     // 获取左边padding
     getPaddingRight(item, index) {
       return index % 2 == 0 ? '40px' : '0'
+    },
+
+    // 审批信息值更新
+    examineValueChange(data) {
+      this.examineInfo = data
     }
   }
 }
@@ -558,5 +601,18 @@ export default {
 
 .img {
   clear: both;
+}
+
+// 审核信息 里的审核类型
+.examine-type {
+  font-size: 12px;
+  color: white;
+  background-color: #fd715a;
+  padding: 0 8px;
+  margin-left: 5px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 8px;
+  transform: scale(0.8, 0.8);
 }
 </style>

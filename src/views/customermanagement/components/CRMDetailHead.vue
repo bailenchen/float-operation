@@ -355,6 +355,9 @@ export default {
       if (this.crmType === 'water') {
         return false
       }
+      if (this.crmType === 'capitalAccount') {
+        return false
+      }
 
       return this.isSeas ? false : this.crm[this.crmType].update
     },
