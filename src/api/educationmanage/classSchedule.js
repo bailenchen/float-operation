@@ -81,3 +81,33 @@ export function crmClassSchduleShiftSave(data) {
     }
   })
 }
+// 班级排课表 课时确认--查询基本信息
+export function crmClassSchduleConfirmInfo(data) {
+  return request({
+    url: 'educationalClasstime/queryById',
+    method: 'post',
+    data: data
+  })
+}
+
+// 班级排课表 课时确认--学生请假
+export function crmClassSchduleConfirmLeave(data) {
+  return request({
+    url: 'educationalClasstime/leaveStudent',
+    method: 'post',
+    data: data
+  })
+}
+
+// 班级排课表 课时确认保存
+export function crmClassSchduleConfirmSave(data) {
+  return request({
+    url: 'educationalClasstime/classConfirmation',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
