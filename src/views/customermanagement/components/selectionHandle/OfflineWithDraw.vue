@@ -267,7 +267,7 @@ export default {
   },
   watch: {
     visible(val) {
-      if (this.fillData) {
+      if (Object.keys(this.fillData).length) {
         const form = {}
         form[this.moneyType] = {}
         for (const k in this.fillData[this.moneyType]) {

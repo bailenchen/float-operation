@@ -1038,8 +1038,13 @@ export default {
         console.log('新建资金账户， 选择学员')
         if (item.data.formType === 'customer') {
           let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'leads_number')
+          console.log('findIndex', findIndex)
           if (findIndex !== -1) {
             this.crmForm.crmFields[findIndex].value = item.value[0].leadsNumber || ''
+          }
+          findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'name')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].value = item.value[0].customerName || ''
           }
           findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'mobile')
           if (findIndex !== -1) {
@@ -1979,9 +1984,13 @@ export default {
           ]
           // 普通合同禁用contractsAttr
           // console.log(!this.action.present, this.action.contractType != 2)
-          // if (!this.action.present) {
+          //
           if (this.action.contractType != 2) {
             arr.push('contractsAttr')
+
+            if (item.fieldName == 'is_early_retirement') {
+              params['value'] = 1
+            }
           }
 
           // 额外合同
@@ -2116,7 +2125,7 @@ export default {
         }
         if (this.crmType == 'capitalAccount') {
           console.log('是资金账号，设置字段是否可编辑')
-          if (element.key == 'leads_number' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id' || (element.key == 'customer_id' && this.action.type == 'update')) {
+          if (element.key == 'leads_number' || element.key == 'name' || element.key == 'mobile' || element.key == 'dept_id' || element.key == 'owner_user_id' || (element.key == 'customer_id' && this.action.type == 'update')) {
             element.disabled = true
           }
           if (element.key == 'dept_id' || element.key == 'owner_user_id') {
@@ -3222,8 +3231,12 @@ export default {
           return false
         }
 
+
+        let minUnivalence = element.value.data[0].univalence
         for (let i = 0; i < element.value.data.length; i++) {
           const item = element.value.data[i]
+          minUnivalence = minUnivalence > item.univalence ? item.univalence : minUnivalence
+
           if (!item.subject) {
             this.$message.error('请选择科目')
             return false
@@ -3261,6 +3274,13 @@ export default {
         params.entity.ruleDetails = element.value.ruleDetails
         if (element.value.refundMonry) {
           params.entity.refundMonry = element.value.refundMonry
+        }
+
+        console.log('最小均价', minUnivalence)
+        // 返还时判断 返还金额大于最小均价无法变更
+        if (element.value.refundMonry < 0 && Math.abs(element.value.refundMonry) > minUnivalence) {
+          this.$message.warning('变更返还金额大于最小均价，无法变更')
+          return false
         }
       } else {
         this.$message.error('请添加套餐')

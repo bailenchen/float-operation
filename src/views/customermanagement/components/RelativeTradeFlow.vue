@@ -42,16 +42,15 @@
         :width="item.width"
         :label="item.label"
         show-overflow-tooltip/>
-        <!-- <el-table-column
+      <el-table-column
         label="操作"
         align="center"
         fixed="right"
         width="80">
         <template slot-scope="scope">
-          <el-button v-if="!scope.row.transactionType" disabled>编辑</el-button>
-          <el-button v-if="scope.row.transactionType" @click="editHandle(scope.row)">编辑</el-button>
+          <el-button v-if="showEdit(scope.row.transactionType)" :disabled="isDisabled(scope.row.checkStatus)" @click="editHandle(scope.row)">编辑</el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -326,7 +325,7 @@ export default {
         // console.log(row[column.property])
       } else if (column.property === 'price') {
         if (row.bigDealType === 2) {
-          console.log(row, 'xxxxx')
+          // console.log(row, 'xxxxx')
           return `-${row[column.property]}`
         } else if (row.bigDealType === 1) {
           return `+${row[column.property]}`
@@ -442,6 +441,18 @@ export default {
       }
 
       this.changeSearchHandle()
+    },
+    showEdit(transactionType) {
+      if (transactionType == '线下资金收款' || transactionType == '资金退款') {
+        return true
+      }
+      return false
+    },
+    isDisabled(checkStatus) {
+      if (checkStatus == 1) {
+        return true
+      }
+      return false
     }
   }
 }

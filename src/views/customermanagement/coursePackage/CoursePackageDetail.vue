@@ -84,7 +84,6 @@
         </flexbox>
       </flexbox>
     </div>
-
     <c-r-m-create-view
       v-if="isCreate"
       :action="{type: 'update', id: id, batchId: detailData.batchId, editDetail: detailData}"

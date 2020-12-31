@@ -521,6 +521,7 @@ export default {
     },
 
     getSettingConfig(item) {
+      console.log('循环元素', item)
       if (!item.formType) return
       const reqObj = this.reqMap.find(o => o.formType === item.formType)
       if (!reqObj) return

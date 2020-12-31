@@ -22,6 +22,15 @@
           :placeholder="item.placeholder"
           v-model="bitem.form[item.prop]"/>
 
+        <el-select v-if="item.prop == 'courseType'" v-model="bitem.form[item.prop]" style="width: 100%;" placeholder="请选择">
+          <el-option
+            v-for="item in courseTypeOptions"
+            :key="item.value"
+            :label="item.dictionaryName"
+            :value="item.dictionaryId"
+            :disabled="item.disabled"/>
+        </el-select>
+
         <el-input
           v-if="item.type == 'ctx'"
           v-model="bitem.form[item.prop]"
@@ -69,6 +78,7 @@
 
 <script>
 import { QueryAdminSubject } from '@/api/systemManagement/params'
+import { queryDictionaryField } from '@/api/common'
 
 export default {
   name: 'XhMealSubject',
@@ -114,6 +124,7 @@ export default {
     return {
       formsList: [],
       options: [], // 学科下拉
+      courseTypeOptions: [], // 课程类型
       rules: {
         'receivables': {
           detailsName: [
@@ -140,7 +151,8 @@ export default {
             { required: true, trigger: ['change'] }
           ]
         }
-      }
+      },
+      formsListcourseType: '常规课'
     }
   },
   computed: {
@@ -158,6 +170,42 @@ export default {
   },
   created() {
     this.formsList = []
+    if (this.crmType == 'productSetMeal') {
+      queryDictionaryField({ dictionaryField: 'course_type' }).then(res => {
+        console.log('字典', res.data)
+        this.courseTypeOptions = res.data
+
+        if (this.action == 'save') {
+          // 创建初始item
+          const item = this.createFieldObj()
+          // 添加item
+          this.formsList.push(item)
+        }
+
+        if (this.action == 'update') {
+          this.detailList.forEach(item => {
+            const iteData = this.createFieldObj()
+            console.log('item111', item)
+            iteData.form = {
+              detailsId: item.detailsId,
+              detailsName: item.detailsName,
+              courseType: item.courseType,
+              purchaseFrequency: item.purchaseFrequency,
+              giveFrequency: item.giveFrequency,
+              start_life_cycle: item.startLifeCycle,
+              end_life_cycle: item.endLifeCycle,
+              isGive: item.isGive,
+              term: item.endLifeCycle ? [item.startLifeCycle, item.endLifeCycle] : []
+            }
+
+            this.formsList.push(iteData)
+          })
+        }
+      }).catch(() => {})
+      return
+    }
+
+
     if (this.action == 'save') {
       // 创建初始item
       const item = this.createFieldObj()
@@ -170,7 +218,7 @@ export default {
     if (this.action == 'update') {
       this.detailList.forEach(item => {
         const iteData = this.createFieldObj()
-        if (this.crmType == 'productSetMeal') {
+        /* if (this.crmType == 'productSetMeal') {
           iteData.form = {
             detailsId: item.detailsId,
             detailsName: item.detailsName,
@@ -181,7 +229,7 @@ export default {
             isGive: item.isGive,
             term: item.endLifeCycle ? [item.startLifeCycle, item.endLifeCycle] : []
           }
-        }
+        } */
         this.formsList.push(iteData)
       })
     }
@@ -228,6 +276,7 @@ export default {
         item = {
           formField: [
             { label: '套餐', prop: 'detailsName', showblock: false, type: 'text', placeholder: '请输入套餐' },
+            { label: '课程类型', prop: 'courseType', value: '常规课', showblock: false, type: 'select', placeholder: '请选择' },
             { label: '购买课次', prop: 'purchaseFrequency', showblock: false, type: 'text', placeholder: '请输入购买课次' },
             { label: '赠送课次', prop: 'giveFrequency', showblock: false, type: 'text', placeholder: '请输入赠送课次' },
             { label: '是否参与累计赠送', prop: 'isGive', showblock: false, type: 'radio' },
@@ -235,6 +284,7 @@ export default {
           ],
           form: {
             detailsName: '',
+            course_type: this.courseTypeOptions[0].dictionaryId,
             purchaseFrequency: '',
             giveFrequency: '',
             start_life_cycle: '',

@@ -208,46 +208,79 @@
       :close-on-click-modal="false"
       :title="depCreateTitle"
       :before-close="depCreateClose"
-      width="30%">
-      <div class="nav-dialog-div">
-        <label>{{ depCreateLabel }}：</label>
-        <el-input
-          v-model="depCreateLabelValue"
-          :maxlength="20"
-          placeholder="请输入内容" />
+      top="1vh"
+      width="35%">
+      <div class="wrap-dept">
+        <el-form
+          ref="depCreateForm"
+          :model="depCreateForm"
+          :rules="deptCreateRules"
+          label-position="left">
+          <el-form-item label="部门名称" prop="name">
+            <el-input
+              v-model="depCreateForm.name"
+              :maxlength="20"
+              placeholder="请输入部门名称" />
+          </el-form-item>
+
+          <el-form-item label="上级部门" prop="pid">
+            <el-select
+              v-model="depCreateForm.pid"
+              placeholder="请选择">
+              <el-option
+                v-for="item in superDepList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="是否为所属中心" prop="centre">
+            <el-radio-group v-model="depCreateForm.centre">
+              <el-radio :label="2">否</el-radio>
+              <el-radio :label="1">是</el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <el-form-item label="部门编号" prop="deptNumber">
+            <el-input
+              v-model="depCreateForm.deptNumber"
+              :maxlength="20"
+              placeholder="请输入部门编号" />
+          </el-form-item>
+
+          <el-form-item label="公司名称" prop="companyName">
+            <el-input
+              v-model="depCreateForm.companyName"
+              :maxlength="20"
+              placeholder="请输入公司名称" />
+          </el-form-item>
+
+          <el-form-item label="公司银行账号" prop="account">
+            <el-input
+              v-model="depCreateForm.account"
+              :maxlength="20"
+              placeholder="请输入公司银行账号" />
+          </el-form-item>
+
+          <el-form-item label="开户行" prop="openBank">
+            <el-input
+              v-model="depCreateForm.openBank"
+              :maxlength="20"
+              placeholder="请输入开户行" />
+          </el-form-item>
+
+          <el-form-item label="备用字段" prop="">
+            <el-input
+              v-model="depCreateForm.backField"
+              :maxlength="20"
+              placeholder="请输入备用字段" />
+          </el-form-item>
+
+          <xh-customer-address @value-change="fieldValueChange" />
+        </el-form>
       </div>
-      <div
-        v-if="depSelect != 0"
-        class="nav-dialog-div">
-        <label>上级部门：</label>
-        <el-select
-          v-model="depSelect"
-          :clearable="false"
-          placeholder="请选择">
-          <el-option
-            v-for="item in superDepList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id" />
-        </el-select>
-      </div>
-      <div
-        v-if="depSelect != 0"
-        class="nav-dialog-div">
-        <label>是否为所属中心：</label>
-        <el-radio-group v-model="centre">
-          <el-radio :label="2">否</el-radio>
-          <el-radio :label="1">是</el-radio>
-        </el-radio-group>
-      </div>
-      <div
-        v-if="depSelect != 0"
-        class="nav-dialog-div">
-        <label>部门编号：</label>
-        <el-input
-          v-model="deptNumber"
-          placeholder="请输入部门编号" />
-      </div>
+
       <span
         slot="footer"
         class="dialog-footer">
@@ -548,6 +581,30 @@
       </span>
     </el-dialog>
 
+    <!-- 更换直属上级 -->
+    <el-dialog
+
+      :visible.sync="changeSuperiorDialog"
+      title="更换直属上级"
+      width="30%">
+      <el-select v-loading="superiorloading" v-model="superiorId" placeholder="请选择">
+        <el-option
+          v-for="item in superiorList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :disabled="item.disabled"/>
+      </el-select>
+      <span
+        slot="footer"
+        class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="changeSuperiorHandle">保 存</el-button>
+        <el-button @click="changeSuperiorDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
+
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
@@ -569,12 +626,13 @@ import {
   adminUsersUsernameEditAPI,
   adminUsersManagerUsernameEditAPI,
   usersEditStatus,
-  userCallQueryInfoAPI
+  userCallQueryInfoAPI,
+  changeSuperiorAPI
 } from '@/api/systemManagement/EmployeeDepManagement'
 import {
   adminConfigsetIndex
 } from '@/api/systemManagement/applicationManagement'
-import { usersList, depList } from '@/api/common' // 直属上级接口
+import { usersList, depList, queryUserListAPI } from '@/api/common' // 直属上级接口
 import { SendSmsAPI } from '@/api/login'
 import {
   QueryAdminSubject,
@@ -589,6 +647,9 @@ import XrHeader from '@/components/xr-header'
 import Reminder from '@/components/reminder'
 import SlideVerify from '@/components/SlideVerify'
 
+import XhCustomerAddress from '@/components/CreateCom/XhCustomerAddress'
+// import VDistpicker from '@/components/v-distpicker'
+
 import { chinaMobileRegex } from '@/utils'
 import { objDeepCopy } from '@/utils'
 
@@ -600,7 +661,8 @@ export default {
     BulkImportUser,
     XrHeader,
     Reminder,
-    SlideVerify
+    SlideVerify,
+    XhCustomerAddress
   },
   data() {
     return {
@@ -851,7 +913,43 @@ export default {
           { required: true, message: '硬话机不能为空', trigger: ['blur', 'change'] }
         ]
 
-      }
+      },
+      changeSuperiorDialog: false,
+      superiorloading: false,
+      superiorList: null,
+      superiorId: '',
+      addressSelect: {
+        province: '',
+        city: '',
+        area: ''
+      },
+      depCreateForm: {
+        centre: 2
+      },
+      deptCreateRules: {
+        name: [
+          { required: true, message: '部门名称不能为空', trigger: ['blur', 'change'] }
+        ],
+        pid: [
+          { required: true, message: '上级部门不能为空', trigger: ['blur', 'change'] }
+        ],
+        centre: [
+          { required: true, message: '所属中心不能为空', trigger: ['blur', 'change'] }
+        ],
+        deptNumber: [
+          { required: true, message: '部门编号不能为空', trigger: ['blur', 'change'] }
+        ],
+        companyName: [
+          { required: true, message: '公司名称不能为空', trigger: ['blur', 'change'] }
+        ],
+        account: [
+          { required: true, message: '公司银行账号不能为空', trigger: ['blur', 'change'] }
+        ],
+        openBank: [
+          { required: true, message: '开户行不能为空', trigger: ['blur', 'change'] }
+        ]
+      },
+      addressData: null
     }
   },
   computed: {
@@ -950,6 +1048,11 @@ export default {
               name: '重置登录账号',
               type: 'resetName',
               icon: 'wk wk-reset'
+            },
+            {
+              name: '更换直属上级',
+              type: 'changeSuperior',
+              icon: 'wk wk-edit'
             }
           ])
         } else {
@@ -958,6 +1061,11 @@ export default {
               name: '重置密码',
               type: 'reset',
               icon: 'wk wk-circle-password'
+            },
+            {
+              name: '更换直属上级',
+              type: 'changeSuperior',
+              icon: 'wk wk-edit'
             }
           ])
         }
@@ -1266,6 +1374,7 @@ export default {
     addStruc() {
       const id =
         this.allDepData && this.allDepData.length ? this.allDepData[0].id : ''
+      console.log('创建部门', id)
       if (id) {
         this.depCreateLabelValue = ''
         this.depCreateLabel = '新增部门'
@@ -1364,14 +1473,28 @@ export default {
     },
     // 新增或编辑确定按钮
     submitDialog() {
+      // 验证部门
+      // addressData
+      if (!this.addressData) {
+        this.$message.warning('请选择省市区并输入详细地址')
+        return
+      }
       if (this.depCreateLabel == '新增部门') {
-        depSave({ name: this.depCreateLabelValue, pid: this.depSelect, centre: this.centre, deptNumber: this.deptNumber }).then(
-          res => {
-            this.getDepList() // 增加了新部门 刷新数据
-            this.getDepTreeList()
-            this.depCreateClose()
-          }
-        )
+        this.$refs.depCreateForm.validate((valid) => {
+          if (!valid) return
+
+          const params = { ...this.depCreateForm }
+          params.address = this.addressData.value.address.join(',')
+          params.detailAddress = this.addressData.value.detailAddress
+          return
+          depSave(params).then(
+            res => {
+              this.getDepList() // 增加了新部门 刷新数据
+              this.getDepTreeList()
+              this.depCreateClose()
+            }
+          )
+        })
       } else {
         depEdit({
           name: this.depCreateLabelValue,
@@ -1587,6 +1710,29 @@ export default {
           })
       } else if (type === 'reset') {
         this.resetPasswordVisible = true
+      } else if (type === 'changeSuperior') {
+        this.changeSuperiorDialog = true
+        this.superiorloading = true
+        queryUserListAPI().then(res => {
+          this.superiorloading = false
+          console.log('激活员工', res.data)
+          // this.superiorList = res.data
+          const arr = []
+          const userIds = []
+          this.selectionList.forEach(item => {
+            userIds.push(item.userId)
+          })
+
+          res.data.forEach(item => {
+            arr.push({
+              label: item.realname,
+              value: item.userId,
+              disabled: userIds.includes(item.userId)
+            })
+          })
+
+          this.superiorList = arr
+        }).catch(() => {})
       } else if (type === 'resetName') {
         // 重置验证码弹窗变量
         this.isManageReset = false
@@ -1857,6 +2003,29 @@ export default {
           this.isStartCall = false
         }
       }).catch(() => {})
+    },
+    changeSuperiorHandle() {
+      const userIds = []
+      this.selectionList.forEach(item => {
+        userIds.push(item.userId)
+      })
+      const params = {
+        userIds,
+        parentId: this.superiorId
+      }
+      // return
+      changeSuperiorAPI(params).then(res => {
+        this.$message.success('更换成功')
+        this.changeSuperiorDialog = false
+        this.superiorId = ''
+        this.refreshUserList()
+        this.getSelectUserList()
+      }).catch(() => {})
+    },
+
+    fieldValueChange(val) {
+      console.log('地图', val)
+      this.addressData = val
     }
   }
 }
@@ -2079,12 +2248,20 @@ export default {
   }
 }
 .nav-dialog-div {
+  // display: flex;
+  height: 35px;
   margin-bottom: 20px;
 }
 .nav-dialog-div {
+  &>label {
+    width: 130px;
+    float: left;
+    // display: inline-block;
+  }
   .el-input,
   .el-select {
-    width: calc(100% - 80px);
+    float: left;
+    width: calc(100% - 130px);
   }
 }
 /** 树形结构 */
@@ -2340,5 +2517,17 @@ export default {
   color: #999;
 }
 @import '../styles/table.scss';
+
+.wrap-dept {
+  height: 600px;
+  padding-right: 14px;
+  overflow: auto;
+  /deep/ .el-form-item__content {
+    margin-left: 130px;
+  }
+  /deep/ .el-select {
+    width: 100%;
+  }
+}
 </style>
 

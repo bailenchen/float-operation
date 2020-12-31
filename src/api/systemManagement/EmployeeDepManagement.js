@@ -181,3 +181,21 @@ export function userCallQueryInfoAPI(data) {
     data: data
   })
 }
+
+
+/**
+ * 批量更换直属上级
+ * @param {*} data
+ * password
+ * id 用户数组
+ */
+export function changeSuperiorAPI(data) {
+  return request({
+    url: 'system/user/updateUserPId',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
