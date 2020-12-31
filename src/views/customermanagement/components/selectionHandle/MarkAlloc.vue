@@ -37,7 +37,7 @@
           <div class="form">
             <el-select v-model="items.newStudentRatio" placeholder="请选择">
               <el-option
-                v-for="item in rateList"
+                v-for="item in newRateList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"/>
@@ -70,6 +70,7 @@
 <script>
 import { XhUserCell } from '@/components/CreateCom'
 import { markAllocSaveAPI, queryMarkAllocSaveAPI } from '@/api/customermanagement/contract'
+import { queryDictionaryField } from '@/api/common'
 import { Loading } from 'element-ui'
 import { objDeepCopy } from '@/utils'
 
@@ -97,11 +98,8 @@ export default {
       list: [
         { userList: [], performanceRatio: '', newStudentRatio: '' }
       ],
-      rateList: [
-        { label: 100, value: 100 },
-        { label: 50, value: 50 },
-        { label: 0, value: 0 }
-      ],
+      rateList: [],
+      newRateList: [],
       classList: []
     }
   },
@@ -117,9 +115,14 @@ export default {
         } else {
           this.classList = []
         }
+        this.queryRate('new_student_ratio')
+        this.queryRate('performance_ratio')
         this.queryAlloc()
       }
     }
+  },
+  created() {
+
   },
   mounted() {
     if (this.selectionList.length) {
@@ -147,6 +150,27 @@ export default {
     // 修改成员
     changeUser(data, index) {
       this.$set(this.list[index], 'userList', data.value)
+    },
+
+    queryRate(field) {
+      queryDictionaryField({ dictionaryField: field }).then(res => {
+        if (field === 'new_student_ratio') {
+          this.newRateList = res.data.map(item => {
+            item.label = item.dictionaryName
+            item.value = item.dictionaryId
+            return item
+          })
+        } else if (field === 'performance_ratio') {
+          this.rateList = res.data.map(item => {
+            item.label = item.dictionaryName
+            item.value = item.dictionaryId
+            return item
+          })
+        }
+        console.log(res)
+      }).catch((err) => {
+        console.log(err)
+      })
     },
 
     /**
