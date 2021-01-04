@@ -302,9 +302,7 @@ export default {
           realname: data['subjectTeacherName']
         }]
 
-
         this.stuList = data.students
-        console.log(res)
         this.loading = false
       }).catch(err => {
         this.loading = false
@@ -391,7 +389,6 @@ export default {
           } else if (type === 'time') {
             element.time = val || ''
           } else if (type === 'during') {
-            console.log(val, 'xxxx')
             this.$set(element, 'during', val)
           }
         }
@@ -420,35 +417,37 @@ export default {
       } else if (!this.during.startTime || !this.during.endTime) {
         this.$message.error('请选择基本信息中的上课时段')
       }
-      // const { timeId } = this.selectionList[0]
-      // const shiftList = []
-      // for (let index = 0; index < this.checkList.length; index++) {
-      //   const element = this.checkList[index]
-      //   shiftList.push({
-      //     timeId: element.timeId,
-      //     classTime: element.time,
-      //     timeSlot: `${element.during.startTime}:00-${element.during.endTime}:00`,
-      //     classroomId: element.deptSelectValue[0].classroomId,
-      //     subjectTeacherId: element.teacherList[0].userId
-      //   })
-      // }
-      // const params = {
-      //   entity: {
-      //     timeId,
-      //     classTime: this.classTime,
-      //     timeSlot: `${this.during.startTime}:00-${this.during.endTime}:00`,
-      //     classroomId: this.deptSelectValue[0].classroomId,
-      //     subjectTeacherId: this.teacherList[0].userId
-      //   },
-      //   list: shiftList
-      // }
-      // crmClassSchduleShiftSave(params).then(res => {
-      //   this.hidenView()
-      //   this.$message.success('操作成功')
-      //   this.$emit('save-success', { type: 'shift' })
-      // }).catch((err) => {
-      //   console.log(err)
-      // })
+      this.loading = true
+      const { timeId } = this.selectionList[0]
+      const shiftList = []
+      for (let index = 0; index < this.checkList.length; index++) {
+        const element = this.checkList[index]
+        shiftList.push({
+          timeId: element.timeId,
+          classTime: element.time,
+          timeSlot: `${element.during.startTime}:00-${element.during.endTime}:00`,
+          classroomId: element.deptSelectValue[0].classroomId,
+          subjectTeacherId: element.teacherList[0].userId
+        })
+      }
+      const params = {
+        entity: {
+          timeId,
+          classTime: this.classTime,
+          timeSlot: `${this.during.startTime}:00-${this.during.endTime}:00`,
+          classroomId: this.deptSelectValue[0].classroomId,
+          subjectTeacherId: this.teacherList[0].userId
+        },
+        list: shiftList
+      }
+      crmClassSchduleShiftSave(params).then(res => {
+        this.hidenView()
+        this.loading = false
+        this.$message.success('操作成功')
+        this.$emit('save-success', { type: 'shift' })
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 }
