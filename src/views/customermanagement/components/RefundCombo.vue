@@ -16,7 +16,7 @@
         align="center"/>
     </el-table>
 
-    <el-button v-if="tableData" type="text" @click="isOfflineWithDraw = true">填写资金退款</el-button>
+    <el-button v-if="tableData" :disabled="disabled" type="primary" @click="isOfflineWithDraw = true">填写资金退款</el-button>
 
     <offline-with-draw
       :visible.sync="isOfflineWithDraw"
@@ -154,7 +154,8 @@ export default {
       money: '',
       product: null, // 表格数据
       capital: null, // 资金退款信息
-      fillData: null
+      fillData: null,
+      disabled: false
     }
   },
   computed: {

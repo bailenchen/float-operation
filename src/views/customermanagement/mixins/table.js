@@ -499,7 +499,7 @@ export default {
             2: '特殊充值返还'
           }[row[column.property]]
         } else if (column.property === 'capitalNumber') {
-          return row[column.property][0].number
+          // return row[column.property][0].number
         } else if (column.property === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {

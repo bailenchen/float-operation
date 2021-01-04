@@ -2159,7 +2159,9 @@ export default {
             element.value = this.action.information.customer.channelIdName
           }
           if (element.key == 'coach_type') {
-            this.actionCombo.searchJson.coachType = this.action.information.contract.coachType
+            console.log('编辑', this.action.information.contract)
+            this.actionCombo.searchJson.coachType = +this.action.information.contract.coachType
+            element.value = +this.action.information.contract.coachType
           }
           if (element.key == 'grade_id') {
             this.actionCombo.searchJson.gradeId = this.action.information.contract.gradeId
@@ -2811,14 +2813,13 @@ export default {
               }
               console.log('params参数', params)
 
-
               params.entity.checkStatus = 5
               this.submiteParams(params)
             } else {
               this.$refs.examineInfo.validateField((result) => {
                 if (result) {
                   var params = this.getSubmiteParams(this.crmForm.crmFields)
-                  console.log('params可能是false1', params)
+
                   if (params === false) {
                     this.loading = false
                     return
@@ -2998,7 +2999,7 @@ export default {
           params.entity.relevanceContractId = this.action.detail.contractId
         }
         if (this.action.attr && this.action.attr == 'change' && this.action.type == 'update') {
-          params.entity.relevanceContractId = this.action.information.contract.contractId
+          params.entity.relevanceContractId = this.action.oldInformation.contract.contractId
         }
         console.log('字段1', params.field)
         // 获取相关字段
@@ -3272,15 +3273,20 @@ export default {
         params.entity.buyCount = element.value.buyCount
         params.entity.presenterCount = element.value.presenterCount
         params.entity.ruleDetails = element.value.ruleDetails
-        if (element.value.refundMonry) {
-          params.entity.refundMonry = element.value.refundMonry
-        }
+
 
         console.log('最小均价', minUnivalence)
         // 返还时判断 返还金额大于最小均价无法变更
         if (element.value.refundMonry < 0 && Math.abs(element.value.refundMonry) > minUnivalence) {
           this.$message.warning('变更返还金额大于最小均价，无法变更')
           return false
+        }
+
+        if (element.value.refundMonry) {
+          params.entity.refundMonry = element.value.refundMonry
+          // const refundMonry = Math.abs(element.value.refundMonry)
+          // this.$message(`变更后原合同剩余金额${refundMonry}元将会返还至资金账户`)
+          this.$message(`变更后原合同剩余金额${Math.abs(element.value.refundMonry)}元将会返还至资金账户`)
         }
       } else {
         this.$message.error('请添加套餐')

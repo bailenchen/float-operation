@@ -219,6 +219,7 @@ export default {
         } else {
           this.isAddCombo = false
           this.$message.error('该年级与辅导方式没有对应单品')
+          return
         }
 
         // 请求科目生成comboValue

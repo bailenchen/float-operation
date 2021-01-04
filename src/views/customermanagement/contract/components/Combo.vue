@@ -250,15 +250,19 @@ export default {
   },
   watch: {
     action: {
-      handler(val) {
+      handler(val, oldVal) {
+        console.log('新旧action', val, oldVal)
         this.structureData()
       },
       deep: true
     },
     value: {
       handler(val, oldVal) {
-        // console.log('新旧val', val, oldVal)
-        this.structureDataByValue()
+        console.log('新旧val', val, oldVal)
+        // this.structureDataByValue()
+        if (val) {
+          this.structureDataByValue()
+        }
       }
     }
   },
@@ -299,7 +303,7 @@ export default {
       var arr = []
       for (let i = 0; i < this.action.productSetMeal.length; i++) {
         const productSetMeal = this.action.productSetMeal[i]
-        console.log('大套餐', productSetMeal)
+        // console.log('大套餐', productSetMeal)
 
         this.purchaseLesson += Number(productSetMeal.purchaseFrequency)
 
@@ -361,7 +365,6 @@ export default {
       if (this.giveAction && this.giveAction.type && this.giveAction.type == 'change') {
         // console.log('chang，计算两份合同的差价', this.totalPrice, this.giveAction.surplusPrice)
         this.refundMonry = this.totalPrice - this.giveAction.surplusPrice
-        console.log('不显示差价')
         this.priceValue = this.totalPrice
       }
       this.havePresent()

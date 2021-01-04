@@ -22,8 +22,8 @@
           <el-option
             v-for="item in options"
             :key="item.coachId"
-            :label="item.name"
-            :value="item.coachId" />
+            :label="item.dictionaryName"
+            :value="item.dictionaryId" />
         </el-select>
         <span>购买</span>
         <el-input-number
@@ -66,9 +66,11 @@
  */
 import {
   QueryAdminGive,
-  AddAdminGive,
-  QueryCoach
+  AddAdminGive
 } from '@/api/systemManagement/params'
+
+import { queryDictionaryField } from '@/api/common'
+
 import {
   CrmRelativeCell
 } from '@/components/CreateCom'
@@ -102,7 +104,7 @@ export default {
      */
     getCoach() {
       this.loading = true
-      QueryCoach().then(res => {
+      queryDictionaryField({ dictionaryField: 'coach_type' }).then(res => {
         this.loading = false
         this.options = res.data
         this.getDetail()
