@@ -47,12 +47,20 @@ export default {
       return maxv
     }
   },
+  watch: {
+    value(val) {
+      this.updateTime()
+    }
+  },
   created() {
-    const { startTime, endTime } = this.value
-    this.startTime = startTime
-    this.endTime = endTime
+    this.updateTime()
   },
   methods: {
+    updateTime() {
+      const { startTime, endTime } = this.value
+      this.startTime = startTime
+      this.endTime = endTime
+    },
     changeTime() {
       this.endTime = ''
       this.$emit('update-time', { startTime: this.startTime, endTime: this.endTime })

@@ -78,7 +78,7 @@
                 </el-table-column>
                 <el-table-column fixed="right" width="90" align="center" label="操作">
                   <template slot-scope="scope">
-                    <el-button size="mini">请假</el-button>
+                    <el-button size="mini" @click="handleLeave(scope.row.id)">请假</el-button>
                   </template>
                 </el-table-column>
                 <el-table-column/>
@@ -105,9 +105,8 @@
 <script>
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
-// import {
-//   sysConfigDataDictarySaveAPI
-// } from '@/api/systemManagement/SystemCustomer'
+
+import { crmClassSchduleConfirmInfo, crmClassSchduleConfirmLeave, crmClassSchduleConfirmSave } from '@/api/educationmanage/classSchedule'
 
 export default {
   name: 'ConfirmClassTime',
@@ -132,26 +131,27 @@ export default {
         deptName: '中心',
         className: '班级名称',
         subjectTeacherName: '学科老师',
-        coachType: '上课时段',
+        timeSlot: '上课时段',
         classroomName: '教室',
         subjectName: '科目',
         gradeName: '年级',
-        xx: '状态'
+        classStatus: '状态'
       },
       baseInfoList: [],
 
       // 学员合同表
       list: [{ num: '123465' }],
       fieldLists: [
-        { prop: 'num', label: '学员姓名' },
-        { prop: '', label: '合同编号' },
-        { prop: '', label: '年级' },
-        { prop: '', label: '科目' },
-        { prop: '', label: '合同课次' },
-        { prop: '', label: '结课课次' },
-        { prop: '', label: '已排课次' },
-        { prop: '', label: '上课状态' }
-      ]
+        { prop: 'customerName', label: '学员姓名' },
+        { prop: 'num', label: '合同编号' },
+        { prop: 'gradeName', label: '年级' },
+        { prop: 'subjectName', label: '科目' },
+        { prop: 'sumCourse', label: '合同课次' },
+        { prop: 'endCourse', label: '结课课次' },
+        { prop: 'alreadyCourse', label: '已排课次' },
+        { prop: 'classStatusName', label: '上课状态' }
+      ],
+      checkList: []
 
     }
   },
@@ -159,23 +159,58 @@ export default {
 
   },
   created() {
-    for (const key in this.fieldObj) {
-      if (Object.hasOwnProperty.call(this.fieldObj, key)) {
-        const element = this.fieldObj[key]
-        this.baseInfoList.push({
-          name: element,
-          value: this.selectionList[0][key]
-        })
-      }
-    }
+    this.queryBaseInfo()
   },
   methods: {
     hidenView() {
       this.$emit('hiden-view', 'confirm')
     },
 
+    // 获取基本信息与学员信息
+    queryBaseInfo() {
+      crmClassSchduleConfirmInfo({ timeId: this.selectionList[0].timeId }).then(res => {
+        const data = res.data
+        for (const key in this.fieldObj) {
+          if (Object.hasOwnProperty.call(this.fieldObj, key)) {
+            const element = this.fieldObj[key]
+            this.baseInfoList.push({
+              name: element,
+              value: data[key]
+            })
+          }
+        }
+        this.list = data.students
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+
+    // 请假操作
+    handleLeave(id) {
+      this.$confirm('确认请假?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        crmClassSchduleConfirmLeave({ ids: id }).then(res => {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消请假'
+        })
+      })
+    },
+
     // 勾选
     handleSelectionChange(data) {
+      this.checkList = data
       console.log(data)
     },
 
@@ -183,7 +218,24 @@ export default {
      * 保存
      */
     submitForm() {
+      if (!this.checkList.length) {
+        this.$message.error('请勾选需要课时确认的学员')
+      }
+      const ids = []
+      for (let index = 0; index < this.checkList.length; index++) {
+        const element = this.checkList[index]
+        ids.push(element.id)
+      }
+      const params = {
+        ids
+      }
+      crmClassSchduleConfirmSave(params).then(res => {
+        this.hidenView()
+        this.$message.success('操作成功')
+        this.$emit('save-success', { type: 'confirm' })
+      }).catch(() => {
 
+      })
     }
   }
 }

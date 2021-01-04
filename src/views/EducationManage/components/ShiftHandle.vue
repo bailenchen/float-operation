@@ -54,11 +54,14 @@
                         v-model="classTime"
                         type="date"
                         style="width:100%;"
-                        placeholder="选择日期"/>
+                        value-format="yyyy-MM-dd"
+                        placeholder="选择日期"
+                        @change="changeBaseDate"/>
 
                       <div v-else-if="item.type === 'time'" class="time-select">
                         <period
-                          :value="during"/>
+                          :value="during"
+                          @update-time="updateTime($event)"/>
                       </div>
 
                       <span v-else>{{ base[item.prop] }}</span>
@@ -258,7 +261,7 @@ export default {
         { prop: 'deptSelectValue', label: '教室（变更后）', width: 160 },
         { prop: 'teacherList', label: '学科老师（变更后）', width: 160 },
         { prop: 'time', label: '上课时间（变更后）', width: 160 },
-        { prop: 'during', label: '时间段（变更后）', width: 200 }
+        { prop: 'during', label: '时间段（变更后）', width: 220 }
       ],
 
       classInfoLists: [
@@ -286,8 +289,10 @@ export default {
         const data = res.data
         this.base = data
         this.classTime = data['classTime'].slice(0, 10) || ''
-        this.startTime = data['timeSlotStart'].slice(0, 5)
-        this.endTime = data['timeSlotEnd'].slice(0, 5)
+        this.during = {
+          startTime: data['timeSlotStart'].slice(0, 5),
+          endTime: data['timeSlotEnd'].slice(0, 5)
+        }
         this.deptSelectValue = [{
           classroomId: data['classroomId'],
           classroomName: data['classroomName']
@@ -297,9 +302,7 @@ export default {
           realname: data['subjectTeacherName']
         }]
 
-
         this.stuList = data.students
-        console.log(res)
         this.loading = false
       }).catch(err => {
         this.loading = false
@@ -310,21 +313,20 @@ export default {
     // 查询换挡列表
     queryShift() {
       if (!this.showShift) {
-        const data = this.selectionList[0]
         crmClassSchduleShift({ classId: this.selectionList[0].classId }).then(res => {
           this.list = res.data.map(item => {
-            item.time = data['classTime'].slice(0, 10) || ''
+            item.time = this.classTime ? this.classTime.slice(0, 10) : ''
             item.during = {
-              startTime: item.timeSlot.slice(0, 5),
-              endTime: item.timeSlot.slice(9, -3)
+              startTime: this.during.startTime,
+              endTime: this.during.endTime
             }
             item.deptSelectValue = [{
-              classroomId: data['classroomId'],
-              classroomName: data['classroomName']
+              classroomId: this.deptSelectValue.length ? this.deptSelectValue[0]['classroomId'] : null,
+              classroomName: this.deptSelectValue.length ? this.deptSelectValue[0]['classroomName'] : null
             }]
             item.teacherList = [{
-              userId: data['subjectTeacherId'],
-              realname: data['subjectTeacherName']
+              userId: this.teacherList.length ? this.teacherList[0]['userId'] : null,
+              realname: this.teacherList.length ? this.teacherList[0]['realname'] : null
             }]
             return item
           })
@@ -339,8 +341,16 @@ export default {
       this.$set(this.list[index], 'time', data)
     },
 
+    changeBaseDate(val) {
+      this.changeListItem('time', val)
+    },
+
     updateTime(data, index) {
-      this.$set(this.list[index], 'during', data)
+      if (arguments.length == 2) {
+        this.$set(this.list[index], 'during', data)
+      } else {
+        this.changeListItem('during', data)
+      }
     },
 
     /**
@@ -351,6 +361,7 @@ export default {
         this.$set(this.list[index], 'deptSelectValue', data.value || [])
       } else {
         this.deptSelectValue = data.value || []
+        this.changeListItem('classroom', data.value)
       }
     },
 
@@ -362,6 +373,25 @@ export default {
         this.$set(this.list[index], 'teacherList', data.value || [])
       } else {
         this.teacherList = data.value || []
+        this.changeListItem('teacher', data.value)
+      }
+    },
+
+    // 基本信息变更联动列表
+    changeListItem(type, val) {
+      if (this.showShift) {
+        for (let index = 0; index < this.list.length; index++) {
+          const element = this.list[index]
+          if (type === 'classroom') {
+            element.deptSelectValue = val || []
+          } else if (type === 'teacher') {
+            element.teacherList = val || []
+          } else if (type === 'time') {
+            element.time = val || ''
+          } else if (type === 'during') {
+            this.$set(element, 'during', val)
+          }
+        }
       }
     },
 
@@ -378,6 +408,16 @@ export default {
      * 保存
      */
     submitForm() {
+      if (!this.teacherList.length) {
+        this.$message.error('请选择基本信息中的学科老师')
+      } else if (!this.deptSelectValue.length) {
+        this.$message.error('请选择基本信息中的教室')
+      } else if (!this.classTime) {
+        this.$message.error('请选择基本信息中的日期')
+      } else if (!this.during.startTime || !this.during.endTime) {
+        this.$message.error('请选择基本信息中的上课时段')
+      }
+      this.loading = true
       const { timeId } = this.selectionList[0]
       const shiftList = []
       for (let index = 0; index < this.checkList.length; index++) {
@@ -402,6 +442,7 @@ export default {
       }
       crmClassSchduleShiftSave(params).then(res => {
         this.hidenView()
+        this.loading = false
         this.$message.success('操作成功')
         this.$emit('save-success', { type: 'shift' })
       }).catch((err) => {
