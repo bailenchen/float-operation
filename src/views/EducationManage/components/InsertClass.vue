@@ -83,7 +83,27 @@
           </div>
         </create-sections>
         <create-sections title="学员名称" class="student-wrap">
-          <el-button type="primary" size="mini" class="add-customer">添加学员</el-button>
+          <!-- <el-button type="primary" size="mini" class="add-customer">添加学员</el-button> -->
+          <!-- 添加学员 -->
+          <el-popover
+            v-model="showPopover"
+            placement="right"
+            width="700"
+            trigger="click">
+            <crm-relative
+              v-if="showSelectView"
+              ref="crmrelative"
+              :show-types="showTypes"
+              crm-type="student"
+              @close="showPopover=false"
+              @changeCheckout="checkInfos"/>
+            <el-button
+              slot="reference"
+              type="primary"
+              size="mini"
+              class="add-customer"
+              @click.native="contentClick">添加学员</el-button>
+          </el-popover>
           <div class="crm-create-body" style="margin-top:10px;">
             <div class="content create-sections-content">
               <el-table
@@ -141,6 +161,7 @@
 <script>
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
+import CrmRelative from '@/components/CreateCom/CrmRelative'
 // import {
 //   sysConfigDataDictarySaveAPI
 // } from '@/api/systemManagement/SystemCustomer'
@@ -149,7 +170,8 @@ export default {
   name: 'InsertClass',
   components: {
     CreateView,
-    CreateSections
+    CreateSections,
+    CrmRelative
   },
   props: {
     // 操作数据
@@ -200,7 +222,11 @@ export default {
         { prop: '', label: '已排课次' },
         { prop: '', label: '未排课次' },
         { prop: '', label: '已完成课次' }
-      ]
+      ],
+
+      showPopover: false,
+      showSelectView: false,
+      showTypes: []
     }
   },
   computed: {
@@ -225,6 +251,15 @@ export default {
     // 勾选
     handleSelectionChange(data) {
       console.log(data)
+    },
+
+    /** 选中 */
+    checkInfos(data) {
+      console.log('kkkk', data)
+    },
+
+    contentClick() {
+      this.showSelectView = true
     },
 
     /**
