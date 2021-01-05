@@ -16,7 +16,7 @@
         align="center"/>
     </el-table>
 
-    <el-button v-if="tableData" :disabled="disabled" type="primary" @click="isOfflineWithDraw = true">填写资金退款</el-button>
+    <el-button v-if="tableData" :disabled="action.isInteriorRefund" type="primary" @click="isOfflineWithDraw = true">填写资金退款</el-button>
 
     <offline-with-draw
       :visible.sync="isOfflineWithDraw"
@@ -57,7 +57,11 @@ export default {
         return {}
       }
     },
-    refundMoney: [Number, String]
+    refundMoney: [Number, String],
+    isInteriorRefund: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -166,6 +170,8 @@ export default {
       handler(val) {
         debugger
         console.log('监听refundcombo的action', val)
+        this.capital = this.action.isInteriorRefund ? null : this.capital
+        // this.
         if (!val.contracId) {
           this.tableData = null
           this.sendData(false)
@@ -191,6 +197,12 @@ export default {
         if (Object.keys(val).length) {
           this.structureTableByVal(val)
         }
+      },
+      immediate: true
+    },
+    isInteriorRefund: {
+      handler(val) {
+        this.disabled = val
       },
       immediate: true
     },
@@ -223,6 +235,7 @@ export default {
       this.isOfflineWithDraw = false
     },
     sendData(del = false) {
+      // this.capital = this.action.isInteriorRefund ? null : this.capital
       const obj = {
         index: this.index,
         value: {
@@ -230,6 +243,8 @@ export default {
           capital: this.capital
         }
       }
+
+
 
       obj.value.money = this.oldValue.money ? this.oldValue.money : this.money
       obj.value = del ? '' : obj.value
