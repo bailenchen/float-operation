@@ -9,6 +9,7 @@ import CRMTableHead from '../../customermanagement/components/CRMTableHead'
 import { crmClassroomIndex, crmClassroomExcelAllExport } from '@/api/educationmanage/classroom'
 import { crmClassIndex, crmClassExcelAllExport } from '@/api/educationmanage/class'
 import { crmClassSchduleIndex, crmClassSchduleExcelAllExport } from '@/api/educationmanage/classSchedule'
+import { crmStudentSchduleIndex, crmStudentSchduleExcelAllExport } from '@/api/educationmanage/studentSchedule'
 import {
   crmFieldColumnWidth
 } from '@/api/customermanagement/common'
@@ -117,6 +118,8 @@ export default {
         return crmClassIndex
       } else if (this.crmType == 'classschedule') {
         return crmClassSchduleIndex
+      } else if (this.crmType == 'studentschedule') {
+        return crmStudentSchduleIndex
       }
     },
     genListHead(obj) {
@@ -179,22 +182,22 @@ export default {
         },
         // 学员排课表
         studentschedule: {
-          a: '校区',
-          b: '合同编号',
-          c: '学员编号',
-          d: '学员姓名',
-          e: '辅导方式',
-          f: '班级类型',
-          g: '班级名称',
-          h: '教室',
-          i: '年级',
-          j: '科目',
-          k: '学科老师,',
-          l: '上课日期',
-          m: '上课时段',
-          n: '总课次/已确认',
-          x: '考勤',
-          y: '课时确认'
+          deptName: '校区',
+          num: '合同编号',
+          leadsNumber: '学员编号',
+          customerName: '学员姓名',
+          coachType: '辅导方式',
+          classType: '班级类型',
+          className: '班级名称',
+          classroomName: '教室',
+          gradeName: '年级',
+          subjectName: '科目',
+          subjectTeacherName: '学科老师,',
+          classTime: '上课日期',
+          timeSlot: '上课时段',
+          status: '总课次/已确认',
+          classStatusType: '考勤',
+          classConfirmationType: '课时确认'
         }
       }[this.crmType]
 
@@ -243,7 +246,8 @@ export default {
       const request = {
         classroom: crmClassroomExcelAllExport,
         class: crmClassExcelAllExport,
-        classschedule: crmClassSchduleExcelAllExport
+        classschedule: crmClassSchduleExcelAllExport,
+        studentschedule: crmStudentSchduleExcelAllExport
       }[this.crmType]
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
       request(params)
