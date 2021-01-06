@@ -521,6 +521,7 @@ export default {
         type: data.direction,
         state: this.connectedState,
         callId: data.callId,
+        uui: data.customer.acid,
         starttime: data.time,
         answertime: data.begin,
         endtime: data.end,
