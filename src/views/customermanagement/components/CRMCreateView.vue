@@ -436,7 +436,7 @@ export default {
         buyCount: 0, // 主合同总购买课次
         type: 'save' // 新建
       },
-      actionRefundCombo: { contracId: '', type: 'save' },
+      actionRefundCombo: { contracId: '', isInteriorRefund: true, type: 'save' },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
       contractDiscount: 100, // 合同折扣
@@ -1193,6 +1193,9 @@ export default {
         }
         if (item.key === 'refund_cause_type') {
           this.cause = item.value == '主观原因' ? 2 : 1
+        }
+        if (item.key === 'is_early_retirement') {
+          this.actionRefundCombo.isInteriorRefund = item.value == '是'
         }
       }
 

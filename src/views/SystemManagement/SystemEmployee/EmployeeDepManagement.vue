@@ -249,30 +249,48 @@
               placeholder="请输入部门编号" />
           </el-form-item>
 
-          <el-form-item label="公司名称" prop="companyName">
+          <el-form-item label="公司名称" prop="corporateName">
             <el-input
-              v-model="depCreateForm.companyName"
+              v-model="depCreateForm.corporateName"
               :maxlength="20"
               placeholder="请输入公司名称" />
           </el-form-item>
 
-          <el-form-item label="公司银行账号" prop="account">
+          <el-form-item label="公司银行账号" prop="bankAccount">
             <el-input
-              v-model="depCreateForm.account"
+              v-model="depCreateForm.bankAccount"
               :maxlength="20"
               placeholder="请输入公司银行账号" />
           </el-form-item>
 
-          <el-form-item label="开户行" prop="openBank">
+          <el-form-item label="开户行" prop="bankDeposit">
             <el-input
-              v-model="depCreateForm.openBank"
+              v-model="depCreateForm.bankDeposit"
               :maxlength="20"
               placeholder="请输入开户行" />
           </el-form-item>
 
+          <el-form-item label="商户号">
+            <el-input
+              v-model="depCreateForm.sybCusid"
+              placeholder="请输入商户号" />
+          </el-form-item>
+
+          <el-form-item label="应用ID">
+            <el-input
+              v-model="depCreateForm.sybAppid"
+              placeholder="请输入应用ID" />
+          </el-form-item>
+
+          <el-form-item label="MD5交易密码" >
+            <el-input
+              v-model="depCreateForm.sybMd5Appkey"
+              placeholder="请输入MD5交易密码" />
+          </el-form-item>
+
           <el-form-item label="备用字段" prop="">
             <el-input
-              v-model="depCreateForm.backField"
+              v-model="depCreateForm.remark"
               :maxlength="20"
               placeholder="请输入备用字段" />
           </el-form-item>
@@ -939,13 +957,13 @@ export default {
         deptNumber: [
           { required: true, message: '部门编号不能为空', trigger: ['blur', 'change'] }
         ],
-        companyName: [
+        corporateName: [
           { required: true, message: '公司名称不能为空', trigger: ['blur', 'change'] }
         ],
-        account: [
+        bankAccount: [
           { required: true, message: '公司银行账号不能为空', trigger: ['blur', 'change'] }
         ],
-        openBank: [
+        bankDeposit: [
           { required: true, message: '开户行不能为空', trigger: ['blur', 'change'] }
         ]
       },
@@ -1486,9 +1504,12 @@ export default {
           const params = { ...this.depCreateForm }
           params.address = this.addressData.value.address.join(',')
           params.detailAddress = this.addressData.value.detailAddress
-          return
+          params.location = this.addressData.value.location
+          console.log('请求参数', params)
+          // return
           depSave(params).then(
             res => {
+              // 初始化depCreateForm
               this.getDepList() // 增加了新部门 刷新数据
               this.getDepTreeList()
               this.depCreateClose()
@@ -2026,6 +2047,7 @@ export default {
     fieldValueChange(val) {
       console.log('地图', val)
       this.addressData = val
+      this.depCreateForm.addressData = val
     }
   }
 }
