@@ -3,15 +3,31 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      title="班级管理"
-      placeholder="请输入中心/班级名称/教师名称"
-      main-title="添加班级"
-      @create-class="createClick"
+      main-title="添加预警"
+      title="学员管理"
+      placeholder="请输入学员姓名/学习中心"
+      @create-warning="createClick"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
-      @on-export="exportInfos"/>
+      @on-export="exportInfos">
+      <el-menu
+        slot="icon"
+        ref="elMenu"
+        :default-active="crmType"
+        mode="horizontal"
+        active-text-color="#2362FB"
+        @select="menuSelect" >
+        <el-menu-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :index="item.path">
+          <img :src="item.icon">
+          <span>{{ item.title }}</span>
+        </el-menu-item>
+      </el-menu>
+    </c-r-m-list-head>
     <div
-      v-empty="!education.class.index"
+      v-empty="!crm.student.index"
       xs-empty-icon="nopermission"
       xs-empty-text="暂无权限"
       class="crm-container">
@@ -49,15 +65,21 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          sortable="custom"
+          :sortable="item.prop != 'poolDay' ? 'custom' : false"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <template>
-              {{ fieldFormatter(scope.row, scope.column) }}
+            <template v-if="item.prop == 'dealStatus'">
+              <i :class="scope.row[item.prop] | dealIcon"/>
+              <span>{{ scope.row[item.prop] | dealName }}</span>
             </template>
+            <template v-else-if="item.prop == 'status'">
+              <i
+                v-if="scope.row.status == 2"
+                class="wk wk-circle-password customer-lock"/>
+            </template>
+            <template v-else>{{ fieldFormatter(scope.row, scope.column) }}</template>
           </template>
         </el-table-column>
-        <el-table-column/>
       </el-table>
       <div class="p-contianer">
         <el-pagination
@@ -74,50 +96,60 @@
       </div>
     </div>
 
-    <create-class
+    <create-warning
       v-if="showHandleView"
-      :handle="rowInfo"
       @save="getDataList"
       @hiden-view="showHandleView=false" />
   </div>
 </template>
 
 <script>
-import CreateClass from './components/CreateClass'
-import table from '../mixins/table'
+import { mapGetters } from 'vuex'
+import CreateWarning from './components/CreateWarning'
+import table from '../../mixins/table'
+import menuMixins from '../menuMixins'
+
 
 export default {
-  /** 教务管理 的 班级管理列表 */
-  name: 'ClassIndex',
+  /** 客户管理 的 学员列表 */
+  name: 'WarningIndex',
   components: {
-    CreateClass
+    CreateWarning
   },
-  mixins: [table],
-  data() {
-    return {
-      crmType: 'class',
-      showHandleView: false,
-      rowInfo: null
+  filters: {
+    dealIcon(statu) {
+      return statu == 1 ? 'wk wk-success deal-suc' : 'wk wk-close deal-un'
+    },
+
+    dealName(statu) {
+      return statu == 1 ? '已成交' : '未成交'
     }
   },
-  mounted() {},
+  mixins: [table, menuMixins],
+  data() {
+    return {
+      crmType: 'studentWarning',
+      showHandleView: false
+    }
+  },
+  computed: {
+    ...mapGetters(['CRMConfig'])
+  },
+  deactivated: function() {
+    this.$refs.elMenu.activeIndex = this.crmType
+  },
   methods: {
+    createClick() {
+      this.showHandleView = true
+    },
     // 重新获取列表
     getDataList() {
       this.getList()
-    },
-
-    createClick() {
-      this.rowInfo = {
-        action: 'add', // save 创建  update 编辑
-        data: null // 编辑数据
-      }
-      this.showHandleView = true
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../customermanagement/styles/table.scss';
+@import '../../styles/table';
 </style>

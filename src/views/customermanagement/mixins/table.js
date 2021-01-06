@@ -290,6 +290,24 @@ export default {
         ]
         this.getList()
         return
+      } else if (this.crmType === 'studentWarning') {
+        this.fieldList = [
+          { prop: '', label: '序号', width: '100px' },
+          { prop: '', label: '学员姓名', width: '115px' },
+          { prop: '', label: '学习中心', width: '115px' },
+          { prop: '', label: '预警级别', width: '115px' },
+          { prop: '', label: '预警原因', width: '115px' },
+          { prop: '', label: '预警时间', width: '115px' },
+          { prop: '', label: '发布时间', width: '115px' },
+          { prop: '', label: '发布者', width: '115px' },
+          { prop: '', label: '解除预警日期', width: '115px' },
+          { prop: '', label: '解除预警原因' }
+        ]
+        this.list = [{
+          a: 1
+        }]
+        // this.getList()
+        return
       }
       if (this.fieldList.length == 0 || force) {
         this.loading = true

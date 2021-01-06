@@ -18,12 +18,14 @@
  */
 import StudentIndex from './student/index'
 import AccountIndex from './account/index'
+import WarningIndex from './warning/index'
 
 export default {
   name: 'StudentManageIndex',
   components: {
     StudentIndex,
-    AccountIndex
+    AccountIndex,
+    WarningIndex
   },
   data() {
     return {
@@ -32,11 +34,11 @@ export default {
   computed: {
     componentName() {
       const params = this.$route.params
-      return params.type === 'capitalAccount' ? 'AccountIndex' : 'StudentIndex'
+      return params.type === 'capitalAccount' ? 'AccountIndex' : params.type === 'student' ? 'StudentIndex' : 'WarningIndex'
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (!to.params || !['student', 'capitalAccount'].includes(to.params.type)) {
+    if (!to.params || !['student', 'capitalAccount', 'studentWarning'].includes(to.params.type)) {
       next({
         name: 'StudentManageIndex',
         params: {

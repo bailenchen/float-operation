@@ -21,7 +21,6 @@
           v-for="(item, index) in fieldList"
           :key="index"
           :prop="item.prop"
-          :formatter="fieldFormatter"
           :width="item.width"
           :label="item.label"
           align="center"

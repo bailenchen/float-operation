@@ -210,6 +210,22 @@
       type="edit"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
+
+    <!-- 提升预警等级 -->
+    <!-- v-if="isWarning" -->
+    <raise-warning
+      :visible="isWarning"
+      :selection-list="selectionList"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 解除预警 -->
+    <!-- v-if="isDismiss" -->
+    <dismiss-warning
+      :visible="isDismiss"
+      :selection-list="selectionList"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
   </div>
 </template>
 
@@ -331,6 +347,8 @@ import RankCourse from '@/views/EducationManage/components/RankCourse' // 排课
 import ShiftHandle from '@/views/EducationManage/components/ShiftHandle' // 换挡
 import CreateClassroom from '@/views/EducationManage/classroom/components/CreateClassroom' // 创建教室
 import CreateClass from '@/views/EducationManage/class/components/CreateClass' // 创建班级
+import DismissWarning from '../studentManage/warning/components/DismissWarning' // 提升预警等级
+import RaiseWarning from '../studentManage/warning/components/RaiseWarning' // 解除等级
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 import CRMCreateView from './CRMCreateView'
@@ -364,7 +382,9 @@ export default {
     RankCourse,
     ShiftHandle,
     CreateClassroom,
-    CreateClass
+    CreateClass,
+    RaiseWarning,
+    DismissWarning
   },
   props: {
     title: {
@@ -429,6 +449,8 @@ export default {
       isShift: false, // 换挡
       isClassroom: false, // 编辑教室
       isClass: false, // 编辑班级
+      isWarning: false, // 提升预警等级
+      isDismiss: false, // 解除预警
       createActionInfo: { type: 'save' } // 创建的相关信息
     }
   },
@@ -782,6 +804,10 @@ export default {
         this.isClassroom = true
       } else if (type == 'mode_class') {
         this.isClass = true
+      } else if (type == 'raise_warning') {
+        this.isWarning = true
+      } else if (type == 'dismiss_warning') {
+        this.isDismiss = true
       }
     },
     confirmHandle(type) {
@@ -1272,6 +1298,16 @@ export default {
           name: '请假',
           type: 'leave',
           icon: 'transfer'
+        },
+        raise_warning: {
+          name: '提升预警等级',
+          type: 'raise_warning',
+          icon: 'activation'
+        },
+        dismiss_warning: {
+          name: '解除预警',
+          type: 'dismiss_warning',
+          icon: 'remove'
         }
       }
       if (this.crmType == 'leads') {
@@ -1337,6 +1373,11 @@ export default {
           'refound',
           'export',
           'delete'
+        ])
+      } else if (this.crmType == 'studentWarning') {
+        return this.forSelectionHandleItems(handleInfos, [
+          'raise_warning',
+          'dismiss_warning'
         ])
       } else if (this.crmType == 'contacts') {
         return this.forSelectionHandleItems(handleInfos, [
@@ -1622,6 +1663,8 @@ export default {
         } else {
           return false
         }
+      } else if (type == 'raise_warning' || type == 'dismiss_warning') {
+        return true
       }
 
       return true
@@ -1666,6 +1709,8 @@ export default {
         return '全部班级'
       } else if (this.crmType == 'classschedule') {
         return '全部班级排课表'
+      } else if (this.crmType == 'studentschedule') {
+        return '全部学员排课表'
       }
     },
 
@@ -1691,6 +1736,10 @@ export default {
         this.isClassroom = false
       } else if (type == 'mode_class') {
         this.isClass = false
+      } else if (type == 'raise_warning') {
+        this.isWarning = false
+      } else if (type == 'dismiss_warning') {
+        this.isDismiss = false
       } else {
         this.isUpdate = false
       }

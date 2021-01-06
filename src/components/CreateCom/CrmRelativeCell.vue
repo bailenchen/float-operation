@@ -118,6 +118,8 @@ export default {
         return ''
       } else if (this.item.crmType == 'presentContract' && this.item.key == 'customer_id') {
         return 'student'
+      } else if (this.item.crmType == 'customer') {
+        return 'customer'
       }
       return this.item.data.formType
       // return this.item.crmType == 'contract' ? '' : this.item.data.formType

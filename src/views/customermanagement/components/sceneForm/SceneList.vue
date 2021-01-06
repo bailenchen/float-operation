@@ -59,6 +59,8 @@ export default {
       if (this.education[this.crmType].index) {
         this.getSceneList()
       }
+    } else if (this.crmType == 'studentWarning') {
+      this.getSceneList()
     } else {
       if (this.crm[this.crmType].index) {
         this.getSceneList()

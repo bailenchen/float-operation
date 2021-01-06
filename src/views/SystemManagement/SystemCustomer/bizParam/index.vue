@@ -46,6 +46,7 @@ import CommunicationSet from './components/communicationSet' // 学员回访沟�
 import SerialNumberSet from './components/SerialNumberSet' // 编号规则设置
 import FieldListSet from './components/FieldListSet' // 编号规则设置
 import DataDictionarySet from './components/dataDictionarySet' // 编号规则设置
+import StudentWarningSet from './components/StudentWarningSet' // 学员预警规则设置
 
 export default {
   name: 'BizParam',
@@ -68,7 +69,8 @@ export default {
     CommunicationSet,
     LeadsStatusFollowResultSet,
     FieldListSet,
-    DataDictionarySet
+    DataDictionarySet,
+    StudentWarningSet
   },
 
   data() {
@@ -91,7 +93,8 @@ export default {
         { label: 'LEADS承诺到访提醒设置', key: 'leadsVisit' },
         { label: '编号规则设置', key: 'SerialNumberSet' },
         { label: '自定义列表设置', key: 'FieldListSet' },
-        { label: '数据字典', key: 'DataDictionarySet' }
+        { label: '数据字典', key: 'DataDictionarySet' },
+        { label: '学员预警规则设置', key: 'StudentWarningSet' }
       ],
       menuIndex: 'ChannelCategorySet',
       types: '' // 区分拥有客户 和 锁定客户

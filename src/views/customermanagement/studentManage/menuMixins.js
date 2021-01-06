@@ -31,6 +31,15 @@ export default {
           }
         )
       }
+
+      list.push(
+        {
+          title: '学员预警',
+          path: 'studentWarning',
+          icon: require('@/assets/img/crm/customer.png')
+        }
+      )
+
       return list
     }
   },

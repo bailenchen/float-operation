@@ -135,6 +135,11 @@ export default {
         return this.education[this.crmType].save
       }
 
+      if (this.crmType == 'studentWarning') {
+        return true
+      }
+
+
       return this.crm[this.crmType].save
     },
 
@@ -145,6 +150,8 @@ export default {
         return require(`@/assets/img/crm/product.png`)
       } else if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
         return require(`@/assets/img/crm/product.png`)
+      } else if (this.crmType == 'studentWarning') {
+        return require(`@/assets/img/crm/customer.png`)
       }
       return require(`@/assets/img/crm/${this.crmType}.png`)
     },
@@ -235,6 +242,8 @@ export default {
           this.$emit('create-room')
         } else if (this.crmType == 'class') {
           this.$emit('create-class')
+        } else if (this.crmType == 'studentWarning') {
+          this.$emit('create-warning')
         } else {
           this.isCreate = !this.isCreate
         }
