@@ -346,3 +346,14 @@ export function crmAccountWaterDown(data) {
   })
 }
 
+// 额外赠送合同授权审批
+export function judgeGiveAPI(data) {
+  return request({
+    url: 'adminDictionary/judgeGive',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

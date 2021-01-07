@@ -30,7 +30,7 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column v-if="showOperation" prop="" label="操作1" width="100" align="center">
+      <el-table-column v-if="showOperation" prop="" label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-plus" circle @click="plusSubjectHandle(scope.row.dataIndex)" />
           <el-button v-show="tableData.length>1" type="danger" icon="el-icon-minus" circle @click="minusSubjectHandle(scope.row.dataIndex)" />

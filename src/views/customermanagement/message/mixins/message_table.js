@@ -193,7 +193,7 @@ export default {
         } else {
           this.showDview = false
         }
-      } else if (this.crmType == 'refound') {
+      } else if (this.crmType == 'refound') { // 资金退款
         if (column.property == 'leadsNumber') {
           this.rowID = row.customerId
           this.clickField = column.property
@@ -205,9 +205,8 @@ export default {
           this.rowType = 'moneyType'
           this.showDview = true
         }
-        console.log(column.property, 'bbbjjjj')
-      } else if (this.crmType == 'refund') {
-        if (column.property == 'leadsNumber') {
+      } else if (this.crmType == 'refund') { // 充值返还
+        if (column.property == 'customerName' || column.property == 'leadsNumber') {
           this.rowID = row.customerId
           this.clickField = column.property
           this.rowType = 'student'
@@ -217,8 +216,18 @@ export default {
           this.rowType = 'refund'
           this.clickField = column.property
           this.showDview = true
+        } else if (column.property === 'capitalNumber') {
+          this.rowID = row.capitalNumber[0].contractCapitalId
+          this.rowType = 'receive'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'contractNum') {
+          console.log('row', row)
+          this.rowID = row.contractId
+          this.rowType = 'contract'
+          this.clickField = column.property
+          this.showDview = true
         }
-        console.log(column.property, 'bbbjjjj')
       }
 
       console.log('SCDSJK', this.crmType)

@@ -202,10 +202,9 @@ import {
   crmBusinessSave,
   crmBusinessProduct // 商机下产品
 } from '@/api/customermanagement/business'
-import { crmContractSave } from '@/api/customermanagement/contract'
+import { crmContractSave, crmReceivablesPlanSave, judgeGiveAPI } from '@/api/customermanagement/contract'
 import { crmProductSave } from '@/api/customermanagement/product'
 import { crmReceivablesSave } from '@/api/customermanagement/money'
-import { crmReceivablesPlanSave } from '@/api/customermanagement/contract'
 import { crmReturnVisitSaveAPI } from '@/api/customermanagement/visit'
 import { crmProductSetMealSave } from '@/api/customermanagement/meal'
 
@@ -886,10 +885,10 @@ export default {
             }
           })
         } else if (item.data.fieldName == 'coach_type') {
-          console.log('辅导方式的值', item.value)
+          // console.log('辅导方式的值', item.value)
           this.actionCombo.searchJson.coachType = item.value
         } else if (item.data.fieldName == 'grade_id') {
-          console.log('选择年级1', item.value)
+          // console.log('选择年级1', item.value)
           this.actionCombo.searchJson.gradeId = item.value
         } else if (item.data.fieldName == 'contractId') {
           var countCourseSum = 0
@@ -897,13 +896,13 @@ export default {
           item.value.forEach(item => {
             countCourseSum += item.countCourseSum
             buyCount += item.buyCount
-            console.log('总课次与购买课次', item.countCourseSum, item.buyCount)
+            // console.log('总课次与购买课次', item.countCourseSum, item.buyCount)
           })
 
           this.actionPresent.countCourseSum = countCourseSum
           this.actionPresent.buyCount = buyCount
 
-          console.log('zAAAAAAAA--', item.value)
+          // console.log('zAAAAAAAA--', item.value)
 
           for (let index = 0; index < this.crmForm.crmFields.length; index++) {
             const element = this.crmForm.crmFields[index]
@@ -924,16 +923,11 @@ export default {
             // 复制
             const getValueObj = {
               coach_type: data => {
-                console.log('data1111', data)
                 if (data && data.coachType) {
-                  return data.coachType
+                  return +data.coachType
                 }
                 return ''
               }
-              // totalclassTime: data => {
-              //   console.log('a1111', data)
-              //   return ''
-              // }
             }
 
 
@@ -2944,7 +2938,7 @@ export default {
       })
     },
     /** 上传 */
-    submiteParams(params) {
+    async submiteParams(params) {
       var a = { ...params }
       console.log('submiteParams', a)
       var crmRequest = this.getSubmiteRequest()
@@ -3045,6 +3039,25 @@ export default {
             params.field.splice(i--, 1)
           }
         }
+
+        /* if (this.action.contractType == 2 && this.examineInfo.examineType === 2) {
+          let degree = 0
+          params.product.forEach(item => {
+            degree += Number(item.courseSum)
+          })
+          const judgeParams = {
+            userId: this.examineInfo.value[0].userId,
+            contractIds: params.entity.relevance_contract_id.split(','),
+            degree
+          }
+          this.loading = false
+          const judgeGiveRes = await judgeGiveAPI(judgeParams)
+          if (!judgeGiveRes.data.audit) {
+            this.loading = false
+            this.$message.error(judgeGiveRes.data.msg)
+            return
+          }
+        } */
       }
 
       // 充值返还
@@ -3070,8 +3083,6 @@ export default {
           }
         }
       }
-
-
 
       console.log('请求参数: ', params)
       this.loading = false
