@@ -1711,6 +1711,8 @@ export default {
         return '全部班级排课表'
       } else if (this.crmType == 'studentschedule') {
         return '全部学员排课表'
+      } else if (this.crmType == 'studentWarning') {
+        return '全部预警'
       }
     },
 
