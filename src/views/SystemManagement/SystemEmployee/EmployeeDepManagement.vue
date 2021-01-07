@@ -204,6 +204,7 @@
     </div>
     <!-- 导航新增部门 -->
     <el-dialog
+      v-if="depCreateDialog"
       :visible.sync="depCreateDialog"
       :close-on-click-modal="false"
       :title="depCreateTitle"
@@ -295,7 +296,7 @@
               placeholder="请输入备用字段" />
           </el-form-item>
 
-          <xh-customer-address @value-change="fieldValueChange" />
+          <xh-customer-address :value="depCreateForm.addressData.value" @value-change="fieldValueChange" />
         </el-form>
       </div>
 
@@ -645,7 +646,8 @@ import {
   adminUsersManagerUsernameEditAPI,
   usersEditStatus,
   userCallQueryInfoAPI,
-  changeSuperiorAPI
+  changeSuperiorAPI,
+  depListDetailAPI
 } from '@/api/systemManagement/EmployeeDepManagement'
 import {
   adminConfigsetIndex
@@ -942,7 +944,10 @@ export default {
         area: ''
       },
       depCreateForm: {
-        centre: 2
+        centre: 2,
+        addressData: {
+          value: {}
+        }
       },
       deptCreateRules: {
         name: [
@@ -967,7 +972,7 @@ export default {
           { required: true, message: '开户行不能为空', trigger: ['blur', 'change'] }
         ]
       },
-      addressData: null
+      addressData: {}
     }
   },
   computed: {
@@ -1294,7 +1299,6 @@ export default {
 
     // 详情 -- 编辑用户
     editBtn() {
-      console.log('dialogData: ', this.dialogData)
       this.dialogTitle = '编辑员工'
       this.getHandleEmployeeRelateData()
       this.formInline = {
@@ -1392,7 +1396,6 @@ export default {
     addStruc() {
       const id =
         this.allDepData && this.allDepData.length ? this.allDepData[0].id : ''
-      console.log('创建部门', id)
       if (id) {
         this.depCreateLabelValue = ''
         this.depCreateLabel = '新增部门'
@@ -1416,7 +1419,7 @@ export default {
     },
 
     /**
-     * 新增部门
+     * 新增子部门
      */
     appendStruc(data) {
       this.depCreateLabelValue = ''
@@ -1434,9 +1437,32 @@ export default {
      */
     getStructuresListBySuperior(data) {
       this.superDepList = []
-      depList(data)
+      if (data.type === 'save') {
+        depList(data)
+          .then(response => {
+            this.superDepList = response.data
+          })
+          .catch(() => {})
+        return
+      }
+
+      depListDetailAPI()
         .then(response => {
           this.superDepList = response.data
+          this.depCreateForm = response.data.find(item => {
+            return item.id == data.id
+          })
+          this.depCreateForm.name = this.depCreateForm.name.replace(/.*-(.*)/, (match, p1) => {
+            return p1
+          })
+          this.depCreateForm.addressData = {}
+          this.depCreateForm.addressData.value = {
+            address: this.depCreateForm.address.split(','),
+            detailAddress: this.depCreateForm.detailAddress,
+            lat: this.depCreateForm.lat,
+            lng: this.depCreateForm.lng,
+            location: this.depCreateForm.location
+          }
         })
         .catch(() => {})
     },
@@ -1488,12 +1514,16 @@ export default {
     // 关闭新增或编辑
     depCreateClose() {
       this.depCreateDialog = false
+      this.$refs.depCreateForm.resetFields()
+      this.depCreateForm = {
+        centre: 2,
+        addressData: { value: {}}
+      }
     },
     // 新增或编辑确定按钮
     submitDialog() {
       // 验证部门
-      // addressData
-      if (!this.addressData) {
+      if (Object.keys(this.addressData.value).length === 0) {
         this.$message.warning('请选择省市区并输入详细地址')
         return
       }
@@ -1505,11 +1535,16 @@ export default {
           params.address = this.addressData.value.address.join(',')
           params.detailAddress = this.addressData.value.detailAddress
           params.location = this.addressData.value.location
+          params.lat = this.addressData.value.lat // 39.977805134254524
+          params.lng = this.addressData.value.lng // 116.33621404364403
+          // delete params.addressData
+
           console.log('请求参数', params)
           // return
           depSave(params).then(
             res => {
-              // 初始化depCreateForm
+              this.$message.success('添加成功')
+              this.depCreateForm = { centre: 2 }
               this.getDepList() // 增加了新部门 刷新数据
               this.getDepTreeList()
               this.depCreateClose()
@@ -1517,14 +1552,18 @@ export default {
           )
         })
       } else {
-        depEdit({
-          name: this.depCreateLabelValue,
-          deptId: this.treeEditId,
-          pid: this.depSelect,
-          centre: this.centre,
-          deptNumber: this.deptNumber
-        }).then(res => {
-          this.$message.success('操作成功')
+        const params = { ...this.depCreateForm }
+        params.deptId = params.id
+        params.address = this.addressData.value.address.join(',')
+        params.detailAddress = this.addressData.value.detailAddress
+        params.location = this.addressData.value.location
+        params.lat = this.addressData.value.lat // 39.977805134254524
+        params.lng = this.addressData.value.lng // 116.33621404364403
+        delete params.addressData
+
+        depEdit(params).then(res => {
+          this.$message.success('修改成功')
+
           this.getDepTreeList()
           this.depCreateClose()
         })
@@ -1559,7 +1598,6 @@ export default {
             params.gradeIds = ''
             params.subjectIds = ''
           }
-          console.log('save: ', params)
           if (this.dialogTitle == '新建员工') {
             usersAdd(params)
               .then(res => {
@@ -1618,7 +1656,6 @@ export default {
             .map(function(item, index, array) {
               return item.userId
             })
-          console.log('save: ', params)
           crmCallAuthorize(params)
             .then(res => {
               this.callLoading = false
@@ -1736,7 +1773,6 @@ export default {
         this.superiorloading = true
         queryUserListAPI().then(res => {
           this.superiorloading = false
-          console.log('激活员工', res.data)
           // this.superiorList = res.data
           const arr = []
           const userIds = []
@@ -2045,8 +2081,8 @@ export default {
     },
 
     fieldValueChange(val) {
-      console.log('地图', val)
-      this.addressData = val
+      console.log('fieldValueChange', val)
+      // this.addressData = val
       this.depCreateForm.addressData = val
     }
   }

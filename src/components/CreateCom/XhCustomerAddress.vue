@@ -50,6 +50,12 @@ export default {
         return {}
       }
     },
+    info: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     /** 索引值 用于更新数据 */
     index: Number,
     /** 包含数据源 */
@@ -71,11 +77,25 @@ export default {
         area: ''
       },
       /** 防止联动情况  */
-      canExecute: true
+      canExecute: true,
+      isClearInfo: false // 清除数据时使用
     }
   },
   computed: {},
   watch: {
+    /* info: {
+      handler(val) {
+        console.log('info的值', val)
+        if (Object.keys(val).length === 0) {
+          // this.isClearInfo = true
+          this.clearInfo()
+          return
+        }
+
+        this.baiduMap()
+      },
+      deep: true
+    }, */
     pointAddress: function(newValue) {
       this.valueChange()
     },
@@ -94,6 +114,7 @@ export default {
         // map.disableContinuousZoom()
         map.enableScrollWheelZoom()
         this.map = map
+        console.log('生成map', this.value)
         if (this.value && JSON.stringify(this.value) !== '{}') {
           this.initInfo(this.value)
         } else {
@@ -112,6 +133,34 @@ export default {
       })
   },
   methods: {
+    clearInfo() {
+      this.searchInput = ''
+      this.searchCopyInput = ''
+      this.detailAddress = ''
+      this.pointAddress = null
+      this.addressSelect = {
+        province: '',
+        city: '',
+        area: ''
+      }
+      this.canExecute = true
+    },
+    baiduMap() {
+      getBaiduMap()
+        .then(() => {
+          var map = new BMap.Map('choicemap', { enableMapClick: false })
+          map.centerAndZoom(new BMap.Point(116.404, 39.915), 14)
+          map.enableScrollWheelZoom()
+          this.map = map
+          this.initInfo(this.info)
+          this.isClearInfo = true
+          /* if (this.value && JSON.stringify(this.value) !== '{}') {
+            this.initInfo(this.value)
+          } else {
+          // 定位逻辑
+          } */
+        })
+    },
     initInfo(val) {
       this.searchInput = val.location
       this.detailAddress = val.detailAddress
@@ -225,6 +274,10 @@ export default {
     },
     // 值更新的回调
     valueChange() {
+      if (this.isClearInfo) return
+
+      console.log('更新')
+      // return
       this.$emit('value-change', {
         index: this.index,
         value: {

@@ -186,8 +186,6 @@ export function userCallQueryInfoAPI(data) {
 /**
  * 批量更换直属上级
  * @param {*} data
- * password
- * id 用户数组
  */
 export function changeSuperiorAPI(data) {
   return request({
@@ -197,5 +195,17 @@ export function changeSuperiorAPI(data) {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
+  })
+}
+
+
+/**
+ * 查询部门详情信息
+ * @param {*} data
+ */
+export function depListDetailAPI() {
+  return request({
+    url: 'system/dept/queryDeptTree',
+    method: 'get'
   })
 }
