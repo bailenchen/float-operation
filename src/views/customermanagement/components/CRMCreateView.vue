@@ -2778,7 +2778,6 @@ export default {
     // 保存数据
     saveField(saveAndCreate, isDraft = false) {
       this.saveAndCreate = saveAndCreate
-      console.log('保存')
       this.$refs.crmForm.validate((valid, obj) => {
         let msresult = null
         if (this.crmType == 'receivables' || this.crmType == 'productSetMeal') {
@@ -2787,6 +2786,7 @@ export default {
             return
           }
         }
+
         if (valid) {
           if (this.crmType == 'productSetMeal') {
             const { key } = this.validPrice()
@@ -2866,6 +2866,9 @@ export default {
                 if (!msresult) {
                   return
                 }
+              }
+              if (!valid) {
+                return false
               }
               this.loading = true
               if (this.showExamine) {
