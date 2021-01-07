@@ -209,6 +209,7 @@
       :close-on-click-modal="false"
       :title="depCreateTitle"
       :before-close="depCreateClose"
+      class="dialog-container"
       top="1vh"
       width="35%">
       <div class="wrap-dept">
@@ -222,6 +223,13 @@
               v-model="depCreateForm.name"
               :maxlength="20"
               placeholder="请输入部门名称" />
+          </el-form-item>
+
+          <el-form-item v-if="depCreateTitle === '编辑部门'" label="部门ID" prop="deptId">
+            <el-input
+              v-model="deptId"
+              :maxlength="20"
+              disabled />
           </el-form-item>
 
           <el-form-item label="上级部门" prop="pid">
@@ -296,7 +304,7 @@
               placeholder="请输入备用字段" />
           </el-form-item>
 
-          <xh-customer-address :value="depCreateForm.addressData.value" @value-change="fieldValueChange" />
+          <xh-customer-address :value="depCreateForm.addressData" dept-mark="123" @value-change="fieldValueChange" />
         </el-form>
       </div>
 
@@ -938,17 +946,11 @@ export default {
       superiorloading: false,
       superiorList: null,
       superiorId: '',
-      addressSelect: {
-        province: '',
-        city: '',
-        area: ''
-      },
       depCreateForm: {
         centre: 2,
-        addressData: {
-          value: {}
-        }
+        addressData: {}
       },
+      deptId: null,
       deptCreateRules: {
         name: [
           { required: true, message: '部门名称不能为空', trigger: ['blur', 'change'] }
@@ -971,8 +973,7 @@ export default {
         bankDeposit: [
           { required: true, message: '开户行不能为空', trigger: ['blur', 'change'] }
         ]
-      },
-      addressData: {}
+      }
     }
   },
   computed: {
@@ -1452,16 +1453,17 @@ export default {
           this.depCreateForm = response.data.find(item => {
             return item.id == data.id
           })
+          this.deptId = this.depCreateForm.id
           this.depCreateForm.name = this.depCreateForm.name.replace(/.*-(.*)/, (match, p1) => {
             return p1
           })
-          this.depCreateForm.addressData = {}
-          this.depCreateForm.addressData.value = {
-            address: this.depCreateForm.address.split(','),
-            detailAddress: this.depCreateForm.detailAddress,
-            lat: this.depCreateForm.lat,
-            lng: this.depCreateForm.lng,
-            location: this.depCreateForm.location
+          const { address, detailAddress, lat, lng, location } = this.depCreateForm
+          this.depCreateForm.addressData = {
+            address: address.split(','),
+            detailAddress,
+            lat,
+            lng,
+            location
           }
         })
         .catch(() => {})
@@ -1517,30 +1519,29 @@ export default {
       this.$refs.depCreateForm.resetFields()
       this.depCreateForm = {
         centre: 2,
-        addressData: { value: {}}
+        addressData: {}
       }
     },
     // 新增或编辑确定按钮
     submitDialog() {
       // 验证部门
-      if (Object.keys(this.addressData.value).length === 0) {
+      if (Object.keys(this.depCreateForm.addressData).length === 0) {
         this.$message.warning('请选择省市区并输入详细地址')
         return
       }
+
+      const { address, detailAddress, location, lat, lng } = this.depCreateForm.addressData
+      const params = { ...this.depCreateForm }
+      params.address = address.join(',')
+      params.detailAddress = detailAddress
+      params.location = location
+      params.lat = lat // 39.977805134254524
+      params.lng = lng // 116.33621404364403
+      delete params.addressData
+
       if (this.depCreateLabel == '新增部门') {
         this.$refs.depCreateForm.validate((valid) => {
           if (!valid) return
-
-          const params = { ...this.depCreateForm }
-          params.address = this.addressData.value.address.join(',')
-          params.detailAddress = this.addressData.value.detailAddress
-          params.location = this.addressData.value.location
-          params.lat = this.addressData.value.lat // 39.977805134254524
-          params.lng = this.addressData.value.lng // 116.33621404364403
-          // delete params.addressData
-
-          console.log('请求参数', params)
-          // return
           depSave(params).then(
             res => {
               this.$message.success('添加成功')
@@ -1552,15 +1553,7 @@ export default {
           )
         })
       } else {
-        const params = { ...this.depCreateForm }
         params.deptId = params.id
-        params.address = this.addressData.value.address.join(',')
-        params.detailAddress = this.addressData.value.detailAddress
-        params.location = this.addressData.value.location
-        params.lat = this.addressData.value.lat // 39.977805134254524
-        params.lng = this.addressData.value.lng // 116.33621404364403
-        delete params.addressData
-
         depEdit(params).then(res => {
           this.$message.success('修改成功')
 
@@ -2081,9 +2074,7 @@ export default {
     },
 
     fieldValueChange(val) {
-      console.log('fieldValueChange', val)
-      // this.addressData = val
-      this.depCreateForm.addressData = val
+      this.depCreateForm.addressData = val.value
     }
   }
 }
@@ -2575,7 +2566,13 @@ export default {
   color: #999;
 }
 @import '../styles/table.scss';
+.dialog-container /deep/ .el-dialog {
+  min-width: 500px;
+}
 
+/deep/ .area-title {
+  line-height: 40px;
+}
 .wrap-dept {
   height: 600px;
   padding-right: 14px;

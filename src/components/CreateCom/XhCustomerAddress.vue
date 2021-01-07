@@ -59,7 +59,12 @@ export default {
     /** 索引值 用于更新数据 */
     index: Number,
     /** 包含数据源 */
-    item: Object
+    item: Object,
+    /** 新增部门时使用 */
+    deptMark: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -96,6 +101,15 @@ export default {
       },
       deep: true
     }, */
+    value: {
+      handler(val) {
+        if (val && this.deptMark) {
+          this.clearInfo()
+          this.getBaiduMap()
+        }
+      },
+      deep: true
+    },
     pointAddress: function(newValue) {
       this.valueChange()
     },
@@ -104,20 +118,23 @@ export default {
     }
   },
   mounted() {
-    getBaiduMap()
-      .then(() => {
-        var map = new BMap.Map('choicemap', { enableMapClick: false })
-        map.centerAndZoom(new BMap.Point(116.404, 39.915), 14)
-        // map.disableDragging() //禁止拖拽
-        // map.disableDoubleClickZoom()
-        // map.disableScrollWheelZoom()
-        // map.disableContinuousZoom()
-        map.enableScrollWheelZoom()
-        this.map = map
-        console.log('生成map', this.value)
-        if (this.value && JSON.stringify(this.value) !== '{}') {
-          this.initInfo(this.value)
-        } else {
+    this.getBaiduMap()
+  },
+  methods: {
+    getBaiduMap() {
+      getBaiduMap()
+        .then(() => {
+          var map = new BMap.Map('choicemap', { enableMapClick: false })
+          map.centerAndZoom(new BMap.Point(116.404, 39.915), 14)
+          // map.disableDragging() //禁止拖拽
+          // map.disableDoubleClickZoom()
+          // map.disableScrollWheelZoom()
+          // map.disableContinuousZoom()
+          map.enableScrollWheelZoom()
+          this.map = map
+          if (this.value && JSON.stringify(this.value) !== '{}') {
+            this.initInfo(this.value)
+          } else {
           // 定位逻辑
           // var geolocation = new BMap.Geolocation()
           // var self = this
@@ -129,10 +146,9 @@ export default {
           //   },
           //   { enableHighAccuracy: true }
           // )
-        }
-      })
-  },
-  methods: {
+          }
+        })
+    },
     clearInfo() {
       this.searchInput = ''
       this.searchCopyInput = ''
@@ -153,6 +169,7 @@ export default {
           map.enableScrollWheelZoom()
           this.map = map
           this.initInfo(this.info)
+
           this.isClearInfo = true
           /* if (this.value && JSON.stringify(this.value) !== '{}') {
             this.initInfo(this.value)
@@ -276,8 +293,6 @@ export default {
     valueChange() {
       if (this.isClearInfo) return
 
-      console.log('更新')
-      // return
       this.$emit('value-change', {
         index: this.index,
         value: {
