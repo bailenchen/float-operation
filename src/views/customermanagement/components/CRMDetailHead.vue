@@ -313,7 +313,8 @@ export default {
       } else if (this.crmType === 'capitalAccount') {
         return this.detail[this.clickField]
       } else if (this.crmType == 'student') {
-        return this.detail[this.clickField]
+        // return this.detail[this.clickField]
+        return this.detail.customerName
       } else if (this.crmType === 'water') {
         return this.detail[this.clickField]
       } else if (this.crmType == 'contract') {

@@ -548,6 +548,8 @@ export default {
             1: '常规充值返还',
             2: '特殊充值返还'
           }[value]
+        } else if (name === 'capitalNumber') {
+          return value[0].number
         } else if (name === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
@@ -704,7 +706,9 @@ export default {
         column.property === 'contactsName' ||
         column.property === 'num' ||
         column.property === 'relevanceContractNum' ||
-        column.property === 'visitNumber'
+        column.property === 'visitNumber' ||
+        column.property === 'capitalNumber' ||
+         column.property === 'contractNum'
       ) {
         return 'can-visit--underline'
       } else {

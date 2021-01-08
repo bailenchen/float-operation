@@ -742,7 +742,12 @@ export default {
           this.rowType = 'receive'
           this.clickField = column.property
           this.showDview = true
-        } else if (column.property === 'customerName') {
+        } else if (column.property === 'contractNum') {
+          this.rowID = row.capitalNumber[0].contractCapitalId
+          this.rowType = 'receive'
+          this.clickField = column.property
+          this.showDview = true
+        } else if (column.property === 'customerName' || column.property == 'leadsNumber') {
           this.rowID = row.customerId
           this.rowType = 'student'
           this.clickField = column.property
