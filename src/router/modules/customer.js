@@ -132,6 +132,19 @@ export default [
       permissions: ['crm', 'insideUser']
     }),
     children: [{
+      path: 'student-warning',
+      component: () => import('@/views/customermanagement/warning'),
+      meta: {
+        title: '学员预警',
+        icon: 'bell'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'insideUser']
+    }),
+    children: [{
       path: 'inner-address',
       component: () => import('@/views/customermanagement/internalAddress/AddressIndex'),
       meta: {
