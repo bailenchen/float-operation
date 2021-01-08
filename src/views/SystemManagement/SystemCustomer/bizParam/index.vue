@@ -47,6 +47,8 @@ import SerialNumberSet from './components/SerialNumberSet' // 编号规则设置
 import FieldListSet from './components/FieldListSet' // 编号规则设置
 import DataDictionarySet from './components/dataDictionarySet' // 编号规则设置
 import StudentWarningSet from './components/StudentWarningSet' // 学员预警规则设置
+import PersonAccountSet from './components/PersonAccountSet' // 个人账户认证
+import OrganizationSet from './components/OrganizationSet' // 机构认证
 
 export default {
   name: 'BizParam',
@@ -70,7 +72,9 @@ export default {
     LeadsStatusFollowResultSet,
     FieldListSet,
     DataDictionarySet,
-    StudentWarningSet
+    StudentWarningSet,
+    PersonAccountSet,
+    OrganizationSet
   },
 
   data() {
@@ -94,7 +98,9 @@ export default {
         { label: '编号规则设置', key: 'SerialNumberSet' },
         { label: '自定义列表设置', key: 'FieldListSet' },
         { label: '数据字典', key: 'DataDictionarySet' },
-        { label: '学员预警规则设置', key: 'StudentWarningSet' }
+        { label: '学员预警规则设置', key: 'StudentWarningSet' },
+        { label: '个人账户认证', key: 'PersonAccountSet' },
+        { label: '机构认证', key: 'OrganizationSet' }
       ],
       menuIndex: 'ChannelCategorySet',
       types: '' // 区分拥有客户 和 锁定客户
