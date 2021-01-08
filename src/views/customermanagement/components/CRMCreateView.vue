@@ -2344,6 +2344,8 @@ export default {
                 realname: this.action.data.customer.ownerUserName,
                 userId: this.action.data.customer.ownerUserId
               }]
+            } else if (element.key == 'name') {
+              element.value = this.action.data.customer.customerName
             }
           } else {
             if (element.key == 'dept_id') {

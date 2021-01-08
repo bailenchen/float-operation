@@ -22,7 +22,7 @@
         <span v-else-if="item.formType === 'user'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].realname + '”' }}</span>
         <span v-else-if="item.formType === 'single_structure'">{{ item.name +'&nbsp;' + optionsNames[item.condition] + '“' + item.value[0].name + '”' }}</span>
         <span v-else-if="['category', 'leads_source'].includes(item.formType) && item.value.length > 0">{{ item.name +'&nbsp;“' + item.valueContent + '”' }}</span>
-        <span v-else-if="item.formType == 'select' && (['contract_type', 'is_early_retirement', 'is_new', 'contract_status', 'status'].includes(item.fieldName))">{{ item.name +'&nbsp;'+ optionsNames[item.condition] +'“' + handleSelectName(item.fieldName, item.value) + '”' }}</span>
+        <span v-else-if="item.formType == 'select' && (['contract_type', 'is_early_retirement', 'is_new', 'contract_status', 'status', 'allot_status'].includes(item.fieldName))">{{ item.name +'&nbsp;'+ optionsNames[item.condition] +'“' + handleSelectName(item.fieldName, item.value) + '”' }}</span>
         <span v-else>{{ item.name + '&nbsp;' + optionsNames[item.condition] + '“' + item.value + '”' }}</span>
         <i
           class="el-icon-close icon"
@@ -143,6 +143,10 @@ export default {
         'status': {
           1: '正常',
           2: '关闭'
+        },
+        'allot_status': {
+          '是': '是',
+          '否': '否'
         }
       }[name][value]
     },

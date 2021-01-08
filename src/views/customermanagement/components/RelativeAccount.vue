@@ -172,6 +172,7 @@ export default {
     createClick() {
       // leads 和 学员 下新建资金账户
       if (this.crmType == 'customer') {
+        console.log(this.detail, '关联资金账户')
         this.createActionInfo.data['customer'] = this.detail
       } else if (this.crmType == 'student') {
         this.createActionInfo.data['customer'] = this.detail

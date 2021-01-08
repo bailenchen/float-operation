@@ -421,7 +421,7 @@ export default {
 
     // 判断formType为select的不同数据格式时的处理
     handleSelect(item) {
-      if (['contract_type', 'is_early_retirement', 'is_new', 'contract_status', 'status'].includes(item.fieldName)) {
+      if (['contract_type', 'is_early_retirement', 'is_new', 'contract_status', 'status', 'allot_status'].includes(item.fieldName)) {
         return true
       } else {
         return false

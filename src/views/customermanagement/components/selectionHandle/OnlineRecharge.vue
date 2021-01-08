@@ -22,11 +22,12 @@
       append-to-body
       @close="innerHandleCancel">
 
-      <div v-loading="loading" style="margin: 20px auto;width:150px;height:150px;">
-        <div
-          v-if="!isSucc"
-          id="canvas"
-          class="publish-info-content" />
+      <div style="margin: 20px auto;width:150px;height:150px;">
+        <div v-loading="loading" v-if="!isSucc" style="width：100%;height:100%;">
+          <div
+            id="canvas"
+            class="publish-info-content" />
+        </div>
         <div v-if="isSucc" class="succ-wrap">
           <i class="el-icon-success" />
           <div style="margin-top:10px;">支付成功</div>
@@ -98,6 +99,11 @@ export default {
     //   if (val && this.list.length === 0) {
     //     this.getList()
     //   }
+    }
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer)
     }
   },
   methods: {

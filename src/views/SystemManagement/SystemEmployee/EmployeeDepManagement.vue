@@ -2055,6 +2055,9 @@ export default {
       }).catch(() => {})
     },
     changeSuperiorHandle() {
+      if (!this.superiorId) {
+        return this.$message.error('请选择直属上级')
+      }
       const userIds = []
       this.selectionList.forEach(item => {
         userIds.push(item.userId)
