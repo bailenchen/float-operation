@@ -22,7 +22,7 @@
           :placeholder="item.placeholder"
           v-model="bitem.form[item.prop]"/>
 
-        <el-select v-if="item.prop == 'courseType'" v-model="bitem.form[item.prop]" style="width: 100%;" placeholder="请选择">
+        <el-select v-if="item.prop == 'course_type'" v-model="bitem.form[item.prop]" style="width: 100%;" placeholder="请选择">
           <el-option
             v-for="item in courseTypeOptions"
             :key="item.value"
@@ -276,7 +276,8 @@ export default {
         item = {
           formField: [
             { label: '套餐', prop: 'detailsName', showblock: false, type: 'text', placeholder: '请输入套餐' },
-            { label: '课程类型', prop: 'courseType', value: '常规课', showblock: false, type: 'select', placeholder: '请选择' },
+            // { label: '课程类型', prop: 'courseType', value: '常规课', showblock: false, type: 'select', placeholder: '请选择' },
+            { label: '课程类型', prop: 'course_type', value: '常规课', showblock: false, type: 'select', placeholder: '请选择' },
             { label: '购买课次', prop: 'purchaseFrequency', showblock: false, type: 'text', placeholder: '请输入购买课次' },
             { label: '赠送课次', prop: 'giveFrequency', showblock: false, type: 'text', placeholder: '请输入赠送课次' },
             { label: '是否参与累计赠送', prop: 'isGive', showblock: false, type: 'radio' },

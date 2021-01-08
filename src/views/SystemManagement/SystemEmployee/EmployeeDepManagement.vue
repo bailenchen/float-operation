@@ -610,7 +610,6 @@
 
     <!-- 更换直属上级 -->
     <el-dialog
-
       :visible.sync="changeSuperiorDialog"
       title="更换直属上级"
       width="30%">
@@ -2055,8 +2054,9 @@ export default {
       }).catch(() => {})
     },
     changeSuperiorHandle() {
-      if (!this.superiorId) {
-        return this.$message.error('请选择直属上级')
+      if (this.superiorId === '') {
+        this.$message.warning('请选择直属上级')
+        return
       }
       const userIds = []
       this.selectionList.forEach(item => {

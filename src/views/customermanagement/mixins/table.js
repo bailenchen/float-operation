@@ -482,7 +482,11 @@ export default {
           8: '确认放弃'
         }[row[column.property]]
       }
-
+      if (this.crmType == 'contract') {
+        if (column.property === 'customerId') {
+          return row.customerName
+        }
+      }
       if (this.crmType == 'receive') {
         if (column.property === 'payment') {
           return {

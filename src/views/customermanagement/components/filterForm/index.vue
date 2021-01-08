@@ -245,7 +245,7 @@ import {
  *     type:  date || datetime || select || 其他 input
  */
 export default {
-  name: 'Index',
+  name: 'FilterContent',
   components: {
     XhUserCell,
     XhStructureCell,

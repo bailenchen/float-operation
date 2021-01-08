@@ -48,7 +48,12 @@
         fixed="right"
         width="80">
         <template slot-scope="scope">
-          <el-button v-if="showEdit(scope.row.transactionType)" :disabled="isDisabled(scope.row.checkStatus)" @click="editHandle(scope.row)">编辑</el-button>
+          <el-button
+            v-if="showEdit(scope.row.transactionType)"
+            :disabled="isDisabled(scope.row.checkStatus)"
+            @click="editHandle(scope.row)">
+            编辑
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -2156,7 +2156,6 @@ export default {
             element.value = this.action.information.customer.channelIdName
           }
           if (element.key == 'coach_type') {
-            console.log('编辑', this.action.information.contract)
             this.actionCombo.searchJson.coachType = +this.action.information.contract.coachType
             element.value = +this.action.information.contract.coachType
           }
@@ -3042,7 +3041,7 @@ export default {
           }
         }
 
-        /* if (this.action.contractType == 2 && this.examineInfo.examineType === 2) {
+        if (this.action.contractType == 2 && this.examineInfo.examineType === 2) {
           let degree = 0
           params.product.forEach(item => {
             degree += Number(item.courseSum)
@@ -3059,7 +3058,7 @@ export default {
             this.$message.error(judgeGiveRes.data.msg)
             return
           }
-        } */
+        }
       }
 
       // 充值返还
@@ -3305,7 +3304,9 @@ export default {
           params.entity.refundMonry = element.value.refundMonry
           // const refundMonry = Math.abs(element.value.refundMonry)
           // this.$message(`变更后原合同剩余金额${refundMonry}元将会返还至资金账户`)
-          this.$message(`变更后原合同剩余金额${Math.abs(element.value.refundMonry)}元将会返还至资金账户`)
+          if (element.value.refundMonry < 0) {
+            this.$message(`变更后原合同剩余金额${Math.abs(element.value.refundMonry)}元将会返还至资金账户`)
+          }
         }
       } else {
         this.$message.error('请添加套餐')
