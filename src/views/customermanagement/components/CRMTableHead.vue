@@ -316,6 +316,10 @@ import {
   crmClassClose
 } from '@/api/educationmanage/class'
 import {
+  crmStudentSchduleDelete,
+  crmStudentSchduleLeave
+} from '@/api/educationmanage/studentSchedule'
+import {
   crmClassSchduleDelete
 } from '@/api/educationmanage/classSchedule'
 import { crmCreateExamineFlow } from '@/api/customermanagement/common'
@@ -347,8 +351,8 @@ import RankCourse from '@/views/EducationManage/components/RankCourse' // 排课
 import ShiftHandle from '@/views/EducationManage/components/ShiftHandle' // 换挡
 import CreateClassroom from '@/views/EducationManage/classroom/components/CreateClassroom' // 创建教室
 import CreateClass from '@/views/EducationManage/class/components/CreateClass' // 创建班级
-import DismissWarning from '../studentManage/warning/components/DismissWarning' // 提升预警等级
-import RaiseWarning from '../studentManage/warning/components/RaiseWarning' // 解除等级
+import DismissWarning from '../warning/components/DismissWarning' // 提升预警等级
+import RaiseWarning from '../warning/components/RaiseWarning' // 解除等级
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 import CRMCreateView from './CRMCreateView'
@@ -656,6 +660,7 @@ export default {
       } else if (
         type == 'transform' ||
         type == 'delete' ||
+        type == 'leave' ||
         type == 'lock' ||
         type == 'unlock' ||
         type == 'start' ||
@@ -710,6 +715,8 @@ export default {
           }
         } else if (type == 'close') {
           message = '确认关闭吗?'
+        } else if (type == 'leave') {
+          message = '确认请假吗?'
         }
         this.$confirm(message, '提示', {
           confirmButtonText: type === 'confirm_give_up' ? '提交家长确认' : '确定',
@@ -938,6 +945,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['timeId']
           })
+        } else if (this.crmType == 'studentschedule') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['id']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -962,7 +973,8 @@ export default {
           refund: crmRefundDeleteAPI,
           classroom: crmClassroomDelete,
           class: crmClassDelete,
-          classschedule: crmClassSchduleDelete
+          classschedule: crmClassSchduleDelete,
+          studentschedule: crmStudentSchduleDelete
         }[this.crmType]
         var params = null
         if (this.crmType == 'productSetMeal') {
@@ -993,6 +1005,10 @@ export default {
           params = {
             timeIds: ids.join(',')
           }
+        } else if (this.crmType == 'studentschedule') {
+          params = {
+            ids: ids.join(',')
+          }
         } else {
           params = {
             [crmTypes + 'Ids']: ids.join(',')
@@ -1001,7 +1017,6 @@ export default {
         if (this.isSeas) {
           params.poolId = this.poolId
         }
-        // return
         this.loading = true
         request(params)
           .then(res => {
@@ -1009,6 +1024,30 @@ export default {
             this.$message({
               type: 'success',
               message: '删除成功'
+            })
+            this.$emit('handle', { type: type })
+          })
+          .catch(() => {
+            this.loading = false
+          })
+      } else if (type == 'leave') {
+        var ids = null
+        var params = null
+        if (this.crmType == 'studentschedule') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['id']
+          })
+          params = {
+            ids: ids.join(',')
+          }
+        }
+        this.loading = true
+        crmStudentSchduleLeave(params)
+          .then(res => {
+            this.loading = false
+            this.$message({
+              type: 'success',
+              message: '请假成功'
             })
             this.$emit('handle', { type: type })
           })
@@ -1656,7 +1695,15 @@ export default {
       } else if (type == 'shift') {
         return this.education[this.crmType].shifts
       } else if (type == 'leave') {
-        return this.education[this.crmType].leave
+        const allStatus = []
+        this.selectionList.forEach(element => {
+          allStatus.push(element.classConfirmationType)
+        })
+        if (allStatus.includes('已确认')) {
+          return false
+        } else {
+          return this.education[this.crmType].leave
+        }
       } else if (type == 'mode_class') {
         if (this.selectionList.length == 1 && this.selectionList[0].isCourse === '是') {
           return this.education[this.crmType].update

@@ -25,3 +25,21 @@ export function crmStudentSchduleExcelAllExport(data) {
     }
   })
 }
+
+// 学员排课表 删除
+export function crmStudentSchduleDelete(data) {
+  return request({
+    url: 'educationalTimecontract/deleteByIds',
+    method: 'post',
+    data: data
+  })
+}
+
+// 学员排课表 请假
+export function crmStudentSchduleLeave(data) {
+  return request({
+    url: 'educationalTimecontract/leaveStudent',
+    method: 'post',
+    data: data
+  })
+}
