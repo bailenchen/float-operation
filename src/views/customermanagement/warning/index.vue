@@ -9,23 +9,7 @@
       @create-warning="createClick"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
-      @on-export="exportInfos">
-      <el-menu
-        slot="icon"
-        ref="elMenu"
-        :default-active="crmType"
-        mode="horizontal"
-        active-text-color="#2362FB"
-        @select="menuSelect" >
-        <el-menu-item
-          v-for="(item, index) in menuItems"
-          :key="index"
-          :index="item.path">
-          <img :src="item.icon">
-          <span>{{ item.title }}</span>
-        </el-menu-item>
-      </el-menu>
-    </c-r-m-list-head>
+      @on-export="exportInfos"/>
     <div
       v-empty="!crm.student.index"
       xs-empty-icon="nopermission"
@@ -106,9 +90,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import CreateWarning from './components/CreateWarning'
-import table from '../../mixins/table'
-import menuMixins from '../menuMixins'
-
+import table from '../mixins/table'
 
 export default {
   /** 客户管理 的 学员列表 */
@@ -125,7 +107,7 @@ export default {
       return statu == 1 ? '已成交' : '未成交'
     }
   },
-  mixins: [table, menuMixins],
+  mixins: [table],
   data() {
     return {
       crmType: 'studentWarning',
@@ -134,9 +116,6 @@ export default {
   },
   computed: {
     ...mapGetters(['CRMConfig'])
-  },
-  deactivated: function() {
-    this.$refs.elMenu.activeIndex = this.crmType
   },
   methods: {
     createClick() {
@@ -151,5 +130,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/table';
+@import '../styles/table';
 </style>
