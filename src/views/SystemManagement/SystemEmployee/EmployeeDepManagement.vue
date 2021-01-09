@@ -225,6 +225,13 @@
               placeholder="请输入部门名称" />
           </el-form-item>
 
+          <el-form-item label="公司税号" prop="dutyParagraph">
+            <el-input
+              v-model="depCreateForm.dutyParagraph"
+              :maxlength="20"
+              placeholder="请输入公司税号" />
+          </el-form-item>
+
           <el-form-item v-if="depCreateTitle === '编辑部门'" label="部门ID" prop="deptId">
             <el-input
               v-model="deptId"
@@ -727,6 +734,7 @@ export default {
       depSelect: '',
       centre: 2,
       deptNumber: '',
+      dutyParagraph: '',
       // 上级部门
       superDepList: [],
       depCreateLabel: '',
@@ -962,16 +970,16 @@ export default {
         ],
         deptNumber: [
           { required: true, message: '部门编号不能为空', trigger: ['blur', 'change'] }
-        ],
-        corporateName: [
-          { required: true, message: '公司名称不能为空', trigger: ['blur', 'change'] }
-        ],
-        bankAccount: [
-          { required: true, message: '公司银行账号不能为空', trigger: ['blur', 'change'] }
-        ],
-        bankDeposit: [
-          { required: true, message: '开户行不能为空', trigger: ['blur', 'change'] }
         ]
+        // corporateName: [
+        //   { required: true, message: '公司名称不能为空', trigger: ['blur', 'change'] }
+        // ],
+        // bankAccount: [
+        //   { required: true, message: '公司银行账号不能为空', trigger: ['blur', 'change'] }
+        // ],
+        // bankDeposit: [
+        //   { required: true, message: '开户行不能为空', trigger: ['blur', 'change'] }
+        // ]
       }
     }
   },
@@ -1428,6 +1436,7 @@ export default {
       this.depSelect = data.id
       this.centre = data.centre
       this.deptNumber = data.deptNumber
+      this.dutyParagraph = data.dutyParagraph
       this.getStructuresListBySuperior({ id: data.id, type: 'save' })
       this.depCreateDialog = true
     },
@@ -1477,6 +1486,7 @@ export default {
       this.depSelect = data.pid
       this.centre = data.centre
       this.deptNumber = data.deptNumber
+      this.dutyParagraph = data.dutyParagraph
       this.depCreateTitle = '编辑部门'
       this.depCreateLabel = '编辑部门'
       this.getStructuresListBySuperior({ id: data.id, type: 'update' })

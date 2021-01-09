@@ -202,7 +202,7 @@ export default {
     },
 
     getParams() {
-      const params =
+      let params =
         this.infoParams && Object.keys(this.infoParams.length !== 0)
           ? this.infoParams
           : {}
@@ -213,9 +213,10 @@ export default {
         params.relatedTeachers = this.teacherId
         return params
       } else {
-        params.pageType = 0
         if (this.deptId) {
-          params.deptId = this.deptId
+          params = {}
+        } else {
+          params.pageType = 0
         }
         return params
       }

@@ -104,7 +104,7 @@ export default {
     value: {
       handler(val) {
         if (val && this.deptMark) {
-          this.clearInfo()
+          // this.clearInfo()
           this.getBaiduMap()
         }
       },

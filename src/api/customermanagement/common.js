@@ -507,7 +507,7 @@ export function QueryHeadmaster(data) {
  */
 export function queryStudentOwnerUserAPI(data) {
   return request({
-    url: 'system/user/transferUser',
+    url: 'system/user/queryHeadmasterByApply',
     method: 'post',
     data: data
   })
