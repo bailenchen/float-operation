@@ -145,6 +145,7 @@ import { filedGetInformation } from '@/api/customermanagement/common'
 import {
   filedGetTableField
 } from '@/api/customermanagement/common'
+import { queryDictionaryField } from '@/api/common'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
 import crmTypeModel from '@/views/customermanagement/model/crmTypeModel'
 
@@ -263,10 +264,10 @@ export default {
 
       allocList: [],
       fieldlist: [
-        { prop: 'createUserName', label: '业绩享受人' },
+        { prop: 'memberUserName', label: '业绩享受人' },
         { prop: 'performanceRatio', label: '业绩比例（%）' },
         { prop: 'newStudentRatio', label: '新签学员比例（%）' },
-        { prop: 'memberUserName', label: '添加人' },
+        { prop: 'createUserName', label: '添加人' },
         { prop: 'checkStatus', label: '审批状态' },
         { prop: 'createTime', label: '添加时间' }
       ],
@@ -285,7 +286,11 @@ export default {
       // },
       createActionInfo: {
         type: 'update'
-      }
+      },
+
+      // 分配比例
+      rateList: [],
+      newRateList: []
     }
   },
   computed: {
@@ -353,6 +358,8 @@ export default {
   },
   created() {
     this.createActionInfo.id = this.id
+    this.queryRate('new_student_ratio')
+    this.queryRate('performance_ratio')
   },
   mounted() {
     if (this.crm.contract && this.crm.contract.read) {
@@ -377,6 +384,28 @@ export default {
           this.isCreate = true
         }).catch(() => {})
       }).catch(() => {})
+    },
+
+    // 查询业绩分配比列
+    queryRate(field) {
+      queryDictionaryField({ dictionaryField: field }).then(res => {
+        if (field === 'new_student_ratio') {
+          this.newRateList = res.data.map(item => {
+            item.label = item.dictionaryName
+            item.value = item.dictionaryId
+            return item
+          })
+        } else if (field === 'performance_ratio') {
+          this.rateList = res.data.map(item => {
+            item.label = item.dictionaryName
+            item.value = item.dictionaryId
+            return item
+          })
+        }
+        console.log(res)
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     /**
      * 详情
@@ -590,7 +619,25 @@ export default {
           7: '已删除',
           8: '作废'
         }[row.checkStatus]
+      } else if (column.property === 'newStudentRatio') {
+        let personcent = ''
+        this.newRateList.forEach(item => {
+          if (row.newStudentRatio === item.value) {
+            personcent = item.label
+          }
+        })
+        return personcent
+      } else if (column.property === 'performanceRatio') {
+        let personcent = ''
+        this.rateList.forEach(item => {
+          if (row.performanceRatio === item.value) {
+            personcent = item.label
+          }
+        })
+        return personcent
       }
+
+      console.log(column.property, 'xxxxx')
       return row[column.property]
     },
 

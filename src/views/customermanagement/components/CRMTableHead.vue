@@ -1533,15 +1533,16 @@ export default {
     // 判断是否展示
     whetherTypeShowByPermision: function(type) {
       if (type == 'transfer') {
-        if (this.sceneData.bydata == 'transform') {
-          return false
-        } else {
+        if (this.crmType == 'student') {
           if (this.selectionList.length == 1) {
             return this.crm[this.crmType].transfer
           } else {
             return false
           }
         }
+        return this.sceneData.bydata == 'transform'
+          ? false
+          : this.crm[this.crmType].transfer
       } else if (type == 'transform') {
         return this.sceneData.bydata == 'transform'
           ? false
