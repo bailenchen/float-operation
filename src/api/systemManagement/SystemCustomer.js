@@ -373,3 +373,105 @@ export function sysConfigDataDictarySaveAPI(data) {
     }
   })
 }
+
+/**
+ * 个人账户认证 保存
+ * @param {*} data
+ */
+export function sysConfigDataPersonAccountSaveAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/saveOne',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 个人账户认证 查询
+ * @param {*} data
+ */
+export function sysConfigDataPersonAccountQueryAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/queryPageList',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 个人账户认证 删除
+ * @param {*} data
+ */
+export function sysConfigDataPersonAccountDeleteAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/deleteOne',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 个人账户认证 认证
+ * @param {*} data
+ */
+export function sysConfigDataPersonAccountAuthAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/authenticationOne',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 机构认证 保存
+ * @param {*} data
+ */
+export function sysConfigDataPersonOrgSaveAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/saveOne',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 机构认证 查询
+ * @param {*} data
+ */
+export function sysConfigDataPersonOrgQueryAPI(data) {
+  return request({
+    url: 'adminAuthenticationMechanism/queryPageList',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 机构认证 删除
+ * @param {*} data
+ */
+export function sysConfigDataPersonOrgDeleteAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/deleteOne',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 机构认证 认证
+ * @param {*} data
+ */
+export function sysConfigDataPersonOrgAuthAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/authenticationOne',
+    method: 'post',
+    data: data
+  })
+}

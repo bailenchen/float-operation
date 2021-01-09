@@ -1534,19 +1534,17 @@ export default {
     // 新增或编辑确定按钮
     submitDialog() {
       // 验证部门
-      if (Object.keys(this.depCreateForm.addressData).length === 0) {
-        this.$message.warning('请选择省市区并输入详细地址')
-        return
+      const params = { ...this.depCreateForm }
+      if (Object.keys(this.depCreateForm.addressData).length !== 0) {
+        const { address, detailAddress, location, lat, lng } = this.depCreateForm.addressData
+        params.address = address.join(',')
+        params.detailAddress = detailAddress
+        params.location = location
+        params.lat = lat // 39.977805134254524
+        params.lng = lng // 116.33621404364403
+        delete params.addressData
       }
 
-      const { address, detailAddress, location, lat, lng } = this.depCreateForm.addressData
-      const params = { ...this.depCreateForm }
-      params.address = address.join(',')
-      params.detailAddress = detailAddress
-      params.location = location
-      params.lat = lat // 39.977805134254524
-      params.lng = lng // 116.33621404364403
-      delete params.addressData
 
       if (this.depCreateLabel == '新增部门') {
         this.$refs.depCreateForm.validate((valid) => {

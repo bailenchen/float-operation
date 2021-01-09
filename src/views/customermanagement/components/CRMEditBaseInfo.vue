@@ -187,7 +187,8 @@ import { crmMarketingInformationAPI } from '@/api/customermanagement/marketing'
 import {
   QueryAdminGrade,
   QuerySignUpList,
-  QueryCommunicationMode
+  QueryCommunicationMode,
+  QueryCoachingMethods
 } from '@/api/systemManagement/params'
 import {
   crmSettingRecordListAPI
@@ -296,6 +297,12 @@ export default {
           req: QuerySignUpList,
           labelField: 'signUpName',
           valueField: 'id'
+        },
+        {
+          formType: 'coaching_methods',
+          req: QueryCoachingMethods,
+          labelField: 'dictionaryName',
+          valueField: 'dictionaryId'
         },
         {
           formType: 'communication_mode',

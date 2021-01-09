@@ -96,7 +96,6 @@
 
 <script>
 import { crmProductRead } from '@/api/customermanagement/product'
-
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 产品基本信息
@@ -204,9 +203,8 @@ export default {
         .then(res => {
           this.loading = false
           this.detailData = res.data
-
           this.headDetails[0].value = res.data.gradeName
-          this.headDetails[1].value = res.data.coachType
+          this.headDetails[1].value = res.data.coachTypeName
           this.headDetails[2].value = separator(res.data.price || 0)
           // this.headDetails[3].value = res.data.num
         })

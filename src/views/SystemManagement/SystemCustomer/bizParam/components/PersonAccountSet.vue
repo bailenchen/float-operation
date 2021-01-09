@@ -22,20 +22,22 @@
           :prop="item.field"
           :label="item.label"
           :formatter="fieldFormatter"
+          align="center"
           show-overflow-tooltip/>
         <el-table-column
           fixed="right"
           label="操作"
+          align="center"
           width="120">
           <template slot-scope="scope">
             <el-button
               type="text"
               size="small"
-              @click="handleEdit(scope.row)">编 辑</el-button>
+              @click="handleAuth(scope.row)">认证</el-button>
             <el-button
               type="text"
               size="small"
-              @click="handleDelete(scope)">删 除</el-button>
+              @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -53,27 +55,45 @@
       </div>
     </div>
 
-    <edit-customer-limit
+    <el-dialog
       :visible.sync="showAddEdit"
-      :type="type"
-      :action="action"
-      @success="getList"/>
+      title="创建E签宝个人账号"
+      width="30%">
+      <el-form ref="ruleForm" :label-position="labelPosition" :rules="rules" :model="form" label-width="80px">
+        <el-form-item label="员工编号" prop="jobNumber">
+          <el-input v-model="form.jobNumber"/>
+        </el-form-item>
+        <el-form-item label="姓名" prop="userName">
+          <el-input v-model="form.userName"/>
+        </el-form-item>
+        <el-form-item label="手机号" prop="mobile">
+          <el-input v-model="form.mobile"/>
+        </el-form-item>
+        <el-form-item label="身份证号" prop="idNumber">
+          <el-input v-model="form.type"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showAddEdit = false">取 消</el-button>
+        <el-button type="primary" @click="confirm">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import {
-  crmSettingCustomerConfigListAPI,
-  crmSettingCustomerConfigDelAPI
+  sysConfigDataPersonAccountSaveAPI,
+  sysConfigDataPersonAccountQueryAPI,
+  sysConfigDataPersonAccountDeleteAPI,
+  sysConfigDataPersonAccountAuthAPI
 } from '@/api/systemManagement/SystemCustomer'
-import EditCustomerLimit from './editCustomerLimit'
+
+import { chinaMobileRegex, checkCode, checkDate, checkProv } from '@/utils'
 
 export default {
   name: 'PersonAccountSet',
-
-  components: {
-    EditCustomerLimit
-  },
   data() {
     return {
       loading: false, // 展示加载中效果
@@ -81,34 +101,33 @@ export default {
       // 设置
       list: [],
       // 添加 编辑
+      labelPosition: 'right',
       showAddEdit: false,
-      action: {},
+      form: {},
       currentPage: 1,
       pageSize: 10,
       pageSizes: [10, 20, 30, 40],
-      total: 0
+      total: 0,
+
+      rules: {
+        jobNumber: [
+          { required: true, message: '请输入员工编号', trigger: 'change' }
+        ],
+        userName: [
+          { required: true, message: '请输入姓名', trigger: 'change' }
+        ]
+      }
     }
   },
 
   computed: {
     fieldList() {
       const temps = [
-        { label: '姓名', field: 'name' },
-        { label: '账户是否认证', field: 'status' },
-        { label: '认证校区', field: 'depart' }
+        { label: '姓名', field: 'userName' },
+        { label: '账户是否认证', field: 'isAuthentication' }
       ]
 
       return temps
-    },
-    typeNum() {
-      return ['own', 'lock'].findIndex(o => o === this.type) + 1
-    }
-  },
-
-  watch: {
-    type() {
-      this.list = []
-      this.getList()
     }
   },
   created() {
@@ -148,10 +167,10 @@ export default {
      */
     getList() {
       this.loading = true
-      crmSettingCustomerConfigListAPI({
+      sysConfigDataPersonAccountQueryAPI({
         page: this.currentPage,
         limit: this.pageSize,
-        type: this.typeNum
+        name: ''
       })
         .then(res => {
           this.loading = false
@@ -167,63 +186,26 @@ export default {
      * 列表格式化
      */
     fieldFormatter(row, column) {
-      if (column.property == 'customerDeal') {
-        return row.customerDeal == 1 ? '是' : '否' // 0 不占用 1 占用
-      } else if (column.property === 'userIds') {
-        const structures = row['deptIds'] || []
-        let strName = structures
-          .map(item => {
-            return item.name
-          })
-          .join('、')
-
-        const users = row['userIds'] || []
-        const userName = users
-          .map(item => {
-            return item.realname
-          })
-          .join('、')
-
-        if (strName && userName) {
-          strName += '、'
-        }
-        const name = strName + userName
-        return name || '全公司'
-        // 1 启用 0 禁用 2 删除
-      } else if (column.property === 'status') {
-        if (row[column.property] === 0) {
-          return '停用'
-        }
-        return '启用'
+      if (column.property === 'isAuthentication') {
+        return {
+          0: '否',
+          1: '是'
+        }[row.isAuthentication]
       }
       return row[column.property]
-    },
-
-    /**
-     * 编辑
-     */
-    handleEdit(data) {
-      this.action = {
-        type: 'update',
-        data: data
-      }
-      this.showAddEdit = true
     },
 
     /**
      * 添加
      */
     addRule() {
-      this.action = {
-        type: 'save'
-      }
       this.showAddEdit = true
     },
 
     /**
      * 删除
      */
-    handleDelete(scope) {
+    handleDelete(row) {
       this.$confirm('确定删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -231,11 +213,11 @@ export default {
       })
         .then(() => {
           this.loading = true
-          crmSettingCustomerConfigDelAPI({
-            settingId: scope.row.settingId
+          sysConfigDataPersonAccountDeleteAPI({
+            accountId: row.accountId
           })
             .then(res => {
-              this.list.splice(scope.$index, 1)
+              this.getList()
               this.$message.success('删除成功')
               this.loading = false
             })
@@ -249,6 +231,63 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+    handleAuth(row) {
+      this.$confirm('确定去认证?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        sysConfigDataPersonAccountAuthAPI(row).then(res => {
+          const url = res.data.url
+          if (url) {
+            window.open(url)
+          } else {
+            this.$message.error('认证操作失败')
+          }
+        }).catch()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 身份证校验
+    checkID(val) {
+      if (checkCode(val)) {
+        var date = val.substring(6, 14)
+        if (checkDate(date)) {
+          if (checkProv(val.substring(0, 2))) {
+            return true
+          }
+        }
+      }
+      return false
+    },
+    confirm() {
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          if (this.form.mobile) {
+            if (!chinaMobileRegex.test(this.form.mobile)) {
+              return this.$message.error('手机格式有误')
+            }
+          }
+          if (this.form.idNumber) {
+            if (!this.checkID(this.form.idNumber)) {
+              return this.$message.error('身份证号格式有误')
+            }
+          }
+
+          sysConfigDataPersonAccountSaveAPI(this.form).then(res => {
+            this.showAddEdit = false
+            this.getList()
+            this.$message.success('保存成功')
+          }).catch(() => {
+
+          })
+        }
+      })
     }
   }
 }

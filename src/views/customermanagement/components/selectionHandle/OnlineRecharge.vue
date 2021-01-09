@@ -23,12 +23,22 @@
       @close="innerHandleCancel">
 
       <div style="margin: 20px auto;width:150px;height:150px;">
-        <div v-loading="loading" v-if="!isSucc" style="width：100%;height:100%;">
+        <div v-loading="loading" style="width：100%;height:100%">
           <div
             id="canvas"
             class="publish-info-content" />
         </div>
-        <div v-if="isSucc" class="succ-wrap">
+
+      </div>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="succVisible"
+      width="30%"
+      title="线上资金收款"
+      append-to-body
+      @close="innerHandleCancel">
+      <div style="margin: 20px auto;width:150px;height:150px;">
+        <div class="succ-wrap">
           <i class="el-icon-success" />
           <div style="margin-top:10px;">支付成功</div>
         </div>
@@ -78,6 +88,7 @@ export default {
     }
     return {
       innerVisible: false,
+      succVisible: false,
       loading: false,
       qrcode: null,
       form: {
@@ -90,15 +101,19 @@ export default {
       },
       start: 0,
       timer: null,
-      isSucc: false
+      path: null
     }
   },
   watch: {
     visible(val) {
       this.form.money = ''
-    //   if (val && this.list.length === 0) {
-    //     this.getList()
-    //   }
+      //   if (val && this.list.length === 0) {
+      //     this.getList()
+      //   }
+      if (!val) {
+        this.innerVisible = false
+        this.succVisible = false
+      }
     }
   },
   beforeDestroy() {
@@ -116,12 +131,17 @@ export default {
 
     innerHandleCancel() {
       clearInterval(this.timer)
+      if (this.qrcode) {
+        this.qrcode.clear()
+        this.qrcode.makeCode(this.path)
+      }
     },
 
     /**
     生成二维码
      */
     createCode(path) {
+      this.path = path
       this.$nextTick(() => {
         this.loading = false
         if (this.qrcode) {
@@ -194,7 +214,8 @@ export default {
       crmAccountQueryPayStatus({ reqsn: req }).then(res => {
         if (res.data == 1) {
           clearInterval(this.timer)
-          this.isSucc = true
+          this.innerVisible = false
+          this.succVisible = true
         }
       }).catch((err) => {
         clearInterval(this.timer)
@@ -301,4 +322,11 @@ export default {
   align-items: center;
   padding-top: 15px;
 }
+
+.hideImg {
+  display: none !important;
+}
+
+
+
 </style>
