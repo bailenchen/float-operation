@@ -16,6 +16,7 @@ import {
   crmMessagVisitRemindAPI,
   crmMessageCheckDisputedAPI,
   crmContractAllocListAPI,
+  crmCheckWaterListAPI,
   crmRefoundListAPI
 } from '@/api/customermanagement/message'
 import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
@@ -53,7 +54,9 @@ export default {
         'allotCustomer',
         'checkContract',
         'performanceDistributions',
-        'refundNumber'
+        'checkWater',
+        'refundNumber',
+        'checkRefund'
       ].includes(this.infoType)
     }
   },
@@ -235,7 +238,9 @@ export default {
 
     /** 获取列表数据 */
     getList(loading = true) {
+      console.log('发送数据请求')
       const crmIndexRequest = this.getIndexRequest()
+      console.log('zDz', crmIndexRequest)
       if (!crmIndexRequest) return
       this.loading = loading
       const params = {
@@ -287,6 +292,7 @@ export default {
         'returnVisitRemind': crmMessagVisitRemindAPI,
         'disputed': crmMessageCheckDisputedAPI,
         'performanceDistributions': crmContractAllocListAPI,
+        'checkWater': crmCheckWaterListAPI,
         'refundNumber': crmRefoundListAPI,
         'checkRefund': crmRefundQueryPageListAPI
       }[this.infoType]

@@ -48,10 +48,7 @@
         fixed="right"
         width="80">
         <template slot-scope="scope">
-          <el-button
-            v-if="showEdit(scope.row.transactionType)"
-            :disabled="isDisabled(scope.row.checkStatus)"
-            @click="editHandle(scope.row)">
+          <el-button v-if="showEdit(scope.row.transactionType)" @click="editHandle(scope.row)">
             编辑
           </el-button>
         </template>
@@ -449,12 +446,6 @@ export default {
     },
     showEdit(transactionType) {
       if (transactionType == '线下资金收款' || transactionType == '资金退款') {
-        return true
-      }
-      return false
-    },
-    isDisabled(checkStatus) {
-      if (checkStatus == 1) {
         return true
       }
       return false

@@ -400,7 +400,13 @@ export default {
       }
       if (this.infoType == 'allotCustomer') {
         return [{ name: '待跟进', value: 1 }, { name: '已跟进', value: 2 }]
-      } else if (this.infoType == 'checkContract' || this.infoType == 'performanceDistributions' || this.infoType == 'refundNumber') {
+      } else if (
+        this.infoType == 'checkContract' ||
+        this.infoType == 'performanceDistributions' ||
+        this.infoType == 'checkWater' ||
+        this.infoType == 'refundNumber' ||
+        this.infoType == 'checkRefund'
+      ) {
         return [{ name: '待审核', value: 1 }, { name: '已审核', value: 2 }]
       }
       return []

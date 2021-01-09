@@ -281,6 +281,21 @@ export function crmExamineContractAllocListAPI(data) {
 }
 
 /**
+ * 待审核资金退款
+ * @param {*} data
+ */
+export function crmCheckWaterListAPI(data) {
+  return request({
+    url: 'CrmBackLog/checkWater',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
  * 待审核退款列表
  * @param {*} data
  */
