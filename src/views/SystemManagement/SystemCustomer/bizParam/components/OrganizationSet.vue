@@ -22,20 +22,27 @@
           :prop="item.field"
           :label="item.label"
           :formatter="fieldFormatter"
+          align="center"
           show-overflow-tooltip/>
         <el-table-column
           fixed="right"
           label="操作"
-          width="120">
+          align="center">
           <template slot-scope="scope">
             <el-button
+              :disabled="!!scope.row.isAuthentication"
               type="text"
               size="small"
-              @click="handleEdit(scope.row)">编 辑</el-button>
+              @click="handleAuth(scope.row)">{{ scope.row.isAuthentication ? '已认证' : '去认证' }}</el-button>
+            <el-button
+              :disabled="!!scope.row.deptName"
+              type="text"
+              size="small"
+              @click="handleRelativeDet(scope.row)">{{ scope.row.deptName ? '已关联校区' : '去关联校区' }}</el-button>
             <el-button
               type="text"
               size="small"
-              @click="handleDelete(scope)">删 除</el-button>
+              @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -53,62 +60,113 @@
       </div>
     </div>
 
-    <edit-customer-limit
+    <el-dialog
       :visible.sync="showAddEdit"
-      :type="type"
-      :action="action"
-      @success="getList"/>
+      title="创建E签宝组织账号"
+      width="30%">
+      <el-form ref="ruleForm" :label-position="labelPosition" :rules="rules" :model="form" label-width="100px">
+        <el-form-item label="关联认证用户" prop="authenticationId">
+          <el-select v-model="form.authenticationId" style="width:100%" placeholder="请选择" @change="selectedData">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="机构名称" prop="mechanismName">
+          <el-input v-model="form.mechanismName"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showAddEdit = false">取 消</el-button>
+        <el-button type="primary" @click="confirm">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      :visible.sync="showRelative"
+      title="关联校区"
+      width="380px">
+      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form-item label="请选择关联的校区">
+          <xh-structure-cell
+            :value="deptSelectValue"
+            radio
+            style="width: 185px;display: inline-block;"
+            class="xh-structure-cell"
+            @value-change="structureChange" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showRelative = false">取 消</el-button>
+        <el-button type="primary" @click="confirmRelative">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  crmSettingCustomerConfigListAPI,
-  crmSettingCustomerConfigDelAPI
+  sysConfigDataRelativePersonAccountAPI,
+  sysConfigDataPersonOrgQueryAPI,
+  sysConfigDataPersonOrgDeleteAPI,
+  sysConfigDataPersonOrgAuthAPI,
+  sysConfigDataPersonOrgSaveAPI,
+  sysConfigDataRelativeDeptAPI // 关联校区
 } from '@/api/systemManagement/SystemCustomer'
-import EditCustomerLimit from './editCustomerLimit'
+
+import { XhStructureCell } from '@/components/CreateCom'
 
 export default {
   name: 'OrganizationSet',
-
   components: {
-    EditCustomerLimit
+    XhStructureCell
   },
-
   data() {
     return {
       loading: false, // 展示加载中效果
       tableHeight: document.documentElement.clientHeight - 320, // 表的高度
       // 设置
       list: [],
+      form: {
+        authenticationId: null,
+        mechanismName: '',
+        accountId: ''
+      },
       // 添加 编辑
+      labelPosition: 'right',
       showAddEdit: false,
-      action: {},
       currentPage: 1,
       pageSize: 10,
       pageSizes: [10, 20, 30, 40],
-      total: 0
+      total: 0,
+
+      showRelative: false,
+      formInline: {},
+      deptSelectValue: [],
+
+      options: [],
+      rules: {
+        authenticationId: [
+          { required: true, message: '请选择关联认证用户', trigger: 'change' }
+        ],
+        mechanismName: [
+          { required: true, message: '请输入机构名称', trigger: 'blur' }
+        ]
+      }
     }
   },
 
   computed: {
     fieldList() {
       const temps = [
-        { label: '机构名称', field: 'name' },
-        { label: '机构是否认证', field: 'status' },
-        { label: '关联校区', field: 'depart' }
+        { label: '机构名称', field: 'mechanismName' },
+        { label: '关联的个人账户', field: 'userName' },
+        { label: '机构是否认证', field: 'isAuthentication' },
+        { label: '关联校区', field: 'deptName' }
       ]
       return temps
-    },
-    typeNum() {
-      return ['own', 'lock'].findIndex(o => o === this.type) + 1
-    }
-  },
-
-  watch: {
-    type() {
-      this.list = []
-      this.getList()
     }
   },
   created() {
@@ -143,15 +201,33 @@ export default {
       this.getList()
     },
 
+    structureChange(data) {
+      this.formInline.deptId = data.value.length ? data.value[0].id : ''
+      this.deptSelectValue = data.value || []
+    },
+
+    // 确定关联校区
+    confirmRelative() {
+      if (!this.formInline.deptId) {
+        return this.$message.error('请选择将要关联的校区')
+      }
+      sysConfigDataRelativeDeptAPI(this.formInline).then(res => {
+        this.$message.success('关联校区成功')
+        this.showRelative = false
+        this.getList()
+      }).catch()
+      this.showRelative = false
+    },
+
     /**
      * 列表
      */
     getList() {
       this.loading = true
-      crmSettingCustomerConfigListAPI({
+      sysConfigDataPersonOrgQueryAPI({
         page: this.currentPage,
         limit: this.pageSize,
-        type: this.typeNum
+        name: ''
       })
         .then(res => {
           this.loading = false
@@ -163,67 +239,78 @@ export default {
         })
     },
 
+    selectedData(data) {
+      this.options.forEach(item => {
+        if (data === item.authenticationId) {
+          this.form.accountId = item.accountId
+        }
+      })
+    },
+
     /**
      * 列表格式化
      */
     fieldFormatter(row, column) {
-      if (column.property == 'customerDeal') {
-        return row.customerDeal == 1 ? '是' : '否' // 0 不占用 1 占用
-      } else if (column.property === 'userIds') {
-        const structures = row['deptIds'] || []
-        let strName = structures
-          .map(item => {
-            return item.name
-          })
-          .join('、')
-
-        const users = row['userIds'] || []
-        const userName = users
-          .map(item => {
-            return item.realname
-          })
-          .join('、')
-
-        if (strName && userName) {
-          strName += '、'
-        }
-        const name = strName + userName
-        return name || '全公司'
-        // 1 启用 0 禁用 2 删除
-      } else if (column.property === 'status') {
-        if (row[column.property] === 0) {
-          return '停用'
-        }
-        return '启用'
+      if (column.property === 'isAuthentication') {
+        return {
+          0: '否',
+          1: '是'
+        }[row.isAuthentication]
       }
       return row[column.property]
-    },
-
-    /**
-     * 编辑
-     */
-    handleEdit(data) {
-      this.action = {
-        type: 'update',
-        data: data
-      }
-      this.showAddEdit = true
     },
 
     /**
      * 添加
      */
     addRule() {
-      this.action = {
-        type: 'save'
-      }
+      this.relativePersonList()
       this.showAddEdit = true
+    },
+
+    // 关联认证用户
+    relativePersonList() {
+      sysConfigDataRelativePersonAccountAPI().then(res => {
+        this.options = res.data.map(item => {
+          item.label = item.userName
+          item.value = item.authenticationId
+          return item
+        })
+      }).catch()
+    },
+
+    handleRelativeDet(row) {
+      this.formInline.mechanismId = row.mechanismId
+      this.showRelative = true
+    },
+
+    // 认证
+    handleAuth(row) {
+      this.$confirm('确定去认证?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        sysConfigDataPersonOrgAuthAPI({ orgId: row.orgId, accountId: row.accountId }).then(res => {
+          const url = res.data.url
+          if (url) {
+            window.open(url)
+          } else {
+            this.$message.error('认证操作失败')
+          }
+        }).catch()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
 
     /**
      * 删除
      */
-    handleDelete(scope) {
+    handleDelete(row) {
       this.$confirm('确定删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -231,11 +318,11 @@ export default {
       })
         .then(() => {
           this.loading = true
-          crmSettingCustomerConfigDelAPI({
-            settingId: scope.row.settingId
+          sysConfigDataPersonOrgDeleteAPI({
+            orgId: row.orgId
           })
             .then(res => {
-              this.list.splice(scope.$index, 1)
+              this.getList()
               this.$message.success('删除成功')
               this.loading = false
             })
@@ -249,6 +336,20 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+
+    confirm() {
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          sysConfigDataPersonOrgSaveAPI(this.form).then(res => {
+            this.showAddEdit = false
+            this.getList()
+            this.$message.success('保存成功')
+          }).catch(() => {
+
+          })
+        }
+      })
     }
   }
 }

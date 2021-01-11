@@ -426,12 +426,24 @@ export function sysConfigDataPersonAccountAuthAPI(data) {
 }
 
 /**
+ * 机构认证 关联个人账户列表
+ * @param {*} data
+ */
+export function sysConfigDataRelativePersonAccountAPI(data) {
+  return request({
+    url: 'adminAuthenticationUser/selectAdminAuthenticationUser',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
  * 机构认证 保存
  * @param {*} data
  */
 export function sysConfigDataPersonOrgSaveAPI(data) {
   return request({
-    url: 'adminAuthenticationUser/saveOne',
+    url: 'adminAuthenticationMechanism/saveOne',
     method: 'post',
     data: data
   })
@@ -458,19 +470,31 @@ export function sysConfigDataPersonOrgQueryAPI(data) {
  */
 export function sysConfigDataPersonOrgDeleteAPI(data) {
   return request({
-    url: 'adminAuthenticationUser/deleteOne',
+    url: 'adminAuthenticationMechanism/deleteOne',
     method: 'post',
     data: data
   })
 }
-
 /**
  * 机构认证 认证
  * @param {*} data
  */
 export function sysConfigDataPersonOrgAuthAPI(data) {
   return request({
-    url: 'adminAuthenticationUser/authenticationOne',
+    url: 'adminAuthenticationMechanism/authenticationOne',
+    method: 'post',
+    data: data
+  })
+}
+
+
+/**
+ * 机构认证 关联校区
+ * @param {*} data
+ */
+export function sysConfigDataRelativeDeptAPI(data) {
+  return request({
+    url: 'adminAuthenticationMechanism/relationDept',
     method: 'post',
     data: data
   })

@@ -27,13 +27,13 @@
         <el-table-column
           fixed="right"
           label="操作"
-          align="center"
-          width="120">
+          align="center">
           <template slot-scope="scope">
             <el-button
+              :disabled="!!scope.row.isAuthentication"
               type="text"
               size="small"
-              @click="handleAuth(scope.row)">认证</el-button>
+              @click="handleAuth(scope.row)">{{ scope.row.isAuthentication ? '已认证' : '去认证' }}</el-button>
             <el-button
               type="text"
               size="small"
