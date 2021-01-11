@@ -225,6 +225,7 @@ export default {
       issurplus: false,
       surplusPrice: 0, // 剩余金额
       refundMonry: 0, // 充值返回金额
+      minUnivalence: 0, // 最小均价
       drainage: false, // 是否选择了引流套餐
       purchaseLesson: 0, // 全部购买课次之和
       purchaseInGive: 0, // 参与累计的购买课次之和
@@ -992,6 +993,7 @@ export default {
       if (this.giveAction && this.giveAction.type && this.giveAction.type == 'old-change') {
         this.issurplus = true
       }
+
       var obj = {
         // tableData: this.tableData,
         totalclassTime: this.purchaseLesson + this.allGiveLesson + this.accumulativeLesson, // 总课次

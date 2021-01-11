@@ -6,14 +6,16 @@
       label="业务参数设置" />
     <div class="customer-content">
       <!-- 客户管理导航 -->
-      <div class="system-view-nav">
-        <div
-          v-for="(item, index) in menuList"
-          :key="index"
-          :class="{'is-select' : item.key == menuIndex}"
-          class="menu-item"
-          @click="menuSelect(item.key)">
-          {{ item.label }}
+      <div class="system-view-nav-box">
+        <div class="system-view-nav">
+          <div
+            v-for="(item, index) in menuList"
+            :key="index"
+            :class="{'is-select' : item.key == menuIndex}"
+            class="menu-item"
+            @click="menuSelect(item.key)">
+            {{ item.label }}
+          </div>
         </div>
       </div>
       <keep-alive>
@@ -49,6 +51,7 @@ import DataDictionarySet from './components/dataDictionarySet' // 编号规则�
 import StudentWarningSet from './components/StudentWarningSet' // 学员预警规则设置
 import PersonAccountSet from './components/PersonAccountSet' // 个人账户认证
 import OrganizationSet from './components/OrganizationSet' // 机构认证
+// import DFRASSet from './components/DFRASSet' // 人脸考勤设备清单
 
 export default {
   name: 'BizParam',
@@ -75,6 +78,7 @@ export default {
     StudentWarningSet,
     PersonAccountSet,
     OrganizationSet
+    // DFRASSet
   },
 
   data() {
@@ -101,6 +105,7 @@ export default {
         { label: '学员预警规则设置', key: 'StudentWarningSet' },
         { label: '个人账户认证', key: 'PersonAccountSet' },
         { label: '机构认证', key: 'OrganizationSet' }
+        // { label: '人脸考勤设备清单', key: 'DFRASSet' }
       ],
       menuIndex: 'ChannelCategorySet',
       types: '' // 区分拥有客户 和 锁定客户
@@ -150,14 +155,16 @@ export default {
   display: flex;
   overflow: hidden;
 }
+.system-view-nav-box {
+  overflow: auto;
+  margin-right: 10px;
+}
 .system-view-nav {
   min-width: 200px;
   background: #fff;
-  margin-right: 10px;
   padding-top: 20px;
   border: 1px solid $xr-border-line-color;
   border-radius: $xr-border-radius-base;
-
 }
 .system-view-content {
   flex: 1;

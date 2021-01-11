@@ -442,7 +442,8 @@ export default {
       isFlow: false,
       cause: 1, // 返还原因 1: 客观 2: 主观
       refundType: 1, // 合同充值返还类型 1:常规充值返还审批 2:特殊充值返还审批
-      refundMoney: ''
+      refundMoney: '',
+      minUnivalence: 0 // 最小均价
     }
   },
   computed: {
@@ -1214,35 +1215,23 @@ export default {
       if (this.crmType == 'contract' && this.action.attr == 'change') {
         this.actionCombo.type = 'change'
         var _list = objDeepCopy(list)
-        // console.log('_list', _list)
+        console.log('_list', _list)
 
         var contractInfo = this.action.oldInformation ? this.action.oldInformation : this.action.information
         // 计算剩余金额
         var expenditure = 0 // 已花费金额
-        // this.action.information.
         contractInfo.contract.productList.forEach(item => {
           expenditure += item.price * item.finishCourse
         })
-        // console.log('expenditure', expenditure)
-        // this.actionCombo.surplusPrice = this.action.information.contract.money - expenditure
         this.actionCombo.surplusPrice = contractInfo.contract.money - expenditure
 
+        // 计算最小均价
+        let minUnivalence = +contractInfo.contract.productList[0].price
+        contractInfo.contract.productList.forEach(item => {
+          minUnivalence = minUnivalence > +item.price ? +item.price : minUnivalence
+        })
+        this.minUnivalence = minUnivalence
 
-
-        // var params = { types: 6, id: contractInfo.contract.relevanceContractId[0].contractId }
-
-        // if (this.action.type == 'update') {
-        //   contractInfo = this.action.information.contract
-        //   params.id = contractInfo.relevanceContractId[0].contractId
-        // } else {
-        //   contractInfo = this.action.detail
-        //   params.id = contractInfo.contractId
-        // }
-
-
-        // filedGetInformation(params).then(res => {
-        // debugger
-        // this.loading = false
         let showStyleIndex = -1
         for (let index = 0; index < _list.length; index++) {
           // debugger
@@ -1294,7 +1283,8 @@ export default {
           }
 
           if (item.fieldName == 'coach_type') {
-            params['value'] = contractInfo.contract.coachType
+            // params['value'] = contractInfo.contract.coachType
+            params['value'] = contractInfo.contract.coachTypeName
           }
           if (item.fieldName == 'channel') {
             params['value'] = contractInfo.contract.channel
@@ -3086,7 +3076,7 @@ export default {
       }
 
       console.log('请求参数: ', params)
-      this.loading = false
+      // this.loading = false
       // return
       crmRequest(params)
         .then(res => {
@@ -3251,10 +3241,10 @@ export default {
         }
 
 
-        let minUnivalence = element.value.data[0].univalence
+        // let minUnivalence = element.value.data[0].univalence
         for (let i = 0; i < element.value.data.length; i++) {
           const item = element.value.data[i]
-          minUnivalence = minUnivalence > item.univalence ? item.univalence : minUnivalence
+          // minUnivalence = minUnivalence > item.univalence ? item.univalence : minUnivalence
 
           if (!item.subject) {
             this.$message.error('请选择科目')
@@ -3292,10 +3282,9 @@ export default {
         params.entity.presenterCount = element.value.presenterCount
         params.entity.ruleDetails = element.value.ruleDetails
 
-
-        console.log('最小均价', minUnivalence)
         // 返还时判断 返还金额大于最小均价无法变更
-        if (element.value.refundMonry < 0 && Math.abs(element.value.refundMonry) > minUnivalence) {
+        console.log('差价', element.value.refundMonry)
+        if (element.value.refundMonry < 0 && Math.abs(element.value.refundMonry) > this.minUnivalence) {
           this.$message.warning('变更返还金额大于最小均价，无法变更')
           return false
         }
