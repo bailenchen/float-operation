@@ -1676,8 +1676,7 @@ export default {
           return false
         }
       } else if (type == 'update_contract') {
-        console.log(this.crmType, 'bbjjj')
-        if (this.selectionList.length == 1 && this.selectionList[0].checkStatus == 1 && this.selectionList[0].contractType != 2) {
+        if (this.selectionList.length == 1 && this.selectionList[0].checkStatus == 1 && this.selectionList[0].contractType != 2 && this.selectionList[0].allotStatus == '是') {
           return this.crm[this.crmType].update
         } else {
           return false

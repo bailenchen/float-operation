@@ -6,16 +6,14 @@
       label="业务参数设置" />
     <div class="customer-content">
       <!-- 客户管理导航 -->
-      <div class="system-view-nav-box">
-        <div class="system-view-nav">
-          <div
-            v-for="(item, index) in menuList"
-            :key="index"
-            :class="{'is-select' : item.key == menuIndex}"
-            class="menu-item"
-            @click="menuSelect(item.key)">
-            {{ item.label }}
-          </div>
+      <div class="system-view-nav">
+        <div
+          v-for="(item, index) in menuList"
+          :key="index"
+          :class="{'is-select' : item.key == menuIndex}"
+          class="menu-item"
+          @click="menuSelect(item.key)">
+          {{ item.label }}
         </div>
       </div>
       <keep-alive>
@@ -155,14 +153,11 @@ export default {
   display: flex;
   overflow: hidden;
 }
-.system-view-nav-box {
-  overflow: auto;
-  margin-right: 10px;
-}
 .system-view-nav {
   min-width: 200px;
   background: #fff;
-  padding-top: 20px;
+  margin-right: 10px;
+  overflow-y: auto;
   border: 1px solid $xr-border-line-color;
   border-radius: $xr-border-radius-base;
 }
