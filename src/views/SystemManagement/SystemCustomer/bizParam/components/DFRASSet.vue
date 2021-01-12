@@ -2,28 +2,29 @@
   <div v-loading="loading">
     <div class="content-title">
       <div class="title">人脸考勤设备清单</div>
+      <div class="subhead">设备信息查询</div>
       <div class="query-form">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="分类标志：">
+          <el-form-item label="校区ID：">
             <el-input v-model="formInline.dictionaryField" placeholder=""/>
           </el-form-item>
-          <el-form-item label="值：">
+          <el-form-item label="校区名称：">
             <el-input v-model="formInline.dictionaryName" placeholder=""/>
           </el-form-item>
-          <el-form-item label="父ID：">
+          <el-form-item label="设备编号：">
             <el-input v-model="formInline.pId" placeholder=""/>
           </el-form-item>
-          <el-form-item label="是否展示：">
+          <el-form-item label="在线状态：">
             <el-select v-model="formInline.isHidden" placeholder="">
-              <el-option label="是" value="0"/>
-              <el-option label="否" value="1"/>
+              <el-option label="在线" value="0"/>
+              <el-option label="离线" value="1"/>
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="queryList">查询</el-button>
+            <el-button type="primary" @click="queryList">一键同步</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="addData('add', '')">新增</el-button>
+            <el-button type="primary" @click="addData('add', '')">新增设备</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -57,7 +58,7 @@
               <el-button
                 type="text"
                 size="small"
-                @click="addData('child', scope.row)">新增子字典</el-button>
+                @click="addData('child', scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -76,7 +77,7 @@
       </flexbox-item>
     </flexbox>
 
-    <create-dictionary
+    <create-facial-equipment
       v-if="showHandleView"
       :handle="rowInfo"
       @save="getDataList"
@@ -88,12 +89,12 @@
 import {
   sysConfigDataDictaryListQueryAPI
 } from '@/api/systemManagement/SystemCustomer'
-import CreateDictionary from '../../components/createDictionary'
+import CreateFacialEquipment from '../../components/createFacialEquipment'
 
 export default {
   name: 'DataDictionarySet',
   components: {
-    CreateDictionary
+    CreateFacialEquipment
   },
   data() {
     return {
@@ -107,15 +108,15 @@ export default {
 
       tableData: [],
       fieldList: [
-        { field: 'dictionaryId', label: 'id' },
-        { field: 'dictionaryField', label: '分类标志' },
-        { field: 'dictionaryName', label: '值' },
-        { field: 'standby', label: '备用' },
-        { field: 'pId', label: '父id' },
-        { field: 'status', label: '状态' },
-        { field: 'isHidden', label: '是否显示' },
-        { field: 'colour', label: '颜色' },
-        { field: 'sort', label: '排序' }
+        { field: 'dictionaryId', label: '校区ID' },
+        { field: 'dictionaryField', label: '校区名称' },
+        { field: 'dictionaryName', label: '公司名称' },
+        { field: 'standby', label: '设备编号' },
+        { field: 'pId', label: '在线状态' },
+        { field: 'status', label: '创建人' },
+        { field: 'isHidden', label: '创建时间' },
+        { field: 'colour', label: '修改人' },
+        { field: 'sort', label: '修改时间' }
       ],
 
       formInline: {},
@@ -209,13 +210,17 @@ export default {
 .content-title {
   padding: 10px;
   border-bottom: 1px solid #e6e6e6;
-  .title {
+  .title, .subhead {
     height: 36px;
     line-height: 36px;
     margin-left: 20px;
   }
+  .title {
+  font-weight: 700;
+    font-size: 16px;
+  }
   .query-form {
-      margin-left: 20px;
+    margin-left: 20px;
   }
 }
 

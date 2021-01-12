@@ -95,7 +95,7 @@ import table from '../mixins/table'
 
 export default {
   /** 课程套餐列表 */
-  name: 'ProductIndex',
+  name: 'CoursePackageIndex',
   components: {
     ProductDetail
   },

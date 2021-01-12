@@ -49,7 +49,7 @@ import DataDictionarySet from './components/dataDictionarySet' // 编号规则�
 import StudentWarningSet from './components/StudentWarningSet' // 学员预警规则设置
 import PersonAccountSet from './components/PersonAccountSet' // 个人账户认证
 import OrganizationSet from './components/OrganizationSet' // 机构认证
-// import DFRASSet from './components/DFRASSet' // 人脸考勤设备清单
+import DFRASSet from './components/DFRASSet' // 人脸考勤设备清单
 
 export default {
   name: 'BizParam',
@@ -75,8 +75,8 @@ export default {
     DataDictionarySet,
     StudentWarningSet,
     PersonAccountSet,
-    OrganizationSet
-    // DFRASSet
+    OrganizationSet,
+    DFRASSet
   },
 
   data() {
@@ -102,8 +102,8 @@ export default {
         { label: '数据字典', key: 'DataDictionarySet' },
         { label: '学员预警规则设置', key: 'StudentWarningSet' },
         { label: '个人账户认证', key: 'PersonAccountSet' },
-        { label: '机构认证', key: 'OrganizationSet' }
-        // { label: '人脸考勤设备清单', key: 'DFRASSet' }
+        { label: '机构认证', key: 'OrganizationSet' },
+        { label: '人脸考勤设备清单', key: 'DFRASSet' }
       ],
       menuIndex: 'ChannelCategorySet',
       types: '' // 区分拥有客户 和 锁定客户

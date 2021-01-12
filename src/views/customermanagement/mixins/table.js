@@ -194,7 +194,6 @@ export default {
       }
 
       if (this.filterObj && Object.keys(this.filterObj).length > 0) {
-        console.log('DSAD')
         params.data = this.filterObj
       }
       if (this.getOtherParams && typeof this.getOtherParams === 'function') {
@@ -327,6 +326,18 @@ export default {
             const fieldList = []
             const moneyFields = []
             const dictionaryArr = []
+
+            if (this.crmType == 'student') {
+              res.data.push({
+                fieldId: null,
+                fieldName: 'portrait',
+                formType: 'portrait',
+                name: '查看人脸照片',
+                setting: [],
+                type: 4,
+                width: 100
+              })
+            }
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
 
@@ -379,6 +390,19 @@ export default {
                   }[element.fieldName]
                 } else {
                   width = element.width
+                }
+
+                // 针对套餐页面调整
+                if (this.crmType == 'productSetMeal') {
+                  console.log('针对套餐页面调整', element.fieldName)
+                  if (['name', 'warningLine', 'status', 'purchaseCycle'].includes(element.fieldName)) {
+                    width = {
+                      name: 150,
+                      warningLine: 140,
+                      status: 120,
+                      purchaseCycle: 300
+                    }[element.fieldName]
+                  }
                 }
               }
 
@@ -481,7 +505,11 @@ export default {
           7: '合同充值返还',
           8: '确认放弃'
         }[row[column.property]]
+      } else if (column.property === 'portrait') {
+        if (row.portrait) return '查看'
+        return ''
       }
+
       if (this.crmType == 'contract') {
         if (column.property === 'customerId') {
           return row.customerName
@@ -599,6 +627,24 @@ export default {
           this.showDview = true
         } else {
           this.showDview = false
+        }
+
+        if (column.property === 'portrait') {
+          const name = row.portrait.replace(/.*=(.*)/, function(match, p) {
+            return p
+          })
+          this.$bus.emit('preview-image-bus', {
+            index: 0,
+            data: [
+              {
+                filePath: row.portrait,
+                fileType: 'file',
+                name: `${name}.jpg`,
+                readOnly: 0,
+                url: row.portrait
+              }
+            ]
+          })
         }
       } else if (this.crmType == 'capitalAccount') {
         if (column.property == 'accountNumber') {

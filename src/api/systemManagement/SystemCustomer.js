@@ -499,3 +499,15 @@ export function sysConfigDataRelativeDeptAPI(data) {
     data: data
   })
 }
+
+/**
+ * 人脸考勤设备 添加/编辑
+ * @param {*} data
+ */
+export function sysConfigFacialEquipmentSaveAPI(data) {
+  return request({
+    url: 'AdminDeptEquipment/saveOrUpdate',
+    method: 'post',
+    data: data
+  })
+}

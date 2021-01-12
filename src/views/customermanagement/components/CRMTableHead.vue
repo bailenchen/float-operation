@@ -226,6 +226,13 @@
       :selection-list="selectionList"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
+
+    <!-- 上传人脸照片 -->
+    <facial-photo
+      :visible.sync="isFacialPhoto"
+      :selection-list="selectionList"
+      type="edit"
+    />
   </div>
 </template>
 
@@ -353,6 +360,7 @@ import CreateClassroom from '@/views/EducationManage/classroom/components/Create
 import CreateClass from '@/views/EducationManage/class/components/CreateClass' // 创建班级
 import DismissWarning from '../warning/components/DismissWarning' // 提升预警等级
 import RaiseWarning from '../warning/components/RaiseWarning' // 解除等级
+import FacialPhoto from './selectionHandle/FacialPhoto' // 线下充值和提现
 import { Loading } from 'element-ui'
 import GlobalSearch from '@/views/customermanagement/customer/components/GlobalSearch'
 import CRMCreateView from './CRMCreateView'
@@ -388,7 +396,8 @@ export default {
     CreateClassroom,
     CreateClass,
     RaiseWarning,
-    DismissWarning
+    DismissWarning,
+    FacialPhoto
   },
   props: {
     title: {
@@ -455,6 +464,7 @@ export default {
       isClass: false, // 编辑班级
       isWarning: false, // 提升预警等级
       isDismiss: false, // 解除预警
+      isFacialPhoto: false, // 上传人脸照片
       createActionInfo: { type: 'save' } // 创建的相关信息
     }
   },
@@ -815,6 +825,8 @@ export default {
         this.isWarning = true
       } else if (type == 'dismiss_warning') {
         this.isDismiss = true
+      } else if (type == 'facialPhoto') {
+        this.isFacialPhoto = true
       }
     },
     confirmHandle(type) {
@@ -1347,6 +1359,11 @@ export default {
           name: '解除预警',
           type: 'dismiss_warning',
           icon: 'remove'
+        },
+        facialPhoto: {
+          name: '上传人脸照片',
+          type: 'facialPhoto',
+          icon: 'upload'
         }
       }
       if (this.crmType == 'leads') {
@@ -1403,7 +1420,8 @@ export default {
           'change_dept',
           'transfer',
           'export',
-          'delete'
+          'delete',
+          'facialPhoto'
         ])
       } else if (this.crmType == 'capitalAccount') {
         return this.forSelectionHandleItems(handleInfos, [
