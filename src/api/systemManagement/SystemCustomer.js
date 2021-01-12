@@ -506,7 +506,37 @@ export function sysConfigDataRelativeDeptAPI(data) {
  */
 export function sysConfigFacialEquipmentSaveAPI(data) {
   return request({
-    url: 'AdminDeptEquipment/saveOrUpdate',
+    url: 'adminDeptEquipment/saveOrUpdate',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 人脸考勤设备 查询
+ * @param {*} data
+ */
+export function sysConfigFacialEquipmentQueryAPI(data) {
+  return request({
+    url: 'adminDeptEquipment/queryPageList',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 人脸考勤设备 删除
+ * @param {*} data
+ */
+export function sysConfigFacialEquipmentDelAPI(data) {
+  return request({
+    url: 'adminDeptEquipment/deleteById',
     method: 'post',
     data: data
   })
