@@ -1700,17 +1700,37 @@ export default {
           return false
         }
       } else if (type == 'mode') {
-        return this.education[this.crmType].update
+        if (this.selectionList.length === 1) {
+          return this.education[this.crmType].update
+        } else {
+          return false
+        }
       } else if (type == 'schedule') {
-        return this.education[this.crmType].course
+        if (this.selectionList.length === 1) {
+          return this.education[this.crmType].course
+        } else {
+          return false
+        }
       } else if (type == 'close') {
         return this.education[this.crmType].close
       } else if (type == 'insert_class') {
-        return this.education[this.crmType].insert
+        if (this.selectionList.length === 1) {
+          return this.education[this.crmType].insert
+        } else {
+          return false
+        }
       } else if (type == 'confirm') {
-        return this.education[this.crmType].confirm
+        if (this.selectionList.length === 1) {
+          return this.education[this.crmType].confirm
+        } else {
+          return false
+        }
       } else if (type == 'shift') {
-        return this.education[this.crmType].shifts
+        if (this.selectionList.length === 1) {
+          return this.education[this.crmType].shifts
+        } else {
+          return false
+        }
       } else if (type == 'leave') {
         const allStatus = []
         this.selectionList.forEach(element => {

@@ -168,10 +168,7 @@ export default {
   watch: {
     action: {
       handler(val) {
-        debugger
-        console.log('监听refundcombo的action', val)
         this.capital = this.action.isInteriorRefund ? null : this.capital
-        // this.
         if (!val.contracId) {
           this.tableData = null
           this.sendData(false)
@@ -184,8 +181,6 @@ export default {
           return
         }
 
-        console.log('有contracId和money')
-        debugger
         this.money = val.money
         this.sendData()
       },

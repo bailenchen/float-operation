@@ -104,10 +104,7 @@ export function crmClassSchduleConfirmSave(data) {
   return request({
     url: 'educationalClasstime/classConfirmation',
     method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    data: data
   })
 }
 

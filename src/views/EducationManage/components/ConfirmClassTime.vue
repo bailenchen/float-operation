@@ -227,7 +227,7 @@ export default {
         ids.push(element.id)
       }
       const params = {
-        ids
+        ids: ids.join(',')
       }
       crmClassSchduleConfirmSave(params).then(res => {
         this.hidenView()
