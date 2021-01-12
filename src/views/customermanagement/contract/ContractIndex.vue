@@ -83,7 +83,7 @@
         </el-table-column>
         <el-table-column fixed="right" width="90" align="center" label="合同预览">
           <template slot-scope="scope">
-            <el-button @click="previewCOntract(scope.row)">查看</el-button>
+            <el-button :disabled="!scope.row.expirationTime" @click="previewCOntract(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column fixed="right" width="110" align="center" label="电子合同确认">
@@ -166,6 +166,7 @@ import QRCode from 'qrcodejs2'
 
 import table from '../mixins/table'
 import { floatAdd } from '@/utils'
+import moment from 'moment'
 
 export default {
   /** 客户管理 的 合同列表 */
@@ -307,8 +308,17 @@ export default {
 
     // 预览合同
     previewCOntract(row) {
-      if (row.queryUrl) {
-        window.open(row.queryUrl)
+      if (row.expirationTime) {
+        const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        const outTime = moment(row.expirationTime)
+        const result = moment(currentTime).diff(outTime, 'minutes')
+        if (result > 60) {
+          this.$message.error('该合同已过期')
+        } else {
+          window.open(row.queryUrl)
+        }
+      } else {
+        this.$message.error('没有相关合同可以预览')
       }
     },
 

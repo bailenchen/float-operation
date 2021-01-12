@@ -70,6 +70,19 @@ export function crmClassSchduleExcelAllExport(data) {
   })
 }
 
+
+// 班级排课表 插班保存
+export function crmClassSchduleInsertClassSave(data) {
+  return request({
+    url: 'educationalClasstime/insertStudent',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 // 班级排课表 换挡保存
 export function crmClassSchduleShiftSave(data) {
   return request({

@@ -135,7 +135,7 @@ export default {
         classroomName: '教室',
         subjectName: '科目',
         gradeName: '年级',
-        classStatus: '状态'
+        classConfirmation: '状态'
       },
       baseInfoList: [],
 
@@ -175,7 +175,7 @@ export default {
             const element = this.fieldObj[key]
             this.baseInfoList.push({
               name: element,
-              value: data[key]
+              value: this.handleValue(key, data)
             })
           }
         }
@@ -183,6 +183,20 @@ export default {
       }).catch((err) => {
         console.log(err)
       })
+    },
+
+    handleValue(key, data) {
+      if (key === 'classConfirmation') {
+        return { 1: '确认', 2: '未确认' }[data[key]]
+      } else if (key === 'timeSlot') {
+        if (data.timeSlotStart && data.timeSlotEnd) {
+          return `${data.timeSlotStart.slice(0, 5)}~${data.timeSlotEnd.slice(0, 5)}`
+        } else {
+          return '--'
+        }
+      } else {
+        return data[key]
+      }
     },
 
     // 请假操作

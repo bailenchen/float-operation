@@ -41,7 +41,7 @@
 
           </div>
         </create-sections>
-        <create-sections title="上课时间段">
+        <create-sections v-if="crmType === 'class'" title="上课时间段">
           <div class="crm-create-body" style="margin-top:10px;">
             <div class="content create-sections-content">
               <el-table
@@ -83,65 +83,8 @@
           </div>
         </create-sections>
         <create-sections title="学员名称" class="student-wrap">
-          <!-- <el-button type="primary" size="mini" class="add-customer">添加学员</el-button> -->
-          <!-- 添加学员 -->
-          <el-popover
-            v-model="showPopover"
-            placement="right"
-            width="700"
-            trigger="click">
-            <crm-relative
-              v-if="showSelectView"
-              ref="crmrelative"
-              :show-types="showTypes"
-              crm-type="student"
-              @close="showPopover=false"
-              @changeCheckout="checkInfos"/>
-            <el-button
-              slot="reference"
-              type="primary"
-              size="mini"
-              class="add-customer"
-              @click.native="contentClick">添加学员</el-button>
-          </el-popover>
-          <div class="crm-create-body" style="margin-top:10px;">
-            <div class="content create-sections-content">
-              <el-table
-                id="crm-table"
-                :row-height="40"
-                :data="list"
-                :height="350"
-                class="n-table--border"
-                use-virtual
-                stripe
-                border
-                highlight-current-row
-                style="width: 100%"
-                @selection-change="handleSelectionChange">
-                <el-table-column
-                  show-overflow-tooltip
-                  type="selection"
-                  align="center"
-                  width="55"/>
-                <el-table-column
-                  v-for="(item, index) in fieldLists"
-                  :key="index"
-                  :fixed="index==0"
-                  :prop="item.prop"
-                  :label="item.label"
-                  :width="item.width"
-                  align="center"
-                  show-overflow-tooltip>
-                  <template slot-scope="scope">
-                    <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
-                    <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
-                    <span v-else>{{ scope.row[item.prop] }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column/>
-              </el-table>
-            </div>
-          </div>
+          <add-student
+            @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>
       <div
@@ -161,17 +104,17 @@
 <script>
 import CreateView from '@/components/CreateView'
 import CreateSections from '@/components/CreateSections'
-import CrmRelative from '@/components/CreateCom/CrmRelative'
-// import {
-//   sysConfigDataDictarySaveAPI
-// } from '@/api/systemManagement/SystemCustomer'
+import AddStudent from './AddStudent'
+
+import { crmClassSchduleConfirmInfo, crmClassSchduleInsertClassSave } from '@/api/educationmanage/classSchedule'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'InsertClass',
   components: {
     CreateView,
     CreateSections,
-    CrmRelative
+    AddStudent
   },
   props: {
     // 操作数据
@@ -180,6 +123,10 @@ export default {
       default: () => {
         return []
       }
+    },
+    crmType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -190,11 +137,11 @@ export default {
         deptName: '中心',
         className: '班级名称',
         subjectTeacherName: '学科老师',
-        coachType: '上课时间',
+        classTime: '上课时间',
         classroomName: '教室',
         subjectName: '科目',
         gradeName: '年级',
-        gradeNames: '上课时段',
+        timeSlot: '上课时段',
         totalNumber: '次数',
         classType: '班级类型',
         remarks: '备注'
@@ -202,6 +149,7 @@ export default {
       baseInfoList: [],
 
       // 上课时段
+      list: [],
       timeLists: [
         { prop: 'num', label: '序号' },
         { prop: '', label: '日期/时间' },
@@ -209,43 +157,63 @@ export default {
         { prop: '', label: '实际学员/最大人数' }
       ],
 
-      // 学员合同表
-      list: [{ num: '123465' }],
-      fieldLists: [
-        { prop: 'num', label: '合同编号' },
-        { prop: '', label: '合同属性' },
-        { prop: '', label: '合同类型' },
-        { prop: '', label: '签约日期' },
-        { prop: '', label: '是否赠送' },
-        { prop: '', label: '科目' },
-        { prop: '', label: '课次' },
-        { prop: '', label: '已排课次' },
-        { prop: '', label: '未排课次' },
-        { prop: '', label: '已完成课次' }
-      ],
-
-      showPopover: false,
-      showSelectView: false,
-      showTypes: []
+      // 已经添加的数据
+      addedList: []
     }
   },
   computed: {
 
   },
   created() {
-    for (const key in this.fieldObj) {
-      if (Object.hasOwnProperty.call(this.fieldObj, key)) {
-        const element = this.fieldObj[key]
-        this.baseInfoList.push({
-          name: element,
-          value: this.selectionList[0][key]
-        })
-      }
-    }
+    this.queryBaseInfo()
   },
   methods: {
     hidenView() {
       this.$emit('hiden-view', 'insert_class')
+    },
+
+    // 获取基本信息与学员信息
+    queryBaseInfo() {
+      // const request = {
+      //   class: 'xxx',
+      //   classschedule: 'xxx'
+      // }
+      crmClassSchduleConfirmInfo({ timeId: this.selectionList[0].timeId }).then(res => {
+        const data = res.data
+        for (const key in this.fieldObj) {
+          if (Object.hasOwnProperty.call(this.fieldObj, key)) {
+            const element = this.fieldObj[key]
+            this.baseInfoList.push({
+              name: element,
+              value: this.handleValue(key, data)
+            })
+          }
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+
+    handleValue(key, data) {
+      if (key === 'classTime') {
+        if (data.classTime) {
+          return data.classTime.slice(0, 10)
+        } else {
+          return '--'
+        }
+      } else if (key === 'timeSlot') {
+        if (data.timeSlotStart && data.timeSlotEnd) {
+          return `${data.timeSlotStart.slice(0, 5)}~${data.timeSlotEnd.slice(0, 5)}`
+        } else {
+          return '--'
+        }
+      } else {
+        return data[key]
+      }
+    },
+
+    getStuInfo(data) {
+      this.addedList = data
     },
 
     // 勾选
@@ -258,15 +226,53 @@ export default {
       console.log('kkkk', data)
     },
 
-    contentClick() {
-      this.showSelectView = true
+    getRequest() {
+      return {
+        class: 'xx',
+        classschedule: crmClassSchduleInsertClassSave
+      }[this.crmType]
     },
 
     /**
      * 保存
      */
     submitForm() {
+      const { timeId, batchId, classId, classroomId } = this.selectionList[0]
+      const bstudentList = []
+      const newList = objDeepCopy(this.addedList)
+      const customerIds = []
+      newList.forEach(item => {
+        customerIds.push(item.customerId)
+      })
+      // 去重
+      const newCustomerIds = Array.from(new Set(customerIds))
+      for (let index = 0; index < newCustomerIds.length; index++) {
+        const element = newCustomerIds[index]
+        for (let indexs = 0; indexs < this.addedList.length; indexs++) {
+          const selement = this.addedList[indexs]
+          if (element == selement.customerId) {
+            bstudentList.push({
+              customerId: selement.customerId,
+              rId: selement.rId,
+              classtimeBatchId: batchId
+            })
+          }
+        }
+      }
+      const params = {
+        classtime: [
+          { timeId, batchId, classId, classroomId }
+        ],
+        timecontract: bstudentList
+      }
 
+      this.getRequest()(params).then(res => {
+        this.hidenView()
+        this.$message.success('操作成功')
+        this.$emit('save-success', { type: 'insert_class' })
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 }

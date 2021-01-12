@@ -177,6 +177,7 @@
     <!-- 插班 -->
     <insert-class
       v-if="isInsert"
+      :crm-type="crmType"
       :selection-list="selectionList"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
