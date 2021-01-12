@@ -48,15 +48,9 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
+          :formatter="fieldFormatter"
           sortable="custom"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            <template>
-              <span v-if="item.prop == 'classConfirmationName'" style="color:red;">{{ scope.row[item.prop] }}</span>
-              <span v-else>{{ fieldFormatter(scope.row, scope.column) }}</span>
-            </template>
-          </template>
-        </el-table-column>
+          show-overflow-tooltip/>
         <el-table-column/>
       </el-table>
       <div class="p-contianer">

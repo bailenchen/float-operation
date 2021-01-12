@@ -49,14 +49,9 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
+          :formatter="fieldFormatter"
           sortable="custom"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            <template>
-              {{ fieldFormatter(scope.row, scope.column) }}
-            </template>
-          </template>
-        </el-table-column>
+          show-overflow-tooltip/>
         <el-table-column/>
       </el-table>
       <div class="p-contianer">

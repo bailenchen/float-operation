@@ -446,6 +446,7 @@ export default {
         this.$message.success('操作成功')
         this.$emit('save-success', { type: 'shift' })
       }).catch((err) => {
+        this.loading = false
         console.log(err)
       })
     }
