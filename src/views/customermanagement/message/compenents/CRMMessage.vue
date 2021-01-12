@@ -547,6 +547,11 @@ export default {
         }[value]
       }
 
+      if (name == 'serialNumber') {
+        if (!value) return '--'
+        return value
+      }
+
       // 待审核的充值返还
       if (this.crmType == 'refund') {
         if (name === 'refundType') {
@@ -554,6 +559,9 @@ export default {
             1: '常规充值返还',
             2: '特殊充值返还'
           }[value]
+        } else if (name == 'serialNumber') {
+          // if()
+          console.log('value', value)
         } else if (name === 'capitalNumber') {
           return value[0].number
         } else if (name === 'refundWayId') {

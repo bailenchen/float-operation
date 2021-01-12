@@ -3012,6 +3012,11 @@ export default {
             params.entity.isEarlyRetirement = element.value
           }
         }
+
+        /* if (this.action.contractType == 2) {
+          params.entity.discount = params.product[0].discountRate
+        } */
+
         // 删除只用于展示的字段
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
@@ -3169,11 +3174,13 @@ export default {
           // console.log(111)
         } else if (element.key == 'present') {
           // console.log('额外')
+
           this.getPresentParams(params, element)
           console.log('额外赠送校验是否通过', res)
           if (res === false) {
             return false
           }
+          params.entity.discountRate = params.product[0].discountRate
         } else {
           element.data.value = this.getRealParams(element)
           console.log('data', element.data)

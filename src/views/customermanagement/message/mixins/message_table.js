@@ -238,9 +238,7 @@ export default {
 
     /** 获取列表数据 */
     getList(loading = true) {
-      console.log('发送数据请求')
       const crmIndexRequest = this.getIndexRequest()
-      console.log('zDz', crmIndexRequest)
       if (!crmIndexRequest) return
       this.loading = loading
       const params = {
