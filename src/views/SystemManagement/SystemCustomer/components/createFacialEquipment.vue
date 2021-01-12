@@ -31,12 +31,17 @@
               :prop="item.prop"
               :key="indexs" class="crm-create-item">
               <el-input
-                v-if="item.type == 'text' || item.type == 'number'"
-                :disabled="item.prop == 'pId'"
+                v-if="item.type == 'text'"
+                :disabled="item.disabled"
                 v-model="form[item.prop]"/>
 
-              <el-select v-if="item.type == 'select'" v-model="form[item.prop]" placeholder="请选择" style="width:100%">
-                <el-option v-for="(ites, inds) in optionList" :label="ites.label" :key="inds" :value="ites.value"/>
+              <el-select v-if="item.type == 'select'" v-model="form[item.prop]" style="width:100%" placeholder="请选择" @change="changeHandle">
+                <el-option
+                  v-for="item in depList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
               </el-select>
 
             </el-form-item>
@@ -60,88 +65,79 @@
 
 <script>
 import CreateView from '@/components/CreateView'
-import {
-  sysConfigDataDictarySaveAPI
-} from '@/api/systemManagement/SystemCustomer'
+import { sysConfigFacialEquipmentSaveAPI } from '@/api/systemManagement/SystemCustomer'
+import { depListDetailAPI } from '@/api/systemManagement/EmployeeDepManagement'
 
 export default {
-  name: 'CreateDictionary',
+  name: 'CreateFacialEquipment',
   components: {
     CreateView
   },
-  props: {
-    handle: {
-      type: Object,
-      default: () => {
-        return {
-          action: 'add', // save 创建  update 编辑
-          data: null // 编辑数据
-        }
-      }
-    }
-  },
+  // props: {
+  //   handle: {
+  //     type: Object,
+  //     default: () => {
+  //       return {
+  //         action: 'add', // save 创建  update 编辑
+  //         data: null // 编辑数据
+  //       }
+  //     }
+  //   }
+  // },
   data() {
     return {
       loading: false,
       datalist: [
-        { prop: 'dictionaryField', label: '校区ID', type: 'text' },
-        { prop: 'dictionaryName', label: '校区名称', type: 'text' },
-        { prop: 'standby', label: '公司名称', type: 'text' },
-        { prop: 'pId', label: '设备编号', type: 'text' }
+        { prop: 'deptId', label: '校区ID', type: 'select', disabled: false },
+        { prop: 'deptName', label: '校区名称', type: 'text', disabled: true },
+        { prop: 'corporateName', label: '公司名称', type: 'text', disabled: true },
+        { prop: 'equipmentNumber', label: '设备编号', type: 'text', disabled: false }
       ],
-      optionList: [
-        { label: '是', value: 0 },
-        { label: '否', value: 1 }
-      ],
+      depList: [],
       rule: {
-        dictionaryField: [
-          { required: true, message: '请输入分类标志', trigger: 'blur' }
+        deptId: [
+          { required: true, message: '请选择校区', trigger: ['blur', 'change'] }
         ],
-        dictionaryName: [
-          { required: true, message: '请输入值', trigger: 'blur' }
-        ],
-        isHidden: [
-          { required: true, message: '请选择是否显示', trigger: 'change' }
+        equipmentNumber: [
+          { required: true, message: '设备编号', trigger: 'blur' }
         ]
       },
       form: {
-        dictionaryField: '',
-        dictionaryName: '',
-        standby: '',
-        pId: '',
-        isHidden: '',
-        colour: ''
+        deptId: '',
+        deptName: '',
+        corporateName: '',
+        equipmentNumber: ''
       }
     }
   },
   computed: {
     title() {
-      return {
+      /* return {
         'add': '新增设备',
         'edit': '编辑设备'
-      }[this.handle.action]
+      }[this.handle.action] */
+      return '新增设备'
     }
   },
   created() {
-    this.form.pId = {
-      'add': 0,
-      'edit': this.handle.data.pId,
-      'child': this.handle.data.dictionaryId
-    }[this.handle.action]
-    if (this.handle.action == 'edit') {
-      this.form.dictionaryId = this.handle.data.dictionaryId
-      this.form.dictionaryField = this.handle.data.dictionaryField
-      this.form.dictionaryName = this.handle.data.dictionaryName
-      this.form.standby = this.handle.data.standby
-      this.form.pId = this.handle.data.pId
-      this.form.isHidden = this.handle.data.isHidden
-      this.form.colour = this.handle.data.colour
-    }
-    if (this.handle.action == 'child') {
-      this.form.dictionaryField = this.handle.data.dictionaryField
-    }
+    depListDetailAPI().then(res => {
+      console.log(res)
+      this.depList = res.data
+    }).catch(() => {})
   },
   methods: {
+    changeHandle(val) {
+      console.log('val', val)
+      const deptInfo = this.depList.filter(item => {
+        return item.id == val
+      })[0]
+      console.log('deptInfo', deptInfo)
+      /* this.form.deptName = deptInfo.name.replace(/.*-(.*)/, (match, p1) => {
+        return p1
+      }) */
+      this.form.deptName = deptInfo.name
+      this.form.corporateName = deptInfo.corporateName
+    },
     hidenView() {
       this.$emit('hiden-view')
     },
@@ -153,11 +149,13 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.loading = true
-          const params = this.form
-          sysConfigDataDictarySaveAPI(params).then(res => {
+          const params = {
+            deptId: this.form.deptId,
+            equipmentNumber: this.form.equipmentNumber
+          }
+          sysConfigFacialEquipmentSaveAPI(params).then(res => {
             this.loading = false
             this.$emit('hiden-view')
-            this.$emit('save')
           }).catch(() => {
             this.loading = false
           })

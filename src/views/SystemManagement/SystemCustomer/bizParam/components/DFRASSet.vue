@@ -6,25 +6,28 @@
       <div class="query-form">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="校区ID：">
-            <el-input v-model="formInline.dictionaryField" placeholder=""/>
+            <el-input v-model="formInline.deptId" placeholder=""/>
           </el-form-item>
           <el-form-item label="校区名称：">
-            <el-input v-model="formInline.dictionaryName" placeholder=""/>
+            <el-input v-model="formInline.name" placeholder=""/>
           </el-form-item>
           <el-form-item label="设备编号：">
-            <el-input v-model="formInline.pId" placeholder=""/>
+            <el-input v-model="formInline.equipmentNumber" placeholder=""/>
           </el-form-item>
           <el-form-item label="在线状态：">
-            <el-select v-model="formInline.isHidden" placeholder="">
+            <el-select v-model="formInline.equipmentStatus" placeholder="">
               <el-option label="在线" value="0"/>
               <el-option label="离线" value="1"/>
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="queryList">一键同步</el-button>
+            <el-button type="primary" @click="queryList">查询</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="addData('add', '')">新增设备</el-button>
+            <el-button type="primary">一键同步</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="showHandleView = true">新增设备</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -54,11 +57,7 @@
               <el-button
                 type="text"
                 size="small"
-                @click="addData('edit', scope.row)">编 辑</el-button>
-              <el-button
-                type="text"
-                size="small"
-                @click="addData('child', scope.row)">删除</el-button>
+                @click="delData(scope.row.equipmentId)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -80,19 +79,17 @@
     <create-facial-equipment
       v-if="showHandleView"
       :handle="rowInfo"
-      @save="getDataList"
       @hiden-view="showHandleView=false" />
   </div>
 </template>
 
 <script>
-import {
-  sysConfigDataDictaryListQueryAPI
-} from '@/api/systemManagement/SystemCustomer'
+import { sysConfigFacialEquipmentQueryAPI, sysConfigFacialEquipmentDelAPI } from '@/api/systemManagement/SystemCustomer'
 import CreateFacialEquipment from '../../components/createFacialEquipment'
 
+
 export default {
-  name: 'DataDictionarySet',
+  name: 'DFRASSet',
   components: {
     CreateFacialEquipment
   },
@@ -108,15 +105,15 @@ export default {
 
       tableData: [],
       fieldList: [
-        { field: 'dictionaryId', label: '校区ID' },
-        { field: 'dictionaryField', label: '校区名称' },
-        { field: 'dictionaryName', label: '公司名称' },
-        { field: 'standby', label: '设备编号' },
-        { field: 'pId', label: '在线状态' },
-        { field: 'status', label: '创建人' },
-        { field: 'isHidden', label: '创建时间' },
-        { field: 'colour', label: '修改人' },
-        { field: 'sort', label: '修改时间' }
+        { field: 'deptId', label: '校区ID' },
+        { field: 'name', label: '校区名称' },
+        { field: 'corporateName', label: '公司名称' },
+        { field: 'equipmentNumber', label: '设备编号' },
+        { field: 'equipmentStatus', label: '在线状态' },
+        { field: 'createUserName', label: '创建人' },
+        { field: 'createTime', label: '创建时间', width: '150px' },
+        { field: 'updateUserName', label: '修改人' },
+        { field: 'updateTime', label: '修改时间', width: '150px' }
       ],
 
       formInline: {},
@@ -146,7 +143,7 @@ export default {
           page: this.currentPage
         }
       }
-      sysConfigDataDictaryListQueryAPI(params).then(res => {
+      sysConfigFacialEquipmentQueryAPI(params).then(res => {
         this.loading = false
         this.tableData = res.data.list
         this.total = res.data.totalRow
@@ -162,15 +159,10 @@ export default {
      * @return {string|string|*}
      */
     fieldFormatter(row, column) {
-      if (column.property === 'isHidden') {
+      if (column.property === 'equipmentStatus') {
         return {
-          0: '是',
-          1: '否'
-        }[row[column.property]]
-      } else if (column.property === 'status') {
-        return {
-          0: '无效',
-          1: '有效'
+          0: '离线',
+          1: '在线'
         }[row[column.property]]
       }
       return row[column.property]
@@ -195,12 +187,12 @@ export default {
       this.getDataList('search')
     },
 
-    addData(way, row) {
-      this.rowInfo = {
-        action: way,
-        data: row
-      }
-      this.showHandleView = true
+    delData(id) {
+      sysConfigFacialEquipmentDelAPI({ id }).then(res => {
+        console.log('res', res)
+        this.$message.success('删除成功')
+        this.getDataList()
+      }).catch(() => {})
     }
   }
 }
