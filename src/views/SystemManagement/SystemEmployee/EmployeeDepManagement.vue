@@ -648,6 +648,7 @@
       :visible.sync="querySubordinate.dialog"
       title="批量换上级"
       width="1170px"
+      top="5vh"
       @close="closeQuerySubordinate"
     >
       <div class="querySubordinate-head">
@@ -677,7 +678,7 @@
       <el-table
         v-loading="querySubordinate.loading"
         :data="querySubordinate.tableData"
-        height="260px"
+        :height="tableHeight"
         @selection-change="selectionChangeInQuerySubordinate">
         <el-table-column
           v-if="tableUpdateAuth"
@@ -729,9 +730,6 @@
           @size-change="querySubordinatePageSizeChange"
           @current-change="querySubordinateCurrentChange" />
       </div>
-
-
-
     </el-dialog>
 
     <!-- 批量导入 -->
@@ -1056,8 +1054,8 @@ export default {
         loading: false,
         tableData: [],
         currentPage: 1,
-        pageSize: 5,
-        pageSizes: [5, 10, 15],
+        pageSize: 15,
+        pageSizes: [15, 30, 45, 60],
         total: 0,
         disabled: true
       },
@@ -1190,12 +1188,12 @@ export default {
               name: '重置登录账号',
               type: 'resetName',
               icon: 'wk wk-reset'
-            },
-            {
-              name: '更换直属上级',
-              type: 'changeSuperior',
-              icon: 'wk wk-edit'
             }
+            // {
+            //   name: '更换直属上级',
+            //   type: 'changeSuperior',
+            //   icon: 'wk wk-edit'
+            // }
           ])
         } else {
           temps = temps.concat([
@@ -2224,6 +2222,12 @@ export default {
         this.$message.warning('请选择直属上级')
         return
       }
+
+      if (!this.querySubordinate.selection.length) {
+        this.$message.warning('请选择员工')
+        return
+      }
+
       const userIds = []
       this.querySubordinate.selection.forEach(item => {
         userIds.push(item.userId)
@@ -2293,7 +2297,7 @@ export default {
      * 更改每页展示数量
      */
     querySubordinatePageSizeChange(val) {
-      this.querySubordinate.pageSizes = val
+      this.querySubordinate.pageSize = val
       this.querySubordinateHandle()
     },
     /**
@@ -2321,8 +2325,8 @@ export default {
         loading: false,
         tableData: [],
         currentPage: 1,
-        pageSize: 5,
-        pageSizes: [5, 10, 15],
+        pageSize: 15,
+        pageSizes: [15, 30, 45, 60],
         total: 0,
         disabled: true
       }

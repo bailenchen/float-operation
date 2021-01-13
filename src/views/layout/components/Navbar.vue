@@ -199,7 +199,7 @@ export default {
         })
       }
 
-      if (this.education) {
+      /* if (this.education) {
         tempsItems.push({
           title: '教务管理',
           type: 9,
@@ -207,7 +207,7 @@ export default {
           icon: 'wk wk-approval-15',
           fontSize: '17px'
         })
-      }
+      } */
 
       if (this.oa && this.oa.taskExamine) {
         tempsItems.push({
