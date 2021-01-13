@@ -135,7 +135,7 @@ export default {
           { prop: 'statusType', label: '教室状态', width: 100 },
           { prop: 'relatedTeachers', label: '关联老师', width: 200 },
           { prop: 'updateUserName', label: '最后修改人', width: 115 },
-          { prop: 'updateTime', label: '最后修改时间' }
+          { prop: 'updateTime', label: '最后修改时间', width: 150 }
         ]
       } else if (this.crmType === 'class') {
         list = [

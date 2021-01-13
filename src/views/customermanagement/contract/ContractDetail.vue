@@ -433,7 +433,7 @@ export default {
           this.headDetails[1].value = res.data.customerName
           this.headDetails[2].value = separator(res.data.money || 0)
           this.headDetails[3].value = res.data.orderDate ? res.data.orderDate.slice(0, 10) : ''
-          this.headDetails[4].value = res.data.contractType == 1 && res.data.relevanceContractId.length ? '' : Number(res.data.money) < 0 ? separator(0) : separator(res.data.money || 0)
+          this.headDetails[4].value = res.data.contractCapitalMoney
           this.headDetails[5].value = res.data.signingUserName
         })
         .catch(() => {

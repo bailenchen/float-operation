@@ -179,6 +179,7 @@ export default {
             // 刷新待办
             if (
               this.crmType == 'customer' ||
+              this.crmType == 'student' ||
               this.crmType == 'contract' ||
               this.crmType == 'leads'
             ) {
@@ -195,7 +196,7 @@ export default {
     getRequest() {
       if (this.crmType === 'leads') {
         return crmLeadsTransfer
-      } else if (this.crmType === 'customer') {
+      } else if (this.crmType === 'customer' || this.crmType === 'student') {
         return crmCustomerTransfer
       } else if (this.crmType === 'contacts') {
         return crmContactsTransfer
@@ -228,11 +229,12 @@ export default {
       // }
 
       var self = this
+      const keyType = self.crmType === 'student' ? 'customer' : self.crmType
       var actionId = this.selectionList.map(function(item, index, array) {
-        return item[self.crmType + 'Id']
+        return item[keyType + 'Id']
       })
-      params[this.crmType + 'Ids'] = actionId.join(',')
-      if (this.crmType === 'customer') {
+      params[keyType + 'Ids'] = actionId.join(',')
+      if (keyType === 'customer' || keyType === 'student') {
         // 只有客户下面有同时变更
         // params.changeType = this.addsTypes.join(',')
         params.changeType = ''
