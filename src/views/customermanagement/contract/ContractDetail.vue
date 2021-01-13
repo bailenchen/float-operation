@@ -620,32 +620,22 @@ export default {
           8: '作废'
         }[row.checkStatus]
       } else if (column.property === 'newStudentRatio') {
-        if (row.checkStatus === 1) {
-          return row.newStudentRatio
-        } else {
-          let personcent = ''
-          this.newRateList.forEach(item => {
-            if (row.newStudentRatio === item.value) {
-              personcent = item.label
-            }
-          })
-          return personcent
-        }
+        let personcent = ''
+        this.newRateList.forEach(item => {
+          if (row.newStudentRatio === item.value) {
+            personcent = item.label
+          }
+        })
+        return personcent
       } else if (column.property === 'performanceRatio') {
-        if (row.checkStatus === 1) {
-          return row.performanceRatio
-        } else {
-          let personcent = ''
-          this.rateList.forEach(item => {
-            if (row.performanceRatio === item.value) {
-              personcent = item.label
-            }
-          })
-          return personcent
-        }
+        let personcent = ''
+        this.rateList.forEach(item => {
+          if (row.performanceRatio === item.value) {
+            personcent = item.label
+          }
+        })
+        return personcent
       }
-
-      console.log(column.property, 'xxxxx')
       return row[column.property]
     },
 
