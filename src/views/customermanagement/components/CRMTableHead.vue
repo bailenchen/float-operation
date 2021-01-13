@@ -1595,8 +1595,18 @@ export default {
           } else {
             return this.crm[this.crmType].delete
           }
-        } else if (this.crmType == 'classroom' || this.crmType == 'class' || this.crmType == 'classschedule' || this.crmType == 'studentschedule') {
+        } else if (this.crmType == 'classroom' || this.crmType == 'class') {
           return this.education[this.crmType].delete
+        } else if (this.crmType == 'classschedule' || this.crmType == 'studentschedule') {
+          const statusList = []
+          this.selectionList.forEach(item => {
+            statusList.push(item.classConfirmation)
+          })
+          if (statusList.includes(1)) {
+            return false
+          } else {
+            return this.education[this.crmType].delete
+          }
         } else {
           return this.crm[this.crmType].delete
         }
@@ -1733,11 +1743,12 @@ export default {
           return false
         }
       } else if (type == 'leave') {
-        const allStatus = []
-        this.selectionList.forEach(element => {
-          allStatus.push(element.classConfirmationType)
+        // 默认仅适用于--教务管理--学员排课表studentschedule
+        const statusList = []
+        this.selectionList.forEach(item => {
+          statusList.push(item.classConfirmation)
         })
-        if (allStatus.includes('已确认')) {
+        if (statusList.includes(1)) {
           return false
         } else {
           return this.education[this.crmType].leave

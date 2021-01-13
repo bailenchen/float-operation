@@ -86,11 +86,19 @@ export function crmClassQueryTeacher(data) {
   })
 }
 
-
 // 班级管理 通过老师查学科与年级
 export function crmClassQuerySubjectGrade(data) {
   return request({
     url: 'system/user/queryUserInfoOne',
+    method: 'post',
+    data: data
+  })
+}
+
+// 班级管理 插班基本信息
+export function crmClassQueryInsertBaseInfo(data) {
+  return request({
+    url: 'educationalClass/queryByTimeId',
     method: 'post',
     data: data
   })
