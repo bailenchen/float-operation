@@ -96,6 +96,11 @@
             <el-button
               v-if="userSaveAuth"
               type="text"
+              icon="wk wk-transfer"
+              @click="batchChangeSubordinate">批量换上级</el-button>
+            <el-button
+              v-if="userSaveAuth"
+              type="text"
               icon="el-icon-circle-plus"
               @click="addEmployee">添加员工</el-button>
             <el-button
@@ -292,16 +297,16 @@
               placeholder="请输入商户号" />
           </el-form-item>
 
-          <el-form-item label="应用ID">
+          <el-form-item label="通联的APPID">
             <el-input
               v-model="depCreateForm.sybAppid"
-              placeholder="请输入应用ID" />
+              placeholder="请输入通联的APPID" />
           </el-form-item>
 
-          <el-form-item label="MD5交易密码" >
+          <el-form-item label="通联MD5交易密码" >
             <el-input
               v-model="depCreateForm.sybMd5Appkey"
-              placeholder="请输入MD5交易密码" />
+              placeholder="请输入通联MD5交易密码" />
           </el-form-item>
 
           <el-form-item label="备用字段" prop="">
@@ -638,6 +643,97 @@
       </span>
     </el-dialog>
 
+    <!-- 查询下级 -->
+    <el-dialog
+      :visible.sync="querySubordinate.dialog"
+      title="批量换上级"
+      width="1170px"
+      @close="closeQuerySubordinate"
+    >
+      <div class="querySubordinate-head">
+        <el-input
+          v-model="querySubordinate.superiorName"
+          class="sc-container"
+          placeholder="请输入要查询的内容">
+          <el-button
+            slot="append" type="primary" @click="querySubordinateHandle"
+          >查询</el-button>
+        </el-input>
+
+        <el-select v-loading="superiorloading" v-model="superiorId" :disabled="querySubordinate.disabled" placeholder="请选择">
+          <el-option
+            v-for="item in superiorList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            :disabled="item.disabled"/>
+        </el-select>
+
+        <el-button
+          :disabled="querySubordinate.disabled" type="primary" @click="batchChangeSubordinateHandle"
+        >确定</el-button>
+      </div>
+
+      <el-table
+        v-loading="querySubordinate.loading"
+        :data="querySubordinate.tableData"
+        height="260px"
+        @selection-change="selectionChangeInQuerySubordinate">
+        <el-table-column
+          v-if="tableUpdateAuth"
+          type="selection"
+          width="55" />
+
+        <el-table-column
+          prop="realname"
+          width="100"
+          show-overflow-tooltip
+          label="姓名">
+          <template slot-scope="scope">
+            <div class="status-name">
+              <div :style="{'background-color' : getStatusColor(scope.row.status)}" />
+              {{ scope.row.realname }}
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          v-for="(item, index) in fieldList"
+          :key="index"
+          :width="item.width"
+          :prop="item.field"
+          :label="item.value"
+          :formatter="tableFormatter"
+        />
+        <el-table-column />
+      </el-table>
+
+      <div class="p-contianer">
+        <div class="status-des">
+          <div
+            v-for="item in statusOptions"
+            :key="item.value"
+            class="status-des-item">
+            <div :style="{'background-color' : getStatusColor(item.value)}" />
+            {{ item.label }}
+          </div>
+        </div>
+        <el-pagination
+          :current-page="querySubordinate.currentPage"
+          :page-sizes="querySubordinate.pageSizes"
+          :page-size.sync="querySubordinate.pageSize"
+          :total="querySubordinate.total"
+          class="p-bar"
+          background
+          layout="prev, pager, next, sizes, total, jumper"
+          @size-change="querySubordinatePageSizeChange"
+          @current-change="querySubordinateCurrentChange" />
+      </div>
+
+
+
+    </el-dialog>
+
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
@@ -951,8 +1047,22 @@ export default {
       },
       changeSuperiorDialog: false,
       superiorloading: false,
+      superiorList_: null,
       superiorList: null,
       superiorId: '',
+      querySubordinate: {
+        dialog: false,
+        superiorName: '',
+        loading: false,
+        tableData: [],
+        currentPage: 1,
+        pageSize: 5,
+        pageSizes: [5, 10, 15],
+        total: 0,
+        disabled: true
+      },
+
+
       depCreateForm: {
         centre: 2,
         addressData: {}
@@ -981,6 +1091,7 @@ export default {
         //   { required: true, message: '开户行不能为空', trigger: ['blur', 'change'] }
         // ]
       }
+
     }
   },
   computed: {
@@ -1773,7 +1884,6 @@ export default {
         this.superiorloading = true
         queryUserListAPI().then(res => {
           this.superiorloading = false
-          // this.superiorList = res.data
           const arr = []
           const userIds = []
           this.selectionList.forEach(item => {
@@ -2086,6 +2196,136 @@ export default {
 
     fieldValueChange(val) {
       this.depCreateForm.addressData = val.value
+    },
+
+    batchChangeSubordinate() {
+      this.querySubordinate.dialog = true
+      /* queryUserListAPI().then(res => {
+        const arr = []
+        const userIds = []
+        this.selectionList.forEach(item => {
+          userIds.push(item.userId)
+        })
+
+        res.data.forEach(item => {
+          arr.push({
+            label: item.realname,
+            value: item.userId,
+            disabled: userIds.includes(item.userId)
+          })
+        })
+
+        this.superiorList = arr
+      }).catch(() => {}) */
+    },
+
+    batchChangeSubordinateHandle() {
+      if (this.superiorId === '') {
+        this.$message.warning('请选择直属上级')
+        return
+      }
+      const userIds = []
+      this.querySubordinate.selection.forEach(item => {
+        userIds.push(item.userId)
+      })
+      const params = {
+        userIds,
+        parentId: this.superiorId
+      }
+      // return
+      changeSuperiorAPI(params).then(res => {
+        this.$message.success('更换成功')
+        this.superiorId = ''
+        this.refreshQuerySubordinateList()
+      }).catch(() => {})
+    },
+
+    querySubordinateHandle() {
+      console.log('查询上级')
+      const params = {
+        page: this.querySubordinate.currentPage,
+        limit: this.querySubordinate.pageSize,
+        parentName: this.querySubordinate.superiorName
+      }
+      this.querySubordinate.loading = true
+      usersList(params).then(res => {
+        this.querySubordinate.loading = false
+        console.log(res)
+        this.querySubordinate.tableData = res.data.list
+        this.querySubordinate.total = res.data.totalRow
+      }).catch(() => {})
+    },
+
+    selectionChangeInQuerySubordinate(val) {
+      function fn(_this) {
+        const arr = []
+        const userIds = []
+        _this.querySubordinate.selection.forEach(item => {
+          userIds.push(item.userId)
+        })
+
+        _this.superiorList_.forEach(item => {
+          arr.push({
+            label: item.realname,
+            value: item.userId,
+            disabled: userIds.includes(item.userId)
+          })
+        })
+        _this.superiorList = arr
+      }
+
+      this.querySubordinate.selection = val
+      this.querySubordinate.disabled = false
+
+      if (!this.superiorList) {
+        this.superiorloading = true
+        queryUserListAPI().then(res => {
+          this.superiorloading = false
+          this.superiorList_ = res.data
+          fn(this)
+        }).catch(() => {})
+      } else {
+        fn(this)
+      }
+    },
+
+    /**
+     * 更改每页展示数量
+     */
+    querySubordinatePageSizeChange(val) {
+      this.querySubordinate.pageSizes = val
+      this.querySubordinateHandle()
+    },
+    /**
+     * 刷新员工列表
+     */
+    refreshQuerySubordinateList() {
+      this.querySubordinate.currentPage = 1
+      this.querySubordinateHandle()
+    },
+
+    /**
+     * 更改当前页数
+     */
+    querySubordinateCurrentChange(val) {
+      this.querySubordinate.currentPage = val
+      this.querySubordinateHandle()
+    },
+
+    closeQuerySubordinate() {
+      this.superiorId = ''
+      this.querySubordinate.dialog = false
+      this.querySubordinate = {
+        dialog: false,
+        superiorName: '',
+        loading: false,
+        tableData: [],
+        currentPage: 1,
+        pageSize: 5,
+        pageSizes: [5, 10, 15],
+        total: 0,
+        disabled: true
+      }
     }
   }
 }
@@ -2593,6 +2833,27 @@ export default {
   }
   /deep/ .el-select {
     width: 100%;
+  }
+}
+
+.querySubordinate-head {
+  &>div {
+    margin-right: 14px;
+    margin-bottom: 14px;
+  }
+}
+.sc-container {
+  width: 428px;
+
+  /deep/ .el-input-group__append {
+    left: -1px;
+    background-color: $xr-color-primary;
+    border-color: $xr-color-primary;
+    color: white;
+  }
+
+  /deep/ .el-input__inner {
+    width: 375px;
   }
 }
 </style>
