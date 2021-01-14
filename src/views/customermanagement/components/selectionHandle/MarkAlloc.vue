@@ -201,6 +201,24 @@ export default {
       })
     },
 
+    getPercentVal(type, id) {
+      let name
+      if (type === 'newStudentRatio') {
+        this.newRateList.forEach(item => {
+          if (item.value === id) {
+            name = item.label
+          }
+        })
+      } else if (type === 'performanceRatio') {
+        this.rateList.forEach(item => {
+          if (item.value === id) {
+            name = item.label
+          }
+        })
+      }
+      return name
+    },
+
     /**
      * 确定
      */
@@ -221,8 +239,8 @@ export default {
         if (element.newStudentRatio === '') {
           return this.$message.error('请选择新签学员数比例')
         }
-        perNum += Number(element.performanceRatio)
-        newNum += Number(element.newStudentRatio)
+        perNum += Number(this.getPercentVal('performanceRatio', element.performanceRatio))
+        newNum += Number(this.getPercentVal('newStudentRatio', element.newStudentRatio))
         lists.push({
           contractAllotId: element.contractAllotId,
           memberUserId: element.userList[0].userId,
