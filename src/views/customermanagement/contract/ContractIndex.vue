@@ -83,7 +83,7 @@
         </el-table-column>
         <el-table-column fixed="right" width="90" align="center" label="合同预览">
           <template slot-scope="scope">
-            <el-button :disabled="!scope.row.expirationTime" @click="previewCOntract(scope.row)">查看</el-button>
+            <el-button @click="previewCOntract(scope.row)">查看</el-button>
           </template>
         </el-table-column>
         <el-table-column fixed="right" width="110" align="center" label="电子合同确认">
@@ -160,7 +160,7 @@
 
 <script>
 import CRMAllDetail from '@/views/customermanagement/components/CRMAllDetail'
-import { crmAccountWaterDown } from '@/api/customermanagement/contract'
+import { crmAccountWaterDown, generateTemplateAPI } from '@/api/customermanagement/contract'
 import Clipboard from 'clipboard'
 import QRCode from 'qrcodejs2'
 
@@ -306,7 +306,7 @@ export default {
       this.outerVisible = true
     },
 
-    // 预览合同
+    // 预览与生成合同
     previewCOntract(row) {
       if (row.expirationTime) {
         const currentTime = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -318,7 +318,19 @@ export default {
           window.open(row.queryUrl)
         }
       } else {
-        this.$message.error('没有相关合同可以预览')
+        const params = {
+          type: row.contractType === 1 && row.relevanceContractId ? 3 : row.contractType,
+          contractId: row.contractId
+        }
+        generateTemplateAPI(params).then(res => {
+          if (res.code == '0') {
+            window.open(res.downloadUrl)
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          // this.$message.error('查看失败')
+        })
       }
     },
 

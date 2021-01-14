@@ -357,3 +357,12 @@ export function judgeGiveAPI(data) {
     }
   })
 }
+
+// 生成合同模板
+export function generateTemplateAPI(data) {
+  return request({
+    url: 'CrmContract/generate',
+    method: 'post',
+    data: data
+  })
+}
