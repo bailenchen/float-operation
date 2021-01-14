@@ -742,3 +742,7 @@ export function checkProv(val) {
   }
   return false
 }
+
+export function toThousands(str) {
+  return Number(str).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
+}
