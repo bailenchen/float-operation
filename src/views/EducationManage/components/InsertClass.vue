@@ -84,6 +84,7 @@
         </create-sections>
         <create-sections title="学员名称" class="student-wrap">
           <add-student
+            :base-info="selectionList[0]"
             @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>
@@ -143,8 +144,10 @@ export default {
         subjectName: '科目',
         gradeName: '年级',
         timeSlot: '上课时段',
+        coachType: '辅导方式',
         classType: '班级类型',
-        remarks: '备注'
+        remarks: '备注',
+        totalNumber: '满班人数'
       },
       baseInfoList: [],
 
@@ -175,6 +178,7 @@ export default {
 
     // 获取基本信息与学员信息
     queryBaseInfo() {
+      this.loading = true
       const request = {
         class: crmClassQueryInsertBaseInfo,
         classschedule: crmClassSchduleConfirmInfo
@@ -204,7 +208,8 @@ export default {
 
         // 上课时间段列表
         if (this.crmType === 'class') {
-          this.list = data.list.map((item, index) => {
+          const totalNumber = []
+          this.list = data.list.filter((item, index) => {
             item.num = index + 1
             item.dateTime = item.classTime ? `${item.classTime.slice(0, 10)} ${item.timeSlotStart.slice(0, 5)}~${item.timeSlotEnd.slice(0, 5)}` : ''
             let actual = 0
@@ -216,11 +221,15 @@ export default {
             }).join(',')
             item.actual = actual
             item.totalNumber = item.totalNumber
+            totalNumber.push(item.totalNumber - actual)
             item.maxs = `${item.actual}/${item.totalNumber}`
-            return item
+            return item.actual !== item.totalNumber
           })
+          this.selectionList[0].totalNumber = Math.min(...totalNumber)
         }
+        this.loading = false
       }).catch((err) => {
+        this.loading = false
         console.log(err)
       })
     },

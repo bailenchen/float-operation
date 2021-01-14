@@ -78,7 +78,7 @@
                 </el-table-column>
                 <el-table-column fixed="right" width="90" align="center" label="操作">
                   <template slot-scope="scope">
-                    <el-button size="mini" @click="handleLeave(scope.row.id)">请假</el-button>
+                    <el-button :disabled="scope.row.classConfirmationName === '确认'" size="mini" @click="handleLeave(scope.row.id)">请假</el-button>
                   </template>
                 </el-table-column>
                 <el-table-column/>
@@ -142,14 +142,15 @@ export default {
       // 学员合同表
       list: [{ num: '123465' }],
       fieldLists: [
-        { prop: 'customerName', label: '学员姓名' },
-        { prop: 'num', label: '合同编号' },
-        { prop: 'gradeName', label: '年级' },
-        { prop: 'subjectName', label: '科目' },
-        { prop: 'sumCourse', label: '合同课次' },
-        { prop: 'endCourse', label: '结课课次' },
-        { prop: 'alreadyCourse', label: '已排课次' },
-        { prop: 'classStatusName', label: '上课状态' }
+        { prop: 'customerName', label: '学员姓名', width: 90 },
+        { prop: 'num', label: '合同编号', width: 150 },
+        { prop: 'gradeName', label: '年级', width: 90 },
+        { prop: 'subjectName', label: '科目', width: 90 },
+        { prop: 'sumCourse', label: '合同课次', width: 90 },
+        { prop: 'endCourse', label: '结课课次', width: 90 },
+        { prop: 'alreadyCourse', label: '已排课次', width: 90 },
+        { prop: 'classStatusName', label: '上课状态', width: 90 },
+        { prop: 'classConfirmationName', label: '状态', width: 90 }
       ],
       checkList: []
 
@@ -168,6 +169,7 @@ export default {
 
     // 获取基本信息与学员信息
     queryBaseInfo() {
+      this.loading = true
       crmClassSchduleConfirmInfo({ timeId: this.selectionList[0].timeId }).then(res => {
         const data = res.data
         for (const key in this.fieldObj) {
@@ -180,7 +182,9 @@ export default {
           }
         }
         this.list = data.students
+        this.loading = false
       }).catch((err) => {
+        this.loading = false
         console.log(err)
       })
     },
@@ -211,6 +215,7 @@ export default {
             type: 'success',
             message: '操作成功!'
           })
+          this.queryBaseInfo()
         }).catch((err) => {
           console.log(err)
         })

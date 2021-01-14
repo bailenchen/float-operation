@@ -53,7 +53,6 @@
               <el-button @click="deleteAddItem(scope.$index)">删除</el-button>
             </template>
           </el-table-column>
-          <el-table-column/>
         </el-table>
         <!-- 列表顶部信息 -->
         <flexbox
@@ -88,6 +87,7 @@
           style="width: 100%"
           @selection-change="handleSelectionChange">
           <el-table-column
+            :selectable="selectable"
             show-overflow-tooltip
             type="selection"
             align="center"
@@ -107,7 +107,6 @@
               <span v-else>{{ scope.row[item.prop] }}</span>
             </template>
           </el-table-column>
-          <el-table-column/>
         </el-table>
       </div>
     </div>
@@ -122,6 +121,15 @@ export default {
   name: 'AddStudent',
   components: {
     CrmRelative
+  },
+  props: {
+    // 满班人数
+    baseInfo: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
   },
   data() {
     return {
@@ -143,16 +151,16 @@ export default {
       // 学员合同表
       list: [],
       fieldLists: [
-        { prop: 'num', label: '合同编号' },
-        { prop: 'isnew', label: '合同属性' },
-        { prop: 'coachType', label: '合同类型' },
-        { prop: 'orderDate', label: '签约日期' },
-        { prop: 'isGive', label: '是否赠送' },
-        { prop: 'subjectName', label: '科目' },
-        { prop: 'sumCourse', label: '课次' },
-        { prop: 'alreadyCourse', label: '已排课次' },
-        { prop: 'notArranged', label: '未排课次' },
-        { prop: 'finishCourse', label: '已完成课次' }
+        { prop: 'num', label: '合同编号', width: 150 },
+        { prop: 'isnew', label: '合同属性', width: 90 },
+        { prop: 'coachType', label: '合同类型', width: 90 },
+        { prop: 'orderDate', label: '签约日期', width: 150 },
+        { prop: 'isGive', label: '是否赠送', width: 90 },
+        { prop: 'subjectName', label: '科目', width: 60 },
+        { prop: 'sumCourse', label: '课次', width: 60 },
+        { prop: 'alreadyCourse', label: '已排课次', width: 90 },
+        { prop: 'notArranged', label: '未排课次', width: 90 },
+        { prop: 'finishCourse', label: '已完成课次', width: 90 }
       ],
 
       showPopover: false,
@@ -171,11 +179,26 @@ export default {
 
     /** 选中 */
     checkInfos(seldata) {
-      const data = seldata.data
-      if (data && data.length) {
-        this.getContractList(data[0].customerId)
+      const { totalNumber } = this.baseInfo
+      const list = this.arrayObjRepeat(this.addedList, 'customerId')
+      if (totalNumber > list.length) {
+        const data = seldata.data
+        if (data && data.length) {
+          this.getContractList(data[0].customerId)
+        }
+      } else {
+        this.$message.error('添加的学员人数不能超过满班人数')
       }
-      console.log('kkkk', data)
+    },
+
+    // 禁用学科不相等的
+    selectable(row, index) {
+      const { subjectName, coachType, gradeName } = this.baseInfo
+      if (row.subjectName === subjectName && row.coachType === coachType && row.gradeName === gradeName) {
+        return true // 可用
+      } else {
+        return false // 禁用
+      }
     },
 
     // 添加学员并获取对应的合同

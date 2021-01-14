@@ -313,6 +313,7 @@ export default {
           return item
         })
         console.log(res, 'sg')
+        this.loading = false
       }).catch(() => {})
     },
 
@@ -350,13 +351,18 @@ export default {
 
     // 获取辅导方式
     getWaySelect() {
+      this.loading = true
       QueryCoachingMethods().then(res => {
         this.option.coachType = res.data.map(item => {
           item.label = item.name
           item.value = item.dictionaryId
           return item
         })
+        if (this.handle.action == 'add') {
+          this.loading = false
+        }
       }).catch((err) => {
+        this.loading = false
         console.log(err)
       })
     },

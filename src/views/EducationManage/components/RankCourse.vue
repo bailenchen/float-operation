@@ -131,6 +131,7 @@
         </create-sections>
         <create-sections title="学员名称" class="student-wrap">
           <add-student
+            :base-info="selectionList[0]"
             @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>

@@ -54,6 +54,7 @@ export default {
   created() {
     if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
       if (this.education[this.crmType].index) {
+        this.loading = true
         this.getFieldList()
       }
     }
@@ -158,6 +159,7 @@ export default {
         list = [
           { prop: 'deptName', label: '中心', width: 150 },
           { prop: 'classType', label: '班级类型', width: 100 },
+          { prop: 'totalNumber', label: '满班人数', width: 100 },
           { prop: 'className', label: '班级名称', width: 150 },
           { prop: 'classroomName', label: '教室名称', width: 200 },
           { prop: 'gradeName', label: '年级', width: 80 },

@@ -98,7 +98,7 @@ const user = {
       // 权限
       state.allAuth = data.auth
       state.crm = data.auth.crm
-      state.education = data.auth.education
+      state.education = data.auth.educational
       state.bi = data.auth.bi
       state.manage = data.auth.manage
       state.oa = data.auth.oa
