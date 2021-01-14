@@ -224,6 +224,11 @@ export default {
     }
   },
   mounted() {},
+  destroyed() {
+    if (this.clipboard) {
+      this.clipboard.destroy()
+    }
+  },
   methods: {
     /**
      * 通过回调控制class
@@ -323,8 +328,9 @@ export default {
           contractId: row.contractId
         }
         generateTemplateAPI(params).then(res => {
-          if (res.code == '0') {
+          if (!res.code) {
             window.open(res.downloadUrl)
+            this.getList()
           } else {
             this.$message.error(res.msg)
           }

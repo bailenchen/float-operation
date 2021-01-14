@@ -255,6 +255,10 @@ export default {
         return this.$message.error('成员不能重复')
       }
 
+      if (perNum > 100 && newNum > 100) {
+        return this.$message.error('所有业绩比例之和、新签学员数比例之和均不得超过100%')
+      }
+
       if (perNum > 100) {
         return this.$message.error('所有业绩比例之和不得超过100%')
       }
