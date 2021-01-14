@@ -319,7 +319,7 @@ export default {
         }
       } else {
         const params = {
-          type: row.contractType === 1 && row.relevanceContractId ? 3 : row.contractType,
+          type: row.contractType === 1 && row.relevanceContractId ? 2 : row.contractType === 1 ? 1 : 3,
           contractId: row.contractId
         }
         generateTemplateAPI(params).then(res => {
