@@ -661,7 +661,7 @@
           >查询</el-button>
         </el-input>
 
-        <el-select v-loading="superiorloading" v-model="superiorId" :disabled="querySubordinate.disabled" placeholder="请选择">
+        <el-select v-loading="superiorloading" v-model="superiorId" :disabled="querySubordinate.disabled" filterable placeholder="请选择">
           <el-option
             v-for="item in superiorList"
             :key="item.value"
@@ -1890,7 +1890,7 @@ export default {
 
           res.data.forEach(item => {
             arr.push({
-              label: item.realname,
+              label: `${item.realname}(${item.username})`,
               value: item.userId,
               disabled: userIds.includes(item.userId)
             })
@@ -2270,7 +2270,8 @@ export default {
 
         _this.superiorList_.forEach(item => {
           arr.push({
-            label: item.realname,
+            // label: item.realname,
+            label: `${item.realname}(${item.username})`,
             value: item.userId,
             disabled: userIds.includes(item.userId)
           })

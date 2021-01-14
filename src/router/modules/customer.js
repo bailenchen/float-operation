@@ -56,23 +56,23 @@ export default [
   },
 
 
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'student']
-  //   }),
-  //   children: [
-  //     {
-  //       path: 'student-manage/:type',
-  //       name: 'StudentManageIndex',
-  //       component: () => import('@/views/customermanagement/studentManage/index'),
-  //       meta: {
-  //         title: '学员管理',
-  //         icon: 'contacts',
-  //         activeMenu: '/crm/student-manage/:type'
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    ...layout({
+      permissions: ['crm', 'student']
+    }),
+    children: [
+      {
+        path: 'student-manage/:type',
+        name: 'StudentManageIndex',
+        component: () => import('@/views/customermanagement/studentManage/index'),
+        meta: {
+          title: '学员管理',
+          icon: 'contacts',
+          activeMenu: '/crm/student-manage/:type'
+        }
+      }
+    ]
+  },
   {
     ...layout({
       permissions: ['crm', 'contract']
@@ -86,58 +86,58 @@ export default [
       }
     }]
   },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'product']
-  //   }),
-  //   children: [{
-  //     path: 'course',
-  //     component: () => import('@/views/customermanagement/product/ProductIndex'),
-  //     meta: {
-  //       title: '课程单品',
-  //       icon: 'product'
-  //     }
-  //   }]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'product']
-  //   }),
-  //   children: [{
-  //     path: 'course-package',
-  //     component: () => import('@/views/customermanagement/coursePackage/CoursePackageIndex'),
-  //     meta: {
-  //       title: '课程套餐',
-  //       icon: 'associated'
-  //     }
-  //   }]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'visit']
-  //   }),
-  //   children: [{
-  //     path: 'visit',
-  //     component: () => import('@/views/customermanagement/visit/VisitIndex'),
-  //     meta: {
-  //       title: '学员回访',
-  //       icon: 'house'
-  //     }
-  //   }]
-  // },
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'insideUser']
-  //   }),
-  //   children: [{
-  //     path: 'student-warning',
-  //     component: () => import('@/views/customermanagement/warning'),
-  //     meta: {
-  //       title: '学员预警',
-  //       icon: 'bell'
-  //     }
-  //   }]
-  // },
+  {
+    ...layout({
+      permissions: ['crm', 'product']
+    }),
+    children: [{
+      path: 'course',
+      component: () => import('@/views/customermanagement/product/ProductIndex'),
+      meta: {
+        title: '课程单品',
+        icon: 'product'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'product']
+    }),
+    children: [{
+      path: 'course-package',
+      component: () => import('@/views/customermanagement/coursePackage/CoursePackageIndex'),
+      meta: {
+        title: '课程套餐',
+        icon: 'associated'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'visit']
+    }),
+    children: [{
+      path: 'visit',
+      component: () => import('@/views/customermanagement/visit/VisitIndex'),
+      meta: {
+        title: '学员回访',
+        icon: 'house'
+      }
+    }]
+  },
+  {
+    ...layout({
+      permissions: ['crm', 'insideUser']
+    }),
+    children: [{
+      path: 'student-warning',
+      component: () => import('@/views/customermanagement/warning'),
+      meta: {
+        title: '学员预警',
+        icon: 'bell'
+      }
+    }]
+  },
   {
     ...layout({
       permissions: ['crm', 'insideUser']
@@ -150,25 +150,25 @@ export default [
         icon: 'grid'
       }
     }]
-  }
+  },
 
-  // {
-  //   ...layout({
-  //     permissions: ['crm', 'receive']
-  //   }),
-  //   children: [
-  //     {
-  //       path: 'finance-manage/:type',
-  //       name: 'FinanceManageIndex',
-  //       component: () => import('@/views/customermanagement/financeManage/index'),
-  //       meta: {
-  //         title: '合同充值/返还',
-  //         icon: 'contacts',
-  //         activeMenu: '/crm/finance-manage/:type'
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    ...layout({
+      permissions: ['crm', 'receive']
+    }),
+    children: [
+      {
+        path: 'finance-manage/:type',
+        name: 'FinanceManageIndex',
+        component: () => import('@/views/customermanagement/financeManage/index'),
+        meta: {
+          title: '合同充值/返还',
+          icon: 'contacts',
+          activeMenu: '/crm/finance-manage/:type'
+        }
+      }
+    ]
+  }
 
 
 
