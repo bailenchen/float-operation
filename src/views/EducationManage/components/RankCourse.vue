@@ -57,11 +57,13 @@
                       step: '00:60',
                       end: '19:00'
                     }"
+                    :clearable="false"
                     placeholder="起始时间"
                     @change="changeTime"/>
                   至
                   <el-time-select
                     v-model="endTime"
+                    :clearable="false"
                     :picker-options="{
                       start: '08:00',
                       step: '00:60',
@@ -232,6 +234,8 @@ export default {
       // 排课列表
       dateList: [],
       markWeek: null, // 连排周数
+      // 连排时的数据
+      pendingData: [],
 
       // 已添加学员信息
       addedList: []
@@ -292,13 +296,17 @@ export default {
 
     // 连排公共方法
     rankCourse(weeks) {
+      if (this.markWeek === weeks) {
+        return
+      }
       if (this.currentAddDateTime.length) {
         let week = weeks
         if (this.dateList.length) {
           week = weeks - 1
         }
         if (this.markWeek) {
-          this.dateList.length = this.dateList.length - (this.markWeek - 1)
+          this.dateList.length = this.dateList.length - this.pendingData.length
+          this.pendingData.length = 0
         }
         this.markWeek = weeks
         // 待连排的所有日期 this.currentAddDateTime
@@ -310,7 +318,9 @@ export default {
             for (let index = 0; index < week; index++) {
               day.setDate(day.getDate() + 7)
               const newdate = moment(day).format('YYYY-MM-DD')
-              this.dateList.push(`${newdate} ${this.startTime}~${this.endTime}`)
+              const itemData = `${newdate} ${this.startTime}~${this.endTime}`
+              this.pendingData.push(itemData)
+              this.dateList.push(itemData)
             }
           }
         }

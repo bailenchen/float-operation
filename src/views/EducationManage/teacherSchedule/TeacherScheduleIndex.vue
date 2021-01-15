@@ -3,9 +3,8 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
+      :show-search="false"
       title="教师排课表"
-      placeholder="请输入教师姓名"
-      main-title=""
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos"/>
@@ -22,10 +21,46 @@
         @handle="handleHandle"
         @scene="handleScene">
         <template slot-scope="">
-          <el-button :type="comName == 'WeekTable' ? 'primary' : ''" style="margin-left: 10px;" @click="toggleShow('week')">按周显示</el-button>
           <el-button :type="comName == 'DayTable' ? 'primary' : ''" @click="toggleShow('day')">按天显示</el-button>
+          <el-button :type="comName == 'WeekTable' ? 'primary' : ''" style="margin-left: 10px;" @click="toggleShow('week')">按周显示</el-button>
         </template>
       </c-r-m-table-head>
+      <div class="filter-wrap">
+        <el-form :inline="true" :model="form" class="demo-form-inline">
+          <el-form-item label="学习中心">
+            <xh-structure-cell
+              :value="deptSelectValue"
+              radio
+              class="xh-structure-cell"
+              @value-change="structureChange" />
+          </el-form-item>
+          <el-form-item label="日期">
+            <el-date-picker
+              v-model="form.xx"
+              style="width:150px;"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择日期"/>
+          </el-form-item>
+          <el-form-item label="是否兼职">
+            <el-select v-model="form.region" placeholder="请选择">
+              <el-option label="是" value="1"/>
+              <el-option label="否" value="0"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="科目">
+            <el-select v-model="form.regions" placeholder="请选择">
+              <el-option v-for="(item,index) in subList" :key="index" :label="item.label" :value="item.value"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="教师姓名">
+            <el-input v-model="form.user" placeholder="请输入教师姓名"/>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
       <div class="three-flex">
         <div class="toggle-btn" @click="preDayOrWeek">LAST</div>
         <div class="center-txt">
@@ -33,7 +68,7 @@
         </div>
         <div class="toggle-btn" @click="nextDayOrWeek">NEXT</div>
       </div>
-      <component :is="comName"/>
+      <component ref="table" :is="comName"/>
     </div>
   </div>
 </template>
@@ -41,16 +76,21 @@
 <script>
 import DayTable from './components/DayTable'
 import WeekTable from './components/WeekTable'
+import {
+  XhStructureCell
+} from '@/components/CreateCom'
 import table from '../mixins/table'
 import { getDateStr, getMonday } from '@/utils/dateDiff'
 import moment from 'moment'
+import { QueryAdminSubject } from '@/api/systemManagement/params'
 
 export default {
   /** 教务管理 的 教师排课表列表 */
   name: 'TeacherScheduleIndex',
   components: {
     DayTable,
-    WeekTable
+    WeekTable,
+    XhStructureCell
   },
   mixins: [table],
   data() {
@@ -59,7 +99,11 @@ export default {
       comName: 'DayTable',
       date: moment().format('YYYY/MM/DD'),
       currentWeekStartDate: '',
-      currentWeekEndDate: ''
+      currentWeekEndDate: '',
+
+      form: {},
+      deptSelectValue: [],
+      subList: []
     }
   },
   watch: {
@@ -69,7 +113,9 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+    this.getSubject()
+  },
   methods: {
     // 按周/按天切换
     toggleShow(type) {
@@ -120,7 +166,36 @@ export default {
       }
       const everyDay = getDateStr(this.currentWeekStartDate, this.currentWeekEndDate, 0)
       console.log(everyDay, '123')
-      console.log(this.currentWeekStartDate, this.currentWeekEndDate, 'xxxxxx')
+      this.date = `${this.currentWeekStartDate} ~ ${this.currentWeekEndDate}`
+      this.$nextTick(() => {
+        this.$refs.table.fieldLists.forEach((element, index) => {
+          if (index > 1) {
+            const date = everyDay.split(',')[index - 2].slice(5).split('-')
+            element.label = `${element.label.slice(0, 1)}(${this.handleMonthDay(date)})`
+          }
+        })
+
+        console.log(this.currentWeekStartDate, this.currentWeekEndDate, this.$refs.table, 'xxxxxx')
+      })
+    },
+
+    // 处理月日以0开头的
+    handleMonthDay(md) {
+      const str1 = md[0]
+      const str2 = md[1]
+      let newstr1 = ''
+      let newstr2 = ''
+      if (str1.startsWith('0')) {
+        newstr1 = str1.slice(1)
+      } else {
+        newstr1 = str1
+      }
+      if (str2.startsWith('0')) {
+        newstr2 = str2.slice(1)
+      } else {
+        newstr2 = str2
+      }
+      return `${newstr1}.${newstr2}`
     },
 
     // 上周或下周的开始日期与结束日期
@@ -145,7 +220,27 @@ export default {
           this.currentWeekEndDate = moment(day).format('YYYY-MM-DD')
         }
       }
-    }
+    },
+
+    // 中心选择
+    structureChange(data) {
+      this.deptNumber = data.value.length ? data.value[0].deptNumber : ''
+      this.form.deptId = data.value.length ? data.value[0].id : ''
+      this.deptSelectValue = data.value || []
+    },
+
+    getSubject() {
+      // 获取科目
+      QueryAdminSubject().then(res => {
+        this.subList = res.data.map(item => {
+          item.label = item.subjectName
+          item.value = item.id
+          return item
+        })
+      }).catch(() => {})
+    },
+
+    onSubmit() {}
   }
 }
 </script>
@@ -174,4 +269,24 @@ export default {
 /deep/ .el-table__body td {
   border-right-color: #e6e6e6;
 }
+
+.filter-wrap {
+  font-size: 13px;
+  height: 50px;
+  padding: 0 20px;
+  margin-top: 15px;
+}
+
+.demo-form-inline {
+  white-space: nowrap;
+}
+
+.demo-form-inline /deep/ .el-form-item {
+  margin-bottom: 0;
+}
+
+.demo-form-inline /deep/ .el-form-item__content {
+  width: 150px;
+}
+
 </style>

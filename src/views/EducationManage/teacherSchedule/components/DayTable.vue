@@ -19,6 +19,7 @@
         :key="index"
         :prop="item.prop"
         :label="item.label"
+        min-width="100"
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
@@ -40,7 +41,7 @@ export default {
     return {
       border: true,
       loading: false,
-      tableHeight: document.documentElement.clientHeight - 200, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 306, // 表的高度
       list: [
         { name: '李艳', t1: { id: 1 }, t2: { id: 2 }, t3: { id: 2 }, t4: { id: 3 }, t5: { id: 2 }, t6: { id: 4 }, t7: { id: 2 }, t8: { id: 2 }, t9: { id: 2 }, t10: { id: 2 }, t11: { id: 2 }, t12: { id: 2 }, t13: { id: 2 }, t14: { id: 2 }, t15: { id: 2 }}
       ],

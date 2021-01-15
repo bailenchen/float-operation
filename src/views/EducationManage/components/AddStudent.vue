@@ -129,6 +129,12 @@ export default {
       default() {
         return {}
       }
+    },
+    timeList: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   data() {
@@ -169,7 +175,9 @@ export default {
       addStuCustomerId: null,
 
       // 当勾选发生变化时是否执行
-      isExecute: true
+      isExecute: true,
+
+      checkGradeName: ''
     }
   },
   methods: {
@@ -179,6 +187,20 @@ export default {
 
     /** 选中 */
     checkInfos(seldata) {
+      if (this.timeList.length) {
+        const totalList = []
+        for (let index = 0; index < this.timeList.length; index++) {
+          const element = this.timeList[index]
+          totalList.push(...element.students)
+        }
+
+        for (let index = 0; index < totalList.length; index++) {
+          const element = totalList[index]
+          if (element.customerId === seldata.data[0].customerId) {
+            return this.$message.error('添加的学员已存在该班级')
+          }
+        }
+      }
       const { totalNumber } = this.baseInfo
       const list = this.arrayObjRepeat(this.addedList, 'customerId')
       if (totalNumber > list.length) {
@@ -191,10 +213,10 @@ export default {
       }
     },
 
-    // 禁用学科不相等的
+    // 禁用学科、辅导方式、年级不相等的
     selectable(row, index) {
       const { subjectName, coachType, gradeName } = this.baseInfo
-      if (row.subjectName === subjectName && row.coachType === coachType && row.gradeName === gradeName) {
+      if (row.subjectName === subjectName && row.coachType === coachType && this.checkGradeName === gradeName) {
         return true // 可用
       } else {
         return false // 禁用
@@ -208,6 +230,7 @@ export default {
       this.isExecute = false // 此时阻止勾选自动执行
       crmClassContractIndext({ customerId: id }).then(res => {
         const stuInfo = res.data
+        this.checkGradeName = res.data.gradeName
         this.addStuCustomerId = stuInfo.customerId
         this.resetDataByCustomerId(this.addStuCustomerId)
         for (const key in this.stuObj) {

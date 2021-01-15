@@ -12,6 +12,7 @@
       :show="showPopover"
       :radio="radio"
       :cell-type="cellType"
+      :classroom-id="classroomId"
       :selected-data="dataValue"
       :info-params="infoParams"
       @changeCheckout="checkStructure"/>
@@ -75,7 +76,8 @@ export default {
     cellType: {
       type: String,
       default: ''
-    }
+    },
+    classroomId: [Number, String]
   },
   data() {
     return {

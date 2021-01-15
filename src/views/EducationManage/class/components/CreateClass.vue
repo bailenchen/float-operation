@@ -63,6 +63,8 @@
                 v-if="item.type === 'classroom'"
                 :value="classRoom"
                 :radio="radio"
+                :disabled="!form.deptId"
+                :classroom-id="form.deptId"
                 cell-type="classroom"
                 placeholder="选择教室"
                 class="xh-structure-cell"
@@ -180,7 +182,7 @@ export default {
       teacherList: [],
       teacherId: '',
       form: {
-        deptId: '',
+        deptId: null,
         gradeId: null,
         coachType: null,
         subjectId: null,
