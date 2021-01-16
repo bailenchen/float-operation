@@ -19,6 +19,13 @@
         size="mini"
         class="add-customer"
         @click.native="contentClick">添加学员</el-button>
+      <el-button
+        v-if="stuType && !originalTimeList.length"
+        slot="reference"
+        type="primary"
+        size="mini"
+        class="add-customer"
+        @click="disabledAdd">添加学员</el-button>
     </el-popover>
     <div class="crm-create-body" style="margin-top:10px;">
       <div class="content create-sections-content">
@@ -76,6 +83,7 @@
         <!-- 列表信息 -->
         <el-table
           id="crm-table"
+          ref="multipleTables"
           :row-height="40"
           :data="list"
           :height="350"
@@ -130,11 +138,21 @@ export default {
         return {}
       }
     },
+    originalTimeList: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     timeList: {
       type: Array,
       default() {
         return []
       }
+    },
+    stuType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -181,6 +199,11 @@ export default {
     }
   },
   methods: {
+    disabledAdd() {
+      if (!this.originalTimeList.length) {
+        return this.$message.error('没有上课时间段，无法添加学员')
+      }
+    },
     contentClick() {
       this.showSelectView = true
     },
@@ -252,10 +275,56 @@ export default {
     // 勾选同时去重
     handleSelectionChange(data) {
       if (this.isExecute) {
+        if (this.timeList.length) {
+          debugger
+          const tcustomerId = []
+          const totalList = []
+          for (let index = 0; index < this.timeList.length; index++) {
+            const element = this.timeList[index]
+            totalList.push(...element.students)
+          }
+          for (let index = 0; index < data.length; index++) {
+            const element = data[index]
+            for (let indexs = 0; indexs < totalList.length; indexs++) {
+              const item = totalList[indexs]
+              if (element.customerId == item.customerId) {
+                tcustomerId.push(index)
+              }
+            }
+          }
+          const newtcustomerId = Array.from(new Set(tcustomerId))
+          for (let index = 0; index < newtcustomerId.length; index++) {
+            const element = newtcustomerId[index]
+            data.splice(element, 1)
+          }
+
+          if (newtcustomerId.length) {
+            data = this.toggleSelection(data)
+          }
+
+          if (newtcustomerId.length > 1) {
+            return this.$message.error('勾选的数据中包含已存在学员')
+          } else if (newtcustomerId.length == 1) {
+            return this.$message.error('该学员已存在')
+          }
+        }
+
+
         this.resetDataByCustomerId(this.addStuCustomerId)
         this.addedList.push(...data)
         this.addedList = this.arrayObjRepeat(this.addedList, 'rId')
         this.sendData()
+      }
+    },
+
+    // 校正勾选时间段
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTables.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTables.clearSelection()
       }
     },
 
@@ -324,4 +393,5 @@ export default {
     word-break: break-all;
   }
 }
+
 </style>

@@ -51,6 +51,16 @@
           :formatter="fieldFormatter"
           sortable="custom"
           show-overflow-tooltip/>
+        <el-table-column fixed="right" width="90" align="center" label="课时确认">
+          <template slot-scope="scope">
+            <div :class="{'green': scope.row.classConfirmationType === '确认' }" style="color:red;">{{ scope.row.classConfirmationType }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" width="90" align="center" label="考勤">
+          <template slot-scope="scope">
+            <div>{{ scope.row.classStatusType }}</div>
+          </template>
+        </el-table-column>
         <el-table-column/>
       </el-table>
       <div class="p-contianer">
@@ -92,4 +102,8 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../customermanagement/styles/table.scss';
+
+.green {
+  color: #67c23a !important;
+}
 </style>

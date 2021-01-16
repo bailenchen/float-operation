@@ -139,7 +139,7 @@ export default {
   data() {
     return {
       loading: false,
-      radio: false,
+      radio: true,
       datalist: [
         { prop: 'deptId', label: '校区', type: 'dept' },
         { prop: 'coachType', label: '辅导方式', type: 'select' },

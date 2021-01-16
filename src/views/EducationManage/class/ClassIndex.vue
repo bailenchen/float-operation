@@ -50,7 +50,7 @@
           :label="item.label"
           :width="item.width"
           :formatter="fieldFormatter"
-          sortable="custom"
+          :sortable="item.prop != 'isCourse'"
           show-overflow-tooltip/>
         <el-table-column/>
       </el-table>

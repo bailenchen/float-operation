@@ -46,6 +46,7 @@
             <div class="content create-sections-content">
               <el-table
                 id="crm-table"
+                ref="multipleTable"
                 :row-height="40"
                 :data="list"
                 :height="350"
@@ -85,7 +86,9 @@
         <create-sections title="学员名称" class="student-wrap">
           <add-student
             :base-info="selectionList[0]"
-            :time-list="list"
+            :time-list="checkList"
+            :original-time-list="list"
+            :stu-type="markTime"
             @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>
@@ -161,6 +164,7 @@ export default {
         { prop: 'maxs', label: '实际学员/最大人数', width: 170 }
       ],
       checkList: [],
+      markTime: '',
 
       // 已经添加的数据
       addedList: []
@@ -226,6 +230,9 @@ export default {
             item.maxs = `${item.actual}/${item.totalNumber}`
             return item.actual !== item.totalNumber
           })
+          if (!this.list.length) {
+            this.markTime = 'notime'
+          }
           this.selectionList[0].totalNumber = Math.min(...totalNumber)
         }
         this.loading = false
@@ -259,16 +266,41 @@ export default {
 
     // 勾选
     handleSelectionChange(data) {
-      const sub = []
-      this.checkList = data.map((item, index) => {
-        if (item.actual === item.totalNumber) {
-          sub.push(index)
+      if (this.addedList.length) {
+        const tcustomerId = []
+        for (let index = 0; index < data.length; index++) {
+          const element = data[index]
+          for (let indexs = 0; indexs < this.addedList.length; indexs++) {
+            const item = this.addedList[indexs]
+            if (element.customerId == item.customerId) {
+              tcustomerId.push(index)
+            }
+          }
         }
-      })
-      // for (let index = 0; index < sub.length; index++) {
-      //   this.checkList.splice(index, 1)
-      // }
+
+        for (let index = 0; index < tcustomerId.length; index++) {
+          const element = tcustomerId[index]
+          data.splice(element, 1)
+        }
+        data = this.toggleSelection(data)
+        if (tcustomerId) {
+          this.$message.error('该学员已经添加')
+        }
+      }
+      this.checkList = data
+
       console.log(this.checkList, 'xxx')
+    },
+
+    // 校正勾选时间段
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
     },
 
     /**
@@ -300,6 +332,12 @@ export default {
       // 班级中的时间段
       const timeLists = []
       if (this.crmType == 'class') {
+        if (!this.checkList.length) {
+          return this.$message.error('请勾选上课时间段')
+        }
+        if (!this.addedList.length) {
+          return this.$message.error('请添加学员')
+        }
         this.checkList.forEach(item => {
           timeLists.push({
             timeId: item.timeId,

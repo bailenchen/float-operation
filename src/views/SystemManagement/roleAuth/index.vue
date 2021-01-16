@@ -608,7 +608,7 @@ export default {
      */
     getRoleRulesInfo() {
       if (this.roleActive && this.ruleMenuList.length) {
-        if (this.pid == 2) {
+        if (this.pid == 2 || this.pid == 9) {
           const lastItem = this.ruleMenuList[this.ruleMenuList.length - 1]
           if (lastItem.type != 'data') {
             this.ruleMenuList.push({

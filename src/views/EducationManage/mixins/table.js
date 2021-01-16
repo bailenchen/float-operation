@@ -187,9 +187,7 @@ export default {
           { prop: 'subjectTeacherName', label: '学科老师', width: 100 },
           { prop: 'classTime', label: '上课日期', width: 100 },
           { prop: 'timeSlot', label: '上课时段', width: 100 },
-          { prop: 'status', label: '总课次/已确认', width: 130 },
-          { prop: 'classStatusType', label: '考勤', width: 80 },
-          { prop: 'classConfirmationType', label: '课时确认', width: 100 }
+          { prop: 'status', label: '总课次/已确认', width: 130 }
         ]
       }
 
