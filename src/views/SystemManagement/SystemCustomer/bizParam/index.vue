@@ -99,10 +99,10 @@ export default {
         { label: 'LEADS承诺到访提醒设置', key: 'leadsVisit' },
         { label: '编号规则设置', key: 'SerialNumberSet' },
         { label: '自定义列表设置', key: 'FieldListSet' },
-        { label: '数据字典', key: 'DataDictionarySet' }
+        { label: '数据字典', key: 'DataDictionarySet' },
         // { label: '学员预警规则设置', key: 'StudentWarningSet' },
-        // { label: '个人账户认证', key: 'PersonAccountSet' },
-        // { label: '机构认证', key: 'OrganizationSet' },
+        { label: '个人账户认证', key: 'PersonAccountSet' },
+        { label: '机构认证', key: 'OrganizationSet' }
         // { label: '人脸考勤设备清单', key: 'DFRASSet' }
       ],
       menuIndex: 'ChannelCategorySet',

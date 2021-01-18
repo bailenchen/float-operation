@@ -112,32 +112,32 @@ export default [
       }
     }]
   },
-  {
-    ...layout({
-      permissions: ['crm', 'visit']
-    }),
-    children: [{
-      path: 'visit',
-      component: () => import('@/views/customermanagement/visit/VisitIndex'),
-      meta: {
-        title: '学员回访',
-        icon: 'house'
-      }
-    }]
-  },
-  {
-    ...layout({
-      permissions: ['crm', 'insideUser']
-    }),
-    children: [{
-      path: 'student-warning',
-      component: () => import('@/views/customermanagement/warning'),
-      meta: {
-        title: '学员预警',
-        icon: 'bell'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'visit']
+  //   }),
+  //   children: [{
+  //     path: 'visit',
+  //     component: () => import('@/views/customermanagement/visit/VisitIndex'),
+  //     meta: {
+  //       title: '学员回访',
+  //       icon: 'house'
+  //     }
+  //   }]
+  // },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'insideUser']
+  //   }),
+  //   children: [{
+  //     path: 'student-warning',
+  //     component: () => import('@/views/customermanagement/warning'),
+  //     meta: {
+  //       title: '学员预警',
+  //       icon: 'bell'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
       permissions: ['crm', 'insideUser']
