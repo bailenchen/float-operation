@@ -2590,9 +2590,6 @@ export default {
      * item 当行数据源
      */
     getItemRulesArrayFromItem(item) {
-      // var validateMultiple = (rule, value, callback) => {
-      //   console.log('校验多选')
-      // }
       var tempList = []
       if (!this.getItemIsCanEdit(item)) {
         return tempList
