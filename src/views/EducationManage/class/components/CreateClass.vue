@@ -205,7 +205,9 @@ export default {
       // name
       deptName: '',
       gradeName: '',
-      subjectName: ''
+      subjectName: '',
+
+      totalNumber: null
     }
   },
   computed: {
@@ -235,8 +237,10 @@ export default {
         classroomName,
         classType,
         className,
-        remarks
+        remarks,
+        totalNumber
       } = this.selectionList[0]
+      this.totalNumber = totalNumber
       this.deptSelectValue = [{
         id: deptId,
         name: deptName
@@ -321,6 +325,11 @@ export default {
 
     fieldChange(data, name) {
       if (name == 'coachType') {
+        this.option.coachType.forEach(item => {
+          if (data === item.value) {
+            this.totalNumber = item.standby
+          }
+        })
         this.queryClassType(data)
       } else if (name == 'subjectId') {
         this.option.subjectId.forEach(item => {
@@ -394,6 +403,7 @@ export default {
           this.loading = true
           const params = {
             entity: {
+              totalNumber: this.totalNumber,
               ...this.form
             }
           }
