@@ -1385,8 +1385,6 @@ export default {
             'change_seas'
           ])
         } else {
-          console.log('从store中取出权限，当有这个权限时展示')
-          console.log(this.crm.customer)
           const items = [
             'assignHeadTeacher',
             'transfer',
@@ -1419,11 +1417,11 @@ export default {
         }
       } else if (this.crmType == 'student') {
         return this.forSelectionHandleItems(handleInfos, [
-          'change_dept',
-          'transfer',
-          'export',
-          'delete',
-          'facialPhoto'
+          // 'change_dept',
+          // 'transfer',
+          // 'export',
+          // 'delete',
+          // 'facialPhoto'
         ])
       } else if (this.crmType == 'capitalAccount') {
         return this.forSelectionHandleItems(handleInfos, [

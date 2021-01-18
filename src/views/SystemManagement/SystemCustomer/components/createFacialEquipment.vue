@@ -155,7 +155,8 @@ export default {
           }
           sysConfigFacialEquipmentSaveAPI(params).then(res => {
             this.loading = false
-            this.$emit('hiden-view')
+            // this.$emit('hiden-view')
+            this.$emit('save')
           }).catch(() => {
             this.loading = false
           })

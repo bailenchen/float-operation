@@ -79,7 +79,8 @@
     <create-facial-equipment
       v-if="showHandleView"
       :handle="rowInfo"
-      @hiden-view="showHandleView=false" />
+      @hiden-view="showHandleView=false"
+      @save="saveHandle" />
   </div>
 </template>
 
@@ -193,6 +194,10 @@ export default {
         this.$message.success('删除成功')
         this.getDataList()
       }).catch(() => {})
+    },
+    saveHandle() {
+      this.showHandleView = false
+      this.getDataList()
     }
   }
 }
