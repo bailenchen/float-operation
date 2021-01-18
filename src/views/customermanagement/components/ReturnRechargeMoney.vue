@@ -18,6 +18,7 @@
       :data="list"
       :height="tableHeight"
       :cell-class-name="cellClassName"
+      resizable
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -46,7 +47,8 @@
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
-import { queryRechargeListAPI } from '@/api/customermanagement/contract'
+// import { queryRechargeListAPI } from '@/api/customermanagement/contract'
+import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
 // import { crmBusinessQueryContract } from '@/api/customermanagement/business'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { separator } from '@/filters/vue-numeral-filter/filters'
@@ -102,44 +104,49 @@ export default {
   mounted() {
     this.getDetail()
   },
-  activated: function() {},
-  deactivated: function() {},
   methods: {
     getFieldList() {
       this.fieldList.push({
-        prop: 'number',
-        width: '200',
+        prop: 'num',
+        width: '400',
         label: '合同充值返还编号'
       })
-      this.fieldList.push({ prop: 'num', width: '200', label: '学员编号' })
+      this.fieldList.push({ prop: 'leadsNumber', width: '200', label: '学员编号' })
       this.fieldList.push({
         prop: 'customerName',
-        width: '200',
+        width: '350',
         label: '学员姓名'
       })
-      this.fieldList.push({ prop: 'money', width: '200', label: '合同充值返还日期' })
+      this.fieldList.push({ prop: 'refundTime', width: '400', label: '合同充值返还日期' })
       this.fieldList.push({
-        prop: 'startTime',
-        width: '200',
+        prop: 'money',
+        width: '300',
         label: '合同充值返还金额（元）'
       })
-
-      this.fieldList.push({ prop: 'endTime', width: '200', label: '合同充值返还方式' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '备注' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '课程顾问' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '更新时间' })
-      this.fieldList.push({ prop: 'checkStatus', width: '200', label: '创建人' })
+      this.fieldList.push({ prop: 'refundWayName', width: '200', label: '合同充值返还方式' })
+      this.fieldList.push({ prop: 'remarks', width: '200', label: '备注' })
+      this.fieldList.push({ prop: 'ownerUserName', width: '200', label: '课程顾问' })
+      this.fieldList.push({ prop: 'updateTime', width: '200', label: '更新时间' })
+      this.fieldList.push({ prop: 'createUserName', width: '200', label: '创建人' })
     },
 
     getDetail() {
       this.loading = true
       console.log(this.crmType, '*----')
       const request = {
-        contract: queryRechargeListAPI,
-        student: queryRechargeListAPI
+        contract: crmRefundQueryPageListAPI,
+        student: crmRefundQueryPageListAPI
       }[this.crmType]
-      const params = {}
-      params[this.crmType + 'Id'] = this.id
+      const params = {
+        searchJson: {}
+      }
+
+      if (this.crmType == 'student') {
+        params.searchJson.customerId = this.id
+      } else {
+        params.searchJson[this.crmType + 'Id'] = this.id
+      }
+
       request(params)
         .then(res => {
           if (this.fieldList.length == 0) {
@@ -147,7 +154,7 @@ export default {
           }
           this.nopermission = false
           this.loading = false
-          this.list = res.data
+          this.list = res.data.list
         })
         .catch(data => {
           if (data.code == 102) {

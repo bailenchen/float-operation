@@ -186,11 +186,16 @@ export default {
     },
     handleCurrentChange(page) {
       this.currentPage = page
+      if (Object.keys(this.formInline).length) {
+        this.getDataList('search')
+        return
+      }
       this.getDataList()
     },
 
     // 查询
     queryList() {
+      this.currentPage = 1
       this.getDataList('search')
     },
 

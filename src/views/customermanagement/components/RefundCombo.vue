@@ -171,6 +171,9 @@ export default {
         this.capital = this.action.isInteriorRefund ? null : this.capital
         if (!val.contracId) {
           this.tableData = null
+          this.product = null
+          this.money = ''
+          this.capital = null
           this.sendData(false)
           return
         }

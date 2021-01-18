@@ -534,8 +534,8 @@ export default {
   .b-cell-value {
     font-size: 13px;
     color: #333;
-    line-height: 1.2;
-    white-space: pre-wrap;
+    // line-height: 1.2;
+    // white-space: pre-wrap;
     word-wrap: break-word;
     word-break: break-all;
   }

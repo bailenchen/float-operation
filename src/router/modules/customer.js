@@ -56,8 +56,6 @@ export default [
   },
 
 
-
-
   {
     ...layout({
       permissions: ['crm', 'student']

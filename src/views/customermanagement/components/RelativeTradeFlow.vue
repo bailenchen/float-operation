@@ -350,6 +350,24 @@ export default {
         this.clickField = column.property
         this.contractId = row.waterId
         this.showFullDetail = true
+      } else if (column.property == 'receipt') {
+        console.log('查看', row)
+
+        // const name = row.portrait.replace(/.*=(.*)/, function(match, p) {
+        //   return p
+        // })
+        // this.$bus.emit('preview-image-bus', {
+        //   index: 0,
+        //   data: [
+        //     {
+        //       filePath: row.portrait,
+        //       fileType: 'file',
+        //       name: `${name}.jpg`,
+        //       readOnly: 0,
+        //       url: row.portrait
+        //     }
+        //   ]
+        // })
       }
     },
 
@@ -357,7 +375,7 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'leadsNumber' || column.property == 'serialNumber') {
+      if (column.property === 'leadsNumber' || column.property == 'serialNumber' || column.property === 'receipt') {
         if (row.bigDealType === 2) {
           return 'under-line red-font'
         } else if (row.bigDealType === 1) {
