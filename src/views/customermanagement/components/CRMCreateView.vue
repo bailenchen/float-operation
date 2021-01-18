@@ -1118,10 +1118,10 @@ export default {
           // 赋值
           const getValueObj = {
             dept_id: data => {
-              return data.deptIdName ? data.deptIdName : ''
+              return data && data.deptIdName ? data.deptIdName : ''
             },
             owner_user_id: data => {
-              return data.ownerUserName ? data.ownerUserName : ''
+              return data && data.ownerUserName ? data.ownerUserName : ''
             }
           }
 
@@ -1153,17 +1153,27 @@ export default {
             }
 
             // 取消禁用，增加属性
-            if (addRelation.includes(element.key)) {
-              element.disabled = false
-              if (getRelationObj[element.key]) {
-                getRelationObj[element.key](customerItem, element)
+            if (customerItem) {
+              if (addRelation.includes(element.key)) {
+                element.disabled = false
+                if (getRelationObj[element.key]) {
+                  getRelationObj[element.key](customerItem, element)
+                }
+              }
+            } else {
+              if (addRelation.includes(element.key)) {
+                element.disabled = true
+                element.relation = {}
+                element.value = []
               }
             }
           }
         }
         console.log('字段111', item)
         if (item.data.formType === 'contract') {
-          this.actionRefundCombo.contracId = item.value[0].contractId
+          this.actionRefundCombo.contracId = item.value[0] ? item.value[0].contractId : ''
+          console.log('item.value[0]', item.value[0])
+          console.log(this.actionRefundCombo.contracId)
         }
         if (item.data.formType === 'refundCombo') {
           if (this.refundType == 2) return
@@ -1174,9 +1184,7 @@ export default {
           })
         }
         if (item.key === 'money') {
-          console.log('修改')
           this.refundMoney = item.value
-          // this.actionRefundCombo.money = item.value
         }
         if (item.key === 'refund_type') {
           this.crmForm.crmFields.forEach(_item => {
