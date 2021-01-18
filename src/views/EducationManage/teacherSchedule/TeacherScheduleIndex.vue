@@ -36,25 +36,25 @@
           </el-form-item>
           <el-form-item label="日期">
             <el-date-picker
-              v-model="form.xx"
+              v-model="form.time"
               style="width:150px;"
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="选择日期"/>
           </el-form-item>
           <el-form-item label="是否兼职">
-            <el-select v-model="form.region" placeholder="请选择">
+            <el-select v-model="form.isJob" placeholder="请选择">
               <el-option label="是" value="1"/>
               <el-option label="否" value="0"/>
             </el-select>
           </el-form-item>
           <el-form-item label="科目">
-            <el-select v-model="form.regions" placeholder="请选择">
+            <el-select v-model="form.subjectId" placeholder="请选择">
               <el-option v-for="(item,index) in subList" :key="index" :label="item.label" :value="item.value"/>
             </el-select>
           </el-form-item>
           <el-form-item label="教师姓名">
-            <el-input v-model="form.user" placeholder="请输入教师姓名"/>
+            <el-input v-model="form.realname" placeholder="请输入教师姓名"/>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -101,7 +101,9 @@ export default {
       currentWeekStartDate: '',
       currentWeekEndDate: '',
 
-      form: {},
+      form: {
+        time: '2021-1-18'
+      },
       deptSelectValue: [],
       subList: []
     }

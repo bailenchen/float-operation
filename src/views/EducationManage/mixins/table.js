@@ -159,7 +159,6 @@ export default {
         list = [
           { prop: 'deptName', label: '中心', width: 150 },
           { prop: 'classType', label: '班级类型', width: 100 },
-          { prop: 'totalNumber', label: '满班人数', width: 100 },
           { prop: 'className', label: '班级名称', width: 150 },
           { prop: 'classroomName', label: '教室名称', width: 200 },
           { prop: 'gradeName', label: '年级', width: 80 },
@@ -168,8 +167,8 @@ export default {
           { prop: 'classConfirmationName', label: '状态' },
           { prop: 'classTime', label: '上课时间', width: 100 },
           { prop: 'timeSlot', label: '时间段', width: 100 },
-          { prop: 'actualNumber', label: '排课人数', width: 100 },
-          { prop: 'rowNumber', label: '实际上课人数', width: 125 },
+          { prop: 'rowNumber', label: '排课人数', width: 100 },
+          { prop: 'actualNumber', label: '实际上课人数', width: 125 },
           { prop: 'totalNumber', label: '最大上课人数', width: 125 }
         ]
       } else if (this.crmType === 'studentschedule') {

@@ -30,8 +30,18 @@
     <div class="crm-create-body" style="margin-top:10px;">
       <div class="content create-sections-content">
         <!-- 已勾选数据列表 -->
-        <div style="line-height:25px;">已勾选的数据</div>
-        <el-table
+        <div style="line-height:25px;">
+          <span>已添加的学员</span>&nbsp;
+          <el-select v-model="addedListVal" multiple placeholder="请选择">
+            <el-option
+              v-for="(item, index) in addedStuList"
+              :key="index++"
+              :label="item.customerName"
+              :value="item.customerId"/>
+          </el-select>
+        </div>
+
+        <!-- <el-table
           id="crm-table"
           :row-height="40"
           :data="addedList"
@@ -60,7 +70,7 @@
               <el-button @click="deleteAddItem(scope.$index)">删除</el-button>
             </template>
           </el-table-column>
-        </el-table>
+        </el-table> -->
         <!-- 列表顶部信息 -->
         <flexbox
           :gutter="0"
@@ -158,7 +168,10 @@ export default {
   data() {
     return {
       // 已勾选数据
-      addedList: [],
+      addedList: [], // 勾选的合同数据
+      addedListVal: [],
+      addedStuList: [],
+      stuInfo: [], // 当前添加的学员基本信息
 
       stuObj: {
         deptName: '所在校区',
@@ -196,6 +209,7 @@ export default {
       isExecute: true,
 
       checkGradeName: ''
+
     }
   },
   methods: {
@@ -210,6 +224,17 @@ export default {
 
     /** 选中 */
     checkInfos(seldata) {
+      // 对于校区不一致的做出提示
+      const checkList = seldata.data
+      if (checkList.length) {
+        const { deptId } = this.baseInfo
+        for (let index = 0; index < checkList.length; index++) {
+          const element = checkList[index]
+          if (element.deptId != deptId) {
+            return this.$message.error('勾选的数据中含有与该班级中心不一致的学员')
+          }
+        }
+      }
       if (this.timeList.length) {
         const totalList = []
         for (let index = 0; index < this.timeList.length; index++) {
@@ -238,8 +263,8 @@ export default {
 
     // 禁用学科、辅导方式、年级不相等的
     selectable(row, index) {
-      const { subjectName, coachType, gradeName } = this.baseInfo
-      if (row.subjectName === subjectName && row.coachType === coachType && this.checkGradeName === gradeName) {
+      const { subjectName, coachType } = this.baseInfo
+      if (row.subjectName === subjectName && row.coachType === coachType) {
         return true // 可用
       } else {
         return false // 禁用
@@ -253,6 +278,7 @@ export default {
       this.isExecute = false // 此时阻止勾选自动执行
       crmClassContractIndext({ customerId: id }).then(res => {
         const stuInfo = res.data
+        this.stuInfo = stuInfo
         this.checkGradeName = res.data.gradeName
         this.addStuCustomerId = stuInfo.customerId
         this.resetDataByCustomerId(this.addStuCustomerId)
@@ -276,39 +302,39 @@ export default {
     handleSelectionChange(data) {
       if (this.isExecute) {
         if (this.timeList.length) {
-          debugger
-          const tcustomerId = []
-          const totalList = []
-          for (let index = 0; index < this.timeList.length; index++) {
-            const element = this.timeList[index]
-            totalList.push(...element.students)
-          }
+          const filterData = []
+          const useData = []
           for (let index = 0; index < data.length; index++) {
             const element = data[index]
-            for (let indexs = 0; indexs < totalList.length; indexs++) {
-              const item = totalList[indexs]
-              if (element.customerId == item.customerId) {
-                tcustomerId.push(index)
+            for (let indexs = 0; indexs < this.timeList.length; indexs++) {
+              const item = this.timeList[indexs]
+              if (item.customerId.includes(element.customerId)) {
+                filterData.push(element)
+              } else {
+                useData.push(element)
               }
             }
           }
-          const newtcustomerId = Array.from(new Set(tcustomerId))
-          for (let index = 0; index < newtcustomerId.length; index++) {
-            const element = newtcustomerId[index]
-            data.splice(element, 1)
+          if (filterData.length) {
+            data = this.toggleSelection(filterData)
           }
 
-          if (newtcustomerId.length) {
-            data = this.toggleSelection(data)
-          }
-
-          if (newtcustomerId.length > 1) {
+          if (filterData.length > 1) {
+            data = useData
             return this.$message.error('勾选的数据中包含已存在学员')
-          } else if (newtcustomerId.length == 1) {
+          } else if (filterData.length == 1) {
             return this.$message.error('该学员已存在')
           }
         }
+        const { customerId, customerName } = this.stuInfo
+        debugger
+        this.addedStuList.push({
+          customerId, customerName
+        })
 
+        if (!this.addedListVal.includes(customerId)) {
+          this.addedListVal.push(customerId)
+        }
 
         this.resetDataByCustomerId(this.addStuCustomerId)
         this.addedList.push(...data)
@@ -318,9 +344,9 @@ export default {
     },
 
     // 校正勾选时间段
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
+    toggleSelection(filterData) {
+      if (filterData.length) {
+        filterData.forEach(row => {
           this.$refs.multipleTables.toggleRowSelection(row)
         })
       } else {
@@ -357,7 +383,6 @@ export default {
       this.addedList = this.addedList.filter(item => {
         return item.customerId !== id
       })
-      console.log(this.addedList, 'hhhhhh')
     }
   }
 }

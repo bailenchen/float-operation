@@ -74,6 +74,7 @@
                 v-if="item.type == 'user'"
                 :radio="radio"
                 :teacher-id="teacherId"
+                :disabled="!form.classroomId"
                 :value="teacherList"
                 info-type="relativeteacher"
                 @value-change="userChange"/>
@@ -105,6 +106,7 @@ import {
   XhUserCell
 } from '@/components/CreateCom'
 import {
+  QueryAdminGrade,
   QueryCoachingMethods // 辅导方式
 } from '@/api/systemManagement/params'
 
@@ -146,8 +148,8 @@ export default {
         { prop: 'classType', label: '班级类型', type: 'select' },
         { prop: 'classroomId', label: '教室', type: 'classroom' },
         { prop: 'subjectTeacherId', label: '学科老师', type: 'user' },
-        { prop: 'gradeId', label: '年级', type: 'select' },
         { prop: 'subjectId', label: '科目', type: 'sub' },
+        { prop: 'gradeId', label: '年级', type: 'select' },
         { prop: 'className', label: '班级名称', type: 'text' },
         { prop: 'remarks', label: '备注', type: 'tear' }
       ],
@@ -222,7 +224,7 @@ export default {
   },
   created() {
     // this.getSubject()
-    // this.getGradeSelect()
+    this.getGradeSelect()
     this.getWaySelect()
     if (this.type == 'edit') {
       const {
@@ -285,13 +287,31 @@ export default {
       this.deptSelectValue = data.value || []
       this.deptName = data.value.length ? data.value[0].deptNumber : ''
       this.paddingClassName()
+
+      // 改变中心时重置相关项
+      this.form.classroomId = ''
+      this.classRoom = []
+      this.teacherId = ''
+      this.form.subjectTeacherId = ''
+      this.teacherList = []
+
+      this.option.subjectId = []
+      this.form.subjectId = null
+      this.form.className = ''
+      this.subjectName = ''
     },
     // 教室选择
     classroomChange(data) {
-      console.log(data, 'vvvvv')
       this.form.classroomId = data.value.length ? data.value[0].classroomId : ''
       this.classRoom = data.value || []
       this.teacherId = data.value.length ? data.value[0].relatedTeachers : ''
+
+      // 改变教室重置相关项
+      this.form.subjectTeacherId = ''
+      this.teacherList = []
+      this.option.subjectId = []
+      this.form.subjectId = null
+      this.subjectName = ''
     },
 
     /**
@@ -299,6 +319,10 @@ export default {
      */
     userChange(data) {
       this.form.subjectTeacherId = data.value.length ? data.value[0].userId : ''
+      // 先重置学科与科目
+      this.option.subjectId = []
+      this.form.subjectId = null
+      this.subjectName = ''
       if (this.form.subjectTeacherId) {
         this.querySubjectGrade(this.form.subjectTeacherId)
       }
@@ -307,12 +331,7 @@ export default {
     // 同时获取学科与年级
     querySubjectGrade(id) {
       crmClassQuerySubjectGrade({ userId: id }).then(res => {
-        const { grades, subjects } = res.data
-        this.option.gradeId = grades.map(item => {
-          item.label = item.gradeName
-          item.value = item.id
-          return item
-        })
+        const { subjects } = res.data
         this.option.subjectId = subjects.map(item => {
           item.label = item.subjectName
           item.value = item.id
@@ -335,13 +354,6 @@ export default {
         this.option.subjectId.forEach(item => {
           if (item.value == data) {
             this.subjectName = item.label
-          }
-        })
-        this.paddingClassName()
-      } else if (name == 'gradeId') {
-        this.option.gradeId.forEach(item => {
-          if (item.value == data) {
-            this.gradeName = item.label
           }
         })
         this.paddingClassName()
@@ -375,6 +387,19 @@ export default {
       }).catch((err) => {
         this.loading = false
         console.log(err)
+      })
+    },
+
+    getGradeSelect() {
+      this.loading = true
+      QueryAdminGrade().then(res => {
+        this.option.gradeId = res.data.map(item => {
+          item.label = item.gradeName
+          item.value = item.id
+          return item
+        })
+      }).catch(() => {
+        this.loading = false
       })
     },
 

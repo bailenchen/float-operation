@@ -23,8 +23,9 @@
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
-          <span v-else>{{ scope.row[item.prop].id }}</span>
+          <span v-if="item.prop == 'realname'">{{ scope.row.realname }}</span>
+          <!-- <span v-else>{{ scope.row[item.prop].batchId }}</span> -->
+          <span v-else>{{ scope.row[item.prop].subjectName }}</span>
 
 
         </template>
@@ -34,6 +35,7 @@
 </template>
 
 <script>
+import { crmTeacherSchduleQueryByDay } from '@/api/educationmanage/teacherSchedule'
 export default {
   // 按天显示--行合并
   name: 'DayTable',
@@ -43,10 +45,27 @@ export default {
       loading: false,
       tableHeight: document.documentElement.clientHeight - 306, // 表的高度
       list: [
-        { name: '李艳', t1: { id: 1 }, t2: { id: 2 }, t3: { id: 2 }, t4: { id: 3 }, t5: { id: 2 }, t6: { id: 4 }, t7: { id: 2 }, t8: { id: 2 }, t9: { id: 2 }, t10: { id: 2 }, t11: { id: 2 }, t12: { id: 2 }, t13: { id: 2 }, t14: { id: 2 }, t15: { id: 2 }}
+        { realname: '李艳', t1: { id: 1 }, t2: { id: 2 }, t3: { id: 2 }, t4: { id: 3 }, t5: { id: 2 }, t6: { id: 4 }, t7: { id: 2 }, t8: { id: 2 }, t9: { id: 2 }, t10: { id: 2 }, t11: { id: 2 }, t12: { id: 2 }, t13: { id: 2 }, t14: { id: 2 }, t15: { id: 2 }}
       ],
+      fieldTime: {
+        t1: '08:00:00',
+        t2: '09:00:00',
+        t3: '10:00:00',
+        t4: '11:00:00',
+        t5: '12:00:00',
+        t6: '13:00:00',
+        t7: '14:00:00',
+        t8: '15:00:00',
+        t9: '16:00:00',
+        t10: '17:00:00',
+        t11: '18:00:00',
+        t12: '19:00:00',
+        t13: '20:00:00',
+        t14: '补1小时A',
+        t15: '补1小时B'
+      },
       fieldLists: [
-        { prop: 'name', label: ' ' },
+        { prop: 'realname', label: ' ' },
         { prop: 't1', label: '08:00-9:00' },
         { prop: 't2', label: '09:00-10:00' },
         { prop: 't3', label: '10:00-11:00' },
@@ -75,28 +94,64 @@ export default {
   methods: {
     getWillMergeColumns() {
       // 源数据
-      const list = this.list[0]
-      // 对象所有的key集合
-      const keyList = Object.keys(list)
-      keyList.forEach((key, index) => {
-        if (key == 'name') {
-          this.arrColumn.push(1)
-          this.position = 0
-        } else {
-          if (key == 't1') {
-            this.arrColumn.push(1)
-            this.position = 0
-          } else {
-            if (list[key].id == list[keyList[index - 1]].id) {
-              this.arrColumn[this.position] += 1
-              this.arrColumn.push(0)
-            } else {
+      // const list = this.list[0]
+      const params = {
+        types: 1,
+        time: '2021-1-18',
+        ...this.form
+      }
+      crmTeacherSchduleQueryByDay(params).then(res => {
+        this.list = this.handleResData(res.data)
+        const list = this.list
+        console.log(list, 'xbbbb')
+        // 对象所有的key集合
+        for (let indexs = 0; indexs < list.length; indexs++) {
+          const element = list[indexs]
+          const keyList = Object.keys(element)
+          keyList.forEach((key, index) => {
+            if (key == 'realname') {
               this.arrColumn.push(1)
-              this.position = index
+              this.position = 0
+            } else {
+              if (key == 't1') {
+                this.arrColumn.push(1)
+                this.position = 0
+              } else {
+                if (element[key].batchId && element[keyList[index - 1]].batchId && (element[key].batchId == element[keyList[index - 1]].batchId)) {
+                  this.arrColumn[this.position] += 1
+                  this.arrColumn.push(0)
+                } else {
+                  this.arrColumn.push(1)
+                  this.position = index
+                }
+              }
+            }
+          })
+        }
+      }).catch(() => {})
+    },
+
+    handleResData(list) {
+      const newList = []
+      for (let indexs = 0; indexs < list.length; indexs++) {
+        const item = list[indexs]
+        const newitem = { realname: item.realname }
+        const keys = Object.keys(this.fieldTime)
+        for (let indexs = 0; indexs < keys.length; indexs++) {
+          const key = keys[indexs]
+          const elements = this.fieldTime[key]
+          for (let sindex = 0; sindex < item.data.length; sindex++) {
+            const selement = item.data[sindex]
+            if (elements == selement.timeSlotStart) {
+              newitem[key] = selement
+            } else {
+              newitem[key] = {}
             }
           }
         }
-      })
+        newList.push(newitem)
+      }
+      return newList
     },
     mergeRow({ row, column, rowIndex, columnIndex }) {
       // 按天实行行合并

@@ -217,8 +217,10 @@ export default {
           this.list = data.list.filter((item, index) => {
             item.num = index + 1
             item.dateTime = item.classTime ? `${item.classTime.slice(0, 10)} ${item.timeSlotStart.slice(0, 5)}~${item.timeSlotEnd.slice(0, 5)}` : ''
+            item.customerId = []
             let actual = 0
             item.customerName = item.students.map(ite => {
+              item.customerId.push(ite.customerId)
               if (ite.classStatus === 1) {
                 actual++
               }
@@ -267,35 +269,42 @@ export default {
     // 勾选
     handleSelectionChange(data) {
       if (this.addedList.length) {
-        const tcustomerId = []
+        const filterData = []
+        const useData = []
         for (let index = 0; index < data.length; index++) {
           const element = data[index]
           for (let indexs = 0; indexs < this.addedList.length; indexs++) {
             const item = this.addedList[indexs]
-            if (element.customerId == item.customerId) {
-              tcustomerId.push(index)
+            console.log(element, item.customerId)
+            if (element.customerId.includes(item.customerId)) {
+              filterData.push(element)
+            } else {
+              useData.push(element)
             }
           }
         }
+        if (filterData.length) {
+          this.toggleSelection(filterData)
+        }
+        if (filterData.length > 1) {
+          return this.$message.error('勾选的数据中包含已存在学员')
+        } else if (filterData.length == 1) {
+          return this.$message.error('该学员已存在')
+        }
 
-        for (let index = 0; index < tcustomerId.length; index++) {
-          const element = tcustomerId[index]
-          data.splice(element, 1)
-        }
-        data = this.toggleSelection(data)
-        if (tcustomerId) {
-          this.$message.error('该学员已经添加')
-        }
+        this.checkList = useData
+      } else {
+        this.checkList = data
       }
-      this.checkList = data
+
 
       console.log(this.checkList, 'xxx')
     },
 
     // 校正勾选时间段
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
+    toggleSelection(filterData) {
+      if (filterData.length) {
+        filterData.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
         })
       } else {
@@ -338,6 +347,7 @@ export default {
         if (!this.addedList.length) {
           return this.$message.error('请添加学员')
         }
+        debugger
         this.checkList.forEach(item => {
           timeLists.push({
             timeId: item.timeId,

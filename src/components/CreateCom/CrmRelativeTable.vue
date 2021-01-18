@@ -311,6 +311,8 @@ export default {
         return [
           { name: '学员姓名', field: 'customerName', formType: 'customer' },
           { name: '学员编号', field: 'leadsNumber', formType: 'customer' },
+          { name: '校区', field: 'deptIdName', formType: 'text' },
+          { name: '年级', field: 'gradeName', formType: 'text' },
           // { name: '邮箱', field: 'email', formType: 'text' },
           { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
           { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
