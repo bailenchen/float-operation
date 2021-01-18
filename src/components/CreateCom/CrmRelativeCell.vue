@@ -126,6 +126,17 @@ export default {
     }
   },
   watch: {
+    value: function(val, old) {
+      console.log('监听', val, old)
+      // this.checkInfos()
+
+      if (val.length == 0 && old.length !== 0) {
+        this.$emit('value-change', {
+          index: this.index,
+          value: []
+        })
+      }
+    },
     relation: function(val) {
       if (val.moduleType) {
         if (val.moduleType == 'refundMoney') {

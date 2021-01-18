@@ -247,16 +247,13 @@ export default {
         } else {
           this.isCreate = !this.isCreate
         }
-        // if (this.crmType === 'contract' && action === 'present') {
-        //   this.createActionInfo = {
-        //     type: 'save',
-        //     present: true,
-        //     userInfo: {
-        //       userId: this.userInfo.userId,
-        //       realname: this.userInfo.realname
-        //     }
-        //   }
-        // }
+
+        if (this.crmType === 'visit') {
+          this.createActionInfo.userInfo = {
+            userId: this.userInfo.userId,
+            realname: this.userInfo.realname
+          }
+        }
       }
     },
     inputChange() {

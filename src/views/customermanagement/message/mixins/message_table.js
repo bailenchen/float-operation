@@ -17,9 +17,11 @@ import {
   crmMessageCheckDisputedAPI,
   crmContractAllocListAPI,
   crmCheckWaterListAPI,
-  crmRefoundListAPI
+  crmRefoundListAPI,
+  crmMessagevisitNumAPI
 } from '@/api/customermanagement/message'
 import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
+// import { crmReturnVisitIndexAPI } from '@/api/customermanagement/visit'
 import { queryDictionaryField } from '@/api/common'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
@@ -292,7 +294,8 @@ export default {
         'performanceDistributions': crmContractAllocListAPI,
         'checkWater': crmCheckWaterListAPI,
         'refundNumber': crmRefoundListAPI,
-        'checkRefund': crmRefundQueryPageListAPI
+        'checkRefund': crmRefundQueryPageListAPI,
+        'visitNum': crmMessagevisitNumAPI
       }[this.infoType]
     },
 
@@ -349,6 +352,9 @@ export default {
       let keytype = this.crmType == 'globalAlloc' ? 28 : crmTypeModel[this.crmType]
       if (this.crmType == 'refound') {
         keytype = 23
+      }
+      if (this.crmType == 'student') {
+        keytype = 19
       }
 
       filedGetTableField({

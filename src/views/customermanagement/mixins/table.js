@@ -394,7 +394,6 @@ export default {
 
                 // 针对套餐页面调整
                 if (this.crmType == 'productSetMeal') {
-                  console.log('针对套餐页面调整', element.fieldName)
                   if (['name', 'warningLine', 'status', 'purchaseCycle'].includes(element.fieldName)) {
                     width = {
                       name: 150,
@@ -411,14 +410,13 @@ export default {
                 moneyFields.push(element.fieldName || '')
               }
 
-
-              if (element.formType == 'provinces') {
+              if (element.formType == 'provinces' || element.formType == 'multiple_provinces') {
                 dictionaryArr.push(element)
               }
 
               fieldList.push({
                 prop: element.fieldName,
-                provinces: element.formType == 'provinces', // 数据字典
+                provinces: ['provinces', 'multiple_provinces'].includes(element.formType), // 数据字典
                 label: element.name,
                 width: width
               })
@@ -441,8 +439,6 @@ export default {
 
     getDictionaries(arr) {
       console.log('字典数组', arr)
-      // var num = 0
-      // const obj = {}
       const promiseArr = []
       for (let index = 0; index < arr.length; index++) {
         const element = arr[index]
@@ -574,6 +570,36 @@ export default {
             9: '家长审核中',
             10: '家长拒绝'
           }[row[column.property]]
+        }
+      }
+
+      if (this.crmType == 'visit') {
+        if (['keyWord', 'communicationMode', 'typeOfReturnVisit'].includes(column.property)) {
+          let res = ''
+          for (let index = 0; index < this.dictionaries[column.property].length; index++) {
+            const element = this.dictionaries[column.property][index]
+            if (row[column.property] == element.dictionaryId) {
+              res = element.dictionaryName
+              break
+            }
+          }
+          return res
+        }
+        if (column.property === 'projectType') {
+          let res = ''
+          const arr = row[column.property].split(',')
+          this.dictionaries[column.property].forEach(item => {
+            for (let index = 0; index < arr.length; index++) {
+              const element = arr[index]
+              if (item.dictionaryId == element) {
+                res += item.dictionaryName + '，'
+              }
+            }
+          })
+          res = res.replace(/(.*)，$/g, function(match, p) {
+            return p
+          })
+          return res
         }
       }
 

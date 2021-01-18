@@ -69,7 +69,8 @@
               align="stretch"
               class="b-cell-b">
               <div class="b-cell-name">{{ item.name }}</div>
-              <div class="b-cell-value can-check" @click="checkModuleDetail(item)">{{ getModuleName(item) }}</div>
+              <!-- <div class="b-cell-value can-check" @click="checkModuleDetail(item)">{{ getModuleName(item) }}</div> -->
+              <div :class="{'can-check': canCheck}" class="b-cell-value" @click="checkModuleDetail(item)">{{ getModuleName(item) }}</div>
             </flexbox>
 
             <flexbox
@@ -208,7 +209,8 @@ export default {
       mapViewInfo: {},
       showFullDetail: false,
       fullDetailId: '',
-      fullDetailType: ''
+      fullDetailType: '',
+      canCheck: true
     }
   },
   computed: {},
@@ -478,6 +480,11 @@ export default {
     },
 
     getModuleName(item) {
+      if (this.crmType == 'visit' && item.formType === 'customer') {
+        this.canCheck = false
+        return this.detail.customerName
+      }
+
       const field = {
         customer: 'customerName',
         business: 'businessName',

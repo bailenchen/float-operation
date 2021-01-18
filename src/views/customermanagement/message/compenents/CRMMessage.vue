@@ -385,7 +385,8 @@ export default {
         'followCustomer',
         'returnVisitRemind',
         'putInPoolRemind',
-        'disputed'
+        'disputed',
+        'visitNum'
       ].includes(this.infoType)
     },
 

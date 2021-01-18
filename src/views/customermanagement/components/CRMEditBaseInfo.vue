@@ -159,7 +159,11 @@
               </div>
             </div>
 
-            <div v-else :class="{'can-check':isModule(item)}" class="form-item__value" @click="checkModuleDetail(item)">{{ getCommonShowValue(item) }}<i v-if="getEditAuth(item)" class="wk wk-edit form-item__edit" @click.stop="editClick(item)" />
+            <div
+              v-else
+              :class="{'can-check':isModule(item)}"
+              class="form-item__value"
+              @click="checkModuleDetail(item)">{{ getCommonShowValue(item) }}<i v-if="getEditAuth(item)" class="wk wk-edit form-item__edit" @click.stop="editClick(item)" />
             </div>
           </template>
         </el-form-item>
@@ -385,6 +389,7 @@ export default {
             const baseList = []
             const systemList = []
             res.data.forEach(item => {
+              console.log('item', item)
               if (item.formType === 'floatnumber') {
                 item.value = separator(item.value)
               }
@@ -554,6 +559,7 @@ export default {
      * 获取非附件类型的展示值
      */
     getCommonShowValue(item) {
+      console.log('getCommonShowValue', item)
       if (this.isModule(item) || this.isSpecialField(item)) {
         return this.getModuleName(item)
       } else if (item.formType === 'single_user') {

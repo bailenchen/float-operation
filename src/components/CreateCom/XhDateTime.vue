@@ -15,7 +15,7 @@ import { getDateFromTimestamp } from '@/utils'
 import moment from 'moment'
 
 export default {
-  name: 'XhInput', // 新建 datetime
+  name: 'XhDateTime', // 新建 datetime
   components: {},
   mixins: [stringMixin],
   props: {
@@ -28,7 +28,15 @@ export default {
     return {}
   },
   computed: {},
-  watch: {},
+  watch: {
+    value: {
+      handler(val) {
+        console.log('监听value')
+        this.dataValue = val
+      },
+      immediate: true
+    }
+  },
   mounted() {
     if (this.value && this.value.toString().length == 10) {
       // 编辑的时候 值是时间戳

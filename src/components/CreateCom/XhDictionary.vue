@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-select v-model="dataValue" placeholder="请选择" style="width: 100%;" @change="handleChange">
+    <el-select v-model="dataValue" :multiple="multiple" placeholder="请选择" style="width: 100%;" @change="handleChange">
       <el-option
         v-for="(item,index) in options"
         :key="index"
@@ -21,12 +21,16 @@ export default {
     /** 包含数据源 */
     item: Object,
     dictionaryField: String,
+    multiple: {
+      type: Boolean,
+      default: false
+    },
     disabled: {
       type: Boolean,
       default: false
     },
     value: {
-      type: [String, Number],
+      type: [String, Number, Array],
       default: ''
     }
   },
@@ -45,12 +49,15 @@ export default {
     }
   },
   created() {
+    if (this.multiple && !this.value) {
+      this.dataValue = [] // 把v-model绑定的值改为数组
+      // if (this.value) this.dataValue = this.value
+    }
+
     const params = {
-      // dictionaryField: 'refund_way_id'
       dictionaryField: this.dictionaryField
     }
     queryDictionaryField(params).then(res => {
-      console.log('res', res)
       this.options = res.data
     }).catch(() => {})
   },

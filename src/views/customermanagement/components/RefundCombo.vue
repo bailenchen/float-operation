@@ -168,9 +168,13 @@ export default {
   watch: {
     action: {
       handler(val) {
+        console.log('监听action')
         this.capital = this.action.isInteriorRefund ? null : this.capital
         if (!val.contracId) {
           this.tableData = null
+          this.product = null
+          this.money = ''
+          this.capital = null
           this.sendData(false)
           return
         }

@@ -310,3 +310,15 @@ export function crmRefoundListAPI(data) {
   })
 }
 
+
+/**
+ * 今日待回访的学员
+ * @param data
+ */
+export function crmMessagevisitNumAPI(data) {
+  return request({
+    url: 'CrmBackLog/visitNum',
+    method: 'post',
+    data: data
+  })
+}

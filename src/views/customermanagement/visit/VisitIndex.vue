@@ -6,7 +6,7 @@
       :show-search="false"
       title="学员回访"
       placeholder="请输入学员名称"
-      main-title="新建回访"
+      main-title="新建学员回访"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos"/>

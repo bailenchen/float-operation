@@ -113,6 +113,7 @@
                     :cause="cause"
                     :refund-money="refundMoney"
                     :dictionary-field="item.dictionaryField"
+                    :multiple="item.dictionaryMultiple"
                     :relative-type="item.relativeType"
                     @value-change="fieldValueChange" />
 
@@ -348,7 +349,7 @@ export default {
         return 'Present'
       } else if (formType == 'detail') {
         return 'XhDetail'
-      } else if (formType == 'provinces') { // 需要请求数据字典
+      } else if (formType == 'provinces' || formType == 'multiple_provinces') { // 需要请求数据字典
         return 'XhDictionary'
       } else if (formType == 'refundCombo') {
         return 'RefundCombo'
@@ -936,8 +937,8 @@ export default {
               // 填充值
               if (getValueObj[element.key]) {
                 element.value = getValueObj[element.key](item.value[0])
-                console.log('saa111', getValueObj[element.key](item.value[0]))
-                console.log(element)
+                // console.log('saa111', getValueObj[element.key](item.value[0]))
+                // console.log(element)
               }
               element.disabled = !!addDisabled.includes(element.key)
             }
@@ -1018,17 +1019,32 @@ export default {
             this.crmForm.crmFields[findIndex].value = item.value[0].leadsNumber || ''
           }
           findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'mobile')
+          console.log('student', item.value)
           if (findIndex !== -1) {
-            this.crmForm.crmFields[findIndex].value = item.value[0].mobile || ''
+            this.crmForm.crmFields[findIndex].value = item.value[0] ? item.value[0].mobile : ''
           }
           findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'owner_user_id')
           if (findIndex !== -1) {
-            this.crmForm.crmFields[findIndex].value = [{
-              userId: item.value[0].ownerUserId,
-              realname: item.value[0].ownerUserName
-            }]
+            if (item.value[0]) {
+              this.crmForm.crmFields[findIndex].value = [{
+                userId: item.value[0].ownerUserId,
+                realname: item.value[0].ownerUserName
+              }]
+            } else {
+              this.crmForm.crmFields[findIndex].value = []
+            }
           }
         }
+        /* if (item.data.formType === 'datetime') {
+          let pass = true
+          const time = new Date()
+          pass = moment(item.value).isAfter(time)
+          if (!pass) {
+            item.value = ''
+            console.log('修改值为空', item.value)
+            this.$message.warning('下次回访时间不能早于当前时间')
+          }
+        } */
       } else if (this.crmType === 'capitalAccount') {
         console.log('新建资金账户， 选择学员')
         if (item.data.formType === 'customer') {
@@ -1118,10 +1134,11 @@ export default {
           // 赋值
           const getValueObj = {
             dept_id: data => {
-              return data.deptIdName ? data.deptIdName : ''
+              return data && data.deptIdName ? data.deptIdName : ''
             },
             owner_user_id: data => {
-              return data.ownerUserName ? data.ownerUserName : ''
+              console.log('data', data)
+              return data && data.ownerUserName ? data.ownerUserName : ''
             }
           }
 
@@ -1153,17 +1170,25 @@ export default {
             }
 
             // 取消禁用，增加属性
-            if (addRelation.includes(element.key)) {
-              element.disabled = false
-              if (getRelationObj[element.key]) {
-                getRelationObj[element.key](customerItem, element)
+            if (customerItem) {
+              if (addRelation.includes(element.key)) {
+                element.disabled = false
+                if (getRelationObj[element.key]) {
+                  getRelationObj[element.key](customerItem, element)
+                }
+              }
+            } else {
+              if (addRelation.includes(element.key)) {
+                element.disabled = true
+                element.relation = {}
+                element.value = []
               }
             }
           }
         }
         console.log('字段111', item)
         if (item.data.formType === 'contract') {
-          this.actionRefundCombo.contracId = item.value[0].contractId
+          this.actionRefundCombo.contracId = item.value[0] ? item.value[0].contractId : ''
         }
         if (item.data.formType === 'refundCombo') {
           if (this.refundType == 2) return
@@ -1174,9 +1199,7 @@ export default {
           })
         }
         if (item.key === 'money') {
-          console.log('修改')
           this.refundMoney = item.value
-          // this.actionRefundCombo.money = item.value
         }
         if (item.key === 'refund_type') {
           this.crmForm.crmFields.forEach(_item => {
@@ -1951,15 +1974,6 @@ export default {
               'introducer_id'
             ].includes(item.fieldName)
           }
-        } else if (this.crmType === 'visit') {
-          params.disabled = [
-            'leads_number',
-            'mobile',
-            'owner_user_id'
-          ].includes(item.fieldName)
-          if (item.fieldName === 'author') {
-            params.value = [{ ...this.userInfo }]
-          }
         } else if (this.crmType == 'contract') {
           var arr = [
             'source',
@@ -2096,9 +2110,43 @@ export default {
               }
             }
           }
+        } else if (this.crmType == 'visit') {
+          if (item.formType == 'provinces') {
+            params.dictionaryField = item.fieldName
+          }
+          if (item.formType == 'multiple_provinces') {
+            params.dictionaryField = item.fieldName
+            params.dictionaryMultiple = true
+            // params['value'] = []
+          }
+
+          // 禁用
+          if (['mobile', 'owner_user_id'].includes(item.fieldName)) {
+            params.disabled = true
+          }
+
+          // 禁止删除
+          if (['owner_user_id'].includes(item.fieldName)) {
+            params.useDelete = false
+          }
+
+          if (item.fieldName == 'author') {
+            params.value = [this.action.userInfo]
+          }
+
+          // 编辑
+          if (this.action.type === 'update') {
+            if (item.fieldName == 'project_type') {
+              params['value'] = item.value.split(',')
+              params['value'] = item.value.split(',').map(item => {
+                return +item
+              })
+            }
+          }
         }
         this.crmForm.crmFields.push(params)
       }
+      console.log('this.crmForm.crmFields', this.crmForm.crmFields)
       for (let index = 0; index < this.crmForm.crmFields.length; index++) {
         const element = this.crmForm.crmFields[index]
         if (element.key == 'status') {
@@ -2281,7 +2329,6 @@ export default {
           }
 
           if (element.key == 'product') {
-            // console.log('合同biang11')
             // element.oldValue = {
             //   isEdit: true,
             //   meal: this.action.information.contract.mealProducts,
@@ -2543,10 +2590,14 @@ export default {
      * item 当行数据源
      */
     getItemRulesArrayFromItem(item) {
+      // var validateMultiple = (rule, value, callback) => {
+      //   console.log('校验多选')
+      // }
       var tempList = []
       if (!this.getItemIsCanEdit(item)) {
         return tempList
       }
+
       // 验证必填
       if (item.isNull == 1 && !this.ingnoreRequiredField(item)) {
         if (['leads_source', 'category', 'student'].includes(item.formType)) {
@@ -2684,6 +2735,27 @@ export default {
         })
       }
 
+      // 下次回访时间必须大于当前时间
+      if (this.crmType === 'visit') {
+        if (item.fieldName === 'visit_time') {
+          const validateVisitTime = (rule, value, callback) => {
+            let pass = true
+            const time = new Date()
+            console.log('value的值', value)
+            pass = moment(value).isAfter(time)
+            console.log('是否通过', pass)
+            if (!pass) {
+              callback(new Error('下次回访时间不能早于当前时间'))
+            }
+            callback()
+          }
+          tempList.push({
+            validator: validateVisitTime,
+            trigger: ['blur', 'change']
+          })
+        }
+      }
+
       // 合同的开始时间和结束时间
       if (this.crmType === 'contract') {
         if (item.fieldName === 'start_time' || item.fieldName === 'end_time') {
@@ -2763,6 +2835,18 @@ export default {
     // 保存数据
     saveField(saveAndCreate, isDraft = false) {
       this.saveAndCreate = saveAndCreate
+      // let dictionaryMultipleRes = false
+      // this.crmForm.crmFields.forEach(item => {
+      //   if (item.dictionaryMultiple != true) {
+      //     if (!item.value) {
+      //       this.$message.error(`${item.data.name}不能为空`)
+      //       dictionaryMultipleRes = true
+      //     }
+      //   }
+      // })
+      // if (dictionaryMultipleRes) return
+
+
       this.$refs.crmForm.validate((valid, obj) => {
         let msresult = null
         if (this.crmType == 'receivables' || this.crmType == 'productSetMeal') {
@@ -2823,7 +2907,6 @@ export default {
             }
           } else {
             var params = this.getSubmiteParams(this.crmForm.crmFields)
-            console.log('AAA111111', params)
             if (isDraft) {
               params.entity.checkStatus = 5
             }
@@ -2836,7 +2919,6 @@ export default {
                 delete params.entity.termTime
               }
             }
-            console.log('aaa-11-', params)
             this.submiteParams(params)
           }
         } else {
@@ -2930,8 +3012,8 @@ export default {
     },
     /** 上传 */
     async submiteParams(params) {
-      var a = { ...params }
-      console.log('submiteParams', a)
+      // var a = { ...params }
+      // console.log('submiteParams', a)
       var crmRequest = this.getSubmiteRequest()
       console.log('crmRequest', crmRequest)
       // console.log('crmRequest的请求', crmRequest)
@@ -3080,6 +3162,10 @@ export default {
         }
       }
 
+      // if (this.crmType == 'visit') {
+      //   params.project_type = 1
+      // }
+
       console.log('请求参数: ', params)
       // this.loading = false
       // return
@@ -3157,7 +3243,7 @@ export default {
         const element = array[index]
         if (element.data.formType == 'product') {
           var res = this.getProductParams(params, element)
-          console.log('产品校验是否通过', res)
+          // console.log('产品校验是否通过', res)
           if (res === false) {
             return false
           }
@@ -3167,27 +3253,23 @@ export default {
           if (element.key == 'status') {
             params.entity[element.key] = this.getRealParams(element)
           } else {
-            // console.log('相关')
             params.entity[element.key] = this.getRealParams(element) || ''
           }
         } else if (element.data.key == 'introducer_type') {
           // console.log(111)
         } else if (element.key == 'present') {
-          // console.log('额外')
-
           this.getPresentParams(params, element)
-          console.log('额外赠送校验是否通过', res)
+          // console.log('额外赠送校验是否通过', res)
           if (res === false) {
             return false
           }
           params.entity.discountRate = params.product[0].discountRate
         } else {
           element.data.value = this.getRealParams(element)
-          console.log('data', element.data)
+          // console.log('data', element.data)
           params.field.push(element.data)
         }
       }
-
 
       if (this.showImageHandle) {
         // 图片信息
@@ -3363,7 +3445,10 @@ export default {
           return element.value[element.value.length - 1]
         }
         return ''
-      } else if (element.data.formType == 'checkbox') {
+      } else if (element.data.formType == 'checkbox' || element.data.formType == 'multiple_provinces') {
+        // console.log('multiple_provinces', element.value)
+        // console.log('element.value.length', element.value.length)
+        // console.log('join', element.value.join(','))
         if (element.value && element.value.length > 0) {
           return element.value.join(',')
         }
@@ -3417,7 +3502,7 @@ export default {
       } else if (this.crmType == 'receivables_plan') {
         return this.action.type == 'update' ? '编辑回款计划' : '新建回款计划'
       } else if (this.crmType == 'visit') {
-        return this.action.type == 'update' ? '编辑回访' : '新建回访'
+        return this.action.type == 'update' ? '编辑学员回访' : '新建学员回访'
       } else if (this.crmType == 'capitalAccount') {
         return this.action.type == 'update' ? '编辑资金账户' : '新建资金账户'
       } else if (this.crmType == 'refund') {

@@ -69,6 +69,7 @@ import { crmReturnVisitReadAPI } from '@/api/customermanagement/visit'
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../components/CRMDetailHead'
 import CRMEditBaseInfo from '../components/CRMEditBaseInfo' // 产品基本信息
+import CRMBaseInfo from '../components/CRMBaseInfo' // 产品基本信息
 import RelativeFiles from '../components/RelativeFiles' // 相关附件
 import RelativeHandle from '../components/RelativeHandle' // 相关操作
 
@@ -83,6 +84,7 @@ export default {
     SlideView,
     CRMDetailHead,
     CRMEditBaseInfo,
+    CRMBaseInfo,
     RelativeFiles,
     RelativeHandle,
     CRMCreateView,
@@ -122,9 +124,10 @@ export default {
         { title: '学员姓名', value: '', field: 'customerName' },
         { title: '第一联系人电话', value: '', field: 'mobile' },
         { title: '课程顾问', value: '', field: 'ownerUserName' },
-        { title: '作者', value: '', field: 'author' }
+        { title: '作者', value: '', field: 'authorName' }
       ],
-      tabCurrentName: 'CRMEditBaseInfo',
+      // tabCurrentName: 'CRMEditBaseInfo',
+      tabCurrentName: 'CRMBaseInfo',
       // 编辑操作
       isCreate: false
     }
@@ -132,7 +135,8 @@ export default {
   computed: {
     tabNames() {
       return [
-        { label: '详细资料', name: 'CRMEditBaseInfo' },
+        // { label: '详细资料', name: 'CRMEditBaseInfo' },
+        { label: '详细资料', name: 'CRMBaseInfo' },
         { label: this.getTabName('附件', this.tabsNumber.fileCount), name: 'RelativeFiles' },
         { label: '操作记录', name: 'RelativeHandle' }
       ]
