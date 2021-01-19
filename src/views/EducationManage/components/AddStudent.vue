@@ -32,7 +32,7 @@
         <!-- 已勾选数据列表 -->
         <div style="line-height:25px;">
           <span>已添加的学员</span>&nbsp;
-          <el-select v-model="addedListVal" multiple placeholder="请选择">
+          <el-select v-model="addedListVal" multiple placeholder="请选择" @remove-tag="removeCustomer">
             <el-option
               v-for="(item, index) in addedStuList"
               :key="index++"
@@ -208,8 +208,8 @@ export default {
       // 当勾选发生变化时是否执行
       isExecute: true,
 
-      checkGradeName: ''
-
+      checkGradeName: '',
+      delIndex: null
     }
   },
   methods: {
@@ -220,6 +220,49 @@ export default {
     },
     contentClick() {
       this.showSelectView = true
+    },
+
+    // 移除学员同时也要删除相关合同
+    removeCustomer(data) {
+      let vindex = null
+      for (let index = 0; index < this.addedListVal.length; index++) {
+        const element = this.addedListVal[index]
+        if (element === data) {
+          vindex = index
+        }
+      }
+      this.addedListVal.splice(vindex, 1)
+      for (let index = 0; index < this.addedStuList.length; index++) {
+        const element = this.addedStuList[index]
+        if (element.customerId === data) {
+          this.delIndex = index
+        }
+      }
+
+      this.addedStuList.splice(this.delIndex, 1)
+
+      const delList = []
+      for (let index = 0; index < this.addedList.length; index++) {
+        const element = this.addedList[index]
+        if (element.customerId === data) {
+          delList.push(index)
+        }
+      }
+      if (delList.length) {
+        for (let index = 0; index < delList.length; index++) {
+          const element = delList[index]
+          this.addedList.splice(element, 1)
+        }
+        this.$emit('added-stu', this.addedList)
+      }
+
+
+      if (this.stuInfo.customerId === data) {
+        this.$refs.multipleTables.clearSelection()
+        if (this.addedListVal.includes(data)) { // 利用递归删除当前项
+          this.removeCustomer(data)
+        }
+      }
     },
 
     /** 选中 */
@@ -327,19 +370,53 @@ export default {
           }
         }
         const { customerId, customerName } = this.stuInfo
-        debugger
-        this.addedStuList.push({
-          customerId, customerName
-        })
+        if (data.length) {
+          this.addedStuList.push({
+            customerId, customerName
+          })
+        }
 
         if (!this.addedListVal.includes(customerId)) {
+          debugger
           this.addedListVal.push(customerId)
+        }
+
+        if (!data.length) {
+          this.resetCustomer()
         }
 
         this.resetDataByCustomerId(this.addStuCustomerId)
         this.addedList.push(...data)
         this.addedList = this.arrayObjRepeat(this.addedList, 'rId')
         this.sendData()
+      }
+    },
+
+    // 取消完当前学员合同的勾选时重置文本框
+    resetCustomer() {
+      const ids = []
+      for (let index = 0; index < this.addedList.length; index++) {
+        const element = this.addedList[index]
+
+        ids.push(element.customerId)
+      }
+
+      if (!ids.includes(this.stuInfo.customerId) && this.addedListVal.includes(this.stuInfo.customerId)) {
+        for (let index = 0; index < this.addedListVal.length; index++) {
+          const element = this.addedListVal[index]
+          if (element.customerId === this.stuInfo.customerId) {
+            this.addedListVal.splice(index, 1)
+          }
+        }
+        let ind = null
+        for (let index = 0; index < this.addedStuList.length; index++) {
+          const element = this.addedStuList[index]
+          if (element.customerId === this.stuInfo.customerId) {
+            ind = index
+          }
+        }
+
+        this.addedStuList.splice(ind, 1)
       }
     },
 

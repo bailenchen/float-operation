@@ -316,7 +316,7 @@ export default {
      * 保存
      */
     submitForm() {
-      const { timeId, batchId, classId, classroomId } = this.selectionList[0]
+      const { timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId } = this.selectionList[0]
       const bstudentList = []
       const newList = objDeepCopy(this.addedList)
       const customerIds = []
@@ -327,16 +327,20 @@ export default {
       const newCustomerIds = Array.from(new Set(customerIds))
       for (let index = 0; index < newCustomerIds.length; index++) {
         const element = newCustomerIds[index]
+        const stuList = []
         for (let indexs = 0; indexs < this.addedList.length; indexs++) {
           const selement = this.addedList[indexs]
           if (element == selement.customerId) {
-            bstudentList.push({
+            stuList.push({
               customerId: selement.customerId,
               rId: selement.rId,
               classtimeBatchId: batchId
             })
           }
         }
+        bstudentList.push({
+          list: stuList
+        })
       }
       // 班级中的时间段
       const timeLists = []
@@ -347,20 +351,22 @@ export default {
         if (!this.addedList.length) {
           return this.$message.error('请添加学员')
         }
-        debugger
         this.checkList.forEach(item => {
           timeLists.push({
             timeId: item.timeId,
             batchId: item.batchId,
             classId,
-            classroomId
+            classroomId,
+            classTime: item.classTime,
+            timeSlot: item.timeSlot,
+            subjectTeacherId: item.subjectTeacherId
           })
         })
       }
 
       const params = {
-        classtime: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId }],
-        timecontract: bstudentList
+        list1: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId }],
+        list2: bstudentList
       }
 
       crmClassSchduleInsertClassSave(params).then(res => {

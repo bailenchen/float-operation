@@ -224,7 +224,7 @@ export default {
   },
   created() {
     // this.getSubject()
-    this.getGradeSelect()
+    // this.getGradeSelect()
     this.getWaySelect()
     if (this.type == 'edit') {
       const {
@@ -331,7 +331,12 @@ export default {
     // 同时获取学科与年级
     querySubjectGrade(id) {
       crmClassQuerySubjectGrade({ userId: id }).then(res => {
-        const { subjects } = res.data
+        const { grades, subjects } = res.data
+        this.option.gradeId = grades.map(item => {
+          item.label = item.gradeName
+          item.value = item.id
+          return item
+        })
         this.option.subjectId = subjects.map(item => {
           item.label = item.subjectName
           item.value = item.id
@@ -354,6 +359,13 @@ export default {
         this.option.subjectId.forEach(item => {
           if (item.value == data) {
             this.subjectName = item.label
+          }
+        })
+        this.paddingClassName()
+      } else if (name == 'gradeId') {
+        this.option.gradeId.forEach(item => {
+          if (item.value == data) {
+            this.gradeName = item.label
           }
         })
         this.paddingClassName()
@@ -390,18 +402,18 @@ export default {
       })
     },
 
-    getGradeSelect() {
-      this.loading = true
-      QueryAdminGrade().then(res => {
-        this.option.gradeId = res.data.map(item => {
-          item.label = item.gradeName
-          item.value = item.id
-          return item
-        })
-      }).catch(() => {
-        this.loading = false
-      })
-    },
+    // getGradeSelect() {
+    //   this.loading = true
+    //   QueryAdminGrade().then(res => {
+    //     this.option.gradeId = res.data.map(item => {
+    //       item.label = item.gradeName
+    //       item.value = item.id
+    //       return item
+    //     })
+    //   }).catch(() => {
+    //     this.loading = false
+    //   })
+    // },
 
 
     // 根据辅导方式查询班级类型

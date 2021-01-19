@@ -105,7 +105,9 @@ export default {
         time: '2021-1-18'
       },
       deptSelectValue: [],
-      subList: []
+      subList: [],
+
+      everyDay: '' // 周表使用
     }
   },
   watch: {
@@ -167,6 +169,7 @@ export default {
         this.getStartEndDate(way)
       }
       const everyDay = getDateStr(this.currentWeekStartDate, this.currentWeekEndDate, 0)
+      this.everyDay = everyDay
       console.log(everyDay, '123')
       this.date = `${this.currentWeekStartDate} ~ ${this.currentWeekEndDate}`
       this.$nextTick(() => {

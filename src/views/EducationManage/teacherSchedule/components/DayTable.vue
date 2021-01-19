@@ -23,11 +23,16 @@
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <span v-if="item.prop == 'realname'">{{ scope.row.realname }}</span>
-          <!-- <span v-else>{{ scope.row[item.prop].batchId }}</span> -->
-          <span v-else>{{ scope.row[item.prop].subjectName }}</span>
-
-
+          <div v-if="item.prop == 'realname'">{{ scope.row.realname }}</div>
+          <div v-else-if="scope.row[item.prop].batchId">
+            <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
+            <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
+            <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
+            <span class="blue click">[换挡]</span>
+            <span class="blue click">[排课]</span>
+            <span class="blue click">[插班]</span>
+          </div>
+          <div v-else class="blue">开班</div>
         </template>
       </el-table-column>
     </el-table>
@@ -84,8 +89,7 @@ export default {
       ],
 
       // 合并标记相关
-      arrColumn: [],
-      position: 0
+      objRow: {}
     }
   },
   created() {
@@ -93,8 +97,7 @@ export default {
   },
   methods: {
     getWillMergeColumns() {
-      // 源数据
-      // const list = this.list[0]
+      this.loading = true
       const params = {
         types: 1,
         time: '2021-1-18',
@@ -103,32 +106,39 @@ export default {
       crmTeacherSchduleQueryByDay(params).then(res => {
         this.list = this.handleResData(res.data)
         const list = this.list
-        console.log(list, 'xbbbb')
+        console.log(JSON.parse(JSON.stringify(list)))
         // 对象所有的key集合
         for (let indexs = 0; indexs < list.length; indexs++) {
           const element = list[indexs]
           const keyList = Object.keys(element)
           keyList.forEach((key, index) => {
             if (key == 'realname') {
-              this.arrColumn.push(1)
-              this.position = 0
+              this.objRow[indexs] = {
+                arrColumn: [],
+                position: 0
+              }
+              this.objRow[indexs].arrColumn.push(1)
+              this.objRow[indexs].position = 0
             } else {
               if (key == 't1') {
-                this.arrColumn.push(1)
-                this.position = 0
+                this.objRow[indexs].arrColumn.push(1)
+                this.objRow[indexs].position = 0
               } else {
                 if (element[key].batchId && element[keyList[index - 1]].batchId && (element[key].batchId == element[keyList[index - 1]].batchId)) {
-                  this.arrColumn[this.position] += 1
-                  this.arrColumn.push(0)
+                  this.objRow[indexs].arrColumn[key == 't2' ? this.objRow[indexs].position += 1 : this.objRow[indexs].position] += 1
+                  this.objRow[indexs].arrColumn.push(0)
                 } else {
-                  this.arrColumn.push(1)
-                  this.position = index
+                  this.objRow[indexs].arrColumn.push(1)
+                  this.objRow[indexs].position = index
                 }
               }
             }
           })
         }
-      }).catch(() => {})
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     handleResData(list) {
@@ -144,9 +154,10 @@ export default {
             const selement = item.data[sindex]
             if (elements == selement.timeSlotStart) {
               newitem[key] = selement
-            } else {
-              newitem[key] = {}
             }
+          }
+          if (!newitem[key]) {
+            newitem[key] = {}
           }
         }
         newList.push(newitem)
@@ -155,8 +166,8 @@ export default {
     },
     mergeRow({ row, column, rowIndex, columnIndex }) {
       // 按天实行行合并
-      if (rowIndex === 0) {
-        const dcolumn = this.arrColumn[columnIndex]
+      if (this.objRow[rowIndex]) {
+        const dcolumn = this.objRow[rowIndex].arrColumn[columnIndex]
         const drow = dcolumn > 0 ? 1 : 0
         return {
           rowspan: drow,
@@ -174,5 +185,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.blue {
+  color:#0000FF;
+}
 
+.red {
+  color: red;
+}
+
+.click {
+  cursor: pointer;
+}
 </style>
