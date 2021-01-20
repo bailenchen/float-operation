@@ -9,6 +9,7 @@
       class="rc-head"
       direction="row-reverse">
       <el-button
+        v-if="showCreate"
         class="xr-btn--orange rc-head-item"
         icon="el-icon-plus"
         type="primary"
@@ -47,9 +48,9 @@
 <script type="text/javascript">
 import loading from '../mixins/loading'
 import CRMCreateView from './CRMCreateView'
-// import { queryRechargeListAPI } from '@/api/customermanagement/contract'
 import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
-// import { crmBusinessQueryContract } from '@/api/customermanagement/business'
+import { filedGetTableField } from '@/api/customermanagement/common'
+
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 import { separator } from '@/filters/vue-numeral-filter/filters'
 
@@ -94,7 +95,14 @@ export default {
       createActionInfo: { type: 'relative', crmType: this.crmType, data: {}}
     }
   },
-  computed: {},
+  computed: {
+    showCreate() {
+      if (this.crmType == 'contract') {
+        return false
+      }
+      return true
+    }
+  },
   watch: {
     id: function(val) {
       this.list = []
@@ -106,28 +114,36 @@ export default {
   },
   methods: {
     getFieldList() {
-      this.fieldList.push({
-        prop: 'num',
-        width: '400',
-        label: '合同充值返还编号'
-      })
-      this.fieldList.push({ prop: 'leadsNumber', width: '200', label: '学员编号' })
-      this.fieldList.push({
-        prop: 'customerName',
-        width: '350',
-        label: '学员姓名'
-      })
-      this.fieldList.push({ prop: 'refundTime', width: '400', label: '合同充值返还日期' })
-      this.fieldList.push({
-        prop: 'money',
-        width: '300',
-        label: '合同充值返还金额（元）'
-      })
-      this.fieldList.push({ prop: 'refundWayName', width: '200', label: '合同充值返还方式' })
-      this.fieldList.push({ prop: 'remarks', width: '200', label: '备注' })
-      this.fieldList.push({ prop: 'ownerUserName', width: '200', label: '课程顾问' })
-      this.fieldList.push({ prop: 'updateTime', width: '200', label: '更新时间' })
-      this.fieldList.push({ prop: 'createUserName', width: '200', label: '创建人' })
+      filedGetTableField({ label: 29 }).then(res => {
+        // this.fieldList = res.data
+        console.log('res.data', res.data)
+
+        const arr = []
+        res.data.forEach(item => {
+          arr.push({
+            prop: item.fieldName,
+            width: item.width,
+            label: item.name
+          })
+        })
+        console.log('arr', arr)
+        this.fieldList = arr
+      }).catch(() => {})
+
+      // this.fieldList.push({ prop: 'num', width: '400', label: '合同充值返还编号' })
+      // this.fieldList.push({ prop: 'capitalNumber', width: '400', label: '合同充值编号' })
+      // this.fieldList.push({ prop: 'leadsNumber', width: '200', label: '学员编号' })
+      // this.fieldList.push({ prop: 'customerName', width: '350', label: '学员姓名' })
+      // this.fieldList.push({ prop: 'refundTime', width: '400', label: '合同充值返还日期' })
+      // this.fieldList.push({ prop: 'money', width: '300', label: '合同充值返还金额（元）' })
+      // this.fieldList.push({ prop: 'refundWayName', width: '200', label: '合同充值返还方式' })
+      // this.fieldList.push({ prop: 'remarks', width: '200', label: '备注' })
+      // this.fieldList.push({ prop: 'deptIdName', width: '200', label: '所属中心' })
+      // this.fieldList.push({ prop: 'ownerUserName', width: '200', label: '课程顾问' })
+      // this.fieldList.push({ prop: 'checkStatus', width: '200', label: '审核状态' })
+      // this.fieldList.push({ prop: 'updateTime', width: '200', label: '更新时间' })
+      // this.fieldList.push({ prop: 'createUserName', width: '200', label: '创建人' })
+      // this.fieldList.push({ prop: 'createTime', width: '200', label: '创建时间' })
     },
 
     getDetail() {
@@ -173,6 +189,15 @@ export default {
         return this.getStatusName(row.checkStatus)
       } else if (column.property == 'money') {
         return separator(row[column.property] || 0)
+      } else if (column.property === 'capitalNumber') {
+        return row[column.property][0] ? row[column.property][0].number : ''
+      } else if (column.property === 'refundWayId') {
+        return row.refundWayName
+      } else if (column.property === 'refundType') {
+        return {
+          1: '常规充值返还',
+          2: '特殊充值返还'
+        }[row[column.property]]
       }
       return row[column.property]
     },

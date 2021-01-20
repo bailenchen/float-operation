@@ -87,11 +87,20 @@ export default {
   },
   watch: {
     cause: {
-      handler(val) {
-        console.log(val)
+      handler(val, oldVal) {
+        console.log('cause', val, oldVal)
+
+        // if(val==2) {
+
+        // }
+
         this.isImpersonality = val == 1
-        this.$emit('value-change', { index: this.index, value: '' })
-      }
+
+        if (val && oldVal) {
+          this.$emit('value-change', { index: this.index, value: '' })
+        }
+      },
+      immediate: true
     },
     value: {
       handler(val) {

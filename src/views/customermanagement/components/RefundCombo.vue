@@ -16,7 +16,7 @@
         align="center"/>
     </el-table>
 
-    <el-button v-if="tableData" :disabled="action.isInteriorRefund" type="primary" @click="isOfflineWithDraw = true">填写资金退款</el-button>
+    <el-button v-if="tableData" :disabled="action.isInteriorRefund" :type="btnType" @click="isOfflineWithDraw = true">{{ this.btnText }}</el-button>
 
     <offline-with-draw
       :visible.sync="isOfflineWithDraw"
@@ -24,7 +24,7 @@
       :money="money"
       :fill-data="fillData"
       :is-save="true"
-      money-type="refound"
+      :money-type="moneyType"
       @save="handleCallBack"
     />
   </div>
@@ -81,16 +81,16 @@ export default {
           prop: 'subject',
           width: 100
         },
-        {
-          label: '套餐标准课次',
-          prop: 'comboNormLesson',
-          width: 100
-        },
-        {
-          label: '套餐标准赠送课次',
-          prop: 'normLesson',
-          width: 100
-        },
+        // {
+        //   label: '套餐标准课次',
+        //   prop: 'comboNormLesson',
+        //   width: 100
+        // },
+        // {
+        //   label: '套餐标准赠送课次',
+        //   prop: 'normLesson',
+        //   width: 100
+        // },
         {
           label: '购买课次',
           prop: 'purchaseLesson',
@@ -159,7 +159,10 @@ export default {
       product: null, // 表格数据
       capital: null, // 资金退款信息
       fillData: null,
-      disabled: false
+      disabled: false,
+      moneyType: 'contractRefound',
+      btnText: '填写资金退款',
+      btnType: 'primary'
     }
   },
   computed: {
@@ -219,14 +222,16 @@ export default {
     handleCallBack(val) {
       this.fillData = val
       const capital = {
-        'payment': val.refound.payment,
-        'account': val.refound.userAccount ? val.refound.userAccount : '',
-        'payeeName': val.refound.payeeName ? val.refound.payeeName : '',
-        'refundMoney': val.refound.price,
-        'dealTime': val.refound.transactionTime,
-        'refundUserId': val.refound.characterId,
-        'remarks': val.refound.remark
+        'payment': val[this.moneyType].payment,
+        'account': val[this.moneyType].userAccount ? val[this.moneyType].userAccount : '',
+        'payeeName': val[this.moneyType].payeeName ? val[this.moneyType].payeeName : '',
+        'refundMoney': val[this.moneyType].price,
+        'dealTime': val[this.moneyType].transactionTime,
+        'refundUserId': val[this.moneyType].characterId,
+        'remarks': val[this.moneyType].remark
       }
+      this.btnText = '查看资金退款信息'
+      this.btnType = 'success'
       console.log('capital', capital)
       this.capital = capital
       this.sendData()
@@ -241,8 +246,6 @@ export default {
           capital: this.capital
         }
       }
-
-
 
       obj.value.money = this.oldValue.money ? this.oldValue.money : this.money
       obj.value = del ? '' : obj.value
@@ -290,8 +293,9 @@ export default {
 
         this.capital = dataObj.capital
         if (this.capital) {
+          const _this = this
           this.fillData = {
-            refound: {
+            [_this.moneyType]: {
               'payment': Number(this.capital.payment),
               'userAccount': this.capital.account ? this.capital.account : '',
               'payeeName': this.capital.payeeName ? this.capital.payeeName : '',

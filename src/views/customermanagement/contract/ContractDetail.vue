@@ -456,6 +456,7 @@ export default {
     // 处理基本信息展示字段
     handleFieldVal(name, val) {
       if (['checkStatus', 'contractType', 'isEarlyRetirement', 'isNew', 'contractStatus'].includes(name)) {
+        console.log('处理基本信息展示字段')
         return {
           'contractType': { 1: '购买', 2: '赠送' },
           'isEarlyRetirement': { 0: '否', 1: '是', null: '' },

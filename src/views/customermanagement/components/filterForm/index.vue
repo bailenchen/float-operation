@@ -64,6 +64,7 @@
 
             <el-col :span="1">&nbsp;</el-col>
             <el-col :span="formItem.formType === 'datetime' || formItem.formType === 'date' || formItem.formType === 'map_address' ? 13 : 8">
+              <!-- {{ formItem.setting[0] }} -->
               <el-select
                 v-if="formItem.formType === 'select'"
                 v-model="formItem.value"
@@ -421,7 +422,9 @@ export default {
 
     // 判断formType为select的不同数据格式时的处理
     handleSelect(item) {
-      if (['contract_type', 'is_early_retirement', 'is_new', 'contract_status', 'status', 'allot_status'].includes(item.fieldName)) {
+      if (this.crmType == 'refund' && item.fieldName == 'is_early_retirement') {
+        return false
+      } else if (['contract_type', 'is_early_retirement', 'is_new', 'contract_status', 'status', 'allot_status'].includes(item.fieldName)) {
         return true
       } else {
         return false

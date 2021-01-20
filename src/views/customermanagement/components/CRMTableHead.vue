@@ -67,6 +67,7 @@
     <filter-content
       v-if="filterObj.form && filterObj.form.length > 0"
       :obj="filterObj"
+      :crm-type="crmType"
       @delete="handleDeleteField" />
 
     <transfer-handle

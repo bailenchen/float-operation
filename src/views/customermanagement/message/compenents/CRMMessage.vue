@@ -515,6 +515,10 @@ export default {
     },
 
     transformData(name, value) {
+      if (this.crmType == 'refund' && name === 'isEarlyRetirement') {
+        return value
+      }
+
       if (name === 'contractType') {
         return {
           1: '购买',
@@ -561,7 +565,7 @@ export default {
           // if()
           console.log('value', value)
         } else if (name === 'capitalNumber') {
-          return value[0].number
+          return value[0] ? value[0].number : ''
         } else if (name === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
