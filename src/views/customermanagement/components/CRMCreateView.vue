@@ -472,7 +472,7 @@ export default {
     },
     // 草稿按钮
     showDraft() {
-      if (this.crmType === 'contract' || this.crmType === 'receivables' || this.crmType === 'refund') {
+      if (this.crmType === 'contract' || this.crmType === 'receivables') {
         return true
       }
       return false
@@ -1172,8 +1172,6 @@ export default {
         console.log('字段111', item)
         if (item.data.formType === 'contract') {
           this.actionRefundCombo.contracId = item.value[0] ? item.value[0].contractId : ''
-          console.log('item.value[0]', item.value[0])
-          console.log(this.actionRefundCombo.contracId)
         }
         if (item.data.formType === 'refundCombo') {
           if (this.refundType == 2) return
@@ -1196,6 +1194,10 @@ export default {
         }
         if (item.key === 'refund_cause_type') {
           this.cause = item.value == '主观原因' ? 2 : 1
+          const findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'refundCauseDetails')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].data.name = item.value
+          }
         }
         if (item.key === 'is_early_retirement') {
           this.actionRefundCombo.isInteriorRefund = item.value == '是'
@@ -1665,7 +1667,8 @@ export default {
           isNull: 1,
           isUnique: 0,
           label: 29,
-          name: '主/客观原因',
+          // name: '主/客观原因',
+          name: '客观原因',
           options: null,
           setting: [],
           type: 15,
@@ -2091,8 +2094,18 @@ export default {
               params['value'] = item.value
               this.refundType = item.value
             }
+            if (item.fieldName === 'refund_cause_type') {
+              params['value'] = item.value
+              // const findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'refundCauseDetails')
+              // if (findIndex !== -1) {
+              //   this.crmForm.crmFields[findIndex].data.name = item.value
+              // }
+            }
             if (item.fieldName == 'refundCauseDetails') {
               params['value'] = this.action.information.refund.refundCauseDetails
+            }
+            if (item.fieldName == 'is_early_retirement') {
+              this.actionRefundCombo.isInteriorRefund = item.value == '是'
             }
             if (item.fieldName == 'refundCombo') {
               params['oldValue'] = {
@@ -2116,6 +2129,15 @@ export default {
           } else {
             element.value = this.action.editDetail.status
             element.data.value = this.action.editDetail.status
+          }
+        }
+        if (this.crmType == 'refund') {
+          if (element.key === 'refund_cause_type') {
+            this.cause = element.value == '主观原因' ? 2 : 1
+            const findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'refundCauseDetails')
+            if (findIndex !== -1) {
+              this.crmForm.crmFields[findIndex].data.name = element.value
+            }
           }
         }
         if (this.crmType == 'capitalAccount') {
@@ -3066,13 +3088,19 @@ export default {
 
       // 充值返还
       if (this.crmType == 'refund') {
-        console.log('字段', params.field)
+        // console.log('字段', params.field)
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
           if (element.fieldName == 'refundCombo') {
             params.product = element.value.product
             params.capital = element.value.capital
           }
+        }
+
+        if (params.entity.is_early_retirement == '否' && !params.capital) {
+          this.$message.warning('请填写资金退款信息')
+          this.loading = false
+          return
         }
         // 删除只用于展示的字段
         for (let i = 0; i < params.field.length; i++) {

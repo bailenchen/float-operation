@@ -483,6 +483,9 @@ export default {
           2: '赠送'
         }[row[column.property]]
       } else if (column.property === 'isEarlyRetirement') {
+        if (this.crmType == 'refund') {
+          return row[column.property]
+        }
         return {
           0: '否',
           1: '是',
@@ -549,7 +552,7 @@ export default {
             2: '特殊充值返还'
           }[row[column.property]]
         } else if (column.property === 'capitalNumber') {
-          return row[column.property][0].number
+          return row[column.property][0] ? row[column.property][0].number : ''
         } else if (column.property === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
@@ -793,8 +796,8 @@ export default {
           this.clickField = column.property
           this.showDview = true
         } else if (column.property === 'contractNum') {
-          this.rowID = row.capitalNumber[0].contractCapitalId
-          this.rowType = 'receive'
+          this.rowID = row.contractId
+          this.rowType = 'contract'
           this.clickField = column.property
           this.showDview = true
         } else if (column.property === 'customerName' || column.property == 'leadsNumber') {

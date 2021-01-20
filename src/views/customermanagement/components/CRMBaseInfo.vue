@@ -326,6 +326,17 @@ export default {
                   }[res.data.refund.refundType]
                 },
                 {
+                  name: '返还原因',
+                  formType: 'text',
+                  value: res.data.refund.refundCauseType
+                },
+                {
+                  name: res.data.refund.refundCauseType,
+                  formType: 'text',
+                  value: res.data.refund.refundCauseDetails
+                },
+
+                {
                   name: '教育顾问',
                   formType: 'text',
                   value: res.data.refund.ownerUserName
@@ -351,6 +362,24 @@ export default {
                     9: '家长审核中',
                     10: '家长拒绝'
                   }[res.data.refund.checkStatus]
+                }
+              ]
+
+              const systemList = [
+                {
+                  name: '更新时间',
+                  formType: 'text',
+                  value: res.data.refund.updateTime
+                },
+                {
+                  name: '创建时间',
+                  formType: 'text',
+                  value: res.data.refund.createTime
+                },
+                {
+                  name: '创建人',
+                  formType: 'text',
+                  value: res.data.refund.createUserName
                 }
               ]
 
@@ -404,6 +433,10 @@ export default {
               }, {
                 name: '资金退款',
                 list: capitalList
+              },
+              {
+                name: '系统信息',
+                list: systemList
               }]
               this.loading = false
               return

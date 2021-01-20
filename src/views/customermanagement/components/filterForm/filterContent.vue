@@ -36,6 +36,7 @@
 export default {
   name: 'FilterContent',
   props: {
+    crmType: String,
     obj: {
       type: Object,
       required: true,
@@ -115,9 +116,13 @@ export default {
     // 合同中类型为select的name处理
     handleSelectName(name, value) {
       console.log(name, value, 'njkkkk')
+      if (this.crmType == 'refund' && name == 'is_early_retirement') {
+        // console.log(11)
+        return value
+      }
       return {
         'contract_type': { 1: '购买', 2: '赠送' },
-        'is_early-retirement': { 0: '否', 1: '是' },
+        'is_early_retirement': { 0: '否', 1: '是' },
         'is_new': { 0: '续签', 1: '新签', 2: '引流' },
         'checkStatus': {
           0: '待审核',

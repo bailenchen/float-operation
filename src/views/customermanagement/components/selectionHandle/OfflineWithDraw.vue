@@ -64,7 +64,7 @@
         </el-form-item>
 
         <create-sections
-          title="审核信息">
+          v-if="moneyType!='contractRefound'" title="审核信息">
           <div
             v-if="examineInfo.examineType===1 || examineInfo.examineType===2"
             slot="header"
@@ -172,7 +172,8 @@ export default {
       ],
       title: {
         offline: '线下资金收款',
-        refound: '资金退款'
+        refound: '资金退款',
+        contractRefound: '资金退款'
       },
       form: {
         offline: {
@@ -181,7 +182,8 @@ export default {
         },
         refound: {
           // transactionType: 2
-        }
+        },
+        contractRefound: {}
       },
       formList: {
         offline: [
@@ -205,6 +207,14 @@ export default {
           { label: '退款申请人：', prop: 'characterId', type: 'character' },
           { label: '备注：', prop: 'remark', type: 'textarea' }
           // { label: '审核人：', prop: 'examine', type: 'user' }
+        ],
+        contractRefound: [
+          { label: '支付方式：', prop: 'payment', type: 'select' },
+          { label: '用户账号：', prop: 'userAccount', type: 'text' },
+          { label: '退款金额（元）：', prop: 'price', type: 'text' },
+          { label: '交易时间：', prop: 'transactionTime', type: 'date' },
+          { label: '退款申请人：', prop: 'characterId', type: 'character' },
+          { label: '备注：', prop: 'remark', type: 'textarea' }
         ]
       },
       rules: {
@@ -255,6 +265,21 @@ export default {
           // examine: [
           //   { required: true, message: '请选择审核人', trigger: 'blur' }
           // ]
+        },
+        contractRefound: {
+          payment: [
+            { required: true, message: '请选择支付方式', trigger: ['blur', 'change'] }
+          ],
+          price: [
+            { required: true, message: '请输入金额', trigger: 'blur' },
+            { validator: validateMoney, trigger: 'blur' }
+          ],
+          transactionTime: [
+            { required: true, message: '请选择交易时间', trigger: 'blur' }
+          ],
+          remark: [
+            { max: 800, message: '不能多于800个字符', trigger: 'blur' }
+          ]
         }
       },
       draftUser: null, // 审核人
@@ -285,6 +310,14 @@ export default {
 
       var form = {}
       form[this.moneyType] = {}
+
+      if (this.moneyType == 'contractRefound') {
+        console.log('设置默认值')
+        //  this.options
+        form[this.moneyType].payment = this.options[5].value
+      }
+
+
 
       this.characterUser = this.userInfo
       form[this.moneyType].characterId = this.userInfo.userId
