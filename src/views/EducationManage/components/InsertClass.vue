@@ -186,7 +186,8 @@ export default {
       this.loading = true
       const request = {
         class: crmClassQueryInsertBaseInfo,
-        classschedule: crmClassSchduleConfirmInfo
+        classschedule: crmClassSchduleConfirmInfo,
+        teacher: crmClassSchduleConfirmInfo
       }[this.crmType]
       const { timeId, classId } = this.selectionList[0]
       const params = this.crmType === 'class' ? { classId } : { timeId }
@@ -202,7 +203,7 @@ export default {
                   value: this.handleValue(key, data)
                 })
               }
-            } else if (this.crmType === 'classschedule') {
+            } else if (this.crmType === 'classschedule' || this.crmType === 'teacher') {
               this.baseInfoList.push({
                 name: element,
                 value: this.handleValue(key, data)
@@ -316,7 +317,7 @@ export default {
      * 保存
      */
     submitForm() {
-      const { timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId } = this.selectionList[0]
+      const { timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId, totalNumber } = this.selectionList[0]
       const bstudentList = []
       const newList = objDeepCopy(this.addedList)
       const customerIds = []
@@ -366,7 +367,8 @@ export default {
 
       const params = {
         list1: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId }],
-        list2: bstudentList
+        list2: bstudentList,
+        totalNumber
       }
 
       crmClassSchduleInsertClassSave(params).then(res => {

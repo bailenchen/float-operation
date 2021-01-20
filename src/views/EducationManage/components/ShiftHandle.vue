@@ -126,7 +126,7 @@
                         :value="scope.row['during']"
                         @update-time="updateTime($event, scope.$index)"/>
                     </span>
-                    <span v-else>{{ scope.row[item.prop] }}</span>
+                    <span v-else>{{ handleVal(item.prop, scope.row[item.prop]) }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column/>
@@ -249,15 +249,15 @@ export default {
       list: [],
       stuList: [],
       fieldLists: [
-        { prop: 'classroomName', label: '教室' },
-        { prop: 'gradeName', label: '年级' },
-        { prop: 'subjectName', label: '科目' },
-        { prop: 'subjectTeacherName', label: '学科老师' },
-        { prop: '', label: '状态' },
-        { prop: 'classTime', label: '上课时间' },
-        { prop: 'timeSlot', label: '时间段' },
-        { prop: 'customerName', label: '上课学员' },
-        { prop: 'number', label: '上课人数' },
+        { prop: 'classroomName', label: '教室', width: 150 },
+        { prop: 'gradeName', label: '年级', width: 90 },
+        { prop: 'subjectName', label: '科目', width: 90 },
+        { prop: 'subjectTeacherName', label: '学科老师', width: 100 },
+        { prop: 'classConfirmationName', label: '状态', width: 90 },
+        { prop: 'classTime', label: '上课时间', width: 100 },
+        { prop: 'timeSlot', label: '时间段', width: 100 },
+        { prop: 'customerName', label: '上课学员', width: 100 },
+        { prop: 'number', label: '上课人数', width: 100 },
         { prop: 'deptSelectValue', label: '教室（变更后）', width: 160 },
         { prop: 'teacherList', label: '学科老师（变更后）', width: 160 },
         { prop: 'time', label: '上课时间（变更后）', width: 160 },
@@ -265,13 +265,13 @@ export default {
       ],
 
       classInfoLists: [
-        { prop: 'customerName', label: '姓名' },
-        { prop: 'num', label: '合同号' },
-        { prop: 'subjectName', label: '科目' },
-        { prop: 'gradeName', label: '年级' },
-        { prop: 'sumCourse', label: '合同课次' },
-        { prop: 'endCourse', label: '结课课次' },
-        { prop: 'alreadyCourse', label: '已排课次' }
+        { prop: 'customerName', label: '姓名', width: 100 },
+        { prop: 'num', label: '合同编号', width: 150 },
+        { prop: 'subjectName', label: '科目', width: 90 },
+        { prop: 'gradeName', label: '年级', width: 90 },
+        { prop: 'sumCourse', label: '合同课次', width: 100 },
+        { prop: 'endCourse', label: '结课课次', width: 100 },
+        { prop: 'alreadyCourse', label: '已排课次', width: 100 }
       ],
       showShift: false,
       // 勾选将换挡数据
@@ -334,6 +334,16 @@ export default {
         }).catch(err => {
           console.log(err)
         })
+      }
+    },
+
+    handleVal(key, val) {
+      if (key == 'classTime' && val) {
+        return val.slice(0, 10)
+      } else if (key == 'timeSlot' && val) {
+        return `${val.slice(0, 5)}-${val.slice(9, -3)}`
+      } else {
+        return val
       }
     },
 

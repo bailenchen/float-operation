@@ -106,7 +106,7 @@ import {
   XhUserCell
 } from '@/components/CreateCom'
 import {
-  QueryAdminGrade,
+  // QueryAdminGrade,
   QueryCoachingMethods // 辅导方式
 } from '@/api/systemManagement/params'
 
@@ -255,6 +255,7 @@ export default {
         userId: subjectTeacherId,
         realname: subjectTeacherName
       }]
+      this.teacherId = subjectTeacherId
       this.querySubjectGrade(subjectTeacherId)
       this.form = {
         deptId: deptId,
@@ -299,6 +300,10 @@ export default {
       this.form.subjectId = null
       this.form.className = ''
       this.subjectName = ''
+
+      this.gradeName = ''
+      this.option.gradeId = []
+      this.form.gradeId = null
     },
     // 教室选择
     classroomChange(data) {
@@ -312,6 +317,9 @@ export default {
       this.option.subjectId = []
       this.form.subjectId = null
       this.subjectName = ''
+      this.gradeName = ''
+      this.option.gradeId = []
+      this.form.gradeId = null
     },
 
     /**
@@ -321,6 +329,9 @@ export default {
       this.form.subjectTeacherId = data.value.length ? data.value[0].userId : ''
       // 先重置学科与科目
       this.option.subjectId = []
+      this.gradeName = ''
+      this.option.gradeId = []
+      this.form.gradeId = null
       this.form.subjectId = null
       this.subjectName = ''
       if (this.form.subjectTeacherId) {

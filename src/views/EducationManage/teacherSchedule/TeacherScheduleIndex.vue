@@ -61,19 +61,22 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="three-flex">
-        <div class="toggle-btn" @click="preDayOrWeek">LAST</div>
-        <div class="center-txt">
-          <span style="color: red;">{{ date }}</span> 教师排课表
+      <div v-loading="loading" >
+        <div class="three-flex">
+          <div class="toggle-btn" @click="preDayOrWeek">LAST</div>
+          <div class="center-txt">
+            <span style="color: red;">{{ date }}</span> 教师排课表
+          </div>
+          <div class="toggle-btn" @click="nextDayOrWeek">NEXT</div>
         </div>
-        <div class="toggle-btn" @click="nextDayOrWeek">NEXT</div>
+        <component ref="table" :is="comName" @close-loading="closeLoading"/>
       </div>
-      <component ref="table" :is="comName"/>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import DayTable from './components/DayTable'
 import WeekTable from './components/WeekTable'
 import {
@@ -95,20 +98,24 @@ export default {
   mixins: [table],
   data() {
     return {
+      loading: false,
       crmType: 'teacherschedule',
       comName: 'DayTable',
-      date: moment().format('YYYY/MM/DD'),
+      date: moment().format('YYYY-MM-DD'),
       currentWeekStartDate: '',
       currentWeekEndDate: '',
 
       form: {
-        time: '2021-1-18'
+        time: moment().format('YYYY-MM-DD')
       },
       deptSelectValue: [],
       subList: [],
 
       everyDay: '' // 周表使用
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   watch: {
     comName(val) {
@@ -117,16 +124,31 @@ export default {
       }
     }
   },
+  created() {
+    this.form.deptId = this.userInfo.deptId
+    this.deptSelectValue = [{
+      id: this.userInfo.deptId,
+      name: this.userInfo.deptName
+    }]
+  },
   mounted() {
     this.getSubject()
+    this.onSubmit()
   },
   methods: {
     // 按周/按天切换
     toggleShow(type) {
+      this.loading = true
       this.comName = {
         week: 'WeekTable',
         day: 'DayTable'
       }[type]
+
+      if (type === 'day') {
+        this.date = moment().format('YYYY-MM-DD')
+        this.form.time = moment().format('YYYY-MM-DD')
+        this.onSubmit()
+      }
     },
 
     // 前一天/周
@@ -144,7 +166,8 @@ export default {
       if (this.comName === 'DayTable') {
         var day = new Date(this.date)
         day.setDate(day.getDate() + num)
-        this.date = moment(day).format('YYYY/MM/DD')
+        this.date = moment(day).format('YYYY-MM-DD')
+        this.form.time = this.date
       } else if (this.comName === 'WeekTable') {
         if (type === 'add') {
           this.getWeekAllDate(1)
@@ -154,6 +177,7 @@ export default {
           this.getWeekAllDate(0)
         }
       }
+      this.onSubmit()
     },
 
     // 获取上周、本周、下周所有的日期
@@ -172,6 +196,7 @@ export default {
       this.everyDay = everyDay
       console.log(everyDay, '123')
       this.date = `${this.currentWeekStartDate} ~ ${this.currentWeekEndDate}`
+      this.form.time = this.currentWeekStartDate
       this.$nextTick(() => {
         this.$refs.table.fieldLists.forEach((element, index) => {
           if (index > 1) {
@@ -179,7 +204,6 @@ export default {
             element.label = `${element.label.slice(0, 1)}(${this.handleMonthDay(date)})`
           }
         })
-
         console.log(this.currentWeekStartDate, this.currentWeekEndDate, this.$refs.table, 'xxxxxx')
       })
     },
@@ -245,7 +269,22 @@ export default {
       }).catch(() => {})
     },
 
-    onSubmit() {}
+    closeLoading() {
+      this.loading = false
+    },
+
+    onSubmit() {
+      this.loading = true
+      if (this.comName === 'DayTable') {
+        this.$nextTick(() => {
+          this.$refs.table.getWillMergeColumns()
+        })
+      } else if (this.comName === 'WeekTable') {
+        this.$nextTick(() => {
+          this.$refs.table.getWillMergeRows()
+        })
+      }
+    }
   }
 }
 </script>

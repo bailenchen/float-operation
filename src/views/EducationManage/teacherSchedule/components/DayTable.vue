@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-table
-      v-loading="loading"
       id="crm-table"
       :row-height="40"
       :data="list"
@@ -19,7 +18,7 @@
         :key="index"
         :prop="item.prop"
         :label="item.label"
-        min-width="100"
+        min-width="160"
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
@@ -28,30 +27,77 @@
             <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
-            <span class="blue click">[换挡]</span>
-            <span class="blue click">[排课]</span>
-            <span class="blue click">[插班]</span>
+            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
+            <span v-if="!scope.row[item.prop].customers.length" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
+            <span
+              v-if="scope.row[item.prop].customers.length && scope.row[item.prop].customers.length < scope.row[item.prop].totalNumber"
+              class="blue click"
+              @click="handle('insert',scope.row[item.prop])">
+              [插班]
+            </span><br>
+            <span v-if="scope.row[item.prop].customers.length">
+              【 <span v-for="(ite,idx) in scope.row[item.prop].customers" :key="idx">
+                {{ ite.customerName }}
+                <span v-if="ite.classStatusType">(</span>
+                <span
+                  v-if="ite.classStatusType"
+                  :class="{'green': ite.classStatusType === '请假' || ite.classStatusType === '出勤','red': ite.classStatusType === '临时插班'}">
+                  {{ ite.classStatusType }}
+                </span>
+                <span v-if="ite.classStatusType">)</span>
+              </span>】
+            </span>
           </div>
-          <div v-else class="blue">开班</div>
+          <div v-else class="blue" @click="handle('createclass',scope.row[item.prop])">开班</div>
         </template>
       </el-table-column>
     </el-table>
+
+
+    <!-- 创建班级 -->
+    <create-class
+      v-if="isClass"
+      :selection-list="currentInfo"
+      type="edit"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 排课 -->
+    <rank-course
+      v-if="isRank"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 插班 -->
+    <insert-class
+      v-if="isInsert"
+      :crm-type="crmType"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 换挡 -->
+    <shift-handle
+      v-if="isShift"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
   </div>
 </template>
 
 <script>
 import { crmTeacherSchduleQueryByDay } from '@/api/educationmanage/teacherSchedule'
+import create from './create'
 export default {
   // 按天显示--行合并
   name: 'DayTable',
+  mixins: [create],
   data() {
     return {
       border: true,
-      loading: false,
       tableHeight: document.documentElement.clientHeight - 306, // 表的高度
-      list: [
-        { realname: '李艳', t1: { id: 1 }, t2: { id: 2 }, t3: { id: 2 }, t4: { id: 3 }, t5: { id: 2 }, t6: { id: 4 }, t7: { id: 2 }, t8: { id: 2 }, t9: { id: 2 }, t10: { id: 2 }, t11: { id: 2 }, t12: { id: 2 }, t13: { id: 2 }, t14: { id: 2 }, t15: { id: 2 }}
-      ],
+      list: [],
       fieldTime: {
         t1: '08:00:00',
         t2: '09:00:00',
@@ -93,15 +139,14 @@ export default {
     }
   },
   created() {
-    this.getWillMergeColumns()
   },
   methods: {
     getWillMergeColumns() {
-      this.loading = true
+      this.list = []
+      this.objRow = {}
       const params = {
         types: 1,
-        time: '2021-1-18',
-        ...this.form
+        ...this.$parent.form
       }
       crmTeacherSchduleQueryByDay(params).then(res => {
         this.list = this.handleResData(res.data)
@@ -135,9 +180,9 @@ export default {
             }
           })
         }
-        this.loading = false
+        this.$emit('close-loading')
       }).catch(() => {
-        this.loading = false
+        this.$emit('close-loading')
       })
     },
 
@@ -195,5 +240,9 @@ export default {
 
 .click {
   cursor: pointer;
+}
+
+.green {
+  color: #70B603;
 }
 </style>

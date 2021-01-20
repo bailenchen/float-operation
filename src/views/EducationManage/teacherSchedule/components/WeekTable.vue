@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-table
-      v-loading="loading"
       id="crm-table"
       :row-height="40"
       :data="list"
@@ -20,7 +19,7 @@
         :prop="item.prop"
         :label="item.label"
         :width="item.width"
-        min-width="100"
+        min-width="160"
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
@@ -30,44 +29,76 @@
             <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
-            <span class="blue click">[换挡]</span>
-            <span class="blue click">[排课]</span>
-            <span class="blue click">[插班]</span>
+            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
+            <span v-if="!scope.row[item.prop].customers.length" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
+            <span
+              v-if="scope.row[item.prop].customers.length && scope.row[item.prop].customers.length < scope.row[item.prop].totalNumber"
+              class="blue click"
+              @click="handle('insert',scope.row[item.prop])">[插班]
+            </span><br>
+            <span v-if="scope.row[item.prop].customers.length">
+              【 <span v-for="(ite,idx) in scope.row[item.prop].customers" :key="idx">
+                {{ ite.customerName }}
+                <span v-if="ite.classStatusType">(</span>
+                <span
+                  v-if="ite.classStatusType"
+                  :class="{'green': ite.classStatusType === '请假' || ite.classStatusType === '出勤','red': ite.classStatusType === '临时插班'}">
+                  {{ ite.classStatusType }}
+                </span>
+                <span v-if="ite.classStatusType">)</span>
+              </span>】
+            </span>
           </div>
-          <div v-else class="blue">开班</div>
+          <div v-else-if="scope.row" class="blue" @click="handle('createclass',scope.row[item.prop])">开班</div>
         </template>
       </el-table-column>
-      <el-table-column/>
+      <!-- <el-table-column/> -->
     </el-table>
+
+    <!-- 创建班级 -->
+    <create-class
+      v-if="isClass"
+      :selection-list="currentInfo"
+      type="edit"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 排课 -->
+    <rank-course
+      v-if="isRank"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 插班 -->
+    <insert-class
+      v-if="isInsert"
+      :crm-type="crmType"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 换挡 -->
+    <shift-handle
+      v-if="isShift"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
   </div>
 </template>
 
 <script>
 import { crmTeacherSchduleQueryByDay } from '@/api/educationmanage/teacherSchedule'
+import create from './create'
 export default {
   // 按周显示--列合并
   name: 'WeekTable',
+  mixins: [create],
   data() {
     return {
-      loading: false,
       tableHeight: document.documentElement.clientHeight - 306, // 表的高度
-      list: [
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 7 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 5 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 9 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 4 }},
-        // { t1: { id: 1 }, t2: { id: 3 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 2 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 5 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 2 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 5 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 4 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        // { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }}
-      ],
+      list: [],
       fieldLists: [
         { prop: 'realname', label: '' },
         { prop: 'time', label: '' },
@@ -79,8 +110,6 @@ export default {
         { prop: 't6', label: '六' },
         { prop: 't7', label: '日' }
       ],
-
-
 
       // 时间段
       periodObj: {
@@ -130,7 +159,24 @@ export default {
       },
 
       // 合并标记相关
-      arrObj: {
+      arrObj: null
+    }
+  },
+  created() {
+    this.reset()
+    this.getWeekDate()
+  },
+  methods: {
+    // 从父组件中获取周的每天日期
+    getWeekDate() {
+      const dateRange = this.$parent.everyDay.split(',')
+      for (let index = 0; index < dateRange.length; index++) {
+        const element = dateRange[index]
+        this.timeDate['t' + (index + 1)] = element
+      }
+    },
+    reset() {
+      this.arrObj = {
         'realname': {
           arrRow: [],
           position: 0
@@ -168,22 +214,13 @@ export default {
           position: 0
         }
       }
-
-    }
-  },
-  created() {
-    const dateRange = this.$parent.everyDay.split(',')
-    for (let index = 0; index < dateRange.length; index++) {
-      const element = dateRange[index]
-      this.timeDate['t' + (index + 1)] = element
-    }
-    this.getWillMergeRows()
-  },
-  methods: {
+    },
     getWillMergeRows() {
+      this.list = []
+      this.reset()
+      this.getWeekDate()
       const params = {
-        time: '2021-1-18',
-        ...this.form
+        ...this.$parent.form
       }
       crmTeacherSchduleQueryByDay(params).then(res => {
         this.list = this.handleResData(res.data)
@@ -194,9 +231,12 @@ export default {
           })
           return item
         })
-        console.log(this.list, 'xxx123xx')
-        console.log(this.arrObj, 'bbbbbbbbbb')
-      }).catch(() => {})
+        this.$emit('close-loading')
+        console.log(JSON.parse(JSON.stringify(this.list)), 'xx123xx')
+        console.log(JSON.parse(JSON.stringify(this.arrObj)), 'bbbbbbbbbb')
+      }).catch(() => {
+        this.$emit('close-loading')
+      })
     },
 
     handleResData(list) {
@@ -213,7 +253,6 @@ export default {
               for (const key in this.timeDate) {
                 if (Object.hasOwnProperty.call(this.timeDate, key)) {
                   const time = this.timeDate[key]
-
                   if (item.timeSlotStart && item.timeSlotStart === val) {
                     const sList = item.data
                     for (let sindex = 0; sindex < sList.length; sindex++) {
@@ -262,7 +301,6 @@ export default {
           condition = this.list[bindex][keyType] == this.list[bindex - 1][keyType]
         } else {
           condition = this.list[bindex][key][keyType] && this.list[bindex - 1][key][keyType] && this.list[bindex][key][keyType] == this.list[bindex - 1][key][keyType]
-          // debugger
         }
         if (condition) {
           this.arrObj[key].arrRow[this.arrObj[key].position] += 1
@@ -287,6 +325,7 @@ export default {
         8: 't7'
       }[columnIndex]
       if (['realname', 'time', 't1', 't2', 't3', 't4', 't5', 't6', 't7'].includes(key)) {
+        console.log('bbbbbb', columnIndex)
         const drow = this.arrObj[key].arrRow[rowIndex]
         const dcolimn = drow > 0 ? 1 : 0
         return {
@@ -313,5 +352,9 @@ export default {
 
 .click {
   cursor: pointer;
+}
+
+.green {
+  color: #70B603;
 }
 </style>

@@ -122,7 +122,9 @@
             <template slot-scope="scope">
               <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
               <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
-              <span v-else>{{ scope.row[item.prop] }}</span>
+              <span v-else>
+                {{ item.prop === 'startLifeCycle' ? `${scope.row[item.prop] ? scope.row[item.prop].slice(0,10) : ''}~${scope.row['endLifeCycle'] ? scope.row['endLifeCycle'].slice(0,10) : ''}` : scope.row[item.prop] }}
+              </span>
             </template>
           </el-table-column>
         </el-table>
@@ -192,7 +194,11 @@ export default {
         { prop: 'isnew', label: '合同属性', width: 90 },
         { prop: 'coachType', label: '合同类型', width: 90 },
         { prop: 'orderDate', label: '签约日期', width: 150 },
-        { prop: 'isGive', label: '是否赠送', width: 90 },
+        { prop: 'isGive', label: '是否额外赠送', width: 110 },
+        { prop: 'detailsName', label: '小套餐名称', width: 110 },
+        { prop: 'courseTypeName', label: '课程类型', width: 100 },
+        { prop: 'startLifeCycle', label: '使用周期', width: 200 },
+        { prop: 'typeName', label: '是否累计赠送', width: 140 },
         { prop: 'subjectName', label: '科目', width: 60 },
         { prop: 'sumCourse', label: '课次', width: 60 },
         { prop: 'alreadyCourse', label: '已排课次', width: 90 },
@@ -278,20 +284,20 @@ export default {
           }
         }
       }
-      if (this.timeList.length) {
-        const totalList = []
-        for (let index = 0; index < this.timeList.length; index++) {
-          const element = this.timeList[index]
-          totalList.push(...element.students)
-        }
+      // if (this.timeList.length) {
+      //   const totalList = []
+      //   for (let index = 0; index < this.timeList.length; index++) {
+      //     const element = this.timeList[index]
+      //     totalList.push(...element.students)
+      //   }
 
-        for (let index = 0; index < totalList.length; index++) {
-          const element = totalList[index]
-          if (element.customerId === seldata.data[0].customerId) {
-            return this.$message.error('添加的学员已存在该班级')
-          }
-        }
-      }
+      //   for (let index = 0; index < totalList.length; index++) {
+      //     const element = totalList[index]
+      //     if (element.customerId === seldata.data[0].customerId) {
+      //       return this.$message.error('添加的学员已存在该班级')
+      //     }
+      //   }
+      // }
       const { totalNumber } = this.baseInfo
       const list = this.arrayObjRepeat(this.addedList, 'customerId')
       if (totalNumber > list.length) {
@@ -300,7 +306,7 @@ export default {
           this.getContractList(data[0].customerId)
         }
       } else {
-        this.$message.error('添加的学员人数不能超过满班人数')
+        return this.$message.error('添加的学员人数不能超过满班人数')
       }
     },
 
