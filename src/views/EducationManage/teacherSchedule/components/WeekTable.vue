@@ -159,8 +159,7 @@ export default {
       },
 
       // 合并标记相关
-      arrObj: null,
-      mark: false
+      arrObj: null
     }
   },
   created() {
@@ -168,13 +167,9 @@ export default {
     this.getWeekDate()
   },
   mounted() {
-    // console.log(this.$refs.week, '123321')
-    // window.addEventListener('scroll', this.handleScroll)
+
   },
   methods: {
-    handleScroll() {
-      console.log('scroll')
-    },
     // 从父组件中获取周的每天日期
     getWeekDate() {
       const dateRange = this.$parent.everyDay.split(',')
@@ -247,12 +242,7 @@ export default {
       })
     },
 
-    modeMark() {
-      this.mark = true
-    },
-
     handleResData(list) {
-      this.mark = false
       const newList = []
       for (let index = 0; index < list.length; index++) {
         const element = list[index]
@@ -338,8 +328,6 @@ export default {
         8: 't7'
       }[columnIndex]
       if (['realname', 'time', 't1', 't2', 't3', 't4', 't5', 't6', 't7'].includes(key)) {
-        // console.log(this.mark, '123')
-        // console.log(this.$refs.week, '123321')
         const drow = this.arrObj[key].arrRow[rowIndex]
         const dcolimn = drow > 0 ? 1 : 0
         return {
