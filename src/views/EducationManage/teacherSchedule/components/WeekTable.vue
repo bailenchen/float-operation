@@ -2,6 +2,7 @@
   <div>
     <el-table
       id="crm-table"
+      ref="week"
       :row-height="40"
       :data="list"
       :span-method="mergeColumn"
@@ -11,8 +12,7 @@
       stripe
       border
       highlight-current-row
-      style="width: 100%"
-      @row-click="handleRowClick">
+      style="width: 100%">
       <el-table-column
         v-for="(item, index) in fieldLists"
         :key="index"
@@ -159,14 +159,22 @@ export default {
       },
 
       // 合并标记相关
-      arrObj: null
+      arrObj: null,
+      mark: false
     }
   },
   created() {
     this.reset()
     this.getWeekDate()
   },
+  mounted() {
+    // console.log(this.$refs.week, '123321')
+    // window.addEventListener('scroll', this.handleScroll)
+  },
   methods: {
+    handleScroll() {
+      console.log('scroll')
+    },
     // 从父组件中获取周的每天日期
     getWeekDate() {
       const dateRange = this.$parent.everyDay.split(',')
@@ -239,7 +247,12 @@ export default {
       })
     },
 
+    modeMark() {
+      this.mark = true
+    },
+
     handleResData(list) {
+      this.mark = false
       const newList = []
       for (let index = 0; index < list.length; index++) {
         const element = list[index]
@@ -325,7 +338,8 @@ export default {
         8: 't7'
       }[columnIndex]
       if (['realname', 'time', 't1', 't2', 't3', 't4', 't5', 't6', 't7'].includes(key)) {
-        console.log('bbbbbb', columnIndex)
+        // console.log(this.mark, '123')
+        // console.log(this.$refs.week, '123321')
         const drow = this.arrObj[key].arrRow[rowIndex]
         const dcolimn = drow > 0 ? 1 : 0
         return {
@@ -333,9 +347,6 @@ export default {
           colspan: dcolimn
         }
       }
-    },
-    handleRowClick() {
-
     }
   }
 }

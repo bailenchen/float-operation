@@ -202,7 +202,7 @@ export default {
         { prop: 'subjectName', label: '科目', width: 60 },
         { prop: 'sumCourse', label: '课次', width: 60 },
         { prop: 'alreadyCourse', label: '已排课次', width: 90 },
-        { prop: 'notArranged', label: '未排课次', width: 90 },
+        { prop: 'notArranged', label: '剩余课次', width: 90 },
         { prop: 'finishCourse', label: '已完成课次', width: 90 }
       ],
 

@@ -9,3 +9,12 @@ export function crmChangeCenterAPI(data) {
     data: data
   })
 }
+
+// 校区班主任变更记录
+export function crmQueryChangeLogAPI(data) {
+  return request({
+    url: 'CrmCustomer/selectTearcher',
+    method: 'post',
+    data: data
+  })
+}

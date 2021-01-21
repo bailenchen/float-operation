@@ -11,8 +11,7 @@
       use-virtual
       stripe
       highlight-current-row
-      style="width: 100%"
-      @row-click="handleRowClick">
+      style="width: 100%">
       <el-table-column
         v-for="(item, index) in fieldLists"
         :key="index"
@@ -219,11 +218,6 @@ export default {
           colspan: dcolumn
         }
       }
-    },
-
-
-    handleRowClick() {
-
     }
   }
 }
