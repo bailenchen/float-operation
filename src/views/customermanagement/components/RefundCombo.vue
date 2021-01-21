@@ -16,7 +16,7 @@
         align="center"/>
     </el-table>
 
-    <el-button v-if="tableData" :disabled="action.isInteriorRefund" :type="btnType" @click="isOfflineWithDraw = true">{{ this.btnText }}</el-button>
+    <el-button v-if="tableData" :disabled="action.isInteriorRefund" :type="btnType" @click="isOfflineWithDraw = true">{{ btnText }}</el-button>
 
     <offline-with-draw
       :visible.sync="isOfflineWithDraw"

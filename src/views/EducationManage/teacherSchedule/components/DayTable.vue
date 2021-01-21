@@ -2,13 +2,11 @@
   <div>
     <el-table
       id="crm-table"
-      :row-height="40"
       :data="list"
       :height="tableHeight"
       :span-method="mergeRow"
       :border="border"
       class="n-table--border"
-      use-virtual
       stripe
       highlight-current-row
       style="width: 100%">
@@ -47,19 +45,9 @@
               </span>】
             </span>
           </div>
-          <div v-else class="blue" @click="handle('createclass',scope.row[item.prop])">开班</div>
         </template>
       </el-table-column>
     </el-table>
-
-
-    <!-- 创建班级 -->
-    <create-class
-      v-if="isClass"
-      :selection-list="currentInfo"
-      type="edit"
-      @save-success="createSaveSuccess"
-      @hiden-view="hideView"/>
 
     <!-- 排课 -->
     <rank-course
@@ -150,7 +138,7 @@ export default {
       crmTeacherSchduleQueryByDay(params).then(res => {
         this.list = this.handleResData(res.data)
         const list = this.list
-        console.log(JSON.parse(JSON.stringify(list)))
+        // console.log(JSON.parse(JSON.stringify(list)))
         // 对象所有的key集合
         for (let indexs = 0; indexs < list.length; indexs++) {
           const element = list[indexs]

@@ -3,12 +3,10 @@
     <el-table
       id="crm-table"
       ref="week"
-      :row-height="40"
       :data="list"
       :span-method="mergeColumn"
       :height="tableHeight"
       class="n-table--border"
-      use-virtual
       stripe
       border
       highlight-current-row
@@ -29,10 +27,10 @@
             <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
-            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
+            <span v-if="scope.row[item.prop].batchId && scope.row[item.prop].classConfirmationType === '未确认'" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
             <span v-if="!scope.row[item.prop].customers.length" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
             <span
-              v-if="scope.row[item.prop].customers.length && scope.row[item.prop].customers.length < scope.row[item.prop].totalNumber"
+              v-if="scope.row[item.prop].customers.length && scope.row[item.prop].customers.length < scope.row[item.prop].totalNumber && scope.row[item.prop].classConfirmationType === '未确认'"
               class="blue click"
               @click="handle('insert',scope.row[item.prop])">[插班]
             </span><br>
@@ -49,19 +47,10 @@
               </span>】
             </span>
           </div>
-          <div v-else-if="scope.row" class="blue" @click="handle('createclass',scope.row[item.prop])">开班</div>
         </template>
       </el-table-column>
       <!-- <el-table-column/> -->
     </el-table>
-
-    <!-- 创建班级 -->
-    <create-class
-      v-if="isClass"
-      :selection-list="currentInfo"
-      type="edit"
-      @save-success="createSaveSuccess"
-      @hiden-view="hideView"/>
 
     <!-- 排课 -->
     <rank-course
@@ -235,8 +224,8 @@ export default {
           return item
         })
         this.$emit('close-loading')
-        console.log(JSON.parse(JSON.stringify(this.list)), 'xx123xx')
-        console.log(JSON.parse(JSON.stringify(this.arrObj)), 'bbbbbbbbbb')
+        // console.log(JSON.parse(JSON.stringify(this.list)), 'xx123xx')
+        // console.log(JSON.parse(JSON.stringify(this.arrObj)), 'bbbbbbbbbb')
       }).catch(() => {
         this.$emit('close-loading')
       })
@@ -280,7 +269,7 @@ export default {
           }
         }
       }
-      console.log(JSON.parse(JSON.stringify(newList)), 'xx456')
+      // console.log(JSON.parse(JSON.stringify(newList)), 'xx456')
       return newList
     },
 

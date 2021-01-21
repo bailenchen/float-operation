@@ -128,6 +128,37 @@
                     @click="deleteDate()"/>
                 </div>
               </flexbox>
+
+              <!-- 展示时间段列表 -->
+              <el-table
+                id="crm-table"
+                ref="multipleTable"
+                :row-height="40"
+                :data="timeList"
+                :height="300"
+                class="n-table--border"
+                use-virtual
+                stripe
+                border
+                highlight-current-row
+                style="width: 100%">
+                <el-table-column
+                  v-for="(item, index) in timeLists"
+                  :key="index"
+                  :fixed="index==0"
+                  :prop="item.prop"
+                  :label="item.label"
+                  :width="item.width"
+                  align="center"
+                  show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
+                    <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
+                    <span v-else>{{ scope.row[item.prop] }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column/>
+              </el-table>
             </div>
           </div>
         </create-sections>
@@ -171,7 +202,7 @@ import AddStudent from './AddStudent'
 import { getDateStr } from '@/utils/dateDiff'
 import moment from 'moment'
 
-import { crmClassRankCourse } from '@/api/educationmanage/class'
+import { crmClassRankCourse, crmClassQueryInsertBaseInfo } from '@/api/educationmanage/class'
 import { objDeepCopy } from '@/utils'
 
 export default {
@@ -237,6 +268,14 @@ export default {
       // 连排时的数据
       pendingData: [],
 
+      timeList: [],
+      timeLists: [
+        { prop: 'num', label: '序号', width: 60 },
+        { prop: 'dateTime', label: '日期/时间', width: 170 },
+        { prop: 'customerName', label: '上课学员', width: 170 },
+        { prop: 'maxs', label: '实际学员/最大人数', width: 170 }
+      ],
+
       // 已添加学员信息
       addedList: []
     }
@@ -269,8 +308,41 @@ export default {
         })
       }
     }
+    this.queryBaseInfo()
   },
   methods: {
+    queryBaseInfo() {
+      this.loading = true
+      const { classId } = this.selectionList[0]
+      crmClassQueryInsertBaseInfo({ classId }).then(res => {
+        const data = res.data
+        // 上课时间段列表
+        const totalNumber = []
+        this.timeList = data.list.filter((item, index) => {
+          item.num = index + 1
+          item.dateTime = item.classTime ? `${item.classTime.slice(0, 10)} ${item.timeSlotStart.slice(0, 5)}~${item.timeSlotEnd.slice(0, 5)}` : ''
+          item.customerId = []
+          let actual = 0
+          item.customerName = item.students.map(ite => {
+            item.customerId.push(ite.customerId)
+            if (ite.classStatus === 1) {
+              actual++
+            }
+            return `${ite.customerName}(${ite.classStatusName})`
+          }).join(',')
+          item.actual = actual
+          item.totalNumber = item.totalNumber
+          totalNumber.push(item.totalNumber - actual)
+          item.maxs = `${item.actual}/${item.totalNumber}`
+          return item.actual !== item.totalNumber
+        })
+        this.selectionList[0].totalNumber = Math.min(...totalNumber)
+        this.loading = false
+      }).catch((err) => {
+        this.loading = false
+        console.log(err)
+      })
+    },
     hidenView() {
       this.$emit('hiden-view', 'schedule')
     },

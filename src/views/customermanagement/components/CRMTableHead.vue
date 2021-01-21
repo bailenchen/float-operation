@@ -794,7 +794,11 @@ export default {
       } else if (type == 'follow') {
         this.isFollow = true
       } else if (type == 'mark_alloc') {
-        this.markAllocShow = true
+        if (this.selectionList[0].checkStatus == 0) {
+          return this.$message.error('已提交的业绩分配正在审核中')
+        } else {
+          this.markAllocShow = true
+        }
       } else if (type == 'update_contract') {
         var params = { types: 6, id: this.selectionList[0].contractId }
         filedGetInformation(params).then(res => {

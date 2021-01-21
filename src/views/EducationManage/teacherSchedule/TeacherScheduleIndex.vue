@@ -193,8 +193,7 @@ export default {
         this.getStartEndDate(way)
       }
       const everyDay = getDateStr(this.currentWeekStartDate, this.currentWeekEndDate, 0)
-      this.everyDay = everyDay
-      console.log(everyDay, '123')
+      this.everyDay = everyDay // 生成该周的每一天
       this.date = `${this.currentWeekStartDate} ~ ${this.currentWeekEndDate}`
       this.form.time = this.currentWeekStartDate
       this.$nextTick(() => {
@@ -204,7 +203,7 @@ export default {
             element.label = `${element.label.slice(0, 1)}(${this.handleMonthDay(date)})`
           }
         })
-        console.log(this.currentWeekStartDate, this.currentWeekEndDate, this.$refs.table, 'xxxxxx')
+        // console.log(this.currentWeekStartDate, this.currentWeekEndDate, this.$refs.table, 'xxxxxx')
       })
     },
 

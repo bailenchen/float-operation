@@ -383,7 +383,6 @@ export default {
         }
 
         if (!this.addedListVal.includes(customerId)) {
-          debugger
           this.addedListVal.push(customerId)
         }
 
