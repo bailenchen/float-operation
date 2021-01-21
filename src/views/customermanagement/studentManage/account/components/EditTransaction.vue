@@ -230,7 +230,7 @@ export default {
           { label: '扣款时间：', prop: 'deductionTime', type: 'date', disable: true },
           { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false },
-          { label: '收款人：', prop: 'character', type: 'text', disable: true },
+          { label: '收款申请人：', prop: 'character', type: 'text', disable: true },
           { label: '交易凭证：', prop: 'receipt', type: 'file', disable: false }
         ],
         offline: [
@@ -241,7 +241,7 @@ export default {
           { label: '扣款时间：', prop: 'deductionTime', type: 'date', disable: true },
           { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false },
-          { label: '收款人：', prop: 'character', type: 'text', disable: true },
+          { label: '收款申请人：', prop: 'character', type: 'text', disable: true },
           { label: '交易凭证：', prop: 'receipt', type: 'file', disable: false }
         ],
         refound: [
@@ -249,7 +249,7 @@ export default {
           { label: '用户账号：', prop: 'userAccount', type: 'text', disable: false },
           { label: '资金收款金额（元）：', prop: 'price', type: 'text', disable: true },
           { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
-          { label: '退款人：', prop: 'character', type: 'text', disable: true },
+          { label: '退款申请人：', prop: 'character', type: 'text', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false }
         ]
       },

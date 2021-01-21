@@ -111,11 +111,11 @@
                     :use-delete="item.useDelete"
                     :action="typeToAction"
                     :cause="cause"
+                    :positive="item.positive"
                     :refund-money="refundMoney"
                     :dictionary-field="item.dictionaryField"
                     :relative-type="item.relativeType"
                     @value-change="fieldValueChange" />
-
                 </el-form-item>
               </el-form>
 
@@ -293,7 +293,8 @@ export default {
         formType == 'number' ||
         formType == 'floatnumber' ||
         formType == 'mobile' ||
-        formType == 'email'
+        formType == 'email' ||
+        formType == 'positive_number'
       ) {
         return 'XhInput'
       } else if (formType == 'textarea') {
@@ -1938,6 +1939,9 @@ export default {
           params['key'] = item.fieldName
           params['data'] = item
           params['styleIndex'] = showStyleIndex
+          if (item.formType == 'positive_number') {
+            params['positive'] = true
+          }
         }
         // 新建合同合同属性默认为新签
         if (this.action.type == 'save' || this.action.type == 'contract') {
@@ -2001,6 +2005,9 @@ export default {
         } else if (this.crmType == 'refund') {
           if (item.fieldName == 'refund_time') {
             params['value'] = moment().format('YYYY-MM-DD')
+          }
+          if (item.fieldName == 'money') {
+            params['positive'] = true
           }
           if (item.fieldName == 'refund_type') {
             params['setting'] = [
