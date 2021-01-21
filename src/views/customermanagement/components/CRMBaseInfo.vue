@@ -298,6 +298,11 @@ export default {
                   value: res.data.refund.customerName
                 },
                 {
+                  name: '合同编号',
+                  formType: 'text',
+                  value: res.data.refund.contractNum
+                },
+                {
                   name: '所属中心',
                   formType: 'text',
                   value: res.data.refund.deptIdName

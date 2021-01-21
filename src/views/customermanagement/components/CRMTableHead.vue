@@ -1841,6 +1841,8 @@ export default {
         return '全部学员'
       } else if (this.crmType == 'receive') {
         return '全部合同充值'
+      } else if (this.crmType == 'refund') {
+        return '全部合同充值返还'
       } else if (this.crmType == 'classroom') {
         return '全部教室'
       } else if (this.crmType == 'class') {
