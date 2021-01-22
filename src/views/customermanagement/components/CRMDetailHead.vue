@@ -347,11 +347,12 @@ export default {
     showEdit() {
       if (this.crmType === 'contract') {
         //  8 已作废
-        return (
-          this.detail &&
-          this.detail.checkStatus != 8 &&
-          this.crm[this.crmType].redact
-        )
+        // return (
+        //   this.detail &&
+        //   this.detail.checkStatus != 8 &&
+        //   this.crm[this.crmType].redact
+        // )
+        return (this.detail && this.crm[this.crmType].redact && this.detail.checkStatus == 2)
       }
       if (this.crmType === 'water') {
         return false
