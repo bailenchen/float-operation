@@ -42,12 +42,12 @@
           icon="wk wk-transfer"
           @click="contractChange">合同变更</el-button>
 
-        <el-button
+        <!-- <el-button
           v-if="showDealStatus"
           class="head-handle-button"
           type="primary"
           icon="wk wk-success"
-          @click.native="handleTypeClick('deal_status')">更改成交状态</el-button>
+          @click.native="handleTypeClick('deal_status')">更改成交状态</el-button> -->
 
         <el-button
           v-if="showChangeSeas"
@@ -376,13 +376,13 @@ export default {
     /**
      * 展示成交按钮
      */
-    showDealStatus() {
-      return (
-        !this.isSeas &&
-        this.crmType == 'customer' &&
-        this.crm[this.crmType].dealStatus
-      )
-    },
+    // showDealStatus() {
+    //   return (
+    //     !this.isSeas &&
+    //     this.crmType == 'customer' &&
+    //     this.crm[this.crmType].dealStatus
+    //   )
+    // },
 
     /**
      * 转移到其他公海按钮
@@ -769,7 +769,7 @@ export default {
       } else if (this.crmType == 'business') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'contract') {
-        return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete', 'cancel'])
+        return this.forSelectionHandleItems(handleInfos, ['delete'])
       } else if (this.crmType == 'receivables') {
         return this.forSelectionHandleItems(handleInfos, ['transfer', 'delete'])
       } else if (this.crmType == 'product') {

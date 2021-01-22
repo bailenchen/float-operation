@@ -201,6 +201,19 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column
+        v-if="infoType == 'checkWater'"
+        :resizable="false"
+        label="操作"
+        align="center"
+        fixed="right"
+        width="150">
+        <template slot-scope="scope">
+          <el-button @click="enterWaterDetail(scope.row)">
+            详情
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -224,7 +237,6 @@
       :id="rowID"
       @handle="getList"
       @refresh-list="refreshParentList"/>
-
 
     <!-- 争议详情页面 -->
     <dispute-detail
@@ -511,6 +523,13 @@ export default {
       this.rowID = item.contractId
       this.rowType = 'contract'
       this.clickField = 'num'
+      this.showDview = true
+    },
+
+    enterWaterDetail(row) {
+      this.rowType = 'moneyType'
+      this.clickField = 'serialNumber'
+      this.rowID = row.waterId
       this.showDview = true
     },
 
