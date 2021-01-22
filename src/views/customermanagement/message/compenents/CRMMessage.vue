@@ -93,6 +93,8 @@
       class="n-table--border"
       stripe
       highlight-current-row
+      resizable
+      border
       style="width: 100%"
       @row-click="handleRowClick"
       @selection-change="handleSelectionChange">
@@ -595,6 +597,8 @@ export default {
             }
           }
           return res
+        } else if (name === 'refundTime') {
+          return value.replace(/(\d{4})-(\d{2})-(\d{2}) .*/, '$1-$2-$3')
         }
       }
       return value

@@ -14,7 +14,6 @@ module.exports = {
         // target: 'http://192.168.1.27:8080/',
         target: 'http://192.168.1.41:8080/',
         // target: ' http://testcrm.qiwenedu.com.cn/',
-        // target: 'http://dev.5kcrm.cn/api/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

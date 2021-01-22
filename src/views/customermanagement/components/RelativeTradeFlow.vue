@@ -48,7 +48,7 @@
         fixed="right"
         width="150">
         <template slot-scope="scope">
-          <el-button :disabled="showEdit(scope.row.transactionType)" @click="editHandle(scope.row)">
+          <el-button v-if="showEdit(scope.row.transactionType)" @click="editHandle(scope.row)">
             编辑
           </el-button>
           <el-button @click="enterDetail(scope.row)">
@@ -361,23 +361,18 @@ export default {
         this.contractId = row.waterId
         this.showFullDetail = true
       } else if (column.property == 'receipt') {
-        console.log('查看', row)
-
-        // const name = row.portrait.replace(/.*=(.*)/, function(match, p) {
-        //   return p
-        // })
-        // this.$bus.emit('preview-image-bus', {
-        //   index: 0,
-        //   data: [
-        //     {
-        //       filePath: row.portrait,
-        //       fileType: 'file',
-        //       name: `${name}.jpg`,
-        //       readOnly: 0,
-        //       url: row.portrait
-        //     }
-        //   ]
-        // })
+        this.$bus.emit('preview-image-bus', {
+          index: 0,
+          data: [
+            {
+              filePath: row.filePath,
+              fileType: 'file',
+              name: row.receipt,
+              readOnly: 0,
+              url: row.filePath
+            }
+          ]
+        })
       }
     },
 
