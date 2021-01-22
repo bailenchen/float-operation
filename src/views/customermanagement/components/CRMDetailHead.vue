@@ -352,7 +352,12 @@ export default {
         //   this.detail.checkStatus != 8 &&
         //   this.crm[this.crmType].redact
         // )
-        return (this.detail && this.crm[this.crmType].redact && this.detail.checkStatus == 2)
+        return (this.detail &&
+        this.crm[this.crmType].redact &&
+        (this.detail.checkStatus == 2 ||
+        this.detail.checkStatus == 10 ||
+        this.detail.contractStatus == 6)
+        )
       }
       if (this.crmType === 'water') {
         return false

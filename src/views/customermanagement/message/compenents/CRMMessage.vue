@@ -202,7 +202,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="infoType == 'checkWater'"
+        v-if="infoType == 'checkWater' || infoType == 'refundNumber'"
         :resizable="false"
         label="操作"
         align="center"
