@@ -3216,10 +3216,8 @@ export default {
         } else if (element.data.key == 'introducer_type') {
           // console.log(111)
         } else if (element.key == 'present') {
-          // console.log('额外')
-
-          this.getPresentParams(params, element)
-          console.log('额外赠送校验是否通过', res)
+          const res = this.getPresentParams(params, element)
+          // console.log('额外赠送校验是否通过', res)
           if (res === false) {
             return false
           }
@@ -3230,7 +3228,6 @@ export default {
           params.field.push(element.data)
         }
       }
-
 
       if (this.showImageHandle) {
         // 图片信息

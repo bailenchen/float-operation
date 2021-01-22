@@ -562,13 +562,15 @@ export default {
               grooveLesson: item.presenterCourseSum, // 常规赠送课次
               planeLesson: item.alreadyCourse, // 已排课课次
               completeLesson: item.finishCourse, // 已完成课次
+              surplusCount: item.surplusCount, // 剩余课次
               price: item.subtotal, // 大套餐价格
               univalence: item.price, // 单价
               salePrice: item.salesPrice,
               drainage: mealKeyVal[item.mealProductId].courseType == '引流课',
               discount: mealKeyVal[item.mealProductId].warningLine,
 
-              combo_number: item.mealProductId
+              combo_number: item.mealProductId,
+              giftProductId: item.giftProductId
             }
 
             mealList.push(obj)
@@ -580,6 +582,7 @@ export default {
               presentLesson: item.courseSum, // 赠送
               planeLesson: item.alreadyCourse, // 排课
               completeLesson: item.finishCourse, // 已完成
+              surplusCount: item.surplusCount, // 剩余课次
               univalence: item.price, // 均价
               dataIndex: presentDataIndex++, // 标识
               type: 2, // 类型。标识累计赠送

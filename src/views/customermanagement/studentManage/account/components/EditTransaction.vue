@@ -474,6 +474,8 @@ export default {
         params['checkUserId'] = this.examineInfo.value[0].userId
       }
 
+      params.entity.waterBatchId = ''
+
       if (this.imgFile[0]) {
         params.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识
         params.entity.receipt = this.imgFile[0].name // 交易凭证附件名称

@@ -5,7 +5,7 @@
       :crm-type="crmType"
       main-title="新建资金账户"
       title="资金账户"
-      placeholder="请输入账户名称/账户编号"
+      placeholder="请输入账户名称/账户编号/学员姓名/学员编号"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"
       @on-export="exportInfos">
