@@ -69,6 +69,9 @@
         prop="completeLesson"
         label="已完成课次"/>
       <el-table-column
+        prop="surplusCount"
+        label="剩余课次"/>
+      <el-table-column
         prop="univalence"
         label="均价"/>
     </el-table>
@@ -134,6 +137,11 @@ export default {
         {
           label: '已完成课次',
           prop: 'completeLesson',
+          width: 100
+        },
+        {
+          label: '剩余课次',
+          prop: 'surplusCount',
           width: 100
         },
         {
@@ -291,7 +299,7 @@ export default {
       // 第0、9列，按照本类的第一行中的数据显示，剩余行为0
       if (
         columnIndex === 0 ||
-        columnIndex === 8
+        columnIndex === 9
       ) {
         for (let i = 0; i < this.OrderLeve1Arr.length; i++) {
           const element = this.OrderLeve1Arr[i]
@@ -316,9 +324,12 @@ export default {
 
       if (this.OrderLeve3Arr.length) {
         if (
-          columnIndex === 7 ||
-          columnIndex === 9 ||
-          columnIndex === 10
+          // columnIndex === 7 ||
+          // columnIndex === 9 ||
+          // columnIndex === 10
+          columnIndex === 8 ||
+          columnIndex === 10 ||
+          columnIndex === 11
         ) {
           for (let i = 0; i < this.OrderLeve3Arr.length; i++) {
             const element = this.OrderLeve3Arr[i]
