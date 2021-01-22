@@ -568,7 +568,8 @@ export default {
               drainage: mealKeyVal[item.mealProductId].courseType == '引流课',
               discount: mealKeyVal[item.mealProductId].warningLine,
 
-              combo_number: item.mealProductId
+              combo_number: item.mealProductId,
+              giftProductId: item.giftProductId
             }
 
             mealList.push(obj)

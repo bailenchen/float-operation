@@ -253,15 +253,15 @@ export default {
         // 先判断有没有大套餐
         if (OrderObj1[element.combo_number]) {
           // 判断有没有小套餐
-          if (OrderObj1[element.combo_number][element.productName]) {
-            OrderObj1[element.combo_number][element.productName].push({
+          if (OrderObj1[element.combo_number][element.giftProductId]) {
+            OrderObj1[element.combo_number][element.giftProductId].push({
               index,
               item: element
             })
           } else {
             // 创建小套餐
-            OrderObj1[element.combo_number][element.productName] = []
-            OrderObj1[element.combo_number][element.productName].push({
+            OrderObj1[element.combo_number][element.giftProductId] = []
+            OrderObj1[element.combo_number][element.giftProductId].push({
               index,
               item: element
             })
@@ -270,8 +270,8 @@ export default {
           // 创建大套餐
           OrderObj1[element.combo_number] = {}
           // 创建小套餐
-          OrderObj1[element.combo_number][element.productName] = []
-          OrderObj1[element.combo_number][element.productName].push({
+          OrderObj1[element.combo_number][element.giftProductId] = []
+          OrderObj1[element.combo_number][element.giftProductId].push({
             index,
             item: element
           })
