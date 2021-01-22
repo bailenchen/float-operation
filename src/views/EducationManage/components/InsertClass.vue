@@ -89,6 +89,7 @@
             :time-list="checkList"
             :original-time-list="list"
             :stu-type="markTime"
+            :current-date="currentDate"
             @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>
@@ -167,7 +168,9 @@ export default {
       markTime: '',
 
       // 已经添加的数据
-      addedList: []
+      addedList: [],
+
+      currentDate: []
     }
   },
   computed: {
@@ -189,7 +192,7 @@ export default {
         classschedule: crmClassSchduleConfirmInfo,
         teacher: crmClassSchduleConfirmInfo
       }[this.crmType]
-      const { timeId, classId } = this.selectionList[0]
+      const { timeId, classId, classTime } = this.selectionList[0]
       const params = this.crmType === 'class' ? { classId } : { timeId }
       request(params).then(res => {
         const data = res.data
@@ -204,6 +207,8 @@ export default {
                 })
               }
             } else if (this.crmType === 'classschedule' || this.crmType === 'teacher') {
+              this.currentDate = []
+              this.currentDate.push(classTime)
               this.baseInfoList.push({
                 name: element,
                 value: this.handleValue(key, data)
@@ -297,8 +302,13 @@ export default {
       } else {
         this.checkList = data
       }
-
-
+      this.currentDate = []
+      if (this.crmType === 'class') {
+        for (let index = 0; index < this.checkList.length; index++) {
+          const element = this.checkList[index]
+          this.currentDate.push(element.classTime)
+        }
+      }
       console.log(this.checkList, 'xxx')
     },
 
@@ -506,6 +516,7 @@ export default {
 /deep/ .el-table--border {
   border: 1px solid #EBEEF5;
 }
+
 </style>
 
 

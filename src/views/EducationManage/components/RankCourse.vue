@@ -165,6 +165,7 @@
         <create-sections title="学员名称" class="student-wrap">
           <add-student
             :base-info="selectionList[0]"
+            :current-date="currentAddDateTime"
             @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>
@@ -245,7 +246,7 @@ export default {
 
       // 当前添加的日期
       currentAddDate: '',
-      currentAddDateTime: '',
+      currentAddDateTime: [],
 
       // 添加日期
       dateVisible: false,
@@ -317,7 +318,6 @@ export default {
       crmClassQueryInsertBaseInfo({ classId }).then(res => {
         const data = res.data
         // 上课时间段列表
-        const totalNumber = []
         this.timeList = data.list.filter((item, index) => {
           item.num = index + 1
           item.dateTime = item.classTime ? `${item.classTime.slice(0, 10)} ${item.timeSlotStart.slice(0, 5)}~${item.timeSlotEnd.slice(0, 5)}` : ''
@@ -332,11 +332,9 @@ export default {
           }).join(',')
           item.actual = actual
           item.totalNumber = item.totalNumber
-          totalNumber.push(item.totalNumber - actual)
           item.maxs = `${item.actual}/${item.totalNumber}`
           return item.actual !== item.totalNumber
         })
-        this.selectionList[0].totalNumber = Math.min(...totalNumber)
         this.loading = false
       }).catch((err) => {
         this.loading = false

@@ -94,7 +94,6 @@
         <el-table
           id="crm-table"
           ref="multipleTables"
-          :row-height="40"
           :data="list"
           :height="350"
           class="n-table--border"
@@ -148,6 +147,12 @@ export default {
       type: Object,
       default() {
         return {}
+      }
+    },
+    currentDate: {
+      type: Array,
+      default() {
+        return []
       }
     },
     originalTimeList: {
@@ -325,7 +330,18 @@ export default {
       this.stuInfoList = []
       this.list = []
       this.isExecute = false // 此时阻止勾选自动执行
-      crmClassContractIndext({ customerId: id }).then(res => {
+      const date = []
+      if (this.currentDate.length) {
+        for (let index = 0; index < this.currentDate.length; index++) {
+          const element = this.currentDate[index]
+          date.push(element.slice(0, 10))
+        }
+      }
+      const params = {
+        customerId: id,
+        date: String(date)
+      }
+      crmClassContractIndext(params).then(res => {
         const stuInfo = res.data
         this.stuInfo = stuInfo
         this.checkGradeName = res.data.gradeName
@@ -350,9 +366,9 @@ export default {
     // 勾选同时去重
     handleSelectionChange(data) {
       if (this.isExecute) {
-        if (this.timeList.length) {
-          const filterData = []
-          const useData = []
+        const filterData = []
+        const useData = []
+        if (this.timeList.length) { // 勾选的时间段列表数据
           for (let index = 0; index < data.length; index++) {
             const element = data[index]
             for (let indexs = 0; indexs < this.timeList.length; indexs++) {
@@ -365,25 +381,36 @@ export default {
             }
           }
           if (filterData.length) {
-            data = this.toggleSelection(filterData)
+            this.toggleSelection(filterData)
           }
 
           if (filterData.length > 1) {
-            data = useData
             return this.$message.error('勾选的数据中包含已存在学员')
           } else if (filterData.length == 1) {
             return this.$message.error('该学员已存在')
           }
         }
+        if (filterData.length) return
         const { customerId, customerName } = this.stuInfo
-        if (data.length) {
-          this.addedStuList.push({
-            customerId, customerName
-          })
-        }
 
-        if (!this.addedListVal.includes(customerId)) {
-          this.addedListVal.push(customerId)
+        if (data.length) {
+          if (this.addedListVal.length) {
+            if (!this.addedListVal.includes(data[0].customerId)) {
+              this.addedStuList.push({
+                customerId, customerName
+              })
+              if (!filterData.length && !this.addedListVal.includes(customerId)) {
+                this.addedListVal.push(customerId)
+              }
+            }
+          } else {
+            this.addedStuList.push({
+              customerId, customerName
+            })
+            if (!filterData.length && !this.addedListVal.includes(customerId)) {
+              this.addedListVal.push(customerId)
+            }
+          }
         }
 
         if (!data.length) {
