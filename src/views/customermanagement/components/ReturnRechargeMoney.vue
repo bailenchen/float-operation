@@ -19,7 +19,7 @@
       :data="list"
       :height="tableHeight"
       :cell-class-name="cellClassName"
-      resizable
+
       stripe
       style="width: 100%;border: 1px solid #E6E6E6;"
       @row-click="handleRowClick">
@@ -27,6 +27,7 @@
         v-for="(item, index) in fieldList"
         :key="index"
         :prop="item.prop"
+        :width="item.width"
         :formatter="fieldFormatter"
         :label="item.label"
         show-overflow-tooltip/>
@@ -120,11 +121,27 @@ export default {
 
         const arr = []
         res.data.forEach(item => {
-          arr.push({
+          const obj = {
             prop: item.fieldName,
             width: item.width,
             label: item.name
-          })
+          }
+          // arr.push({
+          //   prop: item.fieldName,
+          //   width: item.width,
+          //   label: item.name
+          // })
+          if ([
+            'money',
+            'leadsNumber',
+            'createTime'].includes(item.fieldName)) {
+            obj.width = {
+              money: 120,
+              leadsNumber: 130,
+              createTime: 150
+            }[item.fieldName]
+          }
+          arr.push(obj)
         })
         console.log('arr', arr)
         this.fieldList = arr
@@ -198,6 +215,8 @@ export default {
           1: '常规充值返还',
           2: '特殊充值返还'
         }[row[column.property]]
+      } else if (column.property === 'refundTime') {
+        return row[column.property].replace(/(\d{4})-(\d{2})-(\d{2}) .*/, '$1-$2-$3')
       }
       return row[column.property]
     },

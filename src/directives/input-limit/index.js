@@ -10,8 +10,7 @@ export default {
         if (!value) { // 默认保留两位小数
           el.value = el.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3')
         } else if (value == 'noMinus') { // 默认保留两位小数
-          console.log('el.value', el.value)
-          el.value = el.value.replace(/[\-\+]*(\d+)(\.?)(\d)(\d).*$/, function(...arg) {
+          el.value = el.value.replace(/[\-\+]*(\d+)(\.?)(\d?)(\d?).*$/, function(...arg) {
             console.log('匹配', arg)
             arg[3] = arg[3] ? arg[3] : ''
             arg[4] = arg[4] ? arg[4] : ''

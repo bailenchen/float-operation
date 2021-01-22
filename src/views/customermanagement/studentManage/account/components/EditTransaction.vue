@@ -70,6 +70,7 @@
             <div v-if="item.type == 'file'" class="img">
               <div v-show="!show">
                 {{ fileName }}
+                <el-button type="text" @click="preview">预览</el-button>
                 <el-button type="text" @click="downloadFile">下载</el-button>
                 <el-button type="text" @click="delFile">删除</el-button>
               </div>
@@ -343,6 +344,20 @@ export default {
     // 解决element输入框嵌套太深无法输入内容bug
     updateInputVal: function() {
       this.$forceUpdate()	// 刷新
+    },
+    preview() {
+      this.$bus.emit('preview-image-bus', {
+        index: 0,
+        data: [
+          {
+            filePath: this.action.filePath,
+            fileType: 'file',
+            name: this.action.receipt,
+            readOnly: 0,
+            url: this.action.filePath
+          }
+        ]
+      })
     },
     downloadFile() {
       downloadAdjunct({ 'batchId': this.fieldBatchId })
