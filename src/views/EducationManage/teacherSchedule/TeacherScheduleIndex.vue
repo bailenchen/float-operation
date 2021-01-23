@@ -57,7 +57,7 @@
             <el-input v-model="form.realname" placeholder="请输入教师姓名"/>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button type="primary" @click="onSubmit('do')">查询</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -194,8 +194,12 @@ export default {
       }
       const everyDay = getDateStr(this.currentWeekStartDate, this.currentWeekEndDate, 0)
       this.everyDay = everyDay // 生成该周的每一天
-      this.date = `${this.currentWeekStartDate} ~ ${this.currentWeekEndDate}`
       this.form.time = this.currentWeekStartDate
+      this.handleDateRange(everyDay)
+    },
+
+    handleDateRange(everyDay) {
+      this.date = `${this.currentWeekStartDate} ~ ${this.currentWeekEndDate}`
       this.$nextTick(() => {
         this.$refs.table.fieldLists.forEach((element, index) => {
           if (index > 1) {
@@ -272,13 +276,45 @@ export default {
       this.loading = false
     },
 
-    onSubmit() {
+    // 根据某一天获取当周的所有日期
+    getWeekAry(datestr) {
+      var date = new Date(datestr)
+      var weeknum = date.getDay() // 返回一周的某一天数字。（0-6）
+      if (weeknum == 0) {
+        weeknum = 7
+      }
+      weeknum--
+      var weekAry = []
+      for (var i = -weeknum; i < 7 - weeknum; i++) {
+        weekAry.push(
+          moment(new Date(this.addDay(i, date))).format('YYYY-MM-DD')
+        )
+      }
+      return weekAry
+    },
+
+    // 截取对应时间
+    addDay(dayNumber, date) {
+      var ms = dayNumber * (1000 * 60 * 60 * 24) // 一天的毫秒数(1000 * 60 * 60 * 24) = 86400000
+      // 根据传进来的值分别得到一周7天的标准时间;
+      var newDate = new Date(date.getTime() + ms)
+      return newDate
+    },
+
+    onSubmit(content) {
       this.loading = true
       if (this.comName === 'DayTable') {
+        this.date = this.form.time
         this.$nextTick(() => {
           this.$refs.table.getWillMergeColumns()
         })
       } else if (this.comName === 'WeekTable') {
+        if (content) {
+          const sevenDays = this.getWeekAry(this.form.time)
+          this.currentWeekStartDate = sevenDays[0]
+          this.currentWeekEndDate = sevenDays[sevenDays.length - 1]
+          this.handleDateRange(String(sevenDays))
+        }
         this.$nextTick(() => {
           this.$refs.table.getWillMergeRows()
         })
