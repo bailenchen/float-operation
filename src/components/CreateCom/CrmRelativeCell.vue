@@ -144,7 +144,6 @@ export default {
     //   handler(val) {
     //     console.log('监听relation', val)
     //     if (Object.keys(val).length == 0) {
-    //       console.log('阻止')
     //       return
     //     }
     //     if (val.moduleType) {
@@ -155,9 +154,7 @@ export default {
     //       this.relationAction = { type: 'condition', data: val }
     //     } else if (val.type == 'presentContract') {
     //       this.relationAction = val
-    //       console.log('更新relationAction', this.relationAction)
     //     } else {
-    //       console.log('进入？')
     //       this.relationAction = { type: 'default' }
     //     }
     //   },

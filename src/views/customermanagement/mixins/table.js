@@ -342,11 +342,12 @@ export default {
               const element = res.data[index]
 
               var width = 0
-              if (!element.width) {
+              // if (!element.width) {
+              if (element.width) {
                 if (element.name && element.name.length <= 6) {
-                  width = element.name.length * 15 + 45
+                  width = element.name.length * 20 + 45
                 } else {
-                  width = 140
+                  width = 200
                 }
               } else {
                 if ([

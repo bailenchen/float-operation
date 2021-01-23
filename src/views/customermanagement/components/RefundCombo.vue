@@ -183,6 +183,8 @@ export default {
           return
         }
 
+        console.log('val.money', val.money)
+
         // 只有contracId
         if (val.contracId && val.money == undefined) {
           if (val.refundType == 1) {
@@ -191,6 +193,7 @@ export default {
 
           this.btnType = val.isInteriorRefund ? 'primary' : 'success'
           this.btnText = val.isInteriorRefund ? '填写资金退款' : '查看资金退款信息'
+          console.log('adssads')
           this.getData()
           return
         }
@@ -278,7 +281,13 @@ export default {
         }
       }
 
-      obj.value.money = this.oldValue.money ? this.oldValue.money : this.money
+      if (this.action.refundType == 2) {
+        obj.value.money = this.oldValue.money ? this.oldValue.money : this.money
+      } else {
+        obj.value.money = this.money
+      }
+
+
       obj.value = del ? '' : obj.value
       this.$emit('value-change', obj)
     },
@@ -287,6 +296,7 @@ export default {
       const params = { types: 6, id: this.action.contracId }
       filedGetInformation(params).then(res => {
         this.loading = false
+        // debugger
         this.structureTable(res.data.contract)
         this.calculateMoney(res.data.contract)
         this.structureProduct(res.data.contract.productList)
@@ -304,6 +314,7 @@ export default {
         arr.push(obj)
       })
       this.product = arr
+      // debugger
       this.sendData()
     },
 

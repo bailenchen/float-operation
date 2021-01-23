@@ -2122,6 +2122,7 @@ export default {
               this.actionRefundCombo.isInteriorRefund = item.value == '是'
             }
             if (item.fieldName == 'refundCombo') {
+              this.actionRefundCombo.type = 'update'
               params['oldValue'] = {
                 productList: this.action.information.refund.productList,
                 giftProducts: this.action.information.refund.giftProducts,

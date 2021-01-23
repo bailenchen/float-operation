@@ -230,6 +230,9 @@ export default {
       if (contractType === 2) {
         this.createActionInfo.contractType = 2
         this.createActionInfo.present = true
+      } else if (this.createActionInfo.contractType == 2) {
+        delete this.createActionInfo.contractType
+        delete this.createActionInfo.present
       }
 
       this.isCreate = true
