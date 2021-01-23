@@ -16,7 +16,7 @@
         align="center">
         <template slot-scope="scope">
           <template v-if="item.prop == 'subject'">
-            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择" @change="changeSubject(scope.row)">
+            <el-select v-model="scope.row.subject" :disabled="isDisabled" placeholder="请选择">
               <el-option
                 v-for="subjectItem in subjectList"
                 :key="subjectItem.value"
@@ -417,11 +417,11 @@ export default {
         this.refundMonry = this.totalPrice - this.giveAction.surplusPrice
         this.priceValue = this.totalPrice
       }
-      this.havePresent()
+      this.havePresent(false)
     },
 
     // 有累积赠送，生成presentData，向父组件发送数据
-    async havePresent() {
+    async havePresent(initPresent = true) {
       var obj = await this.getMaxGive(this.purchaseInGive)
 
       // 判断后端有没有返回值
@@ -435,7 +435,10 @@ export default {
         this.presentRules = obj.presentRules
         this.presentRules.coachType = this.giveAction.searchJson.coachType
 
-        // this.jointpresentData(this.giveObj)
+        if (initPresent) {
+          this.jointpresentData(this.giveObj)
+        }
+
         this.maxGive = this.presentRules.presenterCount
         this.surplusGive = this.maxGive
       }
@@ -920,7 +923,7 @@ export default {
 
     // 改变科目
     changeSubject(row) {
-      console.log('row信息1', row)
+      console.log('row信息', row)
       if (!this.giveObj) return
 
       if (this.giveObj.giftProductId != row.detailsId) {

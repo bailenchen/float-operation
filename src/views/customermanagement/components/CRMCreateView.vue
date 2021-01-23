@@ -436,7 +436,7 @@ export default {
         buyCount: 0, // 主合同总购买课次
         type: 'save' // 新建
       },
-      actionRefundCombo: { contracId: '', isInteriorRefund: true, type: 'save' },
+      actionRefundCombo: { contracId: '', refundType: 1, isInteriorRefund: true, type: 'save' },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
       contractDiscount: 100, // 合同折扣
@@ -689,7 +689,6 @@ export default {
                 element.relation = {
                   type: 'presentContract',
                   searchJson: {
-                  // customerId: item.value[0].customerId,
                     customerId: item.value[0].customerId,
                     checkStatus: 1,
                     contractType: 1,
@@ -1179,6 +1178,7 @@ export default {
           this.crmForm.crmFields.forEach(_item => {
             if (_item.key == 'money') {
               _item.value = item.value.money
+              return false
             }
           })
         }
@@ -1186,12 +1186,21 @@ export default {
           this.refundMoney = item.value
         }
         if (item.key === 'refund_type') {
+          console.log('refund_type', item)
+          this.actionRefundCombo.refundType = item.value
           this.crmForm.crmFields.forEach(_item => {
             if (_item.key == 'money') {
               _item.disabled = item.value != 2
+              return false
             }
-            this.refundType = item.value
           })
+          this.refundType = item.value
+
+          /*     // 重新计算金额
+          if (item.value == 1) {
+            console.log('重新计算金额')
+
+          } */
         }
         if (item.key === 'refund_cause_type') {
           this.cause = item.value == '主观原因' ? 2 : 1
@@ -1728,7 +1737,6 @@ export default {
           params['key'] = item.fieldName
           params['data'] = item
 
-          // if (this.crmType == 'contract' && item.fieldName == 'customer_id') {
           if (this.crmType == 'contract') {
             if (item.fieldName == 'customer_id') {
               if (!this.action.present || !this.action.contractType == 2) {
@@ -1740,12 +1748,10 @@ export default {
               }
             }
             // 额外赠送合同，关联合同字段多选
-            // if (this.action.present && item.fieldName == 'contractId') {
             if ((this.action.present || this.action.contractType == 2) && item.fieldName == 'contractId') {
               params.radio = false
             }
           }
-
 
           // 获取 value relative 信息
           this.getParamsValueAndRelativeInfo(params, item, list)
@@ -2100,6 +2106,7 @@ export default {
             if (item.fieldName == 'refund_type') {
               params['value'] = item.value
               this.refundType = item.value
+              this.actionRefundCombo.refundType = item.value
             }
             if (item.fieldName === 'refund_cause_type') {
               params['value'] = item.value
@@ -2334,8 +2341,7 @@ export default {
         }
 
         // 从学员创建合同
-        // console.log('从leads创建合同', this.action)
-        if (this.action && this.action.crmType == 'customer') {
+        if (this.action && (this.action.crmType == 'customer' || this.action.crmType == 'student')) {
           if (element.key == 'customer_id') {
             element.disabled = true
             this.actionCombo.customerId = element.value[0].customerId
@@ -2377,6 +2383,22 @@ export default {
           }
           if (element.key == 'source') {
             element.value = this.action.data.customer.channelIdName
+          }
+
+
+          if (this.action.contractType == 2) {
+            if (element.key == 'contractId') {
+              element.disabled = false
+              element.relation = {
+                type: 'presentContract',
+                searchJson: {
+                  customerId: this.action.data.customer.customerId,
+                  checkStatus: 1,
+                  contractType: 1,
+                  contractStatus: 5
+                }
+              }
+            }
           }
         }
 

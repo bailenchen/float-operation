@@ -35,7 +35,6 @@ import { filedGetInformation } from '@/api/customermanagement/common'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
 import OfflineWithDraw from '@/views/customermanagement/components/selectionHandle/OfflineWithDraw'
 import { mapGetters } from 'vuex'
-// import moment from 'moment'
 
 export default {
   name: 'RefundCombo',
@@ -58,6 +57,8 @@ export default {
       }
     },
     refundMoney: [Number, String],
+    refundType: [Number, String],
+
     isInteriorRefund: {
       type: Boolean,
       default: false
@@ -158,8 +159,8 @@ export default {
       money: '',
       product: null, // 表格数据
       capital: null, // 资金退款信息
-      // fillData: null,
-      fillData: {},
+      fillData: null,
+      // fillData: {},
       disabled: false,
       moneyType: 'contractRefound',
       btnText: '填写资金退款',
@@ -184,6 +185,12 @@ export default {
 
         // 只有contracId
         if (val.contracId && val.money == undefined) {
+          if (val.refundType == 1) {
+            this.fillData = null
+          }
+
+          this.btnType = val.isInteriorRefund ? 'primary' : 'success'
+          this.btnText = val.isInteriorRefund ? '填写资金退款' : '查看资金退款信息'
           this.getData()
           return
         }
@@ -209,20 +216,28 @@ export default {
       immediate: true
     },
     refundMoney: function(val) {
+      console.log('监听refundMoney')
       this.money = val
 
-      this.fillData = {
-        [this.moneyType]: {
-          'payment': 6,
-          'userAccount': '',
-          'payeeName': '',
-          'price': val,
-          'transactionTime': '',
-          'characterId': '',
-          'characterName': '',
-          'remark': ''
+      if (!this.fillData) {
+        this.fillData = {
+          [this.moneyType]: {
+            'payment': 6,
+            'userAccount': '',
+            'payeeName': '',
+            'price': val,
+            'transactionTime': '',
+            'characterId': '',
+            'characterName': '',
+            'remark': ''
+          }
         }
+      } else {
+        this.fillData[this.moneyType].price = val
+        if (this.capital) this.capital.refundMoney = val
       }
+
+
 
 
       this.sendData()
@@ -303,6 +318,10 @@ export default {
     },
     structureTableByVal(dataObj) {
       console.log('aa', dataObj)
+
+      this.btnType = dataObj.capital ? 'success' : 'primary'
+      this.btnText = dataObj.capital ? '查看资金退款信息' : '填写资金退款'
+
 
       QueryAdminSubject().then(res => {
         this.subjectList = res.data

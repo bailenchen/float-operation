@@ -18,7 +18,7 @@
         class="xr-btn--orange rc-head-item"
         icon="el-icon-plus"
         type="primary"
-        @click="createClick">新建额外赠送合同</el-button>
+        @click="createClick(2)">新建额外赠送合同</el-button>
     </flexbox>
     <el-table
       :data="list"
@@ -209,7 +209,7 @@ export default {
     /**
      * 新建
      */
-    createClick() {
+    createClick(contractType) {
       // leads判断是否已到访
       if (this.crmType == 'customer' && this.detail.followUpResults != '已到访') {
         this.$message.warning('请先跟进至已到访')
@@ -225,6 +225,11 @@ export default {
           userId: this.userInfo.userId,
           realname: this.userInfo.realname
         }
+      }
+
+      if (contractType === 2) {
+        this.createActionInfo.contractType = 2
+        this.createActionInfo.present = true
       }
 
       this.isCreate = true
