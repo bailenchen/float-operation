@@ -374,6 +374,7 @@ export default {
     structureDataByValue() {
       this.init()
       this.tableData = this.value.productList
+      this.presentData = this.value.presentList
 
       this.tableData.forEach(item => {
         if (item.courseType == '引流课') {
@@ -434,36 +435,14 @@ export default {
         this.presentRules = obj.presentRules
         this.presentRules.coachType = this.giveAction.searchJson.coachType
 
-        // this.createSubject()
-        this.jointpresentData(this.giveObj)
+        // this.jointpresentData(this.giveObj)
         this.maxGive = this.presentRules.presenterCount
         this.surplusGive = this.maxGive
       }
       this.sendData()
     },
 
-    // 有累积赠送，生成presentData，向父组件发送数据
-    // async havePresent() {
-    //   var obj = await this.getMaxGive(this.purchaseInGive)
-    //   this.giveObj = obj.lastPresent
-    //   this.presentRules = obj.presentRules
 
-    //   console.log('giveObj1', this.giveObj)
-    //   console.log('presentRules1', this.presentRules)
-
-    //   if (this.giveObj) {
-    //     this.createSubject()
-    //     this.jointpresentData(this.giveObj)
-    //     this.maxGive = giveObj.presentRules.presenterCount
-    //     this.presentRules = {
-    //       coachType: this.giveAction.searchJson.coachType,
-    //       classes: giveObj.presentRules.classes,
-    //       give: giveObj.presentRules.give
-    //     }
-    //     this.surplusGive = this.maxGive
-    //   }
-    //   this.sendData()
-    // },
 
     async getMaxGive(purchaseInGive) {
       var parms = {

@@ -577,6 +577,8 @@ export default {
             9: '家长审核中',
             10: '家长拒绝'
           }[row[column.property]]
+        } else if (column.property === 'refundTime') {
+          return row[column.property].replace(/(\d{4})-(\d{2})-(\d{2}) .*/, '$1-$2-$3')
         }
       }
 

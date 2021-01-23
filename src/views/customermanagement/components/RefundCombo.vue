@@ -158,7 +158,8 @@ export default {
       money: '',
       product: null, // 表格数据
       capital: null, // 资金退款信息
-      fillData: null,
+      // fillData: null,
+      fillData: {},
       disabled: false,
       moneyType: 'contractRefound',
       btnText: '填写资金退款',
@@ -209,6 +210,21 @@ export default {
     },
     refundMoney: function(val) {
       this.money = val
+
+      this.fillData = {
+        [this.moneyType]: {
+          'payment': 6,
+          'userAccount': '',
+          'payeeName': '',
+          'price': val,
+          'transactionTime': '',
+          'characterId': '',
+          'characterName': '',
+          'remark': ''
+        }
+      }
+
+
       this.sendData()
     }
   },
@@ -277,9 +293,10 @@ export default {
     },
 
     calculateMoney(dataObj) {
-      var money = 0
+      let money = 0
+      console.log('dataObj', dataObj)
       dataObj.productList.forEach(item => {
-        money += item.surplusCount * item.price
+        money += (item.price * 100 * item.surplusCount) / 100
       })
       console.log('应退金额', money)
       this.money = money
@@ -555,11 +572,11 @@ export default {
 
       if (
         columnIndex === 1 ||
-        columnIndex === 3 ||
-        columnIndex === 4 ||
+        // columnIndex === 3 ||
+        // columnIndex === 4 ||
         columnIndex === 9 ||
-        columnIndex === 11 ||
-        columnIndex === 12
+        columnIndex === 11
+        // columnIndex === 12
       ) {
         for (let i = 0; i < this.OrderLeve2Arr.length; i++) {
           const element = this.OrderLeve2Arr[i]

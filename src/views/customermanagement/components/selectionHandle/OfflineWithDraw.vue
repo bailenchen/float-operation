@@ -300,10 +300,11 @@ export default {
           form[this.moneyType][k] = this.fillData[this.moneyType][k]
         }
         this.characterUser = {
-          realname: this.fillData[this.moneyType].characterName,
-          userId: this.fillData[this.moneyType].characterId,
+          realname: this.fillData[this.moneyType].characterName ? this.fillData[this.moneyType].characterName : this.userInfo.realname,
+          userId: this.fillData[this.moneyType].characterId ? this.fillData[this.moneyType].characterId : this.userInfo.userId,
           username: ''
         }
+        form[this.moneyType].transactionTime = form[this.moneyType].transactionTime ? form[this.moneyType].transactionTime : this.timeFormat()
         this.form = form
         return
       }
@@ -351,6 +352,7 @@ export default {
       this.$forceUpdate() // 强制重新渲染
     },
     timeFormat() {
+      console.log('sdadasas')
       function _timeFormat(options) {
         const time = options.time ? options.time : new Date()
         const template = options.template

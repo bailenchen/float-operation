@@ -127,6 +127,11 @@ export default {
           icon: 'wk wk-receivables',
           color: '#6995FF',
           type: 'capitalAccount'
+        },
+        refund: {
+          icon: 'wk wk-receivables',
+          color: '#6995FF',
+          type: 'refund'
         }
       }
 
@@ -165,6 +170,8 @@ export default {
           key = 'insideUser'
         } else if ([43, 44, 45].includes(this.data.type)) {
           key = 'capitalAccount'
+        } else if ([46, 47, 48].includes(this.data.type)) {
+          key = 'refund'
         }
       }
 
@@ -217,7 +224,11 @@ export default {
         42: `${this.data.realname}导入了内部通讯录`,
         43: `${this.data.realname} 资金待审核审批提醒`,
         44: `${this.data.realname} 资金拒绝通知`,
-        45: `${this.data.realname} 资金通过通知`
+        45: `${this.data.realname} 资金通过通知`,
+
+        46: `${this.data.realname} 合同充值返还待审核审批提醒`,
+        47: `${this.data.realname} 合同充值返还拒绝通知`,
+        48: `${this.data.realname} 合同充值返还通过通知`
       }[this.data.type]
     },
 

@@ -356,9 +356,12 @@ export default {
 
       if (
         columnIndex === 1 ||
-        columnIndex === 7 ||
-        columnIndex === 9 ||
-        columnIndex === 10
+        // columnIndex === 7 ||
+        // columnIndex === 9 ||
+        // columnIndex === 10
+        columnIndex === 8 ||
+        columnIndex === 10 ||
+        columnIndex === 11
       ) {
         for (let i = 0; i < this.OrderLeve2Arr.length; i++) {
           const element = this.OrderLeve2Arr[i]
