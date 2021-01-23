@@ -794,8 +794,9 @@ export default {
       } else if (type == 'follow') {
         this.isFollow = true
       } else if (type == 'mark_alloc') {
-        if (this.selectionList[0].checkStatus == 0) {
-          return this.$message.error('已提交的业绩分配正在审核中')
+        const { allotType } = this.selectionList[0]
+        if (allotType == 1) {
+          return this.$message.error('已提交的业绩分配已全部通过或处于待审核中')
         } else {
           this.markAllocShow = true
         }

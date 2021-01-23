@@ -56,8 +56,8 @@ export default {
       list: [],
       fieldList: [
         { prop: 'deptName', label: '所属中心' },
-        { prop: 'headmasterUserName', label: '变更前校区班主任' },
-        { prop: 'proHeadmasterUserName', label: '变更后校区班主任' },
+        { prop: 'proHeadmasterUserName', label: '变更前校区班主任' },
+        { prop: 'headmasterUserName', label: '变更后校区班主任' },
         { prop: 'createTime', label: '分配时间' }
       ],
       tableHeight: '400px',

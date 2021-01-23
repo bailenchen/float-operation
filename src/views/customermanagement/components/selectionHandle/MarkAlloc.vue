@@ -266,6 +266,7 @@ export default {
       if (newNum > 100) {
         return this.$message.error('所有新签学员数比例之和不得超过100%')
       }
+
       const params = {
         contractId: this.selectionList[0].contractId,
         userId: this.classList.length ? this.classList[0].userId : null,
