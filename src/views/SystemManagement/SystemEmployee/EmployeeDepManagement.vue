@@ -1644,7 +1644,7 @@ export default {
     submitDialog() {
       // 验证部门
       const params = { ...this.depCreateForm }
-      if (Object.keys(this.depCreateForm.addressData).length !== 0) {
+      if (this.depCreateForm.addressData && Object.keys(this.depCreateForm.addressData).length !== 0) {
         const { address, detailAddress, location, lat, lng } = this.depCreateForm.addressData
         params.address = address.join(',')
         params.detailAddress = detailAddress

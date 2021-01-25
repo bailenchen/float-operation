@@ -32,6 +32,8 @@ import NoticeDetail from '@/views/OAManagement/notice/NoticeDetail'
 import VisitDetail from '../visit/VisitDetail'
 import InvoiceDetail from '../invoice/InvoiceDetail'
 import StudentDetail from '../studentManage/student/detail'
+import RefundDetail from '../financeManage/refund/detail'
+// src\views\customermanagement\financeManage\refund\detail.vue
 
 export default {
   name: 'CRMFullScreenDetail', // 客户管理下 重要提醒 回款计划提醒
@@ -50,7 +52,8 @@ export default {
     NoticeDetail,
     VisitDetail,
     InvoiceDetail,
-    StudentDetail
+    StudentDetail,
+    RefundDetail
   },
   props: {
     /** 模块ID */
@@ -120,6 +123,8 @@ export default {
         return 'CustomerDetail'
       } else if (this.crmType == 'student') {
         return 'StudentDetail'
+      } else if (this.crmType == 'refund') {
+        return 'RefundDetail'
       }
       return ''
     }

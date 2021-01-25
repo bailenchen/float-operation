@@ -125,19 +125,19 @@ export default [
       }
     }]
   },
-  {
-    ...layout({
-      permissions: ['crm', 'insideUser']
-    }),
-    children: [{
-      path: 'student-warning',
-      component: () => import('@/views/customermanagement/warning'),
-      meta: {
-        title: '学员预警',
-        icon: 'bell'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'insideUser']
+  //   }),
+  //   children: [{
+  //     path: 'student-warning',
+  //     component: () => import('@/views/customermanagement/warning'),
+  //     meta: {
+  //       title: '学员预警',
+  //       icon: 'bell'
+  //     }
+  //   }]
+  // },
   {
     ...layout({
       permissions: ['crm', 'insideUser']
@@ -213,7 +213,7 @@ export default [
   //       activeMenu: '/crm/customer'
   //     }
   //   }]
-  // },
+  // }
   // {
   //   ...layout({
   //     permissions: ['crm', 'customer', 'nearbyCustomer']

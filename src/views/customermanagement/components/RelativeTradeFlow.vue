@@ -46,10 +46,13 @@
         label="操作"
         align="center"
         fixed="right"
-        width="80">
+        width="150">
         <template slot-scope="scope">
           <el-button v-if="showEdit(scope.row.transactionType)" @click="editHandle(scope.row)">
             编辑
+          </el-button>
+          <el-button @click="enterDetail(scope.row)">
+            详情
           </el-button>
         </template>
       </el-table-column>
@@ -149,8 +152,8 @@ export default {
         {
           options: [
             { label: '全部交易类型', value: '' },
-            { label: '交易类型为充值', value: 1 },
-            { label: '交易类型为提现', value: 2 }
+            { label: '交易类型为收款', value: 1 },
+            { label: '交易类型为退款', value: 2 }
           ],
           // prop: 'a'
           prop: 'transactionType'
@@ -261,6 +264,13 @@ export default {
       this.isCreate = true
     },
 
+    enterDetail(row) {
+      this.detailType = 'moneyType'
+      this.clickField = 'serialNumber'
+      this.contractId = row.waterId
+      this.showFullDetail = true
+    },
+
     getDetail(search) {
       this.loading = true
       const params = {
@@ -350,6 +360,19 @@ export default {
         this.clickField = column.property
         this.contractId = row.waterId
         this.showFullDetail = true
+      } else if (column.property == 'receipt') {
+        this.$bus.emit('preview-image-bus', {
+          index: 0,
+          data: [
+            {
+              filePath: row.filePath,
+              fileType: 'file',
+              name: row.receipt,
+              readOnly: 0,
+              url: row.filePath
+            }
+          ]
+        })
       }
     },
 
@@ -357,7 +380,7 @@ export default {
      * 通过回调控制class
      */
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.property === 'leadsNumber' || column.property == 'serialNumber') {
+      if (column.property === 'leadsNumber' || column.property == 'serialNumber' || column.property === 'receipt') {
         if (row.bigDealType === 2) {
           return 'under-line red-font'
         } else if (row.bigDealType === 1) {

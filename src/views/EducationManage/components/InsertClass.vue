@@ -46,6 +46,7 @@
             <div class="content create-sections-content">
               <el-table
                 id="crm-table"
+                ref="multipleTable"
                 :row-height="40"
                 :data="list"
                 :height="350"
@@ -84,6 +85,11 @@
         </create-sections>
         <create-sections title="学员名称" class="student-wrap">
           <add-student
+            :base-info="selectionList[0]"
+            :time-list="checkList"
+            :original-time-list="list"
+            :stu-type="markTime"
+            :current-date="currentDate"
             @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>
@@ -107,6 +113,7 @@ import CreateSections from '@/components/CreateSections'
 import AddStudent from './AddStudent'
 
 import { crmClassSchduleConfirmInfo, crmClassSchduleInsertClassSave } from '@/api/educationmanage/classSchedule'
+import { crmClassQueryInsertBaseInfo } from '@/api/educationmanage/class'
 import { objDeepCopy } from '@/utils'
 
 export default {
@@ -142,23 +149,28 @@ export default {
         subjectName: '科目',
         gradeName: '年级',
         timeSlot: '上课时段',
-        totalNumber: '次数',
+        coachType: '辅导方式',
         classType: '班级类型',
-        remarks: '备注'
+        remarks: '备注',
+        totalNumber: '满班人数'
       },
       baseInfoList: [],
 
       // 上课时段
       list: [],
       timeLists: [
-        { prop: 'num', label: '序号' },
-        { prop: '', label: '日期/时间' },
-        { prop: '', label: '上课学员' },
-        { prop: '', label: '实际学员/最大人数' }
+        { prop: 'num', label: '序号', width: 50 },
+        { prop: 'dateTime', label: '日期/时间', width: 170 },
+        { prop: 'customerName', label: '上课学员', width: 170 },
+        { prop: 'maxs', label: '实际学员/最大人数', width: 170 }
       ],
+      checkList: [],
+      markTime: '',
 
       // 已经添加的数据
-      addedList: []
+      addedList: [],
+
+      currentDate: []
     }
   },
   computed: {
@@ -174,22 +186,66 @@ export default {
 
     // 获取基本信息与学员信息
     queryBaseInfo() {
-      // const request = {
-      //   class: 'xxx',
-      //   classschedule: 'xxx'
-      // }
-      crmClassSchduleConfirmInfo({ timeId: this.selectionList[0].timeId }).then(res => {
+      this.loading = true
+      const request = {
+        class: crmClassQueryInsertBaseInfo,
+        classschedule: crmClassSchduleConfirmInfo,
+        teacher: crmClassSchduleConfirmInfo
+      }[this.crmType]
+      const { timeId, classId, classTime } = this.selectionList[0]
+      const params = this.crmType === 'class' ? { classId } : { timeId }
+      request(params).then(res => {
         const data = res.data
         for (const key in this.fieldObj) {
           if (Object.hasOwnProperty.call(this.fieldObj, key)) {
             const element = this.fieldObj[key]
-            this.baseInfoList.push({
-              name: element,
-              value: this.handleValue(key, data)
-            })
+            if (this.crmType === 'class') {
+              if (!(key == 'classTime' || key == 'timeSlot')) {
+                this.baseInfoList.push({
+                  name: element,
+                  value: this.handleValue(key, data)
+                })
+              }
+            } else if (this.crmType === 'classschedule' || this.crmType === 'teacher') {
+              this.currentDate = []
+              this.currentDate.push(classTime)
+              this.baseInfoList.push({
+                name: element,
+                value: this.handleValue(key, data)
+              })
+            }
           }
         }
+
+        // 上课时间段列表
+        if (this.crmType === 'class') {
+          const totalNumber = []
+          this.list = data.list.filter((item, index) => {
+            item.num = index + 1
+            item.dateTime = item.classTime ? `${item.classTime.slice(0, 10)} ${item.timeSlotStart.slice(0, 5)}~${item.timeSlotEnd.slice(0, 5)}` : ''
+            item.customerId = []
+            let actual = 0
+            item.customerName = item.students.map(ite => {
+              item.customerId.push(ite.customerId)
+              if (ite.classStatus === 1) {
+                actual++
+              }
+              return `${ite.customerName}(${ite.classStatusName})`
+            }).join(',')
+            item.actual = actual
+            item.totalNumber = item.totalNumber
+            totalNumber.push(item.totalNumber - actual)
+            item.maxs = `${item.actual}/${item.totalNumber}`
+            return item.actual !== item.totalNumber
+          })
+          if (!this.list.length) {
+            this.markTime = 'notime'
+          }
+          this.selectionList[0].totalNumber = Math.min(...totalNumber)
+        }
+        this.loading = false
       }).catch((err) => {
+        this.loading = false
         console.log(err)
       })
     },
@@ -218,26 +274,60 @@ export default {
 
     // 勾选
     handleSelectionChange(data) {
-      console.log(data)
+      if (this.addedList.length) {
+        const filterData = []
+        const useData = []
+        for (let index = 0; index < data.length; index++) {
+          const element = data[index]
+          for (let indexs = 0; indexs < this.addedList.length; indexs++) {
+            const item = this.addedList[indexs]
+            console.log(element, item.customerId)
+            if (element.customerId.includes(item.customerId)) {
+              filterData.push(element)
+            } else {
+              useData.push(element)
+            }
+          }
+        }
+        if (filterData.length) {
+          this.toggleSelection(filterData)
+        }
+        if (filterData.length > 1) {
+          return this.$message.error('勾选的数据中包含已存在学员')
+        } else if (filterData.length == 1) {
+          return this.$message.error('该学员已存在')
+        }
+
+        this.checkList = useData
+      } else {
+        this.checkList = data
+      }
+      this.currentDate = []
+      if (this.crmType === 'class') {
+        for (let index = 0; index < this.checkList.length; index++) {
+          const element = this.checkList[index]
+          this.currentDate.push(element.classTime)
+        }
+      }
+      console.log(this.checkList, 'xxx')
     },
 
-    /** 选中 */
-    checkInfos(data) {
-      console.log('kkkk', data)
-    },
-
-    getRequest() {
-      return {
-        class: 'xx',
-        classschedule: crmClassSchduleInsertClassSave
-      }[this.crmType]
+    // 校正勾选时间段
+    toggleSelection(filterData) {
+      if (filterData.length) {
+        filterData.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
     },
 
     /**
      * 保存
      */
     submitForm() {
-      const { timeId, batchId, classId, classroomId } = this.selectionList[0]
+      const { timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId, totalNumber } = this.selectionList[0]
       const bstudentList = []
       const newList = objDeepCopy(this.addedList)
       const customerIds = []
@@ -248,25 +338,50 @@ export default {
       const newCustomerIds = Array.from(new Set(customerIds))
       for (let index = 0; index < newCustomerIds.length; index++) {
         const element = newCustomerIds[index]
+        const stuList = []
         for (let indexs = 0; indexs < this.addedList.length; indexs++) {
           const selement = this.addedList[indexs]
           if (element == selement.customerId) {
-            bstudentList.push({
+            stuList.push({
               customerId: selement.customerId,
               rId: selement.rId,
               classtimeBatchId: batchId
             })
           }
         }
+        bstudentList.push({
+          list: stuList
+        })
       }
-      const params = {
-        classtime: [
-          { timeId, batchId, classId, classroomId }
-        ],
-        timecontract: bstudentList
+      // 班级中的时间段
+      const timeLists = []
+      if (this.crmType == 'class') {
+        if (!this.checkList.length) {
+          return this.$message.error('请勾选上课时间段')
+        }
+        if (!this.addedList.length) {
+          return this.$message.error('请添加学员')
+        }
+        this.checkList.forEach(item => {
+          timeLists.push({
+            timeId: item.timeId,
+            batchId: item.batchId,
+            classId,
+            classroomId,
+            classTime: item.classTime,
+            timeSlot: item.timeSlot,
+            subjectTeacherId: item.subjectTeacherId
+          })
+        })
       }
 
-      this.getRequest()(params).then(res => {
+      const params = {
+        list1: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId }],
+        list2: bstudentList,
+        totalNumber
+      }
+
+      crmClassSchduleInsertClassSave(params).then(res => {
         this.hidenView()
         this.$message.success('操作成功')
         this.$emit('save-success', { type: 'insert_class' })
@@ -401,6 +516,7 @@ export default {
 /deep/ .el-table--border {
   border: 1px solid #EBEEF5;
 }
+
 </style>
 
 

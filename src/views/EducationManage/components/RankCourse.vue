@@ -57,11 +57,13 @@
                       step: '00:60',
                       end: '19:00'
                     }"
+                    :clearable="false"
                     placeholder="起始时间"
                     @change="changeTime"/>
                   至
                   <el-time-select
                     v-model="endTime"
+                    :clearable="false"
                     :picker-options="{
                       start: '08:00',
                       step: '00:60',
@@ -126,11 +128,44 @@
                     @click="deleteDate()"/>
                 </div>
               </flexbox>
+
+              <!-- 展示时间段列表 -->
+              <el-table
+                id="crm-table"
+                ref="multipleTable"
+                :row-height="40"
+                :data="timeList"
+                :height="300"
+                class="n-table--border"
+                use-virtual
+                stripe
+                border
+                highlight-current-row
+                style="width: 100%">
+                <el-table-column
+                  v-for="(item, index) in timeLists"
+                  :key="index"
+                  :fixed="index==0"
+                  :prop="item.prop"
+                  :label="item.label"
+                  :width="item.width"
+                  align="center"
+                  show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
+                    <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
+                    <span v-else>{{ scope.row[item.prop] }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column/>
+              </el-table>
             </div>
           </div>
         </create-sections>
         <create-sections title="学员名称" class="student-wrap">
           <add-student
+            :base-info="selectionList[0]"
+            :current-date="currentAddDateTime"
             @added-stu="getStuInfo"/>
         </create-sections>
       </flexbox>
@@ -168,7 +203,7 @@ import AddStudent from './AddStudent'
 import { getDateStr } from '@/utils/dateDiff'
 import moment from 'moment'
 
-import { crmClassRankCourse } from '@/api/educationmanage/class'
+import { crmClassRankCourse, crmClassQueryInsertBaseInfo } from '@/api/educationmanage/class'
 import { objDeepCopy } from '@/utils'
 
 export default {
@@ -211,7 +246,7 @@ export default {
 
       // 当前添加的日期
       currentAddDate: '',
-      currentAddDateTime: '',
+      currentAddDateTime: [],
 
       // 添加日期
       dateVisible: false,
@@ -231,6 +266,16 @@ export default {
       // 排课列表
       dateList: [],
       markWeek: null, // 连排周数
+      // 连排时的数据
+      pendingData: [],
+
+      timeList: [],
+      timeLists: [
+        { prop: 'num', label: '序号', width: 60 },
+        { prop: 'dateTime', label: '日期/时间', width: 170 },
+        { prop: 'customerName', label: '上课学员', width: 170 },
+        { prop: 'maxs', label: '实际学员/最大人数', width: 170 }
+      ],
 
       // 已添加学员信息
       addedList: []
@@ -264,8 +309,38 @@ export default {
         })
       }
     }
+    this.queryBaseInfo()
   },
   methods: {
+    queryBaseInfo() {
+      this.loading = true
+      const { classId } = this.selectionList[0]
+      crmClassQueryInsertBaseInfo({ classId }).then(res => {
+        const data = res.data
+        // 上课时间段列表
+        this.timeList = data.list.filter((item, index) => {
+          item.num = index + 1
+          item.dateTime = item.classTime ? `${item.classTime.slice(0, 10)} ${item.timeSlotStart.slice(0, 5)}~${item.timeSlotEnd.slice(0, 5)}` : ''
+          item.customerId = []
+          let actual = 0
+          item.customerName = item.students.map(ite => {
+            item.customerId.push(ite.customerId)
+            if (ite.classStatus === 1) {
+              actual++
+            }
+            return `${ite.customerName}(${ite.classStatusName})`
+          }).join(',')
+          item.actual = actual
+          item.totalNumber = item.totalNumber
+          item.maxs = `${item.actual}/${item.totalNumber}`
+          return item.actual !== item.totalNumber
+        })
+        this.loading = false
+      }).catch((err) => {
+        this.loading = false
+        console.log(err)
+      })
+    },
     hidenView() {
       this.$emit('hiden-view', 'schedule')
     },
@@ -291,13 +366,17 @@ export default {
 
     // 连排公共方法
     rankCourse(weeks) {
+      if (this.markWeek === weeks) {
+        return
+      }
       if (this.currentAddDateTime.length) {
         let week = weeks
         if (this.dateList.length) {
           week = weeks - 1
         }
         if (this.markWeek) {
-          this.dateList.length = this.dateList.length - (this.markWeek - 1)
+          this.dateList.length = this.dateList.length - this.pendingData.length
+          this.pendingData.length = 0
         }
         this.markWeek = weeks
         // 待连排的所有日期 this.currentAddDateTime
@@ -309,7 +388,9 @@ export default {
             for (let index = 0; index < week; index++) {
               day.setDate(day.getDate() + 7)
               const newdate = moment(day).format('YYYY-MM-DD')
-              this.dateList.push(`${newdate} ${this.startTime}~${this.endTime}`)
+              const itemData = `${newdate} ${this.startTime}~${this.endTime}`
+              this.pendingData.push(itemData)
+              this.dateList.push(itemData)
             }
           }
         }

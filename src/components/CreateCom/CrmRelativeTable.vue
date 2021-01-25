@@ -311,6 +311,8 @@ export default {
         return [
           { name: '学员姓名', field: 'customerName', formType: 'customer' },
           { name: '学员编号', field: 'leadsNumber', formType: 'customer' },
+          { name: '校区', field: 'deptIdName', formType: 'text' },
+          { name: '年级', field: 'gradeName', formType: 'text' },
           // { name: '邮箱', field: 'email', formType: 'text' },
           { name: '下次联系时间', field: 'nextTime', formType: 'datetime' },
           { name: '最后跟进时间', field: 'updateTime', formType: 'datetime' },
@@ -396,15 +398,14 @@ export default {
       } else if (this.crmType === 'productSetMeal') {
         params.searchJson = this.action.searchJson
       } else if (this.crmType === 'contract') { // 额外赠送合同
-        console.log('sdaa', this.action.searchJson)
         params.searchJson = this.action.searchJson
       } else if (this.crmType === 'refundMoney') { // 合同充值返还
-        console.log('合同充值返还', this.action.searchJson)
+        // console.log('合同充值返还', this.action.searchJson)
       }
       // 注入关联ID
       if (this.isRelationShow) {
-        console.log('读取action', this.action, this.crmType)
-        console.log('sa1111', this.action.data.moduleType[this.crmType])
+        // console.log('读取action', this.action, this.crmType)
+        // console.log('sa1111', this.action.data.moduleType[this.crmType])
         // this.action.data.moduleType 下的 this.crmType 的列表
         if (this.action.data.moduleType) {
           crmIndexRequest = {

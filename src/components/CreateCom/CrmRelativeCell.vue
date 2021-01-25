@@ -150,6 +150,28 @@ export default {
         this.relationAction = { type: 'default' }
       }
     }
+
+    // relation: {
+    //   handler(val) {
+    //     console.log('监听relation', val)
+    //     if (Object.keys(val).length == 0) {
+    //       return
+    //     }
+    //     if (val.moduleType) {
+    //       if (val.moduleType == 'refundMoney') {
+    //         this.relationAction = val
+    //         return
+    //       }
+    //       this.relationAction = { type: 'condition', data: val }
+    //     } else if (val.type == 'presentContract') {
+    //       this.relationAction = val
+    //     } else {
+    //       this.relationAction = { type: 'default' }
+    //     }
+    //   },
+    //   deep: true,
+    //   immediate: true
+    // }
   },
   mounted() {
     if (this.relation && this.relation.moduleType) {
@@ -160,6 +182,10 @@ export default {
       this.relationAction = { type: 'condition', data: this.relation }
     } else {
       this.relationAction = { type: 'default' }
+    }
+
+    if (this.relation && this.relation.type == 'presentContract') {
+      this.relationAction = this.relation
     }
   },
   methods: {

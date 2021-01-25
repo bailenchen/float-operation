@@ -23,8 +23,7 @@
 
 <script type="text/javascript">
 import loading from '../mixins/loading'
-import { queryRechargeListAPI } from '@/api/customermanagement/contract'
-// import { crmBusinessQueryContract } from '@/api/customermanagement/business'
+import { crmQueryChangeLogAPI } from '@/api/customermanagement/student'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
 export default {
@@ -56,10 +55,10 @@ export default {
       nopermission: false,
       list: [],
       fieldList: [
-        { prop: 'number', label: '所属中心' },
-        { prop: 'number', label: '变更前校区班主任' },
-        { prop: 'number', label: '变更后校区班主任' },
-        { prop: 'number', label: '分配时间' }
+        { prop: 'deptName', label: '所属中心' },
+        { prop: 'proHeadmasterUserName', label: '变更前校区班主任' },
+        { prop: 'headmasterUserName', label: '变更后校区班主任' },
+        { prop: 'createTime', label: '分配时间' }
       ],
       tableHeight: '400px',
       showFullDetail: false,
@@ -73,22 +72,21 @@ export default {
   watch: {
     id: function(val) {
       this.list = []
-    //   this.getDetail()
+      this.getDetail()
     }
   },
   mounted() {
-    // this.getDetail()
+    this.getDetail()
   },
-  activated: function() {},
-  deactivated: function() {},
   methods: {
     getDetail() {
       this.loading = true
       const request = {
-        contract: queryRechargeListAPI
+        student: crmQueryChangeLogAPI
       }[this.crmType]
-      const params = {}
-      params[this.crmType + 'Id'] = this.id
+      const params = {
+        customerId: this.id
+      }
       request(params)
         .then(res => {
           this.nopermission = false

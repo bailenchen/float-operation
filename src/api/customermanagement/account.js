@@ -89,7 +89,7 @@ export function crmAccountFileListAPI(data) {
  */
 export function crmWaterFileListAPI(data) {
   return request({
-    url: 'CrmCapitalAccount/queryFileList',
+    url: 'CrmCapitalAccountWater/queryFileList',
     method: 'post',
     data: data
   })

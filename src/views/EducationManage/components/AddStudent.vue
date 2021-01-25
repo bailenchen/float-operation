@@ -19,12 +19,29 @@
         size="mini"
         class="add-customer"
         @click.native="contentClick">添加学员</el-button>
+      <el-button
+        v-if="stuType && !originalTimeList.length"
+        slot="reference"
+        type="primary"
+        size="mini"
+        class="add-customer"
+        @click="disabledAdd">添加学员</el-button>
     </el-popover>
     <div class="crm-create-body" style="margin-top:10px;">
       <div class="content create-sections-content">
         <!-- 已勾选数据列表 -->
-        <div style="line-height:25px;">已勾选的数据</div>
-        <el-table
+        <div style="line-height:25px;">
+          <span>已添加的学员</span>&nbsp;
+          <el-select v-model="addedListVal" multiple placeholder="请选择" @remove-tag="removeCustomer">
+            <el-option
+              v-for="(item, index) in addedStuList"
+              :key="index++"
+              :label="item.customerName"
+              :value="item.customerId"/>
+          </el-select>
+        </div>
+
+        <!-- <el-table
           id="crm-table"
           :row-height="40"
           :data="addedList"
@@ -53,8 +70,7 @@
               <el-button @click="deleteAddItem(scope.$index)">删除</el-button>
             </template>
           </el-table-column>
-          <el-table-column/>
-        </el-table>
+        </el-table> -->
         <!-- 列表顶部信息 -->
         <flexbox
           :gutter="0"
@@ -77,7 +93,7 @@
         <!-- 列表信息 -->
         <el-table
           id="crm-table"
-          :row-height="40"
+          ref="multipleTables"
           :data="list"
           :height="350"
           class="n-table--border"
@@ -88,6 +104,7 @@
           style="width: 100%"
           @selection-change="handleSelectionChange">
           <el-table-column
+            :selectable="selectable"
             show-overflow-tooltip
             type="selection"
             align="center"
@@ -104,10 +121,11 @@
             <template slot-scope="scope">
               <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
               <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
-              <span v-else>{{ scope.row[item.prop] }}</span>
+              <span v-else>
+                {{ item.prop === 'startLifeCycle' ? `${scope.row[item.prop] ? scope.row[item.prop].slice(0,10) : ''}~${scope.row['endLifeCycle'] ? scope.row['endLifeCycle'].slice(0,10) : ''}` : scope.row[item.prop] }}
+              </span>
             </template>
           </el-table-column>
-          <el-table-column/>
         </el-table>
       </div>
     </div>
@@ -123,10 +141,44 @@ export default {
   components: {
     CrmRelative
   },
+  props: {
+    // 满班人数
+    baseInfo: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    currentDate: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    originalTimeList: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    timeList: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    stuType: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       // 已勾选数据
-      addedList: [],
+      addedList: [], // 勾选的合同数据
+      addedListVal: [],
+      addedStuList: [],
+      stuInfo: [], // 当前添加的学员基本信息
 
       stuObj: {
         deptName: '所在校区',
@@ -143,16 +195,20 @@ export default {
       // 学员合同表
       list: [],
       fieldLists: [
-        { prop: 'num', label: '合同编号' },
-        { prop: 'isnew', label: '合同属性' },
-        { prop: 'coachType', label: '合同类型' },
-        { prop: 'orderDate', label: '签约日期' },
-        { prop: 'isGive', label: '是否赠送' },
-        { prop: 'subjectName', label: '科目' },
-        { prop: 'sumCourse', label: '课次' },
-        { prop: 'alreadyCourse', label: '已排课次' },
-        { prop: 'notArranged', label: '未排课次' },
-        { prop: 'finishCourse', label: '已完成课次' }
+        { prop: 'num', label: '合同编号', width: 150 },
+        { prop: 'isnew', label: '合同属性', width: 90 },
+        { prop: 'coachType', label: '合同类型', width: 90 },
+        { prop: 'orderDate', label: '签约日期', width: 150 },
+        { prop: 'isGive', label: '是否额外赠送', width: 110 },
+        { prop: 'detailsName', label: '小套餐名称', width: 110 },
+        { prop: 'courseTypeName', label: '课程类型', width: 100 },
+        { prop: 'startLifeCycle', label: '使用周期', width: 200 },
+        { prop: 'typeName', label: '是否累计赠送', width: 140 },
+        { prop: 'subjectName', label: '科目', width: 60 },
+        { prop: 'sumCourse', label: '课次', width: 60 },
+        { prop: 'alreadyCourse', label: '已排课次', width: 90 },
+        { prop: 'notArranged', label: '剩余课次', width: 90 },
+        { prop: 'finishCourse', label: '已完成课次', width: 90 }
       ],
 
       showPopover: false,
@@ -161,21 +217,112 @@ export default {
       addStuCustomerId: null,
 
       // 当勾选发生变化时是否执行
-      isExecute: true
+      isExecute: true,
+
+      checkGradeName: '',
+      delIndex: null
     }
   },
   methods: {
+    disabledAdd() {
+      if (!this.originalTimeList.length) {
+        return this.$message.error('没有上课时间段，无法添加学员')
+      }
+    },
     contentClick() {
       this.showSelectView = true
     },
 
+    // 移除学员同时也要删除相关合同
+    removeCustomer(data) {
+      let vindex = null
+      for (let index = 0; index < this.addedListVal.length; index++) {
+        const element = this.addedListVal[index]
+        if (element === data) {
+          vindex = index
+        }
+      }
+      this.addedListVal.splice(vindex, 1)
+      for (let index = 0; index < this.addedStuList.length; index++) {
+        const element = this.addedStuList[index]
+        if (element.customerId === data) {
+          this.delIndex = index
+        }
+      }
+
+      this.addedStuList.splice(this.delIndex, 1)
+
+      const delList = []
+      for (let index = 0; index < this.addedList.length; index++) {
+        const element = this.addedList[index]
+        if (element.customerId === data) {
+          delList.push(index)
+        }
+      }
+      if (delList.length) {
+        for (let index = 0; index < delList.length; index++) {
+          const element = delList[index]
+          this.addedList.splice(element, 1)
+        }
+        this.$emit('added-stu', this.addedList)
+      }
+
+
+      if (this.stuInfo.customerId === data) {
+        this.$refs.multipleTables.clearSelection()
+        if (this.addedListVal.includes(data)) { // 利用递归删除当前项
+          this.removeCustomer(data)
+        }
+      }
+    },
+
     /** 选中 */
     checkInfos(seldata) {
-      const data = seldata.data
-      if (data && data.length) {
-        this.getContractList(data[0].customerId)
+      // 对于校区不一致的做出提示
+      const checkList = seldata.data
+      if (checkList.length) {
+        const { deptId } = this.baseInfo
+        for (let index = 0; index < checkList.length; index++) {
+          const element = checkList[index]
+          if (element.deptId != deptId) {
+            return this.$message.error('勾选的数据中含有与该班级中心不一致的学员')
+          }
+        }
       }
-      console.log('kkkk', data)
+      // if (this.timeList.length) {
+      //   const totalList = []
+      //   for (let index = 0; index < this.timeList.length; index++) {
+      //     const element = this.timeList[index]
+      //     totalList.push(...element.students)
+      //   }
+
+      //   for (let index = 0; index < totalList.length; index++) {
+      //     const element = totalList[index]
+      //     if (element.customerId === seldata.data[0].customerId) {
+      //       return this.$message.error('添加的学员已存在该班级')
+      //     }
+      //   }
+      // }
+      const { totalNumber } = this.baseInfo
+      const list = this.arrayObjRepeat(this.addedList, 'customerId')
+      if (totalNumber > list.length) {
+        const data = seldata.data
+        if (data && data.length) {
+          this.getContractList(data[0].customerId)
+        }
+      } else {
+        return this.$message.error('添加的学员人数不能超过满班人数')
+      }
+    },
+
+    // 禁用学科、辅导方式、年级不相等的
+    selectable(row, index) {
+      const { subjectName, coachType } = this.baseInfo
+      if (row.subjectName === subjectName && row.coachType === coachType) {
+        return true // 可用
+      } else {
+        return false // 禁用
+      }
     },
 
     // 添加学员并获取对应的合同
@@ -183,8 +330,21 @@ export default {
       this.stuInfoList = []
       this.list = []
       this.isExecute = false // 此时阻止勾选自动执行
-      crmClassContractIndext({ customerId: id }).then(res => {
+      const date = []
+      if (this.currentDate.length) {
+        for (let index = 0; index < this.currentDate.length; index++) {
+          const element = this.currentDate[index]
+          date.push(element.slice(0, 10))
+        }
+      }
+      const params = {
+        customerId: id,
+        date: String(date)
+      }
+      crmClassContractIndext(params).then(res => {
         const stuInfo = res.data
+        this.stuInfo = stuInfo
+        this.checkGradeName = res.data.gradeName
         this.addStuCustomerId = stuInfo.customerId
         this.resetDataByCustomerId(this.addStuCustomerId)
         for (const key in this.stuObj) {
@@ -206,10 +366,100 @@ export default {
     // 勾选同时去重
     handleSelectionChange(data) {
       if (this.isExecute) {
+        const filterData = []
+        const useData = []
+        if (this.timeList.length) { // 勾选的时间段列表数据
+          for (let index = 0; index < data.length; index++) {
+            const element = data[index]
+            for (let indexs = 0; indexs < this.timeList.length; indexs++) {
+              const item = this.timeList[indexs]
+              if (item.customerId.includes(element.customerId)) {
+                filterData.push(element)
+              } else {
+                useData.push(element)
+              }
+            }
+          }
+          if (filterData.length) {
+            this.toggleSelection(filterData)
+          }
+
+          if (filterData.length > 1) {
+            return this.$message.error('勾选的数据中包含已存在学员')
+          } else if (filterData.length == 1) {
+            return this.$message.error('该学员已存在')
+          }
+        }
+        if (filterData.length) return
+        const { customerId, customerName } = this.stuInfo
+
+        if (data.length) {
+          if (this.addedListVal.length) {
+            if (!this.addedListVal.includes(data[0].customerId)) {
+              this.addedStuList.push({
+                customerId, customerName
+              })
+              if (!filterData.length && !this.addedListVal.includes(customerId)) {
+                this.addedListVal.push(customerId)
+              }
+            }
+          } else {
+            this.addedStuList.push({
+              customerId, customerName
+            })
+            if (!filterData.length && !this.addedListVal.includes(customerId)) {
+              this.addedListVal.push(customerId)
+            }
+          }
+        }
+
+        if (!data.length) {
+          this.resetCustomer()
+        }
+
         this.resetDataByCustomerId(this.addStuCustomerId)
         this.addedList.push(...data)
         this.addedList = this.arrayObjRepeat(this.addedList, 'rId')
         this.sendData()
+      }
+    },
+
+    // 取消完当前学员合同的勾选时重置文本框
+    resetCustomer() {
+      const ids = []
+      for (let index = 0; index < this.addedList.length; index++) {
+        const element = this.addedList[index]
+
+        ids.push(element.customerId)
+      }
+
+      if (!ids.includes(this.stuInfo.customerId) && this.addedListVal.includes(this.stuInfo.customerId)) {
+        for (let index = 0; index < this.addedListVal.length; index++) {
+          const element = this.addedListVal[index]
+          if (element.customerId === this.stuInfo.customerId) {
+            this.addedListVal.splice(index, 1)
+          }
+        }
+        let ind = null
+        for (let index = 0; index < this.addedStuList.length; index++) {
+          const element = this.addedStuList[index]
+          if (element.customerId === this.stuInfo.customerId) {
+            ind = index
+          }
+        }
+
+        this.addedStuList.splice(ind, 1)
+      }
+    },
+
+    // 校正勾选时间段
+    toggleSelection(filterData) {
+      if (filterData.length) {
+        filterData.forEach(row => {
+          this.$refs.multipleTables.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTables.clearSelection()
       }
     },
 
@@ -242,7 +492,6 @@ export default {
       this.addedList = this.addedList.filter(item => {
         return item.customerId !== id
       })
-      console.log(this.addedList, 'hhhhhh')
     }
   }
 }
@@ -278,4 +527,5 @@ export default {
     word-break: break-all;
   }
 }
+
 </style>

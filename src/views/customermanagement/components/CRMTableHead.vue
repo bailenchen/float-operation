@@ -67,6 +67,7 @@
     <filter-content
       v-if="filterObj.form && filterObj.form.length > 0"
       :obj="filterObj"
+      :crm-type="crmType"
       @delete="handleDeleteField" />
 
     <transfer-handle
@@ -466,7 +467,8 @@ export default {
       isWarning: false, // 提升预警等级
       isDismiss: false, // 解除预警
       isFacialPhoto: false, // 上传人脸照片
-      createActionInfo: { type: 'save' } // 创建的相关信息
+      createActionInfo: { type: 'save' }, // 创建的相关信息
+      closeTxt: '关闭'
     }
   },
   computed: {
@@ -491,7 +493,7 @@ export default {
 
     // 展示筛选
     showFilterView() {
-      if (['marketing', 'applet'].includes(this.crmType)) {
+      if (['marketing', 'applet', 'teacherschedule'].includes(this.crmType)) {
         return false
       } else {
         return true
@@ -792,7 +794,12 @@ export default {
       } else if (type == 'follow') {
         this.isFollow = true
       } else if (type == 'mark_alloc') {
-        this.markAllocShow = true
+        const { allotType } = this.selectionList[0]
+        if (allotType == 1) {
+          return this.$message.error('已提交的业绩分配已全部通过或处于待审核中')
+        } else {
+          this.markAllocShow = true
+        }
       } else if (type == 'update_contract') {
         var params = { types: 6, id: this.selectionList[0].contractId }
         filedGetInformation(params).then(res => {
@@ -1152,7 +1159,7 @@ export default {
         }).join(',')
         const params = {
           classIds: ids,
-          status: 2
+          status: this.closeTxt == '关闭' ? 2 : 1
         }
         crmClassClose(params).then(res => {
           this.loading = false
@@ -1327,7 +1334,7 @@ export default {
           icon: 'transfer'
         },
         close: {
-          name: '关闭',
+          name: this.closeTxt,
           type: 'close',
           icon: 'remove'
         },
@@ -1384,8 +1391,6 @@ export default {
             'change_seas'
           ])
         } else {
-          console.log('从store中取出权限，当有这个权限时展示')
-          console.log(this.crm.customer)
           const items = [
             'assignHeadTeacher',
             'transfer',
@@ -1421,8 +1426,8 @@ export default {
           'change_dept',
           'transfer',
           'export',
-          'delete',
-          'facialPhoto'
+          'delete'
+          // 'facialPhoto'
         ])
       } else if (this.crmType == 'capitalAccount') {
         return this.forSelectionHandleItems(handleInfos, [
@@ -1583,6 +1588,7 @@ export default {
           const regordRes = []
           for (let index = 0; index < this.selectionList.length; index++) {
             const element = this.selectionList[index]
+            console.log('element', element)
             if ((element.price == null || parseFloat(element.price) == 0) &&
             (element.surplus == null || parseFloat(element.surplus) == 0)) {
               regordRes.push(true)
@@ -1595,8 +1601,29 @@ export default {
           } else {
             return this.crm[this.crmType].delete
           }
-        } else if (this.crmType == 'classroom' || this.crmType == 'class' || this.crmType == 'classschedule' || this.crmType == 'studentschedule') {
+        } else if (this.crmType == 'classroom') {
           return this.education[this.crmType].delete
+        } else if (this.crmType == 'class') {
+          const isDel = []
+          for (let index = 0; index < this.selectionList.length; index++) {
+            const element = this.selectionList[index]
+            isDel.push(element.isCourse)
+          }
+          if (isDel.includes('是')) {
+            return false
+          } else {
+            return this.education[this.crmType].delete
+          }
+        } else if (this.crmType == 'classschedule' || this.crmType == 'studentschedule') {
+          const statusList = []
+          this.selectionList.forEach(item => {
+            statusList.push(item.classConfirmation)
+          })
+          if (statusList.includes(1)) {
+            return false
+          } else {
+            return this.education[this.crmType].delete
+          }
         } else {
           return this.crm[this.crmType].delete
         }
@@ -1707,21 +1734,46 @@ export default {
           return false
         }
       } else if (type == 'schedule') {
-        if (this.selectionList.length === 1) {
+        if (this.selectionList.length === 1 && this.selectionList[0].status === 1) {
           return this.education[this.crmType].course
         } else {
           return false
         }
       } else if (type == 'close') {
-        return this.education[this.crmType].close
+        const status = []
+        for (let index = 0; index < this.selectionList.length; index++) {
+          const element = this.selectionList[index]
+          if (!(element.usageTimes || element.usageTimes) && element.status === 1) {
+            status.push('close')
+          } else if (element.status === 2) {
+            status.push('open')
+          }
+        }
+        if (status.includes('close') && status.includes('open')) {
+          return false
+        } else if (status.includes('close') && !(status.includes('open'))) {
+          this.closeTxt = '关闭'
+          return this.education[this.crmType].close
+        } else if (status.includes('open') && !(status.includes('close'))) {
+          this.closeTxt = '开启'
+          return this.education[this.crmType].close
+        } else {
+          return false
+        }
       } else if (type == 'insert_class') {
         if (this.selectionList.length === 1) {
-          return this.education[this.crmType].insert
+          if (this.crmType == 'class' && this.selectionList[0].notOn) {
+            return this.education[this.crmType].insert
+          } else if (this.crmType == 'classschedule' && this.selectionList[0].actualNumber < this.selectionList[0].totalNumber) {
+            return this.education[this.crmType].insert
+          } else {
+            return false
+          }
         } else {
           return false
         }
       } else if (type == 'confirm') {
-        if (this.selectionList.length === 1) {
+        if (this.selectionList.length === 1 && this.selectionList[0].classConfirmationName == '未确认') {
           return this.education[this.crmType].confirm
         } else {
           return false
@@ -1733,18 +1785,25 @@ export default {
           return false
         }
       } else if (type == 'leave') {
-        const allStatus = []
-        this.selectionList.forEach(element => {
-          allStatus.push(element.classConfirmationType)
+        // 默认仅适用于--教务管理--学员排课表studentschedule
+        const statusList = []
+        this.selectionList.forEach(item => {
+          statusList.push(item.classConfirmation)
         })
-        if (allStatus.includes('已确认')) {
+        if (statusList.includes(1)) {
           return false
         } else {
           return this.education[this.crmType].leave
         }
       } else if (type == 'mode_class') {
-        if (this.selectionList.length == 1 && this.selectionList[0].isCourse === '是') {
-          return this.education[this.crmType].update
+        if (this.selectionList.length === 1) {
+          if (this.crmType == 'class' && this.selectionList[0].isCourse === '否') {
+            return this.education[this.crmType].update
+          } else if (this.crmType == 'classroom') {
+            return this.education[this.crmType].update
+          } else {
+            return false
+          }
         } else {
           return false
         }
@@ -1788,6 +1847,8 @@ export default {
         return '全部学员'
       } else if (this.crmType == 'receive') {
         return '全部合同充值'
+      } else if (this.crmType == 'refund') {
+        return '全部合同充值返还'
       } else if (this.crmType == 'classroom') {
         return '全部教室'
       } else if (this.crmType == 'class') {

@@ -3,9 +3,8 @@
     <c-r-m-list-head
       :search.sync="search"
       :crm-type="crmType"
-      :show-search="false"
       title="学员回访"
-      placeholder="请输入学员名称"
+      placeholder="请输入学员名称/回访编号"
       main-title="新建学员回访"
       @on-handle="listHeadHandle"
       @on-search="crmSearch"

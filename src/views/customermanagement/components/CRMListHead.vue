@@ -178,7 +178,7 @@ export default {
       this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
     }
 
-    if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType) && this.education[this.crmType].excelexport) {
+    if (['classroom', 'class', 'classschedule', 'studentschedule'].includes(this.crmType) && this.education[this.crmType].excelexport) {
       this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
     }
 

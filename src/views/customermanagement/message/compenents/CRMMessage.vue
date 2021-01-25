@@ -93,6 +93,8 @@
       class="n-table--border"
       stripe
       highlight-current-row
+      resizable
+      border
       style="width: 100%"
       @row-click="handleRowClick"
       @selection-change="handleSelectionChange">
@@ -201,6 +203,19 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column
+        v-if="infoType == 'checkWater' || infoType == 'refundNumber'"
+        :resizable="false"
+        label="操作"
+        align="center"
+        fixed="right"
+        width="150">
+        <template slot-scope="scope">
+          <el-button @click="enterWaterDetail(scope.row)">
+            详情
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -224,7 +239,6 @@
       :id="rowID"
       @handle="getList"
       @refresh-list="refreshParentList"/>
-
 
     <!-- 争议详情页面 -->
     <dispute-detail
@@ -515,7 +529,18 @@ export default {
       this.showDview = true
     },
 
+    enterWaterDetail(row) {
+      this.rowType = 'moneyType'
+      this.clickField = 'serialNumber'
+      this.rowID = row.waterId
+      this.showDview = true
+    },
+
     transformData(name, value) {
+      if (this.crmType == 'refund' && name === 'isEarlyRetirement') {
+        return value
+      }
+
       if (name === 'contractType') {
         return {
           1: '购买',
@@ -562,7 +587,7 @@ export default {
           // if()
           console.log('value', value)
         } else if (name === 'capitalNumber') {
-          return value[0].number
+          return value[0] ? value[0].number : ''
         } else if (name === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
@@ -573,6 +598,8 @@ export default {
             }
           }
           return res
+        } else if (name === 'refundTime') {
+          return value.replace(/(\d{4})-(\d{2})-(\d{2}) .*/, '$1-$2-$3')
         }
       }
       return value

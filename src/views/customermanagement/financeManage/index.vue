@@ -25,6 +25,7 @@ export default {
     componentName() {
       const params = this.$route.params
       return params.type === 'receive' ? 'ReceiveIndex' : 'RefundIndex'
+      // return ReceiveIndex
     }
   },
   beforeRouteEnter(to, from, next) {

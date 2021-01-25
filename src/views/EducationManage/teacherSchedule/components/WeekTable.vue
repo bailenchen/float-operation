@@ -1,65 +1,95 @@
 <template>
   <div>
     <el-table
-      v-loading="loading"
       id="crm-table"
-      :row-height="40"
+      ref="week"
       :data="list"
       :span-method="mergeColumn"
       :height="tableHeight"
       class="n-table--border"
-      use-virtual
       stripe
       border
       highlight-current-row
-      style="width: 100%"
-      @row-click="handleRowClick">
+      style="width: 100%">
       <el-table-column
         v-for="(item, index) in fieldLists"
         :key="index"
         :prop="item.prop"
         :label="item.label"
         :width="item.width"
+        min-width="160"
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <span v-if="item.prop == 'name'">{{ scope.row.name }}</span>
-          <span v-else-if="item.prop == 'time'">{{ scope.row.time }}</span>
-          <span v-else>{{ scope.row[item.prop].id }}</span>
+          <div v-if="item.prop == 'realname'">{{ scope.row.realname }}</div>
+          <div v-else-if="item.prop == 'time'">{{ scope.row.time }}</div>
+          <div v-else-if="scope.row[item.prop].batchId">
+            <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
+            <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
+            <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
+            <span v-if="scope.row[item.prop].batchId && scope.row[item.prop].classConfirmationType === '未确认'" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
+            <span v-if="!scope.row[item.prop].customers.length" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
+            <span
+              v-if="scope.row[item.prop].customers.length && scope.row[item.prop].customers.length < scope.row[item.prop].totalNumber && scope.row[item.prop].classConfirmationType === '未确认'"
+              class="blue click"
+              @click="handle('insert',scope.row[item.prop])">[插班]
+            </span><br>
+            <span v-if="scope.row[item.prop].customers.length">
+              【 <span v-for="(ite,idx) in scope.row[item.prop].customers" :key="idx">
+                {{ ite.customerName }}
+                <span v-if="ite.classStatusType">(</span>
+                <span
+                  v-if="ite.classStatusType"
+                  :class="{'green': ite.classStatusType === '请假' || ite.classStatusType === '出勤','red': ite.classStatusType === '临时插班'}">
+                  {{ ite.classStatusType }}
+                </span>
+                <span v-if="ite.classStatusType">)</span>
+              </span>】
+            </span>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column/>
+      <!-- <el-table-column/> -->
     </el-table>
+
+    <!-- 排课 -->
+    <rank-course
+      v-if="isRank"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 插班 -->
+    <insert-class
+      v-if="isInsert"
+      :crm-type="crmType"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
+    <!-- 换挡 -->
+    <shift-handle
+      v-if="isShift"
+      :selection-list="currentInfo"
+      @save-success="createSaveSuccess"
+      @hiden-view="hideView"/>
+
   </div>
 </template>
 
 <script>
+import { crmTeacherSchduleQueryByDay } from '@/api/educationmanage/teacherSchedule'
+import create from './create'
 export default {
   // 按周显示--列合并
   name: 'WeekTable',
+  mixins: [create],
   data() {
     return {
-      loading: false,
-      tableHeight: document.documentElement.clientHeight - 200, // 表的高度
-      list: [
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 7 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 5 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 9 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 4 }},
-        { t1: { id: 1 }, t2: { id: 3 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 2 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 5 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 2 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 5 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 4 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }},
-        { t1: { id: 1 }, t2: { id: 1 }, t3: { id: 1 }, t4: { id: 1 }, t5: { id: 1 }, t6: { id: 1 }, t7: { id: 1 }}
-      ],
+      tableHeight: document.documentElement.clientHeight - 306, // 表的高度
+      list: [],
       fieldLists: [
-        { prop: 'name', label: '' },
+        { prop: 'realname', label: '' },
         { prop: 'time', label: '' },
         { prop: 't1', label: '一' },
         { prop: 't2', label: '二' },
@@ -89,9 +119,61 @@ export default {
         14: '补1小时B'
       },
 
+      startTime: {
+        0: '08:00:00',
+        1: '09:00:00',
+        2: '10:00:00',
+        3: '11:00:00',
+        4: '12:00:00',
+        5: '13:00:00',
+        6: '14:00:00',
+        7: '15:00:00',
+        8: '16:00:00',
+        9: '17:00:00',
+        10: '18:00:00',
+        11: '19:00:00',
+        12: '20:00:00',
+        13: '补1小时A',
+        14: '补1小时B'
+      },
+
+      timeDate: {
+        t1: '',
+        t2: '',
+        t3: '',
+        t4: '',
+        t5: '',
+        t6: '',
+        t7: ''
+      },
+
       // 合并标记相关
-      arrObj: {
-        'name': {
+      arrObj: null
+    }
+  },
+  created() {
+    this.reset()
+    this.getWeekDate()
+  },
+  mounted() {
+
+  },
+  methods: {
+    // 从父组件中获取周的每天日期
+    getWeekDate() {
+      const dateRange = this.$parent.everyDay.split(',')
+      for (let index = 0; index < dateRange.length; index++) {
+        const element = dateRange[index]
+        this.timeDate['t' + (index + 1)] = element
+      }
+    },
+    reset() {
+      this.arrObj = {
+        'realname': {
+          arrRow: [],
+          position: 0
+        },
+        'time': {
           arrRow: [],
           position: 0
         },
@@ -124,32 +206,80 @@ export default {
           position: 0
         }
       }
-
-    }
-  },
-  created() {
-    this.getWillMergeRows()
-  },
-  methods: {
+    },
     getWillMergeRows() {
-      this.list = this.list.map((item, index) => {
-        item.name = '李艳'
-        item['time'] = this.periodObj[index]
-        return item
-      })
-      const keyList = Object.keys(this.arrObj)
-      this.list.forEach((item, bindex) => {
-        keyList.forEach((key, sindex) => {
-          this.markIsMerge(item, key, sindex, bindex)
+      this.list = []
+      this.reset()
+      this.getWeekDate()
+      const params = {
+        ...this.$parent.form
+      }
+      crmTeacherSchduleQueryByDay(params).then(res => {
+        this.list = this.handleResData(res.data)
+        const keyList = Object.keys(this.arrObj)
+        this.list = this.list.map((item, bindex) => {
+          keyList.forEach((key, sindex) => {
+            this.markIsMerge(item, key, sindex, bindex)
+          })
+          return item
         })
+        this.$emit('close-loading')
+        // console.log(JSON.parse(JSON.stringify(this.list)), 'xx123xx')
+        // console.log(JSON.parse(JSON.stringify(this.arrObj)), 'bbbbbbbbbb')
+      }).catch(() => {
+        this.$emit('close-loading')
       })
     },
 
+    handleResData(list) {
+      const newList = []
+      for (let index = 0; index < list.length; index++) {
+        const element = list[index]
+        const inList = element.data
+        for (const rowkey in this.startTime) {
+          if (Object.hasOwnProperty.call(this.startTime, rowkey)) { // 每条用户数据生成15行数据row
+            const val = this.startTime[rowkey]
+            const newitem = { realname: element.realname, time: this.periodObj[rowkey] }
+            for (let indexs = 0; indexs < inList.length; indexs++) { // 循环每个时间段
+              const item = inList[indexs]
+              for (const key in this.timeDate) {
+                if (Object.hasOwnProperty.call(this.timeDate, key)) {
+                  const time = this.timeDate[key]
+                  if (item.timeSlotStart && item.timeSlotStart === val) {
+                    const sList = item.data
+                    for (let sindex = 0; sindex < sList.length; sindex++) {
+                      const sitem = sList[sindex]
+                      if (sitem.classTime.includes(time)) {
+                        newitem[key] = sitem
+                      }
+                    }
+
+                    if (!newitem[key]) {
+                      newitem[key] = {}
+                    }
+                  }
+
+                  if (!newitem[key]) {
+                    newitem[key] = {}
+                  }
+                }
+              }
+            }
+            newList.push(newitem)
+          }
+        }
+      }
+      // console.log(JSON.parse(JSON.stringify(newList)), 'xx456')
+      return newList
+    },
+
     markIsMerge(data, key, index, bindex) {
-      if (key == 'name') {
-        this.collecMark(key, bindex, 'name')
+      if (key == 'realname') {
+        this.collecMark(key, bindex, 'realname')
+      } else if (key == 'time') {
+        this.collecMark(key, bindex, 'time')
       } else if (['t1', 't2', 't3', 't4', 't5', 't6', 't7'].includes(key)) {
-        this.collecMark(key, bindex, 'id')
+        this.collecMark(key, bindex, 'batchId')
       }
     },
 
@@ -158,8 +288,12 @@ export default {
         this.arrObj[key].arrRow.push(1)
         this.arrObj[key].position = 0
       } else {
-        const condition = key == 'name' ? this.list[bindex][keyType] == this.list[bindex - 1][keyType]
-          : this.list[bindex][key][keyType] == this.list[bindex - 1][key][keyType]
+        let condition = false
+        if (key == 'realname' || key == 'time') {
+          condition = this.list[bindex][keyType] == this.list[bindex - 1][keyType]
+        } else {
+          condition = this.list[bindex][key][keyType] && this.list[bindex - 1][key][keyType] && this.list[bindex][key][keyType] == this.list[bindex - 1][key][keyType]
+        }
         if (condition) {
           this.arrObj[key].arrRow[this.arrObj[key].position] += 1
           this.arrObj[key].arrRow.push(0)
@@ -172,7 +306,8 @@ export default {
     // 主要合并列
     mergeColumn({ row, column, rowIndex, columnIndex }) {
       const key = {
-        0: 'name',
+        0: 'realname',
+        1: 'time',
         2: 't1',
         3: 't2',
         4: 't3',
@@ -181,7 +316,7 @@ export default {
         7: 't6',
         8: 't7'
       }[columnIndex]
-      if (['name', 't1', 't2', 't3', 't4', 't5', 't6', 't7'].includes(key)) {
+      if (['realname', 'time', 't1', 't2', 't3', 't4', 't5', 't6', 't7'].includes(key)) {
         const drow = this.arrObj[key].arrRow[rowIndex]
         const dcolimn = drow > 0 ? 1 : 0
         return {
@@ -189,14 +324,25 @@ export default {
           colspan: dcolimn
         }
       }
-    },
-    handleRowClick() {
-
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.blue {
+  color:#0000FF;
+}
 
+.red {
+  color: red;
+}
+
+.click {
+  cursor: pointer;
+}
+
+.green {
+  color: #70B603;
+}
 </style>

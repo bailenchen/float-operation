@@ -48,6 +48,7 @@
               <xh-user-cell
                 v-if="item.type == 'user'"
                 :radio="radio"
+                :disabled="!deptSelectValue.length"
                 :value="teacherList"
                 @value-change="userChange"/>
 
@@ -116,7 +117,8 @@ export default {
         { prop: 'status', label: '教室状态', type: 'select' }
       ],
       optionList: [
-        { label: '正常', value: 1 }
+        { label: '正常', value: 1 },
+        { label: '关闭', value: 2 }
       ],
       rule: {
         deptId: [
@@ -190,6 +192,9 @@ export default {
       this.deptNumber = data.value.length ? data.value[0].deptNumber : ''
       this.form.deptId = data.value.length ? data.value[0].id : ''
       this.deptSelectValue = data.value || []
+
+      this.form.classroomName = ''
+      this.teacherList = []
     },
 
     /**

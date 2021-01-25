@@ -161,7 +161,7 @@
 
             <div
               v-else
-              :class="{'can-check':isModule(item)}"
+              :class="{'can-check':isModule(item), 'can-visit': isvisit(item)}"
               class="form-item__value"
               @click="checkModuleDetail(item)">{{ getCommonShowValue(item) }}<i v-if="getEditAuth(item)" class="wk wk-edit form-item__edit" @click.stop="editClick(item)" />
             </div>
@@ -346,7 +346,6 @@ export default {
     if (this.filedList) {
       this.list = this.filedList
     } else {
-      console.log('mounted周期')
       this.getBaseInfo(true)
     }
   },
@@ -368,7 +367,6 @@ export default {
           this.loading = false
         })
       } else {
-        console.log('ASA', this.crmType)
         console.log(crmTypeModel[this.crmType])
 
         const keytype = this.crmType === 'student' ? 'customer' : this.crmType
@@ -473,6 +471,12 @@ export default {
         'business',
         'contract',
         'contacts'].includes(item.formType)
+    },
+
+    isvisit(item) {
+      return [
+        '交易凭证'
+      ].includes(item.name)
     },
 
     /**
@@ -595,6 +599,21 @@ export default {
      * 查看详情
      */
     checkModuleDetail(data) {
+      console.log('checkModuleDetail', data)
+      if (data.name == '交易凭证' && data.filePath) {
+        this.$bus.emit('preview-image-bus', {
+          index: 0,
+          data: [
+            {
+              filePath: data.filePath,
+              fileType: 'file',
+              name: data.value,
+              readOnly: 0,
+              url: data.filePath
+            }
+          ]
+        })
+      }
       if (this.isModule(data) && isObject(data.value)) {
         this.fullDetailType = data.formType
         this.fullDetailId = data.value[`${data.formType}Id`]

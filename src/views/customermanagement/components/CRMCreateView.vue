@@ -111,12 +111,12 @@
                     :use-delete="item.useDelete"
                     :action="typeToAction"
                     :cause="cause"
+                    :positive="item.positive"
                     :refund-money="refundMoney"
                     :dictionary-field="item.dictionaryField"
                     :multiple="item.dictionaryMultiple"
                     :relative-type="item.relativeType"
                     @value-change="fieldValueChange" />
-
                 </el-form-item>
               </el-form>
 
@@ -294,7 +294,8 @@ export default {
         formType == 'number' ||
         formType == 'floatnumber' ||
         formType == 'mobile' ||
-        formType == 'email'
+        formType == 'email' ||
+        formType == 'positive_number'
       ) {
         return 'XhInput'
       } else if (formType == 'textarea') {
@@ -436,7 +437,7 @@ export default {
         buyCount: 0, // 主合同总购买课次
         type: 'save' // 新建
       },
-      actionRefundCombo: { contracId: '', isInteriorRefund: true, type: 'save' },
+      actionRefundCombo: { contracId: '', refundType: 1, isInteriorRefund: true, type: 'save' },
       otherTypes: '', // 用于审批流区分合同、额外赠送合同、合同变更
       contractMoney: 0, // 合同金额
       contractDiscount: 100, // 合同折扣
@@ -473,7 +474,7 @@ export default {
     },
     // 草稿按钮
     showDraft() {
-      if (this.crmType === 'contract' || this.crmType === 'receivables' || this.crmType === 'refund') {
+      if (this.crmType === 'contract' || this.crmType === 'receivables') {
         return true
       }
       return false
@@ -689,7 +690,6 @@ export default {
                 element.relation = {
                   type: 'presentContract',
                   searchJson: {
-                  // customerId: item.value[0].customerId,
                     customerId: item.value[0].customerId,
                     checkStatus: 1,
                     contractType: 1,
@@ -1137,7 +1137,6 @@ export default {
               return data && data.deptIdName ? data.deptIdName : ''
             },
             owner_user_id: data => {
-              console.log('data', data)
               return data && data.ownerUserName ? data.ownerUserName : ''
             }
           }
@@ -1146,6 +1145,9 @@ export default {
           const addRelation = ['contract_id']
           const getRelationObj = {
             contract_id: (data, element) => {
+              if (element.value.length == 0) {
+                this.actionRefundCombo.contracId = ''
+              }
               console.log('添加关联信息')
               element.relation = {
                 moduleType: 'refundMoney',
@@ -1174,6 +1176,8 @@ export default {
               if (addRelation.includes(element.key)) {
                 element.disabled = false
                 if (getRelationObj[element.key]) {
+                  console.log('更换后值为空')
+                  element.value = []
                   getRelationObj[element.key](customerItem, element)
                 }
               }
@@ -1185,6 +1189,10 @@ export default {
               }
             }
           }
+
+          if (item.value.length == 0) {
+            this.actionRefundCombo.contracId = ''
+          }
         }
         console.log('字段111', item)
         if (item.data.formType === 'contract') {
@@ -1195,6 +1203,7 @@ export default {
           this.crmForm.crmFields.forEach(_item => {
             if (_item.key == 'money') {
               _item.value = item.value.money
+              return false
             }
           })
         }
@@ -1202,15 +1211,28 @@ export default {
           this.refundMoney = item.value
         }
         if (item.key === 'refund_type') {
+          console.log('refund_type', item)
+          this.actionRefundCombo.refundType = item.value
           this.crmForm.crmFields.forEach(_item => {
             if (_item.key == 'money') {
               _item.disabled = item.value != 2
+              return false
             }
-            this.refundType = item.value
           })
+          this.refundType = item.value
+
+          /*     // 重新计算金额
+          if (item.value == 1) {
+            console.log('重新计算金额')
+
+          } */
         }
         if (item.key === 'refund_cause_type') {
           this.cause = item.value == '主观原因' ? 2 : 1
+          const findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'refundCauseDetails')
+          if (findIndex !== -1) {
+            this.crmForm.crmFields[findIndex].data.name = item.value
+          }
         }
         if (item.key === 'is_early_retirement') {
           this.actionRefundCombo.isInteriorRefund = item.value == '是'
@@ -1680,7 +1702,8 @@ export default {
           isNull: 1,
           isUnique: 0,
           label: 29,
-          name: '主/客观原因',
+          // name: '主/客观原因',
+          name: '客观原因',
           options: null,
           setting: [],
           type: 15,
@@ -1739,7 +1762,6 @@ export default {
           params['key'] = item.fieldName
           params['data'] = item
 
-          // if (this.crmType == 'contract' && item.fieldName == 'customer_id') {
           if (this.crmType == 'contract') {
             if (item.fieldName == 'customer_id') {
               if (!this.action.present || !this.action.contractType == 2) {
@@ -1751,12 +1773,10 @@ export default {
               }
             }
             // 额外赠送合同，关联合同字段多选
-            // if (this.action.present && item.fieldName == 'contractId') {
             if ((this.action.present || this.action.contractType == 2) && item.fieldName == 'contractId') {
               params.radio = false
             }
           }
-
 
           // 获取 value relative 信息
           this.getParamsValueAndRelativeInfo(params, item, list)
@@ -1950,6 +1970,9 @@ export default {
           params['key'] = item.fieldName
           params['data'] = item
           params['styleIndex'] = showStyleIndex
+          if (item.formType == 'positive_number') {
+            params['positive'] = true
+          }
         }
         // 新建合同合同属性默认为新签
         if (this.action.type == 'save' || this.action.type == 'contract') {
@@ -2004,6 +2027,9 @@ export default {
         } else if (this.crmType == 'refund') {
           if (item.fieldName == 'refund_time') {
             params['value'] = moment().format('YYYY-MM-DD')
+          }
+          if (item.fieldName == 'money') {
+            params['positive'] = true
           }
           if (item.fieldName == 'refund_type') {
             params['setting'] = [
@@ -2096,11 +2122,23 @@ export default {
             if (item.fieldName == 'refund_type') {
               params['value'] = item.value
               this.refundType = item.value
+              this.actionRefundCombo.refundType = item.value
+            }
+            if (item.fieldName === 'refund_cause_type') {
+              params['value'] = item.value
+              // const findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'refundCauseDetails')
+              // if (findIndex !== -1) {
+              //   this.crmForm.crmFields[findIndex].data.name = item.value
+              // }
             }
             if (item.fieldName == 'refundCauseDetails') {
               params['value'] = this.action.information.refund.refundCauseDetails
             }
+            if (item.fieldName == 'is_early_retirement') {
+              this.actionRefundCombo.isInteriorRefund = item.value == '是'
+            }
             if (item.fieldName == 'refundCombo') {
+              this.actionRefundCombo.type = 'update'
               params['oldValue'] = {
                 productList: this.action.information.refund.productList,
                 giftProducts: this.action.information.refund.giftProducts,
@@ -2156,6 +2194,15 @@ export default {
           } else {
             element.value = this.action.editDetail.status
             element.data.value = this.action.editDetail.status
+          }
+        }
+        if (this.crmType == 'refund') {
+          if (element.key === 'refund_cause_type') {
+            this.cause = element.value == '主观原因' ? 2 : 1
+            const findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'refundCauseDetails')
+            if (findIndex !== -1) {
+              this.crmForm.crmFields[findIndex].data.name = element.value
+            }
           }
         }
         if (this.crmType == 'capitalAccount') {
@@ -2344,8 +2391,7 @@ export default {
         }
 
         // 从学员创建合同
-        // console.log('从leads创建合同', this.action)
-        if (this.action && this.action.crmType == 'customer') {
+        if (this.action && (this.action.crmType == 'customer' || this.action.crmType == 'student')) {
           if (element.key == 'customer_id') {
             element.disabled = true
             this.actionCombo.customerId = element.value[0].customerId
@@ -2387,6 +2433,22 @@ export default {
           }
           if (element.key == 'source') {
             element.value = this.action.data.customer.channelIdName
+          }
+
+
+          if (this.action.contractType == 2) {
+            if (element.key == 'contractId') {
+              element.disabled = false
+              element.relation = {
+                type: 'presentContract',
+                searchJson: {
+                  customerId: this.action.data.customer.customerId,
+                  checkStatus: 1,
+                  contractType: 1,
+                  contractStatus: 5
+                }
+              }
+            }
           }
         }
 
@@ -3137,13 +3199,19 @@ export default {
 
       // 充值返还
       if (this.crmType == 'refund') {
-        console.log('字段', params.field)
+        // console.log('字段', params.field)
         for (let i = 0; i < params.field.length; i++) {
           const element = params.field[i]
           if (element.fieldName == 'refundCombo') {
             params.product = element.value.product
             params.capital = element.value.capital
           }
+        }
+
+        if (params.entity.is_early_retirement == '否' && !params.capital) {
+          this.$message.warning('请填写资金退款信息')
+          this.loading = false
+          return
         }
         // 删除只用于展示的字段
         for (let i = 0; i < params.field.length; i++) {
@@ -3255,7 +3323,7 @@ export default {
         } else if (element.data.key == 'introducer_type') {
           // console.log(111)
         } else if (element.key == 'present') {
-          this.getPresentParams(params, element)
+          const res = this.getPresentParams(params, element)
           // console.log('额外赠送校验是否通过', res)
           if (res === false) {
             return false

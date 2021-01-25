@@ -54,6 +54,7 @@ export default {
   created() {
     if (['classroom', 'class', 'classschedule', 'studentschedule', 'teacherschedule'].includes(this.crmType)) {
       if (this.education[this.crmType].index) {
+        this.loading = true
         this.getFieldList()
       }
     }
@@ -166,8 +167,8 @@ export default {
           { prop: 'classConfirmationName', label: '状态' },
           { prop: 'classTime', label: '上课时间', width: 100 },
           { prop: 'timeSlot', label: '时间段', width: 100 },
-          { prop: 'actualNumber', label: '排课人数', width: 100 },
-          { prop: 'rowNumber', label: '实际上课人数', width: 125 },
+          { prop: 'rowNumber', label: '排课人数', width: 100 },
+          { prop: 'actualNumber', label: '实际上课人数', width: 125 },
           { prop: 'totalNumber', label: '最大上课人数', width: 125 }
         ]
       } else if (this.crmType === 'studentschedule') {
@@ -185,9 +186,7 @@ export default {
           { prop: 'subjectTeacherName', label: '学科老师', width: 100 },
           { prop: 'classTime', label: '上课日期', width: 100 },
           { prop: 'timeSlot', label: '上课时段', width: 100 },
-          { prop: 'status', label: '总课次/已确认', width: 130 },
-          { prop: 'classStatusType', label: '考勤', width: 80 },
-          { prop: 'classConfirmationType', label: '课时确认', width: 100 }
+          { prop: 'status', label: '总课次/已确认', width: 130 }
         ]
       }
 

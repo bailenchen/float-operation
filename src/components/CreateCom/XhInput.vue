@@ -5,6 +5,7 @@
     v-model="dataValue"
     :type="type"
     :disabled="disabled"
+    :min="min"
     :maxlength="100"
     @input="valueChange"/>
   <el-input
@@ -23,16 +24,27 @@ export default {
   name: 'XhInput', // 新建 input
   components: {},
   mixins: [stringMixin],
-  props: {},
+  props: {
+    positive: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {}
   },
   computed: {
+    min() {
+      const data = this.item && this.item.data ? this.item.data : this.item
+      if (data.formType == 'positive_number') {
+        return 0
+      }
+    },
     type() {
       const data = this.item && this.item.data ? this.item.data : this.item
       if (this.item && data.formType == 'password') {
         return data.formType
-      } else if (this.item && (data.formType == 'floatnumber' || data.formType == 'number')) {
+      } else if (this.item && (data.formType == 'floatnumber' || data.formType == 'number' || data.formType == 'positive_number')) {
         return 'number'
       } else {
         return 'text'
@@ -41,10 +53,12 @@ export default {
 
     inputLimitType() {
       const data = this.item && this.item.data ? this.item.data : this.item
+      if (this.item && this.positive) {
+        return 'noMinus'
+      }
       if (this.item && data.formType == 'number') {
         return 'number'
       }
-
       return null
     },
 

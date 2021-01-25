@@ -70,6 +70,7 @@
             <div v-if="item.type == 'file'" class="img">
               <div v-show="!show">
                 {{ fileName }}
+                <el-button type="text" @click="preview">预览</el-button>
                 <el-button type="text" @click="downloadFile">下载</el-button>
                 <el-button type="text" @click="delFile">删除</el-button>
               </div>
@@ -230,7 +231,7 @@ export default {
           { label: '扣款时间：', prop: 'deductionTime', type: 'date', disable: true },
           { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false },
-          { label: '收款人：', prop: 'character', type: 'text', disable: true },
+          { label: '收款申请人：', prop: 'character', type: 'text', disable: true },
           { label: '交易凭证：', prop: 'receipt', type: 'file', disable: false }
         ],
         offline: [
@@ -241,7 +242,7 @@ export default {
           { label: '扣款时间：', prop: 'deductionTime', type: 'date', disable: true },
           { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false },
-          { label: '收款人：', prop: 'character', type: 'text', disable: true },
+          { label: '收款申请人：', prop: 'character', type: 'text', disable: true },
           { label: '交易凭证：', prop: 'receipt', type: 'file', disable: false }
         ],
         refound: [
@@ -249,7 +250,7 @@ export default {
           { label: '用户账号：', prop: 'userAccount', type: 'text', disable: false },
           { label: '资金收款金额（元）：', prop: 'price', type: 'text', disable: true },
           { label: '交易时间：', prop: 'transactionTime', type: 'date', disable: true },
-          { label: '退款人：', prop: 'character', type: 'text', disable: true },
+          { label: '退款申请人：', prop: 'character', type: 'text', disable: true },
           { label: '备注：', prop: 'remark', type: 'textarea', disable: false }
         ]
       },
@@ -343,6 +344,20 @@ export default {
     // 解决element输入框嵌套太深无法输入内容bug
     updateInputVal: function() {
       this.$forceUpdate()	// 刷新
+    },
+    preview() {
+      this.$bus.emit('preview-image-bus', {
+        index: 0,
+        data: [
+          {
+            filePath: this.action.filePath,
+            fileType: 'file',
+            name: this.action.receipt,
+            readOnly: 0,
+            url: this.action.filePath
+          }
+        ]
+      })
     },
     downloadFile() {
       downloadAdjunct({ 'batchId': this.fieldBatchId })
@@ -458,6 +473,8 @@ export default {
       if (this.examineInfo.examineType == 2) {
         params['checkUserId'] = this.examineInfo.value[0].userId
       }
+
+      params.entity.waterBatchId = ''
 
       if (this.imgFile[0]) {
         params.entity.waterBatchId = this.imgFile[0].batchId // 交易凭证附件唯一标识

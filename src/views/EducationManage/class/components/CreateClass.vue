@@ -63,6 +63,8 @@
                 v-if="item.type === 'classroom'"
                 :value="classRoom"
                 :radio="radio"
+                :disabled="!form.deptId"
+                :classroom-id="form.deptId"
                 cell-type="classroom"
                 placeholder="选择教室"
                 class="xh-structure-cell"
@@ -72,6 +74,7 @@
                 v-if="item.type == 'user'"
                 :radio="radio"
                 :teacher-id="teacherId"
+                :disabled="!form.classroomId"
                 :value="teacherList"
                 info-type="relativeteacher"
                 @value-change="userChange"/>
@@ -103,6 +106,7 @@ import {
   XhUserCell
 } from '@/components/CreateCom'
 import {
+  // QueryAdminGrade,
   QueryCoachingMethods // 辅导方式
 } from '@/api/systemManagement/params'
 
@@ -137,15 +141,15 @@ export default {
   data() {
     return {
       loading: false,
-      radio: false,
+      radio: true,
       datalist: [
         { prop: 'deptId', label: '校区', type: 'dept' },
         { prop: 'coachType', label: '辅导方式', type: 'select' },
         { prop: 'classType', label: '班级类型', type: 'select' },
         { prop: 'classroomId', label: '教室', type: 'classroom' },
         { prop: 'subjectTeacherId', label: '学科老师', type: 'user' },
-        { prop: 'gradeId', label: '年级', type: 'select' },
         { prop: 'subjectId', label: '科目', type: 'sub' },
+        { prop: 'gradeId', label: '年级', type: 'select' },
         { prop: 'className', label: '班级名称', type: 'text' },
         { prop: 'remarks', label: '备注', type: 'tear' }
       ],
@@ -180,7 +184,7 @@ export default {
       teacherList: [],
       teacherId: '',
       form: {
-        deptId: '',
+        deptId: null,
         gradeId: null,
         coachType: null,
         subjectId: null,
@@ -203,7 +207,9 @@ export default {
       // name
       deptName: '',
       gradeName: '',
-      subjectName: ''
+      subjectName: '',
+
+      totalNumber: null
     }
   },
   computed: {
@@ -233,8 +239,10 @@ export default {
         classroomName,
         classType,
         className,
-        remarks
+        remarks,
+        totalNumber
       } = this.selectionList[0]
+      this.totalNumber = totalNumber
       this.deptSelectValue = [{
         id: deptId,
         name: deptName
@@ -247,6 +255,7 @@ export default {
         userId: subjectTeacherId,
         realname: subjectTeacherName
       }]
+      this.teacherId = subjectTeacherId
       this.querySubjectGrade(subjectTeacherId)
       this.form = {
         deptId: deptId,
@@ -279,13 +288,38 @@ export default {
       this.deptSelectValue = data.value || []
       this.deptName = data.value.length ? data.value[0].deptNumber : ''
       this.paddingClassName()
+
+      // 改变中心时重置相关项
+      this.form.classroomId = ''
+      this.classRoom = []
+      this.teacherId = ''
+      this.form.subjectTeacherId = ''
+      this.teacherList = []
+
+      this.option.subjectId = []
+      this.form.subjectId = null
+      this.form.className = ''
+      this.subjectName = ''
+
+      this.gradeName = ''
+      this.option.gradeId = []
+      this.form.gradeId = null
     },
     // 教室选择
     classroomChange(data) {
-      console.log(data, 'vvvvv')
       this.form.classroomId = data.value.length ? data.value[0].classroomId : ''
       this.classRoom = data.value || []
       this.teacherId = data.value.length ? data.value[0].relatedTeachers : ''
+
+      // 改变教室重置相关项
+      this.form.subjectTeacherId = ''
+      this.teacherList = []
+      this.option.subjectId = []
+      this.form.subjectId = null
+      this.subjectName = ''
+      this.gradeName = ''
+      this.option.gradeId = []
+      this.form.gradeId = null
     },
 
     /**
@@ -293,6 +327,13 @@ export default {
      */
     userChange(data) {
       this.form.subjectTeacherId = data.value.length ? data.value[0].userId : ''
+      // 先重置学科与科目
+      this.option.subjectId = []
+      this.gradeName = ''
+      this.option.gradeId = []
+      this.form.gradeId = null
+      this.form.subjectId = null
+      this.subjectName = ''
       if (this.form.subjectTeacherId) {
         this.querySubjectGrade(this.form.subjectTeacherId)
       }
@@ -313,11 +354,17 @@ export default {
           return item
         })
         console.log(res, 'sg')
+        this.loading = false
       }).catch(() => {})
     },
 
     fieldChange(data, name) {
       if (name == 'coachType') {
+        this.option.coachType.forEach(item => {
+          if (data === item.value) {
+            this.totalNumber = item.standby
+          }
+        })
         this.queryClassType(data)
       } else if (name == 'subjectId') {
         this.option.subjectId.forEach(item => {
@@ -350,16 +397,34 @@ export default {
 
     // 获取辅导方式
     getWaySelect() {
+      this.loading = true
       QueryCoachingMethods().then(res => {
         this.option.coachType = res.data.map(item => {
           item.label = item.name
           item.value = item.dictionaryId
           return item
         })
+        if (this.handle.action == 'add') {
+          this.loading = false
+        }
       }).catch((err) => {
+        this.loading = false
         console.log(err)
       })
     },
+
+    // getGradeSelect() {
+    //   this.loading = true
+    //   QueryAdminGrade().then(res => {
+    //     this.option.gradeId = res.data.map(item => {
+    //       item.label = item.gradeName
+    //       item.value = item.id
+    //       return item
+    //     })
+    //   }).catch(() => {
+    //     this.loading = false
+    //   })
+    // },
 
 
     // 根据辅导方式查询班级类型
@@ -386,6 +451,7 @@ export default {
           this.loading = true
           const params = {
             entity: {
+              totalNumber: this.totalNumber,
               ...this.form
             }
           }

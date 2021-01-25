@@ -90,7 +90,8 @@ export default {
     cellType: {
       type: String,
       default: ''
-    }
+    },
+    classroomId: [Number, String]
   },
   data() {
     return {
@@ -140,10 +141,14 @@ export default {
     getStructureList() {
       this.loading = true
       if (this.cellType === 'classroom') {
-        crmClassroomSelectList().then(res => {
-          const allList = this.handelCheck(this.addIsCheckProp(res.data))
-          this.dataList = allList
-          this.breadcrumbList.push({ label: '全部', data: allList })
+        crmClassroomSelectList({ deptId: this.classroomId }).then(res => {
+          if (res.data.length) {
+            const allList = this.handelCheck(this.addIsCheckProp(res.data))
+            this.dataList = allList
+            this.breadcrumbList.push({ label: '全部', data: allList })
+          } else {
+            this.dataList = []
+          }
           this.loading = false
         }).catch(() => {
           this.loading = false

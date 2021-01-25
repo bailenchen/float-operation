@@ -18,10 +18,10 @@ import {
   crmContractAllocListAPI,
   crmCheckWaterListAPI,
   crmRefoundListAPI,
+  crmContractRefoundAPI,
   crmMessagevisitNumAPI
 } from '@/api/customermanagement/message'
-import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
-// import { crmReturnVisitIndexAPI } from '@/api/customermanagement/visit'
+// import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
 import { queryDictionaryField } from '@/api/common'
 import CheckStatusMixin from '@/mixins/CheckStatusMixin'
 
@@ -294,7 +294,7 @@ export default {
         'performanceDistributions': crmContractAllocListAPI,
         'checkWater': crmCheckWaterListAPI,
         'refundNumber': crmRefoundListAPI,
-        'checkRefund': crmRefundQueryPageListAPI,
+        'checkRefund': crmContractRefoundAPI,
         'visitNum': crmMessagevisitNumAPI
       }[this.infoType]
     },

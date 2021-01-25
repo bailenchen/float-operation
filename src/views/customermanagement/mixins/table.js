@@ -342,11 +342,12 @@ export default {
               const element = res.data[index]
 
               var width = 0
-              if (!element.width) {
+              // if (!element.width) {
+              if (element.width) {
                 if (element.name && element.name.length <= 6) {
-                  width = element.name.length * 15 + 45
+                  width = element.name.length * 20 + 45
                 } else {
-                  width = 140
+                  width = 200
                 }
               } else {
                 if ([
@@ -479,6 +480,9 @@ export default {
           2: '赠送'
         }[row[column.property]]
       } else if (column.property === 'isEarlyRetirement') {
+        if (this.crmType == 'refund') {
+          return row[column.property]
+        }
         return {
           0: '否',
           1: '是',
@@ -545,7 +549,7 @@ export default {
             2: '特殊充值返还'
           }[row[column.property]]
         } else if (column.property === 'capitalNumber') {
-          return row[column.property][0].number
+          return row[column.property][0] ? row[column.property][0].number : ''
         } else if (column.property === 'refundWayId') {
           let res = ''
           for (let index = 0; index < this.dictionaries.refundWayId.length; index++) {
@@ -570,6 +574,8 @@ export default {
             9: '家长审核中',
             10: '家长拒绝'
           }[row[column.property]]
+        } else if (column.property === 'refundTime') {
+          return row[column.property].replace(/(\d{4})-(\d{2})-(\d{2}) .*/, '$1-$2-$3')
         }
       }
 
@@ -819,8 +825,8 @@ export default {
           this.clickField = column.property
           this.showDview = true
         } else if (column.property === 'contractNum') {
-          this.rowID = row.capitalNumber[0].contractCapitalId
-          this.rowType = 'receive'
+          this.rowID = row.contractId
+          this.rowType = 'contract'
           this.clickField = column.property
           this.showDview = true
         } else if (column.property === 'customerName' || column.property == 'leadsNumber') {
