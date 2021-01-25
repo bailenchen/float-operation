@@ -163,8 +163,9 @@ export default {
       // fillData: {},
       disabled: false,
       moneyType: 'contractRefound',
+      btnType: 'primary',
       btnText: '填写资金退款',
-      btnType: 'primary'
+      contractData: null
     }
   },
   computed: {
@@ -172,34 +173,28 @@ export default {
   },
   watch: {
     action: {
-      handler(val) {
-        this.capital = this.action.isInteriorRefund ? null : this.capital
+      handler(val, oldValue) {
+        // console.log(val, oldValue)
+        // this.capital = this.action.isInteriorRefund ? null : this.capital
+        // 没有合同
         if (!val.contracId) {
           this.tableData = null
-          this.product = null
           this.money = ''
+          this.product = null
           this.capital = null
+          this.fillData = null
           this.sendData(false)
+          this.btnType = 'primary'
+          this.btnText = '填写资金退款'
           return
         }
 
-        console.log('val.money', val.money)
-
-        // 只有contracId
-        if (val.contracId && val.money == undefined) {
-          if (val.refundType == 1) {
-            this.fillData = null
-          }
-
-          this.btnType = val.isInteriorRefund ? 'primary' : 'success'
-          this.btnText = val.isInteriorRefund ? '填写资金退款' : '查看资金退款信息'
-          console.log('adssads')
-          this.getData()
-          return
+        // 有无资金信息
+        if (this.capital) {
+          this.btnType = 'success'
+          this.btnText = '查看资金退款信息'
         }
-
-        this.money = val.money
-        this.sendData()
+        this.getData()
       },
       deep: true
       // immediate: true
@@ -219,7 +214,7 @@ export default {
       immediate: true
     },
     refundMoney: function(val) {
-      console.log('监听refundMoney')
+      // console.log('监听refundMoney', val)
       this.money = val
 
       if (!this.fillData) {
@@ -239,10 +234,6 @@ export default {
         this.fillData[this.moneyType].price = val
         if (this.capital) this.capital.refundMoney = val
       }
-
-
-
-
       this.sendData()
     }
   },
@@ -272,35 +263,38 @@ export default {
       this.isOfflineWithDraw = false
     },
     sendData(del = false) {
-      // this.capital = this.action.isInteriorRefund ? null : this.capital
       const obj = {
         index: this.index,
         value: {
           product: this.product,
-          capital: this.capital
+          capital: this.action.isInteriorRefund ? null : this.capital,
+          money: this.money
         }
       }
 
-      if (this.action.refundType == 2) {
-        obj.value.money = this.oldValue.money ? this.oldValue.money : this.money
-      } else {
-        obj.value.money = this.money
-      }
-
-
+      // obj.value.money = this.money
       obj.value = del ? '' : obj.value
+      console.log('obj', obj)
       this.$emit('value-change', obj)
     },
     getData() {
-      this.loading = true
-      const params = { types: 6, id: this.action.contracId }
-      filedGetInformation(params).then(res => {
-        this.loading = false
-        // debugger
-        this.structureTable(res.data.contract)
-        this.calculateMoney(res.data.contract)
-        this.structureProduct(res.data.contract.productList)
-      }).catch(() => {})
+      // 没有tableData
+      if (!this.tableData) {
+        this.loading = true
+        const params = { types: 6, id: this.action.contracId }
+        filedGetInformation(params).then(res => {
+          this.loading = false
+          this.contractData = res.data.contract
+          // debugger
+          this.structureTable(this.contractData)
+          this.calculateMoney(this.contractData)
+          this.structureProduct(this.contractData.productList)
+        }).catch(() => {})
+      } else {
+        const data = this.contractData ? this.contractData : this.oldValue
+        this.calculateMoney(data)
+        this.sendData()
+      }
     },
 
     structureProduct(productList) {
@@ -326,13 +320,19 @@ export default {
       })
       console.log('应退金额', money)
       this.money = money
+
+      if (this.fillData) {
+        this.fillData[this.moneyType].price = money
+      }
+      if (this.capital) {
+        this.capital.refundMoney = money
+      }
     },
     structureTableByVal(dataObj) {
       console.log('aa', dataObj)
 
       this.btnType = dataObj.capital ? 'success' : 'primary'
       this.btnText = dataObj.capital ? '查看资金退款信息' : '填写资金退款'
-
 
       QueryAdminSubject().then(res => {
         this.subjectList = res.data
@@ -354,7 +354,7 @@ export default {
             }
           }
         }
-        console.log('调用structureTable', dataObj)
+        // console.log('调用structureTable', dataObj)
         this.structureTable(dataObj)
         // this.calculateMoney(dataObj)
         this.structureProduct(dataObj.productList)

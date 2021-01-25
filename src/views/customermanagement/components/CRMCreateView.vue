@@ -1129,6 +1129,9 @@ export default {
           const addRelation = ['contract_id']
           const getRelationObj = {
             contract_id: (data, element) => {
+              if (element.value.length == 0) {
+                this.actionRefundCombo.contracId = ''
+              }
               console.log('添加关联信息')
               element.relation = {
                 moduleType: 'refundMoney',
@@ -1157,6 +1160,8 @@ export default {
               if (addRelation.includes(element.key)) {
                 element.disabled = false
                 if (getRelationObj[element.key]) {
+                  console.log('更换后值为空')
+                  element.value = []
                   getRelationObj[element.key](customerItem, element)
                 }
               }
@@ -1167,6 +1172,10 @@ export default {
                 element.value = []
               }
             }
+          }
+
+          if (item.value.length == 0) {
+            this.actionRefundCombo.contracId = ''
           }
         }
         console.log('字段111', item)

@@ -1423,10 +1423,10 @@ export default {
         }
       } else if (this.crmType == 'student') {
         return this.forSelectionHandleItems(handleInfos, [
-          // 'change_dept',
-          // 'transfer',
-          // 'export',
-          // 'delete',
+          'change_dept',
+          'transfer',
+          'export',
+          'delete'
           // 'facialPhoto'
         ])
       } else if (this.crmType == 'capitalAccount') {
@@ -1588,6 +1588,7 @@ export default {
           const regordRes = []
           for (let index = 0; index < this.selectionList.length; index++) {
             const element = this.selectionList[index]
+            console.log('element', element)
             if ((element.price == null || parseFloat(element.price) == 0) &&
             (element.surplus == null || parseFloat(element.surplus) == 0)) {
               regordRes.push(true)
