@@ -794,9 +794,13 @@ export default {
       } else if (type == 'follow') {
         this.isFollow = true
       } else if (type == 'mark_alloc') {
-        const { allotType } = this.selectionList[0]
+        const { allotType, isNew } = this.selectionList[0]
         if (allotType == 1) {
-          return this.$message.error('已提交的业绩分配已全部通过或处于待审核中')
+          if (isNew == 2) {
+            return this.$message.error('该合同属性为引流课，不能进行业绩分配')
+          } else {
+            return this.$message.error('已提交的业绩分配已全部通过或处于待审核中')
+          }
         } else {
           this.markAllocShow = true
         }
@@ -1779,7 +1783,7 @@ export default {
           return false
         }
       } else if (type == 'shift') {
-        if (this.selectionList.length === 1) {
+        if (this.selectionList.length === 1 && this.selectionList[0].classConfirmationName == '未确认') {
           return this.education[this.crmType].shifts
         } else {
           return false
