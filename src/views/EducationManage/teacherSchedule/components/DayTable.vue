@@ -15,19 +15,22 @@
         :key="index"
         :prop="item.prop"
         :label="item.label"
-        min-width="160"
+        min-width="200"
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <div v-if="item.prop == 'realname'">{{ scope.row.realname }}</div>
+          <div v-if="item.prop == 'realname'">
+            <span>{{ scope.row.realname }}</span><br>
+            <span class="blue click">开班</span>
+          </div>
           <div v-else-if="scope.row[item.prop].batchId">
             <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
             <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
-            <span v-if="!scope.row[item.prop].customers.length" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
+            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
             <span
-              v-if="scope.row[item.prop].customers.length && scope.row[item.prop].customers.length < scope.row[item.prop].totalNumber"
+              v-if="scope.row[item.prop].batchId"
               class="blue click"
               @click="handle('insert',scope.row[item.prop])">
               [插班]
@@ -53,21 +56,26 @@
     <rank-course
       v-if="isRank"
       :selection-list="currentInfo"
+      :type="type"
+      crm-type="teacher"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
 
     <!-- 插班 -->
     <insert-class
       v-if="isInsert"
-      :crm-type="crmType"
+      :type="type"
       :selection-list="currentInfo"
+      crm-type="teacher"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
 
     <!-- 换挡 -->
     <shift-handle
       v-if="isShift"
+      :type="type"
       :selection-list="currentInfo"
+      crm-type="teacher"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
   </div>
@@ -120,6 +128,8 @@ export default {
         { prop: 't14', label: '补1小时A' },
         { prop: 't15', label: '补1小时B' }
       ],
+
+      type: 'day',
 
       // 合并标记相关
       objRow: {}

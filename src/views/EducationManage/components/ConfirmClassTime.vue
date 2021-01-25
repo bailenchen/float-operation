@@ -57,6 +57,7 @@
                 style="width: 100%"
                 @selection-change="handleSelectionChange">
                 <el-table-column
+                  :selectable="selectable"
                   show-overflow-tooltip
                   type="selection"
                   align="center"
@@ -78,7 +79,7 @@
                 </el-table-column>
                 <el-table-column fixed="right" width="90" align="center" label="操作">
                   <template slot-scope="scope">
-                    <el-button :disabled="scope.row.classConfirmationName === '确认'" size="mini" @click="handleLeave(scope.row.id)">请假</el-button>
+                    <el-button :disabled="scope.row.classConfirmationName === '确认' || scope.row.classStatusName === '请假'" size="mini" @click="handleLeave(scope.row.id)">请假</el-button>
                   </template>
                 </el-table-column>
                 <el-table-column/>
@@ -171,6 +172,7 @@ export default {
     queryBaseInfo() {
       this.loading = true
       crmClassSchduleConfirmInfo({ timeId: this.selectionList[0].timeId }).then(res => {
+        this.baseInfoList = []
         const data = res.data
         for (const key in this.fieldObj) {
           if (Object.hasOwnProperty.call(this.fieldObj, key)) {
@@ -187,6 +189,15 @@ export default {
         this.loading = false
         console.log(err)
       })
+    },
+
+    // 确认的禁止勾选
+    selectable(row, index) {
+      if (row.classConfirmationName == '未确认') {
+        return true // 可用
+      } else {
+        return false // 禁用
+      }
     },
 
     handleValue(key, data) {

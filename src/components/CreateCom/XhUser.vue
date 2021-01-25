@@ -47,7 +47,7 @@
 </template>
 <script type="text/javascript">
 // import { usersList } from '@/api/common'
-import { queryUserListAPI } from '@/api/common'
+import { queryUserListAPI, queryTeacherListAPI } from '@/api/common'
 import { crmCallCheckAuthAll } from '@/api/customermanagement/customer'
 import {
   crmClassQueryTeacher
@@ -92,8 +92,8 @@ export default {
         return {}
       }
     },
-    deptId: Number,
-    teacherId: String
+    deptId: [Number, String],
+    teacherId: [Number, String]
   },
   data() {
     return {
@@ -164,6 +164,7 @@ export default {
     getUserList() {
       if (this.infoType === 'relativeteacher' && !this.teacherId) return
       this.loading = true
+      console.log(this.getParams(), 'xxxxx')
       this.getRequest()(this.getParams())
         .then(res => {
           // this.allList = res.data
@@ -189,6 +190,8 @@ export default {
         return queryUserListAPI
       } else if (this.infoType === 'relativeteacher') {
         return crmClassQueryTeacher
+      } else if (this.infoType === 'teacher') {
+        return queryTeacherListAPI
       } else {
         return queryUserListAPI
       }
@@ -212,6 +215,8 @@ export default {
       } else if (this.infoType === 'relativeteacher') {
         params.relatedTeachers = this.teacherId
         return params
+      } else if (this.infoType === 'teacher') {
+        return { deptId: this.deptId }
       } else {
         if (this.deptId) {
           params = {}

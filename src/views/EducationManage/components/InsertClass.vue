@@ -89,6 +89,7 @@
             :time-list="checkList"
             :original-time-list="list"
             :stu-type="markTime"
+            :crm-type="crmType"
             :current-date="currentDate"
             @added-stu="getStuInfo"/>
         </create-sections>
@@ -233,15 +234,15 @@ export default {
               return `${ite.customerName}(${ite.classStatusName})`
             }).join(',')
             item.actual = actual
-            item.totalNumber = item.totalNumber
-            totalNumber.push(item.totalNumber - actual)
-            item.maxs = `${item.actual}/${item.totalNumber}`
-            return item.actual !== item.totalNumber
+            item.totalNumbers = item.totalNumber
+            totalNumber.push(item.totalNumbers - actual)
+            item.maxs = `${item.actual}/${item.totalNumbers}`
+            return item.actual !== item.totalNumbers
           })
           if (!this.list.length) {
             this.markTime = 'notime'
           }
-          this.selectionList[0].totalNumber = Math.min(...totalNumber)
+          this.selectionList[0].totalNumbers = Math.min(...totalNumber)
         }
         this.loading = false
       }).catch((err) => {

@@ -17,20 +17,23 @@
         :prop="item.prop"
         :label="item.label"
         :width="item.width"
-        min-width="160"
+        min-width="200"
         align="center"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <div v-if="item.prop == 'realname'">{{ scope.row.realname }}</div>
+          <div v-if="item.prop == 'realname'">
+            <span>{{ scope.row.realname }}</span><br>
+            <span class="blue click">开班</span>
+          </div>
           <div v-else-if="item.prop == 'time'">{{ scope.row.time }}</div>
           <div v-else-if="scope.row[item.prop].batchId">
             <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
-            <span v-if="scope.row[item.prop].batchId && scope.row[item.prop].classConfirmationType === '未确认'" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
-            <span v-if="!scope.row[item.prop].customers.length" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
+            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
+            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
             <span
-              v-if="scope.row[item.prop].customers.length && scope.row[item.prop].customers.length < scope.row[item.prop].totalNumber && scope.row[item.prop].classConfirmationType === '未确认'"
+              v-if="scope.row[item.prop].batchId"
               class="blue click"
               @click="handle('insert',scope.row[item.prop])">[插班]
             </span><br>
@@ -56,14 +59,17 @@
     <rank-course
       v-if="isRank"
       :selection-list="currentInfo"
+      :type="type"
+      crm-type="teacher"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
 
     <!-- 插班 -->
     <insert-class
       v-if="isInsert"
-      :crm-type="crmType"
       :selection-list="currentInfo"
+      :type="type"
+      crm-type="teacher"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
 
@@ -71,6 +77,8 @@
     <shift-handle
       v-if="isShift"
       :selection-list="currentInfo"
+      :type="type"
+      crm-type="teacher"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
 
@@ -146,6 +154,8 @@ export default {
         t6: '',
         t7: ''
       },
+
+      type: 'week',
 
       // 合并标记相关
       arrObj: null
