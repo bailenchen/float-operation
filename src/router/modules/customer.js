@@ -154,7 +154,8 @@ export default [
 
   {
     ...layout({
-      permissions: ['crm', 'receive']
+      // permissions: ['crm', 'receive', 'refund']
+      permissionList: [['crm', 'receive'], ['crm', 'refund']]
     }),
     children: [
       {

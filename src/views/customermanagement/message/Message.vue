@@ -166,6 +166,16 @@ export default {
           num: 0,
           tips: '',
           hidden: true
+        },
+        {
+          name: '待审核的变更中心',
+          crmType: 'student',
+          color: '#26D4DA',
+          iconClass: 'wk wk-s-seas',
+          infoType: 'checkProDept',
+          num: 0,
+          tips: '',
+          hidden: true
         }
 
 

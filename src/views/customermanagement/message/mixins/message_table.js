@@ -19,7 +19,8 @@ import {
   crmCheckWaterListAPI,
   crmRefoundListAPI,
   crmContractRefoundAPI,
-  crmMessagevisitNumAPI
+  crmMessagevisitNumAPI,
+  crmCheckProDeptAPI
 } from '@/api/customermanagement/message'
 // import { crmRefundQueryPageListAPI } from '@/api/customermanagement/refund'
 import { queryDictionaryField } from '@/api/common'
@@ -58,7 +59,8 @@ export default {
         'performanceDistributions',
         'checkWater',
         'refundNumber',
-        'checkRefund'
+        'checkRefund',
+        'checkProDept'
       ].includes(this.infoType)
     }
   },
@@ -96,10 +98,11 @@ export default {
         } else {
           this.showDview = false
         }
-      } else if (this.crmType === 'customer') {
+      } else if (this.crmType === 'customer' || this.crmType === 'student') {
         if (['leadsNumber', 'customerName'].includes(column.property)) {
           this.rowID = row.customerId
-          this.rowType = 'customer'
+          // this.rowType = 'customer'
+          this.rowType = this.crmType
           this.recID = row.examineRecordId
           this.ownId = row.ownerUserId
           if (this.infoType === 'disputed') {
@@ -295,7 +298,8 @@ export default {
         'checkWater': crmCheckWaterListAPI,
         'refundNumber': crmRefoundListAPI,
         'checkRefund': crmContractRefoundAPI,
-        'visitNum': crmMessagevisitNumAPI
+        'visitNum': crmMessagevisitNumAPI,
+        'checkProDept': crmCheckProDeptAPI
       }[this.infoType]
     },
 
