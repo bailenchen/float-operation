@@ -420,7 +420,8 @@ export default {
         this.infoType == 'performanceDistributions' ||
         this.infoType == 'checkWater' ||
         this.infoType == 'refundNumber' ||
-        this.infoType == 'checkRefund'
+        this.infoType == 'checkRefund' ||
+        this.infoType == 'checkProDept'
       ) {
         return [{ name: '待审核', value: 1 }, { name: '已审核', value: 2 }]
       }

@@ -336,4 +336,17 @@ export function crmContractRefoundAPI(data) {
     }
   })
 }
-
+/**
+ * 待审核转中心列表
+ * @param {*} data
+ */
+export function crmCheckProDeptAPI(data) {
+  return request({
+    url: 'CrmBackLog/checkProDept',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
