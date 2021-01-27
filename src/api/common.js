@@ -19,6 +19,15 @@ export function queryUserListAPI() {
   })
 }
 
+// 查询老师
+export function queryTeacherListAPI(data) {
+  return request({
+    url: 'system/user/transferUser',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  *
  * @param {*} data

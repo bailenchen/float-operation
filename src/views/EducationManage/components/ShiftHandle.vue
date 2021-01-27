@@ -38,6 +38,7 @@
                         v-if="item.type === 'dept'"
                         :value="deptSelectValue"
                         :radio="radio"
+                        :classroom-id="base.deptId"
                         cell-type="classroom"
                         placeholder="选择教室"
                         class="xh-structure-cell"
@@ -46,7 +47,10 @@
                       <xh-user-cell
                         v-else-if="item.type === 'user'"
                         :radio="radio"
+                        :teacher-id="teacherId"
                         :value="teacherList"
+                        :disabled="!classroomId"
+                        info-type="relativeteacher"
                         @value-change="userChange"/>
 
                       <el-date-picker
@@ -275,7 +279,10 @@ export default {
       ],
       showShift: false,
       // 勾选将换挡数据
-      checkList: []
+      checkList: [],
+
+      classroomId: '',
+      teacherId: ''
     }
   },
   created() {
@@ -293,10 +300,12 @@ export default {
           startTime: data['timeSlotStart'].slice(0, 5),
           endTime: data['timeSlotEnd'].slice(0, 5)
         }
+        this.classroomId = data['classroomId']
         this.deptSelectValue = [{
           classroomId: data['classroomId'],
           classroomName: data['classroomName']
         }]
+        this.teacherId = data['subjectTeacherId']
         this.teacherList = [{
           userId: data['subjectTeacherId'],
           realname: data['subjectTeacherName']
@@ -313,7 +322,8 @@ export default {
     // 查询换挡列表
     queryShift() {
       if (!this.showShift) {
-        crmClassSchduleShift({ classId: this.selectionList[0].classId }).then(res => {
+        const { classId, timeId } = this.selectionList[0]
+        crmClassSchduleShift({ classId, timeId }).then(res => {
           this.list = res.data.map(item => {
             item.time = this.classTime ? this.classTime.slice(0, 10) : ''
             item.during = {
@@ -360,6 +370,7 @@ export default {
         this.$set(this.list[index], 'during', data)
       } else {
         this.changeListItem('during', data)
+        this.during = data
       }
     },
 
@@ -371,6 +382,10 @@ export default {
         this.$set(this.list[index], 'deptSelectValue', data.value || [])
       } else {
         this.deptSelectValue = data.value || []
+        this.classroomId = data.value.length ? data.value[0].classroomId : ''
+        this.teacherId = data.value.length ? data.value[0].relatedTeachers : ''
+        // 重置老师
+        this.teacherList = []
         this.changeListItem('classroom', data.value)
       }
     },
@@ -419,13 +434,13 @@ export default {
      */
     submitForm() {
       if (!this.teacherList.length) {
-        this.$message.error('请选择基本信息中的学科老师')
+        return this.$message.error('请选择基本信息中的学科老师')
       } else if (!this.deptSelectValue.length) {
-        this.$message.error('请选择基本信息中的教室')
+        return this.$message.error('请选择基本信息中的教室')
       } else if (!this.classTime) {
-        this.$message.error('请选择基本信息中的日期')
-      } else if (!this.during.startTime || !this.during.endTime) {
-        this.$message.error('请选择基本信息中的上课时段')
+        return this.$message.error('请选择基本信息中的日期')
+      } else if (!(this.during.startTime || this.during.endTime)) {
+        return this.$message.error('请选择基本信息中的上课时段')
       }
       this.loading = true
       const { timeId } = this.selectionList[0]

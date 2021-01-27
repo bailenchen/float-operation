@@ -230,6 +230,8 @@ export default {
       const {
         deptId,
         deptName,
+        deptNumber,
+        gradeName,
         gradeId,
         coachType,
         subjectId,
@@ -243,6 +245,9 @@ export default {
         totalNumber
       } = this.selectionList[0]
       this.totalNumber = totalNumber
+      this.deptName = deptNumber
+      this.gradeName = gradeName
+      this.subjectName = subjectTeacherName
       this.deptSelectValue = [{
         id: deptId,
         name: deptName

@@ -7,6 +7,7 @@
         step: '00:60',
         end: '19:00'
       }"
+      :clearable="false"
       placeholder="起始时间"
       @change="changeTime"/>
     <el-time-select
@@ -17,6 +18,7 @@
         end: maxEndTime,
         minTime: startTime,
       }"
+      :clearable="false"
       placeholder="结束时间"
       @change="overTime"/>
   </div>

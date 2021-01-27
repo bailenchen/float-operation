@@ -104,7 +104,11 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width"
-          :sortable="item.prop != 'poolDay' ? 'custom' : false"
+          :sortable="(item.prop == 'poolDay' ||
+            item.prop == 'totalNumber' ||
+            item.prop == 'surplus' ||
+            item.prop == 'recentClassHours' ||
+          item.prop == 'latestTimetableTime') ? false : true"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <template v-if="item.prop == 'dealStatus'">

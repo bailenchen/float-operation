@@ -267,7 +267,8 @@ export default {
       dateList: [],
       markWeek: null, // 连排周数
       // 连排时的数据
-      pendingData: [],
+      activeData: [],
+      storedDate: [],
 
       timeList: [],
       timeLists: [
@@ -318,7 +319,7 @@ export default {
       crmClassQueryInsertBaseInfo({ classId }).then(res => {
         const data = res.data
         // 上课时间段列表
-        this.timeList = data.list.filter((item, index) => {
+        this.timeList = data.list.map((item, index) => {
           item.num = index + 1
           item.dateTime = item.classTime ? `${item.classTime.slice(0, 10)} ${item.timeSlotStart.slice(0, 5)}~${item.timeSlotEnd.slice(0, 5)}` : ''
           item.customerId = []
@@ -331,9 +332,9 @@ export default {
             return `${ite.customerName}(${ite.classStatusName})`
           }).join(',')
           item.actual = actual
-          item.totalNumber = item.totalNumber
-          item.maxs = `${item.actual}/${item.totalNumber}`
-          return item.actual !== item.totalNumber
+          item.totalNumbers = item.totalNumber
+          item.maxs = `${item.actual}/${item.totalNumbers}`
+          return item
         })
         this.loading = false
       }).catch((err) => {
@@ -370,13 +371,8 @@ export default {
         return
       }
       if (this.currentAddDateTime.length) {
-        let week = weeks
-        if (this.dateList.length) {
-          week = weeks - 1
-        }
         if (this.markWeek) {
-          this.dateList.length = this.dateList.length - this.pendingData.length
-          this.pendingData.length = 0
+          this.activeData.length = 0
         }
         this.markWeek = weeks
         // 待连排的所有日期 this.currentAddDateTime
@@ -385,14 +381,18 @@ export default {
             const element = this.currentAddDateTime[index].slice(0, 10)
 
             var day = new Date(element)
-            for (let index = 0; index < week; index++) {
+            var wks = weeks - 1
+            for (let index = 0; index < wks; index++) {
               day.setDate(day.getDate() + 7)
               const newdate = moment(day).format('YYYY-MM-DD')
               const itemData = `${newdate} ${this.startTime}~${this.endTime}`
-              this.pendingData.push(itemData)
-              this.dateList.push(itemData)
+              if (index == 0) {
+                this.activeData.push(`${element} ${this.startTime}~${this.endTime}`)
+              }
+              this.activeData.push(itemData)
             }
           }
+          this.dateList = this.storedDate.concat(this.activeData)
         }
       }
     },
@@ -401,6 +401,7 @@ export default {
     clearWeek() {
       this.weeks = null
       this.dateList = []
+      this.storedDate = []
       this.markWeek = null
     },
 
@@ -456,14 +457,21 @@ export default {
       this.currentAddDateTime = Array.from(new Set(comDate))
       const totalDate = [...this.dateList, ...this.currentAddDateTime]
       console.log(totalDate, 'totalDate')
+      // 有新日期添加进来时，就正式合并连排日期与之前添加的所有日期
+      if (this.currentAddDate) {
+        this.dateList = this.storedDate = this.storedDate.concat(this.activeData)
+        this.markWeek = null
+        this.activeData.length = 0
+      }
+      // 过滤重复的日期，然后拼上已添加的日期
+      this.dateList = Array.from(new Set(totalDate))
       // 与已经添加的日期时间比较 获取重复的数据
       this.currentAddRepeatDateTime = this.outRepeat(totalDate)
-      // 过滤重复的日期
-      this.dateList = Array.from(new Set(totalDate))
-      console.log(comDate, 'bbjjjj')
       // 去掉重复的日期，显示在上课日期栏里
       this.showCurrentDate(this.currentAddRepeatDateTime)
       console.log(this.dateList, 'bbbbbb')
+
+      console.log(comDate, 'bbjjjj')
       this.dateVisible = false
     },
 
@@ -525,6 +533,7 @@ export default {
       this.endTime = '10:00'
       this.currentAddDate = ''
       this.weeks = null
+      this.activeData.length = 0
     },
 
     /**

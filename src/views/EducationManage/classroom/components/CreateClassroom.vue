@@ -50,6 +50,8 @@
                 :radio="radio"
                 :disabled="!deptSelectValue.length"
                 :value="teacherList"
+                :dept-id="form.deptId"
+                info-type="teacher"
                 @value-change="userChange"/>
 
             </el-form-item>

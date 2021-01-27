@@ -142,6 +142,10 @@ export default {
     CrmRelative
   },
   props: {
+    crmType: {
+      type: String,
+      default: ''
+    },
     // 满班人数
     baseInfo: {
       type: Object,
@@ -197,7 +201,7 @@ export default {
       fieldLists: [
         { prop: 'num', label: '合同编号', width: 150 },
         { prop: 'isnew', label: '合同属性', width: 90 },
-        { prop: 'coachType', label: '合同类型', width: 90 },
+        { prop: 'coachType', label: '辅导方式', width: 90 },
         { prop: 'orderDate', label: '签约日期', width: 150 },
         { prop: 'isGive', label: '是否额外赠送', width: 110 },
         { prop: 'detailsName', label: '小套餐名称', width: 110 },
@@ -303,9 +307,10 @@ export default {
       //     }
       //   }
       // }
-      const { totalNumber } = this.baseInfo
+      const { totalNumber, totalNumbers } = this.baseInfo
       const list = this.arrayObjRepeat(this.addedList, 'customerId')
-      if (totalNumber > list.length) {
+      const numbers = this.crmType == 'class' ? totalNumbers : totalNumber
+      if (numbers >= list.length) {
         const data = seldata.data
         if (data && data.length) {
           this.getContractList(data[0].customerId)

@@ -19,6 +19,11 @@ export default {
   },
   methods: {
     createSaveSuccess() {
+      if (this.type == 'day') {
+        this.getWillMergeColumns()
+      } else if (this.type == 'week') {
+        this.getWillMergeRows()
+      }
       this.getWillMergeRows()
     },
 

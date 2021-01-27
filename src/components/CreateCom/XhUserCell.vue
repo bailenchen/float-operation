@@ -89,8 +89,8 @@ export default {
       type: String,
       default: ''
     },
-    deptId: Number,
-    teacherId: String
+    deptId: [Number, String],
+    teacherId: [Number, String]
   },
   data() {
     return {
