@@ -210,7 +210,6 @@ export default {
   computed: {
     ...mapGetters(['CRMConfig']),
     Show() {
-      console.log('dsa111', this.$store.state.customer.isCall)
       return this.$store.state.customer.isCall
     }
   },

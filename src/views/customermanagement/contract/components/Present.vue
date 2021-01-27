@@ -115,7 +115,6 @@ export default {
     },
     oldValue: {
       handler(val) {
-        console.log('oldValue', val)
         if (val && this.action.type == 'update') {
           this.structureDataByValue()
         }

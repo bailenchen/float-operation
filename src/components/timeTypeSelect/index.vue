@@ -115,7 +115,6 @@ export default {
     } else {
       this.$emit('change', { type: 'default', value: this.selectType.value })
     }
-    console.log(this.bType, '456123')
   },
   methods: {
     getDefaultTypeValue(type) {

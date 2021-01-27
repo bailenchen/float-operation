@@ -179,6 +179,13 @@ export function crmCustomerRead(data) {
     data: data
   })
 }
+export function crmCustomerReadNullAPI(data) {
+  return request({
+    url: 'CrmCustomer/queryByIdNull',
+    method: 'post',
+    data: data
+  })
+}
 
 // 操作
 /**

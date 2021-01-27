@@ -9,6 +9,7 @@
     :no-listener-ids="noListenerIDs"
     :no-listener-class="noListenerClass"
     :click-field="clickField"
+    :is-check-pro-dept="isCheckProDept"
     class="d-view"
     @handle="detailHandle"
     @hide-view="hiddenView"
@@ -93,6 +94,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    isCheckProDept: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

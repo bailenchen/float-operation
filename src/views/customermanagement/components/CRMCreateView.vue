@@ -1014,7 +1014,37 @@ export default {
         }
       } else if (this.crmType === 'visit') {
         if (item.data.formType === 'student') {
-          let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'leads_number')
+          const handleFields = [
+            'leadsNumber',
+            'dept_id',
+            'owner_user_id'
+          ]
+
+          // 赋值
+          const getValueObj = {
+            leadsNumber: data => {
+              return data && data.deptIdName ? data.deptIdName : ''
+            },
+            dept_id: data => {
+              return data && data.deptIdName ? data.deptIdName : ''
+            },
+            owner_user_id: data => {
+              return data && data.ownerUserName ? data.ownerUserName : ''
+            }
+          }
+
+          const customerItem = item.value[0]
+          for (let index = 0; index < this.crmForm.crmFields.length; index++) {
+            const element = this.crmForm.crmFields[index]
+            if (handleFields.includes(element.key)) {
+              // 填充值
+              if (getValueObj[element.key]) {
+                element.value = getValueObj[element.key](customerItem)
+              }
+            }
+          }
+
+          let findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'leadsNumber')
           if (findIndex !== -1) {
             this.crmForm.crmFields[findIndex].value = item.value[0].leadsNumber || ''
           }
@@ -1026,12 +1056,14 @@ export default {
           findIndex = this.crmForm.crmFields.findIndex(o => o.key === 'owner_user_id')
           if (findIndex !== -1) {
             if (item.value[0]) {
-              this.crmForm.crmFields[findIndex].value = [{
-                userId: item.value[0].ownerUserId,
-                realname: item.value[0].ownerUserName
-              }]
+              // this.crmForm.crmFields[findIndex].value = [{
+              //   userId: item.value[0].ownerUserId,
+              //   realname: item.value[0].ownerUserName
+              // }]
+              this.crmForm.crmFields[findIndex].value = item.value[0].ownerUserName ? item.value[0].ownerUserName : ''
             } else {
-              this.crmForm.crmFields[findIndex].value = []
+              // this.crmForm.crmFields[findIndex].value = []
+              this.crmForm.crmFields[findIndex].value = ''
             }
           }
         }
@@ -1548,6 +1580,128 @@ export default {
 
           var list = res.data
 
+          if (this.crmType == 'visit') {
+            list.unshift({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'school',
+              fieldType: 1,
+              formType: 'text',
+              inputTips: '',
+              isNull: 0,
+              isUnique: 1,
+              label: 2,
+              name: '就读学校',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+            list.unshift({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'headmasterUserName',
+              fieldType: 1,
+              formType: 'text',
+              inputTips: '',
+              isNull: 0,
+              isUnique: 1,
+              label: 2,
+              name: '班主任',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+            list.unshift({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'source',
+              fieldType: 1,
+              formType: 'text',
+              inputTips: '',
+              isNull: 1,
+              isUnique: 1,
+              label: 2,
+              name: '来源',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+            list.unshift({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'grade_id',
+              fieldType: 1,
+              formType: 'text',
+              inputTips: '',
+              isNull: 1,
+              isUnique: 1,
+              label: 2,
+              name: '年级',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+            list.unshift({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'owner_user_id',
+              fieldType: 1,
+              formType: 'text',
+              inputTips: '',
+              isNull: 1,
+              isUnique: 1,
+              label: 2,
+              name: '教育顾问',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+            list.unshift({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'dept_id',
+              fieldType: 1,
+              formType: 'text',
+              inputTips: '',
+              isNull: 1,
+              isUnique: 1,
+              label: 2,
+              name: '所属中心',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+            list.unshift({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'leadsNumber',
+              fieldType: 1,
+              formType: 'text',
+              inputTips: '',
+              isNull: 1,
+              isUnique: 1,
+              label: 2,
+              name: '学员编号',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+          }
+
           // 调整字段顺序
           for (let i = 0; i < list.length; i++) {
             const element = list[i]
@@ -1558,11 +1712,8 @@ export default {
           }
 
           this.getOldForm(list)
-
-          // console.log('字段列表', list)
           // debugger
 
-          // const list = res.data
           if (this.crmType == 'customer') {
             for (let index = 0; index < list.length; index++) {
               const element = list[index]
@@ -1572,17 +1723,14 @@ export default {
             }
           }
 
+
+
           this.getcrmRulesAndModel(list)
 
-          // if (this.crmType == 'customer' && this.action.userInfo) {
           if (this.action.userInfo) {
-            console.log('当前登录用户', this.action.userInfo)
             queryUserListAPI().then(res => {
-              console.log(res)
               this.userList = res.data
               this.crmForm.crmFields.forEach(item => {
-              // console.log('---', item)
-
                 var isFill = [
                   'leads_registrant_id',
                   'signing_user_id'
@@ -1768,7 +1916,7 @@ export default {
                 params.crmType = 'contract'
                 params.showTypes = ['customer', 'student']
               } else {
-                console.log('增加额外赠送合同')
+                // console.log('增加额外赠送合同')
                 params.crmType = 'presentContract'
               }
             }
@@ -2159,7 +2307,10 @@ export default {
           }
 
           // 禁用
-          if (['mobile', 'owner_user_id'].includes(item.fieldName)) {
+          if ([
+            'leadsNumber', 'dept_id', 'owner_user_id', 'grade_id', 'source',
+            'headmasterUserName', 'school'
+          ].includes(item.fieldName)) {
             params.disabled = true
           }
 
@@ -2168,9 +2319,9 @@ export default {
             params.useDelete = false
           }
 
-          if (item.fieldName == 'author') {
-            params.value = [this.action.userInfo]
-          }
+          // if (item.fieldName == 'author') {
+          //   params.value = [this.action.userInfo]
+          // }
 
           // 编辑
           if (this.action.type === 'update') {
@@ -2184,7 +2335,7 @@ export default {
         }
         this.crmForm.crmFields.push(params)
       }
-      console.log('this.crmForm.crmFields', this.crmForm.crmFields)
+      // console.log('this.crmForm.crmFields', this.crmForm.crmFields)
       for (let index = 0; index < this.crmForm.crmFields.length; index++) {
         const element = this.crmForm.crmFields[index]
         if (element.key == 'status') {
@@ -2437,6 +2588,9 @@ export default {
 
 
           if (this.action.contractType == 2) {
+            if (element.key == 'grade_id') {
+              element.value = this.action.data.customer.gradeId
+            }
             if (element.key == 'contractId') {
               element.disabled = false
               element.relation = {
@@ -3232,8 +3386,8 @@ export default {
       // }
 
       console.log('请求参数: ', params)
-      // this.loading = false
-      // return
+      this.loading = false
+      return
       crmRequest(params)
         .then(res => {
           this.loading = false
@@ -3242,7 +3396,11 @@ export default {
               this.$message.success(
                 this.action.type == 'update' ? '编辑成功' : '添加成功'
               )
-              this.hidenView()
+              // console.log('请求参数与结果: ', params)
+              if (params.entity.refundMonry < 0) {
+                this.$message(`变更后原合同剩余金额${Math.abs(params.entity.refundMonry)}元将会返还至资金账户`)
+              }
+              // this.hidenView()
             }
           } else {
             this.hidenView()

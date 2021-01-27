@@ -367,8 +367,6 @@ export default {
           this.loading = false
         })
       } else {
-        console.log(crmTypeModel[this.crmType])
-
         const keytype = this.crmType === 'student' ? 'customer' : this.crmType
         const params = {
           types: crmTypeModel[keytype],
@@ -383,11 +381,9 @@ export default {
 
         filedGetInformation(params)
           .then(res => {
-            // console.log('azsx')
             const baseList = []
             const systemList = []
             res.data.forEach(item => {
-              console.log('item', item)
               if (item.formType === 'floatnumber') {
                 item.value = separator(item.value)
               }
@@ -537,7 +533,6 @@ export default {
     },
 
     getSettingConfig(item) {
-      console.log('循环元素', item)
       if (!item.formType) return
       const reqObj = this.reqMap.find(o => o.formType === item.formType)
       if (!reqObj) return
@@ -563,7 +558,6 @@ export default {
      * 获取非附件类型的展示值
      */
     getCommonShowValue(item) {
-      console.log('getCommonShowValue', item)
       if (this.isModule(item) || this.isSpecialField(item)) {
         return this.getModuleName(item)
       } else if (item.formType === 'single_user') {
@@ -977,7 +971,6 @@ export default {
         })
       } else if (item.formType == 'mobile') {
         var validateCRMMobile = (rule, value, callback) => {
-          console.log(rule)
           if (!rule.item || !rule.item.isEdit) {
             return callback()
           }
