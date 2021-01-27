@@ -228,6 +228,7 @@ export default {
     this.getWaySelect()
     if (this.type == 'edit') {
       const {
+        classId,
         deptId,
         deptName,
         deptNumber,
@@ -263,6 +264,7 @@ export default {
       this.teacherId = subjectTeacherId
       this.querySubjectGrade(subjectTeacherId)
       this.form = {
+        classId,
         deptId: deptId,
         gradeId: gradeId,
         coachType: coachType,

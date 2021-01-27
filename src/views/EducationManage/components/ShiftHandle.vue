@@ -106,6 +106,7 @@
                       <xh-structure-cell
                         :value="scope.row['deptSelectValue']"
                         :radio="radio"
+                        :classroom-id="base.deptId"
                         cell-type="classroom"
                         placeholder="选择教室"
                         class="xh-structure-cell"
@@ -114,7 +115,10 @@
                     <span v-else-if="item.prop == 'teacherList'">
                       <xh-user-cell
                         :radio="radio"
+                        :teacher-id="scope.row['relatedTeachers']"
+                        :disabled="!scope.row['classroomId']"
                         :value="scope.row['teacherList']"
+                        info-type="relativeteacher"
                         @value-change="userChange($event, scope.$index)"/>
                     </span>
                     <span v-else-if="item.prop == 'time'">
@@ -221,6 +225,10 @@ export default {
       default: () => {
         return []
       }
+    },
+    crmType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -274,7 +282,7 @@ export default {
         { prop: 'subjectName', label: '科目', width: 90 },
         { prop: 'gradeName', label: '年级', width: 90 },
         { prop: 'sumCourse', label: '合同课次', width: 100 },
-        { prop: 'endCourse', label: '结课课次', width: 100 },
+        { prop: 'finishCourse', label: '结课课次', width: 100 },
         { prop: 'alreadyCourse', label: '已排课次', width: 100 }
       ],
       showShift: false,
@@ -334,6 +342,7 @@ export default {
               classroomId: this.deptSelectValue.length ? this.deptSelectValue[0]['classroomId'] : null,
               classroomName: this.deptSelectValue.length ? this.deptSelectValue[0]['classroomName'] : null
             }]
+            item.classroomId = this.deptSelectValue.length ? this.deptSelectValue[0]['classroomId'] : null
             item.teacherList = [{
               userId: this.teacherList.length ? this.teacherList[0]['userId'] : null,
               realname: this.teacherList.length ? this.teacherList[0]['realname'] : null
@@ -380,6 +389,11 @@ export default {
     structureChange(data, index) {
       if (arguments.length == 2) {
         this.$set(this.list[index], 'deptSelectValue', data.value || [])
+        this.$set(this.list[index], 'classroomId', data.value.length ? data.value[0].classroomId : '')
+
+        // 重置
+        this.$set(this.list[index], 'teacherList', [])
+        this.$set(this.list[index], 'relatedTeachers', data.value.length ? data.value[0].relatedTeachers : '')
       } else {
         this.deptSelectValue = data.value || []
         this.classroomId = data.value.length ? data.value[0].classroomId : ''
@@ -387,6 +401,13 @@ export default {
         // 重置老师
         this.teacherList = []
         this.changeListItem('classroom', data.value)
+
+        if (this.list.length) {
+          for (let index = 0; index < this.list.length; index++) {
+            this.$set(this.list[index], 'teacherList', [])
+            this.$set(this.list[index], 'relatedTeachers', '')
+          }
+        }
       }
     },
 
@@ -439,7 +460,7 @@ export default {
         return this.$message.error('请选择基本信息中的教室')
       } else if (!this.classTime) {
         return this.$message.error('请选择基本信息中的日期')
-      } else if (!(this.during.startTime || this.during.endTime)) {
+      } else if (!this.during.startTime || !this.during.endTime) {
         return this.$message.error('请选择基本信息中的上课时段')
       }
       this.loading = true
@@ -450,7 +471,7 @@ export default {
         shiftList.push({
           timeId: element.timeId,
           classTime: element.time,
-          timeSlot: `${element.during.startTime}:00-${element.during.endTime}:00`,
+          timeSlot: `${element.during.startTime}:00-${element.during.endTime.includes('24') ? '23:59:59' : element.during.endTime + ':00'}`,
           classroomId: element.deptSelectValue[0].classroomId,
           subjectTeacherId: element.teacherList[0].userId
         })
@@ -459,12 +480,13 @@ export default {
         entity: {
           timeId,
           classTime: this.classTime,
-          timeSlot: `${this.during.startTime}:00-${this.during.endTime}:00`,
+          timeSlot: `${this.during.startTime}:00-${this.during.endTime.includes('24') ? '23:59:59' : this.during.endTime + ':00'}`,
           classroomId: this.deptSelectValue[0].classroomId,
           subjectTeacherId: this.teacherList[0].userId
         },
         list: shiftList
       }
+
       crmClassSchduleShiftSave(params).then(res => {
         this.hidenView()
         this.loading = false

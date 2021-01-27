@@ -266,6 +266,10 @@ import {
   crmCustomerReceive
 } from '@/api/customermanagement/customer'
 import {
+  crmStudentDeleteAPI,
+  crmStudentExcelExport
+} from '@/api/customermanagement/student'
+import {
   crmAccountExcelExport,
   crmAccountDelete
 } from '@/api/customermanagement/account'
@@ -416,7 +420,14 @@ export default {
       type: Boolean,
       default: false
     },
-    poolId: [String, Number]
+    poolId: [String, Number],
+    // 教师排课表开班跳转过来的数据
+    markData: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
   },
   data() {
     return {
@@ -509,6 +520,40 @@ export default {
       } else {
         this.loadingObj && this.loadingObj.close()
       }
+    },
+    markData: {
+      handler(val) {
+        if (val && val.data && ('subject_teacher_id' in val.data)) {
+          const form = {
+            form: [{
+              address: {
+                area: '',
+                city: '',
+                state: ''
+              },
+              condition: 'is',
+              fieldName: 'subject_teacher_id',
+              formType: 'user',
+              name: '学科老师',
+              statusId: '',
+              statusOption: [],
+              typeId: '',
+              typeOption: [],
+              value: [{
+                realname: val.name,
+                userId: val.data.subject_teacher_id.value,
+                username: '',
+                valueContent: ''
+              }]
+
+
+            }],
+            obj: val.data
+          }
+          this.handleFilter(form)
+        }
+      },
+      immediate: true
     }
   },
   mounted() {},
@@ -528,8 +573,7 @@ export default {
       if (this.isSeas) {
         params.poolId = this.poolId
       } else {
-        const keytype = this.crmType === 'student' ? 'customer' : this.crmType
-        params.label = crmTypeModel[keytype]
+        params.label = this.crmType === 'student' ? 19 : crmTypeModel[this.crmType]
       }
 
       console.log(this.isSeas)
@@ -543,6 +587,7 @@ export default {
         .catch(() => {})
     },
     handleFilter(form) {
+      console.log(form, 'form')
       this.filterObj = form
       this.showFilter = false
       if (form.saveChecked) {
@@ -575,9 +620,9 @@ export default {
       if (data.type == 'set') {
         this.showSceneSet = true
       } else if (data.type == 'add') {
-        const keytype = this.crmType == 'student' ? 'customer' : this.crmType
+        const keyType = this.crmType == 'student' ? 'customer' : this.crmType
         filterIndexfields({
-          label: crmTypeModel[keytype]
+          label: crmTypeModel[keyType]
         })
           .then(res => {
             this.fieldList = res.data
@@ -622,6 +667,7 @@ export default {
         } else {
           request = {
             customer: crmCustomerExcelExport,
+            student: crmStudentExcelExport,
             capitalAccount: crmAccountExcelExport,
             leads: crmLeadsExcelExport,
             contacts: crmContactsExcelExport,
@@ -644,13 +690,14 @@ export default {
                 return item.insideId
               } else if (this.crmType == 'receive') {
                 return item.contractCapitalId
+              } else if (this.crmType == 'student') {
+                return item.customerId
               } else {
                 return item[`${this.crmType}Id`]
               }
             })
             .join(',')
         }
-        // return
 
         request(params)
           .then(res => {
@@ -690,7 +737,11 @@ export default {
         if (type == 'transform') {
           message = '确定将这些线索转换为客户吗?'
         } else if (type == 'delete') {
-          message = '确定删除?'
+          if (this.crmType == 'classschedule') {
+            message = '删除班级课表会将本节课的学员排课信息一并删除，课次将会返还，是否确认删除?'
+          } else {
+            message = '确定删除?'
+          }
         } else if (type == 'lock') {
           message = '确定要锁定这些LEADS吗？锁定后将不会掉入公海。'
         } else if (type == 'unlock') {
@@ -794,7 +845,7 @@ export default {
       } else if (type == 'follow') {
         this.isFollow = true
       } else if (type == 'mark_alloc') {
-        const { allotType, isNew } = this.selectionList[0]
+        const { allotType, isNew, contractType } = this.selectionList[0]
         if (allotType == 1) {
           if (isNew == 2) {
             return this.$message.error('该合同属性为引流课，不能进行业绩分配')
@@ -802,7 +853,11 @@ export default {
             return this.$message.error('已提交的业绩分配已全部通过或处于待审核中')
           }
         } else {
-          this.markAllocShow = true
+          if (contractType == 2) {
+            return this.$message.error('该合同类型为赠送合同，不能进行业绩分配')
+          } else {
+            this.markAllocShow = true
+          }
         }
       } else if (type == 'update_contract') {
         var params = { types: 6, id: this.selectionList[0].contractId }
@@ -973,6 +1028,10 @@ export default {
           ids = this.selectionList.map(function(item, index, array) {
             return item['id']
           })
+        } else if (this.crmType == 'student') {
+          ids = this.selectionList.map(function(item, index, array) {
+            return item['customerId']
+          })
         } else {
           ids = this.selectionList.map(function(item, index, array) {
             return item[crmTypes + 'Id']
@@ -985,6 +1044,7 @@ export default {
           capitalAccount: crmAccountDelete,
           contacts: crmContactsDelete,
           business: crmBusinessDelete,
+          student: crmStudentDeleteAPI,
           contract: crmContractDelete,
           receivables: crmReceivablesDelete,
           applet: crmWeixinDeleteAPI,
@@ -1000,6 +1060,7 @@ export default {
           classschedule: crmClassSchduleDelete,
           studentschedule: crmStudentSchduleDelete
         }[this.crmType]
+
         var params = null
         if (this.crmType == 'productSetMeal') {
           params = {
@@ -1032,6 +1093,10 @@ export default {
         } else if (this.crmType == 'studentschedule') {
           params = {
             ids: ids.join(',')
+          }
+        } else if (this.crmType == 'student') {
+          params = {
+            customerIds: ids.join(',')
           }
         } else {
           params = {
@@ -1745,10 +1810,16 @@ export default {
         }
       } else if (type == 'close') {
         const status = []
+        const res = []
         for (let index = 0; index < this.selectionList.length; index++) {
           const element = this.selectionList[index]
-          if (!(element.usageTimes || element.usageTimes) && element.status === 1) {
+          if (element.status === 1) {
             status.push('close')
+            if (!(element.usageTimes || element.notOn)) {
+              res.push('n')
+            } else {
+              res.push('y')
+            }
           } else if (element.status === 2) {
             status.push('open')
           }
@@ -1757,7 +1828,11 @@ export default {
           return false
         } else if (status.includes('close') && !(status.includes('open'))) {
           this.closeTxt = '关闭'
-          return this.education[this.crmType].close
+          if (res.includes('n') && !res.includes('y')) {
+            return this.education[this.crmType].close
+          } else {
+            return false
+          }
         } else if (status.includes('open') && !(status.includes('close'))) {
           this.closeTxt = '开启'
           return this.education[this.crmType].close
@@ -1769,7 +1844,11 @@ export default {
           if (this.crmType == 'class' && this.selectionList[0].notOn) {
             return this.education[this.crmType].insert
           } else if (this.crmType == 'classschedule' && this.selectionList[0].actualNumber < this.selectionList[0].totalNumber) {
-            return this.education[this.crmType].insert
+            if (this.selectionList[0].classConfirmationType == '确认') {
+              return false
+            } else {
+              return this.education[this.crmType].insert
+            }
           } else {
             return false
           }

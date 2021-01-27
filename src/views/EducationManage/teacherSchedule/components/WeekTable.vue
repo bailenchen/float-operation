@@ -25,15 +25,15 @@
             <span>{{ scope.row.realname }}</span><br>
             <span class="blue click">开班</span>
           </div>
-          <div v-else-if="item.prop == 'time'">{{ scope.row.time }}</div>
+          <div v-else-if="item.prop == 'time'">{{ scope.row.time }} </div>
           <div v-else-if="scope.row[item.prop].batchId">
             <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
-            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
-            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
+            <span v-if="scope.row[item.prop].batchId && education.classschedule && education.classschedule.shifts" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
+            <span v-if="scope.row[item.prop].batchId && education.class && education.class.course" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
             <span
-              v-if="scope.row[item.prop].batchId"
+              v-if="scope.row[item.prop].batchId && education.classschedule && education.classschedule.shifts"
               class="blue click"
               @click="handle('insert',scope.row[item.prop])">[插班]
             </span><br>
@@ -43,9 +43,10 @@
                 <span v-if="ite.classStatusType">(</span>
                 <span
                   v-if="ite.classStatusType"
-                  :class="{'green': ite.classStatusType === '请假' || ite.classStatusType === '出勤','red': ite.classStatusType === '临时插班'}">
+                  :class="{'green': ite.classStatusType === '请假' || ite.classStatusType === '出勤'}">
                   {{ ite.classStatusType }}
                 </span>
+                <span v-if="ite.isShiftIn == 1" class="red">临时插班</span>
                 <span v-if="ite.classStatusType">)</span>
               </span>】
             </span>
@@ -88,6 +89,9 @@
 <script>
 import { crmTeacherSchduleQueryByDay } from '@/api/educationmanage/teacherSchedule'
 import create from './create'
+import {
+  mapGetters
+} from 'vuex'
 export default {
   // 按周显示--列合并
   name: 'WeekTable',
@@ -123,8 +127,9 @@ export default {
         10: '18:00-19:00',
         11: '19:00-20:00',
         12: '20:00-21:00',
-        13: '补1小时A',
-        14: '补1小时B'
+        13: '21:00-22:00',
+        14: '22:00-23:00',
+        15: '23:00-24:00'
       },
 
       startTime: {
@@ -141,8 +146,10 @@ export default {
         10: '18:00:00',
         11: '19:00:00',
         12: '20:00:00',
-        13: '补1小时A',
-        14: '补1小时B'
+        13: '21:00:00',
+        14: '22:00:00',
+        15: '23:00:00',
+        16: '24:00:00'
       },
 
       timeDate: {
@@ -160,6 +167,9 @@ export default {
       // 合并标记相关
       arrObj: null
     }
+  },
+  computed: {
+    ...mapGetters(['education'])
   },
   created() {
     this.reset()
@@ -249,7 +259,7 @@ export default {
         for (const rowkey in this.startTime) {
           if (Object.hasOwnProperty.call(this.startTime, rowkey)) { // 每条用户数据生成15行数据row
             const val = this.startTime[rowkey]
-            const newitem = { realname: element.realname, time: this.periodObj[rowkey] }
+            const newitem = { realname: `[${element.subjectName}] ${element.realname}`, time: this.periodObj[rowkey] }
             for (let indexs = 0; indexs < inList.length; indexs++) { // 循环每个时间段
               const item = inList[indexs]
               for (const key in this.timeDate) {

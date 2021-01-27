@@ -12,6 +12,7 @@
         <span
           v-else-if="[
             'grades',
+            'class_type',
             'subject',
             'follow_up_plan',
             'sign_up',

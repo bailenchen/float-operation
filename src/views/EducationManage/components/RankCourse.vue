@@ -55,7 +55,7 @@
                     :picker-options="{
                       start: '08:00',
                       step: '00:60',
-                      end: '19:00'
+                      end: '22:00'
                     }"
                     :clearable="false"
                     placeholder="起始时间"
@@ -220,6 +220,10 @@ export default {
       default: () => {
         return []
       }
+    },
+    crmType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -301,23 +305,32 @@ export default {
     }
   },
   created() {
-    for (const key in this.fieldObj) {
-      if (Object.hasOwnProperty.call(this.fieldObj, key)) {
-        const element = this.fieldObj[key]
-        this.baseInfoList.push({
-          name: element,
-          value: this.selectionList[0][key]
-        })
-      }
+    console.log(this.selectionList, 'xbbbbbb')
+    if (!this.crmType) {
+      this.createBase(this.selectionList[0])
     }
     this.queryBaseInfo()
   },
   methods: {
+    createBase(obj) {
+      for (const key in this.fieldObj) {
+        if (Object.hasOwnProperty.call(this.fieldObj, key)) {
+          const element = this.fieldObj[key]
+          this.baseInfoList.push({
+            name: element,
+            value: obj[key]
+          })
+        }
+      }
+    },
     queryBaseInfo() {
       this.loading = true
       const { classId } = this.selectionList[0]
       crmClassQueryInsertBaseInfo({ classId }).then(res => {
         const data = res.data
+        if (this.crmType) {
+          this.createBase(data)
+        }
         // 上课时间段列表
         this.timeList = data.list.map((item, index) => {
           item.num = index + 1
@@ -379,17 +392,20 @@ export default {
         if (this.currentAddDate && this.currentAddDateTime.length) {
           for (let index = 0; index < this.currentAddDateTime.length; index++) {
             const element = this.currentAddDateTime[index].slice(0, 10)
-
-            var day = new Date(element)
-            var wks = weeks - 1
-            for (let index = 0; index < wks; index++) {
-              day.setDate(day.getDate() + 7)
-              const newdate = moment(day).format('YYYY-MM-DD')
-              const itemData = `${newdate} ${this.startTime}~${this.endTime}`
-              if (index == 0) {
-                this.activeData.push(`${element} ${this.startTime}~${this.endTime}`)
+            if (weeks == 1) {
+              this.activeData.push(`${element} ${this.startTime}~${this.endTime}`)
+            } else {
+              var day = new Date(element)
+              var wks = weeks - 1
+              for (let index = 0; index < wks; index++) {
+                day.setDate(day.getDate() + 7)
+                const newdate = moment(day).format('YYYY-MM-DD')
+                const itemData = `${newdate} ${this.startTime}~${this.endTime}`
+                if (index == 0) {
+                  this.activeData.push(`${element} ${this.startTime}~${this.endTime}`)
+                }
+                this.activeData.push(itemData)
               }
-              this.activeData.push(itemData)
             }
           }
           this.dateList = this.storedDate.concat(this.activeData)
@@ -412,6 +428,9 @@ export default {
 
     // 选择日期
     selectDate() {
+      if (!this.endTime || !this.startTime) {
+        return this.$message.error('请选择上课时间段')
+      }
       this.addSingleDate = []
       this.addDateRange = {
         start: '',
@@ -549,7 +568,7 @@ export default {
           classId,
           classroomId,
           classTime: item.slice(0, 10),
-          timeSlot: `${item.slice(11, -6)}:00-${item.slice(17)}:00`,
+          timeSlot: `${item.slice(11, -6)}:00-${item.slice(17).includes('24') ? '23:59:59' : item.slice(17) + ':00'}`,
           subjectTeacherId
         })
       })

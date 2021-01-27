@@ -20,17 +20,17 @@
         show-overflow-tooltip>
         <template slot-scope="scope">
           <div v-if="item.prop == 'realname'">
-            <span>{{ scope.row.realname }}</span><br>
-            <span class="blue click">开班</span>
+            <span>{{ scope.row.realname }} </span><br>
+            <span class="blue click" @click="openClass(index)">开班</span>
           </div>
           <div v-else-if="scope.row[item.prop].batchId">
             <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
-            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
-            <span v-if="scope.row[item.prop].batchId" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
+            <span v-if="scope.row[item.prop].batchId && education.classschedule && education.classschedule.shifts" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
+            <span v-if="scope.row[item.prop].batchId && education.class && education.class.course" class="blue click" @click="handle('rank',scope.row[item.prop])">[排课]</span>
             <span
-              v-if="scope.row[item.prop].batchId"
+              v-if="scope.row[item.prop].batchId && education.classschedule && education.classschedule.insert"
               class="blue click"
               @click="handle('insert',scope.row[item.prop])">
               [插班]
@@ -41,9 +41,10 @@
                 <span v-if="ite.classStatusType">(</span>
                 <span
                   v-if="ite.classStatusType"
-                  :class="{'green': ite.classStatusType === '请假' || ite.classStatusType === '出勤','red': ite.classStatusType === '临时插班'}">
+                  :class="{'green': ite.classStatusType === '请假' || ite.classStatusType === '出勤'}">
                   {{ ite.classStatusType }}
                 </span>
+                <span v-if="ite.isShiftIn == 1" class="red">临时插班</span>
                 <span v-if="ite.classStatusType">)</span>
               </span>】
             </span>
@@ -78,12 +79,16 @@
       crm-type="teacher"
       @save-success="createSaveSuccess"
       @hiden-view="hideView"/>
+
   </div>
 </template>
 
 <script>
 import { crmTeacherSchduleQueryByDay } from '@/api/educationmanage/teacherSchedule'
 import create from './create'
+import {
+  mapGetters
+} from 'vuex'
 export default {
   // 按天显示--行合并
   name: 'DayTable',
@@ -93,6 +98,7 @@ export default {
       border: true,
       tableHeight: document.documentElement.clientHeight - 306, // 表的高度
       list: [],
+      firstColumnId: [],
       fieldTime: {
         t1: '08:00:00',
         t2: '09:00:00',
@@ -107,8 +113,10 @@ export default {
         t11: '18:00:00',
         t12: '19:00:00',
         t13: '20:00:00',
-        t14: '补1小时A',
-        t15: '补1小时B'
+        t14: '21:00:00',
+        t15: '22:00:00',
+        t16: '23:00:00',
+        t17: '24:00:00'
       },
       fieldLists: [
         { prop: 'realname', label: ' ' },
@@ -125,8 +133,9 @@ export default {
         { prop: 't11', label: '18:00-19:00' },
         { prop: 't12', label: '19:00-20:00' },
         { prop: 't13', label: '20:00-21:00' },
-        { prop: 't14', label: '补1小时A' },
-        { prop: 't15', label: '补1小时B' }
+        { prop: 't14', label: '21:00-22:00' },
+        { prop: 't15', label: '22:00-23:00' },
+        { prop: 't16', label: '23:00-24:00' }
       ],
 
       type: 'day',
@@ -134,6 +143,9 @@ export default {
       // 合并标记相关
       objRow: {}
     }
+  },
+  computed: {
+    ...mapGetters(['education'])
   },
   created() {
   },
@@ -184,10 +196,15 @@ export default {
     },
 
     handleResData(list) {
+      this.firrstColumnId = []
       const newList = []
       for (let indexs = 0; indexs < list.length; indexs++) {
         const item = list[indexs]
-        const newitem = { realname: item.realname }
+        this.firstColumnId.push({
+          userId: item.userId,
+          realname: item.realname
+        })
+        const newitem = { realname: `[${item.subjectName}] ${item.realname}` }
         const keys = Object.keys(this.fieldTime)
         for (let indexs = 0; indexs < keys.length; indexs++) {
           const key = keys[indexs]

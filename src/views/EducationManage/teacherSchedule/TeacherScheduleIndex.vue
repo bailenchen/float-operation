@@ -54,7 +54,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="教师姓名">
-            <el-input v-model="form.realname" placeholder="请输入教师姓名"/>
+            <xh-user-cell
+              :value="teacherList"
+              :radio="radio"
+              @value-change="userChange"/>
+
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit('do')">查询</el-button>
@@ -80,7 +84,8 @@ import { mapGetters } from 'vuex'
 import DayTable from './components/DayTable'
 import WeekTable from './components/WeekTable'
 import {
-  XhStructureCell
+  XhStructureCell,
+  XhUserCell
 } from '@/components/CreateCom'
 import table from '../mixins/table'
 import { getDateStr, getMonday } from '@/utils/dateDiff'
@@ -93,7 +98,8 @@ export default {
   components: {
     DayTable,
     WeekTable,
-    XhStructureCell
+    XhStructureCell,
+    XhUserCell
   },
   mixins: [table],
   data() {
@@ -106,12 +112,16 @@ export default {
       currentWeekEndDate: '',
 
       form: {
-        time: moment().format('YYYY-MM-DD')
+        time: moment().format('YYYY-MM-DD'),
+        realname: ''
       },
       deptSelectValue: [],
       subList: [],
 
-      everyDay: '' // 周表使用
+      everyDay: '', // 周表使用
+
+      radio: false,
+      teacherList: []
     }
   },
   computed: {
@@ -126,6 +136,13 @@ export default {
   },
   created() {
     this.form.deptId = this.userInfo.deptId
+    if (this.userInfo.isTeacher == 1) {
+      this.teacherList = [{
+        realname: this.userInfo.realname,
+        userId: this.userInfo.userId
+      }]
+      this.form.realname = this.userInfo.realname
+    }
     this.deptSelectValue = [{
       id: this.userInfo.deptId,
       name: this.userInfo.deptName
@@ -256,9 +273,23 @@ export default {
 
     // 中心选择
     structureChange(data) {
-      this.deptNumber = data.value.length ? data.value[0].deptNumber : ''
-      this.form.deptId = data.value.length ? data.value[0].id : ''
-      this.deptSelectValue = data.value || []
+      if (data.value.length) {
+        this.deptNumber = data.value[0].deptNumber
+        this.form.deptId = data.value[0].id
+        this.deptSelectValue = data.value
+      } else {
+        this.deptNumber = ''
+        this.form.deptId = ''
+        this.deptSelectValue = []
+      }
+    },
+
+    // 关联老师
+    userChange(data, index) {
+      this.teacherList = data.value || []
+      this.form.realname = this.teacherList.map(item => {
+        return item.realname
+      }).join(' ')
     },
 
     getSubject() {

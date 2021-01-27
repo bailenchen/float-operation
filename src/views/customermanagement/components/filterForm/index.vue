@@ -89,6 +89,7 @@
               <el-select
                 v-else-if="[
                   'grades',
+                  'class_type',
                   'coaching_methods',
                   'follow_up_plan',
                   'communication_mode',
@@ -490,6 +491,7 @@ export default {
         formType == 'dealStatus' ||
         formType == 'sign_up' ||
         formType == 'grades' ||
+        formType == 'class_type' ||
         formType == 'subject' ||
         formType == 'coaching_methods' ||
         formType == 'follow_up_plan' ||
@@ -589,6 +591,7 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
+          formItem.formType == 'class_type' ||
           formItem.formType == 'subject' ||
           formItem.formType == 'coaching_methods' ||
           formItem.formType == 'follow_up_plan' ||
@@ -637,6 +640,7 @@ export default {
           formItem.formType == 'dealStatus' ||
           formItem.formType == 'sign_up' ||
           formItem.formType == 'grades' ||
+          formItem.formType == 'class_type' ||
           formItem.formType == 'subject' ||
           formItem.formType == 'coaching_methods' ||
           formItem.formType == 'follow_up_plan' ||

@@ -435,8 +435,7 @@ export default {
      */
     getFilterFieldInfo() {
       const params = {}
-      const keytype = this.crmType == 'student' ? 'customer' : this.crmType
-      params.label = crmTypeModel[keytype]
+      params.label = this.crmType == 'student' ? 19 : crmTypeModel[this.crmType]
 
       const request = filterIndexfields
 

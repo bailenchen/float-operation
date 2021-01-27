@@ -143,7 +143,9 @@ export default {
         relatedTeachers: '',
         classroomName: '',
         status: 1
-      }
+      },
+
+      deptNumber: ''
     }
   },
   computed: {
@@ -158,13 +160,13 @@ export default {
   },
   created() {
     if (this.type == 'edit') {
-      console.log(this.selectionList, '123')
       const detail = this.selectionList[0]
       this.deptSelectValue = [{
         id: detail.deptId,
         name: detail.deptName
       }]
       this.teacherList = detail.adminUsers
+      this.deptNumber = detail.deptNumber
       const ids = ['']
       this.teacherList.forEach(item => {
         ids.push(item.userId)

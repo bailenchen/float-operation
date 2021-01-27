@@ -18,6 +18,7 @@
       <c-r-m-table-head
         ref="crmTableHead"
         :crm-type="crmType"
+        :mark-data="markData"
         @filter="handleFilter"
         @handle="handleHandle"
         @scene="handleScene"/>
@@ -92,7 +93,33 @@ export default {
     return {
       crmType: 'class',
       showHandleView: false,
-      rowInfo: null
+      rowInfo: null,
+      markData: null // 教师排课表开班跳转过来的数据
+    }
+  },
+  created() {
+    const id = this.$route.query.id
+    const name = this.$route.query.name
+    if (id && name) {
+      this.markData = {
+        name,
+        data: {
+          subject_teacher_id: {
+            condition: 'is',
+            value: id,
+            formType: 'user',
+            name: 'subject_teacher_id'
+          }
+        }
+      }
+      this.handleFilter({
+        subject_teacher_id: {
+          condition: 'is',
+          value: id,
+          formType: 'user',
+          name: 'subject_teacher_id'
+        }
+      })
     }
   },
   mounted() {},

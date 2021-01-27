@@ -202,7 +202,7 @@ export default {
         { prop: 'num', label: '合同编号', width: 150 },
         { prop: 'isnew', label: '合同属性', width: 90 },
         { prop: 'coachType', label: '辅导方式', width: 90 },
-        { prop: 'orderDate', label: '签约日期', width: 150 },
+        { prop: 'signingTime', label: '签约日期', width: 150 },
         { prop: 'isGive', label: '是否额外赠送', width: 110 },
         { prop: 'detailsName', label: '小套餐名称', width: 110 },
         { prop: 'courseTypeName', label: '课程类型', width: 100 },
@@ -239,44 +239,22 @@ export default {
 
     // 移除学员同时也要删除相关合同
     removeCustomer(data) {
-      let vindex = null
-      for (let index = 0; index < this.addedListVal.length; index++) {
-        const element = this.addedListVal[index]
-        if (element === data) {
-          vindex = index
-        }
-      }
-      this.addedListVal.splice(vindex, 1)
-      for (let index = 0; index < this.addedStuList.length; index++) {
-        const element = this.addedStuList[index]
-        if (element.customerId === data) {
-          this.delIndex = index
-        }
-      }
+      this.addedListVal = this.addedListVal.filter(item => {
+        return item != data
+      })
 
-      this.addedStuList.splice(this.delIndex, 1)
+      this.addedStuList = this.addedStuList.filter(item => {
+        return item.customerId != data
+      })
 
-      const delList = []
-      for (let index = 0; index < this.addedList.length; index++) {
-        const element = this.addedList[index]
-        if (element.customerId === data) {
-          delList.push(index)
-        }
-      }
-      if (delList.length) {
-        for (let index = 0; index < delList.length; index++) {
-          const element = delList[index]
-          this.addedList.splice(element, 1)
-        }
-        this.$emit('added-stu', this.addedList)
-      }
+      this.addedList = this.addedList.filter(item => {
+        return item.customerId != data
+      })
 
+      this.$emit('added-stu', this.addedList)
 
       if (this.stuInfo.customerId === data) {
         this.$refs.multipleTables.clearSelection()
-        if (this.addedListVal.includes(data)) { // 利用递归删除当前项
-          this.removeCustomer(data)
-        }
       }
     },
 
@@ -323,7 +301,7 @@ export default {
     // 禁用学科、辅导方式、年级不相等的
     selectable(row, index) {
       const { subjectName, coachType } = this.baseInfo
-      if (row.subjectName === subjectName && row.coachType === coachType) {
+      if (row.subjectName === subjectName && row.coachType === coachType && row.notArranged != 0) {
         return true // 可用
       } else {
         return false // 禁用
@@ -371,32 +349,45 @@ export default {
     // 勾选同时去重
     handleSelectionChange(data) {
       if (this.isExecute) {
-        const filterData = []
-        const useData = []
-        if (this.timeList.length) { // 勾选的时间段列表数据
-          for (let index = 0; index < data.length; index++) {
-            const element = data[index]
-            for (let indexs = 0; indexs < this.timeList.length; indexs++) {
-              const item = this.timeList[indexs]
-              if (item.customerId.includes(element.customerId)) {
-                filterData.push(element)
-              } else {
-                useData.push(element)
-              }
-            }
-          }
-          if (filterData.length) {
-            this.toggleSelection(filterData)
-          }
+        // const filterData = []
+        // const useData = []
+        // if (this.timeList.length) { // 勾选的时间段列表数据
+        //   for (let index = 0; index < data.length; index++) {
+        //     const element = data[index]
+        //     for (let indexs = 0; indexs < this.timeList.length; indexs++) {
+        //       const item = this.timeList[indexs]
+        //       if (item.customerId.includes(element.customerId)) {
+        //         filterData.push(element)
+        //       } else {
+        //         useData.push(element)
+        //       }
+        //     }
+        //   }
+        //   if (filterData.length) {
+        //     this.toggleSelection(filterData)
+        //   }
 
-          if (filterData.length > 1) {
-            return this.$message.error('勾选的数据中包含已存在学员')
-          } else if (filterData.length == 1) {
-            return this.$message.error('该学员已存在')
+        //   if (filterData.length > 1) {
+        //     return this.$message.error('勾选的数据中包含已存在学员')
+        //   } else if (filterData.length == 1) {
+        //     return this.$message.error('该学员已存在')
+        //   }
+        // }
+        // if (filterData.length) return
+
+        const { customerId, customerName } = this.stuInfo
+        let isContain = false
+        for (let index = 0; index < this.addedList.length; index++) {
+          const element = this.addedList[index]
+          if (!element.customerId) {
+            isContain = true
           }
         }
-        if (filterData.length) return
-        const { customerId, customerName } = this.stuInfo
+
+        if (!data.length && !isContain) {
+          this.removeCustomer(customerId)
+          return
+        }
 
         if (data.length) {
           if (this.addedListVal.length) {
@@ -404,7 +395,7 @@ export default {
               this.addedStuList.push({
                 customerId, customerName
               })
-              if (!filterData.length && !this.addedListVal.includes(customerId)) {
+              if (!this.addedListVal.includes(customerId)) {
                 this.addedListVal.push(customerId)
               }
             }
@@ -412,7 +403,7 @@ export default {
             this.addedStuList.push({
               customerId, customerName
             })
-            if (!filterData.length && !this.addedListVal.includes(customerId)) {
+            if (!this.addedListVal.includes(customerId)) {
               this.addedListVal.push(customerId)
             }
           }

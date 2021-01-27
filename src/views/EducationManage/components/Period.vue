@@ -5,7 +5,7 @@
       :picker-options="{
         start: '08:00',
         step: '00:60',
-        end: '19:00'
+        end: '22:00'
       }"
       :clearable="false"
       placeholder="起始时间"

@@ -21,13 +21,16 @@ import {
   crmCustomerStarAPI
 } from '@/api/customermanagement/customer'
 import {
+  crmStudentExcelAllExport
+} from '@/api/customermanagement/student'
+import {
   crmInsideUserIndex,
   CrmInsideUserExcelAllExport
 } from '@/api/customermanagement/address'
 import {
-  crmAccountExcelAllExport
+  crmAccountExcelAllExport,
+  crmAccountIndex
 } from '@/api/customermanagement/account'
-import { crmAccountIndex } from '@/api/customermanagement/account'
 import {
   crmAppletIndexAPI,
   CrmWeixinLeadsExportLeadsAPI
@@ -510,6 +513,17 @@ export default {
         return ''
       }
 
+      if (this.crmType == 'student') {
+        if (column.property === 'deptCheckStatus') {
+          return {
+            0: '待审核',
+            1: '通过',
+            2: '拒绝',
+            3: '审核中'
+          }[row[column.property]]
+        }
+      }
+
       if (this.crmType == 'contract') {
         if (column.property === 'customerId') {
           return row.customerName
@@ -865,9 +879,9 @@ export default {
         request = crmCustomerPoolExcelAllExport
         params.poolId = this.poolId
       } else {
-        const keytype = this.crmType === 'student' ? 'customer' : this.crmType
         request = {
           customer: crmCustomerExcelAllExport,
+          student: crmStudentExcelAllExport,
           capitalAccount: crmAccountExcelAllExport,
           leads: crmLeadsExcelAllExport,
           contacts: crmContactsExcelAllExport,
@@ -880,7 +894,7 @@ export default {
           insideUser: CrmInsideUserExcelAllExport,
           receive: crmReceiveExcelAllExport,
           refund: crmRefundExcelAllExport
-        }[keytype]
+        }[this.crmType]
       }
       const loading = Loading.service({ fullscreen: true, text: '导出中...' })
       console.log('导出参数', params)

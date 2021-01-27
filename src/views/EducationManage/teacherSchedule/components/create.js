@@ -1,12 +1,14 @@
 import InsertClass from '@/views/EducationManage/components/InsertClass' // 学员插班
 import RankCourse from '@/views/EducationManage/components/RankCourse' // 排课
 import ShiftHandle from '@/views/EducationManage/components/ShiftHandle' // 换挡
+import ClassList from './ClassList'
 
 export default {
   components: {
     InsertClass,
     RankCourse,
-    ShiftHandle
+    ShiftHandle,
+    ClassList
   },
   data() {
     return {
@@ -15,6 +17,9 @@ export default {
       isShift: false,
       currentInfo: [],
       crmType: 'teacher'
+
+      // show: false,
+      // currentId: ''
     }
   },
   methods: {
@@ -38,6 +43,7 @@ export default {
     },
 
     handle(type, row) {
+      console.log(row, 'zzzzbbb')
       this.currentInfo = [row]
       if (type === 'insert') {
         this.isInsert = true
@@ -46,6 +52,27 @@ export default {
       } else if (type === 'rank') {
         this.isRank = true
       }
+    },
+
+    // 查看班级列表
+    queryClassList() {
+
+    },
+
+    openClass(index) {
+      console.log(this.firstColumnId, index, 'BBBBBBBBBBBBBB')
+
+      this.$router.push({
+        path: '/education/class',
+        query: {
+          id: this.firstColumnId[index].userId,
+          name: this.firstColumnId[index].realname
+        }
+      })
+
+      // data: {
+      //   subject_teacher_id: { condition: 'is', value: row.subjectTeacherId, formType: 'user', name: 'subject_teacher_id' }
+      // }
     }
   }
 }

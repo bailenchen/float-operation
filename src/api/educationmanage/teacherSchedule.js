@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 学员排课表 列表
+// 教师排课表 列表
 export function crmTeacherSchduleQueryByDay(data) {
   return request({
     url: 'educationalTimecontract/selectTeacherSchedule',
@@ -11,3 +11,4 @@ export function crmTeacherSchduleQueryByDay(data) {
     }
   })
 }
+

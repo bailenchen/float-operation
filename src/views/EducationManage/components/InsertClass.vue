@@ -275,34 +275,34 @@ export default {
 
     // 勾选
     handleSelectionChange(data) {
-      if (this.addedList.length) {
-        const filterData = []
-        const useData = []
-        for (let index = 0; index < data.length; index++) {
-          const element = data[index]
-          for (let indexs = 0; indexs < this.addedList.length; indexs++) {
-            const item = this.addedList[indexs]
-            console.log(element, item.customerId)
-            if (element.customerId.includes(item.customerId)) {
-              filterData.push(element)
-            } else {
-              useData.push(element)
-            }
-          }
-        }
-        if (filterData.length) {
-          this.toggleSelection(filterData)
-        }
-        if (filterData.length > 1) {
-          return this.$message.error('勾选的数据中包含已存在学员')
-        } else if (filterData.length == 1) {
-          return this.$message.error('该学员已存在')
-        }
+      // if (this.addedList.length) {
+      //   const filterData = []
+      //   const useData = []
+      //   for (let index = 0; index < data.length; index++) {
+      //     const element = data[index]
+      //     for (let indexs = 0; indexs < this.addedList.length; indexs++) {
+      //       const item = this.addedList[indexs]
+      //       console.log(element, item.customerId)
+      //       if (element.customerId.includes(item.customerId)) {
+      //         filterData.push(element)
+      //       } else {
+      //         useData.push(element)
+      //       }
+      //     }
+      //   }
+      //   if (filterData.length) {
+      //     this.toggleSelection(filterData)
+      //   }
+      //   if (filterData.length > 1) {
+      //     return this.$message.error('勾选的数据中包含已存在学员')
+      //   } else if (filterData.length == 1) {
+      //     return this.$message.error('该学员已存在')
+      //   }
 
-        this.checkList = useData
-      } else {
-        this.checkList = data
-      }
+      //   this.checkList = useData
+      // } else {
+      this.checkList = data
+      // }
       this.currentDate = []
       if (this.crmType === 'class') {
         for (let index = 0; index < this.checkList.length; index++) {
@@ -310,7 +310,6 @@ export default {
           this.currentDate.push(element.classTime)
         }
       }
-      console.log(this.checkList, 'xxx')
     },
 
     // 校正勾选时间段
@@ -371,7 +370,8 @@ export default {
             classroomId,
             classTime: item.classTime,
             timeSlot: item.timeSlot,
-            subjectTeacherId: item.subjectTeacherId
+            subjectTeacherId: item.subjectTeacherId,
+            actualNumber: item.totalNumber - item.actual
           })
         })
       }
