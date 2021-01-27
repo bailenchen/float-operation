@@ -173,7 +173,6 @@ export default {
     if (this.crm[this.crmType] && this.crm[this.crmType].excelimport) {
       this.moreTypes.push({ type: 'enter', name: '导入', icon: 'import' })
     }
-    console.log('菜单', this.crmType, this.crm, this.crm[this.crmType])
     if (this.crm[this.crmType] && this.crm[this.crmType].excelexport) {
       this.moreTypes.push({ type: 'out', name: '导出', icon: 'export' })
     }
@@ -226,7 +225,6 @@ export default {
             this.createActionInfo.isStudent = true
           }
         }
-        console.log('传递给creat组件一个userID')
         if (this.crmType === 'contract') {
           this.createActionInfo.userInfo = {
             userId: this.userInfo.userId,

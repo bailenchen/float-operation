@@ -82,7 +82,7 @@ import detail from '../../mixins/detail'
 
 export default {
   // 客户管理 的 合同详情
-  name: 'ContractDetail',
+  name: 'WaterDetail',
   components: {
     SlideView,
     CRMDetailHead,
@@ -217,10 +217,11 @@ export default {
 
           this.headDetails[0].value = res.data.leadsNumber
           this.headDetails[1].value = res.data.transactionTypeName
-          this.headDetails[2].value = {
-            1: '线下资金收款',
-            2: '资金退款'
-          }[res.data.payment]
+          // this.headDetails[2].value = {
+          //   1: '线下资金收款',
+          //   2: '资金退款'
+          // }[res.data.payment]
+          this.headDetails[2].value = res.data.paymentName
           this.headDetails[3].value = res.data.price
         })
         .catch(() => {

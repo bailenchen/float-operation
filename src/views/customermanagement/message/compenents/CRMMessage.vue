@@ -237,6 +237,7 @@
       :model-data="modelData"
       :click-field="clickField"
       :id="rowID"
+      :is-check-pro-dept="true"
       @handle="getList"
       @refresh-list="refreshParentList"/>
 

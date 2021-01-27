@@ -219,10 +219,8 @@ export default {
         params.poolId = this.poolId
       }
 
-      console.log('参数', params)
       filedGetInformation(params)
         .then(res => {
-          console.log('aaa1')
           this.list = res.data
           this.loading = false
         })

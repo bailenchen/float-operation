@@ -14,13 +14,15 @@ export default {
           },
         )
       }
-      list.push(
-        {
-          title: '合同充值返还',
-          path: 'refund',
-          icon: require('@/assets/img/crm/customer.png')
-        }
-      )
+      if (this.crm.refund) {
+        list.push(
+          {
+            title: '合同充值返还',
+            path: 'refund',
+            icon: require('@/assets/img/crm/customer.png')
+          }
+        )
+      }
       return list
     }
   },

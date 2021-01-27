@@ -331,15 +331,15 @@ export default {
             const dictionaryArr = []
 
             if (this.crmType == 'student') {
-              res.data.push({
-                fieldId: null,
-                fieldName: 'portrait',
-                formType: 'portrait',
-                name: '查看人脸照片',
-                setting: [],
-                type: 4,
-                width: 100
-              })
+              // res.data.push({
+              //   fieldId: null,
+              //   fieldName: 'portrait',
+              //   formType: 'portrait',
+              //   name: '查看人脸照片',
+              //   setting: [],
+              //   type: 4,
+              //   width: 100
+              // })
             }
             for (let index = 0; index < res.data.length; index++) {
               const element = res.data[index]
@@ -442,7 +442,7 @@ export default {
     },
 
     getDictionaries(arr) {
-      console.log('字典数组', arr)
+      // console.log('字典数组', arr)
       const promiseArr = []
       for (let index = 0; index < arr.length; index++) {
         const element = arr[index]
@@ -463,7 +463,7 @@ export default {
         res.forEach((item, index) => {
           dictionaries[arr[index].fieldName] = item[arr[index].fieldName]
         })
-        console.log('拆分好的字典', dictionaries)
+        // console.log('字典', dictionaries)
         this.dictionaries = dictionaries
         this.getList()
       }).catch(() => {})

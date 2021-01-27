@@ -368,10 +368,7 @@ export default {
           this.loading = false
           this.detailData = res.data
           this.firstContactsId = this.detailData.contactsId
-          console.log('请求回来')
-          console.log(res)
           this.capitalId = res.data.capitalId
-          console.log(this.capitalId)
 
           // 负责人
           this.headDetails[0].value = res.data.customerName

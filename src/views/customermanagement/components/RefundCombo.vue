@@ -35,6 +35,8 @@ import { filedGetInformation } from '@/api/customermanagement/common'
 import { QueryAdminSubject } from '@/api/systemManagement/params'
 import OfflineWithDraw from '@/views/customermanagement/components/selectionHandle/OfflineWithDraw'
 import { mapGetters } from 'vuex'
+import operation from 'float-operation'
+import { objDeepCopy } from '@/utils'
 
 export default {
   name: 'RefundCombo',
@@ -169,12 +171,49 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    actionC() {
+      console.log('actionC', this.action)
+      // return this.action
+      return objDeepCopy(this.action)
+      // return 1
+    }
   },
   watch: {
-    action: {
+    actionC: {
       handler(val, oldValue) {
-        // console.log(val, oldValue)
+        console.log('ASAS', val, oldValue)
+        // 没有合同
+        if (!val.contracId) {
+          // this.tableData = null
+          // this.money = ''
+          // this.product = null
+          // this.capital = null
+          // this.fillData = null
+          // this.sendData(false)
+          // this.btnType = 'primary'
+          // this.btnText = '填写资金退款'
+          this.init()
+          this.sendData(false)
+          return
+        }
+
+        // 有无资金信息
+        if (this.capital) {
+          this.btnType = 'success'
+          this.btnText = '查看资金退款信息'
+        }
+
+        if (val.contracId != oldValue.contracId) {
+          this.init()
+        }
+        this.getData()
+      },
+      deep: true
+    },
+    /* action: {
+      handler(val, oldValue) {
+        console.log('ASAS', val, oldValue)
         // this.capital = this.action.isInteriorRefund ? null : this.capital
         // 没有合同
         if (!val.contracId) {
@@ -198,7 +237,7 @@ export default {
       },
       deep: true
       // immediate: true
-    },
+    }, */
     oldValue: {
       handler(val) {
         if (Object.keys(val).length) {
@@ -244,6 +283,16 @@ export default {
   },
 
   methods: {
+    init() {
+      this.tableData = null
+      this.money = ''
+      this.product = null
+      this.capital = null
+      this.fillData = null
+      // this.sendData(false)
+      this.btnType = 'primary'
+      this.btnText = '填写资金退款'
+    },
     handleCallBack(val) {
       this.fillData = val
       const capital = {
@@ -272,7 +321,6 @@ export default {
         }
       }
 
-      // obj.value.money = this.money
       obj.value = del ? '' : obj.value
       console.log('obj', obj)
       this.$emit('value-change', obj)
@@ -292,6 +340,7 @@ export default {
         }).catch(() => {})
       } else {
         const data = this.contractData ? this.contractData : this.oldValue
+        console.log('修改')
         this.calculateMoney(data)
         this.sendData()
       }
@@ -314,18 +363,19 @@ export default {
 
     calculateMoney(dataObj) {
       let money = 0
-      console.log('dataObj', dataObj)
+      // console.log('dataObj', dataObj)
       dataObj.productList.forEach(item => {
-        money += (item.price * 100 * item.surplusCount) / 100
+        const oneRow = operation.mul(item.price, item.surplusCount)
+        money = operation.add(money, oneRow)
       })
-      console.log('应退金额', money)
-      this.money = money
+      // console.log('应退金额', money)
+      this.money = this.refundMoney !== '' ? this.refundMoney : money
 
       if (this.fillData) {
-        this.fillData[this.moneyType].price = money
+        this.fillData[this.moneyType].price = this.money
       }
       if (this.capital) {
-        this.capital.refundMoney = money
+        this.capital.refundMoney = this.money
       }
     },
     structureTableByVal(dataObj) {

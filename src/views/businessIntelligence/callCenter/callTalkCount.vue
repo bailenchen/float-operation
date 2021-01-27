@@ -349,17 +349,14 @@ export default {
     MillisecondToDate(msd, text) {
       let time
       if (msd != null && msd != '') {
-        console.log('sdad1', msd, text)
         time = parseFloat(msd)
       } else {
-        console.log('sdad2')
         return `0秒`
       }
       if (time == 0) {
         return `0秒`
       }
       if (time < 60) {
-        console.log('time', time)
         const formated = Number(time).toFixed(2)
         return `${formated}秒`
       } else if (time < 3600) {

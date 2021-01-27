@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { crmCustomerRead } from '@/api/customermanagement/customer'
+import { crmCustomerRead, crmCustomerReadNullAPI } from '@/api/customermanagement/customer'
 
 import SlideView from '@/components/SlideView'
 import CRMDetailHead from '../../components/CRMDetailHead'
@@ -204,6 +204,10 @@ export default {
     clickField: {
       type: String,
       default: ''
+    },
+    isCheckProDept: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -384,7 +388,9 @@ export default {
         params.poolId = this.poolId
       }
 
-      crmCustomerRead(params)
+      const request = this.isCheckProDept ? crmCustomerReadNullAPI : crmCustomerRead
+
+      request(params)
         .then(res => {
           this.loading = false
           this.detailData = res.data
