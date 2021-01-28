@@ -241,6 +241,7 @@ export default {
         classroomId,
         classroomName,
         classType,
+        classTypeName,
         className,
         remarks,
         totalNumber
@@ -252,6 +253,10 @@ export default {
       this.deptSelectValue = [{
         id: deptId,
         name: deptName
+      }]
+      this.option.classType = [{
+        label: classTypeName,
+        value: Number(classType)
       }]
       this.classRoom = [{
         classroomId: classroomId,
@@ -267,11 +272,11 @@ export default {
         classId,
         deptId: deptId,
         gradeId: gradeId,
-        coachType: coachType,
+        coachType: Number(coachType),
         subjectId: subjectId,
         subjectTeacherId: subjectTeacherId,
         classroomId: classroomId,
-        classType: classType,
+        classType: Number(classType),
         className: className,
         remarks: remarks
       }

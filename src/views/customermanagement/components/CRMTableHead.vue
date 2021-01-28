@@ -1848,7 +1848,7 @@ export default {
           if (this.crmType == 'class' && this.selectionList[0].notOn) {
             return this.education[this.crmType].insert
           } else if (this.crmType == 'classschedule' && this.selectionList[0].actualNumber < this.selectionList[0].totalNumber) {
-            if (this.selectionList[0].classConfirmationType == '确认') {
+            if (this.selectionList[0].classConfirmationName == '确认') {
               return false
             } else {
               return this.education[this.crmType].insert

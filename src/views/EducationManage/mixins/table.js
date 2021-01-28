@@ -141,8 +141,9 @@ export default {
       } else if (this.crmType === 'class') {
         list = [
           { prop: 'deptName', label: '中心', width: 150 },
-          { prop: 'coachType', label: '班级类型', width: 100 },
-          { prop: 'className', label: '班级名称', width: 150 },
+          { prop: 'coachTypeName', label: '辅导方式', width: 100 },
+          { prop: 'classTypeName', label: '班级类型', width: 100 },
+          { prop: 'className', label: '班级名称', width: 170 },
           { prop: 'classroomName', label: '教室名称', width: 200 },
           { prop: 'gradeName', label: '年级', width: 80 },
           { prop: 'subjectName', label: '科目', width: 80 },
@@ -158,8 +159,8 @@ export default {
       } else if (this.crmType === 'classschedule') {
         list = [
           { prop: 'deptName', label: '中心', width: 150 },
-          { prop: 'classType', label: '班级类型', width: 100 },
-          { prop: 'className', label: '班级名称', width: 150 },
+          { prop: 'classTypeName', label: '班级类型', width: 100 },
+          { prop: 'className', label: '班级名称', width: 170 },
           { prop: 'classroomName', label: '教室名称', width: 200 },
           { prop: 'gradeName', label: '年级', width: 80 },
           { prop: 'subjectName', label: '科目', width: 80 },
@@ -177,9 +178,9 @@ export default {
           { prop: 'num', label: '合同编号', width: 150 },
           { prop: 'leadsNumber', label: '学员编号', width: 110 },
           { prop: 'customerName', label: '学员姓名', width: 100 },
-          { prop: 'coachType', label: '辅导方式', width: 100 },
-          { prop: 'classType', label: '班级类型', width: 100 },
-          { prop: 'className', label: '班级名称', width: 150 },
+          { prop: 'coachTypeName', label: '辅导方式', width: 100 },
+          { prop: 'classTypeName', label: '班级类型', width: 100 },
+          { prop: 'className', label: '班级名称', width: 170 },
           { prop: 'classroomName', label: '教室', width: 200 },
           { prop: 'gradeName', label: '年级', width: 80 },
           { prop: 'subjectName', label: '科目', width: 80 },

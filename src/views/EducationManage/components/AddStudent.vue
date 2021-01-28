@@ -300,8 +300,8 @@ export default {
 
     // 禁用学科、辅导方式、年级不相等的
     selectable(row, index) {
-      const { subjectName, coachType } = this.baseInfo
-      if (row.subjectName === subjectName && row.coachType === coachType && row.notArranged != 0) {
+      const { subjectName, coachTypeName } = this.baseInfo
+      if (row.subjectName === subjectName && row.coachType === coachTypeName && row.notArranged != 0) {
         return true // 可用
       } else {
         return false // 禁用

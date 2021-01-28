@@ -234,11 +234,11 @@ export default {
         deptName: '中心',
         className: '班级名称',
         subjectTeacherName: '学科老师',
-        coachType: '辅导方式',
+        coachTypeName: '辅导方式',
         classroomName: '教室',
         subjectName: '科目',
         gradeName: '年级',
-        classType: '班级类型',
+        classTypeName: '班级类型',
         totalNumber: '满班人数',
         remarks: '备注'
       },

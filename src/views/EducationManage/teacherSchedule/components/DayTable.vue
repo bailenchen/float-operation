@@ -24,7 +24,7 @@
             <span class="blue click" @click="openClass(index)">开班</span>
           </div>
           <div v-else-if="scope.row[item.prop].batchId">
-            <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
+            <span class="red">{{ scope.row[item.prop].coachTypeName }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
             <span v-if="scope.row[item.prop].batchId && education.classschedule && education.classschedule.shifts" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
@@ -116,7 +116,7 @@ export default {
         t14: '21:00:00',
         t15: '22:00:00',
         t16: '23:00:00',
-        t17: '24:00:00'
+        t17: '23:59:00'
       },
       fieldLists: [
         { prop: 'realname', label: ' ' },

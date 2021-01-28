@@ -245,7 +245,7 @@ export default {
         { prop: 'subjectName', label: '科目' },
         { prop: 'gradeName', label: '年级' },
         { prop: 'timeSlot', label: '上课时段', type: 'time' },
-        { prop: 'classType', label: '班级类型' },
+        { prop: 'classTypeName', label: '班级类型' },
         { prop: 'remarks', label: '备注' }
       ],
       during: {

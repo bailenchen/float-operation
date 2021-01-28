@@ -150,8 +150,8 @@ export default {
         subjectName: '科目',
         gradeName: '年级',
         timeSlot: '上课时段',
-        coachType: '辅导方式',
-        classType: '班级类型',
+        coachTypeName: '辅导方式',
+        classTypeName: '班级类型',
         remarks: '备注',
         totalNumber: '满班人数'
       },
@@ -371,7 +371,7 @@ export default {
             classTime: item.classTime,
             timeSlot: item.timeSlot,
             subjectTeacherId: item.subjectTeacherId,
-            actualNumber: item.totalNumber - item.actual
+            actualNumber: item.actual
           })
         })
       }

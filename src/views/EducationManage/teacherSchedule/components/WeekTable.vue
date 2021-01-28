@@ -27,7 +27,7 @@
           </div>
           <div v-else-if="item.prop == 'time'">{{ scope.row.time }} </div>
           <div v-else-if="scope.row[item.prop].batchId">
-            <span class="red">{{ scope.row[item.prop].coachType }}</span><br>
+            <span class="red">{{ scope.row[item.prop].coachTypeName }}</span><br>
             <span style="color:#00CC76;">{{ scope.row[item.prop].gradeName }}</span>
             <span class="blue">{{ scope.row[item.prop].subjectName }}</span>
             <span v-if="scope.row[item.prop].batchId && education.classschedule && education.classschedule.shifts" class="blue click" @click="handle('shift',scope.row[item.prop])">[换挡]</span>
@@ -149,8 +149,7 @@ export default {
         12: '20:00:00',
         13: '21:00:00',
         14: '22:00:00',
-        15: '23:00:00',
-        16: '24:00:00'
+        15: '23:00:00'
       },
 
       timeDate: {

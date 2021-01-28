@@ -148,7 +148,7 @@ export default {
         { prop: 'gradeName', label: '年级', width: 90 },
         { prop: 'subjectName', label: '科目', width: 90 },
         { prop: 'sumCourse', label: '合同课次', width: 90 },
-        { prop: 'endCourse', label: '结课课次', width: 90 },
+        { prop: 'finishCourse', label: '结课课次', width: 90 },
         { prop: 'alreadyCourse', label: '已排课次', width: 90 },
         { prop: 'classStatusName', label: '上课状态', width: 90 },
         { prop: 'classConfirmationName', label: '状态', width: 90 }
