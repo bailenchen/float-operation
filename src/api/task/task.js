@@ -193,3 +193,36 @@ export function taskOaExportAPI(data) {
   })
 }
 
+
+// 学员回访-关键词-标签列表
+export function keyWordTagListAPI(data) {
+  return request({
+    url: 'CrmReturnVisitLabel/getLabelList',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 学员回访-关键词-创建标签
+ * @param {*} data
+ */
+export function createKeyWordTagAPI(data) {
+  return request({
+    url: 'CrmReturnVisitLabel/setLabel',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 学员回访-关键词-删除标签
+ * @param {*} data
+ */
+export function deleteKeyWordTagAPI(data) {
+  return request({
+    url: 'CrmReturnVisitLabel/deleteLabel',
+    method: 'post',
+    data: data
+  })
+}

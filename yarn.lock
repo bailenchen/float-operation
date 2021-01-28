@@ -4339,6 +4339,11 @@ flat-cache@^1.2.1:
     rimraf "~2.6.2"
     write "^0.2.1"
 
+float-operation@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/float-operation/-/float-operation-0.0.2.tgz#93ef261b49c6d68c9452c9785ab82cb3f3d6aec3"
+  integrity sha512-qay1HGZMFytyMeez0xOQYxdeH8IUX0k0qhj64PmDL4SmMZXzPXxdqodVR/t/0oMttXT07DnpvtJ8VJi1udqegA==
+
 flush-write-stream@^1.0.0:
   version "1.1.1"
   resolved "https://registry.npm.taobao.org/flush-write-stream/download/flush-write-stream-1.1.1.tgz#8dd7d873a1babc207d94ead0c2e0e44276ebf2e8"
