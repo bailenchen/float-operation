@@ -377,7 +377,7 @@ export default {
       }
 
       const params = {
-        list1: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId }],
+        list1: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId, actualNumber: 0 }],
         list2: bstudentList,
         totalNumber
       }

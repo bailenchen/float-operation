@@ -54,14 +54,8 @@ export default {
       }
     },
 
-    // 查看班级列表
-    queryClassList() {
-
-    },
-
+    // 跳转到班级管理
     openClass(index) {
-      console.log(this.firstColumnId, index, 'BBBBBBBBBBBBBB')
-
       this.$router.push({
         path: '/education/class',
         query: {
@@ -69,10 +63,6 @@ export default {
           name: this.firstColumnId[index].realname
         }
       })
-
-      // data: {
-      //   subject_teacher_id: { condition: 'is', value: row.subjectTeacherId, formType: 'user', name: 'subject_teacher_id' }
-      // }
     }
   }
 }

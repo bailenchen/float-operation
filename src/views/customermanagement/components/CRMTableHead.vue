@@ -739,6 +739,8 @@ export default {
         } else if (type == 'delete') {
           if (this.crmType == 'classschedule') {
             message = '删除班级课表会将本节课的学员排课信息一并删除，课次将会返还，是否确认删除?'
+          } else if (this.crmType == 'student') {
+            message = '删除学员会将关联的资金账户、合同、排课信息全部删除，请确认是否删除？'
           } else {
             message = '确定删除?'
           }
@@ -1784,6 +1786,8 @@ export default {
         } else {
           return false
         }
+      } else if (type == 'change_dept') {
+        return this.crm[this.crmType].department
       } else if (type == 'mark_alloc') {
         if (this.selectionList.length == 1 && this.selectionList[0].isNew != 0 && this.selectionList[0].channel != '特殊关系') {
           return this.crm[this.crmType].distributionOfEarnings

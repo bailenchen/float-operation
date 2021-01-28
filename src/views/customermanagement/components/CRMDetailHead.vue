@@ -858,6 +858,8 @@ export default {
         return this.crm[this.crmType].updateStatus
       } else if (type === 'assignHeadTeacher') {
         return this.crm[this.crmType].assignHeadTeacher
+      } else if (type === 'change_dept') {
+        return this.crm[this.crmType].department
       }
 
       return true

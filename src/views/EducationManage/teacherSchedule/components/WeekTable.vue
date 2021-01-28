@@ -23,7 +23,7 @@
         <template slot-scope="scope">
           <div v-if="item.prop == 'realname'">
             <span>{{ scope.row.realname }}</span><br>
-            <span class="blue click">开班</span>
+            <span class="blue click" @click="openClass(index)">开班</span>
           </div>
           <div v-else-if="item.prop == 'time'">{{ scope.row.time }} </div>
           <div v-else-if="scope.row[item.prop].batchId">
@@ -100,6 +100,7 @@ export default {
     return {
       tableHeight: document.documentElement.clientHeight - 306, // 表的高度
       list: [],
+      firstColumnId: [],
       fieldLists: [
         { prop: 'realname', label: '' },
         { prop: 'time', label: '' },
@@ -259,6 +260,10 @@ export default {
         for (const rowkey in this.startTime) {
           if (Object.hasOwnProperty.call(this.startTime, rowkey)) { // 每条用户数据生成15行数据row
             const val = this.startTime[rowkey]
+            this.firstColumnId.push({
+              userId: element.userId,
+              realname: element.realname
+            })
             const newitem = { realname: `[${element.subjectName}] ${element.realname}`, time: this.periodObj[rowkey] }
             for (let indexs = 0; indexs < inList.length; indexs++) { // 循环每个时间段
               const item = inList[indexs]

@@ -569,7 +569,8 @@ export default {
           classroomId,
           classTime: item.slice(0, 10),
           timeSlot: `${item.slice(11, -6)}:00-${item.slice(17).includes('24') ? '23:59:59' : item.slice(17) + ':00'}`,
-          subjectTeacherId
+          subjectTeacherId,
+          actualNumber: 0
         })
       })
 
