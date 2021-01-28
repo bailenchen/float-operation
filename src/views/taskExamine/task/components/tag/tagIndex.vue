@@ -84,7 +84,11 @@ import {
   createTagAPI,
   deleteTagAPI,
   editTagAPI,
-  taskDeleteLabelAPI
+  taskDeleteLabelAPI,
+
+  keyWordTagListAPI,
+  createKeyWordTagAPI,
+  deleteKeyWordTagAPI
 } from '@/api/task/task'
 import { workTaskLabelSetAPI } from '@/api/projectManagement/projectTask'
 
@@ -100,7 +104,11 @@ export default {
         return {}
       }
     },
-    placement: String
+    placement: String,
+    isKeyWord: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -188,6 +196,24 @@ export default {
      */
     tagSelectClick(value, index) {
       // 标签点击关联页面
+      if (this.isKeyWord) {
+        console.log('value', value, index)
+
+        value.check = true
+        const labelList = []
+        this.tagList.forEach(item => {
+          if (item.check) {
+            item.labelName = item.name
+            labelList.push(item)
+          }
+        })
+
+        console.log('labelList', labelList)
+        console.log('发送事件')
+        this.$emit('select', labelList)
+        return
+      }
+
       if (value.check) {
         taskDeleteLabelAPI({
           taskId: this.taskData.taskId,
@@ -221,6 +247,8 @@ export default {
             }
           })
           this.taskData.labelList = labelList
+          // console.log('发送事件')
+          // this.$emit('select', labelList)
         }).catch(() => {
           value.check = false
         })
@@ -265,7 +293,12 @@ export default {
      */
     tagCreateSubmit(val, color) {
       if (this.newTagTitle == '创建新标签') {
-        createTagAPI({
+        const request = this.isKeyWord ? createKeyWordTagAPI : createTagAPI
+        // createTagAPI({
+        //   name: val,
+        //   color: color
+        // }).then(res => {
+        request({
           name: val,
           color: color
         }).then(res => {
@@ -329,7 +362,10 @@ export default {
         customClass: 'is-particulars'
       })
         .then(() => {
-          deleteTagAPI({
+          const request = this.isKeyWord ? deleteKeyWordTagAPI : deleteTagAPI
+
+          // deleteTagAPI({
+          request({
             labelId: val.labelId
           }).then(res => {
             for (const i in this.tagList) {
@@ -363,7 +399,9 @@ export default {
      */
     getTagList() {
       // 标签列表
-      tagList().then(res => {
+      const request = this.isKeyWord ? keyWordTagListAPI : tagList
+      // tagList().then(res => {
+      request().then(res => {
         const dataList = res.data || []
         const selectLabels = this.taskData.labelList || []
         const selectIds = selectLabels.map(item => item.labelId)

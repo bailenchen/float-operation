@@ -241,6 +241,7 @@ import {
   XhProuctCate,
   XhProduct,
   XhCause,
+  XhTag,
   XhDetail,
   XhDictionary,
   XhBusinessStatus,
@@ -281,7 +282,8 @@ export default {
     Present,
     RefundCombo,
     XhDictionary,
-    XhCause
+    XhCause,
+    XhTag
   },
   filters: {
     /** 根据type 找到组件 */
@@ -356,6 +358,8 @@ export default {
         return 'RefundCombo'
       } else if (formType == 'cause') {
         return 'XhCause'
+      } else if (formType == 'tag') {
+        return 'XhTag'
       }
     }
   },
@@ -1017,7 +1021,11 @@ export default {
           const handleFields = [
             'leadsNumber',
             'dept_id',
-            'owner_user_id'
+            'owner_user_id',
+            'gradeName',
+            'source',
+            'headmasterUserName',
+            'school'
           ]
 
           // 赋值
@@ -1030,7 +1038,20 @@ export default {
             },
             owner_user_id: data => {
               return data && data.ownerUserName ? data.ownerUserName : ''
+            },
+            gradeName: data => {
+              return data && data.gradeName ? data.gradeName : ''
+            },
+            source: data => {
+              return data && data.channelIdName ? data.channelIdName : ''
+            },
+            headmasterUserName: data => {
+              return data && data.headmasterUserName ? data.headmasterUserName : ''
+            },
+            school: data => {
+              return data && data.school ? data.school : ''
             }
+
           }
 
           const customerItem = item.value[0]
@@ -1636,7 +1657,7 @@ export default {
               authLevel: 3,
               defaultValue: '',
               fieldId: 1229739,
-              fieldName: 'grade_id',
+              fieldName: 'gradeName',
               fieldType: 1,
               formType: 'text',
               inputTips: '',
@@ -1695,6 +1716,23 @@ export default {
               isUnique: 1,
               label: 2,
               name: '学员编号',
+              options: '',
+              setting: [],
+              type: 7,
+              value: ''
+            })
+            list.push({
+              authLevel: 3,
+              defaultValue: '',
+              fieldId: 1229739,
+              fieldName: 'keyword',
+              fieldType: 1,
+              formType: 'tag',
+              inputTips: '',
+              isNull: 1,
+              isUnique: 1,
+              label: 2,
+              name: '关键词',
               options: '',
               setting: [],
               type: 7,
@@ -2308,7 +2346,7 @@ export default {
 
           // 禁用
           if ([
-            'leadsNumber', 'dept_id', 'owner_user_id', 'grade_id', 'source',
+            'leadsNumber', 'dept_id', 'owner_user_id', 'gradeName', 'source',
             'headmasterUserName', 'school'
           ].includes(item.fieldName)) {
             params.disabled = true
@@ -3385,9 +3423,9 @@ export default {
       //   params.project_type = 1
       // }
 
-      console.log('请求参数: ', params)
-      this.loading = false
-      return
+      // console.log('请求参数: ', params)
+      // this.loading = false
+      // return
       crmRequest(params)
         .then(res => {
           this.loading = false
@@ -3396,11 +3434,12 @@ export default {
               this.$message.success(
                 this.action.type == 'update' ? '编辑成功' : '添加成功'
               )
-              // console.log('请求参数与结果: ', params)
-              if (params.entity.refundMonry < 0) {
-                this.$message(`变更后原合同剩余金额${Math.abs(params.entity.refundMonry)}元将会返还至资金账户`)
-              }
-              // this.hidenView()
+              this.hidenView()
+            }
+          } else if (this.actionCombo.type == 'change') {
+            if (res.code == 0 && params.entity.refundMonry < 0) {
+              this.$message(`变更后原合同剩余金额${Math.abs(params.entity.refundMonry)}元将会返还至资金账户`)
+              this.hidenView()
             }
           } else {
             this.hidenView()
@@ -3603,11 +3642,6 @@ export default {
 
         if (element.value.refundMonry) {
           params.entity.refundMonry = element.value.refundMonry
-          // const refundMonry = Math.abs(element.value.refundMonry)
-          // this.$message(`变更后原合同剩余金额${refundMonry}元将会返还至资金账户`)
-          if (element.value.refundMonry < 0) {
-            this.$message(`变更后原合同剩余金额${Math.abs(element.value.refundMonry)}元将会返还至资金账户`)
-          }
         }
       } else {
         this.$message.error('请添加套餐')
