@@ -238,8 +238,8 @@ export default {
       })
 
       this.fieldList.push({ prop: 'receipt', width: '100', label: '交易凭证' })
-      this.fieldList.push({ prop: 'createTime', width: '100', label: '交易时间' })
-      this.fieldList.push({ prop: 'updateTime', width: '100', label: '扣款/打款时间' })
+      this.fieldList.push({ prop: 'transactionTime', width: '100', label: '交易时间' })
+      this.fieldList.push({ prop: 'remitTime', width: '100', label: '扣款/打款时间' })
       this.fieldList.push({ prop: 'checkStatus', width: '100', label: '审批状态' })
       this.fieldList.push({ prop: 'remark', width: '100', label: '备注' })
       this.fieldList.push({ prop: 'characterName', width: '100', label: '收款/退款申请人' })
@@ -341,6 +341,12 @@ export default {
           return `-${row[column.property]}`
         } else if (row.bigDealType === 1) {
           return `+${row[column.property]}`
+        }
+      } else if (column.property === 'remitTime') {
+        if (row.transactionType === '合同充值返还') {
+          return row.transactionTime
+        } else {
+          return `--`
         }
       }
       return row[column.property] || '--'
