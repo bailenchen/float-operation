@@ -289,6 +289,8 @@ export default {
       // 勾选将换挡数据
       checkList: [],
 
+      optionTeacherList: [],
+
       classroomId: '',
       teacherId: ''
     }
@@ -313,11 +315,12 @@ export default {
           classroomId: data['classroomId'],
           classroomName: data['classroomName']
         }]
-        this.teacherId = data['subjectTeacherId']
-        this.teacherList = [{
-          userId: data['subjectTeacherId'],
-          realname: data['subjectTeacherName']
-        }]
+        this.teacherId = data.subjectTeacherList.map(item => {
+          return item.userId
+        }).join()
+        this.teacherList = data.subjectTeacherList
+
+        this.optionTeacherList.push(...this.teacherList)
 
         this.stuList = data.students
         this.loading = false
@@ -343,10 +346,12 @@ export default {
               classroomName: this.deptSelectValue.length ? this.deptSelectValue[0]['classroomName'] : null
             }]
             item.classroomId = this.deptSelectValue.length ? this.deptSelectValue[0]['classroomId'] : null
-            item.teacherList = [{
-              userId: this.teacherList.length ? this.teacherList[0]['userId'] : null,
-              realname: this.teacherList.length ? this.teacherList[0]['realname'] : null
-            }]
+            const tList = [...this.optionTeacherList]
+            item.relatedTeachers = tList.map(ite => {
+              return ite.userId
+            }).join() || ''
+
+            item.teacherList = tList
             return item
           })
           this.showShift = true
@@ -405,7 +410,7 @@ export default {
         if (this.list.length) {
           for (let index = 0; index < this.list.length; index++) {
             this.$set(this.list[index], 'teacherList', [])
-            this.$set(this.list[index], 'relatedTeachers', '')
+            this.$set(this.list[index], 'relatedTeachers', data.value.length ? data.value[0].relatedTeachers : '')
           }
         }
       }
@@ -415,8 +420,15 @@ export default {
      * 关联老师
      */
     userChange(data, index) {
+      console.log(data, index, 'data, index')
       if (arguments.length == 2) {
-        this.$set(this.list[index], 'teacherList', data.value || [])
+        for (let bindex = 0; bindex < this.list.length; bindex++) {
+          const element = this.list[bindex]
+          if (bindex == index) {
+            const tList = [...data.value]
+            element.teacherList = data.value.length ? tList : []
+          }
+        }
       } else {
         this.teacherList = data.value || []
         this.changeListItem('teacher', data.value)
@@ -429,9 +441,11 @@ export default {
         for (let index = 0; index < this.list.length; index++) {
           const element = this.list[index]
           if (type === 'classroom') {
-            element.deptSelectValue = val || []
+            const tList = [...val]
+            element.deptSelectValue = tList
           } else if (type === 'teacher') {
-            element.teacherList = val || []
+            const tList = [...val]
+            element.teacherList = tList
           } else if (type === 'time') {
             element.time = val || ''
           } else if (type === 'during') {

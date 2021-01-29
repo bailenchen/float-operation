@@ -1532,7 +1532,7 @@ export default {
           'export',
           'delete',
           'give_up',
-          'confirm_give_up',
+          // 'confirm_give_up',
           'mark_alloc',
           'update_contract'
         ])
