@@ -108,7 +108,9 @@ export default {
     isKeyWord: {
       type: Boolean,
       default: false
-    }
+    },
+    // selectData: Array
+    selectIds: Array
   },
   data() {
     return {
@@ -247,8 +249,6 @@ export default {
             }
           })
           this.taskData.labelList = labelList
-          // console.log('发送事件')
-          // this.$emit('select', labelList)
         }).catch(() => {
           value.check = false
         })
@@ -404,7 +404,12 @@ export default {
       request().then(res => {
         const dataList = res.data || []
         const selectLabels = this.taskData.labelList || []
-        const selectIds = selectLabels.map(item => item.labelId)
+        // const selectIds = selectLabels.map(item => item.labelId)
+        const selectIds = this.selectIds ? this.selectIds : selectLabels.map(item => item.labelId)
+
+        // if (this.selectIds) {
+        //   selectIds = this.selectIds
+        // }
         for (const item of dataList) {
           item.check = selectIds.includes(item.labelId)
         }

@@ -11,6 +11,7 @@
       <tag-index
         :placement="'right'"
         :task-data="taskData"
+        :select-ids="selectIds"
         :is-key-word="true"
         @change="otherChange($event, data)"
         @select="selectLabelList">
@@ -31,13 +32,14 @@
 
 <script>
 import TagIndex from '@/views/taskExamine/task/components/tag/tagIndex'
-
+import { keyWordTagListAPI } from '@/api/task/task'
 
 export default {
   name: 'XhTag',
   components: { TagIndex },
   props: {
     index: Number,
+    // value: Array
     value: {
       type: [String, Number],
       default: ''
@@ -46,7 +48,8 @@ export default {
   data() {
     return {
       taskData: {},
-      labelList: []
+      labelList: [],
+      selectIds: []
     }
   },
   computed: {
@@ -68,25 +71,35 @@ export default {
   watch: {
     value: {
       handler(val) {
-        if (this.isImpersonality) {
-          this.impersonality = val
-        } else {
-          this.subjectivity = val
+        console.log('val', val)
+        if (val) {
+          const _val = val.split(',').map(item => {
+            return +item
+          })
+          this.getTag(_val)
         }
       },
       immediate: true
     },
 
-    taskData: {
-      handler(val, oldVal) {
-        console.log('监听 taskData', val, oldVal)
-      },
-      deep: true,
-      immediate: true
-    },
+    // taskData: {
+    //   handler(val, oldVal) {
+    //     console.log('监听 taskData', val, oldVal)
+    //   },
+    //   deep: true,
+    //   immediate: true
+    // },
 
-    labelList(newValue, oldValue) {
-      console.log('监听labelList')
+    labelList(val, oldVal) {
+      console.log('监听labelList', val, oldVal)
+      const labelId = []
+      val.forEach(element => {
+        labelId.push(element.labelId)
+      })
+
+      console.log('labelId', labelId)
+
+      this.$emit('value-change', { index: this.index, value: labelId.join() })
       // if (oldValue) {
       //   this.$emit('on-handle', {
       //     type: 'change-label',
@@ -98,6 +111,33 @@ export default {
     }
   },
   methods: {
+    getTag(val) {
+      keyWordTagListAPI().then(res => {
+        console.log('Tag', res)
+        const list = []
+
+        val.forEach(item => {
+          res.data.forEach(element => {
+            if (item == element.labelId) {
+              element.check = true
+              element.labelName = element.name
+              list.push(element)
+
+              // this.labelList.push(
+              //   element
+              // )
+              // this.taskData.push(
+              //   element
+              // )
+            }
+          })
+        })
+
+        this.labelList = list
+        // this.taskData = list
+        this.selectIds = val
+      }).catch(() => {})
+    },
     otherChange(data, field) {
       console.log('otherChange')
       console.log(data, field)
