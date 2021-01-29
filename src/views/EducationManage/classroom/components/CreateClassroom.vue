@@ -48,7 +48,6 @@
               <xh-user-cell
                 v-if="item.type == 'user'"
                 :radio="radio"
-                :disabled="!deptSelectValue.length"
                 :value="teacherList"
                 :dept-id="form.deptId"
                 info-type="teacher"
@@ -145,7 +144,8 @@ export default {
         status: 1
       },
 
-      deptNumber: ''
+      deptNumber: '',
+      teacherNames: []
     }
   },
   computed: {
@@ -196,9 +196,7 @@ export default {
       this.deptNumber = data.value.length ? data.value[0].deptNumber : ''
       this.form.deptId = data.value.length ? data.value[0].id : ''
       this.deptSelectValue = data.value || []
-
-      this.form.classroomName = ''
-      this.teacherList = []
+      this.form.classroomName = `${this.deptNumber ? this.deptNumber + '-' : (this.deptNumber || '')} ${String(this.teacherNames)}`
     },
 
     /**
@@ -206,13 +204,13 @@ export default {
      */
     userChange(data) {
       const ids = ['']
-      const names = []
+      this.teacherNames = []
       data.value.forEach(item => {
         ids.push(item.userId)
-        names.push(item.realname)
+        this.teacherNames.push(item.realname)
       })
       this.form.relatedTeachers = String(ids)
-      this.form.classroomName = `${this.deptNumber}-${String(names)}`
+      this.form.classroomName = `${this.deptNumber ? this.deptNumber + '-' : (this.deptNumber || '')} ${String(this.teacherNames)}`
       this.teacherList = data.value || []
     },
 
