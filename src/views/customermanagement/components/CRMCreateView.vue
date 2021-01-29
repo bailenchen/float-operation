@@ -1229,7 +1229,6 @@ export default {
               if (addRelation.includes(element.key)) {
                 element.disabled = false
                 if (getRelationObj[element.key]) {
-                  console.log('更换后值为空')
                   element.value = []
                   getRelationObj[element.key](customerItem, element)
                 }
@@ -1725,7 +1724,8 @@ export default {
               authLevel: 3,
               defaultValue: '',
               fieldId: 1229739,
-              fieldName: 'keyword',
+              // fieldName: 'keyword',
+              fieldName: 'label_id',
               fieldType: 1,
               formType: 'tag',
               inputTips: '',
@@ -2357,17 +2357,56 @@ export default {
             params.useDelete = false
           }
 
-          // if (item.fieldName == 'author') {
-          //   params.value = [this.action.userInfo]
-          // }
-
           // 编辑
           if (this.action.type === 'update') {
-            if (item.fieldName == 'project_type') {
-              params['value'] = item.value.split(',')
-              params['value'] = item.value.split(',').map(item => {
-                return +item
-              })
+            // if (item.fieldName == 'project_type') {
+            //   params['value'] = item.value.split(',')
+            //   params['value'] = item.value.split(',').map(item => {
+            //     return +item
+            //   })
+            // }
+            const handleFields = [
+              'leadsNumber',
+              'dept_id',
+              'owner_user_id',
+              'gradeName',
+              'source',
+              'headmasterUserName',
+              'school',
+              'label_id'
+            ]
+            // 赋值
+            const getValueObj = {
+              leadsNumber: data => {
+                return data && data.leadsNumber ? data.leadsNumber : ''
+              },
+              dept_id: data => {
+                return data && data.deptName ? data.deptName : ''
+              },
+              owner_user_id: data => {
+                return data && data.ownerUserName ? data.ownerUserName : ''
+              },
+              gradeName: data => {
+                return data && data.gradeName ? data.gradeName : ''
+              },
+              source: data => {
+                return data && data.channelName ? data.channelName : ''
+              },
+              headmasterUserName: data => {
+                return data && data.headmasterUserName ? data.headmasterUserName : ''
+              },
+              school: data => {
+                return data && data.school ? data.school : ''
+              },
+              label_id: data => {
+                // return data && data.labelId ? data.labelId.split(',') : []
+                return data && data.labelId ? data.labelId : ''
+              }
+            }
+            if (handleFields.includes(item.fieldName)) {
+              if (getValueObj[item.fieldName]) {
+                params.value = getValueObj[item.fieldName](this.action.editDetail)
+              }
             }
           }
         }

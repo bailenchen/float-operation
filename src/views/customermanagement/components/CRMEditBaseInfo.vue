@@ -586,6 +586,16 @@ export default {
         }[item.value == null ? 0 : item.value]
       }
 
+      if (item.name == '扣款/打款时间') {
+        const transactionTime = this.list[0].list.filter(item => {
+          return item.name == '交易时间'
+        })[0]
+        const transactionType = this.list[0].list.filter(item => {
+          return item.name == '交易类型'
+        })[0]
+        return transactionType.value == '合同充值返还' ? transactionTime.value : ''
+      }
+
       return item.value
     },
 

@@ -511,6 +511,10 @@ export default {
       } else if (column.property === 'portrait') {
         if (row.portrait) return '查看'
         return ''
+      } else if (column.property === 'labelNames') {
+        return row.labelNames.map(item => {
+          return item.name
+        }).join('，')
       }
 
       if (this.crmType == 'student') {

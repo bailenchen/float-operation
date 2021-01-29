@@ -116,6 +116,22 @@
             </flexbox>
 
             <flexbox
+              v-else-if="item.fieldName === 'label_names'"
+              align="stretch"
+              class="b-cell-b">
+              <div class="b-cell-name">{{ item.name }}</div>
+              <div class="b-cell-value">
+                <span
+                  v-for="(labelItem, labelIndex) in item.value"
+                  :style="{'background': labelItem.color ? labelItem.color : '#ccc'}"
+                  :key="labelIndex"
+                  class="item-color">
+                  {{ labelItem.name }}
+                </span>
+              </div>
+            </flexbox>
+
+            <flexbox
               v-else
               align="stretch"
               class="b-cell-b">
@@ -620,4 +636,15 @@ export default {
   cursor: pointer;
 }
 
+.b-cell-value .item-color{
+  padding: 0 10px;
+  color: #fff;
+  font-size: 12px;
+  margin-right: 5px;
+  border-radius: 3px;
+  display: inline-block;
+  height: 22px;
+  line-height: 22px;
+  margin-bottom: 5px;
+}
 </style>
