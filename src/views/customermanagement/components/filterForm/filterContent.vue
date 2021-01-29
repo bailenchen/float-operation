@@ -12,6 +12,8 @@
         <span
           v-else-if="[
             'grades',
+            'classsatus',
+            'check_status',
             'class_type',
             'subject',
             'follow_up_plan',

@@ -1690,7 +1690,7 @@ export default {
           this.selectionList.forEach(item => {
             statusList.push(item.classConfirmation)
           })
-          if (statusList.includes(1)) {
+          if (statusList.includes(3)) {
             return false
           } else {
             return this.education[this.crmType].delete

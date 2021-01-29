@@ -125,7 +125,7 @@
                   <i
                     v-if="dateList.length > 1"
                     class="el-icon-remove"
-                    @click="deleteDate()"/>
+                    @click="deleteDate(index)"/>
                 </div>
               </flexbox>
 

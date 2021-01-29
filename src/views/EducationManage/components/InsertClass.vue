@@ -327,7 +327,7 @@ export default {
      * 保存
      */
     submitForm() {
-      const { timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId, totalNumber } = this.selectionList[0]
+      const { timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId, actualNumber, totalNumber } = this.selectionList[0]
       const bstudentList = []
       const newList = objDeepCopy(this.addedList)
       const customerIds = []
@@ -377,7 +377,7 @@ export default {
       }
 
       const params = {
-        list1: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId, actualNumber: 0 }],
+        list1: this.crmType == 'class' ? timeLists : [{ timeId, batchId, classId, classroomId, classTime, timeSlot, subjectTeacherId, actualNumber }],
         list2: bstudentList,
         totalNumber
       }

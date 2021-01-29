@@ -460,15 +460,6 @@ export default {
       if (column.property === 'orderDate') {
         return row[column.property].slice(0, 10)
       }
-
-      if (column.property === 'deptCheckStatus') {
-        return {
-          0: '待审核',
-          1: '通过',
-          2: '拒绝',
-          3: '审核中'
-        }[row[column.property]]
-      }
       return row[column.property] === '' || row[column.property] === null ? '--' : row[column.property]
     },
 

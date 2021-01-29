@@ -318,7 +318,10 @@ export default {
         this.teacherId = data.subjectTeacherList.map(item => {
           return item.userId
         }).join()
-        this.teacherList = data.subjectTeacherList
+        this.teacherList = [{
+          userId: data.subjectTeacherId,
+          realname: data.subjectTeacherName
+        }]
 
         this.optionTeacherList.push(...this.teacherList)
 
@@ -347,9 +350,7 @@ export default {
             }]
             item.classroomId = this.deptSelectValue.length ? this.deptSelectValue[0]['classroomId'] : null
             const tList = [...this.optionTeacherList]
-            item.relatedTeachers = tList.map(ite => {
-              return ite.userId
-            }).join() || ''
+            item.relatedTeachers = this.teacherId
 
             item.teacherList = tList
             return item

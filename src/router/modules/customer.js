@@ -112,19 +112,19 @@ export default [
       }
     }]
   },
-  {
-    ...layout({
-      permissions: ['crm', 'visit']
-    }),
-    children: [{
-      path: 'visit',
-      component: () => import('@/views/customermanagement/visit/VisitIndex'),
-      meta: {
-        title: '学员回访',
-        icon: 'house'
-      }
-    }]
-  },
+  // {
+  //   ...layout({
+  //     permissions: ['crm', 'visit']
+  //   }),
+  //   children: [{
+  //     path: 'visit',
+  //     component: () => import('@/views/customermanagement/visit/VisitIndex'),
+  //     meta: {
+  //       title: '学员回访',
+  //       icon: 'house'
+  //     }
+  //   }]
+  // },
   // {
   //   ...layout({
   //     permissions: ['crm', 'insideUser']

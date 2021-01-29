@@ -578,6 +578,15 @@ export default {
         return value
       }
 
+      if (name === 'deptCheckStatus') {
+        return {
+          0: '待审核',
+          1: '通过',
+          2: '拒绝',
+          3: '审核中'
+        }[value]
+      }
+
       // 待审核的充值返还
       if (this.crmType == 'refund') {
         if (name === 'refundType') {

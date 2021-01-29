@@ -270,10 +270,10 @@ export default {
         { label: '资金账户', name: 'RelativeAccount', permission: 'crm.contract.index' },
         { label: '合同充值', name: 'ContractRecharge' },
         { label: '合同充值返还', name: 'ReturnRechargeMoney' },
-        { label: '学员回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
+        // { label: '学员回访', name: 'RelativeVisit', numField: 'returnVisitCount' },
         { label: '校区班主任变更记录', name: 'ChangeLog' },
-        { label: '家长会登记', name: 'RelativeParentRegistration' },
-        { label: '学生考试成绩登记', name: 'RelativeScoreRegistration' },
+        // { label: '家长会登记', name: 'RelativeParentRegistration' },
+        // { label: '学生考试成绩登记', name: 'RelativeScoreRegistration' },
 
 
         // { label: '收款', name: 'RelativeReturnMoney' },
