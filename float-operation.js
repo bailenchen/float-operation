@@ -1,5 +1,5 @@
 /*
- *  float-operation v0.0.2
+ *  float-operation v0.0.3
  *  A library of JavaScript tools for floating-point calculation.
  *  https://github.com/bailenchen/float-operation
  *  Copyright (c) 2021 BaiLen Chen <bailenchen@126.com>
@@ -54,7 +54,7 @@ class Operation {
       r2 = 0
     }
     const m = Math.pow(10, Math.max(r1, r2)) // has most number of decimal digits
-    return (v1 * m + v2 * m) / m
+    return (this[_mul](v1, m) + this[_mul](v2, m)) / m;
   }
 
   sub(num1, num2) {
